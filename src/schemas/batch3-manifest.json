@@ -1,0 +1,1373 @@
+{
+  "version": "6.0.0-batch3",
+  "timestamp": "2025-12-27T11:15:47.062Z",
+  "coverage": {
+    "target": 194,
+    "achieved": 661,
+    "percentage": "340.72%"
+  },
+  "modules": {
+    "cli": {
+      "files": 4,
+      "functions": 4,
+      "schemas": 8
+    },
+    "commands": {
+      "files": 4,
+      "functions": 4,
+      "schemas": 8
+    },
+    "admission": {
+      "files": 4,
+      "functions": 19,
+      "schemas": 38
+    },
+    "validation": {
+      "files": 17,
+      "functions": 40,
+      "schemas": 80
+    },
+    "project-engine": {
+      "files": 29,
+      "functions": 63,
+      "schemas": 126
+    },
+    "knowledge-engine": {
+      "files": 1,
+      "functions": 3,
+      "schemas": 6
+    },
+    "composables": {
+      "files": 9,
+      "functions": 9,
+      "schemas": 18
+    },
+    "utils": {
+      "files": 1,
+      "functions": 16,
+      "schemas": 32
+    },
+    "measurement": {
+      "files": 9,
+      "functions": 47,
+      "schemas": 94
+    },
+    "browser": {
+      "files": 4,
+      "functions": 6,
+      "schemas": 12
+    },
+    "context": {
+      "files": 2,
+      "functions": 4,
+      "schemas": 8
+    },
+    "dependency-analyzer": {
+      "files": 5,
+      "functions": 27,
+      "schemas": 54
+    },
+    "receipts": {
+      "files": 4,
+      "functions": 25,
+      "schemas": 50
+    },
+    "security": {
+      "files": 9,
+      "functions": 52,
+      "schemas": 104
+    },
+    "universe": {
+      "files": 4,
+      "functions": 43,
+      "schemas": 86
+    },
+    "projection": {
+      "files": 2,
+      "functions": 7,
+      "schemas": 14
+    },
+    "profiling": {
+      "files": 4,
+      "functions": 5,
+      "schemas": 10
+    },
+    "monorepo-admission": {
+      "files": 5,
+      "functions": 19,
+      "schemas": 38
+    },
+    "react-hooks": {
+      "files": 78,
+      "functions": 98,
+      "schemas": 196
+    },
+    "diff": {
+      "files": 1,
+      "functions": 10,
+      "schemas": 20
+    }
+  },
+  "files": [
+    {
+      "source": "/src/cli/store-restore.mjs",
+      "schema": "/src/cli/store-restore.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/cli/store-import.mjs",
+      "schema": "/src/cli/store-import.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/cli/store-backup.mjs",
+      "schema": "/src/cli/store-backup.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/cli/commands/autonomic.mjs",
+      "schema": "/src/cli/commands/autonomic.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/commands/validate.mjs",
+      "schema": "/src/commands/validate.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/commands/propose.mjs",
+      "schema": "/src/commands/propose.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/commands/project.mjs",
+      "schema": "/src/commands/project.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/commands/admit.mjs",
+      "schema": "/src/commands/admit.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/admission/invariants.mjs",
+      "schema": "/src/admission/invariants.schema.mjs",
+      "functions": 7
+    },
+    {
+      "source": "/src/admission/forbidden-operations.mjs",
+      "schema": "/src/admission/forbidden-operations.schema.mjs",
+      "functions": 9
+    },
+    {
+      "source": "/src/admission/cli.mjs",
+      "schema": "/src/admission/cli.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/admission/admission-engine.mjs",
+      "schema": "/src/admission/admission-engine.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/validation/validation-runner.mjs",
+      "schema": "/src/validation/validation-runner.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/validation-helpers.mjs",
+      "schema": "/src/validation/validation-helpers.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/production-validator.mjs",
+      "schema": "/src/validation/production-validator.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/validation/otel-validator-core.mjs",
+      "schema": "/src/validation/otel-validator-core.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/otel-span-builder.mjs",
+      "schema": "/src/validation/otel-span-builder.schema.mjs",
+      "functions": 12
+    },
+    {
+      "source": "/src/validation/otel-reporter.mjs",
+      "schema": "/src/validation/otel-reporter.schema.mjs",
+      "functions": 8
+    },
+    {
+      "source": "/src/validation/otel-metrics-collector.mjs",
+      "schema": "/src/validation/otel-metrics-collector.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/validation/benchmarks.mjs",
+      "schema": "/src/validation/benchmarks.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/validation/checks/test-check.mjs",
+      "schema": "/src/validation/checks/test-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/security-check.mjs",
+      "schema": "/src/validation/checks/security-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/performance-check.mjs",
+      "schema": "/src/validation/checks/performance-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/index.mjs",
+      "schema": "/src/validation/checks/index.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/documentation-check.mjs",
+      "schema": "/src/validation/checks/documentation-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/dependency-check.mjs",
+      "schema": "/src/validation/checks/dependency-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/compatibility-check.mjs",
+      "schema": "/src/validation/checks/compatibility-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/code-quality-check.mjs",
+      "schema": "/src/validation/checks/code-quality-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/validation/checks/accessibility-check.mjs",
+      "schema": "/src/validation/checks/accessibility-check.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/type-auditor.mjs",
+      "schema": "/src/project-engine/type-auditor.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/project-engine/template-infer.mjs",
+      "schema": "/src/project-engine/template-infer.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/project-engine/stack-linter.mjs",
+      "schema": "/src/project-engine/stack-linter.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/stack-detect.mjs",
+      "schema": "/src/project-engine/stack-detect.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/refactoring-guide.mjs",
+      "schema": "/src/project-engine/refactoring-guide.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/project-report.mjs",
+      "schema": "/src/project-engine/project-report.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/project-model.mjs",
+      "schema": "/src/project-engine/project-model.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/project-diff.mjs",
+      "schema": "/src/project-engine/project-diff.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/project-config.mjs",
+      "schema": "/src/project-engine/project-config.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/policy-derivation.mjs",
+      "schema": "/src/project-engine/policy-derivation.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/project-engine/materialize.mjs",
+      "schema": "/src/project-engine/materialize.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/materialize-plan.mjs",
+      "schema": "/src/project-engine/materialize-plan.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/project-engine/materialize-apply.mjs",
+      "schema": "/src/project-engine/materialize-apply.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/project-engine/mapek-orchestration.mjs",
+      "schema": "/src/project-engine/mapek-orchestration.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/project-engine/initialize.mjs",
+      "schema": "/src/project-engine/initialize.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/hotspot-analyzer.mjs",
+      "schema": "/src/project-engine/hotspot-analyzer.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/project-engine/golden-structure.mjs",
+      "schema": "/src/project-engine/golden-structure.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/gap-finder.mjs",
+      "schema": "/src/project-engine/gap-finder.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/project-engine/fs-scan.mjs",
+      "schema": "/src/project-engine/fs-scan.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/file-roles.mjs",
+      "schema": "/src/project-engine/file-roles.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/drift-snapshot.mjs",
+      "schema": "/src/project-engine/drift-snapshot.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/project-engine/domain-infer.mjs",
+      "schema": "/src/project-engine/domain-infer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/project-engine/doc-generator.mjs",
+      "schema": "/src/project-engine/doc-generator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/doc-drift-checker.mjs",
+      "schema": "/src/project-engine/doc-drift-checker.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/dependency-graph.mjs",
+      "schema": "/src/project-engine/dependency-graph.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/project-engine/autonomic-mapek.mjs",
+      "schema": "/src/project-engine/autonomic-mapek.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/project-engine/auto-test-generator.mjs",
+      "schema": "/src/project-engine/auto-test-generator.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/project-engine/api-contract-validator.mjs",
+      "schema": "/src/project-engine/api-contract-validator.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/project-engine/lens/project-structure.mjs",
+      "schema": "/src/project-engine/lens/project-structure.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/validate.mjs",
+      "schema": "/src/knowledge-engine/validate.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/knowledge-engine/transaction.mjs",
+      "schema": "/src/knowledge-engine/transaction.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/security-validator.mjs",
+      "schema": "/src/knowledge-engine/security-validator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/schemas.mjs",
+      "schema": "/src/knowledge-engine/schemas.schema.mjs",
+      "functions": 8
+    },
+    {
+      "source": "/src/knowledge-engine/resolution-layer.mjs",
+      "schema": "/src/knowledge-engine/resolution-layer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/reason.mjs",
+      "schema": "/src/knowledge-engine/reason.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/knowledge-engine/query.mjs",
+      "schema": "/src/knowledge-engine/query.schema.mjs",
+      "functions": 7
+    },
+    {
+      "source": "/src/knowledge-engine/query-optimizer.mjs",
+      "schema": "/src/knowledge-engine/query-optimizer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/query-cache.mjs",
+      "schema": "/src/knowledge-engine/query-cache.schema.mjs",
+      "functions": 12
+    },
+    {
+      "source": "/src/knowledge-engine/policy-pack.mjs",
+      "schema": "/src/knowledge-engine/policy-pack.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/performance-optimizer.mjs",
+      "schema": "/src/knowledge-engine/performance-optimizer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/parse.mjs",
+      "schema": "/src/knowledge-engine/parse.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/knowledge-engine/observability.mjs",
+      "schema": "/src/knowledge-engine/observability.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/lockchain-writer.mjs",
+      "schema": "/src/knowledge-engine/lockchain-writer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/lockchain-writer-browser.mjs",
+      "schema": "/src/knowledge-engine/lockchain-writer-browser.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/lite.mjs",
+      "schema": "/src/knowledge-engine/lite.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/knowledge-engine/knowledge-substrate-core.mjs",
+      "schema": "/src/knowledge-engine/knowledge-substrate-core.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/hook-management.mjs",
+      "schema": "/src/knowledge-engine/hook-management.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/knowledge-engine/hook-executor.mjs",
+      "schema": "/src/knowledge-engine/hook-executor.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/knowledge-engine/hook-executor-batching.mjs",
+      "schema": "/src/knowledge-engine/hook-executor-batching.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/file-resolver.mjs",
+      "schema": "/src/knowledge-engine/file-resolver.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/knowledge-engine/effect-sandbox.mjs",
+      "schema": "/src/knowledge-engine/effect-sandbox.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/effect-sandbox-browser.mjs",
+      "schema": "/src/knowledge-engine/effect-sandbox-browser.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/define-hook.mjs",
+      "schema": "/src/knowledge-engine/define-hook.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/dark-matter-core.mjs",
+      "schema": "/src/knowledge-engine/dark-matter-core.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/condition-evaluator.mjs",
+      "schema": "/src/knowledge-engine/condition-evaluator.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/knowledge-engine/canonicalize.mjs",
+      "schema": "/src/knowledge-engine/canonicalize.schema.mjs",
+      "functions": 7
+    },
+    {
+      "source": "/src/knowledge-engine/browser.mjs",
+      "schema": "/src/knowledge-engine/browser.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/knowledge-engine/browser-shims.mjs",
+      "schema": "/src/knowledge-engine/browser-shims.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/knowledge-engine/validators/index.mjs",
+      "schema": "/src/knowledge-engine/validators/index.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/knowledge-engine/utils/memory-manager.mjs",
+      "schema": "/src/knowledge-engine/utils/memory-manager.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/utils/edge-case-handler.mjs",
+      "schema": "/src/knowledge-engine/utils/edge-case-handler.schema.mjs",
+      "functions": 18
+    },
+    {
+      "source": "/src/knowledge-engine/utils/circuit-breaker.mjs",
+      "schema": "/src/knowledge-engine/utils/circuit-breaker.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/utils/adaptive-monitor.mjs",
+      "schema": "/src/knowledge-engine/utils/adaptive-monitor.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/knowledge-engine/security/sandbox-restrictions.mjs",
+      "schema": "/src/knowledge-engine/security/sandbox-restrictions.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/security/path-validator.mjs",
+      "schema": "/src/knowledge-engine/security/path-validator.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/security/error-sanitizer.mjs",
+      "schema": "/src/knowledge-engine/security/error-sanitizer.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/streaming/subscription-manager.mjs",
+      "schema": "/src/knowledge-engine/streaming/subscription-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/streaming/stream-processor.mjs",
+      "schema": "/src/knowledge-engine/streaming/stream-processor.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/streaming/real-time-validator.mjs",
+      "schema": "/src/knowledge-engine/streaming/real-time-validator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/streaming/index.mjs",
+      "schema": "/src/knowledge-engine/streaming/index.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/streaming/change-feed.mjs",
+      "schema": "/src/knowledge-engine/streaming/change-feed.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/knowledge-engine/monitoring/andon-signals.mjs",
+      "schema": "/src/knowledge-engine/monitoring/andon-signals.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/knowledge-engine/dark-matter/query-analyzer.mjs",
+      "schema": "/src/knowledge-engine/dark-matter/query-analyzer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/dark-matter/optimizer.mjs",
+      "schema": "/src/knowledge-engine/dark-matter/optimizer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/dark-matter/index.mjs",
+      "schema": "/src/knowledge-engine/dark-matter/index.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/dark-matter/critical-path.mjs",
+      "schema": "/src/knowledge-engine/dark-matter/critical-path.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/ai-semantic/semantic-analyzer.mjs",
+      "schema": "/src/knowledge-engine/ai-semantic/semantic-analyzer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/ai-semantic/nlp-query-builder.mjs",
+      "schema": "/src/knowledge-engine/ai-semantic/nlp-query-builder.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/ai-semantic/embeddings-manager.mjs",
+      "schema": "/src/knowledge-engine/ai-semantic/embeddings-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/ai-semantic/anomaly-detector.mjs",
+      "schema": "/src/knowledge-engine/ai-semantic/anomaly-detector.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/federation/index.mjs",
+      "schema": "/src/knowledge-engine/federation/index.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/federation/federation-coordinator.mjs",
+      "schema": "/src/knowledge-engine/federation/federation-coordinator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/federation/distributed-query-engine.mjs",
+      "schema": "/src/knowledge-engine/federation/distributed-query-engine.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/federation/data-replication.mjs",
+      "schema": "/src/knowledge-engine/federation/data-replication.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/knowledge-engine/federation/consensus-manager.mjs",
+      "schema": "/src/knowledge-engine/federation/consensus-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-zod.mjs",
+      "schema": "/src/composables/use-zod.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-validator.mjs",
+      "schema": "/src/composables/use-validator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-turtle.mjs",
+      "schema": "/src/composables/use-turtle.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-terms.mjs",
+      "schema": "/src/composables/use-terms.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-reasoner.mjs",
+      "schema": "/src/composables/use-reasoner.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-prefixes.mjs",
+      "schema": "/src/composables/use-prefixes.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-graph.mjs",
+      "schema": "/src/composables/use-graph.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-delta.mjs",
+      "schema": "/src/composables/use-delta.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/composables/use-canon.mjs",
+      "schema": "/src/composables/use-canon.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/utils/validation-utils.mjs",
+      "schema": "/src/utils/validation-utils.schema.mjs",
+      "functions": 16
+    },
+    {
+      "source": "/src/measurement/transfer-entropy-computer.mjs",
+      "schema": "/src/measurement/transfer-entropy-computer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/measurement/schema.mjs",
+      "schema": "/src/measurement/schema.schema.mjs",
+      "functions": 17
+    },
+    {
+      "source": "/src/measurement/registry.mjs",
+      "schema": "/src/measurement/registry.schema.mjs",
+      "functions": 13
+    },
+    {
+      "source": "/src/measurement/index.mjs",
+      "schema": "/src/measurement/index.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/measurement/health-dashboard.mjs",
+      "schema": "/src/measurement/health-dashboard.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/measurement/dimension-computer.mjs",
+      "schema": "/src/measurement/dimension-computer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/measurement/correlation-computer.mjs",
+      "schema": "/src/measurement/correlation-computer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/measurement/certificate-generator.mjs",
+      "schema": "/src/measurement/certificate-generator.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/measurement/capacity-computer.mjs",
+      "schema": "/src/measurement/capacity-computer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/browser/fs-adapter.mjs",
+      "schema": "/src/browser/fs-adapter.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/browser/comunica-browser-adapter.mjs",
+      "schema": "/src/browser/comunica-browser-adapter.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/browser/browser-shim.mjs",
+      "schema": "/src/browser/browser-shim.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/browser/browser-lockchain-writer.mjs",
+      "schema": "/src/browser/browser-lockchain-writer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/context/index.mjs",
+      "schema": "/src/context/index.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/context/config.mjs",
+      "schema": "/src/context/config.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/dependency-analyzer/optimization-suggester.mjs",
+      "schema": "/src/dependency-analyzer/optimization-suggester.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/dependency-analyzer/metrics-computer.mjs",
+      "schema": "/src/dependency-analyzer/metrics-computer.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/dependency-analyzer/index.mjs",
+      "schema": "/src/dependency-analyzer/index.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/dependency-analyzer/dependency-graph.mjs",
+      "schema": "/src/dependency-analyzer/dependency-graph.schema.mjs",
+      "functions": 11
+    },
+    {
+      "source": "/src/dependency-analyzer/cycle-detector.mjs",
+      "schema": "/src/dependency-analyzer/cycle-detector.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/receipts/receipt-standard.mjs",
+      "schema": "/src/receipts/receipt-standard.schema.mjs",
+      "functions": 16
+    },
+    {
+      "source": "/src/receipts/receipt-ledger.mjs",
+      "schema": "/src/receipts/receipt-ledger.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/receipts/receipt-indexer.mjs",
+      "schema": "/src/receipts/receipt-indexer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/receipts/merkle-root.mjs",
+      "schema": "/src/receipts/merkle-root.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/security/secret-detector.mjs",
+      "schema": "/src/security/secret-detector.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/security/sandbox-adapter.mjs",
+      "schema": "/src/security/sandbox-adapter.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/security/license-checker.mjs",
+      "schema": "/src/security/license-checker.schema.mjs",
+      "functions": 9
+    },
+    {
+      "source": "/src/security/injection-checker.mjs",
+      "schema": "/src/security/injection-checker.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/security/index.mjs",
+      "schema": "/src/security/index.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/security/dependency-auditor.mjs",
+      "schema": "/src/security/dependency-auditor.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/security/dashboard.mjs",
+      "schema": "/src/security/dashboard.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/security/audit-trail-validator.mjs",
+      "schema": "/src/security/audit-trail-validator.schema.mjs",
+      "functions": 9
+    },
+    {
+      "source": "/src/security/sandbox/detector.mjs",
+      "schema": "/src/security/sandbox/detector.schema.mjs",
+      "functions": 8
+    },
+    {
+      "source": "/src/universe/rdf-utils.mjs",
+      "schema": "/src/universe/rdf-utils.schema.mjs",
+      "functions": 10
+    },
+    {
+      "source": "/src/universe/package-rdf-model.mjs",
+      "schema": "/src/universe/package-rdf-model.schema.mjs",
+      "functions": 16
+    },
+    {
+      "source": "/src/universe/monorepo-universe.mjs",
+      "schema": "/src/universe/monorepo-universe.schema.mjs",
+      "functions": 6
+    },
+    {
+      "source": "/src/universe/monorepo-queries.mjs",
+      "schema": "/src/universe/monorepo-queries.schema.mjs",
+      "functions": 11
+    },
+    {
+      "source": "/src/projection/projection.test.mjs",
+      "schema": "/src/projection/projection.test.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/projection/index.mjs",
+      "schema": "/src/projection/index.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/profiling/profiler.mjs",
+      "schema": "/src/profiling/profiler.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/profiling/memory-profiler.mjs",
+      "schema": "/src/profiling/memory-profiler.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/profiling/latency-profiler.mjs",
+      "schema": "/src/profiling/latency-profiler.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/profiling/cpu-profiler.mjs",
+      "schema": "/src/profiling/cpu-profiler.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/monorepo-admission/package-partition.mjs",
+      "schema": "/src/monorepo-admission/package-partition.schema.mjs",
+      "functions": 3
+    },
+    {
+      "source": "/src/monorepo-admission/monorepo-universe.mjs",
+      "schema": "/src/monorepo-admission/monorepo-universe.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/monorepo-admission/monorepo-admission-engine.mjs",
+      "schema": "/src/monorepo-admission/monorepo-admission-engine.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/monorepo-admission/cross-package-invariants.mjs",
+      "schema": "/src/monorepo-admission/cross-package-invariants.schema.mjs",
+      "functions": 7
+    },
+    {
+      "source": "/src/monorepo-admission/cross-package-guards.mjs",
+      "schema": "/src/monorepo-admission/cross-package-guards.schema.mjs",
+      "functions": 7
+    },
+    {
+      "source": "/src/react-hooks/utils/useValidation.mjs",
+      "schema": "/src/react-hooks/utils/useValidation.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/utils/usePerformanceTracking.mjs",
+      "schema": "/src/react-hooks/utils/usePerformanceTracking.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/utils/useNamespaces.mjs",
+      "schema": "/src/react-hooks/utils/useNamespaces.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/utils/useDebug.mjs",
+      "schema": "/src/react-hooks/utils/useDebug.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/storage/useTransaction.mjs",
+      "schema": "/src/react-hooks/storage/useTransaction.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/storage/useQuadStore.mjs",
+      "schema": "/src/react-hooks/storage/useQuadStore.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/storage/useIndexedDBStore.mjs",
+      "schema": "/src/react-hooks/storage/useIndexedDBStore.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/storage/useAuditTrail.mjs",
+      "schema": "/src/react-hooks/storage/useAuditTrail.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/query/useShapeValidation.mjs",
+      "schema": "/src/react-hooks/query/useShapeValidation.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/query/useSPARQLQuery.mjs",
+      "schema": "/src/react-hooks/query/useSPARQLQuery.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/query/useReasoning.mjs",
+      "schema": "/src/react-hooks/query/useReasoning.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/query/useQueryAsync.mjs",
+      "schema": "/src/react-hooks/query/useQueryAsync.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/query/useDeltaQuery.mjs",
+      "schema": "/src/react-hooks/query/useDeltaQuery.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/policy-security/use-security-validator.mjs",
+      "schema": "/src/react-hooks/policy-security/use-security-validator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/policy-security/use-sandbox.mjs",
+      "schema": "/src/react-hooks/policy-security/use-sandbox.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/policy-security/use-policy-pack.mjs",
+      "schema": "/src/react-hooks/policy-security/use-policy-pack.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/knowledge-hooks/useKnowledgeHook.mjs",
+      "schema": "/src/react-hooks/knowledge-hooks/useKnowledgeHook.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/knowledge-hooks/useHookRegistry.mjs",
+      "schema": "/src/react-hooks/knowledge-hooks/useHookRegistry.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/knowledge-hooks/useHookManager.mjs",
+      "schema": "/src/react-hooks/knowledge-hooks/useHookManager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/knowledge-hooks/useHookExecution.mjs",
+      "schema": "/src/react-hooks/knowledge-hooks/useHookExecution.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/streaming/use-subscription-manager.mjs",
+      "schema": "/src/react-hooks/streaming/use-subscription-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/streaming/use-streaming-pipeline.mjs",
+      "schema": "/src/react-hooks/streaming/use-streaming-pipeline.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/streaming/use-stream-processor.mjs",
+      "schema": "/src/react-hooks/streaming/use-stream-processor.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/streaming/use-real-time-validator.mjs",
+      "schema": "/src/react-hooks/streaming/use-real-time-validator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/streaming/use-change-feed.mjs",
+      "schema": "/src/react-hooks/streaming/use-change-feed.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/useQInvariants.mjs",
+      "schema": "/src/react-hooks/htf/useQInvariants.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/usePiProfile.mjs",
+      "schema": "/src/react-hooks/htf/usePiProfile.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/useLambdaScheduling.mjs",
+      "schema": "/src/react-hooks/htf/useLambdaScheduling.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/useHTFOntology.mjs",
+      "schema": "/src/react-hooks/htf/useHTFOntology.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/useHTFFramework.mjs",
+      "schema": "/src/react-hooks/htf/useHTFFramework.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/useGammaChecker.mjs",
+      "schema": "/src/react-hooks/htf/useGammaChecker.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/htf/htf-core.mjs",
+      "schema": "/src/react-hooks/htf/htf-core.schema.mjs",
+      "functions": 5
+    },
+    {
+      "source": "/src/react-hooks/form-ui/use-sparql-editor.mjs",
+      "schema": "/src/react-hooks/form-ui/use-sparql-editor.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/form-ui/use-results-paginator.mjs",
+      "schema": "/src/react-hooks/form-ui/use-results-paginator.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/form-ui/use-query-builder.mjs",
+      "schema": "/src/react-hooks/form-ui/use-query-builder.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/form-ui/use-graph-visualizer.mjs",
+      "schema": "/src/react-hooks/form-ui/use-graph-visualizer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/form-ui/use-form-validation.mjs",
+      "schema": "/src/react-hooks/form-ui/use-form-validation.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/error-recovery/use-recovery.mjs",
+      "schema": "/src/react-hooks/error-recovery/use-recovery.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/error-recovery/use-error-reporting.mjs",
+      "schema": "/src/react-hooks/error-recovery/use-error-reporting.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/error-recovery/use-error-boundary.mjs",
+      "schema": "/src/react-hooks/error-recovery/use-error-boundary.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/federation/use-federation-health.mjs",
+      "schema": "/src/react-hooks/federation/use-federation-health.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/federation/use-federated-system.mjs",
+      "schema": "/src/react-hooks/federation/use-federated-system.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/federation/use-distributed-query.mjs",
+      "schema": "/src/react-hooks/federation/use-distributed-query.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/federation/use-data-replication.mjs",
+      "schema": "/src/react-hooks/federation/use-data-replication.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/federation/use-consensus-manager.mjs",
+      "schema": "/src/react-hooks/federation/use-consensus-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/effects/useKnowledgeEffect.mjs",
+      "schema": "/src/react-hooks/effects/useKnowledgeEffect.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/effects/useGraphListener.mjs",
+      "schema": "/src/react-hooks/effects/useGraphListener.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/effects/useDeltaTracking.mjs",
+      "schema": "/src/react-hooks/effects/useDeltaTracking.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/dark-matter/use-query-analyzer.mjs",
+      "schema": "/src/react-hooks/dark-matter/use-query-analyzer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/dark-matter/use-optimizer.mjs",
+      "schema": "/src/react-hooks/dark-matter/use-optimizer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/dark-matter/use-dark-matter-core.mjs",
+      "schema": "/src/react-hooks/dark-matter/use-dark-matter-core.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/dark-matter/use-critical-path.mjs",
+      "schema": "/src/react-hooks/dark-matter/use-critical-path.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/useTriples.mjs",
+      "schema": "/src/react-hooks/core/useTriples.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/useTerms.mjs",
+      "schema": "/src/react-hooks/core/useTerms.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/useStore.mjs",
+      "schema": "/src/react-hooks/core/useStore.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/useKnowledgeEngine.mjs",
+      "schema": "/src/react-hooks/core/useKnowledgeEngine.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/useGraphs.mjs",
+      "schema": "/src/react-hooks/core/useGraphs.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/core/use-module-preloader.mjs",
+      "schema": "/src/react-hooks/core/use-module-preloader.schema.mjs",
+      "functions": 13
+    },
+    {
+      "source": "/src/react-hooks/context/useKnowledgeEngineContext.mjs",
+      "schema": "/src/react-hooks/context/useKnowledgeEngineContext.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/context/useConfigContext.mjs",
+      "schema": "/src/react-hooks/context/useConfigContext.schema.mjs",
+      "functions": 2
+    },
+    {
+      "source": "/src/react-hooks/context/KnowledgeEngineProvider.mjs",
+      "schema": "/src/react-hooks/context/KnowledgeEngineProvider.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/cache/useQueryCache.mjs",
+      "schema": "/src/react-hooks/cache/useQueryCache.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/cache/useMemoizedQuery.mjs",
+      "schema": "/src/react-hooks/cache/useMemoizedQuery.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/cache/useCacheStats.mjs",
+      "schema": "/src/react-hooks/cache/useCacheStats.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/batch/useOptimizedBatch.mjs",
+      "schema": "/src/react-hooks/batch/useOptimizedBatch.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/batch/useBatchOperations.mjs",
+      "schema": "/src/react-hooks/batch/useBatchOperations.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/composition/use-offline-store.mjs",
+      "schema": "/src/react-hooks/composition/use-offline-store.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/composition/use-knowledge-stack.mjs",
+      "schema": "/src/react-hooks/composition/use-knowledge-stack.schema.mjs",
+      "functions": 4
+    },
+    {
+      "source": "/src/react-hooks/ai-semantic/use-semantic-analyzer.mjs",
+      "schema": "/src/react-hooks/ai-semantic/use-semantic-analyzer.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/ai-semantic/use-nlp-query-builder.mjs",
+      "schema": "/src/react-hooks/ai-semantic/use-nlp-query-builder.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/ai-semantic/use-embeddings-manager.mjs",
+      "schema": "/src/react-hooks/ai-semantic/use-embeddings-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/ai-semantic/use-anomaly-detector.mjs",
+      "schema": "/src/react-hooks/ai-semantic/use-anomaly-detector.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-reasoning-session.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-reasoning-session.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-quality-metrics.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-quality-metrics.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-observability-manager.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-observability-manager.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-isomorphism.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-isomorphism.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-graph-merge.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-graph-merge.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/react-hooks/advanced-utility/use-graph-diff.mjs",
+      "schema": "/src/react-hooks/advanced-utility/use-graph-diff.schema.mjs",
+      "functions": 1
+    },
+    {
+      "source": "/src/diff.mjs",
+      "schema": "/src/diff.schema.mjs",
+      "functions": 10
+    },
+    {
+      "source": "/src/knowledge-engine.mjs",
+      "schema": "/src/knowledge-engine.schema.mjs",
+      "functions": 3
+    }
+  ]
+}

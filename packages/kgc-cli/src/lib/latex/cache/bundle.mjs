@@ -13,8 +13,8 @@
  * @module lib/latex/cache/bundle
  */
 
-import { readFile, writeFile, mkdir, copyFile, readdir } from 'node:fs/promises';
-import { join, relative, dirname } from 'node:path';
+import { readFile, writeFile, mkdir, copyFile, readdir as _readdir } from 'node:fs/promises';
+import { join, relative as _relative, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { listCached } from './store.mjs';

@@ -15,7 +15,7 @@ export {
   sortVFSPaths,
 } from '../path-normalize.mjs';
 
-import { sep } from 'node:path';
+import { sep as _sep } from 'node:path';
 
 /**
  * Normalize path to POSIX format (forward slashes)

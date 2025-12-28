@@ -1,0 +1,202 @@
+═══════════════════════════════════════════════════════════════════
+  V6 RECOVERY METRICS - BASELINE vs TARGET
+═══════════════════════════════════════════════════════════════════
+
+📊 CURRENT STATE (2025-12-27, Pre-Recovery)
+───────────────────────────────────────────────────────────────────
+
+BLOCKER 1: Vitest Version Mismatch
+  Current: "vitest": "^1.0.0"
+  Impact:  Tests fail with version conflict
+  Severity: CRITICAL (blocks test execution)
+
+BLOCKER 2: Dependency Installation
+  Status:  pnpm install times out after 60s
+  Impact:  ERR_MODULE_NOT_FOUND in all test runs
+  Severity: CRITICAL (blocks all validation)
+
+BLOCKER 3: Determinism Violations
+  Count:   63 violations (measured with grep)
+  Files:   CLI (18) + Delta (23) + Compat (22)
+  Impact:  Receipts non-reproducible, Merkle proofs fail
+  Severity: CRITICAL (violates L3 maturity)
+
+BLOCKER 4: Missing Zod Schemas
+  Count:   4/49 files have schemas (8% coverage)
+  Gap:     45 files missing validation (92% gap)
+  Impact:  No runtime validation, injection vulnerabilities
+  Severity: CRITICAL (violates input/output validation)
+
+TEST STATUS:
+  Executable:    ❌ NO (ERR_MODULE_NOT_FOUND)
+  Pass Rate:     UNKNOWN (can't run)
+  Failing Tests: 7+ (reported, can't verify)
+
+BUILD STATUS:
+  Buildable:     ❌ NO (missing dependencies)
+  Errors:        UNKNOWN (can't run)
+
+LINT STATUS:
+  Runnable:      ❌ NO (missing dependencies)
+  Violations:    UNKNOWN (can't run)
+
+OTEL VALIDATION:
+  Score:         UNKNOWN (can't run)
+  Target:        ≥80/100
+  Status:        BLOCKED (missing dependencies)
+
+───────────────────────────────────────────────────────────────────
+
+🎯 TARGET STATE (After 4-Phase Recovery)
+───────────────────────────────────────────────────────────────────
+
+BLOCKER 1: Vitest Version
+  Target:  "vitest": "^4.0.15"
+  Status:  ✅ FIXED (PHASE 0, 15 min)
+
+BLOCKER 2: Dependencies
+  Target:  All dependencies installed
+  Status:  ✅ FIXED (PHASE 1, 2-4h)
+  Proof:   pnpm test runs without ERR_MODULE_NOT_FOUND
+
+BLOCKER 3: Determinism
+  Target:  0 violations (100% deterministic)
+  Status:  ✅ FIXED (PHASE 2, 16-24h)
+  Proof:   100/100 determinism proof passes
+
+BLOCKER 4: Zod Schemas
+  Target:  49/49 files have schemas (100% coverage)
+  Status:  ✅ FIXED (PHASE 3, 32-40h)
+  Proof:   npm run lint shows 0 missing schemas
+
+TEST STATUS:
+  Executable:    ✅ YES
+  Pass Rate:     100% (all tests pass)
+  Failing Tests: 0
+
+BUILD STATUS:
+  Buildable:     ✅ YES
+  Errors:        0 (npm run build succeeds)
+
+LINT STATUS:
+  Runnable:      ✅ YES
+  Violations:    0 (npm run lint clean)
+
+OTEL VALIDATION:
+  Score:         ≥80/100 (target achieved)
+  Status:        ✅ VALIDATED
+  Proof:         validation-output.log
+
+───────────────────────────────────────────────────────────────────
+
+📈 IMPROVEMENT METRICS
+───────────────────────────────────────────────────────────────────
+
+Determinism Violations:  63 → 0 (100% reduction)
+Zod Schema Coverage:     8% → 100% (+92 percentage points)
+Test Execution:          BLOCKED → 100% pass rate
+Build Success:           BLOCKED → 0 errors
+Lint Violations:         UNKNOWN → 0 violations
+OTEL Score:              BLOCKED → ≥80/100
+
+Time to Production:      54-74 hours (with 4-agent parallelization)
+Critical Path Duration:  6.25-10.25 hours (PHASE 0+1+4)
+Parallel Speedup:        ~25-29 hours saved (38-39% faster)
+
+───────────────────────────────────────────────────────────────────
+
+⏱️  TIMELINE BREAKDOWN
+───────────────────────────────────────────────────────────────────
+
+PHASE 0: Fix Vitest Version
+  Duration:  15 minutes
+  Agent:     1 (Backend Dev)
+  Type:      CRITICAL PATH
+
+PHASE 1: Unblock Testing
+  Duration:  2-4 hours
+  Agent:     1 (Backend Dev)
+  Type:      CRITICAL PATH
+
+PHASE 2: Fix Determinism (PARALLEL)
+  Duration:  16-24 hours sequential → 9-13 hours parallel
+  Agents:    2, 3, 4, 5 (3 parallel + 1 validation)
+  Speedup:   ~40% faster with parallelization
+
+PHASE 3: Add Zod Schemas (PARALLEL)
+  Duration:  32-40 hours sequential → 24-32 hours parallel
+  Agents:    6, 7, 8, 9 (2 parallel + 1 sequential + 1 audit)
+  Speedup:   ~25% faster with parallelization
+
+PHASE 4: Full Validation
+  Duration:  4-6 hours
+  Agent:     10 (Production Validator)
+  Type:      CRITICAL PATH
+
+TOTAL DURATION:
+  Sequential:    54-74 hours
+  Parallel:      54-74 hours (same, but 4 agents working)
+  Critical Path: 6.25-10.25 hours (minimum to validation)
+
+───────────────────────────────────────────────────────────────────
+
+✅ VALIDATION GATES
+───────────────────────────────────────────────────────────────────
+
+Gate 1: PHASE 0 → PHASE 1
+  Check:  grep '"vitest": "\^4.0.15"' package.json
+  Status: PENDING
+
+Gate 2: PHASE 1 → PHASE 2/3
+  Check:  pnpm test runs without ERR_MODULE_NOT_FOUND
+  Status: PENDING
+
+Gate 3: PHASE 2 → PHASE 4
+  Check:  0 violations + 100/100 determinism proof
+  Status: PENDING
+
+Gate 4: PHASE 3 → PHASE 4
+  Check:  100% Zod coverage + 0 lint errors
+  Status: PENDING
+
+Gate 5: PHASE 4 → Production
+  Check:  OTEL ≥80/100 AND 100% test pass rate
+  Status: PENDING
+
+───────────────────────────────────────────────────────────────────
+
+📁 DELIVERABLES
+───────────────────────────────────────────────────────────────────
+
+Planning Documents (COMPLETE):
+  ✅ /home/user/unrdf/V6-RECOVERY-ORCHESTRATION-PLAN.md (~1,200 lines)
+  ✅ /home/user/unrdf/V6-RECOVERY-EXECUTIVE-SUMMARY.md
+  ✅ /home/user/unrdf/V6-RECOVERY-PHASE-ASSIGNMENTS.md
+  ✅ /home/user/unrdf/V6-RECOVERY-METRICS.txt (this file)
+
+Execution Evidence (PENDING):
+  ⏳ pnpm-install.log (PHASE 1)
+  ⏳ determinism-proof-output.log (PHASE 2.4)
+  ⏳ zod-coverage-audit.log (PHASE 3.4)
+  ⏳ build-output.log (PHASE 4.1)
+  ⏳ test-output.log (PHASE 4.2)
+  ⏳ lint-output.log (PHASE 4.3)
+  ⏳ validation-output.log (PHASE 4.4)
+  ⏳ V6-PRODUCTION-READINESS-REPORT.md (PHASE 4.5)
+
+───────────────────────────────────────────────────────────────────
+
+🚀 NEXT ACTION
+───────────────────────────────────────────────────────────────────
+
+AWAITING USER APPROVAL TO PROCEED WITH PHASE 0
+
+Options:
+  1. FULL APPROVAL    → Execute all 4 phases (54-74 hours)
+  2. PARTIAL APPROVAL → Execute PHASE 0+1 only (6.25-10.25 hours)
+  3. REQUEST CHANGES  → Provide feedback on plan adjustments
+  4. DEFER            → Archive plan for future execution
+
+Recommended: PARTIAL APPROVAL (PHASE 0+1) to unblock testing, then reassess
+
+═══════════════════════════════════════════════════════════════════

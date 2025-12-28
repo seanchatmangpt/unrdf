@@ -1,0 +1,5 @@
+# Ignore local testing artifacts
+*.log
+node_modules/
+dist/
+.env

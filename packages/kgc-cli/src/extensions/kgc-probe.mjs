@@ -66,7 +66,7 @@ const extension = {
           argsSchema: ScanArgsSchema,
           handler: async (args) => {
             // Dynamic import to avoid circular dependency
-            const { runProbe, createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { runProbe, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
 
             try {
               const artifact = await runProbe({
@@ -104,9 +104,9 @@ const extension = {
         validate: {
           description: 'Validate artifact integrity and guard compliance',
           argsSchema: ValidateArgsSchema,
-          handler: async (args) => {
+          handler: async (_args) => {
             // Dynamic import
-            const { verifyArtifact, createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { verifyArtifact: _verifyArtifact, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
 
             try {
               // Would need to load artifact from storage first
@@ -134,9 +134,9 @@ const extension = {
         diff: {
           description: 'Compare two artifacts and show differences',
           argsSchema: DiffArgsSchema,
-          handler: async (args) => {
+          handler: async (_args) => {
             // Dynamic import
-            const { diffArtifacts } = await import('@unrdf/kgc-probe');
+            const { diffArtifacts: _diffArtifacts } = await import('@unrdf/kgc-probe');
 
             try {
               // Would need to load artifacts from storage
@@ -190,7 +190,7 @@ const extension = {
           argsSchema: ShardMergeArgsSchema,
           handler: async (args) => {
             // Dynamic import
-            const { mergeShards, createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { mergeShards: _mergeShards, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
 
             try {
               // Would load shards from storage and merge

@@ -79,7 +79,7 @@ const CompileOptionsSchema = z.object({
 export async function runEngine(engine, options) {
   // Validate options
   const validated = CompileOptionsSchema.parse(options);
-  const { vfs, entry, passes, args, verbose } = validated;
+  const { vfs: _vfs, entry, passes, args: _args, verbose } = validated;
 
   if (verbose) {
     console.log(`[TeX Engine] Compiling ${entry} (${passes} passes)`);

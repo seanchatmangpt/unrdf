@@ -121,20 +121,217 @@ export function generateSchemaFromFunction(fnSource) {
 /**
  * CLI: Generate schemas for all files in directory
  *
+ * **P0-002 Implementation**
+ *
  * Usage:
  * node schema-generator.mjs src/**\/*.mjs
  *
  * Outputs: src/**\/*.schema.mjs
+ *
+ * @param {string|Array<string>} filePatterns - Glob patterns for files
+ * @param {Object} options - Generation options
+ * @param {string} [options.outputSuffix='.schema.mjs'] - Output file suffix
+ * @param {boolean} [options.dryRun=false] - Don't write files, just return schemas
+ * @returns {Promise<Array<{file: string, schema: string, functions: Array}>>}
  */
-export async function generateSchemasForFiles(filePatterns) {
-  // Placeholder - production version should:
-  // 1. Read all matching files
-  // 2. Parse JSDoc comments
-  // 3. Generate Zod schemas
-  // 4. Write to .schema.mjs files
+export async function generateSchemasForFiles(filePatterns, options = {}) {
+  const {
+    outputSuffix = '.schema.mjs',
+    dryRun = false,
+  } = options;
 
-  console.log('Generating schemas for:', filePatterns);
-  console.log('Not implemented yet - see V6-002 capsule');
+  // Ensure filePatterns is an array
+  const patterns = Array.isArray(filePatterns) ? filePatterns : [filePatterns];
+
+  const results = [];
+
+  // Import dynamic modules
+  const { glob } = await import('glob');
+  const { readFile, writeFile } = await import('fs/promises');
+  const { basename, dirname, join } = await import('path');
+
+  for (const pattern of patterns) {
+    const files = await glob(pattern, { absolute: true });
+
+    for (const file of files) {
+      try {
+        const source = await readFile(file, 'utf-8');
+        const functions = extractFunctionsFromSource(source);
+
+        if (functions.length === 0) {
+          continue; // Skip files with no exported functions
+        }
+
+        // Generate schema module
+        const schemaCode = generateSchemaModule(functions, file);
+
+        // Determine output path
+        const dir = dirname(file);
+        const base = basename(file, '.mjs');
+        const outputPath = join(dir, `${base}${outputSuffix}`);
+
+        if (!dryRun) {
+          await writeFile(outputPath, schemaCode, 'utf-8');
+        }
+
+        results.push({
+          file,
+          outputPath,
+          schema: schemaCode,
+          functions,
+        });
+      } catch (error) {
+        console.warn(`Failed to process ${file}:`, error.message);
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Extract exported functions from source code
+ *
+ * @param {string} source - Source code
+ * @returns {Array<{name: string, jsdoc: string, params: Array, returnType: string}>}
+ */
+function extractFunctionsFromSource(source) {
+  const functions = [];
+  const lines = source.split('\n');
+
+  let jsdocBuffer = [];
+  let inJSDoc = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Detect JSDoc start
+    if (line.trim().startsWith('/**')) {
+      inJSDoc = true;
+      jsdocBuffer = [line];
+      continue;
+    }
+
+    // Collect JSDoc lines
+    if (inJSDoc) {
+      jsdocBuffer.push(line);
+      if (line.trim().includes('*/')) {
+        inJSDoc = false;
+      }
+      continue;
+    }
+
+    // Detect exported function
+    const exportMatch = line.match(/^export\s+(async\s+)?function\s+(\w+)\s*\(([^)]*)\)/);
+    if (exportMatch && jsdocBuffer.length > 0) {
+      const [, isAsync, name, paramsStr] = exportMatch;
+
+      // Parse params
+      const params = paramsStr
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+        .map((p) => {
+          const [paramName, defaultValue] = p.split('=').map((s) => s.trim());
+          return { name: paramName, optional: !!defaultValue };
+        });
+
+      // Extract return type from JSDoc
+      const jsdoc = jsdocBuffer.join('\n');
+      const returnMatch = jsdoc.match(/@returns?\s+\{([^}]+)\}/);
+      const returnType = returnMatch ? returnMatch[1] : 'unknown';
+
+      // Extract param types from JSDoc
+      const paramTypes = extractParamTypesFromJSDoc(jsdoc);
+
+      functions.push({
+        name,
+        jsdoc,
+        params: params.map((p) => ({
+          ...p,
+          type: paramTypes[p.name] || 'unknown',
+        })),
+        returnType,
+        isAsync: !!isAsync,
+      });
+
+      jsdocBuffer = [];
+    } else if (exportMatch) {
+      jsdocBuffer = [];
+    }
+  }
+
+  return functions;
+}
+
+/**
+ * Extract parameter types from JSDoc
+ *
+ * @param {string} jsdoc - JSDoc comment
+ * @returns {Object} Map of param name → type
+ */
+function extractParamTypesFromJSDoc(jsdoc) {
+  const paramTypes = {};
+  const paramMatches = jsdoc.matchAll(/@param\s+\{([^}]+)\}\s+(\w+)/g);
+
+  for (const match of paramMatches) {
+    const [, type, name] = match;
+    paramTypes[name] = type;
+  }
+
+  return paramTypes;
+}
+
+/**
+ * Generate schema module code
+ *
+ * @param {Array} functions - Function metadata
+ * @param {string} sourceFile - Source file path
+ * @returns {string} Generated schema module
+ */
+function generateSchemaModule(functions, sourceFile) {
+  const schemas = functions.map((fn) => {
+    const paramsSchema = fn.params.map((p) => {
+      const zodType = TS_TO_ZOD[p.type] || 'z.unknown()';
+      return p.optional ? `${zodType}.optional()` : zodType;
+    });
+
+    const returnZodType = TS_TO_ZOD[fn.returnType] || 'z.unknown()';
+
+    return `
+/**
+ * Schema for ${fn.name}
+ */
+export const ${fn.name}ParamsSchema = z.tuple([${paramsSchema.join(', ')}]);
+
+export const ${fn.name}ReturnSchema = ${returnZodType};
+
+export const ${fn.name}Schema = {
+  params: ${fn.name}ParamsSchema,
+  returns: ${fn.name}ReturnSchema,
+};
+`.trim();
+  });
+
+  // Extract basename for header
+  const fileName = sourceFile.split('/').pop();
+
+  return `/**
+ * Auto-generated Zod schemas for ${fileName}
+ *
+ * Generated by @unrdf/v6-compat/schema-generator
+ *
+ * DO NOT EDIT MANUALLY
+ */
+
+import { z } from 'zod';
+
+${schemas.join('\n\n')}
+
+export default {
+  ${functions.map((fn) => `${fn.name}: ${fn.name}Schema`).join(',\n  ')}
+};
+`;
 }
 
 /**

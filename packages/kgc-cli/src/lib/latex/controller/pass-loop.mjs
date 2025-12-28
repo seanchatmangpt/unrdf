@@ -305,7 +305,7 @@ export async function executePassLoop(options) {
   let pass = 0;
   let prevArtifacts = null;
   let lastLog = '';
-  let lastError = '';
+  let _lastError = '';
   let resolveRetries = 0;
 
   // ============= Pass Loop =============

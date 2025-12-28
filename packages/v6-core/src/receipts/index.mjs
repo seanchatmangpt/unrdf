@@ -119,8 +119,9 @@ export async function createReceipt(type, event, previousReceipt = null) {
   }
 
   // 1. Generate receipt ID and timestamp
-  const id = generateUUID();
-  const t_ns = now();
+  // Support deterministic ID for testing (via event._deterministicId)
+  const id = event._deterministicId || generateUUID();
+  const t_ns = event._timestampProvider ? event._timestampProvider() : now();
   const timestamp_iso = toISO(t_ns);
 
   // 2. Build receipt payload (type-specific fields + base fields)
@@ -322,6 +323,9 @@ export {
 
 // Merkle tree utilities
 export { default as MerkleTree } from './merkle/index.mjs';
+
+// P0-001: KGC-4D Receipt Wrapper HOF
+export { withReceipt, createReceiptChain, verifyIdempotency } from './with-receipt.mjs';
 
 // Default export
 export default {

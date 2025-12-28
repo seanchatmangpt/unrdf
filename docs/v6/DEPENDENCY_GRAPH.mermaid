@@ -1,0 +1,120 @@
+```mermaid
+graph TD
+    %% P0 Critical Path
+    START([v6.0.0-alpha.1])
+
+    START --> V6001[V6-001: Receipt Wrapper<br/>8h, L=backend-dev]
+    START --> V6002[V6-002: Schema Generator<br/>10h, L=backend-dev]
+
+    V6001 --> V6003[V6-003: v6-compat Package<br/>16h, L=backend-dev+tester]
+    V6002 --> V6003
+
+    V6003 --> V6004[V6-004: Workspace Update<br/>2h, L=system-architect]
+
+    %% P0 Gate
+    V6004 --> P0_GATE{Gate 3: P0 Complete<br/>OTEL ≥80/100}
+
+    %% P1 Wave 1 (Parallel after V6-001)
+    V6001 --> V6010[V6-010: oxigraph L3→L4<br/>10h, L=backend-dev]
+    V6001 --> V6012[V6-012: core L2→L3<br/>14h, L=backend-dev]
+    V6001 --> V6015[V6-015: kgc-4d L4→L5<br/>7h, L=backend-dev]
+
+    %% Wave 1 Gate
+    V6010 --> WAVE1_GATE{Gate 4: Wave 1 Complete}
+    V6012 --> WAVE1_GATE
+    V6015 --> WAVE1_GATE
+
+    %% P1 Wave 2 (Parallel after V6-012)
+    V6012 --> V6013[V6-013: core L3→L4<br/>12h, L=backend-dev]
+
+    V6001 --> V6016[V6-016: hooks L2→L5<br/>25h, L=backend-dev+tester]
+    V6012 --> V6016
+
+    V6001 --> V6017[V6-017: streaming L2→L5<br/>27h, L=backend-dev+tester]
+    V6012 --> V6017
+
+    V6001 --> V6018[V6-018: federation L2→L5<br/>28h, L=backend-dev+tester]
+    V6012 --> V6018
+
+    V6001 --> V6019[V6-019: cli L2→L5<br/>22h, L=backend-dev+tester]
+    V6012 --> V6019
+
+    %% Wave 2 Gate
+    V6013 --> WAVE2_GATE{Gate 5: Wave 2 Complete}
+    V6016 --> WAVE2_GATE
+    V6017 --> WAVE2_GATE
+    V6018 --> WAVE2_GATE
+    V6019 --> WAVE2_GATE
+
+    %% P1 Wave 3 (Sequential - requires ALL other L5)
+    WAVE2_GATE --> V6011[V6-011: oxigraph L4→L5<br/>7h, L=tester]
+    WAVE2_GATE --> V6014[V6-014: core L4→L5<br/>10h, L=tester]
+
+    V6010 --> V6011
+    V6013 --> V6014
+
+    %% Final Gate
+    V6011 --> FINAL_GATE{Gate 6: P1 Complete<br/>ALL L5, OTEL ≥80/100}
+    V6014 --> FINAL_GATE
+
+    FINAL_GATE --> RELEASE([v6.0.0-rc Release])
+
+    %% Styling
+    classDef p0 fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px,color:#fff
+    classDef p1wave1 fill:#4dabf7,stroke:#1971c2,stroke-width:2px,color:#fff
+    classDef p1wave2 fill:#51cf66,stroke:#2f9e44,stroke-width:2px,color:#fff
+    classDef p1wave3 fill:#ffd43b,stroke:#f08c00,stroke-width:2px,color:#000
+    classDef gate fill:#e599f7,stroke:#9c36b5,stroke-width:3px,color:#fff
+    classDef release fill:#69db7c,stroke:#2f9e44,stroke-width:4px,color:#fff
+
+    class V6001,V6002,V6003,V6004 p0
+    class V6010,V6012,V6015 p1wave1
+    class V6013,V6016,V6017,V6018,V6019 p1wave2
+    class V6011,V6014 p1wave3
+    class P0_GATE,WAVE1_GATE,WAVE2_GATE,FINAL_GATE gate
+    class START,RELEASE release
+```
+
+## Critical Path Explanation
+
+### P0 Critical Path (26 hours minimum)
+```
+START
+├─ V6-001 (8h) ──┐
+└─ V6-002 (10h) ─┴─→ V6-003 (16h) ─→ V6-004 (2h) ─→ Gate 3
+                     └─ BLOCKS P1 WORK
+```
+
+### P1 Critical Path (60 hours minimum)
+```
+V6-001 ──┬─→ V6-012 (14h) ──→ V6-018 (28h) ──→ V6-014 (10h) ─→ Gate 6
+         └─→ V6-010 (10h) ──→ V6-011 (7h) ─────┘
+```
+
+### Total Minimum Time
+- **Sequential**: 26h (P0) + 60h (P1) = 86 hours (~11 days with 1 agent)
+- **Parallel (5 agents)**: 26h + 28h (longest Wave 2) + 10h (Wave 3) = 64 hours (~8 days)
+- **Realistic (with validation)**: 12-15 days (96-120 hours wall time)
+
+## Parallelization Opportunities
+
+### Maximum Parallelism
+| Phase | Parallel Capsules | Duration | Agent Count |
+|-------|-------------------|----------|-------------|
+| P0 Start | 2 (V6-001, V6-002) | 10h | 2 |
+| P0 Sequential | 1 (V6-003) | 16h | 1 |
+| Wave 1 | 3 (V6-010, V6-012, V6-015) | 14h | 3 |
+| Wave 2 | 5 (V6-013, V6-016, V6-017, V6-018, V6-019) | 28h | 5 |
+| Wave 3 | 2 (V6-011, V6-014) | 10h | 2 (sequential) |
+
+### Bottlenecks
+1. **V6-003**: 16-hour sequential dependency after V6-001+V6-002 complete
+2. **V6-012**: Blocks 4 other Wave 2 capsules (14-hour bottleneck)
+3. **V6-018**: Longest single capsule (28 hours) in Wave 2
+4. **Wave 3**: Integration tests must be sequential (cannot parallelize)
+
+### Optimization Strategy
+- Start V6-001 and V6-002 immediately (parallel)
+- Pre-allocate agents for V6-003 the moment dependencies complete
+- Stagger Wave 2 starts based on V6-012 progress
+- Prepare Wave 3 test infrastructure during Wave 2 execution
