@@ -10,6 +10,7 @@
       "API.md",
       "CONTRIBUTING.md",
       "GUIDE.md",
+      "hooks-policy-architecture.md",
       "knowledge-hook-manager.md"
     ],
     "examplesFiles": [
@@ -17,7 +18,7 @@
       "knowledge-hook-manager-usage.mjs",
       "validate-hooks.mjs"
     ],
-    "fingerprint": "ce5b9db40766f9cb13172d228b1bd5c5a2e4222ad9eb0cac5a5bc450f7b13026",
+    "fingerprint": "e276bc30e0d4aa7a1c920c792c8e69e94129afc11bc6d1663535115208b26390",
     "readmeHeadings": [
       "Installation",
       "📚 Examples",

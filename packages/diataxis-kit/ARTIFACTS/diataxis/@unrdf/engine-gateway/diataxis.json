@@ -1,48 +1,24 @@
 {
   "confidence": {
-    "explanation": 0.6,
-    "howtos": 0.5,
-    "reference": 0.7,
-    "tutorials": 0.6
+    "explanation": 0,
+    "howtos": 0,
+    "reference": 0.5,
+    "tutorials": 0
   },
   "evidence": {
-    "docsFiles": [
-      "README.md",
-      "validation-report.json"
-    ],
+    "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "4d9d941e9097927f2bc9313a900d7b94f114c330b9e122994d783e87803e89b0",
-    "readmeHeadings": [
-      "Overview",
-      "Installation",
-      "Quick Start",
-      "The 5 Justified N3 Operations",
-      "All Other Operations → Oxigraph",
-      "Routing Metadata",
-      "Validation & Enforcement",
-      "Operation Detection",
-      "Validators",
-      "Architecture Diagram",
-      "Configuration",
-      "Integration with UnrdfStore",
-      "Error Handling",
-      "Machine-Readable Ontology",
-      "Testing",
-      "API Reference",
-      "References",
-      "License"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "@unrdf/engine-gateway is a package in the UNRDF ecosystem",
     "concepts": [
       "core functionality"
     ],
-    "confidenceScore": 0.6,
+    "confidenceScore": 0,
     "id": "explanation-unrdf-engine-gateway-explanation",
     "source": [
-      "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/engine-gateway",
@@ -55,34 +31,34 @@
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
     {
-      "confidenceScore": 1,
-      "context": "When you need to customize package behavior",
-      "id": "howto-configure-unrdf-engine-gateway",
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
       "source": [
-        "readme"
+        "inferred"
       ],
       "steps": [
-        "Create configuration file",
-        "Define configuration options",
-        "Apply configuration to package"
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
       ],
-      "task": "Set up custom configuration for @unrdf/engine-gateway",
-      "title": "Configure @unrdf/engine-gateway"
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
     },
     {
-      "confidenceScore": 0.5,
-      "context": "When you need robust error handling in production",
-      "id": "howto-handle-errors",
+      "confidenceScore": 0.4,
+      "context": "When you need to accomplish common tasks",
+      "id": "howto-use-unrdf-engine-gateway",
       "source": [
-        "tests"
+        "inferred"
       ],
       "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
       ],
-      "task": "Implement error handling for @unrdf/engine-gateway",
-      "title": "Handle Errors"
+      "task": "Perform basic operations with @unrdf/engine-gateway",
+      "title": "Use @unrdf/engine-gateway"
     }
   ],
   "packageName": "@unrdf/engine-gateway",
@@ -122,12 +98,12 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.3,
+      "confidenceScore": 0,
       "goal": "Learn how to set up and use @unrdf/engine-gateway in your project",
       "id": "tutorial-getting-started-with-unrdf-engine-gateway",
       "prerequisites": [],
       "source": [
-        "readme"
+        "inferred"
       ],
       "stepsOutline": [
         "Install the package",

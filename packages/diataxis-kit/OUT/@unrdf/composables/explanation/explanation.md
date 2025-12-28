@@ -4,8 +4,8 @@ type: "explanation"
 packageName: "@unrdf/composables"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 1
-proof: "2926d9c6e8e80fb8f8a8462015057aba3890b5a0b47de6420c8c238999dc1fa1"
+confidenceScore: 0.4
+proof: "5dd27c17d81c9b5ec2e68aafad4b5c24fb9460551b84fc550035b74623afc8a1"
 ---
 
 ## Concepts
@@ -18,7 +18,7 @@ proof: "2926d9c6e8e80fb8f8a8462015057aba3890b5a0b47de6420c8c238999dc1fa1"
 
 ## Architecture
 
-![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.
+@unrdf/composables is a package in the UNRDF ecosystem
 
 ## Tradeoffs
 
@@ -30,20 +30,16 @@ proof: "2926d9c6e8e80fb8f8a8462015057aba3890b5a0b47de6420c8c238999dc1fa1"
 
 This file was generated from the following evidence sources:
 
-- docs
 - inferred
 - keywords
-- readme
 
 ```json
 {
-  "fingerprintInput": "docs|inferred|keywords|readme|Understanding @unrdf/composables|1",
-  "hash": "2926d9c6e8e80fb8f8a8462015057aba3890b5a0b47de6420c8c238999dc1fa1",
+  "fingerprintInput": "inferred|keywords|Understanding @unrdf/composables|0.4",
+  "hash": "5dd27c17d81c9b5ec2e68aafad4b5c24fb9460551b84fc550035b74623afc8a1",
   "sources": [
-    "docs",
     "inferred",
-    "keywords",
-    "readme"
+    "keywords"
   ]
 }
 ```

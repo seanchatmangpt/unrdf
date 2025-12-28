@@ -144,151 +144,175 @@ export class AtomVMRuntime {
     // Transition to Loading state
     this.state = 'Loading';
 
-    try {
-      this.terminal.log('Checking SharedArrayBuffer support...', 'info');
-
-      // Poka-yoke: Environment check prevents runtime errors
-      if (typeof SharedArrayBuffer === 'undefined') {
-        this.state = 'Error';
-        const errorMsg =
-          'SharedArrayBuffer not available. Cross-Origin-Isolation required. Page will reload automatically.';
-        this.terminal.log(errorMsg, 'error');
-        throw new Error(errorMsg);
+    return getTracer().startActiveSpan('atomvm.load_wasm', {
+      attributes: {
+        'runtime.type': 'browser',
+        'atomvm.version': ATOMVM_VERSION
       }
+    }, async (span) => {
+      try {
+        this.terminal.log('Checking SharedArrayBuffer support...', 'info');
 
-      this.terminal.log('SharedArrayBuffer confirmed available ✓', 'success');
-      this.terminal.log('Loading AtomVM WASM module...', 'info');
+        // Poka-yoke: Environment check prevents runtime errors
+        if (typeof SharedArrayBuffer === 'undefined') {
+          this.state = 'Error';
+          const errorMsg =
+            'SharedArrayBuffer not available. Cross-Origin-Isolation required. Page will reload automatically.';
+          this.terminal.log(errorMsg, 'error');
+          span.setStatus({ code: 2, message: errorMsg });
+          span.end();
+          throw new Error(errorMsg);
+        }
 
-      // Check if AtomVM.js is already loaded
-      if (window.Module && window.Module.ready) {
-        this.terminal.log('AtomVM module already loaded', 'info');
-        this.atomvmModule = window.Module;
-        // Poka-yoke: State transition ensures consistency
-        this.state = 'Ready';
-        return;
-      }
+        this.terminal.log('SharedArrayBuffer confirmed available ✓', 'success');
+        this.terminal.log('Loading AtomVM WASM module...', 'info');
 
-      // Configure Module before loading (Emscripten pattern)
-      // Create Module configuration object
-      window.Module = window.Module || {};
-
-      // Configure output capture before script loads
-      const originalPrint =
-        window.Module.print ||
-        (text => {
-          if (typeof console !== 'undefined' && console.log) {
-            console.log(text);
-          }
-        });
-      const originalPrintErr =
-        window.Module.printErr ||
-        (text => {
-          if (typeof console !== 'undefined' && console.error) {
-            console.error(text);
-          }
-        });
-
-      window.Module.print = text => {
-        originalPrint(text);
-        this.terminal.log(String(text).trim(), 'info');
-      };
-
-      window.Module.printErr = text => {
-        originalPrintErr(text);
-        this.terminal.log(String(text).trim(), 'error');
-      };
-
-      // Prevent auto-run on initial load
-      window.Module.noInitialRun = true;
-      window.Module.arguments = [];
-
-      // Load AtomVM.js script dynamically
-      return new Promise((resolve, reject) => {
-        // Check if script already exists
-        const existingScript = document.querySelector(
-          `script[src*="AtomVM-web-${ATOMVM_VERSION}"]`
-        );
-        if (existingScript) {
-          if (window.Module && (window.Module.ready || window.Module.calledRun)) {
-            this.atomvmModule = window.Module;
-            // Poka-yoke: State transition ensures consistency
-            this.state = 'Ready';
-            this.terminal.log('AtomVM WASM module already loaded ✓', 'success');
-            resolve();
-            return;
-          }
-          // Wait for existing script to load
-          existingScript.addEventListener('load', () => {
-            setTimeout(() => {
-              if (window.Module) {
-                this.atomvmModule = window.Module;
-                // Poka-yoke: State transition ensures consistency
-                this.state = 'Ready';
-                this.terminal.log('AtomVM WASM module loaded ✓', 'success');
-                resolve();
-              } else {
-                this.state = 'Error';
-                reject(new Error('AtomVM module not available after script load'));
-              }
-            }, MODULE_LOAD_CHECK_DELAY_MS);
-          });
+        // Check if AtomVM.js is already loaded
+        if (window.Module && window.Module.ready) {
+          this.terminal.log('AtomVM module already loaded', 'info');
+          this.atomvmModule = window.Module;
+          // Poka-yoke: State transition ensures consistency
+          this.state = 'Ready';
+          span.setAttribute('runtime.state', this.state);
+          span.setStatus({ code: 1 }); // OK
+          span.end();
           return;
         }
 
-        // Create script element
-        const script = document.createElement('script');
-        script.src = `/AtomVM-web-${ATOMVM_VERSION}.js`;
-        script.async = true;
+        // Configure Module before loading (Emscripten pattern)
+        // Create Module configuration object
+        window.Module = window.Module || {};
 
-        script.onload = () => {
-          // Wait for Module to be initialized
-          let attempts = 0;
+        // Configure output capture before script loads
+        const originalPrint =
+          window.Module.print ||
+          (text => {
+            if (typeof console !== 'undefined' && console.log) {
+              console.log(text);
+            }
+          });
+        const originalPrintErr =
+          window.Module.printErr ||
+          (text => {
+            if (typeof console !== 'undefined' && console.error) {
+              console.error(text);
+            }
+          });
 
-          const checkModule = setInterval(() => {
-            attempts++;
+        window.Module.print = text => {
+          originalPrint(text);
+          this.terminal.log(String(text).trim(), 'info');
+        };
+
+        window.Module.printErr = text => {
+          originalPrintErr(text);
+          this.terminal.log(String(text).trim(), 'error');
+        };
+
+        // Prevent auto-run on initial load
+        window.Module.noInitialRun = true;
+        window.Module.arguments = [];
+
+        // Load AtomVM.js script dynamically
+        return new Promise((resolve, reject) => {
+          // Check if script already exists
+          const existingScript = document.querySelector(
+            `script[src*="AtomVM-web-${ATOMVM_VERSION}"]`
+          );
+          if (existingScript) {
             if (window.Module && (window.Module.ready || window.Module.calledRun)) {
-              clearInterval(checkModule);
               this.atomvmModule = window.Module;
               // Poka-yoke: State transition ensures consistency
               this.state = 'Ready';
+              this.terminal.log('AtomVM WASM module already loaded ✓', 'success');
               span.setAttribute('runtime.state', this.state);
               span.setStatus({ code: 1 }); // OK
               span.end();
-              this.terminal.log('AtomVM WASM module loaded ✓', 'success');
               resolve();
-            } else if (attempts >= MODULE_INIT_MAX_ATTEMPTS) {
-              clearInterval(checkModule);
-              this.state = 'Error';
-              const timeoutSeconds =
-                (MODULE_INIT_MAX_ATTEMPTS * MODULE_INIT_CHECK_INTERVAL_MS) / 1000;
-              reject(
-                new Error(
-                  `AtomVM module failed to initialize within ${timeoutSeconds}s timeout. Script loaded but Module.ready never became true.`
-                )
-              );
+              return;
             }
-          }, MODULE_INIT_CHECK_INTERVAL_MS);
-        };
+            // Wait for existing script to load
+            existingScript.addEventListener('load', () => {
+              setTimeout(() => {
+                if (window.Module) {
+                  this.atomvmModule = window.Module;
+                  // Poka-yoke: State transition ensures consistency
+                  this.state = 'Ready';
+                  this.terminal.log('AtomVM WASM module loaded ✓', 'success');
+                  span.setAttribute('runtime.state', this.state);
+                  span.setStatus({ code: 1 }); // OK
+                  span.end();
+                  resolve();
+                } else {
+                  this.state = 'Error';
+                  span.setStatus({ code: 2, message: 'Module not available after script load' });
+                  span.end();
+                  reject(new Error('AtomVM module not available after script load'));
+                }
+              }, MODULE_LOAD_CHECK_DELAY_MS);
+            });
+            return;
+          }
 
-        script.onerror = error => {
-          this.state = 'Error';
-          span.setStatus({ code: 2, message: error?.message || 'Network error' });
-          span.end();
-          reject(
-            new Error(
-              `Failed to load AtomVM.js script from ${script.src}: ${error?.message || 'Network error or file not found'}`
-            )
-          );
-        };
+          // Create script element
+          const script = document.createElement('script');
+          script.src = `/AtomVM-web-${ATOMVM_VERSION}.js`;
+          script.async = true;
 
-        document.head.appendChild(script);
-      });
-    } catch (error) {
-      // Poka-yoke: State transition on error
-      this.state = 'Error';
-      this.terminal.log(`WASM load error: ${error.message}`, 'error');
-      throw error;
-    }
+          script.onload = () => {
+            // Wait for Module to be initialized
+            let attempts = 0;
+
+            const checkModule = setInterval(() => {
+              attempts++;
+              if (window.Module && (window.Module.ready || window.Module.calledRun)) {
+                clearInterval(checkModule);
+                this.atomvmModule = window.Module;
+                // Poka-yoke: State transition ensures consistency
+                this.state = 'Ready';
+                span.setAttribute('runtime.state', this.state);
+                span.setStatus({ code: 1 }); // OK
+                span.end();
+                this.terminal.log('AtomVM WASM module loaded ✓', 'success');
+                resolve();
+              } else if (attempts >= MODULE_INIT_MAX_ATTEMPTS) {
+                clearInterval(checkModule);
+                this.state = 'Error';
+                const timeoutSeconds =
+                  (MODULE_INIT_MAX_ATTEMPTS * MODULE_INIT_CHECK_INTERVAL_MS) / 1000;
+                span.setStatus({ code: 2, message: `Module init timeout (${timeoutSeconds}s)` });
+                span.end();
+                reject(
+                  new Error(
+                    `AtomVM module failed to initialize within ${timeoutSeconds}s timeout. Script loaded but Module.ready never became true.`
+                  )
+                );
+              }
+            }, MODULE_INIT_CHECK_INTERVAL_MS);
+          };
+
+          script.onerror = error => {
+            this.state = 'Error';
+            span.setStatus({ code: 2, message: error?.message || 'Network error' });
+            span.end();
+            reject(
+              new Error(
+                `Failed to load AtomVM.js script from ${script.src}: ${error?.message || 'Network error or file not found'}`
+              )
+            );
+          };
+
+          document.head.appendChild(script);
+        });
+      } catch (error) {
+        // Poka-yoke: State transition on error
+        this.state = 'Error';
+        this.terminal.log(`WASM load error: ${error.message}`, 'error');
+        span.setStatus({ code: 2, message: error.message });
+        span.end();
+        throw error;
+      }
+    });
   }
 
   /**

@@ -4,8 +4,8 @@ type: "tutorial"
 packageName: "@unrdf/engine-gateway"
 version: "5.0.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
-confidenceScore: 0.3
-proof: "137f8bf41e760855c4cf05578bc6f6d27e4a33d3ee64df993917acda69433d86"
+confidenceScore: 0
+proof: "7b38e137c3924e6be327c8bc522c5bdb2c976cdedb7ec690d52a265a72354f04"
 ---
 
 ## Overview
@@ -27,14 +27,14 @@ Learn how to set up and use @unrdf/engine-gateway in your project
 
 This file was generated from the following evidence sources:
 
-- readme
+- inferred
 
 ```json
 {
-  "fingerprintInput": "readme|Getting Started with @unrdf/engine-gateway|0.3",
-  "hash": "137f8bf41e760855c4cf05578bc6f6d27e4a33d3ee64df993917acda69433d86",
+  "fingerprintInput": "inferred|Getting Started with @unrdf/engine-gateway|0",
+  "hash": "7b38e137c3924e6be327c8bc522c5bdb2c976cdedb7ec690d52a265a72354f04",
   "sources": [
-    "readme"
+    "inferred"
   ]
 }
 ```

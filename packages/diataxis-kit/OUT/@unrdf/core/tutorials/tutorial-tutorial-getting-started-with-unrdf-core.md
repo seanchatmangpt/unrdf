@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/core"
 type: "tutorial"
 packageName: "@unrdf/core"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.9999999999999999
 proof: "3594f1e388ae868f8bb97dba97976350d8cf79026bf97837898284e23f8817de"

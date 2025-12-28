@@ -1,37 +1,28 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.5,
+    "explanation": 0.4,
+    "howtos": 0.25,
     "reference": 0.5,
     "tutorials": 0.1
   },
   "evidence": {
     "docsFiles": [],
     "examplesFiles": [],
-    "fingerprint": "462b89599d784c7d57815678ca1418786328b6cd6d63902914f137f956a31ea2",
-    "readmeHeadings": [
-      "Purpose",
-      "Installation",
-      "Usage",
-      "OTEL Spans",
-      "Contents",
-      "Truth Source",
-      "See Also"
-    ]
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "@unrdf/validation is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "validation",
       "otel",
       "observability"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-validation-explanation",
     "source": [
       "keywords",
-      "readme",
       "inferred"
     ],
     "title": "Understanding @unrdf/validation",

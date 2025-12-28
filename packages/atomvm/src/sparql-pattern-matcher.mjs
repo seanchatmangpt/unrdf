@@ -605,6 +605,199 @@ export class SPARQLPatternMatcher {
       maxSize: 100,
     };
   }
+
+  /**
+   * Compile a full SPARQL query to BEAM list comprehension syntax
+   * @param {string} sparqlQuery - SPARQL SELECT query
+   * @returns {string} BEAM list comprehension code
+   */
+  compileQueryToBeam(sparqlQuery) {
+    const parsed = this._parseSelectQuery(sparqlQuery);
+    if (!parsed) {
+      throw new SyntaxError('Failed to parse SPARQL query for BEAM compilation');
+    }
+
+    const { variables, patterns, filters } = parsed;
+
+    // Build pattern matches for list comprehension generators
+    const beamPatterns = patterns.map((p, idx) => {
+      const s = this._compilePatternTermToBeam(p.subject, `S${idx}`);
+      const pred = this._compilePatternTermToBeam(p.predicate, `P${idx}`);
+      const o = this._compilePatternTermToBeam(p.object, `O${idx}`);
+      return `{${s}, ${pred}, ${o}} <- Store`;
+    });
+
+    // Extract guards (JOIN conditions on shared variables)
+    const guards = [];
+    const varMap = new Map();
+
+    // Map variables to their positions
+    patterns.forEach((p, idx) => {
+      [
+        { field: 'subject', prefix: 'S' },
+        { field: 'predicate', prefix: 'P' },
+        { field: 'object', prefix: 'O' }
+      ].forEach(({ field, prefix }) => {
+        const term = p[field];
+        if (term && typeof term === 'string' && term.startsWith('?')) {
+          const varName = term.slice(1);
+          if (!varMap.has(varName)) {
+            varMap.set(varName, []);
+          }
+          varMap.get(varName).push(`${prefix}${idx}`);
+        }
+      });
+    });
+
+    // Generate JOIN guards for shared variables (equality checks)
+    for (const [varName, occurrences] of varMap.entries()) {
+      if (occurrences.length > 1) {
+        for (let i = 1; i < occurrences.length; i++) {
+          guards.push(`${occurrences[0]} =:= ${occurrences[i]}`);
+        }
+      }
+    }
+
+    // Add FILTER guards
+    for (const filter of filters) {
+      const beamFilter = this._compileFilterToBeam(filter, varMap);
+      if (beamFilter) {
+        guards.push(beamFilter);
+      }
+    }
+
+    // Build result expression
+    const resultVars = variables[0] === '*'
+      ? Array.from(varMap.keys())
+      : variables;
+
+    // Capitalize and map to BEAM variable positions
+    const resultExpr = resultVars.length === 1
+      ? this._getBeamVarName(resultVars[0], varMap)
+      : `{${resultVars.map(v => this._getBeamVarName(v, varMap)).join(', ')}}`;
+
+    // Combine into list comprehension
+    const allConditions = [...beamPatterns, ...guards];
+    const conditions = allConditions.join(',\n        ');
+
+    return `[${resultExpr} ||\n        ${conditions}]`;
+  }
+
+  /**
+   * Compile a pattern term to BEAM syntax
+   * @param {string} term - Pattern term
+   * @param {string} defaultVar - Default variable name
+   * @returns {string} BEAM term
+   * @private
+   */
+  _compilePatternTermToBeam(term, defaultVar) {
+    if (!term) return '_';
+
+    const trimmed = term.trim();
+
+    // Variable: ?name -> Name
+    if (trimmed.startsWith('?')) {
+      return this._capitalizeVar(trimmed.slice(1));
+    }
+
+    // URI: <http://...> -> '{uri, <<"http://...">>}'
+    if (trimmed.startsWith('<') && trimmed.endsWith('>')) {
+      const uri = trimmed.slice(1, -1);
+      return `'${uri}'`;
+    }
+
+    // Prefixed: foaf:Person -> expanded URI
+    if (trimmed.includes(':') && !trimmed.startsWith('<')) {
+      const [prefix, local] = trimmed.split(':');
+      const namespace = this.prefixes[prefix];
+      if (namespace) {
+        return `'${namespace}${local}'`;
+      }
+    }
+
+    // Literal: "value" -> {literal, <<"value">>}
+    if (trimmed.startsWith('"')) {
+      const literalValue = trimmed.match(/^"([^"]*)"/)?.[ 1] || '';
+      return `{literal, <<"${literalValue}">>}`;
+    }
+
+    // Keyword 'a' -> rdf:type
+    if (trimmed === 'a') {
+      return `'${this.prefixes.rdf}type'`;
+    }
+
+    return defaultVar;
+  }
+
+  /**
+   * Compile a FILTER expression to BEAM guard
+   * @param {string} filterExpr - FILTER expression
+   * @param {Map<string, Array<string>>} varMap - Variable to position mapping
+   * @returns {string|null} BEAM guard or null
+   * @private
+   */
+  _compileFilterToBeam(filterExpr, varMap) {
+    const trimmed = filterExpr.trim();
+
+    // Equality: ?x = "value"
+    const eqMatch = trimmed.match(/^\?(\w+)\s*=\s*(.+)$/);
+    if (eqMatch) {
+      const varName = this._getBeamVarName(eqMatch[1], varMap);
+      const value = this._compilePatternTermToBeam(eqMatch[2].trim(), '');
+      return `${varName} =:= ${value}`;
+    }
+
+    // Inequality: ?x != "value"
+    const neqMatch = trimmed.match(/^\?(\w+)\s*!=\s*(.+)$/);
+    if (neqMatch) {
+      const varName = this._getBeamVarName(neqMatch[1], varMap);
+      const value = this._compilePatternTermToBeam(neqMatch[2].trim(), '');
+      return `${varName} =/= ${value}`;
+    }
+
+    // Greater than: ?x > "value"
+    const gtMatch = trimmed.match(/^\?(\w+)\s*>\s*(.+)$/);
+    if (gtMatch) {
+      const varName = this._getBeamVarName(gtMatch[1], varMap);
+      const value = gtMatch[2].trim().replace(/^"([^"]*)"$/, '$1');
+      return `is_integer(${varName}), ${varName} > ${value}`;
+    }
+
+    // Less than: ?x < "value"
+    const ltMatch = trimmed.match(/^\?(\w+)\s*<\s*(.+)$/);
+    if (ltMatch) {
+      const varName = this._getBeamVarName(ltMatch[1], varMap);
+      const value = ltMatch[2].trim().replace(/^"([^"]*)"$/, '$1');
+      return `is_integer(${varName}), ${varName} < ${value}`;
+    }
+
+    return null;
+  }
+
+  /**
+   * Get BEAM variable name from SPARQL variable
+   * @param {string} sparqlVar - SPARQL variable name (without ?)
+   * @param {Map<string, Array<string>>} varMap - Variable mapping
+   * @returns {string} BEAM variable name
+   * @private
+   */
+  _getBeamVarName(sparqlVar, varMap) {
+    const positions = varMap.get(sparqlVar);
+    if (positions && positions.length > 0) {
+      return positions[0];
+    }
+    return this._capitalizeVar(sparqlVar);
+  }
+
+  /**
+   * Capitalize a variable name for BEAM
+   * @param {string} varName - Variable name
+   * @returns {string} Capitalized name
+   * @private
+   */
+  _capitalizeVar(varName) {
+    return varName.charAt(0).toUpperCase() + varName.slice(1);
+  }
 }
 
 /**

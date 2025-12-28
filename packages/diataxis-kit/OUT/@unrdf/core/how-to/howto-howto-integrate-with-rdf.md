@@ -2,7 +2,7 @@
 title: "Integrate with rdf"
 type: "how-to"
 packageName: "@unrdf/core"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "3139c7aa0e23bb357b3d03412d44f6dc728613100555a21890eac8d67175e0fe"

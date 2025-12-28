@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/federation"
 type: "tutorial"
 packageName: "@unrdf/federation"
-version: "5.0.1"
+version: "6.0.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.9999999999999999
 proof: "c2c42f4ac0370fa15727c7f76bfbee677717a1351b5e07de8ad5ce7a3dfb27cf"

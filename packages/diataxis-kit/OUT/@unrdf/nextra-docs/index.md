@@ -24,8 +24,8 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
-- [Configure @unrdf/nextra-docs](how-to/howto-howto-configure-unrdf-nextra-docs.md)
 - [Troubleshoot Common Issues](how-to/howto-howto-troubleshoot-common-issues.md)
+- [Use @unrdf/nextra-docs](how-to/howto-howto-use-unrdf-nextra-docs.md)
 
 ### Reference
 
