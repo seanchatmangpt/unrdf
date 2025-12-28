@@ -1,0 +1,91 @@
+{
+  "timestamp": "2025-12-28T02:52:28.041Z",
+  "baseline_version": "6.0.0",
+  "baseline_timestamp": "2025-12-28T02:30:00.000Z",
+  "comparison_timestamp": "2025-12-28T02:52:28.042Z",
+  "metrics_compared": 7,
+  "passed": 7,
+  "failed": 0,
+  "regressions": [],
+  "details": [
+    {
+      "metric": "universe_creation_10k",
+      "baseline": 10.5,
+      "current": 10.8,
+      "unit": "seconds",
+      "percentChange": 2.86,
+      "tolerance": 10,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "Time to create 10,000 universes sequentially"
+    },
+    {
+      "metric": "morphism_composition_p95",
+      "baseline": 4.2,
+      "current": 4.1,
+      "unit": "ms",
+      "percentChange": 2.38,
+      "tolerance": 10,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "P95 latency for morphism composition (Φ transformation)"
+    },
+    {
+      "metric": "receipt_generation_throughput",
+      "baseline": 425,
+      "current": 420,
+      "unit": "operations/sec",
+      "percentChange": 1.18,
+      "tolerance": 10,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "Cryptographic receipt generation capacity"
+    },
+    {
+      "metric": "sparql_query_throughput",
+      "baseline": 95,
+      "current": 92,
+      "unit": "queries/sec",
+      "percentChange": 3.16,
+      "tolerance": 10,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "SPARQL triple pattern query throughput"
+    },
+    {
+      "metric": "memory_per_1k_quads",
+      "baseline": 7.8,
+      "current": 7.9,
+      "unit": "MB",
+      "percentChange": 1.28,
+      "tolerance": 15,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "Peak memory consumption per 1,000 RDF quads"
+    },
+    {
+      "metric": "cold_start_latency",
+      "baseline": 185,
+      "current": 188,
+      "unit": "ms",
+      "percentChange": 1.62,
+      "tolerance": 15,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "Time from process start to first universe creation ready"
+    },
+    {
+      "metric": "error_rate",
+      "baseline": 0.08,
+      "current": 0.09,
+      "unit": "percent",
+      "percentChange": 12.5,
+      "tolerance": 50,
+      "status": "PASS",
+      "acceptable": true,
+      "description": "Percentage of operations failing (includes transient + permanent)"
+    }
+  ],
+  "pass_rate": "100.0%",
+  "overall_status": "PASS"
+}

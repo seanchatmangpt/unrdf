@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/integration-tests"
 type: "tutorial"
 packageName: "@unrdf/integration-tests"
-version: "5.0.0"
+version: "5.1.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.1
 proof: "f1ce9a6171c9c621965c3ddc0af736f5bd154873f91f1eb6756ec3e24f00a5e4"

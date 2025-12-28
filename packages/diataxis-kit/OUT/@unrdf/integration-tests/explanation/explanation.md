@@ -2,7 +2,7 @@
 title: "Understanding @unrdf/integration-tests"
 type: "explanation"
 packageName: "@unrdf/integration-tests"
-version: "5.0.0"
+version: "5.1.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "057826a94cfbc63ff96140865a46c58a4ccc07c9d64213f60084625d25635e35"
@@ -11,10 +11,10 @@ proof: "057826a94cfbc63ff96140865a46c58a4ccc07c9d64213f60084625d25635e35"
 ## Concepts
 
 - integration-tests
+- adversarial-tests
 - unrdf
 - workflow
 - federation
-- streaming
 
 ## Architecture
 

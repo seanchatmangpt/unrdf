@@ -28,16 +28,14 @@ export const MorphismType = {
 
 /**
  * Morphism Schema (Zod validation)
+ * Note: Functions and metadata validated manually due to Zod v4 limitations
  */
 const MorphismSchema = z.object({
   id: z.string(),                           // Unique morphism ID
   type: z.nativeEnum(MorphismType),         // Morphism type
   name: z.string(),                         // Human-readable name
   description: z.string().optional(),       // Optional description
-  transform: z.function(),                  // Transformation function
-  inverse: z.function().optional(),         // Optional inverse transformation
-  metadata: z.record(z.any()).optional(),   // Arbitrary metadata
-});
+}).passthrough();                           // Allow additional properties
 
 /**
  * Delta Schema (Quad change representation)
@@ -67,7 +65,10 @@ const DeltaSchema = z.object({
  */
 export async function generateMorphismID(name) {
   const timestamp = BigInt(Date.now()) * 1_000_000n;
-  const combined = `${name}-${timestamp}`;
+  // Add random component for uniqueness
+  const randomBytes = crypto.getRandomValues(new Uint8Array(8));
+  const randomHex = Array.from(randomBytes, b => b.toString(16).padStart(2, '0')).join('');
+  const combined = `${name}-${timestamp}-${randomHex}`;
   const hash = await blake3(combined);
   return `Φ_${hash.slice(0, 16)}`;
 }

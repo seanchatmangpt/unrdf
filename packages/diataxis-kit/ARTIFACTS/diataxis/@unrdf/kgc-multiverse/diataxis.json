@@ -1,0 +1,183 @@
+{
+  "confidence": {
+    "explanation": 0.4,
+    "howtos": 0.75,
+    "reference": 0.8,
+    "tutorials": 0.4
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "canary-test.mjs",
+      "proof-100-universes.mjs"
+    ],
+    "fingerprint": "28a6e90de876ca387a009ae2051c45f839dcf5f8c7fb7a431646d7dd1e12e01e",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "@unrdf/kgc-multiverse is a package in the UNRDF ecosystem",
+    "concepts": [
+      "rdf",
+      "knowledge-graph",
+      "multiverse",
+      "branching",
+      "morphism"
+    ],
+    "confidenceScore": 0.4,
+    "id": "explanation-unrdf-kgc-multiverse-explanation",
+    "source": [
+      "keywords",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgc-multiverse",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgc-multiverse",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgc-multiverse with rdf",
+      "title": "Integrate with rdf"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute kgc-10k command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@unrdf/kgc-multiverse",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgc-multiverse-reference",
+    "items": [
+      {
+        "description": "Export: ./cli-10k",
+        "example": "import from \"./src/cli-10k.mjs\"",
+        "name": "./cli-10k",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./composition",
+        "example": "import from \"./src/composition.mjs\"",
+        "name": "./composition",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./guards",
+        "example": "import from \"./src/guards.mjs\"",
+        "name": "./guards",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./morphism",
+        "example": "import from \"./src/morphism.mjs\"",
+        "name": "./morphism",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./parallel-executor",
+        "example": "import from \"./src/parallel-executor.mjs\"",
+        "name": "./parallel-executor",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./q-star",
+        "example": "import from \"./src/q-star.mjs\"",
+        "name": "./q-star",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./universe-manager",
+        "example": "import from \"./src/universe-manager.mjs\"",
+        "name": "./universe-manager",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./worker-task",
+        "example": "import from \"./src/worker-task.mjs\"",
+        "name": "./worker-task",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/kgc-multiverse",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: kgc-10k",
+        "example": "kgc-10k [options]",
+        "name": "kgc-10k",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "exports",
+      "bin"
+    ],
+    "title": "@unrdf/kgc-multiverse Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.7,
+      "goal": "Learn how to set up and use @unrdf/kgc-multiverse in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgc-multiverse",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/kgc-multiverse"
+    }
+  ],
+  "version": "1.0.0"
+}

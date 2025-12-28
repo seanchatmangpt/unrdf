@@ -1,7 +1,7 @@
 ---
 title: "@unrdf/integration-tests Documentation"
 packageName: "@unrdf/integration-tests"
-version: "5.0.0"
+version: "5.1.0"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 

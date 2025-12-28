@@ -2,7 +2,7 @@
 title: "Understanding unrdf-workspace"
 type: "explanation"
 packageName: "unrdf-workspace"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.6
 proof: "3d2573610d1a197a58cb5402cff758320462f1ea5a74406431d8dcb792315cf4"

@@ -1,7 +1,7 @@
 ---
 title: "unrdf-workspace Documentation"
 packageName: "unrdf-workspace"
-version: "5.0.1"
+version: "6.0.0-alpha.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 

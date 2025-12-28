@@ -7,7 +7,15 @@
     ".": "./src/index.mjs",
     "./universe-manager": "./src/universe-manager.mjs",
     "./morphism": "./src/morphism.mjs",
-    "./guards": "./src/guards.mjs"
+    "./guards": "./src/guards.mjs",
+    "./q-star": "./src/q-star.mjs",
+    "./composition": "./src/composition.mjs",
+    "./parallel-executor": "./src/parallel-executor.mjs",
+    "./worker-task": "./src/worker-task.mjs",
+    "./cli-10k": "./src/cli-10k.mjs"
+  },
+  "bin": {
+    "kgc-10k": "./src/cli-10k.mjs"
   },
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",
@@ -28,7 +36,9 @@
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/receipts": "workspace:*",
     "hash-wasm": "^4.12.0",
+    "piscina": "^4.9.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {

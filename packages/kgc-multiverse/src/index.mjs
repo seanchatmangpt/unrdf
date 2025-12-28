@@ -48,3 +48,40 @@ export {
   guardUniverseHash,
   allGuards,
 } from './guards.mjs';
+
+// Q* Validation System
+export {
+  QStarErrorCode,
+  QStarIDSchema,
+  QStarRDFSchema,
+  QStarPROVSchema,
+  QStarSnapshotSchema,
+  extractIRIs,
+  computeCanonicalHash,
+  createQStarSnapshot,
+  QStarValidator,
+  createQStarValidator,
+  validateQStarSnapshot,
+} from './q-star.mjs';
+
+// Composition Engine
+export {
+  CompositionErrorCode,
+  CompositionEngine,
+  createCompositionEngine,
+  quickCompose,
+  verifyAlgebraicLaws,
+} from './composition.mjs';
+
+// Parallel Executor (Phase 4)
+export {
+  ParallelExecutor,
+  createParallelExecutor,
+  DEFAULT_CONFIG,
+  benchmark10k,
+} from './parallel-executor.mjs';
+
+// Worker Tasks
+export {
+  TaskType,
+} from './worker-task.mjs';

@@ -249,6 +249,7 @@
       "TRIZ_SOLUTIONS.md",
       "TROUBLESHOOTING.md",
       "UNIFIED-ARCHITECTURE-CHAPTER.md",
+      "UNRDF-V6-RELEASE-ORCHESTRATION.md",
       "UNRDF_V5_CODE_ANALYSIS.md",
       "V5-BETA2-RELEASE-NOTES.md",
       "V5-BETA2-REQUIREMENTS.md",
@@ -343,6 +344,7 @@
       "performance-analysis-summary.md",
       "performance-optimization-results.md",
       "performance-targets-v4.0.0.md",
+      "poka-yoke-multiverse-specification.md",
       "profiling-guide.md",
       "quad-utils.md",
       "quality-report-react-hooks.md",
@@ -462,7 +464,7 @@
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs"
     ],
-    "fingerprint": "cd0a2ef37f87859c9f8e8aed557fd57f6b0b34fd4b523ad969825d73f94e4a5e",
+    "fingerprint": "5b1b0355c662c5dac2daa059d01b94d46c630e9bc4900791c1f6bf3d7f0b42a8",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
@@ -595,5 +597,5 @@
       "title": "Getting Started with unrdf-workspace"
     }
   ],
-  "version": "5.0.1"
+  "version": "6.0.0-alpha.1"
 }

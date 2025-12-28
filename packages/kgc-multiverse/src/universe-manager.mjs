@@ -304,8 +304,8 @@ export class UniverseManager {
     universe.state = UniverseState.FROZEN;
     universe.universeHash = universeHash;
 
-    // Freeze object properties (immutability)
-    Object.freeze(universe);
+    // Note: We don't freeze the internal object to allow state transitions to DISCARDED
+    // The returned copy is frozen for immutability
 
     this._logger.debug?.(`Froze universe ${qid} with hash ${universeHash}`);
 

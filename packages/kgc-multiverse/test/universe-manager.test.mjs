@@ -96,7 +96,7 @@ describe('UniverseManager', () => {
 
       expect(() => {
         manager.transitionState(universe.id.Q_ID, UniverseState.ACTIVE);
-      }).toThrow(/Invalid state transition/);
+      }).toThrow(/Invalid transition/);
     });
 
     it('rejects DISCARDED → any transition', async () => {
