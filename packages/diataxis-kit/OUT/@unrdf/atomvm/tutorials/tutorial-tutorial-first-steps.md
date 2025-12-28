@@ -18,10 +18,11 @@ Complete your first practical examples
 
 ## Steps
 
-1. Work through demo-triple-roundtrip.mjs
-2. Work through policy-hot-reload-demo.mjs
-3. Work through production-messaging.mjs
-4. Work through sparql-to-beam-demo.mjs
+1. Work through README.md
+2. Work through demo-message-passing.mjs
+3. Work through demo-sparql-pattern.mjs
+4. Work through demo-triple-roundtrip.mjs
+5. Work through policy-hot-reload-demo.mjs
 
 ## Proof
 

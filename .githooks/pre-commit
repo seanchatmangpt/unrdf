@@ -1,0 +1,85 @@
+#!/bin/bash
+
+###############################################################################
+# Pre-commit Hook: Capability Documentation Validation
+#
+# Validates capability documentation before allowing commits
+#
+# Checks:
+# - Modified capability maps are valid
+# - Cross-references are not broken
+# - Required sections present
+# - Package metadata consistency
+#
+# Usage:
+#   This hook runs automatically on `git commit`
+#   To bypass: `git commit --no-verify` (not recommended)
+###############################################################################
+
+set -e
+
+echo "🔍 Running pre-commit validation..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if capability docs were modified
+DOCS_MODIFIED=$(git diff --cached --name-only | grep -E '^docs/capabilities/' || echo "")
+
+if [ -n "$DOCS_MODIFIED" ]; then
+  echo "📝 Capability documentation changes detected"
+  echo ""
+
+  # Validate modified capability maps
+  echo "⏱️  Validating capability maps (timeout: 5s)..."
+  if timeout 5s node scripts/validate-capability-docs.mjs --strict 2>&1; then
+    echo -e "${GREEN}✅ Capability map validation passed${NC}"
+  else
+    echo -e "${RED}❌ Capability map validation failed${NC}"
+    echo ""
+    echo "Please fix validation errors before committing."
+    echo "Run: node scripts/validate-capability-docs.mjs --verbose"
+    exit 1
+  fi
+
+  # Validate cross-references
+  echo ""
+  echo "⏱️  Validating cross-references (timeout: 5s)..."
+  if timeout 5s node scripts/validate-capability-docs.mjs --check-refs 2>&1; then
+    echo -e "${GREEN}✅ Cross-reference validation passed${NC}"
+  else
+    echo -e "${RED}❌ Cross-reference validation failed${NC}"
+    echo ""
+    echo "Please fix broken links before committing."
+    echo "Run: node scripts/validate-capability-docs.mjs --check-refs --verbose"
+    exit 1
+  fi
+fi
+
+# Check if package.json files were modified
+PKG_JSON_MODIFIED=$(git diff --cached --name-only | grep -E '^packages/[^/]+/package\.json$' || echo "")
+
+if [ -n "$PKG_JSON_MODIFIED" ]; then
+  echo ""
+  echo "📦 Package.json changes detected"
+  echo -e "${YELLOW}⚠️  Consider regenerating capability maps:${NC}"
+  echo "   node scripts/generate-capability-maps.mjs --packages <package-name>"
+  echo ""
+fi
+
+# Check if source files were modified
+SRC_MODIFIED=$(git diff --cached --name-only | grep -E '^packages/[^/]+/src/' || echo "")
+
+if [ -n "$SRC_MODIFIED" ] && [ -z "$DOCS_MODIFIED" ]; then
+  echo ""
+  echo -e "${YELLOW}⚠️  Source files modified but no capability docs updated${NC}"
+  echo "   Consider updating capability maps if APIs changed"
+  echo ""
+fi
+
+echo ""
+echo -e "${GREEN}✅ Pre-commit validation complete${NC}"
+exit 0
