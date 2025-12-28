@@ -428,15 +428,21 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
   const endQuads = store.match(specNode, namedNode(YAWL + 'endTask'), null, null);
   const endTaskIds = endQuads.map(q => q.object.value.replace(YAWL_TASK, ''));
 
-  // Create workflow using provided class
-  return new WorkflowClass({
-    id: workflowId,
-    name,
-    version,
-    description,
-    tasks,
-    flows,
-    startTaskId,
-    endTaskIds,
-  });
+    // Create workflow using provided class
+    return new WorkflowClass({
+      id: workflowId,
+      name,
+      version,
+      description,
+      tasks,
+      flows,
+      startTaskId,
+      endTaskIds,
+    });
+  } catch (err) {
+    throw new WorkflowError('Failed to deserialize workflow from RDF', {
+      cause: err,
+      context: { workflowId },
+    });
+  }
 }

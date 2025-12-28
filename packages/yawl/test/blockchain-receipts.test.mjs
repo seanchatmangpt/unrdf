@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { sha512 } from '@noble/hashes/sha512';
+import { createHash } from 'crypto';
 import * as ed from '@noble/ed25519';
 import {
   generateSigningKey,
@@ -29,8 +29,12 @@ import {
   VerificationResultSchema,
 } from '../src/blockchain-receipts.mjs';
 
-// Set up SHA-512 for @noble/ed25519
-ed.etc.sha512Sync = (...m) => sha512(ed.etc.concatBytes(...m));
+// Set up SHA-512 for @noble/ed25519 using Node.js crypto
+ed.etc.sha512Sync = (...m) => {
+  const hash = createHash('sha512');
+  m.forEach(data => hash.update(data));
+  return Uint8Array.from(hash.digest());
+};
 
 // =============================================================================
 // Test Fixtures

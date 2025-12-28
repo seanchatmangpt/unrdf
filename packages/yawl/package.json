@@ -65,6 +65,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@noble/hashes": "^2.0.1",
     "eslint": "^8.0.0",
     "jsdom": "^27.4.0",
     "vitest": "^4.0.15"
