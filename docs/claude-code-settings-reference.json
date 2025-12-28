@@ -1,0 +1,410 @@
+{
+  "$schema": "https://code.claude.com/schema/settings.json",
+  "_comment": "Complete Claude Code settings.json reference - All available options",
+  "_file_locations": {
+    "user": "~/.claude/settings.json - Applies to all projects",
+    "project_shared": ".claude/settings.json - Checked into git, shared with team",
+    "project_local": ".claude/settings.local.json - Personal, not checked into git"
+  },
+  "_precedence": "Managed > CLI args > Local project > Shared project > User",
+
+  // ========================================================================
+  // CORE CONFIGURATION
+  // ========================================================================
+
+  "model": "sonnet",
+  "_model_options": {
+    "aliases": ["default", "sonnet", "opus", "haiku", "sonnet[1m]", "opusplan"],
+    "full_names": ["claude-sonnet-4-5-20250929", "claude-opus-4-5-20251101", "claude-haiku-4-5-20250929"],
+    "extended_context": "Append [1m] to full model names for 1M token context",
+    "opusplan": "Uses Opus for planning, Sonnet for execution"
+  },
+
+  "outputStyle": "Explanatory",
+  "_outputStyle_options": ["Explanatory", "Concise", "Verbose"],
+
+  "cleanupPeriodDays": 30,
+  "_cleanupPeriodDays_desc": "Session retention period in days (default: 30)",
+
+  // ========================================================================
+  // AUTHENTICATION & API
+  // ========================================================================
+
+  "apiKeyHelper": null,
+  "_apiKeyHelper_desc": "Custom script generating auth values for API requests",
+  "_apiKeyHelper_example": "/bin/generate_temp_api_key.sh",
+
+  // ========================================================================
+  // ENVIRONMENT VARIABLES
+  // ========================================================================
+
+  "env": {
+    "_desc": "Environment variables applied per session, available to all tools",
+
+    // Model Configuration
+    "ANTHROPIC_API_KEY": "sk-ant-...",
+    "ANTHROPIC_AUTH_TOKEN": "custom-auth-token",
+    "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4-5-20251101",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5-20250929",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4-5-20250929",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+
+    // Cloud Provider Integration
+    "CLAUDE_CODE_USE_BEDROCK": "false",
+    "AWS_REGION": "us-east-1",
+    "AWS_PROFILE": "default",
+    "CLAUDE_CODE_USE_VERTEX": "false",
+    "VERTEX_PROJECT_ID": "my-project",
+    "VERTEX_REGION": "us-central1",
+
+    // Prompt Caching
+    "DISABLE_PROMPT_CACHING": "false",
+    "DISABLE_PROMPT_CACHING_HAIKU": "false",
+    "DISABLE_PROMPT_CACHING_SONNET": "false",
+    "DISABLE_PROMPT_CACHING_OPUS": "false",
+
+    // Bash & Command Execution
+    "BASH_DEFAULT_TIMEOUT_MS": "120000",
+    "BASH_MAX_TIMEOUT_MS": "600000",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "CLAUDE_ENV_FILE": "/path/to/env-setup.sh",
+
+    // MCP (Model Context Protocol)
+    "MCP_TIMEOUT": "30000",
+    "MCP_SERVER_TIMEOUT_MS": "30000",
+    "MCP_TOOL_TIMEOUT_MS": "60000",
+
+    // Network & Proxy
+    "HTTP_PROXY": "http://proxy.example.com:8080",
+    "HTTPS_PROXY": "https://proxy.example.com:8443",
+    "NO_PROXY": "localhost,127.0.0.1,.example.com",
+
+    // Telemetry & Privacy
+    "DISABLE_TELEMETRY": "false",
+    "DISABLE_ERROR_REPORTING": "false",
+    "DISABLE_AUTOUPDATER": "false",
+    "DISABLE_BUG_COMMAND": "false",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "false",
+
+    // Debugging & Logging
+    "ANTHROPIC_LOG": "info",
+    "_ANTHROPIC_LOG_levels": ["debug", "info", "warn", "error"],
+    "DEBUG": "*",
+    "VERBOSE": "1",
+
+    // API Key Management
+    "CLAUDE_CODE_API_KEY_HELPER_TTL_MS": "3600000",
+
+    // Performance & Limits
+    "CLAUDE_CODE_MAX_TOKENS": "8192",
+    "CLAUDE_CODE_TEMPERATURE": "1.0",
+
+    // Custom Environment
+    "NODE_ENV": "development",
+    "PATH": "/custom/bin:$PATH"
+  },
+
+  // ========================================================================
+  // PERMISSIONS
+  // ========================================================================
+
+  "permissions": {
+    "_desc": "Access control for all Claude Code tools and operations",
+
+    "allow": [
+      "_examples": [
+        "Bash(npm run lint:*)",
+        "Bash(git log:*)",
+        "Read(~/.zshrc)",
+        "Read(/home/user/project/**/*.md)",
+        "Edit(/home/user/project/src/**/*.js)",
+        "Write(/home/user/project/dist/**/*)",
+        "WebFetch(https://api.example.com/*)",
+        "Glob(**/*.json)",
+        "Grep(pattern)",
+        "mcp__server__tool_name"
+      ]
+    ],
+
+    "deny": [
+      "_examples": [
+        "Bash(curl:*)",
+        "Bash(rm -rf:*)",
+        "Read(./.env)",
+        "Read(**/.env.*)",
+        "Read(**/secrets.*)",
+        "Write(/etc/**/*)",
+        "WebFetch(https://malicious.com/*)"
+      ]
+    ],
+
+    "ask": [
+      "_examples": [
+        "Bash(git push:*)",
+        "Bash(npm publish:*)",
+        "Write(/home/user/important-file.txt)",
+        "Edit(/home/user/.bashrc)"
+      ]
+    ],
+
+    "additionalDirectories": [
+      "../docs/",
+      "/home/user/shared-libs/"
+    ],
+    "_additionalDirectories_desc": "Extra directories accessible beyond project root",
+
+    "defaultMode": "acceptEdits",
+    "_defaultMode_options": ["acceptEdits", "reviewEdits", "ask"],
+    "_defaultMode_desc": "Default behavior for edit operations",
+
+    "disableBypassPermissionsMode": "disable",
+    "_disableBypassPermissionsMode_options": ["disable", "enable"],
+    "_disableBypassPermissionsMode_desc": "Prevent --dangerously-skip-permissions flag"
+  },
+
+  // ========================================================================
+  // SANDBOX CONFIGURATION
+  // ========================================================================
+
+  "sandbox": {
+    "enabled": false,
+    "_enabled_desc": "Enable sandboxed bash execution with network isolation",
+
+    "autoAllowBashIfSandboxed": true,
+    "_autoAllowBashIfSandboxed_desc": "Auto-approve bash commands when sandboxed",
+
+    "excludedCommands": ["docker", "kubectl", "terraform"],
+    "_excludedCommands_desc": "Commands that bypass sandbox and run natively",
+
+    "network": {
+      "allowUnixSockets": [
+        "~/.ssh/agent-socket",
+        "/var/run/docker.sock"
+      ],
+      "_allowUnixSockets_desc": "Unix sockets accessible from sandbox",
+
+      "allowLocalBinding": true,
+      "_allowLocalBinding_desc": "Allow binding to localhost ports"
+    }
+  },
+
+  // ========================================================================
+  // HOOKS (Pre/Post Tool Execution)
+  // ========================================================================
+
+  "hooks": {
+    "_desc": "Run custom commands before/after tool execution",
+
+    "pre": {
+      "Bash": "echo 'About to run bash command'",
+      "Edit": "/path/to/pre-edit-hook.sh",
+      "*": "logger 'Claude Code tool executed'"
+    },
+
+    "post": {
+      "Bash": "echo 'Bash command completed'",
+      "Write": "/path/to/post-write-hook.sh",
+      "*": "logger 'Claude Code tool completed'"
+    }
+  },
+
+  // ========================================================================
+  // GIT ATTRIBUTION
+  // ========================================================================
+
+  "attribution": {
+    "commit": "Generated with Claude Code\n\nCo-Authored-By: Claude <[email protected]>",
+    "_commit_desc": "Custom git commit message attribution",
+
+    "pr": "Created with assistance from Claude Code",
+    "_pr_desc": "Custom pull request attribution",
+
+    "_default_behavior": "Includes Claude model name and GitHub profile by default"
+  },
+
+  // ========================================================================
+  // UI CUSTOMIZATION
+  // ========================================================================
+
+  "statusLine": {
+    "type": "command",
+    "command": "/path/to/status-script.sh",
+    "_desc": "Custom status line display script"
+  },
+
+  "fileSuggestion": {
+    "type": "command",
+    "command": "/path/to/file-suggest.sh",
+    "_desc": "Custom @ file autocomplete script"
+  },
+
+  "companyAnnouncements": [
+    "Welcome to our organization's Claude Code instance!",
+    "Remember to follow our coding standards"
+  ],
+  "_companyAnnouncements_desc": "Messages displayed at startup",
+
+  // ========================================================================
+  // PLUGINS & MARKETPLACE
+  // ========================================================================
+
+  "enabledPlugins": {
+    "formatter@acme-tools": true,
+    "linter@acme-tools": true,
+    "deployer@acme-tools": false
+  },
+  "_enabledPlugins_desc": "Enable/disable specific plugins from marketplaces",
+
+  "extraKnownMarketplaces": {
+    "acme-tools": {
+      "source": {
+        "source": "github",
+        "repo": "acme-corp/claude-plugins",
+        "branch": "main"
+      }
+    },
+    "internal-tools": {
+      "source": {
+        "source": "local",
+        "path": "/opt/internal-plugins"
+      }
+    }
+  },
+  "_extraKnownMarketplaces_desc": "Additional plugin marketplaces",
+
+  "strictKnownMarketplaces": [],
+  "_strictKnownMarketplaces_desc": "Enterprise: Enforce plugin allowlist (blocks all others)",
+
+  // ========================================================================
+  // PROJECT-SPECIFIC SETTINGS
+  // ========================================================================
+
+  "projects": {
+    "/home/user/unrdf": {
+      "allowedTools": [
+        "Read",
+        "Edit",
+        "Write",
+        "Bash(npm run *)",
+        "Bash(git *)",
+        "Grep",
+        "Glob"
+      ],
+      "model": "sonnet",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "/home/user/production-app": {
+      "allowedTools": [
+        "Read",
+        "Bash(git log:*)"
+      ],
+      "model": "opus",
+      "permissions": {
+        "deny": [
+          "Write(**/*)",
+          "Edit(**/*)",
+          "Bash(git push:*)"
+        ]
+      }
+    }
+  },
+  "_projects_desc": "Per-project settings keyed by absolute path",
+
+  // ========================================================================
+  // ADVANCED OPTIONS
+  // ========================================================================
+
+  "experimental": {
+    "_desc": "Experimental features - may change or be removed",
+    "feature_flags": {
+      "enable_streaming": true,
+      "enable_multimodal": true
+    }
+  },
+
+  // ========================================================================
+  // TOOL-SPECIFIC CONFIGURATION
+  // ========================================================================
+
+  "tools": {
+    "Bash": {
+      "defaultTimeout": 120000,
+      "maxTimeout": 600000,
+      "maintainWorkingDir": true
+    },
+    "Read": {
+      "maxFileSize": 10485760,
+      "_maxFileSize_desc": "10MB limit for file reads"
+    },
+    "WebFetch": {
+      "timeout": 30000,
+      "maxResponseSize": 5242880,
+      "_maxResponseSize_desc": "5MB limit for web responses"
+    }
+  },
+
+  // ========================================================================
+  // SECURITY & COMPLIANCE
+  // ========================================================================
+
+  "security": {
+    "allowedNetworks": ["10.0.0.0/8", "192.168.0.0/16"],
+    "blockedNetworks": ["0.0.0.0/0"],
+    "_network_desc": "CIDR ranges for network access control",
+
+    "secretPatterns": [
+      "sk-ant-[a-zA-Z0-9-_]+",
+      "AKIA[0-9A-Z]{16}",
+      "ghp_[a-zA-Z0-9]{36}"
+    ],
+    "_secretPatterns_desc": "Regex patterns to detect and block secrets"
+  },
+
+  // ========================================================================
+  // DOCUMENTATION & REFERENCES
+  // ========================================================================
+
+  "_references": {
+    "official_docs": "https://code.claude.com/docs/en/settings",
+    "model_config": "https://code.claude.com/docs/en/model-config",
+    "environment_vars": "https://code.claude.com/docs/en/environment-variables",
+    "permissions": "https://platform.claude.com/docs/en/agent-sdk/permissions",
+    "github_issues": "https://github.com/anthropics/claude-code/issues"
+  },
+
+  "_tool_types": {
+    "available_tools": [
+      "Bash",
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "NotebookEdit",
+      "TodoWrite",
+      "BashOutput",
+      "Skill",
+      "SlashCommand",
+      "mcp__*"
+    ],
+    "permission_patterns": {
+      "exact_match": "Bash(npm test)",
+      "wildcard": "Bash(npm run test:*)",
+      "path_glob": "Read(/home/user/project/**/*.md)",
+      "deny_sensitive": "Read(**/.env*)"
+    }
+  },
+
+  "_validation": {
+    "check_precedence": "Local project > Shared project > User settings",
+    "test_permissions": "Use /allowed-tools to verify current permissions",
+    "verify_env": "Use /config to view current environment variables",
+    "test_model": "Use /model to view/change current model"
+  }
+}
