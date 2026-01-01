@@ -4,6 +4,7 @@ import { getModuleFederation } from './unrdf-module-federation.mjs';
 import { getPackageOptimizer } from './unrdf-package-optimizer.mjs';
 import { VerificationState } from './unrdf-verification-engine.mjs';
 import { getCoherenceRepair } from './unrdf-coherence-repair.mjs';
+import { getPressureMitigation } from './unrdf-pressure-mitigation.mjs';
 
 export class UnrdfRuntimeOrchestrator {
   constructor() {
@@ -13,6 +14,7 @@ export class UnrdfRuntimeOrchestrator {
     this.optimizer = null;
     this.verificationState = null;
     this.coherenceRepair = null;
+    this.pressureMitigation = null;
     this.state = {
       initialized: false,
       running: false,
@@ -46,6 +48,12 @@ export class UnrdfRuntimeOrchestrator {
       this.packageSystem,
       this.moduleFederation,
       this.optimizer
+    );
+
+    this.pressureMitigation = await getPressureMitigation(
+      this.verificationState,
+      this.coherenceRepair,
+      this.coherenceRepair.learningSystem
     );
 
     this.state.initialized = true;
@@ -337,6 +345,37 @@ export class UnrdfRuntimeOrchestrator {
   getRepairHistory() {
     if (!this.coherenceRepair) return null;
     return this.coherenceRepair.getRepairHistory();
+  }
+
+  async runPressureMitigationCycle(maxCycles = 3) {
+    if (!this.state.initialized) await this.initialize();
+
+    try {
+      const results = await this.pressureMitigation.executeMitigationCycle(maxCycles);
+
+      this._recordOperation('runPressureMitigationCycle', {
+        success: true,
+        cyclesCompleted: results.cyclesCompleted,
+        strategiesExecuted: results.strategiesExecuted,
+        pressureReduction: results.pressureReduction,
+        equilibriumReached: results.equilibriumReached,
+      });
+
+      return results;
+    } catch (error) {
+      this._recordOperation('runPressureMitigationCycle', { success: false, error: error.message });
+      throw error;
+    }
+  }
+
+  getPressureStatus() {
+    if (!this.pressureMitigation) return null;
+    return this.pressureMitigation.export();
+  }
+
+  isSystemInEquilibrium() {
+    if (!this.pressureMitigation) return false;
+    return this.pressureMitigation.isInEquilibrium();
   }
 
   _recordOperation(name, details) {
