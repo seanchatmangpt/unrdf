@@ -1,0 +1,52 @@
+# {{ package.name | upper }}
+
+> {{ package.description }}
+
+**Version**: {{ package.version }}
+
+## Overview
+
+This package provides {{ package.description | lower }}.
+
+## Installation
+
+```bash
+pnpm add {{ package.name }}
+```
+
+## Usage
+
+### Basic Example
+
+```javascript
+import { /* exports here */ } from '{{ package.name }}';
+
+// Your code here
+```
+
+## API Reference
+
+See [API Documentation](../../docs/API_REFERENCE.md) for complete API details.
+
+## Dependencies
+
+{% if package.dependencies %}
+This package depends on:
+{% for dep in package.dependencies %}
+- `{{ dep.name }}@{{ dep.version }}`
+{% endfor %}
+{% else %}
+This package has no internal dependencies.
+{% endif %}
+
+## Tier: {{ package.tier }}
+
+This package is classified as **{{ package.tier }}** tier in UNRDF.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+
+## License
+
+Licensed under either of Apache License, Version 2.0 or MIT license at your option.
