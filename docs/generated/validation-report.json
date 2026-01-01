@@ -1,0 +1,921 @@
+{
+  "timestamp": "2026-01-01T03:14:36.273Z",
+  "total": 57,
+  "valid": 57,
+  "invalid": 0,
+  "issues": [],
+  "packages": {
+    "@unrdf/atomvm": {
+      "name": "@unrdf/atomvm",
+      "version": "5.0.1",
+      "path": "atomvm",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/blockchain": {
+      "name": "@unrdf/blockchain",
+      "version": "1.0.0",
+      "path": "blockchain",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/caching": {
+      "name": "@unrdf/caching",
+      "version": "1.0.0",
+      "path": "caching",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/cli": {
+      "name": "@unrdf/cli",
+      "version": "5.0.1",
+      "path": "cli",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/collab": {
+      "name": "@unrdf/collab",
+      "version": "1.0.0",
+      "path": "collab",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/composables": {
+      "name": "@unrdf/composables",
+      "version": "5.0.1",
+      "path": "composables",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/consensus": {
+      "name": "@unrdf/consensus",
+      "version": "1.0.0",
+      "path": "consensus",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/core": {
+      "name": "@unrdf/core",
+      "version": "6.0.0-alpha.1",
+      "path": "core",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/dark-matter": {
+      "name": "@unrdf/dark-matter",
+      "version": "5.0.1",
+      "path": "dark-matter",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/decision-fabric": {
+      "name": "@unrdf/decision-fabric",
+      "version": "0.1.0",
+      "path": "decision-fabric",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/diataxis-kit": {
+      "name": "@unrdf/diataxis-kit",
+      "version": "1.0.0",
+      "path": "diataxis-kit",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": false,
+        "isPublishable": true
+      }
+    },
+    "docs": {
+      "name": "docs",
+      "version": "5.0.1",
+      "path": "docs",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": false,
+        "hasMainExport": true,
+        "hasExports": false,
+        "hasDependencies": true,
+        "isPublishable": false
+      }
+    },
+    "@unrdf/domain": {
+      "name": "@unrdf/domain",
+      "version": "5.0.1",
+      "path": "domain",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": false,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/engine-gateway": {
+      "name": "@unrdf/engine-gateway",
+      "version": "5.0.1",
+      "path": "engine-gateway",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/federation": {
+      "name": "@unrdf/federation",
+      "version": "6.0.0",
+      "path": "federation",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/fusion": {
+      "name": "@unrdf/fusion",
+      "version": "1.0.0",
+      "path": "fusion",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/graph-analytics": {
+      "name": "@unrdf/graph-analytics",
+      "version": "1.0.0",
+      "path": "graph-analytics",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/hooks": {
+      "name": "@unrdf/hooks",
+      "version": "5.0.1",
+      "path": "hooks",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/integration-tests": {
+      "name": "@unrdf/integration-tests",
+      "version": "5.1.0",
+      "path": "integration-tests",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": false,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-4d": {
+      "name": "@unrdf/kgc-4d",
+      "version": "5.0.1",
+      "path": "kgc-4d",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-claude": {
+      "name": "@unrdf/kgc-claude",
+      "version": "5.0.0",
+      "path": "kgc-claude",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-cli": {
+      "name": "@unrdf/kgc-cli",
+      "version": "5.0.1",
+      "path": "kgc-cli",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-docs": {
+      "name": "@unrdf/kgc-docs",
+      "version": "1.0.0",
+      "path": "kgc-docs",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-multiverse": {
+      "name": "@unrdf/kgc-multiverse",
+      "version": "1.0.0",
+      "path": "kgc-multiverse",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-probe": {
+      "name": "@unrdf/kgc-probe",
+      "version": "1.0.0",
+      "path": "kgc-probe",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-runtime": {
+      "name": "@unrdf/kgc-runtime",
+      "version": "1.0.0",
+      "path": "kgc-runtime",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-substrate": {
+      "name": "@unrdf/kgc-substrate",
+      "version": "1.0.0",
+      "path": "kgc-substrate",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-swarm": {
+      "name": "@unrdf/kgc-swarm",
+      "version": "1.0.0",
+      "path": "kgc-swarm",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgc-tools": {
+      "name": "@unrdf/kgc-tools",
+      "version": "1.0.0",
+      "path": "kgc-tools",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/kgn": {
+      "name": "@unrdf/kgn",
+      "version": "5.0.1",
+      "path": "kgn",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/knowledge-engine": {
+      "name": "@unrdf/knowledge-engine",
+      "version": "5.0.1",
+      "path": "knowledge-engine",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/ml-inference": {
+      "name": "@unrdf/ml-inference",
+      "version": "5.0.1",
+      "path": "ml-inference",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/ml-versioning": {
+      "name": "@unrdf/ml-versioning",
+      "version": "1.0.0",
+      "path": "ml-versioning",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/nextra-docs": {
+      "name": "@unrdf/nextra-docs",
+      "version": "5.0.1",
+      "path": "nextra",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": false,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/observability": {
+      "name": "@unrdf/observability",
+      "version": "1.0.0",
+      "path": "observability",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/oxigraph": {
+      "name": "@unrdf/oxigraph",
+      "version": "5.0.1",
+      "path": "oxigraph",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/project-engine": {
+      "name": "@unrdf/project-engine",
+      "version": "5.0.1",
+      "path": "project-engine",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/rdf-graphql": {
+      "name": "@unrdf/rdf-graphql",
+      "version": "1.0.0",
+      "path": "rdf-graphql",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/react": {
+      "name": "@unrdf/react",
+      "version": "5.0.0",
+      "path": "react",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/receipts": {
+      "name": "@unrdf/receipts",
+      "version": "1.0.0",
+      "path": "receipts",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/semantic-search": {
+      "name": "@unrdf/semantic-search",
+      "version": "1.0.0",
+      "path": "semantic-search",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/serverless": {
+      "name": "@unrdf/serverless",
+      "version": "1.0.0",
+      "path": "serverless",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/streaming": {
+      "name": "@unrdf/streaming",
+      "version": "5.0.1",
+      "path": "streaming",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/test-utils": {
+      "name": "@unrdf/test-utils",
+      "version": "5.0.1",
+      "path": "test-utils",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/v6-compat": {
+      "name": "@unrdf/v6-compat",
+      "version": "6.0.0-rc.1",
+      "path": "v6-compat",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/v6-core": {
+      "name": "@unrdf/v6-core",
+      "version": "6.0.0-rc.1",
+      "path": "v6-core",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/validation": {
+      "name": "@unrdf/validation",
+      "version": "5.0.1",
+      "path": "validation",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl": {
+      "name": "@unrdf/yawl",
+      "version": "6.0.0",
+      "path": "yawl",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-ai": {
+      "name": "@unrdf/yawl-ai",
+      "version": "1.0.0",
+      "path": "yawl-ai",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-api": {
+      "name": "@unrdf/yawl-api",
+      "version": "1.0.0",
+      "path": "yawl-api",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-durable": {
+      "name": "@unrdf/yawl-durable",
+      "version": "0.1.0",
+      "path": "yawl-durable",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-kafka": {
+      "name": "@unrdf/yawl-kafka",
+      "version": "1.0.0",
+      "path": "yawl-kafka",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-langchain": {
+      "name": "@unrdf/yawl-langchain",
+      "version": "1.0.0",
+      "path": "yawl-langchain",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-observability": {
+      "name": "@unrdf/yawl-observability",
+      "version": "1.0.0",
+      "path": "yawl-observability",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-queue": {
+      "name": "@unrdf/yawl-queue",
+      "version": "1.0.0",
+      "path": "yawl-queue",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-realtime": {
+      "name": "@unrdf/yawl-realtime",
+      "version": "1.0.0",
+      "path": "yawl-realtime",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    },
+    "@unrdf/yawl-viz": {
+      "name": "@unrdf/yawl-viz",
+      "version": "1.0.0",
+      "path": "yawl-viz",
+      "valid": true,
+      "checks": {
+        "fileExists": true,
+        "hasName": true,
+        "hasVersion": true,
+        "hasDescription": true,
+        "hasMainExport": true,
+        "hasExports": true,
+        "hasDependencies": true,
+        "isPublishable": true
+      }
+    }
+  }
+}
