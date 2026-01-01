@@ -1,0 +1,145 @@
+# {{ package.label }} - API Reference
+
+> Generated from UNRDF ontology
+> Last updated: {{ generation_date }}
+
+## Overview
+
+**Package**: `{{ package.name }}`
+**Tier**: {{ package.tier }}
+**Version**: {{ package.version }}
+**Node.js Requirement**: >= {{ package.minNodeVersion }}
+
+{{ package.description }}
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Quick Start](#quick-start)
+3. [API Reference](#api-reference)
+4. [Capabilities](#capabilities)
+5. [Dependencies](#dependencies)
+6. [Examples](#examples)
+7. [Testing](#testing)
+
+## Installation
+
+```bash
+npm install {{ package.name }}
+```
+
+or with pnpm:
+
+```bash
+pnpm add {{ package.name }}
+```
+
+## Quick Start
+
+```javascript
+import { {{ package.mainExport }} } from '{{ package.name }}';
+
+// Initialize the module
+const instance = {{ package.mainExport }}();
+
+// Use the instance
+console.log(instance);
+```
+
+## API Reference
+
+### Main Export: `{{ package.mainExport }}`
+
+```typescript
+function {{ package.mainExport }}(options?: Config): Instance
+```
+
+Creates and initializes an instance of {{ package.label }}.
+
+**Parameters:**
+- `options` (optional) - Configuration object
+
+**Returns:** Instance of the module
+
+**Example:**
+```javascript
+const instance = {{ package.mainExport }}();
+```
+
+## Capabilities
+
+This package provides the following capabilities:
+
+{% for capability in package.capabilities %}
+### {{ capability.label }}
+
+{{ capability.description }}
+
+{% endfor %}
+
+## Dependencies
+
+### Internal Dependencies
+
+This package depends on the following UNRDF packages:
+
+{% if package.dependencies %}
+{% for dep in package.dependencies -%}
+- `{{ dep.name }}` (v{{ dep.version }})
+{% endfor %}
+{% else %}
+No internal dependencies
+{% endif %}
+
+### External Dependencies
+
+{% if package.externalDependencies %}
+This package uses the following external libraries:
+
+{% for ext in package.externalDependencies -%}
+- `{{ ext }}`
+{% endfor %}
+{% else %}
+No external dependencies
+{% endif %}
+
+## Examples
+
+### Basic Usage
+
+```javascript
+import { {{ package.mainExport }} } from '{{ package.name }}';
+
+const instance = {{ package.mainExport }}();
+console.log('Instance created:', instance);
+```
+
+For more examples, see the [examples directory](./examples).
+
+## Testing
+
+Run tests with:
+
+```bash
+pnpm test
+```
+
+Run tests with coverage:
+
+```bash
+pnpm test:coverage
+```
+
+Current test coverage: **{{ package.testCoverage }}%**
+
+## Contributing
+
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) for contribution guidelines.
+
+## License
+
+MIT - See LICENSE file for details
+
+---
+
+**Part of UNRDF v{{ version }}** - https://unrdf.io

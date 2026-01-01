@@ -1,0 +1,130 @@
+# UNRDF Packages Index
+
+> Auto-generated from `schemas/unrdf-packages.ttl`
+> Last updated: {{ generation_date }}
+
+This document provides an overview of all UNRDF packages organized by tier and capability.
+
+## 📋 Table of Contents
+
+- [Essential Tier (7 packages)](#essential-tier)
+- [Extended Tier (8 packages)](#extended-tier)
+- [Optional Tier](#optional-tier)
+- [By Capability](#by-capability)
+
+---
+
+## Essential Tier
+
+Critical packages required for basic UNRDF functionality.
+
+{% set essential = packages | filter(attribute="tier", value="essential") %}
+{% for package in essential %}
+
+### {{ package.label }}
+
+**Package**: `{{ package.name }}`
+**Path**: `{{ package.path }}`
+**Version**: {{ package.version }}
+**Test Coverage**: {{ package.testCoverage }}%
+
+{{ package.description }}
+
+**Capabilities**:
+{% for capability in package.capabilities -%}
+- {{ capability.label }}
+{% endfor %}
+
+**Main Export**: `{{ package.mainExport }}`
+
+[View Documentation](./docs/{{ package.name | replace("@unrdf/", "") }}.md)
+
+---
+{% endfor %}
+
+## Extended Tier
+
+Packages for common use cases and integrations.
+
+{% set extended = packages | filter(attribute="tier", value="extended") %}
+{% for package in extended %}
+
+### {{ package.label }}
+
+**Package**: `{{ package.name }}`
+**Path**: `{{ package.path }}`
+**Version**: {{ package.version }}
+**Test Coverage**: {{ package.testCoverage }}%
+
+{{ package.description }}
+
+**Capabilities**:
+{% for capability in package.capabilities -%}
+- {{ capability.label }}
+{% endfor %}
+
+**Depends on**:
+{% for dep in package.dependencies -%}
+- `{{ dep.name }}`
+{% endfor %}
+
+[View Documentation](./docs/{{ package.name | replace("@unrdf/", "") }}.md)
+
+---
+{% endfor %}
+
+## Optional Tier
+
+Specialized packages for performance, AI, and visualization.
+
+{% set optional = packages | filter(attribute="tier", value="optional") %}
+{% if optional | length > 0 %}
+{% for package in optional %}
+
+### {{ package.label }}
+
+**Package**: `{{ package.name }}`
+**Description**: {{ package.description }}
+
+[View Documentation](./docs/{{ package.name | replace("@unrdf/", "") }}.md)
+
+---
+{% endfor %}
+{% else %}
+No optional packages currently defined.
+{% endif %}
+
+## By Capability
+
+Packages organized by capability.
+
+{% set capabilities = packages | map(attribute="capabilities") | flatten %}
+{% for capability in capabilities | unique %}
+
+### {{ capability.label }}
+
+{{ capability.description }}
+
+**Packages**:
+{% for package in packages | filter(attribute="capabilities", value=capability) -%}
+- `{{ package.name }}` ({{ package.tier }})
+{% endfor %}
+
+---
+{% endfor %}
+
+## Quick Installation
+
+### All Essential Packages
+```bash
+npm install @unrdf/core @unrdf/oxigraph @unrdf/kgc-4d @unrdf/yawl @unrdf/hooks @unrdf/streaming @unrdf/v6-core
+```
+
+### Common Setup (Essential + Extended)
+```bash
+npm install @unrdf/core @unrdf/oxigraph @unrdf/hooks @unrdf/federation @unrdf/knowledge-engine @unrdf/cli
+```
+
+---
+
+**UNRDF v{{ version }}** - https://unrdf.io

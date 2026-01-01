@@ -1,37 +1,12 @@
 [project]
 name = "unrdf"
 version = "6.0.0-rc.1"
-description = "RDF Knowledge Graph Substrate Platform - Ontology-Driven Code Generation"
-authors = ["Sean ChatMan <sean@chatman.io>"]
-license = "MIT OR Apache-2.0"
+description = "RDF Knowledge Graph Substrate Platform"
+
+[ontology]
+source = "schemas/unrdf-packages.ttl"
+format = "turtle"
 
 [generation]
-ontology_dir = "schema/"
-templates_dir = "templates/"
-output_dir = "src/generated/"
-incremental = true
-overwrite = false
-
-[sync]
-enabled = true
-on_change = "manual"
-validate_after = true
-conflict_mode = "warn"
-
-[rdf]
-formats = ["turtle", "n-triples"]
-default_format = "turtle"
-base_uri = "https://unrdf.io/"
-strict_validation = true
-
-[templates]
-enable_caching = true
-auto_reload = true
-
-[output]
-formatting = "default"
-line_length = 100
-indent = 2
-
-[marketplace]
-verify_signatures = true
+output_dir = "ggen/generated/"
+rules = []

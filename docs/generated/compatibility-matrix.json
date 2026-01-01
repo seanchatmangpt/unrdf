@@ -1,0 +1,520 @@
+{
+  "generated": "2026-01-01T03:14:36.285Z",
+  "packages": 57,
+  "tiers": {
+    "essential": {
+      "count": 7,
+      "versions": [
+        "6.0.0-alpha.1",
+        "5.0.1",
+        "6.0.0-rc.1",
+        "6.0.0"
+      ],
+      "allVersionCompatible": true
+    },
+    "extended": {
+      "count": 8,
+      "versions": [
+        "5.0.1",
+        "1.0.0",
+        "6.0.0",
+        "6.0.0-rc.1"
+      ],
+      "allVersionCompatible": true
+    },
+    "optional": {
+      "count": 42,
+      "versions": [
+        "5.0.1",
+        "1.0.0",
+        "0.1.0",
+        "5.1.0",
+        "5.0.0"
+      ],
+      "allVersionCompatible": false
+    }
+  },
+  "versionMatrix": {
+    "5.0.1": {
+      "packages": [
+        "@unrdf/atomvm",
+        "@unrdf/cli",
+        "@unrdf/composables",
+        "@unrdf/dark-matter",
+        "docs",
+        "@unrdf/domain",
+        "@unrdf/engine-gateway",
+        "@unrdf/hooks",
+        "@unrdf/kgc-4d",
+        "@unrdf/kgc-cli",
+        "@unrdf/kgn",
+        "@unrdf/knowledge-engine",
+        "@unrdf/ml-inference",
+        "@unrdf/nextra-docs",
+        "@unrdf/oxigraph",
+        "@unrdf/project-engine",
+        "@unrdf/streaming",
+        "@unrdf/test-utils",
+        "@unrdf/validation"
+      ],
+      "count": 19,
+      "tiers": {
+        "essential": 4,
+        "extended": 2,
+        "optional": 13
+      }
+    },
+    "1.0.0": {
+      "packages": [
+        "@unrdf/blockchain",
+        "@unrdf/caching",
+        "@unrdf/collab",
+        "@unrdf/consensus",
+        "@unrdf/diataxis-kit",
+        "@unrdf/fusion",
+        "@unrdf/graph-analytics",
+        "@unrdf/kgc-docs",
+        "@unrdf/kgc-multiverse",
+        "@unrdf/kgc-probe",
+        "@unrdf/kgc-runtime",
+        "@unrdf/kgc-substrate",
+        "@unrdf/kgc-swarm",
+        "@unrdf/kgc-tools",
+        "@unrdf/ml-versioning",
+        "@unrdf/observability",
+        "@unrdf/rdf-graphql",
+        "@unrdf/receipts",
+        "@unrdf/semantic-search",
+        "@unrdf/serverless",
+        "@unrdf/yawl-ai",
+        "@unrdf/yawl-api",
+        "@unrdf/yawl-kafka",
+        "@unrdf/yawl-langchain",
+        "@unrdf/yawl-observability",
+        "@unrdf/yawl-queue",
+        "@unrdf/yawl-realtime",
+        "@unrdf/yawl-viz"
+      ],
+      "count": 28,
+      "tiers": {
+        "essential": 0,
+        "extended": 4,
+        "optional": 24
+      }
+    },
+    "6.0.0-alpha.1": {
+      "packages": [
+        "@unrdf/core"
+      ],
+      "count": 1,
+      "tiers": {
+        "essential": 1,
+        "extended": 0,
+        "optional": 0
+      }
+    },
+    "0.1.0": {
+      "packages": [
+        "@unrdf/decision-fabric",
+        "@unrdf/yawl-durable"
+      ],
+      "count": 2,
+      "tiers": {
+        "essential": 0,
+        "extended": 0,
+        "optional": 2
+      }
+    },
+    "6.0.0": {
+      "packages": [
+        "@unrdf/federation",
+        "@unrdf/yawl"
+      ],
+      "count": 2,
+      "tiers": {
+        "essential": 1,
+        "extended": 1,
+        "optional": 0
+      }
+    },
+    "5.1.0": {
+      "packages": [
+        "@unrdf/integration-tests"
+      ],
+      "count": 1,
+      "tiers": {
+        "essential": 0,
+        "extended": 0,
+        "optional": 1
+      }
+    },
+    "5.0.0": {
+      "packages": [
+        "@unrdf/kgc-claude",
+        "@unrdf/react"
+      ],
+      "count": 2,
+      "tiers": {
+        "essential": 0,
+        "extended": 0,
+        "optional": 2
+      }
+    },
+    "6.0.0-rc.1": {
+      "packages": [
+        "@unrdf/v6-compat",
+        "@unrdf/v6-core"
+      ],
+      "count": 2,
+      "tiers": {
+        "essential": 1,
+        "extended": 1,
+        "optional": 0
+      }
+    }
+  },
+  "compatibility": {
+    "@unrdf/atomvm": {
+      "totalDependencies": 5,
+      "internalDependencies": 3,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/blockchain": {
+      "totalDependencies": 6,
+      "internalDependencies": 2,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/caching": {
+      "totalDependencies": 5,
+      "internalDependencies": 1,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/cli": {
+      "totalDependencies": 8,
+      "internalDependencies": 5,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/collab": {
+      "totalDependencies": 7,
+      "internalDependencies": 1,
+      "externalDependencies": 6,
+      "dependenciesExist": true
+    },
+    "@unrdf/composables": {
+      "totalDependencies": 3,
+      "internalDependencies": 2,
+      "externalDependencies": 1,
+      "dependenciesExist": true
+    },
+    "@unrdf/consensus": {
+      "totalDependencies": 5,
+      "internalDependencies": 1,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/core": {
+      "totalDependencies": 12,
+      "internalDependencies": 1,
+      "externalDependencies": 11,
+      "dependenciesExist": true
+    },
+    "@unrdf/dark-matter": {
+      "totalDependencies": 3,
+      "internalDependencies": 2,
+      "externalDependencies": 1,
+      "dependenciesExist": true
+    },
+    "@unrdf/decision-fabric": {
+      "totalDependencies": 7,
+      "internalDependencies": 7,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "@unrdf/diataxis-kit": {
+      "totalDependencies": 0,
+      "internalDependencies": 0,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "docs": {
+      "totalDependencies": 21,
+      "internalDependencies": 0,
+      "externalDependencies": 21,
+      "dependenciesExist": true
+    },
+    "@unrdf/domain": {
+      "totalDependencies": 0,
+      "internalDependencies": 0,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "@unrdf/engine-gateway": {
+      "totalDependencies": 2,
+      "internalDependencies": 2,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "@unrdf/federation": {
+      "totalDependencies": 6,
+      "internalDependencies": 2,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/fusion": {
+      "totalDependencies": 8,
+      "internalDependencies": 6,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/graph-analytics": {
+      "totalDependencies": 3,
+      "internalDependencies": 0,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/hooks": {
+      "totalDependencies": 4,
+      "internalDependencies": 2,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/integration-tests": {
+      "totalDependencies": 11,
+      "internalDependencies": 9,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-4d": {
+      "totalDependencies": 4,
+      "internalDependencies": 2,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-claude": {
+      "totalDependencies": 7,
+      "internalDependencies": 5,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-cli": {
+      "totalDependencies": 2,
+      "internalDependencies": 0,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-docs": {
+      "totalDependencies": 1,
+      "internalDependencies": 0,
+      "externalDependencies": 1,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-multiverse": {
+      "totalDependencies": 7,
+      "internalDependencies": 4,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-probe": {
+      "totalDependencies": 8,
+      "internalDependencies": 6,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-runtime": {
+      "totalDependencies": 3,
+      "internalDependencies": 1,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-substrate": {
+      "totalDependencies": 5,
+      "internalDependencies": 3,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-swarm": {
+      "totalDependencies": 8,
+      "internalDependencies": 6,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgc-tools": {
+      "totalDependencies": 5,
+      "internalDependencies": 3,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/kgn": {
+      "totalDependencies": 6,
+      "internalDependencies": 2,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/knowledge-engine": {
+      "totalDependencies": 6,
+      "internalDependencies": 3,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/ml-inference": {
+      "totalDependencies": 6,
+      "internalDependencies": 3,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/ml-versioning": {
+      "totalDependencies": 6,
+      "internalDependencies": 3,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/nextra-docs": {
+      "totalDependencies": 7,
+      "internalDependencies": 0,
+      "externalDependencies": 7,
+      "dependenciesExist": true
+    },
+    "@unrdf/observability": {
+      "totalDependencies": 6,
+      "internalDependencies": 0,
+      "externalDependencies": 6,
+      "dependenciesExist": true
+    },
+    "@unrdf/oxigraph": {
+      "totalDependencies": 2,
+      "internalDependencies": 0,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/project-engine": {
+      "totalDependencies": 2,
+      "internalDependencies": 2,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "@unrdf/rdf-graphql": {
+      "totalDependencies": 4,
+      "internalDependencies": 1,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/react": {
+      "totalDependencies": 5,
+      "internalDependencies": 2,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/receipts": {
+      "totalDependencies": 6,
+      "internalDependencies": 4,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/semantic-search": {
+      "totalDependencies": 4,
+      "internalDependencies": 1,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/serverless": {
+      "totalDependencies": 6,
+      "internalDependencies": 2,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/streaming": {
+      "totalDependencies": 8,
+      "internalDependencies": 3,
+      "externalDependencies": 5,
+      "dependenciesExist": true
+    },
+    "@unrdf/test-utils": {
+      "totalDependencies": 3,
+      "internalDependencies": 1,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/v6-compat": {
+      "totalDependencies": 5,
+      "internalDependencies": 4,
+      "externalDependencies": 1,
+      "dependenciesExist": true
+    },
+    "@unrdf/v6-core": {
+      "totalDependencies": 11,
+      "internalDependencies": 7,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/validation": {
+      "totalDependencies": 1,
+      "internalDependencies": 1,
+      "externalDependencies": 0,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl": {
+      "totalDependencies": 10,
+      "internalDependencies": 3,
+      "externalDependencies": 7,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-ai": {
+      "totalDependencies": 4,
+      "internalDependencies": 0,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-api": {
+      "totalDependencies": 8,
+      "internalDependencies": 2,
+      "externalDependencies": 6,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-durable": {
+      "totalDependencies": 4,
+      "internalDependencies": 2,
+      "externalDependencies": 2,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-kafka": {
+      "totalDependencies": 4,
+      "internalDependencies": 1,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-langchain": {
+      "totalDependencies": 7,
+      "internalDependencies": 3,
+      "externalDependencies": 4,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-observability": {
+      "totalDependencies": 6,
+      "internalDependencies": 1,
+      "externalDependencies": 5,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-queue": {
+      "totalDependencies": 5,
+      "internalDependencies": 2,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-realtime": {
+      "totalDependencies": 4,
+      "internalDependencies": 1,
+      "externalDependencies": 3,
+      "dependenciesExist": true
+    },
+    "@unrdf/yawl-viz": {
+      "totalDependencies": 8,
+      "internalDependencies": 1,
+      "externalDependencies": 7,
+      "dependenciesExist": true
+    }
+  }
+}

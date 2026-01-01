@@ -1,0 +1,23 @@
+{
+  "generated": "2026-01-01T03:10:46.464Z",
+  "total": 57,
+  "tiers": {
+    "essential": 7,
+    "extended": 8,
+    "optional": 42
+  },
+  "versions": {
+    "5.0.1": 19,
+    "1.0.0": 28,
+    "6.0.0-alpha.1": 1,
+    "0.1.0": 2,
+    "6.0.0": 2,
+    "5.1.0": 1,
+    "5.0.0": 2,
+    "6.0.0-rc.1": 2
+  },
+  "dependencies": {
+    "internal": 20,
+    "external": 106
+  }
+}
