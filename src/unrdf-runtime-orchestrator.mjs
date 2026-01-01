@@ -2,6 +2,8 @@ import { getPackageSystem } from './unrdf-package-system.mjs';
 import { getHealthMonitor } from './unrdf-package-health-monitor.mjs';
 import { getModuleFederation } from './unrdf-module-federation.mjs';
 import { getPackageOptimizer } from './unrdf-package-optimizer.mjs';
+import { VerificationState } from './unrdf-verification-engine.mjs';
+import { getCoherenceRepair } from './unrdf-coherence-repair.mjs';
 
 export class UnrdfRuntimeOrchestrator {
   constructor() {
@@ -9,6 +11,8 @@ export class UnrdfRuntimeOrchestrator {
     this.healthMonitor = null;
     this.moduleFederation = null;
     this.optimizer = null;
+    this.verificationState = null;
+    this.coherenceRepair = null;
     this.state = {
       initialized: false,
       running: false,
@@ -28,6 +32,20 @@ export class UnrdfRuntimeOrchestrator {
       this.packageSystem,
       this.moduleFederation,
       this.healthMonitor
+    );
+
+    this.verificationState = new VerificationState(
+      this.packageSystem,
+      this.moduleFederation,
+      this.healthMonitor,
+      this.optimizer
+    );
+
+    this.coherenceRepair = await getCoherenceRepair(
+      this.verificationState,
+      this.packageSystem,
+      this.moduleFederation,
+      this.optimizer
     );
 
     this.state.initialized = true;
@@ -249,6 +267,76 @@ export class UnrdfRuntimeOrchestrator {
     });
 
     return diagnostics;
+  }
+
+  async checkCoherence() {
+    if (!this.state.initialized) await this.initialize();
+
+    const report = await this.verificationState.generateCoherenceReport();
+
+    this._recordOperation('checkCoherence', {
+      success: true,
+      stateConsistency: report.coherence.stateConsistency,
+      contradictions: report.coherence.contradictionCount,
+      failureModes: report.coherence.failureModeCount,
+      canContinue: this.verificationState.canContinue(),
+      atFixedPoint: this.verificationState.hasReachedFixedPoint(),
+    });
+
+    return report;
+  }
+
+  getVerificationState() {
+    return this.verificationState;
+  }
+
+  async getDetailedStatus() {
+    if (!this.state.initialized) await this.initialize();
+
+    const baseStatus = await this.getSystemStatus();
+    const coherence = await this.checkCoherence();
+
+    return {
+      ...baseStatus,
+      coherence: {
+        stateConsistency: coherence.coherence.stateConsistency,
+        contradictions: coherence.coherence.contradictionCount,
+        failureModes: coherence.coherence.failureModeCount,
+        limitationsAcknowledged: coherence.coherence.limitationAcknowledgement,
+        canContinue: this.verificationState.canContinue(),
+        atFixedPoint: this.verificationState.hasReachedFixedPoint(),
+      },
+    };
+  }
+
+  async runRepairCycle(maxAttempts = 5) {
+    if (!this.state.initialized) await this.initialize();
+
+    try {
+      const results = await this.coherenceRepair.runRepairCycle(maxAttempts);
+
+      this._recordOperation('runRepairCycle', {
+        success: true,
+        repairsAttempted: results.repairsAttempted,
+        repairsSucceeded: results.repairsSucceeded,
+        contradictionsResolved: results.contradictionsResolved,
+      });
+
+      return results;
+    } catch (error) {
+      this._recordOperation('runRepairCycle', { success: false, error: error.message });
+      throw error;
+    }
+  }
+
+  getRepairStatus() {
+    if (!this.coherenceRepair) return null;
+    return this.coherenceRepair.getRepairStats();
+  }
+
+  getRepairHistory() {
+    if (!this.coherenceRepair) return null;
+    return this.coherenceRepair.getRepairHistory();
   }
 
   _recordOperation(name, details) {
