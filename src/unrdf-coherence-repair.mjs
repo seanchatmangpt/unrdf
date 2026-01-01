@@ -4,6 +4,8 @@
  * @description Autonomous system that observes contradictions from VerificationState and applies repairs
  */
 
+import CoherenceLearningSystem from './unrdf-coherence-learning.mjs';
+
 export class CoherenceRepairEngine {
   constructor(verificationState, packageSystem, moduleFederation, optimizer) {
     this.verificationState = verificationState;
@@ -14,6 +16,7 @@ export class CoherenceRepairEngine {
     this.repairs = [];
     this.repairHistory = [];
     this.learningPatterns = new Map();
+    this.learningSystem = new CoherenceLearningSystem();
     this.maxRepairs = 100;
   }
 
@@ -100,18 +103,31 @@ export class CoherenceRepairEngine {
     // Score each issue by impact and difficulty
     const scored = [];
     for (const issue of repairableIssues) {
-      for (const option of issue.options) {
-        const score = this._scoreRepairOption(issue.contradiction, option);
+      // Record contradiction in learning system
+      this.learningSystem.recordContradiction(issue.contradiction);
+
+      // Use learning system to rank repair options
+      const ranked = this.learningSystem.rankRepairOptions(issue.contradiction, issue.options);
+
+      for (const ranked_item of ranked) {
+        const basicScore = this._scoreRepairOption(issue.contradiction, ranked_item.option);
+        const learningScore = ranked_item.score;
+
+        // Blend basic scoring with learning-based ranking
+        const finalScore = basicScore.priority * 0.4 + learningScore * 100 * 0.6;
+
         scored.push({
           issue,
-          option,
-          score,
+          option: ranked_item.option,
+          prediction: ranked_item.prediction,
+          score: finalScore,
+          basicScore,
         });
       }
     }
 
-    // Sort by score (lowest risk, highest impact)
-    scored.sort((a, b) => a.score.priority - b.score.priority);
+    // Sort by score (lowest risk, highest impact, best learned outcome)
+    scored.sort((a, b) => a.score - b.score);
 
     if (scored.length === 0) return { success: false, reason: 'No valid repair options' };
 
@@ -164,7 +180,8 @@ export class CoherenceRepairEngine {
       };
     }
 
-    const { option, issue, score } = repair;
+    const { option, score, prediction } = repair;
+    const issue = repair.issue || {};
     const repairRecord = {
       timestamp: Date.now(),
       type: option.type,
@@ -205,9 +222,19 @@ export class CoherenceRepairEngine {
       // Learn from this repair
       this._learnRepairPattern(option.type, result.success);
 
+      // Record in learning system for future predictions
+      const verification = await this.verifyRepairEffectiveness(repairRecord);
+      this.learningSystem.recordRepairAttempt(
+        issue.contradiction,
+        option,
+        result,
+        verification
+      );
+
       return {
         success: result.success,
         repair: repairRecord,
+        verification,
       };
     } catch (error) {
       repairRecord.result = { success: false, error: error.message };
@@ -403,11 +430,16 @@ export class CoherenceRepairEngine {
     }));
   }
 
+  getLearningState() {
+    return this.learningSystem.export();
+  }
+
   export() {
     return {
       repairs: this.repairs,
       stats: this.getRepairStats(),
       history: this.getRepairHistory(),
+      learning: this.getLearningState(),
       timestamp: Date.now(),
     };
   }
