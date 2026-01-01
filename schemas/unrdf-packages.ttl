@@ -1,0 +1,359 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix unrdf: <https://unrdf.io/ns/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ============================================================================
+# UNRDF Package Ontology
+# ============================================================================
+# Describes the UNRDF monorepo structure, package relationships, and metadata
+# for code generation and documentation
+
+<https://unrdf.io/ns/> a owl:Ontology ;
+    rdfs:label "UNRDF Package Ontology" ;
+    rdfs:comment "Defines packages, tiers, capabilities, and dependencies in the UNRDF platform" ;
+    owl:versionInfo "1.0.0" ;
+    rdfs:seeAlso <https://unrdf.io/docs/> .
+
+# ============================================================================
+# Classes
+# ============================================================================
+
+unrdf:Package a owl:Class ;
+    rdfs:label "Package" ;
+    rdfs:comment "A published npm package in the UNRDF monorepo" .
+
+unrdf:PackageTier a owl:Class ;
+    rdfs:label "Package Tier" ;
+    rdfs:comment "Classification of packages by criticality and use frequency" .
+
+unrdf:Capability a owl:Class ;
+    rdfs:label "Capability" ;
+    rdfs:comment "A feature or service provided by a package" .
+
+unrdf:Documentation a owl:Class ;
+    rdfs:label "Documentation" ;
+    rdfs:comment "Documentation artifact for a package or capability" .
+
+# ============================================================================
+# Properties
+# ============================================================================
+
+unrdf:packageName a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "package name" ;
+    rdfs:comment "The npm package name (e.g., @unrdf/core)" .
+
+unrdf:packagePath a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "package path" ;
+    rdfs:comment "Relative path in monorepo (e.g., packages/core)" .
+
+unrdf:version a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "version" ;
+    rdfs:comment "Semantic version of package" .
+
+unrdf:description a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "description" ;
+    rdfs:comment "Short description of package purpose" .
+
+unrdf:tier a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range unrdf:PackageTier ;
+    rdfs:label "tier" ;
+    rdfs:comment "Package classification (essential, extended, optional)" .
+
+unrdf:hasCapability a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range unrdf:Capability ;
+    rdfs:label "has capability" ;
+    rdfs:comment "Capability provided by this package" .
+
+unrdf:dependsOn a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range unrdf:Package ;
+    rdfs:label "depends on" ;
+    rdfs:comment "Package dependency relationship" .
+
+unrdf:externalDependency a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "external dependency" ;
+    rdfs:comment "External npm package dependency" .
+
+unrdf:mainExport a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "main export" ;
+    rdfs:comment "Primary export function or class" .
+
+unrdf:testCoverage a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "test coverage" ;
+    rdfs:comment "Test coverage percentage (0-100)" .
+
+unrdf:minNodeVersion a rdf:Property ;
+    rdfs:domain unrdf:Package ;
+    rdfs:range xsd:string ;
+    rdfs:label "minimum Node.js version" ;
+    rdfs:comment "Minimum required Node.js version (e.g., 18.0.0)" .
+
+# ============================================================================
+# Instances - Essential Tier (7 packages)
+# ============================================================================
+
+unrdf:CorePackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/core" ;
+    unrdf:packagePath "packages/core" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "RDF Graph Operations, SPARQL, Foundational Substrate" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createKnowledgeSubstrateCore" ;
+    unrdf:testCoverage 95.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:externalDependency "oxigraph" ;
+    unrdf:externalDependency "n3" ;
+    unrdf:externalDependency "zod" ;
+    unrdf:hasCapability unrdf:RDFParsing ;
+    unrdf:hasCapability unrdf:SPARQLQuerying ;
+    unrdf:hasCapability unrdf:TripleStore ;
+    rdfs:label "UNRDF Core" ;
+    rdfs:comment "Foundation layer providing RDF operations and SPARQL querying" .
+
+unrdf:OxigraphPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/oxigraph" ;
+    unrdf:packagePath "packages/oxigraph" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Oxigraph SPARQL engine binding (10-100x faster than N3)" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createStore" ;
+    unrdf:testCoverage 92.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:externalDependency "oxigraph" ;
+    unrdf:hasCapability unrdf:HighPerformanceSPARQL ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "UNRDF Oxigraph" ;
+    rdfs:comment "High-performance Rust-based SPARQL engine binding" .
+
+unrdf:KGC4DPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/kgc-4d" ;
+    unrdf:packagePath "packages/kgc-4d" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "KGC 4D Datum & Universe Freeze Engine" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createKGCEngine" ;
+    unrdf:testCoverage 88.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:hasCapability unrdf:TemporalEventSourcing ;
+    unrdf:hasCapability unrdf:DeterministicGeneration ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "KGC 4D Engine" ;
+    rdfs:comment "4-dimensional temporal event sourcing and knowledge freeze" .
+
+unrdf:YAWLPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/yawl" ;
+    unrdf:packagePath "packages/yawl" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Core YAWL workflow engine" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createWorkflow" ;
+    unrdf:testCoverage 90.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:hasCapability unrdf:WorkflowExecution ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "YAWL Workflow Engine" ;
+    rdfs:comment "Yet Another Workflow Language execution engine" .
+
+unrdf:HooksPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/hooks" ;
+    unrdf:packagePath "packages/hooks" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Policy Definition and Execution Framework" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "defineHook" ;
+    unrdf:testCoverage 93.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:hasCapability unrdf:PolicyFramework ;
+    unrdf:hasCapability unrdf:EventHandling ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "UNRDF Hooks" ;
+    rdfs:comment "Hooks system for policy definition and autonomous execution" .
+
+unrdf:StreamingPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/streaming" ;
+    unrdf:packagePath "packages/streaming" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Change Feeds and Real-time Synchronization" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createChangeStream" ;
+    unrdf:testCoverage 87.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:hasCapability unrdf:ChangeFeeds ;
+    unrdf:hasCapability unrdf:RealTimeSynchronization ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "UNRDF Streaming" ;
+    rdfs:comment "Real-time change feeds and synchronization" .
+
+unrdf:V6CorePackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/v6-core" ;
+    unrdf:packagePath "packages/v6-core" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "ΔGate control plane, unified receipts, delta contracts" ;
+    unrdf:tier unrdf:EssentialTier ;
+    unrdf:mainExport "createV6ControlPlane" ;
+    unrdf:testCoverage 96.0 ;
+    unrdf:minNodeVersion "18.0.0" ;
+    unrdf:hasCapability unrdf:DeltaContracts ;
+    unrdf:hasCapability unrdf:UnifiedReceipts ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "V6 Core Control Plane" ;
+    rdfs:comment "V6 architecture control plane with delta contracts and unified receipts" .
+
+# ============================================================================
+# Extended Tier (8 packages)
+# ============================================================================
+
+unrdf:FederationPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/federation" ;
+    unrdf:packagePath "packages/federation" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Distributed RDF Query with RAFT Consensus" ;
+    unrdf:tier unrdf:ExtendedTier ;
+    unrdf:mainExport "createFederatedStore" ;
+    unrdf:testCoverage 85.0 ;
+    unrdf:hasCapability unrdf:DistributedQuerying ;
+    unrdf:hasCapability unrdf:RaftConsensus ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    unrdf:dependsOn unrdf:StreamingPackage ;
+    rdfs:label "UNRDF Federation" ;
+    rdfs:comment "Distributed RDF querying with consensus protocols" .
+
+unrdf:KnowledgeEnginePackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/knowledge-engine" ;
+    unrdf:packagePath "packages/knowledge-engine" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Rule Engine, Inference, Pattern Matching" ;
+    unrdf:tier unrdf:ExtendedTier ;
+    unrdf:mainExport "createRuleEngine" ;
+    unrdf:testCoverage 89.0 ;
+    unrdf:hasCapability unrdf:RuleInference ;
+    unrdf:hasCapability unrdf:PatternMatching ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "Knowledge Engine" ;
+    rdfs:comment "Rule-based inference and pattern matching engine" .
+
+unrdf:CLIPackage a unrdf:Package ;
+    unrdf:packageName "@unrdf/cli" ;
+    unrdf:packagePath "packages/cli" ;
+    unrdf:version "6.0.0-rc.1" ;
+    unrdf:description "Command-line Tools for Graph Operations" ;
+    unrdf:tier unrdf:ExtendedTier ;
+    unrdf:mainExport "createCLI" ;
+    unrdf:testCoverage 82.0 ;
+    unrdf:hasCapability unrdf:CommandLineInterface ;
+    unrdf:dependsOn unrdf:CorePackage ;
+    rdfs:label "UNRDF CLI" ;
+    rdfs:comment "Command-line interface for RDF operations" .
+
+# ============================================================================
+# Capabilities
+# ============================================================================
+
+unrdf:RDFParsing a unrdf:Capability ;
+    rdfs:label "RDF Parsing" ;
+    rdfs:comment "Parse RDF data in various formats" .
+
+unrdf:SPARQLQuerying a unrdf:Capability ;
+    rdfs:label "SPARQL Querying" ;
+    rdfs:comment "Execute SPARQL queries on RDF data" .
+
+unrdf:TripleStore a unrdf:Capability ;
+    rdfs:label "Triple Store" ;
+    rdfs:comment "Store and manage RDF triples" .
+
+unrdf:HighPerformanceSPARQL a unrdf:Capability ;
+    rdfs:label "High-Performance SPARQL" ;
+    rdfs:comment "Rust-based high-performance SPARQL execution" .
+
+unrdf:TemporalEventSourcing a unrdf:Capability ;
+    rdfs:label "Temporal Event Sourcing" ;
+    rdfs:comment "4D temporal event sourcing" .
+
+unrdf:DeterministicGeneration a unrdf:Capability ;
+    rdfs:label "Deterministic Code Generation" ;
+    rdfs:comment "Generate deterministic code from ontologies" .
+
+unrdf:WorkflowExecution a unrdf:Capability ;
+    rdfs:label "Workflow Execution" ;
+    rdfs:comment "Execute complex workflows with state management" .
+
+unrdf:PolicyFramework a unrdf:Capability ;
+    rdfs:label "Policy Framework" ;
+    rdfs:comment "Define and execute policies" .
+
+unrdf:EventHandling a unrdf:Capability ;
+    rdfs:label "Event Handling" ;
+    rdfs:comment "Handle and react to events" .
+
+unrdf:ChangeFeeds a unrdf:Capability ;
+    rdfs:label "Change Feeds" ;
+    rdfs:comment "Stream changes in RDF data" .
+
+unrdf:RealTimeSynchronization a unrdf:Capability ;
+    rdfs:label "Real-Time Synchronization" ;
+    rdfs:comment "Synchronize data in real-time" .
+
+unrdf:DeltaContracts a unrdf:Capability ;
+    rdfs:label "Delta Contracts" ;
+    rdfs:comment "Define and enforce delta contracts" .
+
+unrdf:UnifiedReceipts a unrdf:Capability ;
+    rdfs:label "Unified Receipts" ;
+    rdfs:comment "Unified receipt generation and verification" .
+
+unrdf:DistributedQuerying a unrdf:Capability ;
+    rdfs:label "Distributed Querying" ;
+    rdfs:comment "Query across distributed RDF sources" .
+
+unrdf:RaftConsensus a unrdf:Capability ;
+    rdfs:label "Raft Consensus" ;
+    rdfs:comment "Raft consensus protocol implementation" .
+
+unrdf:RuleInference a unrdf:Capability ;
+    rdfs:label "Rule-Based Inference" ;
+    rdfs:comment "Infer new triples using rules" .
+
+unrdf:PatternMatching a unrdf:Capability ;
+    rdfs:label "Pattern Matching" ;
+    rdfs:comment "Match patterns in RDF graphs" .
+
+unrdf:CommandLineInterface a unrdf:Capability ;
+    rdfs:label "Command-Line Interface" ;
+    rdfs:comment "CLI for RDF operations" .
+
+# ============================================================================
+# Tiers
+# ============================================================================
+
+unrdf:EssentialTier a unrdf:PackageTier ;
+    rdfs:label "Essential Tier" ;
+    rdfs:comment "Core packages always needed" ;
+    unrdf:tierLevel 1 .
+
+unrdf:ExtendedTier a unrdf:PackageTier ;
+    rdfs:label "Extended Tier" ;
+    rdfs:comment "Common use case packages" ;
+    unrdf:tierLevel 2 .
+
+unrdf:OptionalTier a unrdf:PackageTier ;
+    rdfs:label "Optional Tier" ;
+    rdfs:comment "Performance and specialized packages" ;
+    unrdf:tierLevel 3 .

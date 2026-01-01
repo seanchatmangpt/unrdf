@@ -1,0 +1,74 @@
+# {{ package.label }}
+
+{% if package.description -%}
+{{ package.description }}
+{%- endif %}
+
+## Overview
+
+This package is part of the **UNRDF v6.0.0** knowledge graph platform.
+
+- **Package**: `{{ package.name }}`
+- **Path**: `{{ package.path }}`
+- **Version**: {{ package.version }}
+- **Tier**: {{ package.tier }}
+- **Test Coverage**: {{ package.coverage }}%
+- **Min Node.js**: {{ package.nodeVersion }}
+
+## Installation
+
+```bash
+npm install {{ package.name }}
+# or
+pnpm add {{ package.name }}
+```
+
+## Quick Start
+
+```javascript
+import { {{ package.mainExport }} } from '{{ package.name }}';
+
+// Initialize
+const instance = {{ package.mainExport }}();
+```
+
+## Features
+
+{% for capability in package.capabilities -%}
+- **{{ capability.label }}** - {{ capability.comment }}
+{% endfor %}
+
+## Dependencies
+
+### Internal Dependencies
+{% for dep in package.dependencies -%}
+- `{{ dep.name }}`
+{% endfor %}
+
+### External Dependencies
+{% for ext in package.externalDeps -%}
+- `{{ ext }}`
+{% endfor %}
+
+## API Reference
+
+See the [API Documentation](./API.md) for complete reference.
+
+## Examples
+
+See the [examples](./examples) directory for usage examples.
+
+## Testing
+
+```bash
+pnpm test
+pnpm test:coverage
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+
+## License
+
+MIT

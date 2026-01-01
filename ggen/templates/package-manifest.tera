@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "generated": "{{ generation_date }}",
+    "version": "1.0.0",
+    "source": "schemas/unrdf-packages.ttl"
+  },
+  "package": {
+    "name": "{{ package.name }}",
+    "path": "{{ package.path }}",
+    "version": "{{ package.version }}",
+    "description": "{{ package.description }}",
+    "tier": "{{ package.tier }}",
+    "label": "{{ package.label }}"
+  },
+  "quality": {
+    "testCoverage": {{ package.testCoverage }},
+    "minNodeVersion": "{{ package.minNodeVersion }}"
+  },
+  "capabilities": [
+    {% for capability in package.capabilities %}
+    {
+      "id": "{{ capability.id }}",
+      "label": "{{ capability.label }}",
+      "description": "{{ capability.description }}"
+    }{{ not loop.last ? "," : "" }}
+    {% endfor %}
+  ],
+  "dependencies": {
+    "internal": [
+      {% for dep in package.dependencies %}
+      {
+        "name": "{{ dep.name }}",
+        "version": "{{ dep.version }}"
+      }{{ not loop.last ? "," : "" }}
+      {% endfor %}
+    ],
+    "external": [
+      {% for ext in package.externalDependencies %}
+      "{{ ext }}"{{ not loop.last ? "," : "" }}
+      {% endfor %}
+    ]
+  },
+  "exports": {
+    "main": "{{ package.mainExport }}"
+  }
+}

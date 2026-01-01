@@ -1,0 +1,134 @@
+/**
+ * Generated TypeScript interfaces from UNRDF ontology
+ * Source: schemas/unrdf-packages.ttl
+ * Generated: {{ generation_date }}
+ *
+ * This file is auto-generated. Manual edits will be lost.
+ */
+
+// ============================================================================
+// Package Interfaces
+// ============================================================================
+
+/**
+ * Represents an UNRDF package
+ */
+export interface IPackage {
+  /** npm package name (e.g., @unrdf/core) */
+  name: string;
+
+  /** Relative path in monorepo */
+  path: string;
+
+  /** Semantic version */
+  version: string;
+
+  /** Short description */
+  description: string;
+
+  /** Package tier (essential, extended, optional) */
+  tier: 'essential' | 'extended' | 'optional';
+
+  /** Primary export function or class */
+  mainExport: string;
+
+  /** Test coverage percentage */
+  testCoverage: number;
+
+  /** Minimum required Node.js version */
+  minNodeVersion: string;
+
+  /** Capabilities provided */
+  capabilities: ICapability[];
+
+  /** Internal package dependencies */
+  dependencies: IPackage[];
+
+  /** External npm dependencies */
+  externalDependencies: string[];
+}
+
+/**
+ * Represents a capability provided by a package
+ */
+export interface ICapability {
+  /** Unique identifier */
+  id: string;
+
+  /** Human-readable label */
+  label: string;
+
+  /** Detailed description */
+  description: string;
+}
+
+/**
+ * Represents a package tier
+ */
+export interface IPackageTier {
+  /** Tier name */
+  name: 'essential' | 'extended' | 'optional';
+
+  /** Tier level (1=critical, 2=common, 3=optional) */
+  level: number;
+
+  /** Description */
+  description: string;
+}
+
+/**
+ * UNRDF platform configuration
+ */
+export interface IUnrdfConfig {
+  /** Platform name */
+  name: string;
+
+  /** Platform version */
+  version: string;
+
+  /** All packages */
+  packages: IPackage[];
+
+  /** Essential packages (always required) */
+  essentialPackages: IPackage[];
+
+  /** Extended packages (common use cases) */
+  extendedPackages: IPackage[];
+
+  /** Optional packages */
+  optionalPackages: IPackage[];
+}
+
+// ============================================================================
+// Factory Functions
+// ============================================================================
+
+/**
+ * Create a package instance
+ */
+export function createPackage(data: Partial<IPackage>): IPackage {
+  return {
+    name: data.name || '',
+    path: data.path || '',
+    version: data.version || '0.0.0',
+    description: data.description || '',
+    tier: data.tier || 'optional',
+    mainExport: data.mainExport || '',
+    testCoverage: data.testCoverage || 0,
+    minNodeVersion: data.minNodeVersion || '18.0.0',
+    capabilities: data.capabilities || [],
+    dependencies: data.dependencies || [],
+    externalDependencies: data.externalDependencies || [],
+  };
+}
+
+/**
+ * Create a capability instance
+ */
+export function createCapability(data: Partial<ICapability>): ICapability {
+  return {
+    id: data.id || '',
+    label: data.label || '',
+    description: data.description || '',
+  };
+}
