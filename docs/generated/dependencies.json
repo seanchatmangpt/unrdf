@@ -1,0 +1,673 @@
+{
+  "@unrdf/atomvm": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/streaming"
+    ],
+    "dependents": []
+  },
+  "@unrdf/blockchain": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/yawl"
+    ],
+    "dependents": [
+      "@unrdf/fusion",
+      "@unrdf/v6-core"
+    ]
+  },
+  "@unrdf/caching": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/fusion"
+    ]
+  },
+  "@unrdf/cli": {
+    "version": "5.0.1",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/decision-fabric",
+      "@unrdf/federation",
+      "@unrdf/hooks",
+      "@unrdf/streaming"
+    ],
+    "dependents": []
+  },
+  "@unrdf/collab": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/composables": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/streaming"
+    ],
+    "dependents": []
+  },
+  "@unrdf/consensus": {
+    "version": "1.0.0",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/federation"
+    ],
+    "dependents": []
+  },
+  "@unrdf/core": {
+    "version": "6.0.0-alpha.1",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/atomvm",
+      "@unrdf/cli",
+      "@unrdf/collab",
+      "@unrdf/composables",
+      "@unrdf/dark-matter",
+      "@unrdf/decision-fabric",
+      "@unrdf/engine-gateway",
+      "@unrdf/federation",
+      "@unrdf/hooks",
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-multiverse",
+      "@unrdf/kgc-substrate",
+      "@unrdf/kgc-swarm",
+      "@unrdf/kgc-tools",
+      "@unrdf/kgn",
+      "@unrdf/knowledge-engine",
+      "@unrdf/ml-inference",
+      "@unrdf/ml-versioning",
+      "@unrdf/project-engine",
+      "@unrdf/react",
+      "@unrdf/receipts",
+      "@unrdf/serverless",
+      "@unrdf/streaming",
+      "@unrdf/v6-compat",
+      "@unrdf/yawl-kafka"
+    ]
+  },
+  "@unrdf/dark-matter": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/decision-fabric": {
+    "version": "0.1.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/knowledge-engine",
+      "@unrdf/oxigraph",
+      "@unrdf/streaming",
+      "@unrdf/validation"
+    ],
+    "dependents": [
+      "@unrdf/cli"
+    ]
+  },
+  "@unrdf/diataxis-kit": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "docs": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/domain": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/engine-gateway": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/federation": {
+    "version": "6.0.0",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/hooks"
+    ],
+    "dependents": [
+      "@unrdf/cli",
+      "@unrdf/consensus",
+      "@unrdf/integration-tests"
+    ]
+  },
+  "@unrdf/fusion": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/blockchain",
+      "@unrdf/hooks",
+      "@unrdf/caching",
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  },
+  "@unrdf/graph-analytics": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/hooks": {
+    "version": "5.0.1",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/cli",
+      "@unrdf/decision-fabric",
+      "@unrdf/federation",
+      "@unrdf/fusion",
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-probe",
+      "@unrdf/streaming",
+      "@unrdf/v6-core",
+      "@unrdf/yawl"
+    ]
+  },
+  "@unrdf/integration-tests": {
+    "version": "5.1.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl",
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-multiverse",
+      "@unrdf/federation",
+      "@unrdf/streaming",
+      "@unrdf/oxigraph",
+      "@unrdf/receipts",
+      "@unrdf/core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/kgc-4d": {
+    "version": "5.0.1",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/blockchain",
+      "@unrdf/decision-fabric",
+      "@unrdf/fusion",
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-multiverse",
+      "@unrdf/kgc-probe",
+      "@unrdf/kgc-substrate",
+      "@unrdf/kgc-swarm",
+      "@unrdf/kgc-tools",
+      "@unrdf/ml-versioning",
+      "@unrdf/receipts",
+      "@unrdf/v6-compat",
+      "@unrdf/v6-core",
+      "@unrdf/yawl",
+      "@unrdf/yawl-api",
+      "@unrdf/yawl-durable",
+      "@unrdf/yawl-langchain",
+      "@unrdf/yawl-queue"
+    ]
+  },
+  "@unrdf/kgc-claude": {
+    "version": "5.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/yawl",
+      "@unrdf/hooks"
+    ],
+    "dependents": []
+  },
+  "@unrdf/kgc-cli": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": [
+      "@unrdf/v6-core"
+    ]
+  },
+  "@unrdf/kgc-docs": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/kgc-multiverse": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/receipts"
+    ],
+    "dependents": [
+      "@unrdf/integration-tests",
+      "@unrdf/receipts"
+    ]
+  },
+  "@unrdf/kgc-probe": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/kgc-substrate",
+      "@unrdf/kgc-4d",
+      "@unrdf/v6-core",
+      "@unrdf/oxigraph",
+      "@unrdf/hooks",
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  },
+  "@unrdf/kgc-runtime": {
+    "version": "1.0.0",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/kgc-tools"
+    ]
+  },
+  "@unrdf/kgc-substrate": {
+    "version": "1.0.0",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/core"
+    ],
+    "dependents": [
+      "@unrdf/kgc-probe",
+      "@unrdf/kgc-swarm",
+      "@unrdf/v6-core"
+    ]
+  },
+  "@unrdf/kgc-swarm": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-substrate",
+      "@unrdf/kgn",
+      "@unrdf/knowledge-engine",
+      "@unrdf/kgc-4d"
+    ],
+    "dependents": []
+  },
+  "@unrdf/kgc-tools": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-runtime",
+      "@unrdf/core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/kgn": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/test-utils"
+    ],
+    "dependents": [
+      "@unrdf/kgc-swarm"
+    ]
+  },
+  "@unrdf/knowledge-engine": {
+    "version": "5.0.1",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/streaming"
+    ],
+    "dependents": [
+      "@unrdf/decision-fabric",
+      "@unrdf/kgc-swarm",
+      "@unrdf/project-engine",
+      "@unrdf/validation"
+    ]
+  },
+  "@unrdf/ml-inference": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/streaming",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/ml-versioning": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/nextra-docs": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/observability": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/oxigraph": {
+    "version": "5.0.1",
+    "tier": "essential",
+    "dependencies": [],
+    "dependents": [
+      "@unrdf/atomvm",
+      "@unrdf/caching",
+      "@unrdf/core",
+      "@unrdf/dark-matter",
+      "@unrdf/decision-fabric",
+      "@unrdf/engine-gateway",
+      "@unrdf/fusion",
+      "@unrdf/hooks",
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-multiverse",
+      "@unrdf/kgc-probe",
+      "@unrdf/kgc-runtime",
+      "@unrdf/kgc-substrate",
+      "@unrdf/kgc-swarm",
+      "@unrdf/knowledge-engine",
+      "@unrdf/ml-inference",
+      "@unrdf/ml-versioning",
+      "@unrdf/rdf-graphql",
+      "@unrdf/react",
+      "@unrdf/receipts",
+      "@unrdf/semantic-search",
+      "@unrdf/serverless",
+      "@unrdf/streaming",
+      "@unrdf/test-utils",
+      "@unrdf/v6-compat",
+      "@unrdf/v6-core",
+      "@unrdf/yawl",
+      "@unrdf/yawl-langchain"
+    ]
+  },
+  "@unrdf/project-engine": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/knowledge-engine"
+    ],
+    "dependents": []
+  },
+  "@unrdf/rdf-graphql": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/react": {
+    "version": "5.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/receipts": {
+    "version": "1.0.0",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph",
+      "@unrdf/kgc-4d",
+      "@unrdf/kgc-multiverse"
+    ],
+    "dependents": [
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-multiverse"
+    ]
+  },
+  "@unrdf/semantic-search": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/serverless": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": []
+  },
+  "@unrdf/streaming": {
+    "version": "5.0.1",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/hooks",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/atomvm",
+      "@unrdf/cli",
+      "@unrdf/composables",
+      "@unrdf/decision-fabric",
+      "@unrdf/integration-tests",
+      "@unrdf/knowledge-engine",
+      "@unrdf/ml-inference"
+    ]
+  },
+  "@unrdf/test-utils": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/kgn"
+    ]
+  },
+  "@unrdf/v6-compat": {
+    "version": "6.0.0-rc.1",
+    "tier": "extended",
+    "dependencies": [
+      "@unrdf/core",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/v6-core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/v6-core": {
+    "version": "6.0.0-rc.1",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/kgc-substrate",
+      "@unrdf/yawl",
+      "@unrdf/kgc-cli",
+      "@unrdf/kgc-4d",
+      "@unrdf/hooks",
+      "@unrdf/oxigraph",
+      "@unrdf/blockchain"
+    ],
+    "dependents": [
+      "@unrdf/kgc-probe",
+      "@unrdf/v6-compat"
+    ]
+  },
+  "@unrdf/validation": {
+    "version": "5.0.1",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/knowledge-engine"
+    ],
+    "dependents": [
+      "@unrdf/decision-fabric"
+    ]
+  },
+  "@unrdf/yawl": {
+    "version": "6.0.0",
+    "tier": "essential",
+    "dependencies": [
+      "@unrdf/hooks",
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph"
+    ],
+    "dependents": [
+      "@unrdf/blockchain",
+      "@unrdf/fusion",
+      "@unrdf/integration-tests",
+      "@unrdf/kgc-claude",
+      "@unrdf/kgc-probe",
+      "@unrdf/v6-core",
+      "@unrdf/yawl-api",
+      "@unrdf/yawl-durable",
+      "@unrdf/yawl-langchain",
+      "@unrdf/yawl-observability",
+      "@unrdf/yawl-queue",
+      "@unrdf/yawl-realtime",
+      "@unrdf/yawl-viz"
+    ]
+  },
+  "@unrdf/yawl-ai": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [],
+    "dependents": []
+  },
+  "@unrdf/yawl-api": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl",
+      "@unrdf/kgc-4d"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-durable": {
+    "version": "0.1.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl",
+      "@unrdf/kgc-4d"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-kafka": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/core"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-langchain": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/kgc-4d",
+      "@unrdf/oxigraph",
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-observability": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-queue": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl",
+      "@unrdf/kgc-4d"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-realtime": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  },
+  "@unrdf/yawl-viz": {
+    "version": "1.0.0",
+    "tier": "optional",
+    "dependencies": [
+      "@unrdf/yawl"
+    ],
+    "dependents": []
+  }
+}

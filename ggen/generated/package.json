@@ -1,0 +1,13 @@
+{
+  "name": "@unrdf/generated",
+  "version": "6.0.0-rc.1",
+  "description": "Auto-generated package registry and utilities",
+  "type": "module",
+  "main": "index.js",
+  "module": "index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./cjs": "./index.js",
+    "./registry": "./registry.mjs"
+  }
+}
