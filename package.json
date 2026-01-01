@@ -83,7 +83,11 @@
     "validate:readme": "node scripts/readme-validation/run-all.mjs",
     "validate:readme:examples": "node scripts/readme-validation/extract-examples.mjs",
     "validate:readme:links": "node scripts/readme-validation/check-links.mjs",
-    "validate:readme:api": "node scripts/readme-validation/validate-api-coverage.mjs"
+    "validate:readme:api": "node scripts/readme-validation/validate-api-coverage.mjs",
+    "ggen:discover": "node scripts/ggen-package-discovery.mjs",
+    "ggen:generate": "node scripts/ggen-generate-integration.mjs",
+    "ggen:sync": "npm run ggen:discover && npm run ggen:generate",
+    "ggen:verify": "test -f src/generated/package-exports.mjs && test $(ls docs/packages/*.md 2>/dev/null | wc -l) -ge 50 && echo '✅ ggen output verified'"
   },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",
