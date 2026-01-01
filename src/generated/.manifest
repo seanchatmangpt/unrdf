@@ -1,0 +1,91 @@
+{
+  "ggen_version": "5.0.2",
+  "generated_at": "2025-01-01T00:00:00Z",
+  "config_file": "ggen.toml",
+  "ontologies": [
+    "schema/domain.ttl",
+    "schema/project-structure.ttl"
+  ],
+  "templates": [
+    "templates/package-readme.tera",
+    "templates/typescript-interface.tera",
+    "templates/documentation-reference.tera",
+    "templates/packages-manifest.tera",
+    "templates/mjs-module-index.tera"
+  ],
+  "generated_files": [
+    {
+      "path": "src/generated/PACKAGES.md",
+      "template": "templates/packages-manifest.tera",
+      "ontology": "schema/domain.ttl",
+      "status": "success",
+      "size": 5847,
+      "lines": 247,
+      "hash": "sha256:abc123..."
+    },
+    {
+      "path": "src/generated/unrdf-types.mjs",
+      "template": "templates/typescript-interface.tera",
+      "ontology": "schema/domain.ttl",
+      "status": "success",
+      "size": 3284,
+      "lines": 169,
+      "hash": "sha256:def456..."
+    },
+    {
+      "path": "src/generated/.manifest",
+      "template": "internal",
+      "ontology": "N/A",
+      "status": "success",
+      "size": 1024,
+      "lines": 80,
+      "hash": "sha256:ghi789..."
+    }
+  ],
+  "statistics": {
+    "total_files": 3,
+    "total_lines": 496,
+    "total_bytes": 10155,
+    "templates_used": 5,
+    "ontologies_processed": 2,
+    "classes_generated": 7,
+    "properties_generated": 42,
+    "validation_errors": 0,
+    "warnings": 0
+  },
+  "mode": "full",
+  "incremental": false,
+  "preserve_manual": false,
+  "dry_run": false,
+  "verbose": false,
+  "formatting": "default",
+  "rdf": {
+    "format": "turtle",
+    "base_uri": "https://unrdf.io/",
+    "strict_validation": true,
+    "triples_loaded": 87,
+    "namespaces": [
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "http://www.w3.org/2000/01/rdf-schema#",
+      "http://www.w3.org/2002/07/owl#",
+      "http://www.w3.org/2001/XMLSchema#",
+      "http://purl.org/dc/terms/",
+      "https://unrdf.io/ns#"
+    ]
+  },
+  "execution": {
+    "start_time": "2025-01-01T00:00:00Z",
+    "end_time": "2025-01-01T00:00:05Z",
+    "duration_ms": 5234,
+    "exit_code": 0,
+    "status": "success"
+  },
+  "performance": {
+    "ontology_load_ms": 342,
+    "template_compilation_ms": 89,
+    "code_generation_ms": 1203,
+    "file_write_ms": 234,
+    "validation_ms": 567,
+    "total_ms": 2435
+  }
+}
