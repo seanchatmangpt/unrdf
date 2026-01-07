@@ -1,0 +1,79 @@
+{
+  "name": "Receipt Merkle Chain Validator (RMCV)",
+  "description": "Deterministic, cryptographically-verified validator for immutable receipt chains using Merkle tree proofs. Demonstrates holographic precipitation of A = μ(O) with all 5 axioms: SCALE (Merkle batching), REVERSIBILITY (fraud is irreversible), DETERMINISM (pure crypto), COORDINATION (commutative verification), MINIMALITY (15-bit spec).",
+  "domain": "Cryptographic Verification & Batch Anchoring",
+  "statement": "Build a production-grade receipt chain validator that verifies Merkle proofs, detects fraud, proves correctness via cryptographic receipts, operates at deterministic performance with zero ambiguity.",
+  "features": [
+    {
+      "id": "rmcv-001",
+      "name": "Receipt Batch Ingestion",
+      "value": 100,
+      "cost": 10,
+      "description": "Accept array of YAWL receipt objects, normalize to canonical form (JSON hash), deterministically"
+    },
+    {
+      "id": "rmcv-002",
+      "name": "Merkle Tree Construction",
+      "value": 95,
+      "cost": 15,
+      "description": "Build SHA256 Merkle tree from receipt hashes; expose root for anchoring; deterministic algorithm, reproducible"
+    },
+    {
+      "id": "rmcv-003",
+      "name": "Proof Verification",
+      "value": 100,
+      "cost": 5,
+      "description": "Pure function: verify(receipt, proof, root) → boolean; no side effects, no randomness, pure crypto"
+    },
+    {
+      "id": "rmcv-004",
+      "name": "Fraud Detection",
+      "value": 90,
+      "cost": 8,
+      "description": "Detect first invalid proof in chain; mark as unrecoverable; once detected, status is permanent (reversibility axiom)"
+    },
+    {
+      "id": "rmcv-005",
+      "name": "Batch Idempotence",
+      "value": 85,
+      "cost": 5,
+      "description": "verify(batch, proofs, root) = verify(batch, proofs, root); commutative; order-independent verification"
+    },
+    {
+      "id": "rmcv-006",
+      "name": "Cryptographic Receipt",
+      "value": 80,
+      "cost": 3,
+      "description": "Generate deterministic proof receipt: hash(input || verifications || output); sign with commitment proof"
+    },
+    {
+      "id": "rmcv-007",
+      "name": "Performance at Scale",
+      "value": 75,
+      "cost": 12,
+      "description": "Verify 1M receipt batches/sec on commodity hardware; Merkle tree O(log N) operations, throughput bounded by I/O not CPU"
+    },
+    {
+      "id": "rmcv-008",
+      "name": "Static Correctness Proof",
+      "value": 70,
+      "cost": 8,
+      "description": "Provide informal proof that verify() is correct: no edge cases, no NULL dereferences, Merkle properties preserved"
+    }
+  ],
+  "axioms": {
+    "SCALE": "Merkle batching enables 10^3 ops/sec → 10^9 verifications/sec; human cognition ~10^3 per sec",
+    "REVERSIBILITY": "Fraudulent receipt cannot be unverified; once detected, status is immutable; action is irreversible",
+    "DETERMINISM": "Pure cryptographic functions; no randomness; same input → same output always; formal verification possible",
+    "COORDINATION": "Merkle tree structure is commutative (order of verification doesn't matter); idempotent (verify twice = verify once)",
+    "MINIMALITY": "5 core functions: ingest, buildTree, verify, detectFraud, receipt; 3 types: bytes, tree, bool; 15-bit protocol"
+  },
+  "constraints": {
+    "no_external_api_calls": "All operations must be pure; no network, no filesystem, no randomness",
+    "deterministic_output": "hash(input) must be reproducible; same receipt batch must produce same root always",
+    "immutable_log": "Once fraud detected, status is permanent and cannot be reversed",
+    "batch_performance": "Must handle 1M receipts/sec minimum; Merkle algorithm is O(log N) proof verification"
+  },
+  "H_spec_target": 16,
+  "H_spec_justification": "5 axioms + 5 core functions + 3 data types + 2 states (valid/fraudulent) = ~15 bits information content"
+}
