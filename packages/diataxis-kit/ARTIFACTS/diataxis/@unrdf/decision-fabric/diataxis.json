@@ -1,0 +1,147 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.7,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "d12d9e248e6f8d14e069443a06351ee8fe8395b45f7d058e565558f0eeaad6d7",
+    "readmeHeadings": [
+      "Overview",
+      "Key Capabilities (2030 Vision)",
+      "Installation",
+      "Quick Start",
+      "Architecture",
+      "Big Bang 80/20 Methodology",
+      "Socratic AI Reasoning",
+      "Performance Targets",
+      "Integration with Existing Packages",
+      "Examples",
+      "Testing",
+      "Contributing",
+      "License",
+      "References"
+    ]
+  },
+  "explanation": {
+    "architecture": "The Decision Fabric implements the 2030 vision for eclipsing \"Database as Canvas\" whiteboards through mathematical inevitability.",
+    "concepts": [
+      "rdf",
+      "knowledge-graph",
+      "decision-support",
+      "hyperdimensional",
+      "mu-operators"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-decision-fabric-explanation",
+    "source": [
+      "keywords",
+      "readme"
+    ],
+    "title": "Understanding @unrdf/decision-fabric",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/decision-fabric",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/decision-fabric with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/decision-fabric",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-decision-fabric-reference",
+    "items": [
+      {
+        "description": "Export: ./engine",
+        "example": "import from \"./src/engine.mjs\"",
+        "name": "./engine",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./operators",
+        "example": "import from \"./src/operators.mjs\"",
+        "name": "./operators",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./pareto",
+        "example": "import from \"./src/pareto-analyzer.mjs\"",
+        "name": "./pareto",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./socratic",
+        "example": "import from \"./src/socratic-agent.mjs\"",
+        "name": "./socratic",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/decision-fabric",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/decision-fabric Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @unrdf/decision-fabric in your project",
+      "id": "tutorial-getting-started-with-unrdf-decision-fabric",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/decision-fabric"
+    }
+  ],
+  "version": "0.1.0"
+}

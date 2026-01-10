@@ -2,7 +2,7 @@
 title: "Understanding @unrdf/v6-core"
 type: "explanation"
 packageName: "@unrdf/v6-core"
-version: "6.0.0-alpha.1"
+version: "6.0.0-rc.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "f6322a655e6e8cf30e79d2c4fe035a4c0e1421d0b84ae0847f2b38e417bca525"

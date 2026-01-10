@@ -1,8 +1,8 @@
 {
   "confidence": {
     "explanation": 0.7,
-    "howtos": 0.25,
-    "reference": 0.5,
+    "howtos": 0.75,
+    "reference": 0.8,
     "tutorials": 0.7
   },
   "evidence": {
@@ -48,6 +48,21 @@
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
     {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/v6-core",
+      "title": "Handle Errors"
+    },
+    {
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
@@ -64,19 +79,19 @@
       "title": "Integrate with unrdf"
     },
     {
-      "confidenceScore": 0.4,
-      "context": "When encountering issues during usage",
-      "id": "howto-troubleshoot-common-issues",
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
       "source": [
-        "inferred"
+        "bin"
       ],
       "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
       ],
-      "task": "Resolve common problems and errors",
-      "title": "Troubleshoot Common Issues"
+      "task": "Execute v6-cli command-line interface",
+      "title": "Use the CLI"
     }
   ],
   "packageName": "@unrdf/v6-core",
@@ -191,10 +206,17 @@
         "example": "import from \"./src/index.mjs\"",
         "name": "@unrdf/v6-core",
         "type": "export"
+      },
+      {
+        "description": "CLI command: v6-cli",
+        "example": "v6-cli [options]",
+        "name": "v6-cli",
+        "type": "bin"
       }
     ],
     "source": [
-      "exports"
+      "exports",
+      "bin"
     ],
     "title": "@unrdf/v6-core Reference"
   },

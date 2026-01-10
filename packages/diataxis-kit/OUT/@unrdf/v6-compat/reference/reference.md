@@ -2,7 +2,7 @@
 title: "@unrdf/v6-compat Reference"
 type: "reference"
 packageName: "@unrdf/v6-compat"
-version: "6.0.0-alpha.1"
+version: "6.0.0-rc.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "960588e3bb105ccfb55d3bf848634cf9b92c5a68424ce55b4fa485dca6b016aa"

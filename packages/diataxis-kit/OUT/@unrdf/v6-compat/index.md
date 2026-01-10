@@ -1,7 +1,7 @@
 ---
 title: "@unrdf/v6-compat Documentation"
 packageName: "@unrdf/v6-compat"
-version: "6.0.0-alpha.1"
+version: "6.0.0-rc.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 
@@ -24,8 +24,8 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
+- [Handle Errors](how-to/howto-howto-handle-errors.md)
 - [Integrate with unrdf](how-to/howto-howto-integrate-with-unrdf.md)
-- [Troubleshoot Common Issues](how-to/howto-howto-troubleshoot-common-issues.md)
 
 ### Reference
 

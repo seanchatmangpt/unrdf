@@ -1,7 +1,7 @@
 ---
 title: "@unrdf/v6-core Documentation"
 packageName: "@unrdf/v6-core"
-version: "6.0.0-alpha.1"
+version: "6.0.0-rc.1"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 
@@ -12,7 +12,7 @@ Generated documentation using the Diátaxis framework.
 ## Quick Stats
 
 - **Tutorials**: 1
-- **How-To Guides**: 2
+- **How-To Guides**: 3
 - **Reference**: Available
 - **Explanation**: Available
 
@@ -24,8 +24,9 @@ Generated documentation using the Diátaxis framework.
 
 ### How-To Guides
 
+- [Handle Errors](how-to/howto-howto-handle-errors.md)
 - [Integrate with unrdf](how-to/howto-howto-integrate-with-unrdf.md)
-- [Troubleshoot Common Issues](how-to/howto-howto-troubleshoot-common-issues.md)
+- [Use the CLI](how-to/howto-howto-use-the-cli.md)
 
 ### Reference
 
