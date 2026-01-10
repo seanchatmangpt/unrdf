@@ -1,0 +1,37 @@
+JTBD,Component,Metric Name,Unit,Target Value,P50 Target,P95 Target,P99 Target,Alert Threshold,Severity on Miss,Monthly Compliance %,Last Updated,Owner
+JTBD-1,Receipt Generation,Receipt Latency,milliseconds,45 max,5,15,45,>60ms,CRITICAL,99.95,2026-01-10,daemon-team
+JTBD-1,Receipt Generation,Success Rate,percent,99.95,99.95,99.95,99.95,<99.9%,CRITICAL,99.95,2026-01-10,daemon-team
+JTBD-1,Receipt Generation,Hash Collision Rate,per million,0,0,0,0,>0.1,CRITICAL,100,2026-01-10,daemon-team
+JTBD-2,Verification,Verification Latency,seconds,120 max,5,45,120,>150s,CRITICAL,99.9,2026-01-10,daemon-team
+JTBD-2,Verification,Success Rate,percent,99.9,99.9,99.9,99.9,<99.5%,CRITICAL,99.9,2026-01-10,daemon-team
+JTBD-2,Verification,Ledger Sync Time,seconds,30,15,30,45,>60s,WARNING,99.5,2026-01-10,daemon-team
+JTBD-2,Verification,False Positive Rate,percent,0.001,0,0,0,>0.01%,CRITICAL,99.999,2026-01-10,daemon-team
+JTBD-2,Verification,False Negative Rate,percent,0.001,0,0,0,>0.01%,CRITICAL,99.999,2026-01-10,daemon-team
+JTBD-3,Failover,Failure Detection Time,seconds,5,1,5,10,>15s,WARNING,99,2026-01-10,daemon-team
+JTBD-3,Failover,Leader Election Time,seconds,10,5,10,20,>20s,WARNING,98.5,2026-01-10,daemon-team
+JTBD-3,Failover,State Sync Time,seconds,30,15,30,60,>60s,WARNING,99.2,2026-01-10,daemon-team
+JTBD-3,Failover,Full Recovery Time,seconds,45,30,45,60,>60s,CRITICAL,98.5,2026-01-10,daemon-team
+JTBD-3,Failover,Recovery Success Rate,percent,99.99,99.99,99.99,99.99,<99.95%,CRITICAL,98.5,2026-01-10,daemon-team
+JTBD-3,Failover,Data Loss,bytes,0,0,0,0,>0,CRITICAL,100,2026-01-10,daemon-team
+JTBD-3,Failover,Operation Continuity,percent,99.95,99.95,99.95,99.95,<99.9%,CRITICAL,99.2,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Health Check Response,milliseconds,50,10,50,100,>100ms,WARNING,99.8,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Metrics Query Latency,seconds,3,1,2,5,>5s,WARNING,99.5,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Full Report Generation,seconds,30,15,20,60,>60s,CRITICAL,99.8,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Log Aggregation Time,seconds,45,30,40,90,>90s,WARNING,99.2,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Completeness,percent,100,100,100,100,<99%,CRITICAL,99.8,2026-01-10,daemon-team
+JTBD-4,Diagnostics,Accuracy,percent,99.9,99.9,99.9,99.9,<99%,CRITICAL,99.6,2026-01-10,daemon-team
+JTBD-5,Throughput,Sustained Throughput,ops/second,33,25,33,40,<25,CRITICAL,85,2026-01-10,daemon-team
+JTBD-5,Throughput,P99 Queue Wait,milliseconds,500,100,300,500,>1000ms,WARNING,88,2026-01-10,daemon-team
+JTBD-5,Throughput,Concurrent Operations,operations,1000,800,900,1000,<800,WARNING,90,2026-01-10,daemon-team
+JTBD-5,Throughput,Throughput Stability,percent variation,5,2,3,5,>10%,WARNING,85,2026-01-10,daemon-team
+JTBD-5,Throughput,Queue Depth @ 100% Load,operations,500,300,400,500,>800,WARNING,88,2026-01-10,daemon-team
+JTBD-5,Throughput,Failure Rate Under Load,percent,0.5,0.1,0.3,0.5,>1%,CRITICAL,92,2026-01-10,daemon-team
+JTBD-6,Deployment,Build Time,seconds,30,20,25,45,>45s,WARNING,95,2026-01-10,devops-team
+JTBD-6,Deployment,Test Execution,seconds,60,45,60,90,>90s,WARNING,92,2026-01-10,devops-team
+JTBD-6,Deployment,Artifact Publishing,seconds,30,20,25,45,>45s,WARNING,96,2026-01-10,devops-team
+JTBD-6,Deployment,Release Notes Gen,seconds,15,10,12,30,>30s,WARNING,98,2026-01-10,devops-team
+JTBD-6,Deployment,Rollout Time,seconds,120,60,90,180,>180s,WARNING,90,2026-01-10,devops-team
+JTBD-6,Deployment,Smoke Test Execution,seconds,30,20,25,45,>45s,WARNING,94,2026-01-10,devops-team
+JTBD-6,Deployment,Full Deployment Time,seconds,285,240,300,360,>480s,CRITICAL,88,2026-01-10,devops-team
+JTBD-6,Deployment,Success Rate,percent,99.5,99.5,99.5,99.5,<99%,WARNING,97,2026-01-10,devops-team
+JTBD-6,Deployment,Rollback Time,seconds,60,30,60,120,>180s,CRITICAL,91,2026-01-10,devops-team

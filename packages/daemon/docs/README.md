@@ -100,6 +100,18 @@ Read this to understand the "why" behind design decisions.
 - Performance characteristics
 - When to use daemon
 
+### 5. **[E2E JTBD Test Guide](./e2e-jtbd-guide.md)** - For Operators & Auditors
+**NEW**: Comprehensive guide for non-engineering stakeholders.
+- What are E2E JTBD tests and why they matter
+- The 6 customer jobs (JTBDs) and how they're tested
+- How to read and interpret test results
+- How to verify receipts independently (auditors)
+- When to run tests and how to troubleshoot failures
+- Independent verification without daemon access
+
+**Audience**: Operations teams, compliance officers, auditors  
+**Purpose**: Understand how to use the test suite for verification and compliance
+
 ## Examples
 
 Three complete, runnable examples included:
@@ -224,13 +236,26 @@ React to change feeds and entity mutations.
 
 See [Explanation](./explanation.md) for integration patterns.
 
+## For Operations & Compliance Teams
+
+If you're an **operator, compliance officer, or auditor**, start with the **[E2E JTBD Test Guide](./e2e-jtbd-guide.md)**. This guide is specifically written for non-engineering stakeholders and explains:
+
+- What jobs the daemon is hired to do (JTBDs)
+- How to verify the daemon is doing those jobs correctly
+- How to interpret test results and receipts
+- How to perform independent verification (auditors)
+- When to involve engineers vs when to read receipts
+
+**No coding knowledge required** — the guide is written for business and compliance audiences.
+
 ## Next Steps
 
 1. **New to daemons?** → Start with [Tutorial](./tutorial.md)
-2. **Need to do something specific?** → Use [How-To Guides](./how-to.md)
-3. **Looking up an API?** → Check [API Reference](./reference.md)
-4. **Want to understand the design?** → Read [Explanation](./explanation.md)
-5. **Ready to build?** → Run the [Examples](../examples/)
+2. **Operations/Compliance role?** → Read [E2E JTBD Test Guide](./e2e-jtbd-guide.md)
+3. **Need to do something specific?** → Use [How-To Guides](./how-to.md)
+4. **Looking up an API?** → Check [API Reference](./reference.md)
+5. **Want to understand the design?** → Read [Explanation](./explanation.md)
+6. **Ready to build?** → Run the [Examples](../examples/)
 
 ## Files
 
@@ -241,7 +266,8 @@ packages/daemon/
 │   ├── tutorial.md (learning path)
 │   ├── how-to.md (task solutions)
 │   ├── reference.md (API docs)
-│   └── explanation.md (deep dives)
+│   ├── explanation.md (deep dives)
+│   └── e2e-jtbd-guide.md (ops/compliance guide)
 ├── examples/
 │   ├── 01-basic-daemon.mjs
 │   ├── 02-distributed-cluster.mjs
