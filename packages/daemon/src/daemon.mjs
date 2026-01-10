@@ -108,7 +108,7 @@ export class Daemon extends EventEmitter {
     this.isRunning = true;
     this.startTime = Date.now();
     this.logger.info(`[Daemon ${this.nodeId}] Started`);
-    this.emit('daemon:started', { nodeId: this.nodeId, timestamp: new Date() });
+    this._safeEmit('daemon:started', { nodeId: this.nodeId, timestamp: new Date() });
   }
 
   /**
@@ -122,7 +122,7 @@ export class Daemon extends EventEmitter {
 
     this.isRunning = false;
     this.logger.info(`[Daemon ${this.nodeId}] Stopped`);
-    this.emit('daemon:stopped', { nodeId: this.nodeId, timestamp: new Date() });
+    this._safeEmit('daemon:stopped', { nodeId: this.nodeId, timestamp: new Date() });
   }
 
   /**
@@ -147,7 +147,7 @@ export class Daemon extends EventEmitter {
 
     this.operationQueue.push(operation.id);
     this.logger.debug(`[Daemon ${this.nodeId}] Operation scheduled: ${operation.id}`);
-    this.emit('operation:enqueued', {
+    this._safeEmit('operation:enqueued', {
       operationId: operation.id,
       name: operation.name,
       timestamp: new Date(),
@@ -204,7 +204,7 @@ export class Daemon extends EventEmitter {
     this.activeCount += 1;
 
     try {
-      this.emit('operation:started', {
+      this._safeEmit('operation:started', {
         operationId,
         name: operation.name,
         timestamp: new Date(),
@@ -222,7 +222,7 @@ export class Daemon extends EventEmitter {
       };
 
       this.completedOperations.set(operationId, completed);
-      this.emit('operation:success', {
+      this._safeEmit('operation:success', {
         operationId,
         name: operation.name,
         duration,
@@ -241,7 +241,7 @@ export class Daemon extends EventEmitter {
       };
 
       this.completedOperations.set(operationId, completed);
-      this.emit('operation:failure', {
+      this._safeEmit('operation:failure', {
         operationId,
         name: operation.name,
         error: error.message,
@@ -252,6 +252,20 @@ export class Daemon extends EventEmitter {
       throw error;
     } finally {
       this.activeCount -= 1;
+    }
+  }
+
+  /**
+   * Safely emit an event, catching any listener errors
+   * @private
+   * @param {string} event - Event name
+   * @param {*} data - Event data
+   */
+  _safeEmit(event, data) {
+    try {
+      this.emit(event, data);
+    } catch (error) {
+      this.logger.warn(`[Daemon ${this.nodeId}] Listener error for event '${event}': ${error.message}`);
     }
   }
 
