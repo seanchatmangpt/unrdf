@@ -1,0 +1,93 @@
+{
+  "timestamp": "2026-01-11T01:34:26.623Z",
+  "summary": {
+    "totalBenchmarks": 2,
+    "totalRegressions": 0,
+    "criticalRegressions": 0,
+    "warningRegressions": 0,
+    "passRate": "100.00"
+  },
+  "regressions": [],
+  "results": {
+    "operation-scheduling-latency": {
+      "benchmark": {
+        "name": "operation-scheduling-latency",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.0227,
+        "min": 0.0033,
+        "max": 0.6275,
+        "stdDev": 0.0508,
+        "variance": 223.49,
+        "sampleCount": 200,
+        "runs": 2,
+        "operationsPerRun": 100,
+        "timestamp": "2026-01-11T01:34:26.605Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "operation-scheduling-latency",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.15,
+        "min": 0.08,
+        "max": 0.45,
+        "stdDev": 0.08,
+        "variance": 52.5,
+        "description": "Latency to schedule an operation into daemon",
+        "target": "< 0.5ms p99",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.1513",
+        "percentChange": "-84.87%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 0.15,
+        "currentValue": 0.0227
+      }
+    },
+    "operation-scheduling-throughput": {
+      "benchmark": {
+        "name": "operation-scheduling-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 179175.4141,
+        "min": 154522.9406,
+        "max": 203827.8877,
+        "stdDev": 24652.4736,
+        "variance": 13.76,
+        "sampleCount": 2,
+        "runs": 2,
+        "concurrentOps": 1000,
+        "timestamp": "2026-01-11T01:34:26.619Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "operation-scheduling-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 8500,
+        "min": 7200,
+        "max": 9800,
+        "stdDev": 950,
+        "variance": 11.2,
+        "description": "Throughput of scheduling concurrent operations",
+        "target": "> 8000 ops/sec",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "21.0795",
+        "percentChange": "2007.95%",
+        "threshold": "0.8500",
+        "severity": "none",
+        "baselineValue": 8500,
+        "currentValue": 179175.4141
+      }
+    }
+  }
+}

@@ -8,7 +8,8 @@
     ".": "./src/index.mjs",
     "./daemon": "./src/daemon.mjs",
     "./schemas": "./src/schemas.mjs",
-    "./trigger-evaluator": "./src/trigger-evaluator.mjs"
+    "./trigger-evaluator": "./src/trigger-evaluator.mjs",
+    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -26,6 +27,8 @@
     "task-queue"
   ],
   "dependencies": {
+    "@unrdf/kgc-4d": "workspace:*",
+    "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {

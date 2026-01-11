@@ -68,6 +68,8 @@ Comprehensive Zod validation for all daemon entities.
 
 Choose your learning path based on your goal:
 
+### Learning Path (New to @unrdf/daemon)
+
 ### 1. **[Tutorial](./tutorial.md)** - Learning-Oriented (15-20 min)
 Start here if you're new to @unrdf/daemon.
 - Hello World daemon
@@ -100,8 +102,46 @@ Read this to understand the "why" behind design decisions.
 - Performance characteristics
 - When to use daemon
 
-### 5. **[E2E JTBD Test Guide](./e2e-jtbd-guide.md)** - For Operators & Auditors
-**NEW**: Comprehensive guide for non-engineering stakeholders.
+### Operations & Compliance Path
+
+### 5. **[Production Deployment Guide](./production-deployment.md)** - Infrastructure & DevOps (45-60 min)
+**New**: Complete guide for deploying daemon to production.
+- Infrastructure requirements (CPU, RAM, storage)
+- Docker image optimization and build
+- Kubernetes StatefulSet deployment with HA
+- Raft cluster configuration and bootstrap
+- SSL/TLS setup for secure operation
+- Backup and disaster recovery procedures
+- Capacity planning and scaling
+
+**Audience**: DevOps engineers, platform engineers, SREs
+
+### 6. **[Operational Runbooks](./operational-runbooks.md)** - Day-2 Operations (30-40 min)
+**New**: Step-by-step procedures for operating daemon in production.
+- Day-1 setup checklist (4 hours)
+- Day-2 health monitoring and alerting
+- Common failure scenarios and recovery
+- Performance tuning under different loads
+- Version upgrade procedures (blue-green, rolling)
+- Rollback procedures
+- Operations quick reference and escalation
+
+**Audience**: SREs, on-call engineers, operations teams
+
+### 7. **[Security Hardening Guide](./security-hardening.md)** - Production Security (20-30 min)
+**New**: Security best practices and hardening procedures.
+- API authentication (Bearer tokens, mTLS, API keys)
+- Authorization (RBAC) configuration
+- Audit logging and centralization
+- Network segmentation (zero-trust)
+- Secrets management and rotation
+- CVE monitoring and patching
+- Security checklists for compliance
+
+**Audience**: Security engineers, platform engineers, compliance teams
+
+### 8. **[E2E JTBD Test Guide](./e2e-jtbd-guide.md)** - For Operators & Auditors
+Comprehensive guide for non-engineering stakeholders.
 - What are E2E JTBD tests and why they matter
 - The 6 customer jobs (JTBDs) and how they're tested
 - How to read and interpret test results
@@ -109,7 +149,7 @@ Read this to understand the "why" behind design decisions.
 - When to run tests and how to troubleshoot failures
 - Independent verification without daemon access
 
-**Audience**: Operations teams, compliance officers, auditors  
+**Audience**: Operations teams, compliance officers, auditors
 **Purpose**: Understand how to use the test suite for verification and compliance
 
 ## Examples
@@ -250,24 +290,44 @@ If you're an **operator, compliance officer, or auditor**, start with the **[E2E
 
 ## Next Steps
 
+### For Developers
 1. **New to daemons?** → Start with [Tutorial](./tutorial.md)
-2. **Operations/Compliance role?** → Read [E2E JTBD Test Guide](./e2e-jtbd-guide.md)
-3. **Need to do something specific?** → Use [How-To Guides](./how-to.md)
-4. **Looking up an API?** → Check [API Reference](./reference.md)
-5. **Want to understand the design?** → Read [Explanation](./explanation.md)
-6. **Ready to build?** → Run the [Examples](../examples/)
+2. **Need to do something specific?** → Use [How-To Guides](./how-to.md)
+3. **Looking up an API?** → Check [API Reference](./reference.md)
+4. **Want to understand the design?** → Read [Explanation](./explanation.md)
+5. **Ready to build?** → Run the [Examples](../examples/)
+
+### For Operations & DevOps
+1. **Deploying to production?** → Read [Production Deployment Guide](./production-deployment.md)
+   - Infrastructure sizing, Kubernetes manifests, Raft configuration
+   - Backup/DR, capacity planning
+
+2. **Running the daemon?** → Read [Operational Runbooks](./operational-runbooks.md)
+   - Day-1 setup, Day-2 monitoring, failure recovery
+   - Performance tuning, upgrades, rollbacks
+
+3. **Securing the daemon?** → Read [Security Hardening Guide](./security-hardening.md)
+   - Authentication, authorization, audit logging
+   - Network security, secrets, CVE monitoring
+
+4. **Compliance/Auditing?** → Read [E2E JTBD Test Guide](./e2e-jtbd-guide.md)
+   - Verify daemon is doing its job correctly
+   - Interpret test results and receipts
 
 ## Files
 
 ```
 packages/daemon/
 ├── docs/
-│   ├── README.md (this file)
+│   ├── README.md (this file - documentation index)
 │   ├── tutorial.md (learning path)
 │   ├── how-to.md (task solutions)
 │   ├── reference.md (API docs)
 │   ├── explanation.md (deep dives)
-│   └── e2e-jtbd-guide.md (ops/compliance guide)
+│   ├── e2e-jtbd-guide.md (ops/compliance guide)
+│   ├── production-deployment.md (infrastructure & kubernetes)
+│   ├── operational-runbooks.md (day-2 operations)
+│   └── security-hardening.md (security & compliance)
 ├── examples/
 │   ├── 01-basic-daemon.mjs
 │   ├── 02-distributed-cluster.mjs

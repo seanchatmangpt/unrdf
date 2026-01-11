@@ -2,6 +2,7 @@
  * @file Daemon Streaming Integration - Reactive Change Feed Subscriptions
  * @module @unrdf/daemon/integrations/streaming
  * @description Integrates daemon with streaming change feeds for reactive operation execution
+ * with backpressure handling, debouncing/throttling, and memory efficiency
  */
 
 import { z } from 'zod';
@@ -10,12 +11,16 @@ const ReactiveTriggerSchema = z.object({
   pattern: z.union([z.string(), z.object({ type: z.enum(['add', 'remove', 'update']).optional(), subject: z.any().optional(), predicate: z.any().optional(), object: z.any().optional(), graph: z.any().optional() })]),
   operationId: z.string().min(1),
   metadata: z.record(z.any()).optional(),
-});
+}).passthrough();
 
 const StreamingConfigSchema = z.object({
   maxBackpressure: z.number().int().positive().default(1000),
+  maxQueueSize: z.number().int().positive().default(5000),
   batchSize: z.number().int().positive().default(100),
   drainThreshold: z.number().int().positive().default(500),
+  backpressureDrainMs: z.number().int().positive().default(100),
+  maxDrainWaitMs: z.number().int().positive().default(5000),
+  memoryWarningThresholdBytes: z.number().int().positive().default(52428800),
   logger: z.any().optional(),
 });
 
@@ -28,6 +33,7 @@ const ChangeEventSchema = z.object({
 
 /**
  * Manages reactive subscriptions and pattern matching for daemon operations
+ * with backpressure handling, debouncing, and memory tracking
  */
 export class ReactiveSubscriptionManager {
   /**
@@ -42,19 +48,32 @@ export class ReactiveSubscriptionManager {
     this.logger = validated.logger || console;
     this.triggers = new Map();
     this.activeCount = 0;
+    this.eventQueue = [];
+    this.subscriptions = new Map();
+    this.debounceTimers = new Map();
+    this.throttleTimestamps = new Map();
+    this.memoryUsage = 0;
+    this.totalProcessed = 0;
+    this.dropped = 0;
   }
 
   /**
    * Register a reactive trigger pattern
    * @param {string | Object} pattern - SPARQL query or event pattern
    * @param {string} operationId - Operation to execute on pattern match
-   * @param {Object} [metadata] - Optional trigger metadata
+   * @param {Object} [metadata] - Optional trigger metadata with debounce/throttle
    * @returns {string} Trigger ID
    */
   registerTrigger(pattern, operationId, metadata = {}) {
-    const trigger = ReactiveTriggerSchema.parse({ pattern, operationId, metadata });
+    const triggerData = { pattern, operationId, metadata };
+    const trigger = ReactiveTriggerSchema.parse(triggerData);
+
     const triggerId = `trigger_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    this.triggers.set(triggerId, trigger);
+    this.triggers.set(triggerId, {
+      ...trigger,
+      debounceMs: metadata.debounceMs || 0,
+      throttleMs: metadata.throttleMs || 0,
+    });
     this.logger.debug(`[ReactiveSubscriptionManager] Trigger registered: ${triggerId}`);
     return triggerId;
   }
@@ -67,6 +86,8 @@ export class ReactiveSubscriptionManager {
   unregisterTrigger(triggerId) {
     const removed = this.triggers.delete(triggerId);
     if (removed) {
+      this.debounceTimers.delete(triggerId);
+      this.throttleTimestamps.delete(triggerId);
       this.logger.debug(`[ReactiveSubscriptionManager] Trigger unregistered: ${triggerId}`);
     }
     return removed;
@@ -85,11 +106,89 @@ export class ReactiveSubscriptionManager {
     }
     if (pattern.type && pattern.type !== change.type) return false;
     const q = change.quad;
-    if (pattern.subject && q.subject?.value !== pattern.subject?.value) return false;
-    if (pattern.predicate && q.predicate?.value !== pattern.predicate?.value) return false;
-    if (pattern.object && q.object?.value !== pattern.object?.value) return false;
-    if (pattern.graph && q.graph?.value !== pattern.graph?.value) return false;
+    if (pattern.subject) {
+      const subjectValue = pattern.subject?.value !== undefined ? pattern.subject.value : pattern.subject;
+      const quadSubjectValue = q.subject?.value !== undefined ? q.subject?.value : q.subject;
+      if (quadSubjectValue !== subjectValue) return false;
+    }
+    if (pattern.predicate) {
+      const predicateValue = pattern.predicate?.value !== undefined ? pattern.predicate.value : pattern.predicate;
+      const quadPredicateValue = q.predicate?.value !== undefined ? q.predicate?.value : q.predicate;
+      if (quadPredicateValue !== predicateValue) return false;
+    }
+    if (pattern.object) {
+      const objectValue = pattern.object?.value !== undefined ? pattern.object.value : pattern.object;
+      const quadObjectValue = q.object?.value !== undefined ? q.object?.value : q.object;
+      if (quadObjectValue !== objectValue) return false;
+    }
+    if (pattern.graph) {
+      const graphValue = pattern.graph?.value !== undefined ? pattern.graph.value : pattern.graph;
+      const quadGraphValue = q.graph?.value !== undefined ? q.graph?.value : q.graph;
+      if (quadGraphValue !== graphValue) return false;
+    }
     return true;
+  }
+
+  /**
+   * Check if trigger should execute based on debounce/throttle settings
+   * @param {string} triggerId - Trigger ID
+   * @param {Object} trigger - Trigger configuration
+   * @returns {boolean} Whether trigger should execute now
+   * @private
+   */
+  shouldExecuteTrigger(triggerId, trigger) {
+    const now = Date.now();
+
+    if (trigger.throttleMs && trigger.throttleMs > 0) {
+      const lastExecution = this.throttleTimestamps.get(triggerId) || 0;
+      if (now - lastExecution < trigger.throttleMs) {
+        return false;
+      }
+      this.throttleTimestamps.set(triggerId, now);
+    }
+
+    return true;
+  }
+
+  /**
+   * Schedule debounced trigger execution
+   * @param {string} triggerId - Trigger ID
+   * @param {Array} operationIds - Operations to execute
+   * @param {Object} trigger - Trigger configuration
+   * @private
+   */
+  scheduleDebouncedExecution(triggerId, operationIds, trigger) {
+    if (this.debounceTimers.has(triggerId)) {
+      clearTimeout(this.debounceTimers.get(triggerId));
+    }
+
+    const timer = setTimeout(() => {
+      this.executeOperations(operationIds).catch(error => {
+        this.logger.error('[ReactiveSubscriptionManager] Error in debounced execution', { error });
+      });
+      this.debounceTimers.delete(triggerId);
+    }, trigger.debounceMs);
+
+    this.debounceTimers.set(triggerId, timer);
+  }
+
+  /**
+   * Execute operations with error handling
+   * @param {Array} operationIds - Operation IDs to execute
+   * @returns {Promise<Array>} Results from executed operations
+   * @private
+   */
+  async executeOperations(operationIds) {
+    const results = [];
+    for (const operationId of operationIds) {
+      try {
+        const result = await this.daemon.execute(operationId);
+        results.push({ operationId, status: 'success', result });
+      } catch (error) {
+        results.push({ operationId, status: 'error', error: error.message });
+      }
+    }
+    return results;
   }
 
   /**
@@ -100,11 +199,21 @@ export class ReactiveSubscriptionManager {
    */
   async handleChange(change) {
     const validated = ChangeEventSchema.parse(change);
+    this.totalProcessed += 1;
+
+    if (this.eventQueue.length >= this.config.maxQueueSize) {
+      this.dropped += 1;
+      this.logger.warn(`[ReactiveSubscriptionManager] Event queue full, dropping event (total dropped: ${this.dropped})`);
+      return [];
+    }
+
     const matched = [];
 
-    for (const [, trigger] of this.triggers) {
+    for (const [triggerId, trigger] of this.triggers) {
       if (this.matchesPattern(validated, trigger.pattern)) {
-        matched.push(trigger.operationId);
+        if (this.shouldExecuteTrigger(triggerId, trigger)) {
+          matched.push({ triggerId, trigger, operationId: trigger.operationId });
+        }
       }
     }
 
@@ -113,17 +222,21 @@ export class ReactiveSubscriptionManager {
     this.activeCount += 1;
     try {
       const results = [];
-      for (const operationId of matched) {
-        try {
-          const result = await this.daemon.execute(operationId);
-          results.push({ operationId, status: 'success', result });
-        } catch (error) {
-          results.push({ operationId, status: 'error', error: error.message });
+
+      for (const { triggerId, trigger, operationId } of matched) {
+        if (trigger.debounceMs && trigger.debounceMs > 0) {
+          this.scheduleDebouncedExecution(triggerId, [operationId], trigger);
+          results.push({ operationId, status: 'debounced' });
+        } else {
+          const opResults = await this.executeOperations([operationId]);
+          results.push(...opResults);
         }
       }
+
       if (this.activeCount >= this.config.drainThreshold) {
         await this.drain();
       }
+
       return results;
     } finally {
       this.activeCount -= 1;
@@ -137,18 +250,120 @@ export class ReactiveSubscriptionManager {
   async drain() {
     if (this.activeCount < this.config.maxBackpressure) return;
 
-    this.logger.warn(`[ReactiveSubscriptionManager] Backpressure threshold reached (${this.activeCount})`);
+    this.logger.warn(`[ReactiveSubscriptionManager] Backpressure threshold reached (${this.activeCount}/${this.config.maxBackpressure})`);
 
-    const maxWait = 5000;
     const startTime = Date.now();
 
     while (this.activeCount >= this.config.maxBackpressure) {
-      if (Date.now() - startTime > maxWait) {
+      if (Date.now() - startTime > this.config.maxDrainWaitMs) {
         this.logger.error('[ReactiveSubscriptionManager] Backpressure drain timeout');
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, this.config.backpressureDrainMs));
     }
+  }
+
+  /**
+   * Subscribe to a change feed with automatic cleanup tracking
+   * @param {Object} feed - Change feed to subscribe to
+   * @returns {Function} Unsubscribe function
+   */
+  subscribe(feed) {
+    if (!feed || typeof feed.subscribe !== 'function') {
+      throw new Error('Feed must have a subscribe method');
+    }
+
+    const handler = (change) => {
+      this.handleChange(change).catch(error => {
+        this.logger.error('[ReactiveSubscriptionManager] Error handling change', { error });
+      });
+    };
+
+    feed.subscribe(handler);
+
+    const subscriptionId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    this.subscriptions.set(subscriptionId, { feed, handler });
+    this.logger.debug(`[ReactiveSubscriptionManager] Subscription created: ${subscriptionId}`);
+
+    return () => this.unsubscribe(subscriptionId);
+  }
+
+  /**
+   * Unsubscribe from a change feed
+   * @param {string} subscriptionId - Subscription ID to remove
+   * @returns {boolean} Whether subscription was found and removed
+   */
+  unsubscribe(subscriptionId) {
+    const subscription = this.subscriptions.get(subscriptionId);
+    if (!subscription) return false;
+
+    try {
+      if (subscription.feed && typeof subscription.feed.unsubscribe === 'function') {
+        subscription.feed.unsubscribe(subscription.handler);
+      }
+    } catch (error) {
+      this.logger.warn(`[ReactiveSubscriptionManager] Error unsubscribing: ${error.message}`);
+    }
+
+    this.subscriptions.delete(subscriptionId);
+    this.logger.debug(`[ReactiveSubscriptionManager] Subscription removed: ${subscriptionId}`);
+    return true;
+  }
+
+  /**
+   * Cleanup all subscriptions and timers
+   * @returns {Promise<void>}
+   */
+  async cleanup() {
+    for (const subscriptionId of this.subscriptions.keys()) {
+      this.unsubscribe(subscriptionId);
+    }
+
+    for (const timer of this.debounceTimers.values()) {
+      clearTimeout(timer);
+    }
+
+    this.debounceTimers.clear();
+    this.throttleTimestamps.clear();
+    this.triggers.clear();
+
+    this.logger.info('[ReactiveSubscriptionManager] Cleanup complete');
+  }
+
+  /**
+   * Get memory usage statistics
+   * @returns {Object} Memory usage information
+   */
+  getMemoryStats() {
+    const estimatedMemory = JSON.stringify({
+      triggers: Array.from(this.triggers.values()),
+      subscriptions: this.subscriptions.size,
+      eventQueue: this.eventQueue.length,
+    }).length;
+
+    return {
+      estimatedMemoryBytes: estimatedMemory,
+      triggersCount: this.triggers.size,
+      subscriptionsCount: this.subscriptions.size,
+      eventQueueSize: this.eventQueue.length,
+      totalProcessed: this.totalProcessed,
+      droppedEvents: this.dropped,
+    };
+  }
+
+  /**
+   * Get statistics about trigger execution
+   * @returns {Object} Trigger statistics
+   */
+  getStats() {
+    return {
+      activeCount: this.activeCount,
+      triggersCount: this.triggers.size,
+      subscriptionsCount: this.subscriptions.size,
+      totalProcessed: this.totalProcessed,
+      droppedEvents: this.dropped,
+      memoryStats: this.getMemoryStats(),
+    };
   }
 
   /**
@@ -161,6 +376,8 @@ export class ReactiveSubscriptionManager {
       pattern: trigger.pattern,
       operationId: trigger.operationId,
       metadata: trigger.metadata,
+      debounceMs: trigger.debounceMs,
+      throttleMs: trigger.throttleMs,
     }));
   }
 }
@@ -172,7 +389,7 @@ export class ReactiveSubscriptionManager {
  * @param {Object} [config] - Configuration options
  * @returns {ReactiveSubscriptionManager} Subscription manager instance
  * @example
- * const daemon = new UnrdfDaemon({ id: 'worker-1' });
+ * const daemon = new Daemon({ daemonId: uuid(), name: 'worker-1' });
  * const feed = createChangeFeed();
  * const manager = subscribeToChangeFeeds(daemon, feed);
  */
@@ -181,11 +398,7 @@ export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
   const manager = new ReactiveSubscriptionManager(daemon, config);
 
   for (const feed of feedArray) {
-    feed.subscribe(change => {
-      manager.handleChange(change).catch(error => {
-        manager.logger.error('[subscribeToChangeFeeds] Error handling change', { error });
-      });
-    });
+    manager.subscribe(feed);
   }
 
   return manager;
@@ -219,10 +432,10 @@ export function registerReactiveTrigger(daemon, pattern, operationId, metadata =
  * @param {Object} [config] - Configuration options
  * @returns {ReactiveSubscriptionManager} Subscription manager instance
  * @example
- * import { UnrdfDaemon } from '../daemon.mjs';
+ * import { Daemon } from '../daemon.mjs';
  * import { createChangeFeed } from '@unrdf/streaming/streaming/change-feed.mjs';
  *
- * const daemon = new UnrdfDaemon({ id: 'reactive-worker-1' });
+ * const daemon = new Daemon({ daemonId: uuid(), name: 'reactive-worker-1' });
  * const feed = createChangeFeed();
  * const manager = createDaemonFromChangeFeeds(daemon, feed);
  * daemon.schedule({ id: 'sync', handler: () => syncData() });

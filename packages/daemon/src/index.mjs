@@ -29,3 +29,11 @@ export {
 } from './integrations/distributed.mjs';
 
 export { DistributedTaskDistributor } from './integrations/task-distributor.mjs';
+
+export {
+  DaemonDeltaGate,
+  DeltaContractSchema,
+  DeltaOperationSchema,
+  DeltaReceiptSchema,
+  HealthStatusSchema,
+} from './integrations/v6-deltagate.mjs';
