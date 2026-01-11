@@ -1,0 +1,146 @@
+---
+to: {{ output_dir }}/openapi/paths.yaml
+description: OpenAPI paths section - API endpoints derived from RDF graph
+---
+{# OpenAPI Paths Section Template #}
+{# Generates API paths/endpoints from SPARQL query results #}
+
+paths:
+{% for row in sparql_results %}
+{% if row["?endpointPath"] %}
+  {{ row["?endpointPath"] }}:
+    {{ row["?method"] | lower | default("get") }}:
+      summary: {{ row["?summary"] | default(row["?operationId"]) }}
+      operationId: {{ row["?operationId"] }}
+      {% if row["?description"] %}
+      description: {{ row["?description"] }}
+      {% endif %}
+      {% if row["?tags"] %}
+      tags:
+        {% for tag in row["?tags"] | split(",") %}
+        - {{ tag | trim }}
+        {% endfor %}
+      {% else %}
+      tags:
+        - default
+      {% endif %}
+      {% if row["?deprecated"] == "true" %}
+      deprecated: true
+      {% endif %}
+      {% if row["?parameters"] %}
+      parameters:
+        {% for param in row["?parameters"] | split(";") %}
+        {% set paramParts = param | split(":") %}
+        {% if paramParts | length >= 3 %}
+        - name: {{ paramParts[0] | trim }}
+          in: {{ paramParts[1] | trim }}
+          required: {{ paramParts[2] | trim | default("false") }}
+          {% if paramParts | length >= 4 %}
+          description: {{ paramParts[3] | trim }}
+          {% endif %}
+          schema:
+            type: {{ paramParts[4] | trim | default("string") }}
+        {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if row["?pathParams"] %}
+      parameters:
+        {% for param in row["?pathParams"] | split(",") %}
+        - name: {{ param | trim }}
+          in: path
+          required: true
+          schema:
+            type: string
+        {% endfor %}
+      {% endif %}
+      {% if row["?requestBody"] %}
+      requestBody:
+        required: {{ row["?requestBodyRequired"] | default("true") }}
+        description: {{ row["?requestBodyDescription"] | default("Request body") }}
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/{{ row["?requestBody"] }}"
+            {% if row["?requestExample"] %}
+            example: {{ row["?requestExample"] }}
+            {% endif %}
+      {% endif %}
+      responses:
+        "200":
+          description: {{ row["?successDescription"] | default("Success") }}
+          {% if row["?responseType"] %}
+          content:
+            application/json:
+              schema:
+                {% if row["?responseArray"] == "true" %}
+                type: array
+                items:
+                  $ref: "#/components/schemas/{{ row["?responseType"] }}"
+                {% else %}
+                $ref: "#/components/schemas/{{ row["?responseType"] }}"
+                {% endif %}
+              {% if row["?responseExample"] %}
+              example: {{ row["?responseExample"] }}
+              {% endif %}
+          {% endif %}
+          {% if row["?hateoasLinks"] == "true" %}
+          headers:
+            Link:
+              description: HATEOAS links for available actions
+              schema:
+                type: string
+          {% endif %}
+        {% if row["?method"] | lower == "post" %}
+        "201":
+          description: Created successfully
+          {% if row["?responseType"] %}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/{{ row["?responseType"] }}"
+          {% endif %}
+        {% endif %}
+        "400":
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        {% if row["?requiresAuth"] == "true" %}
+        "401":
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden - insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        {% endif %}
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      {% if row["?requiresAuth"] == "true" %}
+      security:
+        - bearerAuth: []
+        {% if row["?scopes"] %}
+        - oauth2:
+            {% for scope in row["?scopes"] | split(",") %}
+            - {{ scope | trim }}
+            {% endfor %}
+        {% endif %}
+      {% endif %}
+{% endif %}
+{% endfor %}

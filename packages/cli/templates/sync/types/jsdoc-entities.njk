@@ -1,0 +1,127 @@
+---
+to: {{ output_dir }}/types/entities.mjs
+description: Generates JSDoc type definitions for entities from RDF ontology
+requires:
+  - sparql_results: Array of entity/property bindings from ontology query
+  - output_dir: Target output directory
+---
+/**
+ * @file Entity Type Definitions
+ * @module {{ module_name | default("generated/types/entities") }}
+ * @description Auto-generated JSDoc types from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * DO NOT EDIT MANUALLY - This file is auto-generated from the RDF ontology.
+ * Re-run the sync command to regenerate: `unrdf sync --types`
+ */
+
+// =============================================================================
+// Entity Type Definitions (JSDoc @typedef)
+// =============================================================================
+
+{% set entities = {} %}
+{% for row in sparql_results %}
+{% set entityName = row["?entityName"] | trim %}
+{% if entityName %}
+{% if not entities[entityName] %}
+{% set _ = entities.__setitem__(entityName, {
+  "properties": [],
+  "description": row["?entityDescription"] | default(""),
+  "namespace": row["?namespace"] | default(""),
+  "superClass": row["?superClass"] | default("")
+}) %}
+{% endif %}
+{% set prop = {
+  "name": row["?propertyName"] | trim,
+  "type": row["?propertyType"] | default("unknown"),
+  "required": row["?required"] | default("false") == "true",
+  "description": row["?propertyDescription"] | default(""),
+  "minCount": row["?minCount"] | default(0),
+  "maxCount": row["?maxCount"] | default(-1),
+  "pattern": row["?pattern"] | default(""),
+  "defaultValue": row["?defaultValue"] | default("")
+} %}
+{% if prop.name %}
+{% set _ = entities[entityName].properties.append(prop) %}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% for entityName, entityData in entities | dictsort %}
+/**
+ * {{ entityData.description | default(entityName + " entity type") | wordwrap(70) | replace("\n", "\n * ") }}
+{% if entityData.namespace %}
+ * @namespace {{ entityData.namespace }}
+{% endif %}
+{% if entityData.superClass %}
+ * @extends {{ entityData.superClass }}
+{% endif %}
+ * @typedef {Object} {{ entityName }}
+{% for prop in entityData.properties | sort(attribute='name') %}
+{% set jsDocType = prop.type | jsdoc_type %}
+{% if prop.required %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} {{ prop.name }} - {{ prop.description | default(prop.name + " property") }}{% if prop.pattern %} (pattern: {{ prop.pattern }}){% endif %}
+{% else %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} [{{ prop.name }}] - {{ prop.description | default(prop.name + " property") }}{% if prop.defaultValue %} (default: {{ prop.defaultValue }}){% endif %}
+{% endif %}
+{% endfor %}
+ */
+
+{% endfor %}
+
+// =============================================================================
+// Entity Name Constants
+// =============================================================================
+
+/**
+ * Entity name constants for type-safe entity references
+ * @constant
+ * @type {Object<string, string>}
+ */
+export const EntityNames = Object.freeze({
+{% for entityName in entities | keys | sort %}
+  /** {{ entityName }} entity identifier */
+  {{ entityName | upper | replace("-", "_") }}: '{{ entityName }}',
+{% endfor %}
+});
+
+/**
+ * List of all entity names
+ * @constant
+ * @type {string[]}
+ */
+export const ALL_ENTITY_NAMES = Object.freeze([
+{% for entityName in entities | keys | sort %}
+  '{{ entityName }}',
+{% endfor %}
+]);
+
+// =============================================================================
+// Type Definitions Usage
+// =============================================================================
+
+/**
+ * Use these types via JSDoc type annotations:
+ *
+ * @example
+ * // Import types for IDE support
+ * // @type {import('./entities.mjs').User}
+ * const user = { id: '123', name: 'Alice' };
+ *
+ * @example
+ * // Use in function signatures
+ * /**
+ *  * Process a user entity
+ *  * @param {import('./entities.mjs').User} user
+ *  * @returns {Promise<void>}
+ *  *\/
+ * async function processUser(user) {
+ *   // implementation
+ * }
+ */
+
+// Export empty object for module resolution (types are JSDoc-only)
+export default {
+  EntityNames,
+  ALL_ENTITY_NAMES,
+};

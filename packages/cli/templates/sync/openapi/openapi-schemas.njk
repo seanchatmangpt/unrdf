@@ -1,0 +1,95 @@
+---
+to: {{ output_dir }}/openapi/schemas.yaml
+description: OpenAPI component schemas - Type definitions derived from RDF/SHACL
+---
+{# OpenAPI Schemas Section Template #}
+{# Generates component schemas from SPARQL query results #}
+
+schemas:
+{% for row in sparql_results %}
+{% if row["?schemaName"] %}
+  {{ row["?schemaName"] }}:
+    type: {{ row["?schemaType"] | default("object") }}
+    {% if row["?schemaDescription"] %}
+    description: {{ row["?schemaDescription"] }}
+    {% endif %}
+    {% if row["?required"] %}
+    required:
+      {% for field in row["?required"] | split(",") %}
+      - {{ field | trim }}
+      {% endfor %}
+    {% endif %}
+    {% if row["?properties"] %}
+    properties:
+      {% for prop in row["?properties"] | split(";") %}
+      {% set propParts = prop | split(":") %}
+      {% if propParts | length >= 2 %}
+      {{ propParts[0] | trim }}:
+        type: {{ propParts[1] | trim }}
+        {% if propParts | length >= 3 %}
+        description: {{ propParts[2] | trim }}
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if row["?example"] %}
+    example: {{ row["?example"] }}
+    {% endif %}
+{% endif %}
+{% endfor %}
+
+  # Standard error response schema
+  Error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        description: HTTP status code
+      message:
+        type: string
+        description: Error message
+      details:
+        type: object
+        description: Additional error details
+        additionalProperties: true
+
+  # Pagination response wrapper
+  PaginatedResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: object
+      total:
+        type: integer
+        description: Total number of items
+      page:
+        type: integer
+        description: Current page number
+      pageSize:
+        type: integer
+        description: Number of items per page
+      hasMore:
+        type: boolean
+        description: Whether more pages exist
+
+  # HATEOAS link
+  Link:
+    type: object
+    properties:
+      href:
+        type: string
+        format: uri
+        description: Link URL
+      rel:
+        type: string
+        description: Link relation type
+      method:
+        type: string
+        enum: [GET, POST, PUT, PATCH, DELETE]
+        description: HTTP method for this link
