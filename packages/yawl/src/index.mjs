@@ -489,3 +489,26 @@ export {
   validatePerformanceMetrics,
   validateAlertConfig,
 } from './integrations/index.mjs';
+
+// =============================================================================
+// MULTIPLE INSTANCE PATTERNS - WP13-WP15
+// =============================================================================
+export {
+  // Synchronization Barrier (AND-join)
+  SyncBarrier,
+  createSyncBarrier,
+  BarrierConfigSchema,
+  InstanceCompletionSchema,
+  BarrierResultSchema,
+} from './multiple-instance/sync-barrier.mjs';
+
+export {
+  // WP13: Multiple Instances with Design-Time Knowledge
+  spawnInstancesDesignTime,
+  createMultipleInstanceTask,
+  estimateCompletionTime,
+  MultipleInstanceTaskSchema,
+  SpawnOptionsSchema,
+  InstanceResultSchema,
+  SpawnResultSchema,
+} from './multiple-instance/wp13-design-time.mjs';
