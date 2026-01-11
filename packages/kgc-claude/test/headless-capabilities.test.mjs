@@ -201,8 +201,9 @@ describe('CIIntegration', () => {
   });
 
   it.skip('should detect GitHub Actions environment', () => {
-    // Note: This test is skipped due to Zod v4 compatibility issue with z.record()
-    // The functionality works in production but has test environment issues
+    // SKIP REASON: Zod v4 compatibility - z.record() API changed in v4
+    // pnpm overrides force Zod v4 but schema uses v3 API
+    // RESOLUTION: Update CIEventSchema to use Zod v4 API or pin to Zod v3
     const originalEnv = { ...process.env };
 
     process.env.GITHUB_ACTIONS = 'true';

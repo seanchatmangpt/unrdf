@@ -4,7 +4,7 @@
  */
 
 import { promises as _fs } from 'fs';
-import { createStore as _createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore as _createStore } from '@unrdf/oxigraph';
 import { parseTurtle } from '@unrdf/knowledge-engine';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { z } from 'zod';

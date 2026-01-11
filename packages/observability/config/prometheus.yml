@@ -1,0 +1,136 @@
+# Prometheus Scrape Configuration for UNRDF
+#
+# This configuration collects OpenTelemetry metrics from UNRDF services.
+# It includes scrape jobs, relabeling rules, and service discovery.
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'unrdf-production'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Load alert rules
+rule_files:
+  - 'alert-rules.yml'
+
+# Scrape configurations
+scrape_configs:
+  # UNRDF Core Service
+  - job_name: 'unrdf-core'
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'localhost:9464'  # OTEL collector endpoint
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+      - source_labels: [__scheme__]
+        target_label: scheme
+    metric_relabel_configs:
+      # Keep only UNRDF metrics
+      - source_labels: [__name__]
+        regex: '(business|latency|throughput|resource|event)_.*'
+        action: keep
+      # Add service label
+      - target_label: service
+        replacement: 'unrdf-core'
+
+  # UNRDF Sidecar
+  - job_name: 'unrdf-sidecar'
+    scrape_interval: 10s
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets:
+          - 'localhost:3000'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: '(rate_limit|ddos|query|backpressure)_.*'
+        action: keep
+      - target_label: service
+        replacement: 'unrdf-sidecar'
+
+  # UNRDF Federation Nodes
+  - job_name: 'unrdf-federation'
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'federation-node-1:9464'
+          - 'federation-node-2:9464'
+          - 'federation-node-3:9464'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '(.*):.*'
+        target_label: node
+        replacement: '$1'
+    metric_relabel_configs:
+      - target_label: service
+        replacement: 'unrdf-federation'
+
+  # OpenTelemetry Collector
+  - job_name: 'otel-collector'
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+          - 'otel-collector:8888'  # Collector self-metrics
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'otelcol_.*'
+        action: keep
+
+  # Kubernetes Service Discovery (optional)
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      # Only scrape pods with annotation prometheus.io/scrape: "true"
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      # Use custom scrape path if specified
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      # Use custom port if specified
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      # Add pod labels
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: kubernetes_pod_name
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: kubernetes_node
+
+# Remote write configuration (for long-term storage)
+remote_write:
+  - url: 'http://remote-storage:9090/api/v1/write'
+    queue_config:
+      max_samples_per_send: 10000
+      batch_send_deadline: 5s
+      max_shards: 10
+      min_shards: 1
+    write_relabel_configs:
+      # Drop high-cardinality metrics
+      - source_labels: [__name__]
+        regex: '.*_bucket|.*_count|.*_sum'
+        action: drop

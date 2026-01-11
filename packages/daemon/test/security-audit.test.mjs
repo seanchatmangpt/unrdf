@@ -36,6 +36,70 @@ describe('Security Audit Module', () => {
       expect(validateInputSafety(undefined).safe).toBe(true);
     });
 
+    it('should handle BigInt values in objects', () => {
+      const input = { timestamp: BigInt(Date.now()), value: 42n };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+      expect(result.eventId).toBeDefined();
+    });
+
+    it('should handle BigInt values in nested objects', () => {
+      const input = {
+        metadata: {
+          created: BigInt(1234567890),
+          updated: BigInt(9876543210),
+        },
+        data: { count: 100n },
+      };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+    });
+
+    it('should handle BigInt values in arrays', () => {
+      const input = [BigInt(1), BigInt(2), BigInt(3)];
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+    });
+
+    it('should handle mixed BigInt and regular values', () => {
+      const input = {
+        id: 'test-id',
+        timestamp: BigInt(Date.now()),
+        count: 42,
+        active: true,
+        metadata: null,
+      };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+    });
+
+    it('should detect injection in BigInt-containing objects', () => {
+      const input = {
+        timestamp: BigInt(Date.now()),
+        command: 'test | cat /etc/passwd',
+      };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(false);
+      expect(result.reason).toContain('injection');
+    });
+
+    it('should handle very large BigInt values', () => {
+      const input = {
+        value: BigInt('9007199254740991999999999999'),
+      };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+    });
+
+    it('should handle negative BigInt values', () => {
+      const input = {
+        balance: -42n,
+        timestamp: BigInt(-1234567890),
+      };
+      const result = validateInputSafety(input, 'command');
+      expect(result.safe).toBe(true);
+    });
+
     it('should reject command injection - pipe operator', () => {
       const result = validateInputSafety('test | cat /etc/passwd', 'command');
       expect(result.safe).toBe(false);

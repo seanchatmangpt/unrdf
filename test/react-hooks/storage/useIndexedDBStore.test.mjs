@@ -57,6 +57,9 @@ describe('useIndexedDBStore', () => {
   describe('CRUD Operations', () => {
     it.skip(
       'should add quad to IndexedDB',
+      // SKIP REASON: Test requires fake-indexeddb package (not installed)
+      // Also not in vitest.config.mjs include list - needs React testing setup
+      // RESOLUTION: Install fake-indexeddb and add to vitest config, or move to browser tests
       async () => {
         const dbName = `test-db-${Date.now()}`;
         const db = await openDB(dbName);

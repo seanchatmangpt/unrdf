@@ -6,6 +6,8 @@
  */
 
 import { z } from 'zod';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+
 
 const ReactiveTriggerSchema = z.object({
   pattern: z.union([z.string(), z.object({ type: z.enum(['add', 'remove', 'update']).optional(), subject: z.any().optional(), predicate: z.any().optional(), object: z.any().optional(), graph: z.any().optional() })]),
@@ -30,6 +32,55 @@ const ChangeEventSchema = z.object({
   timestamp: z.number(),
   metadata: z.record(z.any()).optional(),
 });
+
+/**
+ * Trigger ID validation schema
+ */
+const TriggerIdSchema = z.string().min(1);
+
+/**
+ * Subscription ID validation schema
+ */
+const SubscriptionIdSchema = z.string().min(1);
+
+/**
+ * Feed validation schema
+ */
+const FeedSchema = z.object({
+  subscribe: z.function().args(z.any()).returns(z.any()),
+  unsubscribe: z.function().args(z.any()).returns(z.any()).optional(),
+}).passthrough();
+
+/**
+ * Daemon validation schema
+ */
+const DaemonSchema = z.object({
+  execute: z.function().args(z.string()).returns(z.promise(z.any())).optional(),
+}).passthrough();
+
+/**
+ * Pattern validation schema
+ */
+const PatternSchema = z.union([
+  z.string(),
+  z.object({
+    type: z.enum(['add', 'remove', 'update']).optional(),
+    subject: z.any().optional(),
+    predicate: z.any().optional(),
+    object: z.any().optional(),
+    graph: z.any().optional(),
+  })
+]);
+
+/**
+ * Operation ID validation schema
+ */
+const OperationIdSchema = z.string().min(1);
+
+/**
+ * Metadata validation schema
+ */
+const MetadataSchema = z.record(z.any()).optional();
 
 /**
  * Manages reactive subscriptions and pattern matching for daemon operations
@@ -65,14 +116,18 @@ export class ReactiveSubscriptionManager {
    * @returns {string} Trigger ID
    */
   registerTrigger(pattern, operationId, metadata = {}) {
-    const triggerData = { pattern, operationId, metadata };
+    const validatedPattern = PatternSchema.parse(pattern);
+    const validatedOperationId = OperationIdSchema.parse(operationId);
+    const validatedMetadata = MetadataSchema.parse(metadata) || {};
+
+    const triggerData = { pattern: validatedPattern, operationId: validatedOperationId, metadata: validatedMetadata };
     const trigger = ReactiveTriggerSchema.parse(triggerData);
 
     const triggerId = `trigger_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     this.triggers.set(triggerId, {
       ...trigger,
-      debounceMs: metadata.debounceMs || 0,
-      throttleMs: metadata.throttleMs || 0,
+      debounceMs: validatedMetadata.debounceMs || 0,
+      throttleMs: validatedMetadata.throttleMs || 0,
     });
     this.logger.debug(`[ReactiveSubscriptionManager] Trigger registered: ${triggerId}`);
     return triggerId;
@@ -84,11 +139,12 @@ export class ReactiveSubscriptionManager {
    * @returns {boolean} Whether trigger was found and removed
    */
   unregisterTrigger(triggerId) {
-    const removed = this.triggers.delete(triggerId);
+    const validated = TriggerIdSchema.parse(triggerId);
+    const removed = this.triggers.delete(validated);
     if (removed) {
-      this.debounceTimers.delete(triggerId);
-      this.throttleTimestamps.delete(triggerId);
-      this.logger.debug(`[ReactiveSubscriptionManager] Trigger unregistered: ${triggerId}`);
+      this.debounceTimers.delete(validated);
+      this.throttleTimestamps.delete(validated);
+      this.logger.debug(`[ReactiveSubscriptionManager] Trigger unregistered: ${validated}`);
     }
     return removed;
   }
@@ -269,9 +325,7 @@ export class ReactiveSubscriptionManager {
    * @returns {Function} Unsubscribe function
    */
   subscribe(feed) {
-    if (!feed || typeof feed.subscribe !== 'function') {
-      throw new Error('Feed must have a subscribe method');
-    }
+    const validatedFeed = FeedSchema.parse(feed);
 
     const handler = (change) => {
       this.handleChange(change).catch(error => {
@@ -279,10 +333,10 @@ export class ReactiveSubscriptionManager {
       });
     };
 
-    feed.subscribe(handler);
+    validatedFeed.subscribe(handler);
 
     const subscriptionId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    this.subscriptions.set(subscriptionId, { feed, handler });
+    this.subscriptions.set(subscriptionId, { feed: validatedFeed, handler });
     this.logger.debug(`[ReactiveSubscriptionManager] Subscription created: ${subscriptionId}`);
 
     return () => this.unsubscribe(subscriptionId);
@@ -294,7 +348,8 @@ export class ReactiveSubscriptionManager {
    * @returns {boolean} Whether subscription was found and removed
    */
   unsubscribe(subscriptionId) {
-    const subscription = this.subscriptions.get(subscriptionId);
+    const validated = SubscriptionIdSchema.parse(subscriptionId);
+    const subscription = this.subscriptions.get(validated);
     if (!subscription) return false;
 
     try {
@@ -305,8 +360,8 @@ export class ReactiveSubscriptionManager {
       this.logger.warn(`[ReactiveSubscriptionManager] Error unsubscribing: ${error.message}`);
     }
 
-    this.subscriptions.delete(subscriptionId);
-    this.logger.debug(`[ReactiveSubscriptionManager] Subscription removed: ${subscriptionId}`);
+    this.subscriptions.delete(validated);
+    this.logger.debug(`[ReactiveSubscriptionManager] Subscription removed: ${validated}`);
     return true;
   }
 
@@ -394,10 +449,13 @@ export class ReactiveSubscriptionManager {
  * const manager = subscribeToChangeFeeds(daemon, feed);
  */
 export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
+  const validatedDaemon = DaemonSchema.parse(daemon);
+  const validatedConfig = StreamingConfigSchema.parse(config);
   const feedArray = Array.isArray(feeds) ? feeds : [feeds];
-  const manager = new ReactiveSubscriptionManager(daemon, config);
+  const manager = new ReactiveSubscriptionManager(validatedDaemon, validatedConfig);
 
   for (const feed of feedArray) {
+    FeedSchema.parse(feed);
     manager.subscribe(feed);
   }
 
@@ -419,10 +477,15 @@ export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
  * );
  */
 export function registerReactiveTrigger(daemon, pattern, operationId, metadata = {}) {
+  DaemonSchema.parse(daemon);
+  const validatedPattern = PatternSchema.parse(pattern);
+  const validatedOperationId = OperationIdSchema.parse(operationId);
+  const validatedMetadata = MetadataSchema.parse(metadata) || {};
+
   if (!daemon._reactiveManager) {
     throw new Error('Daemon must be subscribed to change feeds first');
   }
-  return daemon._reactiveManager.registerTrigger(pattern, operationId, metadata);
+  return daemon._reactiveManager.registerTrigger(validatedPattern, validatedOperationId, validatedMetadata);
 }
 
 /**
@@ -442,7 +505,9 @@ export function registerReactiveTrigger(daemon, pattern, operationId, metadata =
  * manager.registerTrigger('add', 'sync');
  */
 export function createDaemonFromChangeFeeds(daemon, feeds, config = {}) {
-  const manager = subscribeToChangeFeeds(daemon, feeds, config);
-  daemon._reactiveManager = manager;
+  const validatedDaemon = DaemonSchema.parse(daemon);
+  const validatedConfig = StreamingConfigSchema.parse(config);
+  const manager = subscribeToChangeFeeds(validatedDaemon, feeds, validatedConfig);
+  validatedDaemon._reactiveManager = manager;
   return manager;
 }

@@ -1,0 +1,128 @@
+{
+  "startTime": "2026-01-11T07:15:39.295Z",
+  "config": {
+    "port": 3000,
+    "sustainedDuration": 60,
+    "soakDuration": 60,
+    "skipLongTests": true
+  },
+  "tests": {
+    "baseline": {
+      "testType": "baseline",
+      "timestamp": "2026-01-11T07:16:39.667Z",
+      "duration": 60.35,
+      "latency": {
+        "mean": 21.05,
+        "p50": 21,
+        "p75": 24,
+        "p90": 26,
+        "p99": 30,
+        "max": 939,
+        "min": 3,
+        "stddev": 9.43
+      },
+      "throughput": {
+        "totalRequests": 279848,
+        "requestsPerSecond": 4665.15,
+        "min": 2800,
+        "max": 5950,
+        "mean": 4665.15,
+        "stddev": 649.19
+      },
+      "errors": {
+        "total": 0,
+        "errorRate": 0
+      },
+      "connections": 100,
+      "statusCodes": 279848,
+      "passed": {
+        "latencyP95": false,
+        "latencyP99": true,
+        "errorRate": true,
+        "throughput": true
+      }
+    },
+    "peak": {
+      "testType": "peak-load",
+      "timestamp": "2026-01-11T07:17:40.694Z",
+      "duration": 61.01,
+      "latency": {
+        "mean": 92.47,
+        "p50": 88,
+        "p75": 97,
+        "p90": 107,
+        "p99": 154,
+        "max": 10061,
+        "min": 3,
+        "stddev": 180.7
+      },
+      "throughput": {
+        "totalRequests": 286638,
+        "requestsPerSecond": 4859.28,
+        "min": 3161,
+        "max": 5476,
+        "mean": 4859.28,
+        "stddev": 440.78
+      },
+      "errors": {
+        "total": 3372,
+        "errorRate": 1.1763967094383856
+      },
+      "connections": 1000,
+      "statusCodes": 286638,
+      "passed": {
+        "latencyP95": false,
+        "latencyP99": true,
+        "errorRate": false,
+        "throughput": true
+      }
+    },
+    "sustained": {
+      "skipped": true
+    },
+    "spike": {
+      "testType": "spike-test",
+      "timestamp": "2026-01-11T07:18:11.753Z",
+      "phases": {
+        "warmup": {
+          "connections": 10,
+          "duration": 5,
+          "latencyP99": 3,
+          "throughput": 3586.6,
+          "errors": 0
+        },
+        "spike": {
+          "connections": 5000,
+          "duration": 10,
+          "latencyP99": 1091,
+          "throughput": 2673.3,
+          "errors": 4678
+        },
+        "recovery": {
+          "connections": 100,
+          "duration": 15,
+          "latencyP99": 32,
+          "throughput": 3640.6,
+          "errors": 0
+        }
+      },
+      "analysis": {
+        "spikeLatencyIncrease": "NaN%",
+        "spikeErrorIncrease": 4678,
+        "recoveredToBaseline": false,
+        "maxConcurrentHandled": 5000
+      },
+      "passed": {
+        "spikeHandled": false,
+        "latencyDegradation": false,
+        "recovery": false,
+        "errorRate": false
+      }
+    },
+    "soak": {
+      "skipped": true
+    }
+  },
+  "endTime": "2026-01-11T07:18:11.753Z",
+  "totalDuration": 152458
+}

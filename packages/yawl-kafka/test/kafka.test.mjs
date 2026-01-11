@@ -218,7 +218,9 @@ describe('YAWLKafkaProducer', () => {
     expect(stats.totalPublished).toBe(0);
   });
 
-  // Note: Integration tests requiring actual Kafka cluster are skipped in unit tests
+  // SKIP REASON: Integration test requiring external Kafka cluster (localhost:9092)
+  // VALID: Unit tests should not depend on external infrastructure
+  // TO RUN: Set up Kafka locally and run with KAFKA_INTEGRATION=true
   it.skip('should connect to Kafka and create topics', async () => {
     const producer = new YAWLKafkaProducer({
       brokers: ['localhost:9092'],
@@ -278,7 +280,8 @@ describe('YAWLKafkaConsumer', () => {
     expect(stats.totalConsumed).toBe(0);
   });
 
-  // Note: Integration tests requiring actual Kafka cluster are skipped
+  // SKIP REASON: Integration test requiring external Kafka cluster (localhost:9092)
+  // VALID: Unit tests should not depend on external infrastructure
   it.skip('should connect and subscribe to topics', async () => {
     const consumer = new YAWLKafkaConsumer({
       brokers: ['localhost:9092'],

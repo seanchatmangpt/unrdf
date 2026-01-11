@@ -12,9 +12,7 @@
  * @returns {Promise<Map<string, Uint8Array>>} Resolved files (VFS path -> content)
  */
 export async function resolveMissingInputs(missingInputs, _cacheDir) {
-  // TODO (Agent 4): Implement CTAN package resolution
-  // For now, return empty map (no packages resolved)
-
+  // Stub implementation - CTAN package resolution pending
   const resolved = new Map();
 
   // Stub: Log missing inputs (real implementation would download from CTAN)

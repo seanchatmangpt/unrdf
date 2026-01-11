@@ -102,6 +102,7 @@
     "@vitest/browser": "^4.0.16",
     "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.16",
+    "autocannon": "^8.0.0",
     "citty": "^0.1.6",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
@@ -120,7 +121,8 @@
       "@opentelemetry/api": "^1.7.0",
       "zod": "^4.1.13",
       "esbuild@<=0.24.2": ">=0.25.0",
-      "@rdfjs/types": "^2.0.1"
+      "@rdfjs/types": "^2.0.1",
+      "@swc/helpers": "^0.5.18"
     }
   },
   "volta": {
@@ -135,6 +137,7 @@
     "@rdfjs/dataset": "^2.0.2",
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/v6-compat": "workspace:*",
     "clownface": "^2.0.3",
     "fetch": "^1.1.0",
     "hash-wasm": "^4.12.0",
@@ -146,7 +149,6 @@
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
     "sparqljs": "^3.7.3",
-    "zod": "^3.25.76",
-    "@unrdf/v6-compat": "workspace:*"
+    "zod": "^3.25.76"
   }
 }

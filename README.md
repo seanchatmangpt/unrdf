@@ -284,8 +284,13 @@ registerHook(myHook);
 - ✅ Memory limits (10K triple max per operation)
 - ✅ Protection against prototype pollution
 - ✅ RDF injection prevention (URI validation)
+- ✅ **NEW: API Key Authentication** (BLAKE3 hashing, constant-time verification)
+- ✅ **NEW: Comprehensive Security Audit** across 13 daemon integration modules
+- ✅ **NEW: Secret Detection** and injection attack prevention
 
 **Security Audit**: All microframeworks have been security-hardened against OWASP Top 10 vulnerabilities (Dec 2025). See [SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md](SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md) for details.
+
+**v6.0.0 Security Enhancements** (Jan 2026): Enterprise-grade authentication system with BLAKE3 cryptographic hashing, comprehensive security validation across all daemon operations, and zero CRITICAL/HIGH security vulnerabilities. See [packages/daemon/AUTHENTICATION.md](packages/daemon/AUTHENTICATION.md) and [packages/daemon/SECURITY_INTEGRATION_SUMMARY.md](packages/daemon/SECURITY_INTEGRATION_SUMMARY.md) for details.
 
 ---
 
@@ -382,6 +387,7 @@ UNRDF is organized as a **20-package monorepo** with clear separation of concern
 - **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐
 - **`@unrdf/oxigraph`** - Rust-based persistent triple store backend
 - **`@unrdf/hooks`** - Knowledge Hooks autonomous behaviors framework
+- **`@unrdf/daemon`** - Background operation orchestrator with enterprise-grade security ⭐ NEW
 
 ### Extended Features
 

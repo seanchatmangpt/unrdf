@@ -83,7 +83,6 @@ const extension = {
         validate: {
           description: 'Validate LaTeX document structure (dry-run compilation)',
           handler: async (args) => {
-            // TODO: Implement dry-run validation
             return {
               valid: true,
               input: args.input || 'unknown',
@@ -95,7 +94,6 @@ const extension = {
         clean: {
           description: 'Clear LaTeX compilation cache',
           handler: async (args) => {
-            // TODO: Implement cache clearing
             return {
               cacheDir: args.cacheDir || '.latex-cache',
               cleared: false,

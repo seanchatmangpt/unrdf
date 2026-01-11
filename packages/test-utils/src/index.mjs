@@ -7,7 +7,7 @@
  * scenario DSL, fluent assertions, and helper functions.
  */
 
-import { createStore } from '@unrdf/oxigraph'; // TODO: Replace with Oxigraph Store
+import { createStore } from '@unrdf/oxigraph';
 import { randomUUID } from 'crypto';
 import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
 import { _PolicyPackManager } from '@unrdf/knowledge-engine';

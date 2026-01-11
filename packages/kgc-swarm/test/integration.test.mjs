@@ -377,6 +377,8 @@ describe('KGC-SWARM Integration Tests', () => {
 
   describe('Receipt Chain Integrity', () => {
     it.skip('should detect tampered receipts', async () => {
+      // SKIP REASON: Zod v4 compatibility - receipt schemas use z.record()
+      // RESOLUTION: Update receipt schemas to Zod v4 API
       const agent = swarm.spawnAgent('planner');
 
       const receipt1 = await swarm.generateReceipt(agent.id, {

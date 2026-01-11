@@ -166,6 +166,8 @@ describe('KGC-SWARM Property-Based Tests', () => {
     });
 
     it.skip('should satisfy non-repudiation property', async () => {
+      // SKIP REASON: Zod v4 compatibility - receipt validation uses v3 API
+      // RESOLUTION: Update to Zod v4 API
       // Once a receipt is generated, it cryptographically proves:
       // 1. The agent that created it (agentId)
       // 2. The exact payload (payloadHash)

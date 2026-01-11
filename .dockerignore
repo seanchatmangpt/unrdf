@@ -1,0 +1,98 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node modules (will be installed in container)
+node_modules
+**/node_modules
+.pnpm-store
+
+# Build artifacts
+dist
+build
+*.log
+*.tgz
+.cache
+
+# Test coverage
+coverage
+.nyc_output
+*.lcov
+
+# Documentation (not needed in production)
+docs
+*.md
+!README.md
+
+# Examples (not needed in production)
+examples
+playground
+demos
+
+# Test files
+test
+*.test.mjs
+*.spec.mjs
+__tests__
+__mocks__
+
+# Development
+.env.local
+.env.development
+.env.test
+*.development.*
+*.local.*
+
+# Temporary files
+tmp
+temp
+*.tmp
+*.temp
+
+# Benchmarks (not needed in production)
+benchmarks
+bench-results
+
+# Scripts (development only)
+scripts/*.sh
+scripts/dev-*
+scripts/debug-*
+
+# Validation (not needed in production)
+validation
+
+# Husky
+.husky
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Misc
+.prettierrc
+.prettierignore
+.eslintrc
+.eslintignore
+eslint.config.mjs
+vitest.config.mjs
+tsconfig.json

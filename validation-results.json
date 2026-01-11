@@ -1,0 +1,349 @@
+{
+  "validation_metadata": {
+    "timestamp": "2026-01-11T07:00:00Z",
+    "version": "6.0.0-rc.1",
+    "validation_level": "P0_PRODUCTION_READINESS",
+    "duration_seconds": 240
+  },
+  "overall_score": 62,
+  "deployment_decision": "NO-GO",
+  "critical_blockers": 5,
+  "validation_checks": {
+    "dependencies": {
+      "status": "WARNING",
+      "score": 75,
+      "details": {
+        "installation": "SUCCESS",
+        "duration_seconds": 97,
+        "warnings": [
+          "Cyclic workspace dependencies: kgc-multiverse, receipts",
+          "30 deprecated subdependencies",
+          "Peer dependency issues in packages/docs (@tiptap)",
+          "Peer dependency issues in packages/blockchain (vitest)"
+        ],
+        "deprecated_count": 30,
+        "peer_dependency_issues": 2
+      }
+    },
+    "build": {
+      "status": "FAILED",
+      "score": 0,
+      "blocker": true,
+      "details": {
+        "failed_packages": [
+          "@unrdf/cli@5.0.1"
+        ],
+        "errors": [
+          "unbuild: Could not find entrypoint for ./src/index.mjs",
+          "unbuild: Could not find entrypoint for ./src/commands/index.mjs",
+          "unbuild: Could not find entrypoint for ./src/cli.mjs",
+          "unbuild: Potential missing package.json files"
+        ],
+        "exit_code": 1
+      }
+    },
+    "tests": {
+      "status": "FAILED",
+      "score": 50,
+      "blocker": true,
+      "details": {
+        "failed_packages": [
+          "packages/docs"
+        ],
+        "failures": [
+          "docs@5.0.1: TSConfckParseError - Cannot find .nuxt/tsconfig.json"
+        ],
+        "passed_tests": {
+          "cli": 25,
+          "AUTONOMIC_INNOVATION/agent-2": 20,
+          "AUTONOMIC_INNOVATION/agent-4": 13,
+          "AUTONOMIC_INNOVATION/agent-6": 23
+        },
+        "total_passed": 81,
+        "total_failed": 1,
+        "exit_code": 1
+      }
+    },
+    "lint": {
+      "status": "FAILED",
+      "score": 0,
+      "blocker": true,
+      "details": {
+        "failed_packages": [
+          "@unrdf/kgc-cli@5.0.1"
+        ],
+        "warnings": 3,
+        "errors": 0,
+        "max_warnings_allowed": 0,
+        "violations": [
+          "kgc-cli/src/lib/latex/compile.mjs:234:3 - 'projectDir' unused",
+          "kgc-cli/test/extensions/yawl-extensions.test.mjs:61:21 - 'nounName' unused",
+          "kgc-cli/test/extensions/yawl-extensions.test.mjs:64:23 - 'verbName' unused"
+        ],
+        "exit_code": 1
+      }
+    },
+    "file_sizes": {
+      "status": "WARNING",
+      "score": 40,
+      "details": {
+        "files_exceeding_500_lines": 145,
+        "total_files_checked": "~2000",
+        "largest_files": [
+          "packages/yawl/src/cancellation/yawl-cancellation.mjs: 1779 lines",
+          "packages/yawl/src/resources/yawl-resources.mjs: 1580 lines",
+          "packages/yawl/src/events/yawl-events.mjs: 1428 lines",
+          "packages/kgc-probe/src/agents/index.mjs: 1402 lines",
+          "packages/fusion/src/kgc-docs-diataxis.mjs: 1367 lines",
+          "packages/kgc-runtime/src/schemas.mjs: 1330 lines",
+          "packages/validation/src/otel-span-builder.mjs: 1318 lines"
+        ],
+        "compliance_percentage": 92.75
+      }
+    },
+    "todos": {
+      "status": "PASSED",
+      "score": 100,
+      "details": {
+        "todo_count": 0,
+        "fixme_count": 0,
+        "total": 0
+      }
+    },
+    "forbidden_n3_imports": {
+      "status": "WARNING",
+      "score": 90,
+      "details": {
+        "count": 2,
+        "files": [
+          "packages/v6-compat/src/adapters.mjs",
+          "packages/v6-compat/src/lint-rules.mjs"
+        ],
+        "note": "Both occurrences are in v6-compat package (migration bridge) which may be intentional"
+      }
+    },
+    "version_consistency": {
+      "status": "WARNING",
+      "score": 70,
+      "details": {
+        "total_packages": 69,
+        "version_distribution": {
+          "1.0.0": 39,
+          "5.0.1": 17,
+          "6.0.0": 1,
+          "6.0.0-alpha.1": 1,
+          "6.0.0-rc.1": 3,
+          "5.0.0": 3,
+          "5.1.0": 1,
+          "0.1.0": 4
+        },
+        "concerns": [
+          "Mixed versions across packages (1.0.0, 5.0.1, 6.0.0-rc.1)",
+          "39 packages still at 1.0.0",
+          "17 packages at 5.0.1 while monorepo claims 6.0.0-rc.1"
+        ]
+      }
+    },
+    "security": {
+      "status": "FAILED",
+      "score": 0,
+      "blocker": true,
+      "details": {
+        "vulnerabilities": 2,
+        "severity": {
+          "critical": 0,
+          "high": 2,
+          "moderate": 0,
+          "low": 0
+        },
+        "packages": [
+          {
+            "package": "qs",
+            "vulnerability": "DoS via memory exhaustion (arrayLimit bypass)",
+            "severity": "high",
+            "vulnerable_versions": "<6.14.1",
+            "patched_versions": ">=6.14.1",
+            "path": "packages__observability>express>qs"
+          },
+          {
+            "package": "preact",
+            "vulnerability": "JSON VNode Injection",
+            "severity": "high",
+            "vulnerable_versions": ">=10.28.0 <10.28.2",
+            "patched_versions": ">=10.28.2",
+            "path": "packages__kgc-4d__playground>react-force-graph-3d>3d-force-graph>three-render-objects>float-tooltip>preact"
+          }
+        ]
+      }
+    },
+    "otel_validation": {
+      "status": "PASSED",
+      "score": 100,
+      "details": {
+        "overall_score": "100/100",
+        "features_passed": 6,
+        "features_failed": 0,
+        "duration_ms": 1421,
+        "features": {
+          "knowledge-engine-core": {
+            "score": 100,
+            "latency_ms": 9.6,
+            "error_rate": 0.0,
+            "throughput": 5,
+            "memory_mb": 12.11
+          },
+          "knowledge-hooks-api": {
+            "score": 100,
+            "latency_ms": 9.5,
+            "error_rate": 0.0,
+            "throughput": 4,
+            "memory_mb": 10.55
+          },
+          "policy-packs": {
+            "score": 100,
+            "latency_ms": 11.0,
+            "error_rate": 0.0,
+            "throughput": 3,
+            "memory_mb": 10.79
+          },
+          "lockchain-integrity": {
+            "score": 100,
+            "latency_ms": 12.33,
+            "error_rate": 0.0,
+            "throughput": 3,
+            "memory_mb": 10.99
+          },
+          "transaction-manager": {
+            "score": 100,
+            "latency_ms": 6.67,
+            "error_rate": 0.0,
+            "throughput": 3,
+            "memory_mb": 11.25
+          },
+          "browser-compatibility": {
+            "score": 100,
+            "latency_ms": 17.67,
+            "error_rate": 0.0,
+            "throughput": 3,
+            "memory_mb": 11.43
+          }
+        }
+      }
+    }
+  },
+  "quality_gates": {
+    "build": {
+      "required": "PASS",
+      "actual": "FAIL",
+      "blocker": true
+    },
+    "tests": {
+      "required": "100% pass rate",
+      "actual": "98.8% pass rate",
+      "blocker": true
+    },
+    "lint": {
+      "required": "0 errors, 0 warnings",
+      "actual": "0 errors, 3 warnings",
+      "blocker": true
+    },
+    "security": {
+      "required": "0 high/critical vulnerabilities",
+      "actual": "2 high vulnerabilities",
+      "blocker": true
+    },
+    "coverage": {
+      "required": "≥80%",
+      "actual": "NOT_RUN",
+      "blocker": false
+    },
+    "otel": {
+      "required": "≥80/100",
+      "actual": "100/100",
+      "blocker": false
+    }
+  },
+  "blockers": [
+    {
+      "id": "BLOCKER-001",
+      "severity": "CRITICAL",
+      "category": "BUILD",
+      "description": "@unrdf/cli package build fails - missing entrypoints",
+      "impact": "Cannot build production artifacts",
+      "remediation": "Fix unbuild configuration or add missing index files"
+    },
+    {
+      "id": "BLOCKER-002",
+      "severity": "CRITICAL",
+      "category": "TESTS",
+      "description": "packages/docs tests fail - missing .nuxt/tsconfig.json",
+      "impact": "Cannot verify docs package functionality",
+      "remediation": "Run nuxt prepare or fix tsconfig.json extends path"
+    },
+    {
+      "id": "BLOCKER-003",
+      "severity": "CRITICAL",
+      "category": "LINT",
+      "description": "kgc-cli has 3 lint warnings with max-warnings=0",
+      "impact": "Violates zero-warning policy",
+      "remediation": "Prefix unused variables with underscore or remove them"
+    },
+    {
+      "id": "BLOCKER-004",
+      "severity": "HIGH",
+      "category": "SECURITY",
+      "description": "qs package has DoS vulnerability (GHSA-6rw7-vpxm-498p)",
+      "impact": "Production security risk in observability package",
+      "remediation": "Update express dependency or pin qs to >=6.14.1"
+    },
+    {
+      "id": "BLOCKER-005",
+      "severity": "HIGH",
+      "category": "SECURITY",
+      "description": "preact package has JSON VNode Injection (GHSA-36hm-qxxp-pg3m)",
+      "impact": "Security risk in kgc-4d playground",
+      "remediation": "Update preact to >=10.28.2 or remove playground dependency"
+    }
+  ],
+  "warnings": [
+    {
+      "id": "WARN-001",
+      "category": "FILE_SIZE",
+      "description": "145 files exceed 500-line limit",
+      "impact": "Code maintainability concerns",
+      "remediation": "Refactor large files into smaller modules"
+    },
+    {
+      "id": "WARN-002",
+      "category": "DEPENDENCIES",
+      "description": "30 deprecated subdependencies",
+      "impact": "Future compatibility risks",
+      "remediation": "Update parent dependencies to use non-deprecated versions"
+    },
+    {
+      "id": "WARN-003",
+      "category": "VERSION_CONSISTENCY",
+      "description": "Mixed package versions (39 at 1.0.0, 17 at 5.0.1, 3 at 6.0.0-rc.1)",
+      "impact": "Version confusion, unclear release status",
+      "remediation": "Standardize all package versions to 6.0.0-rc.1"
+    },
+    {
+      "id": "WARN-004",
+      "category": "N3_IMPORTS",
+      "description": "2 forbidden N3 imports in v6-compat package",
+      "impact": "May be intentional for compatibility bridge",
+      "remediation": "Verify if intentional, document exception if needed"
+    }
+  ],
+  "recommendations": [
+    "Fix all 5 critical blockers before proceeding to production",
+    "Address security vulnerabilities immediately (update qs and preact)",
+    "Resolve build failures in @unrdf/cli package",
+    "Fix lint violations in kgc-cli package",
+    "Resolve test failures in packages/docs",
+    "Standardize package versions to 6.0.0-rc.1",
+    "Refactor files exceeding 500 lines (145 files)",
+    "Update deprecated dependencies",
+    "Run coverage analysis to verify ≥80% threshold"
+  ]
+}
