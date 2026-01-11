@@ -1,0 +1,133 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "1a55e0a9846fd39dbe11c0efbf85075ff8a7c91750a3472b4b17ba06c1a38f08",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Architecture",
+      "Usage",
+      "Events",
+      "Conflict Resolution",
+      "Example: Multi-User Approval Workflow",
+      "API Reference",
+      "Testing",
+      "Performance Characteristics",
+      "Production Considerations",
+      "License",
+      "Related Packages"
+    ]
+  },
+  "explanation": {
+    "architecture": "Real-time collaboration framework for YAWL workflows using Socket.io. Enables multiple users to collaboratively execute workflows with optimistic locking, CRDT-inspired state synchronization, and cryptographic receipt verification.",
+    "concepts": [
+      "yawl",
+      "workflow",
+      "real-time",
+      "collaboration",
+      "socket.io"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-yawl-realtime-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/yawl-realtime",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/yawl-realtime",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with yawl in your project",
+      "id": "howto-integrate-with-yawl",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/yawl-realtime with yawl",
+      "title": "Integrate with yawl"
+    }
+  ],
+  "packageName": "@unrdf/yawl-realtime",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-yawl-realtime-reference",
+    "items": [
+      {
+        "description": "Export: ./client",
+        "example": "import from \"./src/client.mjs\"",
+        "name": "./client",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./server",
+        "example": "import from \"./src/server.mjs\"",
+        "name": "./server",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/yawl-realtime",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/yawl-realtime Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/yawl-realtime in your project",
+      "id": "tutorial-getting-started-with-unrdf-yawl-realtime",
+      "prerequisites": [],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/yawl-realtime"
+    }
+  ],
+  "version": "1.0.0"
+}

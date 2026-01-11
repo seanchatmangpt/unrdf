@@ -1,0 +1,238 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [
+      "agent-6-network-probe-report.md",
+      "reporter.md"
+    ],
+    "examplesFiles": [
+      "basic-probe.mjs",
+      "example-output.ttl",
+      "example-report.md",
+      "filesystem-demo.mjs",
+      "generate-examples.mjs",
+      "guard-denial-demo.mjs",
+      "network-probe-demo.mjs",
+      "persistence-example.mjs",
+      "runtime-demo.mjs",
+      "runtime-probe-demo.mjs"
+    ],
+    "fingerprint": "1eafca40f8ade33372c639b8116d7c89a5e7364655f51548de0d8d7fc449c85f",
+    "readmeHeadings": [
+      "Overview",
+      "Installation",
+      "Quick Start",
+      "CLI Usage",
+      "Architecture",
+      "Storage Backends",
+      "Operations",
+      "Complexity Analysis",
+      "Configuration",
+      "Examples",
+      "Design Patterns",
+      "Performance Characteristics",
+      "Testing",
+      "Dependencies",
+      "License",
+      "Contributing",
+      "References"
+    ]
+  },
+  "explanation": {
+    "architecture": "Automated knowledge graph integrity scanning with 10 specialized agents and deterministic artifact validation.",
+    "concepts": [
+      "rdf",
+      "knowledge-graph",
+      "probe",
+      "integrity",
+      "agents"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-kgc-probe-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/kgc-probe",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-unrdf-kgc-probe",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @unrdf/kgc-probe",
+      "title": "Configure @unrdf/kgc-probe"
+    },
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/kgc-probe",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/kgc-probe with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/kgc-probe",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-kgc-probe-reference",
+    "items": [
+      {
+        "description": "Export: ./agents",
+        "example": "import from \"./src/agents/index.mjs\"",
+        "name": "./agents",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./artifact",
+        "example": "import from \"./src/artifact.mjs\"",
+        "name": "./artifact",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./cli",
+        "example": "import from \"./src/cli.mjs\"",
+        "name": "./cli",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./guards",
+        "example": "import from \"./src/guards.mjs\"",
+        "name": "./guards",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./orchestrator",
+        "example": "import from \"./src/orchestrator.mjs\"",
+        "name": "./orchestrator",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./storage",
+        "example": "import from \"./src/storage/index.mjs\"",
+        "name": "./storage",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./types",
+        "example": "import from \"./src/types.mjs\"",
+        "name": "./types",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./utils",
+        "example": "import from \"./src/utils/index.mjs\"",
+        "name": "./utils",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./utils/errors",
+        "example": "import from \"./src/utils/errors.mjs\"",
+        "name": "./utils/errors",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./utils/logger",
+        "example": "import from \"./src/utils/logger.mjs\"",
+        "name": "./utils/logger",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/kgc-probe",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/kgc-probe Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/kgc-probe\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through basic-probe.mjs",
+        "Work through example-output.ttl",
+        "Work through example-report.md",
+        "Work through filesystem-demo.mjs",
+        "Work through generate-examples.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/kgc-probe in your project",
+      "id": "tutorial-getting-started-with-unrdf-kgc-probe",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "CLI Usage",
+        "Examples"
+      ],
+      "title": "Getting Started with @unrdf/kgc-probe"
+    }
+  ],
+  "version": "1.0.0"
+}
