@@ -1,1108 +1,1277 @@
 % =============================================================================
 % Agent 9 Package Documentation
-% Packages 42-48: YAWL Workflow Ecosystem
-% Generated: 2025-12-27
+% Packages 37-42: Domain-Specific Capabilities
+% Generated: 2026-01-11
 % =============================================================================
 
-\label{pkg:unrdf-yawl}
-\section{\pkg{unrdf-yawl} --- YAWL Workflow Engine}
+\label{pkg:unrdf-project-engine}
+\section{\pkg{@unrdf/project-engine} --- Project Domain Inference Engine}
 
 \begin{pkgmeta}
-Path & \texttt{packages/yawl} \\
+Path & \texttt{packages/project-engine} \\
 Kind & js \\
-Entrypoints & 12 files \\
-Dependencies & 14 \\
-Blurb & YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification \\
+Entrypoints & 1 file \\
+Dependencies & 2 \\
+Blurb & Self-hosting project analysis with domain inference, MAPEK autonomic loops, and RDF-encoded project models \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \textbf{Observable \(\Oobs\)}:
 \begin{itemize}
-\item \texttt{WorkflowCase} instances tracking case lifecycle (created, active, completed, cancelled, failed)
-\item \texttt{WorkItem} status transitions (enabled, fired, allocated, started, completed, suspended, cancelled, failed)
-\item SPARQL query results from Oxigraph store containing workflow state
-\item Cryptographic receipt chains linking state transitions with hash pointers
-\item Event sourcing log capturing all workflow operations with KGC-4D nanosecond timestamps
+\item Filesystem structure (paths, contents, timestamps) via \texttt{scanFileSystemToStore}
+\item Stack signatures (\texttt{package.json}, \texttt{tsconfig.json}, build configs)
+\item Code complexity metrics from AST traversal
+\item Documentation drift between baseline and current state
+\item Pattern violations (missing tests, orphan files, convention breaches)
 \end{itemize}
 
 \textbf{Artifact \(\Aout\)}:
 \begin{itemize}
-\item RDF triples in YAWL ontology namespace (\texttt{http://yawlfoundation.org/yawlschema})
-\item Workflow specifications with task definitions, flows, split/join behaviors
-\item Receipt objects containing \texttt{receiptHash}, \texttt{previousReceiptHash}, event type, timestamp, actor
-\item Control flow evaluation results (XOR/AND/OR split behaviors)
-\item Resource allocation records with participant/role/capability mappings
+\item RDF graphs representing project structure in custom ontology
+\item Knowledge hooks derived from pattern analysis (\texttt{deriveHooksFromStructure})
+\item MAPEK loop execution reports with Monitor/Analyze/Plan/Execute/Knowledge stages
+\item Test skeletons and API contract schemas inferred from implementation
+\item Materialization plans (file writes, deletes, moves) with receipts
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
 \begin{verbatim}
-// Core types
-WorkflowEngine :: {
-  registerWorkflow: (WorkflowSpec) -> WorkflowId,
-  createCase: (WorkflowId, Data) -> { case: YawlCase, receipt: Receipt },
-  startTask: (CaseId, WorkItemId, Options) -> { task: WorkItem, receipt: Receipt },
-  completeTask: (CaseId, WorkItemId, Output, Actor) ->
-    { task: WorkItem, receipt: Receipt, downstreamEnabled: WorkItem[] }
+ProjectEngineConfigSchema = z.object({
+  fs: z.object({
+    rootPath: z.string(),
+    ignorePatterns: z.array(z.string()).default(['node_modules', '.git', 'dist']),
+    includeExtensions: z.array(z.string()).default(['.mjs', '.ts', '.tsx'])
+  }),
+  project: z.object({
+    conventions: z.object({
+      sourcePaths: z.array(z.string()).default(['src', 'packages']),
+      testPaths: z.array(z.string()).default(['test', '__tests__'])
+    })
+  }),
+  diff: z.object({
+    structureLens: z.enum(['project-structure', 'feature-drift', 'api-surface'])
+  }),
+  golden: z.object({
+    profile: z.enum(['strict', 'moderate', 'permissive']).default('moderate')
+  })
+})
+
+materializeArtifacts :: (config: {
+  ontologyStore: Store,
+  dryRun?: boolean
+}) -> {
+  plan: { writes: FileOp[], deletes: FileOp[], moves: FileOp[] },
+  receipt: { beforeHash: string, planHash: string, timestamp: number, changes: Change[] }
 }
 
-// Zod validation schemas
-WorkflowSpecSchema = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-  version: z.string().default('1.0.0'),
-  tasks: z.array(TaskDefSchema),
-  flows: z.array(FlowDefSchema)
-})
+deriveHooksFromStructure :: (store: Store, config: Config) -> Hook[]
 
-TaskDefSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  kind: z.enum(['atomic', 'composite', 'multiInstance', 'automated', 'manual']),
-  splitType: z.enum(['XOR', 'AND', 'OR']).optional(),
-  joinType: z.enum(['XOR', 'AND', 'OR']).optional()
-})
-
-ReceiptSchema = z.object({
-  receiptHash: z.string(),
-  previousReceiptHash: z.string().nullable(),
-  eventType: z.string(),
-  timestamp: z.number(),
-  actor: z.string().optional(),
-  data: z.record(z.any())
-})
+analyzePatternViolations :: (store: Store, config: Config) -> {
+  violations: Array<{ kind: string, entity: string, severity: 'error' | 'warning' }>,
+  suggestions: Array<{ action: string, targetEntity: string, reason: string }>
+}
 \end{verbatim}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-Reconciliation operates through SPARQL query evaluation and receipt chain verification:
+The reconciler maps filesystem observations to RDF project models:
 
+\[
+\muRecon_{\text{scan}}: \Oobs_{\text{fs}} \to \Aout_{\text{RDF}}
+\]
+
+Decomposed into stages:
 \begin{enumerate}
-\item \textbf{State reconstruction}: Given receipt chain \(R_0, R_1, \ldots, R_n\), replay events to reconstruct case state
-\item \textbf{Control flow evaluation}: Query enabled tasks via SPARQL:
-\begin{verbatim}
-SELECT ?taskId WHERE {
-  ?wi yawl:taskRef ?taskId ;
-      yawl:status yawl:enabled ;
-      yawl:caseRef ?caseId .
-}
-\end{verbatim}
-\item \textbf{Join satisfaction}: For AND-join tasks, verify all incoming flows completed
-\item \textbf{Receipt verification}: Check hash chain integrity: \texttt{R[i].previousReceiptHash === R[i-1].receiptHash}
-\item \textbf{Pattern validation}: Ensure split/join behaviors match workflow specification (no orphan tasks, cycles detected)
+\item \textbf{Filesystem scan}: \texttt{scanFileSystemToStore} traverses directory tree, creating RDF triples for each file/directory with metadata (path, size, mtime, extension)
+\item \textbf{Stack detection}: \texttt{detectStackFromFs} identifies technology stack via config file heuristics (package.json → Node/npm, tsconfig.json → TypeScript, etc.)
+\item \textbf{File classification}: \texttt{classifyFiles} assigns role annotations (Component, Service, Test, Config) based on path patterns and naming conventions
+\item \textbf{Domain binding}: \texttt{inferTemplatesWithDomainBinding} extracts domain entities (features, modules, capabilities) and constructs project ontology
 \end{enumerate}
 
-Guard condition: Transitions allowed only if \texttt{VALID\_TRANSITIONS[currentStatus].includes(newStatus)}.
+MAPEK autonomic loop reconciler:
+\[
+\muRecon_{\text{MAPEK}}: (\text{Monitor}, \text{Analyze}, \text{Plan}, \text{Execute}, \text{Knowledge}) \to \text{Actions}
+\]
+
+Implemented via \texttt{runMapekIteration}:
+\begin{itemize}
+\item \textbf{Monitor}: Collect drift, hotspots, gaps, complexity metrics
+\item \textbf{Analyze}: Apply lenses to detect violations (missing tests, orphan files)
+\item \textbf{Plan}: Generate materialization plan (file operations, hook registrations)
+\item \textbf{Execute}: Apply plan to filesystem, create receipts
+\item \textbf{Knowledge}: Update project model with new facts, store execution provenance
+\end{itemize}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
 \textbf{Horizontal composition} (\(\PiMerge\)):
 \begin{itemize}
-\item Van der Aalst workflow patterns (sequence, parallel split, synchronization, exclusive choice, simple merge)
-\item Composite workflows via task decomposition (parent case spawns child cases)
-\item Multiple instance tasks with dynamic cardinality
+\item Lens pipeline: Structure lens → Drift lens → API surface lens (applied sequentially)
+\item Multi-profile analysis: Strict/Moderate/Permissive golden profiles composed via rule union
+\item Template inference: Generic templates \(\oplus\) Domain-specific bindings
 \end{itemize}
 
 \textbf{Vertical composition} (\(\oplusMerge\)):
 \begin{itemize}
-\item YAWL-Hooks integration: Control flow guards evaluated via SPARQL predicates
-\item Resource allocation policies: Participant eligibility based on role membership queries
-\item Cancellation regions: Task completion triggers cancellation sets
-\item Event sourcing layer: KGC-4D append-only log tracks all state changes
+\item Diff engine integration: \texttt{diffOntologyFromStores} provides change detection
+\item Knowledge Engine: Inferred templates registered as SPARQL rules
+\item Hooks: Custom pattern hooks derived from project conventions
+\item KGC-4D: MAPEK execution logged with nanosecond timestamps
 \end{itemize}
-
-Pattern builders provide DSL for workflow construction:
-\begin{verbatim}
-const wf = sequence(
-  parallelSplit('fork', ['task1', 'task2']),
-  synchronization('join', ['task1', 'task2'])
-);
-\end{verbatim}
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 \textbf{Guards}:
 \begin{itemize}
-\item \texttt{isCaseStatus(status)}: Type guard for valid case status values
-\item \texttt{isValidCaseTransition(from, to)}: Transition legality check
-\item \texttt{validatePattern(pattern)}: Structural correctness (balanced splits/joins)
-\item \texttt{detectCycles(flows)}: No cycles except in arbitraryCycle pattern
-\item \texttt{validateResourceEligibility(participant, workItem)}: Capability matching
+\item \texttt{isValidPath}: Path traversal prevention (\texttt{..} not allowed in relative paths)
+\item \texttt{isWithinBounds}: File size limit enforcement (reject files >10MB)
+\item \texttt{validateProfile}: Golden profile must be known enum value
+\item \texttt{validateLens}: Lens function must return \texttt{OntologyChange | null}
 \end{itemize}
 
 \textbf{Invariants}:
 \begin{itemize}
-\item Receipt chain monotonicity: Timestamps strictly increasing
-\item Hash chain integrity: No broken links in receipt sequence
-\item Control flow soundness: Every case reaches completion or explicit cancellation
-\item Work item uniqueness: One active instance per task definition in case
-\item Split-join balance: Every split has matching join (except OR-join with implicit merge)
+\item Filesystem scans produce consistent RDF triples (same path → same IRI)
+\item MAPEK loop monotonicity: Knowledge base only grows (append-only)
+\item Materialization receipt chain integrity: Plan hash includes all operation hashes
+\item Template inference determinism: Same project structure → same templates
+\item Hook derivation completeness: Every violation triggers exactly one suggestion
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-Receipt structure:
+Materialization receipts contain:
 \begin{verbatim}
 {
-  receiptHash: sha256(eventType + timestamp + actor + data + prevHash),
-  previousReceiptHash: "abc123...",
-  eventType: "CASE_CREATED" | "TASK_ENABLED" | "TASK_STARTED" | ...,
-  timestamp: 1640000000000000000,  // KGC-4D nanoseconds
-  actor: "user@example.com",
-  data: { caseId: "case-1", workflowId: "wf-1", ... }
-}
-\end{verbatim}
-
-Provenance chain allows:
-\begin{itemize}
-\item Time-travel debugging: Reconstruct case state at any point in history
-\item Audit trails: Cryptographic proof of who did what when
-\item Deterministic replay: Re-execute workflow from receipts without side effects
-\item Compliance: Evidence for regulatory requirements (SOC2, GDPR)
-\end{itemize}
-
-\subsection*{Minimal Example}
-
-\begin{verbatim}
-import { createWorkflowEngine } from '@unrdf/yawl';
-
-const engine = createWorkflowEngine();
-
-// Define workflow
-engine.registerWorkflow({
-  id: 'purchase-order',
-  name: 'Purchase Order Approval',
-  tasks: [
-    { id: 'submit', name: 'Submit Order' },
-    { id: 'approve', name: 'Approve Order' },
-    { id: 'fulfill', name: 'Fulfill Order' }
+  beforeHash: sha256(all triples before operation),
+  planHash: sha256(write ops + delete ops + move ops),
+  timestamp: KGC-4D nanoseconds,
+  changes: [
+    { kind: "FeatureAdded", entity: "http://ex.org/feature/auth" },
+    { kind: "FileWritten", path: "src/features/auth/index.ts" }
   ],
-  flows: [
-    { from: 'submit', to: 'approve' },
-    { from: 'approve', to: 'fulfill' }
-  ]
-});
-
-// Create case
-const { case: caseObj, receipt: r1 } = await engine.createCase(
-  'purchase-order',
-  { items: ['Widget A'], total: 100 }
-);
-
-// Get enabled tasks
-const enabled = caseObj.getEnabledWorkItems();
-console.log(enabled); // [{ id: 'wi-1', taskId: 'submit', status: 'ENABLED' }]
-
-// Start and complete tasks
-const { receipt: r2 } = await caseObj.startTask(enabled[0].id);
-const { receipt: r3, downstreamEnabled } = await caseObj.completeTask(
-  enabled[0].id,
-  { approved: true }
-);
-
-// Verify receipt chain
-console.log(r3.previousReceiptHash === r2.receiptHash); // true
-\end{verbatim}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to optimize SPARQL queries for large-scale workflow executions (1M+ cases)?
-\item What is the performance impact of RDF persistence vs in-memory case state?
-\item Can workflow patterns be expressed as SHACL shapes for static validation?
-\item How to handle cross-workflow dependencies (composite workflows referencing external cases)?
-\item What is the storage overhead of maintaining full receipt chains vs event snapshots?
-\end{enumerate}
-
-% =============================================================================
-
-\label{pkg:unrdf-yawl-ai}
-\section{\pkg{unrdf-yawl-ai} --- AI-Powered Workflow Optimization}
-
-\begin{pkgmeta}
-Path & \texttt{packages/yawl-ai} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 3 \\
-Blurb & AI-powered workflow optimization using TensorFlow.js \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\textbf{Observable \(\Oobs\)}:
-\begin{itemize}
-\item Workflow execution traces (task sequences, durations, outcomes)
-\item Performance metrics (throughput, latency, resource utilization)
-\item Anomaly scores for execution patterns
-\item Neural network prediction confidence scores
-\end{itemize}
-
-\textbf{Artifact \(\Aout\)}:
-\begin{itemize}
-\item TensorFlow.js model files (\texttt{model.json}, weight binaries)
-\item Path prediction vectors (next task probabilities)
-\item Performance optimization reports identifying bottlenecks
-\item Anomaly detection alerts with outlier scores
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-\begin{verbatim}
-WorkflowPathPredictor :: {
-  train: (ExecutionHistory[]) -> Promise<void>,
-  predict: (TaskSequence) -> Promise<{
-    nextTask: TaskId,
-    probability: number,
-    alternatives: Array<{ taskId: TaskId, probability: number }>
-  }>
-}
-
-PerformanceOptimizer :: {
-  analyze: (ExecutionMetrics[]) -> Promise<{
-    bottlenecks: Array<{ taskId: TaskId, avgDuration: number, recommendation: string }>,
-    parallelizationOpportunities: TaskId[][],
-    resourceConstraints: string[]
-  }>,
-  generateReport: () -> Promise<OptimizationReport>
-}
-
-AnomalyDetector :: {
-  train: (NormalExecutions[]) -> Promise<void>,
-  detect: (Execution) -> Promise<{
-    isAnomaly: boolean,
-    score: number,
-    reasons: string[]
-  }>
-}
-\end{verbatim}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-ML model reconciliation:
-\begin{enumerate}
-\item \textbf{Training data collection}: Extract features from YAWL receipt chains (task order, durations, outcomes)
-\item \textbf{Model training}: Fit TensorFlow.js models (LSTM for path prediction, autoencoder for anomaly detection)
-\item \textbf{Prediction integration}: Inject predictions into YAWL task enablement hooks
-\item \textbf{Feedback loop}: Update models based on actual vs predicted outcomes
-\end{enumerate}
-
-Guard: Models only provide recommendations; workflow engine enforces control flow constraints.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Horizontal: Predictor, optimizer, and detector modules composed via adapter pattern.
-
-Vertical: Integrates with \texttt{@unrdf/yawl} engine via \texttt{YAWLMLAdapter} hooks.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards: Model predictions never override workflow specification (advisory only).
-
-Invariants: Training data must be sanitized (no PII), models versioned with KGC-4D timestamps.
-
-\subsection*{Provenance and Receipts}
-
-Model training runs recorded with KGC-4D receipts containing:
-\begin{itemize}
-\item Training dataset hash
-\item Model architecture hash
-\item Hyperparameters (learning rate, epochs, batch size)
-\item Accuracy/loss metrics
-\end{itemize}
-
-\subsection*{Minimal Example}
-
-\begin{verbatim}
-import { createAdapter, createPredictor } from '@unrdf/yawl-ai';
-import { createWorkflowEngine } from '@unrdf/yawl';
-
-const engine = createWorkflowEngine();
-const predictor = createPredictor();
-
-const adapter = createAdapter(engine, { predictor });
-
-// Train on historical executions
-const history = engine.getExecutionHistory('purchase-order');
-await adapter.trainModels();
-
-// Get predictions
-const prediction = await predictor.predict(['submit', 'approve']);
-console.log(`Next task: ${prediction.nextTask} (${prediction.probability * 100}%)`);
-\end{verbatim}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to handle concept drift in workflow patterns over time?
-\item What is the minimum training data size for reliable predictions?
-\item Can transfer learning accelerate model training for new workflows?
-\end{enumerate}
-
-% =============================================================================
-
-\label{pkg:unrdf-yawl-api}
-\section{\pkg{unrdf-yawl-api} --- RESTful Workflow API}
-
-\begin{pkgmeta}
-Path & \texttt{packages/yawl-api} \\
-Kind & js \\
-Entrypoints & 1 file \\
-Dependencies & 7 \\
-Blurb & High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\textbf{Observable \(\Oobs\)}:
-\begin{itemize}
-\item HTTP requests (POST /api/workflows, GET /api/cases/:id, etc.)
-\item Response status codes (201 Created, 404 Not Found, etc.)
-\item HATEOAS hypermedia links in response bodies
-\item Swagger UI interactions at /docs endpoint
-\end{itemize}
-
-\textbf{Artifact \(\Aout\)}:
-\begin{itemize}
-\item OpenAPI 3.1 specification generated from Zod schemas
-\item JSON API responses with case state and enabled task links
-\item Fastify server logs
-\item Prometheus metrics (if enabled)
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-\begin{verbatim}
-YAWLAPIServer :: {
-  listen: (Options) -> Promise<string>,  // Server address
-  close: () -> Promise<void>,
-  getEngine: () -> WorkflowEngine,
-  getServer: () -> FastifyInstance
-}
-
-// API routes
-POST   /api/workflows                      -> { workflowId, message }
-GET    /api/workflows                      -> { workflows: Workflow[] }
-GET    /api/workflows/:workflowId          -> WorkflowSpec
-POST   /api/workflows/:workflowId/cases    -> { case, receipt }
-GET    /api/cases                          -> { cases: Case[] }
-GET    /api/cases/:caseId                  -> CaseDetails + _links
-POST   /api/cases/:caseId/tasks/:workItemId/start    -> { task, receipt }
-POST   /api/cases/:caseId/tasks/:workItemId/complete -> { task, receipt }
-POST   /api/cases/:caseId/tasks/:workItemId/cancel   -> { task, receipt }
-
-// HATEOAS links
-_links: {
-  self: { href, method, description },
-  enabledTasks: [{ taskId, actions: { start, cancel } }],
-  runningTasks: [{ taskId, actions: { complete, cancel } }]
-}
-\end{verbatim}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-HTTP layer reconciles with workflow engine state:
-\begin{enumerate}
-\item Request validation via Zod schemas
-\item Route handler invokes \texttt{WorkflowEngine} methods
-\item Response serialization includes HATEOAS links based on case state
-\item OpenAPI spec auto-generated from \texttt{zodToJsonSchema}
-\end{enumerate}
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Horizontal: Fastify plugins (CORS, Swagger, OpenAPI) composed via middleware chain.
-
-Vertical: REST API wraps \texttt{@unrdf/yawl} engine, exposing workflow operations via HTTP.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards: Request validation via Zod, authentication middleware (if configured).
-
-Invariants:
-\begin{itemize}
-\item All responses include \texttt{\_links} for hypermedia navigation
-\item Case state changes produce receipts returned in response
-\item Error responses conform to RFC 7807 Problem Details
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-API operations return receipt objects:
-\begin{verbatim}
-POST /api/workflows/purchase-order/cases
-Response:
-{
-  "case": { "id": "case-1", "status": "ACTIVE", ... },
-  "receipt": {
-    "receiptHash": "abc123...",
-    "eventType": "CASE_CREATED",
-    "timestamp": 1640000000000000000
-  }
-}
-\end{verbatim}
-
-\subsection*{Minimal Example}
-
-\begin{verbatim}
-import { createYAWLAPIServer } from '@unrdf/yawl-api';
-
-const server = await createYAWLAPIServer({
-  baseUrl: 'http://localhost:3000',
-  enableSwagger: true
-});
-
-await server.listen({ port: 3000 });
-console.log('API docs at http://localhost:3000/docs');
-
-// Register workflow via API
-await fetch('http://localhost:3000/api/workflows', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    id: 'my-workflow',
-    tasks: [{ id: 'task1', name: 'First Task' }],
-    flows: []
-  })
-});
-\end{verbatim}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to version API endpoints when workflow schemas evolve?
-\item What authentication/authorization strategy for production deployments?
-\item Can GraphQL replace REST for more flexible querying?
-\end{enumerate}
-
-% =============================================================================
-
-\label{pkg:unrdf-yawl-durable}
-\section{\pkg{unrdf-yawl-durable} --- Durable Execution Framework}
-
-\begin{pkgmeta}
-Path & \texttt{packages/yawl-durable} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 5 \\
-Blurb & Durable execution framework inspired by Temporal.io \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\textbf{Observable \(\Oobs\)}:
-\begin{itemize}
-\item Activity execution attempts (including retries)
-\item Workflow replay events reconstructed from receipts
-\item Saga compensation triggers on failure
-\item Receipt chain verification results
-\end{itemize}
-
-\textbf{Artifact \(\Aout\)}:
-\begin{itemize}
-\item Workflow execution handle (executionId, status, startedAt)
-\item Receipt chain stored in \texttt{receiptStore} Map
-\item Activity retry logs with backoff intervals
-\item Saga compensation execution records
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-\begin{verbatim}
-DurableWorkflowEngine :: {
-  defineWorkflow: (WorkflowConfig) -> Promise<WorkflowId>,
-  startWorkflow: (WorkflowId, Input, Options) -> Promise<ExecutionHandle>,
-  executeActivity: (ExecutionId, ActivityId, Input) -> Promise<ActivityResult>,
-  replay: (ExecutionId) -> Promise<ReplayedState>,
-  verifyReceiptChain: (ExecutionId) -> Promise<{ valid: boolean, error?: string }>
-}
-
-ActivityConfigSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  handler: z.function(),
-  timeout: z.number().default(30000),
-  retryPolicy: z.object({
-    maxAttempts: z.number().default(3),
-    initialInterval: z.number().default(1000),
-    backoffCoefficient: z.number().default(2)
-  }),
-  compensate: z.function().optional()  // Saga compensation handler
-})
-\end{verbatim}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-Durable execution reconciliation via deterministic replay:
-\begin{enumerate}
-\item \textbf{Receipt-based replay}: Reconstruct workflow state from cryptographic receipt chain
-\item \textbf{Activity idempotency}: Re-execution produces same result (no side effects during replay)
-\item \textbf{Retry logic}: Exponential backoff with jitter, max attempts enforcement
-\item \textbf{Saga compensation}: On failure, execute compensate handlers in reverse order
-\end{enumerate}
-
-Guard: Activities never re-execute during replay (results fetched from receipts).
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Horizontal: Activities composed into workflows via flow definitions.
-
-Vertical: Wraps \texttt{@unrdf/yawl} engine with durable execution composition rules (retry, timeout, saga).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item Activity timeout enforcement (kill after configured duration)
-\item Retry attempt counting (fail after maxAttempts)
-\item Receipt chain integrity checks before replay
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item Receipt chain is append-only (no mutations)
-\item Activity handlers are pure functions during replay
-\item Compensation handlers restore system to consistent state
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-Receipt chain enables deterministic replay:
-\begin{verbatim}
-Receipts: [
-  { eventType: "WORKFLOW_STARTED", data: { workflowId, input } },
-  { eventType: "TASK_ENABLED", data: { taskId: "bookFlight" } },
-  { eventType: "TASK_STARTED", data: { taskId: "bookFlight", attempt: 1 } },
-  { eventType: "TASK_COMPLETED", data: { taskId: "bookFlight", result: {...} } },
-  { eventType: "TASK_ENABLED", data: { taskId: "bookHotel" } },
-  ...
-]
-
-// Replay: Step through receipts without re-executing activities
-const state = await engine.replay(executionId);
-\end{verbatim}
-
-\subsection*{Minimal Example}
-
-\begin{verbatim}
-import { DurableWorkflowEngine } from '@unrdf/yawl-durable';
-
-const engine = new DurableWorkflowEngine();
-
-await engine.defineWorkflow({
-  id: 'booking-saga',
-  name: 'Travel Booking',
-  activities: [
-    {
-      id: 'bookFlight',
-      handler: async (input) => {
-        const res = await fetch('https://api.flights/book', { body: input });
-        return res.json();
-      },
-      compensate: async (result) => {
-        await fetch(`https://api.flights/cancel/${result.bookingId}`, { method: 'DELETE' });
-      }
-    },
-    {
-      id: 'bookHotel',
-      handler: async (input) => {
-        const res = await fetch('https://api.hotels/book', { body: input });
-        return res.json();
-      },
-      compensate: async (result) => {
-        await fetch(`https://api.hotels/cancel/${result.bookingId}`, { method: 'DELETE' });
-      }
-    }
-  ],
-  flow: [{ from: 'bookFlight', to: 'bookHotel' }]
-});
-
-const execution = await engine.startWorkflow('booking-saga', { userId: '123' });
-const flightResult = await engine.executeActivity(execution.executionId, 'bookFlight', {});
-
-// Replay from receipts
-const replayed = await engine.replay(execution.executionId);
-console.log(replayed.state); // Reconstructed state from receipt chain
-\end{verbatim}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to handle non-deterministic activity results during replay?
-\item What is the storage overhead of maintaining full receipt chains for long-running workflows?
-\item Can side-effecting memoization improve replay performance?
-\end{enumerate}
-
-% =============================================================================
-
-\label{pkg:unrdf-yawl-kafka}
-\section{\pkg{unrdf-yawl-kafka} --- Event Streaming Integration}
-
-\begin{pkgmeta}
-Path & \texttt{packages/yawl-kafka} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 4 \\
-Blurb & Apache Kafka event streaming integration for YAWL workflows with Avro serialization \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\textbf{Observable \(\Oobs\)}:
-\begin{itemize}
-\item Kafka producer send confirmations (partition, offset, timestamp)
-\item Consumer group rebalances
-\item Avro serialization/deserialization events
-\item Topic partition lag metrics
-\end{itemize}
-
-\textbf{Artifact \(\Aout\)}:
-\begin{itemize}
-\item Kafka messages with Avro-encoded YAWL receipts
-\item Schema registry entries for event types
-\item Consumer offset commits
-\item Dead letter queue messages (failed deserialization)
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-\begin{verbatim}
-YAWLKafkaProducer :: {
-  connect: () -> Promise<void>,
-  sendReceipt: (Receipt) -> Promise<{ partition: number, offset: string }>,
-  sendEvent: (EventType, Data) -> Promise<RecordMetadata>,
-  disconnect: () -> Promise<void>
-}
-
-YAWLKafkaConsumer :: {
-  connect: () -> Promise<void>,
-  subscribe: (Topics) -> void,
-  run: (Handler) -> Promise<void>,
-  disconnect: () -> Promise<void>
-}
-
-// Avro schemas for event types
-ReceiptAvroSchema = {
-  type: 'record',
-  name: 'YAWLReceipt',
-  fields: [
-    { name: 'receiptHash', type: 'string' },
-    { name: 'previousReceiptHash', type: ['null', 'string'] },
-    { name: 'eventType', type: 'string' },
-    { name: 'timestamp', type: 'long' },
-    { name: 'data', type: { type: 'map', values: 'string' } }
+  dryRun: false,
+  violations: [
+    { kind: "MissingTest", entity: "auth", severity: "error" }
   ]
 }
 \end{verbatim}
 
-\subsection*{Reconciler \(\muRecon\)}
-
-Event streaming reconciliation:
-\begin{enumerate}
-\item \textbf{Producer}: YAWL engine emits receipts to Kafka topic on state changes
-\item \textbf{Serialization}: Convert receipt objects to Avro binary format
-\item \textbf{Consumer}: External systems (analytics, monitoring) consume events
-\item \textbf{Deserialization}: Avro binary to receipt objects using schema registry
-\end{enumerate}
-
-At-least-once delivery composition rules (Kafka guarantees).
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Horizontal: Producer and consumer as independent processes, composed via Kafka topic.
-
-Vertical: Integrates with \texttt{@unrdf/yawl} via event emission hooks.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
+MAPEK iteration receipts:
 \begin{itemize}
-\item Schema compatibility checks before producing
-\item Consumer group rebalance handling
-\item Message retry with exponential backoff
+\item Monitor phase: Metrics snapshot (file count, complexity, coverage)
+\item Analyze phase: Violation detection results
+\item Plan phase: Proposed actions with rationale
+\item Execute phase: Applied actions with success/failure
+\item Knowledge phase: Updated fact count, hook registrations
 \end{itemize}
-
-Invariants:
-\begin{itemize}
-\item Message order preserved within partition
-\item No message loss (durability via replication factor)
-\item Schema evolution backward compatible
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-Kafka messages contain full receipt provenance:
-\begin{verbatim}
-Topic: yawl-workflow-events
-Key: case-123
-Value (Avro):
-{
-  "receiptHash": "abc123...",
-  "previousReceiptHash": "def456...",
-  "eventType": "TASK_COMPLETED",
-  "timestamp": 1640000000000000000,
-  "data": { "caseId": "case-123", "taskId": "approve", "output": {...} }
-}
-\end{verbatim}
 
 \subsection*{Minimal Example}
 
 \begin{verbatim}
-import { createYAWLKafkaProducer, createYAWLKafkaConsumer } from '@unrdf/yawl-kafka';
+import {
+  materializeArtifacts,
+  getProjectEngineConfig,
+  deriveHooksFromStructure
+} from '@unrdf/project-engine';
+import { createStore } from '@unrdf/oxigraph';
 
-// Producer
-const producer = createYAWLKafkaProducer({
-  brokers: ['localhost:9092'],
-  clientId: 'yawl-producer'
+// Scan filesystem and build project model
+const config = getProjectEngineConfig({
+  fs: { rootPath: '/path/to/project' },
+  golden: { profile: 'strict' }
 });
 
-await producer.connect();
-await producer.sendReceipt({
-  receiptHash: 'abc123...',
-  eventType: 'CASE_CREATED',
-  timestamp: Date.now() * 1e6,
-  data: { caseId: 'case-1' }
+const store = createStore();
+// ... populate store via scanFileSystemToStore ...
+
+// Derive hooks from project structure
+const hooks = deriveHooksFromStructure(store, config);
+console.log(`Derived ${hooks.length} hooks`);
+
+// Generate materialization plan
+const { plan, receipt } = materializeArtifacts({
+  ontologyStore: store,
+  dryRun: true
 });
 
-// Consumer
-const consumer = createYAWLKafkaConsumer({
-  brokers: ['localhost:9092'],
-  groupId: 'analytics-group'
-});
-
-await consumer.connect();
-consumer.subscribe(['yawl-workflow-events']);
-
-await consumer.run(async ({ message }) => {
-  const receipt = JSON.parse(message.value);
-  console.log(`Received: ${receipt.eventType}`);
-});
+console.log(`Plan: ${plan.writes.length} writes, ${plan.deletes.length} deletes`);
+console.log(`Receipt hash: ${receipt.planHash}`);
 \end{verbatim}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to handle schema evolution when adding new receipt fields?
-\item What partition strategy optimizes for both throughput and ordering guarantees?
-\item Can Kafka Streams enable real-time workflow analytics?
+\item How to handle non-deterministic AST traversal when code formatters introduce variance?
+\item What is the performance impact of full project scans on monorepos with 10K+ files?
+\item Can MAPEK loops converge to stable state, or do they oscillate?
+\item How to version project ontology schemas when conventions evolve?
+\item Can machine learning improve template inference accuracy beyond rule-based heuristics?
 \end{enumerate}
 
 % =============================================================================
 
-\label{pkg:unrdf-yawl-langchain}
-\section{\pkg{unrdf-yawl-langchain} --- LangChain Integration}
+\label{pkg:unrdf-diff-engine}
+\section{\pkg{@unrdf/diff-engine} --- RDF Graph Diff Computation}
 
 \begin{pkgmeta}
-Path & \texttt{packages/yawl-langchain} \\
+Path & \texttt{packages/core/src/diff.mjs} \\
 Kind & js \\
-Entrypoints & 3 files \\
-Dependencies & 6 \\
-Blurb & LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context \\
+Entrypoints & 1 module \\
+Dependencies & 1 (zod) \\
+Blurb & Triple-level and ontology-level diff computation for RDF graphs with pluggable lens functions \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \textbf{Observable \(\Oobs\)}:
 \begin{itemize}
-\item LLM API calls (OpenAI, Anthropic) with prompts and responses
-\item Chain execution traces (tool calls, reasoning steps)
-\item RDF context retrieval from Oxigraph store
-\item Agent decision logs
+\item Two RDF stores (baseline and current) or delta objects (inserts/deletes)
+\item Quad-level changes (added/removed triples)
+\item Ontology lens function mappings (triple → semantic change)
 \end{itemize}
 
 \textbf{Artifact \(\Aout\)}:
 \begin{itemize}
-\item LangChain chain definitions (sequential, routing, map-reduce)
-\item Task execution hooks with prompt templates
-\item RDF triples injected as context for LLM reasoning
-\item Agent tool call results
+\item \texttt{GraphDiff}: Triple-level changes (\texttt{added: DiffTriple[], removed: DiffTriple[]})
+\item \texttt{OntologyDiff}: Semantic changes (\texttt{triples: GraphDiff, changes: OntologyChange[]})
+\item Change summaries grouped by kind (\texttt{FeatureAdded}, \texttt{RoleRemoved}, etc.)
+\item Entity-specific change lists for targeted analysis
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
 \begin{verbatim}
-YAWLLangChainAdapter :: {
-  createTaskExecutor: (TaskDef, LLMConfig) -> TaskExecutor,
-  executeWithContext: (TaskId, Input, RDFContext) -> Promise<Output>,
-  createPromptHook: (Template) -> Hook
-}
-
-createLangChainTaskExecutor :: (config: {
-  taskId: string,
-  llm: ChatOpenAI | ChatAnthropic,
-  promptTemplate: PromptTemplate,
-  tools?: Tool[],
-  rdfContextQuery?: string  // SPARQL query for RDF context
-}) -> AsyncFunction
-
-LangChainTaskConfigSchema = z.object({
-  taskId: z.string(),
-  model: z.enum(['gpt-4', 'claude-3-opus', ...]),
-  temperature: z.number().min(0).max(2).default(0.7),
-  promptTemplate: z.string(),
-  outputParser: z.enum(['json', 'text', 'structured']).default('text'),
-  maxTokens: z.number().optional()
+DiffTripleSchema = z.object({
+  subject: z.string(),
+  predicate: z.string(),
+  object: z.string()
 })
+
+GraphDiffSchema = z.object({
+  added: z.array(DiffTripleSchema),
+  removed: z.array(DiffTripleSchema)
+})
+
+OntologyChangeSchema = z.object({
+  kind: z.string(),
+  entity: z.string().optional(),
+  role: z.string().optional()
+}).passthrough()
+
+OntologyDiffSchema = z.object({
+  triples: GraphDiffSchema,
+  changes: z.array(OntologyChangeSchema)
+})
+
+OntologyLensFn :: (triple: DiffTriple, direction: 'added' | 'removed')
+  -> OntologyChange | null
+
+diffGraphFromStores :: (storeA: Store, storeB: Store) -> GraphDiff
+
+diffOntologyFromStores :: (storeA: Store, storeB: Store, lens: OntologyLensFn)
+  -> OntologyDiff
+
+diffOntologyFromDelta :: (delta: { inserts: Quad[], deletes: Quad[] }, lens: OntologyLensFn)
+  -> OntologyDiff
 \end{verbatim}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-AI-workflow reconciliation:
+Diff reconciliation operates in two phases:
+
+\textbf{Phase 1: Triple-level diff}
 \begin{enumerate}
-\item \textbf{RDF context injection}: SPARQL query extracts relevant triples, serialized as Turtle for LLM prompt
-\item \textbf{Task execution}: LangChain chain invoked with workflow data + RDF context
-\item \textbf{Result parsing}: LLM output structured via Zod schema, stored in YAWL case data
-\item \textbf{Receipt generation}: LLM invocation logged in receipt with model name, token count
+\item Collect all triples from baseline store: \(T_A = \{ t_1, t_2, \ldots, t_n \}\)
+\item Collect all triples from current store: \(T_B = \{ t'_1, t'_2, \ldots, t'_m \}\)
+\item Compute set differences:
+\[
+\text{added} = T_B \setminus T_A, \quad \text{removed} = T_A \setminus T_B
+\]
+\item Use stable key function \texttt{diffTripleKey(t) = t.subject + ' ' + t.predicate + ' ' + t.object} for efficient set operations
 \end{enumerate}
+
+\textbf{Phase 2: Ontology-level diff}
+\begin{enumerate}
+\item Apply lens function to each triple in \(\text{added}\): \texttt{lens(t, 'added')}
+\item Apply lens function to each triple in \(\text{removed}\): \texttt{lens(t, 'removed')}
+\item Filter out \texttt{null} results (triples with no semantic mapping)
+\item Collect non-null results as \texttt{OntologyChange[]}
+\end{enumerate}
+
+Lens compositionality:
+\[
+\text{lens}_{\text{combined}}(t, d) = \text{lens}_1(t, d) \oplus \text{lens}_2(t, d)
+\]
+where \(\oplus\) merges changes (first non-null wins).
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Horizontal: LangChain chains (sequential, parallel, routing) composed with YAWL control flow patterns.
+\textbf{Horizontal composition} (\(\PiMerge\)):
+\begin{itemize}
+\item Multi-store diffs: \texttt{diff(A, B)} \(\circ\) \texttt{diff(B, C)} = \texttt{diff(A, C)} (transitivity)
+\item Batch delta processing: Multiple deltas merged via union
+\item Lens chaining: Apply multiple lenses, deduplicate changes
+\end{itemize}
 
-Vertical: LLM tasks integrated via \texttt{createLangChainTaskExecutor} adapter, RDF context from Oxigraph.
+\textbf{Vertical composition} (\(\oplusMerge\)):
+\begin{itemize}
+\item Merge engine: Diff provides change detection for 3-way merge
+\item KGC-4D: Diffs stored as receipts with timestamp and provenance
+\item Streaming: Incremental diffs emitted as RDF change feeds
+\item SHACL validation: Diff changes validated against ontology constraints
+\end{itemize}
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
-Guards:
+\textbf{Guards}:
 \begin{itemize}
-\item API rate limit handling (exponential backoff)
-\item Token budget enforcement (max\_tokens)
-\item Output validation via Zod schema
+\item \texttt{validateQuad}: Ensure quad has \texttt{subject.value}, \texttt{predicate.value}, \texttt{object.value}
+\item \texttt{validateStore}: Store must implement \texttt{getQuads()} method
+\item \texttt{validateLens}: Lens must be function returning \texttt{OntologyChange | null}
+\item \texttt{validateDelta}: Delta must have \texttt{inserts} and \texttt{deletes} arrays
 \end{itemize}
 
-Invariants:
+\textbf{Invariants}:
 \begin{itemize}
-\item LLM calls are non-deterministic (receipts record actual output, not re-generated)
-\item RDF context query deterministic (same result for same case state)
+\item Diff commutativity: \texttt{diff(A, B).removed === diff(B, A).added}
+\item Lens determinism: Same triple + direction → same change
+\item Change deduplication: No duplicate changes in \texttt{OntologyDiff.changes}
+\item Triple key stability: \texttt{diffTripleKey} produces same key for equivalent triples
+\item Empty diff identity: \texttt{diff(A, A) === \{ added: [], removed: [] \}}
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-LLM task receipts include full context:
+Diff operations generate receipts containing:
 \begin{verbatim}
 {
-  receiptHash: "abc123...",
-  eventType: "LLM_TASK_COMPLETED",
-  timestamp: 1640000000000000000,
-  data: {
-    taskId: "code-review",
-    model: "gpt-4",
-    prompt: "Review this code:\n...",
-    completion: "This code has the following issues:\n...",
-    tokensUsed: 1234,
-    rdfContext: "<http://ex.org/pr/1> ex:diffSize 500 .",
-    durationMs: 2345
-  }
+  operation: "diffOntologyFromStores",
+  baselineStoreHash: sha256(all quads in storeA),
+  currentStoreHash: sha256(all quads in storeB),
+  diffHash: sha256(added triples + removed triples),
+  addedCount: 42,
+  removedCount: 13,
+  changesCount: 18,
+  lensName: "project-structure-lens",
+  timestamp: KGC-4D nanoseconds
 }
 \end{verbatim}
+
+Change provenance:
+\begin{itemize}
+\item Each \texttt{OntologyChange} links to originating triple
+\item Triple-to-change mapping stored for audit trails
+\item Lens invocations logged with input/output for debugging
+\end{itemize}
 
 \subsection*{Minimal Example}
 
 \begin{verbatim}
-import { createLangChainTaskExecutor } from '@unrdf/yawl-langchain';
-import { createWorkflowEngine } from '@unrdf/yawl';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
+import { diffOntologyFromStores } from '@unrdf/core/diff';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
 
-const engine = createWorkflowEngine();
+const { namedNode } = dataFactory;
 
-// Define workflow with AI task
-engine.registerWorkflow({
-  id: 'code-review-wf',
-  tasks: [
-    { id: 'review', name: 'AI Code Review' },
-    { id: 'approve', name: 'Human Approval' }
-  ],
-  flows: [{ from: 'review', to: 'approve' }]
-});
+// Create baseline store
+const storeA = createStore();
+storeA.add(
+  namedNode('http://ex.org/alice'),
+  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+  namedNode('http://ex.org/User')
+);
 
-// Create LangChain executor
-const reviewExecutor = createLangChainTaskExecutor({
-  taskId: 'review',
-  llm: new ChatOpenAI({ modelName: 'gpt-4', temperature: 0.2 }),
-  promptTemplate: `
-    Review the following code diff:
-    {diff}
+// Create current store with changes
+const storeB = createStore();
+storeB.add(
+  namedNode('http://ex.org/alice'),
+  namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+  namedNode('http://ex.org/Admin')
+);
 
-    RDF context:
-    {rdfContext}
+// Define lens
+const lens = (triple, direction) => {
+  if (triple.predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+    return {
+      kind: direction === 'added' ? 'TypeChanged' : 'TypeRemoved',
+      entity: triple.subject,
+      newType: direction === 'added' ? triple.object : undefined
+    };
+  }
+  return null;
+};
 
-    Provide: 1) Issues found, 2) Severity, 3) Recommendations
-  `,
-  rdfContextQuery: `
-    SELECT ?author ?fileCount WHERE {
-      ?pr ex:author ?author ; ex:fileCount ?fileCount .
-    }
-  `
-});
-
-// Execute
-const { case: caseObj } = await engine.createCase('code-review-wf', {
-  diff: 'diff --git a/foo.js ...'
-});
-
-const result = await reviewExecutor(caseObj, { diff: caseObj.data.diff });
-console.log(result); // { issues: [...], severity: 'medium', recommendations: [...] }
+// Compute diff
+const diff = diffOntologyFromStores(storeA, storeB, lens);
+console.log(diff.triples.added.length);   // 1
+console.log(diff.triples.removed.length); // 1
+console.log(diff.changes);                // [{ kind: 'TypeRemoved', ... }, { kind: 'TypeChanged', ... }]
 \end{verbatim}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to ensure reproducibility when LLM outputs are non-deterministic?
-\item What is the cost/benefit tradeoff of RDF context injection vs RAG retrieval?
-\item Can YAWL patterns guide LangChain agent tool selection?
+\item How to optimize diff performance for graphs with millions of triples?
+\item Can diff computation be parallelized across graph partitions?
+\item What are the storage tradeoffs of delta vs snapshot-based version control?
+\item How to handle blank nodes in diff computation (identity vs structural equivalence)?
+\item Can machine learning identify "interesting" changes vs noise?
 \end{enumerate}
 
 % =============================================================================
 
-\label{pkg:unrdf-yawl-observability}
-\section{\pkg{unrdf-yawl-observability} --- Workflow Observability Framework}
+\label{pkg:unrdf-merge-engine}
+\section{\pkg{@unrdf/merge-engine} --- RDF Graph Merge Resolution}
 
 \begin{pkgmeta}
-Path & \texttt{packages/yawl-observability} \\
+Path & \texttt{packages/core/src/utils/merge-utils.mjs} \\
 Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 6 \\
-Blurb & Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL \\
+Entrypoints & 1 module \\
+Dependencies & 2 (@unrdf/core, @unrdf/oxigraph) \\
+Blurb & RDF store merging with set operations (union, intersection, difference, symmetric difference) \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \textbf{Observable \(\Oobs\)}:
 \begin{itemize}
-\item Prometheus metrics (case\_created\_total, task\_duration\_seconds, etc.)
-\item OpenTelemetry traces with spans for workflow operations
-\item Service Level Indicators (SLI): availability, latency, error rate
-\item Alert conditions (SLO violations, anomaly detection)
+\item Multiple RDF stores to be merged
+\item Quad-level content from each store
+\item Merge strategy (union, intersection, difference, symmetric difference)
 \end{itemize}
 
 \textbf{Artifact \(\Aout\)}:
 \begin{itemize}
-\item Prometheus exposition format (/metrics endpoint)
-\item OTLP trace exports to Jaeger/Zipkin
-\item SLI snapshot JSON reports
-\item Grafana dashboard JSON configurations
+\item Merged RDF store containing result quads
+\item Set operation results (union, intersection, difference)
+\item Quad deduplication via stable string representation
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
 \begin{verbatim}
-YAWLMetricsCollector :: {
-  recordCaseCreated: (CaseId, WorkflowId) -> void,
-  recordTaskStarted: (CaseId, TaskId) -> void,
-  recordTaskCompleted: (CaseId, TaskId, DurationMs) -> void,
-  getMetrics: () -> Promise<string>,  // Prometheus format
-  contentType: string
+mergeStores :: (...stores: Store[]) -> Store
+
+unionStores :: (store1: Store, store2: Store) -> Store
+
+intersectStores :: (store1: Store, store2: Store) -> Store
+
+differenceStores :: (store1: Store, store2: Store) -> Store
+
+symmetricDifferenceStores :: (store1: Store, store2: Store) -> Store
+
+quadToString :: (quad: Quad) -> string
+\end{verbatim}
+
+Set semantics:
+\[
+\begin{aligned}
+\text{union}(S_1, S_2) &= S_1 \cup S_2 \\
+\text{intersect}(S_1, S_2) &= S_1 \cap S_2 \\
+\text{difference}(S_1, S_2) &= S_1 \setminus S_2 \\
+\text{symmetricDiff}(S_1, S_2) &= (S_1 \setminus S_2) \cup (S_2 \setminus S_1)
+\end{aligned}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Merge reconciliation via set operations:
+
+\textbf{Union merge}:
+\begin{enumerate}
+\item Create empty result store \(R\)
+\item For each store \(S_i\) in input stores:
+  \begin{enumerate}
+  \item For each quad \(q\) in \(S_i\): \(R.\text{add}(q)\)
+  \end{enumerate}
+\item Store deduplication ensures \(|R| \leq \sum_i |S_i|\)
+\end{enumerate}
+
+\textbf{Intersection merge}:
+\begin{enumerate}
+\item Convert \(S_2\) to set of quad strings: \(Q_2 = \{ \text{quadToString}(q) \mid q \in S_2 \}\)
+\item For each quad \(q\) in \(S_1\):
+  \begin{enumerate}
+  \item If \(\text{quadToString}(q) \in Q_2\): \(R.\text{add}(q)\)
+  \end{enumerate}
+\item Result: \(R = S_1 \cap S_2\)
+\end{enumerate}
+
+\textbf{Difference merge}:
+\begin{enumerate}
+\item Convert \(S_2\) to set of quad strings: \(Q_2 = \{ \text{quadToString}(q) \mid q \in S_2 \}\)
+\item For each quad \(q\) in \(S_1\):
+  \begin{enumerate}
+  \item If \(\text{quadToString}(q) \notin Q_2\): \(R.\text{add}(q)\)
+  \end{enumerate}
+\item Result: \(R = S_1 \setminus S_2\)
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+\textbf{Horizontal composition} (\(\PiMerge\)):
+\begin{itemize}
+\item N-way merge: \texttt{mergeStores(S1, S2, ..., SN)} = sequential union
+\item Associative: \texttt{merge(merge(A, B), C)} = \texttt{merge(A, merge(B, C))}
+\item Commutative (for union): \texttt{merge(A, B)} = \texttt{merge(B, A)}
+\end{itemize}
+
+\textbf{Vertical composition} (\(\oplusMerge\)):
+\begin{itemize}
+\item Diff engine: Merge result diffed with baseline to detect conflicts
+\item Streaming: Incremental merges via delta application
+\item Consensus: Distributed merges with Raft-coordinated conflict resolution
+\item Federation: Cross-node merges via SPARQL UNION queries
+\end{itemize}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item \texttt{validateStore}: Each input must be iterable (implement \texttt{Symbol.iterator})
+\item \texttt{validateQuad}: Quads must have \texttt{subject}, \texttt{predicate}, \texttt{object}, \texttt{graph}
+\item \texttt{nonEmptyStores}: At least one store must be non-empty (or return empty store)
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Merge idempotence: \texttt{merge(S, S) === S} (set semantics)
+\item Union commutativity: \texttt{union(A, B) === union(B, A)}
+\item Intersection commutativity: \texttt{intersect(A, B) === intersect(B, A)}
+\item Difference asymmetry: \texttt{diff(A, B) !== diff(B, A)} in general
+\item Set identity: \texttt{union(A, empty) === A}, \texttt{intersect(A, empty) === empty}
+\item Quad string stability: \texttt{quadToString(q1) === quadToString(q2)} iff quads structurally equal
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Merge receipts contain:
+\begin{verbatim}
+{
+  operation: "mergeStores",
+  inputStoreHashes: [sha256(store1), sha256(store2), ...],
+  outputStoreHash: sha256(mergedStore),
+  inputQuadCounts: [n1, n2, ...],
+  outputQuadCount: m,
+  deduplicationCount: (n1 + n2 + ...) - m,
+  mergeStrategy: "union",
+  timestamp: KGC-4D nanoseconds
+}
+\end{verbatim}
+
+Conflict detection:
+\begin{itemize}
+\item No automatic conflict resolution (merge is set union, conflicts not detected)
+\item Downstream validation via SHACL can detect inconsistencies
+\item Provenance links each quad to originating store(s)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{verbatim}
+import { mergeStores, intersectStores, differenceStores } from '@unrdf/core/utils/merge-utils';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+
+const { namedNode } = dataFactory;
+
+// Create store A
+const storeA = createStore();
+storeA.add(namedNode('http://ex.org/alice'), namedNode('http://ex.org/knows'), namedNode('http://ex.org/bob'));
+storeA.add(namedNode('http://ex.org/alice'), namedNode('http://ex.org/age'), namedNode('30'));
+
+// Create store B
+const storeB = createStore();
+storeB.add(namedNode('http://ex.org/alice'), namedNode('http://ex.org/knows'), namedNode('http://ex.org/charlie'));
+storeB.add(namedNode('http://ex.org/alice'), namedNode('http://ex.org/age'), namedNode('30'));
+
+// Union (all quads from both stores)
+const unionStore = mergeStores(storeA, storeB);
+console.log(unionStore.size); // 3 (1 duplicate removed)
+
+// Intersection (only quads in both stores)
+const intersectStore = intersectStores(storeA, storeB);
+console.log(intersectStore.size); // 1 (age triple)
+
+// Difference (quads in A but not in B)
+const diffStore = differenceStores(storeA, storeB);
+console.log(diffStore.size); // 1 (alice knows bob)
+\end{verbatim}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to handle blank node merging (identity vs skolemization)?
+\item What is the optimal data structure for large-scale quad deduplication?
+\item Can merge operations be parallelized across graph partitions?
+\item How to extend merge semantics to support OWL reasoning (e.g., sameAs)?
+\item What conflict resolution strategies are appropriate for collaborative RDF editing?
+\end{enumerate}
+
+% =============================================================================
+
+\label{pkg:unrdf-query-builder}
+\section{\pkg{@unrdf/query-builder} --- Fluent SPARQL Query Builder}
+
+\begin{pkgmeta}
+Path & \texttt{packages/core/src/utils/sparql-utils.mjs, src/react-hooks/form-ui/use-query-builder.mjs} \\
+Kind & js \\
+Entrypoints & 2 modules (programmatic + React hook) \\
+Dependencies & 2 (core, react) \\
+Blurb & Fluent API for programmatic SPARQL query construction with builder pattern, React integration, and NLP translation \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\textbf{Observable \(\Oobs\)}:
+\begin{itemize}
+\item Builder method calls (select, where, filter, optional, groupBy, orderBy, limit)
+\item React hook state changes (triple patterns, filters, prefixes)
+\item Natural language query input (NLP mode)
+\item SPARQL query AST construction sequence
+\end{itemize}
+
+\textbf{Artifact \(\Aout\)}:
+\begin{itemize}
+\item SPARQL query strings (SELECT, CONSTRUCT, ASK, DESCRIBE)
+\item Query AST representations for optimization
+\item React UI state for visual query builders
+\item NLP-to-SPARQL translation results with confidence scores
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{verbatim}
+// Programmatic Builder
+class SPARQLBuilder {
+  constructor()
+  addPrefix(prefix: string, namespace: string): SPARQLBuilder
+  select(...vars: string[]): SPARQLBuilder
+  where(subject: string, predicate: string, object: string): SPARQLBuilder
+  optional(subject: string, predicate: string, object: string): SPARQLBuilder
+  filter(expression: string): SPARQLBuilder
+  groupBy(...vars: string[]): SPARQLBuilder
+  orderBy(...vars: string[]): SPARQLBuilder
+  limit(n: number): SPARQLBuilder
+  offset(n: number): SPARQLBuilder
+  distinct(enabled: boolean): SPARQLBuilder
+  build(): string
 }
 
-YAWLTracer :: {
-  startCaseSpan: (CaseId, WorkflowId) -> Span,
-  startTaskSpan: (CaseId, TaskId, ParentSpan) -> Span,
-  recordReceiptHash: (Span, ReceiptHash) -> void,
-  endSpan: (Span) -> void
+// React Hook
+useQueryBuilder :: (config?: Config) -> {
+  triplePatterns: Array<{ subject, predicate, object }>,
+  filters: Array<{ variable, operator, value }>,
+  prefixes: Map<string, string>,
+  addTriplePattern: (s, p, o) -> void,
+  removeTriplePattern: (index) -> void,
+  addFilter: (var, op, val) -> void,
+  removeFilter: (index) -> void,
+  buildQuery: () -> string,
+  reset: () -> void,
+  query: string
 }
 
-YAWLSLICalculator :: {
-  recordRequest: (Success: boolean, LatencyMs: number) -> void,
-  getSnapshot: () -> {
-    availability: number,    // % successful requests
-    latency: { p50, p95, p99 },
-    errorRate: number,
-    sloCompliance: { score, violations: string[] }
-  }
+// NLP Builder
+NLPQueryBuilder :: {
+  translateQuery: (nlQuery: string) -> Promise<{
+    sparql: string,
+    entities: Array<{ text, uri, type }>,
+    intent: 'select' | 'ask' | 'describe' | 'construct',
+    confidence: number,
+    method: 'pattern' | 'llm' | 'hybrid'
+  }>
 }
 \end{verbatim}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-Observability reconciliation:
+Query construction reconciliation:
+
+\textbf{Programmatic builder}:
 \begin{enumerate}
-\item \textbf{Metric collection}: Engine emits events, metrics collector increments counters/histograms
-\item \textbf{Trace propagation}: Span context attached to YAWL case, child spans for each task
-\item \textbf{SLI calculation}: Rolling window aggregation (1m, 5m, 1h) for availability/latency
-\item \textbf{Receipt correlation}: Trace spans annotated with receipt hashes for audit trail linkage
+\item Initialize empty builder state (prefixes, vars, clauses)
+\item Apply method calls sequentially, mutating state
+\item On \texttt{build()}, serialize state to SPARQL string:
+  \begin{itemize}
+  \item Prefixes: \texttt{PREFIX p: <namespace>}
+  \item Query type: \texttt{SELECT vars} or \texttt{CONSTRUCT} etc.
+  \item WHERE clause: \texttt{WHERE \{ triple patterns \}}
+  \item Filters: \texttt{FILTER(expression)}
+  \item Modifiers: \texttt{GROUP BY, ORDER BY, LIMIT, OFFSET}
+  \end{itemize}
+\end{enumerate}
+
+\textbf{React hook builder}:
+\begin{enumerate}
+\item Initialize React state (triplePatterns, filters, prefixes)
+\item User interactions trigger state updates via callbacks
+\item \texttt{buildQuery()} computes SPARQL string from current state
+\item Reactive: \texttt{query} field auto-updates on state change
+\end{enumerate}
+
+\textbf{NLP builder}:
+\begin{enumerate}
+\item Parse natural language query with regex patterns or LLM
+\item Extract entities, map to RDF URIs via entity cache
+\item Determine query intent (SELECT, ASK, etc.)
+\item Generate SPARQL using template matching or LLM completion
+\item Return result with confidence score
 \end{enumerate}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Horizontal: Metrics, tracing, and SLI modules composed via event hooks.
+\textbf{Horizontal composition} (\(\PiMerge\)):
+\begin{itemize}
+\item Subquery composition: Builder instances nested via SPARQL 1.1 subqueries
+\item Union queries: Multiple WHERE clauses combined with UNION
+\item Federated queries: SERVICE blocks added via builder extensions
+\end{itemize}
 
-Vertical: Wraps \texttt{@unrdf/yawl} engine with observability instrumentation.
+\textbf{Vertical composition} (\(\oplusMerge\)):
+\begin{itemize}
+\item Oxigraph execution: Built queries passed to SPARQL engine
+\item Query optimizer: AST optimized before execution (join reordering, filter pushdown)
+\item Cache layer: Query strings used as cache keys
+\item Knowledge engine: Generated queries trigger rule evaluation
+\end{itemize}
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
-Guards:
+\textbf{Guards}:
 \begin{itemize}
-\item Metric cardinality limits (prevent label explosion)
-\item Trace sampling (configurable rate to manage overhead)
-\item SLI time window bounds (prevent unbounded memory growth)
+\item \texttt{validateVariable}: Variables must start with \texttt{?}
+\item \texttt{validateIRI}: IRIs must be valid URIs or prefixed names
+\item \texttt{validateFilter}: Filter expressions must be valid SPARQL
+\item \texttt{validateLimit}: Limit/offset must be non-negative integers
 \end{itemize}
 
-Invariants:
+\textbf{Invariants}:
 \begin{itemize}
-\item Metrics monotonically increasing (counters never decrease)
-\item Trace spans properly closed (no leaks)
-\item SLI snapshots immutable once generated
+\item Builder immutability (method chaining): Each method returns \texttt{this}
+\item Query validity: \texttt{build()} always produces syntactically valid SPARQL (or throws)
+\item State consistency: \texttt{buildQuery()} deterministic for same state
+\item NLP confidence bounds: \texttt{0 \leq confidence \leq 1}
+\item Prefix uniqueness: No duplicate prefix declarations
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-Trace spans linked to receipts:
+Query construction receipts:
 \begin{verbatim}
-Span {
-  name: "yawl.task.execute",
-  attributes: {
-    "yawl.case.id": "case-123",
-    "yawl.task.id": "approve",
-    "yawl.receipt.hash": "abc123...",
-    "yawl.workflow.id": "purchase-order"
+{
+  operation: "buildQuery",
+  builderState: {
+    prefixes: { "rdf": "http://..." },
+    selectVars: ["?person", "?age"],
+    whereClauses: [...],
+    filters: [...]
   },
-  duration: 234ms
+  queryHash: sha256(generated SPARQL string),
+  queryString: "SELECT ?person ?age WHERE { ... }",
+  buildMethod: "programmatic" | "react-hook" | "nlp",
+  timestamp: KGC-4D nanoseconds
+}
+\end{verbatim}
+
+NLP translation receipts:
+\begin{itemize}
+\item Input natural language query
+\item Extracted entities with URIs
+\item Confidence score
+\item Translation method (pattern-based vs LLM)
+\item LLM API call metadata (if applicable)
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{verbatim}
+// Programmatic builder
+import { SPARQLBuilder } from '@unrdf/core/utils/sparql-utils';
+
+const query = new SPARQLBuilder()
+  .addPrefix('foaf', 'http://xmlns.com/foaf/0.1/')
+  .select('?person', '?name')
+  .where('?person', 'a', 'foaf:Person')
+  .where('?person', 'foaf:name', '?name')
+  .filter('?age > 18')
+  .orderBy('?name')
+  .limit(10)
+  .build();
+
+console.log(query);
+// PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+// SELECT ?person ?name WHERE {
+//   ?person a foaf:Person .
+//   ?person foaf:name ?name .
+//   FILTER(?age > 18)
+// }
+// ORDER BY ?name
+// LIMIT 10
+
+// React hook
+import { useQueryBuilder } from '@unrdf/react/form-ui/use-query-builder';
+
+function QueryBuilderUI() {
+  const { addTriplePattern, buildQuery, query } = useQueryBuilder();
+
+  const handleAdd = () => {
+    addTriplePattern('?s', 'rdf:type', '?type');
+  };
+
+  return (
+    <div>
+      <button onClick={handleAdd}>Add Pattern</button>
+      <pre>{query}</pre>
+    </div>
+  );
+}
+\end{verbatim}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to provide type-safe builder APIs in TypeScript without runtime overhead?
+\item Can query builders detect and prevent SPARQL injection attacks?
+\item What is the optimal balance between flexibility and safety in fluent APIs?
+\item How to extend builder pattern to support SPARQL 1.1 property paths?
+\item Can NLP translation accuracy improve via domain-specific fine-tuning?
+\end{enumerate}
+
+% =============================================================================
+
+\label{pkg:unrdf-store-adapter}
+\section{\pkg{@unrdf/store-adapter} --- Multi-Store Adapter Interface}
+
+\begin{pkgmeta}
+Path & \texttt{packages/fusion/src/store-adapter.mjs} \\
+Kind & js \\
+Entrypoints & 1 module \\
+Dependencies & 1 (mock-store) \\
+Blurb & Unified adapter interface for RDF stores with transaction semantics, freeze/reconstruct, and deterministic hashing \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\textbf{Observable \(\Oobs\)}:
+\begin{itemize}
+\item Store implementation type (oxigraph, kgc-4d, core)
+\item Quad-level operations (add, delete, query)
+\item Transaction execution (begin, commit, rollback)
+\item Freeze/reconstruct operations for immutable snapshots
+\end{itemize}
+
+\textbf{Artifact \(\Aout\)}:
+\begin{itemize}
+\item Unified store adapter with consistent API
+\item Transaction rollback snapshots
+\item Frozen store hashes for verification
+\item Reconstructed stores from hashes
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{verbatim}
+createStoreAdapter :: (impl: 'oxigraph' | 'kgc-4d' | 'core', options?: {
+  quads?: Quad[]
+}) -> StoreAdapter
+
+StoreAdapter :: {
+  addQuad: (quad: Quad) -> void,
+  deleteQuad: (quad: Quad) -> void,
+  query: (s?, p?, o?, g?) -> Quad[],
+  transaction: (fn: (adapter: StoreAdapter) -> Promise<void>) -> Promise<void>,
+  freeze: () -> { hash: string, snapshot: Quad[] },
+  reconstruct: (hash: string, snapshot: Quad[]) -> Promise<void>,
+  getStore: () -> Store
 }
 
-Receipt {
-  receiptHash: "abc123...",
-  traceId: "def456...",  // Link to OTLP trace
-  spanId: "ghi789...",
-  ...
+// Reuses patterns from:
+// - @unrdf/core/UnrdfStore (base store operations)
+// - @unrdf/kgc-4d/KGCStore (transaction rollback)
+// - @unrdf/kgc-4d/freeze (snapshot hashing)
+\end{verbatim}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Adapter reconciliation provides uniform interface over heterogeneous stores:
+
+\textbf{Store creation}:
+\begin{enumerate}
+\item Based on \texttt{impl} parameter, instantiate appropriate store:
+  \begin{itemize}
+  \item \texttt{oxigraph}: Create Oxigraph SPARQL engine store
+  \item \texttt{kgc-4d}: Create KGC-4D deterministic store
+  \item \texttt{core}: Create N3-based core store
+  \end{itemize}
+\item Wrap store with unified adapter methods
+\item Return adapter object
+\end{enumerate}
+
+\textbf{Transaction semantics}:
+\begin{enumerate}
+\item On \texttt{transaction(fn)}:
+  \begin{enumerate}
+  \item Snapshot current state: \texttt{snapshot = Array.from(store.match())}
+  \item Execute transaction function: \texttt{await fn(adapter)}
+  \item On success: Commit (no-op, changes already applied)
+  \item On failure: Rollback
+    \begin{enumerate}
+    \item Clear store: Remove all quads
+    \item Restore snapshot: Add all quads from snapshot
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+\textbf{Freeze/reconstruct}:
+\begin{enumerate}
+\item \texttt{freeze()}:
+  \begin{enumerate}
+  \item Collect all quads: \texttt{snapshot = Array.from(store.match())}
+  \item Compute hash: \texttt{hash = sha256(serialize(snapshot))}
+  \item Return \texttt{\{ hash, snapshot \}}
+  \end{enumerate}
+\item \texttt{reconstruct(hash, snapshot)}:
+  \begin{enumerate}
+  \item Verify hash: \texttt{assert(sha256(serialize(snapshot)) === hash)}
+  \item Clear store
+  \item Add all quads from snapshot
+  \end{enumerate}
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+\textbf{Horizontal composition} (\(\PiMerge\)):
+\begin{itemize}
+\item Multi-adapter pipelines: Adapters chained for transformation
+\item Store migration: Oxigraph → KGC-4D → Core (data transfer)
+\item Adapter pooling: Multiple adapters for load balancing
+\end{itemize}
+
+\textbf{Vertical composition} (\(\oplusMerge\)):
+\begin{itemize}
+\item Hooks: Adapter used as policy execution substrate
+\item Streaming: Adapter provides change feed interface
+\item Federation: Adapter wraps remote SPARQL endpoints
+\item Consensus: Adapter ensures Raft-coordinated writes
+\end{itemize}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item \texttt{validateImpl}: Implementation type must be known enum value
+\item \texttt{validateQuad}: Quad must be non-null with required fields
+\item \texttt{validateTransactionFn}: Transaction function must be async function
+\item \texttt{validateHash}: Hash must match snapshot content
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Transaction atomicity: Either all operations succeed or all rollback
+\item Snapshot consistency: Freeze hash deterministic for same quads
+\item Reconstruct idempotence: \texttt{reconstruct(freeze()) === identity}
+\item Query determinism: Same query parameters → same results
+\item Adapter interface uniformity: All implementations expose same methods
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Transaction receipts:
+\begin{verbatim}
+{
+  operation: "transaction",
+  beforeHash: sha256(snapshot before transaction),
+  afterHash: sha256(snapshot after transaction),
+  success: true,
+  rollback: false,
+  operationCount: 42,
+  duration: 123,
+  timestamp: KGC-4D nanoseconds
+}
+\end{verbatim}
+
+Freeze receipts:
+\begin{itemize}
+\item Snapshot hash
+\item Quad count
+\item Freeze timestamp
+\item Store implementation type
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{verbatim}
+import { createStoreAdapter } from '@unrdf/fusion/store-adapter';
+import { dataFactory } from '@unrdf/oxigraph';
+
+const { namedNode } = dataFactory;
+
+// Create adapter
+const adapter = await createStoreAdapter('oxigraph');
+
+// Add quads
+adapter.addQuad({
+  subject: namedNode('http://ex.org/alice'),
+  predicate: namedNode('http://ex.org/knows'),
+  object: namedNode('http://ex.org/bob'),
+  graph: namedNode('')
+});
+
+// Transaction with rollback
+try {
+  await adapter.transaction(async (txn) => {
+    txn.addQuad(...);
+    txn.addQuad(...);
+    throw new Error('Rollback!');
+  });
+} catch (err) {
+  console.log('Transaction rolled back');
+}
+
+// Freeze store
+const { hash, snapshot } = adapter.freeze();
+console.log(`Store hash: ${hash}`);
+
+// Reconstruct from snapshot
+await adapter.reconstruct(hash, snapshot);
+console.log('Store reconstructed');
+\end{verbatim}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to extend adapter pattern to support SPARQL UPDATE operations?
+\item Can transaction isolation levels (serializable, snapshot) be configurable?
+\item What is the performance impact of snapshot-based rollback vs write-ahead logging?
+\item How to handle adapter versioning when store APIs evolve?
+\item Can adapters provide automatic schema migration between store versions?
+\end{enumerate}
+
+% =============================================================================
+
+\label{pkg:unrdf-cache}
+\section{\pkg{@unrdf/cache} --- Query Caching Layer}
+
+\begin{pkgmeta}
+Path & \texttt{packages/caching} \\
+Kind & js \\
+Entrypoints & 3 files (multi-layer-cache, dependency-tracker, sparql-cache) \\
+Dependencies & 4 (ioredis, lru-cache, msgpackr, zod) \\
+Blurb & Multi-layer caching system for RDF queries with L1 memory (LRU), L2 Redis, smart invalidation, and SPARQL result caching \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\textbf{Observable \(\Oobs\)}:
+\begin{itemize}
+\item Cache lookups (L1 hits, L1 misses, L2 hits, L2 misses, L3 store queries)
+\item Cache invalidations (subject-based, query-based, time-based)
+\item SPARQL query execution (query string, bindings, result set)
+\item Dependency tracking (query → subjects mapping)
+\end{itemize}
+
+\textbf{Artifact \(\Aout\)}:
+\begin{itemize}
+\item L1 cache: In-memory LRU cache (fastest, limited size)
+\item L2 cache: Redis distributed cache (persistent, shared across instances)
+\item L3 store: RDF store (fallback, authoritative source)
+\item Dependency graph: Query → subjects → dependent queries
+\item Cache statistics: Hit rates, latency, eviction counts
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+\begin{verbatim}
+createCachingSystem :: (config: {
+  store: OxigraphStore,
+  redisUrl?: string,
+  l1MaxSize?: number,
+  l2TtlSeconds?: number
+}) -> Promise<{
+  cache: MultiLayerCache,
+  tracker: DependencyTracker,
+  sparqlCache: SparqlCache,
+  getStats: () -> CacheStats,
+  clear: () -> Promise<void>,
+  close: () -> Promise<void>
+}>
+
+MultiLayerCache :: {
+  get: (key: string) -> Promise<any | null>,
+  set: (key: string, value: any, ttl?: number) -> Promise<void>,
+  delete: (key: string) -> Promise<void>,
+  clear: () -> Promise<void>,
+  getStats: () -> { l1Hits, l1Misses, l2Hits, l2Misses, l3Queries }
+}
+
+DependencyTracker :: {
+  trackQuery: (queryHash: string, subjects: string[]) -> void,
+  invalidateSubject: (subject: string) -> Promise<Set<string>>,
+  getDependents: (subject: string) -> Set<string>,
+  getStats: () -> { queriesTracked, subjectsTracked, invalidations }
+}
+
+SparqlCache :: {
+  query: (sparql: string) -> Promise<QueryResult>,
+  invalidate: (queryHash: string) -> Promise<void>,
+  clear: () -> Promise<void>,
+  getStats: () -> { queries, cacheHits, cacheMisses, avgLatency }
+}
+\end{verbatim}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Cache reconciliation via tiered lookup:
+
+\textbf{Query execution flow}:
+\begin{enumerate}
+\item Compute query hash: \texttt{hash = sha256(sparql + bindings)}
+\item L1 lookup (memory):
+  \begin{itemize}
+  \item If hit: Return cached result (latency: <1ms)
+  \item If miss: Proceed to L2
+  \end{itemize}
+\item L2 lookup (Redis):
+  \begin{itemize}
+  \item If hit: Populate L1, return result (latency: 1-5ms)
+  \item If miss: Proceed to L3
+  \end{itemize}
+\item L3 execution (store):
+  \begin{itemize}
+  \item Execute SPARQL query on Oxigraph (latency: 10-100ms)
+  \item Extract subjects from result bindings
+  \item Track dependencies: \texttt{tracker.trackQuery(hash, subjects)}
+  \item Populate L2 and L1 with result
+  \item Return result
+  \end{itemize}
+\end{enumerate}
+
+\textbf{Invalidation flow}:
+\begin{enumerate}
+\item On data change (quad insert/delete):
+  \begin{enumerate}
+  \item Extract subject IRI: \texttt{subject = quad.subject.value}
+  \item Invalidate subject: \texttt{dependents = tracker.invalidateSubject(subject)}
+  \item For each dependent query hash:
+    \begin{enumerate}
+    \item Delete from L1 cache
+    \item Delete from L2 cache
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+\textbf{Horizontal composition} (\(\PiMerge\)):
+\begin{itemize}
+\item Cache hierarchy: L1 → L2 → L3 (sequential fallback)
+\item Multi-region caching: Regional Redis instances composed via replication
+\item Distributed invalidation: Pub/sub for cross-instance cache coherence
+\end{itemize}
+
+\textbf{Vertical composition} (\(\oplusMerge\)}:
+\begin{itemize}
+\item Streaming: Cache invalidations triggered by change feeds
+\item Hooks: Cache policies enforced via pre-query hooks
+\item Federation: Distributed query results cached per-node
+\item Consensus: Cache invalidations coordinated via Raft
+\end{itemize}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guards}:
+\begin{itemize}
+\item \texttt{validateKey}: Cache keys must be non-empty strings
+\item \texttt{validateTTL}: TTL must be positive integer (seconds)
+\item \texttt{validateSparql}: Query must be valid SPARQL syntax
+\item \texttt{validateRedisUrl}: Redis URL must be valid connection string
+\end{itemize}
+
+\textbf{Invariants}:
+\begin{itemize}
+\item Cache consistency: L1 ⊆ L2 ⊆ L3 (inclusion property)
+\item Invalidation completeness: Subject change invalidates all dependent queries
+\item TTL monotonicity: Cache entries expire in order of insertion (LRU)
+\item Hash stability: Same query + bindings → same hash
+\item Dependency transitivity: If Q1 depends on S, and S changes, Q1 invalidated
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Cache operation receipts:
+\begin{verbatim}
+{
+  operation: "sparqlQuery",
+  queryHash: sha256(sparql + bindings),
+  cacheLevel: "L1" | "L2" | "L3",
+  latency: 0.5,
+  resultSize: 1000,
+  subjects: ["http://ex.org/alice", "http://ex.org/bob"],
+  timestamp: KGC-4D nanoseconds
+}
+\end{verbatim}
+
+Invalidation receipts:
+\begin{verbatim}
+{
+  operation: "invalidateSubject",
+  subject: "http://ex.org/alice",
+  dependentQueriesCount: 42,
+  dependentQueries: [hash1, hash2, ...],
+  l1Evictions: 10,
+  l2Evictions: 32,
+  timestamp: KGC-4D nanoseconds
 }
 \end{verbatim}
 
 \subsection*{Minimal Example}
 
 \begin{verbatim}
-import { createWorkflowEngine } from '@unrdf/yawl';
-import { YAWLMetricsCollector, YAWLTracer } from '@unrdf/yawl-observability';
-import express from 'express';
+import { createCachingSystem } from '@unrdf/caching';
+import { createStore } from '@unrdf/oxigraph';
 
-const engine = createWorkflowEngine();
-const metrics = new YAWLMetricsCollector(engine);
-const tracer = new YAWLTracer(engine);
+// Create store
+const store = createStore();
+// ... populate store ...
 
-// Expose metrics endpoint
-const app = express();
-app.get('/metrics', async (req, res) => {
-  res.set('Content-Type', metrics.contentType);
-  res.end(await metrics.getMetrics());
+// Create caching system
+const caching = await createCachingSystem({
+  store,
+  redisUrl: 'redis://localhost:6379',
+  l1MaxSize: 1000,
+  l2TtlSeconds: 3600
 });
-app.listen(9090);
 
-// Execute workflow (auto-instrumented)
-const { case: caseObj } = await engine.createCase('purchase-order', {});
-// Metrics: yawl_case_created_total{workflow_id="purchase-order"} 1
+// Execute cached query
+const results1 = await caching.sparqlCache.query('SELECT * WHERE { ?s ?p ?o } LIMIT 100');
+console.log('First query (L3):', results1);
 
-const span = tracer.startCaseSpan(caseObj.id, 'purchase-order');
-const { receipt } = await caseObj.startTask('task-1');
-tracer.recordReceiptHash(span, receipt.receiptHash);
-tracer.endSpan(span);
-// Trace exported to Jaeger with receipt hash attribute
+const results2 = await caching.sparqlCache.query('SELECT * WHERE { ?s ?p ?o } LIMIT 100');
+console.log('Second query (L1 hit):', results2);
+
+// Check stats
+const stats = caching.getStats();
+console.log('L1 hit rate:', stats.cache.l1Hits / (stats.cache.l1Hits + stats.cache.l1Misses));
+
+// Invalidate subject
+await caching.tracker.invalidateSubject('http://ex.org/alice');
+console.log('Cache invalidated for alice');
+
+// Cleanup
+await caching.close();
 \end{verbatim}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to correlate traces across distributed workflow executions?
-\item What is the performance overhead of full trace instrumentation?
-\item Can SLO violations trigger automatic workflow compensation (circuit breaker pattern)?
+\item How to optimize cache key generation for complex SPARQL queries with multiple patterns?
+\item What is the optimal L1/L2 size ratio for different workload patterns?
+\item Can machine learning predict cache eviction candidates better than LRU?
+\item How to handle cache warming for frequently accessed queries?
+\item What are the tradeoffs between fine-grained (subject-level) vs coarse-grained (query-level) invalidation?
+\item Can semantic query similarity enable cache reuse for related queries?
 \end{enumerate}
 
 % =============================================================================
