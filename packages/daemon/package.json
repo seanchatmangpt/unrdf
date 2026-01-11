@@ -1,0 +1,50 @@
+{
+  "name": "@unrdf/daemon",
+  "version": "1.0.0",
+  "description": "Background daemon for managing scheduled tasks and event-driven operations",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./daemon": "./src/daemon.mjs",
+    "./schemas": "./src/schemas.mjs",
+    "./trigger-evaluator": "./src/trigger-evaluator.mjs",
+    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test --ext .mjs",
+    "lint:fix": "eslint src test --ext .mjs --fix"
+  },
+  "keywords": [
+    "daemon",
+    "background-tasks",
+    "event-emitter",
+    "scheduling",
+    "task-queue"
+  ],
+  "dependencies": {
+    "@unrdf/kgc-4d": "workspace:*",
+    "hash-wasm": "^4.12.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "timestamp": "2026-01-11T01:46:10.757Z",
+  "summary": {
+    "totalBenchmarks": 3,
+    "totalRegressions": 2,
+    "criticalRegressions": 2,
+    "warningRegressions": 0,
+    "passRate": "33.33"
+  },
+  "regressions": [
+    {
+      "name": "execution-memory-consumption",
+      "severity": "critical",
+      "isRegression": true,
+      "ratio": "4.3825",
+      "percentChange": "338.25%",
+      "threshold": "1.2500",
+      "baselineValue": 4850000,
+      "currentValue": 21255128
+    },
+    {
+      "name": "memory-stability-under-load",
+      "severity": "critical",
+      "isRegression": true,
+      "ratio": "5.0920",
+      "percentChange": "409.20%",
+      "threshold": "1.2500",
+      "baselineValue": 3200000,
+      "currentValue": 16294519.8644
+    }
+  ],
+  "results": {
+    "memory-usage-with-load": {
+      "benchmark": {
+        "name": "memory-usage-with-load",
+        "type": "memory",
+        "unit": "bytes/op",
+        "value": 378.974,
+        "min": -206.82,
+        "max": 918.73,
+        "stdDev": 408.3939,
+        "variance": 107.76,
+        "measurements": [
+          {
+            "operationCount": 2000,
+            "heapUsedStart": 10322936,
+            "heapUsedEnd": 11830440,
+            "heapDelta": 1507504,
+            "bytesPerOperation": "753.75",
+            "rssStart": 148172800,
+            "rssEnd": 149020672,
+            "rssDelta": 847872
+          },
+          {
+            "operationCount": 4000,
+            "heapUsedStart": 11850224,
+            "heapUsedEnd": 12509752,
+            "heapDelta": 659528,
+            "bytesPerOperation": "164.88",
+            "rssStart": 149020672,
+            "rssEnd": 151670784,
+            "rssDelta": 2650112
+          },
+          {
+            "operationCount": 6000,
+            "heapUsedStart": 12525392,
+            "heapUsedEnd": 14111400,
+            "heapDelta": 1586008,
+            "bytesPerOperation": "264.33",
+            "rssStart": 151670784,
+            "rssEnd": 162144256,
+            "rssDelta": 10473472
+          },
+          {
+            "operationCount": 8000,
+            "heapUsedStart": 14119160,
+            "heapUsedEnd": 21468960,
+            "heapDelta": 7349800,
+            "bytesPerOperation": "918.73",
+            "rssStart": 162144256,
+            "rssEnd": 165171200,
+            "rssDelta": 3026944
+          },
+          {
+            "operationCount": 10000,
+            "heapUsedStart": 21476480,
+            "heapUsedEnd": 19408296,
+            "heapDelta": -2068184,
+            "bytesPerOperation": "-206.82",
+            "rssStart": 165171200,
+            "rssEnd": 185188352,
+            "rssDelta": 20017152
+          }
+        ],
+        "maxOperations": 10000,
+        "steps": 5,
+        "timestamp": "2026-01-11T01:46:04.674Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "memory-usage-with-load",
+        "type": "memory",
+        "unit": "bytes/op",
+        "value": 4200,
+        "min": 3800,
+        "max": 4600,
+        "stdDev": 280,
+        "variance": 6.7,
+        "description": "Memory consumption per queued operation",
+        "target": "< 5000 bytes/op",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.0902",
+        "percentChange": "-90.98%",
+        "threshold": "1.2500",
+        "severity": "none",
+        "baselineValue": 4200,
+        "currentValue": 378.974
+      }
+    },
+    "execution-memory-consumption": {
+      "benchmark": {
+        "name": "execution-memory-consumption",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 21255128,
+        "peakMemory": 25777968,
+        "snapshots": [
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 19439928,
+            "afterScheduling": 20902656,
+            "beforeExecution": 20903272,
+            "afterExecution": 22616784,
+            "schedulingDelta": 1462728,
+            "executionDelta": 1713512
+          },
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 22629952,
+            "afterScheduling": 24058416,
+            "beforeExecution": 24058896,
+            "afterExecution": 25777968,
+            "schedulingDelta": 1428464,
+            "executionDelta": 1719072
+          },
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 25786136,
+            "afterScheduling": 27217576,
+            "beforeExecution": 27218056,
+            "afterExecution": 15370632,
+            "schedulingDelta": 1431440,
+            "executionDelta": -11847424
+          }
+        ],
+        "operationCount": 1000,
+        "runs": 3,
+        "timestamp": "2026-01-11T01:46:04.754Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "execution-memory-consumption",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 4850000,
+        "peakMemory": 5200000,
+        "description": "Peak memory usage during execution",
+        "target": "< 6MB peak for 1000 operations",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": true,
+        "ratio": "4.3825",
+        "percentChange": "338.25%",
+        "threshold": "1.2500",
+        "severity": "critical",
+        "baselineValue": 4850000,
+        "currentValue": 21255128
+      }
+    },
+    "memory-stability-under-load": {
+      "benchmark": {
+        "name": "memory-stability-under-load",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 16294519.8644,
+        "heap": {
+          "mean": 16294519.8644,
+          "stdDev": 437109.6819,
+          "variance": 2.68,
+          "min": 15519864,
+          "max": 16892488
+        },
+        "rss": {
+          "mean": 185167872,
+          "stdDev": 0,
+          "variance": 0,
+          "min": 185167872,
+          "max": 185167872
+        },
+        "readingCount": 59,
+        "totalOperations": 489,
+        "duration": 5000,
+        "timestamp": "2026-01-11T01:46:10.755Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "memory-stability-under-load",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 3200000,
+        "description": "Memory stability during sustained operations",
+        "target": "stable within 20% variance",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": true,
+        "ratio": "5.0920",
+        "percentChange": "409.20%",
+        "threshold": "1.2500",
+        "severity": "critical",
+        "baselineValue": 3200000,
+        "currentValue": 16294519.8644
+      }
+    }
+  }
+}

@@ -30,6 +30,7 @@ export default defineConfig({
       "test/diff.test.mjs",
       "test/dark-matter-80-20.test.mjs",
       "test/cli/cli-package.test.mjs",
+      "test/daemon-cli.test.mjs",
       "test/knowledge-engine/parse-contract.test.mjs",
       "test/knowledge-engine/query-contract.test.mjs",
       "test/knowledge-engine/utils/circuit-breaker.test.mjs",

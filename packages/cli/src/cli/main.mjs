@@ -24,6 +24,7 @@ import { decisionCommand } from './commands/decision.mjs';
 import { paretoCommand } from './commands/pareto.mjs';
 import { socraticCommand } from './commands/socratic.mjs';
 import { bb8020Command } from './commands/bb8020.mjs';
+import { daemonCommand } from './commands/daemon.mjs';
 
 /**
  * Main CLI application
@@ -44,6 +45,9 @@ const main = defineCommand({
     'to-turtle': toTurtleCommand,
     'to-ntriples': toNTriplesCommand,
     'to-json': toJSONCommand,
+
+    // Background Operations
+    daemon: daemonCommand,
 
     // Hyperdimensional Decision Fabric
     decision: decisionCommand,
