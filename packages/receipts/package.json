@@ -1,12 +1,16 @@
 {
   "name": "@unrdf/receipts",
   "version": "1.0.0",
-  "description": "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations",
+  "description": "KGC Receipts - Batch receipt generation with Merkle tree verification and post-quantum cryptography for knowledge graph operations",
   "type": "module",
   "exports": {
     ".": "./src/index.mjs",
     "./batch-receipt-generator": "./src/batch-receipt-generator.mjs",
-    "./merkle-batcher": "./src/merkle-batcher.mjs"
+    "./merkle-batcher": "./src/merkle-batcher.mjs",
+    "./dilithium3": "./src/dilithium3.mjs",
+    "./hybrid-signature": "./src/hybrid-signature.mjs",
+    "./pq-signer": "./src/pq-signer.mjs",
+    "./pq-merkle": "./src/pq-merkle.mjs"
   },
   "main": "./src/index.mjs",
   "types": "./dist/index.d.ts",
@@ -24,18 +28,21 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
+    "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
     "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/kgc-multiverse": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "dilithium-crystals": "^1.0.6",
     "hash-wasm": "^4.12.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.15",
-    "vitest": "^4.0.15",
     "eslint": "^9.39.1",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "vitest": "^4.0.15"
   },
   "keywords": [
     "rdf",
@@ -43,7 +50,11 @@
     "receipts",
     "merkle-tree",
     "verification",
-    "provenance"
+    "provenance",
+    "post-quantum",
+    "dilithium3",
+    "cryptography",
+    "quantum-resistant"
   ],
   "engines": {
     "node": ">=18.0.0",

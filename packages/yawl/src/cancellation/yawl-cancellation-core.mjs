@@ -147,6 +147,9 @@ export class TaskCircuitBreaker {
     this.disabledAt = null;
   }
 
+  /**
+   *
+   */
   recordSuccess() {
     if (this.state === 'half_open') {
       this.successCount++;
@@ -202,6 +205,9 @@ export class TaskCircuitBreaker {
     return true;
   }
 
+  /**
+   *
+   */
   reset() {
     this._transition('closed');
     this.failureCount = 0;
@@ -210,6 +216,9 @@ export class TaskCircuitBreaker {
     this.disabledAt = null;
   }
 
+  /**
+   *
+   */
   getState() {
     return {
       taskId: this.taskId,
@@ -223,6 +232,9 @@ export class TaskCircuitBreaker {
     };
   }
 
+  /**
+   *
+   */
   _checkTransition() {
     if (this.state === 'open') {
       const elapsed = Date.now() - this.lastStateChange;
@@ -232,6 +244,9 @@ export class TaskCircuitBreaker {
     }
   }
 
+  /**
+   *
+   */
   _transition(newState) {
     const previousState = this.state;
     this.state = newState;
@@ -261,6 +276,9 @@ export class TaskCircuitBreaker {
  * Logs cancellation receipts for auditability and time-travel
  */
 export class CancellationReceiptLogger {
+  /**
+   *
+   */
   constructor() {
     /** @type {CancellationReceipt[]} */
     this.receipts = [];
@@ -297,6 +315,9 @@ export class CancellationReceiptLogger {
     return receipt;
   }
 
+  /**
+   *
+   */
   logCancelledWorkItem(workItemId, reason, regionId) {
     return this.log('CANCELLED_WORK_ITEM', {
       workItemId,
@@ -306,6 +327,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   logTimeoutOccurred(workItemId, taskId, durationMs, timeoutMs) {
     return this.log('TIMEOUT_OCCURRED', {
       workItemId,
@@ -316,6 +340,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   logCircuitBreakerOpen(taskId, failureCount) {
     return this.log('CIRCUIT_BREAKER_OPEN', {
       taskId,
@@ -324,6 +351,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   logCircuitBreakerClosed(taskId) {
     return this.log('CIRCUIT_BREAKER_CLOSED', {
       taskId,
@@ -331,6 +361,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   logRegionCancelled(regionId, reason, affectedWorkItems) {
     return this.log('REGION_CANCELLED', {
       regionId,
@@ -340,6 +373,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   logCancellationPropagated(sourceWorkItemId, propagatedTo, reason) {
     return this.log('CANCELLATION_PROPAGATED', {
       sourceWorkItemId,
@@ -349,23 +385,38 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   getReceiptsForWorkItem(workItemId) {
     return this.receiptsByWorkItem.get(workItemId) || [];
   }
 
+  /**
+   *
+   */
   getReceiptsForTask(taskId) {
     return this.receiptsByTask.get(taskId) || [];
   }
 
+  /**
+   *
+   */
   getAllReceipts() {
     return [...this.receipts];
   }
 
+  /**
+   *
+   */
   getReceiptsAtTime(timestamp) {
     const targetTime = timestamp.getTime();
     return this.receipts.filter(r => new Date(r.timestamp).getTime() <= targetTime);
   }
 
+  /**
+   *
+   */
   getReceiptsInRange(from, to) {
     const fromTime = from.getTime();
     const toTime = to.getTime();
@@ -375,6 +426,9 @@ export class CancellationReceiptLogger {
     });
   }
 
+  /**
+   *
+   */
   export() {
     return this.receipts.map(r => ({
       ...r,
@@ -382,6 +436,9 @@ export class CancellationReceiptLogger {
     }));
   }
 
+  /**
+   *
+   */
   import(data) {
     this.receipts = [];
     this.receiptsByWorkItem.clear();
@@ -412,6 +469,9 @@ export class CancellationReceiptLogger {
     }
   }
 
+  /**
+   *
+   */
   clear() {
     this.receipts = [];
     this.receiptsByWorkItem.clear();

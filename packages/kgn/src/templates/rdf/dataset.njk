@@ -1,0 +1,83 @@
+{#
+  DCAT Dataset Template
+
+  Generates a DCAT (Data Catalog Vocabulary) dataset description.
+
+  Expected frontmatter variables:
+  - datasetIRI: The IRI of the dataset (required)
+  - title: Dataset title (required)
+  - description: Dataset description (required)
+  - publisher: Publisher name/IRI (optional)
+  - creator: Creator name/IRI (optional)
+  - issued: Issue date (ISO format) (optional)
+  - modified: Modification date (ISO format) (optional)
+  - license: License IRI (optional)
+  - keywords: Array of keyword strings (optional)
+  - theme: Array of theme IRIs (optional)
+  - distributions: Array of distribution objects (optional)
+    - iri: Distribution IRI
+    - title: Distribution title
+    - format: Format (e.g., "text/turtle", "application/json")
+    - accessURL: Access URL
+    - downloadURL: Download URL (optional)
+  - spatial: Spatial coverage IRI (optional)
+  - temporal: Temporal coverage description (optional)
+
+  Example:
+  ---
+  datasetIRI: http://example.org/datasets/sample-data
+  title: Sample Dataset
+  description: A comprehensive sample dataset for testing
+  publisher: http://example.org/organizations/acme
+  issued: 2026-01-11
+  license: http://creativecommons.org/licenses/by/4.0/
+  keywords:
+    - sample
+    - test
+    - rdf
+  distributions:
+    - iri: http://example.org/datasets/sample-data/dist/turtle
+      title: Turtle Distribution
+      format: text/turtle
+      accessURL: http://example.org/datasets/sample-data.ttl
+  ---
+#}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+
+# Dataset Description
+<{{ datasetIRI }}> a dcat:Dataset ;
+    dcterms:title "{{ title }}"@en ;
+    dcterms:description "{{ description }}"@en ;
+{% if publisher %}    dcterms:publisher <{{ publisher }}> ;{% endif %}
+{% if creator %}    dcterms:creator <{{ creator }}> ;{% endif %}
+{% if issued %}    dcterms:issued "{{ issued }}"^^xsd:date ;{% endif %}
+{% if modified %}    dcterms:modified "{{ modified }}"^^xsd:date ;{% else %}    dcterms:modified "{{ now | date('YYYY-MM-DD') }}"^^xsd:date ;{% endif %}
+{% if license %}    dcterms:license <{{ license }}> ;{% endif %}
+{% if spatial %}    dcterms:spatial <{{ spatial }}> ;{% endif %}
+{% if temporal %}    dcterms:temporal "{{ temporal }}"@en ;{% endif %}
+{% if keywords and keywords.length > 0 %}{% for keyword in keywords %}    dcat:keyword "{{ keyword }}"@en ;
+{% endfor %}{% endif %}
+{% if theme and theme.length > 0 %}{% for t in theme %}    dcat:theme <{{ t }}> ;
+{% endfor %}{% endif %}
+{% if distributions and distributions.length > 0 %}{% for dist in distributions %}    dcat:distribution <{{ dist.iri }}> ;
+{% endfor %}{% endif %}
+    .
+
+{% if distributions and distributions.length > 0 %}
+# Distributions
+{% for dist in distributions %}
+<{{ dist.iri }}> a dcat:Distribution ;
+    dcterms:title "{{ dist.title }}"@en ;
+{% if dist.format %}    dcat:mediaType "{{ dist.format }}" ;{% endif %}
+{% if dist.accessURL %}    dcat:accessURL <{{ dist.accessURL }}> ;{% endif %}
+{% if dist.downloadURL %}    dcat:downloadURL <{{ dist.downloadURL }}> ;{% endif %}
+    dcterms:format "{{ dist.format }}" .
+
+{% endfor %}
+{% endif %}

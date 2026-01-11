@@ -63,3 +63,24 @@ export function validateStore(store) {
     return false;
   }
 }
+
+// SHACL Validator exports
+export {
+  createValidator,
+  validateGraph,
+  validateConstraint,
+  generateReport,
+  validateNodeKind,
+  fastValidate,
+  ConstraintType,
+  ValidationOptionsSchema,
+  ValidationReportSchema,
+} from './shacl-validator.mjs';
+
+// RDF Schema Builder exports
+export {
+  shacl,
+  CommonShapes,
+  ShapeBuilder,
+  PropertyBuilder,
+} from './rdf-schema-builder.mjs';

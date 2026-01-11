@@ -1,0 +1,58 @@
+{
+  "parsing.turtle-small-100": {
+    "latency": {
+      "mean": 2.5,
+      "p50": 2.3,
+      "p95": 3.5,
+      "p99": 4.0
+    }
+  },
+  "parsing.turtle-medium-1k": {
+    "latency": {
+      "mean": 15.0,
+      "p50": 14.5,
+      "p95": 18.0,
+      "p99": 20.0
+    }
+  },
+  "parsing.turtle-large-10k": {
+    "latency": {
+      "mean": 150.0,
+      "p50": 145.0,
+      "p95": 180.0,
+      "p99": 200.0
+    }
+  },
+  "sparql.select-simple-small": {
+    "latency": {
+      "mean": 1.5,
+      "p50": 1.3,
+      "p95": 2.5,
+      "p99": 3.0
+    }
+  },
+  "graph-operations.add-medium-1k": {
+    "latency": {
+      "mean": 8.0,
+      "p50": 7.5,
+      "p95": 10.0,
+      "p99": 12.0
+    }
+  },
+  "graph-operations.find-all-1k": {
+    "latency": {
+      "mean": 0.5,
+      "p50": 0.4,
+      "p95": 0.8,
+      "p99": 1.0
+    }
+  },
+  "validation.quad-validation": {
+    "latency": {
+      "mean": 0.01,
+      "p50": 0.008,
+      "p95": 0.015,
+      "p99": 0.02
+    }
+  }
+}

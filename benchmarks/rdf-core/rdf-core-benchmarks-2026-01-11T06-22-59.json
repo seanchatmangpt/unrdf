@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-01-11T06:22:59.036Z",
+  "summary": {
+    "totalBenchmarks": 6,
+    "passed": 4,
+    "failed": 2,
+    "totalRegressions": 0,
+    "totalImprovements": 0
+  },
+  "benchmarks": {
+    "parsing.turtle-small": {
+      "latency": {
+        "mean": 0.29231365000001686,
+        "p50": 0.08951999999999316,
+        "p95": 3.4969539999999597,
+        "p99": 3.4969539999999597
+      },
+      "passed": true,
+      "target": "P95 < 50ms",
+      "unit": "parses/s",
+      "comparison": null
+    },
+    "graph-operations.add-100": {
+      "latency": {
+        "mean": 4.215857250000022,
+        "p50": 2.958892999999989,
+        "p95": 16.73042099999998,
+        "p99": 16.73042099999998
+      },
+      "passed": false,
+      "target": "P95 < 10ms",
+      "unit": "ops/s",
+      "comparison": null
+    },
+    "graph-operations.find-pattern": {
+      "latency": {
+        "mean": 0.3059725999999955,
+        "p50": 0.22855199999980869,
+        "p95": 0.52542399999993,
+        "p99": 2.9199570000000676
+      },
+      "passed": true,
+      "target": "P95 < 5ms",
+      "unit": "queries/s",
+      "comparison": null
+    },
+    "graph-operations.count-100": {
+      "latency": {
+        "mean": 0.2018059999999764,
+        "p50": 0.16363599999999678,
+        "p95": 0.3272790000000896,
+        "p99": 0.9803640000000087
+      },
+      "passed": true,
+      "target": "P95 < 1ms",
+      "unit": "counts/s",
+      "comparison": null
+    },
+    "sparql.select-simple": {
+      "latency": {
+        "mean": 1.872195550000015,
+        "p50": 0.52699500000017,
+        "p95": 26.11836500000004,
+        "p99": 26.11836500000004
+      },
+      "passed": false,
+      "target": "P95 < 10ms",
+      "unit": "queries/s",
+      "comparison": null
+    },
+    "validation.quad-validation": {
+      "latency": {
+        "mean": 0.010655214000002616,
+        "p50": 0.008152999999992971,
+        "p95": 0.014949999999998909,
+        "p99": 0.05978000000004613
+      },
+      "passed": true,
+      "target": "P95 < 0.1ms",
+      "unit": "validations/s",
+      "comparison": null
+    }
+  },
+  "regressions": [],
+  "improvements": []
+}

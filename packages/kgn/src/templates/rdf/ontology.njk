@@ -1,0 +1,107 @@
+{#
+  OWL Ontology Template
+
+  Generates a complete OWL ontology with classes, properties, and metadata.
+
+  Expected frontmatter variables:
+  - ontologyIRI: The IRI of the ontology (required)
+  - version: Version string (optional)
+  - title: Ontology title (required)
+  - description: Ontology description (optional)
+  - creator: Creator name/IRI (optional)
+  - created: Creation date (ISO format) (optional)
+  - license: License IRI (optional)
+  - classes: Array of class definitions (optional)
+    - iri: Class IRI
+    - label: rdfs:label
+    - comment: rdfs:comment
+    - subClassOf: Parent class IRI (optional)
+  - objectProperties: Array of object properties (optional)
+    - iri: Property IRI
+    - label: rdfs:label
+    - comment: rdfs:comment
+    - domain: Domain class IRI
+    - range: Range class IRI
+  - datatypeProperties: Array of datatype properties (optional)
+    - iri: Property IRI
+    - label: rdfs:label
+    - comment: rdfs:comment
+    - domain: Domain class IRI
+    - range: XSD datatype IRI
+
+  Example:
+  ---
+  ontologyIRI: http://example.org/ontology/myonto
+  version: 1.0.0
+  title: My Example Ontology
+  description: An example OWL ontology
+  creator: http://example.org/people/john-doe
+  created: 2026-01-11
+  classes:
+    - iri: http://example.org/ontology/myonto#Person
+      label: Person
+      comment: Represents a person
+    - iri: http://example.org/ontology/myonto#Organization
+      label: Organization
+      comment: Represents an organization
+  objectProperties:
+    - iri: http://example.org/ontology/myonto#worksFor
+      label: works for
+      comment: Relates a person to their employer
+      domain: http://example.org/ontology/myonto#Person
+      range: http://example.org/ontology/myonto#Organization
+  ---
+#}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+{% if prefix %}@prefix {{ prefix }}: <{{ ontologyIRI }}#> .{% endif %}
+
+# Ontology Declaration
+<{{ ontologyIRI }}> a owl:Ontology ;
+    dc:title "{{ title }}"@en ;
+{% if description %}    dc:description "{{ description }}"@en ;{% endif %}
+{% if version %}    owl:versionInfo "{{ version }}" ;{% endif %}
+{% if creator %}    dcterms:creator <{{ creator }}> ;{% endif %}
+{% if created %}    dcterms:created "{{ created }}"^^xsd:date ;{% endif %}
+{% if license %}    dcterms:license <{{ license }}> ;{% endif %}
+    dcterms:modified "{{ now | date('YYYY-MM-DD') }}"^^xsd:date .
+
+{% if classes and classes.length > 0 %}
+# Classes
+{% for class in classes %}
+<{{ class.iri }}> a owl:Class ;
+    rdfs:label "{{ class.label }}"@en ;
+{% if class.comment %}    rdfs:comment "{{ class.comment }}"@en ;{% endif %}
+{% if class.subClassOf %}    rdfs:subClassOf <{{ class.subClassOf }}> ;{% endif %}
+    rdfs:isDefinedBy <{{ ontologyIRI }}> .
+
+{% endfor %}
+{% endif %}
+{% if objectProperties and objectProperties.length > 0 %}
+# Object Properties
+{% for prop in objectProperties %}
+<{{ prop.iri }}> a owl:ObjectProperty ;
+    rdfs:label "{{ prop.label }}"@en ;
+{% if prop.comment %}    rdfs:comment "{{ prop.comment }}"@en ;{% endif %}
+{% if prop.domain %}    rdfs:domain <{{ prop.domain }}> ;{% endif %}
+{% if prop.range %}    rdfs:range <{{ prop.range }}> ;{% endif %}
+    rdfs:isDefinedBy <{{ ontologyIRI }}> .
+
+{% endfor %}
+{% endif %}
+{% if datatypeProperties and datatypeProperties.length > 0 %}
+# Datatype Properties
+{% for prop in datatypeProperties %}
+<{{ prop.iri }}> a owl:DatatypeProperty ;
+    rdfs:label "{{ prop.label }}"@en ;
+{% if prop.comment %}    rdfs:comment "{{ prop.comment }}"@en ;{% endif %}
+{% if prop.domain %}    rdfs:domain <{{ prop.domain }}> ;{% endif %}
+{% if prop.range %}    rdfs:range <{{ prop.range }}> ;{% endif %}
+    rdfs:isDefinedBy <{{ ontologyIRI }}> .
+
+{% endfor %}
+{% endif %}

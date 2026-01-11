@@ -26,6 +26,9 @@ const ResourceSchema = z.object({
  * Manages resources and their allocation to tasks
  */
 export class YawlResourcePool {
+  /**
+   *
+   */
   constructor() {
     /** @type {Map<string, Object>} */
     this.resources = new Map();

@@ -1,0 +1,76 @@
+{
+  "name": "@unrdf/zkp",
+  "version": "6.2.0-alpha.1",
+  "description": "Zero-Knowledge SPARQL - Privacy-preserving query proofs using zk-SNARKs",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./prover": "./src/sparql-zkp-prover.mjs",
+    "./circuit": "./src/circuit-compiler.mjs",
+    "./groth16": "./src/groth16-prover.mjs",
+    "./verifier": "./src/groth16-verifier.mjs",
+    "./schemas": "./src/schemas.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:fast": "vitest run --reporter=verbose",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/**/*.mjs",
+    "lint:fix": "eslint src/**/*.mjs --fix",
+    "format": "prettier --write src/**/*.mjs test/**/*.mjs",
+    "format:check": "prettier --check src/**/*.mjs test/**/*.mjs",
+    "build": "echo 'No build step for ESM'",
+    "dev": "node --watch src/index.mjs"
+  },
+  "keywords": [
+    "unrdf",
+    "zkp",
+    "zk-snark",
+    "zero-knowledge",
+    "sparql",
+    "privacy",
+    "groth16",
+    "cryptography",
+    "rdf",
+    "knowledge-graph"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^3.25.76",
+    "hash-wasm": "^4.12.0",
+    "snarkjs": "^0.7.5",
+    "circomlibjs": "^0.1.7",
+    "sparqljs": "^3.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "eslint": "^9.39.1",
+    "prettier": "^3.0.0",
+    "vitest": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.16"
+  },
+  "peerDependencies": {
+    "@unrdf/v6-core": "workspace:*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanchatmangpt/unrdf.git",
+    "directory": "packages/zkp"
+  },
+  "bugs": {
+    "url": "https://github.com/seanchatmangpt/unrdf/issues"
+  },
+  "homepage": "https://github.com/seanchatmangpt/unrdf/tree/main/packages/zkp#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

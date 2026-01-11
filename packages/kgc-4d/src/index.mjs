@@ -70,3 +70,20 @@ export {
   calculateOpsPerQuery,
   validateDimension,
 } from './hdit/index.mjs';
+
+// Temporal SPARQL - Time-Travel Queries with Nanosecond Precision
+export { TemporalSPARQL } from './temporal-sparql.mjs';
+export { parseTemporalQuery, extractBaseSparql, hasTemporalClauses, validateTemporalQuery } from './temporal-query-parser.mjs';
+export { TemporalCache } from './temporal-cache.mjs';
+export { HistoryReconstructor } from './history-reconstructor.mjs';
+export {
+  TemporalQuerySchema,
+  TemporalCacheConfigSchema,
+  TemporalResultMetadataSchema,
+  TemporalResultSchema,
+  TimeRangeResultSchema,
+  TemporalEngineOptionsSchema,
+  guardTemporalQueryValid,
+  guardTemporalResultValid,
+  guardCacheConfigValid,
+} from './schemas/temporal-sparql-schema.mjs';

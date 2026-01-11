@@ -1,0 +1,9 @@
+@prefix ex: <http://example.org/schema#> .
+@prefix data: <http://example.org/data/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+data:{{ id }} a ex:Person ;
+    ex:name "{{ name }}" ;
+    ex:email "{{ email }}" {% if company %};
+    ex:worksFor data:{{ company }}{% endif %} {% if age %};
+    ex:age {{ age }}{% endif %} .

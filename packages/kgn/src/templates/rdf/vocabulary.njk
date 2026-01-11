@@ -1,0 +1,79 @@
+{#
+  SKOS Vocabulary Template
+
+  Generates a SKOS (Simple Knowledge Organization System) concept scheme.
+
+  Expected frontmatter variables:
+  - schemeIRI: The IRI of the concept scheme (required)
+  - title: Scheme title (required)
+  - description: Scheme description (optional)
+  - creator: Creator name/IRI (optional)
+  - created: Creation date (ISO format) (optional)
+  - concepts: Array of concept definitions (optional)
+    - iri: Concept IRI
+    - prefLabel: Preferred label
+    - altLabel: Alternative labels (array, optional)
+    - definition: Definition text (optional)
+    - broader: Broader concept IRI (optional)
+    - narrower: Array of narrower concept IRIs (optional)
+    - related: Array of related concept IRIs (optional)
+    - notation: Notation string (optional)
+
+  Example:
+  ---
+  schemeIRI: http://example.org/vocabularies/topics
+  title: Topic Vocabulary
+  description: A controlled vocabulary of topics
+  creator: http://example.org/people/jane-doe
+  created: 2026-01-11
+  concepts:
+    - iri: http://example.org/vocabularies/topics#Science
+      prefLabel: Science
+      definition: Natural and formal sciences
+      narrower:
+        - http://example.org/vocabularies/topics#Physics
+        - http://example.org/vocabularies/topics#Biology
+    - iri: http://example.org/vocabularies/topics#Physics
+      prefLabel: Physics
+      definition: The study of matter and energy
+      broader: http://example.org/vocabularies/topics#Science
+  ---
+#}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+{% if prefix %}@prefix {{ prefix }}: <{{ schemeIRI }}#> .{% endif %}
+
+# Concept Scheme
+<{{ schemeIRI }}> a skos:ConceptScheme ;
+    dc:title "{{ title }}"@en ;
+{% if description %}    dc:description "{{ description }}"@en ;{% endif %}
+{% if creator %}    dcterms:creator <{{ creator }}> ;{% endif %}
+{% if created %}    dcterms:created "{{ created }}"^^xsd:date ;{% endif %}
+    dcterms:modified "{{ now | date('YYYY-MM-DD') }}"^^xsd:date ;
+{% if concepts and concepts.length > 0 %}{% for concept in concepts %}    skos:hasTopConcept <{{ concept.iri }}> ;
+{% endfor %}{% endif %}
+    .
+
+{% if concepts and concepts.length > 0 %}
+# Concepts
+{% for concept in concepts %}
+<{{ concept.iri }}> a skos:Concept ;
+    skos:inScheme <{{ schemeIRI }}> ;
+    skos:prefLabel "{{ concept.prefLabel }}"@en ;
+{% if concept.altLabel and concept.altLabel.length > 0 %}{% for alt in concept.altLabel %}    skos:altLabel "{{ alt }}"@en ;
+{% endfor %}{% endif %}
+{% if concept.definition %}    skos:definition "{{ concept.definition }}"@en ;{% endif %}
+{% if concept.notation %}    skos:notation "{{ concept.notation }}" ;{% endif %}
+{% if concept.broader %}    skos:broader <{{ concept.broader }}> ;{% endif %}
+{% if concept.narrower and concept.narrower.length > 0 %}{% for narrow in concept.narrower %}    skos:narrower <{{ narrow }}> ;
+{% endfor %}{% endif %}
+{% if concept.related and concept.related.length > 0 %}{% for rel in concept.related %}    skos:related <{{ rel }}> ;
+{% endfor %}{% endif %}
+    .
+
+{% endfor %}
+{% endif %}

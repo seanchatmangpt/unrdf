@@ -559,11 +559,108 @@ Benchmarked on Apple M1 Pro (8 cores):
 
 Store 100,000+ workflow events with <100MB memory footprint.
 
+## Daemon Integration
+
+YAWL integrates with `@unrdf/daemon` for advanced workflow automation including scheduled case creation, task timeout enforcement, automatic retries, and parallel task distribution.
+
+### Features
+
+- **Scheduled Case Creation** - Create workflow cases on cron schedules or intervals
+- **Task Timeout Enforcement** - Automatically cancel tasks exceeding time limits
+- **Automatic Retry** - Retry failed tasks with exponential backoff
+- **Deferred Choice** - Wait for external events before proceeding
+- **Parallel Distribution** - Distribute AND-split tasks across daemon nodes
+- **Health Monitoring** - Real-time metrics and health checks
+
+### Quick Example
+
+```javascript
+import { Daemon } from '@unrdf/daemon';
+import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
+import { createWorkflow } from '@unrdf/yawl';
+import { createStore } from '@unrdf/oxigraph';
+
+// Create daemon and YAWL engine
+const daemon = new Daemon({ daemonId: 'yawl-daemon' });
+const store = createStore();
+
+// Mock YAWL engine (in production, use real engine)
+const yawlEngine = {
+  createCase: async ({ workflowId, caseId }) => ({ caseId, workflowId }),
+  enableTask: async ({ caseId, taskId }) => ({ caseId, taskId }),
+  on: (event, handler) => () => {},
+};
+
+// Create bridge
+const bridge = new YawlDaemonBridge(daemon, yawlEngine, {
+  daemonNodeId: 'node-1',
+  maxConcurrentCases: 100,
+  enableAutoRetry: true,
+  enableTimeoutTracking: true,
+});
+
+await daemon.start();
+await bridge.start();
+
+// Schedule daily case creation at 2 AM
+await bridge.scheduleRecurringCase(
+  'approval-workflow',
+  '0 2 * * *',
+  { caseIdPrefix: 'daily', priority: 5 }
+);
+
+// Watch task for timeout
+await bridge.watchTaskTimeout('case-001', 'review-task', 60000);
+
+// Get bridge statistics
+const stats = bridge.getStats();
+console.log('Active timeouts:', stats.activeTimeouts);
+console.log('Active retries:', stats.activeRetries);
+```
+
+### CLI Management
+
+Control daemon operations via CLI:
+
+```bash
+# Start daemon (programmatically)
+# See tutorial for full daemon setup
+
+# List scheduled operations
+unrdf daemon list
+
+# Execute operation immediately
+unrdf daemon run backup-graphs
+
+# Schedule trigger
+unrdf daemon schedule sync-federation cron --payload '{"schedule":"0 * * * *"}'
+
+# View daemon status
+unrdf daemon status --include-metrics
+
+# View operation logs
+unrdf daemon logs --follow --filter "yawl"
+
+# Show configuration
+unrdf daemon config
+
+# Show cluster status
+unrdf daemon cluster
+```
+
+### Documentation
+
+- **[Tutorial: YAWL Daemon Setup](../../docs/diataxis/tutorials/yawl-daemon-setup.md)** - Complete setup guide (15-20 min)
+- **[How-to: Daemon Management](../../docs/diataxis/how-to/yawl-daemon-management.md)** - Common tasks (5-10 min)
+- **[Reference: Daemon API](../../docs/diataxis/reference/yawl-daemon-api.md)** - Complete API reference
+- **[Example: Daemon Workflow](../../examples/yawl-daemon-workflow.mjs)** - Working example
+
 ## Dependencies
 
 - `@unrdf/oxigraph` - RDF triple store (required)
 - `@unrdf/kgc-4d` - Event sourcing with time-travel
 - `@unrdf/hooks` - Policy enforcement
+- `@unrdf/daemon` - Background task scheduler (optional, for daemon integration)
 - `zod` - Runtime validation
 - `hash-wasm` - BLAKE3/SHA-256 hashing
 

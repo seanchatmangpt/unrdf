@@ -12,6 +12,8 @@
     "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
     "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
     "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs"
+    "./integrations/yawl": "./src/integrations/yawl.mjs",
+    "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -30,6 +32,7 @@
   ],
   "dependencies": {
     "@unrdf/kgc-4d": "workspace:*",
+    "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

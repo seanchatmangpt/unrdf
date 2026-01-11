@@ -4,7 +4,7 @@
  * @description Background daemon for scheduled tasks and event-driven operations
  */
 
-export { UnrdfDaemon } from './daemon.mjs';
+export { Daemon, Daemon as UnrdfDaemon } from './daemon.mjs';
 export { TriggerEvaluator } from './trigger-evaluator.mjs';
 
 export {

@@ -1,713 +1,2246 @@
 % Agent 7 Package Chapters
-% Packages 28-34: KGN, Knowledge Engine, ML Inference, ML Versioning, Nextra Docs, Observability, Oxigraph
+% Packages 25-30: KGC Compiler Layer - Runtime, Tools, Docs, Probe, Multiverse, Swarm
 
 % ============================================================================
-\label{pkg:unrdf-kgn}
-\section{\pkg{unrdf-kgn} --- Deterministic Nunjucks Template System}
+\label{pkg:unrdf-kgc-runtime}
+\section{\pkg{unrdf-kgc-runtime} --- KGC Governance Runtime}
 
 \begin{pkgmeta}
-Path & \texttt{packages/kgn} \\
+Path & \texttt{packages/kgc-runtime} \\
+Kind & js \\
+Entrypoints & 27 files \\
+Dependencies & 3 (oxigraph, hash-wasm, zod) \\
+Tests & 26 test files \\
+Lines of Code & 10,963 \\
+Coverage & 80\%+ (target) \\
+Blurb & KGC governance runtime with comprehensive Zod schemas, work item execution, and receipt chain validation \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises work item streams (compilation tasks, validation requests), plugin registrations, admission gate policies, and temporal event sequences. Observable includes:
+\begin{itemize}
+  \item Work items with dependency DAGs
+  \item Plugin lifecycle events (load, execute, unload)
+  \item Admission policies (schema constraints, temporal bounds)
+  \item Receipt chains from completed operations
+\end{itemize}
+
+\(\Aout\) consists of executed work items with cryptographic receipts, merged capsule states, validated plugin outputs, and deterministic freeze snapshots. The runtime guarantees ACID transaction semantics and temporal consistency.
+
+The reconciler \(\muRecon_{\text{runtime}} : \text{WorkItem} \times \text{Policy} \to \text{Receipt}\) orchestrates governance-compliant execution with rollback capabilities.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Core type signatures from \texttt{src/index.mjs}:
+\begin{lstlisting}[language=JavaScript]
+// Admission gate interface
+export class AdmissionGate {
+  async admit(workItem) {
+    // Validate against policies
+    // Check temporal bounds
+    // Verify dependencies
+    // Return admission receipt
+  }
+}
+
+// Work item executor
+export class WorkItemExecutor {
+  constructor({ store, receiptStore }) {
+    this.state = WORK_ITEM_STATES.PENDING;
+  }
+
+  async execute(workItem) {
+    // Execute with isolation
+    // Generate receipts
+    // Update state machine
+  }
+}
+
+// Receipt chain validator
+const ReceiptChainSchema = z.object({
+  receipts: z.array(z.object({
+    hash: z.string(),
+    previousHash: z.string().optional(),
+    timestamp: z.number(),
+    workItemId: z.string(),
+  })),
+  chainValid: z.boolean(),
+});
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{runtime}} = (\text{WorkItem} \to \text{Receipt}) \times (\text{Policy} \to \text{Boolean}) \times (\text{PluginAPI} \to \text{IsolatedEnv})\)
+
+From \texttt{src/validators.mjs}:
+\begin{lstlisting}[language=JavaScript]
+// Temporal consistency validator
+export function validateTemporalConsistency(events) {
+  // Ensure monotonic timestamps
+  // Verify causal ordering
+  // Detect temporal violations
+  return { valid: boolean, violations: [...] };
+}
+
+// Dependency DAG validator
+export function validateDependencyDAG(workItems) {
+  const cycles = detectCycle(workItems);
+  if (cycles.length > 0) {
+    throw new Error('Circular dependency detected');
+  }
+  return { valid: true };
+}
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The work item execution reconciler:
+\begin{lstlisting}[language=JavaScript]
+// Admission gate reconciliation
+async admit(workItem) {
+  // 1. Schema validation
+  const validated = WorkItemSchema.parse(workItem);
+
+  // 2. Temporal bounds check
+  const boundsValid = this.boundsChecker.check(validated);
+
+  // 3. Dependency resolution
+  const depsResolved = await this.resolveDependencies(validated);
+
+  // 4. Policy enforcement
+  const policyPass = await this.enforceAdmissionPolicy(validated);
+
+  // 5. Generate admission receipt
+  const receipt = await generateReceipt({
+    operation: 'admit',
+    workItemId: validated.id,
+    admitted: true,
+    timestamp: Date.now()
+  });
+
+  return { admitted: true, receipt };
+}
+\end{lstlisting}
+
+Merge reconciler for distributed capsules:
+\begin{lstlisting}[language=JavaScript]
+// Shard merge with conflict detection
+export async function shardMerge(capsuleA, capsuleB) {
+  const detector = new ConflictDetector();
+  const conflicts = await detector.detect(capsuleA, capsuleB);
+
+  if (conflicts.length > 0) {
+    const resolver = new ConflictResolver({
+      strategy: 'last-write-wins',
+      timestampField: 'lastModified'
+    });
+    return await resolver.resolve(conflicts);
+  }
+
+  // No conflicts - commutative merge
+  return mergeCapsules(capsuleA, capsuleB);
+}
+\end{lstlisting}
+
+Plugin isolation reconciler:
+\begin{lstlisting}[language=JavaScript]
+export class PluginIsolation {
+  createPublicAPI() {
+    // Expose only allowed operations
+    return {
+      store: createReadOnlyProxy(this.store),
+      emit: this.eventEmitter.emit.bind(this.eventEmitter),
+      // NO direct store mutation
+      // NO global access
+    };
+  }
+
+  async executeInIsolation(plugin, input) {
+    const sandbox = this.createSandbox();
+    const result = await sandbox.run(plugin.execute, input);
+    sandbox.destroy();
+    return result;
+  }
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition with work item pipeline:
+\[
+\text{Admit} \circ \text{Execute} \circ \text{Receipt} : \text{WorkItem} \to \text{VerifiedReceipt}
+\]
+
+Parallel composition of validators:
+\[
+\text{SchemaValidator} \oplusMerge \text{TemporalValidator} \oplusMerge \text{DAGValidator} : \text{WorkItem} \to \text{ValidationReport}
+\]
+
+Integration with KGC-4D for time-travel:
+\begin{lstlisting}[language=JavaScript]
+import { createFourDStore } from '@unrdf/kgc-4d';
+import { WorkItemExecutor } from '@unrdf/kgc-runtime';
+
+const store4d = createFourDStore();
+const executor = new WorkItemExecutor({ store: store4d });
+
+// Execute at current time
+await executor.execute(workItem);
+
+// Query historical state
+const pastState = await store4d.queryAtTime(timestamp);
+\end{lstlisting}
+
+Composition operator ensures properties propagate:
+\begin{itemize}
+  \item Admission policies AND together
+  \item Receipt chains append sequentially
+  \item Validators combine via conjunction
+\end{itemize}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{circular-deps}} : \neg \exists D . (\text{workItems}(D) \land \text{cycle}(D))
+\]
+
+Circular dependencies in work item DAG are forbidden. DAG validator detects cycles before admission.
+
+\textbf{Invariant} (Receipt Chain Integrity):
+\[
+\InvQ_{\text{chain}} : \forall i . (\text{receipt}_i.\text{previousHash} = \text{hash}(\text{receipt}_{i-1}))
+\]
+
+Receipt chains maintain cryptographic links. Hash verification ensures tamper-evidence.
+
+\textbf{Invariant} (Temporal Monotonicity):
+\[
+\InvQ_{\text{temporal}} : \forall i, j . (i < j \Rightarrow \text{timestamp}_i \leq \text{timestamp}_j)
+\]
+
+Events ordered causally. Lamport clocks prevent temporal violations.
+
+\textbf{Invariant} (Plugin Isolation):
+\[
+\InvQ_{\text{isolation}} : \forall p . (\text{plugin}(p) \Rightarrow \neg \text{access}(p, \text{globalState}))
+\]
+
+Plugins cannot access global state. Sandboxed execution prevents side effects.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item Work item admission: \(< 10\)ms
+  \item Receipt generation: \(< 1\)ms
+  \item DAG validation: \(O(V + E)\) for \(V\) work items, \(E\) dependencies
+  \item Merge conflict detection: \(O(n \log n)\) for \(n\) quads
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Every operation produces verifiable receipt:
+\begin{lstlisting}[language=JavaScript]
+const receipt = {
+  hash: 'blake3:abc123...',
+  previousHash: 'blake3:def456...',
+  operation: 'execute_work_item',
+  workItemId: 'wi-12345',
+  timestamp: 1704067200000000000, // nanosecond precision
+  inputs: { hash: '...' },
+  outputs: { hash: '...' },
+  executor: 'runtime-v1.0.0'
+};
+
+// Verify receipt integrity
+const valid = await verifyReceiptHash(receipt);
+
+// Verify chain continuity
+const chainValid = await verifyReceiptChain(receipts);
+\end{lstlisting}
+
+Receipt store maintains full audit trail:
+\begin{itemize}
+  \item Immutable append-only log
+  \item Merkle tree for batch verification
+  \item Git-backed persistence for long-term storage
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  AdmissionGate,
+  WorkItemExecutor,
+  PluginManager,
+  generateReceipt
+} from '@unrdf/kgc-runtime';
+
+// Create runtime
+const gate = new AdmissionGate({
+  policies: [
+    { type: 'schema', schema: WorkItemSchema },
+    { type: 'temporal', maxAge: 86400000 }
+  ]
+});
+
+const executor = new WorkItemExecutor({
+  store: createStore(),
+  receiptStore: new ReceiptStore()
+});
+
+// Submit work item
+const workItem = {
+  id: 'wi-001',
+  type: 'compile',
+  dependencies: [],
+  payload: { source: '...' }
+};
+
+// Admit and execute
+const admission = await gate.admit(workItem);
+if (admission.admitted) {
+  const result = await executor.execute(workItem);
+  console.log('Receipt:', result.receipt);
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item How to optimize merge performance for capsules with \(>10^6\) quads while maintaining conflict detection guarantees?
+  \item Can plugin API versioning support gradual migration without breaking existing plugins?
+  \item What temporal consistency models balance causality preservation with distributed execution efficiency?
+  \item How should work item priorities interact with admission policies to prevent starvation?
+\end{enumerate}
+
+% ============================================================================
+\label{pkg:unrdf-kgc-tools}
+\section{\pkg{unrdf-kgc-tools} --- KGC Verification Utilities}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-tools} \\
 Kind & js \\
 Entrypoints & 6 files \\
-Dependencies & 12 \\
-Blurb & Deterministic Nunjucks template system with custom filters and frontmatter support \\
+Dependencies & 4 (kgc-4d, kgc-runtime, core, zod) \\
+Blurb & Verification, freeze, and replay utilities for KGC capsules with deterministic validation \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
-\(\Oobs\) comprises template source files (\texttt{.njk}, \texttt{.md}), frontmatter metadata (YAML), and context objects. \(\Aout\) consists of rendered output files (source code, documentation, configuration) and injection operation receipts.
+\(\Oobs\) comprises capsule directories (Git-backed snapshots), receipt chains, documentation artifacts, and freeze manifests. Observable includes:
+\begin{itemize}
+  \item Capsule metadata (timestamps, hashes, dependencies)
+  \item Receipt chain files (\texttt{.receipts/})
+  \item Freeze snapshots (\texttt{.freeze/})
+  \item Work item execution logs
+\end{itemize}
 
-The package observes template file modifications, variable context changes, and injection operation requests. Artifacts include deterministically-rendered output, validation reports, and rollback states.
+\(\Aout\) consists of verification reports (pass/fail with evidence), replay outputs (deterministic re-execution), freeze archives (compressed snapshots), and validation receipts.
+
+The tools act as forensic analyzers: \(\muRecon_{\text{verify}} : \text{Capsule} \to \text{ValidationReport}\)
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Template input schema specifies:
-\begin{itemize}
-  \item Template source path (filesystem or loader)
-  \item Context object (validated via Zod schema)
-  \item Frontmatter structure (YAML key-value pairs)
-  \item Custom filter registry (function name to implementation)
-\end{itemize}
-
-Output signature guarantees deterministic rendering: identical input context produces byte-identical output across executions. Injection operations specify target markers, content placement mode (before, after, replace), and idempotency keys.
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) implements Nunjucks template rendering with determinism guarantees:
-\begin{enumerate}
-  \item Parse frontmatter (YAML) from template source
-  \item Validate context against extracted variable requirements
-  \item Execute Nunjucks rendering with custom filters
-  \item Verify output determinism via hash comparison
-  \item Apply injection operations atomically with marker targeting
-\end{enumerate}
-
-The reconciler enforces template inheritance, block composition, and macro expansion while maintaining reproducibility.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Templates compose via Nunjucks inheritance (\texttt{\{% extends \%\}}) and includes (\texttt{\{% include \%\}}). \(\PiMerge\) represents sequential template application: base template \(\PiMerge\) child overrides.
-
-\(\oplusMerge\) represents filter composition: multiple custom filters combine to transform template variables. Injection operations compose via atomic markers: operations target distinct markers without interference.
-
-Template packs (NextJS, Office, LaTeX) provide domain-specific compositions validated through integration tests.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): Templates must not contain non-deterministic functions (\texttt{Date.now()}, \texttt{Math.random()}). Linter validates templates against determinism rules before rendering.
-
-\(\InvQ\): Rendered output hash must match for identical context inputs. Injection operations preserve idempotency: repeated execution with same key produces identical result. Rollback operations restore exact prior state.
-
-Frontmatter schema validation prevents undefined variable access. Template inheritance depth limited to prevent stack overflow.
-
-\subsection*{Provenance and Receipts}
-
-Each render operation generates receipt containing:
-\begin{itemize}
-  \item Input context hash (BLAKE3)
-  \item Template source hash
-  \item Output content hash
-  \item Nunjucks version
-  \item Custom filter registry snapshot
-\end{itemize}
-
-Injection operations record atomic write receipts with marker positions, content hashes, and rollback pointers. Operation history persists in \texttt{.kgen-history/} directory for audit and time-travel debugging.
-
-\subsection*{Minimal Example}
-
+Tool wrapper pattern from \texttt{src/tool-wrapper.mjs}:
 \begin{lstlisting}[language=JavaScript]
-import { createEngine, inject } from '@unrdf/kgn';
+export class Wrap {
+  static async tool(fn, options = {}) {
+    const startTime = Date.now();
 
-const engine = createEngine({ enableInjection: true });
+    try {
+      const result = await fn();
 
-// Render template
-const output = await engine.render('greeting.njk', {
-  name: 'Alice',
-  timestamp: 1704067200000 // Deterministic
-});
+      // Generate receipt for tool execution
+      const receipt = await validateReceipt({
+        operation: options.name,
+        startTime,
+        endTime: Date.now(),
+        success: true,
+        output: result
+      });
 
-// Atomic injection
-await inject({
-  targetFile: 'src/config.mjs',
-  marker: 'kgen:exports',
-  content: 'export const VERSION = "1.0.0";',
-  mode: 'after'
-});
+      return { success: true, result, receipt };
+    } catch (error) {
+      const receipt = await validateReceipt({
+        operation: options.name,
+        startTime,
+        endTime: Date.now(),
+        success: false,
+        error: error.message
+      });
+
+      return { success: false, error, receipt };
+    }
+  }
+}
 \end{lstlisting}
 
-\subsection*{Open Questions}
+Verification interface:
+\begin{lstlisting}[language=JavaScript]
+// Verify all receipts in capsule
+export async function verifyAllReceipts(capsulePath) {
+  const receipts = await loadReceipts(capsulePath);
 
-How to validate template determinism across Nunjucks version upgrades? Can injection markers support graph-based dependency resolution for complex codegen scenarios? What metrics quantify template complexity for maintenance?
+  for (const receipt of receipts) {
+    const valid = await verifyReceiptHash(receipt);
+    if (!valid) {
+      return {
+        valid: false,
+        failed: receipt.id,
+        reason: 'Hash mismatch'
+      };
+    }
+  }
 
-% ============================================================================
-\label{pkg:unrdf-knowledge-engine}
-\section{\pkg{unrdf-knowledge-engine} --- Rule Engine and Inference}
+  return { valid: true, verified: receipts.length };
+}
 
-\begin{pkgmeta}
-Path & \texttt{packages/knowledge-engine} \\
-Kind & js \\
-Entrypoints & 5 files \\
-Dependencies & 6 \\
-Blurb & Rule engine, inference, and pattern matching with EYE reasoner integration \\
-\end{pkgmeta}
+// Verify freeze snapshot integrity
+export async function verifyFreeze(freezePath) {
+  const manifest = await loadFreezeManifest(freezePath);
 
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+  // Verify all artifact hashes
+  for (const [file, expectedHash] of Object.entries(manifest.hashes)) {
+    const actualHash = await computeFileHash(file);
+    if (actualHash !== expectedHash) {
+      return { valid: false, file, expectedHash, actualHash };
+    }
+  }
 
-\(\Oobs\) comprises RDF triple streams, SPARQL queries, inference rules (N3 notation), and transaction events. \(\Aout\) consists of inferred triples, query results, canonicalized graphs, and validation reports.
+  return { valid: true, artifacts: Object.keys(manifest.hashes).length };
+}
+\end{lstlisting}
 
-The engine observes hook definitions, policy pack registrations, and transaction lifecycle events. Artifacts include reasoning proofs, SHACL validation outcomes, and optimized query plans.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Core type signatures specified via Zod schemas:
-\begin{itemize}
-  \item \texttt{HookDefinition}: condition predicates, effect functions, priorities
-  \item \texttt{PolicyPack}: rule collections, enforcement levels, scopes
-  \item \texttt{Transaction}: isolation levels, rollback points, commit receipts
-  \item \texttt{ReasoningSession}: input graph, rule set, proof depth limit
-\end{itemize}
-
-Query signatures extend SPARQL 1.1 with knowledge substrate patterns: hook invocation, time-travel queries, and substrate-aware optimization hints.
+Type signature: \(\SigmaType_{\text{tools}} = (\text{CapsulePath} \to \text{Report}) \times (\text{FreezePath} \to \text{Archive})\)
 
 \subsection*{Reconciler \(\muRecon\)}
 
-\(\muRecon: \Oobs \to \Aout\) orchestrates knowledge processing:
-\begin{enumerate}
-  \item Evaluate hook conditions against incoming triples
-  \item Execute hook effects within transaction boundaries
-  \item Apply EYE reasoner for forward-chaining inference
-  \item Validate results against SHACL shapes
-  \item Canonicalize output graphs (RDF Dataset Canonicalization)
-  \item Generate cryptographic hash chains for provenance
-\end{enumerate}
+Freeze reconciler creates deterministic snapshots:
+\begin{lstlisting}[language=JavaScript]
+export async function freeze(capsulePath, options = {}) {
+  const timestamp = options.timestamp || Date.now();
+  const freezeDir = path.join(capsulePath, '.freeze', timestamp.toString());
 
-Query reconciliation optimizes SPARQL via index selection, join reordering, and substrate-specific predicate pushdown.
+  // 1. Collect all artifacts
+  const artifacts = await collectArtifacts(capsulePath);
+
+  // 2. Compute hashes
+  const hashes = {};
+  for (const artifact of artifacts) {
+    hashes[artifact.path] = await computeHash(artifact.content);
+  }
+
+  // 3. Create manifest
+  const manifest = {
+    timestamp,
+    capsulePath,
+    hashes,
+    count: artifacts.length
+  };
+
+  // 4. Write freeze archive
+  await writeFreeze(freezeDir, { manifest, artifacts });
+
+  // 5. Generate freeze receipt
+  const receipt = await generateReceipt({
+    operation: 'freeze',
+    timestamp,
+    artifactCount: artifacts.length,
+    manifestHash: await computeHash(JSON.stringify(manifest))
+  });
+
+  return { freezeDir, manifest, receipt };
+}
+\end{lstlisting}
+
+Replay reconciler for deterministic re-execution:
+\begin{lstlisting}[language=JavaScript]
+export async function replayCapsule(capsulePath) {
+  // Load original execution log
+  const log = await loadExecutionLog(capsulePath);
+
+  // Restore state from freeze
+  const store = await restoreFromFreeze(capsulePath);
+
+  // Re-execute work items
+  const results = [];
+  for (const entry of log.entries) {
+    const result = await replayWorkItem(entry, store);
+
+    // Verify determinism
+    if (result.hash !== entry.originalHash) {
+      throw new Error(
+        `Replay non-deterministic: ${result.hash} !== ${entry.originalHash}`
+      );
+    }
+
+    results.push(result);
+  }
+
+  return { replayed: results.length, deterministic: true };
+}
+\end{lstlisting}
+
+Verification reconciler aggregates multiple checks:
+\begin{lstlisting}[language=JavaScript]
+export async function verifyAll(capsulePath) {
+  const checks = {
+    receipts: await verifyAllReceipts(capsulePath),
+    freeze: await verifyFreeze(path.join(capsulePath, '.freeze')),
+    docs: await verifyDocs(path.join(capsulePath, 'docs'))
+  };
+
+  const allValid = Object.values(checks).every(c => c.valid);
+
+  return {
+    valid: allValid,
+    checks,
+    summary: {
+      totalChecks: Object.keys(checks).length,
+      passed: Object.values(checks).filter(c => c.valid).length
+    }
+  };
+}
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Hook composition via priority ordering: hooks execute in ascending priority order. \(\PiMerge\) represents sequential hook application where later hooks observe earlier effects.
+Sequential composition with runtime:
+\[
+\text{Execute}_{\text{runtime}} \circ \text{Freeze}_{\text{tools}} \circ \text{Verify}_{\text{tools}} : \text{WorkItem} \to \text{ProvenArtifact}
+\]
 
-Policy packs compose via scope hierarchies: workspace-level \(\oplusMerge\) package-level \(\oplusMerge\) module-level. Conflicts resolved via explicit precedence rules.
+Parallel composition of verification checks:
+\[
+\text{VerifyReceipts} \oplusMerge \text{VerifyFreeze} \oplusMerge \text{VerifyDocs} : \text{Capsule} \to \text{AggregateReport}
+\]
 
-Reasoning sessions compose via proof chaining: output of reasoning session \(R_1\) becomes input to \(R_2\).
+Integration example:
+\begin{lstlisting}[language=JavaScript]
+import { WorkItemExecutor } from '@unrdf/kgc-runtime';
+import { freeze, verifyAll } from '@unrdf/kgc-tools';
+
+// Execute work item
+const result = await executor.execute(workItem);
+
+// Freeze state
+const frozenState = await freeze(capsulePath);
+
+// Verify integrity
+const verification = await verifyAll(capsulePath);
+
+if (!verification.valid) {
+  throw new Error('Verification failed');
+}
+\end{lstlisting}
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
-\(\GuardH\): Hook effects must complete within timeout (default 5s). Reasoning depth limited to prevent infinite loops. SPARQL queries reject recursive subqueries without aggregation limits.
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{tamper}} : \neg \exists f . (\text{frozen}(f, t_1) \land \text{modified}(f, t_2) \land t_2 > t_1 \land \text{verifies}(f))
+\]
 
-\(\InvQ\): Transactions preserve ACID properties via TransactionManager. Canonicalization produces deterministic output for isomorphic graphs. Hook execution order respects priority invariant.
+Cannot verify tampered freeze artifacts. Hash verification detects any modification.
 
-Policy pack validation ensures no circular dependencies. SHACL shapes must be well-formed (no undefined prefixes, targets).
+\textbf{Invariant} (Replay Determinism):
+\[
+\InvQ_{\text{deterministic}} : \forall w . (\text{replay}(w) \Rightarrow \text{hash}(\text{replay}(w)) = \text{hash}(\text{original}(w)))
+\]
+
+Replayed work items produce identical outputs. Non-determinism detected immediately.
+
+\textbf{Invariant} (Freeze Completeness):
+\[
+\InvQ_{\text{complete}} : \forall a \in \text{Artifacts} . (\text{frozen}(a) \Rightarrow \exists h . \text{manifest}[a] = h)
+\]
+
+All artifacts included in freeze manifest. No orphaned files.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item Receipt verification: \(O(n)\) for \(n\) receipts, \(< 100\)ms per receipt
+  \item Freeze creation: \(O(m)\) for \(m\) artifacts, \(< 1\)s for \(< 1000\) files
+  \item Replay execution: \(O(k \cdot t)\) for \(k\) work items, \(t\) average execution time
+\end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-Each reasoning session generates proof tree linking inferred triples to axioms and rules. Canonicalization receipts include:
-\begin{itemize}
-  \item Input graph hash
-  \item Canonical serialization (NQuads)
-  \item Isomorphism group identifiers
-  \item Canonicalization algorithm version
-\end{itemize}
-
-Hook executions record trigger conditions, effect results, and transaction IDs. Query execution plans stored for performance analysis.
-
-\subsection*{Minimal Example}
-
+Tool wrapper generates receipts for all operations:
 \begin{lstlisting}[language=JavaScript]
-import { defineHook, reason, canonicalize } from '@unrdf/knowledge-engine';
+const result = await Wrap.tool(
+  () => verifyAllReceipts(capsulePath),
+  { name: 'verify_receipts' }
+);
 
-// Define knowledge hook
-const validateSchema = defineHook({
-  name: 'validate-schema',
-  condition: (triple) => triple.predicate.value === 'rdf:type',
-  effect: async (triple, context) => {
-    const shapes = await context.store.query('SELECT * WHERE { ?s a sh:Shape }');
-    return validateShacl(context.store, shapes);
+// Result includes receipt
+{
+  success: true,
+  result: { valid: true, verified: 42 },
+  receipt: {
+    operation: 'verify_receipts',
+    startTime: 1704067200000,
+    endTime: 1704067201234,
+    success: true,
+    hash: 'blake3:...'
+  }
+}
+\end{lstlisting}
+
+Freeze manifest provides artifact inventory:
+\begin{lstlisting}[language=JavaScript]
+{
+  timestamp: 1704067200000,
+  capsulePath: '/path/to/capsule',
+  hashes: {
+    'src/file1.mjs': 'blake3:abc123...',
+    'src/file2.mjs': 'blake3:def456...',
+    'receipts/receipt1.json': 'blake3:ghi789...'
   },
-  priority: 100
-});
-
-// Perform reasoning
-const { inferred, proof } = await reason(store, rules);
-
-// Canonicalize for comparison
-const hash = await canonicalize(store);
+  count: 3,
+  manifestHash: 'blake3:manifest...'
+}
 \end{lstlisting}
-
-\subsection*{Open Questions}
-
-How to optimize reasoning performance for large rule sets (>10K rules)? Can hook priorities support fractional values for finer-grained ordering? What metrics quantify policy pack complexity and overlap?
-
-% ============================================================================
-\label{pkg:unrdf-ml-inference}
-\section{\pkg{unrdf-ml-inference} --- ONNX ML Inference Pipeline}
-
-\begin{pkgmeta}
-Path & \texttt{packages/ml-inference} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 6 \\
-Blurb & High-performance ONNX model inference pipeline for RDF streams \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\(\Oobs\) comprises RDF triple streams, ONNX model files, feature extraction queries, and inference configuration. \(\Aout\) consists of prediction triples, confidence scores, model performance metrics, and OTEL traces.
-
-The pipeline observes streaming RDF data, model registry updates, and batch completion events. Artifacts include prediction quads (subject, predicate, object, confidence), latency distributions, and throughput measurements.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-ONNX runner interface specifies:
-\begin{itemize}
-  \item Model path (filesystem or URL)
-  \item Input tensor specification (shape, dtype)
-  \item Execution providers (CPU, CUDA, TensorRT)
-  \item Session options (optimization level, thread count)
-\end{itemize}
-
-Streaming pipeline signature defines batch size, feature extraction transform, and output RDF mapping schema. Registry interface provides model lookup, versioning, and health checks.
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) implements inference pipeline:
-\begin{enumerate}
-  \item Subscribe to RDF stream via \pkg{unrdf-streaming}
-  \item Extract features via SPARQL CONSTRUCT queries
-  \item Batch triples according to batch size configuration
-  \item Convert RDF to tensor representation
-  \item Execute ONNX model inference
-  \item Map predictions back to RDF quads
-  \item Emit prediction stream with provenance metadata
-\end{enumerate}
-
-OpenTelemetry instrumentation captures span timing for each pipeline stage.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Multiple models compose via ensemble patterns: predictions from models \(M_1, M_2, \ldots, M_n\) combine via weighted voting or stacking. \(\PiMerge\) represents sequential refinement: initial prediction refined by second-stage model.
-
-Feature extractors compose via SPARQL federation: combine data from multiple RDF stores. Streaming pipelines compose via topic routing: output of pipeline \(P_1\) becomes input to \(P_2\).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): Model input tensors must match declared shape. Feature extraction queries must return consistent schema. Inference timeout prevents unbounded execution.
-
-\(\InvQ\): Batch processing preserves RDF quad ordering. Prediction confidence scores normalized to [0, 1]. Model registry maintains version immutability (loaded models cannot be replaced without version increment).
-
-Throughput metrics monitored via Prometheus: alert if latency exceeds 99th percentile threshold.
-
-\subsection*{Provenance and Receipts}
-
-Each prediction quad includes provenance metadata:
-\begin{itemize}
-  \item Model URI and version hash
-  \item Input feature hash
-  \item Inference timestamp (nanosecond precision)
-  \item Execution provider and optimization level
-  \item Confidence score
-\end{itemize}
-
-OTEL traces link predictions to source RDF triples. Model registry receipts include ONNX file hash, input/output signatures, and performance benchmarks.
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}[language=JavaScript]
-import { createInferenceStack } from '@unrdf/ml-inference';
-import { createRdfStream } from '@unrdf/streaming';
+import {
+  freeze,
+  verifyAll,
+  replayCapsule,
+  listCapsules
+} from '@unrdf/kgc-tools';
 
-const { runner, pipeline, registry } = createInferenceStack({
-  runnerOptions: { executionProviders: ['cpu'] },
-  pipelineOptions: { batchSize: 32 }
+// List available capsules
+const capsules = await listCapsules('.');
+
+// Freeze current state
+const frozen = await freeze('./my-capsule');
+console.log(`Frozen ${frozen.manifest.count} artifacts`);
+
+// Verify integrity
+const verification = await verifyAll('./my-capsule');
+if (verification.valid) {
+  console.log('All checks passed');
+} else {
+  console.error('Verification failed:', verification.checks);
+}
+
+// Replay execution
+const replay = await replayCapsule('./my-capsule');
+console.log(`Replayed ${replay.replayed} work items deterministically`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item How to optimize freeze performance for capsules with millions of small files?
+  \item Can incremental verification reduce validation time for large receipt chains?
+  \item What compression strategies balance freeze archive size versus extraction speed?
+  \item How should replay handle external dependencies (network, file system) for determinism?
+\end{enumerate}
+
+% ============================================================================
+\label{pkg:unrdf-kgc-docs}
+\section{\pkg{unrdf-kgc-docs} --- Documentation Generation}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-docs} \\
+Kind & js \\
+Entrypoints & 12 files \\
+Dependencies & 1 (zod) \\
+Blurb & KGC Markdown parser and dynamic documentation generator with proof anchoring and reference validation \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises Markdown source files with embedded KGC directives, code examples, reference links, and change logs. Observable includes:
+\begin{itemize}
+  \item Markdown files (\texttt{*.md})
+  \item Embedded code blocks (JavaScript, SPARQL)
+  \item Cross-references (\texttt{[link](#anchor)})
+  \item Changelog entries
+\end{itemize}
+
+\(\Aout\) consists of rendered HTML documentation, validated references, proof certificates (Merkle trees), and changelog summaries. The parser guarantees link integrity and proof anchoring.
+
+The reconciler \(\muRecon_{\text{docs}} : \text{Markdown} \to (\text{HTML} \times \text{ProofTree})\) produces verifiable documentation.
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Parser interface from \texttt{src/parser.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export function parseMarkdown(source) {
+  const ast = {
+    type: 'document',
+    children: [],
+    metadata: {}
+  };
+
+  // Parse frontmatter
+  if (source.startsWith('---')) {
+    ast.metadata = parseFrontmatter(source);
+  }
+
+  // Parse sections
+  ast.children = parseSections(source);
+
+  // Extract references
+  ast.references = extractReferences(ast);
+
+  // Validate structure
+  validateDocumentStructure(ast);
+
+  return ast;
+}
+\end{lstlisting}
+
+Renderer interface:
+\begin{lstlisting}[language=JavaScript]
+export async function renderMarkdown(ast, options = {}) {
+  const html = [];
+
+  for (const node of ast.children) {
+    switch (node.type) {
+      case 'heading':
+        html.push(renderHeading(node));
+        break;
+      case 'code':
+        html.push(await renderCode(node, options));
+        break;
+      case 'link':
+        html.push(await renderLink(node, options.validateLinks));
+        break;
+    }
+  }
+
+  return html.join('\n');
+}
+\end{lstlisting}
+
+Proof generation:
+\begin{lstlisting}[language=JavaScript]
+export async function proveDocs(docsPath) {
+  // Collect all documentation files
+  const docs = await collectDocs(docsPath);
+
+  // Compute hashes
+  const leaves = docs.map(doc => computeHash(doc.content));
+
+  // Build Merkle tree
+  const tree = buildMerkleTree(leaves);
+
+  // Generate proof certificate
+  const proof = {
+    root: tree.getRoot(),
+    documents: docs.map(d => d.path),
+    timestamp: Date.now(),
+    proofs: tree.getProofs()
+  };
+
+  // Write proof file
+  await writeProof(path.join(docsPath, '.proof.json'), proof);
+
+  return proof;
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{docs}} = (\text{Markdown} \to \text{AST}) \times (\text{AST} \to \text{HTML}) \times (\text{Docs} \to \text{Proof})\)
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Build reconciler processes documentation pipeline:
+\begin{lstlisting}[language=JavaScript]
+export async function buildDocs(sourcePath, outputPath) {
+  // 1. Discover all markdown files
+  const markdownFiles = await glob(path.join(sourcePath, '**/*.md'));
+
+  // 2. Parse each file
+  const asts = [];
+  for (const file of markdownFiles) {
+    const content = await readFile(file, 'utf-8');
+    const ast = parseMarkdown(content);
+    ast.filePath = file;
+    asts.push(ast);
+  }
+
+  // 3. Validate cross-references
+  const refValidator = new ReferenceValidator(asts);
+  const broken = await refValidator.findBrokenLinks();
+
+  if (broken.length > 0) {
+    throw new Error(`Broken links: ${broken.join(', ')}`);
+  }
+
+  // 4. Render to HTML
+  for (const ast of asts) {
+    const html = await renderMarkdown(ast, { validateLinks: true });
+    const outFile = path.join(
+      outputPath,
+      path.relative(sourcePath, ast.filePath).replace('.md', '.html')
+    );
+    await writeFile(outFile, html);
+  }
+
+  // 5. Generate proof certificate
+  const proof = await proveDocs(outputPath);
+
+  return {
+    built: asts.length,
+    output: outputPath,
+    proof: proof.root
+  };
+}
+\end{lstlisting}
+
+Reference validation reconciler:
+\begin{lstlisting}[language=JavaScript]
+export class ReferenceValidator {
+  constructor(asts) {
+    this.asts = asts;
+    this.anchors = new Map(); // file -> Set<anchor>
+    this.links = []; // { from, to, anchor }
+
+    this.indexAnchors();
+    this.indexLinks();
+  }
+
+  indexAnchors() {
+    for (const ast of this.asts) {
+      const anchors = new Set();
+
+      for (const node of ast.children) {
+        if (node.type === 'heading' && node.id) {
+          anchors.add(node.id);
+        }
+      }
+
+      this.anchors.set(ast.filePath, anchors);
+    }
+  }
+
+  async findBrokenLinks() {
+    const broken = [];
+
+    for (const link of this.links) {
+      // Resolve link target
+      const targetFile = this.resolveFile(link.to);
+
+      if (!this.anchors.has(targetFile)) {
+        broken.push(`${link.from}: Missing file ${targetFile}`);
+        continue;
+      }
+
+      if (link.anchor && !this.anchors.get(targetFile).has(link.anchor)) {
+        broken.push(`${link.from}: Missing anchor #${link.anchor} in ${targetFile}`);
+      }
+    }
+
+    return broken;
+  }
+}
+\end{lstlisting}
+
+Changelog generation reconciler:
+\begin{lstlisting}[language=JavaScript]
+export async function generateChangelog(docsPath, options = {}) {
+  // Read Git history
+  const commits = await gitLog(docsPath, {
+    from: options.since || 'v1.0.0',
+    to: 'HEAD'
+  });
+
+  // Categorize commits
+  const categories = {
+    features: [],
+    fixes: [],
+    breaking: [],
+    docs: []
+  };
+
+  for (const commit of commits) {
+    const type = parseCommitType(commit.message);
+    categories[type].push(commit);
+  }
+
+  // Generate markdown
+  const changelog = [
+    `# Changelog`,
+    '',
+    `## ${options.version} (${new Date().toISOString()})`,
+    ''
+  ];
+
+  for (const [category, commits] of Object.entries(categories)) {
+    if (commits.length === 0) continue;
+
+    changelog.push(`### ${capitalize(category)}`);
+    for (const commit of commits) {
+      changelog.push(`- ${commit.message} (${commit.hash.slice(0, 7)})`);
+    }
+    changelog.push('');
+  }
+
+  return changelog.join('\n');
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential composition of documentation pipeline:
+\[
+\text{Parse} \circ \text{Validate} \circ \text{Render} \circ \text{Prove} : \text{Markdown} \to \text{ProvenHTML}
+\]
+
+Parallel composition with code execution:
+\begin{lstlisting}[language=JavaScript]
+// Render code blocks with execution
+export async function renderCode(node, options) {
+  const html = [];
+
+  // Syntax highlighting
+  html.push(highlight(node.code, node.language));
+
+  // Optionally execute and show output
+  if (options.executeExamples && node.language === 'javascript') {
+    const output = await executeInSandbox(node.code);
+    html.push(`<pre class="output">${escapeHtml(output)}</pre>`);
+  }
+
+  return html.join('\n');
+}
+\end{lstlisting}
+
+Integration with KGC runtime:
+\begin{lstlisting}[language=JavaScript]
+import { buildDocs, verifyDocs } from '@unrdf/kgc-docs';
+import { freeze } from '@unrdf/kgc-tools';
+
+// Build documentation
+const built = await buildDocs('./docs', './dist/docs');
+
+// Verify references
+const verification = await verifyDocs('./dist/docs');
+
+// Freeze documentation state
+const frozen = await freeze('./dist/docs');
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{broken-links}} : \neg \exists l . (\text{published}(l) \land \text{broken}(l.\text{target}))
+\]
+
+Cannot publish documentation with broken links. Reference validator blocks build.
+
+\textbf{Invariant} (Proof Integrity):
+\[
+\InvQ_{\text{proof}} : \forall d \in \text{Docs} . (\text{proven}(d) \Rightarrow \exists p . \text{verify}(p, d))
+\]
+
+Every documented file has verifiable proof. Merkle tree provides batch verification.
+
+\textbf{Invariant} (Changelog Completeness):
+\[
+\InvQ_{\text{changelog}} : \forall c \in \text{Commits} . (\text{since}(c, v) \Rightarrow c \in \text{Changelog}(v))
+\]
+
+All commits since version included in changelog. Git history provides source of truth.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item Markdown parsing: \(< 10\)ms per file
+  \item Reference validation: \(O(n \cdot m)\) for \(n\) files, \(m\) average links
+  \item Proof generation: \(O(n \log n)\) for Merkle tree of \(n\) files
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Proof certificate provides documentation provenance:
+\begin{lstlisting}[language=JavaScript]
+{
+  root: 'blake3:merkle_root...',
+  documents: [
+    'README.md',
+    'ARCHITECTURE.md',
+    'API.md'
+  ],
+  timestamp: 1704067200000,
+  proofs: {
+    'README.md': {
+      leaf: 'blake3:readme...',
+      path: ['blake3:sibling1...', 'blake3:sibling2...']
+    }
+  }
+}
+\end{lstlisting}
+
+Verification workflow:
+\begin{lstlisting}[language=JavaScript]
+import { verifyDocs, verifyProof } from '@unrdf/kgc-docs';
+
+// Verify all references
+const validation = await verifyDocs('./docs');
+
+// Verify cryptographic proof
+const proof = await loadProof('./docs/.proof.json');
+const proofValid = await verifyProof(proof);
+
+console.log('Docs valid:', validation.valid && proofValid);
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  buildDocs,
+  verifyDocs,
+  proveDocs,
+  generateChangelog
+} from '@unrdf/kgc-docs';
+
+// Build documentation
+const built = await buildDocs('./docs', './dist/docs');
+console.log(`Built ${built.built} files`);
+
+// Verify references
+const verification = await verifyDocs('./dist/docs');
+if (!verification.valid) {
+  console.error('Broken links:', verification.broken);
+  process.exit(1);
+}
+
+// Generate proof
+const proof = await proveDocs('./dist/docs');
+console.log('Proof root:', proof.root);
+
+// Generate changelog
+const changelog = await generateChangelog('./docs', {
+  version: 'v2.0.0',
+  since: 'v1.0.0'
+});
+console.log(changelog);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item How to support incremental builds for large documentation sets (\(>1000\) files)?
+  \item Can Merkle proofs enable selective verification of documentation subsets?
+  \item What strategies balance documentation freshness versus build performance?
+  \item How should versioned documentation handle API changes across major versions?
+\end{enumerate}
+
+% ============================================================================
+\label{pkg:unrdf-kgc-probe}
+\section{\pkg{unrdf-kgc-probe} --- Integrity Scanning}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-probe} \\
+Kind & js \\
+Entrypoints & 10+ files \\
+Dependencies & 7 (kgc-substrate, kgc-4d, v6-core, oxigraph, hooks, yawl, zod) \\
+Tests & 22 test files \\
+Blurb & Automated knowledge graph integrity scanning with 10 agents and artifact validation \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises knowledge graph stores, artifact directories, receipt chains, and guard specifications. Observable includes:
+\begin{itemize}
+  \item RDF triple stores (Oxigraph instances)
+  \item Capsule directories with artifacts
+  \item Guard definitions (invariant predicates)
+  \item Scan policies (depth, scope, thresholds)
+\end{itemize}
+
+\(\Aout\) consists of integrity reports (violations detected), agent scan results (10 parallel agents), artifact validation receipts, and remediation recommendations.
+
+The probe orchestrates 10 specialized agents: \(\muRecon_{\text{probe}} = \bigoplus_{i=1}^{10} \text{Agent}_i\)
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Orchestrator interface from \texttt{src/orchestrator.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class ProbeOrchestrator {
+  constructor({ agents, guards, storage }) {
+    this.agents = agents; // 10 specialized agents
+    this.guards = guards; // Invariant predicates
+    this.storage = storage; // Artifact storage
+  }
+
+  async scan(target, options = {}) {
+    // Dispatch to all agents in parallel
+    const results = await Promise.all(
+      this.agents.map(agent => agent.scan(target, options))
+    );
+
+    // Aggregate results
+    const violations = results.flatMap(r => r.violations);
+
+    // Check guards
+    const guardResults = await this.checkGuards(target);
+
+    // Generate report
+    return {
+      target,
+      timestamp: Date.now(),
+      agents: results.length,
+      violations: violations.length,
+      guardsPassed: guardResults.passed,
+      recommendations: this.generateRecommendations(violations)
+    };
+  }
+}
+\end{lstlisting}
+
+Guard specification:
+\begin{lstlisting}[language=JavaScript]
+export const Guards = {
+  // Receipt chain integrity
+  receiptChainIntegrity: async (target) => {
+    const receipts = await loadReceipts(target);
+    for (let i = 1; i < receipts.length; i++) {
+      if (receipts[i].previousHash !== hash(receipts[i - 1])) {
+        return {
+          passed: false,
+          violation: `Receipt chain broken at index ${i}`
+        };
+      }
+    }
+    return { passed: true };
+  },
+
+  // Artifact determinism
+  artifactDeterminism: async (target) => {
+    const artifacts = await loadArtifacts(target);
+    const recomputed = await recomputeArtifacts(target);
+
+    for (const artifact of artifacts) {
+      if (artifact.hash !== recomputed[artifact.path].hash) {
+        return {
+          passed: false,
+          violation: `Artifact ${artifact.path} non-deterministic`
+        };
+      }
+    }
+    return { passed: true };
+  },
+
+  // Temporal consistency
+  temporalConsistency: async (target) => {
+    const events = await loadEvents(target);
+    for (let i = 1; i < events.length; i++) {
+      if (events[i].timestamp < events[i - 1].timestamp) {
+        return {
+          passed: false,
+          violation: `Temporal violation at event ${i}`
+        };
+      }
+    }
+    return { passed: true };
+  }
+};
+\end{lstlisting}
+
+Agent interface:
+\begin{lstlisting}[language=JavaScript]
+export class IntegrityAgent {
+  constructor({ name, scanFn }) {
+    this.name = name;
+    this.scanFn = scanFn;
+  }
+
+  async scan(target, options) {
+    const startTime = Date.now();
+
+    const violations = await this.scanFn(target, options);
+
+    return {
+      agent: this.name,
+      duration: Date.now() - startTime,
+      violations: violations,
+      scanned: true
+    };
+  }
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{probe}} = (\text{Target} \times \text{Guards} \to \text{Report}) \times (\text{Agents} \to \text{Violations}[])\)
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Parallel agent orchestration:
+\begin{lstlisting}[language=JavaScript]
+// 10-agent scan orchestration
+export async function orchestrateScan(target) {
+  const agents = [
+    new IntegrityAgent({ name: 'receipt-validator', scanFn: scanReceipts }),
+    new IntegrityAgent({ name: 'artifact-validator', scanFn: scanArtifacts }),
+    new IntegrityAgent({ name: 'temporal-validator', scanFn: scanTemporal }),
+    new IntegrityAgent({ name: 'dag-validator', scanFn: scanDAG }),
+    new IntegrityAgent({ name: 'schema-validator', scanFn: scanSchemas }),
+    new IntegrityAgent({ name: 'proof-validator', scanFn: scanProofs }),
+    new IntegrityAgent({ name: 'freeze-validator', scanFn: scanFreezes }),
+    new IntegrityAgent({ name: 'link-validator', scanFn: scanLinks }),
+    new IntegrityAgent({ name: 'security-scanner', scanFn: scanSecurity }),
+    new IntegrityAgent({ name: 'performance-profiler', scanFn: profilePerformance })
+  ];
+
+  // Parallel execution
+  const results = await Promise.allSettled(
+    agents.map(agent => agent.scan(target))
+  );
+
+  // Aggregate violations
+  const allViolations = results
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value.violations);
+
+  // Failed agents
+  const failed = results
+    .filter(r => r.status === 'rejected')
+    .map(r => r.reason);
+
+  return {
+    scanned: results.length,
+    violations: allViolations,
+    failed: failed.length,
+    agents: results.map(r => r.status === 'fulfilled' ? r.value.agent : null)
+  };
+}
+\end{lstlisting}
+
+Guard checking reconciler:
+\begin{lstlisting}[language=JavaScript]
+async function checkGuards(target) {
+  const guardResults = {};
+
+  for (const [name, guardFn] of Object.entries(Guards)) {
+    try {
+      const result = await guardFn(target);
+      guardResults[name] = result;
+    } catch (error) {
+      guardResults[name] = {
+        passed: false,
+        error: error.message
+      };
+    }
+  }
+
+  const passed = Object.values(guardResults).every(r => r.passed);
+
+  return {
+    passed,
+    results: guardResults,
+    count: Object.keys(guardResults).length
+  };
+}
+\end{lstlisting}
+
+Artifact validation reconciler:
+\begin{lstlisting}[language=JavaScript]
+async function validateArtifact(artifactPath) {
+  // Load artifact metadata
+  const metadata = await loadArtifactMetadata(artifactPath);
+
+  // Recompute hash
+  const content = await readFile(artifactPath);
+  const computedHash = await hash(content);
+
+  // Verify hash matches
+  if (computedHash !== metadata.hash) {
+    return {
+      valid: false,
+      artifact: artifactPath,
+      expected: metadata.hash,
+      actual: computedHash,
+      violation: 'Hash mismatch'
+    };
+  }
+
+  // Verify determinism if reproducible
+  if (metadata.reproducible) {
+    const reproduced = await reproduceArtifact(metadata.source);
+    const reproducedHash = await hash(reproduced);
+
+    if (reproducedHash !== metadata.hash) {
+      return {
+        valid: false,
+        artifact: artifactPath,
+        violation: 'Non-deterministic reproduction'
+      };
+    }
+  }
+
+  return { valid: true, artifact: artifactPath };
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Parallel composition of 10 agents:
+\[
+\text{ProbeResult} = \bigoplus_{i=1}^{10} \text{Agent}_i(\text{target})
+\]
+
+Sequential composition with remediation:
+\[
+\text{Scan} \circ \text{Detect} \circ \text{Report} \circ \text{Remediate} : \text{Target} \to \text{FixedTarget}
+\]
+
+Integration with KGC tools:
+\begin{lstlisting}[language=JavaScript]
+import { ProbeOrchestrator } from '@unrdf/kgc-probe';
+import { verifyAll } from '@unrdf/kgc-tools';
+
+// Probe scan
+const probe = new ProbeOrchestrator({ agents, guards, storage });
+const scanResult = await probe.scan(capsulePath);
+
+// Tool verification
+const toolResult = await verifyAll(capsulePath);
+
+// Combined report
+const combined = {
+  probe: scanResult,
+  tools: toolResult,
+  overall: scanResult.violations.length === 0 && toolResult.valid
+};
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{unguarded}} : \neg \exists t . (\text{published}(t) \land \neg \text{scanned}(t))
+\]
+
+Cannot publish unscanned targets. Probe verification required before release.
+
+\textbf{Invariant} (Agent Completeness):
+\[
+\InvQ_{\text{agents}} : |\text{AgentsCompleted}| = 10 \lor \text{ScanFails}
+\]
+
+All 10 agents must complete or scan fails. Partial scans rejected.
+
+\textbf{Invariant} (Guard Monotonicity):
+\[
+\InvQ_{\text{guards}} : \forall g \in \text{Guards} . (\text{passed}(g, t_1) \land \text{unchanged}(t_1, t_2) \Rightarrow \text{passed}(g, t_2))
+\]
+
+Guards remain passed for unchanged targets. Monotonic property.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item 10-agent scan: \(< 30\)s for typical capsule
+  \item Guard evaluation: \(< 5\)s per guard
+  \item Artifact validation: \(O(n)\) for \(n\) artifacts
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Scan report provides provenance:
+\begin{lstlisting}[language=JavaScript]
+{
+  target: '/path/to/capsule',
+  timestamp: 1704067200000,
+  agents: [
+    { name: 'receipt-validator', duration: 234, violations: 0 },
+    { name: 'artifact-validator', duration: 567, violations: 1 },
+    // ... 8 more agents
+  ],
+  violations: [
+    {
+      agent: 'artifact-validator',
+      severity: 'high',
+      message: 'Artifact hash mismatch',
+      artifact: 'src/file.mjs',
+      expected: 'blake3:abc...',
+      actual: 'blake3:def...'
+    }
+  ],
+  guardsPassed: 28,
+  guardsFailed: 1,
+  recommendations: [
+    'Regenerate artifact src/file.mjs',
+    'Verify build determinism'
+  ]
+}
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { ProbeOrchestrator, Guards } from '@unrdf/kgc-probe';
+import { createAgents } from '@unrdf/kgc-probe/agents';
+
+// Create orchestrator
+const probe = new ProbeOrchestrator({
+  agents: await createAgents(),
+  guards: Guards,
+  storage: { path: '.probe' }
 });
 
-await registry.registerModel('sentiment', './sentiment.onnx');
+// Scan capsule
+const result = await probe.scan('./my-capsule');
 
-const stream = createRdfStream(store);
-const predictions = await pipeline.process(stream, {
-  modelId: 'sentiment',
-  featureExtractor: 'SELECT ?text WHERE { ?s :text ?text }'
-});
+console.log(`Scanned with ${result.agents} agents`);
+console.log(`Violations: ${result.violations.length}`);
+console.log(`Guards passed: ${result.guardsPassed}`);
 
-for await (const quad of predictions) {
-  console.log(quad.subject, quad.predicate, quad.object, quad.graph);
+if (result.violations.length > 0) {
+  console.error('Integrity violations detected:');
+  result.violations.forEach(v => console.error(`  - ${v.message}`));
+  process.exit(1);
 }
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
-How to optimize tensor conversion for large RDF graphs? Can feature extraction leverage SPARQL query optimization? What strategies handle model versioning in production pipelines?
+\begin{enumerate}
+  \item How to prioritize agent execution based on historical violation patterns?
+  \item Can machine learning identify anomalous integrity violations automatically?
+  \item What distributed scanning strategies enable multi-node probe orchestration?
+  \item How should agent results aggregate when violations have conflicting severities?
+\end{enumerate}
 
 % ============================================================================
-\label{pkg:unrdf-ml-versioning}
-\section{\pkg{unrdf-ml-versioning} --- ML Model Versioning System}
+\label{pkg:unrdf-kgc-multiverse}
+\section{\pkg{unrdf-kgc-multiverse} --- Universe Branching}
 
 \begin{pkgmeta}
-Path & \texttt{packages/ml-versioning} \\
+Path & \texttt{packages/kgc-multiverse} \\
 Kind & js \\
-Entrypoints & 3 files \\
-Dependencies & 6 \\
-Blurb & ML model versioning with TensorFlow.js and KGC-4D time-travel \\
+Entrypoints & 8 files \\
+Dependencies & 6 (core, oxigraph, kgc-4d, receipts, zod, piscina) \\
+Tests & 8 test files \\
+Blurb & Universe branching, forking, and morphism algebra for knowledge graphs with parallel execution \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
-\(\Oobs\) comprises TensorFlow.js model instances, training metadata, weight matrices, and lineage relationships. \(\Aout\) consists of RDF representations of model architecture, cryptographic hash chains, time-stamped snapshots, and comparison reports.
+\(\Oobs\) comprises universe snapshots (4D frozen states), branching operations, morphism specifications, and merge strategies. Observable includes:
+\begin{itemize}
+  \item Universe states at epochs \(\tauEpoch_i\)
+  \item Branch operations (fork, clone, snapshot)
+  \item Morphisms between universes (graph homomorphisms)
+  \item Composition algebra (Q-star calculus)
+\end{itemize}
 
-The version store observes model save operations, weight updates, and hyperparameter changes. Artifacts include model diffs, lineage graphs, and time-travel queries to historical model states.
+\(\Aout\) consists of branched universes, morphism chains, merged states (via morphism composition), and parallel execution results.
+
+The multiverse implements category theory for RDF graphs: \(\muRecon_{\text{multiverse}} : \text{Universe} \times \text{Morphism} \to \text{Universe}'\)
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Version store interface specifies:
-\begin{itemize}
-  \item Model identifier (unique name)
-  \item TensorFlow.js model instance
-  \item Metadata object (hyperparameters, training metrics)
-  \item Parent version references (for lineage)
-\end{itemize}
-
-Comparison operations define diff schema: added/removed layers, weight delta statistics, architecture changes. Time-travel queries specify target timestamp or version hash.
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) serializes models to RDF:
-\begin{enumerate}
-  \item Extract model architecture (layers, connections, activations)
-  \item Serialize weight tensors to RDF literals
-  \item Compute BLAKE3 hash of model state
-  \item Record KGC-4D timestamp for version
-  \item Link to parent version via provenance predicates
-  \item Store metadata as RDF properties
-\end{enumerate}
-
-Comparison reconciler computes structural diff and weight distance metrics between versions.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Model lineage forms directed acyclic graph: version \(V_n\) derives from parent versions via training, fine-tuning, or architecture modification. \(\PiMerge\) represents sequential refinement: base model \(\PiMerge\) fine-tuned variant.
-
-Ensemble models compose via \(\oplusMerge\): multiple independent versions combine predictions. Time-travel snapshots compose via KGC-4D universe freeze: consistent cross-model state at epoch \(\tauEpoch\).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): Model versions immutable after creation. Hash collisions prevented via BLAKE3 cryptographic strength. Lineage graph must be acyclic.
-
-\(\InvQ\): Model retrieval by hash returns identical weights across restores. Time-travel queries return consistent snapshot across all versioned artifacts. Metadata schema validation via Zod prevents malformed records.
-
-Storage backend guarantees atomic writes: partial model saves rejected.
-
-\subsection*{Provenance and Receipts}
-
-Version receipts include:
-\begin{itemize}
-  \item Model architecture hash
-  \item Weight tensor hash (layer-wise and global)
-  \item Parent version hashes
-  \item Training metadata (loss, accuracy, epochs)
-  \item KGC-4D timestamp (nanosecond precision)
-  \item TensorFlow.js version
-\end{itemize}
-
-Lineage graph serialized as RDF using \texttt{prov:wasDerivedFrom} relationships. Comparison receipts record structural and numerical differences.
-
-\subsection*{Minimal Example}
-
+Universe manager from \texttt{src/universe-manager.mjs}:
 \begin{lstlisting}[language=JavaScript]
-import * as tf from '@tensorflow/tfjs-node';
-import { MLVersionStore } from '@unrdf/ml-versioning';
-
-const versionStore = new MLVersionStore({ storeDir: '.ml-models' });
-
-// Train and version model
-const model = tf.sequential({
-  layers: [tf.layers.dense({ units: 10, activation: 'relu', inputShape: [5] })]
-});
-model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
-
-const version = await versionStore.saveModel('classifier', model, {
-  hyperparameters: { learningRate: 0.001 },
-  metrics: { accuracy: 0.95 }
-});
-
-// Time-travel to previous version
-const oldVersion = await versionStore.getModelByHash(parentHash);
-const comparison = await versionStore.compareModels(version, oldVersion);
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-How to optimize storage for large model weight matrices? Can diff algorithms leverage tensor sparsity patterns? What strategies handle model versioning in distributed training scenarios?
-
-% ============================================================================
-\label{pkg:unrdf-nextra-docs}
-\section{\pkg{unrdf-nextra-docs} --- Documentation Site}
-
-\begin{pkgmeta}
-Path & \texttt{packages/nextra} \\
-Kind & docs \\
-Entrypoints & 0 files \\
-Dependencies & 11 \\
-Blurb & UNRDF documentation with Nextra 4 and Next.js \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\(\Oobs\) comprises Markdown documentation files, React components, configuration files, and navigation structures. \(\Aout\) consists of static HTML pages, optimized JavaScript bundles, search indices, and KaTeX-rendered mathematics.
-
-The documentation system observes MDX file modifications, component imports, and theme customizations. Artifacts include deployable static site, sitemap, and accessibility validation reports.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Nextra configuration specifies:
-\begin{itemize}
-  \item Theme configuration (colors, fonts, layout)
-  \item Navigation structure (\texttt{\_meta.json} files)
-  \item MDX component mappings
-  \item Search configuration (Flexsearch options)
-\end{itemize}
-
-Build signature defines output directory, optimization level, and export format (static or server-side rendering).
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) implements documentation build pipeline:
-\begin{enumerate}
-  \item Parse MDX files (Markdown + JSX)
-  \item Resolve component imports
-  \item Apply theme transformations
-  \item Render KaTeX mathematics
-  \item Generate navigation structure from \texttt{\_meta.json}
-  \item Build search index
-  \item Optimize static assets (minification, code splitting)
-  \item Export to static HTML
-\end{enumerate}
-
-Development reconciler provides hot-reload for rapid iteration.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Documentation sections compose hierarchically: root \(\PiMerge\) category \(\PiMerge\) page. Navigation metadata files merge via filesystem hierarchy.
-
-MDX components compose via React composition: custom components wrap Markdown content. Theme configuration merges with defaults via \(\oplusMerge\).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): MDX syntax must be valid. Component imports must resolve. KaTeX expressions must parse successfully. Links must not reference non-existent pages.
-
-\(\InvQ\): Build output deterministic for identical source. Navigation order matches \texttt{\_meta.json} specification. Search index covers all page content.
-
-Accessibility validation ensures WCAG 2.1 AA compliance. Bundle size monitoring prevents excessive JavaScript bloat.
-
-\subsection*{Provenance and Receipts}
-
-Build receipts include:
-\begin{itemize}
-  \item Source file hashes (all MDX files)
-  \item Nextra version
-  \item Next.js version
-  \item Theme configuration hash
-  \item Bundle size metrics
-  \item Accessibility scan results
-\end{itemize}
-
-Deployment receipts record target environment, CDN configuration, and cache invalidation timestamps.
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-// pages/index.mdx
----
-title: UNRDF Documentation
----
-
-# Welcome to UNRDF
-
-UNRDF provides RDF processing infrastructure:
-
-$$\muRecon: \Oobs \to \Aout$$
-
-See [Core Concepts](/concepts) for details.
-
-// next.config.js
-import nextra from 'nextra';
-
-const withNextra = nextra({
-  theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.jsx'
-});
-
-export default withNextra();
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-How to integrate package API documentation automatically? Can search index incorporate RDF knowledge graph for graph queries? What strategies optimize build performance for large documentation sets?
-
-% ============================================================================
-\label{pkg:unrdf-observability}
-\section{\pkg{unrdf-observability} --- Prometheus/Grafana Observability}
-
-\begin{pkgmeta}
-Path & \texttt{packages/observability} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 6 \\
-Blurb & Prometheus/Grafana observability dashboard for distributed workflows \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\(\Oobs\) comprises workflow execution events, OTEL metric streams, alert rule definitions, and dashboard configurations. \(\Aout\) consists of Prometheus metrics endpoints, Grafana dashboard JSON, alert notifications, and SLI reports.
-
-The observability stack observes workflow lifecycle events (start, complete, error), resource utilization metrics, and custom business metrics. Artifacts include time-series databases, alert history, and dashboard snapshots.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Workflow metrics interface specifies:
-\begin{itemize}
-  \item Metric types (Counter, Gauge, Histogram, Summary)
-  \item Label dimensions (workflow ID, status, pattern)
-  \item Recording methods (increment, set, observe)
-  \item Export formats (Prometheus text, JSON)
-\end{itemize}
-
-Alert manager defines threshold rules, evaluation intervals, notification channels, and severity levels. Grafana exporter generates dashboard specifications from metric metadata.
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) orchestrates observability pipeline:
-\begin{enumerate}
-  \item Instrument workflow events via \texttt{WorkflowMetrics}
-  \item Aggregate metrics via OpenTelemetry SDK
-  \item Export to Prometheus endpoint (\texttt{/metrics})
-  \item Evaluate alert rules against metric values
-  \item Trigger notifications on threshold violations
-  \item Generate Grafana dashboards from metric registry
-  \item Compute SLI scores (availability, latency, error rate)
-\end{enumerate}
-
-Metrics collection respects sampling rates and aggregation windows for performance.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Metrics from multiple workflow instances compose via label aggregation: \texttt{workflow\_duration\_seconds\{workflow\_id="A"\}} \(\oplusMerge\) \texttt{workflow\_duration\_seconds\{workflow\_id="B"\}}.
-
-Alert rules compose hierarchically: workspace-level \(\PiMerge\) package-level \(\PiMerge\) workflow-level. Grafana dashboards compose via panel layout: rows combine panels via \(\oplusMerge\).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): Metric recording must not block workflow execution. Alert evaluation must complete within interval. Dashboard queries must not overload Prometheus.
-
-\(\InvQ\): Metrics monotonically increasing for counters. Gauge values reflect current state. Histogram buckets cover expected value range. Alert notifications idempotent (no duplicate notifications within window).
-
-Prometheus scrape interval matches recording granularity. Dashboard refresh rate bounded to prevent excessive load.
-
-\subsection*{Provenance and Receipts}
-
-Metric export receipts include:
-\begin{itemize}
-  \item Metric name and type
-  \item Label cardinality
-  \item Scrape timestamp
-  \item Prometheus version
-  \item Exporter library version
-\end{itemize}
-
-Alert notification receipts record trigger timestamp, threshold value, resolved timestamp, and notification channel. Dashboard generation receipts include metric query hashes and panel configurations.
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-import { createObservabilityStack } from '@unrdf/observability';
-
-const { metrics, grafana, alerts } = await createObservabilityStack({
-  metrics: { prefix: 'unrdf_', port: 9090 },
-  alerts: {
-    rules: [
-      { name: 'high_error_rate', metric: 'error_count', threshold: 10, severity: 'critical' }
-    ]
+export class UniverseManager {
+  constructor({ store4d }) {
+    this.store4d = store4d; // KGC-4D time-travel store
+    this.universes = new Map(); // universeId -> Universe
   }
-});
 
-// Record workflow metrics
-metrics.recordWorkflowStart('workflow-123', 'data-pipeline');
-// ... execute workflow
-metrics.recordWorkflowComplete('workflow-123', 'success', 1500, 'data-pipeline');
+  async createUniverse(options = {}) {
+    const universe = {
+      id: options.id || generateId(),
+      parent: options.parent || null,
+      epoch: await this.store4d.currentEpoch(),
+      store: await this.store4d.freeze()
+    };
 
-// Generate Grafana dashboard
-const dashboard = await grafana.generateDashboard({
-  title: 'UNRDF Workflows',
-  metrics: ['workflow_duration_seconds', 'workflow_error_total']
-});
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-How to optimize metric cardinality for high-dimensional workflows? Can alert rules leverage ML anomaly detection? What strategies reduce Grafana query latency for large time ranges?
-
-% ============================================================================
-\label{pkg:unrdf-oxigraph}
-\section{\pkg{unrdf-oxigraph} --- Oxigraph SPARQL Engine Wrapper}
-
-\begin{pkgmeta}
-Path & \texttt{packages/oxigraph} \\
-Kind & js \\
-Entrypoints & 3 files \\
-Dependencies & 2 \\
-Blurb & Graph database implementation using Oxigraph SPARQL engine \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\(\Oobs\) comprises RDF quads (subject, predicate, object, graph), SPARQL query strings, and transaction operations (add, delete, update). \(\Aout\) consists of query results (bindings, boolean, graph), store snapshots, and performance benchmarks.
-
-The store observes quad insertion/deletion events, SPARQL query execution, and transaction commits. Artifacts include in-memory triple stores, persistent databases, and query execution plans.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Store interface specifies RDFJS-compatible API:
-\begin{itemize}
-  \item \texttt{createStore(quads?: Quad[]): OxigraphStore}
-  \item \texttt{add(quad: Quad): void}
-  \item \texttt{delete(quad: Quad): void}
-  \item \texttt{query(sparql: string): AsyncIterable<Binding>}
-  \item \texttt{size: number}
-\end{itemize}
-
-Data factory provides RDF term constructors: \texttt{namedNode}, \texttt{literal}, \texttt{blankNode}, \texttt{quad}. Type signatures validated via Zod schemas for input validation.
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\(\muRecon: \Oobs \to \Aout\) delegates to Oxigraph engine:
-\begin{enumerate}
-  \item Parse RDF input (Turtle, NTriples, RDF/XML)
-  \item Insert quads into Oxigraph store (in-memory or persistent)
-  \item Optimize SPARQL queries via Oxigraph query planner
-  \item Execute queries using Rust-based SPARQL engine
-  \item Stream results back to JavaScript via async iterables
-  \item Maintain index structures (SPO, POS, OSP)
-\end{enumerate}
-
-Transaction reconciliation ensures atomicity via Oxigraph's ACID guarantees.
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Multiple stores compose via federation: SPARQL SERVICE keyword delegates to remote endpoints. \(\oplusMerge\) represents union: quads from store \(S_1\) \(\oplusMerge\) quads from store \(S_2\).
-
-Query composition via SPARQL algebra: basic graph patterns combine through JOIN, UNION, OPTIONAL. Subqueries nest arbitrarily via \(\PiMerge\).
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-\(\GuardH\): SPARQL queries must be syntactically valid. Quad terms must conform to RDF specification. Persistent stores require valid file paths with write permissions.
-
-\(\InvQ\): Store size matches quad count. Query results deterministic for identical store state. Transaction isolation prevents dirty reads. Index consistency maintained across mutations.
-
-Benchmark tests enforce performance bounds: insertion rate \(>\) 10K quads/sec, query latency \(<\) 100ms for simple patterns.
-
-\subsection*{Provenance and Receipts}
-
-Store operation receipts include:
-\begin{itemize}
-  \item Quad hash (for additions/deletions)
-  \item Transaction ID
-  \item Timestamp (nanosecond precision)
-  \item Store size before/after
-  \item Oxigraph version
-\end{itemize}
-
-Query execution receipts record SPARQL string hash, result count, execution time, and optimizer decisions. Benchmark receipts include throughput, latency percentiles, and memory usage.
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-import { createStore, dataFactory } from '@unrdf/oxigraph';
-
-const store = createStore();
-const { namedNode, literal, quad } = dataFactory;
-
-// Insert triples
-store.add(quad(
-  namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
-  literal('Alice'),
-  namedNode('http://example.org/graph1')
-));
-
-// Query
-const results = store.query(`
-  SELECT ?name WHERE {
-    ?person foaf:name ?name .
+    this.universes.set(universe.id, universe);
+    return universe;
   }
-`);
 
-for await (const binding of results) {
-  console.log(binding.get('name').value);
+  async fork(universeId, options = {}) {
+    const parent = this.universes.get(universeId);
+    if (!parent) throw new Error('Universe not found');
+
+    const child = await this.createUniverse({
+      parent: universeId,
+      epoch: parent.epoch
+    });
+
+    // Copy-on-write semantics
+    child.store = parent.store.clone();
+
+    return child;
+  }
+
+  async merge(universeA, universeB, morphism) {
+    // Apply morphism to align universes
+    const aligned = await morphism.apply(universeB);
+
+    // Merge stores
+    const merged = await this.store4d.merge(universeA.store, aligned.store);
+
+    return await this.createUniverse({
+      parent: null,
+      epoch: Math.max(universeA.epoch, universeB.epoch),
+      store: merged
+    });
+  }
 }
 \end{lstlisting}
 
+Morphism algebra from \texttt{src/morphism.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class Morphism {
+  constructor({ source, target, mapping }) {
+    this.source = source; // Source universe
+    this.target = target; // Target universe
+    this.mapping = mapping; // Subject mapping function
+  }
+
+  async apply(universe) {
+    // Apply morphism to all triples
+    const transformed = [];
+
+    for (const quad of universe.store.match()) {
+      const mappedSubject = this.mapping(quad.subject);
+      transformed.push(quad(
+        mappedSubject,
+        quad.predicate,
+        quad.object,
+        quad.graph
+      ));
+    }
+
+    return { ...universe, store: createStore(transformed) };
+  }
+
+  compose(other) {
+    // Morphism composition: (f ∘ g)(x) = f(g(x))
+    return new Morphism({
+      source: this.source,
+      target: other.target,
+      mapping: (subject) => other.mapping(this.mapping(subject))
+    });
+  }
+
+  // Morphism identity
+  static identity(universe) {
+    return new Morphism({
+      source: universe,
+      target: universe,
+      mapping: (s) => s
+    });
+  }
+}
+\end{lstlisting}
+
+Q-star composition from \texttt{src/q-star.mjs}:
+\begin{lstlisting}[language=JavaScript]
+// Q* calculus for universe composition
+export class QStar {
+  // Parallel composition: U1 ⊕ U2
+  static parallel(u1, u2) {
+    return {
+      id: `${u1.id}⊕${u2.id}`,
+      store: createStore([
+        ...u1.store.match(),
+        ...u2.store.match()
+      ])
+    };
+  }
+
+  // Sequential composition: U1 ; U2
+  static sequential(u1, u2, morphism) {
+    const transformed = morphism.apply(u2);
+    return this.parallel(u1, transformed);
+  }
+
+  // Choice composition: U1 + U2
+  static choice(u1, u2, predicate) {
+    return predicate(u1, u2) ? u1 : u2;
+  }
+}
+\end{lstlisting}
+
+Parallel executor from \texttt{src/parallel-executor.mjs}:
+\begin{lstlisting}[language=JavaScript]
+import Piscina from 'piscina';
+
+export class ParallelUniverseExecutor {
+  constructor({ workers = 4 }) {
+    this.pool = new Piscina({
+      filename: new URL('./worker-task.mjs', import.meta.url).href,
+      maxThreads: workers
+    });
+  }
+
+  async executeParallel(universes, operation) {
+    // Distribute universes across workers
+    const tasks = universes.map(universe => ({
+      universe,
+      operation
+    }));
+
+    const results = await Promise.all(
+      tasks.map(task => this.pool.run(task))
+    );
+
+    return results;
+  }
+
+  async close() {
+    await this.pool.destroy();
+  }
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{multiverse}} = (\text{Universe} \to \text{Universe}) \times (\text{Morphism} \times \text{Morphism} \to \text{Morphism})\)
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Universe forking reconciler:
+\begin{lstlisting}[language=JavaScript]
+// Create branching timeline
+async function createBranchingTimeline(baseUniverse, branches) {
+  const manager = new UniverseManager({ store4d });
+
+  // Fork multiple universes from base
+  const forked = await Promise.all(
+    branches.map(async (branch) => {
+      const universe = await manager.fork(baseUniverse.id);
+
+      // Apply branch-specific modifications
+      for (const modification of branch.modifications) {
+        await modification.apply(universe.store);
+      }
+
+      return universe;
+    })
+  );
+
+  return forked;
+}
+\end{lstlisting}
+
+Morphism composition reconciler:
+\begin{lstlisting}[language=JavaScript]
+// Compose morphism chain
+function composeMorphismChain(morphisms) {
+  // Reduce via composition operator
+  return morphisms.reduce((composed, morphism) => {
+    return composed.compose(morphism);
+  }, Morphism.identity(morphisms[0].source));
+}
+
+// Example: f ∘ g ∘ h
+const chain = [morphismH, morphismG, morphismF];
+const composed = composeMorphismChain(chain);
+
+// Apply composed morphism
+const result = await composed.apply(universe);
+\end{lstlisting}
+
+Parallel merge reconciler:
+\begin{lstlisting}[language=JavaScript]
+// Merge N universes in parallel
+async function parallelMerge(universes, strategy) {
+  const executor = new ParallelUniverseExecutor({ workers: 8 });
+
+  // Pairwise merging in parallel
+  let current = universes;
+
+  while (current.length > 1) {
+    const pairs = [];
+    for (let i = 0; i < current.length; i += 2) {
+      if (i + 1 < current.length) {
+        pairs.push([current[i], current[i + 1]]);
+      } else {
+        pairs.push([current[i], null]);
+      }
+    }
+
+    current = await Promise.all(
+      pairs.map(async ([u1, u2]) => {
+        if (!u2) return u1;
+
+        const morphism = await strategy.createMorphism(u1, u2);
+        return await manager.merge(u1, u2, morphism);
+      })
+    );
+  }
+
+  await executor.close();
+  return current[0];
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Morphism composition forms category:
+\[
+\begin{aligned}
+\text{Identity} &: \text{id}_U : U \to U \\
+\text{Composition} &: (f : U_1 \to U_2) \circ (g : U_2 \to U_3) : U_1 \to U_3 \\
+\text{Associativity} &: (f \circ g) \circ h = f \circ (g \circ h)
+\end{aligned}
+\]
+
+Parallel universe composition:
+\[
+U_1 \oplusMerge U_2 = \text{QStar.parallel}(U_1, U_2)
+\]
+
+Integration with KGC-4D:
+\begin{lstlisting}[language=JavaScript]
+import { create4DStore } from '@unrdf/kgc-4d';
+import { UniverseManager } from '@unrdf/kgc-multiverse';
+
+const store4d = create4DStore();
+const manager = new UniverseManager({ store4d });
+
+// Create universe at epoch T1
+const u1 = await manager.createUniverse();
+
+// Fork at epoch T2
+const u2 = await manager.fork(u1.id);
+
+// Time-travel to T1
+const historical = await store4d.queryAtEpoch(u1.epoch);
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{cyclic}} : \neg \exists m . (m : U \to U \land m \neq \text{id}_U \land m \circ m = m)
+\]
+
+No non-identity cyclic morphisms. Prevents infinite loops in composition chains.
+
+\textbf{Invariant} (Morphism Composition):
+\[
+\InvQ_{\text{compose}} : \forall f, g . (\text{compatible}(f, g) \Rightarrow \text{valid}(f \circ g))
+\]
+
+Compatible morphisms compose validly. Category laws preserved.
+
+\textbf{Invariant} (Universe Isolation):
+\[
+\InvQ_{\text{isolation}} : \forall u_1, u_2 . (\text{fork}(u_1, u_2) \Rightarrow \text{independent}(u_1.\text{store}, u_2.\text{store}))
+\]
+
+Forked universes maintain independent stores. Copy-on-write semantics.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item Fork operation: \(O(1)\) (copy-on-write pointer)
+  \item Morphism application: \(O(n)\) for \(n\) triples
+  \item Parallel merge: \(O(\log k)\) for \(k\) universes with \(p\) workers
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Universe lineage tracked via parent pointers:
+\begin{lstlisting}[language=JavaScript]
+{
+  id: 'universe-42',
+  parent: 'universe-7',
+  epoch: 1704067200000000000,
+  created: 1704067201234567890,
+  operations: [
+    { type: 'fork', from: 'universe-7', timestamp: ... },
+    { type: 'apply_morphism', morphism: '...', timestamp: ... },
+    { type: 'merge', with: 'universe-13', timestamp: ... }
+  ],
+  receipt: {
+    hash: 'blake3:universe42...',
+    storeHash: 'blake3:store42...'
+  }
+}
+\end{lstlisting}
+
+Morphism chain provenance:
+\begin{lstlisting}[language=JavaScript]
+const composed = f.compose(g).compose(h);
+
+composed.provenance = {
+  chain: ['morphism-f', 'morphism-g', 'morphism-h'],
+  source: 'universe-1',
+  target: 'universe-4',
+  composed: 'blake3:composed...'
+};
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  UniverseManager,
+  Morphism,
+  QStar,
+  ParallelUniverseExecutor
+} from '@unrdf/kgc-multiverse';
+
+// Create manager
+const manager = new UniverseManager({ store4d });
+
+// Create base universe
+const base = await manager.createUniverse();
+
+// Fork two branches
+const branch1 = await manager.fork(base.id);
+const branch2 = await manager.fork(base.id);
+
+// Create morphism to align branches
+const morphism = new Morphism({
+  source: branch1,
+  target: branch2,
+  mapping: (subject) => transformSubject(subject)
+});
+
+// Merge with morphism
+const merged = await manager.merge(branch1, branch2, morphism);
+
+console.log(`Merged universe: ${merged.id}`);
+console.log(`Store size: ${merged.store.size}`);
+\end{lstlisting}
+
 \subsection*{Open Questions}
 
-How to optimize persistent store performance for write-heavy workloads? Can Oxigraph support custom SPARQL functions for KGC-specific operations? What strategies handle schema evolution in versioned RDF stores?
+\begin{enumerate}
+  \item How to optimize morphism application for sparse transformations (few modified triples)?
+  \item Can automatic morphism inference discover alignment strategies between universes?
+  \item What garbage collection strategies prevent universe proliferation in long-running systems?
+  \item How should merge conflicts be resolved when morphisms produce contradictory triples?
+\end{enumerate}
+
+% ============================================================================
+\label{pkg:unrdf-kgc-swarm}
+\section{\pkg{unrdf-kgc-swarm} --- Multi-Agent Orchestration}
+
+\begin{pkgmeta}
+Path & \texttt{packages/kgc-swarm} \\
+Kind & js \\
+Entrypoints & 6 files \\
+Dependencies & 7 (core, oxigraph, kgc-substrate, kgn, knowledge-engine, kgc-4d, zod) \\
+Tests & 13 test files \\
+Blurb & Multi-agent template orchestration with cryptographic receipts and poka-yoke guards \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\(\Oobs\) comprises agent task specifications, template sources (Nunjucks), orchestration policies, and coordination signals. Observable includes:
+\begin{itemize}
+  \item Agent definitions (roles, capabilities, constraints)
+  \item Template files (\texttt{.njk}) with embedded logic
+  \item Task queues and coordination messages
+  \item Guard specifications (poka-yoke error prevention)
+\end{itemize}
+
+\(\Aout\) consists of rendered outputs (code, documentation, configuration), agent execution receipts, token usage metrics, and orchestration summaries.
+
+The swarm implements multi-agent code generation: \(\muRecon_{\text{swarm}} : \text{Template} \times \text{Agents} \to \text{Code}\)
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Orchestrator from \texttt{src/orchestrator.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class SwarmOrchestrator {
+  constructor({ agents, templates, guards }) {
+    this.agents = agents; // Array of agent instances
+    this.templates = templates; // Template registry
+    this.guards = guards; // Poka-yoke guards
+    this.tracker = new ExecutionTracker();
+  }
+
+  async orchestrate(task, options = {}) {
+    // Select agents for task
+    const selectedAgents = this.selectAgents(task);
+
+    // Assign templates to agents
+    const assignments = this.assignTemplates(selectedAgents, task);
+
+    // Execute agents in parallel or sequential
+    const results = options.parallel
+      ? await this.executeParallel(assignments)
+      : await this.executeSequential(assignments);
+
+    // Aggregate results
+    const output = await this.aggregateResults(results);
+
+    // Apply guards
+    await this.applyGuards(output);
+
+    // Generate receipt
+    const receipt = await this.generateReceipt(task, results, output);
+
+    return { output, receipt, agents: results.length };
+  }
+
+  async executeParallel(assignments) {
+    return await Promise.all(
+      assignments.map(async ({ agent, template, context }) => {
+        const result = await agent.execute(template, context);
+
+        // Track token usage
+        this.tracker.record(agent.name, result.tokens);
+
+        return result;
+      })
+    );
+  }
+}
+\end{lstlisting}
+
+Guard system from \texttt{src/guardian.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class SwarmGuardian {
+  constructor() {
+    this.guards = new Map();
+  }
+
+  registerGuard(name, predicate) {
+    this.guards.set(name, predicate);
+  }
+
+  async check(output) {
+    const violations = [];
+
+    for (const [name, predicate] of this.guards.entries()) {
+      try {
+        const passed = await predicate(output);
+        if (!passed) {
+          violations.push({
+            guard: name,
+            severity: 'error',
+            message: `Guard ${name} failed`
+          });
+        }
+      } catch (error) {
+        violations.push({
+          guard: name,
+          severity: 'critical',
+          message: error.message
+        });
+      }
+    }
+
+    if (violations.length > 0) {
+      throw new GuardViolationError(violations);
+    }
+
+    return { passed: true, guards: this.guards.size };
+  }
+}
+
+// Example guards
+guardian.registerGuard('no-todos', (output) => {
+  return !output.includes('TODO');
+});
+
+guardian.registerGuard('valid-syntax', async (output) => {
+  try {
+    await import(output);
+    return true;
+  } catch {
+    return false;
+  }
+});
+\end{lstlisting}
+
+Token tracking from \texttt{src/tracker.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class ExecutionTracker {
+  constructor() {
+    this.metrics = {
+      totalTokens: 0,
+      byAgent: new Map(),
+      byTemplate: new Map()
+    };
+  }
+
+  record(agent, tokens) {
+    this.metrics.totalTokens += tokens;
+
+    const current = this.metrics.byAgent.get(agent) || 0;
+    this.metrics.byAgent.set(agent, current + tokens);
+  }
+
+  report() {
+    return {
+      total: this.metrics.totalTokens,
+      agents: Array.from(this.metrics.byAgent.entries()).map(
+        ([agent, tokens]) => ({ agent, tokens })
+      ),
+      average: this.metrics.totalTokens / this.metrics.byAgent.size
+    };
+  }
+}
+\end{lstlisting}
+
+Token compression from \texttt{src/compressor.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export class TemplateCompressor {
+  // Remove whitespace and comments to reduce token count
+  compress(template) {
+    return template
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => !line.startsWith('//') && line.length > 0)
+      .join(' ')
+      .replace(/\s+/g, ' ');
+  }
+
+  // Extract only essential template directives
+  extractDirectives(template) {
+    const directives = [];
+
+    const regex = /\{\%\s*(\w+)\s+([^%]+)\s*\%\}/g;
+    let match;
+
+    while ((match = regex.exec(template)) !== null) {
+      directives.push({
+        type: match[1],
+        content: match[2]
+      });
+    }
+
+    return directives;
+  }
+}
+\end{lstlisting}
+
+Type signature: \(\SigmaType_{\text{swarm}} = (\text{Task} \times \text{Agents} \to \text{Output}) \times (\text{Guards} \to \text{Boolean})\)
+
+\subsection*{Reconciler \(\muRecon\)}
+
+Template rendering reconciler:
+\begin{lstlisting}[language=JavaScript]
+async function renderWithAgent(agent, template, context) {
+  // Load template
+  const source = await loadTemplate(template);
+
+  // Compress to reduce tokens
+  const compressor = new TemplateCompressor();
+  const compressed = compressor.compress(source);
+
+  // Render via agent
+  const result = await agent.render(compressed, context);
+
+  // Post-process
+  const formatted = await formatOutput(result.output);
+
+  return {
+    output: formatted,
+    tokens: result.tokens,
+    agent: agent.name
+  };
+}
+\end{lstlisting}
+
+Multi-agent coordination reconciler:
+\begin{lstlisting}[language=JavaScript]
+async function coordinateAgents(task, agents) {
+  const coordinator = new SwarmOrchestrator({ agents, templates, guards });
+
+  // Phase 1: Planning
+  const plan = await coordinator.plan(task);
+
+  // Phase 2: Parallel execution
+  const results = await coordinator.executeParallel(plan.assignments);
+
+  // Phase 3: Result aggregation
+  const aggregated = await coordinator.aggregateResults(results);
+
+  // Phase 4: Guard validation
+  const guardian = new SwarmGuardian();
+  guardian.registerGuard('syntax-valid', validateSyntax);
+  guardian.registerGuard('no-secrets', detectSecrets);
+
+  await guardian.check(aggregated);
+
+  return aggregated;
+}
+\end{lstlisting}
+
+Receipt generation reconciler:
+\begin{lstlisting}[language=JavaScript]
+async function generateSwarmReceipt(task, agents, output) {
+  const receipt = {
+    task: task.id,
+    timestamp: Date.now(),
+    agents: agents.map(a => ({
+      name: a.name,
+      role: a.role,
+      tokens: a.tokensUsed
+    })),
+    output: {
+      hash: await hash(output),
+      size: output.length,
+      files: extractFileList(output)
+    },
+    guards: {
+      checked: guardsPassed.length,
+      passed: guardsPassed.length
+    },
+    total_tokens: agents.reduce((sum, a) => sum + a.tokensUsed, 0)
+  };
+
+  // Sign receipt
+  receipt.signature = await signReceipt(receipt);
+
+  return receipt;
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential agent pipeline:
+\[
+\text{Planner} \circ \text{Coder} \circ \text{Reviewer} \circ \text{Tester} : \text{Task} \to \text{Code}
+\]
+
+Parallel agent composition:
+\[
+\text{Output} = \bigoplus_{i=1}^{n} \text{Agent}_i(\text{task}, \text{context}_i)
+\]
+
+Integration with KGN templates:
+\begin{lstlisting}[language=JavaScript]
+import { createEngine } from '@unrdf/kgn';
+import { SwarmOrchestrator } from '@unrdf/kgc-swarm';
+
+// KGN template engine
+const engine = createEngine();
+
+// Swarm orchestrator
+const swarm = new SwarmOrchestrator({
+  agents: [plannerAgent, coderAgent, testerAgent],
+  templates: engine,
+  guards: defaultGuards
+});
+
+// Render with swarm
+const result = await swarm.orchestrate({
+  task: 'generate-api',
+  template: 'api-template.njk',
+  context: { resourceName: 'User' }
+});
+\end{lstlisting}
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+\textbf{Guard} (Impossibility):
+\[
+\GuardH_{\text{unsafe-output}} : \neg \exists o . (\text{generated}(o) \land \neg \text{guardsPassed}(o))
+\]
+
+Cannot produce output without passing guards. Poka-yoke prevents errors.
+
+\textbf{Invariant} (Token Budget):
+\[
+\InvQ_{\text{budget}} : \sum_{i=1}^{n} \text{tokens}(\text{Agent}_i) \leq \text{Budget}_{\text{max}}
+\]
+
+Total token usage bounded by budget. Cost control enforced.
+
+\textbf{Invariant} (Receipt Integrity):
+\[
+\InvQ_{\text{receipt}} : \forall r . (\text{generated}(r) \Rightarrow \text{signed}(r) \land \text{verifiable}(r))
+\]
+
+All receipts cryptographically signed and verifiable.
+
+\textbf{Performance Bounds}:
+\begin{itemize}
+  \item Agent coordination: \(O(n)\) for \(n\) agents
+  \item Guard evaluation: \(< 5\)s per guard
+  \item Token compression: \(20-40\%\) reduction
+  \item Parallel speedup: \(O(n/p)\) for \(p\) parallel agents
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Swarm execution receipt:
+\begin{lstlisting}[language=JavaScript]
+{
+  task: 'generate-test-suite',
+  timestamp: 1704067200000,
+  agents: [
+    { name: 'planner', role: 'architecture', tokens: 1234 },
+    { name: 'coder', role: 'implementation', tokens: 5678 },
+    { name: 'tester', role: 'validation', tokens: 2345 }
+  ],
+  output: {
+    hash: 'blake3:output...',
+    size: 15234,
+    files: ['test/api.test.mjs', 'test/integration.test.mjs']
+  },
+  guards: {
+    checked: 5,
+    passed: 5,
+    violations: []
+  },
+  total_tokens: 9257,
+  signature: 'ed25519:sig...'
+}
+\end{lstlisting}
+
+Agent lineage tracking:
+\begin{lstlisting}[language=JavaScript]
+const lineage = {
+  task: 'task-001',
+  agentChain: [
+    { agent: 'planner', input: '...', output: 'plan-hash...' },
+    { agent: 'coder', input: 'plan-hash...', output: 'code-hash...' },
+    { agent: 'reviewer', input: 'code-hash...', output: 'reviewed-hash...' }
+  ],
+  finalOutput: 'reviewed-hash...'
+};
+\end{lstlisting}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import {
+  SwarmOrchestrator,
+  SwarmGuardian,
+  ExecutionTracker
+} from '@unrdf/kgc-swarm';
+
+// Define agents
+const agents = [
+  { name: 'planner', role: 'architecture' },
+  { name: 'coder', role: 'implementation' },
+  { name: 'tester', role: 'validation' }
+];
+
+// Create orchestrator
+const swarm = new SwarmOrchestrator({
+  agents,
+  templates: templateRegistry,
+  guards: defaultGuards
+});
+
+// Execute task
+const result = await swarm.orchestrate({
+  task: 'create-rest-api',
+  context: { resource: 'User', operations: ['CRUD'] }
+}, { parallel: true });
+
+console.log(`Generated by ${result.agents} agents`);
+console.log(`Output hash: ${result.receipt.output.hash}`);
+console.log(`Total tokens: ${result.receipt.total_tokens}`);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+  \item How to optimize agent selection for tasks based on historical performance data?
+  \item Can agents learn from feedback to improve future template rendering quality?
+  \item What coordination protocols minimize token usage while maintaining output quality?
+  \item How should conflict resolution work when agents produce incompatible outputs?
+\end{enumerate}
 
 % ============================================================================
 % End of Agent 7 Packages

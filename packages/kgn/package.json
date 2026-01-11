@@ -46,7 +46,8 @@
     "fs-extra": "^11.3.1",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@amiceli/vitest-cucumber": "^6.2.0",
