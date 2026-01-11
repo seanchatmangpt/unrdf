@@ -27,6 +27,18 @@ export const dataFactory = {
  */
 export { OxigraphStore };
 
+/**
+ * Export SPARQL-star query utilities
+ */
+export {
+  SPARQLStarQueryBuilder,
+  createSPARQLStarBuilder,
+  executeSPARQLStar,
+  queryByConfidence,
+  queryBySource,
+  queryByTemporal,
+} from './sparql-star.mjs';
+
 export default {
   createStore,
   dataFactory,

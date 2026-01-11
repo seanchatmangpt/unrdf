@@ -1,262 +1,862 @@
 % agent_8_packages.tex
-% Agent 8 Package Documentation: Packages 35-41
-% Generated: 2025-12-27
+% Agent 8 Package Documentation: Packages 31-36 (Application Layer)
+% Generated: 2026-01-11
 
 % ============================================================================
-% Package 35: unrdf-project-engine
+% Package 31: @unrdf/cli
 % ============================================================================
 
-\label{pkg:unrdf-project-engine}
-\section{\pkg{@unrdf/project-engine} --- UNRDF Project Engine}
+\label{pkg:unrdf-cli}
+\section{\pkg{@unrdf/cli} --- Command-Line Interface}
 
 \begin{pkgmeta}
-Path & \texttt{packages/project-engine} \\
+Path & \texttt{packages/cli} \\
 Kind & js \\
-Entrypoints & 1 file \\
-Dependencies & 3 \\
-Blurb & Self-hosting Tools and Infrastructure (Development Only) \\
+Entrypoints & 2 files \\
+Dependencies & 6 (citty, table, yaml, @unrdf/core, @unrdf/federation, @unrdf/streaming) \\
+Blurb & Command-line tools for graph operations, SPARQL queries, and context management \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
-The project engine operates on filesystem structures as observables:
+The CLI observes user commands and filesystem state:
 
 \[
-\Oobs_{\text{fs}} = \{ \text{paths}, \text{contents}, \text{timestamps} \}
+\Oobs_{\text{cli}} = \{ \text{commands}, \text{args}, \text{stdin}, \text{files}_{\text{rdf}} \}
 \]
 
-Artifacts include RDF-encoded project models, domain inferences, and hook policies:
+Artifacts include command execution results and formatted output:
 
 \[
-\Aout_{\text{model}} = \store \cup \text{PolicyPacks} \cup \text{Reports}
+\Aout_{\text{cli}} = \{ \text{tables}, \text{json}, \text{yaml}, \text{receipts}, \text{exports} \}
 \]
 
 Primary observables:
 \begin{itemize}
-\item File tree structure via \texttt{scanFileSystemToStore}
-\item Stack signatures (package.json, tsconfig, etc.)
-\item Code complexity metrics from AST traversal
-\item Drift between baseline and current structure
+\item Command-line arguments via \texttt{citty} framework
+\item RDF files for parsing and validation
+\item Store state for backup/restore operations
+\item SPARQL query strings from stdin or files
 \end{itemize}
 
 Artifacts produced:
 \begin{itemize}
-\item RDF graphs representing project structure
-\item Knowledge hooks derived from pattern analysis
-\item MAPEK loop execution reports
-\item Test skeletons and API contract schemas
+\item Formatted query results (table, JSON, YAML)
+\item Receipt verification reports
+\item Store backups with checksums
+\item Import/export manifests
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-All operations validated via Zod schemas:
+Command signature from \texttt{packages/cli/src/cli.mjs}:
 
 \begin{lstlisting}[language=JavaScript]
-const ProjectEngineConfigSchema = z.object({
-  rootPath: z.string(),
-  includePatterns: z.array(z.string()).optional(),
-  excludePatterns: z.array(z.string()).optional(),
-  enableHotspotAnalysis: z.boolean().default(true),
-  enableGapDetection: z.boolean().default(true),
-});
+// Command definition schema (citty framework)
+const CommandSchema = {
+  meta: {
+    name: z.string(),
+    description: z.string(),
+    version: z.string()
+  },
+  args: z.record(z.object({
+    type: z.enum(['string', 'boolean', 'positional']),
+    description: z.string(),
+    required: z.boolean().optional()
+  }))
+};
 \end{lstlisting}
 
-Key type signatures from exported modules:
+Core command types:
 \begin{itemize}
-\item \texttt{FieldInfoSchema}: Field-level type metadata
-\item \texttt{AuditResultSchema}: Type consistency audit results
-\item \texttt{ValidationResultSchema}: API contract validation
-\item \texttt{DriftEntrySchema}: Documentation drift detection
+\item \texttt{query}: Execute SPARQL queries against store
+\item \texttt{import}: Load RDF data from files
+\item \texttt{export}: Dump store to various formats
+\item \texttt{backup}: Create versioned store snapshots
+\item \texttt{restore}: Restore from backup with integrity check
+\item \texttt{receipts}: Verify receipt chains
 \end{itemize}
 
-Type preservation holds across composition:
+Type preservation through command pipeline:
 \[
-\SigmaType(\muRecon_1 \compose \muRecon_2) = \SigmaType(\muRecon_2)[\SigmaType(\muRecon_1)/\text{input}]
+\SigmaType(\text{stdin}) \to \SigmaType(\text{parse}) \to \SigmaType(\text{execute}) \to \SigmaType(\text{format})
 \]
 
 \subsection*{Reconciler \(\muRecon\)}
 
-The reconciler maps filesystem observations to RDF project models:
+The CLI reconciler maps commands to RDF operations:
 
 \[
-\muRecon_{\text{scan}}: \Oobs_{\text{fs}} \to \Aout_{\text{model}}
+\muRecon_{\text{cli}}: \Oobs_{\text{cmd}} \to \Aout_{\text{result}}
 \]
 
-Decomposed into stages:
+Command execution pipeline from \texttt{store-import.mjs}:
 \begin{enumerate}
-\item \texttt{scanFileSystemToStore}: Filesystem $\to$ RDF triples
-\item \texttt{detectStackFromFs}: Stack signatures $\to$ Technology ontology
-\item \texttt{classifyFiles}: File paths $\to$ Role annotations
-\item \texttt{buildProjectModelFromFs}: RDF $\to$ Structured project representation
+\item \texttt{parseArgs()}: Command-line $\to$ Validated options
+\item \texttt{loadRDFFiles()}: File paths $\to$ RDF quads
+\item \texttt{importToStore()}: Quads $\to$ Store mutations
+\item \texttt{generateReceipt()}: Store state $\to$ Cryptographic proof
 \end{enumerate}
 
-MAPEK autonomic loop reconciler:
+Backup reconciler from \texttt{store-backup.mjs}:
 \[
-\muRecon_{\text{MAPEK}}: (\text{Monitor}, \text{Analyze}, \text{Plan}, \text{Execute}, \text{Knowledge}) \to \text{Actions}
+\muRecon_{\text{backup}}: \store \to \{ \text{snapshot}, \text{checksum}, \text{timestamp} \}
 \]
 
-Implemented via \texttt{runMapekIteration} with knowledge hook integration:
-\begin{itemize}
-\item Monitor: Collect drift, hotspots, gaps, complexity
-\item Analyze: Score violations, rank issues
-\item Plan: Generate hook policies, refactoring suggestions
-\item Execute: Apply materialization plans
-\item Knowledge: Update baseline, record receipts
-\end{itemize}
+Implementation:
+\begin{lstlisting}[language=JavaScript]
+async function createBackup(store, options) {
+  const timestamp = toISO(now());
+  const quads = await store.match(null, null, null, null);
+  const serialized = serializeQuads(quads, options.format);
+  const checksum = blake3Hash(serialized);
+
+  return {
+    version: '1.0',
+    timestamp,
+    format: options.format,
+    checksum,
+    quadCount: quads.length,
+    data: serialized
+  };
+}
+\end{lstlisting}
+
+Restore reconciler ensures integrity:
+\begin{lstlisting}[language=JavaScript]
+async function verifyAndRestore(backup) {
+  const computedHash = blake3Hash(backup.data);
+  if (computedHash !== backup.checksum) {
+    throw new Error('Backup integrity check failed');
+  }
+
+  await store.load(backup.data, backup.format);
+  return { restored: backup.quadCount };
+}
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Sequential pipeline composition:
+Sequential command pipeline:
 \[
-\PiMerge(\text{scan}, \text{detect}, \text{classify}, \text{model}) = \text{initialize}
+\PiMerge(\text{import}, \text{query}, \text{export}) = \text{ETL Pipeline}
 \]
 
-Parallel innovation aggregation:
+Example composition:
+\begin{lstlisting}[language=Bash]
+# Import RDF data
+unrdf import --file data.ttl --format turtle
+
+# Query transformed data
+unrdf query --sparql 'SELECT * WHERE { ?s ?p ?o } LIMIT 10'
+
+# Export results
+unrdf export --output results.json --format json
+\end{lstlisting}
+
+Parallel execution with streaming:
 \[
-\Aout_{\text{total}} = \bigoplus_{i \in \text{Innovations}} \muRecon_i(\Oobs_{\text{fs}})
+\Aout_{\text{total}} = \bigoplus_{f \in \text{Files}} \muRecon_{\text{import}}(f)
 \]
 
-Innovations run concurrently via \texttt{runInnovationsParallel}:
+Streaming composition via \texttt{@unrdf/streaming}:
 \begin{itemize}
-\item Hotspot analysis
-\item Gap finding
-\item Type auditing
-\item Contract validation
-\item Complexity analysis
-\item Dependency graph analysis
-\item Documentation drift checking
+\item Multi-file import with progress tracking
+\item Incremental receipt generation
+\item Parallel validation of backup checksums
 \end{itemize}
-
-Results merged via \texttt{aggregateInnovationFindings} with deduplication.
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards prevent invalid operations:
 \begin{itemize}
-\item \(\GuardH_{\text{path}}\): File path must exist before scan
-\item \(\GuardH_{\text{baseline}}\): Baseline must exist before drift computation
-\item \(\GuardH_{\text{schema}}\): Domain model must validate before materialization
+\item \(\GuardH_{\text{file}}\): File must exist before import
+\item \(\GuardH_{\text{format}}\): RDF format must be supported (turtle, ntriples, nquads, trig)
+\item \(\GuardH_{\text{checksum}}\): Backup checksum must match before restore
+\item \(\GuardH_{\text{query}}\): SPARQL syntax must be valid
 \end{itemize}
 
 Invariants preserved:
 \begin{itemize}
-\item \(\InvQ_{\text{consistency}}\): RDF model remains consistent with filesystem
-\item \(\InvQ_{\text{idempotent}}\): Re-scanning produces equivalent graph
-\item \(\InvQ_{\text{snapshot}}\): Snapshot deterministic for given filesystem state
+\item \(\InvQ_{\text{backup}}\): Backup creation is deterministic for given store state
+\item \(\InvQ_{\text{restore}}\): Restore produces equivalent store to backup source
+\item \(\InvQ_{\text{idempotent}}\): Re-importing same file produces same store state
+\item \(\InvQ_{\text{receipt}}\): Receipt chain remains valid across backup/restore
 \end{itemize}
 
-Drift detection verifies:
+Backup integrity invariant:
 \[
-\InvQ_{\text{drift}}(\text{baseline}, \text{current}) \iff \text{computeDrift}(\text{baseline}, \text{current}) = \emptyset
+\InvQ_{\text{integrity}}(\text{backup}) \iff \text{blake3}(\text{backup.data}) = \text{backup.checksum}
 \]
 
 \subsection*{Provenance and Receipts}
 
-MAPEK loop execution produces receipts:
+CLI operations generate receipts from \texttt{cli-receipts.mjs}:
 \begin{lstlisting}[language=JavaScript]
 {
-  timestamp: "2025-12-27T00:00:00.000Z",
-  iteration: 42,
-  findings: {
-    hotspots: [...],
-    gaps: [...],
-    violations: [...]
+  operation: "import",
+  timestamp: "2026-01-11T00:00:00.000Z",
+  files: ["data.ttl"],
+  quadsAdded: 1234,
+  format: "turtle",
+  checksums: {
+    "data.ttl": "blake3:abc123..."
   },
-  actions: [...],
-  hash: "sha256:..."
+  receiptHash: "blake3:def456..."
 }
 \end{lstlisting}
 
-Provenance chain:
-\[
-\ProvHash(\text{snapshot}_t) = h(\ProvHash(\text{snapshot}_{t-1}), \Delta_t)
-\]
+Provenance chain for backup operations:
+\begin{itemize}
+\item Source store state hash
+\item Backup creation timestamp
+\item Format and compression options
+\item Quad count at backup time
+\item Restore verification status
+\end{itemize}
 
-Snapshot serialization enables deterministic reproduction:
-\texttt{serializeSnapshot} $\to$ JSON with canonical field ordering.
+Receipt verification command:
+\begin{lstlisting}[language=Bash]
+unrdf receipts verify --file backup-receipt.json
+\end{lstlisting}
 
 \subsection*{Minimal Example}
 
-\begin{lstlisting}[language=JavaScript]
-import {
-  scanFileSystemToStore,
-  buildProjectModelFromFs,
-  runMapekIteration
-} from '@unrdf/project-engine';
+\begin{lstlisting}[language=Bash]
+# Import RDF ontology
+unrdf import --file ontology.ttl --format turtle
 
-// Scan filesystem to RDF
-const store = await scanFileSystemToStore('./my-project');
+# Execute SPARQL query
+unrdf query --sparql 'SELECT ?s ?p ?o WHERE {
+  ?s a <http://example.org/Person> .
+  ?s ?p ?o .
+} LIMIT 5' --format table
 
-// Build structured model
-const model = await buildProjectModelFromFs('./my-project');
+# Create backup with receipt
+unrdf backup --output snapshot.nq --format nquads --receipt
 
-// Run autonomic analysis
-const result = await runMapekIteration({
-  rootPath: './my-project',
-  baseline: model,
-  enableAllInnovations: true
-});
-
-console.log(result.findings.hotspots);
+# Verify backup integrity
+unrdf restore --dry-run --file snapshot.nq
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item Can MAPEK loop termination be guaranteed for cyclic refactoring suggestions?
-\item How to handle non-deterministic file modification times in snapshot hashing?
-\item What is optimal granularity for hotspot threshold tuning?
-\item Can drift detection scale to monorepos with 1000+ packages?
+\item Can streaming import scale to multi-GB RDF files with constant memory?
+\item How to handle partial restore failures with transactional rollback?
+\item What is optimal buffer size for parallel file import?
+\item Can receipt chains survive across multiple backup/restore cycles?
 \end{enumerate}
 
 % ============================================================================
-% Package 36: unrdf-rdf-graphql
+% Package 32: @unrdf/yawl-api
 % ============================================================================
 
-\label{pkg:unrdf-rdf-graphql}
-\section{\pkg{@unrdf/rdf-graphql} --- Type-Safe GraphQL Interface}
+\label{pkg:unrdf-yawl-api}
+\section{\pkg{@unrdf/yawl-api} --- REST API Framework}
 
 \begin{pkgmeta}
-Path & \texttt{packages/rdf-graphql} \\
+Path & \texttt{packages/yawl-api} \\
 Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 4 \\
-Blurb & Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation \\
+Entrypoints & 1 file \\
+Dependencies & 7 (fastify, @fastify/swagger, @fastify/swagger-ui, zod, @unrdf/yawl, @unrdf/kgc-4d) \\
+Blurb & High-performance REST API framework exposing YAWL workflows with OpenAPI documentation \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
-Observables are RDF ontologies and instance data:
+Observables are HTTP requests and workflow state:
 
 \[
-\Oobs_{\text{rdf}} = \{ \text{classes}, \text{properties}, \text{instances}, \text{constraints} \}
+\Oobs_{\text{api}} = \{ \text{requests}, \text{routes}, \text{workflows}, \text{cases}_{\text{state}} \}
+\]
+
+Artifacts include HTTP responses with HATEOAS links:
+
+\[
+\Aout_{\text{api}} = \{ \text{responses}, \text{receipts}, \text{links}_{\text{HATEOAS}}, \text{OpenAPI}_{\text{spec}} \}
+\]
+
+The server observes:
+\begin{itemize}
+\item HTTP requests validated by Zod schemas
+\item YAWL engine events (task enabled, started, completed)
+\item Workflow definitions for schema generation
+\item Case state transitions for hypermedia links
+\end{itemize}
+
+Produces:
+\begin{itemize}
+\item RESTful endpoints for workflow lifecycle
+\item OpenAPI 3.1 specification with Swagger UI
+\item HATEOAS hypermedia controls
+\item Workflow execution receipts
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Request validation schemas from \texttt{server.mjs}:
+
+\begin{lstlisting}[language=JavaScript]
+const CreateCaseRequestSchema = z.object({
+  workflowId: z.string(),
+  initialData: z.record(z.any()).optional(),
+  caseId: z.string().optional()
+});
+
+const CompleteTaskRequestSchema = z.object({
+  actor: z.string().optional(),
+  output: z.record(z.any()).optional()
+});
+
+const WorkflowDefinitionSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  version: z.string().default('1.0.0'),
+  tasks: z.array(z.record(z.any())),
+  flows: z.array(z.record(z.any())).optional()
+});
+\end{lstlisting}
+
+Server configuration type:
+\[
+\SigmaType_{\text{server}}: \{ \text{engine}, \text{baseUrl}, \text{fastifyOptions} \} \to \text{FastifyInstance}
+\]
+
+HATEOAS link signature:
+\[
+\SigmaType_{\text{links}}: \text{CaseState} \to \{ \text{self}, \text{workflow}, \text{enabledTasks} \}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler maps HTTP requests to workflow operations:
+
+\[
+\muRecon_{\text{api}}: \Oobs_{\text{HTTP}} \to \Aout_{\text{workflow}}
+\]
+
+Request processing pipeline:
+\begin{enumerate}
+\item Fastify route handler receives request
+\item Zod schema validates request body
+\item YAWL engine executes workflow operation
+\item HATEOAS link generator creates hypermedia controls
+\item Response serializer formats output
+\end{enumerate}
+
+HATEOAS link generation from \texttt{server.mjs}:
+\begin{lstlisting}[language=JavaScript]
+function generateHATEOASLinks(caseInstance, baseUrl) {
+  const links = {
+    self: {
+      href: `${baseUrl}/api/cases/${caseInstance.id}`,
+      method: 'GET'
+    },
+    workflow: {
+      href: `${baseUrl}/api/workflows/${caseInstance.workflowId}`,
+      method: 'GET'
+    },
+    enabledTasks: []
+  };
+
+  for (const [workItemId, workItem] of caseInstance.workItems) {
+    if (workItem.status === 'enabled') {
+      links.enabledTasks.push({
+        taskId: workItem.taskId,
+        workItemId,
+        name: workItem.name,
+        actions: {
+          start: {
+            href: `${baseUrl}/api/cases/${caseInstance.id}/tasks/${workItemId}/start`,
+            method: 'POST'
+          },
+          cancel: {
+            href: `${baseUrl}/api/cases/${caseInstance.id}/tasks/${workItemId}/cancel`,
+            method: 'POST'
+          }
+        }
+      });
+    }
+  }
+
+  return links;
+}
+\end{lstlisting}
+
+Endpoint reconcilers:
+\begin{itemize}
+\item \texttt{POST /api/workflows/:id/cases} $\to$ \texttt{engine.createCase()}
+\item \texttt{POST /api/cases/:id/tasks/:wiId/start} $\to$ \texttt{engine.startTask()}
+\item \texttt{POST /api/cases/:id/tasks/:wiId/complete} $\to$ \texttt{engine.completeTask()}
+\item \texttt{GET /api/cases/:id} $\to$ Case state + HATEOAS links
+\end{itemize}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Middleware pipeline composition:
+\[
+\PiMerge(\text{CORS}, \text{Validation}, \text{Execution}, \text{HATEOAS}) = \text{Endpoint}
+\]
+
+Fastify plugin composition:
+\begin{lstlisting}[language=JavaScript]
+const server = await createYAWLAPIServer({
+  engine: createWorkflowEngine(),
+  baseUrl: 'http://localhost:3000',
+  enableSwagger: true
+});
+
+// Plugins composed via Fastify's plugin system
+server.register(fastifyCors);
+server.register(fastifySwagger, swaggerOptions);
+server.register(fastifySwaggerUI, uiOptions);
+\end{lstlisting}
+
+Parallel request processing:
+\[
+\Aout_{\text{responses}} = \bigoplus_{r \in \text{Requests}} \muRecon_{\text{handle}}(r)
+\]
+
+Fastify handles up to 30,000 req/sec with concurrent execution.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards enforce API contracts:
+\begin{itemize}
+\item \(\GuardH_{\text{schema}}\): Request body must validate against Zod schema
+\item \(\GuardH_{\text{workflow}}\): Workflow must exist before case creation
+\item \(\GuardH_{\text{workitem}}\): Work item must be enabled before start
+\item \(\GuardH_{\text{state}}\): Task must be started before completion
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{HATEOAS}}\): Links reflect actual workflow state
+\item \(\InvQ_{\text{receipt}}\): Every state transition generates receipt
+\item \(\InvQ_{\text{idempotent}}\): GET requests do not mutate state
+\item \(\InvQ_{\text{REST}}\): HTTP methods follow REST semantics
+\end{itemize}
+
+HATEOAS correctness:
+\[
+\InvQ_{\text{links}}(\text{case}) \iff \forall \text{link} \in \text{enabledTasks}, \text{engine.isEnabled}(\text{link.workItemId})
+\]
+
+\subsection*{Provenance and Receipts}
+
+API response with receipt:
+\begin{lstlisting}[language=JavaScript]
+{
+  "case": {
+    "id": "case-abc123",
+    "workflowId": "approval",
+    "status": "running",
+    "data": { "amount": 1500 }
+  },
+  "receipt": {
+    "timestamp": "2026-01-11T00:00:00.000Z",
+    "operation": "completeTask",
+    "caseId": "case-abc123",
+    "taskId": "review",
+    "actor": "manager@example.com",
+    "hash": "blake3:def456...",
+    "previousHash": "blake3:abc123..."
+  },
+  "_links": {
+    "self": { "href": "/api/cases/case-abc123", "method": "GET" },
+    "workflow": { "href": "/api/workflows/approval", "method": "GET" },
+    "enabledTasks": [
+      {
+        "taskId": "approve",
+        "workItemId": "wi-789",
+        "actions": {
+          "start": { "href": "/api/cases/case-abc123/tasks/wi-789/start", "method": "POST" }
+        }
+      }
+    ]
+  }
+}
+\end{lstlisting}
+
+OpenAPI specification provides complete API provenance:
+\begin{itemize}
+\item All endpoints auto-documented
+\item Request/response schemas from Zod
+\item Example payloads generated
+\item Available at \texttt{/docs/json}
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { createYAWLAPIServer } from '@unrdf/yawl-api';
+import { createWorkflowEngine, SPLIT_TYPE, JOIN_TYPE } from '@unrdf/yawl';
+
+const engine = createWorkflowEngine();
+
+// Register workflow
+engine.registerWorkflow({
+  id: 'approval',
+  name: 'Approval Workflow',
+  tasks: [
+    { id: 'submit', name: 'Submit', splitType: SPLIT_TYPE.AND, joinType: JOIN_TYPE.XOR },
+    { id: 'review', name: 'Review', splitType: SPLIT_TYPE.XOR, joinType: JOIN_TYPE.XOR },
+    { id: 'approve', name: 'Approve', splitType: SPLIT_TYPE.AND, joinType: JOIN_TYPE.XOR }
+  ],
+  flows: [
+    { from: 'submit', to: 'review' },
+    { from: 'review', to: 'approve' }
+  ],
+  startTaskId: 'submit',
+  endTaskIds: ['approve']
+});
+
+// Create server
+const server = await createYAWLAPIServer({
+  engine,
+  baseUrl: 'http://localhost:3000'
+});
+
+await server.listen({ port: 3000 });
+console.log('API running at http://localhost:3000');
+console.log('Swagger UI at http://localhost:3000/docs');
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item Can HATEOAS link generation scale to workflows with 1000+ enabled tasks?
+\item How to handle rate limiting for high-throughput case creation?
+\item What is optimal caching strategy for workflow definitions?
+\item Can WebSocket subscriptions enhance real-time state updates?
+\end{enumerate}
+
+% ============================================================================
+% Package 33: @unrdf/react
+% ============================================================================
+
+\label{pkg:unrdf-react}
+\section{\pkg{@unrdf/react} --- React Client Library}
+
+\begin{pkgmeta}
+Path & \texttt{packages/react} \\
+Kind & js \\
+Entrypoints & 5 files (main + AI semantic modules) \\
+Dependencies & 4 (@unrdf/core, @unrdf/oxigraph, lru-cache, zod) \\
+Blurb & AI semantic analysis tools for RDF knowledge graphs in React applications \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+Observables are RDF entities and semantic queries:
+
+\[
+\Oobs_{\text{react}} = \{ \text{entities}_{\text{RDF}}, \text{queries}_{\text{NL}}, \text{embeddings}, \text{patterns} \}
+\]
+
+Artifacts include semantic analysis results and recommendations:
+
+\[
+\Aout_{\text{react}} = \{ \text{similarities}, \text{anomalies}, \text{clusters}, \text{queries}_{\text{SPARQL}} \}
+\]
+
+The library observes:
+\begin{itemize}
+\item RDF entity descriptions for embedding generation
+\item Natural language queries for SPARQL translation
+\item Graph topology for anomaly detection
+\item Usage patterns for query optimization
+\end{itemize}
+
+Produces:
+\begin{itemize}
+\item Semantic similarity scores between entities
+\item NLP-to-SPARQL query translations
+\item Anomaly detection reports
+\item Entity recommendations based on graph structure
+\end{itemize}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Core module types from \texttt{packages/react/src/ai-semantic/}:
+
+\begin{lstlisting}[language=JavaScript]
+// Semantic analyzer signature
+class SemanticAnalyzer {
+  /**
+   * @param {Store} store - RDF store
+   * @param {Object} config
+   * @param {number} config.embeddingDim - Vector dimension (default 384)
+   * @param {boolean} config.cacheEnabled - Enable LRU cache
+   */
+  constructor(store, config = {}) { }
+
+  /**
+   * Compute semantic similarity between entities
+   * @param {string} entityA - First entity URI
+   * @param {string} entityB - Second entity URI
+   * @returns {Promise<number>} Similarity score [0, 1]
+   */
+  async computeSimilarity(entityA, entityB) { }
+}
+
+// NLP query builder signature
+class NLPQueryBuilder {
+  /**
+   * Translate natural language to SPARQL
+   * @param {string} naturalLanguage - Query in natural language
+   * @param {Object} options
+   * @returns {Promise<string>} SPARQL query
+   */
+  async buildQuery(naturalLanguage, options) { }
+}
+
+// Anomaly detector signature
+class AnomalyDetector {
+  /**
+   * Detect anomalies in RDF graph
+   * @param {Object} config
+   * @param {number} config.threshold - Anomaly score threshold
+   * @returns {Promise<Array>} List of anomalies with scores
+   */
+  async detectAnomalies(config) { }
+}
+\end{lstlisting}
+
+Type mapping:
+\[
+\SigmaType_{\text{similarity}}: (\text{URI}, \text{URI}) \to [0, 1]
+\]
+\[
+\SigmaType_{\text{translate}}: \text{String}_{\text{NL}} \to \text{SPARQL}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler maps natural language to structured queries:
+
+\[
+\muRecon_{\text{NLP}}: \Oobs_{\text{query}} \to \Aout_{\text{SPARQL}}
+\]
+
+NLP query pipeline:
+\begin{enumerate}
+\item Parse natural language query
+\item Extract entities and predicates
+\item Match to ontology concepts
+\item Generate SPARQL patterns
+\item Optimize query structure
+\end{enumerate}
+
+Semantic similarity reconciler:
+\[
+\muRecon_{\text{sim}}: (\text{Entity}_A, \text{Entity}_B) \to \text{Score} \in [0, 1]
+\]
+
+Implementation pattern:
+\begin{lstlisting}[language=JavaScript]
+async computeSimilarity(entityA, entityB) {
+  // Retrieve entity embeddings (cached)
+  const embeddingA = await this.getOrComputeEmbedding(entityA);
+  const embeddingB = await this.getOrComputeEmbedding(entityB);
+
+  // Cosine similarity
+  const dotProduct = embeddingA.reduce((sum, val, i) =>
+    sum + val * embeddingB[i], 0);
+  const magnitudeA = Math.sqrt(embeddingA.reduce((sum, val) =>
+    sum + val * val, 0));
+  const magnitudeB = Math.sqrt(embeddingB.reduce((sum, val) =>
+    sum + val * val, 0));
+
+  return dotProduct / (magnitudeA * magnitudeB);
+}
+\end{lstlisting}
+
+Anomaly detection reconciler:
+\[
+\muRecon_{\text{anomaly}}: \text{Graph} \to \{ \text{node}, \text{score}, \text{reason} \}^*
+\]
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Analysis pipeline composition:
+\[
+\PiMerge(\text{embed}, \text{cluster}, \text{recommend}) = \text{SemanticEngine}
+\]
+
+Multi-stage analysis:
+\begin{lstlisting}[language=JavaScript]
+// Compose semantic analysis pipeline
+const analyzer = new SemanticAnalyzer(store, { cacheEnabled: true });
+const nlpBuilder = new NLPQueryBuilder(store);
+const detector = new AnomalyDetector(store);
+
+// Sequential composition
+const query = await nlpBuilder.buildQuery("Find all research papers about AI");
+const results = await store.query(query);
+const anomalies = await detector.detectAnomalies({ threshold: 0.8 });
+\end{lstlisting}
+
+Parallel similarity computation:
+\[
+\Aout_{\text{similarities}} = \bigoplus_{(a, b) \in \text{Pairs}} \muRecon_{\text{sim}}(a, b)
+\]
+
+LRU cache composition reduces redundant computations.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{entity}}\): Entity must exist in store before similarity
+\item \(\GuardH_{\text{embedding}}\): Embedding dimension must be consistent (384)
+\item \(\GuardH_{\text{query}}\): Natural language query must parse successfully
+\item \(\GuardH_{\text{threshold}}\): Anomaly threshold must be in [0, 1]
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{symmetric}}\): Similarity is symmetric: \(\text{sim}(a, b) = \text{sim}(b, a)\)
+\item \(\InvQ_{\text{cache}}\): Cache returns identical results to fresh computation
+\item \(\InvQ_{\text{normalized}}\): Similarity scores in [0, 1]
+\item \(\InvQ_{\text{deterministic}}\): Same query produces same SPARQL
+\end{itemize}
+
+Cosine similarity invariant:
+\[
+\InvQ_{\text{cosine}}(u, v) = \frac{u \cdot v}{\|u\| \|v\|} \in [-1, 1]
+\]
+
+Cache consistency:
+\[
+\InvQ_{\text{cache}}(e) \iff \text{cached}(e) = \text{fresh}(e)
+\]
+
+\subsection*{Provenance and Receipts}
+
+Semantic analysis receipt:
+\begin{lstlisting}[language=JavaScript]
+{
+  operation: "semantic-similarity",
+  timestamp: "2026-01-11T00:00:00.000Z",
+  entityA: "http://example.org/Paper1",
+  entityB: "http://example.org/Paper2",
+  similarity: 0.87,
+  embeddingDim: 384,
+  cacheHit: true,
+  computationTime: 12
+}
+\end{lstlisting}
+
+NLP query translation receipt:
+\begin{lstlisting}[language=JavaScript]
+{
+  naturalLanguage: "Find papers about machine learning",
+  generatedSPARQL: "SELECT ?paper WHERE { ?paper rdf:type ex:Paper . ?paper ex:topic ex:MachineLearning }",
+  entities: ["ex:Paper", "ex:MachineLearning"],
+  predicates: ["rdf:type", "ex:topic"],
+  confidence: 0.92
+}
+\end{lstlisting}
+
+Provenance tracking:
+\begin{itemize}
+\item Embedding generation timestamps
+\item Cache hit/miss statistics
+\item Query translation confidence scores
+\item Anomaly detection thresholds
+\end{itemize}
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}[language=JavaScript]
+import { SemanticAnalyzer, NLPQueryBuilder } from '@unrdf/react/ai-semantic';
+import { createStore } from '@unrdf/oxigraph';
+
+const store = createStore();
+
+// Load RDF data
+await store.load(rdfData, 'text/turtle');
+
+// Initialize semantic analyzer
+const analyzer = new SemanticAnalyzer(store, {
+  embeddingDim: 384,
+  cacheEnabled: true
+});
+
+// Compute similarity
+const similarity = await analyzer.computeSimilarity(
+  'http://example.org/Paper1',
+  'http://example.org/Paper2'
+);
+console.log(`Similarity: ${similarity}`);
+
+// NLP to SPARQL
+const nlpBuilder = new NLPQueryBuilder(store);
+const sparql = await nlpBuilder.buildQuery(
+  "Find all papers published after 2020"
+);
+console.log(sparql);
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item Can transformer-based embeddings improve similarity accuracy?
+\item How to handle multilingual NLP queries with ontology alignment?
+\item What is optimal cache size for embedding storage?
+\item Can active learning improve anomaly detection thresholds?
+\end{enumerate}
+
+% ============================================================================
+% Package 34: @unrdf/rdf-graphql
+% ============================================================================
+
+\label{pkg:unrdf-rdf-graphql}
+\section{\pkg{@unrdf/rdf-graphql} --- GraphQL API Gateway}
+
+\begin{pkgmeta}
+Path & \texttt{packages/rdf-graphql} \\
+Kind & js \\
+Entrypoints & 4 files (adapter, schema, query, resolver) \\
+Dependencies & 4 (graphql, @graphql-tools/schema, @unrdf/oxigraph, zod) \\
+Blurb & Type-safe GraphQL interface with automatic schema generation from RDF ontologies \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+Observables are RDF ontologies and GraphQL queries:
+
+\[
+\Oobs_{\text{graphql}} = \{ \text{ontology}_{\text{RDFS/OWL}}, \text{queries}_{\text{GraphQL}}, \text{instances}_{\text{RDF}} \}
 \]
 
 Artifacts include GraphQL schemas and query results:
 
 \[
-\Aout_{\text{graphql}} = \{ \text{Schema}, \text{Resolvers}, \text{QueryResults} \}
+\Aout_{\text{graphql}} = \{ \text{Schema}_{\text{SDL}}, \text{Resolvers}, \text{QueryResults}, \text{Cache} \}
 \]
 
 The adapter observes:
 \begin{itemize}
 \item RDFS/OWL class definitions via SPARQL introspection
-\item Property domains and ranges
-\item Instance data in triple store
+\item Property domains and ranges for field generation
 \item GraphQL queries from clients
+\item RDF instance data for resolver execution
 \end{itemize}
 
 Produces:
 \begin{itemize}
-\item GraphQL schema definition (SDL)
+\item GraphQL Schema Definition Language (SDL)
 \item Resolver functions bound to SPARQL queries
-\item Query execution results with type safety
-\item Cache statistics and performance metrics
+\item Type-safe query execution results
+\item Query result cache with statistics
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Configuration validated via Zod:
+Adapter configuration from \texttt{adapter.mjs}:
 
 \begin{lstlisting}[language=JavaScript]
 const AdapterConfigSchema = z.object({
@@ -264,22 +864,41 @@ const AdapterConfigSchema = z.object({
   excludeClasses: z.array(z.string()).optional(),
   includeInferred: z.boolean().optional(),
   enableCache: z.boolean().optional(),
-  typeMapping: z.record(z.string()).optional(),
+  typeMapping: z.record(z.string()).optional()
 });
+
+class RDFGraphQLAdapter {
+  constructor(config = {}) {
+    this.config = AdapterConfigSchema.parse(config);
+    this.store = createStore();
+    this.schema = null;
+    this.schemaGenerator = new RDFSchemaGenerator(config);
+    this.resolverFactory = null;
+  }
+
+  async loadOntology(rdfData, format, baseIRI) { }
+  async loadData(rdfData, format, baseIRI) { }
+  generateSchema(options) { }
+  async executeQuery(query, variables, context) { }
+}
 \end{lstlisting}
 
-Type mapping from RDF to GraphQL:
+Type mapping rules:
 \[
 \SigmaType_{\text{RDF}}(\text{rdfs:Class}) \mapsto \SigmaType_{\text{GraphQL}}(\text{ObjectType})
 \]
+\[
+\SigmaType_{\text{XSD}}(\text{xsd:string}) \mapsto \SigmaType_{\text{GraphQL}}(\text{String})
+\]
 
-Mapping rules:
+Complete mapping:
 \begin{itemize}
 \item \texttt{owl:Class} $\to$ GraphQL Object Type
-\item \texttt{owl:DatatypeProperty} $\to$ GraphQL Field
-\item \texttt{owl:ObjectProperty} $\to$ GraphQL Relation
-\item \texttt{xsd:string} $\to$ GraphQL String
+\item \texttt{owl:DatatypeProperty} $\to$ GraphQL Scalar Field
+\item \texttt{owl:ObjectProperty} $\to$ GraphQL Object Field
 \item \texttt{xsd:integer} $\to$ GraphQL Int
+\item \texttt{xsd:decimal} $\to$ GraphQL Float
+\item \texttt{xsd:boolean} $\to$ GraphQL Boolean
 \end{itemize}
 
 \subsection*{Reconciler \(\muRecon\)}
@@ -290,26 +909,77 @@ The reconciler generates GraphQL schemas from RDF ontologies:
 \muRecon_{\text{schema}}: \Oobs_{\text{ontology}} \to \Aout_{\text{GraphQLSchema}}
 \]
 
-Pipeline stages:
+Schema generation pipeline from \texttt{schema-generator.mjs}:
 \begin{enumerate}
-\item \texttt{RDFSchemaGenerator.loadOntology}: Parse RDF into internal model
-\item \texttt{generateSchema}: Traverse ontology, emit GraphQL types
-\item \texttt{RDFResolverFactory.createResolvers}: Bind resolvers to SPARQL
-\item \texttt{executeQuery}: Route GraphQL queries to SPARQL backend
+\item \texttt{loadOntology()}: Parse RDF into internal model
+\item \texttt{introspectClasses()}: SPARQL query for all \texttt{rdfs:Class}
+\item \texttt{introspectProperties()}: SPARQL query for properties with domain/range
+\item \texttt{generateSchema()}: Traverse ontology, emit GraphQL types
+\item \texttt{createResolvers()}: Bind resolvers to SPARQL backend
 \end{enumerate}
 
-Query reconciler:
+Query reconciler from \texttt{query-builder.mjs}:
 \[
 \muRecon_{\text{query}}: \text{GraphQL Query} \to \text{SPARQL Query} \to \text{Results}
 \]
 
-\texttt{SPARQLQueryBuilder} translates GraphQL AST to SPARQL:
-\begin{itemize}
-\item Field selections $\to$ SELECT variables
-\item Nested queries $\to$ OPTIONAL patterns
-\item Filters $\to$ FILTER expressions
-\item Aliases $\to$ AS bindings
-\end{itemize}
+SPARQL translation algorithm:
+\begin{lstlisting}[language=JavaScript]
+class SPARQLQueryBuilder {
+  buildListQuery(info, typeIRI, args) {
+    const { limit = 10, offset = 0 } = args;
+
+    let sparql = `
+      SELECT ?subject ?predicate ?object WHERE {
+        ?subject rdf:type <${typeIRI}> .
+        ?subject ?predicate ?object .
+      }
+      LIMIT ${limit}
+      OFFSET ${offset}
+    `;
+
+    return sparql;
+  }
+
+  buildSingleQuery(info, typeIRI, id) {
+    return `
+      SELECT ?predicate ?object WHERE {
+        <${id}> rdf:type <${typeIRI}> .
+        <${id}> ?predicate ?object .
+      }
+    `;
+  }
+}
+\end{lstlisting}
+
+Resolver factory from \texttt{resolver.mjs}:
+\begin{lstlisting}[language=JavaScript]
+class RDFResolverFactory {
+  createResolvers(schema, store, queryBuilder) {
+    const resolvers = {
+      Query: {}
+    };
+
+    for (const [typeName, typeIRI] of schema.types) {
+      // List query resolver
+      resolvers.Query[`${typeName}s`] = async (parent, args, context, info) => {
+        const sparql = queryBuilder.buildListQuery(info, typeIRI, args);
+        const results = await store.query(sparql);
+        return this.formatResults(results);
+      };
+
+      // Single item resolver
+      resolvers.Query[typeName] = async (parent, args, context, info) => {
+        const sparql = queryBuilder.buildSingleQuery(info, typeIRI, args.id);
+        const results = await store.query(sparql);
+        return this.formatSingleResult(results);
+      };
+    }
+
+    return resolvers;
+  }
+}
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
@@ -320,13 +990,15 @@ Adapter lifecycle composition:
 
 Method chaining:
 \begin{lstlisting}[language=JavaScript]
+const adapter = new RDFGraphQLAdapter({ enableCache: true });
+
 await adapter
   .loadOntology(ontologyRDF)
-  .generateSchema()
-  .executeQuery(query);
+  .then(() => adapter.generateSchema())
+  .then(() => adapter.executeQuery(query));
 \end{lstlisting}
 
-Multiple ontologies merged via commutative union:
+Multiple ontologies merged via union:
 \[
 \Aout_{\text{schema}} = \bigoplus_{i} \text{loadOntology}(\text{onto}_i)
 \]
@@ -339,7 +1011,8 @@ Guards enforce preconditions:
 \begin{itemize}
 \item \(\GuardH_{\text{schema}}\): Schema must be generated before query execution
 \item \(\GuardH_{\text{ontology}}\): Ontology must be loaded before schema generation
-\item \(\GuardH_{\text{validation}}\): Config must validate against schema
+\item \(\GuardH_{\text{validation}}\): Config must validate against \texttt{AdapterConfigSchema}
+\item \(\GuardH_{\text{type}}\): GraphQL query types must exist in schema
 \end{itemize}
 
 Invariants:
@@ -347,6 +1020,7 @@ Invariants:
 \item \(\InvQ_{\text{type}}\): Generated schema respects RDF type constraints
 \item \(\InvQ_{\text{cache}}\): Cache returns equivalent results to fresh query
 \item \(\InvQ_{\text{introspection}}\): Introspection matches loaded ontology
+\item \(\InvQ_{\text{resolver}}\): Resolvers produce valid GraphQL responses
 \end{itemize}
 
 Cache consistency:
@@ -354,28 +1028,47 @@ Cache consistency:
 \InvQ_{\text{cache}}(\text{query}, t) \iff \text{cached}(\text{query}) = \text{fresh}(\text{query})
 \]
 
+Type safety:
+\[
+\InvQ_{\text{type}}(\text{field}) \iff \text{GraphQLType}(\text{field}) \equiv \text{RDFRange}(\text{property})
+\]
+
 \subsection*{Provenance and Receipts}
 
-Query execution traces:
-\begin{itemize}
-\item GraphQL query input
-\item Generated SPARQL query
-\item SPARQL execution time
-\item Result set size
-\item Cache hit/miss status
-\end{itemize}
-
-Statistics API provides observability:
+Query execution trace:
 \begin{lstlisting}[language=JavaScript]
-const stats = adapter.getCacheStats();
-// { enabled: true, size: 42 }
-
-const info = await adapter.getStatistics();
-// { tripleCount: 1000, classCount: 50, instanceCount: 200 }
+{
+  graphqlQuery: "{ Person { id name age } }",
+  generatedSPARQL: "SELECT ?subject ?name ?age WHERE { ?subject rdf:type ex:Person . ?subject ex:name ?name . ?subject ex:age ?age }",
+  executionTime: 45,
+  resultCount: 10,
+  cacheHit: false,
+  timestamp: "2026-01-11T00:00:00.000Z"
+}
 \end{lstlisting}
 
-Provenance via introspection:
-\texttt{introspectClasses()} returns complete ontology snapshot.
+Statistics API from \texttt{adapter.mjs}:
+\begin{lstlisting}[language=JavaScript]
+const stats = await adapter.getStatistics();
+// {
+//   tripleCount: 1000,
+//   classCount: 50,
+//   propertyCount: 120,
+//   instanceCount: 200
+// }
+
+const cacheStats = adapter.getCacheStats();
+// { enabled: true, size: 42 }
+\end{lstlisting}
+
+Introspection provides ontology provenance:
+\begin{lstlisting}[language=JavaScript]
+const classes = adapter.introspectClasses();
+// [{ iri: "ex:Person", label: "Person", comment: "..." }, ...]
+
+const properties = adapter.introspectProperties();
+// [{ iri: "ex:name", domain: "ex:Person", range: "xsd:string" }, ...]
+\end{lstlisting}
 
 \subsection*{Minimal Example}
 
@@ -391,238 +1084,471 @@ const adapter = createAdapter({
 await adapter.loadOntology(`
   @prefix ex: <http://example.org/> .
   @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+  @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-  ex:Person a rdfs:Class .
-  ex:name a rdf:Property ; rdfs:domain ex:Person .
+  ex:Person a rdfs:Class ;
+    rdfs:label "Person" .
+
+  ex:name a rdf:Property ;
+    rdfs:domain ex:Person ;
+    rdfs:range xsd:string .
+
+  ex:age a rdf:Property ;
+    rdfs:domain ex:Person ;
+    rdfs:range xsd:integer .
+`);
+
+// Load instance data
+await adapter.loadData(`
+  @prefix ex: <http://example.org/> .
+
+  <http://example.org/people/alice> a ex:Person ;
+    ex:name "Alice Smith" ;
+    ex:age 30 .
 `);
 
 // Generate schema
 adapter.generateSchema();
 
-// Query via GraphQL
+// Execute GraphQL query
 const result = await adapter.executeQuery(`
   query {
-    Person {
+    Person(id: "http://example.org/people/alice") {
+      id
       name
+      age
     }
   }
 `);
+
+console.log(result.data.Person);
+// { id: "http://example.org/people/alice", name: "Alice Smith", age: 30 }
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item Can nested GraphQL queries map to efficient SPARQL property paths?
+\item Can nested GraphQL queries map efficiently to SPARQL property paths?
 \item How to handle GraphQL mutations with transactional RDF updates?
 \item What is cache invalidation strategy for dynamic ontologies?
-\item Can schema generation handle OWL reasoning and inference?
+\item Can federation support distributed RDF data sources?
 \end{enumerate}
 
 % ============================================================================
-% Package 37: unrdf-semantic-search
+% Package 35: @unrdf/yawl-realtime
 % ============================================================================
 
-\label{pkg:unrdf-semantic-search}
-\section{\pkg{@unrdf/semantic-search} --- AI-Powered Vector Search}
+\label{pkg:unrdf-yawl-realtime}
+\section{\pkg{@unrdf/yawl-realtime} --- WebSocket Real-Time Updates}
 
 \begin{pkgmeta}
-Path & \texttt{packages/semantic-search} \\
+Path & \texttt{packages/yawl-realtime} \\
 Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 5 \\
-Blurb & AI-powered search over RDF knowledge graphs using vector embeddings \\
+Entrypoints & 3 files (index, server, client) \\
+Dependencies & 3 (socket.io, socket.io-client, @unrdf/yawl, zod) \\
+Blurb & Real-time collaboration framework using Socket.io with optimistic locking and CRDT-inspired merging \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
-Observables are RDF entities and natural language queries:
+Observables are real-time events and distributed state:
 
 \[
-\Oobs_{\text{search}} = \{ \text{entities}, \text{predicates}, \text{literals}, \text{queries}_{\text{NL}} \}
+\Oobs_{\text{realtime}} = \{ \text{events}_{\text{YAWL}}, \text{connections}, \text{locks}, \text{timestamps}_{\text{Lamport}} \}
 \]
 
-Artifacts include vector embeddings and ranked results:
+Artifacts include synchronized state and conflict resolutions:
 
 \[
-\Aout_{\text{search}} = \{ \text{embeddings}, \text{index}, \text{results}, \text{scores} \}
+\Aout_{\text{realtime}} = \{ \text{state}_{\text{synced}}, \text{receipts}, \text{locks}_{\text{active}}, \text{resolutions} \}
 \]
 
-The engine observes:
+The framework observes:
 \begin{itemize}
-\item RDF entity descriptions (labels, comments, related entities)
-\item User natural language queries
-\item Vector similarity computations
-\item Knowledge graph topology
+\item YAWL engine events (task enabled, started, completed)
+\item WebSocket connection state changes
+\item Task claim attempts with Lamport timestamps
+\item State updates from multiple clients
 \end{itemize}
 
 Produces:
 \begin{itemize}
-\item Entity embeddings via transformer models
-\item Vector index for approximate nearest neighbor search
-\item Ranked search results with similarity scores
-\item Entity recommendations based on graph structure
+\item Real-time event broadcasts to connected clients
+\item Optimistic lock acquisition/release notifications
+\item CRDT-inspired state merges (LWW for data, Add-Wins for work items)
+\item Conflict resolution reports with causality tracking
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Component signatures:
+Server configuration:
 
+\begin{lstlisting}[language=JavaScript]
+class YAWLRealtimeServer {
+  constructor(engine, options = {}) {
+    this.engine = engine;
+    this.io = new Server(options.port, options.corsOptions);
+    this.lockManager = new OptimisticLockManager();
+    this.stateSync = new StateSyncManager();
+  }
+
+  async start() { }
+  async stop() { }
+  getStats() { }
+}
+\end{lstlisting}
+
+Client configuration:
+
+\begin{lstlisting}[language=JavaScript]
+class YAWLRealtimeClient {
+  constructor(options) {
+    this.serverUrl = options.serverUrl;
+    this.userId = options.userId;
+    this.socket = null;
+    this.lamportClock = 0;
+  }
+
+  async connect() { }
+  async disconnect() { }
+  async claimTask(caseId, workItemId, options) { }
+  async completeTask(caseId, workItemId, output) { }
+  async releaseTask(caseId, workItemId) { }
+  async syncState(caseId) { }
+}
+\end{lstlisting}
+
+Lock manager type:
 \[
-\SigmaType_{\text{embedder}}: \text{RDFEntity} \to \mathbb{R}^{384}
+\SigmaType_{\text{lock}}: (\text{WorkItemId}, \text{UserId}, \text{Timestamp}) \to \{ \text{success}, \text{conflict}? \}
 \]
 
-Using \texttt{@xenova/transformers} with MiniLM model:
+State sync type:
+\[
+\SigmaType_{\text{sync}}: \text{StateUpdate} \to \text{MergedState}
+\]
+
+\subsection*{Reconciler \(\muRecon\)}
+
+The reconciler maintains distributed consistency:
+
+\[
+\muRecon_{\text{realtime}}: \Oobs_{\text{events}} \to \Aout_{\text{synced}}
+\]
+
+Optimistic locking algorithm:
 \begin{lstlisting}[language=JavaScript]
-// RDFEmbedder generates 384-dim vectors
-class RDFEmbedder {
-  async embed(entity) {
-    // entity: { uri, label, comment, properties }
-    const text = this.serializeEntity(entity);
-    const embedding = await this.model.encode(text);
-    return embedding; // Float32Array[384]
+class OptimisticLockManager {
+  acquire(workItemId, caseId, userId, timestamp) {
+    const existingLock = this.locks.get(workItemId);
+
+    if (!existingLock) {
+      // No conflict, acquire immediately
+      this.locks.set(workItemId, {
+        workItemId,
+        caseId,
+        userId,
+        timestamp,
+        acquiredAt: Date.now()
+      });
+      return { success: true };
+    }
+
+    // Lamport timestamp conflict resolution
+    if (timestamp > existingLock.timestamp) {
+      // Higher timestamp wins
+      const oldUserId = existingLock.userId;
+      this.locks.set(workItemId, {
+        workItemId,
+        caseId,
+        userId,
+        timestamp,
+        acquiredAt: Date.now()
+      });
+      return {
+        success: true,
+        conflict: {
+          type: 'timestamp',
+          resolution: 'won',
+          previousOwner: oldUserId
+        }
+      };
+    }
+
+    // Conflict, existing lock wins
+    return {
+      success: false,
+      conflict: {
+        type: 'timestamp',
+        resolution: 'lost',
+        currentOwner: existingLock.userId,
+        timestamp: existingLock.timestamp
+      }
+    };
+  }
+
+  release(workItemId, userId) {
+    const lock = this.locks.get(workItemId);
+    if (lock && lock.userId === userId) {
+      this.locks.delete(workItemId);
+      return { success: true };
+    }
+    return { success: false, error: 'Not lock owner' };
   }
 }
 \end{lstlisting}
 
-Search engine signature:
-\[
-\SigmaType_{\text{search}}: \text{Query}_{\text{NL}} \to [\text{Entity} \times \mathbb{R}]^*
-\]
+CRDT-inspired state merge:
+\begin{lstlisting}[language=JavaScript]
+class StateSyncManager {
+  mergeState(caseId, update, receiptHash) {
+    const currentState = this.states.get(caseId) || {
+      data: {},
+      workItems: new Map(),
+      receiptChain: []
+    };
 
-Returns ranked list of (entity, score) pairs.
+    // Last-Write-Wins for data
+    const mergedData = { ...currentState.data, ...update.data };
 
-\subsection*{Reconciler \(\muRecon\)}
+    // Add-Wins for work items (set union)
+    const mergedWorkItems = new Map([
+      ...currentState.workItems,
+      ...update.workItems
+    ]);
 
-The reconciler maps natural language to RDF entities:
+    // Append receipt to chain
+    const mergedReceipts = [
+      ...currentState.receiptChain,
+      { hash: receiptHash, timestamp: Date.now() }
+    ];
 
-\[
-\muRecon_{\text{search}}: \Oobs_{\text{query}} \to \Aout_{\text{results}}
-\]
+    const mergedState = {
+      data: mergedData,
+      workItems: mergedWorkItems,
+      receiptChain: mergedReceipts
+    };
 
-Search pipeline:
-\begin{enumerate}
-\item \texttt{RDFEmbedder.embed(query)}: Query $\to$ embedding vector
-\item \texttt{VectorIndex.search(vector, k)}: Find k-nearest neighbors
-\item \texttt{SemanticQueryEngine.rerank(results)}: Apply SPARQL filtering
-\item \texttt{KnowledgeRecommender.expand(entities)}: Find related entities
-\end{enumerate}
+    this.states.set(caseId, mergedState);
+    return { success: true, state: mergedState };
+  }
 
-Hybrid search reconciler combines vector and graph:
-\[
-\muRecon_{\text{hybrid}} = \lambda q. \alpha \cdot \text{vector}(q) + (1-\alpha) \cdot \text{sparql}(q)
-\]
+  verifyReceiptChain(caseId, expectedHash) {
+    const state = this.states.get(caseId);
+    if (!state || !state.receiptChain.length) {
+      return { valid: false, error: 'No receipt chain' };
+    }
 
-Where $\alpha \in [0,1]$ balances similarity vs. structured query.
+    const latestReceipt = state.receiptChain[state.receiptChain.length - 1];
+    return {
+      valid: latestReceipt.hash === expectedHash,
+      latestHash: latestReceipt.hash
+    };
+  }
+}
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Multi-stage search pipeline:
+Client-server composition:
 \[
-\PiMerge(\text{embed}, \text{search}, \text{rerank}, \text{expand}) = \text{QueryEngine}
+\PiMerge(\text{Connect}, \text{Claim}, \text{Execute}, \text{Sync}) = \text{CollaborativeSession}
 \]
 
-Index construction merges entity embeddings:
+Event broadcast composition:
 \[
-\text{Index} = \bigoplus_{e \in \text{Entities}} \text{embed}(e)
+\Aout_{\text{broadcasts}} = \bigoplus_{c \in \text{Clients}} \text{emit}(c, \text{event})
 \]
 
-Using Vectra library for vector storage with commutative insertion.
+Multi-client workflow example:
+\begin{lstlisting}[language=JavaScript]
+// Server broadcasts to all connected clients
+io.on('connection', (socket) => {
+  engine.on('task:enabled', (event) => {
+    // Broadcast to all clients
+    io.emit('yawl:event', event);
+  });
+
+  socket.on('task:claim', async (data) => {
+    const result = lockManager.acquire(
+      data.workItemId,
+      data.caseId,
+      socket.userId,
+      data.timestamp
+    );
+
+    if (result.success) {
+      // Broadcast lock to all clients
+      io.emit('task:locked', {
+        workItemId: data.workItemId,
+        userId: socket.userId
+      });
+    }
+
+    socket.emit('task:claimed', result);
+  });
+});
+\end{lstlisting}
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards:
 \begin{itemize}
-\item \(\GuardH_{\text{model}}\): Transformer model must load before embedding
-\item \(\GuardH_{\text{index}}\): Index must be built before search
-\item \(\GuardH_{\text{dim}}\): All vectors must have dimension 384
+\item \(\GuardH_{\text{connected}}\): Client must connect before operations
+\item \(\GuardH_{\text{ownership}}\): Only lock owner can complete task
+\item \(\GuardH_{\text{timestamp}}\): Lamport clock must monotonically increase
+\item \(\GuardH_{\text{receipt}}\): Receipt hash must match for conflict-free merge
 \end{itemize}
 
 Invariants:
 \begin{itemize}
-\item \(\InvQ_{\text{symmetric}}\): Distance metric is symmetric
-\item \(\InvQ_{\text{topk}}\): Search returns exactly k results (if available)
-\item \(\InvQ_{\text{score}}\): Scores monotonically decrease in result list
+\item \(\InvQ_{\text{lock}}\): At most one lock per work item
+\item \(\InvQ_{\text{causal}}\): Receipt chain maintains causal ordering
+\item \(\InvQ_{\text{LWW}}\): Last-Write-Wins produces consistent data state
+\item \(\InvQ_{\text{convergence}}\): All clients converge to same state given all updates
 \end{itemize}
 
-Cosine similarity invariant:
+Lock uniqueness:
 \[
-\InvQ_{\text{cosine}}(u, v) = \frac{u \cdot v}{\|u\| \|v\|} \in [-1, 1]
+\InvQ_{\text{lock}}(w) \iff |\{ \text{lock} \mid \text{lock.workItemId} = w \}| \leq 1
+\]
+
+Causal consistency:
+\[
+\InvQ_{\text{causal}}(\text{chain}) \iff \forall i < j, \text{chain}[i].\text{timestamp} < \text{chain}[j].\text{timestamp}
+\]
+
+Convergence theorem (CRDT-inspired):
+\[
+\InvQ_{\text{conv}}(S_1, S_2) \iff \text{applyAll}(\text{updates}) \Rightarrow S_1 \equiv S_2
 \]
 
 \subsection*{Provenance and Receipts}
 
-Search execution trace:
-\begin{itemize}
-\item Input query text
-\item Generated embedding vector (first 10 dimensions logged)
-\item Vector search time (ms)
-\item SPARQL reranking time (ms)
-\item Result URIs and scores
-\end{itemize}
-
-Receipts enable reproducibility:
+Collaborative session receipt:
 \begin{lstlisting}[language=JavaScript]
 {
-  query: "artificial intelligence papers",
-  embedding: [0.123, -0.456, ...],
-  results: [
-    { uri: "ex:Paper1", score: 0.92 },
-    { uri: "ex:Paper2", score: 0.87 }
+  sessionId: "session-abc123",
+  caseId: "case-456",
+  participants: [
+    { userId: "alice@example.com", joinedAt: "2026-01-11T00:00:00.000Z" },
+    { userId: "bob@example.com", joinedAt: "2026-01-11T00:01:00.000Z" }
   ],
-  timing: { vector: 12, sparql: 8 }
+  lockEvents: [
+    {
+      workItemId: "wi-789",
+      userId: "alice@example.com",
+      action: "acquire",
+      timestamp: 100,
+      lamportClock: 5
+    },
+    {
+      workItemId: "wi-789",
+      userId: "alice@example.com",
+      action: "release",
+      timestamp: 150,
+      lamportClock: 8
+    }
+  ],
+  stateUpdates: [
+    {
+      userId: "alice@example.com",
+      operation: "completeTask",
+      receiptHash: "blake3:abc...",
+      timestamp: 145
+    }
+  ],
+  conflicts: [
+    {
+      workItemId: "wi-789",
+      conflictType: "concurrent-claim",
+      winner: "alice@example.com",
+      loser: "bob@example.com",
+      resolution: "lamport-timestamp",
+      timestamp: 102
+    }
+  ]
 }
 \end{lstlisting}
+
+Provenance tracking:
+\begin{itemize}
+\item Lamport clock values for causality
+\item Lock acquisition/release events
+\item State merge operations with hashes
+\item Conflict resolutions with reasoning
+\end{itemize}
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}[language=JavaScript]
-import {
-  RDFEmbedder,
-  SemanticQueryEngine
-} from '@unrdf/semantic-search';
+import { createWorkflowEngine } from '@unrdf/yawl';
+import { YAWLRealtimeServer, YAWLRealtimeClient } from '@unrdf/yawl-realtime';
 
-const embedder = new RDFEmbedder();
-await embedder.initialize();
+// Server setup
+const engine = createWorkflowEngine();
+const server = new YAWLRealtimeServer(engine, {
+  port: 3000,
+  corsOptions: { origin: '*' }
+});
+await server.start();
 
-const engine = new SemanticQueryEngine({
-  store: myStore,
-  embedder: embedder
+// Client A
+const clientA = new YAWLRealtimeClient({
+  serverUrl: 'http://localhost:3000',
+  userId: 'alice@example.com'
+});
+await clientA.connect();
+
+// Client B
+const clientB = new YAWLRealtimeClient({
+  serverUrl: 'http://localhost:3000',
+  userId: 'bob@example.com'
+});
+await clientB.connect();
+
+// Alice claims task
+const resultA = await clientA.claimTask('case-123', 'wi-456');
+console.log(resultA.success); // true
+
+// Bob attempts to claim same task (concurrent)
+const resultB = await clientB.claimTask('case-123', 'wi-456');
+console.log(resultB.success); // false (conflict)
+console.log(resultB.conflict.currentOwner); // alice@example.com
+
+// Alice completes task
+await clientA.completeTask('case-123', 'wi-456', {
+  decision: 'approved'
 });
 
-// Index entities
-await engine.indexEntities();
-
-// Search
-const results = await engine.search(
-  "machine learning research",
-  { topK: 10 }
-);
-
-console.log(results.map(r => r.uri));
+// Both clients receive completion event
+clientA.on('task:completed', (event) => {
+  console.log('Task completed:', event);
+});
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item Can incremental index updates maintain search quality?
-\item How to balance vector similarity vs. SPARQL precision?
-\item What is optimal entity serialization for embedding?
-\item Can multi-modal embeddings (text + graph structure) improve results?
+\item Can distributed locks scale to 1000+ concurrent users per workflow?
+\item How to handle network partitions with split-brain scenarios?
+\item What is optimal Lamport clock synchronization frequency?
+\item Can vector clocks improve causality tracking for complex workflows?
 \end{enumerate}
 
 % ============================================================================
-% Package 38: unrdf-serverless
+% Package 36: @unrdf/serverless
 % ============================================================================
 
 \label{pkg:unrdf-serverless}
-\section{\pkg{@unrdf/serverless} --- AWS Deployment Toolkit}
+\section{\pkg{@unrdf/serverless} --- AWS Serverless Deployment}
 
 \begin{pkgmeta}
 Path & \texttt{packages/serverless} \\
 Kind & js \\
-Entrypoints & 5 files \\
-Dependencies & 10 \\
-Blurb & One-click AWS deployment for RDF applications \\
+Entrypoints & 5 files (index, cdk, deploy, api, storage) \\
+Dependencies & 10 (aws-cdk-lib, constructs, esbuild, zod, @unrdf/core, @unrdf/oxigraph) \\
+Blurb & One-click AWS deployment with Lambda, API Gateway, DynamoDB, and CloudFront CDN \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
@@ -630,58 +1556,99 @@ Blurb & One-click AWS deployment for RDF applications \\
 Observables are application code and infrastructure requirements:
 
 \[
-\Oobs_{\text{deploy}} = \{ \text{handlers}, \text{config}, \text{dependencies}, \text{env} \}
+\Oobs_{\text{deploy}} = \{ \text{handlers}_{\text{Lambda}}, \text{config}_{\text{CDK}}, \text{deps}, \text{env} \}
 \]
 
-Artifacts include AWS CloudFormation stacks and deployed resources:
+Artifacts include deployed AWS resources:
 
 \[
-\Aout_{\text{infra}} = \{ \text{Lambdas}, \text{API Gateway}, \text{DynamoDB}, \text{CDN} \}
+\Aout_{\text{infra}} = \{ \text{Lambdas}, \text{API Gateway}, \text{DynamoDB}, \text{CloudFront}, \text{CloudFormation} \}
 \]
 
 The toolkit observes:
 \begin{itemize}
 \item Lambda handler code (MJS files)
+\item CDK stack definitions in TypeScript/JavaScript
 \item API endpoint configurations
-\item CDK stack definitions
 \item Environment variables and secrets
 \end{itemize}
 
 Produces:
 \begin{itemize}
-\item Bundled Lambda functions (esbuild output)
+\item Optimized Lambda bundles via esbuild
 \item CloudFormation templates
-\item Deployed API Gateway endpoints
-\item DynamoDB tables for RDF storage
+\item Deployed API Gateway endpoints with CORS
+\item DynamoDB tables for RDF triple storage
+\item CloudFront CDN distributions (optional)
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Stack configuration type:
+Stack configuration schema:
+
 \begin{lstlisting}[language=JavaScript]
 const StackConfigSchema = z.object({
   stackName: z.string(),
   environment: z.enum(['dev', 'staging', 'prod']),
-  region: z.enum(SUPPORTED_REGIONS),
+  region: z.string(),
   memorySizeMb: z.number().min(128).max(10240),
   timeoutSeconds: z.number().min(1).max(900),
-  enableCdn: z.boolean().default(false)
+  enableCdn: z.boolean().default(false),
+  enableStreaming: z.boolean().default(false),
+  tableName: z.string().optional(),
+  apiName: z.string().optional()
 });
 \end{lstlisting}
 
-API Gateway endpoint signature:
+CDK stack signature:
 \[
-\SigmaType_{\text{endpoint}}: (\text{Path}, \text{Method}, \text{Handler}) \to \text{Route}
+\SigmaType_{\text{stack}}: \text{Config} \to \text{CDK.Stack} \to \text{AWS Resources}
 \]
+
+Lambda bundler signature from \texttt{deploy/bundler.mjs}:
+
+\begin{lstlisting}[language=JavaScript]
+class LambdaBundler {
+  constructor(options) {
+    this.entryPoint = options.entryPoint;
+    this.outDir = options.outDir;
+    this.minify = options.minify ?? true;
+  }
+
+  async bundle() {
+    const result = await esbuild.build({
+      entryPoints: [this.entryPoint],
+      bundle: true,
+      platform: 'node',
+      target: 'node18',
+      format: 'esm',
+      outdir: this.outDir,
+      minify: this.minify,
+      external: ['@aws-sdk/*'], // Provided by Lambda runtime
+      metafile: true,
+      sourcemap: true
+    });
+
+    return {
+      sizeBytes: result.metafile.outputs[0].bytes,
+      warnings: result.warnings
+    };
+  }
+
+  static async analyzeBundleSize(metafilePath) {
+    // Bundle size analysis from metafile
+  }
+}
+\end{lstlisting}
 
 DynamoDB adapter type:
 \[
-\SigmaType_{\text{storage}}: \text{RDF Quad} \to \text{DynamoDB Item}
+\SigmaType_{\text{storage}}: \text{RDF Quad} \to \text{DynamoDB Item} \to \text{RDF Quad}
 \]
 
 \subsection*{Reconciler \(\muRecon\)}
 
-The reconciler transforms application code to deployed infrastructure:
+The reconciler transforms application code to AWS infrastructure:
 
 \[
 \muRecon_{\text{deploy}}: \Oobs_{\text{app}} \to \Aout_{\text{AWS}}
@@ -690,17 +1657,85 @@ The reconciler transforms application code to deployed infrastructure:
 Deployment pipeline:
 \begin{enumerate}
 \item \texttt{LambdaBundler.bundle()}: MJS $\to$ Optimized bundle
-\item \texttt{UNRDFStack.addLambda()}: Bundle $\to$ CDK construct
+\item \texttt{UNRDFStack.addLambda()}: Bundle $\to$ CDK Lambda construct
 \item \texttt{ApiGatewayConfig.addEndpoint()}: Handler $\to$ API route
+\item \texttt{DynamoDBAdapter.createTable()}: Schema $\to$ DynamoDB table
 \item \texttt{cdk deploy}: CDK $\to$ CloudFormation $\to$ AWS resources
 \end{enumerate}
 
-Request reconciler (runtime):
-\[
-\muRecon_{\text{request}}: \text{HTTP Request} \to \text{Lambda} \to \text{HTTP Response}
-\]
+CDK stack creation from \texttt{cdk/index.mjs}:
+\begin{lstlisting}[language=JavaScript]
+export function createUNRDFStack(app, id, config) {
+  const stack = new Stack(app, id, {
+    env: { region: config.region }
+  });
 
-Via API Gateway integration with validation middleware.
+  // DynamoDB table for triples
+  const triplesTable = new Table(stack, 'TriplesTable', {
+    partitionKey: { name: 'subject', type: AttributeType.STRING },
+    sortKey: { name: 'predicateObject', type: AttributeType.STRING },
+    billingMode: BillingMode.PAY_PER_REQUEST,
+    pointInTimeRecovery: true
+  });
+
+  // Global secondary indexes for query patterns
+  triplesTable.addGlobalSecondaryIndex({
+    indexName: 'PredicateIndex',
+    partitionKey: { name: 'predicate', type: AttributeType.STRING },
+    sortKey: { name: 'subjectObject', type: AttributeType.STRING }
+  });
+
+  triplesTable.addGlobalSecondaryIndex({
+    indexName: 'ObjectIndex',
+    partitionKey: { name: 'object', type: AttributeType.STRING },
+    sortKey: { name: 'subjectPredicate', type: AttributeType.STRING }
+  });
+
+  // Lambda function
+  const queryHandler = new Function(stack, 'QueryHandler', {
+    runtime: Runtime.NODEJS_18_X,
+    memorySize: config.memorySizeMb,
+    timeout: Duration.seconds(config.timeoutSeconds),
+    handler: 'index.handler',
+    code: Code.fromAsset(config.bundlePath),
+    environment: {
+      TRIPLES_TABLE: triplesTable.tableName,
+      ENVIRONMENT: config.environment
+    },
+    tracing: Tracing.ACTIVE // X-Ray
+  });
+
+  triplesTable.grantReadWriteData(queryHandler);
+
+  // API Gateway
+  const api = new RestApi(stack, 'UnrdfApi', {
+    restApiName: config.apiName || 'unrdf-api',
+    deployOptions: {
+      stageName: config.environment
+    }
+  });
+
+  const integration = new LambdaIntegration(queryHandler);
+  api.root.addResource('query').addMethod('POST', integration);
+
+  // Optional CloudFront CDN
+  if (config.enableCdn) {
+    new Distribution(stack, 'CDN', {
+      defaultBehavior: {
+        origin: new HttpOrigin(api.url),
+        cachePolicy: CachePolicy.CACHING_OPTIMIZED
+      }
+    });
+  }
+
+  return stack;
+}
+\end{lstlisting}
+
+Runtime request reconciler:
+\[
+\muRecon_{\text{request}}: \text{HTTP Request} \to \text{Lambda} \to \text{DynamoDB} \to \text{HTTP Response}
+\]
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
@@ -711,18 +1746,38 @@ CDK stack composition:
 
 Sequential deployment stages:
 \begin{lstlisting}[language=JavaScript]
-const stack = createUNRDFStack(app, 'MyApp', config);
-stack
-  .addLambda('queryHandler', './dist/query.js')
-  .addLambda('updateHandler', './dist/update.js')
-  .addApiGateway(apiConfig)
-  .addDynamoTable('triples');
+import { App } from 'aws-cdk-lib';
+import { createUNRDFStack, LambdaBundler } from '@unrdf/serverless';
+
+const app = new App();
+
+// Bundle Lambda functions
+const bundler = new LambdaBundler({
+  entryPoint: './src/handler.mjs',
+  outDir: './dist/lambda',
+  minify: true
+});
+const bundleMetadata = await bundler.bundle();
+
+// Create stack with bundled functions
+const stack = createUNRDFStack(app, 'UnrdfProdStack', {
+  environment: 'prod',
+  region: 'us-east-1',
+  memorySizeMb: 2048,
+  timeoutSeconds: 30,
+  enableCdn: true,
+  bundlePath: './dist/lambda'
+});
+
+app.synth();
 \end{lstlisting}
 
-Multi-region deployment via parallel stacks:
+Multi-region deployment:
 \[
 \Aout_{\text{global}} = \bigoplus_{r \in \text{Regions}} \text{deploy}(r)
 \]
+
+Parallel stack deployment across regions for global distribution.
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
@@ -730,8 +1785,9 @@ Guards enforce AWS limits:
 \begin{itemize}
 \item \(\GuardH_{\text{memory}}\): Lambda memory 128MB--10GB
 \item \(\GuardH_{\text{timeout}}\): Lambda timeout 1--900 seconds
-\item \(\GuardH_{\text{bundle}}\): Bundle size $<$ 250MB uncompressed
-\item \(\GuardH_{\text{region}}\): Region in \texttt{SUPPORTED\_REGIONS}
+\item \(\GuardH_{\text{bundle}}\): Bundle size $<$ 250MB uncompressed, $<$ 50MB zipped
+\item \(\GuardH_{\text{region}}\): Region must be valid AWS region
+\item \(\GuardH_{\text{table}}\): DynamoDB table name must be unique per region
 \end{itemize}
 
 Invariants:
@@ -739,47 +1795,99 @@ Invariants:
 \item \(\InvQ_{\text{idempotent}}\): Re-deploying same code produces equivalent stack
 \item \(\InvQ_{\text{storage}}\): DynamoDB round-trip preserves RDF quad structure
 \item \(\InvQ_{\text{api}}\): All endpoints return valid HTTP status codes
+\item \(\InvQ_{\text{cost}}\): Pay-per-request billing ensures no idle costs
 \end{itemize}
 
-Request validation invariant:
+RDF round-trip invariant:
 \[
-\InvQ_{\text{validate}}(\text{req}) \iff \text{validateApiRequest}(\text{req}) \neq \text{error}
+\InvQ_{\text{roundtrip}}(q) \iff \text{fromDynamoDB}(\text{toDynamoDB}(q)) \equiv q
+\]
+
+Deployment idempotence:
+\[
+\InvQ_{\text{deploy}}(c) \iff \text{deploy}(c)_1 \equiv \text{deploy}(c)_2
 \]
 
 \subsection*{Provenance and Receipts}
 
-Deployment receipt:
+Deployment receipt from CloudFormation:
 \begin{lstlisting}[language=JavaScript]
 {
-  stackName: "UnrdfProd",
+  stackName: "UnrdfProdStack",
   region: "us-east-1",
-  deploymentTime: "2025-12-27T12:00:00Z",
+  deploymentTime: "2026-01-11T00:00:00.000Z",
   resources: {
-    lambdas: ["queryHandler-AbC123"],
-    apis: ["https://api.example.com/v1"],
-    tables: ["triples-prod"]
+    lambdas: ["QueryHandler-AbC123"],
+    apis: ["https://api123.execute-api.us-east-1.amazonaws.com/prod"],
+    tables: ["TriplesTable-prod"],
+    cdns: ["d1234567890.cloudfront.net"]
   },
   bundleHashes: {
-    "queryHandler": "sha256:abc...",
-    "updateHandler": "sha256:def..."
-  }
+    "queryHandler": "sha256:abc123...",
+    "updateHandler": "sha256:def456..."
+  },
+  stackId: "arn:aws:cloudformation:us-east-1:123456789012:stack/UnrdfProdStack/...",
+  stackStatus: "CREATE_COMPLETE"
 }
 \end{lstlisting}
 
-CloudFormation stack provides infrastructure provenance via AWS APIs.
+Bundle analysis receipt:
+\begin{lstlisting}[language=JavaScript]
+{
+  entryPoint: "./src/handler.mjs",
+  outputPath: "./dist/lambda/index.js",
+  sizeBytes: 45678,
+  sizeCompressed: 12345,
+  dependencies: {
+    "@unrdf/core": { bytes: 25000 },
+    "@unrdf/oxigraph": { bytes: 15000 },
+    "zod": { bytes: 5000 }
+  },
+  treeshakeEfficiency: 0.72,
+  buildTime: 450
+}
+\end{lstlisting}
+
+Provenance tracking:
+\begin{itemize}
+\item CloudFormation stack events with timestamps
+\item Bundle size and dependency analysis
+\item Lambda execution metrics via X-Ray
+\item DynamoDB capacity and performance metrics
+\end{itemize}
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}[language=JavaScript]
-import {
-  createUNRDFStack,
-  LambdaBundler
-} from '@unrdf/serverless';
+// 1. Define Lambda handler (src/handler.mjs)
+import { createAdapterFromEnv, createApiResponse } from '@unrdf/serverless';
+
+export async function handler(event) {
+  try {
+    const adapter = createAdapterFromEnv();
+    const body = JSON.parse(event.body);
+
+    const results = await adapter.queryTriples({
+      subject: body.subject,
+      predicate: body.predicate
+    });
+
+    return createApiResponse(200, {
+      results,
+      count: results.length
+    });
+  } catch (error) {
+    return createErrorResponse(error, 500);
+  }
+}
+
+// 2. Create CDK stack (cdk.mjs)
 import { App } from 'aws-cdk-lib';
+import { createUNRDFStack, LambdaBundler } from '@unrdf/serverless';
 
 const app = new App();
 
-// Bundle functions
+// Bundle Lambda
 const bundler = new LambdaBundler({
   entryPoint: './src/handler.mjs',
   outDir: './dist'
@@ -789,605 +1897,26 @@ await bundler.bundle();
 // Create stack
 const stack = createUNRDFStack(app, 'MyRDFApp', {
   environment: 'prod',
+  region: 'us-east-1',
   memorySizeMb: 2048,
-  enableCdn: true
+  timeoutSeconds: 30,
+  enableCdn: true,
+  bundlePath: './dist'
 });
 
-// Deploy: cdk deploy
+app.synth();
+
+// 3. Deploy
+// $ cdk deploy
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item Can Lambda cold starts be mitigated for large RDF graphs?
-\item How to handle SPARQL query optimization in DynamoDB backend?
-\item What is cost-optimal sharding strategy for triple storage?
-\item Can CDK construct library support multi-cloud (Azure, GCP)?
-\end{enumerate}
-
-% ============================================================================
-% Package 39: unrdf-streaming
-% ============================================================================
-
-\label{pkg:unrdf-streaming}
-\section{\pkg{@unrdf/streaming} --- Real-Time Change Feeds}
-
-\begin{pkgmeta}
-Path & \texttt{packages/streaming} \\
-Kind & js \\
-Entrypoints & 2 files \\
-Dependencies & 10 \\
-Blurb & Change Feeds and Real-time Synchronization \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-Observables are RDF store mutations and subscriptions:
-
-\[
-\Oobs_{\text{stream}} = \{ \Delta_{\text{add}}, \Delta_{\text{remove}}, \text{subscriptions} \}
-\]
-
-Artifacts include change events and synchronized replicas:
-
-\[
-\Aout_{\text{stream}} = \{ \text{events}, \text{checksums}, \text{replicas} \}
-\]
-
-The streaming engine observes:
-\begin{itemize}
-\item Quad additions and removals in store
-\item Client subscription patterns (SPARQL filters)
-\item WebSocket connections for real-time delivery
-\item Synchronization protocol messages
-\end{itemize}
-
-Produces:
-\begin{itemize}
-\item Change feed event streams
-\item Subscription notifications matching patterns
-\item Sync protocol messages with checksums
-\item Conflict-free replica convergence
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Change event type:
-\begin{lstlisting}[language=JavaScript]
-const ChangeEventSchema = z.object({
-  type: z.enum(['add', 'remove']),
-  quad: QuadSchema,
-  timestamp: z.number(),
-  source: z.string()
-});
-\end{lstlisting}
-
-Subscription signature:
-\[
-\SigmaType_{\text{sub}}: \text{Pattern} \to \text{Stream}[\text{ChangeEvent}]
-\]
-
-Sync message type:
-\begin{lstlisting}[language=JavaScript]
-const SyncMessageSchema = z.object({
-  sequence: z.number(),
-  changes: z.array(ChangeEventSchema),
-  checksum: z.string(),
-  acknowledged: z.boolean()
-});
-\end{lstlisting}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-The reconciler transforms store mutations into stream events:
-
-\[
-\muRecon_{\text{feed}}: \Delta_{\text{store}} \to \text{Stream}[\text{ChangeEvent}]
-\]
-
-Change feed pipeline:
-\begin{enumerate}
-\item Store hook intercepts quad operations
-\item \texttt{createChangeFeed} emits events
-\item \texttt{SubscriptionManager} filters by pattern
-\item \texttt{StreamProcessor} delivers to clients
-\end{enumerate}
-
-Sync reconciler merges remote changes:
-\[
-\muRecon_{\text{sync}}: \text{SyncMessage} \to \store_{\text{local}}
-\]
-
-Conflict resolution via causal ordering:
-\begin{itemize}
-\item Sequence numbers establish total order
-\item Checksums detect divergence
-\item \texttt{mergeSyncMessages} applies commutative merge
-\end{itemize}
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Feed subscription composition:
-\[
-\PiMerge(\text{feed}, \text{filter}, \text{transform}, \text{deliver}) = \text{Subscription}
-\]
-
-Multiple subscriptions merged:
-\[
-\text{Stream}_{\text{combined}} = \bigoplus_{i} \text{subscribe}(\text{pattern}_i)
-\]
-
-WebSocket multiplexing delivers merged stream over single connection.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{connected}}\): Client must connect before subscription
-\item \(\GuardH_{\text{pattern}}\): Subscription pattern must be valid SPARQL
-\item \(\GuardH_{\text{sequence}}\): Sync messages must have monotonic sequence
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{delivery}}\): All matching events delivered exactly once
-\item \(\InvQ_{\text{order}}\): Events delivered in causal order
-\item \(\InvQ_{\text{checksum}}\): Checksums verify message integrity
-\item \(\InvQ_{\text{convergence}}\): Replicas converge given all sync messages
-\end{itemize}
-
-Checksum invariant:
-\[
-\InvQ_{\text{checksum}}(\text{msg}) \iff \text{calculateChecksum}(\text{msg}) = \text{msg.checksum}
-\]
-
-Convergence theorem:
-\[
-\InvQ_{\text{conv}}(\store_1, \store_2) \iff \text{applyAll}(\text{sync}) \Rightarrow \store_1 \equiv \store_2
-\]
-
-\subsection*{Provenance and Receipts}
-
-Event stream receipt:
-\begin{lstlisting}[language=JavaScript]
-{
-  subscriptionId: "sub-123",
-  pattern: "?s rdf:type ex:Event",
-  eventCount: 42,
-  firstEvent: "2025-12-27T12:00:00.000Z",
-  lastEvent: "2025-12-27T12:05:00.000Z",
-  deliveryLatency: { p50: 12, p99: 45 }
-}
-\end{lstlisting}
-
-Sync protocol audit trail:
-\begin{itemize}
-\item Sequence numbers enable gap detection
-\item Checksums provide tamper evidence
-\item Acknowledgments confirm delivery
-\end{itemize}
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-import {
-  createChangeFeed,
-  createSubscriptionManager
-} from '@unrdf/streaming';
-
-const feed = createChangeFeed(store);
-const subManager = createSubscriptionManager(feed);
-
-// Subscribe to pattern
-const sub = subManager.subscribe({
-  pattern: '?s rdf:type ex:Person',
-  callback: (event) => {
-    console.log('Change:', event.type, event.quad);
-  }
-});
-
-// Add quad triggers notification
-store.add(quad);
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item Can causal broadcast scale to 1000+ concurrent subscribers?
-\item How to handle late joiners with complete history replay?
-\item What is optimal batch size for sync message aggregation?
-\item Can conflict-free replicated data types (CRDTs) improve convergence?
-\end{enumerate}
-
-% ============================================================================
-% Package 40: unrdf-test-utils
-% ============================================================================
-
-\label{pkg:unrdf-test-utils}
-\section{\pkg{@unrdf/test-utils} --- Testing Utilities}
-
-\begin{pkgmeta}
-Path & \texttt{packages/test-utils} \\
-Kind & js \\
-Entrypoints & 1 file \\
-Dependencies & 4 \\
-Blurb & Testing utilities for UNRDF development \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-Observables are test execution traces and assertions:
-
-\[
-\Oobs_{\text{test}} = \{ \text{scenarios}, \text{steps}, \text{contexts}, \text{assertions} \}
-\]
-
-Artifacts include test results and execution reports:
-
-\[
-\Aout_{\text{test}} = \{ \text{results}, \text{failures}, \text{durations}, \text{coverage} \}
-\]
-
-The framework observes:
-\begin{itemize}
-\item Test scenario definitions (DSL)
-\item Step execution outcomes
-\item Assertion evaluations
-\item Store state mutations
-\end{itemize}
-
-Produces:
-\begin{itemize}
-\item Test scenario execution results
-\item Fluent assertion chains
-\item Test context builders
-\item Mock receipt and hook fixtures
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Test scenario schema:
-\begin{lstlisting}[language=JavaScript]
-const TestScenarioSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  setup: z.function().optional().nullable(),
-  teardown: z.function().optional().nullable(),
-  steps: z.array(z.object({
-    name: z.string().min(1),
-    action: z.function(),
-    assertions: z.array(z.function()).optional()
-  })).min(1)
-});
-\end{lstlisting}
-
-Assertion signature:
-\[
-\SigmaType_{\text{assert}}: (\text{Context}, \text{Result}) \to \text{Boolean} \cup \text{Error}
-\]
-
-Test context type:
-\[
-\SigmaType_{\text{ctx}} = \{ \store, \text{manager}, \text{metadata} \}
-\]
-
-\subsection*{Reconciler \(\muRecon\)}
-
-The reconciler executes test scenarios and produces results:
-
-\[
-\muRecon_{\text{test}}: \Oobs_{\text{scenario}} \to \Aout_{\text{result}}
-\]
-
-Execution pipeline:
-\begin{enumerate}
-\item \texttt{TestScenario.setupScenario()}: Initialize context
-\item \texttt{TestScenario.step()}: Execute actions sequentially
-\item \texttt{FluentAssertions.*}: Validate results
-\item \texttt{TestScenario.teardownScenario()}: Cleanup
-\end{enumerate}
-
-Fluent assertion reconciler:
-\[
-\muRecon_{\text{assert}} = \lambda (\text{ctx}, \text{res}). \text{chain}(\text{assertions})
-\]
-
-Supports method chaining:
-\begin{lstlisting}[language=JavaScript]
-expect(ctx, result)
-  .toBeCommitted()
-  .toHaveProperty('receipt')
-  .toCompleteWithin(100);
-\end{lstlisting}
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Test scenario composition:
-\[
-\PiMerge(\text{setup}, \text{steps}, \text{assertions}, \text{teardown}) = \text{Scenario}
-\]
-
-Step-wise sequential execution:
-\begin{lstlisting}[language=JavaScript]
-scenario("Knowledge Hook Test")
-  .setupScenario(async () => ({ store, manager }))
-  .step("Add quad", async (ctx) => { ... })
-  .step("Execute hook", async (ctx) => { ... })
-  .teardownScenario(async (ctx) => { ... });
-\end{lstlisting}
-
-Multiple assertions merged:
-\[
-\Aout_{\text{valid}} = \bigwedge_{i} \text{assertion}_i(\text{ctx}, \text{res})
-\]
-
-All assertions must pass for step success.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{steps}}\): Scenario must have at least one step
-\item \(\GuardH_{\text{context}}\): Context must be initialized before steps
-\item \(\GuardH_{\text{schema}}\): Scenario must validate against schema
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{isolation}}\): Tests do not share state between scenarios
-\item \(\InvQ_{\text{teardown}}\): Teardown always executes (even on failure)
-\item \(\InvQ_{\text{deterministic}}\): Re-running scenario produces same result
-\end{itemize}
-
-Isolation invariant:
-\[
-\InvQ_{\text{iso}}(\text{test}_1, \text{test}_2) \iff \text{ctx}_1 \cap \text{ctx}_2 = \emptyset
-\]
-
-\subsection*{Provenance and Receipts}
-
-Test execution receipt:
-\begin{lstlisting}[language=JavaScript]
-{
-  name: "Hook Execution Test",
-  success: true,
-  steps: [
-    { name: "Add quad", success: true, duration: 5 },
-    { name: "Execute hook", success: true, duration: 12 }
-  ],
-  errors: [],
-  duration: 23
-}
-\end{lstlisting}
-
-Provides complete audit trail for test failures.
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-import { scenario, expect, TestHelpers } from '@unrdf/test-utils';
-
-const test = scenario("Add quad and verify", "Test store operations")
-  .setupScenario(async () => createDefaultTestContext())
-  .step("Add quad", async (ctx) => {
-    const quad = TestHelpers.createQuad(
-      'ex:s', 'ex:p', 'ex:o'
-    );
-    ctx.store.add(quad);
-    return { quad };
-  }, [
-    (ctx, result) => expect(ctx, result)
-      .toHaveProperty('quad')
-      .toContainQuads([result.quad])
-  ])
-  .teardownScenario(async (ctx) => {
-    ctx.store.clear();
-  });
-
-const result = await test.execute();
-console.log(result.success);
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item Can test scenarios compose to form integration test suites?
-\item How to handle non-deterministic timing in OTEL span assertions?
-\item What is optimal granularity for test context fixtures?
-\item Can property-based testing integrate with scenario DSL?
-\end{enumerate}
-
-% ============================================================================
-% Package 41: unrdf-validation
-% ============================================================================
-
-\label{pkg:unrdf-validation}
-\section{\pkg{@unrdf/validation} --- OTEL Validation Framework}
-
-\begin{pkgmeta}
-Path & \texttt{packages/validation} \\
-Kind & js \\
-Entrypoints & 1 file \\
-Dependencies & 1 \\
-Blurb & OTEL validation framework for UNRDF development \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-Observables are OpenTelemetry spans and traces:
-
-\[
-\Oobs_{\text{otel}} = \{ \text{spans}, \text{attributes}, \text{events}, \text{traces} \}
-\]
-
-Artifacts include validation scores and failure reports:
-
-\[
-\Aout_{\text{valid}} = \{ \text{scores}, \text{violations}, \text{metrics}, \text{receipts} \}
-\]
-
-The validator observes:
-\begin{itemize}
-\item OTEL span creation and completion
-\item Span attributes and context
-\item Trace hierarchies and timing
-\item Custom events and annotations
-\end{itemize}
-
-Produces:
-\begin{itemize}
-\item Validation scores (0--100)
-\item Violation reports with evidence
-\item Performance metrics from spans
-\item Receipts linking code to traces
-\end{itemize}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Validation configuration:
-\begin{lstlisting}[language=JavaScript]
-const ValidationConfigSchema = z.object({
-  minScore: z.number().min(0).max(100).default(80),
-  requiredSpans: z.array(z.string()).optional(),
-  maxDuration: z.number().optional(),
-  attributeValidators: z.record(z.function()).optional()
-});
-\end{lstlisting}
-
-Validator signature:
-\[
-\SigmaType_{\text{validator}}: \text{Trace} \to [\text{Score}, \text{Violations}]
-\]
-
-Helper signature:
-\[
-\SigmaType_{\text{helper}}: \text{Span} \to \text{Metric}
-\]
-
-\subsection*{Reconciler \(\muRecon\)}
-
-The reconciler validates execution traces against requirements:
-
-\[
-\muRecon_{\text{validate}}: \Oobs_{\text{trace}} \to \Aout_{\text{score}}
-\]
-
-Validation pipeline:
-\begin{enumerate}
-\item \texttt{OTELValidator.collectSpans()}: Gather all spans
-\item \texttt{ValidationHelpers.extractMetrics()}: Compute span metrics
-\item \texttt{ValidationRunner.scoreTrace()}: Apply validation rules
-\item \texttt{ValidationRunner.reportViolations()}: Generate report
-\end{enumerate}
-
-Score reconciler:
-\[
-\muRecon_{\text{score}} = \lambda \text{trace}. \frac{\sum_{r \in \text{Rules}} w_r \cdot \text{check}(r, \text{trace})}{\sum_{r} w_r}
-\]
-
-Where $w_r$ are rule weights, normalized to [0,100].
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Multi-rule validation composition:
-\[
-\PiMerge(\text{structure}, \text{timing}, \text{attributes}, \text{events}) = \text{Validator}
-\]
-
-Parallel validation across traces:
-\[
-\Aout_{\text{suite}} = \bigoplus_{t \in \text{Traces}} \text{validate}(t)
-\]
-
-Aggregate scores via weighted average.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{trace}}\): Trace must be complete before validation
-\item \(\GuardH_{\text{spans}}\): All required spans must exist
-\item \(\GuardH_{\text{timing}}\): Span end time $\geq$ start time
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{score}}\): Score in [0, 100]
-\item \(\InvQ_{\text{monotonic}}\): Adding spans cannot increase score
-\item \(\InvQ_{\text{deterministic}}\): Same trace produces same score
-\end{itemize}
-
-Timing invariant:
-\[
-\InvQ_{\text{timing}}(\text{span}) \iff \text{span.endTime} \geq \text{span.startTime}
-\]
-
-Determinism:
-\[
-\InvQ_{\text{det}}(t) \iff \text{validate}(t)_1 = \text{validate}(t)_2
-\]
-
-\subsection*{Provenance and Receipts}
-
-Validation receipt:
-\begin{lstlisting}[language=JavaScript]
-{
-  traceId: "abc123...",
-  score: 92,
-  violations: [
-    {
-      rule: "max-duration",
-      severity: "warning",
-      span: "compute-embedding",
-      expected: 100,
-      actual: 142
-    }
-  ],
-  metrics: {
-    totalSpans: 15,
-    avgDuration: 45,
-    maxDepth: 4
-  },
-  timestamp: "2025-12-27T12:00:00.000Z"
-}
-\end{lstlisting}
-
-Receipt hash enables verification:
-\[
-\ProvHash(\text{receipt}) = h(\text{traceId}, \text{score}, \text{violations})
-\]
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}[language=JavaScript]
-import {
-  createOTELValidator,
-  createValidationRunner
-} from '@unrdf/validation';
-
-const validator = createOTELValidator({
-  requiredSpans: ['query', 'parse', 'execute']
-});
-
-const runner = createValidationRunner({
-  minScore: 80,
-  maxDuration: 1000
-});
-
-// Run validation
-const result = await runner.validate(trace);
-
-console.log(`Score: ${result.score}/100`);
-console.log(`Violations: ${result.violations.length}`);
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item Can validation rules be learned from historical trace data?
-\item How to handle distributed traces spanning multiple services?
-\item What is optimal weight assignment for heterogeneous rule sets?
-\item Can validation integrate with CI/CD for automated quality gates?
+\item Can Lambda cold starts be mitigated for large RDF graphs with provisioned concurrency?
+\item How to optimize SPARQL query execution in DynamoDB with limited query patterns?
+\item What is cost-optimal sharding strategy for multi-billion triple datasets?
+\item Can Step Functions orchestrate complex RDF processing pipelines?
 \end{enumerate}
 
 % ============================================================================

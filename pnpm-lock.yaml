@@ -296,6 +296,43 @@ importers:
         specifier: ^0.6.5
         version: 0.6.5
 
+  packages/ai-ml-innovations:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/knowledge-engine':
+        specifier: workspace:*
+        version: link:../knowledge-engine
+      '@unrdf/ml-inference':
+        specifier: workspace:*
+        version: link:../ml-inference
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/semantic-search':
+        specifier: workspace:*
+        version: link:../semantic-search
+      '@unrdf/v6-core':
+        specifier: workspace:*
+        version: link:../v6-core
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.2(jiti@2.6.1)
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
   packages/atomvm:
     dependencies:
       '@opentelemetry/api':
@@ -432,6 +469,19 @@ importers:
       citty-test-utils:
         specifier: ^0.1.0
         version: 0.1.1
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/codegen:
+    dependencies:
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
@@ -764,6 +814,37 @@ importers:
         specifier: ^4.0.15
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
+  packages/event-automation:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/daemon':
+        specifier: workspace:*
+        version: link:../daemon
+      '@unrdf/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@unrdf/receipts':
+        specifier: workspace:*
+        version: link:../receipts
+      '@unrdf/v6-core':
+        specifier: workspace:*
+        version: link:../v6-core
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      eslint:
+        specifier: ^8.55.0
+        version: 8.57.1
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
   packages/federation:
     dependencies:
       '@comunica/query-sparql':
@@ -819,6 +900,31 @@ importers:
         specifier: ^4.1.13
         version: 4.2.1
     devDependencies:
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/geosparql:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@turf/turf':
+        specifier: ^7.1.0
+        version: 7.3.1
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      rbush:
+        specifier: ^4.0.1
+        version: 4.0.1
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.2(jiti@2.6.1)
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
@@ -1567,6 +1673,12 @@ importers:
 
   packages/receipts:
     dependencies:
+      '@noble/curves':
+        specifier: ^2.0.1
+        version: 2.0.1
+      '@noble/hashes':
+        specifier: ^2.0.1
+        version: 2.0.1
       '@unrdf/core':
         specifier: workspace:*
         version: link:../core
@@ -1579,6 +1691,9 @@ importers:
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:../oxigraph
+      dilithium-crystals:
+        specifier: ^1.0.6
+        version: 1.0.6
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1597,6 +1712,28 @@ importers:
         version: 2.0.0(typescript@5.9.3)(vue-tsc@3.2.1(typescript@5.9.3))
       vitest:
         specifier: ^4.0.15
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/self-healing-workflows:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/daemon':
+        specifier: workspace:*
+        version: link:../daemon
+      '@unrdf/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@unrdf/yawl':
+        specifier: workspace:*
+        version: link:../yawl
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      vitest:
+        specifier: ^4.0.16
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
   packages/semantic-search:
@@ -1658,6 +1795,34 @@ importers:
         specifier: ^4.0.15
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
+  packages/spatial-kg:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      d3-force-3d:
+        specifier: ^3.0.5
+        version: 3.0.6
+      three:
+        specifier: ^0.171.0
+        version: 0.171.0
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      '@types/three':
+        specifier: ^0.171.0
+        version: 0.171.0
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
   packages/streaming:
     dependencies:
       '@opentelemetry/api':
@@ -1688,6 +1853,31 @@ importers:
       '@rdfjs/data-model':
         specifier: ^2.0.2
         version: 2.1.1
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.4
+      vitest:
+        specifier: ^4.0.15
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.4)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@24.10.4)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/temporal-discovery:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/graph-analytics':
+        specifier: workspace:*
+        version: link:../graph-analytics
+      '@unrdf/kgc-4d':
+        specifier: workspace:*
+        version: link:../kgc-4d
+      '@unrdf/semantic-search':
+        specifier: workspace:*
+        version: link:../semantic-search
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.4
@@ -2089,6 +2279,52 @@ importers:
       vitest:
         specifier: ^4.0.15
         version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@25.0.1)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
+
+  packages/zkp:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.7.0
+        version: 1.9.0
+      '@unrdf/core':
+        specifier: workspace:*
+        version: link:../core
+      '@unrdf/oxigraph':
+        specifier: workspace:*
+        version: link:../oxigraph
+      '@unrdf/v6-core':
+        specifier: workspace:*
+        version: link:../v6-core
+      circomlibjs:
+        specifier: ^0.1.7
+        version: 0.1.7
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
+      snarkjs:
+        specifier: ^0.7.5
+        version: 0.7.5
+      sparqljs:
+        specifier: ^3.7.3
+        version: 3.7.3
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
+    devDependencies:
+      '@types/node':
+        specifier: ^25.0.3
+        version: 25.0.3
+      '@vitest/coverage-v8':
+        specifier: ^4.0.16
+        version: 4.0.16(@vitest/browser@4.0.16(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.16))(vitest@4.0.16)
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2(jiti@2.6.1)
+      prettier:
+        specifier: ^3.0.0
+        version: 3.7.4
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.0.16)(happy-dom@20.0.11)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(msw@2.12.6(@types/node@25.0.3)(typescript@5.9.3))(terser@5.44.1)(yaml@2.8.2)
 
 packages:
 
@@ -5630,6 +5866,96 @@ packages:
     resolution: {integrity: sha512-zQ0IqbdX8FZ9aw11vP+dZkKDkS+kgIvQPHnSAXzP9pLu+Rfu3D3XEeLbicvoXJTYnhZiPmsZUxgdzXwNKxRPbA==}
     engines: {node: '>=14'}
 
+  '@ethersproject/abi@5.8.0':
+    resolution: {integrity: sha512-b9YS/43ObplgyV6SlyQsG53/vkSal0MNA1fskSC4mbnCMi8R+NkcH8K9FPYNESf6jUefBUniE4SOKms0E/KK1Q==}
+
+  '@ethersproject/abstract-provider@5.8.0':
+    resolution: {integrity: sha512-wC9SFcmh4UK0oKuLJQItoQdzS/qZ51EJegK6EmAWlh+OptpQ/npECOR3QqECd8iGHC0RJb4WKbVdSfif4ammrg==}
+
+  '@ethersproject/abstract-signer@5.8.0':
+    resolution: {integrity: sha512-N0XhZTswXcmIZQdYtUnd79VJzvEwXQw6PK0dTl9VoYrEBxxCPXqS0Eod7q5TNKRxe1/5WUMuR0u0nqTF/avdCA==}
+
+  '@ethersproject/address@5.8.0':
+    resolution: {integrity: sha512-GhH/abcC46LJwshoN+uBNoKVFPxUuZm6dA257z0vZkKmU1+t8xTn8oK7B9qrj8W2rFRMch4gbJl6PmVxjxBEBA==}
+
+  '@ethersproject/base64@5.8.0':
+    resolution: {integrity: sha512-lN0oIwfkYj9LbPx4xEkie6rAMJtySbpOAFXSDVQaBnAzYfB4X2Qr+FXJGxMoc3Bxp2Sm8OwvzMrywxyw0gLjIQ==}
+
+  '@ethersproject/basex@5.8.0':
+    resolution: {integrity: sha512-PIgTszMlDRmNwW9nhS6iqtVfdTAKosA7llYXNmGPw4YAI1PUyMv28988wAb41/gHF/WqGdoLv0erHaRcHRKW2Q==}
+
+  '@ethersproject/bignumber@5.8.0':
+    resolution: {integrity: sha512-ZyaT24bHaSeJon2tGPKIiHszWjD/54Sz8t57Toch475lCLljC6MgPmxk7Gtzz+ddNN5LuHea9qhAe0x3D+uYPA==}
+
+  '@ethersproject/bytes@5.8.0':
+    resolution: {integrity: sha512-vTkeohgJVCPVHu5c25XWaWQOZ4v+DkGoC42/TS2ond+PARCxTJvgTFUNDZovyQ/uAQ4EcpqqowKydcdmRKjg7A==}
+
+  '@ethersproject/constants@5.8.0':
+    resolution: {integrity: sha512-wigX4lrf5Vu+axVTIvNsuL6YrV4O5AXl5ubcURKMEME5TnWBouUh0CDTWxZ2GpnRn1kcCgE7l8O5+VbV9QTTcg==}
+
+  '@ethersproject/contracts@5.8.0':
+    resolution: {integrity: sha512-0eFjGz9GtuAi6MZwhb4uvUM216F38xiuR0yYCjKJpNfSEy4HUM8hvqqBj9Jmm0IUz8l0xKEhWwLIhPgxNY0yvQ==}
+
+  '@ethersproject/hash@5.8.0':
+    resolution: {integrity: sha512-ac/lBcTbEWW/VGJij0CNSw/wPcw9bSRgCB0AIBz8CvED/jfvDoV9hsIIiWfvWmFEi8RcXtlNwp2jv6ozWOsooA==}
+
+  '@ethersproject/hdnode@5.8.0':
+    resolution: {integrity: sha512-4bK1VF6E83/3/Im0ERnnUeWOY3P1BZml4ZD3wcH8Ys0/d1h1xaFt6Zc+Dh9zXf9TapGro0T4wvO71UTCp3/uoA==}
+
+  '@ethersproject/json-wallets@5.8.0':
+    resolution: {integrity: sha512-HxblNck8FVUtNxS3VTEYJAcwiKYsBIF77W15HufqlBF9gGfhmYOJtYZp8fSDZtn9y5EaXTE87zDwzxRoTFk11w==}
+
+  '@ethersproject/keccak256@5.8.0':
+    resolution: {integrity: sha512-A1pkKLZSz8pDaQ1ftutZoaN46I6+jvuqugx5KYNeQOPqq+JZ0Txm7dlWesCHB5cndJSu5vP2VKptKf7cksERng==}
+
+  '@ethersproject/logger@5.8.0':
+    resolution: {integrity: sha512-Qe6knGmY+zPPWTC+wQrpitodgBfH7XoceCGL5bJVejmH+yCS3R8jJm8iiWuvWbG76RUmyEG53oqv6GMVWqunjA==}
+
+  '@ethersproject/networks@5.8.0':
+    resolution: {integrity: sha512-egPJh3aPVAzbHwq8DD7Po53J4OUSsA1MjQp8Vf/OZPav5rlmWUaFLiq8cvQiGK0Z5K6LYzm29+VA/p4RL1FzNg==}
+
+  '@ethersproject/pbkdf2@5.8.0':
+    resolution: {integrity: sha512-wuHiv97BrzCmfEaPbUFpMjlVg/IDkZThp9Ri88BpjRleg4iePJaj2SW8AIyE8cXn5V1tuAaMj6lzvsGJkGWskg==}
+
+  '@ethersproject/properties@5.8.0':
+    resolution: {integrity: sha512-PYuiEoQ+FMaZZNGrStmN7+lWjlsoufGIHdww7454FIaGdbe/p5rnaCXTr5MtBYl3NkeoVhHZuyzChPeGeKIpQw==}
+
+  '@ethersproject/providers@5.8.0':
+    resolution: {integrity: sha512-3Il3oTzEx3o6kzcg9ZzbE+oCZYyY+3Zh83sKkn4s1DZfTUjIegHnN2Cm0kbn9YFy45FDVcuCLLONhU7ny0SsCw==}
+
+  '@ethersproject/random@5.8.0':
+    resolution: {integrity: sha512-E4I5TDl7SVqyg4/kkA/qTfuLWAQGXmSOgYyO01So8hLfwgKvYK5snIlzxJMk72IFdG/7oh8yuSqY2KX7MMwg+A==}
+
+  '@ethersproject/rlp@5.8.0':
+    resolution: {integrity: sha512-LqZgAznqDbiEunaUvykH2JAoXTT9NV0Atqk8rQN9nx9SEgThA/WMx5DnW8a9FOufo//6FZOCHZ+XiClzgbqV9Q==}
+
+  '@ethersproject/sha2@5.8.0':
+    resolution: {integrity: sha512-dDOUrXr9wF/YFltgTBYS0tKslPEKr6AekjqDW2dbn1L1xmjGR+9GiKu4ajxovnrDbwxAKdHjW8jNcwfz8PAz4A==}
+
+  '@ethersproject/signing-key@5.8.0':
+    resolution: {integrity: sha512-LrPW2ZxoigFi6U6aVkFN/fa9Yx/+4AtIUe4/HACTvKJdhm0eeb107EVCIQcrLZkxaSIgc/eCrX8Q1GtbH+9n3w==}
+
+  '@ethersproject/solidity@5.8.0':
+    resolution: {integrity: sha512-4CxFeCgmIWamOHwYN9d+QWGxye9qQLilpgTU0XhYs1OahkclF+ewO+3V1U0mvpiuQxm5EHHmv8f7ClVII8EHsA==}
+
+  '@ethersproject/strings@5.8.0':
+    resolution: {integrity: sha512-qWEAk0MAvl0LszjdfnZ2uC8xbR2wdv4cDabyHiBh3Cldq/T8dPH3V4BbBsAYJUeonwD+8afVXld274Ls+Y1xXg==}
+
+  '@ethersproject/transactions@5.8.0':
+    resolution: {integrity: sha512-UglxSDjByHG0TuU17bDfCemZ3AnKO2vYrL5/2n2oXvKzvb7Cz+W9gOWXKARjp2URVwcWlQlPOEQyAviKwT4AHg==}
+
+  '@ethersproject/units@5.8.0':
+    resolution: {integrity: sha512-lxq0CAnc5kMGIiWW4Mr041VT8IhNM+Pn5T3haO74XZWFulk7wH1Gv64HqE96hT4a7iiNMdOCFEBgaxWuk8ETKQ==}
+
+  '@ethersproject/wallet@5.8.0':
+    resolution: {integrity: sha512-G+jnzmgg6UxurVKRKvw27h0kvG75YKXZKdlLYmAHeF32TGUzHkOFd7Zn6QHOTYRFWnfjtSSFjBowKo7vfrXzPA==}
+
+  '@ethersproject/web@5.8.0':
+    resolution: {integrity: sha512-j7+Ksi/9KfGviws6Qtf9Q7KCqRhpwrYKQPs+JBA/rKVFF/yaWLHJEH3zfVP2plVu+eys0d2DlFmhoQJayFewcw==}
+
+  '@ethersproject/wordlists@5.8.0':
+    resolution: {integrity: sha512-2df9bbXicZws2Sb5S6ET493uJ0Z84Fjr3pC4tu/qlnZERibZCeUVuqdtt+7Tv9xxhUxHoIekIA7avrKUWHrezg==}
+
   '@exodus/bytes@1.6.0':
     resolution: {integrity: sha512-y32mI9627q5LR/L8fLc4YyDRJQOi+jK0D9okzLilAdiU3F9we3zC7Y7CFrR/8vAvUyv7FgBAYcNHtvbmhKCFcw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
@@ -5814,6 +6140,12 @@ packages:
     resolution: {integrity: sha512-C+KuEWIF5nSBrobFJhT//JS87OZ++QDORB6f2q2Wm6fl2mueSTpFBeBsveK0KW9hWiZ4mNiPjsh6Zs4jjdROSg==}
     peerDependencies:
       vue: '>=3'
+
+  '@iden3/bigarray@0.0.2':
+    resolution: {integrity: sha512-Xzdyxqm1bOFF6pdIsiHLLl3HkSLjbhqJHVyqaTxXt3RqXBEnmsUmEW47H7VOi/ak7TdkRpNkxjyK5Zbkm+y52g==}
+
+  '@iden3/binfileutils@0.0.12':
+    resolution: {integrity: sha512-naAmzuDufRIcoNfQ1d99d7hGHufLA3wZSibtr4dMe6ZeiOPV1KwOZWTJ1YVz4HbaWlpDuzVU72dS4ATQS4PXBQ==}
 
   '@img/colour@1.0.0':
     resolution: {integrity: sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw==}
@@ -6545,6 +6877,10 @@ packages:
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
+
+  '@noble/curves@2.0.1':
+    resolution: {integrity: sha512-vs1Az2OOTBiP4q0pwjW5aF0xp9n4MxVrmkFBxc6EKZc6ddYx5gaZiAsZoq0uRRXWbi3AT/sBqn05eRPtn1JCPw==}
+    engines: {node: '>= 20.19.0'}
 
   '@noble/ed25519@2.3.0':
     resolution: {integrity: sha512-M7dvXL2B92/M7dw9+gzuydL8qn/jiqNHaoR3Q+cb1q1GHV7uwE17WCyFMG+Y+TZb5izcaXk5TdJRrDUxHXL78A==}
@@ -8623,6 +8959,354 @@ packages:
   '@ts-morph/common@0.28.1':
     resolution: {integrity: sha512-W74iWf7ILp1ZKNYXY5qbddNaml7e9Sedv5lvU1V8lftlitkc9Pq1A+jlH23ltDgWYeZFFEqGCD1Ies9hqu3O+g==}
 
+  '@turf/along@7.3.1':
+    resolution: {integrity: sha512-z84b9PKsUB69BhkeHA6oPqRO7VaJHwTid1SpuIbwWzDqHTpq8buJBKlrKgHIIthuVr5P/AZiEXmf3R4ifRhDmw==}
+
+  '@turf/angle@7.3.1':
+    resolution: {integrity: sha512-Pcb0Fg8WHsOMKFvIPaYfORrlLYdytWjVAkVTnAqJdmGI+2n+eLROPjJO2sJbpX9yU/dlBgujOB7a1d0PJjhHyQ==}
+
+  '@turf/area@7.3.1':
+    resolution: {integrity: sha512-9nSiwt4zB5QDMcSoTxF28WpK1f741MNKcpUJDiHVRX08CZ4qfGWGV9ZIPQ8TVEn5RE4LyYkFuQ47Z9pdEUZE9Q==}
+
+  '@turf/bbox-clip@7.3.1':
+    resolution: {integrity: sha512-YUeITFtp5QLbpSS0XyQa0GlgMqK4PMgjOeOGOTlWsfDYaqc5SErf7o5UyCOsLAPQW16QZVxJ26uTAE20YkluAA==}
+
+  '@turf/bbox-polygon@7.3.1':
+    resolution: {integrity: sha512-2NvwPfuRtwJk7w5HIC/Knei3mUXrVT+t/0FB1zStgDbakmXrqKISaftlIh4YTOVlUsVnvq0tggjFMLZ/Xxo+lQ==}
+
+  '@turf/bbox@7.3.1':
+    resolution: {integrity: sha512-/IyMKoS7P9B0ch5PIlQ6gMfoE8gRr48+cSbzlyexvEjuDuaAV1VURjH1jAthS0ipFG8RrFxFJKnp7TLL1Skong==}
+
+  '@turf/bearing@7.3.1':
+    resolution: {integrity: sha512-ex78l/LiY6uO6jO8AJepyWE6/tiWEbXjKLOgqUfJSkW23UcMVlhbAKzXDjbsdz9T66sXFC/6QNAh8oaZzmoo6w==}
+
+  '@turf/bezier-spline@7.3.1':
+    resolution: {integrity: sha512-7Mal/d8ttTQ5eu/mwgC53iH9eYBRTBHXsIqEEiTVHChh1iajNuS4/bwYdaxsQsRXKVaFfx+4dCy0cRmqhjgTrw==}
+
+  '@turf/boolean-clockwise@7.3.1':
+    resolution: {integrity: sha512-ik9j0CCrsp/JZ42tbCnyZg86YFoavEU/nyal3HsEgdY5WFYq43aMYqLPRi6yNqE48THEk3fl1BcfgJqAiUhDFA==}
+
+  '@turf/boolean-concave@7.3.1':
+    resolution: {integrity: sha512-jAAt5MhqXSKmRmX7l09oeo9dObf7bMDuzfeUSSNAK+yAi9TE5QWlP4JtzOWC5+gKXsL8dvzE8mvsQj38FzQdEA==}
+
+  '@turf/boolean-contains@7.3.1':
+    resolution: {integrity: sha512-VvytV9ZcUgnitzm5ILVWIoOhoZOh8VZ4dnweUJM3N+A77CzXXFk8e4NqPNZ6tZVPY3ehxzDXrq1+iN87pMcB7g==}
+
+  '@turf/boolean-crosses@7.3.1':
+    resolution: {integrity: sha512-Fn99AxTXQORiQjclUqUYQcA40oJJoJxMBFx/Vycd7v949Lnplt1qrUkBpbZNXQlvHF2gxrgirSfgBDaUnUJjzQ==}
+
+  '@turf/boolean-disjoint@7.3.1':
+    resolution: {integrity: sha512-bqVo+eAYaCq0lcr09zsZdWIAdv22UzGc/h2CCfaBwP5r4o/rFudNFLU9gb9BcM6dBUzrtTgBguShAZr7k3cGbw==}
+
+  '@turf/boolean-equal@7.3.1':
+    resolution: {integrity: sha512-nEsmmNdwD1nzYZLsO6hPC/X/Uag+eT0yuWamD0XxJAQhXBsnSATxKisCJXVJgXvO8M0qvEMW1zZrUGB6Fjfzzw==}
+
+  '@turf/boolean-intersects@7.3.1':
+    resolution: {integrity: sha512-nc6W8qFdzFkfsR6p506HINGu85nHk/Skm+cw3TRQZ5/A44hjf0kYnbhvS3qrCAws3bR+/FKK8O1bsO/Udk8kkg==}
+
+  '@turf/boolean-overlap@7.3.1':
+    resolution: {integrity: sha512-QhhsgCLzkwXIeZhaCmgE3H8yTANJGZatJ5IzQG3xnPTx7LiNAaa/ReN2/NroEv++8Yc0sr5Bkh6xWZOtew1dvQ==}
+
+  '@turf/boolean-parallel@7.3.1':
+    resolution: {integrity: sha512-SXPyYiuaRB1ES/LtcUP11HWyloMJGzN1nYaCLG7H+6l2OKjVJl025qR6uxVElWCzAdElek9nGNeNya1hd9ZHaw==}
+
+  '@turf/boolean-point-in-polygon@7.3.1':
+    resolution: {integrity: sha512-BUPW63vE43LctwkgannjmEFTX1KFR/18SS7WzFahJWK1ZoP0s1jrfxGX+pi0BH/3Dd9mA71hkGKDDnj1Ndcz0g==}
+
+  '@turf/boolean-point-on-line@7.3.1':
+    resolution: {integrity: sha512-8Hywuv7XFpSc8nfH0BJBtt+XTcJ7OjfjpX2Sz+ty8gyiY/2nCLLqq6amu3ebr67ruqZTDpPNQoGGUbUePjF3rA==}
+
+  '@turf/boolean-touches@7.3.1':
+    resolution: {integrity: sha512-XqrQzYGTakoTWeTWT274pfObpbIpAM7L8CzGUa04rJD0l3bv3VK4TUw0v6+bywi5ea6TnJzvOzgvzTb1DtvBKA==}
+
+  '@turf/boolean-valid@7.3.1':
+    resolution: {integrity: sha512-lpw4J5HaV4Tv033s2j/i6QHt6Zx/8Lc90DTfOU0axgRSrs127kbKNJsmDEGvtmV7YjNp8aPbIG1wwAX9wg/dMA==}
+
+  '@turf/boolean-within@7.3.1':
+    resolution: {integrity: sha512-oxP4VU81RRCf59TXCBhVWEyJ5Lsr+wrqvqSAFxyBuur5oLmBqZdYyvL7FQJmYvG0uOxX7ohyHmSJMaTe4EhGDA==}
+
+  '@turf/buffer@7.3.1':
+    resolution: {integrity: sha512-jtdI0Ir3GwPyY1V2dFX039HNhD8MIYLX39c7b9AZdLh7kBuD2VgXJmPvhtnivqMV2SmRlS4fd9cKzNj369/cGg==}
+
+  '@turf/center-mean@7.3.1':
+    resolution: {integrity: sha512-koVenhCl8JPEvtDwH6nhZpLAm9+7XOXosqKdkXyK1uDae3NRyoQQeIYD7nIJHJPCOyeacw6buWzAEoAleBj0XA==}
+
+  '@turf/center-median@7.3.1':
+    resolution: {integrity: sha512-XIvxqnSdcUFOev4WO8AEQth4U3uzfQkxYVkKhZrxpVitqEeSDm5v3ANUeVGYqQ/QNTWvFAFn4zB5+XRRd8tayA==}
+
+  '@turf/center-of-mass@7.3.1':
+    resolution: {integrity: sha512-w2O7RLc0tSs+eEsZCaWa1lYiACsaQTJtie/a4bj5ta1TDTAEjyxC6Rp6br4mN1XPzeSFbEuNw+q9/VdSXU/mGA==}
+
+  '@turf/center@7.3.1':
+    resolution: {integrity: sha512-czqNKLGGdik3phYsWCK5SHKBRkDulUArMlG4v62IQcNcRFq9MbOGqyN21GSshSMO792ynDeWzdXdcKmycQ14Yg==}
+
+  '@turf/centroid@7.3.1':
+    resolution: {integrity: sha512-hRnsDdVBH4pX9mAjYympb2q5W8TCMUMNEjcRrAF7HTCyjIuRmjJf8vUtlzf7TTn9RXbsvPc1vtm3kLw20Jm8DQ==}
+
+  '@turf/circle@7.3.1':
+    resolution: {integrity: sha512-UY2OM1OK7IuyrtN3YE8026ZM3xM9VIkqZ0vRZln8g33D0AogrJVJ/I9T81/VpRPlxTnrbDpzQxJQBH+3vPG/Ow==}
+
+  '@turf/clean-coords@7.3.1':
+    resolution: {integrity: sha512-uNo4lnTekvkw8dUCXIVCc38nZiHBrpy5jn0T8hlodZo/A4XAChFtLQi8NLcX8rtXcaNxeJo+yaPfpP3PSVI2jw==}
+
+  '@turf/clone@7.3.1':
+    resolution: {integrity: sha512-r7xDOfw9ohA7PhZW+8X9RMsO4szB4YqkhEROaELJyLtQ1bo8VNFtndpZdE6YHQpD7Pjlvlb6i99q8w1QLisEPg==}
+
+  '@turf/clusters-dbscan@7.3.1':
+    resolution: {integrity: sha512-rY1wbQlljRhX5e+XM/yw4dKs2HniN45v+Xf5Xde6nv23WyEf/LLjpyD5yrsLa1awfJjD/NmD6axGVebnBBn9YA==}
+
+  '@turf/clusters-kmeans@7.3.1':
+    resolution: {integrity: sha512-HYvRninBY/b5ftkIkoVWjV/wHilNE56cdr6gTlrxuvm4EClilsLDSVYjeiMYU0pjI3xDTc7PlicQDGdnIavUqQ==}
+
+  '@turf/clusters@7.3.1':
+    resolution: {integrity: sha512-ZELehyYnsozw+AHOc426abmPaGJOt46BHnCN+hwtPOkqEbvdZYu+16Y+cjiFnY7FwbvzBjDMb9HRtKJFlAmupg==}
+
+  '@turf/collect@7.3.1':
+    resolution: {integrity: sha512-yVDz5YLcRGFipttb60Y4IAd7zWfbQk6mNW5Kt6/wa8+YueHFzsKJdtbErWfozCVuiKplQZWT5r+9J9g6RnhpjQ==}
+
+  '@turf/combine@7.3.1':
+    resolution: {integrity: sha512-iZBe36sKRq08fY3Ars0JpfYJm8N3LtLLnNzdTxHp8Ry2ORJGHvZHpcv3lQXWL7gyJwDPAye7pyrX7S99IB/1VA==}
+
+  '@turf/concave@7.3.1':
+    resolution: {integrity: sha512-vZWqyAYH4qzOuiqPb+bj2jvpIGzYAH8byUhfFJ2gRFRL3/RfV8jdXL2r0Y6VFScqE6OLVGvtM3ITzXX1/9wTaA==}
+
+  '@turf/convex@7.3.1':
+    resolution: {integrity: sha512-k2T8QVSie4w+KhwUxjzi/6S6VFr33H9gnUawOh4chCGAgje9PljUZLCGbktHgDfAjX1FVzyUyriH+dm86Z7njQ==}
+
+  '@turf/destination@7.3.1':
+    resolution: {integrity: sha512-yyiJtbQJ4AB9Ny/FKDDNuWI9Sg4Jtd2PMpQPqOV3AFq8NNkg0xJSNmDHDxupb3oPqPWYPxyfVI3tBoF+Xhhoig==}
+
+  '@turf/difference@7.3.1':
+    resolution: {integrity: sha512-Ne2AR+1AdeH8aqY2VHcws+Z/1MHl8SlSbSWHBNVZUVEfvyzTrRg8/E+OC5vFaSUvNZXkB/OUufTCM9xsatLKXQ==}
+
+  '@turf/dissolve@7.3.1':
+    resolution: {integrity: sha512-Xmjl4E1aGRMdJjq+HfsiAXZtfMKruq7O+8xvsqnHM6E8iBWlJNSw8ucrNB5RZME8BUojx0q8bvXgS3k68koGyw==}
+
+  '@turf/distance-weight@7.3.1':
+    resolution: {integrity: sha512-h82qLPeMxOfgN62ZysscQCu9IYB5AO+duw7peAQnMtFobpbcQK58158P0cNzxAoTVJXSO/mfR9dI9Zdz7NF75w==}
+
+  '@turf/distance@7.3.1':
+    resolution: {integrity: sha512-DK//doTGgYYjBkcWUywAe7wbZYcdP97hdEJ6rXYVYRoULwGGR3lhY96GNjozg6gaW9q2eSNYnZLpcL5iFVHqgw==}
+
+  '@turf/ellipse@7.3.1':
+    resolution: {integrity: sha512-tcGbS+U7EktZg+UJad17LRU+8C067XDWdmURPCmycaib2zRxeNrImh2Y/589us6wsldlYYoBYRxDY/c1oxIUCA==}
+
+  '@turf/envelope@7.3.1':
+    resolution: {integrity: sha512-Sp3ct/LpWyHN5tTfPOcKXFoVDI1QH9BXtQ+aQzABFp3U5nY2Sz8LFg8SeFQm3K7PpoCnUwSfwDFA4aa+z+4l1g==}
+
+  '@turf/explode@7.3.1':
+    resolution: {integrity: sha512-H0Q8NnmrPoWKhsYYmVmkuT5F4t50N53ByGBf6Ys1n5B9YrFyrT+/aLDXF2C05r+QnW8nFtkM4lFG3ZSBHiq4Xg==}
+
+  '@turf/flatten@7.3.1':
+    resolution: {integrity: sha512-cM/uuQP8oZ4IDJG342uOlqQ8yD9RsAY9Gg9nsDOgJn6tN065aigRCNy2lfrNyLdK/CPTVEWQzx1EQa+zXGSgAg==}
+
+  '@turf/flip@7.3.1':
+    resolution: {integrity: sha512-6sF41pWY8Tw7w72hYc87sR9zzDei7UZ4Db/z0mKuNKueyzl4iTQ/H2JVd/XLZ7Tasz7H8htmrbUO0GR8GY7qiQ==}
+
+  '@turf/geojson-rbush@7.3.1':
+    resolution: {integrity: sha512-EsrBBftZS5TvzRP2opLzwfnPXfmJi45KkGUcKSSFD0bxQe3BQUSmBrZbHMT8avB2s/XHrS/MniqsyeVOMwc35Q==}
+
+  '@turf/great-circle@7.3.1':
+    resolution: {integrity: sha512-pfs7PzBRgYEEyecM0ni6iEF19grn9FmbHyaLz7voYInmc2ZHfWQaxuY4dcf9cziWDaiPlbuyr/RyE6envg1xpw==}
+
+  '@turf/helpers@7.3.1':
+    resolution: {integrity: sha512-zkL34JVhi5XhsuMEO0MUTIIFEJ8yiW1InMu4hu/oRqamlY4mMoZql0viEmH6Dafh/p+zOl8OYvMJ3Vm3rFshgg==}
+
+  '@turf/hex-grid@7.3.1':
+    resolution: {integrity: sha512-cWAKxlU1aa06976C3RhpcilDzLnWwXkH/atNIWKGpLV/HubHrMXxhp9VMBKWaqsLbdn5x2uJjv4MxwWw9/373g==}
+
+  '@turf/interpolate@7.3.1':
+    resolution: {integrity: sha512-dquwDplzkSANMQdvxAu0dRF69EBIIlW/1zTPOB/BQfb/s7j6t8RskgbuV8ew1KpJPMmj7EbexejiMBtRWXTu4Q==}
+
+  '@turf/intersect@7.3.1':
+    resolution: {integrity: sha512-676688YnF9wpprMioQWvxPlUMhtTvYITzw4XoG3lQmLjd/yt2cByanQHWpzWauLfYUlfuL13AeRGdqXRhSkhTQ==}
+
+  '@turf/invariant@7.3.1':
+    resolution: {integrity: sha512-IdZJfDjIDCLH+Gu2yLFoSM7H23sdetIo5t4ET1/25X8gi3GE2XSqbZwaGjuZgNh02nisBewLqNiJs2bo+hrqZA==}
+
+  '@turf/isobands@7.3.1':
+    resolution: {integrity: sha512-An6+yUSrOStQSpZwKW9XN891kCW6eagtuofyudZ2BkoxcYRJ0vcDXo7RoiXuf9nHaG4k/xwhAzTqe8hdO1ltWA==}
+
+  '@turf/isolines@7.3.1':
+    resolution: {integrity: sha512-TcwbTd7Z4BffYe1PtpXUtZvWCwTffta8VxqryGU30CbqKjNJYqrFbEQXS0mo4l3BEPPmT1lfMskUQ2g97O2MWQ==}
+
+  '@turf/jsts@2.7.2':
+    resolution: {integrity: sha512-zAezGlwWHPyU0zxwcX2wQY3RkRpwuoBmhhNE9HY9kWhFDkCxZ3aWK5URKwa/SWKJbj9aztO+8vtdiBA28KVJFg==}
+
+  '@turf/kinks@7.3.1':
+    resolution: {integrity: sha512-gGXNrhlF7zvLwRX672S0Be7bmYjbZEoZYnOGN6RvhyBFSSLFIbne+I74I+lWRzAzG/NhAMBXma5TpB09iTH06Q==}
+
+  '@turf/length@7.3.1':
+    resolution: {integrity: sha512-QOr4qS3yi6qWIfQ/KLcy4rDLdemGCYpqz2YDh29R46seE+arSvlBI0KXvI36rPzgEMcUbQuVQyO65sOSqPaEjQ==}
+
+  '@turf/line-arc@7.3.1':
+    resolution: {integrity: sha512-QSuVP0YWcfl76QjPb5Y2GJqXnziSJ2AuaJm5RKEFt5ELugXdEcHkRtydkGov+ZRPmI93jVmXoEE0UXwQx7aYHA==}
+
+  '@turf/line-chunk@7.3.1':
+    resolution: {integrity: sha512-fbJw/7Qlqz0XRMz0TgtFUivFHr51+++ZUBrARgs3w/pogeAdkrcWKBbuT2cowEsUkXDHaQ7MMpmuV8Uteru1qw==}
+
+  '@turf/line-intersect@7.3.1':
+    resolution: {integrity: sha512-HFPH4Hi+rG7XZ5rijkYL5C9JGVKd6gz6TToShVfqOt/qgGY9/bLYQxymgum/MG7sRhIa8xcKff2d57JrIVuSWA==}
+
+  '@turf/line-offset@7.3.1':
+    resolution: {integrity: sha512-PyElfSyXETXcI8OKRsAJNdOcxlM718EG0d+b9zeO2uRztf2IlSb5w3lYiTIUSslEDA1gMQE31cJE8sAW40+nhg==}
+
+  '@turf/line-overlap@7.3.1':
+    resolution: {integrity: sha512-xIhTfPhJMwz57DvM+/JuzG2BUL/gR/pJfH6w+vofI3akej33LTR8b296h2dhcJjDixxprVVH062AD1Q3AGKyfg==}
+
+  '@turf/line-segment@7.3.1':
+    resolution: {integrity: sha512-hHz1fM2LigNKmnhyHDXtbRrkBqltH/lYEvhgSmv3laZ9PsEYL8jvA3o7+IhLM9B4KPa8N6VGim6ZR5YA5bhLvQ==}
+
+  '@turf/line-slice-along@7.3.1':
+    resolution: {integrity: sha512-RizIhPytHxEewCyUCSMrZ5a58sQev0kZ0jzAV/9iTzvGfRD1VU/RG2ThLpSEqXYKBBSty98rTeSlnwsvZpAraA==}
+
+  '@turf/line-slice@7.3.1':
+    resolution: {integrity: sha512-bp1L4sc7ZOYC4fwxpfWu+IR/COvLFGm5mjbLPK8VBJYa+kUNrzNcB3QE3A8yFRjwPtlUTCm5fDMLSoGtiJcy2g==}
+
+  '@turf/line-split@7.3.1':
+    resolution: {integrity: sha512-Ee4NRN+eYKYX8vJDNvMpyZFjOntKFokQ/E8yFtKMcN++vG7RbnPOo2/ag6TMZaIHsahj4UR2yhqJbHTaB6Dp+g==}
+
+  '@turf/line-to-polygon@7.3.1':
+    resolution: {integrity: sha512-GL4fjbdYYjfOmwTu4dtllNHm18E7+hoXqyca2Rqb2ZzXj++NHvifJ9iYHUSdpV4/mkvVD3U2rU6jzNkjQeXIaA==}
+
+  '@turf/mask@7.3.1':
+    resolution: {integrity: sha512-rSNS6wNuBiaUR1aU7tobgkzHpot5v9GKCn+n5gQ3ad7KWqwwqLWfcCPeyHBWkWEoEwc2yfPqikMQugZbmxrorg==}
+
+  '@turf/meta@7.3.1':
+    resolution: {integrity: sha512-NWsfOE5RVtWpLQNkfOF/RrYvLRPwwruxhZUV0UFIzHqfiRJ50aO9Y6uLY4bwCUe2TumLJQSR4yaoA72Rmr2mnQ==}
+
+  '@turf/midpoint@7.3.1':
+    resolution: {integrity: sha512-hx3eT9ut0Qyl8fyitCREp9l+v5Q4uBILht5+VKQS3p5eK2ijLEsKw4VikNZhh2rZ7bHGrs6obG5/P5ZqDTObiA==}
+
+  '@turf/moran-index@7.3.1':
+    resolution: {integrity: sha512-9t70AjBB0bycJWLVprqS7mtRU+Ha+U4ji5lkKzyg31ZWAr0IwuawY2VQ/ydsodFMLCqmIf8QbWsltV/I/bRdjQ==}
+
+  '@turf/nearest-neighbor-analysis@7.3.1':
+    resolution: {integrity: sha512-qwZON/7v1NbD1H1v3kTHJfLLml2/TNj5QQFRFBJiXRSCydMJT1sKEs5BwJe/9cBbmd0ln3gBWXCkG7Sk3sPgOQ==}
+
+  '@turf/nearest-point-on-line@7.3.1':
+    resolution: {integrity: sha512-FialyHfXXZWLayKQcUtdOtKv3ulOQ9FSI45kSmkDl8b96+VFWHX983Pc94tTrSTSg89+XX7MDr6gRl0yowmF4Q==}
+
+  '@turf/nearest-point-to-line@7.3.1':
+    resolution: {integrity: sha512-7zvhE15vlKBW7F3gYmxZMrnsS2HhXIt0Mpdymy6Y1oMWAXrYIqSeHl1Y/h2CiDh0v91K1KJXf2WyRYacosWiNA==}
+
+  '@turf/nearest-point@7.3.1':
+    resolution: {integrity: sha512-hLKGFzwAEop5z04X5BeurJvz0oVPHQX0rjeL3v83kgIjR/eavQucXKO3XkJBoF1AaT9Dv0mgB8rmj/qrwroWgg==}
+
+  '@turf/planepoint@7.3.1':
+    resolution: {integrity: sha512-/DVTAZcOsSW54B9XDYUXyiL000vJ8WfONCF4FoM71VMeLS7PM3e+4W9gzN21q15XRn3nUftH12tJhqKEqDouvw==}
+
+  '@turf/point-grid@7.3.1':
+    resolution: {integrity: sha512-KqBlGgBzI/M7/awK25o9p8Q+mRjQDRU4mpHtqNzqNxgidk4JxnUnGybYTnsjp3n1Zid3yASv5kARJ4i/Jc5F7w==}
+
+  '@turf/point-on-feature@7.3.1':
+    resolution: {integrity: sha512-uX15wjujBMeMKAN7OLK4RV6KCLxsoQiFRB9kMtbTeZj13mDo+Bz5SyNN+M2AXqrdsQI9+4h0UTwu3EjcXj/nEw==}
+
+  '@turf/point-to-line-distance@7.3.1':
+    resolution: {integrity: sha512-vynnX3zIMmJY633fyAIKnzlsmL7OBhbk05YhWVSjCKvSQV8C2xMA9pWaLFacn1xu4nfMSVDUaNOrcAqwubN9pg==}
+
+  '@turf/point-to-polygon-distance@7.3.1':
+    resolution: {integrity: sha512-A2hTQjMKO2VEMdgOariICLCjt0BDc1wAQ7Mzqc4vFuol1/GlAed4JqyLg1zXuOVlZcojvXDk/XRuZwXDlRJkBA==}
+
+  '@turf/points-within-polygon@7.3.1':
+    resolution: {integrity: sha512-tVcQVykc1vvSqz+l/PA4EKVWfMrGtA3ZUxDYBoD2tSaM79EpdTcY1BzfxT5O2582SQ0AdNFXDXRTf7VI6u/+2Q==}
+
+  '@turf/polygon-smooth@7.3.1':
+    resolution: {integrity: sha512-CNi4SdpOycZRSBr4o0MlrFdC6x5xcXP6jKx2yXZf9FPrOWamHsDXa+NrywCOAPhgZKnBodRF6usKWudVMyPIgg==}
+
+  '@turf/polygon-tangents@7.3.1':
+    resolution: {integrity: sha512-XPLeCLQAcU2xco+3kS5Mp4AKmCKjOGzyZoC6oy8BuvHg1HaaEs0ZRzcmf0x17cq7bruhJ7n/QkcudnAueae5mg==}
+
+  '@turf/polygon-to-line@7.3.1':
+    resolution: {integrity: sha512-qTOFzn7SLQ0TcKBsPFAFYz7iiq34ijqinpjyr9fHQlFHRHeWzUXiWyIn5a2uOHazkdhHCEXNX8JPkt6hjdZ/fQ==}
+
+  '@turf/polygonize@7.3.1':
+    resolution: {integrity: sha512-BSamH4eDSbREtye/RZiIyt488KI/hO3+2FiDB8JUoHNESe3VNWk4KEy+sL6oqfhOZcRWndHtJ6MOi3HFptyJrw==}
+
+  '@turf/projection@7.3.1':
+    resolution: {integrity: sha512-nDM3LG2j37B1tCpF4xL4rUBrQJcG585IRyDIxL2QEvP1LLv6dcm4fodw70HcGAj05Ux8bJr7IOXQXnobOJrlRA==}
+
+  '@turf/quadrat-analysis@7.3.1':
+    resolution: {integrity: sha512-Kwqtih5CnijULGoTobS0pXdzh/Yr3iGatJcKks4IaxA4+hlJ6Z+Mj47QfKvUtl/IP3lZpVzezewJ51Y989YtVg==}
+
+  '@turf/random@7.3.1':
+    resolution: {integrity: sha512-Iruica0gfdAuuqWG3SLe1MQOEP4IOGelPp81Cu552AamhHJmkEZCaiis2n28qdOlAbDs1NJZeJhRFNkiopiy+Q==}
+
+  '@turf/rectangle-grid@7.3.1':
+    resolution: {integrity: sha512-3/fwd1dzeGApxGXAzyVINFylmn8trYTPLG6jtqOgriAdiHPMTtPqSW58wpScC43oKbK3Bps9dSZ43jvcbrfGxw==}
+
+  '@turf/rewind@7.3.1':
+    resolution: {integrity: sha512-gD2TGPNq3SE6IlpDwkVHQthZ2U2MElh6X4Vfld3K7VsBHJv4eBct6OOgSWZLkVVPHuWNlVFTNtcRh2LAznMtgw==}
+
+  '@turf/rhumb-bearing@7.3.1':
+    resolution: {integrity: sha512-GA/EUSOMapLp6qK5kOX+PkFg2MMUHzUSm/jVezv6Fted0dAlCgXHOrKgLm0tN8PqbH7Oj9xQhv9+3/1ze7W8YA==}
+
+  '@turf/rhumb-destination@7.3.1':
+    resolution: {integrity: sha512-HjtAFr5DTISUn9b4oaZpX79tYl72r4EyAj40HKwjQeV6KkwIe5/h4zryOSEpnvAK2Gnkmu1GxYeTGfM5z3J9JA==}
+
+  '@turf/rhumb-distance@7.3.1':
+    resolution: {integrity: sha512-9ZvXU0ii2aywdphLhiawl3uxMEHucMmXCBiRj3WhmssTY9CZkFii9iImbJEqz5glxh6/gzXDcz1CCFQUdNP2xA==}
+
+  '@turf/sample@7.3.1':
+    resolution: {integrity: sha512-s9IkXrrtaHRllgk9X2tmg8+SJKLG6orQwf0p1wZX8WxnHXvmnHaju465A3nmtGGVDI/RSD8KwU9aqPcc4AinNw==}
+
+  '@turf/sector@7.3.1':
+    resolution: {integrity: sha512-3BYJk7pQaqVr1Ji1ors6FUnhCJVHuobNf4bYW2yAUW1rxL+snuo6aTCsu39hpkwLj4BBknYt5w4MIOy5b8+QKg==}
+
+  '@turf/shortest-path@7.3.1':
+    resolution: {integrity: sha512-B0j6MoTSeGw1inRJPfj+6lU4WVXBNFAafqs/BkccScnCHLLK+vMnsOkyQoDX2vdZnhPTEaGj7TEL1SIjV6IMgA==}
+
+  '@turf/simplify@7.3.1':
+    resolution: {integrity: sha512-8LRITQAyNAdvVInjm8pal3J7ZAZZBYrYd5oApXqHlIFK7gEiE21Hx9CZyog6AHDjxZCinwnEoGkzDxORh/mNMg==}
+
+  '@turf/square-grid@7.3.1':
+    resolution: {integrity: sha512-WYCX8+nrqHyAhKBSBHFp1eU1gWrcojz9uVvhCbDO8NO14SLHowzWOgB61Gv8KlLXCUBjDr+rYWCt3ymyPzU5TA==}
+
+  '@turf/square@7.3.1':
+    resolution: {integrity: sha512-LvMkII6bbHaFHp67jI029xHjWFK3pnqwF8c2pUNU+0dL+45KgrO2jaFTnNQdsjexPymI+uaNLlG809Y0aGGQlw==}
+
+  '@turf/standard-deviational-ellipse@7.3.1':
+    resolution: {integrity: sha512-u9ojpWyv3rnFioYZyya6VXVDrRPYymNROVKwGqnQzffYE1MdxhJ6ik/CvdcChzCNvSNVBJQUvnjjPq2C2uOsLA==}
+
+  '@turf/tag@7.3.1':
+    resolution: {integrity: sha512-Y7G2EWm0/j78ss5wCnjGWKfmPbXw9yKJFg93EuMnwggIsDfKdQi/vdUInjQ0462RIQA87StlydPG09X/8bquwQ==}
+
+  '@turf/tesselate@7.3.1':
+    resolution: {integrity: sha512-iJnatp9RcJvyffBjqJaw5GbKE/PQosT8DH2kgG7pv4Re0xl3h/QvCjvTlCTEmJ5cNY4geZVKUXDvkkCkgQQVuA==}
+
+  '@turf/tin@7.3.1':
+    resolution: {integrity: sha512-pDtHE8rLXvV4zAC9mWmwToDDda2ZTty8IZqZIoUqTnlf6AJjzF7TJrhoE3a+zukRTUI1wowTFqe2NvwgNX0yew==}
+
+  '@turf/transform-rotate@7.3.1':
+    resolution: {integrity: sha512-KAYebOkk7IT2j7S8M+ZxDAmyqeni9ZZGU9ouD6mvd/hTpDOlGG+ORRmg312RxG0NiThzCHLyeG1Nea1nEud6bg==}
+
+  '@turf/transform-scale@7.3.1':
+    resolution: {integrity: sha512-e8jBSWEn0BMxG0HR8ZMvkHgBgdwNrFRzbhy8DqQwZDgUN59fMeWGbjX5QR5Exl2gZBPaBXkgbDgEhh/JD3kYhw==}
+
+  '@turf/transform-translate@7.3.1':
+    resolution: {integrity: sha512-yeaW1EqfuuY4l5VBWSsItglaZ9qdTFD0QEIUW1ooOYuQvtKQ2MTKrcQIKLXZckxQrrNq4TXsZDaBbFs+U1wtcQ==}
+
+  '@turf/triangle-grid@7.3.1':
+    resolution: {integrity: sha512-lhZyqnQC/M8x8DgQURHNZP/HaJIqrL5We5ZvzJBX+lrH2u4DO831awJcuDniRuJ5e0QE5n4yMsBJO77KMNdKfw==}
+
+  '@turf/truncate@7.3.1':
+    resolution: {integrity: sha512-rcXHM2m17hyKoW1dJpOvTgUUWFOKluTKKsoLmhEE6aRAYwtuVetkcInt4qBtS1bv7MaL//glbvq0kdEGR0YaOA==}
+
+  '@turf/turf@7.3.1':
+    resolution: {integrity: sha512-0uKkNnM6Bo6cIzZcJ6wQ+FjFioTFXWS3woGDvQ5R7EPehNfdr4HTS39m1seE+HdI8lGItMZehb6fb0jtjP4Clg==}
+
+  '@turf/union@7.3.1':
+    resolution: {integrity: sha512-Fk8HvP2gRrRJz8xefeoFJJUeLwhih3HoPPKlqaDf/6L43jwAzBD6BPu59+AwRXOlaZeOUMNMGzgSgx0KKrBwBg==}
+
+  '@turf/unkink-polygon@7.3.1':
+    resolution: {integrity: sha512-6NVFkCpJUT2P4Yf3z/FI2uGDXqVdEqZqKGl2hYitmH7mNiKhU4bAvvcw7nCSfNG3sUyNhibbtOEopYMRgwimPw==}
+
+  '@turf/voronoi@7.3.1':
+    resolution: {integrity: sha512-yS+0EDwSIOizEXI+05qixw/OGZalpfsz9xzBWbCBA3Gu2boLMXErFZ73qzfu39Vwk+ILbu5em0p+VhULBzvH9w==}
+
+  '@tweenjs/tween.js@23.1.3':
+    resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
+
   '@tweenjs/tween.js@25.0.0':
     resolution: {integrity: sha512-XKLA6syeBUaPzx4j3qwMqzzq+V4uo72BnlbOjmuljLrRqdsd3qnzvZZoxvMHZ23ndsRS4aufU6JOZYpCbU6T1A==}
 
@@ -8757,6 +9441,9 @@ packages:
 
   '@types/d3-transition@3.0.9':
     resolution: {integrity: sha512-uZS5shfxzO3rGlu0cC3bjmMFKsXv+SmZZcgp0KD22ts4uGXp5EVYGzu/0YdwZeKmddhcAccYtREJKkPfXkZuCg==}
+
+  '@types/d3-voronoi@1.1.12':
+    resolution: {integrity: sha512-DauBl25PKZZ0WVJr42a6CNvI6efsdzofl9sajqZr2Gf5Gu733WkDdUGiPkUHXiUvYGzNNlFQde2wdZdfQPG+yw==}
 
   '@types/d3-zoom@3.0.8':
     resolution: {integrity: sha512-iqMC4/YlFCSlO8+2Ii1GGGliCAY4XdeG748w5vQUbevlbDu0zSjH/+jojorQVBK/se0j6DUFNPBGSqD3YWYnDw==}
@@ -9025,6 +9712,9 @@ packages:
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
 
+  '@types/stats.js@0.17.4':
+    resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}
+
   '@types/statuses@2.0.6':
     resolution: {integrity: sha512-xMAgYwceFhRA2zY+XbEA7mxYbA093wdiW8Vu6gZPGWy9cmOyU9XesH1tNcEWsKFd5Vzrqx5T3D38PWx1FIIXkA==}
 
@@ -9033,6 +9723,9 @@ packages:
 
   '@types/three@0.135.0':
     resolution: {integrity: sha512-l7WLhIHjhHMtlpyTSltPPAKLpiMwgMD1hXHj59AVUpYRoZP7Fd9NNOSRSvZBCPLpTHPYojgQvSJCoza9zoL7bg==}
+
+  '@types/three@0.171.0':
+    resolution: {integrity: sha512-oLuT1SAsT+CUg/wxUTFHo0K3NtJLnx9sJhZWQJp/0uXqFpzSk1hRHmvWvpaAWSfvx2db0lVKZ5/wV0I0isD2mQ==}
 
   '@types/throttle-debounce@5.0.2':
     resolution: {integrity: sha512-pDzSNulqooSKvSNcksnV72nk8p7gRqN8As71Sp28nov1IgmPKWbOEIwAWvBME5pPTtaXJAvG3O4oc76HlQ4kqQ==}
@@ -9078,6 +9771,9 @@ packages:
 
   '@types/web-bluetooth@0.0.21':
     resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
+  '@types/webxr@0.5.24':
+    resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
 
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
@@ -9698,6 +10394,9 @@ packages:
     resolution: {integrity: sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==}
     engines: {node: '>=12.0'}
 
+  aes-js@3.0.0:
+    resolution: {integrity: sha512-H7wUZRn8WpTq9jocdxQ2c8x2sKo9ZVmzfRE13GiNJXfp7NcKYEdvl3vspKjXox6RIG2VtaRe4JFvxG4rqp2Zuw==}
+
   aes-js@4.0.0-beta.5:
     resolution: {integrity: sha512-G965FqalsNyrPqgEGON7nIx1e/OVENSgiEIzyC63haUMuvNnwIgIjMs52hlTCKhkBny7A2ORNlfY9Zu+jmGk1Q==}
 
@@ -10141,6 +10840,9 @@ packages:
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
 
+  bech32@1.1.4:
+    resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
+
   better-react-mathjax@2.3.0:
     resolution: {integrity: sha512-K0ceQC+jQmB+NLDogO5HCpqmYf18AU2FxDbLdduYgkHYWZApFggkHE4dIaXCV1NqeoscESYXXo1GSkY6fA295w==}
     peerDependencies:
@@ -10149,6 +10851,10 @@ packages:
   better-sqlite3@12.5.0:
     resolution: {integrity: sha512-WwCZ/5Diz7rsF29o27o0Gcc1Du+l7Zsv7SYtVPG0X3G/uUI1LqdxrQI7c9Hs2FWpqXXERjW9hp6g3/tH7DlVKg==}
     engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x}
+
+  bfj@7.1.0:
+    resolution: {integrity: sha512-I6MMLkn+anzNdCUp9hMRyui1HaNEUCco50lxbvNS4+EyXg8lN3nJ48PjPWtbH8UVS9CuMoaKE9U2V3l29DaRQw==}
+    engines: {node: '>= 8.0.0'}
 
   bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}
@@ -10182,8 +10888,24 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
+  blake-hash@2.0.0:
+    resolution: {integrity: sha512-Igj8YowDu1PRkRsxZA7NVkdFNxH5rKv5cpLxQ0CVXSIA77pVYwCPRQJ2sMew/oneUpfuYRyjG6r8SmmmnbZb1w==}
+    engines: {node: '>= 10'}
+
+  blake2b-wasm@2.4.0:
+    resolution: {integrity: sha512-S1kwmW2ZhZFFFOghcx73+ZajEfKBqhP82JMssxtLVMxlaPea1p9uoLiUZ5WYyHn0KddwbLc+0vh4wR0KBNoT5w==}
+
+  blake2b@2.1.4:
+    resolution: {integrity: sha512-AyBuuJNI64gIvwx13qiICz6H6hpmjvYS5DGkG6jbXMOT8Z3WUJ3V1X0FlhIoT1b/5JtHE3ki+xjtMvu1nn+t9A==}
+
+  bluebird@3.7.2:
+    resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
+
   bn.js@4.11.6:
     resolution: {integrity: sha512-XWwnNNFCuuSQ0m3r3C4LE3EiORltHd9M05pq6FOlVeiophzRbMo50Sbz1ehl8K3Z+jw9+vmgnXefY1hz8X+2wA==}
+
+  bn.js@4.12.2:
+    resolution: {integrity: sha512-n4DSx829VRTRByMRGdjQ9iqsN0Bh4OolPsFnaZBLcbi8iXcB+kJ9s7EnRt4wILZNV3kPLHkRVfOc/HvhC3ovDw==}
 
   bn.js@5.2.2:
     resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==}
@@ -10222,6 +10944,9 @@ packages:
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
+
+  brorand@1.1.0:
+    resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
 
   brotli@1.3.3:
     resolution: {integrity: sha512-oTKjJdShmDuGW94SyyaoQvAjf30dZaHnjJ8uAF+u2/vGJkJbJPJAT1gDiOJP5v1Zb6f9KEyW/1HpuaWIXtGHPg==}
@@ -10399,6 +11124,9 @@ packages:
   check-error@1.0.3:
     resolution: {integrity: sha512-iKEoDYaRmd1mxM90a2OEfWhjsjPpYPuQ+lMYsoxB126+t8fw7ySEO48nmDg5COTjxDI65/Y2OWpeEHk3ZOe8zg==}
 
+  check-types@11.2.3:
+    resolution: {integrity: sha512-+67P1GkJRaxQD6PKK0Et9DhwQB+vGg3PM5+aavopCpZT1lj9jeqfvpgTLAWErNj8qApkkmXlu/Ug74kmhagkXg==}
+
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
 
@@ -10457,6 +11185,13 @@ packages:
   ci-info@4.3.1:
     resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
     engines: {node: '>=8'}
+
+  circom_runtime@0.1.28:
+    resolution: {integrity: sha512-ACagpQ7zBRLKDl5xRZ4KpmYIcZDUjOiNRuxvXLqhnnlLSVY1Dbvh73TI853nqoR0oEbihtWmMSjgc5f+pXf/jQ==}
+    hasBin: true
+
+  circomlibjs@0.1.7:
+    resolution: {integrity: sha512-GRAUoAlKAsiiTa+PA725G9RmEmJJRc8tRFxw/zKktUxlQISGznT4hH4ESvW8FNTsrGg/nNd06sGP/Wlx0LUHVg==}
 
   citty-test-utils@0.1.1:
     resolution: {integrity: sha512-Jdps1K73r0uB3GUYnzBahjILL8qEAijtQLkRhGlzSNnwiXqy9ySUMLeyNJk2k2O53sy2Uey1ddMcRBxBqD3FMA==}
@@ -10674,6 +11409,9 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  concaveman@1.2.1:
+    resolution: {integrity: sha512-PwZYKaM/ckQSa8peP5JpVr7IMJ4Nn/MHIaWUjP4be+KoZ7Botgs8seAZGpmaOM+UZXawcdYRao/px9ycrCihHw==}
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
@@ -11041,6 +11779,9 @@ packages:
     resolution: {integrity: sha512-iJc4TwyANnOGR1OmWhsS9ayRS3s+XQ185FmuHObThD+5AeJCakAAbWv8KimMTt08xCCLNgneQwFp+JRJOr9qGQ==}
     engines: {node: '>=0.10'}
 
+  d3-array@1.2.4:
+    resolution: {integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==}
+
   d3-array@2.12.1:
     resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
 
@@ -11115,6 +11856,9 @@ packages:
     resolution: {integrity: sha512-p0bK60CEzph1iqmnxut7d/1kyTmm3UWtPlwdkM31AU+LW+BXazd5zJdoCn7VFxNCHXRngPHRnsNn5uGjLRGndg==}
     engines: {node: '>=12'}
     hasBin: true
+
+  d3-geo@1.7.1:
+    resolution: {integrity: sha512-O4AempWAr+P5qbk2bC2FuN/sDW4z+dN2wDf9QV3bxQt4M5HfOEeXLgJ/UKQW0+o1Dj8BE+L5kiDbdWUMjsmQpw==}
 
   d3-geo@3.1.1:
     resolution: {integrity: sha512-637ln3gXKXOwhalDzinUgY83KzNWZRKbYubaG+fGVuc/dxO64RRljtCTnf5ecMyE1RIdtqpkVcq0IbtU2S8j2Q==}
@@ -11198,6 +11942,9 @@ packages:
     engines: {node: '>=12'}
     peerDependencies:
       d3-selection: 2 - 3
+
+  d3-voronoi@1.1.2:
+    resolution: {integrity: sha512-RhGS1u2vavcO7ay7ZNAPo4xeDh/VYeGof3x5ZLJBQgYhLegxr3s5IykvWmJ94FTU6mcbtp4sloqZ54mP6R4Utw==}
 
   d3-zoom@3.0.0:
     resolution: {integrity: sha512-b8AmV3kfQaqWAuacbPuNbL6vahnOJflOhexLzMMNLga62+/nh0JzvJ0aO/5a5MVgUFGS7Hu1P9P03o3fJkDCyw==}
@@ -11448,6 +12195,9 @@ packages:
     resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
 
+  dilithium-crystals@1.0.6:
+    resolution: {integrity: sha512-zPMHDmr2l2A6ZU574cbwNn1AX1UkIIYcJTcN4DEycrKXtgqGp7kPYSpatzcEthTLEKwwYBWYyV6mO5HcBlZwyg==}
+
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
@@ -11651,6 +12401,11 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
+  ejs@3.1.10:
+    resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
+    engines: {node: '>=0.10.0'}
+    hasBin: true
+
   electron-to-chromium@1.5.267:
     resolution: {integrity: sha512-0Drusm6MVRXSOJpGbaSVgcQsuB4hEkMpHXaVstcPmhu5LIedxs1xNK/nIxmQIU/RPC0+1/o0AVZfBTkTNJOdUw==}
 
@@ -11659,6 +12414,9 @@ packages:
 
   elkjs@0.11.0:
     resolution: {integrity: sha512-u4J8h9mwEDaYMqo0RYJpqNMFDoMK7f+pu4GjcV+N8jIC7TRdORgzkfSjTJemhqONFfH6fBI3wpysgWbhgVWIXw==}
+
+  elliptic@6.6.1:
+    resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
 
   embla-carousel-auto-height@8.6.0:
     resolution: {integrity: sha512-/HrJQOEM6aol/oF33gd2QlINcXy3e19fJWvHDuHWp2bpyTa+2dm9tVVJak30m2Qy6QyQ6Fc8DkImtv7pxWOJUQ==}
@@ -11890,6 +12648,11 @@ packages:
     resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
     engines: {node: '>=12'}
 
+  escodegen@1.14.3:
+    resolution: {integrity: sha512-qFcX0XJkdg+PB3xjZZG/wKSuT1PnQWx57+TVSjIMmILd2yC/6ByYElPwJnslDsuWuSAp4AwJGumarAAmJch5Kw==}
+    engines: {node: '>=4.0'}
+    hasBin: true
+
   escomplex-plugin-metrics-module@0.1.0:
     resolution: {integrity: sha512-lEHGInx1gAfgIRJeSTXggTvfEtIG061G0Kzk4hIq0qN6nd2prXZihAPRuLB9DdxCmxXvLVFqi+Bnun9rDw1/zg==}
 
@@ -12118,6 +12881,11 @@ packages:
     resolution: {integrity: sha512-oruZaFkjorTpF32kDSI5/75ViwGeZginGGy2NoOSg3Q9bnwlnmDm4HLnkl0RE3n+njDXR037aY1+x58Z/zFdwQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
+  esprima@1.2.2:
+    resolution: {integrity: sha512-+JpPZam9w5DuJ3Q67SqsMGtiHKENSMRVoxvArfJZK01/BfLEObtZ6orJa/MtoGNR/rfMgp5837T41PAmTwAv/A==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
   esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
@@ -12186,6 +12954,9 @@ packages:
 
   ethereum-cryptography@2.2.1:
     resolution: {integrity: sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg==}
+
+  ethers@5.8.0:
+    resolution: {integrity: sha512-DUq+7fHrCg1aPDFCHx6UIPb3nmt2XMpM7Y/g2gLhsl3lIBqeAfOJIl1qEvRf2uq3BiKxmh6Fh5pfp2ieyek7Kg==}
 
   ethers@6.16.0:
     resolution: {integrity: sha512-U1wulmetNymijEhpSEQ7Ct/P/Jw9/e7R1j5XIbPRydgV2DjLVMsULDlNksq3RQnFgKoLlZf88ijYtWEXcPa07A==}
@@ -12312,6 +13083,9 @@ packages:
     resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
     hasBin: true
 
+  fastfile@0.0.20:
+    resolution: {integrity: sha512-r5ZDbgImvVWCP0lA/cGNgQcZqR+aYdFx3u+CtJqUE510pBUVGMn4ulL/iRTI4tACTYsNJ736uzFxEBXesPAktA==}
+
   fastify-plugin@5.1.0:
     resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
 
@@ -12366,6 +13140,15 @@ packages:
   fetch@1.1.0:
     resolution: {integrity: sha512-5O8TwrGzoNblBG/jtK4NFuZwNCkZX6s5GfRNOaGtm+QGJEuNakSC/i2RW0R93KX6E0jVjNXm6O3CRN4Ql3K+yA==}
 
+  ffjavascript@0.2.63:
+    resolution: {integrity: sha512-dBgdsfGks58b66JnUZeZpGxdMIDQ4QsD3VYlRJyFVrKQHb2kJy4R2gufx5oetrTxXPT+aEjg0dOvOLg1N0on4A==}
+
+  ffjavascript@0.3.0:
+    resolution: {integrity: sha512-l7sR5kmU3gRwDy8g0Z2tYBXy5ttmafRPFOqY7S6af5cq51JqJWt5eQ/lSR/rs2wQNbDYaYlQr5O+OSUf/oMLoQ==}
+
+  ffjavascript@0.3.1:
+    resolution: {integrity: sha512-4PbK1WYodQtuF47D4pRI5KUg3Q392vuP5WjE1THSnceHdXwU3ijaoS0OqxTzLknCtz4Z2TtABzkBdBdMn3B/Aw==}
+
   fflate@0.7.4:
     resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
 
@@ -12399,6 +13182,9 @@ packages:
 
   file-uri-to-path@1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+
+  filelist@1.0.4:
+    resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -12629,6 +13415,12 @@ packages:
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
+
+  geojson-equality-ts@1.0.2:
+    resolution: {integrity: sha512-h3Ryq+0mCSN/7yLs0eDgrZhvc9af23o/QuC4aTiuuzP/MRCtd6mf5rLsLRY44jX0RPUfM8c4GqERQmlUxPGPoQ==}
+
+  geojson-polygon-self-intersections@1.2.2:
+    resolution: {integrity: sha512-6XRNF4CsRHYmR9z5YuIk5f/aOototnDf0dgMqYGcS7y1l57ttt6MAIAxl3rXyas6lq1HEbTuLMh4PgvO+OV42w==}
 
   geojson-vt@3.2.1:
     resolution: {integrity: sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==}
@@ -13011,11 +13803,18 @@ packages:
   history@4.10.1:
     resolution: {integrity: sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==}
 
+  hmac-drbg@1.0.1:
+    resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
+
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
+
+  hoopy@0.1.4:
+    resolution: {integrity: sha512-HRcs+2mr52W0K+x8RzcLzuPPmVIKMSv97RGHy0Ea9y/mpcaK+xTrjICA04KAHi4GRzxliNqNJEFYWHghy3rSfQ==}
+    engines: {node: '>= 6.0.0'}
 
   hpack.js@2.1.6:
     resolution: {integrity: sha512-zJxVehUdMGIKsRaNt7apO2Gqp0BdqW5yaiGHXXmbpvxgBYVZnAql+BJb4RO5ad2MgpbZKn5G6nMnegrH1FcNYQ==}
@@ -13665,6 +14464,11 @@ packages:
     resolution: {integrity: sha512-zptv57P3GpL+O0I7VdMJNBZCu+BPHVQUk55Ft8/QCJjTVxrnJHuVuX/0Bl2A6/+2oyR/ZMEuFKwmzqqZ/U5nPQ==}
     engines: {node: 20 || >=22}
 
+  jake@10.9.4:
+    resolution: {integrity: sha512-wpHYzhxiVQL+IV05BLE2Xn34zW1S223hvjtqk0+gsPrwd/8JNLXJgZZM/iPFsYc1xyphF+6M6EvdE5E9MBGkDA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   jerrypick@1.1.2:
     resolution: {integrity: sha512-YKnxXEekXKzhpf7CLYA0A+oDP8V0OhICNCr5lv96FvSsDEmrb0GKM776JgQvHTMjr7DTTPEVv/1Ciaw0uEWzBA==}
     engines: {node: '>=12'}
@@ -13825,6 +14629,9 @@ packages:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
 
+  js-sha3@0.8.0:
+    resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
+
   js-tiktoken@1.0.21:
     resolution: {integrity: sha512-biOj/6M5qdgx5TKjDnFT1ymSpM5tbd3ylwDtrQvFQSu0Z7bBYko2dF+W/aUkXUPuk6IVpRxk/3Q2sHOzGlS36g==}
 
@@ -13964,9 +14771,16 @@ packages:
     resolution: {integrity: sha512-pjMIdkXfC1T2wrX9B9i2uXhGdyCmgec3qgMht+TDj+S0qX3bjWMQUfL7NeqEhuRTi8G5ESzmL9uGlST7nzSEWg==}
     engines: {node: '>=18'}
 
+  jsonpath@1.1.1:
+    resolution: {integrity: sha512-l6Cg7jRpixfbgoWgkrl77dgEj8RPvND0wMH6TwQmi9Qs4TFfS9u5cUFnbeKTwj5ga5Y3BTGGNI28k117LJ009w==}
+
   jsonpointer@5.0.1:
     resolution: {integrity: sha512-p/nXbhSEcu3pZRdkW1OfJhpsVtW1gd4Wa1fnQc9YLiTfAjn0312eMKimbdIQzuZl9aa9xUGaRlP9T/CJE/ditQ==}
     engines: {node: '>=0.10.0'}
+
+  jsts@2.7.1:
+    resolution: {integrity: sha512-x2wSZHEBK20CY+Wy+BPE7MrFQHW6sIsdaGUMEqmGAio+3gFzQaBYPwLRonUfQf9Ak8pBieqj9tUofX1+WtAEIg==}
+    engines: {node: '>= 12'}
 
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
@@ -14175,6 +14989,10 @@ packages:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
     engines: {node: '>=6'}
 
+  levn@0.3.0:
+    resolution: {integrity: sha512-0OO4y2iOHix2W6ujICbKIaEQXvFQHue65vUG3pb5EUomzPI90z9hsA1VsO/dbIIpC53J8gxM9Q4Oho0jrCM/yA==}
+    engines: {node: '>= 0.8.0'}
+
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -14352,6 +15170,9 @@ packages:
   logform@2.7.0:
     resolution: {integrity: sha512-TFYA4jnP7PVbmlBIfhlSe+WKxs9dklXMTEGcBCIvLhE/Tn3H6Gk1norupVW7m5Cnd4bLcr08AytbyV/xj7f/kQ==}
     engines: {node: '>= 12.0.0'}
+
+  logplease@1.2.15:
+    resolution: {integrity: sha512-jLlHnlsPSJjpwUfcNyUxXCl33AYg2cHhIf9QhGL2T4iPT0XPB+xP1LRKFPgIg1M/sg9kAJvy94w9CzBNrfnstA==}
 
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
@@ -14566,6 +15387,9 @@ packages:
   mermaid@11.12.2:
     resolution: {integrity: sha512-n34QPDPEKmaeCG4WDMGy0OT6PSyxKCfy2pJgShP+Qow2KLrvWjclwbc3yXfSIf4BanqWEhQEpngWwNp/XhZt6w==}
 
+  meshoptimizer@0.18.1:
+    resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
+
   methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
@@ -14773,6 +15597,9 @@ packages:
   minimalistic-assert@1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
 
+  minimalistic-crypto-utils@1.0.1:
+    resolution: {integrity: sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==}
+
   minimark@0.2.0:
     resolution: {integrity: sha512-AmtWU9pO0C2/3AM2pikaVhJ//8E5rOpJ7+ioFQfjIq+wCsBeuZoxPd97hBFZ9qrI7DMHZudwGH3r8A7BMnsIew==}
 
@@ -14971,6 +15798,9 @@ packages:
   nan@2.24.0:
     resolution: {integrity: sha512-Vpf9qnVW1RaDkoNKFUvfxqAbtI8ncb8OJlqZ9wwpXzWPEsvsB1nvdUi6oYrHIkQ1Y/tMDnr1h4nczS0VB9Xykg==}
 
+  nanoassert@2.0.0:
+    resolution: {integrity: sha512-7vO7n28+aYO4J+8w96AzhmU8G+Y/xpPDJz/se19ICsqj/momRbb9mh9ZUtkoJ5X3nTnPdhEJyc0qnM6yAsHBaA==}
+
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -15096,6 +15926,9 @@ packages:
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
+
+  node-addon-api@3.2.1:
+    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
 
   node-addon-api@6.1.0:
     resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
@@ -15444,6 +16277,10 @@ packages:
   openid-client@6.8.1:
     resolution: {integrity: sha512-VoYT6enBo6Vj2j3Q5Ec0AezS+9YGzQo1f5Xc42lreMGlfP4ljiXPKVDvCADh+XHCV/bqPu/wWSiCVXbJKvrODw==}
 
+  optionator@0.8.3:
+    resolution: {integrity: sha512-+IW9pACdk3XWmmTXG8m3upGUJst5XRGzxMRjXzAuJ1XnIFNvfhjjIuYkDvysnPQ7qzqVzLt78BCruntqRhWQbA==}
+    engines: {node: '>= 0.8.0'}
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -15778,6 +16615,12 @@ packages:
     resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
     engines: {node: '>=14.19.0'}
 
+  point-in-polygon-hao@1.2.4:
+    resolution: {integrity: sha512-x2pcvXeqhRHlNRdhLs/tgFapAbSSe86wa/eqmj1G6pWftbEs5aVRJhRGM6FYSUERKu0PjekJzMq0gsI2XyiclQ==}
+
+  point-in-polygon@1.1.0:
+    resolution: {integrity: sha512-3ojrFwjnnw8Q9242TzgXuTD+eKiutbzyslcq1ydfu82Db2y+Ogbmyrkpv0Hgj31qwT3lbS9+QAAO/pIQM35XRw==}
+
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
 
@@ -15787,6 +16630,9 @@ packages:
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
     engines: {node: '>=10'}
+
+  polyclip-ts@0.16.8:
+    resolution: {integrity: sha512-JPtKbDRuPEuAjuTdhR62Gph7Is2BS1Szx69CFOO3g71lpJDFo78k4tFyi+qFOMVPePEzdSKkpGU3NBXPHHjvKQ==}
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -16372,6 +17218,10 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  prelude-ls@1.1.2:
+    resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
+    engines: {node: '>= 0.8.0'}
+
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
@@ -16590,8 +17440,17 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
+  quickselect@1.1.1:
+    resolution: {integrity: sha512-qN0Gqdw4c4KGPsBOQafj6yj/PA6c/L63f6CaZ/DCF/xF4Esu3jVmKLUDYxghFx8Kb/O7y9tI7x2RjTSXwdK1iQ==}
+
   quickselect@2.0.0:
     resolution: {integrity: sha512-RKJ22hX8mHe3Y6wH/N3wCM6BWtjaxIyyUIkpHOvfFnxdI4yD4tBXEBKSbriGujF6jnSVkJrffuo6vxACiSSxIw==}
+
+  quickselect@3.0.0:
+    resolution: {integrity: sha512-XdjUArbK4Bm5fLLvlm5KpTFOiOThgfWWI4axAZDWg4E/0mKdZyI9tNEfds27qCi1ze/vwTR16kvmmGhRra3c2g==}
+
+  r1csfile@0.0.48:
+    resolution: {integrity: sha512-kHRkKUJNaor31l05f2+RFzvcH5XSa7OfEfd/l4hzjte6NL6fjRkSMfZ4BjySW9wmfdwPOtq3mXurzPvPGEf5Tw==}
 
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
@@ -16610,6 +17469,15 @@ packages:
   raw-body@2.5.3:
     resolution: {integrity: sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==}
     engines: {node: '>= 0.8'}
+
+  rbush@2.0.2:
+    resolution: {integrity: sha512-XBOuALcTm+O/H8G90b6pzu6nX6v2zCKiFG4BJho8a+bY6AER6t8uQUZdi5bomQc0AprCWhEGa7ncAbbRap0bRA==}
+
+  rbush@3.0.1:
+    resolution: {integrity: sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==}
+
+  rbush@4.0.1:
+    resolution: {integrity: sha512-IP0UpfeWQujYC8Jg162rMNc01Rf0gWMMAb2Uxus/Q0qOFw4lCcq6ZnQEZwUoJqWyUGJ9th7JjwI4yIWo+uvoAQ==}
 
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
@@ -17111,6 +17979,9 @@ packages:
     resolution: {integrity: sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==}
     engines: {node: '>=8.0'}
 
+  robust-predicates@2.0.4:
+    resolution: {integrity: sha512-l4NwboJM74Ilm4VKfbAtFeGq7aEjWL+5kVFcmgFA2MrdnQWx9iE/tUGvxY5HyMI7o/WpSIUFLbC5fbeaHgSCYg==}
+
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
@@ -17229,6 +18100,9 @@ packages:
 
   scroll-into-view-if-needed@3.1.0:
     resolution: {integrity: sha512-49oNpRjWRvnU8NyGVmUaYG4jtTkNonFZI86MmGRDqBphEK2EXT9gdEUoQPZhuBM8yWHxCWbobltqYO5M4XrUvQ==}
+
+  scrypt-js@3.0.1:
+    resolution: {integrity: sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==}
 
   scslre@0.3.0:
     resolution: {integrity: sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ==}
@@ -17465,6 +18339,9 @@ packages:
     resolution: {integrity: sha512-kUMbT1oBJCpgrnKoSr0o6wPtvRWT9W9UKvGLwfJYO2WuahZRHOpEyL1ckyMGgMWh0UdpmaoFqKKD29WTomNEGA==}
     engines: {node: '>=8'}
 
+  skmeans@0.9.7:
+    resolution: {integrity: sha512-hNj1/oZ7ygsfmPZ7ZfN5MUBRoGg1gtpnImuJBgLO0ljQ67DtJuiQaiYdS4lUA6s0KCwnPhGivtC/WRwIZLkHyg==}
+
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -17490,6 +18367,10 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
+
+  snarkjs@0.7.5:
+    resolution: {integrity: sha512-h+3c4rXZKLhLuHk4LHydZCk/h5GcNvk5GjVKRRkHmfb6Ntf8gHOA9zea3g656iclRuhqQ3iKDWFgiD9ypLrKiA==}
+    hasBin: true
 
   socket.io-adapter@2.5.6:
     resolution: {integrity: sha512-DkkO/dz7MGln0dHn5bmN3pPy+JmywNICWrJqVWiVOyvXjWQFIv9c2h24JrQLLFJ2aQVQf/Cvl1vblnd4r2apLQ==}
@@ -17596,6 +18477,9 @@ packages:
     resolution: {integrity: sha512-S6ji+flMEga+1QU79NDbwZ8Ivf0S/MpupQQiIC0rTpU/ZTKgcajijJJb1OcByBQDjrXCN1/DJtGz4ZJeBMPGJw==}
     hasBin: true
 
+  splaytree-ts@1.0.2:
+    resolution: {integrity: sha512-0kGecIZNIReCSiznK3uheYB8sbstLjCZLiwcQwbmLhgHJj2gz6OnSPkVzJQCMnmEz1BQ4gPK59ylhBoEWOhGNA==}
+
   split-ca@1.0.1:
     resolution: {integrity: sha512-Q5thBSxp5t8WPTTJQS59LrGqOZqOsrhDGDVm8azCqIBjSBd7nd9o2PM+mDulQQkh8h//4U6hFZnc/mul8t5pWQ==}
 
@@ -17647,6 +18531,9 @@ packages:
 
   state-local@1.0.7:
     resolution: {integrity: sha512-HTEHMNieakEnoe33shBYcZ7NX83ACUjCu8c40iOGEZsngj9zRnkqS9j1pqQPXwobB0ZcVTk27REb7COQ0UR59w==}
+
+  static-eval@2.0.2:
+    resolution: {integrity: sha512-N/D219Hcr2bPjLxPiV+TQE++Tsmrady7TqAJugLy7Xk1EumfDWS/f5dtBbkRCGE7wKKXuYockQoj8Rm2/pVKyg==}
 
   statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
@@ -17877,6 +18764,9 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
+  sweepline-intersections@1.5.0:
+    resolution: {integrity: sha512-AoVmx72QHpKtItPu72TzFL+kcYjd67BPLDoR0LarIk+xyaRg+pDTMFXndIEvZf9xEKnJv6JdhgRMnocoG0D3AQ==}
+
   swipl-wasm@5.2.0:
     resolution: {integrity: sha512-L/IsHdklnRWmNN6ohztEVFaR6gQD1BM/0AbfHjMl1+SGlxAgMl28rBf185RxlAh98pQvoALalk+pYpbvXOisZA==}
     hasBin: true
@@ -18014,6 +18904,9 @@ packages:
   three@0.135.0:
     resolution: {integrity: sha512-kuEpuuxRzLv0MDsXai9huCxOSQPZ4vje6y0gn80SRmQvgz6/+rI0NAvCRAw56zYaWKMGMfqKWsxF9Qa2Z9xymQ==}
 
+  three@0.171.0:
+    resolution: {integrity: sha512-Y/lAXPaKZPcEdkKjh0JOAHVv8OOnv/NDJqm0wjfCzyQmfKxV7zvkwsnBgPBKTzJHToSOhRGQAGbPJObT59B/PQ==}
+
   three@0.181.2:
     resolution: {integrity: sha512-k/CjiZ80bYss6Qs7/ex1TBlPD11whT9oKfT8oTGiHa34W4JRd1NiH/Tr1DbHWQ2/vMUypxksLnF2CfmlmM5XFQ==}
 
@@ -18133,6 +19026,10 @@ packages:
     resolution: {integrity: sha512-605uxS6bcYxGXw9qi62XyrV6Q3xwbndjachmNxu8HWTtVPxZfEJN9fd/SZS1Q54Sn2y0TMyMxFj/cJINqGHrKw==}
     hasBin: true
 
+  topojson-server@3.0.1:
+    resolution: {integrity: sha512-/VS9j/ffKr2XAOjlZ9CgyyeLmgJ9dMwq6Y0YEON8O7p/tGGk+dCWnrE03zEdu7i4L7YsFZLEPZPzCvcB7lEEXw==}
+    hasBin: true
+
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
@@ -18187,6 +19084,9 @@ packages:
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
 
+  tryer@1.0.1:
+    resolution: {integrity: sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==}
+
   ts-api-utils@2.2.0:
     resolution: {integrity: sha512-L6f5oQRAoLU1RwXz0Ab9mxsE7LtxeVB6AIR1lpkZMsOyg/JXeaxBaXa/FVCBZyNr9S9I4wkHrlZTklX+im+WMw==}
     engines: {node: '>=18.12'}
@@ -18228,6 +19128,10 @@ packages:
     resolution: {integrity: sha512-VuI5OKl+MaUO9UIW3rXKoPgHI3X40ZgB/j12VY6h98Ae1mCBihjPvhOPeJWlxCYcmSbmeZt5ZKkK0dsVtp+6pA==}
     peerDependencies:
       typescript: ^5.5.0
+
+  type-check@0.3.2:
+    resolution: {integrity: sha512-ZCmOJdvOWDBYJlzAoFkC+Q0+bUyEOS1ltgp1MGU03fqHG+dbi9tBFU2Rd9QKiDZFAYrhPh2JUf7rZRIuHRKtOg==}
+    engines: {node: '>= 0.8.0'}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -18363,6 +19267,9 @@ packages:
 
   undefsafe@2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
+
+  underscore@1.12.1:
+    resolution: {integrity: sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==}
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
@@ -19031,6 +19938,12 @@ packages:
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
 
+  wasmbuilder@0.0.16:
+    resolution: {integrity: sha512-Qx3lEFqaVvp1cEYW7Bfi+ebRJrOiwz2Ieu7ZG2l7YyeSJIok/reEQCQCuicj/Y32ITIJuGIM9xZQppGx5LrQdA==}
+
+  wasmcurves@0.2.2:
+    resolution: {integrity: sha512-JRY908NkmKjFl4ytnTu5ED6AwPD+8VJ9oc94kdq7h5bIwbj0L4TDJ69mG+2aLs2SoCmGfqIesMWTEJjtYsoQXQ==}
+
   watchpack@2.5.0:
     resolution: {integrity: sha512-e6vZvY6xboSwLz2GD36c16+O/2Z6fKvIf4pOXptw2rY9MVwE/TXc6RGqxD3I3x0a28lwBY7DE+76uTPSsBrrCA==}
     engines: {node: '>=10.13.0'}
@@ -19051,6 +19964,9 @@ packages:
 
   web-streams-ponyfill@1.4.2:
     resolution: {integrity: sha512-LCHW+fE2UBJ2vjhqJujqmoxh1ytEDEr0dPO3CabMdMDJPKmsaxzS90V1Ar6LtNE5VHLqxR4YMEj1i4lzMAccIA==}
+
+  web-worker@1.2.0:
+    resolution: {integrity: sha512-PgF341avzqyx60neE9DD+XS26MMNMoUQRz9NOZwW32nPQrF6p77f1htcnjBSEV8BGMKZ16choqUG4hyI0Hx7mA==}
 
   web3-utils@1.10.4:
     resolution: {integrity: sha512-tsu8FiKJLk2PzhDl9fXbGUWTkkVXYhtTA+SmEFkKft+9BgwLxfCRpU96sWv7ICC8zixBNd3JURVoiR3dUXgP8A==}
@@ -19306,6 +20222,18 @@ packages:
 
   ws@8.17.1:
     resolution: {integrity: sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  ws@8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -27508,6 +28436,261 @@ snapshots:
       ethereum-cryptography: 2.2.1
       micro-ftch: 0.3.1
 
+  '@ethersproject/abi@5.8.0':
+    dependencies:
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/strings': 5.8.0
+
+  '@ethersproject/abstract-provider@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/networks': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      '@ethersproject/web': 5.8.0
+
+  '@ethersproject/abstract-signer@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+
+  '@ethersproject/address@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+
+  '@ethersproject/base64@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+
+  '@ethersproject/basex@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/properties': 5.8.0
+
+  '@ethersproject/bignumber@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      bn.js: 5.2.2
+
+  '@ethersproject/bytes@5.8.0':
+    dependencies:
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/constants@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+
+  '@ethersproject/contracts@5.8.0':
+    dependencies:
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+
+  '@ethersproject/hash@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/base64': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/strings': 5.8.0
+
+  '@ethersproject/hdnode@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/basex': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/pbkdf2': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/sha2': 5.8.0
+      '@ethersproject/signing-key': 5.8.0
+      '@ethersproject/strings': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      '@ethersproject/wordlists': 5.8.0
+
+  '@ethersproject/json-wallets@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/hdnode': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/pbkdf2': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/random': 5.8.0
+      '@ethersproject/strings': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      aes-js: 3.0.0
+      scrypt-js: 3.0.1
+
+  '@ethersproject/keccak256@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      js-sha3: 0.8.0
+
+  '@ethersproject/logger@5.8.0': {}
+
+  '@ethersproject/networks@5.8.0':
+    dependencies:
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/pbkdf2@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/sha2': 5.8.0
+
+  '@ethersproject/properties@5.8.0':
+    dependencies:
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/providers@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/base64': 5.8.0
+      '@ethersproject/basex': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/networks': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/random': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+      '@ethersproject/sha2': 5.8.0
+      '@ethersproject/strings': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      '@ethersproject/web': 5.8.0
+      bech32: 1.1.4
+      ws: 8.18.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  '@ethersproject/random@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/rlp@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/sha2@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      hash.js: 1.1.7
+
+  '@ethersproject/signing-key@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      bn.js: 5.2.2
+      elliptic: 6.6.1
+      hash.js: 1.1.7
+
+  '@ethersproject/solidity@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/sha2': 5.8.0
+      '@ethersproject/strings': 5.8.0
+
+  '@ethersproject/strings@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/transactions@5.8.0':
+    dependencies:
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+      '@ethersproject/signing-key': 5.8.0
+
+  '@ethersproject/units@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/wallet@5.8.0':
+    dependencies:
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ethersproject/hdnode': 5.8.0
+      '@ethersproject/json-wallets': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/random': 5.8.0
+      '@ethersproject/signing-key': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      '@ethersproject/wordlists': 5.8.0
+
+  '@ethersproject/web@5.8.0':
+    dependencies:
+      '@ethersproject/base64': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/strings': 5.8.0
+
+  '@ethersproject/wordlists@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/strings': 5.8.0
+
   '@exodus/bytes@1.6.0': {}
 
   '@fastify/accept-negotiator@2.0.1': {}
@@ -27734,6 +28917,13 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
       vue: 3.5.26(typescript@5.9.3)
+
+  '@iden3/bigarray@0.0.2': {}
+
+  '@iden3/binfileutils@0.0.12':
+    dependencies:
+      fastfile: 0.0.20
+      ffjavascript: 0.3.1
 
   '@img/colour@1.0.0':
     optional: true
@@ -28529,6 +29719,10 @@ snapshots:
   '@noble/curves@1.4.2':
     dependencies:
       '@noble/hashes': 1.4.0
+
+  '@noble/curves@2.0.1':
+    dependencies:
+      '@noble/hashes': 2.0.1
 
   '@noble/ed25519@2.3.0': {}
 
@@ -31275,6 +32469,1117 @@ snapshots:
       path-browserify: 1.0.1
       tinyglobby: 0.2.15
 
+  '@turf/along@7.3.1':
+    dependencies:
+      '@turf/bearing': 7.3.1
+      '@turf/destination': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/angle@7.3.1':
+    dependencies:
+      '@turf/bearing': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/area@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/bbox-clip@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/bbox-polygon@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/bbox@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/bearing@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/bezier-spline@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-clockwise@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-concave@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-contains@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-crosses@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@turf/polygon-to-line': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-disjoint@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/polygon-to-line': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-equal@7.3.1':
+    dependencies:
+      '@turf/clean-coords': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      geojson-equality-ts: 1.0.2
+      tslib: 2.8.1
+
+  '@turf/boolean-intersects@7.3.1':
+    dependencies:
+      '@turf/boolean-disjoint': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-overlap@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@turf/line-overlap': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      geojson-equality-ts: 1.0.2
+      tslib: 2.8.1
+
+  '@turf/boolean-parallel@7.3.1':
+    dependencies:
+      '@turf/clean-coords': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/line-segment': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-point-in-polygon@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      point-in-polygon-hao: 1.2.4
+      tslib: 2.8.1
+
+  '@turf/boolean-point-on-line@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-touches@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/boolean-valid@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-crosses': 7.3.1
+      '@turf/boolean-disjoint': 7.3.1
+      '@turf/boolean-overlap': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@types/geojson': 7946.0.16
+      geojson-polygon-self-intersections: 1.2.2
+      tslib: 2.8.1
+
+  '@turf/boolean-within@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/buffer@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/center': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/jsts': 2.7.2
+      '@turf/meta': 7.3.1
+      '@turf/projection': 7.3.1
+      '@types/geojson': 7946.0.16
+      d3-geo: 1.7.1
+
+  '@turf/center-mean@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/center-median@7.3.1':
+    dependencies:
+      '@turf/center-mean': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/center-of-mass@7.3.1':
+    dependencies:
+      '@turf/centroid': 7.3.1
+      '@turf/convex': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/center@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/centroid@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/circle@7.3.1':
+    dependencies:
+      '@turf/destination': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/clean-coords@7.3.1':
+    dependencies:
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/clone@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/clusters-dbscan@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      rbush: 3.0.1
+      tslib: 2.8.1
+
+  '@turf/clusters-kmeans@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      skmeans: 0.9.7
+      tslib: 2.8.1
+
+  '@turf/clusters@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/collect@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      rbush: 3.0.1
+      tslib: 2.8.1
+
+  '@turf/combine@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/concave@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/tin': 7.3.1
+      '@types/geojson': 7946.0.16
+      topojson-client: 3.1.0
+      topojson-server: 3.0.1
+      tslib: 2.8.1
+
+  '@turf/convex@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      concaveman: 1.2.1
+      tslib: 2.8.1
+
+  '@turf/destination@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/difference@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      polyclip-ts: 0.16.8
+      tslib: 2.8.1
+
+  '@turf/dissolve@7.3.1':
+    dependencies:
+      '@turf/flatten': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      polyclip-ts: 0.16.8
+      tslib: 2.8.1
+
+  '@turf/distance-weight@7.3.1':
+    dependencies:
+      '@turf/centroid': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/distance@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/ellipse@7.3.1':
+    dependencies:
+      '@turf/destination': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/transform-rotate': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/envelope@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/bbox-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/explode@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/flatten@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/flip@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/geojson-rbush@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      rbush: 3.0.1
+
+  '@turf/great-circle@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/helpers@7.3.1':
+    dependencies:
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/hex-grid@7.3.1':
+    dependencies:
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/intersect': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/interpolate@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/hex-grid': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/point-grid': 7.3.1
+      '@turf/square-grid': 7.3.1
+      '@turf/triangle-grid': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/intersect@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      polyclip-ts: 0.16.8
+      tslib: 2.8.1
+
+  '@turf/invariant@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/isobands@7.3.1':
+    dependencies:
+      '@turf/area': 7.3.1
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/explode': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/isolines@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/jsts@2.7.2':
+    dependencies:
+      jsts: 2.7.1
+
+  '@turf/kinks@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/length@7.3.1':
+    dependencies:
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/line-arc@7.3.1':
+    dependencies:
+      '@turf/circle': 7.3.1
+      '@turf/destination': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/line-chunk@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/length': 7.3.1
+      '@turf/line-slice-along': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/line-intersect@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      sweepline-intersections: 1.5.0
+      tslib: 2.8.1
+
+  '@turf/line-offset@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/line-overlap@7.3.1':
+    dependencies:
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/geojson-rbush': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-segment': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/nearest-point-on-line': 7.3.1
+      '@types/geojson': 7946.0.16
+      fast-deep-equal: 3.1.3
+      tslib: 2.8.1
+
+  '@turf/line-segment@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/line-slice-along@7.3.1':
+    dependencies:
+      '@turf/bearing': 7.3.1
+      '@turf/destination': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/line-slice@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/nearest-point-on-line': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/line-split@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/geojson-rbush': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@turf/line-segment': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/nearest-point-on-line': 7.3.1
+      '@turf/truncate': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/line-to-polygon@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/mask@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      polyclip-ts: 0.16.8
+      tslib: 2.8.1
+
+  '@turf/meta@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+
+  '@turf/midpoint@7.3.1':
+    dependencies:
+      '@turf/bearing': 7.3.1
+      '@turf/destination': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/moran-index@7.3.1':
+    dependencies:
+      '@turf/distance-weight': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/nearest-neighbor-analysis@7.3.1':
+    dependencies:
+      '@turf/area': 7.3.1
+      '@turf/bbox': 7.3.1
+      '@turf/bbox-polygon': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/nearest-point': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/nearest-point-on-line@7.3.1':
+    dependencies:
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/nearest-point-to-line@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/point-to-line-distance': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/nearest-point@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/planepoint@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/point-grid@7.3.1':
+    dependencies:
+      '@turf/boolean-within': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/point-on-feature@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/center': 7.3.1
+      '@turf/explode': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/nearest-point': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/point-to-line-distance@7.3.1':
+    dependencies:
+      '@turf/bearing': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/nearest-point-on-line': 7.3.1
+      '@turf/projection': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@turf/rhumb-distance': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/point-to-polygon-distance@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/point-to-line-distance': 7.3.1
+      '@turf/polygon-to-line': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/points-within-polygon@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/polygon-smooth@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/polygon-tangents@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/boolean-within': 7.3.1
+      '@turf/explode': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/nearest-point': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/polygon-to-line@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/polygonize@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/envelope': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/projection@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/quadrat-analysis@7.3.1':
+    dependencies:
+      '@turf/area': 7.3.1
+      '@turf/bbox': 7.3.1
+      '@turf/bbox-polygon': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/point-grid': 7.3.1
+      '@turf/random': 7.3.1
+      '@turf/square-grid': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/random@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/rectangle-grid@7.3.1':
+    dependencies:
+      '@turf/boolean-intersects': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/rewind@7.3.1':
+    dependencies:
+      '@turf/boolean-clockwise': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/rhumb-bearing@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/rhumb-destination@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/rhumb-distance@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/sample@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/sector@7.3.1':
+    dependencies:
+      '@turf/circle': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/line-arc': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/shortest-path@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/bbox-polygon': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/clean-coords': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/transform-scale': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/simplify@7.3.1':
+    dependencies:
+      '@turf/clean-coords': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/square-grid@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/rectangle-grid': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/square@7.3.1':
+    dependencies:
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/standard-deviational-ellipse@7.3.1':
+    dependencies:
+      '@turf/center-mean': 7.3.1
+      '@turf/ellipse': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/points-within-polygon': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/tag@7.3.1':
+    dependencies:
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/tesselate@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      earcut: 2.2.4
+      tslib: 2.8.1
+
+  '@turf/tin@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/transform-rotate@7.3.1':
+    dependencies:
+      '@turf/centroid': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@turf/rhumb-destination': 7.3.1
+      '@turf/rhumb-distance': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/transform-scale@7.3.1':
+    dependencies:
+      '@turf/bbox': 7.3.1
+      '@turf/center': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@turf/rhumb-destination': 7.3.1
+      '@turf/rhumb-distance': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/transform-translate@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/rhumb-destination': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/triangle-grid@7.3.1':
+    dependencies:
+      '@turf/distance': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/intersect': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/truncate@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/turf@7.3.1':
+    dependencies:
+      '@turf/along': 7.3.1
+      '@turf/angle': 7.3.1
+      '@turf/area': 7.3.1
+      '@turf/bbox': 7.3.1
+      '@turf/bbox-clip': 7.3.1
+      '@turf/bbox-polygon': 7.3.1
+      '@turf/bearing': 7.3.1
+      '@turf/bezier-spline': 7.3.1
+      '@turf/boolean-clockwise': 7.3.1
+      '@turf/boolean-concave': 7.3.1
+      '@turf/boolean-contains': 7.3.1
+      '@turf/boolean-crosses': 7.3.1
+      '@turf/boolean-disjoint': 7.3.1
+      '@turf/boolean-equal': 7.3.1
+      '@turf/boolean-intersects': 7.3.1
+      '@turf/boolean-overlap': 7.3.1
+      '@turf/boolean-parallel': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/boolean-point-on-line': 7.3.1
+      '@turf/boolean-touches': 7.3.1
+      '@turf/boolean-valid': 7.3.1
+      '@turf/boolean-within': 7.3.1
+      '@turf/buffer': 7.3.1
+      '@turf/center': 7.3.1
+      '@turf/center-mean': 7.3.1
+      '@turf/center-median': 7.3.1
+      '@turf/center-of-mass': 7.3.1
+      '@turf/centroid': 7.3.1
+      '@turf/circle': 7.3.1
+      '@turf/clean-coords': 7.3.1
+      '@turf/clone': 7.3.1
+      '@turf/clusters': 7.3.1
+      '@turf/clusters-dbscan': 7.3.1
+      '@turf/clusters-kmeans': 7.3.1
+      '@turf/collect': 7.3.1
+      '@turf/combine': 7.3.1
+      '@turf/concave': 7.3.1
+      '@turf/convex': 7.3.1
+      '@turf/destination': 7.3.1
+      '@turf/difference': 7.3.1
+      '@turf/dissolve': 7.3.1
+      '@turf/distance': 7.3.1
+      '@turf/distance-weight': 7.3.1
+      '@turf/ellipse': 7.3.1
+      '@turf/envelope': 7.3.1
+      '@turf/explode': 7.3.1
+      '@turf/flatten': 7.3.1
+      '@turf/flip': 7.3.1
+      '@turf/geojson-rbush': 7.3.1
+      '@turf/great-circle': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/hex-grid': 7.3.1
+      '@turf/interpolate': 7.3.1
+      '@turf/intersect': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@turf/isobands': 7.3.1
+      '@turf/isolines': 7.3.1
+      '@turf/kinks': 7.3.1
+      '@turf/length': 7.3.1
+      '@turf/line-arc': 7.3.1
+      '@turf/line-chunk': 7.3.1
+      '@turf/line-intersect': 7.3.1
+      '@turf/line-offset': 7.3.1
+      '@turf/line-overlap': 7.3.1
+      '@turf/line-segment': 7.3.1
+      '@turf/line-slice': 7.3.1
+      '@turf/line-slice-along': 7.3.1
+      '@turf/line-split': 7.3.1
+      '@turf/line-to-polygon': 7.3.1
+      '@turf/mask': 7.3.1
+      '@turf/meta': 7.3.1
+      '@turf/midpoint': 7.3.1
+      '@turf/moran-index': 7.3.1
+      '@turf/nearest-neighbor-analysis': 7.3.1
+      '@turf/nearest-point': 7.3.1
+      '@turf/nearest-point-on-line': 7.3.1
+      '@turf/nearest-point-to-line': 7.3.1
+      '@turf/planepoint': 7.3.1
+      '@turf/point-grid': 7.3.1
+      '@turf/point-on-feature': 7.3.1
+      '@turf/point-to-line-distance': 7.3.1
+      '@turf/point-to-polygon-distance': 7.3.1
+      '@turf/points-within-polygon': 7.3.1
+      '@turf/polygon-smooth': 7.3.1
+      '@turf/polygon-tangents': 7.3.1
+      '@turf/polygon-to-line': 7.3.1
+      '@turf/polygonize': 7.3.1
+      '@turf/projection': 7.3.1
+      '@turf/quadrat-analysis': 7.3.1
+      '@turf/random': 7.3.1
+      '@turf/rectangle-grid': 7.3.1
+      '@turf/rewind': 7.3.1
+      '@turf/rhumb-bearing': 7.3.1
+      '@turf/rhumb-destination': 7.3.1
+      '@turf/rhumb-distance': 7.3.1
+      '@turf/sample': 7.3.1
+      '@turf/sector': 7.3.1
+      '@turf/shortest-path': 7.3.1
+      '@turf/simplify': 7.3.1
+      '@turf/square': 7.3.1
+      '@turf/square-grid': 7.3.1
+      '@turf/standard-deviational-ellipse': 7.3.1
+      '@turf/tag': 7.3.1
+      '@turf/tesselate': 7.3.1
+      '@turf/tin': 7.3.1
+      '@turf/transform-rotate': 7.3.1
+      '@turf/transform-scale': 7.3.1
+      '@turf/transform-translate': 7.3.1
+      '@turf/triangle-grid': 7.3.1
+      '@turf/truncate': 7.3.1
+      '@turf/union': 7.3.1
+      '@turf/unkink-polygon': 7.3.1
+      '@turf/voronoi': 7.3.1
+      '@types/geojson': 7946.0.16
+      tslib: 2.8.1
+
+  '@turf/union@7.3.1':
+    dependencies:
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      polyclip-ts: 0.16.8
+      tslib: 2.8.1
+
+  '@turf/unkink-polygon@7.3.1':
+    dependencies:
+      '@turf/area': 7.3.1
+      '@turf/boolean-point-in-polygon': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/meta': 7.3.1
+      '@types/geojson': 7946.0.16
+      rbush: 3.0.1
+      tslib: 2.8.1
+
+  '@turf/voronoi@7.3.1':
+    dependencies:
+      '@turf/clone': 7.3.1
+      '@turf/helpers': 7.3.1
+      '@turf/invariant': 7.3.1
+      '@types/d3-voronoi': 1.1.12
+      '@types/geojson': 7946.0.16
+      d3-voronoi: 1.1.2
+      tslib: 2.8.1
+
+  '@tweenjs/tween.js@23.1.3': {}
+
   '@tweenjs/tween.js@25.0.0': {}
 
   '@tybys/wasm-util@0.10.1':
@@ -31420,6 +33725,8 @@ snapshots:
   '@types/d3-transition@3.0.9':
     dependencies:
       '@types/d3-selection': 3.0.11
+
+  '@types/d3-voronoi@1.1.12': {}
 
   '@types/d3-zoom@3.0.8':
     dependencies:
@@ -31749,6 +34056,8 @@ snapshots:
 
   '@types/stack-utils@2.0.3': {}
 
+  '@types/stats.js@0.17.4': {}
+
   '@types/statuses@2.0.6': {}
 
   '@types/supercluster@5.0.3':
@@ -31756,6 +34065,15 @@ snapshots:
       '@types/geojson': 7946.0.16
 
   '@types/three@0.135.0': {}
+
+  '@types/three@0.171.0':
+    dependencies:
+      '@tweenjs/tween.js': 23.1.3
+      '@types/stats.js': 0.17.4
+      '@types/webxr': 0.5.24
+      '@webgpu/types': 0.1.38
+      fflate: 0.8.2
+      meshoptimizer: 0.18.1
 
   '@types/throttle-debounce@5.0.2': {}
 
@@ -31804,6 +34122,8 @@ snapshots:
   '@types/web-bluetooth@0.0.20': {}
 
   '@types/web-bluetooth@0.0.21': {}
+
+  '@types/webxr@0.5.24': {}
 
   '@types/whatwg-mimetype@3.0.2': {}
 
@@ -32677,6 +34997,8 @@ snapshots:
 
   adm-zip@0.5.16: {}
 
+  aes-js@3.0.0: {}
+
   aes-js@4.0.0-beta.5: {}
 
   agent-base@4.3.0:
@@ -33174,6 +35496,8 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
+  bech32@1.1.4: {}
+
   better-react-mathjax@2.3.0(react@19.2.3):
     dependencies:
       mathjax-full: 3.2.2
@@ -33183,6 +35507,14 @@ snapshots:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
+
+  bfj@7.1.0:
+    dependencies:
+      bluebird: 3.7.2
+      check-types: 11.2.3
+      hoopy: 0.1.4
+      jsonpath: 1.1.1
+      tryer: 1.0.1
 
   bidi-js@1.0.3:
     dependencies:
@@ -33214,7 +35546,31 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  blake-hash@2.0.0:
+    dependencies:
+      node-addon-api: 3.2.1
+      node-gyp-build: 4.8.4
+      readable-stream: 3.6.2
+
+  blake2b-wasm@2.4.0:
+    dependencies:
+      b4a: 1.7.3
+      nanoassert: 2.0.0
+    transitivePeerDependencies:
+      - react-native-b4a
+
+  blake2b@2.1.4:
+    dependencies:
+      blake2b-wasm: 2.4.0
+      nanoassert: 2.0.0
+    transitivePeerDependencies:
+      - react-native-b4a
+
+  bluebird@3.7.2: {}
+
   bn.js@4.11.6: {}
+
+  bn.js@4.12.2: {}
 
   bn.js@5.2.2: {}
 
@@ -33280,6 +35636,8 @@ snapshots:
   braces@3.0.3:
     dependencies:
       fill-range: 7.1.1
+
+  brorand@1.1.0: {}
 
   brotli@1.3.3:
     dependencies:
@@ -33462,6 +35820,8 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
+  check-types@11.2.3: {}
+
   cheerio-select@2.1.0:
     dependencies:
       boolbase: 1.0.0
@@ -33549,6 +35909,21 @@ snapshots:
   ci-info@3.9.0: {}
 
   ci-info@4.3.1: {}
+
+  circom_runtime@0.1.28:
+    dependencies:
+      ffjavascript: 0.3.1
+
+  circomlibjs@0.1.7:
+    dependencies:
+      blake-hash: 2.0.0
+      blake2b: 2.1.4
+      ethers: 5.8.0
+      ffjavascript: 0.2.63
+    transitivePeerDependencies:
+      - bufferutil
+      - react-native-b4a
+      - utf-8-validate
 
   citty-test-utils@0.1.1:
     dependencies:
@@ -33766,6 +36141,13 @@ snapshots:
   compute-scroll-into-view@3.1.1: {}
 
   concat-map@0.0.1: {}
+
+  concaveman@1.2.1:
+    dependencies:
+      point-in-polygon: 1.1.0
+      rbush: 3.0.1
+      robust-predicates: 2.0.4
+      tinyqueue: 2.0.3
 
   confbox@0.1.8: {}
 
@@ -34184,6 +36566,8 @@ snapshots:
 
   cytoscape@3.33.1: {}
 
+  d3-array@1.2.4: {}
+
   d3-array@2.12.1:
     dependencies:
       internmap: 1.0.1
@@ -34260,6 +36644,10 @@ snapshots:
       commander: 7.2.0
       d3-array: 3.2.4
       d3-geo: 3.1.1
+
+  d3-geo@1.7.1:
+    dependencies:
+      d3-array: 1.2.4
 
   d3-geo@3.1.1:
     dependencies:
@@ -34343,6 +36731,8 @@ snapshots:
       d3-interpolate: 3.0.1
       d3-selection: 3.0.0
       d3-timer: 3.0.1
+
+  d3-voronoi@1.1.2: {}
 
   d3-zoom@3.0.0:
     dependencies:
@@ -34562,6 +36952,8 @@ snapshots:
 
   diff@8.0.2: {}
 
+  dilithium-crystals@1.0.6: {}
+
   dir-glob@3.0.1:
     dependencies:
       path-type: 4.0.0
@@ -34708,11 +37100,25 @@ snapshots:
 
   ee-first@1.1.1: {}
 
+  ejs@3.1.10:
+    dependencies:
+      jake: 10.9.4
+
   electron-to-chromium@1.5.267: {}
 
   elkjs@0.10.2: {}
 
   elkjs@0.11.0: {}
+
+  elliptic@6.6.1:
+    dependencies:
+      bn.js: 4.12.2
+      brorand: 1.1.0
+      hash.js: 1.1.7
+      hmac-drbg: 1.0.1
+      inherits: 2.0.4
+      minimalistic-assert: 1.0.1
+      minimalistic-crypto-utils: 1.0.1
 
   embla-carousel-auto-height@8.6.0(embla-carousel@8.6.0):
     dependencies:
@@ -35053,6 +37459,15 @@ snapshots:
   escape-string-regexp@4.0.0: {}
 
   escape-string-regexp@5.0.0: {}
+
+  escodegen@1.14.3:
+    dependencies:
+      esprima: 4.0.1
+      estraverse: 4.3.0
+      esutils: 2.0.3
+      optionator: 0.8.3
+    optionalDependencies:
+      source-map: 0.6.1
 
   escomplex-plugin-metrics-module@0.1.0:
     dependencies:
@@ -35450,6 +37865,8 @@ snapshots:
       acorn-jsx: 5.3.2(acorn@8.15.0)
       eslint-visitor-keys: 3.4.3
 
+  esprima@1.2.2: {}
+
   esprima@4.0.1: {}
 
   esquery@1.6.0:
@@ -35521,6 +37938,42 @@ snapshots:
       '@noble/hashes': 1.4.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
+
+  ethers@5.8.0:
+    dependencies:
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/abstract-provider': 5.8.0
+      '@ethersproject/abstract-signer': 5.8.0
+      '@ethersproject/address': 5.8.0
+      '@ethersproject/base64': 5.8.0
+      '@ethersproject/basex': 5.8.0
+      '@ethersproject/bignumber': 5.8.0
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/contracts': 5.8.0
+      '@ethersproject/hash': 5.8.0
+      '@ethersproject/hdnode': 5.8.0
+      '@ethersproject/json-wallets': 5.8.0
+      '@ethersproject/keccak256': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      '@ethersproject/networks': 5.8.0
+      '@ethersproject/pbkdf2': 5.8.0
+      '@ethersproject/properties': 5.8.0
+      '@ethersproject/providers': 5.8.0
+      '@ethersproject/random': 5.8.0
+      '@ethersproject/rlp': 5.8.0
+      '@ethersproject/sha2': 5.8.0
+      '@ethersproject/signing-key': 5.8.0
+      '@ethersproject/solidity': 5.8.0
+      '@ethersproject/strings': 5.8.0
+      '@ethersproject/transactions': 5.8.0
+      '@ethersproject/units': 5.8.0
+      '@ethersproject/wallet': 5.8.0
+      '@ethersproject/web': 5.8.0
+      '@ethersproject/wordlists': 5.8.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   ethers@6.16.0:
     dependencies:
@@ -35715,6 +38168,8 @@ snapshots:
     dependencies:
       strnum: 2.1.2
 
+  fastfile@0.0.20: {}
+
   fastify-plugin@5.1.0: {}
 
   fastify@5.6.2:
@@ -35807,6 +38262,24 @@ snapshots:
       biskviit: 1.0.1
       encoding: 0.1.12
 
+  ffjavascript@0.2.63:
+    dependencies:
+      wasmbuilder: 0.0.16
+      wasmcurves: 0.2.2
+      web-worker: 1.2.0
+
+  ffjavascript@0.3.0:
+    dependencies:
+      wasmbuilder: 0.0.16
+      wasmcurves: 0.2.2
+      web-worker: 1.2.0
+
+  ffjavascript@0.3.1:
+    dependencies:
+      wasmbuilder: 0.0.16
+      wasmcurves: 0.2.2
+      web-worker: 1.2.0
+
   fflate@0.7.4: {}
 
   fflate@0.8.2: {}
@@ -35840,6 +38313,10 @@ snapshots:
       webpack: 5.104.1
 
   file-uri-to-path@1.0.0: {}
+
+  filelist@1.0.4:
+    dependencies:
+      minimatch: 5.1.6
 
   fill-range@7.1.1:
     dependencies:
@@ -36099,6 +38576,14 @@ snapshots:
   generator-function@2.0.1: {}
 
   gensync@1.0.0-beta.2: {}
+
+  geojson-equality-ts@1.0.2:
+    dependencies:
+      '@types/geojson': 7946.0.16
+
+  geojson-polygon-self-intersections@1.2.2:
+    dependencies:
+      rbush: 2.0.2
 
   geojson-vt@3.2.1: {}
 
@@ -36675,11 +39160,19 @@ snapshots:
       tiny-warning: 1.0.3
       value-equal: 1.0.1
 
+  hmac-drbg@1.0.1:
+    dependencies:
+      hash.js: 1.1.7
+      minimalistic-assert: 1.0.1
+      minimalistic-crypto-utils: 1.0.1
+
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
 
   hookable@5.5.3: {}
+
+  hoopy@0.1.4: {}
 
   hpack.js@2.1.6:
     dependencies:
@@ -37373,6 +39866,12 @@ snapshots:
     dependencies:
       '@isaacs/cliui': 8.0.2
 
+  jake@10.9.4:
+    dependencies:
+      async: 3.2.6
+      filelist: 1.0.4
+      picocolors: 1.1.1
+
   jerrypick@1.1.2: {}
 
   jest-changed-files@29.7.0:
@@ -37713,6 +40212,8 @@ snapshots:
 
   js-cookie@3.0.5: {}
 
+  js-sha3@0.8.0: {}
+
   js-tiktoken@1.0.21:
     dependencies:
       base64-js: 1.5.1
@@ -37963,7 +40464,15 @@ snapshots:
       lru-cache: 6.0.0
       rdf-canonize: 5.0.0
 
+  jsonpath@1.1.1:
+    dependencies:
+      esprima: 1.2.2
+      static-eval: 2.0.2
+      underscore: 1.12.1
+
   jsonpointer@5.0.1: {}
+
+  jsts@2.7.1: {}
 
   jsx-ast-utils@3.3.5:
     dependencies:
@@ -38140,6 +40649,11 @@ snapshots:
 
   leven@3.1.0: {}
 
+  levn@0.3.0:
+    dependencies:
+      prelude-ls: 1.1.2
+      type-check: 0.3.2
+
   levn@0.4.1:
     dependencies:
       prelude-ls: 1.2.1
@@ -38314,6 +40828,8 @@ snapshots:
       ms: 2.1.3
       safe-stable-stringify: 2.5.0
       triple-beam: 1.4.1
+
+  logplease@1.2.15: {}
 
   long@4.0.0: {}
 
@@ -38713,6 +41229,8 @@ snapshots:
       ts-dedent: 2.2.0
       uuid: 11.1.0
 
+  meshoptimizer@0.18.1: {}
+
   methods@1.1.2: {}
 
   mhchemparser@4.2.1: {}
@@ -39077,6 +41595,8 @@ snapshots:
 
   minimalistic-assert@1.0.1: {}
 
+  minimalistic-crypto-utils@1.0.1: {}
+
   minimark@0.2.0: {}
 
   minimatch@10.1.1:
@@ -39332,6 +41852,8 @@ snapshots:
   nan@2.24.0:
     optional: true
 
+  nanoassert@2.0.0: {}
+
   nanoid@3.3.11: {}
 
   nanoid@5.1.6: {}
@@ -39586,6 +42108,8 @@ snapshots:
       semver: 7.7.3
 
   node-abort-controller@3.1.1: {}
+
+  node-addon-api@3.2.1: {}
 
   node-addon-api@6.1.0: {}
 
@@ -40130,6 +42654,15 @@ snapshots:
       jose: 6.1.3
       oauth4webapi: 3.8.3
 
+  optionator@0.8.3:
+    dependencies:
+      deep-is: 0.1.4
+      fast-levenshtein: 2.0.6
+      levn: 0.3.0
+      prelude-ls: 1.1.2
+      type-check: 0.3.2
+      word-wrap: 1.2.5
+
   optionator@0.9.4:
     dependencies:
       deep-is: 0.1.4
@@ -40511,6 +43044,12 @@ snapshots:
 
   pngjs@7.0.0: {}
 
+  point-in-polygon-hao@1.2.4:
+    dependencies:
+      robust-predicates: 3.0.2
+
+  point-in-polygon@1.1.0: {}
+
   points-on-curve@0.2.0: {}
 
   points-on-path@0.2.1:
@@ -40521,6 +43060,11 @@ snapshots:
   polished@4.3.1:
     dependencies:
       '@babel/runtime': 7.28.4
+
+  polyclip-ts@0.16.8:
+    dependencies:
+      bignumber.js: 9.3.1
+      splaytree-ts: 1.0.2
 
   possible-typed-array-names@1.1.0: {}
 
@@ -41147,6 +43691,8 @@ snapshots:
       tar-fs: 2.1.4
       tunnel-agent: 0.6.0
 
+  prelude-ls@1.1.2: {}
+
   prelude-ls@1.2.1: {}
 
   prettier@3.7.4: {}
@@ -41413,7 +43959,18 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
+  quickselect@1.1.1: {}
+
   quickselect@2.0.0: {}
+
+  quickselect@3.0.0: {}
+
+  r1csfile@0.0.48:
+    dependencies:
+      '@iden3/bigarray': 0.0.2
+      '@iden3/binfileutils': 0.0.12
+      fastfile: 0.0.20
+      ffjavascript: 0.3.0
 
   radix3@1.1.2: {}
 
@@ -41431,6 +43988,18 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.4.24
       unpipe: 1.0.0
+
+  rbush@2.0.2:
+    dependencies:
+      quickselect: 1.1.1
+
+  rbush@3.0.1:
+    dependencies:
+      quickselect: 2.0.0
+
+  rbush@4.0.1:
+    dependencies:
+      quickselect: 3.0.0
 
   rc9@2.1.2:
     dependencies:
@@ -42244,6 +44813,8 @@ snapshots:
       semver-compare: 1.0.0
       sprintf-js: 1.1.3
 
+  robust-predicates@2.0.4: {}
+
   robust-predicates@3.0.2: {}
 
   rollup-plugin-dts@6.3.0(rollup@3.29.5)(typescript@5.9.3):
@@ -42406,6 +44977,8 @@ snapshots:
   scroll-into-view-if-needed@3.1.0:
     dependencies:
       compute-scroll-into-view: 3.1.1
+
+  scrypt-js@3.0.1: {}
 
   scslre@0.3.0:
     dependencies:
@@ -42755,6 +45328,8 @@ snapshots:
     dependencies:
       unicode-emoji-modifier-base: 1.0.0
 
+  skmeans@0.9.7: {}
+
   slash@3.0.0: {}
 
   slash@4.0.0: {}
@@ -42775,6 +45350,21 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
+
+  snarkjs@0.7.5:
+    dependencies:
+      '@iden3/binfileutils': 0.0.12
+      bfj: 7.1.0
+      blake2b-wasm: 2.4.0
+      circom_runtime: 0.1.28
+      ejs: 3.1.10
+      fastfile: 0.0.20
+      ffjavascript: 0.3.1
+      js-sha3: 0.8.0
+      logplease: 1.2.15
+      r1csfile: 0.0.48
+    transitivePeerDependencies:
+      - react-native-b4a
 
   socket.io-adapter@2.5.6:
     dependencies:
@@ -42954,6 +45544,8 @@ snapshots:
       commander: 13.1.0
       wicked-good-xpath: 1.3.0
 
+  splaytree-ts@1.0.2: {}
+
   split-ca@1.0.1: {}
 
   split2@4.2.0: {}
@@ -42994,6 +45586,10 @@ snapshots:
   standard-as-callback@2.1.0: {}
 
   state-local@1.0.7: {}
+
+  static-eval@2.0.2:
+    dependencies:
+      escodegen: 1.14.3
 
   statuses@1.5.0: {}
 
@@ -43249,6 +45845,10 @@ snapshots:
       picocolors: 1.1.1
       sax: 1.4.3
 
+  sweepline-intersections@1.5.0:
+    dependencies:
+      tinyqueue: 2.0.3
+
   swipl-wasm@5.2.0:
     dependencies:
       '@types/emscripten': 1.41.5
@@ -43436,6 +46036,8 @@ snapshots:
 
   three@0.135.0: {}
 
+  three@0.171.0: {}
+
   three@0.181.2: {}
 
   throttle-debounce@5.0.2: {}
@@ -43528,6 +46130,10 @@ snapshots:
     dependencies:
       commander: 2.20.3
 
+  topojson-server@3.0.1:
+    dependencies:
+      commander: 2.20.3
+
   totalist@3.0.1: {}
 
   touch@3.1.1: {}
@@ -43570,6 +46176,8 @@ snapshots:
   triple-beam@1.4.1: {}
 
   trough@2.2.0: {}
+
+  tryer@1.0.1: {}
 
   ts-api-utils@2.2.0(typescript@5.9.3):
     dependencies:
@@ -43617,6 +46225,10 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
+
+  type-check@0.3.2:
+    dependencies:
+      prelude-ls: 1.1.2
 
   type-check@0.4.0:
     dependencies:
@@ -43823,6 +46435,8 @@ snapshots:
       unplugin: 2.3.11
 
   undefsafe@2.0.5: {}
+
+  underscore@1.12.1: {}
 
   undici-types@5.26.5: {}
 
@@ -44695,6 +47309,12 @@ snapshots:
     dependencies:
       makeerror: 1.0.12
 
+  wasmbuilder@0.0.16: {}
+
+  wasmcurves@0.2.2:
+    dependencies:
+      wasmbuilder: 0.0.16
+
   watchpack@2.5.0:
     dependencies:
       glob-to-regexp: 0.4.1
@@ -44711,6 +47331,8 @@ snapshots:
   web-streams-polyfill@4.0.0-beta.3: {}
 
   web-streams-ponyfill@1.4.2: {}
+
+  web-worker@1.2.0: {}
 
   web3-utils@1.10.4:
     dependencies:
@@ -45066,6 +47688,8 @@ snapshots:
   ws@7.5.10: {}
 
   ws@8.17.1: {}
+
+  ws@8.18.0: {}
 
   ws@8.18.3: {}
 

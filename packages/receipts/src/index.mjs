@@ -1,6 +1,6 @@
 /**
  * KGC Receipts - Main Entry Point
- * Batch receipt generation with Merkle tree verification
+ * Batch receipt generation with Merkle tree verification + Post-Quantum Cryptography
  *
  * @module @unrdf/receipts
  */
@@ -25,3 +25,40 @@ export {
   calculateTreeDepth,
   getLeafCount,
 } from './merkle-batcher.mjs';
+
+// Post-Quantum Cryptography
+export {
+  // Dilithium3
+  generateDilithium3KeyPair,
+  signDilithium3,
+  verifyDilithium3,
+  serializeDilithium3Signature,
+  deserializeDilithium3Signature,
+  getDilithium3SecurityLevel,
+} from './dilithium3.mjs';
+
+// Hybrid Signatures (Ed25519 + Dilithium3)
+export {
+  generateHybridKeyPair,
+  signHybrid,
+  verifyHybrid,
+  serializeHybridSignature,
+  deserializeHybridSignature,
+  getHybridSecurityLevel,
+} from './hybrid-signature.mjs';
+
+// Post-Quantum Receipts
+export {
+  createPQReceipt,
+  verifyPQReceipt,
+  batchSignReceipts,
+  getPQCapabilities,
+} from './pq-signer.mjs';
+
+// Post-Quantum Merkle Trees (XMSS)
+export {
+  buildPQMerkleTree,
+  generatePQMerkleProof,
+  verifyPQMerkleProof,
+  getPQMerkleTreeInfo,
+} from './pq-merkle.mjs';

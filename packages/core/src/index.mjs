@@ -153,3 +153,51 @@ export {
   checkSchemaConformance,
   generateInspectionReport,
 } from './debug/rdf-inspector.mjs';
+// === RDF-star (W3C RDF 1.2) Support ===
+// ============================================================================
+
+// RDF-star factory and utilities
+export {
+  RDFStarFactory,
+  factory as rdfStarFactory,
+  RDFSTAR,
+  isQuotedTriple,
+  extractBaseTriple,
+} from './rdf-star.mjs';
+
+// Quoted triple class
+export {
+  QuotedTriple,
+  createQuotedTriple,
+} from './quoted-triple.mjs';
+
+// Annotation helpers
+export {
+  AnnotationBuilder,
+  createAnnotationBuilder,
+  createProvenance,
+  createTemporal,
+  createConfidence,
+  createMultiSource,
+  mergeAnnotations,
+  extractAnnotations,
+} from './annotation.mjs';
+
+// RDF-star schemas
+export {
+  QuotedTripleSchema,
+  ProvenanceSchema,
+  TemporalSchema,
+  ConfidenceSchema,
+  MultiSourceSchema,
+  AnnotationSchema,
+  AnnotatedTripleSchema,
+  SPARQLStarOptionsSchema,
+  validateQuotedTriple,
+  validateProvenance,
+  validateTemporal,
+  validateConfidence,
+  validateAnnotation,
+  safeParseQuotedTriple,
+  safeParseAnnotation,
+} from './rdf-star.schema.mjs';
