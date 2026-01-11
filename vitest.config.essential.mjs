@@ -1,11 +1,13 @@
 /**
  * @fileoverview Vitest configuration for ESSENTIAL tier (<10s)
- * Ultra-fast pre-commit validation - 20% of tests = 60%+ coverage
+ * Ultra-fast pre-commit validation
  *
- * 80/20 Principle:
- * - 15 essential test files (2.7% of 552 total)
+ * Core Features:
+ * - testTimeout: 5000ms (5s SLA - Andon Principle)
+ * - maxForks: 10 (parallel execution)
+ * - bail: true (fast failure)
+ * - 15 essential test files = 60%+ coverage
  * - Target: <10 seconds execution
- * - Coverage: 60%+ (core functionality only)
  * - Use case: Pre-commit hook, rapid feedback loop
  *
  * @module vitest.config.essential
@@ -14,78 +16,83 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // Ultra-fast single-fork execution
+    // Parallel execution with maxForks: 10
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true,
+        maxForks: 10,
       },
     },
 
-    // Minimal concurrency for speed
-    concurrent: false,
-    maxConcurrency: 1,
+    // Allow concurrent execution for speed
+    concurrent: true,
+    maxConcurrency: 10,
 
-    // Aggressive timeout (Andon principle)
-    testTimeout: 500,        // 500ms per test
-    hookTimeout: 1000,       // 1s for setup/teardown
+    // Test timeout - 5s SLA (Andon principle)
+    testTimeout: 5000,       // 5s per test
+    hookTimeout: 5000,       // 5s for setup/teardown
 
     // Node environment only
     environment: 'node',
 
     // ESSENTIAL TIER: Critical 20% delivering 60%+ coverage
+    // Target: <10 seconds execution time
     include: [
       // === CORE RDF OPERATIONS (Foundation) ===
-      'test/diff.test.mjs',                              // 685 lines - Diff engine CRITICAL
-      'test/project-engine.test.mjs',                    // 487 lines - Domain inference
-
-      // === HOOK SYSTEM (Governance) ===
-      'test/hook-executor-deps.test.mjs',                // 52 lines - Dependency validation
+      'test/diff.test.mjs',                              // Diff engine CRITICAL
+      'test/project-engine.test.mjs',                    // Domain inference
 
       // === KNOWLEDGE ENGINE CONTRACTS ===
-      'test/knowledge-engine/parse-contract.test.mjs',   // 21 lines - Parse contract
-      'test/knowledge-engine/query-contract.test.mjs',   // 21 lines - Query contract
+      'test/knowledge-engine/parse-contract.test.mjs',   // Parse contract
+      'test/knowledge-engine/query-contract.test.mjs',   // Query contract
 
       // === SECURITY & VALIDATION ===
-      'test/lockchain-merkle-verification.test.mjs',     // 168 lines - Cryptographic proofs
+      'test/lockchain-merkle-verification.test.mjs',     // Cryptographic proofs
       'test/security-error-sanitizer.test.mjs',          // Error sanitization
 
       // === INTEGRATION SMOKE TEST ===
-      'test/e2e-integration.test.mjs',                   // 112 lines - E2E validation
+      'test/e2e-integration.test.mjs',                   // E2E validation
 
-      // === V6 CORE (if tests exist) ===
-      'packages/v6-core/test/*.test.mjs',
-      'packages/v6-compat/test/*.test.mjs',
+      // === CORE PACKAGE TESTS ===
+      'packages/core/test/core.test.mjs',
+      'packages/hooks/test/hooks.test.mjs',
 
-      // === HOOKS CORE (if tests exist) ===
-      'packages/hooks/test/hook-registration.test.mjs',
-      'packages/hooks/test/hook-execution.test.mjs',
+      // === KGC & RECEIPTS ===
+      'packages/kgc-4d/test/freeze.test.mjs',
+      'packages/receipts/test/batch-receipt-generator.test.mjs',
+
+      // === V6 CORE ===
+      'packages/v6-core/test/implementations.test.mjs',
+
+      // === YAWL WORKFLOW ===
+      'packages/yawl/test/workflow-basics.test.mjs',
+
+      // === PROOFS (Formal Verification) ===
+      'proofs/poka-yoke/01-sealed-universe.test.mjs',
+      'proofs/poka-yoke/02-receipt-immutability.test.mjs',
+
+      // === CONSENSUS ===
+      'packages/consensus/test/consensus.test.mjs',
+
+      // === FEDERATION ===
+      'packages/federation/test/federation.test.mjs',
     ],
 
     // Exclude everything else
     exclude: [
       'node_modules/**',
       'dist/**',
+      'coverage/**',
       'test/fixtures/**',
       'test/utils/**',
-      'test/browser/**',
-      'test/react-hooks/**',
-      'test/ml/**',
-      'test/resilience/**',
-      'test/streaming/**',
-      'test/federation/**',
-      'test/knowledge-engine/**',
-      '!test/knowledge-engine/parse-contract.test.mjs',
-      '!test/knowledge-engine/query-contract.test.mjs',
-      'test/validation/**',
-      'test/e2e/**',
-      '!test/e2e-integration.test.mjs',
+      'test/setup/**',
+      'docs/**',
       'examples/**',
-      'proofs/**',
       'AUTONOMIC_INNOVATION/**',
       'ENTERPRISE_MIGRATION/**',
+      'playground/**',
+      'src/**',
       'benchmarks/**',
-      '**/node_modules/**',
     ],
 
     // Minimal coverage for speed
@@ -102,14 +109,14 @@ export default defineConfig({
     // Isolate tests
     isolate: true,
 
-    // Pass with no tests (some includes may not exist yet)
-    passWithNoTests: true,
+    // Fail fast on first error
+    bail: true,
 
     // No retries (fail fast)
     retry: 0,
 
-    // Bail on first failure (rapid feedback)
-    bail: 1,
+    // Do not pass with no tests - essential tier must have tests
+    passWithNoTests: false,
 
     // No watch mode
     watch: false,

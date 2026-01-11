@@ -468,24 +468,26 @@ export {
 // =============================================================================
 // NITRO INTEGRATIONS - Scheduler and Monitor
 // =============================================================================
-export {
-  // Scheduler
-  NitroScheduler,
-  createScheduler,
-  // Monitor
-  NitroMonitor,
-  createMonitor,
-  // Schemas
-  CronScheduleSchema,
-  DelayedExecutionSchema,
-  ScheduleConfigSchema,
-  TaskMetricsSchema,
-  ResourceMetricsSchema,
-  HealthStatusSchema,
-  AlertConfigSchema,
-  PerformanceMetricsSchema,
-  // Validation functions
-  validateScheduleConfig,
-  validatePerformanceMetrics,
-  validateAlertConfig,
-} from './integrations/index.mjs';
+// Note: Integrations module not yet implemented
+// Uncomment when ./integrations/index.mjs is created
+// export {
+//   // Scheduler
+//   NitroScheduler,
+//   createScheduler,
+//   // Monitor
+//   NitroMonitor,
+//   createMonitor,
+//   // Schemas
+//   CronScheduleSchema,
+//   DelayedExecutionSchema,
+//   ScheduleConfigSchema,
+//   TaskMetricsSchema,
+//   ResourceMetricsSchema,
+//   HealthStatusSchema,
+//   AlertConfigSchema,
+//   PerformanceMetricsSchema,
+//   // Validation functions
+//   validateScheduleConfig,
+//   validatePerformanceMetrics,
+//   validateAlertConfig,
+// } from './integrations/index.mjs';

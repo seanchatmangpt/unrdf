@@ -22,6 +22,7 @@
     "test": "vitest run --config vitest.config.mjs",
     "test:essential": "vitest run --config vitest.config.essential.mjs",
     "test:fast": "vitest run --config vitest.config.fast.mjs",
+    "test:ultra-fast": "vitest run --config vitest.config.ultra-fast.mjs",
     "test:all": "pnpm -r test",
     "test:watch": "pnpm -r test:watch",
     "test:watch:pkg": "bash -c './scripts/dev-workflow.sh test:watch \"$@\"' _",
