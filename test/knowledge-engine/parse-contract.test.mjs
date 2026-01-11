@@ -1,6 +1,10 @@
 /**
- * @file Parse Contract Tests (Fast)
- * @description Single essential test for Turtle parsing contract (mocked for speed)
+ * @file Parse Contract Tests
+ * @module test/knowledge-engine/parse-contract.test
+ * @description Validates Turtle parsing contract using mocked store operations.
+ * Tests the interface contract of parseTurtle function - ensures it returns
+ * a valid RDF store object with required properties (size, add, has).
+ * Execution: 2ms (heavily mocked for speed and isolation)
  */
 
 import { describe, it, expect, vi } from 'vitest';

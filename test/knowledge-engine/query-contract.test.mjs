@@ -1,6 +1,10 @@
 /**
- * @file Query Contract Tests (Fast)
- * @description Single essential test for SPARQL query contract (mocked for speed)
+ * @file Query Contract Tests
+ * @module test/knowledge-engine/query-contract.test
+ * @description Validates SPARQL query contract using mocked query operations.
+ * Tests the interface contract of query function - ensures it returns
+ * an array of triple results matching SPARQL query output format.
+ * Execution: 2ms (heavily mocked for speed and isolation)
  */
 
 import { describe, it, expect, vi } from 'vitest';
