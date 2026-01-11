@@ -1,0 +1,77 @@
+{
+  "name": "@unrdf/temporal-discovery",
+  "version": "1.0.0",
+  "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./pattern-miner": "./src/pattern-miner.mjs",
+    "./anomaly-detector": "./src/anomaly-detector.mjs",
+    "./trend-analyzer": "./src/trend-analyzer.mjs",
+    "./correlation-finder": "./src/correlation-finder.mjs",
+    "./changepoint-detector": "./src/changepoint-detector.mjs",
+    "./engine": "./src/temporal-discovery-engine.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run",
+    "test:watch": "vitest --coverage",
+    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "demo": "node examples/temporal-discovery-demo.mjs"
+  },
+  "keywords": [
+    "rdf",
+    "temporal",
+    "knowledge-discovery",
+    "pattern-mining",
+    "anomaly-detection",
+    "trend-analysis",
+    "time-series",
+    "apriori",
+    "pelt",
+    "changepoint"
+  ],
+  "dependencies": {
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/semantic-search": "workspace:*",
+    "@unrdf/graph-analytics": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/temporal-discovery"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

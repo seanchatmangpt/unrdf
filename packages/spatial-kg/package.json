@@ -1,0 +1,79 @@
+{
+  "name": "@unrdf/spatial-kg",
+  "version": "6.3.0-alpha.1",
+  "description": "Spatial Knowledge Graphs - WebXR-enabled 3D visualization and navigation of RDF knowledge graphs",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./engine": "./src/spatial-kg-engine.mjs",
+    "./layout": "./src/layout-3d.mjs",
+    "./renderer": "./src/webxr-renderer.mjs",
+    "./query": "./src/spatial-query.mjs",
+    "./gestures": "./src/gesture-controller.mjs",
+    "./collaboration": "./src/collaboration.mjs",
+    "./lod": "./src/lod-manager.mjs",
+    "./schemas": "./src/schemas.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:fast": "vitest run --no-coverage",
+    "test:watch": "vitest --no-coverage",
+    "build": "echo 'Build spatial-kg'",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/spatial-kg'"
+  },
+  "keywords": [
+    "rdf",
+    "knowledge-graph",
+    "spatial",
+    "3d",
+    "webxr",
+    "vr",
+    "ar",
+    "visualization"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "three": "^0.171.0",
+    "d3-force-3d": "^3.0.5",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/three": "^0.171.0",
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {
+    "@unrdf/core": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/spatial-kg"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

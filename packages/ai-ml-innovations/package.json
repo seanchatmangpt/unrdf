@@ -1,0 +1,49 @@
+{
+  "name": "@unrdf/ai-ml-innovations",
+  "version": "0.1.0",
+  "description": "Novel AI/ML integration patterns for UNRDF knowledge graphs",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./temporal-gnn": "./src/temporal-gnn.mjs",
+    "./neural-symbolic": "./src/neural-symbolic-reasoner.mjs",
+    "./federated": "./src/federated-embeddings.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test --ext .mjs",
+    "lint:fix": "eslint src test --ext .mjs --fix"
+  },
+  "keywords": [
+    "unrdf",
+    "ai",
+    "ml",
+    "knowledge-graph",
+    "gnn",
+    "neural-symbolic",
+    "federated-learning",
+    "embeddings",
+    "temporal",
+    "reasoning"
+  ],
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
+    "@unrdf/semantic-search": "workspace:*",
+    "@unrdf/ml-inference": "workspace:*",
+    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16",
+    "eslint": "^9.0.0"
+  },
+  "author": "UNRDF Contributors",
+  "license": "MIT"
+}

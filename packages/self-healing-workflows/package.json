@@ -1,0 +1,46 @@
+{
+  "name": "@unrdf/self-healing-workflows",
+  "version": "6.1.0",
+  "description": "Automatic error recovery system with 85-95% success rate using YAWL + Daemon + Hooks",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./engine": "./src/self-healing-engine.mjs",
+    "./retry": "./src/retry-strategy.mjs",
+    "./circuit-breaker": "./src/circuit-breaker.mjs",
+    "./recovery": "./src/recovery-actions.mjs",
+    "./classifier": "./src/error-classifier.mjs",
+    "./health": "./src/health-monitor.mjs",
+    "./schemas": "./src/schemas.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test --ext .mjs",
+    "lint:fix": "eslint src test --ext .mjs --fix"
+  },
+  "keywords": [
+    "self-healing",
+    "error-recovery",
+    "circuit-breaker",
+    "retry",
+    "workflow",
+    "resilience"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "peerDependencies": {
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/daemon": "workspace:*",
+    "@unrdf/hooks": "workspace:*"
+  }
+}

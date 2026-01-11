@@ -1,0 +1,46 @@
+{
+  "name": "@unrdf/geosparql",
+  "version": "6.2.0",
+  "description": "OGC GeoSPARQL standard compliance for spatial RDF queries",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./geometry": "./src/geometry.mjs",
+    "./spatial-relations": "./src/spatial-relations.mjs",
+    "./distance": "./src/distance.mjs",
+    "./rtree-index": "./src/rtree-index.mjs",
+    "./crs": "./src/crs.mjs",
+    "./query-functions": "./src/query-functions.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix"
+  },
+  "keywords": [
+    "geosparql",
+    "ogc",
+    "gis",
+    "spatial",
+    "rdf",
+    "geometry",
+    "rtree"
+  ],
+  "dependencies": {
+    "@turf/turf": "^7.1.0",
+    "rbush": "^4.0.1",
+    "@unrdf/oxigraph": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16",
+    "eslint": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
