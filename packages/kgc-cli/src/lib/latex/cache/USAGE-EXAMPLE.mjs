@@ -15,6 +15,14 @@ import { buildCtanUrls, extractPackageName as _extractPackageName, getPackageMet
 // EXAMPLE 1: Production Usage (CTAN with retry)
 // ============================================================================
 
+/**
+ * Demonstrates production usage with CTAN registry and retry logic
+ * @returns {Promise<Object>} Augmented VFS with resolved packages
+ * @throws {Error} If resolution fails after all retries
+ * @example
+ * const vfs = await productionExample();
+ * console.log(`VFS has ${Object.keys(vfs).length} files`);
+ */
 async function productionExample() {
   console.log('\n=== Example 1: Production Usage ===\n');
 
@@ -53,6 +61,14 @@ async function productionExample() {
 // EXAMPLE 2: Testing with Local Fixture Server
 // ============================================================================
 
+/**
+ * Demonstrates testing with local fixture server for offline development
+ * @returns {Promise<Map<string, Uint8Array>>} Map of resolved package files
+ * @throws {Error} If local fixture server is unavailable
+ * @example
+ * const resolved = await testingExample();
+ * console.log(`Resolved ${resolved.size} packages from local fixtures`);
+ */
 async function testingExample() {
   console.log('\n=== Example 2: Testing with Local Fixtures ===\n');
 
@@ -81,6 +97,13 @@ async function testingExample() {
 // EXAMPLE 3: Package Metadata Inspection
 // ============================================================================
 
+/**
+ * Demonstrates package metadata inspection and URL building
+ * @returns {void}
+ * @example
+ * metadataExample();
+ * // Logs metadata for algorithm2e.sty, tikz.sty, and beamer.cls
+ */
 function metadataExample() {
   console.log('\n=== Example 3: Package Metadata ===\n');
 
@@ -150,6 +173,13 @@ async function compileIntegrationExample(
 // EXAMPLE 5: Error Handling
 // ============================================================================
 
+/**
+ * Demonstrates error handling for failed package resolution
+ * @returns {Promise<void>}
+ * @example
+ * await errorHandlingExample();
+ * // Demonstrates proper error message formatting and fallback instructions
+ */
 async function errorHandlingExample() {
   console.log('\n=== Example 5: Error Handling ===\n');
 

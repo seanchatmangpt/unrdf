@@ -30,7 +30,12 @@ export async function buildMerkleTree(receipts) {
         const parentHash = await blake3(combined);
         nextLevel.push(parentHash);
       } else {
-        nextLevel.push(currentLevel[i]);
+        // CVE-2012-2459 mitigation: Duplicate odd leaf and hash with itself
+        // instead of promoting unhashed. This prevents odd-leaf duplication attacks
+        // where an attacker could append a duplicate leaf and maintain the same root.
+        const combined = currentLevel[i] + ':' + currentLevel[i];
+        const parentHash = await blake3(combined);
+        nextLevel.push(parentHash);
       }
     }
     levels.push(nextLevel);

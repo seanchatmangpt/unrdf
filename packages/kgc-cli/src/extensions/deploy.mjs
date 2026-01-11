@@ -32,7 +32,7 @@ const StackSchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/serverless',
+  id: '@unrdf/deploy',
   description: 'Serverless deployment for RDF applications',
 
   nouns: {

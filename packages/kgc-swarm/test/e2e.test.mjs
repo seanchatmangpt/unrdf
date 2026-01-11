@@ -17,7 +17,10 @@ import { ReceiptChain, hash } from '../src/receipts.mjs';
 
 describe('KGC-SWARM End-to-End Workflow Tests', () => {
   describe('Complete Workflow: Task → Plan → Execute → Verify', () => {
-    it.skip('should complete full software development workflow - SKIPPED: Zod v4 schema compat', async () => {
+    it.skip('should complete full software development workflow', async () => {
+      // SKIP REASON: Zod v4 compatibility - z.record() API changed in v4
+      // Schemas in consensus/membership.mjs use z.record(z.any()) which fails in v4
+      // RESOLUTION: Update all schemas to Zod v4 API or pin to Zod v3
       const swarm = createSwarm({
         maxAgents: 10,
         maxBudget: 50000,
@@ -371,7 +374,9 @@ describe('KGC-SWARM End-to-End Workflow Tests', () => {
   });
 
   describe('Guard System Integration in Workflow', () => {
-    it.skip('should track guard validations in receipts - SKIPPED: Zod v4 schema compat', async () => {
+    it.skip('should track guard validations in receipts', async () => {
+      // SKIP REASON: Zod v4 compatibility - same as above test
+      // RESOLUTION: Fix Zod v4 compatibility across package
       const swarm = createSwarm();
       const coder = swarm.spawnAgent('coder');
 

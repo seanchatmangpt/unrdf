@@ -5,72 +5,23 @@
  * with intelligent scheduling, result aggregation, and failure recovery
  */
 
-import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+import {
+  QueryStatsSchema,
+  FederationExecutorConfigSchema,
+  ExecuteQueryOptionsSchema,
+  SparqlQuerySchema,
+  QueryIdSchema,
+  NodeIdSchema,
+  DaemonSchema,
+  FederationCoordinatorSchema,
+} from './federation-query-schemas.mjs';
+import {
+  selectNodes,
+  updateNodeMetrics,
+} from './federation-node-selection.mjs';
+
 const tracer = trace.getTracer('@unrdf/daemon-federation');
-
-/**
- * Query execution statistics
- */
-const QueryStatsSchema = z.object({
-  queryId: z.string(),
-  sparql: z.string(),
-  strategy: z.enum(['broadcast', 'selective', 'best-node']),
-  nodeCount: z.number().int().nonnegative(),
-  successCount: z.number().int().nonnegative(),
-  failureCount: z.number().int().nonnegative(),
-  totalDuration: z.number().nonnegative(),
-  startTime: z.number(),
-  endTime: z.number(),
-  timestamp: z.date().default(() => new Date()),
-});
-
-/**
- * Federation executor configuration
- */
-const FederationExecutorConfigSchema = z.object({
-  executorId: z.string().min(1).default(() => `executor-${Date.now()}`),
-  strategy: z.enum(['broadcast', 'selective', 'best-node']).default('selective'),
-  timeout: z.number().positive().default(30000),
-  maxRetries: z.number().int().min(1).default(2),
-  deduplicateResults: z.boolean().default(true),
-  enableNodeSelection: z.boolean().default(true),
-  healthCheckThreshold: z.number().min(0).max(1).default(0.7),
-});
-
-/**
- * Execute query options schema
- */
-const ExecuteQueryOptionsSchema = z.object({
-  strategy: z.enum(['broadcast', 'selective', 'best-node']).optional(),
-  timeout: z.number().positive().optional(),
-  excludeNodes: z.array(z.string()).optional(),
-}).optional();
-
-/**
- * SPARQL query validation schema
- */
-const SparqlQuerySchema = z.string().min(1).refine(
-  (query) => query.trim().length > 0,
-  { message: 'SPARQL query must be non-empty' }
-);
-
-/**
- * Query ID validation schema
- */
-const QueryIdSchema = z.string().min(1);
-
-/**
- * Node ID validation schema
- */
-const NodeIdSchema = z.string().min(1);
-
-/**
- * Daemon and coordinator validation schemas
- */
-const DaemonSchema = z.object({}).passthrough();
-const FederationCoordinatorSchema = z.object({}).passthrough();
 
 /**
  * Distributed Federated Query Executor for Daemon
@@ -120,7 +71,7 @@ export class DaemonFederationExecutor {
    * @param {Array<string>} [options.excludeNodes] - Nodes to exclude from query
    * @returns {Promise<Object>} Aggregated query results with metadata
    * @throws {Error} If query execution fails on all nodes
-   *
+   */
   async executeQuery(sparqlQuery, options = {}) {
     // Validate inputs
     const validatedQuery = SparqlQuerySchema.parse(sparqlQuery);
@@ -138,7 +89,6 @@ export class DaemonFederationExecutor {
     const startTime = Date.now();
 
     try {
-
       // Determine execution strategy
       const strategy = validatedOptions.strategy || this.config.strategy;
       const timeout = validatedOptions.timeout || this.config.timeout;
@@ -151,7 +101,7 @@ export class DaemonFederationExecutor {
       });
 
       // Get available nodes for federation
-      const availableNodes = this._selectNodes(strategy, excludeNodes);
+      const availableNodes = selectNodes(this.coordinator, strategy, excludeNodes, this.nodeMetrics);
 
       if (availableNodes.length === 0) {
         throw new Error('No available federation nodes for query execution');
@@ -208,7 +158,7 @@ export class DaemonFederationExecutor {
       };
 
       this.queryStats.set(queryId, stats);
-      this._updateNodeMetrics(peerResults);
+      updateNodeMetrics(this.nodeMetrics, peerResults);
 
       span.setAttributes({
         'query.successCount': successCount,
@@ -236,97 +186,6 @@ export class DaemonFederationExecutor {
     } finally {
       span.end();
     }
-  }
-
-  /**
-   * Select nodes for query execution based on strategy
-   *
-   * @private
-   * @param {string} strategy - Selection strategy
-   * @param {Array<string>} excludeNodes - Nodes to exclude
-   * @returns {Array<string>} Selected node IDs
-   */
-  _selectNodes(strategy, excludeNodes = []) {
-    const peers = this.coordinator.listPeers?.() || [];
-    const availableNodes = peers
-      .filter(p => !excludeNodes.includes(p.id) && p.status === 'healthy')
-      .map(p => p.id);
-
-    if (availableNodes.length === 0) {
-      return peers.filter(p => !excludeNodes.includes(p.id)).map(p => p.id);
-    }
-
-    switch (strategy) {
-      case 'best-node': {
-        // Select single best node based on metrics
-        return [this._selectBestNode(availableNodes)];
-      }
-
-      case 'selective': {
-        // Select top performing nodes (50%)
-        const count = Math.max(1, Math.ceil(availableNodes.length * 0.5));
-        return this._selectTopNodes(availableNodes, count);
-      }
-
-      case 'broadcast':
-      default: {
-        // Use all available nodes
-        return availableNodes;
-      }
-    }
-  }
-
-  /**
-   * Select single best node based on performance metrics
-   *
-   * @private
-   * @param {Array<string>} nodeIds - Node IDs to choose from
-   * @returns {string} Best node ID
-   */
-  _selectBestNode(nodeIds) {
-    let bestNode = nodeIds[0];
-    let bestScore = -Infinity;
-
-    for (const nodeId of nodeIds) {
-      const metrics = this.nodeMetrics.get(nodeId) || {
-        queryCount: 0,
-        successRate: 1.0,
-        avgDuration: 0,
-      };
-
-      // Score = success rate / (1 + avgDuration)
-      const score = metrics.successRate / (1 + metrics.avgDuration / 1000);
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestNode = nodeId;
-      }
-    }
-
-    return bestNode;
-  }
-
-  /**
-   * Select top performing nodes
-   *
-   * @private
-   * @param {Array<string>} nodeIds - Node IDs to choose from
-   * @param {number} count - Number of nodes to select
-   * @returns {Array<string>} Selected node IDs
-   */
-  _selectTopNodes(nodeIds, count) {
-    const scored = nodeIds.map(nodeId => {
-      const metrics = this.nodeMetrics.get(nodeId) || {
-        queryCount: 0,
-        successRate: 1.0,
-        avgDuration: 0,
-      };
-
-      const score = metrics.successRate / (1 + metrics.avgDuration / 1000);
-      return { nodeId, score };
-    });
-
-    return scored.sort((a, b) => b.score - a.score).slice(0, count).map(s => s.nodeId);
   }
 
   /**
@@ -467,37 +326,6 @@ export class DaemonFederationExecutor {
     }
 
     return unique;
-  }
-
-  /**
-   * Update node performance metrics
-   *
-   * @private
-   * @param {Array<Object>} peerResults - Results from peer execution
-   */
-  _updateNodeMetrics(peerResults) {
-    for (const result of peerResults) {
-      const nodeId = result.nodeId;
-      const existing = this.nodeMetrics.get(nodeId) || {
-        queryCount: 0,
-        successCount: 0,
-        totalDuration: 0,
-        successRate: 1.0,
-        avgDuration: 0,
-      };
-
-      const isSuccess = result.success === true;
-
-      existing.queryCount += 1;
-      if (isSuccess) {
-        existing.successCount += 1;
-      }
-      existing.totalDuration += result.duration || 0;
-      existing.successRate = existing.successCount / existing.queryCount;
-      existing.avgDuration = existing.totalDuration / existing.queryCount;
-
-      this.nodeMetrics.set(nodeId, existing);
-    }
   }
 
   /**

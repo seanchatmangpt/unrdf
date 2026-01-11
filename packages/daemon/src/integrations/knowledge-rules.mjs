@@ -7,11 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
-
 import {
-  metadataToBindings,
-  matchPatternBindings,
   calculateConfidence,
   generateExplanation,
   checkRuleConflict,
@@ -22,6 +18,13 @@ import {
   RuleExecutionResultSchema,
   DaemonRuleEngineConfigSchema,
 } from './knowledge-rules-schemas.mjs';
+import {
+  evaluateCondition,
+} from './knowledge-rules-evaluators.mjs';
+import {
+  buildInferenceChains,
+  getInferenceChain,
+} from './knowledge-rules-inference.mjs';
 
 // Re-export schemas for external use
 export {
@@ -30,10 +33,6 @@ export {
   RuleExecutionResultSchema,
   DaemonRuleEngineConfigSchema,
 };
-
-// =============================================================================
-// DAEMON RULE ENGINE
-// =============================================================================
 
 /**
  * Daemon Rule Engine extending knowledge-engine with intelligent rule execution
@@ -239,7 +238,7 @@ export class DaemonRuleEngine extends EventEmitter {
 
       // Build inference chains between matched rules
       const inferenceChains = this.config.enableInference
-        ? this._buildInferenceChains(matchedRules)
+        ? buildInferenceChains(matchedRules, this, this.config.maxRuleChainDepth)
         : [];
 
       // Update average confidence
@@ -290,7 +289,7 @@ export class DaemonRuleEngine extends EventEmitter {
     const selectedRule = this._selectRuleVariant(rule);
 
     // Evaluate condition
-    const conditionResult = await this._evaluateCondition(
+    const conditionResult = await evaluateCondition(
       selectedRule.condition,
       operationMetadata,
       context
@@ -318,7 +317,7 @@ export class DaemonRuleEngine extends EventEmitter {
       confidence,
       explanation: {
         ...explanation,
-        inferenceChain: this._getInferenceChain(selectedRule.id, evaluationId),
+        inferenceChain: getInferenceChain(selectedRule.id, evaluationId, this.executionHistory),
       },
       action: matched ? selectedRule.action : undefined,
       duration: Date.now() - startTime,
@@ -353,201 +352,6 @@ export class DaemonRuleEngine extends EventEmitter {
   }
 
   /**
-   * Evaluate a condition (SPARQL pattern or composite)
-   * @param {Object} condition - Condition definition
-   * @param {Object} operationMetadata - Operation metadata
-   * @param {Object} context - Evaluation context
-   * @returns {Promise<Object>} Condition evaluation result
-   * @private
-   */
-  async _evaluateCondition(condition, operationMetadata, context) {
-    if (condition.type === 'sparql') {
-      return this._evaluateSparqlPattern(condition, operationMetadata, context);
-    }
-
-    if (condition.type === 'business-logic') {
-      return this._evaluateBusinessLogic(condition, operationMetadata);
-    }
-
-    if (condition.type === 'composite') {
-      return this._evaluateCompositeCondition(condition, operationMetadata, context);
-    }
-
-    return { matched: false, confidence: 0 };
-  }
-
-  /**
-   * Evaluate SPARQL pattern condition
-   * @param {Object} pattern - SPARQL pattern definition
-   * @param {Object} operationMetadata - Operation metadata
-   * @param {Object} _context - Evaluation context
-   * @returns {Promise<Object>} Pattern evaluation result
-   * @private
-   */
-  async _evaluateSparqlPattern(pattern, operationMetadata, _context) {
-    try {
-      // Prepare SPARQL bindings with operation metadata
-      const bindings = {
-        ...pattern.bindings,
-        ...metadataToBindings(operationMetadata),
-      };
-
-      // In a real implementation, this would execute SPARQL against RDF store
-      const matched = matchPatternBindings(pattern.query, bindings);
-
-      return {
-        matched,
-        confidence: matched ? 0.9 : 0.1,
-        patterns: [pattern.query],
-      };
-    } catch (error) {
-      return {
-        matched: false,
-        confidence: 0,
-        patterns: [],
-        error: error.message,
-      };
-    }
-  }
-
-  /**
-   * Evaluate business logic condition
-   * @param {Object} condition - Business logic condition
-   * @param {Object} operationMetadata - Operation metadata
-   * @returns {Object} Condition evaluation result
-   * @private
-   */
-  _evaluateBusinessLogic(condition, operationMetadata) {
-    try {
-      const result = condition.evaluator(operationMetadata);
-      return {
-        matched: Boolean(result),
-        confidence: result === true ? 1 : 0,
-        description: condition.description,
-      };
-    } catch (error) {
-      return {
-        matched: false,
-        confidence: 0,
-        error: error.message,
-      };
-    }
-  }
-
-  /**
-   * Evaluate composite condition (AND/OR/NOT operators)
-   * @param {Object} condition - Composite condition
-   * @param {Object} operationMetadata - Operation metadata
-   * @param {Object} context - Evaluation context
-   * @returns {Promise<Object>} Composite condition result
-   * @private
-   */
-  async _evaluateCompositeCondition(condition, operationMetadata, context) {
-    const results = await Promise.all(
-      condition.conditions.map(c => this._evaluateCondition(c, operationMetadata, context))
-    );
-
-    switch (condition.operator) {
-      case 'and':
-        return {
-          matched: results.every(r => r.matched),
-          confidence: results.length > 0
-            ? results.reduce((sum, r) => sum + r.confidence, 0) / results.length
-            : 0,
-        };
-
-      case 'or':
-        return {
-          matched: results.some(r => r.matched),
-          confidence: Math.max(...results.map(r => r.confidence), 0),
-        };
-
-      case 'not':
-        return {
-          matched: !results[0]?.matched,
-          confidence: 1 - (results[0]?.confidence || 0),
-        };
-
-      default:
-        return { matched: false, confidence: 0 };
-    }
-  }
-
-
-  /**
-   * Build inference chains between matched rules
-   * @param {Array} matchedRules - Array of matched rule results
-   * @returns {Array} Inference chains
-   * @private
-   */
-  _buildInferenceChains(matchedRules) {
-    const chains = [];
-    const visited = new Set();
-
-    for (const rule of matchedRules) {
-      if (visited.has(rule.ruleId)) continue;
-      const chain = this._buildChainForRule(rule.ruleId, matchedRules, visited, 0);
-      if (chain.length > 0) chains.push(chain);
-    }
-
-    return chains;
-  }
-
-  /**
-   * Build inference chain for a specific rule
-   * @param {string} ruleId - Rule identifier
-   * @param {Array} matchedRules - Matched rules
-   * @param {Set} visited - Visited rule IDs
-   * @param {number} depth - Current chain depth
-   * @returns {Array} Chain of rule IDs
-   * @private
-   */
-  _buildChainForRule(ruleId, matchedRules, visited, depth) {
-    if (depth > this.config.maxRuleChainDepth || visited.has(ruleId)) {
-      return [];
-    }
-
-    visited.add(ruleId);
-    const rule = this.getRule(ruleId);
-    if (!rule) return [];
-
-    const chain = [ruleId];
-
-    // Find dependent rules that match
-    for (const dependent of matchedRules) {
-      if (rule.dependencies.includes(dependent.ruleId)) {
-        const subChain = this._buildChainForRule(
-          dependent.ruleId,
-          matchedRules,
-          visited,
-          depth + 1
-        );
-        if (subChain.length > 0) {
-          chain.push(...subChain);
-        }
-      }
-    }
-
-    return chain;
-  }
-
-  /**
-   * Get inference chain for evaluation
-   * @param {string} ruleId - Rule identifier
-   * @param {string} evaluationId - Evaluation identifier
-   * @returns {Array} Inference chain
-   * @private
-   */
-  _getInferenceChain(ruleId, evaluationId) {
-    // Find related rules from execution history
-    const related = this.executionHistory
-      .filter(e => e.evaluationId === evaluationId && e.matched)
-      .map(e => e.ruleName);
-    return related;
-  }
-
-
-  /**
    * Detect rule conflicts (rules with contradicting actions)
    * @returns {Array} Array of conflict objects
    */
@@ -564,7 +368,6 @@ export class DaemonRuleEngine extends EventEmitter {
 
     return conflicts;
   }
-
 
   /**
    * Get engine metrics and statistics
@@ -612,6 +415,3 @@ export class DaemonRuleEngine extends EventEmitter {
     this.inferenceCache.clear();
   }
 }
-
-// Export ConfidenceLevels for external use
-// (Other schemas are already exported as named exports above)

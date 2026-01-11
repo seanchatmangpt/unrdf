@@ -89,6 +89,16 @@ export function reverseOperation(op) {
 
   switch (op.op) {
     case 'set':
+      // If oldValue was undefined, the original operation created the key
+      // So the reverse should delete it
+      if (op.oldValue === undefined) {
+        return {
+          op: 'delete',
+          path: op.path,
+          oldValue: op.newValue,
+          timestamp_ns: reversed.timestamp_ns,
+        };
+      }
       return {
         op: 'set',
         path: op.path,
@@ -98,10 +108,10 @@ export function reverseOperation(op) {
       };
     case 'delete':
       return {
-        op: 'insert',
+        op: 'set',
         path: op.path,
-        value: op.oldValue,
-        index: 0,
+        oldValue: undefined,
+        newValue: op.oldValue,
         timestamp_ns: reversed.timestamp_ns,
       };
     case 'insert':
@@ -121,29 +131,33 @@ export function reverseOperation(op) {
  * @param {string} condition - Condition to evaluate
  * @param {Object} context - Evaluation context
  * @param {Map} store - State store
+ * @param {Object} [logger] - Logger instance
  * @returns {boolean} Evaluation result
  */
-export function evaluateCondition(condition, context, store) {
-  // Simple condition evaluation - can be extended
+export function evaluateCondition(condition, context, store, logger = console) {
   if (condition === 'always') return true;
   if (condition === 'never') return false;
   if (condition.startsWith('path:')) {
     const path = condition.substring(5);
     return store.has(path);
   }
-  return true;
+  // Fail-closed: Unknown conditions denied
+  logger.warn(`Unknown condition type: ${condition}, denying access`);
+  return false;
 }
 
 /**
  * Evaluate constraint
  * @param {string} constraint - Constraint to evaluate
  * @param {Object} context - Evaluation context
+ * @param {Object} [logger] - Logger instance
  * @returns {boolean} Evaluation result
  */
-export function evaluateConstraint(constraint, context) {
-  // Simple constraint evaluation - can be extended
+export function evaluateConstraint(constraint, context, logger = console) {
   if (constraint === 'none') return true;
-  return true;
+  // Fail-closed: Unknown constraints denied
+  logger.warn(`Unknown constraint type: ${constraint}, denying access`);
+  return false;
 }
 
 /**

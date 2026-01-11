@@ -14,7 +14,7 @@
 import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { createStore, namedNode, literal, quad, iterateQuads } from '@unrdf/core';
-import { Parser, Writer } from 'n3';
+import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Create a new graph

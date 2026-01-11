@@ -4,7 +4,7 @@
  * @description Node selection strategies for federated query execution
  */
 
-export function selectNodes(coordinator, strategy, excludeNodes = []) {
+export function selectNodes(coordinator, strategy, excludeNodes = [], nodeMetrics = new Map()) {
   const peers = coordinator.listPeers?.() || [];
   const availableNodes = peers
     .filter(p => !excludeNodes.includes(p.id) && p.status === 'healthy')
@@ -14,9 +14,9 @@ export function selectNodes(coordinator, strategy, excludeNodes = []) {
   }
   switch (strategy) {
     case 'best-node':
-      return [selectBestNode(availableNodes, new Map())];
+      return [selectBestNode(availableNodes, nodeMetrics)];
     case 'selective':
-      return selectTopNodes(availableNodes, Math.max(1, Math.ceil(availableNodes.length * 0.5)), new Map());
+      return selectTopNodes(availableNodes, Math.max(1, Math.ceil(availableNodes.length * 0.5)), nodeMetrics);
     case 'broadcast':
     default:
       return availableNodes;

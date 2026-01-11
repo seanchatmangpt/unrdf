@@ -15,146 +15,42 @@
  */
 
 import { EventEmitter } from 'events';
-import { z } from 'zod';
-import { createHash, randomUUID } from 'node:crypto';
 import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
+// Import schemas
+import {
+  DeltaOperationSchema,
+  DeltaContractSchema,
+  DeltaReceiptSchema,
+  HealthStatusSchema,
+} from './v6-deltagate.schema.mjs';
 
-// =============================================================================
-// Schema Definitions
-// =============================================================================
+// Import helpers
+import { hashData, generateUUID, getNs, getISOTimestamp } from './v6-deltagate.helpers.mjs';
 
-/**
- * Delta Operation Schema - Individual state change
- * @type {z.ZodDiscriminatedUnion}
- */
-export const DeltaOperationSchema = z.discriminatedUnion('op', [
-  z.object({
-    op: z.literal('set'),
-    path: z.string().min(1),
-    oldValue: z.any().optional(),
-    newValue: z.any(),
-    timestamp_ns: z.bigint(),
-  }),
-  z.object({
-    op: z.literal('delete'),
-    path: z.string().min(1),
-    oldValue: z.any(),
-    timestamp_ns: z.bigint(),
-  }),
-  z.object({
-    op: z.literal('insert'),
-    path: z.string().min(1),
-    index: z.number().int().min(0),
-    value: z.any(),
-    timestamp_ns: z.bigint(),
-  }),
-]);
+// Import evaluators
+import {
+  checkAdmissibility,
+  applyOperations,
+  reverseOperation,
+  evaluateCondition,
+  evaluateConstraint,
+  validateChain,
+} from './v6-deltagate.evaluators.mjs';
 
-/**
- * Delta Contract Schema - Change proposal with metadata
- * @type {z.ZodObject}
- */
-export const DeltaContractSchema = z.object({
-  id: z.string().uuid(),
-  timestamp_ns: z.bigint(),
-  timestamp_iso: z.string().datetime(),
-  operations: z.array(DeltaOperationSchema).min(1),
-  source: z.object({
-    package: z.string().min(1),
-    actor: z.string().optional(),
-    nodeId: z.string().optional(),
-    context: z.record(z.any()).optional(),
-  }),
-  admissibility: z.object({
-    policyId: z.string().optional(),
-    constraints: z.array(z.string()).optional(),
-    preConditions: z.array(z.string()).optional(),
-  }).optional(),
-  previousDeltaId: z.string().uuid().nullable(),
-});
+// Import receipt generation
+import { generateReceipt } from './v6-deltagate.receipts.mjs';
 
-/**
- * Receipt Schema - Delta execution receipt
- * @type {z.ZodObject}
- */
-export const DeltaReceiptSchema = z.object({
-  id: z.string().uuid(),
-  deltaId: z.string().uuid(),
-  timestamp_ns: z.bigint(),
-  timestamp_iso: z.string().datetime(),
-  applied: z.boolean(),
-  reason: z.string().optional(),
-  stateHash: z.string().length(64).optional(),
-  operationsApplied: z.number().int().min(0),
-  operationsFailed: z.number().int().min(0).default(0),
-  metadata: z.record(z.any()).optional(),
-  previousReceiptHash: z.string().length(64).nullable(),
-  receiptHash: z.string().length(64),
-});
+// Import state management
+import { captureState, storeHistory } from './v6-deltagate.state.mjs';
 
-/**
- * Health Status Schema
- * @type {z.ZodObject}
- */
-export const HealthStatusSchema = z.object({
-  status: z.enum(['healthy', 'degraded', 'unhealthy']),
-  deltasProcessed: z.number().int().min(0),
-  deltasRejected: z.number().int().min(0),
-  lastDeltaId: z.string().uuid().nullable().optional(),
-  lastReceiptHash: z.string().length(64).nullable().optional(),
-  timestamp_ns: z.bigint(),
-});
-
-// =============================================================================
-// Helper Functions
-// =============================================================================
-
-/**
- * Generate SHA256 hash of data
- * @param {*} data - Data to hash
- * @returns {string} 64-character hex hash
- * @private
- */
-function hashData(data) {
-  let str;
-  if (typeof data === 'string') {
-    str = data;
-  } else {
-    // Handle BigInt serialization
-    str = JSON.stringify(data, (key, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    );
-  }
-  return createHash('sha256').update(str).digest('hex');
-}
-
-/**
- * Generate UUID v4
- * @returns {string} Valid UUID v4
- * @private
- */
-function generateUUID() {
-  return randomUUID();
-}
-
-/**
- * Get nanosecond timestamp
- * @returns {bigint} Nanosecond timestamp
- * @private
- */
-function getNs() {
-  return BigInt(Date.now()) * 1_000_000n;
-}
-
-/**
- * Get ISO timestamp
- * @returns {string} ISO 8601 timestamp
- * @private
- */
-function getISOTimestamp() {
-  return new Date().toISOString();
-}
+// Re-export schemas for external use
+export {
+  DeltaOperationSchema,
+  DeltaContractSchema,
+  DeltaReceiptSchema,
+  HealthStatusSchema,
+};
 
 // =============================================================================
 // DaemonDeltaGate Class
@@ -246,35 +142,54 @@ export class DaemonDeltaGate extends EventEmitter {
       this.logger.debug(`[DeltaGate] Validating delta ${validated.id}`);
 
       // 2. Capture old state
-      const oldState = this._captureState();
+      const oldState = captureState(this.store);
       const oldStateHash = hashData(oldState);
 
       // 3. Check admissibility
-      const admissibilityCheck = await this._checkAdmissibility(validated, context);
+      const admissibilityCheck = await checkAdmissibility(
+        validated,
+        context,
+        (condition, ctx) => evaluateCondition(condition, ctx, this.store, this.logger),
+        (constraint, ctx) => evaluateConstraint(constraint, ctx, this.logger)
+      );
+
       if (!admissibilityCheck.lawful) {
         return await this._rejectDelta(validated, admissibilityCheck.reason);
       }
 
       // 4. Apply operations atomically
-      const applyResult = this._applyOperations(validated.operations);
+      const applyResult = applyOperations(validated.operations, this.store);
       if (!applyResult.success) {
         return await this._rejectDelta(validated, applyResult.reason);
       }
 
       // 5. Capture new state and generate receipt
-      const newState = this._captureState();
+      const newState = captureState(this.store);
       const newStateHash = hashData(newState);
 
-      const receipt = await this._generateReceipt({
-        deltaId: validated.id,
-        applied: true,
-        stateHash: newStateHash,
-        operationsApplied: validated.operations.length,
-        operationsFailed: 0,
-      });
+      const receipt = await generateReceipt(
+        {
+          deltaId: validated.id,
+          applied: true,
+          stateHash: newStateHash,
+          operationsApplied: validated.operations.length,
+          operationsFailed: 0,
+        },
+        this.lastReceiptHash
+      );
 
       // 6. Store in history
-      this._storeHistory(validated, receipt, oldState, newState);
+      storeHistory(
+        this.deltaHistory,
+        this.receiptHistory,
+        this.stateHistory,
+        validated,
+        receipt,
+        oldState,
+        newState,
+        this.maxHistorySize
+      );
+
       this.deltasProcessed++;
       this.lastDeltaId = validated.id;
       this.lastReceiptHash = receipt.receiptHash;
@@ -335,7 +250,7 @@ export class DaemonDeltaGate extends EventEmitter {
     const reversedOperations = originalDelta.operations
       .slice()
       .reverse()
-      .map((op) => this._reverseOperation(op));
+      .map((op) => reverseOperation(op));
 
     const reversedDelta = DeltaContractSchema.parse({
       id: generateUUID(),
@@ -432,7 +347,7 @@ export class DaemonDeltaGate extends EventEmitter {
   getReceiptChain() {
     return this.receiptHistory.map((receipt, index) => ({
       ...receipt,
-      chainValid: this._validateChain(index),
+      chainValid: validateChain(this.receiptHistory, index),
     }));
   }
 
@@ -441,176 +356,35 @@ export class DaemonDeltaGate extends EventEmitter {
   // =========================================================================
 
   /**
-   * Check delta admissibility
-   * @private
-   */
-  async _checkAdmissibility(delta, context) {
-    if (!delta.admissibility) {
-      return { lawful: true };
-    }
-
-    const { policyId, constraints = [], preConditions = [] } = delta.admissibility;
-
-    // Check pre-conditions
-    for (const condition of preConditions) {
-      if (!this._evaluateCondition(condition, context)) {
-        return {
-          lawful: false,
-          reason: `Pre-condition failed: ${condition}`,
-        };
-      }
-    }
-
-    // Check constraints
-    for (const constraint of constraints) {
-      if (!this._evaluateConstraint(constraint, context)) {
-        return {
-          lawful: false,
-          reason: `Constraint failed: ${constraint}`,
-        };
-      }
-    }
-
-    return { lawful: true };
-  }
-
-  /**
-   * Apply operations atomically
-   * @private
-   */
-  _applyOperations(operations) {
-    try {
-      for (const op of operations) {
-        switch (op.op) {
-          case 'set':
-            this.store.set(op.path, op.newValue);
-            break;
-          case 'delete':
-            this.store.delete(op.path);
-            break;
-          case 'insert':
-            if (op.path.includes('[')) {
-              // Array-like path: handle insert
-              const current = this.store.get(op.path) || [];
-              if (Array.isArray(current)) {
-                current.splice(op.index, 0, op.value);
-              }
-            }
-            break;
-          default:
-            return { success: false, reason: `Unknown operation: ${op.op}` };
-        }
-      }
-      return { success: true };
-    } catch (error) {
-      return { success: false, reason: error.message };
-    }
-  }
-
-  /**
-   * Reverse an operation
-   * @private
-   */
-  _reverseOperation(op) {
-    const reversed = { ...op, timestamp_ns: getNs() };
-
-    switch (op.op) {
-      case 'set':
-        // If oldValue was undefined, the original operation created the key
-        // So the reverse should delete it
-        if (op.oldValue === undefined) {
-          return {
-            op: 'delete',
-            path: op.path,
-            oldValue: op.newValue,
-            timestamp_ns: reversed.timestamp_ns,
-          };
-        }
-        return {
-          op: 'set',
-          path: op.path,
-          oldValue: op.newValue,
-          newValue: op.oldValue,
-          timestamp_ns: reversed.timestamp_ns,
-        };
-      case 'delete':
-        return {
-          op: 'set',
-          path: op.path,
-          oldValue: undefined,
-          newValue: op.oldValue,
-          timestamp_ns: reversed.timestamp_ns,
-        };
-      case 'insert':
-        return {
-          op: 'delete',
-          path: op.path,
-          oldValue: op.value,
-          timestamp_ns: reversed.timestamp_ns,
-        };
-      default:
-        throw new Error(`Cannot reverse operation: ${op.op}`);
-    }
-  }
-
-  /**
-   * Generate receipt with proof chain
-   * @private
-   */
-  async _generateReceipt(receiptData) {
-    const receiptId = generateUUID();
-    const timestamp_ns = getNs();
-    const timestamp_iso = getISOTimestamp();
-
-    const payloadHash = hashData({
-      deltaId: receiptData.deltaId,
-      stateHash: receiptData.stateHash,
-      operationsApplied: receiptData.operationsApplied,
-      timestamp_ns,
-    });
-
-    const receiptHash = hashData({
-      id: receiptId,
-      previousHash: this.lastReceiptHash,
-      payloadHash,
-      timestamp_iso,
-    });
-
-    const receipt = DeltaReceiptSchema.parse({
-      id: receiptId,
-      deltaId: receiptData.deltaId,
-      timestamp_ns,
-      timestamp_iso,
-      applied: receiptData.applied,
-      reason: receiptData.reason,
-      stateHash: receiptData.stateHash,
-      operationsApplied: receiptData.operationsApplied,
-      operationsFailed: receiptData.operationsFailed || 0,
-      previousReceiptHash: this.lastReceiptHash,
-      receiptHash,
-    });
-
-    return receipt;
-  }
-
-  /**
    * Reject delta
    * @private
    */
   async _rejectDelta(delta, reason) {
-    const oldState = this._captureState();
-    const receipt = await this._generateReceipt({
-      deltaId: delta.id,
-      applied: false,
-      reason,
-      operationsApplied: 0,
-      operationsFailed: delta.operations.length,
-    });
+    const oldState = captureState(this.store);
+    const receipt = await generateReceipt(
+      {
+        deltaId: delta.id,
+        applied: false,
+        reason,
+        operationsApplied: 0,
+        operationsFailed: delta.operations.length,
+      },
+      this.lastReceiptHash
+    );
 
     this.deltasRejected++;
 
     // Store rejected delta and receipt in history
-    this._storeHistory(delta, receipt, oldState, oldState);
+    storeHistory(
+      this.deltaHistory,
+      this.receiptHistory,
+      this.stateHistory,
+      delta,
+      receipt,
+      oldState,
+      oldState,
+      this.maxHistorySize
+    );
 
     this.emit('delta:rejected', { deltaId: delta.id, receipt, reason });
 
@@ -620,75 +394,5 @@ export class DaemonDeltaGate extends EventEmitter {
 
     this.logger.warn(`[DeltaGate] Delta rejected: ${delta.id}`, { reason });
     return receipt;
-  }
-
-  /**
-   * Capture current state
-   * @private
-   */
-  _captureState() {
-    const state = {};
-    for (const [key, value] of this.store.entries()) {
-      state[key] = value;
-    }
-    return state;
-  }
-
-  /**
-   * Store delta and receipt in history
-   * @private
-   */
-  _storeHistory(delta, receipt, oldState, newState) {
-    this.deltaHistory.push(delta);
-    this.receiptHistory.push(receipt);
-    this.stateHistory.set(receipt.id, { oldState, newState });
-
-    // Trim history if needed
-    if (this.deltaHistory.length > this.maxHistorySize) {
-      this.deltaHistory.shift();
-      this.receiptHistory.shift();
-    }
-  }
-
-  /**
-   * Evaluate condition
-   * @private
-   */
-  _evaluateCondition(condition, context) {
-    if (condition === 'always') return true;
-    if (condition === 'never') return false;
-    if (condition.startsWith('path:')) {
-      const path = condition.substring(5);
-      return this.store.has(path);
-    }
-    // Fail-closed: Unknown conditions denied
-    this.logger.warn(`Unknown condition type: ${condition}, denying access`);
-    return false;
-  }
-
-  /**
-   * Evaluate constraint
-   * @private
-   */
-  _evaluateConstraint(constraint, context) {
-    if (constraint === 'none') return true;
-    // Fail-closed: Unknown constraints denied
-    this.logger.warn(`Unknown constraint type: ${constraint}, denying access`);
-    return false;
-  }
-
-  /**
-   * Validate chain at index
-   * @private
-   */
-  _validateChain(index) {
-    if (index === 0) {
-      return this.receiptHistory[0].previousReceiptHash === null;
-    }
-
-    const current = this.receiptHistory[index];
-    const previous = this.receiptHistory[index - 1];
-
-    return current.previousReceiptHash === previous.receiptHash;
   }
 }

@@ -31,7 +31,7 @@ const PathSchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/graph-analytics',
+  id: '@unrdf/analytics',
   description: 'Advanced graph analytics for RDF knowledge graphs',
 
   nouns: {

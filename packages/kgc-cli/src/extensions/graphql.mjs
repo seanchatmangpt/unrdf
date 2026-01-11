@@ -25,7 +25,7 @@ const QuerySchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/rdf-graphql',
+  id: '@unrdf/graphql',
   description: 'GraphQL interface for RDF knowledge graphs',
 
   nouns: {

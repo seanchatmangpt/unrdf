@@ -8,15 +8,26 @@
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
-// =============================================================================
-// Constants & Helpers
-// =============================================================================
+import {
+  HASH_LENGTH,
+  DEFAULT_BATCH_SIZE,
+  DaemonOperationSchema,
+  DaemonReceiptSchema,
+  MerkleNodeSchema,
+  MerkleProofSchema,
+  BatchProofSchema,
+  ChainVerificationSchema,
+  GeneratorOptionsSchema,
+} from './receipts-merkle-schemas.mjs';
+import {
+  buildMerkleTree,
+  generateInclusionProof,
+  verifyInclusionProof,
+} from './receipts-merkle-tree.mjs';
 
-/** BLAKE3 hash length in hex characters */
-const HASH_LENGTH = 64;
-
-/** Default batch size for Merkle tree construction */
-const DEFAULT_BATCH_SIZE = 100;
+// =============================================================================
+// Helpers
+// =============================================================================
 
 /**
  * Generate UUID v4
@@ -30,96 +41,6 @@ function generateUUID() {
     return v.toString(16);
   });
 }
-
-// =============================================================================
-// Schemas
-// =============================================================================
-
-/**
- * Daemon operation schema - represents a single daemon operation
- * @private
- */
-const _DaemonOperationSchema = z.object({
-  operationId: z.string().uuid(),
-  operationType: z.string().min(1),
-  timestamp_ns: z.bigint(),
-  nodeId: z.string().min(1),
-  daemonId: z.string().min(1),
-  payload: z.record(z.any()),
-  hash: z.string().length(HASH_LENGTH).optional(),
-});
-
-/**
- * Receipt schema - proof of operation
- * @private
- */
-const _DaemonReceiptSchema = z.object({
-  id: z.string().uuid(),
-  operationId: z.string().uuid(),
-  operationType: z.string(),
-  timestamp_ns: z.bigint(),
-  timestamp_iso: z.string(),
-  payloadHash: z.string().length(HASH_LENGTH),
-  previousHash: z.string().length(HASH_LENGTH).nullable(),
-  receiptHash: z.string().length(HASH_LENGTH),
-  batchIndex: z.number().int().nonnegative(),
-  merkleLeafHash: z.string().length(HASH_LENGTH),
-});
-
-/**
- * Merkle tree node schema
- * @private
- */
-const _MerkleNodeSchema = z.object({
-  hash: z.string().length(HASH_LENGTH),
-  isLeaf: z.boolean(),
-  level: z.number().int().nonnegative(),
-});
-
-/**
- * Merkle proof schema
- * @private
- */
-const _MerkleProofSchema = z.object({
-  leafHash: z.string().length(HASH_LENGTH),
-  leafIndex: z.number().int().nonnegative(),
-  proofPath: z.array(z.object({
-    hash: z.string().length(HASH_LENGTH),
-    position: z.enum(['left', 'right']),
-  })),
-  merkleRoot: z.string().length(HASH_LENGTH),
-  batchSize: z.number().int().positive(),
-});
-
-/**
- * Batch proof schema
- * @private
- */
-const _BatchProofSchema = z.object({
-  batchId: z.string().uuid(),
-  batchNumber: z.number().int().nonnegative(),
-  merkleRoot: z.string().length(HASH_LENGTH),
-  leafCount: z.number().int().positive(),
-  treeDepth: z.number().int().nonnegative(),
-  timestamp_ns: z.bigint(),
-  receipts: z.array(_DaemonReceiptSchema),
-});
-
-/**
- * Chain verification result schema
- * @private
- */
-const _ChainVerificationSchema = z.object({
-  valid: z.boolean(),
-  totalReceipts: z.number().int().nonnegative(),
-  validReceipts: z.number().int().nonnegative(),
-  tamperedReceipts: z.array(z.object({
-    receiptId: z.string(),
-    reason: z.string(),
-  })),
-  merkleRootConsistent: z.boolean(),
-  chainLinksValid: z.boolean(),
-});
 
 // =============================================================================
 // Daemon Receipt Generator
@@ -149,10 +70,7 @@ export class DaemonReceiptGenerator {
    * @throws {Error} If options are invalid
    */
   constructor(options = {}) {
-    const validated = z.object({
-      batchSize: z.number().int().min(10).max(100).default(DEFAULT_BATCH_SIZE),
-      maxBufferSize: z.number().int().min(100).max(10000).default(1000),
-    }).parse(options);
+    const validated = GeneratorOptionsSchema.parse(options);
 
     this.batchSize = validated.batchSize;
     this.maxBufferSize = validated.maxBufferSize;
@@ -168,13 +86,9 @@ export class DaemonReceiptGenerator {
    * @param {Object} operation - Operation to receipt
    * @returns {Promise<Object>} Generated receipt
    * @throws {Error} If operation is invalid
+   */
   async generateReceipt(operation) {
-    // Security: Validate operation payload
-    const payloadValidation = validatePayload(operation, { type: 'rdf' });
-    if (!payloadValidation.valid) {
-      throw new Error(`Security validation failed: ${payloadValidation.reason}`);
-    }
-    // Validate required fields
+    // Validate required fields first
     if (!operation || typeof operation !== 'object') {
       throw new TypeError('operation must be an object');
     }
@@ -235,6 +149,7 @@ export class DaemonReceiptGenerator {
    * @param {number} [count] - Number of receipts to batch (default: all)
    * @returns {Promise<Object>} Batch proof with Merkle tree
    * @throws {Error} If buffer is empty or count invalid
+   */
   async generateBatchProof(count) {
     if (this.operationBuffer.length === 0) {
       throw new Error('Cannot generate batch proof: operation buffer is empty');
@@ -249,8 +164,8 @@ export class DaemonReceiptGenerator {
     const batchReceipts = this.operationBuffer.slice(0, batchSize);
     const remainingReceipts = this.operationBuffer.slice(batchSize);
 
-    // Build Merkle tree
-    const tree = await this._buildMerkleTree(batchReceipts);
+    // Build Merkle tree using imported function
+    const tree = await buildMerkleTree(batchReceipts);
 
     // Create batch proof
     const batchId = generateUUID();
@@ -278,6 +193,7 @@ export class DaemonReceiptGenerator {
    * @param {Array<Object>} receipts - Array of receipts in tree
    * @returns {Promise<Object>} Merkle proof for receipt
    * @throws {Error} If receipt not found
+   */
   async getReceiptProof(receiptId, receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       throw new Error('Invalid receipts array');
@@ -288,10 +204,10 @@ export class DaemonReceiptGenerator {
       throw new Error(`Receipt ${receiptId} not found`);
     }
 
-    const tree = await this._buildMerkleTree(receipts);
+    const tree = await buildMerkleTree(receipts);
     const index = receipts.findIndex(r => r.id === receiptId);
 
-    const proof = await this._generateInclusionProof(tree, index, receipts);
+    const proof = await generateInclusionProof(tree, index);
 
     return {
       leafHash: receipt.merkleLeafHash,
@@ -306,26 +222,9 @@ export class DaemonReceiptGenerator {
    * Verify Merkle inclusion proof
    * @param {Object} proof - Merkle proof to verify
    * @returns {Promise<boolean>} True if proof is valid
+   */
   async verifyProof(proof) {
-    try {
-      if (!proof || !proof.leafHash || !proof.proofPath || !proof.merkleRoot) {
-        return false;
-      }
-
-      // Reconstruct root from leaf and proof path
-      let currentHash = proof.leafHash;
-
-      for (const step of proof.proofPath) {
-        const combined = step.position === 'right'
-          ? currentHash + ':' + step.hash
-          : step.hash + ':' + currentHash;
-        currentHash = await blake3(combined);
-      }
-
-      return currentHash === proof.merkleRoot;
-    } catch {
-      return false;
-    }
+    return verifyInclusionProof(proof);
   }
 
   /**
@@ -333,6 +232,7 @@ export class DaemonReceiptGenerator {
    * Checks chain links, hash integrity, and Merkle tree consistency.
    * @param {Array<Object>} receipts - Receipts to verify
    * @returns {Promise<Object>} Chain verification result
+   */
   async verifyChain(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       return {
@@ -391,7 +291,7 @@ export class DaemonReceiptGenerator {
     let merkleRootConsistent = true;
     try {
       // Try building the tree - success means no tampering of leaf hashes
-      await this._buildMerkleTree(receipts);
+      await buildMerkleTree(receipts);
       merkleRootConsistent = true;
     } catch {
       merkleRootConsistent = false;
@@ -413,6 +313,7 @@ export class DaemonReceiptGenerator {
    * Detect tampered receipts in a batch
    * @param {Array<Object>} receipts - Receipts to check
    * @returns {Promise<Array<Object>>} Array of tampered receipts
+   */
   async detectTampering(receipts) {
     const result = await this.verifyChain(receipts);
     return result.tamperedReceipts;
@@ -422,12 +323,13 @@ export class DaemonReceiptGenerator {
    * Export Merkle tree as JSON
    * @param {Array<Object>} receipts - Receipts in tree
    * @returns {Promise<Object>} Tree structure for export
+   */
   async exportMerkleTree(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       throw new Error('Cannot export tree: receipts array is empty');
     }
 
-    const tree = await this._buildMerkleTree(receipts);
+    const tree = await buildMerkleTree(receipts);
     return {
       root: tree.root,
       depth: tree.depth,
@@ -454,91 +356,6 @@ export class DaemonReceiptGenerator {
   // ==========================================================================
   // Private Methods
   // ==========================================================================
-
-  /**
-   * Build Merkle tree from receipts
-   * @private
-   * @param {Array<Object>} receipts - Receipts to tree
-   * @returns {Promise<Object>} Tree structure
-   */
-  async _buildMerkleTree(receipts) {
-    if (receipts.length === 0) {
-      throw new Error('Cannot build tree: empty receipts array');
-    }
-
-    if (receipts.length === 1) {
-      return {
-        root: receipts[0].merkleLeafHash,
-        depth: 0,
-        leafCount: 1,
-        leaves: [receipts[0].merkleLeafHash],
-        levels: [[receipts[0].merkleLeafHash]],
-      };
-    }
-
-    const leaves = receipts.map(r => r.merkleLeafHash);
-    const levels = [leaves];
-    let currentLevel = leaves;
-
-    while (currentLevel.length > 1) {
-      const nextLevel = [];
-
-      for (let i = 0; i < currentLevel.length; i += 2) {
-        if (i + 1 < currentLevel.length) {
-          const combined = currentLevel[i] + ':' + currentLevel[i + 1];
-          const parentHash = await blake3(combined);
-          nextLevel.push(parentHash);
-        } else {
-          // CVE-2012-2459 mitigation: Duplicate odd leaf and hash with itself
-          // instead of promoting unhashed. This prevents odd-leaf duplication attacks
-          // where an attacker could append a duplicate leaf and maintain the same root.
-          const combined = currentLevel[i] + ':' + currentLevel[i];
-          const parentHash = await blake3(combined);
-          nextLevel.push(parentHash);
-        }
-      }
-
-      levels.push(nextLevel);
-      currentLevel = nextLevel;
-    }
-
-    return {
-      root: currentLevel[0],
-      depth: levels.length - 1,
-      leafCount: leaves.length,
-      leaves,
-      levels,
-    };
-  }
-
-  /**
-   * Generate inclusion proof for a leaf
-   * @private
-   * @param {Object} tree - Tree structure
-   * @param {number} index - Leaf index
-   * @param {Array<Object>} _receipts - Receipts array (reserved for future use)
-   * @returns {Promise<Array<Object>>} Proof path
-   */
-  async _generateInclusionProof(tree, index, _receipts) {
-    const proof = [];
-    let currentIndex = index;
-
-    for (let levelIdx = 0; levelIdx < tree.levels.length - 1; levelIdx++) {
-      const level = tree.levels[levelIdx];
-      const siblingIndex = currentIndex % 2 === 0 ? currentIndex + 1 : currentIndex - 1;
-
-      if (siblingIndex < level.length) {
-        proof.push({
-          hash: level[siblingIndex],
-          position: currentIndex % 2 === 0 ? 'right' : 'left',
-        });
-      }
-
-      currentIndex = Math.floor(currentIndex / 2);
-    }
-
-    return proof;
-  }
 
   /**
    * Serialize tree structure to plain object

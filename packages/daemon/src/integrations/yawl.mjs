@@ -7,70 +7,28 @@
  */
 
 import { EventEmitter } from 'events';
-import { z } from 'zod';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+import { detectInjection } from '../security-audit.mjs';
+import {
+  YawlRetryPolicySchema,
+  YawlTimeoutConfigSchema,
+  DistributionStrategySchema,
+  YawlDaemonBridgeConfigSchema,
+} from './yawl-schemas.mjs';
+import {
+  createCaseCreationHandler,
+  createTimeoutWatchHandler,
+  createRetryHandler,
+  createDistributionHandler,
+  setupEventListeners,
+} from './yawl-handlers.mjs';
 
-
-// =============================================================================
-// Configuration Schemas
-// =============================================================================
-
-/**
- * Retry policy for YAWL task failures
- * Configures exponential backoff for task retry attempts
- * @type {z.ZodType}
- */
-export const YawlRetryPolicySchema = z.object({
-  maxAttempts: z.number().int().min(1).max(10).default(3),
-  backoffMs: z.number().int().min(100).max(60000).default(1000),
-  backoffMultiplier: z.number().min(1.1).max(10).default(2),
-  maxBackoffMs: z.number().int().min(1000).max(300000).default(30000),
-  jitterFactor: z.number().min(0).max(1).default(0.1),
-}).default({});
-
-/**
- * Timeout configuration for YAWL tasks
- * @type {z.ZodType}
- */
-export const YawlTimeoutConfigSchema = z.object({
-  taskTimeoutMs: z.number().int().min(1000).max(3600000).default(30000),
-  caseTimeoutMs: z.number().int().min(5000).max(86400000).default(3600000),
-  checkIntervalMs: z.number().int().min(100).max(30000).default(5000),
-}).default({});
-
-/**
- * Distribution strategy for parallel task execution
- * @type {z.ZodType}
- */
-export const DistributionStrategySchema = z.enum([
-  'round-robin',
-  'least-loaded',
-  'random',
-  'affinity',
-]).default('round-robin');
-
-/**
- * YAWL Daemon Bridge configuration schema
- * @type {z.ZodType}
- */
-export const YawlDaemonBridgeConfigSchema = z.object({
-  bridgeId: z.string().min(1).default(() => `yawl-bridge-${Date.now()}`),
-  daemonNodeId: z.string().min(1),
-  maxConcurrentCases: z.number().int().min(1).max(10000).default(100),
-  retryPolicy: YawlRetryPolicySchema,
-  timeoutDefaults: YawlTimeoutConfigSchema,
-  enableAutoRetry: z.boolean().default(true),
-  enableTimeoutTracking: z.boolean().default(true),
-  enableDistribution: z.boolean().default(true),
-  logger: z.any().optional(),
-}).refine(
-  (config) => config.maxConcurrentCases > 0,
-  { message: 'maxConcurrentCases must be greater than 0', path: ['maxConcurrentCases'] }
-);
-
-// =============================================================================
-// YawlDaemonBridge Class
-// =============================================================================
+// Re-export schemas for external use
+export {
+  YawlRetryPolicySchema,
+  YawlTimeoutConfigSchema,
+  DistributionStrategySchema,
+  YawlDaemonBridgeConfigSchema,
+};
 
 /**
  * Bridges YAWL workflow engine and daemon scheduler
@@ -214,34 +172,12 @@ export class YawlDaemonBridge extends EventEmitter {
     const operationId = `yawl-case-${workflowId}-${Date.now()}`;
     const caseIdPrefix = params.caseIdPrefix || `case-${workflowId}`;
 
+    const handler = createCaseCreationHandler(this, workflowId, caseIdPrefix, params);
+
     this.daemon.schedule({
       id: operationId,
       name: `Create case for ${workflowId}`,
-      handler: async () => {
-        try {
-          const caseId = `${caseIdPrefix}-${Date.now()}`;
-          const result = await this.yawlEngine.createCase({
-            workflowId,
-            caseId,
-            inputData: params.inputData || {},
-          });
-
-          this.emit('case:created-by-schedule', {
-            bridgeId: this.id,
-            workflowId,
-            caseId,
-            result,
-            timestamp: new Date(),
-          });
-
-          return result;
-        } catch (error) {
-          this.logger.error(
-            `[YawlDaemonBridge ${this.id}] Case creation failed: ${error.message}`
-          );
-          throw error;
-        }
-      },
+      handler,
       metadata: { workflowId, schedule, params },
     });
 
@@ -273,39 +209,13 @@ export class YawlDaemonBridge extends EventEmitter {
 
     const operationId = `yawl-timeout-${caseId}-${taskId}`;
     const startTime = Date.now();
-    const checkInterval = this.config.timeoutDefaults.checkIntervalMs;
+
+    const handler = createTimeoutWatchHandler(this, caseId, taskId, timeoutMs, startTime, operationId);
 
     this.daemon.schedule({
       id: operationId,
       name: `Monitor timeout for ${taskId} in ${caseId}`,
-      handler: async () => {
-        const elapsed = Date.now() - startTime;
-        if (elapsed >= timeoutMs) {
-          try {
-            await this.yawlEngine.cancelTask({
-              caseId,
-              taskId,
-              reason: `Timeout after ${timeoutMs}ms`,
-            });
-
-            this.emit('task:timeout-enforced', {
-              bridgeId: this.id,
-              caseId,
-              taskId,
-              timeoutMs,
-              timestamp: new Date(),
-            });
-
-            // Unschedule timeout watch
-            this.daemon.unschedule(operationId);
-            this.taskTimeouts.delete(`${caseId}:${taskId}`);
-          } catch (error) {
-            this.logger.error(
-              `[YawlDaemonBridge ${this.id}] Timeout enforcement failed: ${error.message}`
-            );
-          }
-        }
-      },
+      handler,
       metadata: { caseId, taskId, timeoutMs },
     });
 
@@ -357,63 +267,12 @@ export class YawlDaemonBridge extends EventEmitter {
       operationId,
     };
 
+    const handler = createRetryHandler(this, caseId, taskId, retryKey, policy, operationId);
+
     this.daemon.schedule({
       id: operationId,
       name: `Retry ${taskId} in ${caseId}`,
-      handler: async () => {
-        const state = this.taskRetries.get(retryKey);
-        if (!state || state.attempts >= state.maxAttempts) {
-          return;
-        }
-
-        try {
-          state.attempts += 1;
-          const result = await this.yawlEngine.enableTask({
-            caseId,
-            taskId,
-          });
-
-          this.emit('task:retry-executed', {
-            bridgeId: this.id,
-            caseId,
-            taskId,
-            attempt: state.attempts,
-            result,
-            timestamp: new Date(),
-          });
-
-          if (state.attempts >= state.maxAttempts) {
-            this.daemon.unschedule(operationId);
-            this.taskRetries.delete(retryKey);
-          } else {
-            // Schedule next retry with backoff
-            const nextBackoff = Math.min(
-              policy.backoffMs * Math.pow(policy.backoffMultiplier, state.attempts),
-              policy.maxBackoffMs
-            );
-            const jitter = nextBackoff * policy.jitterFactor * Math.random();
-            state.nextRetryTime = Date.now() + nextBackoff + jitter;
-          }
-        } catch (error) {
-          this.logger.error(
-            `[YawlDaemonBridge ${this.id}] Retry execution failed: ${error.message}`
-          );
-
-          if (state.attempts >= state.maxAttempts) {
-            this.daemon.unschedule(operationId);
-            this.taskRetries.delete(retryKey);
-
-            this.emit('task:retry-exhausted', {
-              bridgeId: this.id,
-              caseId,
-              taskId,
-              attempts: state.attempts,
-              error: error.message,
-              timestamp: new Date(),
-            });
-          }
-        }
-      },
+      handler,
       metadata: { caseId, taskId, policy },
     });
 
@@ -510,53 +369,12 @@ export class YawlDaemonBridge extends EventEmitter {
     const distributionId = `yawl-dist-${caseId}-${Date.now()}`;
     const operationId = `${distributionId}-exec`;
 
+    const handler = createDistributionHandler(this, caseId, taskIds, strategy, distributionId);
+
     this.daemon.schedule({
       id: operationId,
       name: `Distribute tasks for ${caseId}`,
-      handler: async () => {
-        try {
-          const results = [];
-
-          // Distribute tasks according to strategy
-          for (let i = 0; i < taskIds.length; i += 1) {
-            const taskId = taskIds[i];
-            const result = await this.yawlEngine.enableTask({
-              caseId,
-              taskId,
-            });
-
-            results.push({
-              taskId,
-              result,
-              index: i,
-            });
-          }
-
-          this.emit('tasks:distributed', {
-            bridgeId: this.id,
-            caseId,
-            taskIds,
-            strategy,
-            results,
-            timestamp: new Date(),
-          });
-
-          this.parallelDistributions.set(distributionId, {
-            caseId,
-            taskIds,
-            strategy,
-            results,
-            timestamp: Date.now(),
-          });
-
-          return results;
-        } catch (error) {
-          this.logger.error(
-            `[YawlDaemonBridge ${this.id}] Task distribution failed: ${error.message}`
-          );
-          throw error;
-        }
-      },
+      handler,
       metadata: { caseId, taskIds, strategy },
     });
 
@@ -584,81 +402,14 @@ export class YawlDaemonBridge extends EventEmitter {
     };
   }
 
-  // =========================================================================
-  // Private Event Listener Setup
-  // =========================================================================
-
   /**
    * Set up YAWL event listeners
    * @private
    */
   _setupEventListeners() {
-    if (!this.config.enableAutoRetry && !this.config.enableTimeoutTracking) {
-      return;
-    }
-
-    // Listen to task:failed and schedule retry if enabled
-    if (this.config.enableAutoRetry) {
-      const unsubTaskFailed = this.yawlEngine.on('task:failed', async (event) => {
-        try {
-          await this.scheduleRetry(event.caseId, event.taskId);
-        } catch (error) {
-          this.logger.error(
-            `[YawlDaemonBridge ${this.id}] Failed to schedule retry: ${error.message}`
-          );
-        }
-      });
-      this._unsubscribers.push(unsubTaskFailed);
-    }
-
-    // Listen to task:enabled and start timeout watch if configured
-    if (this.config.enableTimeoutTracking) {
-      const unsubTaskEnabled = this.yawlEngine.on('task:enabled', async (event) => {
-        try {
-          await this.watchTaskTimeout(
-            event.caseId,
-            event.taskId,
-            this.config.timeoutDefaults.taskTimeoutMs
-          );
-        } catch (error) {
-          this.logger.error(
-            `[YawlDaemonBridge ${this.id}] Failed to watch timeout: ${error.message}`
-          );
-        }
-      });
-      this._unsubscribers.push(unsubTaskEnabled);
-    }
-
-    // Listen for case completion and cleanup
-    const unsubCaseCompleted = this.yawlEngine.on('case:completed', (event) => {
-      // Clean up any resources for this case
-      for (const [key] of this.taskTimeouts) {
-        if (key.startsWith(`${event.caseId}:`)) {
-          const timeout = this.taskTimeouts.get(key);
-          if (timeout?.operationId) {
-            this.daemon.unschedule(timeout.operationId);
-          }
-          this.taskTimeouts.delete(key);
-        }
-      }
-
-      for (const [key] of this.taskRetries) {
-        if (key.startsWith(`${event.caseId}:`)) {
-          const retry = this.taskRetries.get(key);
-          if (retry?.operationId) {
-            this.daemon.unschedule(retry.operationId);
-          }
-          this.taskRetries.delete(key);
-        }
-      }
-    });
-    this._unsubscribers.push(unsubCaseCompleted);
+    this._unsubscribers = setupEventListeners(this);
   }
 }
-
-// =============================================================================
-// Factory Function
-// =============================================================================
 
 /**
  * Create and integrate a YAWL daemon bridge
