@@ -1,0 +1,59 @@
+{
+  "name": "@unrdf/event-automation",
+  "version": "1.0.0",
+  "description": "Event-driven automation for v6.1.0 - automatic delta processing with receipts",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./engine": "./src/event-automation-engine.mjs",
+    "./delta-processor": "./src/delta-processor.mjs",
+    "./receipt-tracker": "./src/receipt-tracker.mjs",
+    "./policy-enforcer": "./src/policy-enforcer.mjs",
+    "./schemas": "./src/schemas.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix"
+  },
+  "keywords": [
+    "unrdf",
+    "event-automation",
+    "delta-processing",
+    "receipts",
+    "hooks",
+    "policy-enforcement",
+    "v6"
+  ],
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "dependencies": {
+    "@unrdf/daemon": "workspace:*",
+    "@unrdf/v6-core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/receipts": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "hash-wasm": "^4.12.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16",
+    "eslint": "^8.55.0"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -435,7 +435,7 @@ export class SPARQLZKProver {
    * Simulated proof generation (placeholder for snarkjs.groth16.fullProve)
    * @private
    */
-  async _generateProofSimulated(witness, publicSignals) {
+  async _generateProofSimulated(_witness, _publicSignals) {
     // In production, this calls:
     // const { proof, publicSignals } = await snarkjs.groth16.fullProve(
     //   witness,
@@ -469,7 +469,7 @@ export class SPARQLZKProver {
    * Simulated proof verification (placeholder for snarkjs.groth16.verify)
    * @private
    */
-  async _verifyProofSimulated(proof, publicSignals) {
+  async _verifyProofSimulated(proof, _publicSignals) {
     // In production, this calls:
     // return await snarkjs.groth16.verify(vKey, publicSignals, proof);
 

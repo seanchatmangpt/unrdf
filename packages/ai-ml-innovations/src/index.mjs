@@ -33,6 +33,30 @@ export {
   default as Federated,
 } from './federated-embeddings.mjs';
 
+// Federated Learning Core
+export {
+  FedAvgAggregator,
+  createFedAvgAggregator,
+} from './fedavg.mjs';
+
+export {
+  DPMechanism,
+  createDPMechanism,
+} from './dp-mechanism.mjs';
+
+export {
+  PrivacyBudgetTracker,
+  createPrivacyBudgetTracker,
+} from './privacy-budget.mjs';
+
+export {
+  SecureAggregation,
+  createSecureAggregation,
+} from './secure-aggregation.mjs';
+
+// Schemas
+export * as schemas from './schemas.mjs';
+
 /**
  * Package version and metadata
  */
