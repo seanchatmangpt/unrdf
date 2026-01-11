@@ -7,6 +7,8 @@
  */
 
 import { EventEmitter } from 'events';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+
 import {
   metadataToBindings,
   matchPatternBindings,

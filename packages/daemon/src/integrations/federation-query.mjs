@@ -7,7 +7,7 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 const tracer = trace.getTracer('@unrdf/daemon-federation');
 
 /**
@@ -38,6 +38,39 @@ const FederationExecutorConfigSchema = z.object({
   enableNodeSelection: z.boolean().default(true),
   healthCheckThreshold: z.number().min(0).max(1).default(0.7),
 });
+
+/**
+ * Execute query options schema
+ */
+const ExecuteQueryOptionsSchema = z.object({
+  strategy: z.enum(['broadcast', 'selective', 'best-node']).optional(),
+  timeout: z.number().positive().optional(),
+  excludeNodes: z.array(z.string()).optional(),
+}).optional();
+
+/**
+ * SPARQL query validation schema
+ */
+const SparqlQuerySchema = z.string().min(1).refine(
+  (query) => query.trim().length > 0,
+  { message: 'SPARQL query must be non-empty' }
+);
+
+/**
+ * Query ID validation schema
+ */
+const QueryIdSchema = z.string().min(1);
+
+/**
+ * Node ID validation schema
+ */
+const NodeIdSchema = z.string().min(1);
+
+/**
+ * Daemon and coordinator validation schemas
+ */
+const DaemonSchema = z.object({}).passthrough();
+const FederationCoordinatorSchema = z.object({}).passthrough();
 
 /**
  * Distributed Federated Query Executor for Daemon
@@ -88,13 +121,11 @@ export class DaemonFederationExecutor {
    * @returns {Promise<Object>} Aggregated query results with metadata
    * @throws {Error} If query execution fails on all nodes
    *
-   * @example
-   * const results = await executor.executeQuery(
-   *   'SELECT ?person ?name WHERE { ?person foaf:name ?name }',
-   *   { strategy: 'best-node', timeout: 10000 }
-   * );
-   */
   async executeQuery(sparqlQuery, options = {}) {
+    // Validate inputs
+    const validatedQuery = SparqlQuerySchema.parse(sparqlQuery);
+    const validatedOptions = ExecuteQueryOptionsSchema.parse(options) || {};
+
     const queryId = `query-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const span = tracer.startSpan('federation.executeQuery', {
       attributes: {
@@ -107,15 +138,11 @@ export class DaemonFederationExecutor {
     const startTime = Date.now();
 
     try {
-      // Validate query
-      if (!sparqlQuery || typeof sparqlQuery !== 'string' || sparqlQuery.trim().length === 0) {
-        throw new Error('Invalid SPARQL query: must be non-empty string');
-      }
 
       // Determine execution strategy
-      const strategy = options.strategy || this.config.strategy;
-      const timeout = options.timeout || this.config.timeout;
-      const excludeNodes = options.excludeNodes || [];
+      const strategy = validatedOptions.strategy || this.config.strategy;
+      const timeout = validatedOptions.timeout || this.config.timeout;
+      const excludeNodes = validatedOptions.excludeNodes || [];
 
       span.setAttributes({
         'query.strategy': strategy,
@@ -136,7 +163,7 @@ export class DaemonFederationExecutor {
 
       // Execute query across selected nodes
       const executionPromises = availableNodes.map(nodeId =>
-        this._executeOnNode(queryId, nodeId, sparqlQuery, timeout).catch(error => ({
+        this._executeOnNode(queryId, nodeId, validatedQuery, timeout).catch(error => ({
           nodeId,
           success: false,
           error: error.message,
@@ -170,7 +197,7 @@ export class DaemonFederationExecutor {
 
       const stats = {
         queryId,
-        sparql: sparqlQuery,
+        sparql: validatedQuery,
         strategy,
         nodeCount: availableNodes.length,
         successCount,
@@ -480,8 +507,9 @@ export class DaemonFederationExecutor {
    * @returns {Object|Map} Statistics for query or all queries
    */
   getStats(queryId) {
-    if (queryId) {
-      return this.queryStats.get(queryId);
+    if (queryId !== undefined) {
+      const validated = QueryIdSchema.parse(queryId);
+      return this.queryStats.get(validated);
     }
 
     return {
@@ -499,8 +527,9 @@ export class DaemonFederationExecutor {
    * @returns {Object} Node metrics
    */
   getNodeMetrics(nodeId) {
-    if (nodeId) {
-      return this.nodeMetrics.get(nodeId);
+    if (nodeId !== undefined) {
+      const validated = NodeIdSchema.parse(nodeId);
+      return this.nodeMetrics.get(validated);
     }
 
     return Object.fromEntries(this.nodeMetrics);
@@ -557,7 +586,20 @@ export class DaemonFederationExecutor {
  * });
  */
 export function createDaemonFederationExecutor(daemon, federationCoordinator, options = {}) {
-  return new DaemonFederationExecutor(daemon, federationCoordinator, options);
+  DaemonSchema.parse(daemon);
+  FederationCoordinatorSchema.parse(federationCoordinator);
+  const validatedOptions = FederationExecutorConfigSchema.parse(options);
+
+  return new DaemonFederationExecutor(daemon, federationCoordinator, validatedOptions);
 }
 
-export { FederationExecutorConfigSchema, QueryStatsSchema };
+export {
+  FederationExecutorConfigSchema,
+  QueryStatsSchema,
+  ExecuteQueryOptionsSchema,
+  SparqlQuerySchema,
+  QueryIdSchema,
+  NodeIdSchema,
+  DaemonSchema,
+  FederationCoordinatorSchema,
+};

@@ -37,3 +37,17 @@ export {
   DeltaReceiptSchema,
   HealthStatusSchema,
 } from './integrations/v6-deltagate.mjs';
+
+// Authentication exports
+export {
+  ApiKeyAuthenticator,
+  createAuthMiddleware,
+  createAuthenticator,
+} from './auth/api-key-auth.mjs';
+
+export {
+  generateSecureApiKey,
+  hashApiKey,
+  verifyApiKey,
+  generateApiKeyPair,
+} from './auth/crypto-utils.mjs';

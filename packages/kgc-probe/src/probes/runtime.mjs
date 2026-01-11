@@ -94,7 +94,7 @@ function canonicalizeJSON(obj) {
  * Compute SHA-256 hash of canonical JSON
  * @param {Object} data - Data to hash (will be canonicalized)
  * @returns {string} SHA-256 hex digest (64 chars)
- * @note Currently using SHA-256. TODO: Switch to BLAKE3 when hash-wasm is available
+ * @note Using SHA-256 (BLAKE3 upgrade planned when hash-wasm available)
  */
 function blake3Hash(data) {
   const canonical = canonicalizeJSON(data);

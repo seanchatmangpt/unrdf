@@ -6,6 +6,11 @@
  */
 
 import { z } from 'zod';
+import {
+  detectInjection,
+  sanitizeError,
+  validatePayload,
+} from '../security-audit.mjs';
 
 /**
  * Operation with cluster scope configuration
@@ -84,6 +89,12 @@ export function distributeWork(daemon, membershipManager, operations, strategy =
     throw new TypeError('distributeWork: operations must be an array');
   }
 
+  // Security: Validate strategy for injection
+  const strategyInjection = detectInjection(strategy, 'command');
+  if (strategyInjection.detected) {
+    throw new Error(`Security violation: Invalid strategy - ${strategyInjection.reason}`);
+  }
+
   const distribution = new Map();
   const healthyNodes = membershipManager.getHealthyNodes();
 
@@ -94,6 +105,12 @@ export function distributeWork(daemon, membershipManager, operations, strategy =
   let roundRobinIndex = 0;
 
   for (const op of operations) {
+    // Security: Validate operation payload
+    const payloadValidation = validatePayload(op, { type: 'rdf' });
+    if (!payloadValidation.valid) {
+      throw new Error(`Security validation failed for operation: ${payloadValidation.reason}`);
+    }
+
     const validated = DistributedOperationSchema.parse(op);
 
     let targetNodeId;

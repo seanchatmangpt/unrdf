@@ -654,6 +654,84 @@ describe('DaemonReceiptGenerator - Merkle Integration', () => {
     });
   });
 
+  describe('security - CVE-2012-2459 mitigation', () => {
+    let generator;
+
+    beforeEach(() => {
+      generator = new DaemonReceiptGenerator();
+    });
+
+    it('should prevent odd-leaf duplication attack (CVE-2012-2459)', async () => {
+      // Arrange - Create 3 receipts (odd number for odd-leaf scenario)
+      const operations = createTestOperations(3);
+      const receipts = [];
+      for (const op of operations) {
+        receipts.push(await generator.generateReceipt(op));
+      }
+
+      // Act - Build trees with original receipts and with duplicated last receipt
+      const tree1 = await generator.exportMerkleTree(receipts);
+      const tree2 = await generator.exportMerkleTree([...receipts, receipts[2]]);
+
+      // Assert - Roots MUST be different (attack prevented)
+      expect(tree1.root).not.toBe(tree2.root);
+      expect(tree1.leafCount).toBe(3);
+      expect(tree2.leafCount).toBe(4);
+    });
+
+    it('should handle odd-leaf scenario with 5 receipts', async () => {
+      // Arrange
+      const operations = createTestOperations(5);
+      const receipts = [];
+      for (const op of operations) {
+        receipts.push(await generator.generateReceipt(op));
+      }
+
+      // Act
+      const tree = await generator.exportMerkleTree(receipts);
+
+      // Assert - Tree should be built successfully
+      expect(tree.root).toBeDefined();
+      expect(tree.leafCount).toBe(5);
+      expect(tree.root).toHaveLength(64);
+    });
+
+    it('should produce different roots for odd and even receipt counts', async () => {
+      // Arrange
+      const operations = createTestOperations(7);
+      const receipts = [];
+      for (const op of operations) {
+        receipts.push(await generator.generateReceipt(op));
+      }
+
+      // Act
+      const treeOdd = await generator.exportMerkleTree(receipts.slice(0, 7));
+      const treeEven = await generator.exportMerkleTree(receipts.slice(0, 6));
+
+      // Assert
+      expect(treeOdd.root).not.toBe(treeEven.root);
+      expect(treeOdd.leafCount).toBe(7);
+      expect(treeEven.leafCount).toBe(6);
+    });
+
+    it('should verify proofs correctly for odd-leaf trees', async () => {
+      // Arrange - 7 receipts (odd)
+      const operations = createTestOperations(7);
+      const receipts = [];
+      for (const op of operations) {
+        receipts.push(await generator.generateReceipt(op));
+      }
+
+      // Act - Get proof for last receipt (the odd leaf)
+      const proof = await generator.getReceiptProof(receipts[6].id, receipts);
+      const isValid = await generator.verifyProof(proof);
+
+      // Assert
+      expect(isValid).toBe(true);
+      expect(proof.leafIndex).toBe(6);
+    });
+  });
+
   describe('integration scenarios', () => {
     it('should support complete workflow: generate -> batch -> verify', async () => {
       // Arrange

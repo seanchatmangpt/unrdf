@@ -7,6 +7,12 @@
 
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
+import {
+  detectInjection,
+  sanitizeError,
+  validatePayload,
+  detectSecrets,
+} from '../security-audit.mjs';
 
 const AuditSchema = z.object({
   id: z.string(),
@@ -75,6 +81,18 @@ export class OperationAuditor {
    */
   async logEnqueued(opId, type, input) {
     if (!opId?.trim()) throw new TypeError('opId required');
+
+    // Security: Validate operation type and ID for injection
+    const typeInjection = detectInjection(type, 'command');
+    if (typeInjection.detected) {
+      throw new Error(`Security violation: Invalid operation type - ${typeInjection.reason}`);
+    }
+
+    const idInjection = detectInjection(opId, 'command');
+    if (idInjection.detected) {
+      throw new Error(`Security violation: Invalid operation ID - ${idInjection.reason}`);
+    }
+
     const t = this._getNs();
     const h = await this._hash(input);
     const e = { id: await this._id(), operationId: opId, timestamp: t, status: 'enqueued', operationType: type, inputHash: h };
@@ -173,8 +191,13 @@ export async function integrateEventStore(daemon, eventStore) {
   const _getNs = () => typeof process?.hrtime?.bigint === 'function' ? process.hrtime.bigint() : BigInt(Date.now()) * 1_000_000n;
   daemon.on('task:enqueued', async (taskId, payload) => {
     try {
+      // Security: Validate taskId
+      const injection = detectInjection(taskId, 'command');
+      if (injection.detected) {
+        throw new Error(`Security violation: Invalid taskId - ${injection.reason}`);
+      }
       await eventStore.appendEvent({ type: 'TASK_ENQUEUED', payload: { taskId, timestamp: _getNs().toString(), ...payload } }, []);
-    } catch (err) { daemon.logger?.error(`[Event] enqueued failed:`, err); }
+    } catch (err) { daemon.logger?.error(`[Event] enqueued failed:`, sanitizeError(err)); }
   });
   daemon.on('task:started', async (taskId, payload) => {
     try {

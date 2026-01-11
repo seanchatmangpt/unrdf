@@ -17,6 +17,8 @@
 import { EventEmitter } from 'events';
 import { z } from 'zod';
 import { createHash, randomUUID } from 'node:crypto';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+
 
 // =============================================================================
 // Schema Definitions
@@ -514,6 +516,16 @@ export class DaemonDeltaGate extends EventEmitter {
 
     switch (op.op) {
       case 'set':
+        // If oldValue was undefined, the original operation created the key
+        // So the reverse should delete it
+        if (op.oldValue === undefined) {
+          return {
+            op: 'delete',
+            path: op.path,
+            oldValue: op.newValue,
+            timestamp_ns: reversed.timestamp_ns,
+          };
+        }
         return {
           op: 'set',
           path: op.path,
@@ -523,10 +535,10 @@ export class DaemonDeltaGate extends EventEmitter {
         };
       case 'delete':
         return {
-          op: 'insert',
+          op: 'set',
           path: op.path,
-          value: op.oldValue,
-          index: 0,
+          oldValue: undefined,
+          newValue: op.oldValue,
           timestamp_ns: reversed.timestamp_ns,
         };
       case 'insert':
@@ -586,6 +598,7 @@ export class DaemonDeltaGate extends EventEmitter {
    * @private
    */
   async _rejectDelta(delta, reason) {
+    const oldState = this._captureState();
     const receipt = await this._generateReceipt({
       deltaId: delta.id,
       applied: false,
@@ -595,6 +608,10 @@ export class DaemonDeltaGate extends EventEmitter {
     });
 
     this.deltasRejected++;
+
+    // Store rejected delta and receipt in history
+    this._storeHistory(delta, receipt, oldState, oldState);
+
     this.emit('delta:rejected', { deltaId: delta.id, receipt, reason });
 
     if (this.onDeltaRejected) {
@@ -638,14 +655,15 @@ export class DaemonDeltaGate extends EventEmitter {
    * @private
    */
   _evaluateCondition(condition, context) {
-    // Simple condition evaluation - can be extended
     if (condition === 'always') return true;
     if (condition === 'never') return false;
     if (condition.startsWith('path:')) {
       const path = condition.substring(5);
       return this.store.has(path);
     }
-    return true;
+    // Fail-closed: Unknown conditions denied
+    this.logger.warn(`Unknown condition type: ${condition}, denying access`);
+    return false;
   }
 
   /**
@@ -653,9 +671,10 @@ export class DaemonDeltaGate extends EventEmitter {
    * @private
    */
   _evaluateConstraint(constraint, context) {
-    // Simple constraint evaluation - can be extended
     if (constraint === 'none') return true;
-    return true;
+    // Fail-closed: Unknown constraints denied
+    this.logger.warn(`Unknown constraint type: ${constraint}, denying access`);
+    return false;
   }
 
   /**
@@ -673,14 +692,3 @@ export class DaemonDeltaGate extends EventEmitter {
     return current.previousReceiptHash === previous.receiptHash;
   }
 }
-
-// =============================================================================
-// Module Exports
-// =============================================================================
-
-export {
-  DeltaContractSchema,
-  DeltaOperationSchema,
-  DeltaReceiptSchema,
-  HealthStatusSchema,
-};

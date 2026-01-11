@@ -8,6 +8,8 @@
 
 import { EventEmitter } from 'events';
 import { z } from 'zod';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+
 
 // =============================================================================
 // Configuration Schemas
@@ -200,6 +202,11 @@ export class YawlDaemonBridge extends EventEmitter {
    * });
    */
   async scheduleRecurringCase(workflowId, schedule, params = {}) {
+    // Security: Validate workflowId for injection
+    const injection = detectInjection(workflowId, 'command');
+    if (injection.detected) {
+      throw new Error(`Security violation: Invalid workflowId - ${injection.reason}`);
+    }
     if (!workflowId || typeof workflowId !== 'string') {
       throw new TypeError('workflowId must be a non-empty string');
     }

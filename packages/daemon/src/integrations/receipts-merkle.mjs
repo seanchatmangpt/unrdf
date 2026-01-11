@@ -7,7 +7,7 @@
 
 import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
-
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 // =============================================================================
 // Constants & Helpers
 // =============================================================================
@@ -168,17 +168,12 @@ export class DaemonReceiptGenerator {
    * @param {Object} operation - Operation to receipt
    * @returns {Promise<Object>} Generated receipt
    * @throws {Error} If operation is invalid
-   * @example
-   * const receipt = await generator.generateReceipt({
-   *   operationId: uuid(),
-   *   operationType: 'task_executed',
-   *   timestamp_ns: BigInt(Date.now() * 1_000_000),
-   *   nodeId: 'node-1',
-   *   daemonId: 'daemon-1',
-   *   payload: { taskId: 'task-123' }
-   * });
-   */
   async generateReceipt(operation) {
+    // Security: Validate operation payload
+    const payloadValidation = validatePayload(operation, { type: 'rdf' });
+    if (!payloadValidation.valid) {
+      throw new Error(`Security validation failed: ${payloadValidation.reason}`);
+    }
     // Validate required fields
     if (!operation || typeof operation !== 'object') {
       throw new TypeError('operation must be an object');
@@ -240,10 +235,6 @@ export class DaemonReceiptGenerator {
    * @param {number} [count] - Number of receipts to batch (default: all)
    * @returns {Promise<Object>} Batch proof with Merkle tree
    * @throws {Error} If buffer is empty or count invalid
-   * @example
-   * const proof = await generator.generateBatchProof(50);
-   * console.log(proof.merkleRoot); // Merkle root of 50 receipts
-   */
   async generateBatchProof(count) {
     if (this.operationBuffer.length === 0) {
       throw new Error('Cannot generate batch proof: operation buffer is empty');
@@ -287,10 +278,6 @@ export class DaemonReceiptGenerator {
    * @param {Array<Object>} receipts - Array of receipts in tree
    * @returns {Promise<Object>} Merkle proof for receipt
    * @throws {Error} If receipt not found
-   * @example
-   * const proof = await generator.getReceiptProof(receiptId, receipts);
-   * const isValid = await generator.verifyProof(proof);
-   */
   async getReceiptProof(receiptId, receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       throw new Error('Invalid receipts array');
@@ -319,9 +306,6 @@ export class DaemonReceiptGenerator {
    * Verify Merkle inclusion proof
    * @param {Object} proof - Merkle proof to verify
    * @returns {Promise<boolean>} True if proof is valid
-   * @example
-   * const isValid = await generator.verifyProof(proof);
-   */
   async verifyProof(proof) {
     try {
       if (!proof || !proof.leafHash || !proof.proofPath || !proof.merkleRoot) {
@@ -349,11 +333,6 @@ export class DaemonReceiptGenerator {
    * Checks chain links, hash integrity, and Merkle tree consistency.
    * @param {Array<Object>} receipts - Receipts to verify
    * @returns {Promise<Object>} Chain verification result
-   * @example
-   * const result = await generator.verifyChain(receipts);
-   * console.log(result.valid); // true if entire chain is valid
-   * console.log(result.tamperedReceipts); // Any tampered receipts
-   */
   async verifyChain(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       return {
@@ -434,10 +413,6 @@ export class DaemonReceiptGenerator {
    * Detect tampered receipts in a batch
    * @param {Array<Object>} receipts - Receipts to check
    * @returns {Promise<Array<Object>>} Array of tampered receipts
-   * @example
-   * const tampered = await generator.detectTampering(receipts);
-   * if (tampered.length > 0) console.log('Tampering detected!');
-   */
   async detectTampering(receipts) {
     const result = await this.verifyChain(receipts);
     return result.tamperedReceipts;
@@ -447,10 +422,6 @@ export class DaemonReceiptGenerator {
    * Export Merkle tree as JSON
    * @param {Array<Object>} receipts - Receipts in tree
    * @returns {Promise<Object>} Tree structure for export
-   * @example
-   * const tree = await generator.exportMerkleTree(receipts);
-   * fs.writeFileSync('tree.json', JSON.stringify(tree, null, 2));
-   */
   async exportMerkleTree(receipts) {
     if (!Array.isArray(receipts) || receipts.length === 0) {
       throw new Error('Cannot export tree: receipts array is empty');
@@ -518,7 +489,12 @@ export class DaemonReceiptGenerator {
           const parentHash = await blake3(combined);
           nextLevel.push(parentHash);
         } else {
-          nextLevel.push(currentLevel[i]);
+          // CVE-2012-2459 mitigation: Duplicate odd leaf and hash with itself
+          // instead of promoting unhashed. This prevents odd-leaf duplication attacks
+          // where an attacker could append a duplicate leaf and maintain the same root.
+          const combined = currentLevel[i] + ':' + currentLevel[i];
+          const parentHash = await blake3(combined);
+          nextLevel.push(parentHash);
         }
       }
 

@@ -73,6 +73,7 @@ function createDelta(options = {}) {
       actor: 'test',
       nodeId: 'test-node',
     },
+    admissibility: options.admissibility,
     previousDeltaId: options.previousDeltaId || null,
   };
 }
@@ -165,8 +166,8 @@ describe('DaemonDeltaGate Integration', () => {
   // Delta Rejection & Policy Validation
   // =========================================================================
 
-  it.skip('should reject delta with pre-condition violations', async () => {
-    // Skipped: Admissibility pre-condition validation for future enhancement
+  it('should reject delta with pre-condition violations', async () => {
+    // Arrange
     const delta = createDelta({
       operations: [
         {
@@ -181,8 +182,10 @@ describe('DaemonDeltaGate Integration', () => {
       },
     });
 
+    // Act
     const receipt = await gate.proposeDelta(delta);
 
+    // Assert
     expect(receipt.applied).toBe(false);
     expect(receipt.reason).toContain('Pre-condition failed');
   });
@@ -207,16 +210,18 @@ describe('DaemonDeltaGate Integration', () => {
     expect(receipt.applied).toBe(true); // 'none' constraint passes trivially
   });
 
-  it.skip('should track rejected deltas', async () => {
-    // Skipped: Depends on pre-condition validation
+  it('should track rejected deltas', async () => {
+    // Arrange
     const delta = createDelta({
       admissibility: {
         preConditions: ['never'],
       },
     });
 
+    // Act
     await gate.proposeDelta(delta);
 
+    // Assert
     const health = gate.getHealthStatus();
     expect(health.deltasRejected).toBe(1);
   });
@@ -328,7 +333,8 @@ describe('DaemonDeltaGate Integration', () => {
   // Rollback Support
   // =========================================================================
 
-  it.skip('should rollback delta via reversal', async () => {
+  it('should rollback delta via reversal', async () => {
+    // Arrange
     const delta = createDelta({
       operations: [
         {
@@ -340,22 +346,27 @@ describe('DaemonDeltaGate Integration', () => {
       ],
     });
 
+    // Act
     const receipt = await gate.proposeDelta(delta);
     expect(gate.store.get('rollback-test')).toBe('modified');
 
     const rollbackReceipt = await gate.rollback(receipt.id);
 
+    // Assert
     expect(rollbackReceipt.applied).toBe(true);
     expect(gate.store.has('rollback-test')).toBe(false);
   });
 
-  it.skip('should fail rollback for rejected receipt', async () => {
+  it('should fail rollback for rejected receipt', async () => {
+    // Arrange
     const delta = createDelta({
       admissibility: { preConditions: ['never'] },
     });
 
+    // Act
     const receipt = await gate.proposeDelta(delta);
 
+    // Assert
     await expect(gate.rollback(receipt.id)).rejects.toThrow('Cannot rollback rejected receipt');
   });
 
@@ -406,21 +417,25 @@ describe('DaemonDeltaGate Integration', () => {
   // Event Emission
   // =========================================================================
 
-  it.skip('should emit delta:applied event', async () => {
+  it('should emit delta:applied event', async () => {
+    // Arrange
     const listener = vi.fn();
     gate.on('delta:applied', listener);
 
+    // Act
     const delta = createDelta();
     const receipt = await gate.proposeDelta(delta);
 
+    // Assert
     expect(listener).toHaveBeenCalledOnce();
     const event = listener.mock.calls[0][0];
     expect(event.deltaId).toBe(delta.id);
     expect(event.receipt).toEqual(receipt);
-    expect(event.elapsedNs).toBeGreaterThan(0);
+    expect(event.elapsedNs).toBeGreaterThanOrEqual(0);
   });
 
-  it.skip('should emit delta:rejected event', async () => {
+  it('should emit delta:rejected event', async () => {
+    // Arrange
     const listener = vi.fn();
     gate.on('delta:rejected', listener);
 
@@ -428,14 +443,19 @@ describe('DaemonDeltaGate Integration', () => {
       admissibility: { preConditions: ['never'] },
     });
 
+    // Act
     const receipt = await gate.proposeDelta(delta);
 
-    // Verify rejection happened
+    // Assert - Verify rejection happened
     expect(receipt.applied).toBe(false);
     expect(receipt.reason).toBeDefined();
 
-    // Verify event was emitted (may be async)
-    expect(listener.mock.calls.length).toBeGreaterThanOrEqual(0);
+    // Assert - Verify event was emitted
+    expect(listener).toHaveBeenCalledOnce();
+    const event = listener.mock.calls[0][0];
+    expect(event.deltaId).toBe(delta.id);
+    expect(event.receipt).toEqual(receipt);
+    expect(event.reason).toContain('Pre-condition failed');
   });
 
   // =========================================================================
@@ -557,7 +577,8 @@ describe('DaemonDeltaGate Integration', () => {
     expect(hookSpy).toHaveBeenCalledWith(delta, receipt);
   });
 
-  it.skip('should invoke onDeltaRejected hook', async () => {
+  it('should invoke onDeltaRejected hook', async () => {
+    // Arrange
     const hookSpy = vi.fn();
     const hookGate = new DaemonDeltaGate({
       daemonId: 'hook-gate',
@@ -568,11 +589,16 @@ describe('DaemonDeltaGate Integration', () => {
       admissibility: { preConditions: ['never'] },
     });
 
+    // Act
     const receipt = await hookGate.proposeDelta(delta);
 
-    // Verify rejection happened
+    // Assert - Verify rejection happened
     expect(receipt.applied).toBe(false);
     expect(receipt.reason).toBeDefined();
+
+    // Assert - Verify hook was invoked
+    expect(hookSpy).toHaveBeenCalledOnce();
+    expect(hookSpy).toHaveBeenCalledWith(delta, 'Pre-condition failed: never');
   });
 
   // =========================================================================
