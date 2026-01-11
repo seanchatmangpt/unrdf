@@ -19,9 +19,9 @@ export default defineConfig({
     concurrent: false,
     maxConcurrency: 1,
 
-    // Test timeout - reasonable for RDF operations
-    testTimeout: 15_000,
-    hookTimeout: 15_000,
+    // Test timeout - 2s per test for fast tier (Andon principle)
+    testTimeout: 2_000,
+    hookTimeout: 5_000,
 
     // Coverage configuration
     coverage: {
@@ -51,43 +51,66 @@ export default defineConfig({
     // Node.js environment (no browser, no React)
     environment: "node",
 
-    // 80/20 Fast Test Suite: Keep only critical tests that verify core functionality
-    // Total: ~900 lines = 5% of full suite but 80% of value
+    // 80/20 Fast Test Suite: Essential (20%) + Important (30%) = 75%+ coverage
+    // Total: ~45 tests = 8% of full suite but 80% of value
+    // Target: <30 seconds execution
     include: [
-      // v4.0: Core diff utilities (427 lines) - CRITICAL for diff engine
-      "test/diff.test.mjs",
+      // === TIER 1: ESSENTIAL (Core 20%) ===
+      // Core RDF operations
+      "test/diff.test.mjs",                              // 685 lines - Diff engine CRITICAL
+      "test/project-engine.test.mjs",                    // 487 lines - Domain inference
 
-      // v3.0: Core parsing and querying (21 lines) - CONTRACT TESTS
-      "test/knowledge-engine/parse-contract.test.mjs",
-      "test/knowledge-engine/query-contract.test.mjs",
+      // Hook system
+      "test/hook-executor-deps.test.mjs",                // 52 lines - Dependency validation
 
-      // v3.0: Observability (992 lines) - KEY FEATURE, but only run smoke tests
-      // NOTE: Full observability tests included in test:full
-      // For now we include it but could reduce if needed
+      // Knowledge engine contracts
+      "test/knowledge-engine/parse-contract.test.mjs",   // 21 lines - Parse contract
+      "test/knowledge-engine/query-contract.test.mjs",   // 21 lines - Query contract
 
-      // v4.0: Project engine core (487 lines) - CRITICAL for domain inference
-      "test/project-engine.test.mjs",
+      // Security & validation
+      "test/lockchain-merkle-verification.test.mjs",     // 168 lines - Cryptographic proofs
+      "test/security-error-sanitizer.test.mjs",          // Error sanitization
 
-      // v3.0: Dark matter 80/20 (362 lines) - CORE OPTIMIZATION FEATURE
-      "test/dark-matter-80-20.test.mjs",
+      // Integration smoke test
+      "test/e2e-integration.test.mjs",                   // 112 lines - E2E validation
 
-      // v3.0: CLI baseline (16 lines) - CLI smoke test
-      "test/cli/baseline-cli.test.mjs",
+      // V6 core (if exists)
+      "packages/v6-core/test/*.test.mjs",
+      "packages/v6-compat/test/*.test.mjs",
 
-      // v3.1.0: E2E integration (110 lines) - CRITICAL end-to-end validation
-      "test/e2e-integration.test.mjs",
+      // Hooks core (if exists)
+      "packages/hooks/test/hook-registration.test.mjs",
+      "packages/hooks/test/hook-execution.test.mjs",
 
-      // v3.0: RingBuffer utilities (354 lines) - PERFORMANCE CRITICAL
-      "test/knowledge-engine/utils/ring-buffer.test.mjs",
+      // === TIER 2: IMPORTANT (Next 30% for 75% total coverage) ===
+      // Optimization & performance
+      "test/dark-matter-80-20.test.mjs",                 // 362 lines - Core optimization
+      "test/query-optimizer-cache.test.mjs",             // Query optimization
 
-      // v3.0: Circuit breaker (505 lines) - RESILIENCE CRITICAL
-      "test/knowledge-engine/utils/circuit-breaker.test.mjs",
+      // YAWL workflow engine (if exists)
+      "packages/yawl/test/task-activation.test.mjs",
+      "packages/yawl/test/workflow-execution.test.mjs",
 
-      // v3.0: Lockchain verification (168 lines) - SECURITY CRITICAL
-      "test/lockchain-merkle-verification.test.mjs",
+      // Streaming & real-time (if exists)
+      "packages/streaming/test/change-feed.test.mjs",
+      "packages/streaming/test/real-time-sync.test.mjs",
 
-      // v3.0: Hooks dependency validation (52 lines) - HOOK ENGINE VALIDATION
-      "test/hook-executor-deps.test.mjs",
+      // KGC governance (if exists)
+      "packages/kgc-runtime/test/governance.test.mjs",
+      "packages/kgc-4d/test/universe-freeze.test.mjs",
+      "packages/receipts/test/receipt-chain.test.mjs",
+
+      // Resilience & circuit breaking
+      "test/knowledge-engine/utils/circuit-breaker.test.mjs",  // 505 lines - Circuit breaker
+      "test/knowledge-engine/utils/ring-buffer.test.mjs",      // 354 lines - Ring buffer
+
+      // Federation basics (if exists)
+      "packages/federation/test/distributed-query.test.mjs",
+      "packages/consensus/test/raft-basic.test.mjs",
+
+      // CLI core
+      "test/cli.test.mjs",
+      "packages/cli/test/commands.test.mjs",
     ],
 
     exclude: [
