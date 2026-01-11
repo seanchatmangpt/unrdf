@@ -1,360 +1,1029 @@
 % agent_6_packages.tex
-% Agent 6 Documentation: Packages 21-27
-% Graph Analytics, Hooks, Integration Tests, KGC-4D, KGC-Claude, KGC-CLI, KGC-Substrate
+% Agent 6 Documentation: Packages 19-24
+% Validation Layer - Core validation, SHACL, SPARQL validation, Schema validation, Test utilities, OpenTelemetry
 
-\label{pkg:unrdf-graph-analytics}
-\section{\pkg{unrdf-graph-analytics} --- Graph Analytics}
+\label{pkg:unrdf-validation}
+\section{\pkg{unrdf-validation} --- OTEL Validation Framework}
 
 \begin{pkgmeta}
-Path & \texttt{packages/graph-analytics} \\
+Path & \texttt{packages/validation} \\
 Kind & js \\
-Entrypoints & 5 files \\
-Dependencies & 3 (graphlib, dagrejs-graphlib, zod) \\
-Blurb & Advanced graph analytics for RDF knowledge graphs using graphlib \\
+Entrypoints & 1 file \\
+Dependencies & 1 (@unrdf/knowledge-engine) \\
+Blurb & OTEL validation framework for UNRDF development with receipts-backed quality scoring \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \begin{align*}
-\Oobs &= \store \times \texttt{Options} \\
-\Aout &= \texttt{Graph} \times \texttt{Metrics} \times \texttt{Communities}
+\Oobs &= \texttt{OTELSpans} \times \texttt{ValidationRules} \times \texttt{QualityGates} \\
+\Aout &= \texttt{ValidationReport} \times \texttt{QualityScore} \times \texttt{Receipt}
 \end{align*}
 
-The observable is a triple store \(\store\) containing RDF quads. The artifact is a directed graph structure from \pkg{graphlib} enriched with analytics results: centrality scores, path structures, and community assignments.
+The observable is a collection of OpenTelemetry spans representing system execution traces, validation rule definitions, and quality gate thresholds. The artifact is a comprehensive validation report with numerical quality score (0-100) and cryptographic receipt proving validation execution.
 
-Core transformations:
-\begin{itemize}
-\item \texttt{rdfToGraph}: \(\store \to \texttt{Graph}\) --- Convert RDF store to graphlib instance
-\item \texttt{computePageRank}: \(\texttt{Graph} \to \texttt{NodeScores}\) --- Compute PageRank centrality
-\item \texttt{findShortestPath}: \(\texttt{Graph} \times \texttt{URI} \times \texttt{URI} \to \texttt{Path}\)
-\item \texttt{detectCommunitiesLPA}: \(\texttt{Graph} \to \texttt{Communities}\) --- Label propagation algorithm
-\end{itemize}
+Core components:
+\begin{enumerate}
+\item \textbf{OTELValidator}: Analyzes OTEL spans for code quality, testing coverage, security patterns
+\item \textbf{ValidationRunner}: Orchestrates validation suite execution with timeout guards
+\item \textbf{MetricsCollector}: Aggregates metrics from OTEL traces (latency, error rates, throughput)
+\item \textbf{ValidationReceipts}: Generates tamper-proof receipts for validation results
+\end{enumerate}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Zod schemas enforce graph structure:
+Validation report schema:
 \begin{lstlisting}
-const GraphStatsSchema = z.object({
-  nodeCount: z.number().int().nonnegative(),
-  edgeCount: z.number().int().nonnegative(),
-  density: z.number().min(0).max(1),
-  avgDegree: z.number().nonnegative()
-});
-
-const PathSchema = z.object({
-  path: z.array(z.string()),
-  distance: z.number().nonnegative(),
-  found: z.boolean()
+const ValidationReportSchema = z.object({
+  timestamp: z.string().datetime(),
+  score: z.number().min(0).max(100),
+  categories: z.object({
+    codeQuality: z.number().min(0).max(20),
+    testing: z.number().min(0).max(25),
+    security: z.number().min(0).max(20),
+    dependencies: z.number().min(0).max(15),
+    documentation: z.number().min(0).max(5),
+    performance: z.number().min(0).max(10),
+    otelCoverage: z.number().min(0).max(5)
+  }),
+  violations: z.array(z.object({
+    category: z.string(),
+    severity: z.enum(['error', 'warning', 'info']),
+    message: z.string(),
+    location: z.string().optional()
+  })),
+  metrics: z.object({
+    totalSpans: z.number().int().nonnegative(),
+    avgDuration: z.number().nonnegative(),
+    errorRate: z.number().min(0).max(1)
+  })
 });
 \end{lstlisting}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-\[\muRecon: \Oobs \to \Aout = \texttt{rdfToGraph} \compose \texttt{analyzeGraph}\]
+\[\muRecon_{\text{validate}}: \texttt{OTELSpans} \to (\texttt{QualityScore}, \texttt{Violations[]})\]
 
-The reconciler extracts subject-predicate-object relationships from RDF quads and maps them to graph edges. Node identifiers are URI strings, edge labels are predicate URIs. Graph operations (centrality, paths, clustering) execute on the graphlib structure.
+Validation reconciliation pipeline:
+\begin{enumerate}
+\item \textbf{Span Collection}: Gather OTEL spans from instrumented code execution
+\item \textbf{Metric Extraction}: Parse span attributes for quality indicators
+\item \textbf{Rule Evaluation}: Apply validation rules to collected metrics
+\item \textbf{Score Computation}: Weighted sum across 7 categories (total 100 points)
+\item \textbf{Receipt Generation}: Create cryptographic proof of validation state
+\end{enumerate}
 
-Determinism guarantee: Given identical \(\store\) contents and options, \(\muRecon\) produces identical graph structure and metrics (modulo label propagation randomization seed).
+Quality gate enforcement:
+\begin{lstlisting}
+async function validateQualityGate(report, threshold = 80) {
+  if (report.score < threshold) {
+    return {
+      passed: false,
+      reason: `Quality score ${report.score} below threshold ${threshold}`,
+      violations: report.violations.filter(v => v.severity === 'error')
+    };
+  }
+  return { passed: true };
+}
+\end{lstlisting}
+
+Validation runner executes comprehensive checks:
+\begin{itemize}
+\item Code Quality (20\%): JSDoc coverage, cyclomatic complexity, naming conventions
+\item Testing (25\%): Test pass rate, coverage metrics (lines, branches, functions)
+\item Security (20\%): Credential detection, injection patterns, path traversal
+\item Dependencies (15\%): Circular dependencies, version vulnerabilities
+\item Documentation (5\%): README presence, API documentation completeness
+\item Performance (10\%): P95 latency targets, memory footprint, throughput
+\item OTEL Coverage (5\%): Span density, trace completeness
+\end{itemize}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Sequential composition for analytics pipeline:
-\[\PiMerge = \texttt{rdfToGraph} \compose \texttt{computePageRank} \compose \texttt{getTopNodes}\]
+Sequential validation composition:
+\[\PiMerge(\texttt{validator}_1, \texttt{validator}_2) = \texttt{validator}_2 \compose \texttt{validator}_1\]
 
-Commutative merge for graph union:
-\[G_1 \oplusMerge G_2 = \texttt{mergeGraphs}(G_1, G_2)\]
+Validators execute in dependency order. Each validator receives OTEL spans and produces partial scores. Final score is weighted sum of category scores.
 
-Graph union combines node sets and edge sets. PageRank scores are not compositional across graph unions (requires recomputation on merged graph).
+Parallel validation for independent checks:
+\[\texttt{check}_1 \oplusMerge \texttt{check}_2 \iff \neg\texttt{dependent}(\texttt{check}_1, \texttt{check}_2)\]
+
+Independent checks (e.g., JSDoc coverage and test coverage) run concurrently, merging results via score aggregation.
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards:
 \begin{itemize}
-\item \(\GuardH_{\text{cycle}}\): Prevent path finding on graphs with negative weight cycles
-\item \(\GuardH_{\text{size}}\): Reject graphs exceeding 100K nodes for community detection
-\item \(\GuardH_{\text{connected}}\): Warn when computing betweenness centrality on disconnected graphs
+\item \(\GuardH_{\text{timeout}}\): Abort validation exceeding 30-second budget
+\item \(\GuardH_{\text{threshold}}\): Block deployment if score \textless 80/100
+\item \(\GuardH_{\text{error}}\): Fail fast on critical security violations
 \end{itemize}
 
 Invariants:
 \begin{itemize}
-\item \(\InvQ_{\text{degree}}\): Sum of in-degrees equals sum of out-degrees (directed graph)
-\item \(\InvQ_{\text{pagerank}}\): PageRank scores sum to 1.0 (within numerical tolerance)
-\item \(\InvQ_{\text{partition}}\): Community detection produces disjoint node sets
+\item \(\InvQ_{\text{score}}\): \(0 \leq \texttt{score} \leq 100\) (bounded quality metric)
+\item \(\InvQ_{\text{deterministic}}\): Same OTEL spans produce identical score
+\item \(\InvQ_{\text{receipt}}\): Every validation produces cryptographic receipt
+\item \(\InvQ_{\text{comprehensive}}\): All 7 categories evaluated (no partial reports)
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-No cryptographic receipts. Provenance tracked via:
+Validation receipt structure:
+\begin{lstlisting}
+{
+  "id": "validation-550e8400-e29b-41d4-a716",
+  "timestamp": "2024-12-04T15:16:00.123Z",
+  "score": 87.3,
+  "spans_hash": "blake3:a3f8d...",
+  "rules_version": "5.0.1",
+  "violations_count": 3,
+  "categories": {
+    "codeQuality": 18.5,
+    "testing": 24.0,
+    "security": 20.0,
+    "dependencies": 13.5,
+    "documentation": 4.0,
+    "performance": 9.8,
+    "otelCoverage": 4.5
+  }
+}
+\end{lstlisting}
+
+Receipt chain links validation runs:
+\[\texttt{receipt}_n.\texttt{previous} = \ProvHash(\texttt{receipt}_{n-1})\]
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { createValidationRunner, createOTELValidator }
+  from '@unrdf/validation';
+
+const runner = createValidationRunner({
+  threshold: 80,
+  timeout: 30000
+});
+
+const validator = createOTELValidator();
+
+// Run comprehensive validation
+const report = await runner.validate({
+  spans: otelSpans,
+  rules: defaultValidationRules
+});
+
+console.log(`Quality Score: ${report.score}/100`);
+console.log(`Violations: ${report.violations.length}`);
+
+if (report.score >= 80) {
+  console.log('Quality gate passed');
+} else {
+  console.error('Quality gate failed');
+  process.exit(1);
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to extend validation rules dynamically without recompiling validator?
+\item Can validation receipts be anchored to blockchain for external auditability?
+\item Optimal category weights for different project types (library vs application)?
+\item Real-time validation streaming for continuous quality monitoring?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-shacl}
+\section{\pkg{unrdf-shacl} --- SHACL Shape Validation}
+
+\begin{pkgmeta}
+Path & \texttt{packages/core/src/validation + v6-core/grammar/parser} \\
+Kind & js \\
+Entrypoints & 2 files \\
+Dependencies & 3 (rdf-validate-shacl, @unrdf/oxigraph, zod) \\
+Blurb & SHACL (Shapes Constraint Language) validation engine with complexity estimation \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{DataGraph} \times \texttt{ShapesGraph} \\
+\Aout &= \texttt{ValidationReport} \times \texttt{Violations[]} \times \texttt{Conforms}
+\end{align*}
+
+The observable consists of an RDF data graph to be validated and a SHACL shapes graph defining constraints. The artifact is a W3C SHACL validation report indicating conformance, with detailed violation traces for non-conforming nodes.
+
+SHACL validation enforces structural constraints:
 \begin{itemize}
-\item Graph statistics (\texttt{nodeCount}, \texttt{edgeCount}) serve as fingerprints
-\item Algorithm parameters (damping factor, max iterations) logged in result metadata
-\item SPARQL query used for RDF-to-graph conversion included in trace
+\item \textbf{Node Shapes}: Constraints on RDF resources (e.g., \texttt{sh:class}, \texttt{sh:datatype})
+\item \textbf{Property Shapes}: Constraints on property values (e.g., \texttt{sh:minCount}, \texttt{sh:pattern})
+\item \textbf{Target Selection}: \texttt{sh:targetClass}, \texttt{sh:targetNode}, \texttt{sh:targetSubjectsOf}
+\item \textbf{Severity Levels}: \texttt{sh:Violation}, \texttt{sh:Warning}, \texttt{sh:Info}
 \end{itemize}
 
-Future: Content-address graph structures with \(\ProvHash(\texttt{nodes} \cup \texttt{edges})\).
+\subsection*{Type Signature \(\SigmaType\)}
+
+SHACL validation report schema:
+\begin{lstlisting}
+const SHACLReportSchema = z.object({
+  conforms: z.boolean(),
+  results: z.array(z.object({
+    sourceConstraintComponent: z.string(),
+    focusNode: z.string(),
+    resultPath: z.string().optional(),
+    resultSeverity: z.enum(['Violation', 'Warning', 'Info']),
+    resultMessage: z.string(),
+    sourceShape: z.string()
+  })),
+  metadata: z.object({
+    shapesCount: z.number().int().nonnegative(),
+    targetsCount: z.number().int().nonnegative(),
+    validationTimeMs: z.number().nonnegative()
+  })
+});
+\end{lstlisting}
+
+SHACL shape AST (from v6-core parser):
+\begin{lstlisting}
+const SHACLASTSchema = z.object({
+  type: z.literal('shacl'),
+  shapes: z.array(z.object({
+    id: z.string(),
+    targetClass: z.string().optional(),
+    properties: z.array(z.object({
+      path: z.string(),
+      constraints: z.record(z.any())
+    }))
+  })),
+  complexity: z.object({
+    estimatedTimeMs: z.number(),
+    shapesDepth: z.number(),
+    astNodeCount: z.number()
+  })
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{shacl}}: (\texttt{DataGraph}, \texttt{ShapesGraph}) \to \texttt{ValidationReport}\]
+
+SHACL validation algorithm:
+\begin{enumerate}
+\item \textbf{Parse Shapes}: Extract node shapes and property shapes from shapes graph
+\item \textbf{Target Selection}: Identify focus nodes using target declarations
+\item \textbf{Constraint Evaluation}: For each focus node, evaluate all applicable constraints
+\item \textbf{Report Generation}: Aggregate violations into W3C SHACL validation report
+\end{enumerate}
+
+Complexity estimation (from v6-core parser):
+\begin{lstlisting}
+function estimateSHACLComplexity(ast) {
+  const shapes = ast.shapes?.length || 0;
+  const properties = ast.properties?.length || 0;
+
+  // SHACL validation is O(nodes * shapes)
+  const estimatedTimeMs = Math.min(
+    200 + (shapes * 20) + (properties * 30),
+    10000 // 10s timeout
+  );
+
+  return {
+    estimatedTimeMs,
+    shapesDepth: shapes,
+    astNodeCount: countASTNodes(ast)
+  };
+}
+\end{lstlisting}
+
+Integration with \texttt{rdf-validate-shacl} library:
+\begin{lstlisting}
+import factory from 'rdf-ext';
+import SHACLValidator from 'rdf-validate-shacl';
+
+async function validateSHACL(dataGraph, shapesGraph) {
+  const validator = new SHACLValidator(shapesGraph, { factory });
+  const report = await validator.validate(dataGraph);
+
+  return {
+    conforms: report.conforms,
+    results: report.results.map(r => ({
+      focusNode: r.focusNode.value,
+      resultPath: r.path?.value,
+      resultMessage: r.message?.[0]?.value,
+      sourceShape: r.sourceShape.value
+    }))
+  };
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential shape validation:
+\[\PiMerge(\texttt{shape}_1, \texttt{shape}_2) = \texttt{validateAll}([\texttt{shape}_1, \texttt{shape}_2])\]
+
+All shapes in shapes graph are evaluated. Order does not affect conformance (shapes are declarative constraints).
+
+Data graph composition:
+\[\texttt{data}_1 \oplusMerge \texttt{data}_2 = \texttt{validate}(\texttt{data}_1 \cup \texttt{data}_2, \texttt{shapes})\]
+
+Validation over union of data graphs. Adding triples can introduce new violations (non-monotonic).
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{timeout}}\): Abort validation exceeding 10-second estimate
+\item \(\GuardH_{\text{cycle}}\): Detect cyclic shape references (prevent infinite loops)
+\item \(\GuardH_{\text{wellformed}}\): Reject malformed SHACL shapes (invalid constraint components)
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{w3c}}\): Validation report conforms to W3C SHACL spec
+\item \(\InvQ_{\text{deterministic}}\): Same data and shapes produce identical report
+\item \(\InvQ_{\text{complete}}\): All focus nodes evaluated for all applicable shapes
+\item \(\InvQ_{\text{severity}}\): Violations have higher severity than warnings
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+SHACL validation produces W3C-compliant reports with full provenance:
+\begin{lstlisting}
+{
+  "conforms": false,
+  "results": [
+    {
+      "focusNode": "http://example.org/Alice",
+      "resultPath": "http://schema.org/age",
+      "resultSeverity": "Violation",
+      "resultMessage": "Value must be >= 0",
+      "sourceConstraintComponent": "sh:MinInclusiveConstraintComponent",
+      "sourceShape": "http://example.org/PersonShape"
+    }
+  ],
+  "metadata": {
+    "shapesCount": 5,
+    "targetsCount": 12,
+    "validationTimeMs": 234
+  }
+}
+\end{lstlisting}
+
+Shapes graph hash provides deterministic versioning:
+\[\texttt{shapes\_version} = \ProvHash(\texttt{sorted}(\texttt{shapesGraph}))\]
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}
 import { createStore } from '@unrdf/oxigraph';
-import { rdfToGraph, computePageRank, getTopNodes }
-  from '@unrdf/graph-analytics';
+import SHACLValidator from 'rdf-validate-shacl';
+import factory from 'rdf-ext';
 
-const store = createStore();
-// Assume store populated with RDF triples
+const dataGraph = createStore();
+dataGraph.add(/* RDF quads for Person data */);
 
-const graph = rdfToGraph(store);
-const pagerank = computePageRank(graph, {
-  dampingFactor: 0.85,
-  maxIterations: 100
-});
-const top10 = getTopNodes(pagerank, 10);
+const shapesGraph = createStore();
+shapesGraph.add(/* SHACL shapes for Person validation */);
 
-console.log('Most important entities:', top10);
+const validator = new SHACLValidator(shapesGraph, { factory });
+const report = await validator.validate(dataGraph);
+
+if (report.conforms) {
+  console.log('Data conforms to shapes');
+} else {
+  console.log('Validation failures:');
+  for (const result of report.results) {
+    console.log(`- ${result.message}`);
+  }
+}
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to make PageRank compositional over graph unions?
-\item Deterministic community detection (remove LPA randomization)?
-\item Streaming graph analytics for large RDF datasets (>1M triples)?
-\item Integration with SHACL shapes for graph validation constraints?
+\item How to optimize SHACL validation for large graphs (>1M triples)?
+\item Incremental validation on delta updates (avoid full re-validation)?
+\item SHACL-to-Zod compilation for static type checking?
+\item Distributed SHACL validation across federated stores?
 \end{enumerate}
 
 % ============================================================================
 
-\label{pkg:unrdf-hooks}
-\section{\pkg{unrdf-hooks} --- Knowledge Hooks}
+\label{pkg:unrdf-sparql-validator}
+\section{\pkg{unrdf-sparql-validator} --- SPARQL Query Validation}
 
 \begin{pkgmeta}
-Path & \texttt{packages/hooks} \\
+Path & \texttt{packages/v6-core/src/grammar/parser + packages/core/src/sparql} \\
 Kind & js \\
-Entrypoints & 3 files \\
-Dependencies & 6 (citty, unrdf-core, unrdf-oxigraph, zod) \\
-Blurb & UNRDF Knowledge Hooks - Policy Definition and Execution Framework \\
+Entrypoints & 2 files \\
+Dependencies & 2 (@unrdf/oxigraph, zod) \\
+Blurb & SPARQL query parser, validator, and complexity estimator for query optimization \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \begin{align*}
-\Oobs &= \quad{\texttt{subject}, \texttt{predicate}, \texttt{object}, \texttt{graph}} \\
-\Aout &= \texttt{HookResult} = \{\texttt{allowed}, \texttt{transformed}, \texttt{receipt}\}
+\Oobs &= \texttt{SPARQLQuery} \times \texttt{ValidationRules} \\
+\Aout &= \texttt{QueryAST} \times \texttt{Complexity} \times \texttt{SafetyReport}
 \end{align*}
 
-The observable is an RDF quad awaiting admission to the store. The artifact is a hook execution result containing:
+The observable is a SPARQL query string with validation rules (e.g., timeout limits, complexity bounds). The artifact is a parsed Abstract Syntax Tree (AST), complexity estimate, and safety analysis report flagging potential performance issues or security vulnerabilities.
+
+SPARQL validation checks:
 \begin{itemize}
-\item \texttt{allowed}: Boolean admission decision
-\item \texttt{transformed}: Modified quad (if transformation hook)
-\item \texttt{receipt}: Execution trace with timestamps and rule IDs
+\item \textbf{Syntax Validation}: Parse query to AST, reject malformed queries
+\item \textbf{Complexity Estimation}: Estimate execution time based on join depth and filters
+\item \textbf{Safety Analysis}: Detect unbounded queries, Cartesian products, regex DoS
+\item \textbf{Security Checks}: Prevent injection attacks, enforce query size limits
 \end{itemize}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Hook definition schema:
+SPARQL AST schema:
 \begin{lstlisting}
-const HookSchema = z.object({
-  id: z.string(),
-  trigger: z.enum(['before-write', 'after-write', 'before-delete']),
-  validate: z.function().args(QuadSchema).returns(z.boolean()).optional(),
-  transform: z.function().args(QuadSchema).returns(QuadSchema).optional(),
-  priority: z.number().int().nonnegative().default(100)
+const SPARQLASTSchema = z.object({
+  type: z.literal('sparql'),
+  queryType: z.enum(['SELECT', 'CONSTRUCT', 'ASK', 'DESCRIBE']),
+  prefixes: z.record(z.string()),
+  patterns: z.array(z.object({
+    pattern: z.string(),
+    variables: z.array(z.string()).optional()
+  })),
+  filters: z.array(z.string()),
+  modifiers: z.object({
+    limit: z.number().int().positive().optional(),
+    offset: z.number().int().nonnegative().optional(),
+    hasOrderBy: z.boolean(),
+    hasGroupBy: z.boolean()
+  }),
+  complexity: z.object({
+    estimatedTimeMs: z.number(),
+    triplePatterns: z.number(),
+    joinDepth: z.number(),
+    filterComplexity: z.number()
+  })
 });
+\end{lstlisting}
 
-const HookResultSchema = z.object({
-  allowed: z.boolean(),
-  transformed: QuadSchema.optional(),
-  receipt: ReceiptSchema
+Safety report schema:
+\begin{lstlisting}
+const SafetyReportSchema = z.object({
+  safe: z.boolean(),
+  warnings: z.array(z.object({
+    severity: z.enum(['high', 'medium', 'low']),
+    category: z.enum(['complexity', 'security', 'performance']),
+    message: z.string(),
+    suggestion: z.string().optional()
+  })),
+  metrics: z.object({
+    estimatedTimeMs: z.number(),
+    unboundedPatterns: z.number(),
+    cartesianProducts: z.number()
+  })
 });
 \end{lstlisting}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-\[\muRecon: \Oobs \times \texttt{Hook[]} \to \Aout\]
+\[\muRecon_{\text{parse}}: \texttt{SPARQLQuery} \to (\texttt{AST}, \texttt{Complexity})\]
 
-The reconciler executes hook chain sequentially:
+SPARQL parsing and validation pipeline:
+\begin{enumerate}
+\item \textbf{Lexical Analysis}: Tokenize SPARQL query string
+\item \textbf{Syntax Parsing}: Build AST from tokens (query type, patterns, filters)
+\item \textbf{Complexity Estimation}: Analyze AST to estimate execution cost
+\item \textbf{Safety Checks}: Detect performance hazards and security issues
+\end{enumerate}
+
+Complexity estimation algorithm:
 \begin{lstlisting}
-async function executeHookChain(quad, hooks) {
-  let current = quad;
-  for (const hook of hooks.sort(byPriority)) {
-    if (hook.validate && !await hook.validate(current)) {
-      return { allowed: false, receipt: denial(hook.id) };
-    }
-    if (hook.transform) {
-      current = await hook.transform(current);
-    }
-  }
-  return { allowed: true, transformed: current, receipt: approval() };
+function estimateSPARQLComplexity(ast) {
+  const triplePatterns = ast.patterns?.length || 0;
+  const filters = ast.filters?.length || 0;
+  const joinDepth = estimateJoinDepth(ast.patterns);
+
+  // O(n^joinDepth) worst case for joins
+  const estimatedTimeMs = Math.min(
+    100 + (triplePatterns * 10) + (filters * 50) + (joinDepth * 100),
+    5000 // 5s default timeout from CLAUDE.md
+  );
+
+  return {
+    estimatedTimeMs,
+    triplePatterns,
+    joinDepth,
+    filterComplexity: filters,
+    astNodeCount: countASTNodes(ast)
+  };
 }
 \end{lstlisting}
 
-Optimization: Hook chain compiler generates JIT-optimized function for repeated execution (caches validation-only chains, uses quad pooling for zero-allocation transforms).
+Safety analysis:
+\begin{lstlisting}
+function analyzeSafety(ast) {
+  const warnings = [];
+
+  // Check for unbounded queries (no LIMIT)
+  if (!ast.modifiers.limit && ast.queryType === 'SELECT') {
+    warnings.push({
+      severity: 'medium',
+      category: 'performance',
+      message: 'Query has no LIMIT clause',
+      suggestion: 'Add LIMIT to prevent unbounded result sets'
+    });
+  }
+
+  // Check for Cartesian products (unconnected patterns)
+  const cartesian = detectCartesianProducts(ast.patterns);
+  if (cartesian > 0) {
+    warnings.push({
+      severity: 'high',
+      category: 'performance',
+      message: `Detected ${cartesian} Cartesian product(s)`,
+      suggestion: 'Add join conditions between patterns'
+    });
+  }
+
+  // Check for regex DoS (complex FILTER regex)
+  for (const filter of ast.filters) {
+    if (/regex.*\(.*\*.*\*.*\)/i.test(filter)) {
+      warnings.push({
+        severity: 'high',
+        category: 'security',
+        message: 'Complex regex in FILTER may cause DoS',
+        suggestion: 'Simplify regex pattern or use string functions'
+      });
+    }
+  }
+
+  return {
+    safe: warnings.filter(w => w.severity === 'high').length === 0,
+    warnings
+  };
+}
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Sequential hook composition (order matters):
-\[\PiMerge(h_1, h_2) = h_2 \compose h_1\]
+Query federation (sequential execution):
+\[\PiMerge(q_1, q_2) = q_2(q_1(\texttt{store}))\]
 
-Hook priorities determine execution order. Lower priority number executes first.
+Federated queries execute sequentially, with second query operating on results of first.
 
-Commutative merge for independent hooks (validation-only, no state):
-\[h_1 \oplusMerge h_2 \iff \texttt{independent}(h_1, h_2)\]
+Complexity composition (additive for independent queries):
+\[\texttt{complexity}(q_1 \oplusMerge q_2) = \texttt{complexity}(q_1) + \texttt{complexity}(q_2)\]
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards:
 \begin{itemize}
-\item \(\GuardH_{\text{cycle}}\): Detect infinite loops in hook chains (max depth 100)
-\item \(\GuardH_{\text{timeout}}\): Abort hook execution exceeding 5 seconds
-\item \(\GuardH_{\text{sandbox}}\): Prevent hooks from modifying store directly (isolation)
+\item \(\GuardH_{\text{timeout}}\): Reject queries exceeding 5-second estimate
+\item \(\GuardH_{\text{syntax}}\): Block malformed queries at parse stage
+\item \(\GuardH_{\text{injection}}\): Prevent SPARQL injection via parameterized queries
+\item \(\GuardH_{\text{size}}\): Enforce maximum query size (10KB default)
 \end{itemize}
 
 Invariants:
 \begin{itemize}
-\item \(\InvQ_{\text{quad}}\): Transformation preserves quad structure (4-tuple)
-\item \(\InvQ_{\text{receipt}}\): Every hook execution produces receipt (audit trail)
-\item \(\InvQ_{\text{deny}}\): Validation failure halts chain immediately (fail-fast)
-\end{itemize}
-
-Built-in hooks enforce RDF well-formedness:
-\begin{itemize}
-\item \texttt{validateIRIFormat}: Reject malformed URIs
-\item \texttt{rejectBlankNodes}: Enforce named-node-only policy
-\item \texttt{validateLanguageTag}: Check BCP47 compliance for literals
+\item \(\InvQ_{\text{deterministic}}\): Same query produces identical AST
+\item \(\InvQ_{\text{reversible}}\): AST can be serialized back to valid SPARQL
+\item \(\InvQ_{\text{complete}}\): All SPARQL 1.1 features supported in parser
+\item \(\InvQ_{\text{bounded}}\): Complexity estimate never exceeds configured max
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-Hook execution receipt:
+SPARQL validation receipt:
 \begin{lstlisting}
 {
-  "hookId": "validate-pii",
-  "timestamp": 1733314560123456789n,
-  "quad": "<s, p, o, g>",
-  "result": "denied",
-  "reason": "PII without consent",
-  "hash": "blake3_hash_of_input"
+  "queryHash": "blake3:a3f8d...",
+  "parseTimestamp": "2024-12-04T15:16:00.123Z",
+  "queryType": "SELECT",
+  "complexity": {
+    "estimatedTimeMs": 234,
+    "triplePatterns": 5,
+    "joinDepth": 3,
+    "filterComplexity": 2
+  },
+  "safety": {
+    "safe": true,
+    "warnings": []
+  },
+  "validated": true
 }
 \end{lstlisting}
 
-Receipts stored in \texttt{kgc:HookLog} graph for audit queries:
-\begin{lstlisting}
-SELECT ?hook ?quad ?result WHERE {
-  GRAPH <http://kgc.io/HookLog> {
-    ?execution kgc:hook ?hook ;
-               kgc:quad ?quad ;
-               kgc:result ?result .
-  }
-}
-\end{lstlisting}
+Query fingerprint enables caching:
+\[\texttt{queryFingerprint} = \ProvHash(\texttt{normalizedQuery})\]
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}
-import { defineHook, executeHook } from '@unrdf/hooks';
-import { dataFactory } from '@unrdf/oxigraph';
+import { parseSPARQL, estimateSPARQLComplexity }
+  from '@unrdf/v6-core/grammar/parser/sparql';
 
-defineHook('reject-blank-nodes', {
-  trigger: 'before-write',
-  async validate(quad) {
-    return quad.subject.termType !== 'BlankNode' &&
-           quad.object.termType !== 'BlankNode';
+const query = `
+  PREFIX ex: <http://example.org/>
+  SELECT ?person ?name WHERE {
+    ?person a ex:Person .
+    ?person ex:name ?name .
+    FILTER(?name != "")
   }
-});
+  LIMIT 100
+`;
 
-const quad = dataFactory.quad(
-  dataFactory.namedNode('http://example.org/Alice'),
-  dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-  dataFactory.namedNode('http://example.org/Person')
-);
+const { ast, complexity } = parseSPARQL(query);
 
-const result = await executeHook('reject-blank-nodes', quad);
-console.log(result.allowed); // true
+console.log(`Query type: ${ast.queryType}`);
+console.log(`Estimated time: ${complexity.estimatedTimeMs}ms`);
+console.log(`Join depth: ${complexity.joinDepth}`);
+
+if (complexity.estimatedTimeMs > 5000) {
+  console.warn('Query exceeds 5s timeout');
+}
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to verify hook non-interference (commutative validation hooks)?
-\item Formal proof that transformation chains preserve RDF composition rules?
-\item Distributed hook execution across federated stores?
-\item SHACL-to-hook compilation for automated policy generation?
+\item How to accurately estimate complexity for property paths and aggregations?
+\item Can ML models predict query execution time better than rule-based estimators?
+\item Automatic query rewriting to optimize detected anti-patterns?
+\item Integration with query planner for adaptive timeout adjustment?
 \end{enumerate}
 
 % ============================================================================
 
-\label{pkg:unrdf-integration-tests}
-\section{\pkg{unrdf-integration-tests} --- Integration Tests}
+\label{pkg:unrdf-schema-validator}
+\section{\pkg{unrdf-schema-validator} --- Zod Schema Validation}
 
 \begin{pkgmeta}
-Path & \texttt{packages/integration-tests} \\
+Path & \texttt{packages/core/src/validation} \\
 Kind & js \\
-Entrypoints & 0 (test-only package) \\
-Dependencies & 9 (vitest, unrdf-core, unrdf-federation, unrdf-hooks, unrdf-kgc-4d, unrdf-yawl, zod) \\
-Blurb & Comprehensive integration tests for UNRDF multi-package workflows \\
+Entrypoints & 1 file \\
+Dependencies & 2 (@unrdf/oxigraph, zod) \\
+Blurb & Runtime schema validation for RDF quads, stores, and query options using Zod \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \begin{align*}
-\Oobs &= \texttt{TestSuite} \times \texttt{Fixtures} \\
-\Aout &= \texttt{TestResults} = \{\texttt{passed}, \texttt{failed}, \texttt{coverage}\}
+\Oobs &= \texttt{Value} \times \texttt{ZodSchema} \\
+\Aout &= \texttt{ValidatedValue} \lor \texttt{ValidationError}
 \end{align*}
 
-The observable is a collection of test specifications describing multi-package interactions. The artifact is a test execution report with pass/fail counts, error traces, and coverage metrics.
+The observable is an arbitrary JavaScript value paired with a Zod schema defining its expected structure. The artifact is either the validated value (with type refinements applied) or a structured validation error with detailed issue descriptions.
+
+Core schemas:
+\begin{enumerate}
+\item \textbf{QuadSchema}: Validates RDF quad structure (subject, predicate, object, graph)
+\item \textbf{StoreSchema}: Validates triple store interface (getQuads, addQuad, etc.)
+\item \textbf{QueryOptionsSchema}: Validates SPARQL query options (limit, offset, signal)
+\end{enumerate}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Test suite schema:
+Quad validation schema:
 \begin{lstlisting}
-const TestSuiteSchema = z.object({
-  name: z.string(),
-  tests: z.array(z.object({
-    description: z.string(),
-    setup: z.function(),
-    execute: z.function(),
-    assert: z.function(),
-    teardown: z.function().optional()
-  })),
-  timeout: z.number().default(5000)
+const QuadSchema = z.object({
+  subject: z.object({
+    value: z.string(),
+    termType: z.enum(['NamedNode', 'BlankNode', 'Variable'])
+  }),
+  predicate: z.object({
+    value: z.string(),
+    termType: z.literal('NamedNode')
+  }),
+  object: z.object({
+    value: z.string(),
+    termType: z.enum(['NamedNode', 'BlankNode', 'Literal', 'Variable'])
+  }),
+  graph: z.object({
+    value: z.string(),
+    termType: z.enum(['NamedNode', 'DefaultGraph'])
+  }).optional()
 });
+\end{lstlisting}
+
+Store interface schema:
+\begin{lstlisting}
+const StoreSchema = z.object({
+  getQuads: z.function()
+    .args(
+      z.any().optional(), // subject
+      z.any().optional(), // predicate
+      z.any().optional(), // object
+      z.any().optional()  // graph
+    )
+    .returns(z.any()),
+  addQuad: z.function().optional(),
+  removeQuad: z.function().optional(),
+  countQuads: z.function().optional()
+});
+\end{lstlisting}
+
+Query options schema:
+\begin{lstlisting}
+const QueryOptionsSchema = z.object({
+  limit: z.number().int().positive().optional(),
+  offset: z.number().int().nonnegative().optional(),
+  signal: z.instanceof(AbortSignal).optional()
+}).optional();
 \end{lstlisting}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-\[\muRecon: \texttt{TestSuite} \to \texttt{TestResults}\]
+\[\muRecon_{\text{validate}}: (\texttt{Value}, \texttt{Schema}) \to \texttt{ValidatedValue} \lor \texttt{Error}\]
 
-Test runner executes suite sequentially, capturing pass/fail and coverage data. Integration tests verify cross-package contracts:
-\begin{itemize}
-\item \texttt{workflows/}: YAWL workflows with KGC-4D event logging
-\item \texttt{federation/}: Distributed query execution with hooks
-\item \texttt{streaming/}: Real-time change feeds with store synchronization
-\item \texttt{error-recovery/}: Failure modes and rollback composition rules
-\item \texttt{performance/}: Latency budgets and throughput targets
-\end{itemize}
+Validation reconciliation strategies:
+
+\textbf{Strict Validation} (throws on invalid):
+\begin{lstlisting}
+function validateQuad(quad) {
+  return QuadSchema.parse(quad); // Throws ZodError if invalid
+}
+\end{lstlisting}
+
+\textbf{Safe Validation} (returns result object):
+\begin{lstlisting}
+function safeValidateQuad(quad) {
+  const result = QuadSchema.safeParse(quad);
+  if (result.success) {
+    return { valid: true, data: result.data };
+  } else {
+    return { valid: false, errors: result.error.issues };
+  }
+}
+\end{lstlisting}
+
+Custom refinements for RDF-specific constraints:
+\begin{lstlisting}
+const IRIQuadSchema = QuadSchema.refine(
+  quad => quad.subject.termType !== 'BlankNode',
+  { message: 'Subject must be a named node (no blank nodes)' }
+);
+
+const ValidLiteralSchema = z.object({
+  value: z.string(),
+  termType: z.literal('Literal'),
+  datatype: z.object({ value: z.string() }).optional(),
+  language: z.string().regex(/^[a-z]{2,3}(-[A-Z]{2})?$/).optional()
+});
+\end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Test suites compose sequentially:
-\[\PiMerge(\texttt{suite}_1, \texttt{suite}_2) = \texttt{concatenate}(\texttt{suite}_1, \texttt{suite}_2)\]
+Schema composition (intersection):
+\[\texttt{schema}_1 \oplusMerge \texttt{schema}_2 = \texttt{schema}_1.\texttt{and}(\texttt{schema}_2)\]
 
-Independent test suites can execute in parallel:
-\[\texttt{suite}_1 \oplusMerge \texttt{suite}_2 \iff \neg\texttt{sharedState}(\texttt{suite}_1, \texttt{suite}_2)\]
+Zod intersection combines constraints:
+\begin{lstlisting}
+const ExtendedQuadSchema = QuadSchema.and(z.object({
+  metadata: z.object({
+    source: z.string(),
+    timestamp: z.number()
+  }).optional()
+}));
+\end{lstlisting}
+
+Schema refinement (sequential):
+\[\PiMerge(\texttt{schema}_1, \texttt{refine}) = \texttt{schema}_1.\texttt{refine}(\texttt{predicate})\]
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards:
 \begin{itemize}
-\item \(\GuardH_{\text{timeout}}\): Abort tests exceeding 5-second budget (default)
-\item \(\GuardH_{\text{isolation}}\): Prevent test state leakage between suites
-\item \(\GuardH_{\text{coverage}}\): Fail CI if coverage drops below 80\%
+\item \(\GuardH_{\text{type}}\): Reject values with incorrect TypeScript types
+\item \(\GuardH_{\text{format}}\): Validate IRI format, language tags (BCP47)
+\item \(\GuardH_{\text{range}}\): Enforce numeric bounds (limit \textgreater 0, offset \(\geq\) 0)
+\end{itemize}
+
+Invariants:
+\begin{itemize}
+\item \(\InvQ_{\text{parse-safe}}\): Validated values are type-safe (no runtime errors)
+\item \(\InvQ_{\text{deterministic}}\): Same value + schema produces same result
+\item \(\InvQ_{\text{informative}}\): Errors include path and expected type
+\item \(\InvQ_{\text{reversible}}\): Validated values serialize back to original structure
+\end{itemize}
+
+\subsection*{Provenance and Receipts}
+
+Validation error structure provides full provenance:
+\begin{lstlisting}
+{
+  "issues": [
+    {
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "number",
+      "path": ["subject", "value"],
+      "message": "Expected string, received number"
+    }
+  ],
+  "name": "ZodError"
+}
+\end{lstlisting}
+
+Schema fingerprint for versioning:
+\[\texttt{schemaVersion} = \ProvHash(\texttt{schema.shape})\]
+
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { QuadSchema, validateQuad, validateStore }
+  from '@unrdf/core/validation';
+import { dataFactory, createStore } from '@unrdf/oxigraph';
+
+// Validate quad
+const quad = dataFactory.quad(
+  dataFactory.namedNode('http://example.org/Alice'),
+  dataFactory.namedNode('http://schema.org/name'),
+  dataFactory.literal('Alice')
+);
+
+const isValid = validateQuad(quad); // Returns true
+
+// Validate store
+const store = createStore();
+const storeValid = validateStore(store); // Returns true
+
+// Safe validation with error handling
+const result = QuadSchema.safeParse(quad);
+if (result.success) {
+  console.log('Valid quad:', result.data);
+} else {
+  console.error('Validation errors:', result.error.issues);
+}
+\end{lstlisting}
+
+\subsection*{Open Questions}
+
+\begin{enumerate}
+\item How to generate Zod schemas from SHACL shapes automatically?
+\item Runtime schema migration when API contracts evolve?
+\item Performance optimization for high-throughput validation (schema caching)?
+\item Integration with TypeScript for compile-time + runtime validation?
+\end{enumerate}
+
+% ============================================================================
+
+\label{pkg:unrdf-test-utils}
+\section{\pkg{unrdf-test-utils} --- Testing Utilities and Helpers}
+
+\begin{pkgmeta}
+Path & \texttt{packages/test-utils} \\
+Kind & js \\
+Entrypoints & 3 files \\
+Dependencies & 3 (@unrdf/oxigraph, @opentelemetry/api, zod) \\
+Blurb & Comprehensive testing utilities with scenario DSL, fluent assertions, and helper functions \\
+\end{pkgmeta}
+
+\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
+
+\begin{align*}
+\Oobs &= \texttt{TestScenario} \times \texttt{TestContext} \\
+\Aout &= \texttt{TestResult} \times \texttt{Assertions[]} \times \texttt{Duration}
+\end{align*}
+
+The observable is a test scenario definition with setup/teardown functions, action steps, and assertion predicates, paired with a test context containing RDF store and knowledge hook manager. The artifact is a structured test result with pass/fail status, assertion outcomes, and execution duration.
+
+Core components:
+\begin{enumerate}
+\item \textbf{TestScenario}: Builder pattern for defining multi-step test scenarios
+\item \textbf{FluentAssertions}: Chainable assertions for RDF stores and receipts
+\item \textbf{TestContextBuilder}: Fluent API for constructing test contexts
+\item \textbf{TestHelpers}: Utility functions for creating quads, deltas, hooks
+\end{enumerate}
+
+\subsection*{Type Signature \(\SigmaType\)}
+
+Test scenario schema:
+\begin{lstlisting}
+const TestScenarioSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  setup: z.function().optional().nullable(),
+  teardown: z.function().optional().nullable(),
+  steps: z.array(z.object({
+    name: z.string().min(1),
+    action: z.function(),
+    assertions: z.array(z.function()).optional()
+  })).min(1)
+});
+\end{lstlisting}
+
+Test result schema:
+\begin{lstlisting}
+const TestResultSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  success: z.boolean(),
+  steps: z.array(z.object({
+    name: z.string(),
+    success: z.boolean(),
+    error: z.string().nullable(),
+    duration: z.number()
+  })),
+  errors: z.array(z.string()),
+  duration: z.number()
+});
+\end{lstlisting}
+
+Test context schema:
+\begin{lstlisting}
+const TestContextSchema = z.object({
+  store: z.any(), // RDF Store instance
+  manager: z.any(), // KnowledgeHookManager
+  policyPackManager: z.any().optional(),
+  lockchainWriter: z.any().optional(),
+  sandbox: z.any().optional(),
+  metadata: z.record(z.any()).optional()
+});
+\end{lstlisting}
+
+\subsection*{Reconciler \(\muRecon\)}
+
+\[\muRecon_{\text{scenario}}: \texttt{TestScenario} \to \texttt{TestResult}\]
+
+Test scenario execution pipeline:
+\begin{enumerate}
+\item \textbf{Validation}: Validate scenario against TestScenarioSchema
+\item \textbf{Setup}: Execute setup function, create test context
+\item \textbf{Step Execution}: Run each step's action and assertions sequentially
+\item \textbf{Teardown}: Clean up resources, restore pre-test state
+\item \textbf{Reporting}: Aggregate results, compute total duration
+\end{enumerate}
+
+Scenario builder pattern:
+\begin{lstlisting}
+const scenario = new TestScenario('Hook Execution')
+  .setupScenario(async () => {
+    const store = createStore();
+    const manager = new KnowledgeHookManager();
+    return { store, manager };
+  })
+  .step('Register hook', async (ctx) => {
+    ctx.manager.register(myHook);
+  })
+  .step('Execute hook', async (ctx) => {
+    return await ctx.manager.execute(delta);
+  }, [
+    async (ctx, result) => {
+      if (!result.receipt.committed) {
+        throw new Error('Expected receipt to be committed');
+      }
+    }
+  ])
+  .teardownScenario(async (ctx) => {
+    ctx.store.clear();
+  });
+
+const result = await scenario.execute();
+\end{lstlisting}
+
+Fluent assertions API:
+\begin{lstlisting}
+class FluentAssertions {
+  toBeCommitted() { /* Assert receipt committed */ }
+  toNotBeCommitted() { /* Assert receipt not committed */ }
+  expectHook(name, vetoed) { /* Assert hook status */ }
+  toContainQuads(quads) { /* Assert store contains quads */ }
+  toNotContainQuads(quads) { /* Assert store missing quads */ }
+  toHaveSize(count) { /* Assert store size */ }
+  toHaveProperty(prop, value) { /* Assert result property */ }
+  toMatchSchema(schema) { /* Assert Zod schema match */ }
+  toCompleteWithin(ms) { /* Assert duration bound */ }
+}
+\end{lstlisting}
+
+\subsection*{Composition \(\PiMerge / \oplusMerge\)}
+
+Sequential test execution:
+\[\PiMerge(\texttt{test}_1, \texttt{test}_2) = \texttt{test}_2(\texttt{context}_{\texttt{test}_1})\]
+
+Tests execute sequentially. Later tests can depend on state from earlier tests (if same context).
+
+Parallel test execution:
+\[\texttt{test}_1 \oplusMerge \texttt{test}_2 \iff \neg\texttt{sharedState}(\texttt{test}_1, \texttt{test}_2)\]
+
+Independent tests (disjoint contexts) can execute in parallel via Vitest's concurrency.
+
+\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
+
+Guards:
+\begin{itemize}
+\item \(\GuardH_{\text{timeout}}\): Abort tests exceeding 5-second default timeout
+\item \(\GuardH_{\text{isolation}}\): Prevent test state leakage between scenarios
+\item \(\GuardH_{\text{cleanup}}\): Ensure teardown executes even on assertion failure
 \end{itemize}
 
 Invariants:
 \begin{itemize}
 \item \(\InvQ_{\text{idempotent}}\): Tests produce same result on repeated execution
-\item \(\InvQ_{\text{cleanup}}\): Teardown restores pre-test state (no side effects)
+\item \(\InvQ_{\text{hermetic}}\): Tests have no external dependencies (filesystem, network)
 \item \(\InvQ_{\text{deterministic}}\): No flaky tests (100\% pass rate required)
+\item \(\InvQ_{\text{reversible}}\): Teardown fully restores pre-test state
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
@@ -362,672 +1031,365 @@ Invariants:
 Test execution receipt:
 \begin{lstlisting}
 {
-  "suite": "workflows/yawl-kgc-integration",
+  "scenario": "Hook Execution",
   "timestamp": "2024-12-04T15:16:00.123Z",
-  "passed": 42,
-  "failed": 0,
-  "coverage": 87.3,
-  "duration_ms": 2345
+  "success": true,
+  "steps": [
+    { "name": "Register hook", "success": true, "duration": 12 },
+    { "name": "Execute hook", "success": true, "duration": 45 }
+  ],
+  "totalDuration": 67,
+  "assertions": 5,
+  "errors": []
 }
 \end{lstlisting}
 
-OTEL spans track test execution for performance regression detection.
-
-\subsection*{Minimal Example}
-
+Vitest integration for CI/CD:
 \begin{lstlisting}
 import { describe, it, expect } from 'vitest';
-import { KGCStore } from '@unrdf/kgc-4d';
-import { defineHook, executeHook } from '@unrdf/hooks';
+import { scenario, createTestContext } from '@unrdf/test-utils';
 
-describe('KGC-4D + Hooks Integration', () => {
-  it('hooks execute on event append', async () => {
-    const store = new KGCStore();
-    defineHook('log-events', {
-      trigger: 'after-write',
-      async validate(quad) { return true; }
-    });
+describe('Knowledge Hooks', () => {
+  it('should execute hook on delta', async () => {
+    const result = await scenario('Hook Execution')
+      .setupScenario(() => createTestContext().build())
+      .step('Execute hook', async (ctx) => {
+        return await ctx.manager.execute(delta);
+      })
+      .execute();
 
-    const receipt = await store.appendEvent({ type: 'TEST' }, []);
-    expect(receipt).toBeDefined();
-    expect(receipt.receipt.timestamp_iso).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(result.success).toBe(true);
   });
 });
 \end{lstlisting}
 
+\subsection*{Minimal Example}
+
+\begin{lstlisting}
+import { scenario, createTestContext, TestHelpers }
+  from '@unrdf/test-utils';
+import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
+
+const result = await scenario('Basic Hook Test')
+  .setupScenario(() => {
+    return createTestContext()
+      .withManager(new KnowledgeHookManager())
+      .build();
+  })
+  .step('Add quad', async (ctx) => {
+    const quad = TestHelpers.createQuad(
+      'http://example.org/Alice',
+      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+      'http://example.org/Person'
+    );
+    ctx.store.add(quad);
+    return quad;
+  }, [
+    async (ctx, quad) => {
+      // Assert quad was added
+      const found = Array.from(ctx.store.match(quad.subject));
+      if (found.length === 0) throw new Error('Quad not found');
+    }
+  ])
+  .execute();
+
+console.log(`Test ${result.success ? 'passed' : 'failed'}`);
+console.log(`Duration: ${result.duration}ms`);
+\end{lstlisting}
+
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to test distributed failure modes (network partitions)?
-\item Property-based testing for multi-package invariants?
-\item Mutation testing to verify test suite completeness?
-\item Automated test generation from type signatures?
+\item How to generate test scenarios from SHACL shapes automatically?
+\item Property-based testing for RDF store invariants (QuickCheck-style)?
+\item Snapshot testing for SPARQL query results?
+\item Integration with mutation testing frameworks (Stryker)?
 \end{enumerate}
 
 % ============================================================================
 
-\label{pkg:unrdf-kgc-4d}
-\section{\pkg{unrdf-kgc-4d} --- KGC 4D Datum Engine}
+\label{pkg:unrdf-otel}
+\section{\pkg{unrdf-observability} --- OpenTelemetry Integration}
 
 \begin{pkgmeta}
-Path & \texttt{packages/kgc-4d} \\
+Path & \texttt{packages/observability} \\
 Kind & js \\
 Entrypoints & 3 files \\
-Dependencies & 7 (comment-parser, hash-wasm, isomorphic-git, simple-statistics, tinybench, unrdf-core, unrdf-oxigraph) \\
-Blurb & KGC 4D Datum \& Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots \\
+Dependencies & 5 (prom-client, @opentelemetry/api, @opentelemetry/exporter-prometheus, zod) \\
+Blurb & Prometheus/Grafana observability dashboard with OpenTelemetry integration for distributed workflows \\
 \end{pkgmeta}
 
 \subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
 
 \begin{align*}
-\Oobs &= \texttt{Event} \times \texttt{Deltas} \times \tauEpoch \\
-\Aout &= \texttt{Receipt} \times \texttt{UniverseHash} \times \texttt{GitRef}
+\Oobs &= \texttt{WorkflowExecution} \times \texttt{Metrics} \times \texttt{Traces} \\
+\Aout &= \texttt{Dashboard} \times \texttt{Alerts} \times \texttt{MetricsExport}
 \end{align*}
 
-The observable is an event payload with RDF deltas (additions/deletions) timestamped at nanosecond precision. The artifact is a cryptographic receipt containing universe hash and Git commit reference.
-
-Four dimensions:
-\begin{enumerate}
-\item \textbf{Observable State} (\(\Oobs\)): RDF quads in \texttt{kgc:Universe} graph
-\item \textbf{Time} (\(\tauEpoch\)): BigInt nanoseconds (monotonic, immutable)
-\item \textbf{Causality}: Vector clocks for distributed event ordering
-\item \textbf{Provenance}: Git references to frozen snapshots
-\end{enumerate}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Event schema:
-\begin{lstlisting}
-const EventSchema = z.object({
-  type: z.enum(['CREATE', 'UPDATE', 'DELETE', 'SNAPSHOT']),
-  payload: z.record(z.any()),
-  timestamp_ns: z.bigint(),
-  vector_clock: VectorClockSchema.optional()
-});
-
-const ReceiptSchema = z.object({
-  id: z.string().uuid(),
-  t_ns: z.bigint(),
-  timestamp_iso: z.string().datetime(),
-  universe_hash: z.string(),
-  git_ref: z.string().optional(),
-  event_count: z.number().int().nonnegative(),
-  nquad_count: z.number().int().nonnegative()
-});
-\end{lstlisting}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\[\muRecon_{\text{freeze}}: \Oobs_t \to (\Aout_{\text{snapshot}}, \texttt{GitCommit})\]
-
-Freeze operation:
-\begin{enumerate}
-\item Serialize \texttt{kgc:Universe} to N-Quads (deterministic S-P-O-G sort)
-\item Compute BLAKE3 hash: \(\ProvHash(\texttt{nquads})\)
-\item Commit to Git: \texttt{isomorphic-git.commit(nquads)}
-\item Record receipt event in \texttt{kgc:EventLog}
-\end{enumerate}
-
-Reconstruction (time-travel):
-\[\muRecon_{\text{reconstruct}}: \tauEpoch \to \Oobs_{\tauEpoch}\]
-
-\begin{enumerate}
-\item Find latest snapshot before \(\tauEpoch\): \(\texttt{snapshot}_{\text{max}(t < \tauEpoch)}\)
-\item Load snapshot from Git: \texttt{git.readSnapshot(snapshot.git\_ref)}
-\item Replay events: \(\forall e \in \texttt{EventLog} \mid e.t\_ns > \texttt{snapshot.t\_ns} \land e.t\_ns \leq \tauEpoch\)
-\item Apply deltas: \(\Oobs_{\tauEpoch} = \texttt{snapshot} \oplusMerge \sum \texttt{deltas}\)
-\end{enumerate}
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Event composition (sequential, causal):
-\[\PiMerge(e_1, e_2) \iff e_1.t\_ns < e_2.t\_ns\]
-
-Delta merge (commutative for independent quads):
-\[\Delta_1 \oplusMerge \Delta_2 = \{\texttt{adds}: \Delta_1.\texttt{adds} \cup \Delta_2.\texttt{adds}, \texttt{deletes}: \Delta_1.\texttt{deletes} \cup \Delta_2.\texttt{deletes}\}\]
-
-Conflict resolution for concurrent deltas uses last-writer-wins with vector clock comparison.
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{monotonic}}\): Reject events with \(t\_ns \leq \texttt{lastTime}\)
-\item \(\GuardH_{\text{clock-jump}}\): Detect time anomalies (system clock rollback)
-\item \(\GuardH_{\text{hash}}\): Abort freeze if BLAKE3 hash computation fails
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{append-only}}\): EventLog immutable (no updates or deletes)
-\item \(\InvQ_{\text{reconstruct}}\): \(\muRecon_{\text{reconstruct}}(t)\) deterministic
-\item \(\InvQ_{\text{hash-stable}}\): \(\ProvHash(\Oobs_t) = \texttt{receipt}_t.\texttt{universe\_hash}\)
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-Freeze receipt example:
-\begin{lstlisting}
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "t_ns": "1733314560123456789",
-  "timestamp_iso": "2024-12-04T15:16:00.123456789Z",
-  "universe_hash": "blake3:a3f8d...",
-  "git_ref": "abc123def456",
-  "event_count": 42,
-  "nquad_count": 156
-}
-\end{lstlisting}
-
-Verification:
-\begin{lstlisting}
-const verified = await verifyReceipt(receipt, gitBackbone, store);
-// Fetches Git commit, recomputes hash, compares
-\end{lstlisting}
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}
-import { KGCStore, GitBackbone, freezeUniverse, reconstructState }
-  from '@unrdf/kgc-4d';
-
-const store = new KGCStore();
-const git = new GitBackbone('./repo');
-
-// Append event
-const receipt = await store.appendEvent(
-  { type: 'CREATE', payload: { entity: 'Alice' } },
-  [{ type: 'add', subject: 'ex:Alice', predicate: 'rdf:type',
-     object: 'ex:Person' }]
-);
-
-// Freeze universe
-const frozen = await freezeUniverse(store, git);
-console.log(`Frozen at ${frozen.timestamp_iso}, hash: ${frozen.universe_hash}`);
-
-// Time-travel
-const pastStore = await reconstructState(store, git, frozen.t_ns);
-// pastStore contains state from frozen time
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to optimize reconstruction for large event logs (>1M events)?
-\item Distributed consensus for vector clock synchronization?
-\item Incremental snapshots (delta compression) to reduce Git storage?
-\item CRDT integration for offline-first event merging?
-\end{enumerate}
-
-% ============================================================================
-
-\label{pkg:unrdf-kgc-claude}
-\section{\pkg{unrdf-kgc-claude} --- KGC-Claude Substrate}
-
-\begin{pkgmeta}
-Path & \texttt{packages/kgc-claude} \\
-Kind & js \\
-Entrypoints & 7 files \\
-Dependencies & 8 (hash-wasm, unrdf-core, unrdf-hooks, unrdf-kgc-4d, unrdf-oxigraph, unrdf-yawl, zod) \\
-Blurb & KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\begin{align*}
-\Oobs &= \texttt{RunCapsule} \times \texttt{ToolCalls} \times \texttt{Budget} \\
-\Aout &= \texttt{Checkpoint} \times \texttt{Receipt} \times \texttt{DenialProof}
-\end{align*}
-
-The observable is a Claude run capsule containing normalized tool traces and autonomy budget constraints. The artifact is a checkpoint with cryptographic receipt proving execution state.
-
-Core innovations:
-\begin{enumerate}
-\item \textbf{Run Capsules}: First-class \(\Delta_{\text{run}}\) objects with admission control
-\item \textbf{Checkpoints}: Universal freeze/thaw across CLI/IDE/MCP surfaces
-\item \textbf{Autonomy Guards}: Explicit budget enforcement with denial receipts
-\item \textbf{Shard Merge}: Multi-agent concurrency with deterministic conflict resolution
-\item \textbf{Async Workflows}: WorkItem primitives with state transitions
-\item \textbf{Projections}: Surface-specific views (\(\Pi_{\text{ui}}\), \(\Pi_{\text{cli}}\))
-\end{enumerate}
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Run capsule schema:
-\begin{lstlisting}
-const RunCapsuleSchema = z.object({
-  id: z.string().uuid(),
-  timestamp_ns: z.bigint(),
-  tool_calls: z.array(z.object({
-    name: z.string(),
-    input: z.record(z.any()),
-    output: z.any().optional(),
-    duration_ms: z.number().nonnegative()
-  })),
-  artifacts: z.record(z.string()),
-  status: z.enum(['pending', 'executing', 'completed', 'denied'])
-});
-
-const BudgetSchema = z.object({
-  max_tokens: z.number().int().positive(),
-  max_duration_ms: z.number().int().positive(),
-  max_tool_calls: z.number().int().positive()
-});
-\end{lstlisting}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\[\muRecon_{\text{capsule}}: \texttt{RunCapsule} \to (\texttt{Admitted} \lor \texttt{Denied})\]
-
-Admission control:
-\begin{lstlisting}
-function checkAdmission(capsule, budget, history) {
-  // preserve(Q): Check invariant preservation
-  if (!preservesInvariant(capsule)) {
-    return deny('INVARIANT_VIOLATION');
-  }
-
-  // Delta_run not in H: Check no duplicate
-  if (history.has(capsule.id)) {
-    return deny('DUPLICATE_RUN');
-  }
-
-  // Budget check
-  if (capsule.tool_calls.length > budget.max_tool_calls) {
-    return deny('BUDGET_EXCEEDED');
-  }
-
-  return admit();
-}
-\end{lstlisting}
-
-Checkpoint reconciler:
-\[\muRecon_{\text{checkpoint}}: \Oobs_t \to (\texttt{Snapshot}, \texttt{Receipt}_t, \ProvHash(\muRecon(\Oobs_t)))\]
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Shard merge (multi-agent):
-\[\Delta_1 \oplusMerge \Delta_2 = \muRecon(\Oobs \sqcup \Delta_1 \sqcup \Delta_2)\]
-
-Merge law \(\Lambda\) resolves conflicts:
-\begin{itemize}
-\item Disjoint scopes: Union
-\item Overlapping scopes: Last-writer-wins by timestamp
-\item Contradiction: Deny both, escalate to human
-\end{itemize}
-
-Sequential checkpoint composition:
-\[\PiMerge(\texttt{checkpoint}_1, \texttt{checkpoint}_2) = \texttt{checkpoint}_2 \mid \texttt{drift}(\texttt{checkpoint}_1, \texttt{checkpoint}_2) < \epsilon\]
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{budget}}\): Enforce token/time/tool-call limits
-\item \(\GuardH_{\text{scope}}\): Prevent agents from modifying overlapping shards
-\item \(\GuardH_{\text{checkpoint}}\): Verify checkpoint hash before thaw
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{deterministic}}\): Run capsule produces same result on replay
-\item \(\InvQ_{\text{receipt}}\): Every checkpoint has cryptographic receipt
-\item \(\InvQ_{\text{portable}}\): Checkpoints restore across CLI/IDE/MCP
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-Checkpoint receipt:
-\begin{lstlisting}
-{
-  "id": "checkpoint-abc123",
-  "timestamp_ns": 1733314560123456789n,
-  "run_capsules": ["run-1", "run-2", "run-3"],
-  "state_hash": "blake3:...",
-  "git_ref": "def456",
-  "drift_from_previous": 0.002
-}
-\end{lstlisting}
-
-Denial receipt:
-\begin{lstlisting}
-{
-  "run_id": "run-xyz",
-  "reason": "BUDGET_EXCEEDED",
-  "details": { "max_tool_calls": 100, "actual": 142 },
-  "timestamp_ns": 1733314560987654321n
-}
-\end{lstlisting}
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}
-import { KGCStore, GitBackbone } from '@unrdf/kgc-4d';
-import { createSubstrate } from '@unrdf/kgc-claude';
-
-const store = new KGCStore();
-const git = new GitBackbone('./repo');
-const substrate = createSubstrate(store, git, {
-  budget: { max_tokens: 10000, max_duration_ms: 30000, max_tool_calls: 100 }
-});
-
-// Create guarded run
-const run = substrate.createRun();
-run.addToolCall({ name: 'Read', input: { file: 'foo.txt' } });
-
-const check = await substrate.guard.check(run.getMetrics());
-if (check.allowed) {
-  const capsule = await run.seal();
-  await substrate.persist(capsule);
-  await substrate.checkpoint();
-}
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to prove shard merge commutativity for complex conflict laws?
-\item Formal verification of checkpoint portability across surfaces?
-\item Optimal budget allocation for multi-agent systems?
-\item CRDT-based shard merge (avoid central reconciler)?
-\end{enumerate}
-
-% ============================================================================
-
-\label{pkg:unrdf-kgc-cli}
-\section{\pkg{unrdf-kgc-cli} --- KGC CLI}
-
-\begin{pkgmeta}
-Path & \texttt{packages/kgc-cli} \\
-Kind & js \\
-Entrypoints & 4 files \\
-Dependencies & 4 (citty, types-node, vitest, zod) \\
-Blurb & KGC CLI - Deterministic extension registry for ~40 workspace packages \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\begin{align*}
-\Oobs &= \texttt{ExtensionManifest} \times \texttt{Overrides} \\
-\Aout &= \texttt{CittyCommandTree} \times \texttt{LoadOrder}
-\end{align*}
-
-The observable is an extension manifest declaring 47 CLI extensions with dependencies and load constraints. The artifact is a Citty command tree with deterministic load order.
-
-\subsection*{Type Signature \(\SigmaType\)}
-
-Extension schema:
-\begin{lstlisting}
-const ExtensionSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  package: z.string(),
-  depends: z.array(z.string()).default([]),
-  priority: z.number().int().default(100),
-  commands: z.array(z.object({
-    name: z.string(),
-    description: z.string(),
-    handler: z.function()
-  }))
-});
-\end{lstlisting}
-
-\subsection*{Reconciler \(\muRecon\)}
-
-\[\muRecon_{\text{registry}}: \texttt{ExtensionManifest} \to \texttt{CittyTree}\]
-
-Load order computation (topological sort):
-\begin{lstlisting}
-function getLoadOrder(extensions) {
-  const graph = buildDependencyGraph(extensions);
-  const sorted = topologicalSort(graph);
-
-  // Deterministic: stable sort by priority, then lexicographic ID
-  return sorted.sort((a, b) =>
-    a.priority !== b.priority ? a.priority - b.priority : a.id.localeCompare(b.id)
-  );
-}
-\end{lstlisting}
-
-Registry initialization:
-\begin{lstlisting}
-function initializeRegistry() {
-  const order = getLoadOrder(extensions);
-  for (const ext of order) {
-    registry.register(ext);
-  }
-  return buildCittyTree(registry);
-}
-\end{lstlisting}
-
-\subsection*{Composition \(\PiMerge / \oplusMerge\)}
-
-Extension composition (sequential by load order):
-\[\PiMerge(\texttt{ext}_1, \texttt{ext}_2) = \texttt{ext}_2 \mid \texttt{ext}_1 \in \texttt{depends}(\texttt{ext}_2)\]
-
-Command merge (commutative for disjoint namespaces):
-\[\texttt{cmd}_1 \oplusMerge \texttt{cmd}_2 \iff \texttt{namespace}(\texttt{cmd}_1) \cap \texttt{namespace}(\texttt{cmd}_2) = \emptyset\]
-
-\subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
-
-Guards:
-\begin{itemize}
-\item \(\GuardH_{\text{cycle}}\): Reject extension graphs with dependency cycles
-\item \(\GuardH_{\text{namespace}}\): Prevent command name collisions
-\item \(\GuardH_{\text{load}}\): Abort if extension fails to load
-\end{itemize}
-
-Invariants:
-\begin{itemize}
-\item \(\InvQ_{\text{order}}\): Load order deterministic (idempotent)
-\item \(\InvQ_{\text{dependencies}}\): Extensions load after dependencies
-\item \(\InvQ_{\text{envelope}}\): All extensions wrapped in envelope with metadata
-\end{itemize}
-
-\subsection*{Provenance and Receipts}
-
-Extension envelope:
-\begin{lstlisting}
-{
-  "id": "unrdf-kgc-4d-ext",
-  "version": "5.0.0",
-  "loaded_at": "2024-12-04T15:16:00.123Z",
-  "checksum": "blake3:...",
-  "dependencies_resolved": ["unrdf-core", "unrdf-oxigraph"]
-}
-\end{lstlisting}
-
-Registry state hash:
-\[\ProvHash(\texttt{registry}) = \texttt{BLAKE3}(\texttt{sorted}(\texttt{extensions.map}(e \to e.\texttt{id} + e.\texttt{version})))\]
-
-\subsection*{Minimal Example}
-
-\begin{lstlisting}
-import { Registry, loadManifest, initializeRegistry } from '@unrdf/kgc-cli';
-
-const manifest = loadManifest();
-console.log(`Loaded ${manifest.extensions.length} extensions`);
-
-const registry = initializeRegistry();
-const tree = buildCittyTree(registry);
-
-// CLI entrypoint
-tree.run();
-\end{lstlisting}
-
-\subsection*{Open Questions}
-
-\begin{enumerate}
-\item How to verify extension isolation (no side effects on registry)?
-\item Dynamic extension loading (hot-reload without restart)?
-\item Extension versioning constraints (semver compatibility)?
-\item Distributed extension registry (package federation)?
-\end{enumerate}
-
-% ============================================================================
-
-\label{pkg:unrdf-kgc-substrate}
-\section{\pkg{unrdf-kgc-substrate} --- KGC Substrate}
-
-\begin{pkgmeta}
-Path & \texttt{packages/kgc-substrate} \\
-Kind & js \\
-Entrypoints & 3 files \\
-Dependencies & 7 (hash-wasm, types-node, unrdf-core, unrdf-kgc-4d, unrdf-oxigraph, vitest, zod) \\
-Blurb & KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log \\
-\end{pkgmeta}
-
-\subsection*{Observable \(\Oobs\) and Artifact \(\Aout\)}
-
-\begin{align*}
-\Oobs &= \texttt{TripleEntry} \times \tauEpoch \\
-\Aout &= \texttt{Receipt} \times \texttt{StateCommitment} \times \texttt{TamperProof}
-\end{align*}
-
-The observable is an RDF triple entry with append-only composition rules. The artifact is a receipt with state commitment hash and tamper-detection proof.
+The observable consists of distributed workflow executions instrumented with OpenTelemetry spans and Prometheus metrics. The artifact is a Grafana-compatible dashboard, alert rules for anomaly detection, and Prometheus metrics endpoint for scraping.
 
 Core components:
 \begin{enumerate}
-\item \textbf{KnowledgeStore}: Hash-stable triple store with deterministic serialization
-\item \textbf{ReceiptChain}: Merkle-chained receipts for append-only log
-\item \textbf{TamperDetector}: Cryptographic verification of receipt integrity
+\item \textbf{WorkflowMetrics}: Prometheus metric collectors (counters, histograms, gauges)
+\item \textbf{GrafanaExporter}: Dashboard JSON generator with pre-configured panels
+\item \textbf{AlertManager}: Rule-based alerting for SLA violations
+\item \textbf{OTEL Integration}: Trace and metric export to OpenTelemetry collector
 \end{enumerate}
 
 \subsection*{Type Signature \(\SigmaType\)}
 
-Triple entry schema:
+Workflow metrics schema:
 \begin{lstlisting}
-const TripleEntrySchema = z.object({
-  subject: z.string(),
-  predicate: z.string(),
-  object: z.string(),
-  timestamp_ns: z.bigint(),
-  operation: z.enum(['add', 'delete'])
+const WorkflowMetricsSchema = z.object({
+  workflowStarts: z.object({
+    name: z.literal('workflow_starts_total'),
+    type: z.literal('counter'),
+    help: z.string(),
+    labels: z.array(z.string())
+  }),
+  workflowDuration: z.object({
+    name: z.literal('workflow_duration_seconds'),
+    type: z.literal('histogram'),
+    buckets: z.array(z.number())
+  }),
+  activeWorkflows: z.object({
+    name: z.literal('workflow_active'),
+    type: z.literal('gauge')
+  }),
+  errors: z.object({
+    name: z.literal('workflow_errors_total'),
+    type: z.literal('counter'),
+    labels: z.array(z.string())
+  })
 });
+\end{lstlisting}
 
-const StateCommitmentSchema = z.object({
-  root_hash: z.string(),
-  triple_count: z.number().int().nonnegative(),
-  timestamp_ns: z.bigint(),
-  previous_hash: z.string().optional()
+Alert rule schema:
+\begin{lstlisting}
+const AlertRuleSchema = z.object({
+  name: z.string(),
+  metric: z.string(),
+  condition: z.enum(['>', '<', '>=', '<=', '==']),
+  threshold: z.number(),
+  duration: z.number().optional(),
+  severity: z.enum(['critical', 'warning', 'info']),
+  annotations: z.record(z.string()).optional()
+});
+\end{lstlisting}
+
+Grafana dashboard schema:
+\begin{lstlisting}
+const GrafanaDashboardSchema = z.object({
+  title: z.string(),
+  panels: z.array(z.object({
+    id: z.number(),
+    title: z.string(),
+    type: z.enum(['graph', 'stat', 'gauge', 'table']),
+    targets: z.array(z.object({
+      expr: z.string(), // PromQL query
+      legendFormat: z.string().optional()
+    }))
+  })),
+  refresh: z.string().default('10s'),
+  time: z.object({
+    from: z.string().default('now-1h'),
+    to: z.string().default('now')
+  })
 });
 \end{lstlisting}
 
 \subsection*{Reconciler \(\muRecon\)}
 
-\[\muRecon_{\text{append}}: \texttt{TripleEntry} \to (\texttt{Receipt}, \texttt{NewState})\]
+\[\muRecon_{\text{observe}}: \texttt{WorkflowExecution} \to \texttt{MetricsUpdate}\]
 
-Append operation:
+Observability pipeline:
+\begin{enumerate}
+\item \textbf{Instrumentation}: Wrap workflow steps with OTEL spans
+\item \textbf{Metric Collection}: Record counters, histograms, gauges in Prometheus
+\item \textbf{Trace Export}: Send spans to OTEL collector (Jaeger, Zipkin)
+\item \textbf{Alert Evaluation}: Check metrics against alert rule thresholds
+\item \textbf{Dashboard Update}: Stream metrics to Grafana via Prometheus exporter
+\end{enumerate}
+
+Metric recording:
 \begin{lstlisting}
-async function append(store, entry) {
-  // 1. Validate entry
-  const validated = TripleEntrySchema.parse(entry);
+class WorkflowMetrics {
+  recordWorkflowStart(workflowId, pattern) {
+    this.workflowStarts.inc({ workflow_id: workflowId, pattern });
+    this.activeWorkflows.inc();
+  }
 
-  // 2. Compute state commitment
-  const prevState = await store.getStateCommitment();
-  const newState = computeStateCommitment(prevState, validated);
+  recordWorkflowComplete(workflowId, status, duration, pattern) {
+    this.workflowDuration.observe(
+      { workflow_id: workflowId, status, pattern },
+      duration / 1000 // Convert to seconds
+    );
+    this.activeWorkflows.dec();
 
-  // 3. Create receipt
-  const receipt = {
-    id: uuid(),
-    timestamp_ns: validated.timestamp_ns,
-    entry_hash: hash(validated),
-    state_hash: newState.root_hash,
-    previous_receipt: prevState.receipt_id
-  };
+    if (status === 'failed') {
+      this.errors.inc({ workflow_id: workflowId, error_type: 'failure' });
+    }
+  }
 
-  // 4. Merkle chain
-  receipts.append(receipt);
+  recordError(errorType, workflowId, severity) {
+    this.errors.inc({
+      error_type: errorType,
+      workflow_id: workflowId,
+      severity
+    });
+  }
+}
+\end{lstlisting}
 
-  return { receipt, state: newState };
+Alert evaluation:
+\begin{lstlisting}
+class AlertManager {
+  evaluateMetric(metricName, value, labels) {
+    for (const rule of this.rules) {
+      if (rule.metric !== metricName) continue;
+
+      const triggered = this.checkCondition(
+        value,
+        rule.condition,
+        rule.threshold
+      );
+
+      if (triggered) {
+        this.fireAlert({
+          ruleName: rule.name,
+          severity: rule.severity,
+          metric: metricName,
+          value,
+          labels,
+          timestamp: new Date()
+        });
+      }
+    }
+  }
 }
 \end{lstlisting}
 
 \subsection*{Composition \(\PiMerge / \oplusMerge\)}
 
-Receipt chain composition (sequential, causal):
-\[\PiMerge(r_1, r_2) = r_2 \mid r_2.\texttt{previous\_receipt} = r_1.\texttt{id}\]
+Metric aggregation (commutative for counters):
+\[\texttt{metric}_1 \oplusMerge \texttt{metric}_2 = \texttt{sum}(\texttt{metric}_1, \texttt{metric}_2)\]
 
-State commitment merge (deterministic):
-\[\texttt{state}_1 \oplusMerge \texttt{state}_2 = \ProvHash(\texttt{sorted}(\texttt{state}_1.\texttt{triples} \cup \texttt{state}_2.\texttt{triples}))\]
+Prometheus counters and histograms aggregate across instances.
+
+Dashboard composition (sequential panels):
+\[\PiMerge(\texttt{panel}_1, \texttt{panel}_2) = [\texttt{panel}_1, \texttt{panel}_2]\]
+
+Grafana panels display sequentially in dashboard layout.
 
 \subsection*{Guard \(\GuardH\) and Invariant \(\InvQ\)}
 
 Guards:
 \begin{itemize}
-\item \(\GuardH_{\text{hash}}\): Reject entries with invalid hash
-\item \(\GuardH_{\text{monotonic}}\): Reject entries with \(t\_ns \leq \texttt{lastTimestamp}\)
-\item \(\GuardH_{\text{tamper}}\): Abort on receipt chain break
+\item \(\GuardH_{\text{scrape}}\): Ensure Prometheus scrape interval \(\leq\) 30s
+\item \(\GuardH_{\text{cardinality}}\): Prevent metric label explosion (max 1000 unique labels)
+\item \(\GuardH_{\text{latency}}\): Alert if P95 latency \textgreater 5 seconds
 \end{itemize}
 
 Invariants:
 \begin{itemize}
-\item \(\InvQ_{\text{append-only}}\): No updates or deletes to receipt chain
-\item \(\InvQ_{\text{hash-stable}}\): Same triple set produces same state hash
-\item \(\InvQ_{\text{chain}}\): Every receipt links to previous receipt (DAG)
+\item \(\InvQ_{\text{monotonic}}\): Counters only increase (never reset)
+\item \(\InvQ_{\text{consistent}}\): Metric timestamps align with wall clock
+\item \(\InvQ_{\text{complete}}\): All workflow executions produce metrics
+\item \(\InvQ_{\text{bounded}}\): Histogram buckets cover expected latency range
 \end{itemize}
 
 \subsection*{Provenance and Receipts}
 
-Receipt example:
+OTEL trace context propagation:
 \begin{lstlisting}
 {
-  "id": "receipt-abc123",
-  "timestamp_ns": 1733314560123456789n,
-  "entry_hash": "blake3:entry...",
-  "state_hash": "blake3:state...",
-  "previous_receipt": "receipt-xyz789",
-  "merkle_proof": ["hash1", "hash2", "hash3"]
+  "traceId": "a3f8d1e2c4b5a6d7e8f9",
+  "spanId": "b2c3d4e5f6a7",
+  "parentSpanId": "a1b2c3d4e5f6",
+  "name": "workflow.execute",
+  "startTime": 1733314560123456789n,
+  "endTime": 1733314560345678901n,
+  "attributes": {
+    "workflow.id": "wf-123",
+    "workflow.pattern": "sequential",
+    "workflow.status": "completed"
+  },
+  "events": [
+    {
+      "name": "step.complete",
+      "timestamp": 1733314560234567890n,
+      "attributes": { "step": "data-ingestion" }
+    }
+  ]
 }
 \end{lstlisting}
 
-Tamper detection:
+Prometheus metrics endpoint provides scrape target:
 \begin{lstlisting}
-const detector = new TamperDetector(receiptChain);
-const result = await detector.verify();
+# HELP workflow_starts_total Total workflow starts
+# TYPE workflow_starts_total counter
+workflow_starts_total{workflow_id="wf-123",pattern="sequential"} 42
 
-if (!result.valid) {
-  console.error('Tamper detected:', result.violations);
-  // violations: [{ receipt_id, expected_hash, actual_hash }]
-}
+# HELP workflow_duration_seconds Workflow execution duration
+# TYPE workflow_duration_seconds histogram
+workflow_duration_seconds_bucket{le="0.1"} 10
+workflow_duration_seconds_bucket{le="0.5"} 35
+workflow_duration_seconds_bucket{le="1.0"} 40
+workflow_duration_seconds_sum 123.45
+workflow_duration_seconds_count 42
 \end{lstlisting}
 
 \subsection*{Minimal Example}
 
 \begin{lstlisting}
-import { KnowledgeStore, ReceiptChain, TamperDetector }
-  from '@unrdf/kgc-substrate';
+import { createObservabilityStack } from '@unrdf/observability';
 
-const store = new KnowledgeStore();
-const receipts = new ReceiptChain();
+const { metrics, grafana, alerts } = await createObservabilityStack({
+  metrics: {
+    prefix: 'unrdf_',
+    port: 9090
+  },
+  grafana: {
+    dashboardDir: './dashboards'
+  },
+  alerts: {
+    rules: [
+      {
+        name: 'HighErrorRate',
+        metric: 'error_count',
+        condition: '>',
+        threshold: 10,
+        severity: 'critical'
+      }
+    ]
+  }
+});
 
-// Append triple
-const entry = {
-  subject: 'ex:Alice',
-  predicate: 'rdf:type',
-  object: 'ex:Person',
-  timestamp_ns: BigInt(Date.now()) * 1000000n,
-  operation: 'add'
-};
+// Instrument workflow
+metrics.recordWorkflowStart('wf-123', 'sequential');
 
-const { receipt, state } = await store.append(entry);
-receipts.append(receipt);
+const startTime = Date.now();
+// Execute workflow...
+const duration = Date.now() - startTime;
 
-console.log(`State hash: ${state.root_hash}`);
+metrics.recordWorkflowComplete('wf-123', 'completed', duration, 'sequential');
 
-// Verify integrity
-const detector = new TamperDetector(receipts);
-const valid = await detector.verify();
-console.log(`Chain valid: ${valid}`);
+// Export Grafana dashboard
+const dashboard = await grafana.generateDashboard();
+await grafana.exportDashboard(dashboard, './dashboard.json');
+
+// Start Prometheus exporter
+metrics.startServer();
+console.log('Metrics available at http://localhost:9090/metrics');
 \end{lstlisting}
 
 \subsection*{Open Questions}
 
 \begin{enumerate}
-\item How to optimize Merkle proof verification for large chains?
-\item Distributed receipt chain (multi-node consensus)?
-\item Pruning strategies for append-only log (retention policies)?
-\item Integration with blockchain anchoring for external verification?
+\item How to aggregate metrics across distributed UNRDF nodes?
+\item Can ML models detect anomalies in workflow metrics automatically?
+\item Integration with Grafana Loki for log correlation?
+\item OpenTelemetry baggage for cross-service trace context propagation?
 \end{enumerate}
 
 % ============================================================================
