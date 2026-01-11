@@ -1,0 +1,38 @@
+{
+  "name": "@unrdf/codegen",
+  "version": "0.1.0",
+  "description": "Code generation and metaprogramming tools for UNRDF",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./sparql-types": "./src/sparql-type-generator.mjs",
+    "./meta-templates": "./src/meta-template-engine.mjs",
+    "./property-tests": "./src/property-test-generator.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "unrdf",
+    "code-generation",
+    "metaprogramming",
+    "rdf",
+    "sparql",
+    "templates",
+    "testing"
+  ],
+  "author": "UNRDF Team",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "peerDependencies": {
+    "@unrdf/core": "workspace:*"
+  }
+}
