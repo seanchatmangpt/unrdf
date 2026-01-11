@@ -39,6 +39,9 @@ export const CancellationRegionSchema = z.object({
  * Manages cancellation regions - groups of tasks that cancel together
  */
 export class CancellationRegionManager {
+  /**
+   *
+   */
   constructor() {
     /** @type {Map<string, CancellationRegion>} */
     this.regions = new Map();

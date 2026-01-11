@@ -1,0 +1,10 @@
+PREFIX foaf: <{{ "foaf:name" | expand | replace("name", "") }}>
+PREFIX rdf: <{{ "rdf:type" | expand | replace("type", "") }}>
+
+SELECT {{ vars | map("sparqlVar") | join(" ") }}
+WHERE {
+  {% for pattern in wherePatterns %}
+  {{ pattern }}
+  {% endfor %}
+}
+{% if limit %}LIMIT {{ limit }}{% endif %}

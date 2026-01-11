@@ -1,0 +1,8 @@
+@prefix ex: <http://example.org/schema#> .
+@prefix data: <http://example.org/data/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+data:{{ id }} a ex:Organization ;
+    ex:name "{{ name }}" {% if url %};
+    ex:website "{{ url }}"^^xsd:anyURI{% endif %} {% if industry %};
+    ex:industry "{{ industry }}"{% endif %} .

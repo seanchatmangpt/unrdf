@@ -450,7 +450,7 @@ export function evaluateCondition(condition, result, variables) {
     }
 
     // Use Function constructor for sandboxed evaluation
-    // eslint-disable-next-line no-new-func
+     
     const evaluator = new Function('return ' + evalCondition);
     return Boolean(evaluator());
   } catch {

@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-01-11T03:50:59.830Z",
+  "summary": {
+    "totalBenchmarks": 3,
+    "passed": 3,
+    "failed": 0,
+    "totalRegressions": 0,
+    "totalImprovements": 0
+  },
+  "benchmarks": {
+    "startup.coldStartup": {
+      "name": "daemon-cold-startup",
+      "runs": 50,
+      "latency": {
+        "mean": 0.18743472000000566,
+        "p50": 0.10012899999998126,
+        "p95": 0.5524800000000027,
+        "p99": 2.060122999999976,
+        "min": 0.03495500000002494,
+        "max": 2.060122999999976
+      },
+      "memory": {
+        "avgMB": 0.011813507080078126,
+        "maxMB": 0.16204833984375
+      },
+      "passed": true,
+      "target": "500ms",
+      "unit": "ms",
+      "comparison": {
+        "regression": false,
+        "improvement": false,
+        "change": -2.166970776723651,
+        "current": 0.18743472000000566,
+        "baseline": 0.19158634000000008
+      }
+    },
+    "startup.warmStartup": {
+      "name": "daemon-warm-startup",
+      "runs": 30,
+      "latency": {
+        "mean": 0.04810293333333675,
+        "p50": 0.03945699999997032,
+        "p95": 0.09877300000005107,
+        "p99": 0.1048919999999498,
+        "min": 0.023744000000078813,
+        "max": 0.1048919999999498
+      },
+      "passed": true,
+      "target": "300ms",
+      "unit": "ms",
+      "comparison": {
+        "regression": false,
+        "improvement": false,
+        "change": 6.03892706612492,
+        "current": 0.04810293333333675,
+        "baseline": 0.04536346666667062
+      }
+    },
+    "startup.startupWithLoad": {
+      "name": "daemon-startup-with-load",
+      "runs": 10,
+      "operationCount": 100,
+      "latency": {
+        "mean": 0.02050110000002405,
+        "p50": 0.019300000000043838,
+        "p95": 0.033556999999973414,
+        "p99": 0.033556999999973414,
+        "min": 0.013059999999995853,
+        "max": 0.033556999999973414
+      },
+      "passed": true,
+      "target": "1000ms",
+      "unit": "ms",
+      "comparison": {
+        "regression": false,
+        "improvement": false,
+        "change": -18.600560633194146,
+        "current": 0.02050110000002405,
+        "baseline": 0.02518579999997428
+      }
+    }
+  },
+  "regressions": [],
+  "improvements": []
+}

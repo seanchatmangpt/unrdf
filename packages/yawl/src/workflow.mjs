@@ -46,6 +46,9 @@ import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
  * Complete Workflow class with all methods
  */
 export class Workflow extends WorkflowCore {
+  /**
+   *
+   */
   constructor(spec) {
     super(spec);
   }

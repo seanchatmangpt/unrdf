@@ -1,0 +1,89 @@
+{#
+  SHACL Shapes Template
+
+  Generates SHACL (Shapes Constraint Language) shapes for RDF validation.
+
+  Expected frontmatter variables:
+  - shapesGraphIRI: The IRI of the shapes graph (required)
+  - title: Shapes graph title (optional)
+  - description: Description of the shapes (optional)
+  - shapes: Array of shape definitions (required)
+    - iri: Shape IRI
+    - targetClass: Target class IRI (optional)
+    - targetNode: Target node IRI (optional)
+    - label: Shape label (optional)
+    - description: Shape description (optional)
+    - closed: Boolean - whether shape is closed (optional)
+    - properties: Array of property constraints
+      - path: Property path IRI
+      - minCount: Minimum cardinality (optional)
+      - maxCount: Maximum cardinality (optional)
+      - datatype: Datatype IRI for datatype properties (optional)
+      - class: Class IRI for object properties (optional)
+      - pattern: Regex pattern for string validation (optional)
+      - minLength: Minimum string length (optional)
+      - maxLength: Maximum string length (optional)
+      - minInclusive: Minimum numeric value (optional)
+      - maxInclusive: Maximum numeric value (optional)
+
+  Example:
+  ---
+  shapesGraphIRI: http://example.org/shapes/person
+  title: Person Shapes
+  description: Validation shapes for Person data
+  shapes:
+    - iri: http://example.org/shapes/person#PersonShape
+      targetClass: http://example.org/ontology/Person
+      label: Person Shape
+      description: Validates Person instances
+      closed: false
+      properties:
+        - path: http://xmlns.com/foaf/0.1/name
+          minCount: 1
+          maxCount: 1
+          datatype: http://www.w3.org/2001/XMLSchema#string
+        - path: http://xmlns.com/foaf/0.1/mbox
+          minCount: 0
+          datatype: http://www.w3.org/2001/XMLSchema#string
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  ---
+#}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+{% if prefix %}@prefix {{ prefix }}: <{{ shapesGraphIRI }}#> .{% endif %}
+
+# Shapes Graph Metadata
+<{{ shapesGraphIRI }}> a sh:ShapesGraph ;
+{% if title %}    dc:title "{{ title }}"@en ;{% endif %}
+{% if description %}    dc:description "{{ description }}"@en ;{% endif %}
+    .
+
+{% if shapes and shapes.length > 0 %}
+# Shape Definitions
+{% for shape in shapes %}
+<{{ shape.iri }}> a sh:NodeShape ;
+{% if shape.targetClass %}    sh:targetClass <{{ shape.targetClass }}> ;{% endif %}
+{% if shape.targetNode %}    sh:targetNode <{{ shape.targetNode }}> ;{% endif %}
+{% if shape.label %}    rdfs:label "{{ shape.label }}"@en ;{% endif %}
+{% if shape.description %}    rdfs:comment "{{ shape.description }}"@en ;{% endif %}
+{% if shape.closed %}    sh:closed {{ shape.closed }} ;{% endif %}
+{% if shape.properties and shape.properties.length > 0 %}{% for prop in shape.properties %}    sh:property [
+        sh:path <{{ prop.path }}> ;
+{% if prop.minCount !== undefined %}        sh:minCount {{ prop.minCount }} ;{% endif %}
+{% if prop.maxCount !== undefined %}        sh:maxCount {{ prop.maxCount }} ;{% endif %}
+{% if prop.datatype %}        sh:datatype <{{ prop.datatype }}> ;{% endif %}
+{% if prop.class %}        sh:class <{{ prop.class }}> ;{% endif %}
+{% if prop.pattern %}        sh:pattern "{{ prop.pattern }}" ;{% endif %}
+{% if prop.minLength !== undefined %}        sh:minLength {{ prop.minLength }} ;{% endif %}
+{% if prop.maxLength !== undefined %}        sh:maxLength {{ prop.maxLength }} ;{% endif %}
+{% if prop.minInclusive !== undefined %}        sh:minInclusive {{ prop.minInclusive }} ;{% endif %}
+{% if prop.maxInclusive !== undefined %}        sh:maxInclusive {{ prop.maxInclusive }} ;{% endif %}
+    ] ;
+{% endfor %}{% endif %}
+    .
+
+{% endfor %}
+{% endif %}

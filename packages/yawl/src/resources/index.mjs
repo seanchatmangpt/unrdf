@@ -151,6 +151,9 @@ export class YawlResourceManager {
   #resourcePools;
   #allocationCounter;
 
+  /**
+   *
+   */
   constructor(options = {}) {
     this.#store = options.store || createStore();
     this.#policyPacks = new Map();
@@ -162,22 +165,34 @@ export class YawlResourceManager {
   /* Policy Pack Management                                                  */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   registerPolicyPack(policyPack) {
     const validated = PolicyPackSchema.parse(policyPack);
     this.#policyPacks.set(validated.id, validated);
     this.#storePolicyPackRDF(validated);
   }
 
+  /**
+   *
+   */
   unregisterPolicyPack(policyPackId) {
     const existed = this.#policyPacks.has(policyPackId);
     this.#policyPacks.delete(policyPackId);
     return existed;
   }
 
+  /**
+   *
+   */
   getPolicyPack(policyPackId) {
     return this.#policyPacks.get(policyPackId);
   }
 
+  /**
+   *
+   */
   listPolicyPacks() {
     return Array.from(this.#policyPacks.values())
       .sort((a, b) => (b.priority || 0) - (a.priority || 0));
@@ -241,6 +256,9 @@ export class YawlResourceManager {
   /* Resource Allocation                                                     */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   async allocateResource(workItem, resource, options = {}) {
     const validatedWorkItem = WorkItemSchema.parse(workItem);
     const validatedResource = ResourceSchema.parse(resource);
@@ -294,6 +312,9 @@ export class YawlResourceManager {
     return receipt;
   }
 
+  /**
+   *
+   */
   deallocateResource(allocationId) {
     const allocationNode = namedNode(`${YAWL_NS}allocation/${allocationId}`);
 
@@ -399,6 +420,9 @@ export class YawlResourceManager {
   /* Resource Eligibility & Queries                                          */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   async getEligibleResources(taskId, caseId, options = {}) {
     const eligibleResources = [];
     const packs = this.listPolicyPacks();
@@ -435,6 +459,9 @@ export class YawlResourceManager {
     return eligibleResources.sort((a, b) => (b._priority || 0) - (a._priority || 0));
   }
 
+  /**
+   *
+   */
   queryResources(resourceType) {
     const query = `
       PREFIX yawl: <${YAWL_NS}>
@@ -473,10 +500,16 @@ export class YawlResourceManager {
   /* Availability / Calendar                                                 */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   getAvailability(resourceId, options = {}) {
     return getResourceAvailability(this.#store, resourceId, options, dataFactory);
   }
 
+  /**
+   *
+   */
   setAvailability(resourceId, available, windows = []) {
     const resourceNode = namedNode(`${YAWL_NS}resource/${resourceId}`);
 
@@ -502,6 +535,9 @@ export class YawlResourceManager {
   /* Resource Pools                                                          */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   createResourcePool(config) {
     const poolConfig = {
       id: z.string().min(1).parse(config.id),
@@ -517,10 +553,16 @@ export class YawlResourceManager {
     return pool;
   }
 
+  /**
+   *
+   */
   getResourcePool(poolId) {
     return this.#resourcePools.get(poolId);
   }
 
+  /**
+   *
+   */
   listResourcePools() {
     return Array.from(this.#resourcePools.values());
   }
@@ -547,10 +589,16 @@ export class YawlResourceManager {
   /* Capacity Tracking                                                       */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   getCapacityStatus(resourceId) {
     return getCapacityStatus(this.#store, resourceId, dataFactory);
   }
 
+  /**
+   *
+   */
   getActiveAllocations(filter = {}) {
     return getAllActiveAllocations(this.#store, filter);
   }
@@ -559,10 +607,16 @@ export class YawlResourceManager {
   /* Store Access                                                            */
   /* ----------------------------------------------------------------------- */
 
+  /**
+   *
+   */
   getStore() {
     return this.#store;
   }
 
+  /**
+   *
+   */
   query(sparqlQuery) {
     return this.#store.query(sparqlQuery);
   }
@@ -572,29 +626,47 @@ export class YawlResourceManager {
 /* Resource Pool Class                                                       */
 /* ========================================================================= */
 
+/**
+ *
+ */
 export class ResourcePool {
   #manager;
   #config;
   #roundRobinIndex;
 
+  /**
+   *
+   */
   constructor(manager, config) {
     this.#manager = manager;
     this.#config = config;
     this.#roundRobinIndex = 0;
   }
 
+  /**
+   *
+   */
   get id() {
     return this.#config.id;
   }
 
+  /**
+   *
+   */
   get name() {
     return this.#config.name;
   }
 
+  /**
+   *
+   */
   get resources() {
     return [...this.#config.resources];
   }
 
+  /**
+   *
+   */
   async allocateAny(workItem, options = {}) {
     const orderedResources = this.#getOrderedResources();
 
@@ -610,6 +682,9 @@ export class ResourcePool {
     return null;
   }
 
+  /**
+   *
+   */
   getAvailableResources() {
     return this.#config.resources.filter(resource => {
       const status = this.#manager.getCapacityStatus(resource.id);
@@ -617,6 +692,9 @@ export class ResourcePool {
     });
   }
 
+  /**
+   *
+   */
   getAvailability() {
     const available = this.getAvailableResources();
     return {
@@ -656,10 +734,16 @@ export class ResourcePool {
 /* Factory Functions                                                         */
 /* ========================================================================= */
 
+/**
+ *
+ */
 export function createResourceManager(options = {}) {
   return new YawlResourceManager(options);
 }
 
+/**
+ *
+ */
 export function createPolicyPack(config) {
   return PolicyPackSchema.parse({
     id: config.id,

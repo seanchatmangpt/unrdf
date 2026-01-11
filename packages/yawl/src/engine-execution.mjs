@@ -28,6 +28,9 @@ import {
 // Task Execution
 // =============================================================================
 
+/**
+ *
+ */
 export async function enableTask(engine, caseId, taskId, actor) {
   const { YAWL_EVENT_TYPES } = await import('./events/yawl-events.mjs');
 
@@ -85,6 +88,9 @@ export async function enableTask(engine, caseId, taskId, actor) {
   return result;
 }
 
+/**
+ *
+ */
 export async function startTask(engine, caseId, workItemId, options = {}) {
   const { YAWL_EVENT_TYPES } = await import('./events/yawl-events.mjs');
 
@@ -154,6 +160,9 @@ export async function startTask(engine, caseId, workItemId, options = {}) {
   return { ...result, resource: allocatedResource };
 }
 
+/**
+ *
+ */
 export async function completeTask(engine, caseId, workItemId, output = {}, actor) {
   const { YAWL_EVENT_TYPES } = await import('./events/yawl-events.mjs');
 
@@ -272,6 +281,9 @@ export async function completeTask(engine, caseId, workItemId, output = {}, acto
   return result;
 }
 
+/**
+ *
+ */
 export async function cancelTask(engine, caseId, workItemId, reason, actor) {
   const { YAWL_EVENT_TYPES } = await import('./events/yawl-events.mjs');
 
@@ -338,6 +350,9 @@ export async function cancelTask(engine, caseId, workItemId, reason, actor) {
   return result;
 }
 
+/**
+ *
+ */
 export async function cancelRegion(engine, caseId, regionId, reason, actor) {
   const yawlCase = engine.cases.get(caseId);
   if (!yawlCase) {
