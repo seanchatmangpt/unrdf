@@ -1,0 +1,112 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.5,
+    "reference": 0,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "78dfb7a5df22c486b51a930cafdf651f1bf400587ca9f0798273a2f79f0ad032",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Usage",
+      "Example Output",
+      "Hook Chain Patterns",
+      "Custom Hooks",
+      "Chain Execution",
+      "Testing",
+      "Learn More",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "This example demonstrates how to use **@unrdf/hooks** for creating sequential hook chains that validate and transform RDF quads through multiple stages.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-unrdf-hooks-example-chains-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/hooks-example-chains",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/hooks-example-chains",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/hooks-example-chains",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-unrdf-hooks-example-chains-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "@unrdf/hooks-example-chains Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @unrdf/hooks-example-chains in your project",
+      "id": "tutorial-getting-started-with-unrdf-hooks-example-chains",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/hooks-example-chains"
+    }
+  ],
+  "version": "5.0.0"
+}

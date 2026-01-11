@@ -1,0 +1,94 @@
+# AlertManager configuration for UNRDF v6
+
+global:
+  resolve_timeout: 5m
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+  pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+
+# Templates for alert notifications
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Route configuration
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+
+  routes:
+    # Critical alerts go to PagerDuty
+    - match:
+        severity: critical
+      receiver: 'pagerduty'
+      continue: true
+
+    # Warning alerts go to Slack
+    - match:
+        severity: warning
+      receiver: 'slack-warnings'
+
+    # Application-specific alerts
+    - match:
+        component: application
+      receiver: 'slack-app'
+
+    # Performance alerts
+    - match_re:
+        alertname: '^(HighAPILatency|SlowReceiptCreation|SlowDeltaValidation)$'
+      receiver: 'slack-performance'
+
+# Inhibition rules
+inhibit_rules:
+  # Inhibit warning if critical is firing for same alert
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'cluster', 'service']
+
+# Receivers
+receivers:
+  # Default receiver
+  - name: 'default'
+    slack_configs:
+      - channel: '#unrdf-alerts'
+        title: 'UNRDF Alert'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+
+  # PagerDuty for critical alerts
+  - name: 'pagerduty'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        description: '{{ .GroupLabels.alertname }}: {{ .Annotations.summary }}'
+        details:
+          firing: '{{ .Alerts.Firing | len }}'
+          resolved: '{{ .Alerts.Resolved | len }}'
+
+  # Slack for warnings
+  - name: 'slack-warnings'
+    slack_configs:
+      - channel: '#unrdf-warnings'
+        title: 'Warning: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        color: 'warning'
+        send_resolved: true
+
+  # Slack for application alerts
+  - name: 'slack-app'
+    slack_configs:
+      - channel: '#unrdf-app'
+        title: 'Application Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+
+  # Slack for performance alerts
+  - name: 'slack-performance'
+    slack_configs:
+      - channel: '#unrdf-performance'
+        title: 'Performance Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        color: '#FFA500'
+        send_resolved: true

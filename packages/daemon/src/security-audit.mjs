@@ -57,6 +57,53 @@ const PATH_TRAVERSAL_PATTERNS = [
 ];
 
 /**
+ * Extracts all string values from an object/array recursively
+ * @private
+ * @param {*} value - Value to extract strings from
+ * @param {Set} visited - Set of visited objects to prevent circular refs
+ * @returns {string[]} Array of string values
+ */
+function extractStringValues(value, visited = new Set()) {
+  if (value === null || value === undefined) {
+    return [];
+  }
+
+  // Prevent circular reference infinite loops
+  if (typeof value === 'object' && visited.has(value)) {
+    return [];
+  }
+
+  if (typeof value === 'string') {
+    return [value];
+  }
+
+  if (typeof value === 'bigint' || typeof value === 'number' || typeof value === 'boolean') {
+    // Convert to string for validation
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    visited.add(value);
+    const strings = [];
+    for (const item of value) {
+      strings.push(...extractStringValues(item, visited));
+    }
+    return strings;
+  }
+
+  if (typeof value === 'object') {
+    visited.add(value);
+    const strings = [];
+    for (const val of Object.values(value)) {
+      strings.push(...extractStringValues(val, visited));
+    }
+    return strings;
+  }
+
+  return [];
+}
+
+/**
  * Validates input against injection attack patterns
  * @param {*} input - Input to validate
  * @param {string} type - Input type: 'command', 'sql', 'rdf'
@@ -70,28 +117,35 @@ export function validateInputSafety(input, type = 'command') {
     return { safe: true, eventId };
   }
 
-  const stringInput = typeof input === 'string' ? input : JSON.stringify(input);
+  // For non-string inputs, extract all string values and validate each
+  // This avoids false positives from JSON structural characters
+  const stringsToValidate = typeof input === 'string'
+    ? [input]
+    : extractStringValues(input);
 
   const patterns = INJECTION_PATTERNS[type] || INJECTION_PATTERNS.command;
-  for (const pattern of patterns) {
-    if (pattern.test(stringInput)) {
-      const event = {
-        eventId,
-        timestamp,
-        eventType: 'injection_attempt',
-        severity: 'critical',
-        source: type,
-        message: `Injection attack detected: ${type}`,
-        details: { pattern: pattern.toString(), inputLength: stringInput.length },
-      };
 
-      auditLog.push(event);
+  for (const stringInput of stringsToValidate) {
+    for (const pattern of patterns) {
+      if (pattern.test(stringInput)) {
+        const event = {
+          eventId,
+          timestamp,
+          eventType: 'injection_attempt',
+          severity: 'critical',
+          source: type,
+          message: `Injection attack detected: ${type}`,
+          details: { pattern: pattern.toString(), inputLength: stringInput.length },
+        };
 
-      return {
-        safe: false,
-        eventId,
-        reason: `Malicious ${type} injection pattern detected`,
-      };
+        auditLog.push(event);
+
+        return {
+          safe: false,
+          eventId,
+          reason: `Malicious ${type} injection pattern detected`,
+        };
+      }
     }
   }
 

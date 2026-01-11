@@ -9,7 +9,9 @@
     "./daemon": "./src/daemon.mjs",
     "./schemas": "./src/schemas.mjs",
     "./trigger-evaluator": "./src/trigger-evaluator.mjs",
-    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs"
+    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
+    "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
+    "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs"
   },
   "scripts": {
     "test": "vitest run",

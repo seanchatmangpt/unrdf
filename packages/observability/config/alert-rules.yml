@@ -1,0 +1,269 @@
+# Prometheus Alert Rules for UNRDF
+#
+# Production-grade alerting rules for:
+# - Business metrics (success rates, SLA violations)
+# - Performance (latency, throughput)
+# - Resources (memory, CPU)
+# - Security events
+
+groups:
+  # Business Metrics Alerts
+  - name: business_metrics
+    interval: 30s
+    rules:
+      - alert: LowSuccessRate
+        expr: |
+          (
+            rate(business_operations_total{result="success"}[5m]) /
+            rate(business_operations_total[5m])
+          ) < 0.95
+        for: 5m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "Low success rate for {{ $labels.operation }}"
+          description: "Success rate is {{ $value | humanizePercentage }}, below 95% threshold"
+
+      - alert: CriticalSuccessRate
+        expr: |
+          (
+            rate(business_operations_total{result="success"}[5m]) /
+            rate(business_operations_total[5m])
+          ) < 0.90
+        for: 2m
+        labels:
+          severity: critical
+          category: business
+        annotations:
+          summary: "CRITICAL: Success rate for {{ $labels.operation }}"
+          description: "Success rate is {{ $value | humanizePercentage }}, below 90% threshold"
+
+      - alert: HighSLAViolations
+        expr: rate(business_sla_violations[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "High SLA violation rate"
+          description: "SLA violations at {{ $value }} violations/sec for operation {{ $labels.operation }}"
+
+  # Latency Alerts
+  - name: latency_metrics
+    interval: 30s
+    rules:
+      - alert: HighP95Latency
+        expr: latency_p95_ms > 1000
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High P95 latency for {{ $labels.operation }}"
+          description: "P95 latency is {{ $value }}ms, exceeding 1000ms threshold"
+
+      - alert: HighP99Latency
+        expr: latency_p99_ms > 5000
+        for: 2m
+        labels:
+          severity: critical
+          category: performance
+        annotations:
+          summary: "CRITICAL: High P99 latency for {{ $labels.operation }}"
+          description: "P99 latency is {{ $value }}ms, exceeding 5000ms threshold"
+
+      - alert: LatencySpike
+        expr: |
+          (
+            latency_p95_ms - latency_p95_ms offset 5m
+          ) / latency_p95_ms offset 5m > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "Latency spike detected for {{ $labels.operation }}"
+          description: "P95 latency increased by {{ $value | humanizePercentage }} in 5 minutes"
+
+  # Throughput Alerts
+  - name: throughput_metrics
+    interval: 30s
+    rules:
+      - alert: LowThroughput
+        expr: throughput_ops_per_second < 10
+        for: 10m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "Low throughput for {{ $labels.operation }}"
+          description: "Throughput is {{ $value }} ops/sec, below expected rate"
+
+      - alert: ThroughputDrop
+        expr: |
+          (
+            rate(business_operations_total[5m]) -
+            rate(business_operations_total[5m] offset 10m)
+          ) / rate(business_operations_total[5m] offset 10m) < -0.5
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "Throughput drop detected"
+          description: "Throughput dropped by {{ $value | humanizePercentage }} in 10 minutes"
+
+  # Resource Alerts
+  - name: resource_metrics
+    interval: 30s
+    rules:
+      - alert: HighMemoryUsage
+        expr: |
+          resource_heap_used_bytes / resource_heap_total_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          category: resource
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }}, above 85% threshold"
+
+      - alert: CriticalMemoryUsage
+        expr: |
+          resource_heap_used_bytes / resource_heap_total_bytes > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          category: resource
+        annotations:
+          summary: "CRITICAL: Memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }}, above 95% threshold"
+
+      - alert: HighCPULoad
+        expr: resource_cpu_load > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          category: resource
+        annotations:
+          summary: "High CPU load"
+          description: "CPU load is {{ $value | humanizePercentage }}"
+
+      - alert: HighEventLoopLag
+        expr: |
+          histogram_quantile(0.95, rate(resource_event_loop_lag_ms_bucket[5m])) > 100
+        for: 5m
+        labels:
+          severity: warning
+          category: resource
+        annotations:
+          summary: "High event loop lag"
+          description: "P95 event loop lag is {{ $value }}ms, above 100ms threshold"
+
+  # Security Alerts
+  - name: security_events
+    interval: 30s
+    rules:
+      - alert: HighAuthFailures
+        expr: rate(event_total{event_type="security.auth.failure"}[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High authentication failure rate"
+          description: "{{ $value }} auth failures per second"
+
+      - alert: InjectionAttempt
+        expr: increase(event_total{event_type="security.injection.attempt"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Injection attempt detected"
+          description: "{{ $value }} injection attempts in last 5 minutes"
+
+      - alert: RateLimitExceeded
+        expr: rate(event_total{event_type="security.rate_limit.exceeded"}[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate limit violations"
+          description: "{{ $value }} rate limit violations per second"
+
+      - alert: UnauthorizedAccess
+        expr: increase(event_total{event_type="security.unauthorized_access"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Unauthorized access attempts"
+          description: "{{ $value }} unauthorized access attempts in last 5 minutes"
+
+  # Error Rate Alerts
+  - name: error_rates
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(business_failures_by_type[5m])) by (operation) /
+          sum(rate(business_operations_total[5m])) by (operation) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          category: errors
+        annotations:
+          summary: "High error rate for {{ $labels.operation }}"
+          description: "Error rate is {{ $value | humanizePercentage }}, above 5% threshold"
+
+      - alert: CriticalErrorRate
+        expr: |
+          sum(rate(business_failures_by_type[5m])) by (operation) /
+          sum(rate(business_operations_total[5m])) by (operation) > 0.10
+        for: 2m
+        labels:
+          severity: critical
+          category: errors
+        annotations:
+          summary: "CRITICAL: Error rate for {{ $labels.operation }}"
+          description: "Error rate is {{ $value | humanizePercentage }}, above 10% threshold"
+
+  # Service Health
+  - name: service_health
+    interval: 30s
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"unrdf.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for 1 minute"
+
+      - alert: OTELCollectorDown
+        expr: up{job="otel-collector"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: observability
+        annotations:
+          summary: "OpenTelemetry Collector is down"
+          description: "OTEL Collector is unreachable, metrics collection impaired"
+
+      - alert: MetricsStaleness
+        expr: |
+          time() - timestamp(business_operations_total) > 120
+        for: 2m
+        labels:
+          severity: warning
+          category: observability
+        annotations:
+          summary: "Metrics are stale"
+          description: "No metrics received for {{ $labels.operation }} in last 2 minutes"

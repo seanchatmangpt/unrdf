@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-01-11T07:26:37.685Z",
+  "overallStatus": "FAIL",
+  "summary": {
+    "baseline": {
+      "testName": "baseline",
+      "status": "FAIL",
+      "bottlenecks": [],
+      "metrics": {
+        "latency": {
+          "p50": 21,
+          "p95": 26,
+          "p99": 30,
+          "mean": 21.05
+        },
+        "throughput": {
+          "requestsPerSecond": 4665.15,
+          "totalRequests": 279848
+        },
+        "errors": {
+          "total": 0,
+          "errorRate": 0
+        }
+      },
+      "failedCriteria": [
+        "latencyP95"
+      ]
+    },
+    "peak": {
+      "testName": "peak",
+      "status": "FAIL",
+      "bottlenecks": [
+        {
+          "type": "HIGH_ERROR_RATE",
+          "severity": "CRITICAL",
+          "value": 1.1763967094383856,
+          "threshold": 0.1,
+          "description": "Error rate (1.1764%) exceeds 0.1%"
+        }
+      ],
+      "metrics": {
+        "latency": {
+          "p50": 88,
+          "p95": 107,
+          "p99": 154,
+          "mean": 92.47
+        },
+        "throughput": {
+          "requestsPerSecond": 4859.28,
+          "totalRequests": 286638
+        },
+        "errors": {
+          "total": 3372,
+          "errorRate": 1.1763967094383856
+        }
+      },
+      "failedCriteria": [
+        "latencyP95",
+        "errorRate"
+      ]
+    },
+    "spike": {
+      "testName": "spike",
+      "status": "FAIL",
+      "bottlenecks": [],
+      "metrics": {},
+      "failedCriteria": [
+        "spikeHandled",
+        "latencyDegradation",
+        "recovery",
+        "errorRate"
+      ]
+    }
+  },
+  "bottlenecks": [
+    {
+      "type": "HIGH_ERROR_RATE",
+      "severity": "CRITICAL",
+      "value": 1.1763967094383856,
+      "threshold": 0.1,
+      "description": "Error rate (1.1764%) exceeds 0.1%"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "category": "RELIABILITY",
+      "title": "Reduce Error Rate",
+      "description": "Unacceptable error rate detected. This must be addressed before production deployment.",
+      "impact": "Critical for production readiness",
+      "effort": "HIGH",
+      "actions": [
+        "Review error logs to identify root causes",
+        "Implement circuit breakers for failing dependencies",
+        "Add request validation and error handling",
+        "Increase resource limits (memory, file descriptors)",
+        "Add health checks and graceful degradation"
+      ]
+    }
+  ],
+  "performanceMetrics": {
+    "latency": {
+      "baseline": {
+        "p50": 21,
+        "p99": 30
+      },
+      "peak": {
+        "p50": 88,
+        "p99": 154
+      }
+    },
+    "throughput": {
+      "baseline": {
+        "requestsPerSecond": 4665.15,
+        "totalRequests": 279848
+      },
+      "peak": {
+        "requestsPerSecond": 4859.28,
+        "totalRequests": 286638
+      }
+    },
+    "reliability": {
+      "baseline": {
+        "errorRate": 0,
+        "totalErrors": 0
+      },
+      "peak": {
+        "errorRate": 1.1763967094383856,
+        "totalErrors": 3372
+      }
+    },
+    "resources": {}
+  }
+}
