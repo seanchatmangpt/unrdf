@@ -37,8 +37,9 @@ function generateUUID() {
 
 /**
  * Daemon operation schema - represents a single daemon operation
+ * @private
  */
-const DaemonOperationSchema = z.object({
+const _DaemonOperationSchema = z.object({
   operationId: z.string().uuid(),
   operationType: z.string().min(1),
   timestamp_ns: z.bigint(),
@@ -50,8 +51,9 @@ const DaemonOperationSchema = z.object({
 
 /**
  * Receipt schema - proof of operation
+ * @private
  */
-const DaemonReceiptSchema = z.object({
+const _DaemonReceiptSchema = z.object({
   id: z.string().uuid(),
   operationId: z.string().uuid(),
   operationType: z.string(),
@@ -66,8 +68,9 @@ const DaemonReceiptSchema = z.object({
 
 /**
  * Merkle tree node schema
+ * @private
  */
-const MerkleNodeSchema = z.object({
+const _MerkleNodeSchema = z.object({
   hash: z.string().length(HASH_LENGTH),
   isLeaf: z.boolean(),
   level: z.number().int().nonnegative(),
@@ -75,8 +78,9 @@ const MerkleNodeSchema = z.object({
 
 /**
  * Merkle proof schema
+ * @private
  */
-const MerkleProofSchema = z.object({
+const _MerkleProofSchema = z.object({
   leafHash: z.string().length(HASH_LENGTH),
   leafIndex: z.number().int().nonnegative(),
   proofPath: z.array(z.object({
@@ -89,21 +93,23 @@ const MerkleProofSchema = z.object({
 
 /**
  * Batch proof schema
+ * @private
  */
-const BatchProofSchema = z.object({
+const _BatchProofSchema = z.object({
   batchId: z.string().uuid(),
   batchNumber: z.number().int().nonnegative(),
   merkleRoot: z.string().length(HASH_LENGTH),
   leafCount: z.number().int().positive(),
   treeDepth: z.number().int().nonnegative(),
   timestamp_ns: z.bigint(),
-  receipts: z.array(DaemonReceiptSchema),
+  receipts: z.array(_DaemonReceiptSchema),
 });
 
 /**
  * Chain verification result schema
+ * @private
  */
-const ChainVerificationSchema = z.object({
+const _ChainVerificationSchema = z.object({
   valid: z.boolean(),
   totalReceipts: z.number().int().nonnegative(),
   validReceipts: z.number().int().nonnegative(),
@@ -534,10 +540,10 @@ export class DaemonReceiptGenerator {
    * @private
    * @param {Object} tree - Tree structure
    * @param {number} index - Leaf index
-   * @param {Array<Object>} receipts - Receipts array
+   * @param {Array<Object>} _receipts - Receipts array (reserved for future use)
    * @returns {Promise<Array<Object>>} Proof path
    */
-  async _generateInclusionProof(tree, index, receipts) {
+  async _generateInclusionProof(tree, index, _receipts) {
     const proof = [];
     let currentIndex = index;
 
