@@ -42,6 +42,9 @@ import { caseToRDF, caseFromRDF } from './case-rdf.mjs';
  * @class
  */
 export class Case extends CaseCore {
+  /**
+   *
+   */
   constructor(data, workflow) {
     super(data, workflow);
     // Initialize marking after construction

@@ -10,6 +10,7 @@
     "./rdf/minimal-n3-integration": "./src/rdf/minimal-n3-integration.mjs",
     "./rdf/n3-justified-only": "./src/rdf/n3-justified-only.mjs",
     "./sparql": "./src/sparql/index.mjs",
+    "./sparql/executor-sync": "./src/sparql/executor-sync.mjs",
     "./types": "./src/types.mjs",
     "./constants": "./src/constants.mjs",
     "./validation": "./src/validation/index.mjs",
@@ -18,7 +19,10 @@
     "./metrics": "./src/metrics.mjs",
     "./security": "./src/security.mjs",
     "./security-schemas": "./src/security-schemas.mjs",
-    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs"
+    "./utils/sparql-utils": "./src/utils/sparql-utils.mjs",
+    "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
+    "./viz/query-explainer": "./src/viz/query-explainer.mjs",
+    "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs"
   },
   "sideEffects": false,
   "files": [

@@ -1,0 +1,63 @@
+{#
+  JSON-LD Context Template
+
+  Generates a JSON-LD context file for mapping JSON to RDF.
+
+  Expected frontmatter variables:
+  - contextIRI: The IRI of the context (optional, for @id)
+  - vocab: Default vocabulary IRI (optional, for @vocab)
+  - base: Base IRI for relative IRIs (optional, for @base)
+  - prefixes: Object mapping prefixes to namespace IRIs (optional)
+  - terms: Object mapping terms to IRIs or term definitions (required)
+    Simple mapping: termName: iri
+    Complex mapping:
+      termName:
+        id: IRI
+        type: @id, @vocab, or XSD datatype
+        container: @list, @set, @language, etc. (optional)
+        language: Language tag (optional)
+        reverse: Boolean (optional)
+
+  Example:
+  ---
+  contextIRI: http://example.org/contexts/person
+  vocab: http://schema.org/
+  prefixes:
+    foaf: http://xmlns.com/foaf/0.1/
+    xsd: http://www.w3.org/2001/XMLSchema#
+  terms:
+    Person: foaf:Person
+    name: foaf:name
+    email:
+      id: foaf:mbox
+      type: @id
+    age:
+      id: foaf:age
+      type: xsd:integer
+    knows:
+      id: foaf:knows
+      type: @id
+      container: @set
+  ---
+#}{
+  "@context": {
+{% if contextIRI %}    "@id": "{{ contextIRI }}",
+{% endif %}
+{% if vocab %}    "@vocab": "{{ vocab }}",
+{% endif %}
+{% if base %}    "@base": "{{ base }}",
+{% endif %}
+{% if prefixes %}{% for prefix, uri in prefixes %}    "{{ prefix }}": "{{ uri }}",
+{% endfor %}{% endif %}
+{% if terms %}{% for term, def in terms %}{% if def.id %}    "{{ term }}": {
+      "@id": "{{ def.id }}"{% if def.type %},
+      "@type": "{{ def.type }}"{% endif %}{% if def.container %},
+      "@container": "{{ def.container }}"{% endif %}{% if def.language %},
+      "@language": "{{ def.language }}"{% endif %}{% if def.reverse %},
+      "@reverse": "{{ def.reverse }}"{% endif %}
+    }{% if not loop.last %},{% endif %}
+{% else %}    "{{ term }}": "{{ def }}"{% if not loop.last %},{% endif %}
+{% endif %}
+{% endfor %}{% endif %}
+  }
+}

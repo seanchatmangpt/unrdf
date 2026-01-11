@@ -1,0 +1,79 @@
+{#
+  RDFS Schema Template
+
+  Generates an RDFS vocabulary with classes and properties.
+
+  Expected frontmatter variables:
+  - schemaIRI: The IRI of the schema (required)
+  - title: Schema title (required)
+  - description: Schema description (optional)
+  - version: Version string (optional)
+  - classes: Array of RDFS class definitions (optional)
+    - iri: Class IRI
+    - label: rdfs:label
+    - comment: rdfs:comment
+    - subClassOf: Parent class IRI (optional)
+  - properties: Array of RDF properties (optional)
+    - iri: Property IRI
+    - label: rdfs:label
+    - comment: rdfs:comment
+    - domain: Domain class IRI (optional)
+    - range: Range class/datatype IRI (optional)
+    - subPropertyOf: Parent property IRI (optional)
+
+  Example:
+  ---
+  schemaIRI: http://example.org/schema/vocab
+  title: Example Vocabulary
+  description: A simple RDFS vocabulary
+  version: 1.0.0
+  classes:
+    - iri: http://example.org/schema/vocab#Document
+      label: Document
+      comment: A textual document
+  properties:
+    - iri: http://example.org/schema/vocab#title
+      label: title
+      comment: The title of a document
+      domain: http://example.org/schema/vocab#Document
+      range: http://www.w3.org/2001/XMLSchema#string
+  ---
+#}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+{% if prefix %}@prefix {{ prefix }}: <{{ schemaIRI }}#> .{% endif %}
+
+# Schema Metadata
+<{{ schemaIRI }}> a rdfs:Resource ;
+    rdfs:label "{{ title }}"@en ;
+{% if description %}    rdfs:comment "{{ description }}"@en ;{% endif %}
+{% if version %}    dc:version "{{ version }}" ;{% endif %}
+    dcterms:modified "{{ now | date('YYYY-MM-DD') }}"^^xsd:date .
+
+{% if classes and classes.length > 0 %}
+# Class Definitions
+{% for class in classes %}
+<{{ class.iri }}> a rdfs:Class ;
+    rdfs:label "{{ class.label }}"@en ;
+{% if class.comment %}    rdfs:comment "{{ class.comment }}"@en ;{% endif %}
+{% if class.subClassOf %}    rdfs:subClassOf <{{ class.subClassOf }}> ;{% endif %}
+    rdfs:isDefinedBy <{{ schemaIRI }}> .
+
+{% endfor %}
+{% endif %}
+{% if properties and properties.length > 0 %}
+# Property Definitions
+{% for prop in properties %}
+<{{ prop.iri }}> a rdf:Property ;
+    rdfs:label "{{ prop.label }}"@en ;
+{% if prop.comment %}    rdfs:comment "{{ prop.comment }}"@en ;{% endif %}
+{% if prop.domain %}    rdfs:domain <{{ prop.domain }}> ;{% endif %}
+{% if prop.range %}    rdfs:range <{{ prop.range }}> ;{% endif %}
+{% if prop.subPropertyOf %}    rdfs:subPropertyOf <{{ prop.subPropertyOf }}> ;{% endif %}
+    rdfs:isDefinedBy <{{ schemaIRI }}> .
+
+{% endfor %}
+{% endif %}

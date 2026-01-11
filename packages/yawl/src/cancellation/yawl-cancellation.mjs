@@ -303,6 +303,9 @@ export class TaskCircuitBreaker {
  * Manages cancellation regions - groups of tasks that cancel together
  */
 export class CancellationRegionManager {
+  /**
+   *
+   */
   constructor() {
     /** @type {Map<string, CancellationRegion>} */
     this.regions = new Map();
@@ -559,6 +562,9 @@ export class CancellationRegionManager {
  * Logs cancellation receipts for auditability and time-travel
  */
 export class CancellationReceiptLogger {
+  /**
+   *
+   */
   constructor() {
     /** @type {CancellationReceipt[]} */
     this.receipts = [];

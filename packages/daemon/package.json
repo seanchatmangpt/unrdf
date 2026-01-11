@@ -9,7 +9,9 @@
     "./daemon": "./src/daemon.mjs",
     "./schemas": "./src/schemas.mjs",
     "./trigger-evaluator": "./src/trigger-evaluator.mjs",
-    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs"
+    "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
+    "./integrations/yawl": "./src/integrations/yawl.mjs",
+    "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -28,6 +30,7 @@
   ],
   "dependencies": {
     "@unrdf/kgc-4d": "workspace:*",
+    "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

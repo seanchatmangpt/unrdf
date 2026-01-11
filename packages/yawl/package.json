@@ -18,7 +18,10 @@
     "./cancellation": "./src/cancellation/index.mjs",
     "./receipt": "./src/receipt.mjs",
     "./blockchain-receipts": "./src/blockchain-receipts.mjs",
-    "./visualization": "./src/visualization/live-workflow-viz.mjs"
+    "./visualization": "./src/visualization/live-workflow-viz.mjs",
+    "./integrations": "./src/integrations/index.mjs",
+    "./integrations/nitro-handlers": "./src/integrations/nitro-handlers.mjs",
+    "./integrations/nitro-queue": "./src/integrations/nitro-queue.mjs"
   },
   "scripts": {
     "test": "vitest run",
@@ -52,12 +55,14 @@
     "@unrdf/hooks": "workspace:*",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "cron-parser": "^4.9.0",
     "d3": "^7.9.0",
     "graphql": "^16.9.0",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@unrdf/daemon": "workspace:*",
     "eslint": "^8.0.0",
     "vitest": "^4.0.15"
   },

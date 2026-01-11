@@ -122,3 +122,34 @@ export {
   RateLimiter,
   withRecovery,
 } from './recovery.mjs';
+
+// ============================================================================
+// === Visualization & Debugging ===
+// ============================================================================
+
+// Graph visualization tools
+export {
+  toDOT,
+  toMermaid,
+  toASCII,
+  toHTML,
+  extractSubgraph,
+} from './viz/graph-visualizer.mjs';
+
+// Query explanation and performance analysis
+export {
+  explainQuery,
+  formatPlanAsTree,
+  trackQueryStats,
+  compareQueryPerformance,
+} from './viz/query-explainer.mjs';
+
+// RDF graph inspection and quality metrics
+export {
+  getGraphStatistics,
+  analyzeNamespaces,
+  detectOrphans,
+  assessDataQuality,
+  checkSchemaConformance,
+  generateInspectionReport,
+} from './debug/rdf-inspector.mjs';

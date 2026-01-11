@@ -122,6 +122,9 @@ export class YawlCancellationManager {
     return workItem;
   }
 
+  /**
+   *
+   */
   enableWorkItem(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'pending') return null;
@@ -136,6 +139,9 @@ export class YawlCancellationManager {
     return workItem;
   }
 
+  /**
+   *
+   */
   startExecution(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'enabled') return null;
@@ -148,6 +154,9 @@ export class YawlCancellationManager {
     return workItem;
   }
 
+  /**
+   *
+   */
   completeWorkItem(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'executing') return null;
@@ -165,6 +174,9 @@ export class YawlCancellationManager {
     return workItem;
   }
 
+  /**
+   *
+   */
   recordFailure(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem) return { circuitOpened: false };
@@ -202,6 +214,9 @@ export class YawlCancellationManager {
   // CANCELLATION
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   cancelWorkItem(workItemId, reason) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem) {
@@ -252,6 +267,9 @@ export class YawlCancellationManager {
     return { success: true, cancelled, reason };
   }
 
+  /**
+   *
+   */
   _cancelRegion(regionId, sourceWorkItemId, reason = 'region_cancelled') {
     const cancelled = [];
     const region = this.regionManager.getRegion(regionId);
@@ -285,6 +303,9 @@ export class YawlCancellationManager {
     return cancelled;
   }
 
+  /**
+   *
+   */
   _propagateCancellation(taskId, reason) {
     const cancelled = [];
     const downstreamTasks = this.taskDependencies.get(taskId);
@@ -311,6 +332,9 @@ export class YawlCancellationManager {
     return cancelled;
   }
 
+  /**
+   *
+   */
   _cancelAllWorkItemsForTask(taskId, reason) {
     const workItemIds = this.workItemsByTask.get(taskId);
     if (!workItemIds) return;
@@ -327,6 +351,9 @@ export class YawlCancellationManager {
   // TIMEOUT ENFORCEMENT
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   _startTimeoutEnforcement(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem) return;
@@ -338,6 +365,9 @@ export class YawlCancellationManager {
     this.timeoutHandles.set(workItemId, handle);
   }
 
+  /**
+   *
+   */
   _handleTimeout(workItemId) {
     const workItem = this.workItems.get(workItemId);
     if (!workItem || workItem.state !== 'executing') return;
@@ -363,6 +393,9 @@ export class YawlCancellationManager {
     this.cancelWorkItem(workItemId, 'timeout');
   }
 
+  /**
+   *
+   */
   _clearTimeout(workItemId) {
     const handle = this.timeoutHandles.get(workItemId);
     if (handle) {
@@ -375,6 +408,9 @@ export class YawlCancellationManager {
   // CIRCUIT BREAKER MANAGEMENT
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   _getOrCreateCircuitBreaker(taskId) {
     if (!this.circuitBreakers.has(taskId)) {
       const breaker = new TaskCircuitBreaker({
@@ -392,6 +428,9 @@ export class YawlCancellationManager {
     return this.circuitBreakers.get(taskId);
   }
 
+  /**
+   *
+   */
   enableTask(taskId) {
     const breaker = this.circuitBreakers.get(taskId);
     if (breaker) {
@@ -403,12 +442,18 @@ export class YawlCancellationManager {
     }
   }
 
+  /**
+   *
+   */
   isTaskEnabled(taskId) {
     const breaker = this.circuitBreakers.get(taskId);
     if (!breaker) return true;
     return breaker.allowExecution();
   }
 
+  /**
+   *
+   */
   getCircuitBreakerState(taskId) {
     const breaker = this.circuitBreakers.get(taskId);
     return breaker ? breaker.getState() : null;
@@ -418,12 +463,18 @@ export class YawlCancellationManager {
   // CANCELLATION HOOKS
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   registerCancellationHook(hook) {
     if (typeof hook === 'function') {
       this.cancellationHooks.push(hook);
     }
   }
 
+  /**
+   *
+   */
   _invokeCancellationHooks(workItem, reason) {
     for (const hook of this.cancellationHooks) {
       try {
@@ -438,10 +489,16 @@ export class YawlCancellationManager {
   // TASK DEPENDENCIES
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   setTaskDependencies(taskId, downstreamTaskIds) {
     this.taskDependencies.set(taskId, downstreamTaskIds);
   }
 
+  /**
+   *
+   */
   getTaskDependencies(taskId) {
     return this.taskDependencies.get(taskId) || [];
   }
@@ -450,10 +507,16 @@ export class YawlCancellationManager {
   // QUERYING & TIME-TRAVEL
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   getWorkItem(workItemId) {
     return this.workItems.get(workItemId);
   }
 
+  /**
+   *
+   */
   getWorkItemsForTask(taskId) {
     const ids = this.workItemsByTask.get(taskId);
     if (!ids) return [];
@@ -462,6 +525,9 @@ export class YawlCancellationManager {
       .filter(wi => wi !== undefined);
   }
 
+  /**
+   *
+   */
   getWorkItemsForCase(caseId) {
     const ids = this.workItemsByCase.get(caseId);
     if (!ids) return [];
@@ -470,6 +536,9 @@ export class YawlCancellationManager {
       .filter(wi => wi !== undefined);
   }
 
+  /**
+   *
+   */
   getStateAtTime(timestamp) {
     const receipts = this.receiptLogger.getReceiptsAtTime(timestamp);
 
@@ -507,6 +576,9 @@ export class YawlCancellationManager {
   // STATISTICS
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   getStats() {
     const workItemsByState = {};
     for (const wi of this.workItems.values()) {
@@ -541,6 +613,9 @@ export class YawlCancellationManager {
   // CLEANUP
   // --------------------------------------------------------------------------
 
+  /**
+   *
+   */
   terminate(reason = 'workflow_terminated') {
     for (const [id, workItem] of this.workItems) {
       if (workItem.state === 'executing' || workItem.state === 'enabled' || workItem.state === 'pending') {
@@ -554,6 +629,9 @@ export class YawlCancellationManager {
     this.timeoutHandles.clear();
   }
 
+  /**
+   *
+   */
   export() {
     return {
       workItems: Array.from(this.workItems.values()).map(wi => ({
@@ -572,6 +650,9 @@ export class YawlCancellationManager {
     };
   }
 
+  /**
+   *
+   */
   clear() {
     this.terminate();
     this.workItems.clear();

@@ -114,3 +114,30 @@ export function createEnhancedEngine(options = {}) {
 export function createInjectionEngine(injectionConfig = {}) {
   return initializeInjection(injectionConfig);
 }
+
+// RDF TEMPLATE SYSTEM EXPORTS (NEW)
+// RDF-aware template engine with @unrdf/core integration
+export {
+  RdfTemplateEngine,
+  createRdfTemplateEngine,
+  renderRdfTemplate,
+  RdfTemplateEngineConfigSchema,
+  RdfRenderContextSchema,
+  SparqlTemplateSchema,
+} from './rdf/index.js';
+
+// RDF template filters
+export {
+  rdfTemplateFilters,
+  toTurtle,
+  toSparql,
+  rdfPrefix,
+  blankNode,
+  literal,
+} from './rdf/filters.js';
+
+// RDF engine factory
+export async function createRdfEngine(config = {}) {
+  const { RdfTemplateEngine } = await import('./rdf/index.js');
+  return new RdfTemplateEngine(config);
+}

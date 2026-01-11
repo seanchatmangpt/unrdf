@@ -1,0 +1,70 @@
+{#
+  SPARQL Queries Template
+
+  Generates a collection of SPARQL queries with metadata.
+
+  Expected frontmatter variables:
+  - title: Query collection title (required)
+  - description: Collection description (optional)
+  - queries: Array of query definitions (required)
+    - name: Query name/identifier
+    - description: Query description
+    - type: Query type (SELECT, CONSTRUCT, ASK, DESCRIBE)
+    - prefixes: Object with prefix mappings (optional)
+    - variables: Array of variable names for SELECT (optional)
+    - where: Array of WHERE clause patterns
+    - orderBy: Array of ORDER BY variables (optional)
+    - limit: LIMIT value (optional)
+    - offset: OFFSET value (optional)
+
+  Example:
+  ---
+  title: Common SPARQL Queries
+  description: Frequently used SPARQL queries
+  queries:
+    - name: getAllPersons
+      description: Retrieve all persons with their names
+      type: SELECT
+      prefixes:
+        foaf: http://xmlns.com/foaf/0.1/
+        rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+      variables:
+        - person
+        - name
+      where:
+        - "?person a foaf:Person"
+        - "?person foaf:name ?name"
+      orderBy:
+        - name
+      limit: 100
+  ---
+#}
+{# Query Collection: {{ title }} #}
+{% if description %}{# {{ description }} #}{% endif %}
+
+{% for query in queries %}
+{# Query: {{ query.name }} #}
+{% if query.description %}{# Description: {{ query.description }} #}{% endif %}
+
+{% if query.type === 'SELECT' %}SELECT {% if query.variables %}{% for v in query.variables %}?{{ v }}{% if not loop.last %} {% endif %}{% endfor %}{% else %}*{% endif %}
+{% elif query.type === 'CONSTRUCT' %}CONSTRUCT {
+{% for pattern in query.construct %}  {{ pattern }} .
+{% endfor %}}
+{% elif query.type === 'ASK' %}ASK
+{% elif query.type === 'DESCRIBE' %}DESCRIBE {% if query.resources %}{{ query.resources | join(' ') }}{% else %}?resource{% endif %}
+{% endif %}
+{% if query.prefixes %}{% for prefix, uri in query.prefixes %}PREFIX {{ prefix }}: <{{ uri }}>
+{% endfor %}{% endif %}
+WHERE {
+{% for pattern in query.where %}  {{ pattern }} .
+{% endfor %}}
+{% if query.orderBy %}ORDER BY {% for v in query.orderBy %}?{{ v }} {% endfor %}{% endif %}
+{% if query.limit %}LIMIT {{ query.limit }}{% endif %}
+{% if query.offset %}
+OFFSET {{ query.offset }}{% endif %}
+
+{% if not loop.last %}
+---
+
+{% endif %}
+{% endfor %}
