@@ -21,6 +21,10 @@
  * @module @unrdf/decision-fabric
  */
 
+import { DecisionEngine } from './engine.mjs';
+import { ParetoAnalyzer } from './pareto-analyzer.mjs';
+import { SocraticAgent } from './socratic-agent.mjs';
+
 export { DecisionEngine, DecisionOutcome, OPERATORS } from './engine.mjs';
 export { ParetoAnalyzer, Feature, createKGC4DExample } from './pareto-analyzer.mjs';
 export { SocraticAgent, Assumption, SocraticChallenge, createExampleAnalysis } from './socratic-agent.mjs';
@@ -36,10 +40,6 @@ export { BB8020Orchestrator, BB8020Result, WorkflowStepResult } from './bb8020-o
  * @returns {Object} Integrated decision fabric
  */
 export function createDecisionFabric(options = {}) {
-  const { DecisionEngine } = await import('./engine.mjs');
-  const { ParetoAnalyzer } = await import('./pareto-analyzer.mjs');
-  const { SocraticAgent } = await import('./socratic-agent.mjs');
-
   const engine = new DecisionEngine(options);
   const pareto = new ParetoAnalyzer();
   const socratic = new SocraticAgent({
