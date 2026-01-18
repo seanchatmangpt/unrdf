@@ -1067,7 +1067,7 @@ importers:
         specifier: ^4.12.0
         version: 4.12.0
       isomorphic-git:
-        specifier: ^1.35.1
+        specifier: ^1.36.1
         version: 1.36.1
     devDependencies:
       comment-parser:
@@ -1431,6 +1431,9 @@ importers:
       yaml:
         specifier: ^2.8.1
         version: 2.8.2
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
     devDependencies:
       '@amiceli/vitest-cucumber':
         specifier: ^6.2.0
