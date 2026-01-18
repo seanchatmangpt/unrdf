@@ -1026,3 +1026,94 @@ export function tryValidateReceipt(data) {
   const result = ReceiptSchema.safeParse(data);
   return result.success ? result.data : null;
 }
+
+// ============================================================================
+// DEFAULT EXPORT (All schemas and utilities)
+// ============================================================================
+
+/**
+ * Default export containing all schemas for convenient importing
+ * @example
+ * import schemas from '@unrdf/kgc-probe/types';
+ * const validated = schemas.ObservationSchema.parse(data);
+ */
+export default {
+  // Constants
+  SHA256_REGEX,
+  UUID_V4_REGEX,
+  SEMVER_REGEX,
+
+  // Schemas
+  SourceSchema,
+  BoundsSchema,
+  AuthorSchema,
+  DiatasisViewSchema,
+  FrontmatterSchema,
+  BlockTypeSchema,
+  OutputFormatSchema,
+  DeterminismLevelSchema,
+  BlockMetadataSchema,
+  QueryTypeSchema,
+  ResultBoundsSchema,
+  QueryMetadataSchema,
+  ExtractionTypeSchema,
+  ExtractMetadataSchema,
+  RenderMetadataSchema,
+  ProofTypeSchema,
+  ProofMetadataSchema,
+  DecisionSchema,
+  MerkleProofSchema,
+  ReceiptSchema,
+  DynamicSectionSchema,
+  ErrorSeveritySchema,
+  ErrorTypeSchema,
+  ProbeErrorSchema,
+  ProbeWarningSchema,
+  DomainResultSchema,
+  ProbeReportSchema,
+  ObservationSchema,
+  ObservationType,
+  ArtifactSummarySchema,
+  ArtifactSchema,
+  ArtifactType,
+  ProbeConfigSchema,
+  GuardConfigSchema,
+  StorageConfigSchema,
+  AgentSchema,
+  GuardViolationSchema,
+  GuardViolationType,
+  DiffResultSchema,
+  DiffResultType,
+  ScanResultSchema,
+  ScanResultType,
+
+  // Factory functions
+  createFrontmatter,
+  createBounds,
+  createSource,
+  createAuthor,
+  createBlockMetadata,
+  createQueryMetadata,
+  createExtractMetadata,
+  createRenderMetadata,
+  createProofMetadata,
+  createReceipt,
+  createMerkleProof,
+  createObservation,
+  createDynamicSection,
+  createProbeError,
+  createProbeWarning,
+  createDomainResult,
+  createProbeReport,
+  createProbeConfig,
+
+  // Validation functions
+  validateObservation,
+  validateArtifact,
+  validateProbeConfig,
+  validateFrontmatter,
+  validateReceipt,
+  tryValidateObservation,
+  tryValidateFrontmatter,
+  tryValidateReceipt,
+};

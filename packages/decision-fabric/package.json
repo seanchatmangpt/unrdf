@@ -33,6 +33,7 @@
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/knowledge-engine": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/project-engine": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "@unrdf/validation": "workspace:*"
   },

@@ -19,7 +19,7 @@ const tracer = trace.getTracer('unrdf-ai-embeddings');
 /**
  * Embedding result schema
  */
-const EmbeddingResultSchema = z.object({
+const _EmbeddingResultSchema = z.object({
   entity: z.string(),
   vector: z.array(z.number()),
   dimension: z.number(),

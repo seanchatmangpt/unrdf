@@ -384,25 +384,54 @@ export class WebSocketTransport extends EventEmitter {
    * @returns {Promise<void>}
    */
   async shutdown() {
-    // Close all peer connections
-    for (const ws of this.connections.values()) {
-      ws.close();
-    }
-    this.connections.clear();
-
-    // Close server
-    if (this.server) {
-      await new Promise(resolve => {
-        this.server.close(resolve);
-      });
-    }
-
-    // Clear pending messages
+    // Clear pending messages first
     for (const pending of this.pendingMessages.values()) {
       clearTimeout(pending.timeout);
       pending.reject(new Error('Transport shutdown'));
     }
     this.pendingMessages.clear();
+
+    // Clear reconnect attempts
+    this.reconnectAttempts.clear();
+
+    // Force close all peer connections immediately
+    for (const ws of this.connections.values()) {
+      try {
+        if (ws.readyState === 0 || ws.readyState === 1) { // CONNECTING or OPEN
+          ws.terminate(); // Immediate forceful close
+        }
+      } catch (error) {
+        // Ignore close errors
+      }
+    }
+    this.connections.clear();
+    this.peers.clear();
+
+    // Close server with timeout
+    if (this.server) {
+      await Promise.race([
+        new Promise(resolve => {
+          this.server.close(() => {
+            this.server = null;
+            resolve();
+          });
+        }),
+        new Promise(resolve => setTimeout(resolve, 1000)), // 1s timeout
+      ]);
+
+      // Force close if still open
+      if (this.server) {
+        try {
+          this.server.close();
+          this.server = null;
+        } catch (error) {
+          // Ignore
+        }
+      }
+    }
+
+    // Remove all event listeners
+    this.removeAllListeners();
 
     this.emit('shutdown');
   }

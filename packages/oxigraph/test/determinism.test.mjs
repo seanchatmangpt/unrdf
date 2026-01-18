@@ -110,7 +110,7 @@ describe('Oxigraph L5 Determinism Tests', () => {
         t_ns: 1000000000000000n,
       });
 
-      const { result: store } = await createStore(ctx, { quads: [] });
+      const { result: _store } = await createStore(ctx, { quads: [] });
 
       const quad = {
         subject: { value: 'http://example.org/Alice' },

@@ -7,14 +7,13 @@
  * including throughput, latency, memory efficiency, and backpressure handling.
  */
 
-import { createReadStream, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { Readable, pipeline } from 'stream';
 import { promisify } from 'util';
 import { trace } from '@opentelemetry/api';
 import { createRDFStreamParser } from './rdf-stream-parser.mjs';
 import { createPerformanceMonitor } from './performance-monitor.mjs';
 import { createChangeFeed } from './streaming/change-feed.mjs';
-import { createStreamProcessor } from './streaming/stream-processor.mjs';
 import { dataFactory } from '@unrdf/oxigraph';
 const { namedNode, literal } = dataFactory;
 
@@ -278,7 +277,7 @@ export async function benchmarkBackpressure(config = {}) {
 
       monitor.start();
 
-      let backpressureEvents = 0;
+      let _backpressureEvents = 0;
       let processedChunks = 0;
 
       parser.on('data', (chunk) => {

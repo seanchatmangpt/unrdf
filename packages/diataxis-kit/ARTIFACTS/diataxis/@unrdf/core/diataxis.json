@@ -175,6 +175,12 @@
         "type": "export"
       },
       {
+        "description": "Export: ./utils/lockchain-writer",
+        "example": "import from \"./src/utils/lockchain-writer.mjs\"",
+        "name": "./utils/lockchain-writer",
+        "type": "export"
+      },
+      {
         "description": "Export: ./utils/sparql-utils",
         "example": "import from \"./src/utils/sparql-utils.mjs\"",
         "name": "./utils/sparql-utils",
@@ -250,5 +256,5 @@
       "title": "Getting Started with @unrdf/core"
     }
   ],
-  "version": "6.0.0-alpha.1"
+  "version": "6.0.0-rc.2"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl",
-  "version": "6.0.0",
+  "version": "6.0.0-rc.2",
   "description": "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification",
   "type": "module",
   "main": "src/index.mjs",

@@ -176,7 +176,7 @@ export async function validateGraph(data, shapes, options = {}) {
   // Convert data to dataset
   let dataDataset;
   if (Array.isArray(data)) {
-    dataDataset = data;
+    dataDataset = storeToDataset(data);
   } else if (data && typeof data.getQuads === 'function') {
     dataDataset = storeToDataset(data);
   } else {
@@ -184,7 +184,7 @@ export async function validateGraph(data, shapes, options = {}) {
   }
 
   // Run validation
-  const report = validator.validate(dataDataset);
+  const report = await validator.validate(dataDataset);
 
   // Build results
   const results = [];

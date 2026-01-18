@@ -362,19 +362,19 @@ importers:
   packages/cli:
     dependencies:
       '@unrdf/core':
-        specifier: workspace:5.0.0-beta.1
+        specifier: workspace:*
         version: link:../core
       '@unrdf/decision-fabric':
-        specifier: workspace:5.0.0-beta.1
+        specifier: workspace:*
         version: link:../decision-fabric
       '@unrdf/federation':
-        specifier: workspace:5.0.0-beta.1
+        specifier: workspace:*
         version: link:../federation
       '@unrdf/hooks':
-        specifier: workspace:5.0.0-beta.1
+        specifier: workspace:*
         version: link:../hooks
       '@unrdf/streaming':
-        specifier: workspace:5.0.0-beta.1
+        specifier: workspace:*
         version: link:../streaming
       citty:
         specifier: ^0.1.6
@@ -597,6 +597,9 @@ importers:
       '@unrdf/oxigraph':
         specifier: workspace:*
         version: link:../oxigraph
+      '@unrdf/project-engine':
+        specifier: workspace:*
+        version: link:../project-engine
       '@unrdf/streaming':
         specifier: workspace:*
         version: link:../streaming
@@ -988,6 +991,9 @@ importers:
       isomorphic-git:
         specifier: ^1.36.1
         version: 1.36.1
+      zod:
+        specifier: ^4.1.13
+        version: 4.2.1
     devDependencies:
       comment-parser:
         specifier: ^1.4.1

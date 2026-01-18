@@ -222,7 +222,7 @@ describe('DifferentialPrivacySPARQL', () => {
 
   describe('executeSELECT', () => {
     beforeEach(() => {
-      mockStore.match = async (pattern) => {
+      mockStore.match = async (_pattern) => {
         return [
           { disease: 'flu' },
           { disease: 'flu' },

@@ -14,7 +14,6 @@ import { OxigraphStore } from './store.mjs';
 import {
   withReceipt,
   createContext,
-  ReceiptProfileSchema,
   canonicalize,
   blake3Hash,
 } from '../../v6-core/src/receipt-pattern.mjs';

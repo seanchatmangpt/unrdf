@@ -8,8 +8,6 @@
  * error isolation, and performance tracking.
  */
 
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
 
 /**
@@ -437,7 +435,7 @@ export class ObservabilityManager {
         maxSize:
           typeof this.config.cacheMaxSize === 'number'
             ? this.config.cacheMaxSize
-            : (getRuntimeConfig().cacheMaxSize ?? this.metrics.cacheStats.size),
+            : this.metrics.cacheStats.size,
       },
       backpressure: this.metrics.backpressure,
     });

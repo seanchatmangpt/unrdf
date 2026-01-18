@@ -41,12 +41,8 @@ export default defineConfig({
     reporters: ['default'],
     isolate: true,
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        maxForks: 4,
-        minForks: 1
-      }
-    },
+    maxForks: 4,
+    minForks: 1,
     bail: 0,
     silent: false
   }

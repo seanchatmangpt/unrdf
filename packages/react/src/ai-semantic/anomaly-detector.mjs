@@ -437,7 +437,7 @@ export class AnomalyDetector {
    * @returns {Array<Object>} Anomalies
    * @private
    */
-  _detectDomainRangeViolations(store, _options) {
+  _detectDomainRangeViolations(_store, _options) {
     // This is a simplified placeholder
     // Real implementation would check against RDFS/OWL ontology
     return [];
@@ -450,7 +450,7 @@ export class AnomalyDetector {
    * @returns {Array<Object>} Anomalies
    * @private
    */
-  _detectCardinalityViolations(store, _options) {
+  _detectCardinalityViolations(_store, _options) {
     // This is a simplified placeholder
     // Real implementation would check against OWL cardinality restrictions
     return [];

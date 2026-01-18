@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/oxigraph",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.2",
   "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
   "type": "module",
   "main": "src/index.mjs",

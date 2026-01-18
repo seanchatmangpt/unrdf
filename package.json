@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "6.0.0-rc.1",
+  "version": "6.0.0-rc.2",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",

@@ -231,7 +231,7 @@ async function runCompilationPipeline({
   engine,
   cacheDir,
   passes,
-  projectDir,
+  _projectDir,
   inputTexPath,
   lockfile,
 }) {

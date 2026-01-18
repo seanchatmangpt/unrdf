@@ -98,7 +98,7 @@ describe('Daemon CLI Commands', () => {
     });
 
     it('all subcommands should have handlers', () => {
-      for (const [name, cmd] of Object.entries(daemonCommand.subCommands)) {
+      for (const [_name, cmd] of Object.entries(daemonCommand.subCommands)) {
         expect(cmd.handler || cmd.run).toBeDefined();
       }
     });

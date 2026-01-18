@@ -35,7 +35,7 @@ export { BB8020Orchestrator, BB8020Result, WorkflowStepResult } from './bb8020-o
  * @param {Object} options.hookRegistry - Hook registry (from @unrdf/hooks)
  * @returns {Object} Integrated decision fabric
  */
-export function createDecisionFabric(options = {}) {
+export async function createDecisionFabric(options = {}) {
   const { DecisionEngine } = await import('./engine.mjs');
   const { ParetoAnalyzer } = await import('./pareto-analyzer.mjs');
   const { SocraticAgent } = await import('./socratic-agent.mjs');

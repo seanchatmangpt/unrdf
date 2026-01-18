@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-ai",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.2",
   "description": "AI-powered workflow optimization using TensorFlow.js and YAWL patterns",
   "type": "module",
   "main": "src/index.mjs",

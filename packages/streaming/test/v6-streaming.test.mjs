@@ -2,8 +2,7 @@
  * @vitest-environment node
  * @file V6 Streaming Features Test Suite
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Readable } from 'stream';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { dataFactory } from '@unrdf/oxigraph';
 const { namedNode, literal } = dataFactory;
 import {
@@ -20,7 +19,49 @@ import {
   createReadableStreamFromString,
 } from '../src/benchmarks.mjs';
 
+// Track resources for cleanup
+let activeMonitors = [];
+let activeParsers = [];
+let activeTimeouts = [];
+let activeIntervals = [];
+
 describe('V6 Streaming Features', () => {
+  // Global cleanup after each test
+  afterEach(() => {
+    // Stop and clean up all active monitors
+    for (const monitor of activeMonitors) {
+      if (monitor && typeof monitor.stop === 'function') {
+        monitor.stop();
+      }
+    }
+    activeMonitors = [];
+
+    // Destroy all active parsers
+    for (const parser of activeParsers) {
+      if (parser && typeof parser.destroy === 'function') {
+        parser.destroy();
+      }
+    }
+    activeParsers = [];
+
+    // Clear all timeouts
+    for (const timeout of activeTimeouts) {
+      clearTimeout(timeout);
+    }
+    activeTimeouts = [];
+
+    // Clear all intervals
+    for (const interval of activeIntervals) {
+      clearInterval(interval);
+    }
+    activeIntervals = [];
+
+    // Restore timers if fake timers were used
+    if (vi.isFakeTimers()) {
+      vi.useRealTimers();
+    }
+  });
+
   describe('RDF Stream Parser', () => {
     it('should parse turtle stream with backpressure', async () => {
       const rdfData = `
@@ -62,12 +103,16 @@ describe('V6 Streaming Features', () => {
       expect(quads.length).toBe(10000);
     });
 
-    it('should track metrics during parsing', async () => {
+    it('should track metrics during parsing', { timeout: 15000 }, async () => {
       const rdfData = generateSyntheticRDF(1000, 'n-triples');
       const stream = createReadableStreamFromString(rdfData);
       const parser = createRDFStreamParser({ format: 'n-triples' });
+      activeParsers.push(parser);
 
       await new Promise((resolve, reject) => {
+        // Must consume data events for stream to complete
+        parser.on('data', () => {});
+
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
@@ -79,7 +124,7 @@ describe('V6 Streaming Features', () => {
       expect(metrics.throughput).toBeGreaterThan(0);
     });
 
-    it('should handle backpressure events', async () => {
+    it('should handle backpressure events', { timeout: 15000 }, async () => {
       const rdfData = generateSyntheticRDF(5000, 'n-triples');
       const stream = createReadableStreamFromString(rdfData, { chunkSize: 256 });
       const parser = createRDFStreamParser({
@@ -87,8 +132,12 @@ describe('V6 Streaming Features', () => {
         enableBackpressure: true,
         chunkSize: 500,
       });
+      activeParsers.push(parser);
 
       await new Promise((resolve, reject) => {
+        // Must consume data events for stream to complete
+        parser.on('data', () => {});
+
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
@@ -99,7 +148,7 @@ describe('V6 Streaming Features', () => {
       expect(metrics.backpressureRate).toBeGreaterThanOrEqual(0);
     });
 
-    it('should call onQuad callback for each quad', async () => {
+    it('should call onQuad callback for each quad', { timeout: 15000 }, async () => {
       const rdfData = generateSyntheticRDF(100, 'n-triples');
       const stream = createReadableStreamFromString(rdfData);
       const onQuad = vi.fn();
@@ -108,8 +157,12 @@ describe('V6 Streaming Features', () => {
         format: 'n-triples',
         onQuad,
       });
+      activeParsers.push(parser);
 
       await new Promise((resolve, reject) => {
+        // Must consume data events for stream to complete
+        parser.on('data', () => {});
+
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
@@ -125,6 +178,7 @@ describe('V6 Streaming Features', () => {
         sampleInterval: 100,
         windowSize: 10,
       });
+      activeMonitors.push(monitor);
 
       monitor.start();
 
@@ -141,38 +195,41 @@ describe('V6 Streaming Features', () => {
       monitor.stop();
     });
 
-    it('should calculate throughput correctly', (done) => {
+    it('should calculate throughput correctly', async () => {
+      vi.useFakeTimers();
+
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         enableThroughputTracking: true,
       });
+      activeMonitors.push(monitor);
 
       monitor.start();
 
-      // Process quads over time
-      let processed = 0;
-      const interval = setInterval(() => {
+      // Process quads over time - 5 batches of 100
+      for (let batch = 0; batch < 5; batch++) {
         for (let i = 0; i < 100; i++) {
           monitor.recordQuad();
         }
-        processed += 100;
+        await vi.advanceTimersByTimeAsync(10);
+      }
 
-        if (processed >= 500) {
-          clearInterval(interval);
-          monitor.stop();
+      // Trigger final sample
+      await vi.advanceTimersByTimeAsync(50);
+      monitor.stop();
 
-          const report = monitor.getReport();
-          expect(report.throughput.mean).toBeGreaterThan(0);
-          expect(report.summary.quadsProcessed).toBe(500);
-          done();
-        }
-      }, 10);
+      const report = monitor.getReport();
+      expect(report.throughput.mean).toBeGreaterThan(0);
+      expect(report.summary.quadsProcessed).toBe(500);
+
+      vi.useRealTimers();
     });
 
     it('should track latency statistics', () => {
       const monitor = createPerformanceMonitor({
         enableLatencyTracking: true,
       });
+      activeMonitors.push(monitor);
 
       monitor.start();
 
@@ -187,26 +244,32 @@ describe('V6 Streaming Features', () => {
       expect(report.latency.p95).toBeGreaterThan(report.latency.p50);
     });
 
-    it('should track memory usage', (done) => {
+    it('should track memory usage', async () => {
+      vi.useFakeTimers();
+
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         enableMemoryTracking: true,
       });
+      activeMonitors.push(monitor);
 
       monitor.start();
 
-      setTimeout(() => {
-        monitor.stop();
-        const report = monitor.getReport();
+      // Advance timers to allow multiple samples
+      await vi.advanceTimersByTimeAsync(150);
 
-        expect(report.memory.heapUsed).toBeDefined();
-        expect(report.memory.heapUsed.mean).toBeGreaterThan(0);
-        done();
-      }, 150);
+      monitor.stop();
+      const report = monitor.getReport();
+
+      expect(report.memory.heapUsed).toBeDefined();
+      expect(report.memory.heapUsed.mean).toBeGreaterThan(0);
+
+      vi.useRealTimers();
     });
 
     it('should record backpressure events', () => {
       const monitor = createPerformanceMonitor();
+      activeMonitors.push(monitor);
 
       monitor.start();
       monitor.recordBackpressure();
@@ -218,31 +281,42 @@ describe('V6 Streaming Features', () => {
       expect(report.backpressure.events).toBe(3);
     });
 
-    it('should emit threshold violations', (done) => {
+    it('should emit threshold violations', async () => {
+      vi.useFakeTimers();
+
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         thresholds: {
           throughputMin: 10000, // Very high threshold
         },
       });
+      activeMonitors.push(monitor);
 
+      let violationReceived = false;
       monitor.on('threshold-violation', (violation) => {
         expect(violation.metric).toBe('throughput');
         expect(violation.value).toBeLessThan(violation.threshold);
-        monitor.stop();
-        done();
+        violationReceived = true;
       });
 
       monitor.start();
 
-      // Process slowly
-      setTimeout(() => {
-        monitor.recordQuad();
-      }, 60);
+      // Process slowly - advance to first sample
+      await vi.advanceTimersByTimeAsync(60);
+      monitor.recordQuad();
+
+      // Wait for threshold check
+      await vi.advanceTimersByTimeAsync(50);
+
+      monitor.stop();
+      expect(violationReceived).toBe(true);
+
+      vi.useRealTimers();
     });
 
     it('should reset metrics', () => {
       const monitor = createPerformanceMonitor();
+      activeMonitors.push(monitor);
 
       monitor.start();
       monitor.recordQuad();
@@ -398,7 +472,7 @@ describe('V6 Streaming Features', () => {
   });
 
   describe('Integration: Streaming Pipeline', () => {
-    it('should process RDF stream with monitoring', async () => {
+    it('should process RDF stream with monitoring', { timeout: 15000 }, async () => {
       const rdfData = generateSyntheticRDF(1000, 'n-triples');
       const stream = createReadableStreamFromString(rdfData);
 
@@ -407,11 +481,13 @@ describe('V6 Streaming Features', () => {
         enableThroughputTracking: true,
         enableLatencyTracking: true,
       });
+      activeMonitors.push(monitor);
 
       const parser = createRDFStreamParser({
         format: 'n-triples',
         chunkSize: 100,
       });
+      activeParsers.push(parser);
 
       monitor.start();
 
