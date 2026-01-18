@@ -5,11 +5,10 @@
  * Expected Runtime: <50ms
  */
 
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
-test('Proof 05: Atomic Delta (SMOKE)', async (t) => {
-  await t.test('Successful delta applies all operations', () => {
+describe('Proof 05: Atomic Delta (SMOKE)', () => {
+  it('Successful delta applies all operations', () => {
     const store = new Set(['existing-1']);
 
     const delta = {
@@ -25,13 +24,13 @@ test('Proof 05: Atomic Delta (SMOKE)', async (t) => {
       }
     }
 
-    assert.equal(store.size, 3);
-    assert.ok(store.has('new-1'));
-    assert.ok(store.has('new-2'));
+    expect(store.size).toBe(3);
+    expect(store.has('new-1')).toBe(true);
+    expect(store.has('new-2')).toBe(true);
     console.log('  ✅ All operations applied');
   });
 
-  await t.test('Failed delta rolls back ALL operations', () => {
+  it('Failed delta rolls back ALL operations', () => {
     const store = new Set(['existing-1']);
     const snapshot = new Set(store);
 
@@ -55,12 +54,12 @@ test('Proof 05: Atomic Delta (SMOKE)', async (t) => {
       snapshot.forEach(item => store.add(item));
     }
 
-    assert.equal(store.size, 1);
-    assert.ok(!store.has('new-1'));
+    expect(store.size).toBe(1);
+    expect(store.has('new-1')).toBe(false);
     console.log('  ✅ Failed delta rolled back ALL operations');
   });
 
-  await t.test('V6 Pattern: Receipt on success or denial', () => {
+  it('V6 Pattern: Receipt on success or denial', () => {
     function applyDeltaWithReceipt(store, delta) {
       const snapshot = new Set(store);
 
@@ -99,11 +98,9 @@ test('Proof 05: Atomic Delta (SMOKE)', async (t) => {
 
     const result = applyDeltaWithReceipt(store, failingDelta);
 
-    assert.equal(result.applied, false);
-    assert.equal(result.receipt.decision, 'DENY');
-    assert.equal(store.size, 0);
+    expect(result.applied).toBe(false);
+    expect(result.receipt.decision).toBe('DENY');
+    expect(store.size).toBe(0);
     console.log('  ✅ V6 Pattern: Receipt issued on success/denial');
   });
 });
-
-console.log('✅ Proof 05 PASSED: Atomic delta application (all-or-none)');

@@ -35,7 +35,7 @@ export const InvariantSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
-  predicate: z.function().args(z.any()).returns(z.boolean()),
+  predicate: z.unknown(), // Function type - validation skipped
 });
 
 /**
@@ -46,15 +46,7 @@ export const GuardSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
-  condition: z.function()
-    .args(
-      z.object({
-        agent: z.string(),
-        action: z.string(),
-        target: z.any(),
-      })
-    )
-    .returns(z.promise(z.boolean())),
+  condition: z.unknown(), // Function type - validation skipped
 });
 
 /**
@@ -64,13 +56,7 @@ export const GuardSchema = z.object({
 export const UniverseSchema = z.object({
   id: z.string().uuid(),
   schema: z.string().min(1), // RDF schema IRI or identifier
-  reconcile: z.function()
-    .args(z.any(), z.array(z.any()))
-    .returns(z.promise(z.object({
-      consequences: z.array(z.any()),
-      artifacts: z.record(z.any()),
-      errors: z.array(z.string()).default([]),
-    }))),
+  reconcile: z.unknown(), // Function type - validation skipped
   invariants: z.array(InvariantSchema).default([]),
   guards: z.array(GuardSchema).default([]),
   metadata: UniverseMetadataSchema,
@@ -101,7 +87,8 @@ export const ReceiptSchema = z.object({
   forkParents: z.array(z.string()).default([]), // Parent scene IDs for forks
   receiptHash: z.string(), // BLAKE3 hash of entire receipt
   signature: z.string().optional(), // Optional cryptographic signature
-});
+  previousReceiptHash: z.union([z.string(), z.null()]).optional(), // Link to previous receipt
+}).strict(false); // Allow additional properties
 
 /**
  * Zod schema for Scene envelope
@@ -127,12 +114,8 @@ export const BridgeSchema = z.object({
   id: z.string().uuid(),
   sourceUniverseId: z.string().uuid(),
   targetUniverseId: z.string().uuid(),
-  typeCoercion: z.function()
-    .args(z.any())
-    .returns(z.any()), // Type transformation function
-  invariantPreservation: z.function()
-    .args(z.any())
-    .returns(z.promise(z.boolean())), // Verify invariants hold post-coercion
+  typeCoercion: z.unknown(), // Type transformation function - validation skipped
+  invariantPreservation: z.unknown(), // Verify invariants hold post-coercion - validation skipped
   accessGrants: z.array(z.object({
     agent: z.string(),
     permission: z.enum(['read', 'write', 'execute']),

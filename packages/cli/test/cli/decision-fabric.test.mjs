@@ -11,7 +11,6 @@
  * @module cli/test/decision-fabric
  */
 
-import { describe, it } from '@jest/globals';
 import { scenario } from 'citty-test-utils';
 import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';

@@ -71,7 +71,7 @@ export const createVariableSchema = {
 /**
  * Schema for createQuad
  */
-export const createQuadParamsSchema = z.tuple([z.unknown(), z.unknown(), z.unknown(), z.unknown()]);
+export const createQuadParamsSchema = z.array(z.unknown()).length(4);
 
 export const createQuadReturnSchema = z.unknown();
 
