@@ -1,15 +1,16 @@
 {
-  "name": "@unrdf/knowledge-engine",
-  "version": "5.0.1",
-  "description": "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)",
+  "name": "@unrdf/tera-engine",
+  "version": "1.0.0",
+  "description": "Tera-compatible template engine for UNRDF with RDF/Turtle and TOML integration",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./query": "./src/query.mjs",
-    "./canonicalize": "./src/canonicalize.mjs",
-    "./parse": "./src/parse.mjs",
-    "./ai-search": "./src/ai-enhanced-search.mjs"
+    "./engine": "./src/engine.mjs",
+    "./loaders": "./src/loaders.mjs",
+    "./filters": "./src/filters.mjs",
+    "./schemas": "./src/schemas.mjs",
+    "./api": "./src/api.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -22,30 +23,38 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "node build.config.mjs",
+    "build": "echo 'No build step for ESM'",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
     "format:check": "prettier --check src/ test/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
-    "dev": "echo 'Development mode for @unrdf/knowledge-engine'"
+    "dev": "echo 'Development mode for @unrdf/tera-engine'"
   },
   "keywords": [
     "rdf",
+    "template",
+    "tera",
+    "toml",
+    "turtle",
     "knowledge-engine",
-    "inference",
-    "reasoning",
-    "rules"
+    "unrdf"
   ],
   "dependencies": {
-    "@iarna/toml": "^2.2.5",
-    "@noble/hashes": "^1.5.0",
+    "zod": "^3.22.4",
+    "toml": "^3.0.0"
+  },
+  "peerDependencies": {
     "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
-    "@xenova/transformers": "^2.17.2",
-    "eyereasoner": "^18.23.0",
-    "zod": "^3.25.76"
+    "@unrdf/oxigraph": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@unrdf/core": {
+      "optional": true
+    },
+    "@unrdf/oxigraph": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
@@ -57,7 +66,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/unrdf/unrdf.git",
-    "directory": "packages/knowledge-engine"
+    "directory": "packages/tera-engine"
   },
   "bugs": {
     "url": "https://github.com/unrdf/unrdf/issues"

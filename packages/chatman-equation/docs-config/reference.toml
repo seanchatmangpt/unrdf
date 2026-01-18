@@ -1,0 +1,781 @@
+# Chatman Equation - Reference Documentation Configuration
+# Technical API documentation and specifications
+
+[metadata]
+category = "reference"
+output_dir = "docs/diataxis/chatman-equation/reference"
+template = "reference.tera"
+
+# API Reference 1: KGCStore Core API
+[[api]]
+id = "kgc-store-api"
+title = "KGCStore API Reference"
+version = "6.0.0-rc.1"
+
+[api.class]
+name = "KGCStore"
+description = "4D state management with S(t) = ⟨O, t_ns, V, G⟩"
+extends = "EventEmitter"
+
+[[api.class.constructor]]
+signature = "new KGCStore(options)"
+description = "Create a new 4D knowledge graph store"
+
+[[api.class.constructor.parameters]]
+name = "options"
+type = "Object"
+required = true
+
+[[api.class.constructor.parameters.properties]]
+name = "gitDir"
+type = "string"
+required = true
+description = "Path to Git repository for G dimension"
+example = "'.kgc'"
+
+[[api.class.constructor.parameters.properties]]
+name = "nodeId"
+type = "string"
+required = true
+description = "Unique identifier for this node (for V dimension)"
+example = "'node1'"
+
+[[api.class.constructor.parameters.properties]]
+name = "initRepo"
+type = "boolean"
+required = false
+default = "false"
+description = "Initialize Git repository if it doesn't exist"
+
+[[api.class.constructor.parameters.properties]]
+name = "eventLogPath"
+type = "string"
+required = false
+default = "'{gitDir}/events.log'"
+description = "Path to event log file"
+
+[[api.class.constructor.parameters.properties]]
+name = "privateKey"
+type = "string"
+required = false
+description = "Private key for signing receipts (PEM format)"
+
+[[api.class.constructor.example]]
+code = """
+import { KGCStore } from '@unrdf/kgc-4d';
+
+const store = new KGCStore({
+  gitDir: '.kgc',
+  nodeId: 'production-1',
+  initRepo: true,
+  privateKey: process.env.KGC_PRIVATE_KEY
+});
+
+await store.initialize();
+"""
+
+[[api.methods]]
+name = "initialize"
+signature = "async initialize(): Promise<void>"
+description = "Initialize the store (create Git repo, load state)"
+returns = "Promise<void>"
+throws = ["Error - If Git initialization fails"]
+
+[[api.methods.example]]
+code = """
+await store.initialize();
+console.log('Store initialized');
+"""
+
+[[api.methods]]
+name = "appendEvent"
+signature = "async appendEvent(event): Promise<EventResult>"
+description = "Append event to log, updating all 4 dimensions"
+returns = "Promise<EventResult>"
+
+[[api.methods.parameters]]
+name = "event"
+type = "Object"
+required = true
+
+[[api.methods.parameters.properties]]
+name = "operation"
+type = "'insert' | 'delete' | 'update'"
+required = true
+description = "RDF operation type"
+
+[[api.methods.parameters.properties]]
+name = "quads"
+type = "Quad[]"
+required = true
+description = "RDF quads to insert/delete"
+
+[[api.methods.parameters.properties]]
+name = "timestamp"
+type = "bigint"
+required = false
+description = "Nanosecond timestamp (auto-generated if omitted)"
+
+[[api.methods.parameters.properties]]
+name = "metadata"
+type = "Object"
+required = false
+description = "Custom metadata for audit trail"
+
+[[api.methods.returns]]
+type = "EventResult"
+
+[[api.methods.returns.properties]]
+name = "operation"
+type = "string"
+description = "Operation type"
+
+[[api.methods.returns.properties]]
+name = "timestamp"
+type = "bigint"
+description = "Nanosecond timestamp (t_ns dimension)"
+
+[[api.methods.returns.properties]]
+name = "vectorClock"
+type = "Map<string, number>"
+description = "Updated vector clock (V dimension)"
+
+[[api.methods.returns.properties]]
+name = "stateHash"
+type = "string"
+description = "SHA-256 hash of resulting state"
+
+[[api.methods.returns.properties]]
+name = "eventId"
+type = "string"
+description = "Unique event identifier"
+
+[[api.methods.example]]
+code = """
+const result = await store.appendEvent({
+  operation: 'insert',
+  quads: [
+    {
+      subject: 'http://example.org/alice',
+      predicate: 'http://xmlns.com/foaf/0.1/name',
+      object: '"Alice"'
+    }
+  ],
+  metadata: {
+    actor: 'user@example.com',
+    reason: 'User registration'
+  }
+});
+
+console.log('Event appended:');
+console.log('  Timestamp (t_ns):', result.timestamp);
+console.log('  Vector clock (V):', result.vectorClock);
+console.log('  State hash:', result.stateHash);
+"""
+
+[[api.methods]]
+name = "getCurrentState"
+signature = "async getCurrentState(): Promise<State4D>"
+description = "Get current state across all 4 dimensions"
+returns = "Promise<State4D>"
+
+[[api.methods.returns]]
+type = "State4D"
+
+[[api.methods.returns.properties]]
+name = "O"
+type = "Quad[]"
+description = "Observable RDF state"
+
+[[api.methods.returns.properties]]
+name = "t_ns"
+type = "bigint"
+description = "Current nanosecond timestamp"
+
+[[api.methods.returns.properties]]
+name = "V"
+type = "Map<string, number>"
+description = "Current vector clock"
+
+[[api.methods.returns.properties]]
+name = "G"
+type = "string | null"
+description = "Git SHA of last freeze (null if never frozen)"
+
+[[api.methods.example]]
+code = """
+const state = await store.getCurrentState();
+
+console.log('Current state S(t):');
+console.log('  O:', state.O.length, 'quads');
+console.log('  t_ns:', state.t_ns);
+console.log('  V:', state.V);
+console.log('  G:', state.G || 'not frozen');
+"""
+
+[[api.methods]]
+name = "freeze"
+signature = "async freeze(options): Promise<FreezeResult>"
+description = "Freeze state to Git, creating immutable snapshot (G dimension)"
+returns = "Promise<FreezeResult>"
+
+[[api.methods.parameters]]
+name = "options"
+type = "Object"
+required = true
+
+[[api.methods.parameters.properties]]
+name = "message"
+type = "string"
+required = true
+description = "Git commit message"
+
+[[api.methods.parameters.properties]]
+name = "author"
+type = "string"
+required = true
+description = "Git author (email)"
+
+[[api.methods.parameters.properties]]
+name = "sign"
+type = "boolean"
+required = false
+default = "false"
+description = "Generate cryptographic signature"
+
+[[api.methods.parameters.properties]]
+name = "compress"
+type = "boolean"
+required = false
+default = "false"
+description = "Enable delta compression"
+
+[[api.methods.parameters.properties]]
+name = "metadata"
+type = "Object"
+required = false
+description = "Custom freeze metadata"
+
+[[api.methods.returns]]
+type = "FreezeResult"
+
+[[api.methods.returns.properties]]
+name = "commitSHA"
+type = "string"
+description = "Git commit SHA (G dimension value)"
+
+[[api.methods.returns.properties]]
+name = "stateHash"
+type = "string"
+description = "SHA-256 hash of frozen state"
+
+[[api.methods.returns.properties]]
+name = "timestamp"
+type = "bigint"
+description = "Freeze timestamp (t_ns)"
+
+[[api.methods.returns.properties]]
+name = "vectorClock"
+type = "Map<string, number>"
+description = "Vector clock at freeze time (V)"
+
+[[api.methods.returns.properties]]
+name = "receipt"
+type = "Receipt"
+description = "Cryptographic receipt"
+
+[[api.methods.example]]
+code = """
+const freezeResult = await store.freeze({
+  message: 'End of trading day',
+  author: 'system@example.com',
+  sign: true,
+  metadata: {
+    type: 'daily-snapshot',
+    eventCount: 12345
+  }
+});
+
+console.log('Frozen state:');
+console.log('  Git SHA (G):', freezeResult.commitSHA);
+console.log('  State hash:', freezeResult.stateHash);
+console.log('  Receipt:', freezeResult.receipt);
+"""
+
+[[api.methods]]
+name = "reconstructState"
+signature = "async reconstructState(options): Promise<State4D>"
+description = "Reconstruct state at specific timestamp via event replay"
+returns = "Promise<State4D>"
+
+[[api.methods.parameters]]
+name = "options"
+type = "Object"
+required = true
+
+[[api.methods.parameters.properties]]
+name = "timestamp"
+type = "bigint"
+required = true
+description = "Target nanosecond timestamp"
+
+[[api.methods.parameters.properties]]
+name = "useSnapshots"
+type = "boolean"
+required = false
+default = "true"
+description = "Use Git snapshots for faster reconstruction"
+
+[[api.methods.example]]
+code = """
+const oneDayAgo = BigInt(Date.now() - 86400000) * BigInt(1000000);
+
+const pastState = await store.reconstructState({
+  timestamp: oneDayAgo,
+  useSnapshots: true
+});
+
+console.log('State 24 hours ago:');
+console.log('  Observable:', pastState.O.length, 'quads');
+console.log('  Vector clock:', pastState.V);
+"""
+
+[[api.methods]]
+name = "reconstructFromGit"
+signature = "async reconstructFromGit(options): Promise<State4D>"
+description = "Reconstruct state from Git commit SHA"
+returns = "Promise<State4D>"
+
+[[api.methods.parameters]]
+name = "options"
+type = "Object"
+required = true
+
+[[api.methods.parameters.properties]]
+name = "commitSHA"
+type = "string"
+required = true
+description = "Git commit SHA (from freeze())"
+
+[[api.methods.example]]
+code = """
+const sha = 'a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7';
+
+const reconstructed = await store.reconstructFromGit({
+  commitSHA: sha
+});
+
+console.log('Reconstructed from Git:');
+console.log('  O:', reconstructed.O.length, 'quads');
+console.log('  G:', reconstructed.G); // Same as sha
+"""
+
+[[api.methods]]
+name = "merge"
+signature = "async merge(options): Promise<State4D>"
+description = "Merge distributed states using vector clocks"
+returns = "Promise<State4D>"
+
+[[api.methods.parameters]]
+name = "options"
+type = "Object"
+required = true
+
+[[api.methods.parameters.properties]]
+name = "states"
+type = "State4D[]"
+required = true
+description = "States to merge (from other nodes)"
+
+[[api.methods.parameters.properties]]
+name = "strategy"
+type = "'lww' | 'mvr' | 'custom'"
+required = false
+default = "'lww'"
+description = "Conflict resolution strategy"
+
+[[api.methods.parameters.properties]]
+name = "resolveConflict"
+type = "(quad1, quad2) => Quad"
+required = false
+description = "Custom conflict resolver (if strategy='custom')"
+
+[[api.methods.example]]
+code = """
+const node2State = await node2.getCurrentState();
+
+const merged = await node1.merge({
+  states: [node2State],
+  strategy: 'lww',
+});
+
+console.log('Merged state:');
+console.log('  V:', merged.V);
+// Component-wise max: { node1: 5, node2: 8 }
+"""
+
+[[api.methods]]
+name = "verifyReceipt"
+signature = "async verifyReceipt(receipt): Promise<boolean>"
+description = "Verify cryptographic receipt integrity"
+returns = "Promise<boolean>"
+
+[[api.methods.parameters]]
+name = "receipt"
+type = "Receipt"
+required = true
+
+[[api.methods.example]]
+code = """
+const receipt = freezeResult.receipt;
+
+const isValid = await store.verifyReceipt(receipt);
+
+if (!isValid) {
+  throw new Error('Receipt verification failed!');
+}
+
+console.log('✓ Receipt verified');
+"""
+
+[[api.methods]]
+name = "query"
+signature = "async query(sparql): Promise<QueryResult[]>"
+description = "Execute SPARQL query on current state"
+returns = "Promise<QueryResult[]>"
+
+[[api.methods.parameters]]
+name = "sparql"
+type = "string"
+required = true
+description = "SPARQL query string"
+
+[[api.methods.example]]
+code = """
+const results = await store.query(`
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name ?age WHERE {
+    ?person foaf:name ?name .
+    ?person foaf:age ?age .
+  }
+  ORDER BY DESC(?age)
+`);
+
+for (const row of results) {
+  console.log(`${row.name}: ${row.age}`);
+}
+"""
+
+
+# API Reference 2: Receipt Schema
+[[api]]
+id = "receipt-schema"
+title = "Receipt Schema Reference"
+version = "6.0.0-rc.1"
+
+[api.schema]
+name = "Receipt"
+description = "Cryptographic proof of state at specific timestamp"
+format = "JSON"
+
+[[api.schema.fields]]
+name = "operation"
+type = "string"
+required = true
+description = "Operation type"
+enum = ["freeze", "insert", "delete", "update", "merge"]
+example = "'freeze'"
+
+[[api.schema.fields]]
+name = "entityType"
+type = "string"
+required = true
+description = "Type of entity"
+enum = ["State", "Event", "Snapshot"]
+example = "'State'"
+
+[[api.schema.fields]]
+name = "stateHash"
+type = "string"
+required = true
+description = "SHA-256 hash of state (hex)"
+pattern = "^sha256:[0-9a-f]{64}$"
+example = "'sha256:a7f3e1c9d42b...'"
+
+[[api.schema.fields]]
+name = "timestamp"
+type = "string"
+required = true
+description = "Nanosecond timestamp (string to preserve precision)"
+pattern = "^[0-9]{19}$"
+example = "'1704067200000000000'"
+
+[[api.schema.fields]]
+name = "vectorClock"
+type = "object"
+required = true
+description = "Vector clock at time of operation"
+example = "{ 'node1': 42, 'node2': 17 }"
+
+[[api.schema.fields]]
+name = "gitSHA"
+type = "string"
+required = false
+description = "Git commit SHA (for freeze operations)"
+pattern = "^[0-9a-f]{40}$"
+example = "'a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7'"
+
+[[api.schema.fields]]
+name = "signature"
+type = "string"
+required = false
+description = "ECDSA signature (hex, if signed)"
+pattern = "^0x[0-9a-f]+$"
+example = "'0x3a7f...'"
+
+[[api.schema.fields]]
+name = "metadata"
+type = "object"
+required = false
+description = "Custom metadata"
+example = "{ 'type': 'daily-snapshot' }"
+
+[[api.schema.example]]
+format = "json"
+code = """
+{
+  "operation": "freeze",
+  "entityType": "State",
+  "stateHash": "sha256:a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7f8e1c9d4",
+  "timestamp": "1704067200000000000",
+  "vectorClock": {
+    "node1": 42,
+    "node2": 17
+  },
+  "gitSHA": "a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7",
+  "signature": "0x3a7f2e1d9c8b5a4e3d2c1b0a9f8e7d6c5b4a3e2d1c0b9a8f",
+  "metadata": {
+    "type": "daily-snapshot",
+    "environment": "production",
+    "datasetSize": 1024
+  }
+}
+"""
+
+[[api.schema.validation]]
+language = "zod"
+code = """
+import { z } from 'zod';
+
+export const ReceiptSchema = z.object({
+  operation: z.enum(['freeze', 'insert', 'delete', 'update', 'merge']),
+  entityType: z.enum(['State', 'Event', 'Snapshot']),
+  stateHash: z.string().regex(/^sha256:[0-9a-f]{64}$/),
+  timestamp: z.string().regex(/^[0-9]{19}$/),
+  vectorClock: z.record(z.string(), z.number().int().nonnegative()),
+  gitSHA: z.string().regex(/^[0-9a-f]{40}$/).optional(),
+  signature: z.string().regex(/^0x[0-9a-f]+$/).optional(),
+  metadata: z.record(z.any()).optional()
+});
+
+// Validate receipt
+const receipt = ReceiptSchema.parse(data);
+"""
+
+
+# API Reference 3: Vector Clock Operations
+[[api]]
+id = "vector-clock-api"
+title = "Vector Clock API Reference"
+version = "6.0.0-rc.1"
+
+[api.class]
+name = "VectorClock"
+description = "Causal ordering for distributed systems (V dimension)"
+
+[[api.functions]]
+name = "increment"
+signature = "increment(clock, nodeId): VectorClock"
+description = "Increment vector clock for local event"
+pure = true
+
+[[api.functions.parameters]]
+name = "clock"
+type = "VectorClock"
+description = "Current vector clock"
+
+[[api.functions.parameters]]
+name = "nodeId"
+type = "string"
+description = "ID of node generating event"
+
+[[api.functions.returns]]
+type = "VectorClock"
+description = "Updated clock with nodeId counter incremented"
+
+[[api.functions.example]]
+code = """
+import { increment } from '@unrdf/kgc-4d/vector-clock';
+
+let clock = { node1: 5, node2: 2 };
+
+clock = increment(clock, 'node1');
+// { node1: 6, node2: 2 }
+"""
+
+[[api.functions]]
+name = "merge"
+signature = "merge(clock1, clock2): VectorClock"
+description = "Merge two vector clocks (component-wise max)"
+pure = true
+
+[[api.functions.parameters]]
+name = "clock1"
+type = "VectorClock"
+
+[[api.functions.parameters]]
+name = "clock2"
+type = "VectorClock"
+
+[[api.functions.returns]]
+type = "VectorClock"
+description = "Merged clock with max of each component"
+
+[[api.functions.example]]
+code = """
+import { merge } from '@unrdf/kgc-4d/vector-clock';
+
+const c1 = { node1: 5, node2: 2 };
+const c2 = { node1: 3, node2: 8 };
+
+const merged = merge(c1, c2);
+// { node1: 5, node2: 8 } - max(5,3)=5, max(2,8)=8
+"""
+
+[[api.functions]]
+name = "compare"
+signature = "compare(clock1, clock2): 'before' | 'after' | 'concurrent' | 'equal'"
+description = "Compare causal ordering of two clocks"
+pure = true
+
+[[api.functions.returns]]
+type = "'before' | 'after' | 'concurrent' | 'equal'"
+description = "Causal relationship"
+
+[[api.functions.example]]
+code = """
+import { compare } from '@unrdf/kgc-4d/vector-clock';
+
+const c1 = { node1: 5, node2: 2 };
+const c2 = { node1: 6, node2: 2 };
+const c3 = { node1: 3, node2: 8 };
+
+compare(c1, c2); // 'before' (c1 < c2)
+compare(c2, c1); // 'after' (c2 > c1)
+compare(c1, c3); // 'concurrent' (neither dominates)
+compare(c1, c1); // 'equal'
+"""
+
+[[api.functions]]
+name = "dominates"
+signature = "dominates(clock1, clock2): boolean"
+description = "Check if clock1 causally dominates clock2"
+pure = true
+
+[[api.functions.returns]]
+type = "boolean"
+description = "True if clock1[i] >= clock2[i] for all i, with at least one >"
+
+[[api.functions.example]]
+code = """
+import { dominates } from '@unrdf/kgc-4d/vector-clock';
+
+const c1 = { node1: 5, node2: 3 };
+const c2 = { node1: 5, node2: 2 };
+
+dominates(c1, c2); // true (5>=5, 3>2)
+dominates(c2, c1); // false
+"""
+
+
+# API Reference 4: State4D Type
+[[api]]
+id = "state-4d-type"
+title = "State4D Type Reference"
+version = "6.0.0-rc.1"
+
+[api.type]
+name = "State4D"
+description = "Complete 4D state representation: S(t) = ⟨O, t_ns, V, G⟩"
+typescript = true
+
+[[api.type.properties]]
+name = "O"
+type = "Quad[]"
+description = "Observable RDF state (quads)"
+dimension = "Observable"
+equation_symbol = "O"
+
+[[api.type.properties]]
+name = "t_ns"
+type = "bigint"
+description = "Nanosecond timestamp"
+dimension = "Time"
+equation_symbol = "t_{ns}"
+
+[[api.type.properties]]
+name = "V"
+type = "Map<string, number>"
+description = "Vector clock (causality)"
+dimension = "Vector"
+equation_symbol = "\\vec{V}"
+
+[[api.type.properties]]
+name = "G"
+type = "string | null"
+description = "Git commit SHA (null if not frozen)"
+dimension = "Git"
+equation_symbol = "G"
+
+[[api.type.typescript]]
+code = """
+/**
+ * 4D State Representation
+ *
+ * Mathematical notation: S(t) = ⟨O, t_ns, V, G⟩
+ *
+ * @example
+ * const state: State4D = {
+ *   O: [
+ *     { subject: 'alice', predicate: 'foaf:name', object: '"Alice"' }
+ *   ],
+ *   t_ns: 1704067200000000000n,
+ *   V: new Map([['node1', 42]]),
+ *   G: 'a7f3e1c9d42b...'
+ * };
+ */
+export interface State4D {
+  /** Observable RDF state (O dimension) */
+  O: Quad[];
+
+  /** Nanosecond timestamp (t_ns dimension) */
+  t_ns: bigint;
+
+  /** Vector clock for causality (V dimension) */
+  V: Map<string, number>;
+
+  /** Git commit SHA for immutability (G dimension), null if not frozen */
+  G: string | null;
+}
+"""
+
+[[api.type.jsdoc]]
+code = """
+/**
+ * @typedef {Object} State4D
+ * @property {Quad[]} O - Observable RDF state
+ * @property {bigint} t_ns - Nanosecond timestamp
+ * @property {Map<string, number>} V - Vector clock
+ * @property {string|null} G - Git commit SHA
+ */
+"""

@@ -89,5 +89,23 @@ export {
   defaultObservabilityManager,
 } from './observability.mjs';
 
+// Chatman Equation Integration
+export { ChatmanOperator, createChatmanOperator } from './chatman-operator.mjs';
+export { ArtifactGenerator, createArtifactGenerator } from './artifact-generator.mjs';
+export { DarkFieldDetector, createDarkFieldDetector } from './dark-field-detector.mjs';
+export { FormationTheorems, createFormationTheorems } from './formation-theorems.mjs';
+export {
+  ChatmanConfigLoader,
+  createChatmanConfigLoader,
+  loadChatmanConfig,
+} from './chatman-config-loader.mjs';
+export { ChatmanEngine, createChatmanEngine } from './chatman-engine.mjs';
+
+// Chatman Dynamics Rules
+export * from './chatman/market-dynamics.mjs';
+export * from './chatman/organizational-dynamics.mjs';
+export * from './chatman/strategic-dynamics.mjs';
+export * from './chatman/disruption-arithmetic.mjs';
+
 // Consolidated Schemas (single source of truth)
 export * from './schemas.mjs';

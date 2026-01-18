@@ -1,0 +1,90 @@
+# {{ title }}
+
+**Duration**: {{ duration }}
+**Difficulty**: {{ difficulty }}
+**Prerequisites**: {% for prereq in prerequisites %}{{ prereq }}{% if not loop.last %}, {% endif %}{% endfor %}
+
+---
+
+## Overview
+
+{{ context.problem }}
+
+**Solution**: {{ context.solution }}
+
+### Learning Outcomes
+
+By completing this tutorial, you will:
+{% for outcome in learning_outcomes %}
+- {{ outcome }}
+{% endfor %}
+
+---
+
+{% if equation %}
+## The Chatman Equation
+
+```math
+{{ equation.latex }}
+```
+
+### Components
+
+{% for component in equation.components %}
+#### {{ component.symbol }}: {{ component.name }}
+
+{{ component.description }}
+
+- **Type**: {{ component.type }}
+- **Example**: `{{ component.example }}`
+
+{% endfor %}
+{% endif %}
+
+---
+
+## Step-by-Step Guide
+
+{% for step in steps %}
+### Step {{ step.number }}: {{ step.title }}
+
+{{ step.content }}
+
+{% if step.code_example %}
+```javascript
+{{ step.code_example }}
+```
+{% endif %}
+
+{% endfor %}
+
+---
+
+## Next Steps
+
+{% if next_steps.tutorials %}
+### Related Tutorials
+{% for tutorial in next_steps.tutorials %}
+- [{{ tutorial }}](../tutorials/{{ tutorial }}.md)
+{% endfor %}
+{% endif %}
+
+{% if next_steps.how_to %}
+### How-To Guides
+{% for guide in next_steps.how_to %}
+- [{{ guide }}](../how-to/{{ guide }}.md)
+{% endfor %}
+{% endif %}
+
+{% if next_steps.reference %}
+### API Reference
+{% for ref in next_steps.reference %}
+- [{{ ref }}](../reference/{{ ref }}.md)
+{% endfor %}
+{% endif %}
+
+---
+
+**Generated from**: `packages/chatman-equation/docs-config/tutorials.toml`
+**Template**: `tutorial.tera`
+**Last updated**: 2026-01-18

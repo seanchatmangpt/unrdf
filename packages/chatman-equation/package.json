@@ -1,0 +1,47 @@
+{
+  "name": "@unrdf/chatman-equation",
+  "version": "1.0.0",
+  "description": "Chatman Equation documentation generation using Tera-compatible templates",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./template-engine": "./src/template-engine.mjs",
+    "./config": "./src/config-loader.mjs",
+    "./filters": "./src/filters.mjs"
+  },
+  "bin": {
+    "chatman-docs": "./bin/generate-docs.mjs"
+  },
+  "scripts": {
+    "test": "vitest run --no-coverage",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --no-coverage",
+    "generate": "node bin/generate-docs.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "clean": "rm -rf dist/ coverage/ generated/"
+  },
+  "keywords": [
+    "chatman-equation",
+    "documentation",
+    "tera",
+    "templates",
+    "diataxis"
+  ],
+  "dependencies": {
+    "nunjucks": "^3.2.4",
+    "@iarna/toml": "^2.2.5",
+    "zod": "^4.1.13",
+    "glob": "^10.3.10",
+    "n3": "^1.26.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
