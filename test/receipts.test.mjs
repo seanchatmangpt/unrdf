@@ -3,11 +3,10 @@
  * @description Two fast receipt tests (<50ms total)
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
 describe('Receipt Tests (SMOKE)', () => {
-  test('Receipt - Deterministic hash generation', () => {
+  it('Receipt - Deterministic hash generation', () => {
     class Receipt {
       constructor(config) {
         this.id = config.id;
@@ -33,10 +32,10 @@ describe('Receipt Tests (SMOKE)', () => {
     const receipt1 = new Receipt(config);
     const receipt2 = new Receipt(config);
 
-    assert.equal(receipt1.getHash(), receipt2.getHash(), 'Identical receipts must have identical hashes');
+    expect(receipt1.getHash()).toBe(receipt2.getHash());
   });
 
-  test('Receipt - Decision capture (allow/deny)', () => {
+  it('Receipt - Decision capture (allow/deny)', () => {
     class Receipt {
       constructor(config) {
         this.id = config.id;
@@ -51,7 +50,7 @@ describe('Receipt Tests (SMOKE)', () => {
       violations: [],
     });
 
-    assert.equal(allowReceipt.decision, 'ALLOW');
+    expect(allowReceipt.decision).toBe('ALLOW');
 
     const denyReceipt = new Receipt({
       id: 'urn:receipt:2:deny',
@@ -59,8 +58,8 @@ describe('Receipt Tests (SMOKE)', () => {
       violations: ['violation'],
     });
 
-    assert.equal(denyReceipt.decision, 'DENY');
-    assert.equal(denyReceipt.violations.length, 1);
+    expect(denyReceipt.decision).toBe('DENY');
+    expect(denyReceipt.violations.length).toBe(1);
   });
 });
 

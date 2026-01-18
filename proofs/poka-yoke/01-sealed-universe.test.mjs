@@ -5,11 +5,10 @@
  * Expected Runtime: <50ms
  */
 
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
-test('Proof 01: Sealed Universe State Machine (SMOKE)', async (t) => {
-  await t.test('MUTABLE state allows mutations', () => {
+describe('Proof 01: Sealed Universe State Machine (SMOKE)', () => {
+  it('MUTABLE state allows mutations', () => {
     const stateMachine = {
       state: 'MUTABLE',
       guardMutableOperation(op) {
@@ -18,11 +17,11 @@ test('Proof 01: Sealed Universe State Machine (SMOKE)', async (t) => {
       },
     };
 
-    assert.doesNotThrow(() => stateMachine.guardMutableOperation('appendEvent'));
-    assert.equal(stateMachine.state, 'MUTABLE');
+    expect(() => stateMachine.guardMutableOperation('appendEvent')).not.toThrow();
+    expect(stateMachine.state).toBe('MUTABLE');
   });
 
-  await t.test('FROZEN state blocks mutations', () => {
+  it('FROZEN state blocks mutations', () => {
     const stateMachine = {
       state: 'FROZEN',
       guardMutableOperation(op) {
@@ -32,10 +31,10 @@ test('Proof 01: Sealed Universe State Machine (SMOKE)', async (t) => {
       },
     };
 
-    assert.throws(() => stateMachine.guardMutableOperation('appendEvent'));
+    expect(() => stateMachine.guardMutableOperation('appendEvent')).toThrow();
   });
 
-  await t.test('SEALED state blocks ALL mutations (terminal)', () => {
+  it('SEALED state blocks ALL mutations (terminal)', () => {
     const stateMachine = {
       state: 'SEALED',
       isTerminal() {
@@ -48,8 +47,8 @@ test('Proof 01: Sealed Universe State Machine (SMOKE)', async (t) => {
       },
     };
 
-    assert.throws(() => stateMachine.guardMutableOperation('appendEvent'));
-    assert.equal(stateMachine.isTerminal(), true);
+    expect(() => stateMachine.guardMutableOperation('appendEvent')).toThrow();
+    expect(stateMachine.isTerminal()).toBe(true);
   });
 });
 
