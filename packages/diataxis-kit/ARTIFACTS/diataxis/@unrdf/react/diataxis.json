@@ -1,7 +1,7 @@
 {
   "confidence": {
     "explanation": 0.4,
-    "howtos": 0.25,
+    "howtos": 0.5,
     "reference": 0.5,
     "tutorials": 0.1
   },
@@ -36,6 +36,21 @@
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
     {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/react",
+      "title": "Handle Errors"
+    },
+    {
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
@@ -50,21 +65,6 @@
       ],
       "task": "Connect @unrdf/react with rdf",
       "title": "Integrate with rdf"
-    },
-    {
-      "confidenceScore": 0.4,
-      "context": "When encountering issues during usage",
-      "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
-      "task": "Resolve common problems and errors",
-      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/react",

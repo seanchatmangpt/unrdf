@@ -417,7 +417,7 @@ export function precompilePolicies(policies) {
       compilePolicy(policy);
       compiled++;
     } catch (error) {
-      errors.push(`Policy ${policy.type}: ${error.message}`);
+      errors.push(`Policy ${policy?.type || 'unknown'}: ${error.message}`);
     }
   }
 
@@ -439,7 +439,7 @@ export function precompileHooks(hooks) {
       compileHook(hook);
       compiled++;
     } catch (error) {
-      errors.push(`Hook ${hook.name || 'anonymous'}: ${error.message}`);
+      errors.push(`Hook ${hook?.name || 'anonymous'}: ${error.message}`);
     }
   }
 

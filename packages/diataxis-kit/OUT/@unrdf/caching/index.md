@@ -12,7 +12,7 @@ Generated documentation using the Diátaxis framework.
 ## Quick Stats
 
 - **Tutorials**: 1
-- **How-To Guides**: 2
+- **How-To Guides**: 3
 - **Reference**: Available
 - **Explanation**: Available
 
@@ -25,6 +25,7 @@ Generated documentation using the Diátaxis framework.
 ### How-To Guides
 
 - [Configure @unrdf/caching](how-to/howto-howto-configure-unrdf-caching.md)
+- [Handle Errors](how-to/howto-howto-handle-errors.md)
 - [Integrate with cache](how-to/howto-howto-integrate-with-cache.md)
 
 ### Reference

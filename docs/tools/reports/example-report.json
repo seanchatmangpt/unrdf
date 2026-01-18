@@ -1,0 +1,583 @@
+{
+  "timestamp": "2026-01-18T09:40:29.253Z",
+  "mode": "syntax",
+  "summary": {
+    "total": 327,
+    "passed": 232,
+    "failed": 95,
+    "skipped": 0,
+    "passRate": 70.95
+  },
+  "failed": [
+    {
+      "source": "tutorials/01-first-knowledge-hook.md",
+      "line": 156,
+      "context": "Step 3: Execute the Hook",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/02-rdf-operations.md",
+      "line": 172,
+      "context": "Step 5: Serialize Back to Turtle",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/02-rdf-operations.md",
+      "line": 292,
+      "context": "Pattern 2: Count Results",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/04-advanced-hooks.md",
+      "line": 25,
+      "context": "SPARQL ASK Triggers",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "tutorials/04-advanced-hooks.md",
+      "line": 37,
+      "context": "SPARQL SELECT Triggers",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "tutorials/04-advanced-hooks.md",
+      "line": 49,
+      "context": "SHACL Shape Triggers",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "tutorials/04-advanced-hooks.md",
+      "line": 538,
+      "context": "Step 5: Execute Policy Pack",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/creating-rdf-documents.md",
+      "line": 139,
+      "context": "Step 5: Working with Blank Nodes",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/creating-rdf-documents.md",
+      "line": 366,
+      "context": "Mistake 1: Forgetting Await",
+      "error": "Identifier 'store' has already been declared"
+    },
+    {
+      "source": "tutorials/creating-rdf-documents.md",
+      "line": 376,
+      "context": "Mistake 2: Invalid URIs",
+      "error": "Identifier 'uri' has already been declared"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 123,
+      "context": "before() - Pre-Execution Gate",
+      "error": "Unexpected identifier 'before'"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 176,
+      "context": "after() - Post-Execution Cleanup",
+      "error": "Unexpected identifier 'after'"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 445,
+      "context": "Step 7: Receipt Anchoring",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 567,
+      "context": "Mistake 1: Inline Queries",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 587,
+      "context": "Mistake 2: Missing Await in Lifecycle",
+      "error": "Unexpected identifier 'run'"
+    },
+    {
+      "source": "tutorials/knowledge-hooks.md",
+      "line": 603,
+      "context": "Mistake 3: Modifying Payload Directly",
+      "error": "Unexpected identifier 'before'"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 86,
+      "context": "Simple Pattern Matching",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 104,
+      "context": "Multiple Patterns",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 125,
+      "context": "Step 2: OPTIONAL Patterns",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 146,
+      "context": "Numeric Filters",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 164,
+      "context": "String Filters",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 179,
+      "context": "Regex Filters",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 196,
+      "context": "Step 4: UNION Patterns",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 223,
+      "context": "COUNT",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 241,
+      "context": "SUM, AVG, MIN, MAX",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 264,
+      "context": "HAVING",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 347,
+      "context": "Step 9: Subqueries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 367,
+      "context": "With Subquery",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 390,
+      "context": "Step 10: Property Paths",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 429,
+      "context": "Step 11: VALUES Clause",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 469,
+      "context": "Limit Results",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "tutorials/sparql.md",
+      "line": 484,
+      "context": "Use BIND for Computed Values",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/assess-data-quality.md",
+      "line": 284,
+      "context": "Automated Quality Reports",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/generate-ids.md",
+      "line": 65,
+      "context": "Content-Based IDs (Hashing)",
+      "error": "Cannot use import statement outside a module"
+    },
+    {
+      "source": "how-to/generate-ids.md",
+      "line": 100,
+      "context": "Deterministic IDs (Seeded)",
+      "error": "Cannot use import statement outside a module"
+    },
+    {
+      "source": "how-to/handle-transactions.md",
+      "line": 142,
+      "context": "Transaction Rollback",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/handle-transactions.md",
+      "line": 173,
+      "context": "Transaction Metadata",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/handle-transactions.md",
+      "line": 201,
+      "context": "Transaction Statistics",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/handle-transactions.md",
+      "line": 277,
+      "context": "Conditional Transactions",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/implement-audit-trails.md",
+      "line": 39,
+      "context": "Basic Receipt Writing",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/implement-audit-trails.md",
+      "line": 75,
+      "context": "Verify Receipt Integrity",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/implement-audit-trails.md",
+      "line": 376,
+      "context": "Batch Commits",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/implement-audit-trails.md",
+      "line": 465,
+      "context": "Tamper Detection",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/optimize-queries.md",
+      "line": 72,
+      "context": "Query Result Caching",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/optimize-queries.md",
+      "line": 179,
+      "context": "Batch Query Execution",
+      "error": "Unexpected token ']'"
+    },
+    {
+      "source": "how-to/optimize-query-performance.md",
+      "line": 455,
+      "context": "2. Over-Caching",
+      "error": "Identifier 'cache' has already been declared"
+    },
+    {
+      "source": "how-to/optimize-query-performance.md",
+      "line": 468,
+      "context": "3. Missing Dependencies",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/optimize-query-performance.md",
+      "line": 481,
+      "context": "Complete Optimization Module",
+      "error": "Cannot use import statement outside a module"
+    },
+    {
+      "source": "how-to/use-composables.md",
+      "line": 358,
+      "context": "Chain Operations",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "how-to/use-hooks-in-react.md",
+      "line": 29,
+      "context": "Layer 1: Hook Manager in React Context",
+      "error": "Cannot use import statement outside a module"
+    },
+    {
+      "source": "how-to/use-hooks-in-react.md",
+      "line": 576,
+      "context": "3. Error Recovery",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/EXAMPLES-GUIDE.md",
+      "line": 544,
+      "context": "Common Issues",
+      "error": "Identifier 'query' has already been declared"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 150,
+      "context": "Example Structure",
+      "error": "Invalid or unexpected token"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 187,
+      "context": "Example Template",
+      "error": "Invalid or unexpected token"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 219,
+      "context": "1. Error Handling",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 230,
+      "context": "2. Progress Reporting",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 319,
+      "context": "Import Errors",
+      "error": "Unexpected identifier 'install'"
+    },
+    {
+      "source": "examples/README.md",
+      "line": 335,
+      "context": "Memory Issues",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 50,
+      "context": "Adding Relationships",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 79,
+      "context": "Basic SELECT Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 102,
+      "context": "Filtered Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 126,
+      "context": "Relationship Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 147,
+      "context": "CONSTRUCT Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 190,
+      "context": "Serializing to Different Formats",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 201,
+      "context": "Working with JSON-LD",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 223,
+      "context": "Parse Error Handling",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 244,
+      "context": "Query Error Handling",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 373,
+      "context": "Working with Blank Nodes",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 412,
+      "context": "Working with Collections",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 444,
+      "context": "Working with Datatypes",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 484,
+      "context": "1. Always Handle Errors",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/basic-usage.md",
+      "line": 516,
+      "context": "3. Validate Data Before Processing",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 62,
+      "context": "Multi-Variable Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 84,
+      "context": "Filtered Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 106,
+      "context": "Pattern Matching",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 129,
+      "context": "Creating New Graphs",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 162,
+      "context": "Transforming Data",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 193,
+      "context": "Boolean Checks",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 222,
+      "context": "Conditional Logic",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 243,
+      "context": "Resource Descriptions",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 268,
+      "context": "Pattern-Based Descriptions",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 292,
+      "context": "Optional Properties",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 318,
+      "context": "Union Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 343,
+      "context": "Subqueries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 371,
+      "context": "Property Paths",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 390,
+      "context": "Aggregation",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 412,
+      "context": "Window Functions",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 461,
+      "context": "Limit Results",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 482,
+      "context": "Use Indexes",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 501,
+      "context": "Social Network Analysis",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 522,
+      "context": "Organizational Hierarchy",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/sparql.md",
+      "line": 544,
+      "context": "Temporal Queries",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/knowledge-hooks/README.md",
+      "line": 160,
+      "context": "Webhook Integration",
+      "error": "Unexpected token ':'"
+    },
+    {
+      "source": "examples/knowledge-hooks/compliance.md",
+      "line": 311,
+      "context": "Automated Response",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    },
+    {
+      "source": "examples/knowledge-hooks/drift-detection.md",
+      "line": 282,
+      "context": "Automated Response",
+      "error": "await is only valid in async functions and the top level bodies of modules"
+    }
+  ]
+}

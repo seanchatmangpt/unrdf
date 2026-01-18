@@ -25,13 +25,13 @@
     "prediction"
   ],
   "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-node": "^4.22.0",
     "@tensorflow/tfjs-layers": "^4.22.0",
     "ml-matrix": "^6.11.1",
-    "zod": "^4.1.13"
-  },
-  "optionalDependencies": {
-    "@unrdf/yawl": "workspace:*"
+    "zod": "^4.1.13",
+    "@unrdf/yawl": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^4.0.15"

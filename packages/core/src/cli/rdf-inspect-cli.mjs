@@ -5,7 +5,7 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { Parser } from 'n3';
+import { streamingParse } from '../rdf/n3-justified-only.mjs';
 import { createStore } from '../rdf/store.mjs';
 import {
   generateInspectionReport,
@@ -73,19 +73,13 @@ Examples:
 async function loadRDF(filepath) {
   const store = createStore();
   const content = readFileSync(filepath, 'utf-8');
-  const parser = new Parser();
+  const quads = await streamingParse(content);
 
-  return new Promise((resolve, reject) => {
-    parser.parse(content, (error, quad) => {
-      if (error) {
-        reject(error);
-      } else if (quad) {
-        store.add(quad);
-      } else {
-        resolve(store);
-      }
-    });
-  });
+  for (const quad of quads) {
+    store.add(quad);
+  }
+
+  return store;
 }
 
 /**

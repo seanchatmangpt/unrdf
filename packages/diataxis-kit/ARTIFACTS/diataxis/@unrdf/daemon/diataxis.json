@@ -2,7 +2,7 @@
   "confidence": {
     "explanation": 1,
     "howtos": 0.75,
-    "reference": 0.5,
+    "reference": 0.7,
     "tutorials": 1
   },
   "evidence": {
@@ -61,9 +61,10 @@
       "05-policy-controlled-workflow.mjs",
       "06-api-key-authentication.mjs",
       "07-rate-limiting.mjs",
+      "07-security-hardening.mjs",
       "nitro-app-integration.mjs"
     ],
-    "fingerprint": "1a97dae37a72494da1e675920bd2f0751faf62fb04429eaf0f18839a10d8a9b9",
+    "fingerprint": "fb638e56ca96c2a4d66eeb8e6eb21b7925e9ccb63532f827132e302c8b136543",
     "readmeHeadings": [
       "Features",
       "Installation",
@@ -73,13 +74,18 @@
       "Events",
       "Health & Metrics",
       "Testing",
+      "Security",
+      "Integration Examples",
       "Examples",
       "Documentation",
+      "Package Exports",
+      "Performance",
+      "Quality Metrics",
       "License"
     ]
   },
   "explanation": {
-    "architecture": "Background daemon for managing scheduled tasks and event-driven operations in UNRDF.",
+    "architecture": "Background daemon for managing scheduled tasks and event-driven operations in UNRDF with enterprise-grade security and comprehensive RDF integration.",
     "concepts": [
       "daemon",
       "background-tasks",
@@ -163,6 +169,30 @@
         "type": "export"
       },
       {
+        "description": "Export: ./integrations/nitro-tasks",
+        "example": "import from \"./src/integrations/nitro-tasks.mjs\"",
+        "name": "./integrations/nitro-tasks",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./integrations/yawl",
+        "example": "import from \"./src/integrations/yawl.mjs\"",
+        "name": "./integrations/yawl",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./middleware/rate-limiter",
+        "example": "import from \"./src/middleware/rate-limiter.mjs\"",
+        "name": "./middleware/rate-limiter",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./middleware/rate-limiter-schema",
+        "example": "import from \"./src/middleware/rate-limiter.schema.mjs\"",
+        "name": "./middleware/rate-limiter-schema",
+        "type": "export"
+      },
+      {
         "description": "Export: ./schemas",
         "example": "import from \"./src/schemas.mjs\"",
         "name": "./schemas",
@@ -223,10 +253,9 @@
         "keywords"
       ],
       "stepsOutline": [
-        "Install the package",
-        "Import required modules",
-        "Create a basic example",
-        "Run and verify output"
+        "Installation",
+        "Integration Examples",
+        "Examples"
       ],
       "title": "Getting Started with @unrdf/daemon"
     }

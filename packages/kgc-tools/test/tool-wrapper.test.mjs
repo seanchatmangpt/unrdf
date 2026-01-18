@@ -53,7 +53,10 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
     it('should reject invalid inputs', async () => {
       const wrapped = Wrap(mockTool, manifest);
 
-      await expect(wrapped({ invalid: 'field' })).rejects.toThrow();
+      const result = await wrapped({ invalid: 'field' });
+      expect(result.receipt.status).toBe('error');
+      expect(result.receipt.error).toBeDefined();
+      expect(result.delta).toBeNull();
     });
 
     it('should handle optional fields in schema', async () => {

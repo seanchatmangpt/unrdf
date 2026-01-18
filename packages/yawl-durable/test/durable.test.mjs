@@ -3,7 +3,7 @@
  * @module @unrdf/yawl-durable/test/durable.test
  */
 
-import { describe, test, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DurableWorkflowEngine } from '../src/engine.mjs';
 import { executeSaga, createSagaWorkflow } from '../src/saga.mjs';
 import { replayFromReceipts, replayToTimestamp, verifyReceiptChain } from '../src/replay.mjs';
@@ -19,7 +19,7 @@ describe('Deterministic Replay', () => {
     engine = new DurableWorkflowEngine();
   });
 
-  test('should replay workflow state from receipts', async () => {
+  it('should replay workflow state from receipts', async () => {
     // Define simple workflow
     await engine.defineWorkflow({
       id: 'test-workflow',
@@ -60,7 +60,7 @@ describe('Deterministic Replay', () => {
     expect(state.receiptCount).toBe(receipts.length);
   });
 
-  test('should verify receipt chain integrity', async () => {
+  it('should verify receipt chain integrity', async () => {
     await engine.defineWorkflow({
       id: 'test-workflow',
       name: 'Test Workflow',
@@ -85,7 +85,7 @@ describe('Deterministic Replay', () => {
     expect(verification.latestHash).toBeDefined();
   });
 
-  test('should detect broken receipt chain', async () => {
+  it('should detect broken receipt chain', async () => {
     const receipts = [
       {
         id: 'receipt1',
@@ -131,7 +131,7 @@ describe('Saga Compensation', () => {
     compensationLog = [];
   });
 
-  test('should execute compensation on saga failure', async () => {
+  it('should execute compensation on saga failure', async () => {
     const sagaConfig = createSagaWorkflow({
       id: 'test-saga',
       name: 'Test Saga',
@@ -191,7 +191,7 @@ describe('Saga Compensation', () => {
     expect(step2CompensateIdx).toBeLessThan(step1CompensateIdx);
   });
 
-  test('should complete saga successfully when all steps succeed', async () => {
+  it('should complete saga successfully when all steps succeed', async () => {
     const sagaConfig = createSagaWorkflow({
       id: 'success-saga',
       name: 'Success Saga',
@@ -241,7 +241,7 @@ describe('Activity Retries', () => {
     attemptCount = 0;
   });
 
-  test('should retry failed activity with exponential backoff', async () => {
+  it('should retry failed activity with exponential backoff', async () => {
     await engine.defineWorkflow({
       id: 'retry-workflow',
       name: 'Retry Workflow',
@@ -277,7 +277,7 @@ describe('Activity Retries', () => {
     expect(attemptCount).toBe(3);
   }, 10000);
 
-  test('should fail after max retry attempts', async () => {
+  it('should fail after max retry attempts', async () => {
     await engine.defineWorkflow({
       id: 'fail-workflow',
       name: 'Fail Workflow',
@@ -321,7 +321,7 @@ describe('Time Travel', () => {
     engine = new DurableWorkflowEngine();
   });
 
-  test('should replay state at specific timestamp', async () => {
+  it('should replay state at specific timestamp', async () => {
     await engine.defineWorkflow({
       id: 'time-workflow',
       name: 'Time Workflow',
@@ -376,7 +376,7 @@ describe('Workflow Versioning', () => {
     engine = new DurableWorkflowEngine();
   });
 
-  test('should support multiple workflow versions', async () => {
+  it('should support multiple workflow versions', async () => {
     // Define v1
     await engine.defineWorkflow({
       id: 'versioned-workflow',

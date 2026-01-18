@@ -1,7 +1,7 @@
 {
   "confidence": {
     "explanation": 0.7,
-    "howtos": 0.5,
+    "howtos": 0.75,
     "reference": 0.5,
     "tutorials": 0.4
   },
@@ -54,6 +54,21 @@
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
     {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/yawl-ai",
+      "title": "Handle Errors"
+    },
+    {
       "confidenceScore": 0.7,
       "context": "When working with ai in your project",
       "id": "howto-integrate-with-ai",
@@ -68,21 +83,6 @@
       ],
       "task": "Connect @unrdf/yawl-ai with ai",
       "title": "Integrate with ai"
-    },
-    {
-      "confidenceScore": 0.4,
-      "context": "When encountering issues during usage",
-      "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
-      "task": "Resolve common problems and errors",
-      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/yawl-ai",

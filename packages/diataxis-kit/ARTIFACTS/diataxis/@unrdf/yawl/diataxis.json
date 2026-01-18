@@ -11,9 +11,10 @@
       "blockchain-receipts-example.mjs",
       "graphql-api-example.mjs",
       "resource-allocation.mjs",
-      "visualization-example.mjs"
+      "visualization-example.mjs",
+      "wp14-example.mjs"
     ],
-    "fingerprint": "58362d1d6258de8e84258a14e3c87da540fd91e8cf96a1377d3f47dfe7b824af",
+    "fingerprint": "cf6ea5b013eaf88a9adddc2a617e5712c8328484e6e02fda59233158a79d32ba",
     "readmeHeadings": [
       "Features",
       "Installation",
@@ -27,6 +28,7 @@
       "API Reference",
       "Use Cases",
       "Performance",
+      "Daemon Integration",
       "Dependencies",
       "When to Use @unrdf/yawl",
       "Documentation",
@@ -126,6 +128,24 @@
         "type": "export"
       },
       {
+        "description": "Export: ./integrations",
+        "example": "import from \"./src/integrations/index.mjs\"",
+        "name": "./integrations",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./integrations/nitro-handlers",
+        "example": "import from \"./src/integrations/nitro-handlers.mjs\"",
+        "name": "./integrations/nitro-handlers",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./integrations/nitro-queue",
+        "example": "import from \"./src/integrations/nitro-queue.mjs\"",
+        "name": "./integrations/nitro-queue",
+        "type": "export"
+      },
+      {
         "description": "Export: ./ontology",
         "example": "import from \"./src/ontology/yawl-ontology.mjs\"",
         "name": "./ontology",
@@ -194,7 +214,8 @@
         "Work through blockchain-receipts-example.mjs",
         "Work through graphql-api-example.mjs",
         "Work through resource-allocation.mjs",
-        "Work through visualization-example.mjs"
+        "Work through visualization-example.mjs",
+        "Work through wp14-example.mjs"
       ],
       "title": "First Steps"
     },

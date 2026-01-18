@@ -35,9 +35,10 @@
       "local-first-collaboration.mjs",
       "mission-critical.mjs",
       "shard-native-discovery.mjs",
+      "temporal-sparql-demo.mjs",
       "worker-performance-demo.mjs"
     ],
-    "fingerprint": "5f67f36951934061c31b62471fe73422f965a604ef41a5ffaf339adb81ff33da",
+    "fingerprint": "a196c9b505e4bd030053fce73cc198fb22e357428a7ae7d702c3508816793435",
     "readmeHeadings": [
       "What is KGC 4D?",
       "5-Minute Quick Start",

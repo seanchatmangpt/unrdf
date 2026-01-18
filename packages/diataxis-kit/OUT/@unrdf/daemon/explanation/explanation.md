@@ -18,7 +18,7 @@ proof: "e58d20d85b24b2e1f9b6b245c9e6cfd99547da74f48736393c816dfe8cd96140"
 
 ## Architecture
 
-Background daemon for managing scheduled tasks and event-driven operations in UNRDF.
+Background daemon for managing scheduled tasks and event-driven operations in UNRDF with enterprise-grade security and comprehensive RDF integration.
 
 ## Tradeoffs
 

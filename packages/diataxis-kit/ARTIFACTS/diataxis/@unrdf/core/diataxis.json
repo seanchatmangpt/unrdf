@@ -103,6 +103,12 @@
         "type": "export"
       },
       {
+        "description": "Export: ./debug/rdf-inspector",
+        "example": "import from \"./src/debug/rdf-inspector.mjs\"",
+        "name": "./debug/rdf-inspector",
+        "type": "export"
+      },
+      {
         "description": "Export: ./health",
         "example": "import from \"./src/health.mjs\"",
         "name": "./health",
@@ -157,6 +163,12 @@
         "type": "export"
       },
       {
+        "description": "Export: ./sparql/executor-sync",
+        "example": "import from \"./src/sparql/executor-sync.mjs\"",
+        "name": "./sparql/executor-sync",
+        "type": "export"
+      },
+      {
         "description": "Export: ./types",
         "example": "import from \"./src/types.mjs\"",
         "name": "./types",
@@ -172,6 +184,18 @@
         "description": "Export: ./validation",
         "example": "import from \"./src/validation/index.mjs\"",
         "name": "./validation",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./viz/graph-visualizer",
+        "example": "import from \"./src/viz/graph-visualizer.mjs\"",
+        "name": "./viz/graph-visualizer",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./viz/query-explainer",
+        "example": "import from \"./src/viz/query-explainer.mjs\"",
+        "name": "./viz/query-explainer",
         "type": "export"
       },
       {

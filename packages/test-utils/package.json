@@ -31,6 +31,7 @@
   "private": true,
   "dependencies": {
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^4.1.13"
   },

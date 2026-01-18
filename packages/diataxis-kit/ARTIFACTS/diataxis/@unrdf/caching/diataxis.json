@@ -1,7 +1,7 @@
 {
   "confidence": {
     "explanation": 0.7,
-    "howtos": 0.5,
+    "howtos": 0.75,
     "reference": 0.7,
     "tutorials": 1
   },
@@ -64,6 +64,21 @@
       ],
       "task": "Set up custom configuration for @unrdf/caching",
       "title": "Configure @unrdf/caching"
+    },
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/caching",
+      "title": "Handle Errors"
     },
     {
       "confidenceScore": 0.7,

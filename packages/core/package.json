@@ -20,6 +20,7 @@
     "./security": "./src/security.mjs",
     "./security-schemas": "./src/security-schemas.mjs",
     "./utils/sparql-utils": "./src/utils/sparql-utils.mjs",
+    "./utils/lockchain-writer": "./src/utils/lockchain-writer.mjs",
     "./viz/graph-visualizer": "./src/viz/graph-visualizer.mjs",
     "./viz/query-explainer": "./src/viz/query-explainer.mjs",
     "./debug/rdf-inspector": "./src/debug/rdf-inspector.mjs"

@@ -17,6 +17,10 @@ This reference documentation provides technical details for @unrdf/daemon.
 | Name | Type | Description |
 |------|------|-------------|
 | ./daemon | export | Export: ./daemon |
+| ./integrations/nitro-tasks | export | Export: ./integrations/nitro-tasks |
+| ./integrations/yawl | export | Export: ./integrations/yawl |
+| ./middleware/rate-limiter | export | Export: ./middleware/rate-limiter |
+| ./middleware/rate-limiter-schema | export | Export: ./middleware/rate-limiter-schema |
 | ./schemas | export | Export: ./schemas |
 | ./trigger-evaluator | export | Export: ./trigger-evaluator |
 | ./v6-deltagate | export | Export: ./v6-deltagate |

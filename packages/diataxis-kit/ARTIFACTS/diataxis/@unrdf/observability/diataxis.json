@@ -1,16 +1,19 @@
 {
   "confidence": {
-    "explanation": 0.7,
-    "howtos": 0.5,
+    "explanation": 1,
+    "howtos": 0.75,
     "reference": 0.7,
     "tutorials": 1
   },
   "evidence": {
-    "docsFiles": [],
+    "docsFiles": [
+      "OBSERVABILITY-PATTERNS.md",
+      "OBSERVABILITY-RUNBOOK.md"
+    ],
     "examplesFiles": [
       "observability-demo.mjs"
     ],
-    "fingerprint": "a1f84aefb302e9e912632abd3663c0fdb79788bde84d6f9fe4d154b4cbc955f9",
+    "fingerprint": "f0d9ccda8a8f896c4f6b8947f1de033a450ed53f9774765fded3e6ead54bf420",
     "readmeHeadings": [
       "Features",
       "Installation",
@@ -38,11 +41,12 @@
       "observability",
       "monitoring"
     ],
-    "confidenceScore": 0.7,
+    "confidenceScore": 1,
     "id": "explanation-unrdf-observability-explanation",
     "source": [
       "keywords",
       "readme",
+      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/observability",
@@ -54,6 +58,21 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/observability",
+      "title": "Handle Errors"
+    },
     {
       "confidenceScore": 0.7,
       "context": "When working with prometheus in your project",
@@ -69,21 +88,6 @@
       ],
       "task": "Connect @unrdf/observability with prometheus",
       "title": "Integrate with prometheus"
-    },
-    {
-      "confidenceScore": 0.4,
-      "context": "When encountering issues during usage",
-      "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
-      "task": "Resolve common problems and errors",
-      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/observability",

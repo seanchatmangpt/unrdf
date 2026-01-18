@@ -1,0 +1,137 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "86f0fb3b3d449f0f6b3578d836ff1e22ebee8a79b399c17b948a27e773e3ea71",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Usage",
+      "API Reference",
+      "Performance",
+      "Research",
+      "Testing",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "**Code Generation & Metaprogramming Tools for UNRDF v6.",
+    "concepts": [
+      "unrdf",
+      "code-generation",
+      "metaprogramming",
+      "rdf",
+      "sparql"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-codegen-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/codegen",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/codegen",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with unrdf in your project",
+      "id": "howto-integrate-with-unrdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/codegen with unrdf",
+      "title": "Integrate with unrdf"
+    }
+  ],
+  "packageName": "@unrdf/codegen",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-codegen-reference",
+    "items": [
+      {
+        "description": "Export: ./meta-templates",
+        "example": "import from \"./src/meta-template-engine.mjs\"",
+        "name": "./meta-templates",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./property-tests",
+        "example": "import from \"./src/property-test-generator.mjs\"",
+        "name": "./property-tests",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./sparql-types",
+        "example": "import from \"./src/sparql-type-generator.mjs\"",
+        "name": "./sparql-types",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/codegen",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/codegen Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/codegen in your project",
+      "id": "tutorial-getting-started-with-unrdf-codegen",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/codegen"
+    }
+  ],
+  "version": "0.1.0"
+}

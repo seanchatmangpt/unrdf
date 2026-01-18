@@ -1,34 +1,34 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 123,
+  "packageCount": 132,
   "packages": [
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-8",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-8",
       "name": "@agent-8/store-adapter",
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-5",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-5",
       "name": "@autonomic-innovation/agent-5",
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-4",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-4",
       "name": "@autonomic-innovation/impact",
       "version": "0.1.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-9",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-9",
       "name": "@autonomic-innovation/shadow-modes",
       "version": "0.1.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-2",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-2",
       "name": "@autonomic/capsule-ir",
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-6",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-6",
       "name": "@autonomic/conventions-profile",
       "version": "1.0.0"
     },
@@ -63,6 +63,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/packages/ai-ml-innovations",
+      "name": "@unrdf/ai-ml-innovations",
+      "version": "0.1.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/atomvm",
       "name": "@unrdf/atomvm",
       "version": "5.0.1"
@@ -73,7 +78,7 @@
       "version": "0.1.0"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION",
       "name": "@unrdf/autonomic-innovation",
       "version": "0.1.0"
     },
@@ -93,6 +98,11 @@
       "version": "5.0.1"
     },
     {
+      "dir": "/home/user/unrdf/packages/codegen",
+      "name": "@unrdf/codegen",
+      "version": "0.1.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/collab",
       "name": "@unrdf/collab",
       "version": "1.0.0"
@@ -108,27 +118,27 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/core",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/core",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/core",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/core",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/core",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/core",
       "name": "@unrdf/core",
       "version": "5.0.1"
     },
@@ -173,6 +183,11 @@
       "version": "5.0.1"
     },
     {
+      "dir": "/home/user/unrdf/packages/event-automation",
+      "name": "@unrdf/event-automation",
+      "version": "1.0.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/core/examples/basic-store",
       "name": "@unrdf/example-basic-store",
       "version": "1.0.0"
@@ -193,27 +208,27 @@
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/federation",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/federation",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/federation",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/federation",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/federation",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/federation",
       "name": "@unrdf/federation",
       "version": "5.0.1"
     },
@@ -233,6 +248,11 @@
       "version": "6.0.0-rc.1"
     },
     {
+      "dir": "/home/user/unrdf/packages/geosparql",
+      "name": "@unrdf/geosparql",
+      "version": "6.2.0"
+    },
+    {
       "dir": "/home/user/unrdf/src",
       "name": "@unrdf/governed-substrate",
       "version": "1.0.0"
@@ -243,27 +263,27 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/hooks",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/hooks",
       "name": "@unrdf/hooks",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/hooks",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/hooks",
       "name": "@unrdf/hooks",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/hooks",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/hooks",
       "name": "@unrdf/hooks",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/hooks",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/hooks",
       "name": "@unrdf/hooks",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/hooks",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/hooks",
       "name": "@unrdf/hooks",
       "version": "5.0.1"
     },
@@ -353,7 +373,7 @@
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/AUTONOMIC_INNOVATION/agent-3",
+      "dir": "/home/user/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-3",
       "name": "@unrdf/lens",
       "version": "1.0.0"
     },
@@ -383,27 +403,27 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953/packages/oxigraph",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/oxigraph",
       "name": "@unrdf/oxigraph",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082/packages/oxigraph",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/oxigraph",
       "name": "@unrdf/oxigraph",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254/packages/oxigraph",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/oxigraph",
       "name": "@unrdf/oxigraph",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104/packages/oxigraph",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/oxigraph",
       "name": "@unrdf/oxigraph",
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline/packages/oxigraph",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/oxigraph",
       "name": "@unrdf/oxigraph",
       "version": "5.0.1"
     },
@@ -416,6 +436,11 @@
       "dir": "/home/user/unrdf/docs/templates/package-template",
       "name": "@unrdf/package-name",
       "version": "1.0.0"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/privacy",
+      "name": "@unrdf/privacy",
+      "version": "6.2.0"
     },
     {
       "dir": "/home/user/unrdf/packages/project-engine",
@@ -448,6 +473,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/packages/self-healing-workflows",
+      "name": "@unrdf/self-healing-workflows",
+      "version": "6.1.0"
+    },
+    {
       "dir": "/home/user/unrdf/packages/semantic-search",
       "name": "@unrdf/semantic-search",
       "version": "1.0.0"
@@ -463,9 +493,19 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/packages/spatial-kg",
+      "name": "@unrdf/spatial-kg",
+      "version": "6.3.0-alpha.1"
+    },
+    {
       "dir": "/home/user/unrdf/packages/streaming",
       "name": "@unrdf/streaming",
       "version": "5.0.1"
+    },
+    {
+      "dir": "/home/user/unrdf/packages/temporal-discovery",
+      "name": "@unrdf/temporal-discovery",
+      "version": "1.0.0"
     },
     {
       "dir": "/home/user/unrdf/packages/test-utils",
@@ -538,6 +578,11 @@
       "version": "1.0.0"
     },
     {
+      "dir": "/home/user/unrdf/packages/zkp",
+      "name": "@unrdf/zkp",
+      "version": "6.2.0-alpha.1"
+    },
+    {
       "dir": "/home/user/unrdf/packages/atomvm/experiments/docker-cluster",
       "name": "atomvm-docker-cluster-experiments",
       "version": "1.0.0"
@@ -558,7 +603,7 @@
       "version": "5.0.1"
     },
     {
-      "dir": "/home/user/unrdf/ENTERPRISE_MIGRATION",
+      "dir": "/home/user/unrdf/archive/2026-01-11/enterprise/ENTERPRISE_MIGRATION",
       "name": "enterprise-migration",
       "version": "1.0.0"
     },
@@ -588,27 +633,27 @@
       "version": "1.0.0"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835191953",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835652082",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-1766835999254",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/test-snapshot-20251227-112104",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
     },
     {
-      "dir": "/home/user/unrdf/.rollback-snapshots/v5-stable-baseline",
+      "dir": "/home/user/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline",
       "name": "unrdf-workspace",
       "version": "6.0.0-alpha.1"
     },

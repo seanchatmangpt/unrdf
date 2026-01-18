@@ -17,6 +17,7 @@ This reference documentation provides technical details for @unrdf/core.
 | Name | Type | Description |
 |------|------|-------------|
 | ./constants | export | Export: ./constants |
+| ./debug/rdf-inspector | export | Export: ./debug/rdf-inspector |
 | ./health | export | Export: ./health |
 | ./logger | export | Export: ./logger |
 | ./metrics | export | Export: ./metrics |
@@ -26,9 +27,12 @@ This reference documentation provides technical details for @unrdf/core.
 | ./security | export | Export: ./security |
 | ./security-schemas | export | Export: ./security-schemas |
 | ./sparql | export | Export: ./sparql |
+| ./sparql/executor-sync | export | Export: ./sparql/executor-sync |
 | ./types | export | Export: ./types |
 | ./utils/sparql-utils | export | Export: ./utils/sparql-utils |
 | ./validation | export | Export: ./validation |
+| ./viz/graph-visualizer | export | Export: ./viz/graph-visualizer |
+| ./viz/query-explainer | export | Export: ./viz/query-explainer |
 | @unrdf/core | export | Export: . |
 
 

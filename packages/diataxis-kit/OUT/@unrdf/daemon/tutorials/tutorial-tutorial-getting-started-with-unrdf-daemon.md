@@ -18,10 +18,9 @@ Learn how to set up and use @unrdf/daemon in your project
 
 ## Steps
 
-1. Install the package
-2. Import required modules
-3. Create a basic example
-4. Run and verify output
+1. Installation
+2. Integration Examples
+3. Examples
 
 ## Proof
 

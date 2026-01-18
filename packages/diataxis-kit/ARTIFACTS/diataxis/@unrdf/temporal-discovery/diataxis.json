@@ -1,0 +1,202 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "anomaly-detection-example.mjs",
+      "changepoint-detection-example.mjs",
+      "pattern-mining-example.mjs",
+      "temporal-discovery-demo.mjs",
+      "trend-analysis-example.mjs"
+    ],
+    "fingerprint": "3bacb880d8eca309f78b29988bd48a04ff8d606535fce415f17dced32bd49dc3",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Core Algorithms",
+      "Discovery Engine",
+      "Use Cases",
+      "API Reference",
+      "Performance Benchmarks",
+      "Examples",
+      "Integration with UNRDF",
+      "Configuration",
+      "Contributing",
+      "License",
+      "Related Packages"
+    ]
+  },
+  "explanation": {
+    "architecture": "All algorithms support extensive configuration via Zod-validated schemas. See `src/schemas.mjs` for complete schema definitions.",
+    "concepts": [
+      "rdf",
+      "temporal",
+      "knowledge-discovery",
+      "pattern-mining",
+      "anomaly-detection"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-temporal-discovery-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/temporal-discovery",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-unrdf-temporal-discovery",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @unrdf/temporal-discovery",
+      "title": "Configure @unrdf/temporal-discovery"
+    },
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/temporal-discovery",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/temporal-discovery with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/temporal-discovery",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-temporal-discovery-reference",
+    "items": [
+      {
+        "description": "Export: ./anomaly-detector",
+        "example": "import from \"./src/anomaly-detector.mjs\"",
+        "name": "./anomaly-detector",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./changepoint-detector",
+        "example": "import from \"./src/changepoint-detector.mjs\"",
+        "name": "./changepoint-detector",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./correlation-finder",
+        "example": "import from \"./src/correlation-finder.mjs\"",
+        "name": "./correlation-finder",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./engine",
+        "example": "import from \"./src/temporal-discovery-engine.mjs\"",
+        "name": "./engine",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./pattern-miner",
+        "example": "import from \"./src/pattern-miner.mjs\"",
+        "name": "./pattern-miner",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./trend-analyzer",
+        "example": "import from \"./src/trend-analyzer.mjs\"",
+        "name": "./trend-analyzer",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/temporal-discovery",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/temporal-discovery Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/temporal-discovery\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through anomaly-detection-example.mjs",
+        "Work through changepoint-detection-example.mjs",
+        "Work through pattern-mining-example.mjs",
+        "Work through temporal-discovery-demo.mjs",
+        "Work through trend-analysis-example.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/temporal-discovery in your project",
+      "id": "tutorial-getting-started-with-unrdf-temporal-discovery",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/temporal-discovery"
+    }
+  ],
+  "version": "1.0.0"
+}

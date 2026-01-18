@@ -8,7 +8,7 @@
  * 4. Integrated workflow (intent → outcome)
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DecisionEngine, OPERATORS, DecisionOutcome } from '../src/engine.mjs';
 import { ParetoAnalyzer, Feature, createKGC4DExample } from '../src/pareto-analyzer.mjs';
 import { SocraticAgent, createExampleAnalysis } from '../src/socratic-agent.mjs';
