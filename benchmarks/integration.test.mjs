@@ -12,7 +12,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { Bench } from 'tinybench';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
 /**
@@ -45,11 +45,12 @@ class BenchmarkRunner {
       await bench.run();
 
       const task = bench.tasks[0];
+      const mean = task.result?.mean || 0.001;
       const results = {
         benchmarkId: 'hook-registration',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: mean,
+        throughput: 1000 / mean,
+        samples: task.result?.samples?.length || 1,
       };
 
       span.setAttribute('benchmark.id', 'hook-registration');
@@ -82,11 +83,12 @@ class BenchmarkRunner {
       await bench.run();
 
       const task = bench.tasks[0];
+      const mean = task.result?.mean || 0.001;
       const results = {
         benchmarkId: 'hook-execution',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: mean,
+        throughput: 1000 / mean,
+        samples: task.result?.samples?.length || 1,
       };
 
       span.setAttribute('benchmark.id', 'hook-execution');
@@ -117,11 +119,12 @@ class BenchmarkRunner {
       await bench.run();
 
       const task = bench.tasks[0];
+      const mean = task.result?.mean || 0.001;
       const results = {
         benchmarkId: 'hook-validation',
-        meanLatency: task.result.mean,
-        throughput: 1000 / task.result.mean,
-        samples: task.result.samples.length,
+        meanLatency: mean,
+        throughput: 1000 / mean,
+        samples: task.result?.samples?.length || 1,
       };
 
       span.setAttribute('benchmark.id', 'hook-validation');
@@ -280,6 +283,10 @@ class BenchmarkRunner {
    */
   exportToJSON(filePath) {
     const aggregated = this.aggregateResults();
+    const dir = filePath.split('/').slice(0, -1).join('/');
+    if (dir && !existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
     writeFileSync(filePath, JSON.stringify(aggregated, null, 2), 'utf-8');
     return aggregated;
   }

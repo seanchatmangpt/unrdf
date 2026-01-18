@@ -2,26 +2,32 @@
  * @fileoverview Vitest configuration for fast pre-push testing (<30s)
  * 80/20 principle: Keep only critical tests delivering 80% of value
  * Used for git pre-push hook validation
+ *
+ * Core Features:
+ * - testTimeout: 5000ms (5s SLA - Andon Principle)
+ * - maxForks: 10 (parallel execution)
+ * - bail: true (fast failure)
+ * - ~30 critical tests covering 80% of functionality
  */
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    // Single-threaded execution for deterministic results
+    // Parallel execution with maxForks: 10
     pool: "forks",
     poolOptions: {
       forks: {
-        singleFork: true,
+        maxForks: 10,
       },
     },
 
-    // Disable concurrent execution for consistent timing
-    concurrent: false,
-    maxConcurrency: 1,
+    // Allow concurrent execution for speed
+    concurrent: true,
+    maxConcurrency: 10,
 
-    // Test timeout - reasonable for RDF operations
-    testTimeout: 15_000,
-    hookTimeout: 15_000,
+    // Test timeout - 5s SLA (Andon principle)
+    testTimeout: 5000,
+    hookTimeout: 5000,
 
     // Coverage configuration
     coverage: {
@@ -51,72 +57,83 @@ export default defineConfig({
     // Node.js environment (no browser, no React)
     environment: "node",
 
-    // 80/20 Fast Test Suite: Keep only critical tests that verify core functionality
-    // Total: ~900 lines = 5% of full suite but 80% of value
+    // 80/20 Fast Test Suite: ~30 critical tests = 80% of value in <30s
+    // Target: <30 seconds execution
     include: [
-      // v4.0: Core diff utilities (427 lines) - CRITICAL for diff engine
-      "test/diff.test.mjs",
+      // === TIER 1: ESSENTIAL (Core 20%) ===
+      // Core RDF operations (CRITICAL)
+      "test/diff.test.mjs",                              // Core diff engine
+      "test/project-engine.test.mjs",                    // Domain inference
 
-      // v3.0: Core parsing and querying (21 lines) - CONTRACT TESTS
-      "test/knowledge-engine/parse-contract.test.mjs",
-      "test/knowledge-engine/query-contract.test.mjs",
+      // Knowledge engine contracts
+      "test/knowledge-engine/parse-contract.test.mjs",   // Parse contract
+      "test/knowledge-engine/query-contract.test.mjs",   // Query contract
 
-      // v3.0: Observability (992 lines) - KEY FEATURE, but only run smoke tests
-      // NOTE: Full observability tests included in test:full
-      // For now we include it but could reduce if needed
+      // Security & validation
+      "test/lockchain-merkle-verification.test.mjs",     // Cryptographic proofs
+      "test/security-error-sanitizer.test.mjs",          // Error sanitization
 
-      // v4.0: Project engine core (487 lines) - CRITICAL for domain inference
-      "test/project-engine.test.mjs",
+      // Integration smoke test
+      "test/e2e-integration.test.mjs",                   // E2E validation
+      "test/guards.test.mjs",                            // Guard enforcement
 
-      // v3.0: Dark matter 80/20 (362 lines) - CORE OPTIMIZATION FEATURE
-      "test/dark-matter-80-20.test.mjs",
+      // === TIER 2: IMPORTANT (Next 30% for 75% total coverage) ===
+      // Optimization & performance
+      "test/dark-matter-80-20.test.mjs",                 // Core optimization
 
-      // v3.0: CLI baseline (16 lines) - CLI smoke test
-      "test/cli/baseline-cli.test.mjs",
+      // Resilience & circuit breaking
+      "test/knowledge-engine/utils/circuit-breaker.test.mjs",  // Circuit breaker
+      "test/knowledge-engine/utils/ring-buffer.test.mjs",      // Ring buffer
 
-      // v3.1.0: E2E integration (110 lines) - CRITICAL end-to-end validation
-      "test/e2e-integration.test.mjs",
+      // Core package tests (critical)
+      "packages/core/test/core.test.mjs",
+      "packages/core/test/config.test.mjs",
 
-      // v3.0: RingBuffer utilities (354 lines) - PERFORMANCE CRITICAL
-      "test/knowledge-engine/utils/ring-buffer.test.mjs",
+      // Hooks system
+      "packages/hooks/test/hooks.test.mjs",
 
-      // v3.0: Circuit breaker (505 lines) - RESILIENCE CRITICAL
-      "test/knowledge-engine/utils/circuit-breaker.test.mjs",
+      // KGC essentials
+      "packages/kgc-4d/test/freeze.test.mjs",
+      "packages/kgc-4d/test/store.test.mjs",
+      "packages/kgc-runtime/test/validators.test.mjs",
 
-      // v3.0: Lockchain verification (168 lines) - SECURITY CRITICAL
-      "test/lockchain-merkle-verification.test.mjs",
+      // Receipts & verification
+      "packages/receipts/test/batch-receipt-generator.test.mjs",
+      "packages/receipts/test/merkle-batcher.test.mjs",
 
-      // v3.0: Hooks dependency validation (52 lines) - HOOK ENGINE VALIDATION
-      "test/hook-executor-deps.test.mjs",
+      // V6 core
+      "packages/v6-core/test/implementations.test.mjs",
+      "packages/v6-compat/test/batch-1-validation.test.mjs",
+
+      // YAWL workflow essentials
+      "packages/yawl/test/workflow-basics.test.mjs",
+      "packages/yawl/test/cancellation.test.mjs",
+
+      // Federation & consensus
+      "packages/federation/test/federation.test.mjs",
+      "packages/consensus/test/consensus.test.mjs",
+
+      // CLI core
+      "test/cli.test.mjs",
+      "packages/cli/test/daemon-cli.test.mjs",
+
+      // Proofs (formal verification)
+      "proofs/poka-yoke/01-sealed-universe.test.mjs",
+      "proofs/poka-yoke/02-receipt-immutability.test.mjs",
     ],
 
     exclude: [
       "node_modules/**",
       "dist/**",
+      "coverage/**",
       "test/fixtures/**",
       "test/utils/**",
-
-      // Exclude large federation tests (300+ lines each) - nice to have, not critical
-      "test/federation/**",
-
-      // Exclude slow sandbox tests (500+ lines, native modules)
-      "test/knowledge-engine/sandbox/**",
-
-      // Exclude browser compatibility tests (not relevant for pre-push)
-      "test/browser/**",
-
-      // Exclude validation/monitoring tests (not critical for pre-push)
-      "test/validation/**",
-      "test/knowledge-engine/monitoring/**",
-
-      // Exclude advanced project-engine subdirectory tests (only run main)
-      "test/project-engine/**",
-
-      // Exclude streaming tests (advanced feature, not critical)
-      "test/streaming/**",
-
-      // Exclude profiling tests
-      "test/profiling/**",
+      "test/setup/**",
+      "docs/**",
+      "examples/**",
+      "AUTONOMIC_INNOVATION/**",
+      "ENTERPRISE_MIGRATION/**",
+      "playground/**",
     ],
 
     // Minimal reporters for speed
@@ -128,14 +145,14 @@ export default defineConfig({
     // Isolate tests
     isolate: true,
 
+    // Fail fast on first error
+    bail: true,
+
     // Pass with no tests
-    passWithNoTests: true,
+    passWithNoTests: false,
 
-    // Retry failed tests once
-    retry: 1,
-
-    // Don't bail - run all tests even if some fail (for better diagnostics)
-    bail: 0,
+    // No retries - fail fast
+    retry: 0,
 
     // No watch mode for CI
     watch: false,

@@ -1,0 +1,120 @@
+================================================================================
+                    TEST CONSOLIDATION SLA VERIFICATION
+================================================================================
+
+Project: UNRDF v6.0.0
+Date: 2026-01-11
+Branch: claude/consolidate-tests-Fssji
+Configuration: vitest.config.fast.mjs (80/20 Fast Suite)
+
+================================================================================
+                              VERDICT: FAIL
+================================================================================
+
+SLA REQUIREMENT:     All tests run in <5 seconds total
+ACTUAL EXECUTION:    10.75 seconds
+OVERAGE:            +5.75 seconds (+115%)
+PASS RATE:          74.3% (26/35 tests passing)
+
+================================================================================
+                           EXECUTION BREAKDOWN
+================================================================================
+
+Transform       : 7.38s  (68.7% of total)
+Setup           : 1.69s  (15.7% of total)
+Import          : 3.23s  (30.0% of total)
+Tests           : 18.59s (test execution with retries)
+─────────────────────────────────
+TOTAL           : 10.75s (2.15x OVER BUDGET)
+
+================================================================================
+                            TEST STATUS: 11/17 FAILED
+================================================================================
+
+PASSING TEST FILES (6/17):
+  ✓ test/cli.test.mjs                           (6 tests, 6.04s)
+  ✓ test/dark-matter-80-20.test.mjs            (3 tests, 6ms)
+  ✓ test/e2e-integration.test.mjs               (1 test, 2ms)
+  ✓ test/receipts.test.mjs                      (7 tests, 18.6ms)
+  ✓ packages/v6-compat/integration.test.mjs    (13 tests, 14.6ms)
+  ✓ packages/v6-compat/integration-node.test.mjs (6 tests, 14.6ms)
+
+FAILING TEST FILES (11/17):
+  ✗ test/diff.test.mjs                         [MODULE NOT FOUND]
+  ✗ test/project-engine.test.mjs               [MODULE NOT FOUND]
+  ✗ test/hook-executor-deps.test.mjs           [MODULE NOT FOUND]
+  ✗ test/knowledge-engine/circuit-breaker      [MODULE NOT FOUND]
+  ✗ test/knowledge-engine/ring-buffer          [MODULE NOT FOUND]
+  ✗ test/lockchain-merkle-verification         [ASSERTION FAIL - 2 tests]
+  ✗ test/security-error-sanitizer              [ASSERTION FAIL - 2 tests]
+  ✗ test/knowledge-engine/parse-contract       [TIMEOUT - 8041ms]
+  ✗ test/knowledge-engine/query-contract       [TIMEOUT - 8044ms + SYNTAX ERR]
+  ✗ packages/v6-compat/batch-1-validation      [MIXED - 2 fail, 3 pass]
+  ✗ packages/yawl/test/task-activation         [MODULE NOT FOUND]
+
+================================================================================
+                         CRITICAL BLOCKING ISSUES
+================================================================================
+
+1. MODULE NOT FOUND ERRORS (5 tests blocked - 29%)
+   ├─ packages/diff.mjs (missing)
+   ├─ packages/project-engine/index.mjs (missing)
+   ├─ packages/knowledge-engine/hook-executor.mjs (missing)
+   ├─ packages/knowledge-engine/utils/circuit-breaker.mjs (missing)
+   └─ packages/knowledge-engine/utils/ring-buffer.mjs (missing)
+
+2. SYNTAX ERROR (blocks compilation)
+   └─ /src/knowledge-engine/knowledge-substrate-core.mjs:87
+      Error: await in non-async constructor function
+
+3. TIMEOUT VIOLATIONS (4x over limit)
+   ├─ parse-contract.test.mjs: 8041ms (limit: 2000ms)
+   └─ query-contract.test.mjs: 8044ms (limit: 2000ms)
+
+4. ASSERTION FAILURES (4 tests)
+   ├─ lockchain-merkle: hash length 63 vs 64 expected
+   ├─ lockchain-merkle: invalid hash validation
+   ├─ security-error-sanitizer: API key not redacted
+   └─ security-error-sanitizer: path not redacted
+
+================================================================================
+                         PRIORITY 1 FIXES REQUIRED
+================================================================================
+
+To achieve SLA compliance, execute in order:
+
+1. CREATE MISSING MODULES (Will unlock 5 blocked tests)
+   [ ] packages/diff.mjs
+   [ ] packages/project-engine/index.mjs
+   [ ] packages/knowledge-engine/hook-executor.mjs
+   [ ] packages/knowledge-engine/utils/circuit-breaker.mjs
+   [ ] packages/knowledge-engine/utils/ring-buffer.mjs
+
+2. FIX SYNTAX ERROR (Will allow compilation)
+   [ ] knowledge-substrate-core.mjs:87 - Make constructor async
+
+3. INCREASE TEST TIMEOUT (Will allow completion)
+   [ ] vitest.config.fast.mjs:23 - Change testTimeout to 5000ms
+
+4. FIX ASSERTIONS (Will increase pass rate)
+   [ ] Hash calculation: return 64 chars not 63
+   [ ] Error sanitizer: verify API key redaction
+   [ ] Error sanitizer: verify path redaction
+   [ ] Schema validation: fix permissiveness in v6-compat
+
+================================================================================
+                            FULL REPORT LOCATION
+================================================================================
+
+  /home/user/unrdf/TEST-CONSOLIDATION-RESULTS.md
+
+  This comprehensive report includes:
+  - Detailed execution timing analysis
+  - Per-test timing breakdown
+  - Module missing locations with error messages
+  - Assertion failure details with expected vs actual
+  - Coverage metrics (cannot measure due to failures)
+  - Recommendations for Priority 1-3 fixes
+  - Next steps with checkboxes
+
+================================================================================

@@ -82,9 +82,7 @@ export class KnowledgeSubstrateCore {
       developmentEfficiency: 0,
     };
     this.initialized = false;
-
-    // Create internal RDF store
-    this.store = await createStore();
+    this.store = null; // Initialized in initialize() method
   }
 
   /**
@@ -97,6 +95,9 @@ export class KnowledgeSubstrateCore {
     }
 
     console.log('🌌 Initializing Dark Matter 80/20 Core...');
+
+    // Create internal RDF store
+    this.store = await createStore();
 
     // Initialize core components (20% that deliver 80% of value)
     await this._initializeCoreComponents();
