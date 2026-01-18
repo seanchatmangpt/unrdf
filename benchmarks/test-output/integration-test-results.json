@@ -1,7 +1,7 @@
 {
   "suite": "Knowledge Hooks Performance Benchmark Suite",
   "version": "1.0.0",
-  "timestamp": "2026-01-18T05:01:52.281Z",
+  "timestamp": "2026-01-18T05:25:15.061Z",
   "platform": "linux",
   "arch": "x64",
   "nodeVersion": "v22.21.1",
@@ -27,20 +27,20 @@
     },
     {
       "benchmarkId": "memory-profiling",
-      "baselineMemory": 146.67664337158203,
-      "currentMemory": 146.7868194580078,
-      "memoryOverhead": 0.11017608642578125
+      "baselineMemory": 117.48263549804688,
+      "currentMemory": 117.55770111083984,
+      "memoryOverhead": 0.07506561279296875
     },
     {
       "benchmarkId": "concurrent-execution",
       "workerCount": 10,
-      "duration": 12,
-      "throughput": 833.3333333333334
+      "duration": 11,
+      "throughput": 909.090909090909
     }
   ],
   "summary": {
     "avgLatency": 0.001,
-    "avgThroughput": 750208.3333333334,
-    "totalMemoryOverhead": 0.11017608642578125
+    "avgThroughput": 750227.2727272727,
+    "totalMemoryOverhead": 0.07506561279296875
   }
 }
