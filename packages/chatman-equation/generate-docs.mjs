@@ -2,13 +2,14 @@
 
 /**
  * @file generate-docs.mjs
- * @description Generate Diataxis documentation from TOML + Tera templates
+ * @description Generate Diataxis documentation from TOML + KGN templates
  * @module chatman-equation/generate-docs
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { TemplateEngine } from '@unrdf/kgn';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -156,112 +157,7 @@ function setNestedValue(obj, key, value) {
   current[parts[parts.length - 1]] = value;
 }
 
-// Minimal Tera-like template engine (simplified)
-class SimpleTemplateEngine {
-  constructor(templateDir) {
-    this.templateDir = templateDir;
-    this.templates = new Map();
-  }
-
-  loadTemplate(name) {
-    if (this.templates.has(name)) {
-      return this.templates.get(name);
-    }
-
-    const templatePath = resolve(this.templateDir, name);
-    const content = readFileSync(templatePath, 'utf-8');
-    this.templates.set(name, content);
-    return content;
-  }
-
-  render(templateName, context) {
-    let template = this.loadTemplate(templateName);
-
-    // Replace variables: {{ variable }}
-    template = template.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (match, path) => {
-      const value = this.getNestedValue(context, path.trim());
-      return value !== undefined ? String(value) : '';
-    });
-
-    // Handle for loops: {% for item in items %}...{% endfor %}
-    template = template.replace(
-      /\{%\s*for\s+(\w+)\s+in\s+(\w+(?:\.\w+)*)\s*%\}([\s\S]*?)\{%\s*endfor\s*%\}/g,
-      (match, itemVar, arrayPath, loopContent) => {
-        const array = this.getNestedValue(context, arrayPath);
-        if (!Array.isArray(array)) return '';
-
-        return array
-          .map((item, index) => {
-            const loopContext = {
-              ...context,
-              [itemVar]: item,
-              loop: {
-                index: index,
-                first: index === 0,
-                last: index === array.length - 1,
-              },
-            };
-            return this.renderString(loopContent, loopContext);
-          })
-          .join('');
-      }
-    );
-
-    // Handle conditionals: {% if condition %}...{% endif %}
-    template = template.replace(
-      /\{%\s*if\s+([^%]+?)\s*%\}([\s\S]*?)(?:\{%\s*else\s*%\}([\s\S]*?))?\{%\s*endif\s*%\}/g,
-      (match, condition, ifContent, elseContent = '') => {
-        const conditionValue = this.evaluateCondition(condition, context);
-        return conditionValue ? this.renderString(ifContent, context) : this.renderString(elseContent, context);
-      }
-    );
-
-    return template;
-  }
-
-  renderString(template, context) {
-    // Re-apply variable substitution for nested content
-    return template.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (match, path) => {
-      const value = this.getNestedValue(context, path.trim());
-      return value !== undefined ? String(value) : '';
-    });
-  }
-
-  getNestedValue(obj, path) {
-    if (path === 'now') {
-      return new Date().toISOString();
-    }
-
-    const parts = path.split('.');
-    let value = obj;
-
-    for (const part of parts) {
-      if (value && typeof value === 'object' && part in value) {
-        value = value[part];
-      } else {
-        return undefined;
-      }
-    }
-
-    return value;
-  }
-
-  evaluateCondition(condition, context) {
-    // Simple evaluation: just check if variable exists and is truthy
-    const trimmed = condition.trim();
-
-    // Handle negation
-    if (trimmed.startsWith('not ')) {
-      const variable = trimmed.substring(4).trim();
-      const value = this.getNestedValue(context, variable);
-      return !value;
-    }
-
-    // Handle simple variable check
-    const value = this.getNestedValue(context, trimmed);
-    return Boolean(value);
-  }
-}
+// Use @unrdf/kgn template engine (already has Nunjucks + deterministic rendering)
 
 /**
  * Generate documentation from TOML config
@@ -273,7 +169,12 @@ async function generateDocs() {
   const templateDir = resolve(__dirname, 'templates');
   const outputBaseDir = resolve(__dirname, '../../docs/diataxis/chatman-equation');
 
-  const engine = new SimpleTemplateEngine(templateDir);
+  // Use @unrdf/kgn TemplateEngine with deterministic mode
+  const engine = new TemplateEngine({
+    templatesDir: templateDir,
+    deterministicMode: true,
+    strictMode: false
+  });
 
   // Categories to process
   const categories = ['tutorials', 'how-to', 'reference', 'explanation'];
@@ -323,9 +224,14 @@ async function generateDocs() {
       const outputPath = resolve(outputDir, `${id}.md`);
 
       try {
-        const markdown = engine.render(`${metadata.template}`, item);
-        writeFileSync(outputPath, markdown, 'utf-8');
-        console.log(`  ✓ Generated ${id}.md`);
+        // KGN render() is async and returns { success, content, ... }
+        const result = await engine.render(`${metadata.template}`, item);
+        if (result.success) {
+          writeFileSync(outputPath, result.content, 'utf-8');
+          console.log(`  ✓ Generated ${id}.md`);
+        } else {
+          console.error(`  ❌ Failed to generate ${id}.md:`, result.error);
+        }
       } catch (error) {
         console.error(`  ❌ Failed to generate ${id}.md:`, error.message);
       }

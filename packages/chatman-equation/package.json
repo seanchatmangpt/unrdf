@@ -30,11 +30,11 @@
     "diataxis"
   ],
   "dependencies": {
-    "nunjucks": "^3.2.4",
+    "@unrdf/kgn": "workspace:*",
+    "@unrdf/core": "workspace:*",
     "@iarna/toml": "^2.2.5",
-    "zod": "^4.1.13",
-    "glob": "^10.3.10",
-    "n3": "^1.26.0"
+    "zod": "^3.25.76",
+    "glob": "^10.3.10"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
