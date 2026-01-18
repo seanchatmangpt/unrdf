@@ -5,11 +5,10 @@
  * Expected Runtime: <50ms
  */
 
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
-test('Proof 02: Receipt Immutability (SMOKE)', async (t) => {
-  await t.test('Frozen receipt prevents tampering', () => {
+describe('Proof 02: Receipt Immutability (SMOKE)', () => {
+  it('Frozen receipt prevents tampering', () => {
     const receipt = Object.freeze({
       id: '550e8400-e29b-41d4-a716-446655440000',
       universe_hash: 'abc123',
@@ -20,14 +19,13 @@ test('Proof 02: Receipt Immutability (SMOKE)', async (t) => {
     try {
       receipt.universe_hash = 'TAMPERED';
     } catch (e) {
-      assert.ok(e instanceof TypeError);
+      expect(e).toBeInstanceOf(TypeError);
     }
 
-    assert.equal(receipt.universe_hash, 'abc123');
-    console.log('  ✅ PROTECTED: Frozen object prevents tampering');
+    expect(receipt.universe_hash).toBe('abc123');
   });
 
-  await t.test('Cannot add properties to frozen object', () => {
+  it('Cannot add properties to frozen object', () => {
     const receipt = Object.freeze({
       id: '550e8400-e29b-41d4-a716-446655440000',
     });
@@ -36,14 +34,13 @@ test('Proof 02: Receipt Immutability (SMOKE)', async (t) => {
     try {
       receipt.newField = 'should not appear';
     } catch (e) {
-      assert.ok(e instanceof TypeError);
+      expect(e).toBeInstanceOf(TypeError);
     }
 
-    assert.equal(receipt.newField, undefined);
-    console.log('  ✅ Cannot add properties to frozen object');
+    expect(receipt.newField).toBeUndefined();
   });
 
-  await t.test('Deep freeze prevents nested mutations', () => {
+  it('Deep freeze prevents nested mutations', () => {
     function deepFreeze(obj) {
       Object.freeze(obj);
       Object.values(obj).forEach(value => {
@@ -65,12 +62,9 @@ test('Proof 02: Receipt Immutability (SMOKE)', async (t) => {
     try {
       receipt.metadata.timestamp = 'TAMPERED';
     } catch (e) {
-      assert.ok(e instanceof TypeError);
+      expect(e).toBeInstanceOf(TypeError);
     }
 
-    assert.equal(receipt.metadata.timestamp, '2025-12-28');
-    console.log('  ✅ PROTECTED: Deep freeze prevents nested mutations');
+    expect(receipt.metadata.timestamp).toBe('2025-12-28');
   });
 });
-
-console.log('✅ Proof 02 PASSED: Object.freeze() prevents tampering');
