@@ -1,0 +1,327 @@
+
+> @unrdf/yawl@6.0.0 lint /home/user/unrdf/packages/yawl
+> eslint src/ test/ --max-warnings=0
+
+
+/home/user/unrdf/packages/yawl/src/api/workflow-api-execution.mjs
+  46:9  warning  't_ns' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/api/workflow-execution.mjs
+  90:9  warning  't_ns' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/cancellation/yawl-cancellation-manager.mjs
+  309:34  warning  'reason' is defined but never used. Allowed unused args must match /^_/u       no-unused-vars
+  626:17  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/cancellation/yawl-cancellation.mjs
+  1267:34  warning  'reason' is defined but never used. Allowed unused args must match /^_/u       no-unused-vars
+  1689:17  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/case-state.mjs
+  7:10  warning  'YawlTask' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+  7:20  warning  'TaskStatus' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/engine-core.mjs
+    9:10  warning  'YawlCase' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+    9:20  warning  'CaseStatus' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  332:25  warning  'workflow' is defined but never used. Allowed unused args must match /^_/u    no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/engine-events.mjs
+  10:3  warning  'YAWL_EVENT_TYPES' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/engine-execution.mjs
+  15:10  warning  'TaskStatus' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/events/yawl-events-core.mjs
+  13:10  warning  'GRAPHS' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+  13:18  warning  'PREDICATES' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/events/yawl-events-kgc4d.mjs
+  18:3  warning  'YAWL_NS' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+  20:3  warning  'caseGraphUri' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/events/yawl-events.mjs
+   18:22  warning  'VectorClock' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  625:37  warning  'targetTime' is defined but never used. Allowed unused args must match /^_/u   no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/hooks/yawl-hooks.mjs
+  198:58  warning  'conditionEvaluator' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+  294:58  warning  'conditionEvaluator' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+  421:66  warning  'conditionEvaluator' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+  655:18  warning  'context' is assigned a value but never used. Allowed unused vars must match /^_/u    no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/index.mjs
+  460:3  error  Parsing error: Duplicate export 'createWorkflow'
+
+/home/user/unrdf/packages/yawl/src/receipt-batch.mjs
+   16:10  warning  'z' is defined but never used. Allowed unused vars must match /^_/u                            no-unused-vars
+   17:22  warning  'VectorClock' is defined but never used. Allowed unused vars must match /^_/u                  no-unused-vars
+   24:7   warning  'BLAKE3_HEX_LENGTH' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+   25:7   warning  'DEFAULT_BATCH_SIZE' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  213:16  warning  'computeChainHashes' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/index.mjs
+  49:3  warning  'CapacityStatusSchema' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+  50:3  warning  'AllocationRecordSchema' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  78:7  warning  'time' is assigned a value but never used. Allowed unused vars must match /^_/u           no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/yawl-resources-calendar-impl.mjs
+  14:3  warning  'RDF_NS' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  15:3  warning  'XSD_NS' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  16:3  warning  'TIME_NS' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/yawl-resources-core.mjs
+   34:3   warning  'ResourceSchema' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+   35:3   warning  'WorkItemSchema' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+  285:31  warning  'options' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  298:42  warning  'windows' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  312:22  warning  'config' is defined but never used. Allowed unused args must match /^_/u            no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/yawl-resources-pools.mjs
+  18:3  warning  'WorkItemSchema' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/yawl-resources-rdf.mjs
+  13:3  warning  'FOAF_NS' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  15:3  warning  'XSD_NS' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/resources/yawl-resources.mjs
+  63:7  warning  'time' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/store/yawl-store.mjs
+  78:3  warning  'startedBy' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/task-rdf.mjs
+  15:36  warning  'TaskDefinition' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/visualization/live-workflow-viz.mjs
+  50:7  warning  'WorkflowNodeSchema' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  62:7  warning  'WorkflowEdgeSchema' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  95:7  error    'document' is not defined                                                                      no-undef
+
+/home/user/unrdf/packages/yawl/src/workflow-core.mjs
+  12:10  warning  'SPLIT_TYPE' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  12:22  warning  'JOIN_TYPE' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/workflow-execution.mjs
+  163:61  warning  'warnings' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/workflow-rdf.mjs
+  41:3   warning  'flowCondition' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+  52:26  warning  'literal' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/workflow-validation.mjs
+  137:9   warning  'splitJoinPairs' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  282:47  warning  'warnings' is defined but never used. Allowed unused args must match /^_/u                 no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/workflow/validation.mjs
+  290:49  warning  'warnings' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/src/yawl-receipts.mjs
+  12:3  warning  'createContext' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/architecture.test.mjs
+  20:7  warning  'srcDir' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/cancellation.test.mjs
+  8:3  warning  'YawlCancellationManager' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/config.test.mjs
+  8:32  warning  'beforeEach' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  8:44  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/executor.test.mjs
+  652:13  warning  'operation' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  913:13  warning  'result' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/integration.test.mjs
+  655:13  warning  'beforeBridgeTimeouts' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  656:13  warning  'beforeBridgeSchedules' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/ipc.test.mjs
+  564:34  warning  'channelName' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+  878:55  warning  'msg' is defined but never used. Allowed unused args must match /^_/u          no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/lifecycle.test.mjs
+  535:13  warning  'healthAfter' is assigned a value but never used. Allowed unused vars must match /^_/u           no-unused-vars
+  687:13  warning  'initialUnsubscribers' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/daemon/process-manager.test.mjs
+   12:10  warning  'createWorkflowEngine' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+   49:11  warning  'key' is assigned a value but never used. Allowed unused vars must match /^_/u            no-unused-vars
+   55:11  warning  'key' is assigned a value but never used. Allowed unused vars must match /^_/u            no-unused-vars
+  136:13  warning  'operations' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+  366:13  warning  'initialHealth' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  722:13  warning  'unsubCount' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/e2e-daemon.test.mjs
+   23:10  warning  'CaseStatus' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+   24:10  warning  'TaskStatus' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+   43:17  warning  'opId' is assigned a value but never used. Allowed unused vars must match /^_/u    no-unused-vars
+  422:11  warning  'caseId' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/e2e-nitro.test.mjs
+   19:55  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u                     no-unused-vars
+   24:3   warning  'createCase' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   25:3   warning  'enableTask' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   26:3   warning  'startTask' is defined but never used. Allowed unused vars must match /^_/u              no-unused-vars
+   27:3   warning  'completeTask' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+   28:3   warning  'cancelWorkItem' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+   30:3   warning  'CONTROL_FLOW_PATTERNS' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   31:3   warning  'WorkflowEngine' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+   33:3   warning  'ENGINE_EVENTS' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+   35:15  warning  'Case' is defined but never used. Allowed unused vars must match /^_/u                   no-unused-vars
+   36:3   warning  'TaskStatus' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   41:3   warning  'sequence' is defined but never used. Allowed unused vars must match /^_/u               no-unused-vars
+   42:3   warning  'parallelSplit' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+   43:3   warning  'synchronization' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+   44:3   warning  'exclusiveChoice' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+   45:3   warning  'simpleMerge' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+   46:3   warning  'multiChoice' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+   47:3   warning  'structuredSyncMerge' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+   48:3   warning  'arbitraryCycle' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+   49:3   warning  'deferredChoice' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+   57:3   warning  'NitroTaskExecutor' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+  435:13  warning  'nitroTaskId1' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  679:11  warning  'lastError' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integration-kgc4d.test.mjs
+   16:20  warning  'GitBackbone' is defined but never used. Allowed unused vars must match /^_/u                    no-unused-vars
+   28:3   warning  'createTaskEnablementValidator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  341:41  warning  'store' is defined but never used. Allowed unused args must match /^_/u                          no-unused-vars
+  341:48  warning  'env' is defined but never used. Allowed unused args must match /^_/u                            no-unused-vars
+  380:11  warning  'sparqlQueryUsed' is assigned a value but never used. Allowed unused vars must match /^_/u       no-unused-vars
+  383:29  warning  'condition' is defined but never used. Allowed unused args must match /^_/u                      no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integration.test.mjs
+   25:3   warning  'CONTROL_FLOW_PATTERNS' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   34:10  warning  'TaskStatus' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   39:3   warning  'JOIN_TYPE' is defined but never used. Allowed unused vars must match /^_/u              no-unused-vars
+   44:3   warning  'sequence' is defined but never used. Allowed unused vars must match /^_/u               no-unused-vars
+   48:10  warning  'createResourceManager' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   48:33  warning  'ResourceType' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+  586:13  warning  'timestamp2' is assigned a value but never used. Allowed unused vars must match /^_/u    no-unused-vars
+  773:18  warning  'taskId' is assigned a value but never used. Allowed unused vars must match /^_/u        no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integrations/nitro-adapter.test.mjs
+  651:32  warning  'i' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integrations/nitro-bridge.test.mjs
+  475:13  warning  'nitroTask' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integrations/nitro-config.test.mjs
+  13:3  warning  'ConfigManager' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/integrations/nitro-executor.test.mjs
+  490:52  warning  'i' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-advanced.test.mjs
+  69:3  error  Parsing error: Unexpected token }
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-basic.test.mjs
+  24:3  warning  'YawlWorkflow' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-cancellation.test.mjs
+    2:48  warning  'measureTime' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+    2:73  warning  'JOIN_TYPE' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+    2:94  warning  'deferredChoice' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   70:41  error    'TaskStatus' is not defined                                                       no-undef
+  148:32  error    'TaskStatus' is not defined                                                       no-undef
+  186:40  error    'TaskStatus' is not defined                                                       no-undef
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-controlflow.test.mjs
+    5:3   warning  'measureTime' is defined but never used. Allowed unused vars must match /^_/u                 no-unused-vars
+    7:3   warning  'JOIN_TYPE' is defined but never used. Allowed unused vars must match /^_/u                   no-unused-vars
+  178:15  warning  'downstreamEnabled' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-integration.test.mjs
+  230:1  error  Parsing error: Unexpected token
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-receipts.test.mjs
+   1:48  warning  'measureTime' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+  44:21  warning  'yawlCase' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-resources.test.mjs
+    2:10  warning  'createTestWorkflow' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+    2:48  warning  'measureTime' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+   25:7   warning  'engine' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+  127:13  warning  'resource' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/pattern-timetravel.test.mjs
+    4:48  warning  'measureTime' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+   75:13  warning  'checkpoint2' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  105:40  warning  'startReceipt' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/patterns/test-utils.mjs
+  118:10  error  Parsing error: Identifier 'sequence' has already been declared
+
+/home/user/unrdf/packages/yawl/test/performance.test.mjs
+   22:3   warning  'createWorkflowAPI' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+   23:3   warning  'createWorkflowCase' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+   24:3   warning  'enableWorkflowTask' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+   25:3   warning  'startTask' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   26:3   warning  'completeTask' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+   31:3   warning  'createWorkflowEngine' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   33:3   warning  'createYawlStore' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+  222:27  warning  'task' is assigned a value but never used. Allowed unused vars must match /^_/u         no-unused-vars
+  248:15  warning  'downstream' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  533:20  warning  'tasks' is assigned a value but never used. Allowed unused vars must match /^_/u        no-unused-vars
+  535:15  warning  'workflow' is assigned a value but never used. Allowed unused vars must match /^_/u     no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/receipt-batch.test.mjs
+  5:44  warning  'afterEach' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/yawl-events.test.mjs
+   23:10  warning  'createTestWorkflow' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+   23:30  warning  'createTestCase' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+  373:13  warning  'enableResult' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  455:13  warning  'task2' is assigned a value but never used. Allowed unused vars must match /^_/u         no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/yawl-hooks.test.mjs
+    7:30  warning  'createTestTask' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+   25:3   warning  'ResourceConstraintSchema' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   51:7   warning  'createMockQuad' is assigned a value but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  187:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  196:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  291:11  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  316:19  warning  'wfId' is assigned a value but never used. Allowed unused vars must match /^_/u             no-unused-vars
+  340:19  warning  'wfId' is assigned a value but never used. Allowed unused vars must match /^_/u             no-unused-vars
+  378:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  399:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  419:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  440:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  463:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  488:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  513:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  533:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  563:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  592:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  609:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+  629:15  warning  'id' is assigned a value but never used. Allowed unused vars must match /^_/u               no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/yawl-patterns.test.mjs
+    20:57  warning  'vi' is defined but never used. Allowed unused vars must match /^_/u                          no-unused-vars
+    27:25  warning  'createTestWorkflowSpec' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+    34:3   warning  'YawlTask' is defined but never used. Allowed unused vars must match /^_/u                    no-unused-vars
+    36:3   warning  'YawlReceipt' is defined but never used. Allowed unused vars must match /^_/u                 no-unused-vars
+    40:3   warning  'synchronization' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+    45:3   warning  'arbitraryCycle' is defined but never used. Allowed unused vars must match /^_/u              no-unused-vars
+   674:15  warning  'downstreamEnabled' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+   692:7   warning  'engine' is assigned a value but never used. Allowed unused vars must match /^_/u             no-unused-vars
+   794:13  warning  'resource' is assigned a value but never used. Allowed unused vars must match /^_/u           no-unused-vars
+  1075:13  warning  'checkpoint2' is assigned a value but never used. Allowed unused vars must match /^_/u        no-unused-vars
+  1105:40  warning  'startReceipt' is assigned a value but never used. Allowed unused vars must match /^_/u       no-unused-vars
+  1226:21  warning  'yawlCase' is assigned a value but never used. Allowed unused vars must match /^_/u           no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/yawl-resources.test.mjs
+  15:3  warning  'YawlResourceManager' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+  16:3  warning  'ResourcePool' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+  26:3  warning  'createTestWorkflow' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+  27:3  warning  'createTestTask' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+  28:3  warning  'createTestCase' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+
+/home/user/unrdf/packages/yawl/test/yawl.test.mjs
+  21:3  warning  'AtomicTask' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+
+✖ 197 problems (8 errors, 189 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.

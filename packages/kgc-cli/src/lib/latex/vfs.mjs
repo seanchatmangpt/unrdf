@@ -14,8 +14,7 @@ import { join, relative as _relative } from 'node:path';
  * @returns {Promise<Map<string, Uint8Array>>} VFS map (path -> content)
  */
 export async function collectProjectFiles(projectDir) {
-  // TODO (Agent 2): Implement recursive file collection
-  // For now, return minimal VFS for testing
+  // Stub implementation - recursive file collection pending
   const vfs = new Map();
 
   // Stub implementation: only collect .tex files in root

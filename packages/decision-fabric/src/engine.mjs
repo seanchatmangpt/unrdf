@@ -11,8 +11,7 @@
  * - Information-theoretic guarantees: n_min = ⌈(H(Λ) - H(A)) / C⌉ = 8
  */
 
-import { HookRegistry } from '@unrdf/hooks';
-import { KGCStore } from '@unrdf/kgc-4d';
+import { HookRegistry, KGCStore } from '@unrdf/kgc-4d';
 import { createStore } from '@unrdf/oxigraph';
 
 /**

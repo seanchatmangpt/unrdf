@@ -468,26 +468,47 @@ export {
 // =============================================================================
 // NITRO INTEGRATIONS - Scheduler and Monitor
 // =============================================================================
-// Note: Integrations module not yet implemented
-// Uncomment when ./integrations/index.mjs is created
-// export {
-//   // Scheduler
-//   NitroScheduler,
-//   createScheduler,
-//   // Monitor
-//   NitroMonitor,
-//   createMonitor,
-//   // Schemas
-//   CronScheduleSchema,
-//   DelayedExecutionSchema,
-//   ScheduleConfigSchema,
-//   TaskMetricsSchema,
-//   ResourceMetricsSchema,
-//   HealthStatusSchema,
-//   AlertConfigSchema,
-//   PerformanceMetricsSchema,
-//   // Validation functions
-//   validateScheduleConfig,
-//   validatePerformanceMetrics,
-//   validateAlertConfig,
-// } from './integrations/index.mjs';
+export {
+  // Scheduler
+  NitroScheduler,
+  createScheduler,
+  // Monitor
+  NitroMonitor,
+  createMonitor,
+  // Schemas
+  CronScheduleSchema,
+  DelayedExecutionSchema,
+  ScheduleConfigSchema,
+  TaskMetricsSchema,
+  ResourceMetricsSchema,
+  HealthStatusSchema,
+  AlertConfigSchema,
+  PerformanceMetricsSchema,
+  // Validation functions
+  validateScheduleConfig,
+  validatePerformanceMetrics,
+  validateAlertConfig,
+} from './integrations/index.mjs';
+
+// =============================================================================
+// MULTIPLE INSTANCE PATTERNS - WP13-WP15
+// =============================================================================
+export {
+  // Synchronization Barrier (AND-join)
+  SyncBarrier,
+  createSyncBarrier,
+  BarrierConfigSchema,
+  InstanceCompletionSchema,
+  BarrierResultSchema,
+} from './multiple-instance/sync-barrier.mjs';
+
+export {
+  // WP13: Multiple Instances with Design-Time Knowledge
+  spawnInstancesDesignTime,
+  createMultipleInstanceTask,
+  estimateCompletionTime,
+  MultipleInstanceTaskSchema,
+  SpawnOptionsSchema,
+  InstanceResultSchema,
+  SpawnResultSchema,
+} from './multiple-instance/wp13-design-time.mjs';

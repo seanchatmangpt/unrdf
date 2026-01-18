@@ -1,0 +1,177 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 1,
+    "reference": 0.5,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [
+      "AGENT-INTEGRATION.md",
+      "CAPABILITY-REGISTRY.jsonld",
+      "COMMAND-REFERENCE.md",
+      "FAILURE-MODES.md",
+      "HYPER-PLAYGROUND.md",
+      "PERFORMANCE-PROFILE.md",
+      "PROTOCOL-SPECIFICATIONS.md",
+      "RDF-ONTOLOGY-GUIDE.md",
+      "SPARQL-QUERY-GUIDE.md"
+    ],
+    "examplesFiles": [
+      "basic-usage.mjs",
+      "cli-scenarios.mjs",
+      "cli-testing.mjs",
+      "hooks-runtime.mjs",
+      "reasoning.mjs",
+      "sparql-queries.mjs",
+      "turtle-parsing.mjs",
+      "validation.mjs",
+      "zod-integration.mjs"
+    ],
+    "fingerprint": "f7efdeebc57cd42d882599780d6759e029e93907518bf48fa90426c5333641e0",
+    "readmeHeadings": [
+      "🚀 Quick Start",
+      "🔧 API Endpoints",
+      "📝 Example Usage",
+      "🎯 Features",
+      "🔍 Available Predicates",
+      "🛠️ Development",
+      "📊 Architecture",
+      "🔗 Integration",
+      "📈 Performance"
+    ]
+  },
+  "explanation": {
+    "architecture": "This playground provides a web-based runtime for managing and executing UNRDF Knowledge Hooks.",
+    "concepts": [
+      "cli",
+      "rdf",
+      "knowledge-graph",
+      "sparql",
+      "nunjucks"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-playground-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding unrdf-playground",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for unrdf-playground",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with cli in your project",
+      "id": "howto-integrate-with-cli",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect unrdf-playground with cli",
+      "title": "Integrate with cli"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute playground command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "unrdf-playground",
+  "reference": {
+    "confidenceScore": 0.8,
+    "id": "reference-unrdf-playground-reference",
+    "items": [
+      {
+        "description": "CLI command: playground",
+        "example": "playground [options]",
+        "name": "playground",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "bin"
+    ],
+    "title": "unrdf-playground Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with unrdf-playground\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through basic-usage.mjs",
+        "Work through cli-scenarios.mjs",
+        "Work through cli-testing.mjs",
+        "Work through hooks-runtime.mjs",
+        "Work through reasoning.mjs"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use unrdf-playground in your project",
+      "id": "tutorial-getting-started-with-unrdf-playground",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with unrdf-playground"
+    }
+  ],
+  "version": "2.0.0"
+}

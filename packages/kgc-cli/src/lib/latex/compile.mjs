@@ -232,6 +232,7 @@ async function runCompilationPipeline({
   cacheDir,
   passes,
   projectDir,
+  inputTexPath,
   lockfile,
 }) {
   let currentVFS = vfs;
@@ -288,9 +289,10 @@ async function runCompilationPipeline({
 
   // FINAL FAILURE: Write diagnostic log and throw
   const logFilePath = await writeDiagnosticLog({
-    log: lastLog,
-    projectDir,
-    timestamp: new Date().toISOString(),
+    cacheDir,
+    engine,
+    inputTexPath,
+    logText: lastLog,
   });
 
   throw new LatexCompileError(
@@ -382,6 +384,7 @@ export async function compileLatexToPdf({
     cacheDir: absCacheDir,
     passes,
     projectDir: absProjectDir,
+    inputTexPath: absInputPath,
     lockfile,
   });
 

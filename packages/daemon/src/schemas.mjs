@@ -9,6 +9,33 @@
 import { z } from 'zod';
 
 /**
+ * API Key Schema
+ * Hexadecimal string between 32-128 characters (16-64 bytes)
+ */
+export const ApiKeySchema = z.string()
+  .min(32, 'API key must be at least 32 characters')
+  .max(128, 'API key must not exceed 128 characters')
+  .regex(/^[a-f0-9]+$/i, 'API key must be valid hexadecimal');
+
+/**
+ * API Key Hash Schema
+ * BLAKE3 hash output (64 character hex string)
+ */
+export const ApiKeyHashSchema = z.string()
+  .length(64, 'API key hash must be 64 characters (BLAKE3)')
+  .regex(/^[a-f0-9]+$/i, 'Hash must be valid hexadecimal');
+
+/**
+ * Authentication Configuration Schema
+ */
+export const AuthConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  keyHash: ApiKeyHashSchema.optional(),
+  requireInDev: z.boolean().default(false),
+  environment: z.enum(['development', 'production', 'test']).default('development'),
+});
+
+/**
  * Retry policy configuration for operations
  * Defines exponential backoff with jitter for failed operation retries.
  * - maxAttempts: Maximum number of retry attempts (default: 3)

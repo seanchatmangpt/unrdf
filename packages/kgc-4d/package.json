@@ -32,7 +32,7 @@
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "hash-wasm": "^4.12.0",
-    "isomorphic-git": "^1.35.1"
+    "isomorphic-git": "^1.36.1"
   },
   "devDependencies": {
     "comment-parser": "^1.4.1",

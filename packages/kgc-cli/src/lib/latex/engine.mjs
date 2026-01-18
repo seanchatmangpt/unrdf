@@ -25,10 +25,8 @@
  * @returns {Promise<CompilationResult>}
  */
 export async function compileWithSwiftLatex({ engine, vfs, entry, cacheDir: _cacheDir, passes: _passes }) {
-  // TODO (Agent 3): Implement SwiftLaTeX integration
-  // For now, return stub result
-
-  // Stub: Check if entry exists in VFS
+  // Stub implementation - SwiftLaTeX integration pending
+  // Check if entry exists in VFS
   if (!vfs.has(entry)) {
     return {
       success: false,

@@ -1,0 +1,227 @@
+---
+to: {{ output_dir }}/types/requests.mjs
+description: Generates JSDoc type definitions for request/response DTOs from RDF ontology
+requires:
+  - sparql_results: Array of operation/parameter bindings from ontology query
+  - output_dir: Target output directory
+---
+/**
+ * @file Request/Response Type Definitions
+ * @module {{ module_name | default("generated/types/requests") }}
+ * @description Auto-generated JSDoc types for API requests and responses from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * DO NOT EDIT MANUALLY - This file is auto-generated from the RDF ontology.
+ * Re-run the sync command to regenerate: `unrdf sync --types`
+ */
+
+// =============================================================================
+// Request/Response Type Definitions
+// =============================================================================
+
+{% set operations = {} %}
+{% for row in sparql_results %}
+{% set opName = row["?operationName"] | trim %}
+{% if opName %}
+{% if not operations[opName] %}
+{% set _ = operations.__setitem__(opName, {
+  "description": row["?operationDescription"] | default(""),
+  "httpMethod": row["?httpMethod"] | default("POST"),
+  "path": row["?path"] | default(""),
+  "requestParams": [],
+  "responseFields": [],
+  "entityType": row["?entityType"] | default("")
+}) %}
+{% endif %}
+{% set paramType = row["?parameterType"] | default("request") %}
+{% set param = {
+  "name": row["?parameterName"] | trim,
+  "type": row["?parameterDataType"] | default("unknown"),
+  "required": row["?parameterRequired"] | default("false") == "true",
+  "description": row["?parameterDescription"] | default(""),
+  "in": row["?parameterIn"] | default("body"),
+  "defaultValue": row["?parameterDefault"] | default("")
+} %}
+{% if param.name %}
+{% if paramType == "response" %}
+{% set _ = operations[opName].responseFields.append(param) %}
+{% else %}
+{% set _ = operations[opName].requestParams.append(param) %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% for opName, opData in operations | dictsort %}
+// -----------------------------------------------------------------------------
+// {{ opName }} Operation
+// -----------------------------------------------------------------------------
+
+{% set requestTypeName = opName | pascal + "Request" %}
+{% set responseTypeName = opName | pascal + "Response" %}
+
+/**
+ * Request type for {{ opName }} operation
+ * {{ opData.description | wordwrap(70) | replace("\n", "\n * ") }}
+{% if opData.httpMethod and opData.path %}
+ * @route {{ opData.httpMethod }} {{ opData.path }}
+{% endif %}
+{% if opData.entityType %}
+ * @entity {{ opData.entityType }}
+{% endif %}
+ * @typedef {Object} {{ requestTypeName }}
+{% for param in opData.requestParams | sort(attribute='name') %}
+{% set jsDocType = param.type | jsdoc_type %}
+{% if param.required %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} {{ param.name }} - {{ param.description | default(param.name) }}{% if param.in != "body" %} (in: {{ param.in }}){% endif %}
+{% else %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} [{{ param.name }}] - {{ param.description | default(param.name) }}{% if param.defaultValue %} (default: {{ param.defaultValue }}){% endif %}
+{% endif %}
+{% endfor %}
+ */
+
+/**
+ * Response type for {{ opName }} operation
+ * @typedef {Object} {{ responseTypeName }}
+ * @property {boolean} success - Whether the operation succeeded
+ * @property {string} [message] - Optional status message
+{% for field in opData.responseFields | sort(attribute='name') %}
+{% set jsDocType = field.type | jsdoc_type %}
+{% if field.required %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} {{ field.name }} - {{ field.description | default(field.name) }}
+{% else %}
+ * @property {{ "{" }}{{ jsDocType }}{{ "}" }} [{{ field.name }}] - {{ field.description | default(field.name) }}
+{% endif %}
+{% endfor %}
+ * @property {Object} [error] - Error details if operation failed
+ * @property {string} [error.code] - Error code
+ * @property {string} [error.message] - Error message
+ */
+
+{% endfor %}
+
+// =============================================================================
+// Common Request/Response Types
+// =============================================================================
+
+/**
+ * Pagination parameters for list operations
+ * @typedef {Object} PaginationRequest
+ * @property {number} [page=1] - Page number (1-indexed)
+ * @property {number} [pageSize=20] - Items per page (max: 100)
+ * @property {string} [sortBy] - Field to sort by
+ * @property {'asc'|'desc'} [sortOrder='asc'] - Sort direction
+ */
+
+/**
+ * Paginated response wrapper
+ * @template T
+ * @typedef {Object} PaginatedResponse
+ * @property {T[]} items - Array of items
+ * @property {number} total - Total number of items
+ * @property {number} page - Current page number
+ * @property {number} pageSize - Items per page
+ * @property {number} totalPages - Total number of pages
+ * @property {boolean} hasNext - Whether there are more pages
+ * @property {boolean} hasPrev - Whether there are previous pages
+ */
+
+/**
+ * Batch operation request
+ * @template T
+ * @typedef {Object} BatchRequest
+ * @property {T[]} items - Items to process
+ * @property {Object} [options] - Batch options
+ * @property {boolean} [options.stopOnError=false] - Stop processing on first error
+ * @property {boolean} [options.atomic=false] - All or nothing (rollback on failure)
+ */
+
+/**
+ * Batch operation response
+ * @template T
+ * @typedef {Object} BatchResponse
+ * @property {boolean} success - Whether all operations succeeded
+ * @property {number} processed - Number of items processed
+ * @property {number} succeeded - Number of successful operations
+ * @property {number} failed - Number of failed operations
+ * @property {Array<{index: number, item: T, error: string}>} [errors] - Error details
+ * @property {T[]} [results] - Results for successful operations
+ */
+
+/**
+ * Filter expression for query operations
+ * @typedef {Object} FilterExpression
+ * @property {string} field - Field name to filter on
+ * @property {'eq'|'ne'|'gt'|'gte'|'lt'|'lte'|'in'|'contains'|'startsWith'|'endsWith'} operator - Filter operator
+ * @property {*} value - Filter value
+ */
+
+/**
+ * Query request with filtering, sorting, and pagination
+ * @typedef {Object} QueryRequest
+ * @property {FilterExpression[]} [filters] - Filter expressions
+ * @property {PaginationRequest} [pagination] - Pagination parameters
+ * @property {string[]} [fields] - Fields to include in response
+ * @property {string[]} [expand] - Related entities to expand
+ */
+
+// =============================================================================
+// Operation Name Constants
+// =============================================================================
+
+/**
+ * Operation name constants for type-safe operation references
+ * @constant
+ * @type {Object<string, string>}
+ */
+export const OperationNames = Object.freeze({
+{% for opName in operations | keys | sort %}
+  /** {{ opName }} operation identifier */
+  {{ opName | upper | replace("-", "_") }}: '{{ opName }}',
+{% endfor %}
+});
+
+/**
+ * List of all operation names
+ * @constant
+ * @type {string[]}
+ */
+export const ALL_OPERATION_NAMES = Object.freeze([
+{% for opName in operations | keys | sort %}
+  '{{ opName }}',
+{% endfor %}
+]);
+
+// =============================================================================
+// HTTP Method to Operation Mapping
+// =============================================================================
+
+/**
+ * HTTP methods mapped to operations
+ * @constant
+ * @type {Object<string, string[]>}
+ */
+export const OperationsByMethod = Object.freeze({
+{% set methods = {} %}
+{% for opName, opData in operations | dictsort %}
+{% set method = opData.httpMethod | upper | default("POST") %}
+{% if not methods[method] %}
+{% set _ = methods.__setitem__(method, []) %}
+{% endif %}
+{% set _ = methods[method].append(opName) %}
+{% endfor %}
+{% for method, ops in methods | dictsort %}
+  {{ method }}: Object.freeze([
+{% for op in ops | sort %}
+    '{{ op }}',
+{% endfor %}
+  ]),
+{% endfor %}
+});
+
+// Export for module resolution
+export default {
+  OperationNames,
+  ALL_OPERATION_NAMES,
+  OperationsByMethod,
+};

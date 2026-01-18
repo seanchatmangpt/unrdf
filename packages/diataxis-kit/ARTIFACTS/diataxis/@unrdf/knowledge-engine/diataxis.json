@@ -1,0 +1,135 @@
+{
+  "confidence": {
+    "explanation": 0.4,
+    "howtos": 0.5,
+    "reference": 0.5,
+    "tutorials": 0.4
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "ai-search-example.mjs"
+    ],
+    "fingerprint": "a8d1c2dfc18a9b1e5281c5183d916e5bacc34d13629c7967bdd8181d21db1377",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "@unrdf/knowledge-engine is a package in the UNRDF ecosystem",
+    "concepts": [
+      "rdf",
+      "knowledge-engine",
+      "inference",
+      "reasoning",
+      "rules"
+    ],
+    "confidenceScore": 0.4,
+    "id": "explanation-unrdf-knowledge-engine-explanation",
+    "source": [
+      "keywords",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/knowledge-engine",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/knowledge-engine",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/knowledge-engine with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/knowledge-engine",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-knowledge-engine-reference",
+    "items": [
+      {
+        "description": "Export: ./ai-search",
+        "example": "import from \"./src/ai-enhanced-search.mjs\"",
+        "name": "./ai-search",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./canonicalize",
+        "example": "import from \"./src/canonicalize.mjs\"",
+        "name": "./canonicalize",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./parse",
+        "example": "import from \"./src/parse.mjs\"",
+        "name": "./parse",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./query",
+        "example": "import from \"./src/query.mjs\"",
+        "name": "./query",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/knowledge-engine",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/knowledge-engine Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.7,
+      "goal": "Learn how to set up and use @unrdf/knowledge-engine in your project",
+      "id": "tutorial-getting-started-with-unrdf-knowledge-engine",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/knowledge-engine"
+    }
+  ],
+  "version": "5.0.1"
+}
