@@ -1,0 +1,52 @@
+---
+to: {{ output_dir }}/openapi/info.yaml
+description: OpenAPI info section - API metadata and contact information
+---
+{# OpenAPI Info Section Template #}
+{# Generates the info block for OpenAPI 3.0 specification #}
+
+info:
+  title: {{ project.name | default("API") }}
+  version: {{ project.version | default("1.0.0") }}
+  description: |
+    {{ project.description | default("Generated API from RDF knowledge graph") }}
+    {% if project.features %}
+
+    ## Features
+
+    {% for feature in project.features %}
+    - {{ feature }}
+    {% endfor %}
+    {% endif %}
+    {% if project.workflow %}
+
+    ## Workflow
+
+    {{ project.workflow }}
+    {% endif %}
+  {% if project.termsOfService %}
+  termsOfService: {{ project.termsOfService }}
+  {% endif %}
+  {% if project.contact %}
+  contact:
+    {% if project.contact.name %}
+    name: {{ project.contact.name }}
+    {% endif %}
+    {% if project.contact.email %}
+    email: {{ project.contact.email }}
+    {% endif %}
+    {% if project.contact.url %}
+    url: {{ project.contact.url }}
+    {% endif %}
+  {% endif %}
+  {% if project.license %}
+  license:
+    name: {{ project.license.name | default("MIT") }}
+    {% if project.license.url %}
+    url: {{ project.license.url }}
+    {% endif %}
+  {% endif %}
+  x-generated:
+    generator: "@unrdf/cli"
+    source: "RDF Knowledge Graph"
+    timestamp: {{ timestamp | default("") }}

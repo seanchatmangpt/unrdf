@@ -25,6 +25,7 @@ import { paretoCommand } from './commands/pareto.mjs';
 import { socraticCommand } from './commands/socratic.mjs';
 import { bb8020Command } from './commands/bb8020.mjs';
 import { daemonCommand } from './commands/daemon.mjs';
+import { syncCommand } from './commands/sync.mjs';
 
 /**
  * Main CLI application
@@ -48,6 +49,9 @@ const main = defineCommand({
 
     // Background Operations
     daemon: daemonCommand,
+
+    // Code Generation
+    sync: syncCommand,
 
     // Hyperdimensional Decision Fabric
     decision: decisionCommand,

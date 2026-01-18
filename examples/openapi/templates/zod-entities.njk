@@ -1,0 +1,33 @@
+---
+to: schemas/entities.mjs
+description: Generates Zod validation schemas for entities
+---
+/**
+ * @file Entity Validation Schemas
+ * @description Auto-generated Zod schemas from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ */
+import { z } from 'zod';
+
+{% set entities = sparql_results | groupBy("?entityName") %}
+{% for entityName, properties in entities %}
+/**
+ * {{ entityName }} validation schema
+ */
+export const {{ entityName | camelCase }}Schema = z.object({
+{% for prop in properties %}
+  {{ prop["?propertyName"] }}: {{ prop["?propertyType"] | zodType }}{% if prop["?required"] != "true" %}.optional(){% endif %},
+{% endfor %}
+});
+
+/**
+ * @typedef {z.infer<typeof {{ entityName | camelCase }}Schema>} {{ entityName }}
+ */
+
+{% endfor %}
+// Export all schemas
+export const entitySchemas = {
+{% for entityName in entities | keys %}
+  {{ entityName | camelCase }}: {{ entityName | camelCase }}Schema,
+{% endfor %}
+};

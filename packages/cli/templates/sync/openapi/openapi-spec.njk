@@ -1,0 +1,206 @@
+---
+to: {{ output_dir }}/openapi/openapi.yaml
+description: Complete OpenAPI 3.0 specification generated from RDF knowledge graph
+---
+{# OpenAPI 3.0 Main Specification Template #}
+{# Aggregates info, paths, and schemas into complete OpenAPI document #}
+{# Uses SPARQL query results to generate API specification from RDF graph #}
+
+openapi: "3.0.3"
+
+{% include "openapi-info.njk" %}
+
+servers:
+{% if servers %}
+{% for server in servers %}
+  - url: {{ server.url }}
+    description: {{ server.description | default("Server") }}
+    {% if server.variables %}
+    variables:
+      {% for varName, varDef in server.variables %}
+      {{ varName }}:
+        default: {{ varDef.default }}
+        {% if varDef.description %}
+        description: {{ varDef.description }}
+        {% endif %}
+        {% if varDef.enum %}
+        enum:
+          {% for val in varDef.enum %}
+          - {{ val }}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+{% endfor %}
+{% else %}
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+{% endif %}
+
+{% include "openapi-paths.njk" %}
+
+components:
+{% include "openapi-schemas.njk" %}
+
+  {% if securitySchemes or project.auth %}
+  securitySchemes:
+    {% if project.auth.bearer or securitySchemes.bearer %}
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Bearer token authentication
+    {% endif %}
+    {% if project.auth.apiKey or securitySchemes.apiKey %}
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API Key authentication
+    {% endif %}
+    {% if project.auth.oauth2 or securitySchemes.oauth2 %}
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: {{ project.auth.oauth2.authorizationUrl | default("https://auth.example.com/authorize") }}
+          tokenUrl: {{ project.auth.oauth2.tokenUrl | default("https://auth.example.com/token") }}
+          scopes:
+            {% if project.auth.oauth2.scopes %}
+            {% for scopeName, scopeDesc in project.auth.oauth2.scopes %}
+            {{ scopeName }}: {{ scopeDesc }}
+            {% endfor %}
+            {% else %}
+            read: Read access
+            write: Write access
+            admin: Admin access
+            {% endif %}
+    {% endif %}
+    {% if project.auth.basic or securitySchemes.basic %}
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic authentication
+    {% endif %}
+  {% endif %}
+
+  {% if parameters %}
+  parameters:
+    {% for paramName, paramDef in parameters %}
+    {{ paramName }}:
+      name: {{ paramDef.name | default(paramName) }}
+      in: {{ paramDef.in | default("query") }}
+      required: {{ paramDef.required | default("false") }}
+      {% if paramDef.description %}
+      description: {{ paramDef.description }}
+      {% endif %}
+      schema:
+        type: {{ paramDef.type | default("string") }}
+        {% if paramDef.format %}
+        format: {{ paramDef.format }}
+        {% endif %}
+        {% if paramDef.default %}
+        default: {{ paramDef.default }}
+        {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if headers %}
+  headers:
+    {% for headerName, headerDef in headers %}
+    {{ headerName }}:
+      {% if headerDef.description %}
+      description: {{ headerDef.description }}
+      {% endif %}
+      schema:
+        type: {{ headerDef.type | default("string") }}
+    {% endfor %}
+  {% endif %}
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+{% if tags %}
+tags:
+{% for tag in tags %}
+  - name: {{ tag.name }}
+    {% if tag.description %}
+    description: {{ tag.description }}
+    {% endif %}
+    {% if tag.externalDocs %}
+    externalDocs:
+      url: {{ tag.externalDocs.url }}
+      {% if tag.externalDocs.description %}
+      description: {{ tag.externalDocs.description }}
+      {% endif %}
+    {% endif %}
+{% endfor %}
+{% else %}
+tags:
+  - name: default
+    description: Default API operations
+{% endif %}
+
+{% if externalDocs %}
+externalDocs:
+  url: {{ externalDocs.url }}
+  description: {{ externalDocs.description | default("External documentation") }}
+{% endif %}
+
+{% if project.globalSecurity %}
+security:
+{% for secReq in project.globalSecurity %}
+  - {{ secReq.scheme }}:
+      {% if secReq.scopes %}
+      {% for scope in secReq.scopes %}
+      - {{ scope }}
+      {% endfor %}
+      {% else %}
+      []
+      {% endif %}
+{% endfor %}
+{% endif %}
+
+x-unrdf-metadata:
+  generator: "@unrdf/cli"
+  version: "{{ project.version | default("1.0.0") }}"
+  source: "RDF Knowledge Graph"
+  generatedAt: "{{ timestamp | default("") }}"
+  sparqlEndpoint: "{{ sparql_endpoint | default("") }}"
+  {% if ontologies %}
+  ontologies:
+    {% for ont in ontologies %}
+    - {{ ont }}
+    {% endfor %}
+  {% endif %}

@@ -3,8 +3,31 @@
  * Real SPARQL-based codebase pattern matching
  */
 
-import { scanFileSystemToStore } from '@unrdf/project-engine';
 import { executeSelectSync } from '@unrdf/core';
+
+/**
+ * Lazy import for scanFileSystemToStore from @unrdf/project-engine
+ * Returns stub if package not available
+ * @returns {Promise<Function>}
+ */
+async function getScanFileSystemToStore() {
+  try {
+    const mod = await import('@unrdf/project-engine');
+    if (mod.scanFileSystemToStore) {
+      return mod.scanFileSystemToStore;
+    }
+  } catch {
+    // Package not available or doesn't export the function
+  }
+  // Stub implementation
+  return async ({ root, ignorePatterns }) => {
+    console.warn('[Step 4] @unrdf/project-engine not available, using stub');
+    return {
+      store: null,
+      summary: { fileCount: 0 }
+    };
+  };
+}
 
 /**
  * Execute Step 4: Pattern matching in codebase
@@ -16,7 +39,8 @@ export async function executeStep4PatternMatching({ codebasePath, paretoFrontier
 
   console.log(`\n[Step 4] Scanning codebase: ${codebasePath}`);
 
-  // 1. Scan codebase to RDF graph
+  // 1. Scan codebase to RDF graph (lazy import)
+  const scanFileSystemToStore = await getScanFileSystemToStore();
   const { store, summary } = await scanFileSystemToStore({
     root: codebasePath,
     ignorePatterns: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/test/**']

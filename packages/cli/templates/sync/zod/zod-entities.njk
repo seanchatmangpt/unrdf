@@ -1,0 +1,215 @@
+---
+to: {{ output_dir }}/schemas/entities.mjs
+description: Generates Zod validation schemas for entities from RDF ontology
+requires:
+  - sparql_results: Array of SPARQL query results with ?entityName, ?propertyName, ?propertyType, ?required, ?description
+  - now: Current timestamp for generation metadata
+filters:
+  - zod_type: Converts RDF/XSD types to Zod schema types
+  - camel_case: Converts to camelCase for JavaScript identifiers
+---
+/**
+ * @file Entity Validation Schemas
+ * @module schemas/entities
+ * @description Auto-generated Zod schemas from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * SPARQL Query Used:
+ * ```sparql
+ * SELECT ?entityName ?propertyName ?propertyType ?required ?description
+ * WHERE {
+ *   ?entity a rdfs:Class ;
+ *           rdfs:label ?entityName .
+ *   ?property rdfs:domain ?entity ;
+ *             rdfs:range ?propertyType ;
+ *             rdfs:label ?propertyName .
+ *   OPTIONAL { ?property sh:minCount ?minCount }
+ *   BIND(IF(BOUND(?minCount) && ?minCount > 0, "true", "false") AS ?required)
+ *   OPTIONAL { ?property rdfs:comment ?description }
+ * }
+ * ORDER BY ?entityName ?propertyName
+ * ```
+ */
+import { z } from 'zod';
+
+{#
+  Template Helper: Group SPARQL results by entity name
+  This creates a mapping of entityName -> array of properties
+
+  Expected SPARQL result structure:
+  {
+    "?entityName": "User",
+    "?propertyName": "email",
+    "?propertyType": "xsd:string",
+    "?required": "true",
+    "?description": "User email address"
+  }
+#}
+{% set entities = {} %}
+{% for row in sparql_results %}
+  {% set entityName = row["?entityName"] | trim %}
+  {% if entityName %}
+    {% if not entities[entityName] %}
+      {% set _ = entities.__setitem__(entityName, { "properties": [], "description": row["?entityDescription"] or "" }) %}
+    {% endif %}
+    {% set _ = entities[entityName]["properties"].append({
+      "name": row["?propertyName"] | trim,
+      "type": row["?propertyType"] | trim,
+      "required": row["?required"] == "true",
+      "description": row["?description"] or ""
+    }) %}
+  {% endif %}
+{% endfor %}
+
+{#
+  XSD to Zod Type Mapping:
+  - xsd:string -> z.string()
+  - xsd:integer -> z.number().int()
+  - xsd:decimal, xsd:float, xsd:double -> z.number()
+  - xsd:boolean -> z.boolean()
+  - xsd:dateTime -> z.string().datetime()
+  - xsd:date -> z.string().date()
+  - xsd:anyURI -> z.string().url()
+  - rdfs:Literal -> z.string()
+  - Custom types -> z.any() with refinement
+#}
+
+/**
+ * Common base schemas for reusable validation
+ */
+export const baseSchemas = {
+  /** IRI/URI reference */
+  iri: z.string().url().describe('RDF IRI reference'),
+
+  /** Literal value with optional language tag */
+  literal: z.object({
+    value: z.string(),
+    language: z.string().optional(),
+    datatype: z.string().optional(),
+  }).describe('RDF Literal'),
+
+  /** Blank node identifier */
+  blankNode: z.string().regex(/^_:/).describe('Blank node identifier'),
+
+  /** Any RDF term */
+  term: z.union([
+    z.string().url(),
+    z.object({ value: z.string(), language: z.string().optional(), datatype: z.string().optional() }),
+    z.string().regex(/^_:/),
+  ]).describe('RDF Term (IRI, Literal, or Blank Node)'),
+};
+
+{% for entityName, entityData in entities | items %}
+{# Generate schema for each entity #}
+/**
+ * {{ entityName }} validation schema
+ * @description {{ entityData.description or "Auto-generated from RDF ontology" }}
+ */
+export const {{ entityName | lower | camel_case }}Schema = z.object({
+  /** Entity type IRI */
+  '@type': z.literal('{{ entityName }}').optional(),
+
+  /** Entity identifier */
+  '@id': z.string().optional(),
+
+{% for prop in entityData.properties %}
+  /**
+   * {{ prop.description or prop.name }}
+   * @type {{ prop.type }}
+   */
+  {{ prop.name | camel_case }}: {{ prop.type | zod_type }}{% if not prop.required %}.optional(){% endif %}{% if prop.description %}.describe('{{ prop.description | escape }}'){% endif %},
+{% endfor %}
+});
+
+/**
+ * {{ entityName }} type definition
+ * @typedef {z.infer<typeof {{ entityName | lower | camel_case }}Schema>} {{ entityName }}
+ */
+
+/**
+ * Validates a {{ entityName }} object
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}success: boolean, data?: {{ entityName }}, error?: z.ZodError{{ "}" }}
+ */
+export function validate{{ entityName }}(data) {
+  return {{ entityName | lower | camel_case }}Schema.safeParse(data);
+}
+
+/**
+ * Asserts data is a valid {{ entityName }}
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}{{ entityName }}{{ "}" }} Validated {{ entityName }}
+ * @throws {z.ZodError} If validation fails
+ */
+export function assert{{ entityName }}(data) {
+  return {{ entityName | lower | camel_case }}Schema.parse(data);
+}
+
+{% endfor %}
+
+/**
+ * Entity schema registry
+ * @description Maps entity names to their Zod schemas
+ */
+export const entitySchemas = {
+{% for entityName in entities | keys %}
+  /** {{ entityName }} schema */
+  {{ entityName | lower | camel_case }}: {{ entityName | lower | camel_case }}Schema,
+{% endfor %}
+};
+
+/**
+ * Entity validator registry
+ * @description Maps entity names to their validation functions
+ */
+export const entityValidators = {
+{% for entityName in entities | keys %}
+  /** Validate {{ entityName }} */
+  {{ entityName | lower | camel_case }}: validate{{ entityName }},
+{% endfor %}
+};
+
+/**
+ * Get schema by entity name
+ * @param {string} entityName - Entity name
+ * @returns {z.ZodSchema | undefined} Zod schema for entity
+ */
+export function getEntitySchema(entityName) {
+  const normalized = entityName.toLowerCase().replace(/[-_\s]/g, '');
+  return entitySchemas[normalized];
+}
+
+/**
+ * Validate entity by name
+ * @param {string} entityName - Entity name
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}success: boolean, data?: unknown, error?: z.ZodError{{ "}" }}
+ */
+export function validateEntity(entityName, data) {
+  const schema = getEntitySchema(entityName);
+  if (!schema) {
+    return { success: false, error: new Error(`Unknown entity: ${entityName}`) };
+  }
+  return schema.safeParse(data);
+}
+
+/**
+ * List all available entity names
+ * @returns {string[]} Array of entity names
+ */
+export function listEntities() {
+  return Object.keys(entitySchemas);
+}
+
+/**
+ * Generated metadata
+ */
+export const entityMetadata = {
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss.SSSZ") }}',
+  entityCount: {{ entities | keys | length }},
+  entities: [
+{% for entityName in entities | keys %}
+    '{{ entityName }}',
+{% endfor %}
+  ],
+};
