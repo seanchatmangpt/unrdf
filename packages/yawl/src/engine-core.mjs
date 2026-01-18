@@ -37,12 +37,20 @@ export const ENGINE_EVENTS = Object.freeze({
   CASE_COMPLETED: 'case:completed',
   CASE_FAILED: 'case:failed',
   CASE_CANCELLED: 'case:cancelled',
+  CASE_SUSPENDED: 'case:suspended',
+  CASE_RESUMED: 'case:resumed',
   WORKFLOW_REGISTERED: 'workflow:registered',
   CIRCUIT_BREAKER_OPEN: 'circuit:open',
   CIRCUIT_BREAKER_CLOSE: 'circuit:close',
   CHECKPOINT_CREATED: 'checkpoint:created',
   RESOURCE_ALLOCATED: 'resource:allocated',
   RESOURCE_RELEASED: 'resource:released',
+  OBSERVER_ERROR: 'observer:error',
+  TIMER_REGISTERED: 'timer:registered',
+  TIMER_CANCELLED: 'timer:cancelled',
+  TIMER_EXPIRED: 'timer:expired',
+  BULK_LAUNCH: 'bulk:launch',
+  BULK_CANCEL: 'bulk:cancel',
 });
 
 /** Engine health status */
