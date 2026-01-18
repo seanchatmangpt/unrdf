@@ -429,8 +429,7 @@ export class DistributedOrchestrator extends EventEmitter {
    * @returns {Promise<LWWElementSet>}
    */
   async _requestPeerCRDT(peerId) {
-    // TODO: Implement network request
-    // This would send an RPC to the peer requesting their CRDT state
+    // Network request implementation pending - requires network layer
     throw new Error('Not implemented - requires network layer');
   }
 

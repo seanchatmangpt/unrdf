@@ -31,7 +31,7 @@ const WorkflowSchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/kgc-claude',
+  id: '@unrdf/claude',
   description: 'Claude integration for knowledge processing',
 
   nouns: {

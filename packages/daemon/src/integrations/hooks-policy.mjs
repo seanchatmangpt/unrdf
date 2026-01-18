@@ -12,56 +12,17 @@
  */
 
 import { EventEmitter } from 'events';
-import { z } from 'zod';
+import { PolicySchema, PolicyDecisionSchema, PolicyAuditSchema } from './hooks-policy.schema.mjs';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
-/**
- * Policy definition schema
- * @type {Object}
- */
-export const PolicySchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  version: z.number().int().min(1),
-  type: z.enum(['approval', 'time-window', 'resource-limit', 'rate-limit', 'custom']),
-  enabled: z.boolean().default(true),
-  priority: z.number().int().min(0).max(100).default(50),
-  description: z.string().optional(),
-  config: z.record(z.string(), z.unknown()),
-  createdAt: z.date().default(() => new Date()),
-  updatedAt: z.date().default(() => new Date()),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
-/**
- * Policy decision schema
- * @type {Object}
- */
-export const PolicyDecisionSchema = z.object({
-  id: z.string(),
-  operationId: z.string(),
-  timestamp: z.date(),
-  decision: z.enum(['allow', 'deny', 'defer']),
-  reason: z.string(),
-  policiesEvaluated: z.array(z.string()),
-  conflictResolved: z.boolean().default(false),
-  conflictStrategy: z.enum(['highest-priority', 'unanimous', 'majority', 'first-match']).optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
-
-/**
- * Policy audit entry schema
- * @type {Object}
- */
-export const PolicyAuditSchema = z.object({
-  id: z.string(),
-  timestamp: z.date(),
-  policyId: z.string(),
-  action: z.enum(['created', 'updated', 'deleted', 'enabled', 'disabled', 'rolled-back']),
-  version: z.number().int().min(1),
-  changes: z.record(z.string(), z.unknown()).optional(),
-  actor: z.string().optional(),
-  metadata: z.record(z.string(), z.unknown()).optional(),
-});
+import {
+  evaluateApprovalPolicy,
+  evaluateTimeWindowPolicy,
+  evaluateResourceLimitPolicy,
+  evaluateRateLimitPolicy,
+  evaluateCustomPolicy,
+  resolveConflicts,
+} from './hooks-policy.helpers.mjs';
 
 /**
  * Policy history entry
@@ -230,51 +191,42 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 
   /**
    * Enable a policy
-   *
    * @param {string} policyId - Policy ID to enable
    * @returns {boolean} Whether policy was found and enabled
    */
   enablePolicy(policyId) {
-    const policy = this.policies.get(policyId);
-    if (!policy) return false;
-
-    policy.enabled = true;
-    policy.updatedAt = new Date();
-
-    if (this.auditEnabled) {
-      this._recordAudit({
-        policyId,
-        action: 'enabled',
-        version: policy.version,
-      });
-    }
-
-    this.emit('policy:enabled', { adapterId: this.id, policyId });
-    return true;
+    return this._togglePolicy(policyId, true);
   }
 
   /**
    * Disable a policy
-   *
    * @param {string} policyId - Policy ID to disable
    * @returns {boolean} Whether policy was found and disabled
    */
   disablePolicy(policyId) {
+    return this._togglePolicy(policyId, false);
+  }
+
+  /**
+   * Toggle policy enabled state
+   * @private
+   */
+  _togglePolicy(policyId, enabled) {
     const policy = this.policies.get(policyId);
     if (!policy) return false;
 
-    policy.enabled = false;
+    policy.enabled = enabled;
     policy.updatedAt = new Date();
 
     if (this.auditEnabled) {
       this._recordAudit({
         policyId,
-        action: 'disabled',
+        action: enabled ? 'enabled' : 'disabled',
         version: policy.version,
       });
     }
 
-    this.emit('policy:disabled', { adapterId: this.id, policyId });
+    this.emit(`policy:${enabled ? 'enabled' : 'disabled'}`, { adapterId: this.id, policyId });
     return true;
   }
 
@@ -351,7 +303,12 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
       }
     }
 
-    return this._resolveConflicts(operationId, evaluations);
+    return resolveConflicts(
+      operationId,
+      evaluations,
+      this.conflictStrategy,
+      this._recordDecision.bind(this)
+    );
   }
 
   /**
@@ -399,59 +356,29 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     }
   }
 
-  /**
-   * Get policy by ID
-   *
-   * @param {string} policyId - Policy ID
-   * @returns {Object|undefined} Policy or undefined if not found
-   */
+  /** Get policy by ID */
   getPolicy(policyId) {
     return this.policies.get(policyId);
   }
 
-  /**
-   * List all policies
-   *
-   * @returns {Array<Object>} Array of policies
-   */
+  /** List all policies */
   listPolicies() {
     return Array.from(this.policies.values());
   }
 
-  /**
-   * Get policy history
-   *
-   * @param {string} policyId - Policy ID
-   * @returns {Array<PolicyHistoryEntry>} Policy version history
-   */
+  /** Get policy history */
   getPolicyHistory(policyId) {
     return this.policyHistory.get(policyId) || [];
   }
 
-  /**
-   * Get audit trail for a policy
-   *
-   * @param {string} policyId - Policy ID (optional)
-   * @returns {Array<Object>} Audit log entries
-   */
+  /** Get audit trail for a policy (filtered by policyId if provided) */
   getAuditTrail(policyId) {
-    if (!policyId) {
-      return this.auditLog;
-    }
-    return this.auditLog.filter(entry => entry.policyId === policyId);
+    return policyId ? this.auditLog.filter(e => e.policyId === policyId) : this.auditLog;
   }
 
-  /**
-   * Get decision log for an operation
-   *
-   * @param {string} operationId - Operation ID (optional)
-   * @returns {Array<Object>} Decision log entries
-   */
+  /** Get decision log for an operation (filtered by operationId if provided) */
   getDecisionLog(operationId) {
-    if (!operationId) {
-      return this.decisionLog;
-    }
-    return this.decisionLog.filter(entry => entry.operationId === operationId);
+    return operationId ? this.decisionLog.filter(e => e.operationId === operationId) : this.decisionLog;
   }
 
   /**
@@ -474,223 +401,26 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     };
   }
 
-  /**
-   * Evaluate a single policy
-   *
-   * @private
-   * @param {Object} policy - Policy to evaluate
-   * @param {PolicyEvaluationContext} context - Evaluation context
-   * @returns {Promise<Object>} Evaluation result with decision and reason
-   */
+  /** @private Evaluate a single policy */
   async _evaluatePolicy(policy, context) {
     switch (policy.type) {
       case 'approval':
-        return this._evaluateApprovalPolicy(policy, context);
+        return evaluateApprovalPolicy(policy, context);
       case 'time-window':
-        return this._evaluateTimeWindowPolicy(policy, context);
+        return evaluateTimeWindowPolicy(policy, context);
       case 'resource-limit':
-        return this._evaluateResourceLimitPolicy(policy, context);
+        return evaluateResourceLimitPolicy(policy, context, this.resourceUsage);
       case 'rate-limit':
-        return this._evaluateRateLimitPolicy(policy, context);
+        return evaluateRateLimitPolicy(policy, context, this.operationRateLimit);
       case 'custom':
-        return this._evaluateCustomPolicy(policy, context);
+        return evaluateCustomPolicy(policy, context);
       default:
         return { decision: 'allow', reason: 'Unknown policy type - allowing' };
     }
   }
 
-  /**
-   * Evaluate approval policy
-   *
-   * @private
-   */
-  async _evaluateApprovalPolicy(policy, context) {
-    if (!policy.config.requiresApproval) {
-      return { decision: 'allow', reason: 'Approval not required' };
-    }
-
-    // In a real implementation, this would check actual approvals
-    // For now, defer to external approval system
-    return {
-      decision: 'defer',
-      reason: `Awaiting approval from: ${(policy.config.approvers || []).join(', ')}`,
-    };
-  }
-
-  /**
-   * Evaluate time-window policy
-   *
-   * @private
-   */
-  async _evaluateTimeWindowPolicy(policy, context) {
-    const config = policy.config;
-    if (!config.timeWindows || config.timeWindows.length === 0) {
-      return { decision: 'allow', reason: 'No time windows configured' };
-    }
-
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay();
-
-    for (const window of config.timeWindows) {
-      const windowStart = parseInt(window.start, 10);
-      const windowEnd = parseInt(window.end, 10);
-      const allowedDays = window.days || [0, 1, 2, 3, 4, 5, 6];
-
-      if (
-        allowedDays.includes(currentDay) &&
-        currentHour >= windowStart &&
-        currentHour < windowEnd
-      ) {
-        return { decision: 'allow', reason: `Within allowed time window: ${window.start}-${window.end}` };
-      }
-    }
-
-    return {
-      decision: 'deny',
-      reason: `Outside allowed time windows: ${config.timeWindows.map(w => `${w.start}-${w.end}`).join(', ')}`,
-    };
-  }
-
-  /**
-   * Evaluate resource-limit policy
-   *
-   * @private
-   */
-  async _evaluateResourceLimitPolicy(policy, context) {
-    const config = policy.config;
-    const currentUsage = this.resourceUsage.get(context.operationType) || 0;
-    const maxAllowed = config.maxConcurrent || 10;
-
-    if (currentUsage >= maxAllowed) {
-      return {
-        decision: 'defer',
-        reason: `Resource limit exceeded: ${currentUsage}/${maxAllowed} concurrent operations`,
-      };
-    }
-
-    return { decision: 'allow', reason: `Resource available: ${currentUsage}/${maxAllowed}` };
-  }
-
-  /**
-   * Evaluate rate-limit policy
-   *
-   * @private
-   */
-  async _evaluateRateLimitPolicy(policy, context) {
-    const config = policy.config;
-    const maxPerMinute = config.maxPerMinute || 10;
-    const key = context.operationType;
-
-    const count = this.operationRateLimit.get(key) || 0;
-
-    if (count >= maxPerMinute) {
-      return {
-        decision: 'defer',
-        reason: `Rate limit exceeded: ${count}/${maxPerMinute} operations per minute`,
-      };
-    }
-
-    this.operationRateLimit.set(key, count + 1);
-
-    // Reset after a minute
-    setTimeout(() => {
-      this.operationRateLimit.set(key, 0);
-    }, 60000);
-
-    return { decision: 'allow', reason: `Rate limit OK: ${count + 1}/${maxPerMinute}` };
-  }
-
-  /**
-   * Evaluate custom policy
-   *
-   * @private
-   */
-  async _evaluateCustomPolicy(policy, context) {
-    if (!policy.config.evaluatorFn || typeof policy.config.evaluatorFn !== 'function') {
-      return { decision: 'allow', reason: 'No custom evaluator function provided' };
-    }
-
-    try {
-      const result = await policy.config.evaluatorFn(context);
-      return result;
-    } catch (error) {
-      return {
-        decision: 'defer',
-        reason: `Custom evaluator error: ${error.message}`,
-      };
-    }
-  }
-
-  /**
-   * Resolve conflicts between policy decisions
-   *
-   * @private
-   */
-  async _resolveConflicts(operationId, evaluations) {
-    const decisions = evaluations.map(e => e.decision);
-    const policiesEvaluated = evaluations.map(e => e.policyId);
-
-    // Any deny is always respected
-    if (decisions.includes('deny')) {
-      const denyEval = evaluations.find(e => e.decision === 'deny');
-      return this._recordDecision(operationId, 'deny', denyEval.reason, policiesEvaluated, true);
-    }
-
-    // Handle different conflict resolution strategies
-    if (this.conflictStrategy === 'unanimous') {
-      // All must allow, any defer/deny blocks
-      if (decisions.includes('defer')) {
-        const deferEval = evaluations.find(e => e.decision === 'defer');
-        return this._recordDecision(operationId, 'defer', deferEval.reason, policiesEvaluated, true);
-      }
-      return this._recordDecision(operationId, 'allow', 'Unanimous approval', policiesEvaluated, false);
-    }
-
-    if (this.conflictStrategy === 'highest-priority') {
-      // Use the first policy's decision (already sorted by priority)
-      const firstEval = evaluations[0];
-      const conflictExists = evaluations.length > 1;
-      return this._recordDecision(
-        operationId,
-        firstEval.decision,
-        firstEval.reason,
-        policiesEvaluated,
-        conflictExists
-      );
-    }
-
-    if (this.conflictStrategy === 'majority') {
-      const allows = decisions.filter(d => d === 'allow').length;
-      const defers = decisions.filter(d => d === 'defer').length;
-      const denies = decisions.filter(d => d === 'deny').length;
-
-      if (allows > defers && allows > denies) {
-        return this._recordDecision(operationId, 'allow', 'Majority approval', policiesEvaluated, true);
-      }
-      if (defers >= allows && defers >= denies) {
-        const deferEval = evaluations.find(e => e.decision === 'defer');
-        return this._recordDecision(operationId, 'defer', deferEval.reason, policiesEvaluated, true);
-      }
-      return this._recordDecision(operationId, 'deny', 'Majority denial', policiesEvaluated, true);
-    }
-
-    if (this.conflictStrategy === 'first-match') {
-      const firstEval = evaluations[0];
-      return this._recordDecision(operationId, firstEval.decision, firstEval.reason, policiesEvaluated, false);
-    }
-
-    // Default: allow
-    return this._recordDecision(operationId, 'allow', 'Default allow decision', policiesEvaluated, false);
-  }
-
-  /**
-   * Record policy decision in log
-   *
-   * @private
-   */
+  /** @private Record policy decision in log */
   _recordDecision(operationId, decision, reason, policiesEvaluated, conflictResolved = false) {
-    // Include conflictStrategy if there are multiple policies evaluated or if conflict was resolved
     const shouldIncludeStrategy = policiesEvaluated.length > 1 || conflictResolved;
 
     const decisionEntry = PolicyDecisionSchema.parse({
@@ -705,22 +435,15 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     });
 
     this.decisionLog.push(decisionEntry);
-
-    // Trim decision log if too large
     if (this.decisionLog.length > 10000) {
       this.decisionLog.splice(0, this.decisionLog.length - 10000);
     }
 
     this.emit('policy:decision', { adapterId: this.id, decision: decisionEntry });
-
     return decisionEntry;
   }
 
-  /**
-   * Record audit entry
-   *
-   * @private
-   */
+  /** @private Record audit entry */
   _recordAudit(entry) {
     const auditEntry = PolicyAuditSchema.parse({
       id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -729,8 +452,6 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     });
 
     this.auditLog.push(auditEntry);
-
-    // Trim audit log if too large
     if (this.auditLog.length > 10000) {
       this.auditLog.splice(0, this.auditLog.length - 10000);
     }
@@ -738,16 +459,11 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
     this.emit('policy:audit', { adapterId: this.id, audit: auditEntry });
   }
 
-  /**
-   * Setup hook interception for policy enforcement
-   *
-   * @private
-   */
+  /** @private Setup hook interception for policy enforcement */
   _setupHookInterception() {
     const originalExecuteHook = this.hookScheduler.executeHook;
 
     this.hookScheduler.executeHook = async (hook, context) => {
-      // Check if hook has policy context
       if (context?.policyContext) {
         const decision = await this.evaluatePolicies(
           context.policyContext.operationId,
@@ -781,11 +497,3 @@ export class DaemonHookPolicyAdapter extends EventEmitter {
 export function integrateHooksPolicy(daemon, hookScheduler, options = {}) {
   return new DaemonHookPolicyAdapter(daemon, hookScheduler, options);
 }
-
-export default {
-  DaemonHookPolicyAdapter,
-  integrateHooksPolicy,
-  PolicySchema,
-  PolicyDecisionSchema,
-  PolicyAuditSchema,
-};

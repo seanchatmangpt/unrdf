@@ -634,8 +634,24 @@ describe('Category 5: Load Order Tests', () => {
       const registry = new Registry({ failOnCollision: false });
       await loadManifest(registry, { failOnMissing: false });
 
-      const extensions = Array.from(registry.extensions.values());
-      const orders = extensions.map(e => e._loadOrder).filter(o => o !== undefined);
+      const extensionsArray = Array.from(registry.extensions.values());
+      const orders = extensionsArray.map(e => e._loadOrder).filter(o => o !== undefined);
+
+      // Debug: log the orders and IDs to understand what's happening
+      if (orders.length > 0 && !orders.every((v, i, arr) => i === 0 || v >= arr[i-1])) {
+        const idsAndOrders = extensionsArray.map(e => `${e.id}:${e._loadOrder}`);
+        console.log('Total extensions loaded:', extensionsArray.length);
+        console.log('All orders:', orders.join(', '));
+
+        // Find where ordering breaks
+        for (let i = 1; i < orders.length; i++) {
+          if (orders[i] < orders[i - 1]) {
+            console.log(`Ordering breaks at index ${i}: ${orders[i-1]} -> ${orders[i]}`);
+            console.log(`Extensions: ${idsAndOrders[i-1]} -> ${idsAndOrders[i]}`);
+            break;
+          }
+        }
+      }
 
       // Should be sorted
       for (let i = 1; i < orders.length; i++) {

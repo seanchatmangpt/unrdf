@@ -317,15 +317,8 @@ describe('Performance Regression Tests', () => {
   });
 
   describe('v3.1.0 Specific Performance', () => {
-    it.skip('should execute isolated-vm code efficiently (< 100ms)', () => {
-      const code = 'return 42;';
-
-      const start = performance.now();
-      executeInIsolatedVM(code);
-      const duration = performance.now() - start;
-
-      expect(duration, 'Isolated-VM execution should be fast').toBeLessThan(100);
-    });
+    // REMOVED: isolated-vm test - feature was never implemented, only mocked with eval()
+    // If isolated-vm support is added in the future, add real test with actual isolated-vm package
 
     it('should query IndexedDB efficiently (< 200ms)', () => {
       setupIndexedDB(10000);
@@ -460,10 +453,7 @@ function measureOperation(operation) {
   return performance.now() - start;
 }
 
-function executeInIsolatedVM(code) {
-  // Mock isolated-VM execution
-  return eval(code);
-}
+// REMOVED: executeInIsolatedVM() - mock function no longer used
 
 function setupIndexedDB(quadCount) {
   // Mock IndexedDB setup

@@ -6,6 +6,8 @@
 
 import { EventEmitter } from 'events';
 import { z } from 'zod';
+import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
+
 
 export const DaemonHookIntegrationConfigSchema = z.object({
   adapterId: z.string().min(1).default(() => `adapter-${Date.now()}`),

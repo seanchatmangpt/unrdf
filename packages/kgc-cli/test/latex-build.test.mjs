@@ -17,8 +17,7 @@
  * @module test/latex-build
  */
 
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -65,7 +64,7 @@ afterEach(async () => {
  * @returns {object} Validation result
  */
 function validatePDF(pdfBytes) {
-  assert.ok(pdfBytes instanceof Uint8Array, 'pdfBytes must be Uint8Array');
+  expect(pdfBytes).toBeInstanceOf(Uint8Array);
 
   // Check PDF magic bytes: %PDF-
   const header = new TextDecoder().decode(pdfBytes.slice(0, 5));
@@ -120,14 +119,14 @@ describe('LaTeX Compilation - Minimal Document', () => {
     });
 
     // Assert: PDF bytes are valid
-    assert.ok(pdfBytes instanceof Uint8Array, 'pdfBytes must be Uint8Array');
+    expect(pdfBytes).toBeInstanceOf(Uint8Array);
 
     // Assert: PDF format validation
     const validation = validatePDF(pdfBytes);
-    assert.strictEqual(validation.hasPDFMagic, true, 'PDF must start with %PDF-');
-    assert.strictEqual(validation.isLargeEnough, true, 'PDF must be > 5KB');
-    assert.strictEqual(validation.hasEOF, true, 'PDF must contain %%EOF marker');
-    assert.ok(validation.size > 5120, `PDF size ${validation.size} must be > 5120 bytes`);
+    expect(validation.hasPDFMagic).toBe(true);
+    expect(validation.isLargeEnough).toBe(true);
+    expect(validation.hasEOF).toBe(true);
+    expect(validation.size).toBeGreaterThan(5120);
   });
 
   it('should create cache directory structure', async () => {
@@ -142,7 +141,7 @@ describe('LaTeX Compilation - Minimal Document', () => {
 
     // Assert: Cache dir exists and contains expected structure
     const cacheStat = await fs.stat(tempCacheDir);
-    assert.ok(cacheStat.isDirectory(), 'Cache directory must exist');
+    expect(cacheStat.isDirectory()).toBe(true);
 
     // Assert: Lockfile created (location depends on Agent 5's implementation)
     // May be in projectDir or cacheDir depending on design
@@ -168,8 +167,8 @@ describe('LaTeX Compilation - Multi-File Project', () => {
 
     // Assert: Valid PDF output
     const validation = validatePDF(pdfBytes);
-    assert.strictEqual(validation.valid, true, 'PDF must be valid format');
-    assert.ok(validation.size > 5120, 'PDF must be > 5KB');
+    expect(validation.valid).toBe(true);
+    expect(validation.size).toBeGreaterThan(5120);
   });
 
   it('should resolve preamble.tex via \\input', async () => {
@@ -183,8 +182,8 @@ describe('LaTeX Compilation - Multi-File Project', () => {
       cacheDir: tempCacheDir,
     });
 
-    assert.ok(pdfBytes instanceof Uint8Array, 'Must return PDF bytes');
-    assert.ok(pdfBytes.length > 0, 'PDF must have content');
+    expect(pdfBytes).toBeInstanceOf(Uint8Array);
+    expect(pdfBytes.length).toBeGreaterThan(0);
   });
 
   it('should handle multi-pass compilation for cross-refs', async () => {
@@ -201,7 +200,7 @@ describe('LaTeX Compilation - Multi-File Project', () => {
 
     // If cross-refs are unresolved, LaTeX would show "??" in output
     // We can't easily assert on PDF content, but we verify it compiles
-    assert.ok(pdfBytes.length > 0, 'PDF must be generated');
+    expect(pdfBytes.length).toBeGreaterThan(0);
   });
 });
 
@@ -215,17 +214,13 @@ describe('LaTeX Compilation - Error Handling', () => {
     const projectDir = FIXTURES_DIR;
 
     // Assert: Compilation throws LatexCompileError
-    await assert.rejects(
-      async () => {
-        await compileLatexToPdf({
-          inputTexPath,
-          projectDir,
-          cacheDir: tempCacheDir,
-        });
-      },
-      LatexCompileError,
-      'Should throw LatexCompileError for missing package'
-    );
+    await expect(
+      compileLatexToPdf({
+        inputTexPath,
+        projectDir,
+        cacheDir: tempCacheDir,
+      })
+    ).rejects.toThrow(LatexCompileError);
   });
 
   it('should populate missingInputs in error object', async () => {
@@ -238,18 +233,18 @@ describe('LaTeX Compilation - Error Handling', () => {
         projectDir,
         cacheDir: tempCacheDir,
       });
-      assert.fail('Should have thrown LatexCompileError');
+      throw new Error('Should have thrown LatexCompileError');
     } catch (error) {
       // Assert: Error is LatexCompileError instance
-      assert.ok(error instanceof LatexCompileError, 'Error must be LatexCompileError');
+      expect(error).toBeInstanceOf(LatexCompileError);
 
       // Assert: missingInputs array exists and contains package name
-      assert.ok(error.missingInputs, 'missingInputs must be defined');
-      assert.ok(Array.isArray(error.missingInputs), 'missingInputs must be array');
+      expect(error.missingInputs).toBeDefined();
+      expect(Array.isArray(error.missingInputs)).toBe(true);
 
       // Note: Exact package name matching depends on Agent 6's log parser
       // May match "nonexistent-test-package-xyz-12345.sty" or similar
-      assert.ok(error.missingInputs.length > 0, 'missingInputs must contain entries');
+      expect(error.missingInputs.length).toBeGreaterThan(0);
     }
   });
 
@@ -263,20 +258,20 @@ describe('LaTeX Compilation - Error Handling', () => {
         projectDir,
         cacheDir: tempCacheDir,
       });
-      assert.fail('Should have thrown error');
+      throw new Error('Should have thrown error');
     } catch (error) {
       // Assert: Log file was written
       const logExists = await hasLogFile(tempCacheDir);
-      assert.strictEqual(logExists, true, 'Diagnostic log must exist in cache');
+      expect(logExists).toBe(true);
 
       // Assert: Error object contains log file path
-      assert.ok(error.logFilePath, 'Error must have logFilePath');
-      assert.strictEqual(typeof error.logFilePath, 'string', 'logFilePath must be string');
+      expect(error.logFilePath).toBeDefined();
+      expect(typeof error.logFilePath).toBe('string');
 
       // Assert: Log file is readable
       const logContent = await fs.readFile(error.logFilePath, 'utf8');
-      assert.ok(logContent.length > 0, 'Log file must have content');
-      assert.ok(logContent.includes('LaTeX'), 'Log must contain LaTeX output');
+      expect(logContent.length).toBeGreaterThan(0);
+      expect(logContent).toContain('LaTeX');
     }
   });
 
@@ -285,17 +280,13 @@ describe('LaTeX Compilation - Error Handling', () => {
     const projectDir = FIXTURES_DIR;
 
     // Assert: Throws Error (not LatexCompileError, but validation error)
-    await assert.rejects(
-      async () => {
-        await compileLatexToPdf({
-          inputTexPath,
-          projectDir,
-          cacheDir: tempCacheDir,
-        });
-      },
-      /Input file not found/,
-      'Should throw validation error for non-existent file'
-    );
+    await expect(
+      compileLatexToPdf({
+        inputTexPath,
+        projectDir,
+        cacheDir: tempCacheDir,
+      })
+    ).rejects.toThrow(/Input file not found/);
   });
 });
 
@@ -328,9 +319,9 @@ describe('LaTeX Compilation - Determinism', () => {
 
     // Note: PDFs may have embedded timestamps, so byte-for-byte equality
     // is NOT expected. Instead, check size and structure match.
-    assert.strictEqual(pdf1.length, pdf2.length, 'PDF sizes must match');
-    assert.strictEqual(validatePDF(pdf1).valid, true, 'PDF 1 must be valid');
-    assert.strictEqual(validatePDF(pdf2).valid, true, 'PDF 2 must be valid');
+    expect(pdf1.length).toBe(pdf2.length);
+    expect(validatePDF(pdf1).valid).toBe(true);
+    expect(validatePDF(pdf2).valid).toBe(true);
 
     // For true determinism, would need SOURCE_DATE_EPOCH handling
     // This is a known limitation documented in Agent 10's design
@@ -342,7 +333,7 @@ describe('LaTeX Compilation - Determinism', () => {
 // ============================================================================
 
 describe('LaTeX Compilation - Performance', () => {
-  it('should compile minimal.tex in under 5 seconds', async (_t) => {
+  it('should compile minimal.tex in under 5 seconds', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
 
@@ -357,6 +348,6 @@ describe('LaTeX Compilation - Performance', () => {
     const duration = Date.now() - startTime;
 
     // Assert: Compilation time < 5000ms (per CLAUDE.md timeout SLAs)
-    assert.ok(duration < 5000, `Compilation took ${duration}ms, must be < 5000ms`);
+    expect(duration).toBeLessThan(5000);
   });
 });

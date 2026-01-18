@@ -13,7 +13,7 @@
 import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { createStore, iterateQuads } from '@unrdf/core';
-import { Parser, Writer } from 'n3';
+import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
 
 /**
  * Main convert command

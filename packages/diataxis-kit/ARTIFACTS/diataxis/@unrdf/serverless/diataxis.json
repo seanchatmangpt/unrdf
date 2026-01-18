@@ -1,0 +1,165 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.5,
+    "tutorials": 1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [
+      "deploy-demo.mjs"
+    ],
+    "fingerprint": "e4c6727c712c1662504f658b5d55941c5a21cb2b310a2c1cc2498153a33a6885",
+    "readmeHeadings": [
+      "Overview",
+      "Installation",
+      "Quick Start",
+      "Architecture",
+      "Features",
+      "Examples",
+      "Configuration",
+      "Performance",
+      "Deployment Best Practices",
+      "Testing",
+      "Documentation",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "node examples/deploy-demo.",
+    "concepts": [
+      "rdf",
+      "serverless",
+      "aws",
+      "lambda",
+      "cdk"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-serverless-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/serverless",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-unrdf-serverless",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @unrdf/serverless",
+      "title": "Configure @unrdf/serverless"
+    },
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/serverless",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/serverless with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@unrdf/serverless",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-serverless-reference",
+    "items": [
+      {
+        "description": "Export: ./api",
+        "example": "import from \"./src/api/index.mjs\"",
+        "name": "./api",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./cdk",
+        "example": "import from \"./src/cdk/index.mjs\"",
+        "name": "./cdk",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./deploy",
+        "example": "import from \"./src/deploy/index.mjs\"",
+        "name": "./deploy",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./storage",
+        "example": "import from \"./src/storage/index.mjs\"",
+        "name": "./storage",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/serverless",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/serverless Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.9999999999999999,
+      "goal": "Learn how to set up and use @unrdf/serverless in your project",
+      "id": "tutorial-getting-started-with-unrdf-serverless",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/serverless"
+    }
+  ],
+  "version": "1.0.0"
+}

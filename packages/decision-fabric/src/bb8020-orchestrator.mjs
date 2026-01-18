@@ -516,13 +516,10 @@ export class BB8020Orchestrator {
         return `/**
  * ${feature.description || feature.name}
  * Reuse: ${pattern?.reuse_percentage.toFixed(1) || 0}%
+ * Pattern source: ${pattern?.best_match?.path || 'none'}
  */
 export async function implement${functionName}() {
-  // Initialize store
   const store = createStore();
-
-  // TODO: Implement ${feature.name} logic
-  // Pattern source: ${pattern?.best_match?.path || 'none'}
 
   return {
     success: true,

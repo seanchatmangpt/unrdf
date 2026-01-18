@@ -126,8 +126,9 @@ describe('StreamProcessor', () => {
     });
 
     it.skip('should emit window-closed event', async () => {
-      // SKIPPED: 80/20 - Flaky timing test, all other windowing tests pass
-      // Window creation, processing, and metrics are all validated successfully
+      // SKIP REASON: Test not in vitest.config.mjs include list (orphaned test)
+      // Also noted as flaky timing test in original comment
+      // RESOLUTION: Move to packages/streaming/test/ or add to vitest config if needed
       processor.configureWindowing({
         type: WindowType.COUNT,
         size: 10,

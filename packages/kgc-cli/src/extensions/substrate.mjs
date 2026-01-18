@@ -31,7 +31,7 @@ const SnapshotSchema = z.object({
  * @type {Object}
  */
 const extension = {
-  id: '@unrdf/kgc-substrate',
+  id: '@unrdf/substrate',
   description: 'Knowledge substrate layer for KGC',
 
   nouns: {

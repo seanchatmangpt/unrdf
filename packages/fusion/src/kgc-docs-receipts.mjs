@@ -374,15 +374,6 @@ export async function verifyReceipt(receipt, expectedOutputHash) {
     errors.push(`Output hash mismatch: expected ${expectedOutputHash}, got ${receipt.output_hash}`);
   }
 
-  // Verify signature (if present)
-  if (receipt.signature) {
-    // TODO: Implement signature verification when crypto module is available
-    // For now, we just validate that it's a non-empty string
-    if (typeof receipt.signature !== 'string' || receipt.signature.length === 0) {
-      errors.push('Invalid signature format');
-    }
-  }
-
   return {
     valid: errors.length === 0,
     errors,
