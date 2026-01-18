@@ -8,6 +8,8 @@ import { existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { createStore, COMMON_PREFIXES } from '@unrdf/core';
 
+const FORMAT_TO_EXT = { turtle: 'ttl', 'text/turtle': 'ttl', ntriples: 'nt', nquads: 'nq', trig: 'trig', rdfxml: 'rdf' };
+
 /**
  * Load ontology from file into RDF store
  * @param {Object} ontologyConfig - Ontology configuration
@@ -35,8 +37,9 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
   
   // Load content into store
   let tripleCount = 0;
+  const ext = FORMAT_TO_EXT[format] || format;
   if (typeof store.load === 'function') {
-    await store.load(content, { format, baseIRI: base_iri });
+    await store.load(content, { format: ext, baseIRI: base_iri });
     tripleCount = store.size || 0;
   } else {
     // Count triples from content (estimate)
