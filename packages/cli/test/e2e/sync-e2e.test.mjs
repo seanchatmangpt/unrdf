@@ -91,13 +91,13 @@ description: Generated entity summary from RDF ontology
 // Entity count: {{ sparql_results | length }}
 
 {% for row in sparql_results %}
-/** {{ row["?label"] }} - {{ row["?comment"] | default("No description") }} */
-export const {{ row["?label"] | upper }} = '{{ row["?entity"] }}';
+/** {{ row.label }} - {{ row.comment | default("No description") }} */
+export const {{ row.label | upper }} = '{{ row.entity }}';
 {% endfor %}
 
 export const ALL_ENTITIES = [
 {% for row in sparql_results %}
-  {{ row["?label"] | upper }},
+  {{ row.label | upper }},
 {% endfor %}
 ];
 `;
@@ -159,11 +159,11 @@ description: Generated property definitions
  */
 
 {% for row in sparql_results %}
-export const PROP_{{ row["?propLabel"] | upper }} = {
-  uri: '{{ row["?prop"] }}',
-  domain: '{{ row["?domain"] }}',
-  range: '{{ row["?range"] }}',
-  label: '{{ row["?propLabel"] }}',
+export const PROP_{{ row.propLabel | upper }} = {
+  uri: '{{ row.prop }}',
+  domain: '{{ row.domain }}',
+  range: '{{ row.range }}',
+  label: '{{ row.propLabel }}',
 };
 {% endfor %}
 `;
@@ -557,7 +557,7 @@ to: count.mjs
 ---
 // Total classes found: {{ sparql_results | length }}
 {% for row in sparql_results %}
-// Class {{ loop.index }}: {{ row["?entity"] | localName }}
+// Class {{ loop.index }}: {{ row.entity | localName }}
 {% endfor %}
 `;
       const iterTemplatePath = join(testDir, 'templates', 'iter.njk');

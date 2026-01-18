@@ -58,9 +58,39 @@ export const GenerationRuleSchema = z.object({
  */
 export const GenerationConfigSchema = z.object({
   output_dir: z.string().default('lib'),
+  templates_dir: z.string().optional(),
+  ontology_dir: z.string().optional(),
   rules: z.array(GenerationRuleSchema).default([]),
   require_audit_trail: z.boolean().default(false),
   parallel: z.boolean().default(false),
+  incremental: z.boolean().default(true),
+  overwrite: z.boolean().default(false),
+});
+
+/**
+ * Schema for sync configuration
+ */
+export const SyncConfigSchema2 = z.object({
+  enabled: z.boolean().default(true),
+  on_change: z.enum(['manual', 'auto', 'watch']).default('manual'),
+  conflict_mode: z.enum(['warn', 'error', 'overwrite', 'skip']).default('warn'),
+});
+
+/**
+ * Schema for RDF configuration
+ */
+export const RDFConfigSchema = z.object({
+  base_uri: z.string().url().optional(),
+  default_prefix: z.string().optional(),
+});
+
+/**
+ * Template configuration schema
+ */
+export const TemplateConfigSchema = z.object({
+  name: z.string().min(1),
+  source: z.string().min(1),
+  output: z.string().optional(),
 });
 
 /**
@@ -68,8 +98,11 @@ export const GenerationConfigSchema = z.object({
  */
 export const SyncConfigSchema = z.object({
   project: ProjectConfigSchema.optional(),
-  ontology: OntologyConfigSchema,
+  ontology: OntologyConfigSchema.optional(),
   generation: GenerationConfigSchema.default({}),
+  sync: SyncConfigSchema2.default({}),
+  rdf: RDFConfigSchema.optional(),
+  templates: z.array(TemplateConfigSchema).optional(),
 });
 
 /**
@@ -105,5 +138,6 @@ export function detectRDFFormat(filePath) {
 export default {
   SyncConfigSchema, SyncArgsSchema, ProjectConfigSchema,
   OntologyConfigSchema, GenerationRuleSchema, GenerationConfigSchema,
-  RDFFormatSchema, detectRDFFormat,
+  RDFFormatSchema, detectRDFFormat, SyncConfigSchema2, RDFConfigSchema,
+  TemplateConfigSchema,
 };

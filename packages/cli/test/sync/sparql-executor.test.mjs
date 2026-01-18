@@ -121,7 +121,7 @@ describe('sparql-executor', () => {
       // Act & Assert
       await expect(
         executeSparqlQuery(store, query, {}, { timeout: 50 })
-      ).rejects.toThrow('Query timeout');
+      ).rejects.toThrow(/timed out/);
     }, 1000);
 
     it('should handle store query errors', async () => {
@@ -411,10 +411,11 @@ describe('sparql-executor', () => {
       // Act
       const result = transformResults(bindings);
 
-      // Assert
+      // Assert - both prefixed and clean keys should be present for compatibility
       expect(result[0]).toHaveProperty('?class');
       expect(result[0]).toHaveProperty('?property');
-      expect(result[0]).not.toHaveProperty('class');
+      expect(result[0]).toHaveProperty('class');
+      expect(result[0]).toHaveProperty('property');
     });
 
     it('should extract value from object with id property', () => {
