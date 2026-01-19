@@ -640,7 +640,7 @@ describe('Daemon + YAWL Performance', { timeout: 30000 }, () => {
 
       await new Promise((resolve) => setTimeout(resolve, 50)); // Minimal actual wait for test speed
 
-      const elapsedTime = Date.now() - startTime;
+      const _elapsedTime = Date.now() - startTime;
 
       backoffMeasurements.push({
         attempt: attempt + 1,
@@ -664,7 +664,7 @@ describe('Daemon + YAWL Performance', { timeout: 30000 }, () => {
       expect(ratio).toBeLessThan(2.5);
     }
 
-    const taskMetrics = bridge.taskRetryMetrics.get(`${caseId}:${taskId}`);
+    const _taskMetrics = bridge.taskRetryMetrics.get(`${caseId}:${taskId}`);
     const retryPolicy_check = bridge.taskRetries.get(`${caseId}:${taskId}`);
 
     expect(retryPolicy_check.policy.backoffMultiplier).toBe(2);

@@ -6,17 +6,7 @@
  */
 
 import { blake3 } from 'hash-wasm';
-import { z } from 'zod';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 import {
-  HASH_LENGTH,
-  DEFAULT_BATCH_SIZE,
-  DaemonOperationSchema,
-  DaemonReceiptSchema,
-  MerkleNodeSchema,
-  MerkleProofSchema,
-  BatchProofSchema,
-  ChainVerificationSchema,
   GeneratorOptionsSchema,
 } from './receipts-merkle-schemas.mjs';
 import {

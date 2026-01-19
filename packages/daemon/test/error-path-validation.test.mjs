@@ -21,19 +21,6 @@ function generateUUID() {
   });
 }
 
-// Helper: Simulate timeout
-function withTimeout(promise, timeoutMs) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error(`Operation timeout after ${timeoutMs}ms`)),
-        timeoutMs
-      )
-    ),
-  ]);
-}
-
 describe('Error Path Validation - JTBD Failure Modes', () => {
   describe('JTBD #1.2: Concurrent Job Timeout (100 Concurrent)', () => {
     /**
@@ -201,7 +188,7 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
       const results = [];
       for (const opId of opIds) {
         try {
-          const result = await daemon.execute(opId);
+          const _result = await daemon.execute(opId);
           results.push({ opId, success: true });
         } catch (error) {
           results.push({ opId, success: false, error: error.message });

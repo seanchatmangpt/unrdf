@@ -299,7 +299,7 @@ describe('DaemonDeltaGate Integration', () => {
       ],
     });
 
-    const receipt = await gate.proposeDelta(delta);
+    const _receipt = await gate.proposeDelta(delta);
 
     expect(gate.store.get('status')).toBe('running');
   });

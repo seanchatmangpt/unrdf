@@ -6,6 +6,14 @@
 
 import { blake3 } from 'hash-wasm';
 
+/**
+ * Build Merkle tree from leaf hashes using BLAKE3
+ * @param {Array<string>} leaves - Array of leaf hashes
+ * @returns {Promise<string>} Root hash of the Merkle tree
+ * @throws {Error} If tree building fails
+ * @example
+ * const root = await buildMerkleTree(['hash1', 'hash2', 'hash3']);
+ */
 export async function buildMerkleTree(leaves) {
   if (leaves.length === 0) {
     return await blake3('');
@@ -25,6 +33,15 @@ export async function buildMerkleTree(leaves) {
   return current[0];
 }
 
+/**
+ * Generate Merkle proof path for a specific leaf index
+ * @param {Array<string>} leaves - Array of leaf hashes
+ * @param {number} index - Index of leaf to prove
+ * @returns {Promise<Array<Object>>} Array of proof steps with hash and position
+ * @throws {Error} If index is invalid
+ * @example
+ * const proof = await getMerkleProofPath(['hash1', 'hash2', 'hash3'], 0);
+ */
 export async function getMerkleProofPath(leaves, index) {
   if (leaves.length === 0 || index >= leaves.length) {
     return [];

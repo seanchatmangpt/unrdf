@@ -6,12 +6,11 @@
 
 import { EventEmitter } from 'events';
 import { z } from 'zod';
-import { trace, metrics } from '@opentelemetry/api';
+import { metrics } from '@opentelemetry/api';
 import { detectInjection, sanitizeError, validatePayload } from '../security-audit.mjs';
 import { ConsensusOperationState, PartitionState } from './consensus-state.mjs';
 import * as handlers from './consensus-handlers.mjs';
 
-const tracer = trace.getTracer('unrdf-daemon-consensus');
 const meter = metrics.getMeter('unrdf-daemon-consensus');
 
 const ConsensusOperationSchema = z.object({
@@ -40,6 +39,14 @@ const ConsensusConfigSchema = z.object({
  * @extends EventEmitter
  */
 export class ConsensusManager extends EventEmitter {
+  /**
+   * Create a new Consensus Manager instance
+   * @param {Object} daemon - Daemon instance
+   * @param {Object} raftCoordinator - Raft coordinator instance
+   * @param {Object} clusterManager - Cluster manager instance
+   * @param {Object} [config={}] - Configuration options
+   * @throws {TypeError} If daemon, raftCoordinator, or clusterManager are invalid
+   */
   constructor(daemon, raftCoordinator, clusterManager, config = {}) {
     super();
 
@@ -87,6 +94,11 @@ export class ConsensusManager extends EventEmitter {
     this.logSizeGauge.addCallback(result => result.observe(this.operationLog.length));
   }
 
+  /**
+   * Initialize consensus manager with event listeners
+   * @returns {Promise<void>}
+   * @throws {Error} If initialization fails
+   */
   async initialize() {
     try {
       this.raftCoordinator.on('leader_elected', event => handlers.handleLeaderElected(this, event));
@@ -105,6 +117,12 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   * Replicate operation across consensus group
+   * @param {Object} operation - Operation to replicate
+   * @returns {Promise<Object>} Replication result with operationId, replicated, committed flags
+   * @throws {Error} If replication fails
+   */
   async replicateOperation(operation) {
     try {
       const payloadValidation = validatePayload(operation, { type: 'rdf' });
@@ -151,6 +169,12 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   * Wait for operation to be committed to log
+   * @param {string} operationId - Operation ID to wait for
+   * @param {number} timeoutMs - Maximum time to wait in milliseconds
+   * @returns {Promise<boolean>} True if operation committed, false on timeout
+   */
   async waitForCommit(operationId, timeoutMs) {
     return new Promise(resolve => {
       const startTime = Date.now();
@@ -167,6 +191,10 @@ export class ConsensusManager extends EventEmitter {
     });
   }
 
+  /**
+   * Compact operation log by removing old entries
+   * @returns {void}
+   */
   compactLog() {
     try {
       const maxSize = this.config.maxLogSize;
@@ -189,6 +217,12 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   * Gracefully remove node from consensus group (leader only)
+   * @param {string} nodeId - Node ID to remove
+   * @returns {Promise<Object>} Removal result
+   * @throws {Error} If node is not leader or removal fails
+   */
   async removeNodeGracefully(nodeId) {
     try {
       const injection = detectInjection(nodeId, 'command');
@@ -217,6 +251,12 @@ export class ConsensusManager extends EventEmitter {
     }
   }
 
+  /**
+   * Wait for operation replication to remote nodes
+   * @param {string} excludeNodeId - Node ID to exclude from wait
+   * @param {number} timeoutMs - Maximum time to wait in milliseconds
+   * @returns {Promise<boolean>} True if replicated, false on timeout
+   */
   async waitForReplication(excludeNodeId, timeoutMs) {
     return new Promise(resolve => {
       const startTime = Date.now();
@@ -234,6 +274,10 @@ export class ConsensusManager extends EventEmitter {
     });
   }
 
+  /**
+   * Get current consensus state and metrics
+   * @returns {Object} Consensus state object
+   */
   getConsensusState() {
     return {
       nodeId: this.nodeId,
@@ -249,6 +293,11 @@ export class ConsensusManager extends EventEmitter {
     };
   }
 
+  /**
+   * Shutdown consensus manager and cleanup resources
+   * @returns {Promise<void>}
+   * @throws {Error} If shutdown fails
+   */
   async shutdown() {
     try {
       handlers.stopPartitionDetection(this);
@@ -259,6 +308,14 @@ export class ConsensusManager extends EventEmitter {
   }
 }
 
+/**
+ * Factory function to create and configure consensus manager
+ * @param {Object} daemon - Daemon instance
+ * @param {Object} raftCoordinator - Raft coordinator instance
+ * @param {Object} clusterManager - Cluster manager instance
+ * @param {Object} [config={}] - Configuration options
+ * @returns {ConsensusManager} Configured consensus manager instance
+ */
 export function createConsensusManager(daemon, raftCoordinator, clusterManager, config = {}) {
   return new ConsensusManager(daemon, raftCoordinator, clusterManager, config);
 }

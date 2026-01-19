@@ -728,7 +728,7 @@ describe('NitroTaskExecutor Integration', () => {
       executor.registerOperationAsTask(newOp, 'failing-nitro-task');
 
       const taskIds = executor.listTasks().map((t) => executor.daemonToNitroMap.get(t.daemonOperationId));
-      const failingTaskId = executor.daemonToNitroMap.get(newOp);
+      const _failingTaskId = executor.daemonToNitroMap.get(newOp);
 
       // Act
       const results = await Promise.allSettled(

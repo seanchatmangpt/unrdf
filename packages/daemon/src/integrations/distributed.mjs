@@ -8,7 +8,6 @@
 import { z } from 'zod';
 import {
   detectInjection,
-  sanitizeError,
   validatePayload,
 } from '../security-audit.mjs';
 

@@ -15,7 +15,6 @@
  * - Graceful degradation when modules unavailable
  */
 
-import { EventEmitter } from 'events';
 import { z } from 'zod';
 
 /**
@@ -490,7 +489,7 @@ export class EcosystemCompositionValidator {
       details: [],
     };
 
-    for (const [name, module] of this.modules) {
+    for (const [name, _module] of this.modules) {
       try {
         // Simulate module unavailability
         const dependents = Array.from(this.modules.values())
@@ -733,7 +732,7 @@ export class EcosystemCompositionValidator {
           row.compatibility[toModule] = 'self';
         } else {
           const from = this.modules.get(fromModule);
-          const to = this.modules.get(toModule);
+          const _to = this.modules.get(toModule);
 
           const hasDependency = from?.dependencies?.includes(toModule);
           const hasApiCall = Array.from(this.apiCalls.values())

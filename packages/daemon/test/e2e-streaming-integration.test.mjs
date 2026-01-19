@@ -10,7 +10,6 @@ import { Daemon } from '../src/daemon.mjs';
 import {
   ReactiveSubscriptionManager,
   subscribeToChangeFeeds,
-  registerReactiveTrigger,
   createDaemonFromChangeFeeds,
 } from '../src/integrations/streaming.mjs';
 
@@ -269,7 +268,7 @@ describe('Streaming Integration E2E', () => {
 
       await manager.handleChange(change1);
       await manager.handleChange(change2);
-      const result3 = await manager.handleChange(change3);
+      const _result3 = await manager.handleChange(change3);
 
       expect(manager.getMemoryStats().droppedEvents).toBeGreaterThanOrEqual(0);
     });
@@ -304,7 +303,7 @@ describe('Streaming Integration E2E', () => {
       manager = subscribeToChangeFeeds(daemon, feed);
       manager.registerTrigger('add', 'memory-op');
 
-      const initialStats = manager.getMemoryStats();
+      const _initialStats = manager.getMemoryStats();
 
       for (let i = 0; i < 50; i++) {
         feed.emit(createMockChange('add'));
@@ -527,8 +526,8 @@ describe('Streaming Integration E2E', () => {
       daemon.schedule({ id: 'state-op-2', handler: handler2 });
 
       manager = subscribeToChangeFeeds(daemon, feed);
-      const id1 = manager.registerTrigger('add', 'state-op-1');
-      const id2 = manager.registerTrigger('remove', 'state-op-2');
+      const _id1 = manager.registerTrigger('add', 'state-op-1');
+      const _id2 = manager.registerTrigger('remove', 'state-op-2');
 
       feed.emit(createMockChange('add'));
       await new Promise(resolve => setTimeout(resolve, 50));

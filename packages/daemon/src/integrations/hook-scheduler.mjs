@@ -6,9 +6,11 @@
 
 import { EventEmitter } from 'events';
 import { z } from 'zod';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
-
+/**
+ * Configuration schema for daemon-hook integration
+ * @type {z.ZodType}
+ */
 export const DaemonHookIntegrationConfigSchema = z.object({
   adapterId: z.string().min(1).default(() => `adapter-${Date.now()}`),
   autoStart: z.boolean().default(true),
@@ -45,7 +47,9 @@ export class DaemonHookAdapter extends EventEmitter {
   }
 
   /**
-   *
+   * Setup bidirectional event listeners between daemon and hook scheduler
+   * @private
+   * @returns {void}
    */
   _setupListeners() {
     if (this.hookScheduler.onError) {
@@ -73,7 +77,8 @@ export class DaemonHookAdapter extends EventEmitter {
   }
 
   /**
-   *
+   * Start both daemon and hook scheduler
+   * @returns {Promise<void>}
    */
   async start() {
     await this.daemon.start();
@@ -82,7 +87,8 @@ export class DaemonHookAdapter extends EventEmitter {
   }
 
   /**
-   *
+   * Stop both daemon and hook scheduler
+   * @returns {Promise<void>}
    */
   async stop() {
     this.hookScheduler.stop();
@@ -177,7 +183,10 @@ export class DaemonHookAdapter extends EventEmitter {
   }
 
   /**
-   *
+   * Find hook ID by associated task ID
+   * @private
+   * @param {string} taskId - Task ID to find hook for
+   * @returns {string|null} Hook ID or null if not found
    */
   _findHookIdByTaskId(taskId) {
     for (const [hid, tid] of this.hookToDaemonMap.entries()) {
@@ -187,7 +196,8 @@ export class DaemonHookAdapter extends EventEmitter {
   }
 
   /**
-   *
+   * Get adapter statistics and status
+   * @returns {Object} Stats object with adapter state
    */
   getStats() {
     return {

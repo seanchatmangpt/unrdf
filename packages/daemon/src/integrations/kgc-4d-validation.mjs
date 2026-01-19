@@ -4,6 +4,14 @@
  * @description Validation functions for event log entries and related structures
  */
 
+/**
+ * Validate event log entry structure
+ * @param {Object} entry - Entry to validate
+ * @returns {void}
+ * @throws {TypeError} If entry structure is invalid
+ * @example
+ * validateEventLogEntry(entry);
+ */
 export function validateEventLogEntry(entry) {
   if (!entry.id || typeof entry.id !== 'string') throw new TypeError('id must be string');
   if (typeof entry.timestamp !== 'bigint') throw new TypeError('timestamp must be bigint');
@@ -15,6 +23,14 @@ export function validateEventLogEntry(entry) {
   if (!entry.currentHash || typeof entry.currentHash !== 'string') throw new TypeError('currentHash must be string');
 }
 
+/**
+ * Validate universe freeze snapshot structure
+ * @param {Object} snapshot - Snapshot to validate
+ * @returns {void}
+ * @throws {TypeError} If snapshot structure is invalid
+ * @example
+ * validateUniverseFreeze(snapshot);
+ */
 export function validateUniverseFreeze(snapshot) {
   if (!snapshot.freezeId || typeof snapshot.freezeId !== 'string') throw new TypeError('freezeId must be string');
   if (typeof snapshot.timestamp !== 'bigint') throw new TypeError('timestamp must be bigint');
@@ -25,6 +41,14 @@ export function validateUniverseFreeze(snapshot) {
   if (!Array.isArray(snapshot.operations)) throw new TypeError('operations must be array');
 }
 
+/**
+ * Validate Merkle proof structure
+ * @param {Object} proof - Proof to validate
+ * @returns {void}
+ * @throws {TypeError} If proof structure is invalid
+ * @example
+ * validateMerkleProof(proof);
+ */
 export function validateMerkleProof(proof) {
   if (typeof proof.leafIndex !== 'number' || proof.leafIndex < 0) throw new TypeError('leafIndex must be non-negative number');
   if (!proof.leafHash || typeof proof.leafHash !== 'string') throw new TypeError('leafHash must be string');
@@ -32,6 +56,19 @@ export function validateMerkleProof(proof) {
   if (!proof.merkleRoot || typeof proof.merkleRoot !== 'string') throw new TypeError('merkleRoot must be string');
 }
 
+/**
+ * Validate temporal query filters
+ * @param {Object} query - Query object to validate
+ * @param {bigint} [query.fromTimestamp] - Start timestamp
+ * @param {bigint} [query.toTimestamp] - End timestamp
+ * @param {string} [query.operationType] - Operation type
+ * @param {string} [query.operationId] - Operation ID
+ * @param {string} [query.status] - Status value
+ * @returns {void}
+ * @throws {TypeError} If query parameters are invalid
+ * @example
+ * validateTemporalQuery({ fromTimestamp: BigInt(0) });
+ */
 export function validateTemporalQuery(query) {
   if (query.fromTimestamp && typeof query.fromTimestamp !== 'bigint') throw new TypeError('fromTimestamp must be bigint or undefined');
   if (query.toTimestamp && typeof query.toTimestamp !== 'bigint') throw new TypeError('toTimestamp must be bigint or undefined');
@@ -40,6 +77,12 @@ export function validateTemporalQuery(query) {
   if (query.status && !['enqueued', 'started', 'success', 'failure'].includes(query.status)) throw new TypeError('invalid status');
 }
 
+/**
+ * Generate UUID v4 compatible string
+ * @returns {string} UUID v4 formatted string
+ * @example
+ * const id = generateUUID();
+ */
 export function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;

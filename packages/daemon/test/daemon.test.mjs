@@ -5,7 +5,7 @@
  * Tests cover initialization, operation management, lifecycle, events, and error conditions
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Daemon } from '../src/daemon.mjs';
 
 // Generate a valid UUID v4 for testing
@@ -761,7 +761,7 @@ describe('Daemon', () => {
         daemonId: generateUUID(),
         name: 'test-daemon',
       });
-      const opId = daemon.config.daemonId;
+      const _opId = daemon.config.daemonId;
 
       // Act
       await daemon.start();

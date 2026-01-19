@@ -38,7 +38,9 @@ const FeedSchema = z.object({
 }).passthrough();
 
 const DaemonSchema = z.object({
-  execute: z.any().optional(),
+  execute: z.function().optional(),
+  schedule: z.function().optional(),
+  operations: z.instanceof(Map).optional(),
 }).passthrough();
 
 const PatternSchema = z.union([
@@ -63,8 +65,10 @@ export class ReactiveSubscriptionManager {
    * @param {Object} config - Configuration options
    */
   constructor(daemon, config = {}) {
+    // Validate daemon structure without parsing (to preserve method binding)
+    DaemonSchema.parse(daemon);
     const validated = StreamingConfigSchema.parse(config);
-    this.daemon = daemon;
+    this.daemon = daemon;  // Use original daemon, not parsed copy
     this.config = validated;
     this.logger = validated.logger || console;
     this.triggers = new Map();
@@ -193,6 +197,7 @@ export class ReactiveSubscriptionManager {
         const result = await this.daemon.execute(operationId);
         results.push({ operationId, status: 'success', result });
       } catch (error) {
+        this.logger.error(`[ReactiveSubscriptionManager] Operation ${operationId} failed: ${error.message}`);
         results.push({ operationId, status: 'error', error: error.message });
       }
     }
@@ -401,10 +406,11 @@ export class ReactiveSubscriptionManager {
  * const manager = subscribeToChangeFeeds(daemon, feed);
  */
 export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
-  const validatedDaemon = DaemonSchema.parse(daemon);
+  // Validate daemon structure without parsing (to preserve method binding)
+  DaemonSchema.parse(daemon);
   const validatedConfig = StreamingConfigSchema.parse(config);
   const feedArray = Array.isArray(feeds) ? feeds : [feeds];
-  const manager = new ReactiveSubscriptionManager(validatedDaemon, validatedConfig);
+  const manager = new ReactiveSubscriptionManager(daemon, validatedConfig);  // Use original daemon
 
   for (const feed of feedArray) {
     FeedSchema.parse(feed);
@@ -457,9 +463,10 @@ export function registerReactiveTrigger(daemon, pattern, operationId, metadata =
  * manager.registerTrigger('add', 'sync');
  */
 export function createDaemonFromChangeFeeds(daemon, feeds, config = {}) {
-  const validatedDaemon = DaemonSchema.parse(daemon);
+  // Validate daemon structure without parsing (to preserve method binding)
+  DaemonSchema.parse(daemon);
   const validatedConfig = StreamingConfigSchema.parse(config);
-  const manager = subscribeToChangeFeeds(validatedDaemon, feeds, validatedConfig);
-  validatedDaemon._reactiveManager = manager;
+  const manager = subscribeToChangeFeeds(daemon, feeds, validatedConfig);  // Use original daemon
+  daemon._reactiveManager = manager;  // Attach to original daemon
   return manager;
 }

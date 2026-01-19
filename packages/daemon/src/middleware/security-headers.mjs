@@ -28,6 +28,9 @@ export {
 // Re-export defaults
 export { DEFAULT_SECURITY_CONFIG };
 
+// Re-export CSP utilities for backward compatibility
+export { generateCSPHeader, generateNonce } from './csp-utils.mjs';
+
 /**
  * SecurityHeadersMiddleware - Comprehensive security middleware
  */

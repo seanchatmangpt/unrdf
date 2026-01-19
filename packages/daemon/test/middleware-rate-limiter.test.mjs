@@ -4,7 +4,7 @@
  * @description Comprehensive tests for token bucket rate limiter
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   TokenBucketRateLimiter,
   createRateLimitMiddleware,
@@ -620,7 +620,7 @@ describe('Edge Cases and Security', () => {
         maxRequests: 10,
       });
 
-      const promises = Array.from({ length: 20 }, (_, i) =>
+      const promises = Array.from({ length: 20 }, (_, _i) =>
         Promise.resolve(limiter.check({ ip: '192.168.1.1' }))
       );
 

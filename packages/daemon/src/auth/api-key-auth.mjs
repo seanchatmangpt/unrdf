@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { hashApiKey, verifyApiKey, generateApiKeyPair } from './crypto-utils.mjs';
+import { verifyApiKey, generateApiKeyPair } from './crypto-utils.mjs';
 
 /**
  * API Key validation schema
@@ -269,6 +269,6 @@ export function createAuthMiddleware(authenticator) {
  */
 export async function createAuthenticator(options = {}) {
   const authenticator = new ApiKeyAuthenticator(options);
-  const { key, hash } = await authenticator.initialize();
+  const { key, hash: _hash } = await authenticator.initialize();
   return { authenticator, key };
 }

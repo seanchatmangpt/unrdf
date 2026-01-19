@@ -524,7 +524,7 @@ describe('ApiKeyAuthenticator', () => {
 describe('createAuthMiddleware()', () => {
   it('should create middleware function', async () => {
     // Arrange
-    const { key, hash } = await generateApiKeyPair();
+    const { key: _key, hash } = await generateApiKeyPair();
     const authenticator = new ApiKeyAuthenticator({
       storedKeyHash: hash,
       environment: 'development',

@@ -402,7 +402,7 @@ describe('AlertManager', () => {
       name: 'high_backlog',
       condition: 'queue.backlog > threshold',
       severity: 'warning',
-      evaluate: ({ value, context }) => value > 100,
+      evaluate: ({ value, _context }) => value > 100,
     });
 
     // Act
@@ -755,7 +755,7 @@ describe('Integration Tests', () => {
     const startTime = Date.now();
     // Simulate work
     const duration = 50;
-    const endTime = startTime + duration;
+    const _endTime = startTime + duration;
     monitor.recordSuccess(duration);
 
     exporter.recordHistogram('operation.duration', duration);

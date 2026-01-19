@@ -13,7 +13,6 @@
 
 import { EventEmitter } from 'events';
 import { PolicySchema, PolicyDecisionSchema, PolicyAuditSchema } from './hooks-policy.schema.mjs';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
 import {
   evaluateApprovalPolicy,

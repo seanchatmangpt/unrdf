@@ -6,12 +6,9 @@
  */
 
 import crypto from 'crypto';
-import { validateInputSafety, detectInjection } from './utils/injection-detection.mjs';
-import { validatePathSafety, sanitizePath } from './utils/path-validation.mjs';
-import { detectSecrets } from './utils/credential-detection.mjs';
+import { validateInputSafety } from './utils/injection-detection.mjs';
+import { validatePathSafety } from './utils/path-validation.mjs';
 import {
-  getAuditLog,
-  clearAuditLog,
   getSecurityStats as getSecurityStatsBase,
   addAuditEvent,
 } from './utils/audit-utils.mjs';

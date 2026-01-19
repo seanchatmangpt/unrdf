@@ -300,7 +300,7 @@ export class NitroTaskExecutor extends EventEmitter {
     }
 
     // Merge payload into operation context if needed
-    const context = {
+    const _context = {
       ...payload,
       sourceSystem: 'nitro',
       timestamp: new Date(),

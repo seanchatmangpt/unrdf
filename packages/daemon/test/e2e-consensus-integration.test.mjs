@@ -8,7 +8,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EventEmitter } from 'events';
-import { ConsensusManager, createConsensusManager } from '../src/integrations/consensus.mjs';
+import { ConsensusManager } from '../src/integrations/consensus.mjs';
 
 /**
  * Mock Daemon for testing
@@ -114,14 +114,6 @@ class MockClusterManager extends EventEmitter {
 }
 
 // Generate UUID helper
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
 describe('ConsensusManager - E2E Integration', () => {
   let daemon;
   let raftCoordinator;
@@ -383,13 +375,19 @@ describe('ConsensusManager - E2E Integration', () => {
     it('should transition from partitioned to recovering state', async () => {
       // Arrange
       consensusManager = new ConsensusManager(daemon, raftCoordinator, clusterManager, {
-        partitionDetectionMs: 100,
+        partitionDetectionMs: 50,
       });
       await consensusManager.initialize();
+      const partitionSpy = vi.fn();
+      consensusManager.on('partition:detected_by_timeout', partitionSpy);
 
-      // Act - Trigger partition detection
-      await new Promise(resolve => setTimeout(resolve, 150));
+      // Act - Manually trigger partition detection by setting lastHeartbeat in the past
+      consensusManager.lastHeartbeat = Date.now() - 100;
+
+      // Wait for partition detection timer to fire
+      await new Promise(resolve => setTimeout(resolve, 60));
       expect(consensusManager.partitionState).toBe('partitioned');
+      expect(partitionSpy).toHaveBeenCalled();
 
       // Act - Trigger recovery (leader election)
       const recoverySpy = vi.fn();

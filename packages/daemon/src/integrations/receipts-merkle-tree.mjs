@@ -6,6 +6,14 @@
 
 import { blake3 } from 'hash-wasm';
 
+/**
+ * Build Merkle tree from receipt objects with Merkle leaf hashes
+ * @param {Array<Object>} receipts - Array of receipt objects with merkleLeafHash
+ * @returns {Promise<Object>} Tree object with root, depth, leaves, and levels
+ * @throws {Error} If receipts array is empty
+ * @example
+ * const tree = await buildMerkleTree(receipts);
+ */
 export async function buildMerkleTree(receipts) {
   if (receipts.length === 0) {
     throw new Error('Cannot build tree: empty receipts array');
@@ -52,6 +60,14 @@ export async function buildMerkleTree(receipts) {
   };
 }
 
+/**
+ * Generate Merkle inclusion proof for receipt at index in tree
+ * @param {Object} tree - Merkle tree object from buildMerkleTree
+ * @param {number} index - Index of receipt to prove inclusion for
+ * @returns {Promise<Array<Object>>} Proof path array with sibling hashes and positions
+ * @example
+ * const proof = await generateInclusionProof(tree, 0);
+ */
 export async function generateInclusionProof(tree, index) {
   const proof = [];
   let currentIndex = index;
@@ -78,6 +94,13 @@ export async function generateInclusionProof(tree, index) {
   return proof;
 }
 
+/**
+ * Verify Merkle inclusion proof is valid
+ * @param {Object} proof - Proof object with leafHash, proofPath, merkleRoot
+ * @returns {Promise<boolean>} True if proof is valid, false if invalid or on error
+ * @example
+ * const valid = await verifyInclusionProof(proof);
+ */
 export async function verifyInclusionProof(proof) {
   try {
     if (!proof || !proof.leafHash || !proof.proofPath || !proof.merkleRoot) {

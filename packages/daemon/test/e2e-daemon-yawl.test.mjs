@@ -13,7 +13,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EventEmitter } from 'events';
-import { z } from 'zod';
 import { Daemon } from '../src/daemon.mjs';
 import { YawlDaemonBridge } from '../src/integrations/yawl.mjs';
 import { ExecutionReceiptSchema } from '../../v6-core/src/receipts/index.mjs';
@@ -456,7 +455,7 @@ describe('Pattern 3: Retry with Exponential Backoff', () => {
     // Arrange
     const caseId = 'case-retry-001';
     const taskId = 'process-task';
-    let attemptCount = 0;
+    let _attemptCount = 0;
 
     const retryListener = vi.fn();
     bridge.on('task:retry-executed', retryListener);
@@ -478,7 +477,7 @@ describe('Pattern 3: Retry with Exponential Backoff', () => {
     const operation = daemon.operations.get(retryResult.operationId);
     if (operation?.handler) {
       await operation.handler();
-      attemptCount++;
+      _attemptCount++;
     }
 
     // Complete task on retry

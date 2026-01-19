@@ -14,9 +14,6 @@ import { createHookScheduler } from '@unrdf/hooks';
 import {
   DaemonHookPolicyAdapter,
   integrateHooksPolicy,
-  PolicySchema,
-  PolicyDecisionSchema,
-  PolicyAuditSchema,
 } from '../src/integrations/hooks-policy.mjs';
 
 /**
@@ -420,7 +417,7 @@ describe('Daemon Hooks Policy Integration E2E', () => {
     it('should rollback policy to previous version', () => {
       // Arrange
       const policyId = 'rollback-test';
-      const v1 = adapter.registerPolicy({
+      const _v1 = adapter.registerPolicy({
         id: policyId,
         name: 'Original',
         type: 'approval',

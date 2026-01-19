@@ -233,7 +233,7 @@ class MockYawlDaemonBridge extends EventEmitter {
   }
 
   async executeTaskWithRetry(caseId, taskId, taskFn, retryPolicy = {}) {
-    const key = `${caseId}:${taskId}`;
+    const _key = `${caseId}:${taskId}`;
     const maxAttempts = retryPolicy.maxAttempts || 3;
     const backoffMs = retryPolicy.backoffMs || 1000;
 
@@ -437,7 +437,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
       });
 
       // Act
-      const { caseId: returnedCaseId } = bridge.watchTaskTimeout(
+      const { caseId: _returnedCaseId } = bridge.watchTaskTimeout(
         caseId,
         taskId,
         timeoutMs
@@ -660,7 +660,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
      */
     it('should detect circular task dependencies', async () => {
       // Arrange
-      const { caseId } = await yawlEngine.createCase('cyclic-workflow', {});
+      const { caseId: _caseId } = await yawlEngine.createCase('cyclic-workflow', {});
 
       // Simulate circular dependency detection
       const dependencies = {
@@ -714,7 +714,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
      */
     it('should detect unsatisfiable XOR-split condition', async () => {
       // Arrange
-      const { caseId } = await yawlEngine.createCase('xor-workflow', {});
+      const { caseId: _caseId } = await yawlEngine.createCase('xor-workflow', {});
 
       const xorCondition = {
         branches: [

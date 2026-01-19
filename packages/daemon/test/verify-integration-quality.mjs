@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.join(__dirname, '../../..');
+const _projectRoot = path.join(__dirname, '../../..');
 const daemonRoot = path.join(__dirname, '..');
 
 /**
@@ -56,7 +56,7 @@ async function runCommand(command, args = [], options = {}) {
 function parseTestOutput(output) {
   const passedMatch = output.match(/(\d+)\s+passed/);
   const failedMatch = output.match(/(\d+)\s+failed/);
-  const filesMatch = output.match(/Test Files.*?(\d+)\s+passed.*?(\d+)?\s*failed/s);
+  const _filesMatch = output.match(/Test Files.*?(\d+)\s+passed.*?(\d+)?\s*failed/s);
 
   return {
     passed: passedMatch ? parseInt(passedMatch[1], 10) : 0,
