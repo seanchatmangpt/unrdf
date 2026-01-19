@@ -38,8 +38,25 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   };
 
   let rendered;
-  try { rendered = env.renderString(template, renderContext); }
-  catch (err) { throw new Error(`Template rendering failed: ${err.message}`); }
+  try {
+    rendered = env.renderString(template, renderContext);
+  } catch (err) {
+    // Extract line/column info from Nunjucks error
+    const lineInfo = extractNunjucksLineInfo(err);
+    let errorMsg = `Template rendering failed: ${err.message}`;
+
+    if (lineInfo.line !== null) {
+      errorMsg += `\n  Line ${lineInfo.line}${lineInfo.column !== null ? `, Column ${lineInfo.column}` : ''}`;
+    }
+
+    // Add context-specific suggestions
+    const suggestions = getTemplateSuggestions(err.message, renderContext);
+    if (suggestions.length > 0) {
+      errorMsg += '\n\nPossible fixes:\n  ' + suggestions.join('\n  ');
+    }
+
+    throw new Error(errorMsg);
+  }
 
   let outputPath = frontmatter.to || context.outputPath;
   if (outputPath?.includes('{{')) outputPath = env.renderString(outputPath, renderContext);
@@ -259,7 +276,12 @@ export async function batchRender(templates, sharedContext = {}, options = {}) {
         frontmatter,
       });
     } catch (err) {
-      results.push({ error: err.message, templatePath: absPath });
+      const lineInfo = extractNunjucksLineInfo(err);
+      const errorDetails = lineInfo.line !== null
+        ? `${err.message} (Line ${lineInfo.line}${lineInfo.column !== null ? `, Column ${lineInfo.column}` : ''})`
+        : err.message;
+
+      results.push({ error: errorDetails, templatePath: absPath });
     }
   }
   return results;
@@ -311,6 +333,95 @@ export async function discoverTemplates(dir, options = {}) {
 
   await scanDir(absDir);
   return templates;
+}
+
+/**
+ * Extract line and column information from Nunjucks error
+ * @param {Error} err - Nunjucks error
+ * @returns {Object} Object with line and column (or null if not found)
+ */
+function extractNunjucksLineInfo(err) {
+  // Nunjucks errors include line/column in message or properties
+  const msg = err.message || String(err);
+
+  // Try to extract from error properties first (most reliable)
+  if (err.lineno !== undefined) {
+    return {
+      line: err.lineno,
+      column: err.colno !== undefined ? err.colno : null,
+    };
+  }
+
+  // Try to extract from error message
+  const patterns = [
+    /\(line (\d+), column (\d+)\)/,
+    /at line (\d+),?\s*column (\d+)/i,
+    /\[Line (\d+), Column (\d+)\]/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = msg.match(pattern);
+    if (match) {
+      return {
+        line: parseInt(match[1], 10),
+        column: parseInt(match[2], 10),
+      };
+    }
+  }
+
+  return { line: null, column: null };
+}
+
+/**
+ * Get template fix suggestions based on error message and context
+ * @param {string} errorMsg - Error message
+ * @param {Object} context - Render context
+ * @returns {Array<string>} Array of suggestion strings
+ */
+function getTemplateSuggestions(errorMsg, context = {}) {
+  const suggestions = [];
+  const msg = errorMsg.toLowerCase();
+
+  if (msg.includes('undefined') || msg.includes('is not defined')) {
+    suggestions.push('Check that all variables used in template are defined in context');
+
+    // Try to extract variable name
+    const varMatch = errorMsg.match(/['"]?(\w+)['"]?\s+is\s+(not\s+)?defined/i);
+    if (varMatch) {
+      const varName = varMatch[1];
+      suggestions.push(`Variable '${varName}' is not available. Available: ${Object.keys(context).join(', ')}`);
+    } else {
+      suggestions.push(`Available context variables: ${Object.keys(context).join(', ')}`);
+    }
+  }
+
+  if (msg.includes('filter') || msg.includes('unknown filter')) {
+    suggestions.push('Check that custom filters are registered with the template engine');
+    suggestions.push('Available filters: camelCase, pascalCase, snakeCase, kebabCase, localName, namespace, expand, etc.');
+  }
+
+  if (msg.includes('unexpected token') || msg.includes('unexpected end of')) {
+    suggestions.push('Check for unmatched {% ... %} or {{ ... }} tags');
+    suggestions.push('Verify all blocks have matching {% endfor %}, {% endif %}, etc.');
+  }
+
+  if (msg.includes('expected') || msg.includes('unexpected')) {
+    suggestions.push('Check Nunjucks syntax - ensure proper tag structure');
+    suggestions.push('Example: {% for item in items %}...{% endfor %}');
+  }
+
+  if (msg.includes('cannot read') || msg.includes('cannot access')) {
+    suggestions.push('Check for null/undefined values before accessing properties');
+    suggestions.push('Use safe navigation: {{ variable.property if variable }}');
+  }
+
+  // Generic suggestions if none matched
+  if (suggestions.length === 0) {
+    suggestions.push('Verify Nunjucks template syntax is valid');
+    suggestions.push('Check that all loops and conditionals are properly closed');
+  }
+
+  return suggestions;
 }
 
 export default { renderTemplate, createNunjucksEnvironment, createTemplateEngine, renderWithOptions, batchRender, discoverTemplates, TEMPLATE_EXTENSIONS, DEFAULT_PREFIXES };

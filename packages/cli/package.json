@@ -4,7 +4,7 @@
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
-    "unrdf": "./src/cli.mjs"
+    "unrdf": "./src/cli/main.mjs"
   },
   "main": "src/index.mjs",
   "types": "./dist/index.d.ts",

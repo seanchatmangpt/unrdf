@@ -69,13 +69,14 @@ export async function executeSparqlQuery(store, query, prefixes = {}, options = 
   }
 
   const prefixDeclarations = buildPrefixDeclarations(prefixes);
+  const prefixLineCount = prefixDeclarations.split('\n').length;
   const fullQuery = prefixDeclarations + '\n' + query.trim();
 
   try {
     const results = await Promise.race([
       executeQueryInternal(store, fullQuery),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Query timed out')), timeout)
+        setTimeout(() => reject(new Error(`Query execution timed out after ${timeout}ms`)), timeout)
       ),
     ]);
     return transformResults(results);
@@ -83,10 +84,39 @@ export async function executeSparqlQuery(store, query, prefixes = {}, options = 
     if (err instanceof SparqlExecutionError) {
       throw err;
     }
-    throw new SparqlExecutionError(`SPARQL query failed: ${err.message}`, {
+
+    // Handle timeout errors
+    if (err.message.includes('timed out')) {
+      throw new SparqlExecutionError(
+        `Query execution timed out after ${timeout}ms\n` +
+        `  Fix: Simplify query, add LIMIT clause, or increase timeout\n` +
+        `  Query preview: ${query.trim().split('\n')[0].substring(0, 80)}...`,
+        {
+          cause: err,
+          query: fullQuery,
+          phase: 'execute',
+        }
+      );
+    }
+
+    // Extract line/column information from error message
+    const lineInfo = extractLineInfo(err.message, prefixLineCount);
+    const syntaxSuggestions = getSyntaxSuggestions(err.message);
+
+    let errorMsg = `SPARQL query failed: ${err.message}`;
+    if (lineInfo.line !== null) {
+      errorMsg += `\n  Line ${lineInfo.userLine} (${lineInfo.queryLine} in full query): ${lineInfo.content || '(error location)'}`;
+    }
+    if (syntaxSuggestions.length > 0) {
+      errorMsg += '\n\nPossible fixes:\n  ' + syntaxSuggestions.join('\n  ');
+    }
+
+    throw new SparqlExecutionError(errorMsg, {
       cause: err,
       query: fullQuery,
       phase: 'execute',
+      line: lineInfo.line,
+      column: lineInfo.column,
     });
   }
 }
@@ -472,6 +502,86 @@ export function validateSparqlQuery(query) {
 export async function executeParameterizedQuery(store, template, params = {}, prefixes = {}, options = {}) {
   const query = substituteParameters(template, params);
   return executeSparqlQuery(store, query, prefixes, options);
+}
+
+/**
+ * Extract line and column information from error message
+ * @param {string} errorMsg - Error message
+ * @param {number} prefixLineCount - Number of prefix declaration lines
+ * @returns {Object} Object with line, column, userLine, queryLine, content
+ */
+function extractLineInfo(errorMsg, prefixLineCount = 0) {
+  // Common patterns for line/column in SPARQL errors
+  const patterns = [
+    /line[:\s]+(\d+)(?:[,:\s]+column[:\s]+(\d+))?/i,
+    /at line (\d+), column (\d+)/i,
+    /\[line (\d+), col (\d+)\]/i,
+    /position[:\s]+(\d+):(\d+)/i,
+    /(\d+):(\d+):/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = errorMsg.match(pattern);
+    if (match) {
+      const queryLine = parseInt(match[1], 10);
+      const column = match[2] ? parseInt(match[2], 10) : null;
+      // Adjust line number to account for prefix declarations
+      const userLine = Math.max(1, queryLine - prefixLineCount);
+
+      return {
+        line: queryLine,
+        column,
+        userLine,
+        queryLine,
+        content: null,
+      };
+    }
+  }
+
+  return { line: null, column: null, userLine: null, queryLine: null, content: null };
+}
+
+/**
+ * Get syntax fix suggestions based on error message
+ * @param {string} errorMsg - Error message
+ * @returns {Array<string>} Array of suggestion strings
+ */
+function getSyntaxSuggestions(errorMsg) {
+  const suggestions = [];
+  const msg = errorMsg.toLowerCase();
+
+  if (msg.includes('prefix') || msg.includes('namespace')) {
+    suggestions.push('Check that all prefixes are declared (e.g., PREFIX foaf: <http://xmlns.com/foaf/0.1/>)');
+  }
+
+  if (msg.includes('unexpected') || msg.includes('expected')) {
+    suggestions.push('Check for missing or extra punctuation (., ;, ,)');
+    suggestions.push('Verify all brackets/braces are balanced');
+  }
+
+  if (msg.includes('variable') || msg.includes('?')) {
+    suggestions.push('Ensure all variables start with ? or $ (e.g., ?subject)');
+  }
+
+  if (msg.includes('uri') || msg.includes('iri')) {
+    suggestions.push('Check URI syntax - should be <http://...> or use prefixed names');
+  }
+
+  if (msg.includes('literal')) {
+    suggestions.push('Check string literals are properly quoted and escaped');
+  }
+
+  if (msg.includes('token')) {
+    suggestions.push('Look for typos in SPARQL keywords (SELECT, WHERE, FILTER, etc.)');
+  }
+
+  // Generic suggestions if no specific ones matched
+  if (suggestions.length === 0) {
+    suggestions.push('Validate query syntax using a SPARQL validator');
+    suggestions.push('Check for typos in keywords and variable names');
+  }
+
+  return suggestions;
 }
 
 export default {

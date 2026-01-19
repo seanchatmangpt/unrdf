@@ -1,0 +1,271 @@
+# Chatman Equation - Code Generation Configuration
+# Sync configuration for the Chatman Equation package
+#
+# Usage:
+#   unrdf sync --config ggen.toml
+#   unrdf sync --config ggen.toml --rule operators
+#   unrdf sync --config ggen.toml --dry-run
+#
+# This configuration generates TypeScript-style code from the Chatman Equation
+# ontology, including closure operators, market dynamics entities, and examples.
+
+[project]
+name = "chatman-equation"
+version = "1.0.0"
+description = "Chatman Equation - Market dynamics and blue ocean strategy formalization"
+
+[ontology]
+source = "./ontology/chatman.ttl"
+format = "turtle"
+
+[generation]
+output_dir = "./src/generated"
+
+# =============================================================================
+# Rule 1: Closure Operators
+# =============================================================================
+[[generation.rules]]
+name = "operators"
+description = "Generate closure operator definitions (Unification, BlueOcean, Disruption, StrategicPivot)"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?operator ?label ?comment ?domain ?properties
+WHERE {
+  ?operator rdfs:subClassOf ce:ClosureOperator ;
+            rdfs:label ?label .
+
+  OPTIONAL { ?operator rdfs:comment ?comment }
+  OPTIONAL { ?operator ce:appliesTo ?domain }
+
+  # Get properties defined for this operator type
+  OPTIONAL {
+    ?prop rdfs:domain ?operator ;
+          rdfs:label ?propLabel .
+  }
+}
+ORDER BY ?label
+"""
+
+template = "./templates/reference.tera"
+output_file = "operators.mjs"
+
+# =============================================================================
+# Rule 2: Domain Entities (Artifact, Observation, etc.)
+# =============================================================================
+[[generation.rules]]
+name = "entities"
+description = "Generate entity type constants from Chatman Equation ontology"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?entity ?label ?comment ?superClass
+WHERE {
+  ?entity a owl:Class ;
+          rdfs:label ?label .
+
+  FILTER(STRSTARTS(STR(?entity), "urn:chatman:equation:"))
+
+  OPTIONAL { ?entity rdfs:comment ?comment }
+  OPTIONAL { ?entity rdfs:subClassOf ?superClass }
+}
+ORDER BY ?label
+"""
+
+template = "./templates/equation-reference.tera"
+output_file = "entities.mjs"
+
+# =============================================================================
+# Rule 3: Market Dynamics Properties
+# =============================================================================
+[[generation.rules]]
+name = "properties"
+description = "Generate property definitions for market dynamics analysis"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?prop ?propLabel ?domain ?range ?comment
+WHERE {
+  {
+    ?prop a owl:DatatypeProperty .
+  } UNION {
+    ?prop a owl:ObjectProperty .
+  }
+
+  FILTER(STRSTARTS(STR(?prop), "urn:chatman:equation:"))
+
+  OPTIONAL { ?prop rdfs:label ?propLabel }
+  OPTIONAL { ?prop rdfs:domain ?domain }
+  OPTIONAL { ?prop rdfs:range ?range }
+  OPTIONAL { ?prop rdfs:comment ?comment }
+}
+ORDER BY ?propLabel
+"""
+
+template = "./templates/reference.tera"
+output_file = "properties.mjs"
+
+# =============================================================================
+# Rule 4: Example Instances (Netflix, iPhone, Cirque du Soleil cases)
+# =============================================================================
+[[generation.rules]]
+name = "examples"
+description = "Generate code examples from real-world case studies"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX ex: <urn:chatman:examples:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?example ?type ?name ?description ?createdAt
+WHERE {
+  ?example a ce:Artifact ;
+           ce:artifactType ?type ;
+           ce:artifactName ?name .
+
+  OPTIONAL { ?example ce:artifactDescription ?description }
+  OPTIONAL { ?example ce:createdAt ?createdAt }
+}
+ORDER BY ?createdAt ?name
+"""
+
+template = "./templates/example-generator.tera"
+output_file = "examples.mjs"
+
+# =============================================================================
+# Rule 5: Blue Ocean Operators (from examples.ttl)
+# =============================================================================
+[[generation.rules]]
+name = "blue-ocean-cases"
+description = "Extract blue ocean strategy case studies"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX ex: <urn:chatman:examples:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?operator ?label ?comment ?disruptionIndex ?valueCreated ?convergenceProperty
+WHERE {
+  ?operator a ce:BlueOceanOperator ;
+            rdfs:label ?label .
+
+  OPTIONAL { ?operator rdfs:comment ?comment }
+  OPTIONAL { ?operator ce:disruptionIndex ?disruptionIndex }
+  OPTIONAL { ?operator ce:valueCreated ?valueCreated }
+  OPTIONAL { ?operator ce:convergenceProperty ?convergenceProperty }
+}
+ORDER BY DESC(?disruptionIndex)
+"""
+
+template = "./templates/tutorial.tera"
+output_file = "blue-ocean-examples.mjs"
+
+# =============================================================================
+# Rule 6: Disruption Metrics and Observations
+# =============================================================================
+[[generation.rules]]
+name = "observations"
+description = "Generate observation data for market analysis"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX ex: <urn:chatman:examples:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?observation ?observedProperty ?observedValue ?observedAt ?observer ?comment
+WHERE {
+  ?observation a ce:Observation ;
+               ce:observedProperty ?observedProperty ;
+               ce:observedValue ?observedValue ;
+               ce:observedAt ?observedAt .
+
+  OPTIONAL { ?observation ce:observer ?observer }
+  OPTIONAL { ?observation rdfs:comment ?comment }
+}
+ORDER BY ?observedAt ?observedProperty
+"""
+
+template = "./templates/how-to.tera"
+output_file = "observations.mjs"
+
+# =============================================================================
+# Rule 7: API Documentation (Markdown)
+# =============================================================================
+[[generation.rules]]
+name = "api-docs"
+description = "Generate API documentation from ontology"
+enabled = true
+
+query = """
+PREFIX ce: <urn:chatman:equation:>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?class ?label ?comment
+       (COUNT(DISTINCT ?prop) AS ?propertyCount)
+WHERE {
+  ?class a owl:Class ;
+         rdfs:label ?label .
+
+  FILTER(STRSTARTS(STR(?class), "urn:chatman:equation:"))
+
+  OPTIONAL { ?class rdfs:comment ?comment }
+
+  OPTIONAL {
+    ?prop rdfs:domain ?class .
+  }
+}
+GROUP BY ?class ?label ?comment
+ORDER BY ?label
+"""
+
+template = "./templates/diataxis-explanation.tera"
+output_file = "../docs/API_REFERENCE.md"
+
+# =============================================================================
+# Rule 8: Validation Schemas (Zod)
+# =============================================================================
+[[generation.rules]]
+name = "schemas"
+description = "Generate Zod validation schemas from SHACL shapes"
+enabled = false  # Disabled by default - enable when SHACL shapes are complete
+
+query = """
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX chatman: <http://unrdf.org/chatman/>
+
+SELECT ?shape ?targetClass ?propertyPath ?datatype ?minCount ?maxCount
+WHERE {
+  ?shape a sh:NodeShape ;
+         sh:targetClass ?targetClass .
+
+  OPTIONAL {
+    ?shape sh:property ?propertyShape .
+    ?propertyShape sh:path ?propertyPath .
+    OPTIONAL { ?propertyShape sh:datatype ?datatype }
+    OPTIONAL { ?propertyShape sh:minCount ?minCount }
+    OPTIONAL { ?propertyShape sh:maxCount ?maxCount }
+  }
+}
+ORDER BY ?targetClass ?propertyPath
+"""
+
+template = "./templates/explanation.tera"
+output_file = "validation-schemas.mjs"

@@ -1,0 +1,369 @@
+---
+to: constants/ontology.mjs
+description: Generate constant definitions for RDF ontology URIs, classes, and properties
+---
+/**
+ * @file Ontology Constants
+ * @module constants/ontology
+ * @description Auto-generated constants from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * This file provides constant definitions for:
+ * - Entity type URIs
+ * - Property URIs
+ * - Namespace prefixes
+ * - Common RDF patterns
+ *
+ * Use these constants instead of hard-coded strings to prevent typos
+ * and enable IDE autocomplete.
+ *
+ * Re-run sync to regenerate: `unrdf sync --rule constants`
+ */
+
+{#
+  Group SPARQL results by entity name
+  Expected SPARQL result structure:
+  {
+    "entityName": "User",
+    "entityIRI": "http://example.org/schema#User",
+    "propertyName": "email",
+    "propertyIRI": "http://example.org/schema#email",
+    "propertyType": "xsd:string",
+    "entityDescription": "A user in the system",
+    "propertyDescription": "User email address"
+  }
+#}
+{% set entities = sparql_results | groupBy('entityName') %}
+
+// =============================================================================
+// Namespace Prefixes
+// =============================================================================
+
+/**
+ * Common RDF namespace prefixes
+ * @constant
+ */
+export const PREFIXES = {
+  /** RDF namespace */
+  rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+
+  /** RDF Schema namespace */
+  rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+
+  /** OWL namespace */
+  owl: 'http://www.w3.org/2002/07/owl#',
+
+  /** XSD namespace */
+  xsd: 'http://www.w3.org/2001/XMLSchema#',
+
+  /** Application namespace */
+  app: '{{ (sparql_results[0].entityIRI or "http://example.org/") | namespace }}',
+};
+
+// =============================================================================
+// Entity Type URIs
+// =============================================================================
+
+/**
+ * Entity type IRI constants
+ * Use these for rdf:type assertions
+ * @constant
+ */
+export const ENTITY_TYPES = {
+{% for entityName, properties in entities | items | sortBy(0) %}
+{% if properties[0].entityIRI %}
+  /**
+   * {{ entityName }} entity type
+{% if properties[0].entityDescription %}
+   * @description {{ properties[0].entityDescription }}
+{% endif %}
+   */
+  {{ entityName | upper | snakeCase }}: '{{ properties[0].entityIRI }}',
+{% endif %}
+{% endfor %}
+};
+
+/**
+ * Entity type local names (without namespace)
+ * @constant
+ */
+export const ENTITY_NAMES = {
+{% for entityName in entities | keys | sortBy %}
+  /** {{ entityName }} local name */
+  {{ entityName | upper | snakeCase }}: '{{ entityName }}',
+{% endfor %}
+};
+
+// =============================================================================
+// Property URIs
+// =============================================================================
+
+/**
+ * Property IRI constants grouped by entity
+ * @constant
+ */
+export const PROPERTIES = {
+{% for entityName, properties in entities | items | sortBy(0) %}
+  /**
+   * {{ entityName }} properties
+   */
+  {{ entityName | upper | snakeCase }}: {
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName and prop.propertyIRI %}
+    /**
+     * {{ prop.propertyDescription | default(prop.propertyName) }}
+     * @type {{ prop.propertyType }}
+     */
+    {{ prop.propertyName | upper | snakeCase }}: '{{ prop.propertyIRI }}',
+{% endif %}
+{% endfor %}
+  },
+{% endfor %}
+};
+
+/**
+ * Flattened property URIs (all properties in one object)
+ * @constant
+ */
+export const ALL_PROPERTIES = {
+{% for entityName, properties in entities | items | sortBy(0) %}
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName and prop.propertyIRI %}
+  /** {{ entityName }}.{{ prop.propertyName }} - {{ prop.propertyDescription | default(prop.propertyName) }} */
+  {{ entityName | upper | snakeCase }}_{{ prop.propertyName | upper | snakeCase }}: '{{ prop.propertyIRI }}',
+{% endif %}
+{% endfor %}
+{% endfor %}
+};
+
+// =============================================================================
+// Property Names (camelCase for JavaScript)
+// =============================================================================
+
+/**
+ * Property names in camelCase for JavaScript object properties
+ * @constant
+ */
+export const PROPERTY_NAMES = {
+{% for entityName, properties in entities | items | sortBy(0) %}
+  /** {{ entityName }} property names */
+  {{ entityName | upper | snakeCase }}: {
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName %}
+    /** {{ prop.propertyDescription | default(prop.propertyName) }} */
+    {{ prop.propertyName | upper | snakeCase }}: '{{ prop.propertyName | camelCase }}',
+{% endif %}
+{% endfor %}
+  },
+{% endfor %}
+};
+
+// =============================================================================
+// Common RDF Constants
+// =============================================================================
+
+/**
+ * Common RDF predicates
+ * @constant
+ */
+export const RDF = {
+  /** RDF type predicate */
+  TYPE: `${PREFIXES.rdf}type`,
+
+  /** RDF first (for lists) */
+  FIRST: `${PREFIXES.rdf}first`,
+
+  /** RDF rest (for lists) */
+  REST: `${PREFIXES.rdf}rest`,
+
+  /** RDF nil (empty list) */
+  NIL: `${PREFIXES.rdf}nil`,
+};
+
+/**
+ * RDFS schema predicates
+ * @constant
+ */
+export const RDFS = {
+  /** RDFS label */
+  LABEL: `${PREFIXES.rdfs}label`,
+
+  /** RDFS comment */
+  COMMENT: `${PREFIXES.rdfs}comment`,
+
+  /** RDFS subClassOf */
+  SUB_CLASS_OF: `${PREFIXES.rdfs}subClassOf`,
+
+  /** RDFS domain */
+  DOMAIN: `${PREFIXES.rdfs}domain`,
+
+  /** RDFS range */
+  RANGE: `${PREFIXES.rdfs}range`,
+};
+
+/**
+ * OWL ontology predicates
+ * @constant
+ */
+export const OWL = {
+  /** OWL Class */
+  CLASS: `${PREFIXES.owl}Class`,
+
+  /** OWL ObjectProperty */
+  OBJECT_PROPERTY: `${PREFIXES.owl}ObjectProperty`,
+
+  /** OWL DatatypeProperty */
+  DATATYPE_PROPERTY: `${PREFIXES.owl}DatatypeProperty`,
+};
+
+/**
+ * XSD datatype constants
+ * @constant
+ */
+export const XSD = {
+  /** xsd:string */
+  STRING: `${PREFIXES.xsd}string`,
+
+  /** xsd:integer */
+  INTEGER: `${PREFIXES.xsd}integer`,
+
+  /** xsd:decimal */
+  DECIMAL: `${PREFIXES.xsd}decimal`,
+
+  /** xsd:boolean */
+  BOOLEAN: `${PREFIXES.xsd}boolean`,
+
+  /** xsd:dateTime */
+  DATE_TIME: `${PREFIXES.xsd}dateTime`,
+
+  /** xsd:date */
+  DATE: `${PREFIXES.xsd}date`,
+
+  /** xsd:anyURI */
+  ANY_URI: `${PREFIXES.xsd}anyURI`,
+};
+
+// =============================================================================
+// Utility Functions
+// =============================================================================
+
+/**
+ * Expand a prefixed name to full IRI
+ * @param {string} prefixedName - Prefixed name (e.g., "rdf:type")
+ * @returns {string} Full IRI or original string if no prefix found
+ * @example
+ * expandIRI('rdf:type') // => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+ */
+export function expandIRI(prefixedName) {
+  if (!prefixedName.includes(':')) {
+    return prefixedName;
+  }
+  const [prefix, localName] = prefixedName.split(':', 2);
+  const namespace = PREFIXES[prefix];
+  return namespace ? namespace + localName : prefixedName;
+}
+
+/**
+ * Compact an IRI to prefixed name
+ * @param {string} iri - Full IRI
+ * @returns {string} Prefixed name or original IRI if no prefix matches
+ * @example
+ * compactIRI('http://www.w3.org/1999/02/22-rdf-syntax-ns#type') // => 'rdf:type'
+ */
+export function compactIRI(iri) {
+  for (const [prefix, namespace] of Object.entries(PREFIXES)) {
+    if (iri.startsWith(namespace)) {
+      return `${prefix}:${iri.slice(namespace.length)}`;
+    }
+  }
+  return iri;
+}
+
+/**
+ * Get local name from IRI (part after # or last /)
+ * @param {string} iri - Full IRI
+ * @returns {string} Local name
+ * @example
+ * getLocalName('http://example.org/schema#User') // => 'User'
+ */
+export function getLocalName(iri) {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
+  const splitIndex = Math.max(hashIndex, slashIndex);
+  return splitIndex >= 0 ? iri.slice(splitIndex + 1) : iri;
+}
+
+/**
+ * Get namespace from IRI (part before and including # or last /)
+ * @param {string} iri - Full IRI
+ * @returns {string} Namespace
+ * @example
+ * getNamespace('http://example.org/schema#User') // => 'http://example.org/schema#'
+ */
+export function getNamespace(iri) {
+  const hashIndex = iri.lastIndexOf('#');
+  const slashIndex = iri.lastIndexOf('/');
+  const splitIndex = Math.max(hashIndex, slashIndex);
+  return splitIndex >= 0 ? iri.slice(0, splitIndex + 1) : '';
+}
+
+/**
+ * Check if a string is a valid IRI
+ * @param {string} str - String to check
+ * @returns {boolean} True if valid IRI format
+ */
+export function isIRI(str) {
+  try {
+    const url = new URL(str);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+// =============================================================================
+// Metadata
+// =============================================================================
+
+/**
+ * Constants generation metadata
+ * @constant
+ */
+export const constantsMetadata = {
+  /** Generation timestamp */
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss") }}',
+
+  /** Number of entity types */
+  entityCount: {{ entities | keys | length }},
+
+  /** Total number of properties across all entities */
+  propertyCount: {{ sparql_results | length }},
+
+  /** List of entity names */
+  entities: [
+{% for entityName in entities | keys | sortBy %}
+    '{{ entityName }}',
+{% endfor %}
+  ],
+};
+
+/**
+ * Complete list of all IRIs used in the ontology
+ * @constant
+ */
+export const ALL_IRIS = [
+  // Entity types
+{% for entityName, properties in entities | items | sortBy(0) %}
+{% if properties[0].entityIRI %}
+  '{{ properties[0].entityIRI }}',
+{% endif %}
+{% endfor %}
+  // Properties
+{% for entityName, properties in entities | items | sortBy(0) %}
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyIRI %}
+  '{{ prop.propertyIRI }}',
+{% endif %}
+{% endfor %}
+{% endfor %}
+];

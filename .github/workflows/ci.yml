@@ -3,8 +3,18 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, develop ]
+    paths:
+      - 'packages/**'
+      - '.github/workflows/ci.yml'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
   pull_request:
     branches: [ main, develop ]
+    paths:
+      - 'packages/**'
+      - '.github/workflows/ci.yml'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
 
 jobs:
   # TypeScript Gate - Fail on TypeScript artifacts
@@ -409,6 +419,195 @@ jobs:
           # Run comprehensive integration tests
           pnpm test -- --reporter=verbose --testNamePattern="Integration"
           echo "✅ Integration tests completed"
+
+  # CLI Sync Command Tests
+  cli-sync-tests:
+    name: CLI Sync Command Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || contains(github.event.head_commit.modified, 'packages/cli/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run sync-specific unit tests
+        run: |
+          echo "Running sync command unit tests..."
+          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="sync|Sync"
+          echo "✅ Sync unit tests passed"
+
+      - name: Run sync E2E integration tests
+        run: |
+          echo "Running sync E2E integration tests..."
+          timeout 60s pnpm -C packages/cli test -- --reporter=verbose test/e2e/sync-e2e.test.mjs
+          echo "✅ Sync E2E tests passed"
+
+      - name: Test sync command components
+        run: |
+          echo "Testing individual sync components..."
+          timeout 30s pnpm -C packages/cli test -- --reporter=verbose test/sync/
+          echo "✅ Component tests passed"
+
+      - name: Verify example configs (if present)
+        run: |
+          echo "Checking for example configurations..."
+          if [ -d "packages/cli/examples" ] && [ -n "$(find packages/cli/examples -name '*.toml' 2>/dev/null)" ]; then
+            echo "Found example configs, testing..."
+            for config in packages/cli/examples/*.toml; do
+              echo "Validating config: $config"
+              # Dry-run to validate config structure without generating files
+              timeout 10s node packages/cli/src/cli/main.mjs sync --config "$config" --dry-run || {
+                echo "❌ Config validation failed: $config"
+                exit 1
+              }
+            done
+            echo "✅ All example configs validated"
+          else
+            echo "ℹ️  No example configs found, skipping validation"
+          fi
+
+      - name: Test generated code compiles
+        run: |
+          echo "Testing that generated code is valid ESM..."
+          # Create temp directory for generation test
+          TEST_DIR=$(mktemp -d)
+          cd "$TEST_DIR"
+
+          # Create minimal test ontology
+          cat > schema.ttl << 'EOF'
+          @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+          @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+          @prefix owl: <http://www.w3.org/2002/07/owl#> .
+          @prefix test: <http://test.example/> .
+
+          test:User a owl:Class ;
+              rdfs:label "User" ;
+              rdfs:comment "Test user entity" .
+          EOF
+
+          # Create minimal template
+          mkdir -p templates
+          cat > templates/entities.njk << 'EOF'
+          ---
+          to: entities.mjs
+          ---
+          /**
+           * @generated Test generation
+           */
+          {% for row in sparql_results %}
+          export const {{ row.label | upper }} = '{{ row.entity }}';
+          {% endfor %}
+          EOF
+
+          # Create config
+          cat > ggen.toml << EOF
+          [project]
+          name = "test-project"
+          version = "1.0.0"
+
+          [ontology]
+          source = "$TEST_DIR/schema.ttl"
+          format = "turtle"
+
+          [generation]
+          output_dir = "$TEST_DIR/generated"
+
+          [[generation.rules]]
+          name = "test"
+          query = "SELECT ?entity ?label WHERE { ?entity a owl:Class . OPTIONAL { ?entity rdfs:label ?label } }"
+          template = "$TEST_DIR/templates/entities.njk"
+          output_file = "entities.mjs"
+          EOF
+
+          # Run sync command
+          timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config ggen.toml --verbose
+
+          # Verify output exists
+          if [ ! -f "generated/entities.mjs" ]; then
+            echo "❌ Generated file not created"
+            exit 1
+          fi
+
+          # Test that generated code is valid ESM
+          timeout 5s node -c generated/entities.mjs || {
+            echo "❌ Generated code has syntax errors"
+            cat generated/entities.mjs
+            exit 1
+          }
+
+          # Test that generated code can be imported
+          timeout 5s node --input-type=module -e "import('./generated/entities.mjs').then(() => console.log('✅ Generated code imports successfully'))" || {
+            echo "❌ Generated code cannot be imported"
+            exit 1
+          }
+
+          # Cleanup
+          cd "$OLDPWD"
+          rm -rf "$TEST_DIR"
+
+          echo "✅ Generated code compiles and imports successfully"
+
+      - name: Test SPARQL query execution
+        run: |
+          echo "Testing SPARQL executor component..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/sparql-executor.test.mjs
+          echo "✅ SPARQL executor tests passed"
+
+      - name: Test template rendering
+        run: |
+          echo "Testing template renderer component..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/template-renderer.test.mjs
+          echo "✅ Template renderer tests passed"
+
+      - name: Test config parser
+        run: |
+          echo "Testing config parser component..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/config-parser.test.mjs
+          echo "✅ Config parser tests passed"
+
+      - name: Verify sync command exit codes
+        run: |
+          echo "Testing error handling and exit codes..."
+          # Test missing config file
+          if timeout 5s node packages/cli/src/cli/main.mjs sync --config nonexistent.toml 2>/dev/null; then
+            echo "❌ Should fail for missing config"
+            exit 1
+          fi
+          echo "✅ Correctly handles missing config"
+
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "## Sync Command Test Report" > sync-test-report.md
+          echo "" >> sync-test-report.md
+          echo "### Test Results" >> sync-test-report.md
+          echo "- Sync unit tests: ${{ job.status }}" >> sync-test-report.md
+          echo "- E2E tests: ${{ job.status }}" >> sync-test-report.md
+          echo "- Component tests: ${{ job.status }}" >> sync-test-report.md
+          echo "- Generated code compilation: ${{ job.status }}" >> sync-test-report.md
+          echo "" >> sync-test-report.md
+          echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> sync-test-report.md
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-test-report
+          path: sync-test-report.md
+          retention-days: 30
 
   # Final Validation
   validate:
