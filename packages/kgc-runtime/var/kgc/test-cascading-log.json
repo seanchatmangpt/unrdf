@@ -154,5 +154,18 @@
       }
     ],
     "timestamp": "2026-01-18T08:17:05.729Z"
+  },
+  {
+    "transaction_id": "tx_1768795472245_8kp75",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2026-01-19T04:04:32.256Z"
   }
 ]

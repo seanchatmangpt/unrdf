@@ -5,7 +5,7 @@
  * This is the minimal example to get started with Knowledge Hooks.
  */
 
-import { defineHook } from '../packages/knowledge-engine/src/define-hook.mjs';
+import { defineHook } from '@unrdf/hooks';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 

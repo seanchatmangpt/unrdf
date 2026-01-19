@@ -1,106 +1,66 @@
 /**
- * @fileoverview Example demonstrating the new unctx-based store context
+ * @fileoverview Example demonstrating RDF store operations
  *
- * This example shows how to use the new context-based approach where
- * there's only one store by default, managed through unctx.
+ * This example shows how to create and query an RDF store
+ * using the current @unrdf/core API.
  *
  * @version 1.0.0
- * @author GitVan Team
  * @license MIT
  */
 
-/**
- * @fileoverview Example demonstrating the new unctx-based store context
- *
- * This example shows how to use the new context-based approach where
- * there's only one store by default, managed through unctx.
- *
- * @version 1.0.0
- * @author GitVan Team
- * @license MIT
- */
+import { createStore, namedNode, literal, executeSelectSync } from '@unrdf/core';
 
-import { initStore, useStore, useGraph, useTerms } from '../packages/core/src/index.mjs';
+// Example 1: Basic store usage
+console.log('=== Example 1: Basic Store Usage ===');
 
-// Example 1: Basic usage with context
-console.log('=== Example 1: Basic Context Usage ===');
+// Create an RDF store
+const store = createStore();
 
-const runApp = initStore([], { baseIRI: 'http://example.org/' });
+// Create some RDF data
+const subject = namedNode('http://example.org/person1');
+const predicate = namedNode('http://example.org/name');
+const object = literal('John Doe');
 
-runApp(() => {
-  // Get the store from context
-  const store = useStore();
-  const terms = useTerms();
-  const graph = useGraph();
+// Add to the store
+store.addQuad(subject, predicate, object);
 
-  // Create some RDF data
-  const subject = terms.iri('person1');
-  const predicate = terms.iri('name');
-  const object = terms.lit('John Doe');
-  const quad = terms.quad(subject, predicate, object);
+console.log(`Store size: ${store.size}`);
 
-  // Add to the store
-  store.add(quad);
+// Query the data
+const results = executeSelectSync(store, `
+  PREFIX ex: <http://example.org/>
+  SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+`);
 
-  console.log(`Store size: ${store.size}`);
-  console.log(`Store stats:`, store.stats());
-
-  // Query the data
-  graph
-    .select(
-      `
-    PREFIX ex: <http://example.org/>
-    SELECT ?s ?p ?o WHERE { ?s ?p ?o }
-  `
-    )
-    .then(results => {
-      console.log('Query results:', results);
-    });
-});
-
-// Example 2: Multiple composables sharing the same store
-console.log('\n=== Example 2: Shared Store Context ===');
-
-const runApp2 = initStore();
-
-runApp2(() => {
-  const store1 = useStore();
-  const store2 = useStore();
-  const graph1 = useGraph();
-  const graph2 = useGraph();
-
-  // These are all the same instance
-  console.log('store1 === store2:', store1 === store2);
-  console.log('graph1.store === graph2.store:', graph1.store === graph2.store);
-
-  // Add data through one composable
-  const terms = useTerms();
-  const quad = terms.quad(
-    terms.iri('person2'),
-    terms.iri('age'),
-    terms.lit('30', 'http://www.w3.org/2001/XMLSchema#integer')
-  );
-
-  store1.add(quad);
-
-  // Query through another composable
-  console.log('Store size after adding:', store2.size);
-});
-
-// Example 3: Error handling when context is not initialized
-console.log('\n=== Example 3: Error Handling ===');
-
-try {
-  // This will fail because we're not in a context
-  const _store = useStore();
-} catch (error) {
-  console.log('Expected error:', error.message);
+console.log('Query results:');
+for (const binding of results) {
+  console.log(`  ${binding.get('s').value} ${binding.get('p').value} ${binding.get('o').value}`);
 }
 
-console.log('\n=== Context-based unrdf is ready! ===');
-console.log('Key benefits:');
-console.log('- Single store by default');
-console.log('- Automatic context management');
-console.log('- Consistent state across composables');
-console.log('- Better error handling');
-console.log('- Follows unctx best practices');
+// Example 2: Adding multiple triples
+console.log('\n=== Example 2: Multiple Triples ===');
+
+const person2 = namedNode('http://example.org/person2');
+const age = namedNode('http://example.org/age');
+const ageValue = literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'));
+
+store.addQuad(person2, age, ageValue);
+
+console.log(`Store size after adding: ${store.size}`);
+
+// Example 3: Querying specific patterns
+console.log('\n=== Example 3: Pattern Matching ===');
+
+const allPeople = executeSelectSync(store, `
+  PREFIX ex: <http://example.org/>
+  SELECT ?person ?name WHERE {
+    ?person ex:name ?name .
+  }
+`);
+
+console.log('People found:');
+for (const binding of allPeople) {
+  console.log(`  ${binding.get('person').value}: ${binding.get('name').value}`);
+}
+
+console.log('\n✅ Example complete!');

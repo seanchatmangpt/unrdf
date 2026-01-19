@@ -251,9 +251,9 @@ export function isCompileSuccessful(logText) {
   }
 
   // LaTeX success indicators:
-  // - "Output written on X.pdf (N pages)"
+  // - "Output written on X.pdf (N page/pages, ...)"
   // - No "! " error markers
-  const hasOutputWritten = /Output written on .+\.pdf \(\d+ pages/.test(logText);
+  const hasOutputWritten = /Output written on .+\.pdf \(\d+ pages?/.test(logText);
   const hasCriticalError = /^!/m.test(logText);
 
   return hasOutputWritten && !hasCriticalError;

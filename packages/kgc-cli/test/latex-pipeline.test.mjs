@@ -8,10 +8,14 @@
  * - VFS determinism and file resolution
  * - Performance benchmarks
  *
+ * NOTE: These tests require SwiftLaTeX WASM binaries to be installed.
+ * If WASM binaries are not available, all tests will be skipped.
+ * To install: Run `node scripts/vendor-tex-engine.mjs`
+ *
  * @module test/latex-pipeline
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
@@ -24,18 +28,34 @@ import {
   validatePDFFormat,
   countFiles
 } from './fixtures/setup.mjs';
+import { checkLatexAvailable } from './fixtures/check-latex-available.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, 'fixtures', 'latex');
 
+// Check if LaTeX WASM binaries are available
+let latexAvailable = false;
+let _skipReason = '';
+
+beforeAll(async () => {
+  const result = await checkLatexAvailable();
+  latexAvailable = result.available;
+  if (!result.available) {
+    _skipReason = result.reason;
+    console.warn(`\n⚠️  LaTeX pipeline tests skipped: ${result.reason}\n`);
+  }
+});
+
 let tempCacheDir;
 
 beforeEach(async () => {
+  if (!latexAvailable) return;
   tempCacheDir = await createTempDir('pipeline-test-');
 });
 
 afterEach(async () => {
+  if (!latexAvailable) return;
   await cleanupTempDir(tempCacheDir);
 });
 
@@ -43,7 +63,7 @@ afterEach(async () => {
 // MINIMAL DOCUMENT TESTS
 // ============================================================================
 
-describe('Minimal Document Compilation', () => {
+describe.skipIf(!latexAvailable)('Minimal Document Compilation', () => {
   it('should compile minimal.tex to valid PDF', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
@@ -101,7 +121,7 @@ describe('Minimal Document Compilation', () => {
 // CROSS-REFERENCE TESTS (MULTI-PASS)
 // ============================================================================
 
-describe('Multi-Pass Compilation for Cross-References', () => {
+describe.skipIf(!latexAvailable)('Multi-Pass Compilation for Cross-References', () => {
   it('should compile with-refs/main.tex with 2 passes', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'with-refs', 'main.tex');
     const projectDir = join(FIXTURES_DIR, 'with-refs');
@@ -139,7 +159,7 @@ describe('Multi-Pass Compilation for Cross-References', () => {
 // MISSING PACKAGE ERROR HANDLING
 // ============================================================================
 
-describe('Missing Package Detection', () => {
+describe.skipIf(!latexAvailable)('Missing Package Detection', () => {
   it('should throw LatexCompileError for missing package', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'missing-package.tex');
     const projectDir = FIXTURES_DIR;
@@ -198,7 +218,7 @@ describe('Missing Package Detection', () => {
 // VFS DETERMINISM TESTS
 // ============================================================================
 
-describe('VFS Determinism', () => {
+describe.skipIf(!latexAvailable)('VFS Determinism', () => {
   it('should produce consistent PDF sizes for same input', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
@@ -235,7 +255,7 @@ describe('VFS Determinism', () => {
 // IMAGE INCLUSION TESTS
 // ============================================================================
 
-describe('Image Inclusion', () => {
+describe.skipIf(!latexAvailable)('Image Inclusion', () => {
   it('should compile document with embedded PNG', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'with-image', 'main.tex');
     const projectDir = join(FIXTURES_DIR, 'with-image');
@@ -271,7 +291,7 @@ describe('Image Inclusion', () => {
 // ERROR HANDLING EDGE CASES
 // ============================================================================
 
-describe('Error Handling Edge Cases', () => {
+describe.skipIf(!latexAvailable)('Error Handling Edge Cases', () => {
   it('should reject non-existent input file', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'does-not-exist.tex');
     const projectDir = FIXTURES_DIR;
@@ -304,7 +324,7 @@ describe('Error Handling Edge Cases', () => {
 // PERFORMANCE BENCHMARKS
 // ============================================================================
 
-describe('Performance Benchmarks', () => {
+describe.skipIf(!latexAvailable)('Performance Benchmarks', () => {
   it('should handle minimal doc in <5s (cold cache)', { timeout: 6000 }, async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;

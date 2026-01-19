@@ -18,6 +18,9 @@ import {
   blake3Hash,
 } from '../../v6-core/src/receipt-pattern.mjs';
 
+// Get Oxigraph data factory for creating RDF terms
+const { namedNode, literal } = OxigraphStore.getDataFactory();
+
 /**
  * Store Configuration Schema
  */
@@ -112,9 +115,9 @@ function addQuadImpl(store, quad) {
  * Pure function: Get store state hash (for determinism verification)
  *
  * @param {OxigraphStore} store - Store instance
- * @returns {string} BLAKE3 hash of all quads in canonical order
+ * @returns {Promise<string>} BLAKE3 hash of all quads in canonical order
  */
-export function getStoreStateHash(store) {
+export async function getStoreStateHash(store) {
   const allQuads = store.match();
 
   // Canonicalize all quads (sorted by subject, predicate, object)
@@ -139,7 +142,7 @@ export function getStoreStateHash(store) {
       return a.g.localeCompare(b.g);
     });
 
-  return blake3Hash(canonicalize(canonicalQuads));
+  return await blake3Hash(canonicalize(canonicalQuads));
 }
 
 /**
@@ -247,9 +250,9 @@ export async function testComposition(context) {
   });
 
   const quad = {
-    subject: { value: 'http://example.org/Alice' },
-    predicate: { value: 'http://xmlns.com/foaf/0.1/name' },
-    object: { value: 'Alice', datatype: 'http://www.w3.org/2001/XMLSchema#string' },
+    subject: namedNode('http://example.org/Alice'),
+    predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+    object: literal('Alice'),
   };
 
   const { result: updatedStore, receipt: receipt2 } = await addQuad(ctx2, store, quad);
@@ -276,7 +279,7 @@ export async function testComposition(context) {
     chainValid,
     receipts: [receipt1, receipt2, receipt3],
     resultCount: result.length,
-    stateHash: getStoreStateHash(updatedStore),
+    stateHash: await getStoreStateHash(updatedStore),
   };
 }
 
@@ -316,8 +319,8 @@ export async function generateL5Proof(context) {
   const { result: store1 } = await createStore(context, { quads: [] });
   const { result: store2 } = await createStore(context, { quads: [] });
 
-  const hash1 = getStoreStateHash(store1);
-  const hash2 = getStoreStateHash(store2);
+  const hash1 = await getStoreStateHash(store1);
+  const hash2 = await getStoreStateHash(store2);
 
   return {
     package: '@unrdf/oxigraph',

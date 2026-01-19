@@ -13,7 +13,6 @@ import { createConditionEvaluator } from './condition-evaluator.mjs';
 import { PolicyPackManager } from './policy-pack.mjs';
 import { createSecurityValidator } from './security-validator.mjs';
 import {
-  validateTransactionDelta,
   validateManagerConfig,
   validateHookEvent,
 } from './schemas.mjs';

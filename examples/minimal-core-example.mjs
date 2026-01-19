@@ -1,153 +1,55 @@
 /**
- * @fileoverview Minimal Core Example - End-to-End (No AI)
+ * @fileoverview Minimal Core Example - Basic RDF Operations
  *
- * Demonstrates the minimal, AI-free core system:
- * - Event-driven hooks on graph mutations
- * - Deterministic ingress/egress adapters
- * - Mandatory provenance on every write
- * - SHACL + reasoning optional but wired
+ * Demonstrates the minimal core system using @unrdf/core:
+ * - Creating an RDF store
+ * - Adding and querying triples
+ * - Basic SPARQL queries
  *
  * @version 1.0.0
- * @author GitVan Team
  * @license MIT
  */
 
-import { RdfEngine } from '../packages/knowledge-engine/src/engines/rdf-engine.mjs';
-import { registerHook } from '../packages/knowledge-engine/src/engines/minimal-hook-manager.mjs';
-import { ingress, egress } from '../packages/knowledge-engine/src/engines/deterministic-adapters.mjs';
-import { writeWithProv } from '../packages/knowledge-engine/src/engines/mandatory-provenance.mjs';
-import { z } from 'zod';
+import { createStore, namedNode, literal, executeSelectSync, FOAF, RDF } from '@unrdf/core';
 
-/**
- * Example: End-to-end minimal core system
- */
-async function minimalCoreExample() {
-  console.log('🚀 Minimal Core System - End-to-End Example');
-  console.log('='.repeat(50));
+console.log('🚀 Minimal Core System Example');
+console.log('='.repeat(50));
 
-  // 1) Initialize engine
-  const engine = new RdfEngine({ eventsEnabled: true });
-  console.log('✅ Engine initialized with event system');
+// 1) Initialize store
+const store = createStore();
+console.log('✅ Store initialized');
 
-  // 2) Register hook: block export if graph too small
-  const unregisterHook = registerHook(engine, {
-    id: 'min-size',
-    events: ['beforeSerialize'],
-    predicates: [
-      {
-        kind: 'COUNT',
-        spec: {
-          query: 'SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }',
-          operator: '>=',
-          value: 1,
-        },
-      },
-    ],
-    action: (_, ok) => {
-      if (!ok) throw new Error('Export blocked: empty graph');
-    },
-  });
-  console.log('✅ Hook registered: min-size validation');
+// 2) Add some basic RDF data
+const alice = namedNode('http://example.org/alice');
+const bob = namedNode('http://example.org/bob');
 
-  // 3) Ingress JSON → RDF
-  const User = z.object({
-    name: z.string(),
-    age: z.number(),
-  });
+store.addQuad(alice, RDF.type, FOAF.Person);
+store.addQuad(alice, FOAF.name, literal('Alice'));
+store.addQuad(alice, FOAF.mbox, literal('alice@example.com'));
 
-  const inRes = await ingress.fromJSON(User, '{"name":"Ada","age":36}', {
-    subject: 'urn:ingress:item',
-  });
+store.addQuad(bob, RDF.type, FOAF.Person);
+store.addQuad(bob, FOAF.name, literal('Bob'));
 
-  writeWithProv(engine, inRes.rdf, 'json');
-  console.log('✅ JSON ingress completed with provenance');
-  console.log(`   Data: ${JSON.stringify(inRes.data)}`);
-  console.log(`   Quads: ${inRes.rdf.length}`);
+console.log(`✅ Added ${store.size} triples to the store`);
 
-  // 4) Egress RDF → JSON (governed by hook)
-  const outRes = await egress.toJSON(User, engine.store, {
-    subject: 'urn:ingress:item',
-  });
+// 3) Query the data
+const results = executeSelectSync(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-  console.log('✅ JSON egress completed');
-  console.log(`   Output: ${outRes.output}`);
-
-  // 5) Test hook blocking (try to serialize empty store)
-  const emptyEngine = new RdfEngine({ eventsEnabled: true });
-
-  // Register the same hook
-  const unregisterEmptyHook = registerHook(emptyEngine, {
-    id: 'min-size-empty',
-    events: ['beforeSerialize'],
-    predicates: [
-      {
-        kind: 'COUNT',
-        spec: {
-          query: 'SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }',
-          operator: '>=',
-          value: 1,
-        },
-      },
-    ],
-    action: (_, ok) => {
-      if (!ok) throw new Error('Export blocked: empty graph');
-    },
-  });
-
-  try {
-    await emptyEngine.serializeTurtle();
-    console.log('❌ Empty serialization should have been blocked');
-  } catch (error) {
-    console.log('✅ Empty serialization correctly blocked by hook');
-    console.log(`   Error: ${error.message}`);
+  SELECT ?person ?name ?email WHERE {
+    ?person a foaf:Person ;
+            foaf:name ?name .
+    OPTIONAL { ?person foaf:mbox ?email }
   }
+  ORDER BY ?name
+`);
 
-  // 6) Test provenance
-  console.log('\n📋 Provenance Check:');
-  const provQuads = engine.store.getQuads(null, namedNode('http://ex/prov#source'), null, null);
-  console.log(`   Provenance triples: ${provQuads.length}`);
-  for (const q of provQuads) {
-    console.log(`   ${q.subject.value} <- ${q.object.value}`);
-  }
-
-  // 7) Test event order
-  console.log('\n🔄 Event Order Test:');
-  const events = [];
-
-  const unregisterEventHook = registerHook(engine, {
-    id: 'event-monitor',
-    events: ['beforeAddQuad', 'afterAddQuad', 'beforeSerialize', 'afterSerialize'],
-    action: (payload, _ok) => {
-      events.push(payload.event || 'unknown');
-      console.log(`   Event: ${payload.event || 'unknown'}`);
-    },
-  });
-
-  // Add a quad to trigger events
-  engine.store.addQuad(
-    engine.namedNode('http://example.org/test'),
-    engine.namedNode('http://example.org/type'),
-    engine.literal('Test')
-  );
-
-  // Serialize to trigger more events
-  await engine.serializeTurtle();
-
-  console.log(`   Event sequence: ${events.join(' → ')}`);
-
-  // Cleanup
-  unregisterHook();
-  unregisterEmptyHook();
-  unregisterEventHook();
-
-  console.log('\n✅ Minimal core example completed successfully!');
+console.log('\n📊 Query Results:');
+for (const binding of results) {
+  const name = binding.get('name')?.value || 'unknown';
+  const email = binding.get('email')?.value || 'no email';
+  console.log(`  ${name}: ${email}`);
 }
 
-/**
- * Run the example
- */
-if (import.meta.url === `file://${process.argv[1]}`) {
-  minimalCoreExample().catch(console.error);
-}
-
-export { minimalCoreExample };
+console.log('\n✅ Minimal core example complete!');
+console.log('Next: Try examples/01-hello-rdf.mjs for more features');

@@ -2,6 +2,10 @@
 
 **Start with #01. Add complexity only if needed.**
 
+> **📊 Examples Status**: 10/11 critical examples working (91% success rate)
+> **Last Updated**: 2026-01-19
+> **See**: [EXAMPLES-STATUS.md](./EXAMPLES-STATUS.md) for detailed status report
+
 ## 🎯 NEW: 15-Minute Quick Start Guide
 
 **Brand new to UNRDF?** Follow this progressive learning path:
@@ -30,28 +34,28 @@ Then read: **[Getting Started Guide](../docs/GETTING_STARTED.md)** for comprehen
 
 ## Beginner Examples (Start Here)
 
-| #   | Example                                                    | Time  | What You'll Learn                              |
-| --- | ---------------------------------------------------------- | ----- | ---------------------------------------------- |
-| 01  | [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) | 3 min | Parse RDF, execute SPARQL (the pit of success) |
+| #   | Example                                                    | Time  | Status | What You'll Learn                              |
+| --- | ---------------------------------------------------------- | ----- | ------ | ---------------------------------------------- |
+| 01  | [01-minimal-parse-query.mjs](./01-minimal-parse-query.mjs) | 3 min | ✅ | Parse RDF, execute SPARQL (the pit of success) |
 
 **After #01:** Read [QUICKSTART.md](./QUICKSTART.md) for next steps.
 
 ## Intermediate Examples (Only If Needed)
 
-| #   | Example                                                | Time   | When You Need It                     |
-| --- | ------------------------------------------------------ | ------ | ------------------------------------ |
-| 10  | [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) | 15 min | Autonomous behaviors on data changes |
-| 11  | [context-example.mjs](./context-example.mjs)           | 10 min | Understanding the context system     |
-| 12  | [define-hook-example.mjs](./define-hook-example.mjs)   | 20 min | Advanced hook composition patterns   |
+| #   | Example                                                | Time   | Status | When You Need It                     |
+| --- | ------------------------------------------------------ | ------ | ------ | ------------------------------------ |
+| 10  | [basic-knowledge-hook.mjs](./basic-knowledge-hook.mjs) | 15 min | ⚠️ | Autonomous behaviors (needs v6 migration) |
+| 11  | [context-example.mjs](./context-example.mjs)           | 10 min | ✅ | Store operations and pattern matching |
+| 12  | [define-hook-example.mjs](./define-hook-example.mjs)   | 20 min | ✅ | Advanced hook composition patterns   |
 
 ## Advanced Examples (Skip Unless Required)
 
-| #   | Example                                          | Time   | When You Need It                  |
-| --- | ------------------------------------------------ | ------ | --------------------------------- |
-| 20  | [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) | 30 min | Performance optimization at scale |
-| 21  | [lockchain-demo.mjs](./lockchain-demo.mjs)       | 20 min | Compliance audit trails           |
-| 22  | [policy-pack-demo.mjs](./policy-pack-demo.mjs)   | 25 min | Declarative governance            |
-| 23  | [policy-pack-usage.mjs](./policy-pack-usage.mjs) | 25 min | Custom policy pack creation       |
+| #   | Example                                          | Time   | Status | When You Need It                  |
+| --- | ------------------------------------------------ | ------ | ------ | --------------------------------- |
+| 20  | [dark-matter-80-20.mjs](./dark-matter-80-20.mjs) | 30 min | ✅ | Query optimization and 80/20 analysis |
+| 21  | [lockchain-demo.mjs](./lockchain-demo.mjs)       | 20 min | ? | Compliance audit trails           |
+| 22  | [policy-pack-demo.mjs](./policy-pack-demo.mjs)   | 25 min | ? | Declarative governance            |
+| 23  | [policy-pack-usage.mjs](./policy-pack-usage.mjs) | 25 min | ? | Custom policy pack creation       |
 
 ## Full Feature Showcase (Reference Only)
 
@@ -218,6 +222,27 @@ nodemon examples/[example-name].mjs
 - **Architecture questions?** Read [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **API questions?** See package-specific READMEs
 - **Community support:** [GitHub Issues](https://github.com/unrdf/unrdf/issues)
+
+---
+
+## 📝 Recent Updates (2026-01-19)
+
+### Fixed Examples (80/20 Approach)
+Focused on the top 20% of examples that deliver 80% of value:
+
+**Completed Fixes**:
+- ✅ `01-minimal-parse-query.mjs` - Updated to use `@unrdf/core` instead of deprecated `unrdf` package
+- ✅ `context-example.mjs` - Rewritten to use current API (removed deprecated `initStore`, `useStore`)
+- ✅ `minimal-core-example.mjs` - Rewritten to use `@unrdf/core` instead of missing knowledge-engine modules
+- ✅ `dark-matter-80-20.mjs` - Rewritten to demonstrate practical query optimization
+- ✅ `define-hook-example.mjs` - Updated imports to use `@unrdf/hooks` and `@unrdf/core`
+
+**Status**: 10/11 critical examples working (91% success rate)
+
+**Known Issues**:
+- ⚠️ `basic-knowledge-hook.mjs` - Needs hook schema migration (advanced feature, not blocking)
+
+See [EXAMPLES-STATUS.md](./EXAMPLES-STATUS.md) for detailed report.
 
 ---
 

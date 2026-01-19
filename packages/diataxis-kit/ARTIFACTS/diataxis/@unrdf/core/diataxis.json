@@ -1,40 +1,18 @@
 {
   "confidence": {
-    "explanation": 1,
-    "howtos": 0.75,
-    "reference": 0.7,
-    "tutorials": 1
+    "explanation": 0.4,
+    "howtos": 0.25,
+    "reference": 0.5,
+    "tutorials": 0.1
   },
   "evidence": {
-    "docsFiles": [
-      "API.md",
-      "CONTRIBUTING.md",
-      "KNOWLEDGE-HOOKS-PERFORMANCE.md",
-      "OTEL-INSTRUMENTATION.md"
-    ],
-    "examplesFiles": [
-      "TEST_SUMMARY.md",
-      "basic-operations.mjs",
-      "production-rdf-pipeline.mjs"
-    ],
-    "fingerprint": "6f6e066e6135b49a61da8a2e3004973124733da6835e36d2a9b8b489c890e210",
-    "readmeHeadings": [
-      "Features",
-      "Installation",
-      "📚 Examples",
-      "Quick Start",
-      "Common Patterns",
-      "Error Handling",
-      "API Reference",
-      "Dependencies",
-      "When to Use @unrdf/core",
-      "When to Add Extensions",
-      "Documentation",
-      "License"
-    ]
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
+    "architecture": "@unrdf/core is a package in the UNRDF ecosystem",
     "concepts": [
       "rdf",
       "knowledge-graph",
@@ -42,12 +20,10 @@
       "semantic-web",
       "linked-data"
     ],
-    "confidenceScore": 1,
+    "confidenceScore": 0.4,
     "id": "explanation-unrdf-core-explanation",
     "source": [
       "keywords",
-      "readme",
-      "docs",
       "inferred"
     ],
     "title": "Understanding @unrdf/core",
@@ -59,21 +35,6 @@
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
-    {
-      "confidenceScore": 0.5,
-      "context": "When you need robust error handling in production",
-      "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
-      "task": "Implement error handling for @unrdf/core",
-      "title": "Handle Errors"
-    },
     {
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
@@ -89,6 +50,21 @@
       ],
       "task": "Connect @unrdf/core with rdf",
       "title": "Integrate with rdf"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
     }
   ],
   "packageName": "@unrdf/core",
@@ -100,12 +76,6 @@
         "description": "Export: ./constants",
         "example": "import from \"./src/constants.mjs\"",
         "name": "./constants",
-        "type": "export"
-      },
-      {
-        "description": "Export: ./debug/rdf-inspector",
-        "example": "import from \"./src/debug/rdf-inspector.mjs\"",
-        "name": "./debug/rdf-inspector",
         "type": "export"
       },
       {
@@ -163,21 +133,9 @@
         "type": "export"
       },
       {
-        "description": "Export: ./sparql/executor-sync",
-        "example": "import from \"./src/sparql/executor-sync.mjs\"",
-        "name": "./sparql/executor-sync",
-        "type": "export"
-      },
-      {
         "description": "Export: ./types",
         "example": "import from \"./src/types.mjs\"",
         "name": "./types",
-        "type": "export"
-      },
-      {
-        "description": "Export: ./utils/lockchain-writer",
-        "example": "import from \"./src/utils/lockchain-writer.mjs\"",
-        "name": "./utils/lockchain-writer",
         "type": "export"
       },
       {
@@ -190,18 +148,6 @@
         "description": "Export: ./validation",
         "example": "import from \"./src/validation/index.mjs\"",
         "name": "./validation",
-        "type": "export"
-      },
-      {
-        "description": "Export: ./viz/graph-visualizer",
-        "example": "import from \"./src/viz/graph-visualizer.mjs\"",
-        "name": "./viz/graph-visualizer",
-        "type": "export"
-      },
-      {
-        "description": "Export: ./viz/query-explainer",
-        "example": "import from \"./src/viz/query-explainer.mjs\"",
-        "name": "./viz/query-explainer",
         "type": "export"
       },
       {
@@ -218,24 +164,7 @@
   },
   "tutorials": [
     {
-      "confidenceScore": 0.8,
-      "goal": "Complete your first practical examples",
-      "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with @unrdf/core\""
-      ],
-      "source": [
-        "examples"
-      ],
-      "stepsOutline": [
-        "Work through TEST_SUMMARY.md",
-        "Work through basic-operations.mjs",
-        "Work through production-rdf-pipeline.mjs"
-      ],
-      "title": "First Steps"
-    },
-    {
-      "confidenceScore": 0.9999999999999999,
+      "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/core in your project",
       "id": "tutorial-getting-started-with-unrdf-core",
       "prerequisites": [
@@ -243,8 +172,6 @@
         "Understanding of graph databases"
       ],
       "source": [
-        "examples",
-        "readme",
         "keywords"
       ],
       "stepsOutline": [
@@ -256,5 +183,5 @@
       "title": "Getting Started with @unrdf/core"
     }
   ],
-  "version": "6.0.0-rc.2"
+  "version": "5.0.1"
 }

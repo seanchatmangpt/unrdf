@@ -8,6 +8,10 @@
  * - Error handling and diagnostics for missing packages
  * - PDF output format and size constraints
  *
+ * NOTE: These tests require SwiftLaTeX WASM binaries to be installed.
+ * If WASM binaries are not available, all tests will be skipped.
+ * To install: Run `node scripts/vendor-tex-engine.mjs`
+ *
  * Test Strategy:
  * - Call compile module directly (not CLI) for speed
  * - Use temp directories for cache isolation
@@ -17,7 +21,7 @@
  * @module test/latex-build
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -27,6 +31,7 @@ import { dirname } from 'node:path';
 // Agent 10's compile module
 import { compileLatexToPdf } from '../src/lib/latex/compile.mjs';
 import { LatexCompileError } from '../src/lib/latex/diagnostics.mjs';
+import { checkLatexAvailable } from './fixtures/check-latex-available.mjs';
 
 // ============================================================================
 // TEST SETUP
@@ -37,10 +42,24 @@ const __dirname = dirname(__filename);
 
 const FIXTURES_DIR = join(__dirname, 'fixtures', 'latex');
 
+// Check if LaTeX WASM binaries are available
+let latexAvailable = false;
+let _skipReason = '';
+
+beforeAll(async () => {
+  const result = await checkLatexAvailable();
+  latexAvailable = result.available;
+  if (!result.available) {
+    _skipReason = result.reason;
+    console.warn(`\n⚠️  LaTeX build tests skipped: ${result.reason}\n`);
+  }
+});
+
 /** @type {string} Temp cache directory (created per-test, cleaned up after) */
 let tempCacheDir;
 
 beforeEach(async () => {
+  if (!latexAvailable) return;
   // Create isolated temp cache for each test
   const randomSuffix = Math.random().toString(36).slice(2, 10);
   tempCacheDir = join(tmpdir(), `latex-test-${randomSuffix}`);
@@ -48,6 +67,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  if (!latexAvailable) return;
   // Clean up temp cache
   if (tempCacheDir) {
     await fs.rm(tempCacheDir, { recursive: true, force: true });
@@ -105,7 +125,7 @@ async function hasLogFile(cacheDir) {
 // TESTS: Minimal Document
 // ============================================================================
 
-describe('LaTeX Compilation - Minimal Document', () => {
+describe.skipIf(!latexAvailable)('LaTeX Compilation - Minimal Document', () => {
   it('should compile minimal.tex to valid PDF', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR; // minimal.tex has no dependencies
@@ -152,7 +172,7 @@ describe('LaTeX Compilation - Minimal Document', () => {
 // TESTS: Multi-File Project with Cross-References
 // ============================================================================
 
-describe('LaTeX Compilation - Multi-File Project', () => {
+describe.skipIf(!latexAvailable)('LaTeX Compilation - Multi-File Project', () => {
   it('should compile thesis-mini with cross-references', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'thesis-mini', 'main.tex');
     const projectDir = join(FIXTURES_DIR, 'thesis-mini');
@@ -208,7 +228,7 @@ describe('LaTeX Compilation - Multi-File Project', () => {
 // TESTS: Error Handling
 // ============================================================================
 
-describe('LaTeX Compilation - Error Handling', () => {
+describe.skipIf(!latexAvailable)('LaTeX Compilation - Error Handling', () => {
   it('should throw LatexCompileError for missing package', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'missing-package.tex');
     const projectDir = FIXTURES_DIR;
@@ -294,7 +314,7 @@ describe('LaTeX Compilation - Error Handling', () => {
 // TESTS: Determinism
 // ============================================================================
 
-describe('LaTeX Compilation - Determinism', () => {
+describe.skipIf(!latexAvailable)('LaTeX Compilation - Determinism', () => {
   it('should produce identical PDFs for same input', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
@@ -332,7 +352,7 @@ describe('LaTeX Compilation - Determinism', () => {
 // PERFORMANCE TESTS
 // ============================================================================
 
-describe('LaTeX Compilation - Performance', () => {
+describe.skipIf(!latexAvailable)('LaTeX Compilation - Performance', () => {
   it('should compile minimal.tex in under 5 seconds', async () => {
     const inputTexPath = join(FIXTURES_DIR, 'minimal.tex');
     const projectDir = FIXTURES_DIR;
