@@ -1,0 +1,793 @@
+# Chatman Equation - How-To Guides Configuration
+# Task-oriented guides for specific operations
+
+[metadata]
+category = "how-to"
+output_dir = "docs/diataxis/chatman-equation/how-to"
+template = "how-to.tera"
+
+# How-To Guide 1: Freeze and Verify State
+[[guide]]
+id = "freeze-and-verify"
+title = "How to Freeze State and Generate Cryptographic Receipts"
+duration = "10 minutes"
+difficulty = "beginner"
+prerequisites = ["KGCStore instance"]
+
+[guide.context]
+task = "Create an immutable snapshot with cryptographic proof"
+when_to_use = "End-of-day, compliance checkpoints, audit requirements"
+
+[[guide.steps]]
+number = 1
+title = "Freeze current state to Git"
+code = """
+const freezeResult = await store.freeze({
+  message: 'End of trading day 2024-01-01',
+  author: 'system@example.com',
+  sign: true
+});
+
+console.log('Git SHA (G):', freezeResult.commitSHA);
+console.log('State hash:', freezeResult.stateHash);
+"""
+
+[[guide.steps]]
+number = 2
+title = "Extract the cryptographic receipt"
+code = """
+const receipt = freezeResult.receipt;
+
+// Receipt structure:
+// {
+//   operation: 'freeze',
+//   entityType: 'State',
+//   stateHash: 'sha256:...',
+//   timestamp: BigInt,
+//   vectorClock: { node1: 42 },
+//   gitSHA: 'a7f3...',
+//   signature: '0x...'
+// }
+
+// Save receipt for auditors
+await fs.writeFile(
+  `receipts/freeze-${Date.now()}.json`,
+  JSON.stringify(receipt, null, 2)
+);
+"""
+
+[[guide.steps]]
+number = 3
+title = "Verify receipt integrity"
+code = """
+const isValid = await store.verifyReceipt(receipt);
+
+if (!isValid) {
+  throw new Error('Receipt verification failed - state may be tampered');
+}
+
+console.log('✓ Receipt verified - state is authentic');
+"""
+
+[guide.troubleshooting]
+problem = "Freeze fails with 'Git not initialized'"
+solution = "Run `await store.initialize()` before freezing"
+
+[guide.troubleshooting]
+problem = "Receipt signature is null"
+solution = "Pass `sign: true` option to freeze() or configure privateKey"
+
+[guide.related]
+guides = ["reconstruct-state", "time-travel-debugging"]
+reference = ["freeze-api", "receipt-schema"]
+
+
+# How-To Guide 2: Reconstruct State from Git
+[[guide]]
+id = "reconstruct-state"
+title = "How to Reconstruct Historical State from Git Snapshots"
+duration = "8 minutes"
+difficulty = "beginner"
+prerequisites = ["Frozen snapshots exist"]
+
+[guide.context]
+task = "Restore exact state at any point in time"
+when_to_use = "Debugging, audits, disaster recovery, compliance queries"
+
+[[guide.steps]]
+number = 1
+title = "Find available snapshots"
+code = """
+const snapshots = await store.listSnapshots();
+
+console.log('Available snapshots:');
+for (const snap of snapshots) {
+  console.log(`  ${snap.timestamp} - ${snap.gitSHA} - ${snap.message}`);
+}
+
+// Example output:
+// 1704067200000000000 - a7f3e1c9... - End of trading day
+// 1703980800000000000 - b2e4f8d1... - Daily snapshot
+"""
+
+[[guide.steps]]
+number = 2
+title = "Reconstruct from Git SHA"
+code = """
+const targetSHA = 'a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7';
+
+const reconstructed = await store.reconstructFromGit({
+  commitSHA: targetSHA
+});
+
+console.log('Reconstructed state:');
+console.log('  Observable (O):', reconstructed.O.length, 'quads');
+console.log('  Timestamp (t_ns):', reconstructed.t_ns);
+console.log('  Vector clock (V):', reconstructed.V);
+console.log('  Git SHA (G):', reconstructed.G);
+"""
+
+[[guide.steps]]
+number = 3
+title = "Query the reconstructed state"
+code = """
+// SPARQL query on historical state
+const results = await store.queryState(reconstructed, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name ?age WHERE {
+    ?person foaf:name ?name .
+    ?person foaf:age ?age .
+  }
+`);
+
+console.log('People at that time:');
+for (const row of results) {
+  console.log(`  ${row.name}: ${row.age}`);
+}
+"""
+
+[guide.troubleshooting]
+problem = "SHA not found in Git"
+solution = "Ensure freeze() was called; check `.kgc/` directory exists"
+
+[guide.troubleshooting]
+problem = "Reconstructed state is empty"
+solution = "Verify Git object integrity with `git fsck` in `.kgc/`"
+
+[guide.related]
+guides = ["freeze-and-verify", "time-travel-queries"]
+reference = ["reconstruct-api", "git-storage"]
+
+
+# How-To Guide 3: Resolve Merge Conflicts
+[[guide]]
+id = "resolve-conflicts"
+title = "How to Resolve Distributed Merge Conflicts Using Vector Clocks"
+duration = "12 minutes"
+difficulty = "intermediate"
+prerequisites = ["Multiple KGCStore instances", "Understanding vector clocks"]
+
+[guide.context]
+task = "Merge concurrent edits from distributed nodes"
+when_to_use = "Multi-region systems, offline-first apps, federated knowledge graphs"
+
+[[guide.steps]]
+number = 1
+title = "Detect concurrent edits"
+code = """
+const node1State = await node1.getCurrentState();
+const node2State = await node2.getCurrentState();
+
+// Check if vectors are concurrent (neither dominates)
+const relation = compareVectorClocks(node1State.V, node2State.V);
+
+console.log('Vector relation:', relation);
+// Possible values: 'concurrent', 'before', 'after', 'equal'
+
+if (relation === 'concurrent') {
+  console.log('⚠️  Concurrent edits detected - conflict resolution needed');
+}
+"""
+
+[[guide.steps]]
+number = 2
+title = "Choose merge strategy"
+code = """
+// Strategy 1: Last-Writer-Wins (LWW)
+const lwwMerged = await node1.merge({
+  states: [node2State],
+  strategy: 'lww'
+});
+
+// Strategy 2: Multi-Value Register (keep both)
+const mvrMerged = await node1.merge({
+  states: [node2State],
+  strategy: 'mvr'
+});
+
+// Strategy 3: Custom resolution
+const customMerged = await node1.merge({
+  states: [node2State],
+  strategy: 'custom',
+  resolveConflict: (quad1, quad2) => {
+    // Example: Prefer higher numeric values
+    if (quad1.object.datatype === 'xsd:integer') {
+      const val1 = parseInt(quad1.object.value);
+      const val2 = parseInt(quad2.object.value);
+      return val1 > val2 ? quad1 : quad2;
+    }
+
+    // Default: LWW by timestamp
+    return quad1.timestamp > quad2.timestamp ? quad1 : quad2;
+  }
+});
+"""
+
+[[guide.steps]]
+number = 3
+title = "Verify merged state"
+code = """
+console.log('Merged state:');
+console.log('  Observable:', customMerged.O.length, 'quads');
+console.log('  Vector clock:', customMerged.V);
+
+// Vector clock should be component-wise max
+// Example: { node1: 5, node2: 8 } if node1 had {5,2} and node2 had {3,8}
+
+// Sync other nodes
+await node2.sync(customMerged.V);
+
+console.log('✓ Nodes synchronized');
+console.log('  Node 1 V:', node1.vectorClock);
+console.log('  Node 2 V:', node2.vectorClock);
+// Should be equal after sync
+"""
+
+[guide.troubleshooting]
+problem = "Merge creates duplicate triples"
+solution = "Use RDF normalization or configure deduplication strategy"
+
+[guide.troubleshooting]
+problem = "Vector clocks out of sync after merge"
+solution = "Call sync() on all nodes after successful merge"
+
+[guide.related]
+guides = ["distributed-setup", "conflict-strategies"]
+reference = ["vector-clock-api", "merge-api"]
+
+
+# How-To Guide 4: Optimize Time-Travel Performance
+[[guide]]
+id = "optimize-time-travel"
+title = "How to Optimize Time-Travel Query Performance"
+duration = "15 minutes"
+difficulty = "advanced"
+prerequisites = ["Time-travel queries", "Git snapshots"]
+
+[guide.context]
+task = "Reduce reconstruction time from O(n) to O(log n)"
+when_to_use = "Large event logs (>100k events), frequent historical queries"
+
+[[guide.steps]]
+number = 1
+title = "Configure snapshot frequency"
+code = """
+import { SnapshotManager } from '@unrdf/kgc-4d/snapshot';
+
+const snapshots = new SnapshotManager(store, {
+  // Snapshot every 10,000 events
+  eventThreshold: 10000,
+
+  // Or time-based (daily)
+  schedule: '0 0 * * *',
+
+  // Or both (whichever comes first)
+  strategy: 'hybrid'
+});
+
+await snapshots.start();
+"""
+
+[[guide.steps]]
+number = 2
+title = "Enable snapshot indexing"
+code = """
+// Create index of snapshots for O(log n) lookup
+await store.indexSnapshots();
+
+// Now findClosestSnapshot() uses binary search
+const closest = await store.findClosestSnapshot(targetTime);
+
+// Without index: O(n) scan of all snapshots
+// With index: O(log n) binary search
+"""
+
+[[guide.steps]]
+number = 3
+title = "Use delta compression"
+code = """
+// Enable delta compression for faster replay
+await store.freeze({
+  message: 'Compressed snapshot',
+  compress: true,
+  compressionLevel: 9 // 1-9, higher = smaller + slower
+});
+
+// Deltas stored as compressed diffs
+// Reconstruction: Load snapshot + apply compressed deltas
+// Speedup: 3-10x depending on data
+"""
+
+[[guide.steps]]
+number = 4
+title = "Cache reconstructed states"
+code = """
+import { LRUCache } from 'lru-cache';
+
+const stateCache = new LRUCache({
+  max: 100, // Cache 100 states
+  ttl: 1000 * 60 * 10 // 10 minutes
+});
+
+async function reconstructWithCache(timestamp) {
+  const cacheKey = timestamp.toString();
+
+  // Check cache first
+  if (stateCache.has(cacheKey)) {
+    console.log('Cache hit!');
+    return stateCache.get(cacheKey);
+  }
+
+  // Reconstruct if not cached
+  console.log('Cache miss - reconstructing...');
+  const state = await store.reconstructState({ timestamp });
+
+  // Cache for next time
+  stateCache.set(cacheKey, state);
+
+  return state;
+}
+
+// First call: slow (reconstruction)
+await reconstructWithCache(targetTime); // 500ms
+
+// Second call: fast (cached)
+await reconstructWithCache(targetTime); // 2ms
+"""
+
+[[guide.steps]]
+number = 5
+title = "Benchmark and measure"
+code = """
+async function benchmarkReconstruction(iterations = 10) {
+  const times = [];
+  const targetTime = BigInt(Date.now()) * BigInt(1000000) - BigInt(86400000000000);
+
+  for (let i = 0; i < iterations; i++) {
+    const start = performance.now();
+    await store.reconstructState({ timestamp: targetTime });
+    const elapsed = performance.now() - start;
+    times.push(elapsed);
+  }
+
+  const avg = times.reduce((a, b) => a + b) / times.length;
+  const min = Math.min(...times);
+  const max = Math.max(...times);
+
+  console.log('Reconstruction performance:');
+  console.log(`  Average: ${avg.toFixed(2)}ms`);
+  console.log(`  Min: ${min.toFixed(2)}ms`);
+  console.log(`  Max: ${max.toFixed(2)}ms`);
+
+  return { avg, min, max };
+}
+
+await benchmarkReconstruction();
+// Target: <100ms for 1M events with snapshots
+"""
+
+[guide.performance_targets]
+small_dataset = "< 10ms (< 10k events)"
+medium_dataset = "< 50ms (10k-100k events)"
+large_dataset = "< 100ms (100k-1M events)"
+very_large_dataset = "< 500ms (> 1M events)"
+
+[guide.related]
+guides = ["snapshot-strategy", "performance-tuning"]
+reference = ["reconstruction-api", "snapshot-api"]
+
+
+# How-To Guide 5: Implement Temporal Audit Trails
+[[guide]]
+id = "temporal-audit-trails"
+title = "How to Implement Compliance-Ready Temporal Audit Trails"
+duration = "20 minutes"
+difficulty = "intermediate"
+prerequisites = ["KGCStore setup", "Receipt generation"]
+
+[guide.context]
+task = "Create immutable, verifiable audit logs for regulatory compliance"
+when_to_use = "Financial systems, healthcare, any regulated industry"
+
+[[guide.steps]]
+number = 1
+title = "Configure audit event capture"
+code = """
+class AuditTrail {
+  constructor(store) {
+    this.store = store;
+  }
+
+  async logEvent(event) {
+    // Append to event log with metadata
+    const result = await this.store.appendEvent({
+      operation: event.operation,
+      quads: event.quads,
+      metadata: {
+        actor: event.actor,
+        timestamp: new Date().toISOString(),
+        ipAddress: event.ipAddress,
+        sessionId: event.sessionId,
+        reason: event.reason
+      }
+    });
+
+    // Generate receipt immediately
+    const receipt = await this.store.generateReceipt({
+      operation: result.operation,
+      stateHash: result.stateHash,
+      timestamp: result.timestamp,
+      vectorClock: result.vectorClock,
+      metadata: result.metadata
+    });
+
+    // Store receipt for compliance
+    await this.storeReceipt(receipt);
+
+    return { result, receipt };
+  }
+
+  async storeReceipt(receipt) {
+    const filename = `audit-receipts/${receipt.timestamp}.json`;
+    await fs.writeFile(filename, JSON.stringify(receipt, null, 2));
+  }
+}
+
+const audit = new AuditTrail(store);
+"""
+
+[[guide.steps]]
+number = 2
+title = "Create audit snapshots"
+code = """
+// Daily audit snapshot with cryptographic proof
+async function createDailyAuditSnapshot() {
+  const today = new Date().toISOString().split('T')[0];
+
+  const freezeResult = await store.freeze({
+    message: `Audit snapshot: ${today}`,
+    author: 'audit-system@example.com',
+    sign: true,
+    metadata: {
+      type: 'daily-audit',
+      date: today,
+      eventCount: await store.getEventCount(),
+      stateSize: await store.size()
+    }
+  });
+
+  // Store audit report
+  const auditReport = {
+    date: today,
+    gitSHA: freezeResult.commitSHA,
+    stateHash: freezeResult.stateHash,
+    timestamp: freezeResult.timestamp,
+    receipt: freezeResult.receipt,
+    metadata: freezeResult.metadata
+  };
+
+  await fs.writeFile(
+    `audit-reports/${today}.json`,
+    JSON.stringify(auditReport, null, 2)
+  );
+
+  console.log(`✓ Audit snapshot created: ${freezeResult.commitSHA}`);
+
+  return auditReport;
+}
+
+// Schedule daily snapshots
+import { schedule } from 'node-cron';
+schedule('0 0 * * *', createDailyAuditSnapshot);
+"""
+
+[[guide.steps]]
+number = 3
+title = "Query audit trail"
+code = """
+async function queryAuditTrail(options) {
+  const { actor, startTime, endTime, operation } = options;
+
+  // Get events in time range
+  const events = await store.getEvents({
+    from: startTime,
+    to: endTime
+  });
+
+  // Filter by actor and operation
+  const filtered = events.filter(e => {
+    if (actor && e.metadata?.actor !== actor) return false;
+    if (operation && e.operation !== operation) return false;
+    return true;
+  });
+
+  console.log(`Found ${filtered.length} audit events`);
+
+  return filtered.map(e => ({
+    timestamp: e.timestamp,
+    operation: e.operation,
+    actor: e.metadata?.actor,
+    changes: e.quads.length,
+    stateHash: e.stateHash
+  }));
+}
+
+// Example: Find all trades by user in last 24 hours
+const yesterday = BigInt(Date.now() - 86400000) * BigInt(1000000);
+const now = BigInt(Date.now()) * BigInt(1000000);
+
+const userTrades = await queryAuditTrail({
+  actor: 'trader@example.com',
+  startTime: yesterday,
+  endTime: now,
+  operation: 'insert'
+});
+
+console.log('User trades:', userTrades);
+"""
+
+[[guide.steps]]
+number = 4
+title = "Verify audit integrity"
+code = """
+async function verifyAuditIntegrity(startDate, endDate) {
+  // Load all audit reports in range
+  const reports = await loadAuditReports(startDate, endDate);
+
+  console.log(`Verifying ${reports.length} audit snapshots...`);
+
+  const results = [];
+
+  for (const report of reports) {
+    // 1. Verify receipt signature
+    const receiptValid = await store.verifyReceipt(report.receipt);
+
+    // 2. Verify Git SHA exists
+    const gitValid = await verifyGitObject(report.gitSHA);
+
+    // 3. Verify state hash matches Git content
+    const stateValid = await verifyStateHash(
+      report.gitSHA,
+      report.stateHash
+    );
+
+    results.push({
+      date: report.date,
+      receiptValid,
+      gitValid,
+      stateValid,
+      allValid: receiptValid && gitValid && stateValid
+    });
+
+    if (!results[results.length - 1].allValid) {
+      console.error(`❌ Integrity violation on ${report.date}`);
+    } else {
+      console.log(`✓ ${report.date} verified`);
+    }
+  }
+
+  const allValid = results.every(r => r.allValid);
+
+  return {
+    allValid,
+    results,
+    summary: {
+      total: results.length,
+      valid: results.filter(r => r.allValid).length,
+      invalid: results.filter(r => !r.allValid).length
+    }
+  };
+}
+
+// Run integrity check
+const integrityCheck = await verifyAuditIntegrity('2024-01-01', '2024-01-31');
+
+console.log('\\nAudit Integrity Summary:');
+console.log(`  Total snapshots: ${integrityCheck.summary.total}`);
+console.log(`  Valid: ${integrityCheck.summary.valid}`);
+console.log(`  Invalid: ${integrityCheck.summary.invalid}`);
+
+if (!integrityCheck.allValid) {
+  throw new Error('Audit integrity compromised!');
+}
+"""
+
+[guide.compliance_standards]
+SOX = "Sarbanes-Oxley - Financial audit trails"
+HIPAA = "Healthcare - Patient record immutability"
+GDPR = "Data protection - Right to be forgotten (with receipts)"
+SEC17a4 = "SEC Rule 17a-4 - Electronic recordkeeping"
+
+[guide.related]
+guides = ["freeze-and-verify", "reconstruct-state"]
+reference = ["receipt-schema", "audit-api"]
+
+
+# How-To Guide 6: Set Up Distributed KGC Nodes
+[[guide]]
+id = "distributed-setup"
+title = "How to Set Up Multi-Node Distributed KGC Systems"
+duration = "25 minutes"
+difficulty = "advanced"
+prerequisites = ["Network infrastructure", "Understanding vector clocks"]
+
+[guide.context]
+task = "Deploy geographically distributed KGC nodes with causal consistency"
+when_to_use = "Multi-region deployments, offline-first apps, federated systems"
+
+[[guide.steps]]
+number = 1
+title = "Initialize nodes with unique IDs"
+code = """
+// Node 1 (US-East)
+const node1 = new KGCStore({
+  gitDir: '/var/lib/kgc/us-east',
+  nodeId: 'us-east-1',
+  region: 'us-east'
+});
+
+// Node 2 (EU-West)
+const node2 = new KGCStore({
+  gitDir: '/var/lib/kgc/eu-west',
+  nodeId: 'eu-west-1',
+  region: 'eu-west'
+});
+
+// Node 3 (AP-Southeast)
+const node3 = new KGCStore({
+  gitDir: '/var/lib/kgc/ap-southeast',
+  nodeId: 'ap-southeast-1',
+  region: 'ap-southeast'
+});
+
+await node1.initialize();
+await node2.initialize();
+await node3.initialize();
+
+console.log('✓ Distributed nodes initialized');
+"""
+
+[[guide.steps]]
+number = 2
+title = "Configure sync protocol"
+code = """
+import { SyncProtocol } from '@unrdf/kgc-4d/distributed';
+
+const sync = new SyncProtocol({
+  nodes: [node1, node2, node3],
+  strategy: 'eventual-consistency',
+
+  // Sync interval (milliseconds)
+  syncInterval: 5000,
+
+  // Conflict resolution
+  conflictResolution: 'lww',
+
+  // Network transport
+  transport: {
+    type: 'websocket',
+    urls: [
+      'wss://us-east.example.com/sync',
+      'wss://eu-west.example.com/sync',
+      'wss://ap-southeast.example.com/sync'
+    ]
+  }
+});
+
+await sync.start();
+
+console.log('✓ Sync protocol started');
+"""
+
+[[guide.steps]]
+number = 3
+title = "Handle local writes"
+code = """
+// Write to local node
+async function writeLocal(node, data) {
+  const result = await node.appendEvent({
+    operation: 'insert',
+    quads: data.quads,
+    metadata: {
+      nodeId: node.nodeId,
+      region: node.region
+    }
+  });
+
+  console.log(`✓ Written to ${node.nodeId}`);
+  console.log(`  Vector clock: ${JSON.stringify(result.vectorClock)}`);
+
+  // Sync protocol will propagate to other nodes
+  return result;
+}
+
+// Example: User edits in different regions concurrently
+await writeLocal(node1, {
+  quads: [{ subject: 'alice', predicate: 'location', object: '"New York"' }]
+});
+
+await writeLocal(node2, {
+  quads: [{ subject: 'bob', predicate: 'location', object: '"London"' }]
+});
+
+// These writes are concurrent - will be merged via vector clocks
+"""
+
+[[guide.steps]]
+number = 4
+title = "Monitor sync status"
+code = """
+async function monitorSync() {
+  const status = await sync.getStatus();
+
+  console.log('\\n=== Sync Status ===');
+  console.log(`Nodes online: ${status.onlineNodes}/${status.totalNodes}`);
+  console.log(`Pending syncs: ${status.pendingSyncs}`);
+  console.log(`Last sync: ${new Date(status.lastSync).toISOString()}`);
+
+  for (const [nodeId, nodeStatus] of Object.entries(status.nodes)) {
+    console.log(`\\n${nodeId}:`);
+    console.log(`  Vector clock: ${JSON.stringify(nodeStatus.vectorClock)}`);
+    console.log(`  Event count: ${nodeStatus.eventCount}`);
+    console.log(`  State size: ${nodeStatus.stateSize} quads`);
+    console.log(`  Last seen: ${new Date(nodeStatus.lastSeen).toISOString()}`);
+  }
+}
+
+// Monitor every 10 seconds
+setInterval(monitorSync, 10000);
+"""
+
+[[guide.steps]]
+number = 5
+title = "Handle network partitions"
+code = """
+// Graceful degradation during network partition
+sync.on('partition-detected', async ({ isolatedNodes }) => {
+  console.warn(`⚠️  Network partition: ${isolatedNodes.join(', ')} isolated`);
+
+  // Continue operating on local state
+  // Vector clocks will detect conflicts when partition heals
+});
+
+sync.on('partition-healed', async ({ mergedNodes }) => {
+  console.log(`✓ Partition healed: ${mergedNodes.join(', ')} reconnected`);
+
+  // Automatic merge with conflict resolution
+  const conflicts = await sync.resolveConflicts();
+
+  if (conflicts.length > 0) {
+    console.log(`  Resolved ${conflicts.length} conflicts`);
+  }
+});
+"""
+
+[guide.network_topologies]
+star = "Central coordinator with leaf nodes (simpler, single point of failure)"
+mesh = "Peer-to-peer full connectivity (resilient, complex)"
+ring = "Nodes in circular topology (scalable, eventual consistency)"
+hybrid = "Regional hubs + local leaves (recommended for multi-region)"
+
+[guide.related]
+guides = ["resolve-conflicts", "disaster-recovery"]
+reference = ["sync-protocol", "vector-clock-api"]

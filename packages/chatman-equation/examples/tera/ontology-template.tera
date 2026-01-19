@@ -1,0 +1,25 @@
+@prefix ce: <http://unrdf.org/chatman-equation#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Generated Ontology: {{ metadata.name }}
+# Version: {{ metadata.version }}
+# Description: {{ metadata.description }}
+
+ce:Ontology a owl:Ontology ;
+    rdfs:label "{{ name }}" ;
+    owl:versionInfo "{{ version }}" .
+
+{% if enabled %}
+# Components
+{% for item in items %}
+ce:Component{{ loop.index }} a ce:Component ;
+    rdfs:label "{{ item }}" ;
+    ce:order {{ loop.index }} .
+{% endfor %}
+{% endif %}
+
+# Metadata
+ce:hasAuthor "{{ metadata.author }}" ;
+    ce:hasDescription "{{ metadata.description }}" .

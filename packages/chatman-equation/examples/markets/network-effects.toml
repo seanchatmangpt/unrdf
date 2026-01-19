@@ -1,0 +1,182 @@
+# Network Effects - Network Dynamics Example
+# Chatman Equation: A = μ(O)
+# Demonstrates how user growth creates non-linear value emergence
+
+[metadata]
+name = "Network Effects Modeling"
+description = "Metcalfe's Law implementation via closure operator on user activity graphs"
+domain = "platform-economics"
+equation = "NetworkValue = μ(UserActivityGraph)"
+
+# Observations (O): User activity data
+[observations]
+timestamp = "2026-01-18T08:00:00Z"
+platform = "SocialProtocol"
+measurement_window_days = 30
+
+[observations.user_metrics]
+total_users = 10000
+active_users_daily = 7500
+new_users_30d = 1200
+churned_users_30d = 150
+
+[[observations.user_connections]]
+user_id = "u001"
+connections = 45
+interactions_sent = 120
+interactions_received = 95
+avg_session_minutes = 32
+
+[[observations.user_connections]]
+user_id = "u002"
+connections = 230
+interactions_sent = 450
+interactions_received = 380
+avg_session_minutes = 78
+
+[[observations.user_connections]]
+user_id = "u003"
+connections = 12
+interactions_sent = 18
+interactions_received = 22
+avg_session_minutes = 15
+
+# Graph structure metrics
+[observations.graph_metrics]
+total_edges = 125000
+avg_clustering_coefficient = 0.34
+avg_path_length = 3.2
+network_density = 0.0025
+
+# Closure Operator (μ): Network value transformation
+[closure_operator]
+name = "network_value_calculator"
+type = "network_emergence"
+idempotent = true
+deterministic = true
+
+# Rule 1: Metcalfe's Law application
+[[closure_operator.rules]]
+name = "metcalfe_value"
+condition = "user_count > 100"
+action = "calculate_network_value"
+
+[closure_operator.rules.parameters]
+formula = "n^2"  # Or n*log(n) for Reed's Law
+value_per_connection = 0.15
+currency = "USD"
+
+# Rule 2: Critical mass detection
+[[closure_operator.rules]]
+name = "critical_mass_threshold"
+condition = "active_users > threshold"
+action = "mark_sustainable_growth"
+
+[closure_operator.rules.parameters]
+threshold = 5000
+growth_rate_required = 0.05
+churn_rate_max = 0.03
+
+# Rule 3: Engagement clustering
+[[closure_operator.rules]]
+name = "engagement_clusters"
+condition = "clustering_coefficient > 0.3"
+action = "identify_value_pockets"
+
+[closure_operator.rules.parameters]
+min_cluster_size = 50
+interaction_weight = "reciprocal"
+
+# Artifacts (A): Network value emergence
+[artifacts]
+total_network_value_usd = 1875000.00
+value_per_user_usd = 187.50
+critical_mass_achieved = true
+growth_phase = "exponential"
+
+[[artifacts.value_components]]
+component = "direct_connections"
+value_usd = 750000.00
+percentage = 40.0
+formula_used = "n * avg_connections * value_per_connection"
+
+[[artifacts.value_components]]
+component = "potential_connections"
+value_usd = 937500.00
+percentage = 50.0
+formula_used = "(n^2 - n) / 2 * connection_probability * value_per_connection"
+
+[[artifacts.value_components]]
+component = "group_dynamics"
+value_usd = 187500.00
+percentage = 10.0
+formula_used = "cluster_count * avg_cluster_value"
+
+# Growth projections (μ applied to future observations)
+[[artifacts.projections]]
+months_ahead = 3
+projected_users = 15000
+projected_value_usd = 4218750.00
+confidence_interval = [3500000.00, 5000000.00]
+growth_rate = 1.25
+
+[[artifacts.projections]]
+months_ahead = 6
+projected_users = 22500
+projected_value_usd = 9492187.50
+confidence_interval = [7500000.00, 12000000.00]
+growth_rate = 1.5
+
+# Critical thresholds
+[[artifacts.thresholds]]
+type = "tipping_point"
+user_count = 15000
+description = "Viral growth activation"
+probability = 0.72
+
+[[artifacts.thresholds]]
+type = "saturation"
+user_count = 100000
+description = "Market saturation in target demographic"
+probability = 0.15
+
+# Verification: Prove A = μ(O)
+[verification]
+method = "monte_carlo_simulation"
+simulation_runs = 10000
+idempotence_test = "μ(μ(O)) = μ(O)"
+composability_test = "μ(G₁ ∪ G₂) follows graph union rules"
+
+[verification.assertions]
+value_monotonic_in_users = true
+value_convex_in_connections = true
+critical_mass_boolean = true
+
+[verification.invariants]
+min_value_per_user = 0.0
+max_value_per_user = 1000.0
+network_value_positive = true
+growth_rate_bounded = true
+
+# Determinism verification
+[verification.determinism]
+input_hash = "sha256:b4e8f1a2..."
+output_hash = "sha256:c7d2e9f3..."
+run_count = 1000
+unique_outputs = 1
+determinism_score = 1.0
+
+# Idempotence verification
+[verification.idempotence]
+first_application = 1875000.00
+second_application = 1875000.00
+difference = 0.0
+idempotent = true
+
+# Composability verification
+[verification.composability]
+graph_a_value = 750000.00
+graph_b_value = 500000.00
+union_value = 1875000.00
+composable = true
+note = "Union value includes emergent cross-graph connections"
