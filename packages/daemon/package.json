@@ -37,6 +37,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.17",
     "vitest": "^4.0.16"
   },
   "engines": {
