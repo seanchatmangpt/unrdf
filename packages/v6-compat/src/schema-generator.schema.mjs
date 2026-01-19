@@ -47,7 +47,7 @@ export const generateSchemasForFilesSchema = {
 /**
  * Schema for validateWithErrors
  */
-export const validateWithErrorsParamsSchema = z.tuple([z.unknown(), z.unknown()]);
+export const validateWithErrorsParamsSchema = z.array(z.unknown()).min(2).max(2);
 
 export const validateWithErrorsReturnSchema = z.unknown();
 

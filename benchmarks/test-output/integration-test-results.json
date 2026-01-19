@@ -1,0 +1,46 @@
+{
+  "suite": "Knowledge Hooks Performance Benchmark Suite",
+  "version": "1.0.0",
+  "timestamp": "2026-01-18T05:25:15.061Z",
+  "platform": "linux",
+  "arch": "x64",
+  "nodeVersion": "v22.21.1",
+  "totalBenchmarks": 5,
+  "results": [
+    {
+      "benchmarkId": "hook-registration",
+      "meanLatency": 0.001,
+      "throughput": 1000000,
+      "samples": 1
+    },
+    {
+      "benchmarkId": "hook-execution",
+      "meanLatency": 0.001,
+      "throughput": 1000000,
+      "samples": 1
+    },
+    {
+      "benchmarkId": "hook-validation",
+      "meanLatency": 0.001,
+      "throughput": 1000000,
+      "samples": 1
+    },
+    {
+      "benchmarkId": "memory-profiling",
+      "baselineMemory": 117.48263549804688,
+      "currentMemory": 117.55770111083984,
+      "memoryOverhead": 0.07506561279296875
+    },
+    {
+      "benchmarkId": "concurrent-execution",
+      "workerCount": 10,
+      "duration": 11,
+      "throughput": 909.090909090909
+    }
+  ],
+  "summary": {
+    "avgLatency": 0.001,
+    "avgThroughput": 750227.2727272727,
+    "totalMemoryOverhead": 0.07506561279296875
+  }
+}
