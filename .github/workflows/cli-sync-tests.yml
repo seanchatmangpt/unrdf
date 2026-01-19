@@ -1,0 +1,500 @@
+name: CLI Sync Command Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/cli/**'
+      - '.github/workflows/cli-sync-tests.yml'
+  pull_request:
+    paths:
+      - 'packages/cli/**'
+      - '.github/workflows/cli-sync-tests.yml'
+
+jobs:
+  sync-unit-tests:
+    name: Sync Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Run sync command unit tests
+        run: |
+          echo "Running sync command unit tests..."
+          timeout 30s pnpm -C packages/cli test -- --reporter=verbose test/cli/sync.test.mjs
+          echo "✅ Sync unit tests passed"
+
+      - name: Run config parser tests
+        run: |
+          echo "Testing TOML config parser..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/config-parser.test.mjs
+          echo "✅ Config parser tests passed"
+
+      - name: Run ontology loader tests
+        run: |
+          echo "Testing ontology loader..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/ontology-loader.test.mjs
+          echo "✅ Ontology loader tests passed"
+
+      - name: Run SPARQL executor tests
+        run: |
+          echo "Testing SPARQL executor..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/sparql-executor.test.mjs
+          echo "✅ SPARQL executor tests passed"
+
+      - name: Run template renderer tests
+        run: |
+          echo "Testing Nunjucks template renderer..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/template-renderer.test.mjs
+          echo "✅ Template renderer tests passed"
+
+      - name: Run template filter tests
+        run: |
+          echo "Testing custom template filters..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/templates.test.mjs
+          echo "✅ Template filter tests passed"
+
+      - name: Run orchestrator tests
+        run: |
+          echo "Testing sync orchestrator..."
+          timeout 10s pnpm -C packages/cli test -- --reporter=verbose test/sync/orchestrator.test.mjs
+          echo "✅ Orchestrator tests passed"
+
+  sync-e2e-tests:
+    name: Sync E2E Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: sync-unit-tests
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Run E2E tests - Full pipeline
+        run: |
+          echo "Running full sync pipeline E2E tests..."
+          timeout 60s pnpm -C packages/cli test -- --reporter=verbose test/e2e/sync-e2e.test.mjs
+          echo "✅ E2E tests passed on Node ${{ matrix.node-version }}"
+
+      - name: Test full pipeline integration
+        run: |
+          echo "Testing config → ontology → SPARQL → template → output pipeline..."
+
+          # This runs all E2E tests that verify the complete workflow
+          timeout 60s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="Full Pipeline Integration"
+          echo "✅ Full pipeline integration verified"
+
+      - name: Test error handling
+        run: |
+          echo "Testing error handling for sync command..."
+
+          # Run error handling E2E tests
+          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="Error Handling"
+          echo "✅ Error handling tests passed"
+
+  example-configs:
+    name: Test Example Configurations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: sync-unit-tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Find and test example configs
+        run: |
+          echo "Searching for example configurations..."
+
+          # Look for example TOML configs
+          EXAMPLE_CONFIGS=$(find packages/cli -name "*.toml" -o -path "*/examples/*" -name "*.toml" 2>/dev/null || true)
+
+          if [ -z "$EXAMPLE_CONFIGS" ]; then
+            echo "No example configs found in packages/cli"
+            echo "Creating test config for validation..."
+
+            # Create minimal test config
+            mkdir -p /tmp/sync-test
+            cat > /tmp/sync-test/test.toml <<EOFCONFIG
+          [project]
+          name = "ci-test"
+          version = "1.0.0"
+
+          [ontology]
+          source = "/tmp/sync-test/test.ttl"
+          format = "turtle"
+
+          [generation]
+          output_dir = "/tmp/sync-test/out"
+
+          [[generation.rules]]
+          name = "test-rule"
+          query = "SELECT ?s WHERE { ?s ?p ?o } LIMIT 1"
+          template = "/tmp/sync-test/template.njk"
+          output_file = "test.mjs"
+          EOFCONFIG
+
+            # Create minimal ontology
+            cat > /tmp/sync-test/test.ttl <<EOFONT
+          @prefix ex: <http://example.org/> .
+          ex:test a ex:Class .
+          EOFONT
+
+            # Create minimal template
+            cat > /tmp/sync-test/template.njk <<EOFTMPL
+          ---
+          to: test.mjs
+          ---
+          export const TEST = true;
+          EOFTMPL
+
+            # Test the config with dry-run
+            echo "Testing generated config..."
+            timeout 10s node packages/cli/src/cli/main.mjs sync --config /tmp/sync-test/test.toml --dry-run --verbose
+
+            echo "Config validation passed"
+          else
+            echo "Found example configs - $EXAMPLE_CONFIGS"
+
+            # Test each example config
+            for config in $EXAMPLE_CONFIGS; do
+              echo "Testing config - $config"
+              timeout 10s node packages/cli/src/cli/main.mjs sync --config "$config" --dry-run || {
+                echo "Config failed - $config"
+                exit 1
+              }
+            done
+
+            echo "All example configs validated"
+          fi
+
+  generated-code-validation:
+    name: Validate Generated Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: sync-unit-tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Generate code and verify compilation
+        run: |
+          echo "Testing code generation and ESM compilation..."
+
+          # Create comprehensive test setup
+          TEST_DIR=$(mktemp -d)
+          echo "Test directory - $TEST_DIR"
+
+          # Create test ontology with multiple entities and properties
+          cat > "$TEST_DIR/schema.ttl" <<EOFSCHEMA
+          @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+          @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+          @prefix owl: <http://www.w3.org/2002/07/owl#> .
+          @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+          @prefix test: <http://test.example/schema#> .
+
+          test:User a owl:Class ;
+              rdfs:label "User" ;
+              rdfs:comment "User entity" .
+
+          test:Post a owl:Class ;
+              rdfs:label "Post" ;
+              rdfs:comment "Post entity" .
+
+          test:username a owl:DatatypeProperty ;
+              rdfs:domain test:User ;
+              rdfs:range xsd:string ;
+              rdfs:label "username" .
+
+          test:title a owl:DatatypeProperty ;
+              rdfs:domain test:Post ;
+              rdfs:range xsd:string ;
+              rdfs:label "title" .
+          EOFSCHEMA
+
+          # Create template directory
+          mkdir -p "$TEST_DIR/templates"
+
+          # Create entities template (using printf to avoid heredoc issues)
+          printf '%s\n' '---' 'to: entities.mjs' 'description: Generated entity constants' '---' '/**' ' * @file Generated Entity Constants' ' */' '' '{% for row in sparql_results %}' 'export const {{ row.label | upper }}_URI = '"'"'{{ row.entity }}'"'"';' '{% endfor %}' '' 'export const ALL_ENTITIES = [' '{% for row in sparql_results %}' '  {{ row.label | upper }}_URI,' '{% endfor %}' '];' > "$TEST_DIR/templates/entities.njk"
+
+          # Create properties template
+          printf '%s\n' '---' 'to: properties.mjs' '---' '/**' ' * @file Generated Property Definitions' ' */' '' '{% for row in sparql_results %}' 'export const PROP_{{ row.label | upper }} = {' '  uri: '"'"'{{ row.prop }}'"'"',' '  domain: '"'"'{{ row.domain }}'"'"',' '  range: '"'"'{{ row.range }}'"'"',' '};' '{% endfor %}' > "$TEST_DIR/templates/properties.njk"
+
+          # Create comprehensive config
+          cat > "$TEST_DIR/ggen.toml" <<EOFCONFIG
+          [project]
+          name = "validation-test"
+          version = "1.0.0"
+          description = "CI validation test project"
+
+          [ontology]
+          source = "$TEST_DIR/schema.ttl"
+          format = "turtle"
+
+          [generation]
+          output_dir = "$TEST_DIR/generated"
+
+          [[generation.rules]]
+          name = "entities"
+          description = "Generate entity constants"
+          query = """
+          SELECT ?entity ?label ?comment
+          WHERE {
+            ?entity a owl:Class .
+            OPTIONAL { ?entity rdfs:label ?label }
+            OPTIONAL { ?entity rdfs:comment ?comment }
+          }
+          ORDER BY ?label
+          """
+          template = "$TEST_DIR/templates/entities.njk"
+          output_file = "entities.mjs"
+          enabled = true
+
+          [[generation.rules]]
+          name = "properties"
+          description = "Generate property definitions"
+          query = """
+          SELECT ?prop ?label ?domain ?range
+          WHERE {
+            ?prop a owl:DatatypeProperty .
+            OPTIONAL { ?prop rdfs:label ?label }
+            OPTIONAL { ?prop rdfs:domain ?domain }
+            OPTIONAL { ?prop rdfs:range ?range }
+          }
+          ORDER BY ?label
+          """
+          template = "$TEST_DIR/templates/properties.njk"
+          output_file = "properties.mjs"
+          enabled = true
+          EOFCONFIG
+
+          # Run sync command with verbose output
+          echo "Executing sync command..."
+          timeout 15s node packages/cli/src/cli/main.mjs sync \
+            --config "$TEST_DIR/ggen.toml" \
+            --verbose \
+            --output text
+
+          # Verify generated files exist
+          echo "Verifying generated files..."
+          test -f "$TEST_DIR/generated/entities.mjs" || {
+            echo "❌ entities.mjs not generated"
+            exit 1
+          }
+          test -f "$TEST_DIR/generated/properties.mjs" || {
+            echo "❌ properties.mjs not generated"
+            exit 1
+          }
+
+          # Verify ESM syntax is valid
+          echo "Checking ESM syntax..."
+          timeout 5s node -c "$TEST_DIR/generated/entities.mjs" || {
+            echo "❌ entities.mjs has syntax errors"
+            cat "$TEST_DIR/generated/entities.mjs"
+            exit 1
+          }
+          timeout 5s node -c "$TEST_DIR/generated/properties.mjs" || {
+            echo "❌ properties.mjs has syntax errors"
+            cat "$TEST_DIR/generated/properties.mjs"
+            exit 1
+          }
+
+          # Test that files can be imported
+          echo "Testing ESM imports..."
+          timeout 5s node --input-type=module -e "
+            import('$TEST_DIR/generated/entities.mjs').then(m => {
+              console.log('✅ entities.mjs imports successfully');
+              console.log('  Exports:', Object.keys(m).length, 'symbols');
+              if (!m.ALL_ENTITIES || m.ALL_ENTITIES.length === 0) {
+                console.error('❌ ALL_ENTITIES is empty');
+                process.exit(1);
+              }
+            });
+          " || exit 1
+
+          timeout 5s node --input-type=module -e "
+            import('$TEST_DIR/generated/properties.mjs').then(m => {
+              console.log('✅ properties.mjs imports successfully');
+              console.log('  Exports:', Object.keys(m).length, 'symbols');
+            });
+          " || exit 1
+
+          # Verify content quality
+          echo "Verifying generated content..."
+
+          # Check entities.mjs contains expected content
+          grep -q "USER_URI" "$TEST_DIR/generated/entities.mjs" || {
+            echo "❌ entities.mjs missing expected exports"
+            exit 1
+          }
+          grep -q "POST_URI" "$TEST_DIR/generated/entities.mjs" || {
+            echo "❌ entities.mjs missing POST entity"
+            exit 1
+          }
+          grep -q "ALL_ENTITIES" "$TEST_DIR/generated/entities.mjs" || {
+            echo "❌ entities.mjs missing ALL_ENTITIES export"
+            exit 1
+          }
+
+          # Check properties.mjs contains expected content
+          grep -q "PROP_USERNAME" "$TEST_DIR/generated/properties.mjs" || {
+            echo "❌ properties.mjs missing expected properties"
+            exit 1
+          }
+
+          # Display generated files for debugging
+          echo "Generated entities.mjs:"
+          cat "$TEST_DIR/generated/entities.mjs"
+          echo ""
+          echo "Generated properties.mjs:"
+          cat "$TEST_DIR/generated/properties.mjs"
+
+          # Cleanup
+          rm -rf "$TEST_DIR"
+
+          echo "✅ All generated code validated successfully"
+
+  dry-run-mode:
+    name: Test Dry-Run Mode
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: sync-unit-tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+
+      - name: Install dependencies
+        run: timeout 120s pnpm install --frozen-lockfile
+
+      - name: Test dry-run mode
+        run: |
+          echo "Testing --dry-run flag..."
+          timeout 30s pnpm -C packages/cli test -- --reporter=verbose --testNamePattern="dry-run|Dry-run"
+          echo "✅ Dry-run mode tests passed"
+
+  report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    needs: [sync-unit-tests, sync-e2e-tests, example-configs, generated-code-validation, dry-run-mode]
+    if: always()
+
+    steps:
+      - name: Generate summary report
+        run: |
+          echo "# CLI Sync Command Test Report" > report.md
+          echo "" >> report.md
+          echo "## Test Suite Results" >> report.md
+          echo "" >> report.md
+          echo "| Test Suite | Status |" >> report.md
+          echo "|------------|--------|" >> report.md
+          echo "| Sync Unit Tests | ${{ needs.sync-unit-tests.result }} |" >> report.md
+          echo "| E2E Integration Tests | ${{ needs.sync-e2e-tests.result }} |" >> report.md
+          echo "| Example Configs | ${{ needs.example-configs.result }} |" >> report.md
+          echo "| Generated Code Validation | ${{ needs.generated-code-validation.result }} |" >> report.md
+          echo "| Dry-Run Mode | ${{ needs.dry-run-mode.result }} |" >> report.md
+          echo "" >> report.md
+          echo "**Timestamp**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> report.md
+          echo "" >> report.md
+          echo "**Commit**: ${{ github.sha }}" >> report.md
+          echo "**Branch**: ${{ github.ref }}" >> report.md
+
+          cat report.md
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-sync-test-report
+          path: report.md
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

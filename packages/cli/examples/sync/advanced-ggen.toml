@@ -1,0 +1,194 @@
+# Advanced ggen.toml Example
+# Demonstrates multiple generation rules with different queries and templates
+#
+# Usage:
+#   unrdf sync --config advanced-ggen.toml
+#   unrdf sync --config advanced-ggen.toml --rule properties  # Run specific rule
+#   unrdf sync --config advanced-ggen.toml --dry-run          # Preview without writing
+#
+# This example shows how to:
+# - Define multiple generation rules
+# - Extract different aspects of an ontology (classes, properties, instances)
+# - Generate different output formats (constants, schemas, documentation)
+# - Use rule filtering and dry-run mode
+
+[project]
+name = "advanced-example"
+version = "2.0.0"
+description = "Advanced multi-rule sync configuration with comprehensive code generation"
+
+[ontology]
+source = "./ontology/complete-schema.ttl"
+format = "turtle"
+
+[generation]
+output_dir = "./src/generated"
+
+# =============================================================================
+# Rule 1: Extract OWL Classes
+# =============================================================================
+[[generation.rules]]
+name = "entities"
+description = "Generate TypeScript-style entity constants from OWL classes"
+enabled = true
+
+query = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?entity ?label ?comment
+WHERE {
+  ?entity a owl:Class .
+  OPTIONAL { ?entity rdfs:label ?label }
+  OPTIONAL { ?entity rdfs:comment ?comment }
+}
+ORDER BY ?label
+"""
+
+template = "./templates/entities.njk"
+output_file = "entities.mjs"
+
+# =============================================================================
+# Rule 2: Extract Datatype Properties
+# =============================================================================
+[[generation.rules]]
+name = "properties"
+description = "Generate property definitions with domain and range information"
+enabled = true
+
+query = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?prop ?propLabel ?domain ?range ?comment
+WHERE {
+  ?prop a owl:DatatypeProperty .
+  OPTIONAL { ?prop rdfs:label ?propLabel }
+  OPTIONAL { ?prop rdfs:domain ?domain }
+  OPTIONAL { ?prop rdfs:range ?range }
+  OPTIONAL { ?prop rdfs:comment ?comment }
+}
+ORDER BY ?propLabel
+"""
+
+template = "./templates/properties.njk"
+output_file = "properties.mjs"
+
+# =============================================================================
+# Rule 3: Extract Object Properties (Relationships)
+# =============================================================================
+[[generation.rules]]
+name = "relationships"
+description = "Generate object property constants for entity relationships"
+enabled = true
+
+query = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?prop ?propLabel ?domain ?range ?comment ?inverse
+WHERE {
+  ?prop a owl:ObjectProperty .
+  OPTIONAL { ?prop rdfs:label ?propLabel }
+  OPTIONAL { ?prop rdfs:domain ?domain }
+  OPTIONAL { ?prop rdfs:range ?range }
+  OPTIONAL { ?prop rdfs:comment ?comment }
+  OPTIONAL { ?prop owl:inverseOf ?inverse }
+}
+ORDER BY ?propLabel
+"""
+
+template = "./templates/relationships.njk"
+output_file = "relationships.mjs"
+
+# =============================================================================
+# Rule 4: Generate Zod Validation Schemas
+# =============================================================================
+[[generation.rules]]
+name = "schemas"
+description = "Generate Zod validation schemas based on SHACL shapes"
+enabled = true
+
+query = """
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?shape ?targetClass ?propertyPath ?datatype ?minCount ?maxCount
+WHERE {
+  ?shape a sh:NodeShape ;
+         sh:targetClass ?targetClass .
+
+  OPTIONAL {
+    ?shape sh:property ?propertyShape .
+    ?propertyShape sh:path ?propertyPath ;
+                   sh:datatype ?datatype .
+    OPTIONAL { ?propertyShape sh:minCount ?minCount }
+    OPTIONAL { ?propertyShape sh:maxCount ?maxCount }
+  }
+}
+ORDER BY ?targetClass ?propertyPath
+"""
+
+template = "./templates/zod-schemas.njk"
+output_file = "schemas.mjs"
+
+# =============================================================================
+# Rule 5: Generate API Documentation
+# =============================================================================
+[[generation.rules]]
+name = "api-docs"
+description = "Generate Markdown API documentation from ontology"
+enabled = true
+
+query = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class ?classLabel ?classComment
+       (GROUP_CONCAT(DISTINCT ?propLabel; separator=", ") AS ?properties)
+WHERE {
+  ?class a owl:Class .
+  OPTIONAL { ?class rdfs:label ?classLabel }
+  OPTIONAL { ?class rdfs:comment ?classComment }
+
+  OPTIONAL {
+    ?prop rdfs:domain ?class ;
+          rdfs:label ?propLabel .
+  }
+}
+GROUP BY ?class ?classLabel ?classComment
+ORDER BY ?classLabel
+"""
+
+template = "./templates/api-docs.njk"
+output_file = "../docs/api-reference.md"
+
+# =============================================================================
+# Rule 6: Extract Named Individuals (Instances)
+# =============================================================================
+[[generation.rules]]
+name = "instances"
+description = "Generate constants for named individuals in the ontology"
+enabled = false  # Disabled by default - enable when needed
+
+query = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?instance ?type ?label ?comment
+WHERE {
+  ?instance a owl:NamedIndividual ;
+            rdf:type ?type .
+
+  FILTER(?type != owl:NamedIndividual)
+
+  OPTIONAL { ?instance rdfs:label ?label }
+  OPTIONAL { ?instance rdfs:comment ?comment }
+}
+ORDER BY ?type ?label
+"""
+
+template = "./templates/instances.njk"
+output_file = "instances.mjs"

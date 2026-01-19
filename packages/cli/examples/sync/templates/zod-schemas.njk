@@ -1,0 +1,262 @@
+---
+to: schemas/entities.mjs
+description: Generate Zod validation schemas from RDF ontology classes and properties
+---
+/**
+ * @file Entity Validation Schemas
+ * @module schemas/entities
+ * @description Auto-generated Zod validation schemas from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * This file provides runtime validation schemas using Zod.
+ * Each entity from the RDF ontology has corresponding:
+ * - Schema definition (entityNameSchema)
+ * - Validation function (validateEntityName)
+ * - Assertion function (assertEntityName)
+ *
+ * Re-run sync to regenerate: `unrdf sync --rule zod-schemas`
+ */
+
+import { z } from 'zod';
+
+{#
+  Group SPARQL results by entity name
+  Expected SPARQL result structure:
+  {
+    "entityName": "User",
+    "propertyName": "email",
+    "propertyType": "xsd:string",
+    "required": "true",
+    "propertyDescription": "User email address",
+    "entityDescription": "A user in the system"
+  }
+#}
+{% set entities = sparql_results | groupBy('entityName') %}
+
+// =============================================================================
+// Base Schemas
+// =============================================================================
+
+/**
+ * Common base schemas for RDF data types
+ */
+export const baseSchemas = {
+  /** RDF IRI/URI reference */
+  iri: z.string().url().describe('RDF IRI reference'),
+
+  /** RDF Literal with optional language tag and datatype */
+  literal: z.object({
+    value: z.string(),
+    language: z.string().optional(),
+    datatype: z.string().optional(),
+  }).describe('RDF Literal'),
+
+  /** RDF Blank Node identifier */
+  blankNode: z.string().regex(/^_:/).describe('Blank node identifier'),
+
+  /** Any RDF Term (IRI, Literal, or Blank Node) */
+  term: z.union([
+    z.string().url(),
+    z.object({
+      value: z.string(),
+      language: z.string().optional(),
+      datatype: z.string().optional(),
+    }),
+    z.string().regex(/^_:/),
+  ]).describe('RDF Term'),
+};
+
+// =============================================================================
+// Entity Schemas
+// =============================================================================
+
+{% for entityName, properties in entities | items | sortBy(0) %}
+/**
+ * Zod schema for {{ entityName }}
+{% if properties[0].entityDescription %}
+ * @description {{ properties[0].entityDescription }}
+{% endif %}
+ */
+export const {{ entityName | camelCase }}Schema = z.object({
+  /** Entity type identifier */
+  type: z.literal('{{ entityName }}').optional(),
+
+  /** Entity identifier (IRI) */
+  id: z.string().optional(),
+
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName %}
+  /**
+   * {{ prop.propertyDescription | default(prop.propertyName) }}
+   * @type {{ prop.propertyType }}
+   */
+  {{ prop.propertyName | camelCase }}: {{ prop.propertyType | zodType }}{% if prop.required != "true" %}.optional(){% endif %}{% if prop.propertyDescription %}.describe('{{ prop.propertyDescription | quote("'") }}'){% endif %},
+{% endif %}
+{% endfor %}
+});
+
+/**
+ * TypeScript type for {{ entityName }} (inferred from Zod schema)
+ * @typedef {z.infer<typeof {{ entityName | camelCase }}Schema>} {{ entityName | pascalCase }}
+ */
+
+{% endfor %}
+
+// =============================================================================
+// Validation Functions
+// =============================================================================
+
+{% for entityName, properties in entities | items | sortBy(0) %}
+/**
+ * Validates {{ entityName }} data (safe parse, returns result object)
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}success: boolean, data?: {{ entityName | pascalCase }}, error?: z.ZodError{{ "}" }} Validation result
+ * @example
+ * const result = validate{{ entityName | pascalCase }}(inputData);
+ * if (result.success) {
+ *   console.log('Valid {{ entityName }}:', result.data);
+ * } else {
+ *   console.error('Validation errors:', result.error.issues);
+ * }
+ */
+export function validate{{ entityName | pascalCase }}(data) {
+  return {{ entityName | camelCase }}Schema.safeParse(data);
+}
+
+{% endfor %}
+
+// =============================================================================
+// Assertion Functions
+// =============================================================================
+
+{% for entityName, properties in entities | items | sortBy(0) %}
+/**
+ * Asserts data is valid {{ entityName }} (throws on failure)
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}{{ entityName | pascalCase }}{{ "}" }} Validated {{ entityName }} data
+ * @throws {z.ZodError} If validation fails
+ * @example
+ * try {
+ *   const {{ entityName | camelCase }} = assert{{ entityName | pascalCase }}(inputData);
+ *   // {{ entityName | camelCase }} is now typed and validated
+ * } catch (error) {
+ *   console.error('Invalid {{ entityName }}:', error.issues);
+ * }
+ */
+export function assert{{ entityName | pascalCase }}(data) {
+  return {{ entityName | camelCase }}Schema.parse(data);
+}
+
+{% endfor %}
+
+// =============================================================================
+// Schema Registry
+// =============================================================================
+
+/**
+ * Registry of all entity schemas by name
+ * @constant
+ */
+export const entitySchemas = {
+{% for entityName in entities | keys | sortBy %}
+  /** {{ entityName }} validation schema */
+  {{ entityName | camelCase }}: {{ entityName | camelCase }}Schema,
+{% endfor %}
+};
+
+/**
+ * Registry of all validation functions by entity name
+ * @constant
+ */
+export const validators = {
+{% for entityName in entities | keys | sortBy %}
+  /** Validate {{ entityName }} */
+  {{ entityName | camelCase }}: validate{{ entityName | pascalCase }},
+{% endfor %}
+};
+
+/**
+ * Registry of all assertion functions by entity name
+ * @constant
+ */
+export const asserters = {
+{% for entityName in entities | keys | sortBy %}
+  /** Assert {{ entityName }} */
+  {{ entityName | camelCase }}: assert{{ entityName | pascalCase }},
+{% endfor %}
+};
+
+// =============================================================================
+// Utility Functions
+// =============================================================================
+
+/**
+ * Get schema by entity name
+ * @param {string} entityName - Entity name (case-insensitive)
+ * @returns {z.ZodSchema | undefined} Zod schema or undefined if not found
+ */
+export function getSchema(entityName) {
+  const normalized = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+  return entitySchemas[normalized];
+}
+
+/**
+ * Validate any entity by name
+ * @param {string} entityName - Entity name
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}success: boolean, data?: unknown, error?: z.ZodError | Error{{ "}" }} Validation result
+ */
+export function validateEntity(entityName, data) {
+  const schema = getSchema(entityName);
+  if (!schema) {
+    return {
+      success: false,
+      error: new Error(`Unknown entity type: ${entityName}`),
+    };
+  }
+  return schema.safeParse(data);
+}
+
+/**
+ * List all available entity names
+ * @returns {string[]} Array of entity names
+ */
+export function listEntities() {
+  return Object.keys(entitySchemas);
+}
+
+/**
+ * Check if schema exists for entity name
+ * @param {string} entityName - Entity name to check
+ * @returns {boolean} True if schema exists
+ */
+export function hasSchema(entityName) {
+  const normalized = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+  return normalized in entitySchemas;
+}
+
+// =============================================================================
+// Metadata
+// =============================================================================
+
+/**
+ * Schema generation metadata
+ * @constant
+ */
+export const schemaMetadata = {
+  /** Generation timestamp */
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss") }}',
+
+  /** Number of entity schemas */
+  entityCount: {{ entities | keys | length }},
+
+  /** List of all entity names */
+  entities: [
+{% for entityName in entities | keys | sortBy %}
+    '{{ entityName }}',
+{% endfor %}
+  ],
+
+  /** Zod version used */
+  zodVersion: '^3.25.76',
+};

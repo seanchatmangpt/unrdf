@@ -3,8 +3,9 @@
  * @module cli/commands/sync/orchestrator
  * @description Main orchestrator for code generation sync process
  */
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile, access } from 'fs/promises';
 import { dirname, resolve, relative } from 'path';
+import { constants } from 'fs';
 import { parseConfig } from './config-parser.mjs';
 import { loadOntology } from './ontology-loader.mjs';
 import { executeSparqlQuery } from './sparql-executor.mjs';
@@ -64,25 +65,66 @@ export async function runSync(options) {
     for (const rule of enabledRules) {
       const ruleStart = performance.now();
       metrics.rulesProcessed++;
-      
+
       if (verbose) console.log('\n   ' + c.dim + 'Rule: ' + rule.name + c.reset);
-      
+
       try {
-        const sparqlResults = await executeSparqlQuery(store, rule.query, prefixes);
-        if (verbose) console.log('   Query returned ' + sparqlResults.length + ' results');
-        
+        // Validate template file exists before processing
+        if (!rule.template) {
+          throw new Error('Rule configuration missing required "template" field');
+        }
+
+        const templatePath = resolve(baseDir, rule.template);
+        try {
+          await access(templatePath, constants.R_OK);
+        } catch (accessErr) {
+          throw new Error(
+            `Template file not found or not readable: ${templatePath}\n` +
+            `  Rule: ${rule.name}\n` +
+            `  Config: ${configPath}\n` +
+            `  Fix: Check that the template path is correct and the file exists`
+          );
+        }
+
+        // Execute SPARQL query
+        let sparqlResults;
+        try {
+          sparqlResults = await executeSparqlQuery(store, rule.query, prefixes);
+          if (verbose) console.log('   Query returned ' + sparqlResults.length + ' results');
+        } catch (queryErr) {
+          throw new Error(
+            `SPARQL query execution failed for rule "${rule.name}"\n` +
+            `  Template: ${rule.template}\n` +
+            `  Error: ${queryErr.message}\n` +
+            `  Fix: Check query syntax and ensure ontology contains expected data`
+          );
+        }
+
+        // Render template
         const outputDir = config.generation?.output_dir || resolve(baseDir, 'lib');
-        const { content, outputPath } = await renderTemplate(rule.template, sparqlResults, {
-          project: config.project,
-          prefixes,
-          output_dir: outputDir,
-        });
-        
+        let content, outputPath;
+        try {
+          const result = await renderTemplate(templatePath, sparqlResults, {
+            project: config.project,
+            prefixes,
+            output_dir: outputDir,
+          });
+          content = result.content;
+          outputPath = result.outputPath;
+        } catch (renderErr) {
+          throw new Error(
+            `Template rendering failed for rule "${rule.name}"\n` +
+            `  Template: ${templatePath}\n` +
+            `  Error: ${renderErr.message}\n` +
+            `  Fix: Check template syntax and ensure all variables are defined`
+          );
+        }
+
         const finalPath = resolve(outputDir, outputPath || rule.output_file);
         const bytes = Buffer.byteLength(content, 'utf-8');
         totalBytes += bytes;
         const duration = performance.now() - ruleStart;
-        
+
         if (dryRun) {
           console.log('   ' + c.yellow + '[DRY RUN]' + c.reset + ' Would write: ' + relative(process.cwd(), finalPath));
           results.push({ rule: rule.name, path: finalPath, status: 'dry-run', duration, bytes });
@@ -95,9 +137,19 @@ export async function runSync(options) {
           metrics.filesGenerated++;
         }
       } catch (err) {
-        console.log('   ' + c.red + 'ERR' + c.reset + ' ' + rule.name + ': ' + err.message);
-        results.push({ rule: rule.name, status: 'error', error: err.message });
+        const errorMsg = err.message.includes('\n') ? '\n' + err.message : err.message;
+        console.log('   ' + c.red + 'ERR' + c.reset + ' ' + rule.name + ': ' + errorMsg);
+        if (verbose && err.stack) {
+          console.log('   ' + c.dim + err.stack + c.reset);
+        }
+        results.push({
+          rule: rule.name,
+          status: 'error',
+          error: err.message,
+          template: rule.template
+        });
         metrics.errors++;
+        // Continue processing other rules
       }
     }
     

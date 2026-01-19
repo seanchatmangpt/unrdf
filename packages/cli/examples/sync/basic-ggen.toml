@@ -1,0 +1,45 @@
+# Basic ggen.toml Example
+# Minimal configuration demonstrating the sync command
+#
+# Usage:
+#   unrdf sync --config basic-ggen.toml
+#
+# This example extracts OWL classes from an ontology and generates
+# JavaScript constants for each class.
+
+[project]
+name = "basic-example"
+version = "1.0.0"
+description = "Basic example of sync command with minimal configuration"
+
+[ontology]
+# Path to your RDF ontology file (relative to this config file)
+source = "./ontology/schema.ttl"
+format = "turtle"
+
+[generation]
+# Directory where generated files will be written
+output_dir = "./generated"
+
+# Single generation rule
+[[generation.rules]]
+name = "entities"
+description = "Generate entity constants from OWL classes"
+enabled = true
+
+# SPARQL query to extract classes
+query = """
+SELECT ?entity ?label ?comment
+WHERE {
+  ?entity a <http://www.w3.org/2002/07/owl#Class> .
+  OPTIONAL { ?entity <http://www.w3.org/2000/01/rdf-schema#label> ?label }
+  OPTIONAL { ?entity <http://www.w3.org/2000/01/rdf-schema#comment> ?comment }
+}
+ORDER BY ?label
+"""
+
+# Path to Nunjucks template file
+template = "./templates/entities.njk"
+
+# Output file path (relative to output_dir)
+output_file = "entities.mjs"

@@ -1,0 +1,169 @@
+---
+to: types/entities.mjs
+description: Generate JSDoc type definitions from RDF ontology classes and properties
+---
+/**
+ * @file Entity Type Definitions
+ * @module types/entities
+ * @description Auto-generated JSDoc type definitions from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * This file contains TypeScript-compatible JSDoc type definitions extracted from the RDF ontology.
+ * These types can be used for IDE autocomplete and type checking without requiring TypeScript compilation.
+ *
+ * Re-run sync to regenerate: `unrdf sync --rule entity-types`
+ */
+
+{#
+  Group SPARQL results by entity name
+  Expected SPARQL result structure:
+  {
+    "entityName": "User",
+    "propertyName": "email",
+    "propertyType": "xsd:string",
+    "required": "true",
+    "propertyDescription": "User email address",
+    "entityDescription": "A user in the system"
+  }
+#}
+{% set entities = sparql_results | groupBy('entityName') %}
+
+// =============================================================================
+// Entity Type Definitions
+// =============================================================================
+
+{% for entityName, properties in entities | items | sortBy(0) %}
+/**
+ * @typedef {{ "{" }}Object{{ "}" }} {{ entityName | pascalCase }}
+{% if properties[0].entityDescription %}
+ * @description {{ properties[0].entityDescription }}
+{% endif %}
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName %}
+ * @property {{ "{" }}{{ prop.propertyType | jsdocType }}{% if prop.required != "true" %}={% endif %}{{ "}" }} {{ prop.propertyName | camelCase }} - {{ prop.propertyDescription | default(prop.propertyName) }}
+{% endif %}
+{% endfor %}
+ */
+
+{% endfor %}
+
+// =============================================================================
+// Entity Name Constants
+// =============================================================================
+
+/**
+ * Entity type identifiers
+ * @enum {string}
+ */
+export const EntityType = {
+{% for entityName in entities | keys | sortBy %}
+  /** {{ entityName }} entity type */
+  {{ entityName | upper | snakeCase }}: '{{ entityName }}',
+{% endfor %}
+};
+
+// =============================================================================
+// Property Name Constants
+// =============================================================================
+
+/**
+ * Property name constants for all entities
+ * @constant
+ */
+export const PropertyNames = {
+{% for entityName, properties in entities | items | sortBy(0) %}
+  /** {{ entityName }} properties */
+  {{ entityName | pascalCase }}: {
+{% for prop in properties | sortBy('propertyName') %}
+{% if prop.propertyName %}
+    /** {{ prop.propertyDescription | default(prop.propertyName) }} */
+    {{ prop.propertyName | upper | snakeCase }}: '{{ prop.propertyName | camelCase }}',
+{% endif %}
+{% endfor %}
+  },
+{% endfor %}
+};
+
+// =============================================================================
+// Helper Types
+// =============================================================================
+
+/**
+ * Union type of all entity names
+ * @typedef {typeof EntityType[keyof typeof EntityType]} EntityName
+ */
+
+/**
+ * @typedef {{ "{" }}Object{{ "}" }} RdfResource
+ * @property {string} [id] - RDF resource IRI
+ * @property {string} [type] - RDF type IRI
+ */
+
+/**
+ * @typedef {{ "{" }}Object{{ "}" }} Literal
+ * @property {string} value - Literal value
+ * @property {string} [language] - Language tag (e.g., "en", "fr")
+ * @property {string} [datatype] - Datatype IRI (e.g., xsd:string)
+ */
+
+// =============================================================================
+// Utility Functions
+// =============================================================================
+
+/**
+ * Check if a value has a specific entity type
+ * @param {unknown} value - Value to check
+ * @param {EntityName} typeName - Expected entity type name
+ * @returns {boolean} True if value has the specified type
+ */
+export function isEntityType(value, typeName) {
+  return (
+    value != null &&
+    typeof value === 'object' &&
+    'type' in value &&
+    value.type === typeName
+  );
+}
+
+/**
+ * Get entity type name from object
+ * @param {unknown} value - Value to inspect
+ * @returns {EntityName | undefined} Entity type name or undefined
+ */
+export function getEntityType(value) {
+  if (value != null && typeof value === 'object' && 'type' in value) {
+    return value.type;
+  }
+  return undefined;
+}
+
+/**
+ * List all available entity types
+ * @returns {EntityName[]} Array of entity type names
+ */
+export function listEntityTypes() {
+  return Object.values(EntityType);
+}
+
+// =============================================================================
+// Metadata
+// =============================================================================
+
+/**
+ * Generation metadata
+ * @constant
+ */
+export const typeMetadata = {
+  /** Timestamp of generation */
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss") }}',
+
+  /** Total number of entity types */
+  entityCount: {{ entities | keys | length }},
+
+  /** List of all entity type names */
+  entities: [
+{% for entityName in entities | keys | sortBy %}
+    '{{ entityName }}',
+{% endfor %}
+  ],
+};
