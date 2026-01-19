@@ -1,0 +1,255 @@
+# Chatman Equation Schema Definition
+# μ(O ⊔ Δ) → A
+# Where:
+# - O = Observations (current state)
+# - Δ = Delta (proposed changes)
+# - μ = Closure operator (reconciliation function)
+# - ⊔ = Join operation
+# - A = Artifacts (results)
+
+[metadata]
+version = "1.0.0"
+description = "Chatman Equation framework schema for configuration-driven transformations"
+author = "UNRDF Contributors"
+
+# ============================================================================
+# OBSERVATIONS (O) - Current state representation
+# ============================================================================
+[observations]
+description = "Observations represent the current state of the system"
+
+[observations.schema]
+type = "object"
+required = ["id", "timestamp", "domain", "state"]
+
+[observations.schema.properties.id]
+type = "string"
+format = "uuid"
+description = "Unique identifier for observation"
+
+[observations.schema.properties.timestamp]
+type = "string"
+format = "iso8601"
+description = "Observation timestamp"
+
+[observations.schema.properties.domain]
+type = "string"
+enum = ["market", "organization", "strategy", "product", "customer"]
+description = "Domain context for observation"
+
+[observations.schema.properties.state]
+type = "object"
+description = "Domain-specific state representation"
+additionalProperties = true
+
+[observations.schema.properties.metadata]
+type = "object"
+description = "Additional metadata"
+required = false
+
+# ============================================================================
+# CLOSURE OPERATOR (μ) - Reconciliation functions
+# ============================================================================
+[closure_operator]
+description = "Closure operator μ defines how to reconcile observations with deltas"
+
+[closure_operator.types]
+description = "Supported closure operator types"
+
+[closure_operator.types.merge]
+description = "Merge strategy - combine observations and deltas"
+strategy = "union"
+conflict_resolution = "delta_wins"
+
+[closure_operator.types.transform]
+description = "Transformation strategy - apply function to joined state"
+strategy = "functional"
+preserves_invariants = true
+
+[closure_operator.types.reconcile]
+description = "Reconciliation strategy - resolve conflicts explicitly"
+strategy = "explicit"
+requires_policy = true
+
+[closure_operator.types.compose]
+description = "Composition strategy - chain multiple operators"
+strategy = "sequential"
+commutative = false
+
+# Closure operator configuration schema
+[closure_operator.schema]
+type = "object"
+required = ["type", "name", "domain"]
+
+[closure_operator.schema.properties.type]
+type = "string"
+enum = ["merge", "transform", "reconcile", "compose"]
+description = "Operator type"
+
+[closure_operator.schema.properties.name]
+type = "string"
+description = "Operator identifier"
+
+[closure_operator.schema.properties.domain]
+type = "string"
+description = "Applicable domain"
+
+[closure_operator.schema.properties.policies]
+type = "array"
+description = "Policy identifiers to enforce"
+required = false
+
+[closure_operator.schema.properties.conflict_resolution]
+type = "string"
+enum = ["delta_wins", "current_wins", "merge", "reject"]
+default = "delta_wins"
+required = false
+
+[closure_operator.schema.properties.invariants]
+type = "array"
+description = "Invariants to preserve"
+required = false
+
+# ============================================================================
+# ARTIFACTS (A) - Results of μ(O ⊔ Δ)
+# ============================================================================
+[artifacts]
+description = "Artifacts represent the result of applying closure operator to joined state"
+
+[artifacts.schema]
+type = "object"
+required = ["id", "timestamp", "source_observation", "applied_deltas", "result"]
+
+[artifacts.schema.properties.id]
+type = "string"
+format = "uuid"
+description = "Unique artifact identifier"
+
+[artifacts.schema.properties.timestamp]
+type = "string"
+format = "iso8601"
+description = "Creation timestamp"
+
+[artifacts.schema.properties.source_observation]
+type = "string"
+format = "uuid"
+description = "Reference to source observation ID"
+
+[artifacts.schema.properties.applied_deltas]
+type = "array"
+description = "List of delta IDs that were applied"
+
+[artifacts.schema.properties.operator]
+type = "string"
+description = "Closure operator used"
+
+[artifacts.schema.properties.result]
+type = "object"
+description = "Resulting state after μ(O ⊔ Δ)"
+additionalProperties = true
+
+[artifacts.schema.properties.proof]
+type = "object"
+description = "Cryptographic proof of transformation"
+required = false
+
+[artifacts.schema.properties.receipt]
+type = "object"
+description = "Receipt from delta gate"
+required = false
+
+# ============================================================================
+# UNIFICATION MAPPINGS - Domain-specific configurations
+# ============================================================================
+
+# Market Dynamics
+[unification.market]
+description = "Market dynamics unification"
+observation_fields = ["supply", "demand", "price", "competitors", "trends"]
+delta_fields = ["supply_change", "demand_change", "price_adjustment", "new_entrants"]
+artifact_fields = ["equilibrium_price", "market_share", "growth_rate", "saturation"]
+closure_operator = "market_equilibrium"
+
+[unification.market.invariants]
+supply_positive = "supply >= 0"
+demand_positive = "demand >= 0"
+price_positive = "price >= 0"
+
+# Organization Dynamics
+[unification.organization]
+description = "Organizational structure and dynamics"
+observation_fields = ["structure", "resources", "capabilities", "culture", "performance"]
+delta_fields = ["restructuring", "resource_allocation", "capability_development", "culture_shift"]
+artifact_fields = ["efficiency", "adaptability", "innovation_rate", "employee_satisfaction"]
+closure_operator = "org_transformation"
+
+[unification.organization.invariants]
+resource_conservation = "total_resources_allocated <= total_resources_available"
+capability_monotonic = "capabilities can only increase or remain same"
+
+# Strategic Dynamics
+[unification.strategy]
+description = "Strategic positioning and execution"
+observation_fields = ["current_position", "competitors", "customer_needs", "resources", "capabilities"]
+delta_fields = ["strategic_moves", "resource_commitments", "partnerships", "innovations"]
+artifact_fields = ["competitive_advantage", "market_position", "value_proposition", "execution_plan"]
+closure_operator = "strategy_synthesis"
+
+[unification.strategy.invariants]
+value_creation = "value_to_customer > cost_to_serve"
+differentiation = "unique_value_proposition == true"
+
+# Blue Ocean Strategy
+[unification.blue_ocean]
+description = "Blue ocean formation and value innovation"
+observation_fields = ["red_ocean_factors", "industry_boundaries", "customer_pain_points", "non_customers"]
+delta_fields = ["eliminate", "reduce", "raise", "create"]
+artifact_fields = ["value_curve", "new_market_space", "value_innovation", "cost_structure"]
+closure_operator = "blue_ocean_formation"
+
+[unification.blue_ocean.invariants]
+simultaneous_differentiation_cost = "differentiation_increase AND cost_decrease"
+buyer_value_leap = "buyer_value_new > buyer_value_existing * 1.5"
+
+# Product Development
+[unification.product]
+description = "Product evolution and feature development"
+observation_fields = ["current_features", "user_feedback", "market_demands", "technical_debt"]
+delta_fields = ["new_features", "improvements", "deprecations", "refactorings"]
+artifact_fields = ["product_roadmap", "feature_prioritization", "release_plan", "quality_metrics"]
+closure_operator = "product_evolution"
+
+[unification.product.invariants]
+backward_compatibility = "breaking_changes require major_version_bump"
+quality_threshold = "test_coverage >= 0.80 AND bug_count < threshold"
+
+# Customer Journey
+[unification.customer]
+description = "Customer experience and journey optimization"
+observation_fields = ["touchpoints", "pain_points", "moments_of_truth", "satisfaction", "retention"]
+delta_fields = ["experience_improvements", "new_touchpoints", "automation", "personalization"]
+artifact_fields = ["customer_lifetime_value", "nps_score", "churn_rate", "advocacy"]
+closure_operator = "experience_optimization"
+
+[unification.customer.invariants]
+friction_reduction = "total_friction_new < total_friction_current"
+value_delivery = "perceived_value >= expected_value"
+
+# ============================================================================
+# VALIDATION RULES
+# ============================================================================
+[validation]
+description = "Cross-cutting validation rules"
+
+[validation.temporal]
+observation_before_delta = "observation.timestamp <= delta.timestamp"
+delta_before_artifact = "delta.timestamp <= artifact.timestamp"
+
+[validation.referential]
+delta_references_observation = "delta.observation_id exists in observations"
+artifact_references_observation = "artifact.source_observation exists in observations"
+artifact_references_deltas = "all artifact.applied_deltas exist in deltas"
+
+[validation.semantic]
+domain_consistency = "observation.domain == delta.domain == artifact.domain"
+operator_applicability = "closure_operator.domain matches observation.domain"

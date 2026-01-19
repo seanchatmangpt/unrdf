@@ -1,0 +1,44 @@
+# {{ title }}
+
+**Duration**: {{ duration }}
+**Difficulty**: {{ difficulty }}
+**Prerequisites**: {% for prereq in prerequisites %}{{ prereq }}{% if not loop.last %}, {% endif %}{% endfor %}
+
+---
+
+## Task
+
+**What**: {{ context.task }}
+
+**When to use**: {{ context.when_to_use }}
+
+---
+
+## Steps
+
+{% for step in steps %}
+### {{ step.number }}. {{ step.title }}
+
+{% if step.code %}
+```javascript
+{{ step.code }}
+```
+{% endif %}
+
+{% endfor %}
+
+---
+
+{% if troubleshooting %}
+## Troubleshooting
+
+### Problem: {{ troubleshooting.problem }}
+
+**Solution**: {{ troubleshooting.solution }}
+
+{% endif %}
+
+---
+
+**Generated from**: `packages/chatman-equation/docs-config/how-to.toml`
+**Last updated**: 2026-01-18
