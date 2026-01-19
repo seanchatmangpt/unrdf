@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/rdf-graphql",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation",
   "type": "module",
   "main": "src/adapter.mjs",

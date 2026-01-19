@@ -235,10 +235,30 @@ pnpm -C packages/v6-core test
 
 ### 2. @unrdf/kgc-cli LaTeX Features
 **Severity**: MEDIUM
-**Impact**: LaTeX VFS and compilation broken
-**Description**: 8 tests failing in `latex-build.test.mjs`
-**Workaround**: Core KGC-CLI functionality works, avoid LaTeX features
-**Fix Timeline**: TBD
+**Impact**: LaTeX compilation limited to simple single-file projects
+**Status**: ⚠️ EXPERIMENTAL (v6.0.0-rc.3)
+**Description**: LaTeX integration tests have 26.7% pass rate (4/15 tests passing)
+- Multi-file projects fail to compile
+- Some CTAN packages not fully supported
+- Error messages may be cryptic
+
+**Setup Required**:
+```bash
+cd packages/kgc-cli
+node scripts/vendor-tex-engine.mjs
+```
+
+**Workaround**:
+- Use external LaTeX toolchain (TeX Live, MiKTeX) for production documents
+- Core KGC-CLI functionality works normally without LaTeX setup
+- LaTeX tests skip gracefully if WASM binaries not installed
+
+**Known Limitations**:
+- Test pass rate: 4/15 (26.7%)
+- Multi-file projects may fail
+- Recommended for evaluation only, not production use
+
+**Fix Timeline**: Planned for v6.0.0 stable release
 
 ### 3. Vitest 4.x Deprecation Warnings
 **Severity**: LOW

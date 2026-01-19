@@ -3,7 +3,7 @@
  * @description Runs all L1-L5 tests and generates evidence report
  */
 
-import { test, describe } from 'node:test';
+import { test, describe, expect } from 'vitest';
 import { execSync } from 'node:child_process';
 
 describe('L5 Maturity Test Suite', () => {

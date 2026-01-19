@@ -101,7 +101,7 @@ export default {
           ]
         }
       ],
-      "copyright": "Copyright © 2025 UNRDF. Built with Docusaurus 3.9.2."
+      "copyright": "Copyright © 2026 UNRDF. Built with Docusaurus 3.9.2."
     },
     "prism": {
       "theme": {

@@ -9,8 +9,7 @@
  * - Coverage: 95%+ of error paths
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, describe, expect } from 'vitest';
 
 describe('L4: Adversarial Safety', () => {
   test('[L4.1] Store rejects invalid quads gracefully', async () => {
@@ -20,18 +19,10 @@ describe('L4: Adversarial Safety', () => {
     const store = createStore();
 
     // Test null quad
-    assert.throws(
-      () => store.add(null),
-      /Quad is required/,
-      'Rejects null quad'
-    );
+    expect(() => store.add(null)).toThrow(/Quad is required/);
 
     // Test undefined quad
-    assert.throws(
-      () => store.add(undefined),
-      /Quad is required/,
-      'Rejects undefined quad'
-    );
+    expect(() => store.add(undefined)).toThrow(/Quad is required/);
 
     // Store should still be functional
     const { dataFactory } = await import('@unrdf/oxigraph');
@@ -41,7 +32,7 @@ describe('L4: Adversarial Safety', () => {
       dataFactory.literal('test')
     );
     store.add(validQuad);
-    assert.ok(store.has(validQuad), 'Store remains functional after errors');
+    expect(store.has(validQuad)).toBeTruthy();
 
     console.log('[L4.1] ✅ Invalid quad handling secure');
   });
@@ -52,33 +43,27 @@ describe('L4: Adversarial Safety', () => {
     const { Receipt } = await import('../../src/admission/receipts.mjs');
 
     // Test missing required fields
-    assert.throws(
-      () =>
-        new Receipt({
-          // Missing id, decision, etc.
-        }),
-      /Error/,
-      'Rejects incomplete config'
-    );
+    expect(() =>
+      new Receipt({
+        // Missing id, decision, etc.
+      })
+    ).toThrow(/Error/);
 
     // Test invalid decision value
-    assert.throws(
-      () =>
-        new Receipt({
-          id: 'test',
-          decision: 'INVALID', // Should be ALLOW or DENY
-          deltaHash: 'test',
-          beforeHash: '0'.repeat(64),
-          afterHash: '1'.repeat(64),
-          epoch: 1,
-          timestamp: Date.now(),
-          toolchainVersion: '1.0.0',
-          violations: [],
-          reason: 'test',
-        }),
-      /Error/,
-      'Rejects invalid decision'
-    );
+    expect(() =>
+      new Receipt({
+        id: 'test',
+        decision: 'INVALID', // Should be ALLOW or DENY
+        deltaHash: 'test',
+        beforeHash: '0'.repeat(64),
+        afterHash: '1'.repeat(64),
+        epoch: 1,
+        timestamp: Date.now(),
+        toolchainVersion: '1.0.0',
+        violations: [],
+        reason: 'test',
+      })
+    ).toThrow(/Error/);
 
     console.log('[L4.2] ✅ Receipt validation prevents malformed data');
   });
@@ -92,11 +77,11 @@ describe('L4: Adversarial Safety', () => {
     // Query empty store - should not crash
     const query = 'SELECT * WHERE { ?s ?p ?o }';
     const results = Array.from(store.query(query));
-    assert.equal(results.length, 0, 'Empty store returns empty results');
+    expect(results.length).toBe(0);
 
     // Match on empty store
     const matches = Array.from(store.match());
-    assert.equal(matches.length, 0, 'Empty store has no matches');
+    expect(matches.length).toBe(0);
 
     // Delete from empty store - should not crash
     const { dataFactory } = await import('@unrdf/oxigraph');
@@ -106,7 +91,7 @@ describe('L4: Adversarial Safety', () => {
       dataFactory.literal('test')
     );
 
-    assert.doesNotThrow(() => store.delete(quad), 'Delete on empty store safe');
+    expect(() => store.delete(quad)).not.toThrow();
 
     console.log('[L4.3] ✅ Empty dataset operations safe');
   });
@@ -137,14 +122,11 @@ describe('L4: Adversarial Safety', () => {
     const actualMemoryMB = memoryIncrease / (1024 * 1024);
 
     console.log(`[L4.4] Memory increase: ${actualMemoryMB.toFixed(2)}MB`);
-    assert.ok(
-      actualMemoryMB < maxMemoryMB,
-      `Memory increase ${actualMemoryMB.toFixed(2)}MB within ${maxMemoryMB}MB limit`
-    );
+    expect(actualMemoryMB < maxMemoryMB).toBeTruthy();
 
     // Query should still work
     const matches = Array.from(store.match());
-    assert.equal(matches.length, 10000, 'All quads retrievable');
+    expect(matches.length).toBe(10000);
 
     console.log('[L4.4] ✅ Large dataset handling efficient');
   });
@@ -165,18 +147,12 @@ describe('L4: Adversarial Safety', () => {
     }
 
     // Error should not contain system paths, env vars, etc.
-    assert.ok(
-      !errorMessage.includes('/home/'),
-      'Error does not leak file paths'
-    );
-    assert.ok(
-      !errorMessage.includes('NODE_ENV'),
-      'Error does not leak env vars'
-    );
+    expect(errorMessage.includes('/home/')).toBeFalsy();
+    expect(errorMessage.includes('NODE_ENV')).toBeFalsy();
 
     // Error should be generic but useful
-    assert.ok(errorMessage.length > 0, 'Error message is present');
-    assert.ok(errorMessage.length < 200, 'Error message is concise');
+    expect(errorMessage.length > 0).toBeTruthy();
+    expect(errorMessage.length < 200).toBeTruthy();
 
     console.log('[L4.5] ✅ Error messages sanitized');
   });
@@ -202,7 +178,7 @@ describe('L4: Adversarial Safety', () => {
 
     // All quads should be present
     const matches = Array.from(store.match());
-    assert.equal(matches.length, 100, 'All concurrent adds succeeded');
+    expect(matches.length).toBe(100);
 
     console.log('[L4.6] ✅ Concurrent operations safe');
   });
@@ -220,16 +196,12 @@ describe('L4: Adversarial Safety', () => {
     ];
 
     for (const query of invalidQueries) {
-      assert.throws(
-        () => store.query(query),
-        /Error/,
-        `Rejects invalid query: ${query}`
-      );
+      expect(() => store.query(query)).toThrow(/Error/);
     }
 
     // Store should remain functional
     const validQuery = 'SELECT * WHERE { ?s ?p ?o }';
-    assert.doesNotThrow(() => store.query(validQuery), 'Valid query still works');
+    expect(() => store.query(validQuery)).not.toThrow();
 
     console.log('[L4.7] ✅ SPARQL error handling robust');
   });

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-durable",
-  "version": "6.0.0-rc.2",
+  "version": "6.0.0-rc.3",
   "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
   "type": "module",
   "main": "src/engine.mjs",

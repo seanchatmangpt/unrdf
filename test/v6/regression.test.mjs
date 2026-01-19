@@ -6,8 +6,7 @@
  * @module test/v6/regression
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
 import {
   createReceipt,
@@ -36,18 +35,18 @@ describe('V6 Regression Tests', () => {
         payload: { data: 'test' },
       });
 
-      assert.ok(receipt.id, 'Should have ID');
-      assert.ok(receipt.receiptHash, 'Should have hash');
-      assert.ok(receipt.payloadHash, 'Should have payload hash');
-      assert.equal(receipt.receiptType, 'execution', 'Should preserve type');
+      expect(receipt.id).toBeTruthy();
+      expect(receipt.receiptHash).toBeTruthy();
+      expect(receipt.payloadHash).toBeTruthy();
+      expect(receipt.receiptType).toBe('execution');
     });
 
     it('should maintain delta behavior', async () => {
       const delta = await createDelta('add', 's', 'p', 'o');
 
-      assert.ok(delta.id, 'Should have ID');
-      assert.ok(delta.operations, 'Should have operations');
-      assert.ok(delta.timestamp_iso, 'Should have timestamp');
+      expect(delta.id).toBeTruthy();
+      expect(delta.operations).toBeTruthy();
+      expect(delta.timestamp_iso).toBeTruthy();
     });
   });
 
@@ -61,8 +60,8 @@ describe('V6 Regression Tests', () => {
           payload: { decision: 'COMPLETED' },
         });
 
-        assert.ok(receipt, 'Should handle empty payload');
-        assert.ok(receipt.payloadHash, 'Should still have payload hash');
+        expect(receipt).toBeTruthy();
+        expect(receipt.payloadHash).toBeTruthy();
       });
 
       it('should handle large payloads', async () => {
@@ -78,8 +77,8 @@ describe('V6 Regression Tests', () => {
           payload: largePayload,
         });
 
-        assert.ok(receipt, 'Should handle large payload');
-        assert.ok(receipt.payloadHash.length > 0, 'Should compute hash for large payload');
+        expect(receipt).toBeTruthy();
+        expect(receipt.payloadHash.length > 0).toBeTruthy();
       });
 
       it('should handle special characters in IDs', async () => {
@@ -90,7 +89,7 @@ describe('V6 Regression Tests', () => {
           payload: { decision: 'COMPLETED' },
         });
 
-        assert.ok(receipt, 'Should handle special characters');
+        expect(receipt).toBeTruthy();
         assert.ok(receipt.caseId.includes('🚀'), 'Should preserve emoji');
       });
 
@@ -106,8 +105,8 @@ describe('V6 Regression Tests', () => {
           null
         );
 
-        assert.ok(receipt, 'Should handle null previous receipt');
-        assert.equal(receipt.previousHash, null, 'Previous hash should be null');
+        expect(receipt).toBeTruthy();
+        expect(receipt.previousHash).toBe(null);
       });
 
       it('should reject invalid receipt types', async () => {
@@ -123,16 +122,16 @@ describe('V6 Regression Tests', () => {
       it('should handle simple operations', async () => {
         const delta = await createDelta('add', 's', 'p', 'o');
 
-        assert.ok(delta, 'Should create delta');
-        assert.equal(delta.operations.length, 1, 'Should have 1 operation');
+        expect(delta).toBeTruthy();
+        expect(delta.operations.length).toBe(1);
       });
 
       it('should handle different operation types', async () => {
         const delta1 = await createDelta('add', 's', 'p', 'o');
         const delta2 = await createDelta('delete', 's', 'p', 'o');
 
-        assert.ok(delta1, 'Should create add delta');
-        assert.ok(delta2, 'Should create delete delta');
+        expect(delta1).toBeTruthy();
+        expect(delta2).toBeTruthy();
       });
 
       it('should handle complex subjects/predicates', async () => {
@@ -143,14 +142,14 @@ describe('V6 Regression Tests', () => {
           'Complex Object'
         );
 
-        assert.ok(delta, 'Should handle complex values');
+        expect(delta).toBeTruthy();
       });
     });
 
     describe('Adapter Edge Cases', () => {
       it('should handle store creation with undefined options', async () => {
         const store = await createStore(undefined);
-        assert.ok(store, 'Should handle undefined options');
+        expect(store).toBeTruthy();
       });
 
       it('should handle workflow with no run method', () => {
@@ -197,8 +196,8 @@ describe('V6 Regression Tests', () => {
 
       const verification = await verifyReceipt(invalidReceipt);
 
-      assert.ok(!verification.valid, 'Invalid receipt should fail verification');
-      assert.ok(verification.error, 'Should have error message');
+      expect(verification.valid).toBeFalsy();
+      expect(verification.error).toBeTruthy();
     });
 
     it('should handle receipt creation errors gracefully', async () => {
@@ -226,7 +225,7 @@ describe('V6 Regression Tests', () => {
 
       const receipts = await Promise.all(promises);
 
-      assert.equal(receipts.length, 20, 'Should create all receipts');
+      expect(receipts.length).toBe(20);
       assert.ok(
         receipts.every((r) => r.id),
         'All receipts should have IDs'
@@ -235,7 +234,7 @@ describe('V6 Regression Tests', () => {
       // All IDs should be unique
       const ids = receipts.map((r) => r.id);
       const uniqueIds = new Set(ids);
-      assert.equal(uniqueIds.size, 20, 'All IDs should be unique');
+      expect(uniqueIds.size).toBe(20);
     });
 
     it('should handle malformed payload data', async () => {
@@ -257,7 +256,7 @@ describe('V6 Regression Tests', () => {
         payload: { safe: 'data' }, // Use safe payload for verification
       });
 
-      assert.ok(verification, 'Should handle verification');
+      expect(verification).toBeTruthy();
     });
   });
 
@@ -280,7 +279,7 @@ describe('V6 Regression Tests', () => {
 
       const duration = performance.now() - start;
 
-      assert.ok(duration < 5000, `Should create 100 receipts in <5s (took ${duration}ms)`);
+      expect(duration < 5000).toBeTruthy();
     });
 
     it('should handle 100 verifications quickly', async () => {
@@ -301,7 +300,7 @@ describe('V6 Regression Tests', () => {
 
       const duration = performance.now() - start;
 
-      assert.ok(duration < 2000, `Should verify 100 receipts in <2s (took ${duration}ms)`);
+      expect(duration < 2000).toBeTruthy();
     });
 
     it('should handle large chain of receipts', async () => {
@@ -320,8 +319,8 @@ describe('V6 Regression Tests', () => {
         );
       }
 
-      assert.ok(previousReceipt, 'Should create chain of 50 receipts');
-      assert.ok(previousReceipt.previousHash, 'Last receipt should have previous hash');
+      expect(previousReceipt).toBeTruthy();
+      expect(previousReceipt.previousHash).toBeTruthy();
     });
 
     it('should handle many concurrent operations', async () => {
@@ -346,7 +345,7 @@ describe('V6 Regression Tests', () => {
 
       const results = await Promise.all(operations);
 
-      assert.equal(results.length, 50, 'Should complete all operations');
+      expect(results.length).toBe(50);
     });
   });
 
@@ -373,7 +372,7 @@ describe('V6 Regression Tests', () => {
         global.gc();
       }
 
-      assert.ok(true, 'Memory test completed');
+      expect(true).toBeTruthy();
     });
 
     it('should handle receipt references correctly', async () => {
@@ -398,8 +397,8 @@ describe('V6 Regression Tests', () => {
       // Modify receipt1 should not affect receipt2
       receipt1.modified = true;
 
-      assert.ok(!receipt2.modified, 'Receipt2 should not be affected');
-      assert.equal(receipt2.previousHash, receipt1.receiptHash, 'Hash reference should be preserved');
+      expect(receipt2.modified).toBeFalsy();
+      expect(receipt2.previousHash).toBe(receipt1.receiptHash);
     });
   });
 
@@ -445,8 +444,8 @@ describe('V6 Regression Tests', () => {
           });
         }
 
-        assert.ok(receipt, `Should create ${type} receipt`);
-        assert.equal(receipt.receiptType, type, `Should have correct type: ${type}`);
+        expect(receipt).toBeTruthy();
+        expect(receipt.receiptType).toBe(type);
       }
     });
 
@@ -460,13 +459,13 @@ describe('V6 Regression Tests', () => {
       });
 
       // Core fields should exist
-      assert.ok(receipt.id, 'Should have id');
-      assert.ok(receipt.receiptType, 'Should have receiptType');
-      assert.ok(receipt.t_ns, 'Should have t_ns');
-      assert.ok(receipt.timestamp_iso, 'Should have timestamp_iso');
-      assert.ok(receipt.payloadHash, 'Should have payloadHash');
-      assert.ok(receipt.receiptHash, 'Should have receiptHash');
-      assert.ok('previousHash' in receipt, 'Should have previousHash field');
+      expect(receipt.id).toBeTruthy();
+      expect(receipt.receiptType).toBeTruthy();
+      expect(receipt.t_ns).toBeTruthy();
+      expect(receipt.timestamp_iso).toBeTruthy();
+      expect(receipt.payloadHash).toBeTruthy();
+      expect(receipt.receiptHash).toBeTruthy();
+      expect('previousHash' in receipt).toBeTruthy();
     });
   });
 
@@ -480,12 +479,12 @@ describe('V6 Regression Tests', () => {
 
       // v5 style
       const v5Result = await wrapped.run({ id: 'v5-task' });
-      assert.ok(v5Result, 'v5 style should work');
+      expect(v5Result).toBeTruthy();
 
       // v6 style
       const v6Result = await wrapped.execute({ id: 'v6-task' });
-      assert.ok(v6Result.result, 'v6 style should work');
-      assert.ok(v6Result.receipt, 'v6 style should return receipt');
+      expect(v6Result.result).toBeTruthy();
+      expect(v6Result.receipt).toBeTruthy();
     });
 
     it('should support gradual migration', async () => {
@@ -494,9 +493,9 @@ describe('V6 Regression Tests', () => {
       const workflow = { run: async () => ({}) };
       const wrapped = wrapWorkflow(workflow);
 
-      assert.ok(store, 'New store API works');
-      assert.ok(wrapped.run, 'Old workflow API preserved');
-      assert.ok(wrapped.execute, 'New workflow API available');
+      expect(store).toBeTruthy();
+      expect(wrapped.run).toBeTruthy();
+      expect(wrapped.execute).toBeTruthy();
     });
   });
 });

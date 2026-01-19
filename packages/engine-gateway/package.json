@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/engine-gateway",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing",
   "type": "module",
   "main": "./src/index.mjs",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/receipts",
-  "version": "6.0.0-rc.2",
+  "version": "6.0.0-rc.3",
   "description": "KGC Receipts - Batch receipt generation with Merkle tree verification and post-quantum cryptography for knowledge graph operations",
   "type": "module",
   "exports": {

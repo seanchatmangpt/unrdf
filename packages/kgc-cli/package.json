@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-cli",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
   "type": "module",
   "bin": {
@@ -50,6 +50,9 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "vitest": "^4.0.15"
+  },
+  "peerDependenciesOptional": {
+    "swiftlatex": "^1.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

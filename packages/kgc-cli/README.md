@@ -178,29 +178,74 @@ export const overrides = [
 - **vm**: Virtual machine / WASM execution
 - **latex**: LaTeX to PDF compilation (pure JavaScript, zero dependencies)
 
-## LaTeX to PDF Compilation
+## ⚠️ Experimental Features
 
-**NEW**: Compile LaTeX documents to PDF entirely in JavaScript with zero system dependencies.
+### LaTeX to PDF Compilation (EXPERIMENTAL - v6.0.0-rc.3)
+
+**Status**: 🧪 **EXPERIMENTAL** - Not production-ready
+
+Compile LaTeX documents to PDF entirely in JavaScript with zero system dependencies.
 
 ```bash
+# Setup (required first)
+node scripts/vendor-tex-engine.mjs
+
 # Compile a LaTeX document
 kgc latex build --input thesis/main.tex --output dist/thesis.pdf
 ```
 
-**Features**:
-- Pure JavaScript (no TeX installation required)
-- WebAssembly TeX engine (XeTeX/PDFLaTeX)
-- Automatic dependency resolution from CTAN
-- Deterministic, reproducible builds with lockfiles
-- Offline support via package caching
+**Current Status**:
+- ✅ Core KGC-CLI: PRODUCTION READY
+- ⚠️ LaTeX features: EXPERIMENTAL (4/15 integration tests passing - 26.7%)
+- ❌ Multi-file projects: Known issues
 
-**Documentation**: See [docs/latex/](./docs/latex/README.md)
+**Requirements**:
+- SwiftLaTeX WASM binaries (automatically downloaded by setup script)
+- Node.js ≥18.0.0
+- unzip command-line tool (for setup only)
 
-**Quick links**:
+**Setup Instructions**:
+```bash
+# 1. Download and install SwiftLaTeX WASM binaries
+cd packages/kgc-cli
+node scripts/vendor-tex-engine.mjs
+
+# 2. Verify installation
+node src/cli.mjs latex diagnose
+
+# 3. Test with example document
+node src/cli.mjs latex build --input examples/hello.tex --output /tmp/hello.pdf
+```
+
+**Known Limitations**:
+- Multi-file projects may fail to compile
+- Some LaTeX packages not fully supported
+- Error messages may be cryptic
+- Recommended for evaluation only, not production use
+
+**Workaround**: For production documents, use external LaTeX toolchain (TeX Live, MiKTeX, or overleaf.com).
+
+**Without LaTeX Setup**:
+- All other KGC-CLI features work normally
+- LaTeX tests skip gracefully
+- No impact on core functionality
+
+**Planned For**: v6.0.0 stable release (see tracking issue on GitHub)
+
+---
+
+### LaTeX Feature Documentation
+
+**Available Documentation**:
+- [LaTeX Setup Guide](./docs/latex/SETUP.md) - Installation and troubleshooting
 - [Your First PDF Tutorial](./docs/latex/tutorials/first-pdf.md) - 5-minute quickstart
 - [CLI Reference](./docs/latex/reference/cli.md) - Complete command documentation
 - [JavaScript API](./docs/latex/reference/api.md) - Programmatic usage
 - [Architecture](./docs/latex/explanation/architecture.md) - How it works
+
+**Migration Path**:
+- rc.3 (current): Test and evaluate
+- Stable (v6.0.0): Production-ready with full multi-file support
 
 ## Testing
 

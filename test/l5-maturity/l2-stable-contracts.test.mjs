@@ -9,8 +9,7 @@
  * - Evidence: API documentation + changelog
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, describe, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
 describe('L2: Stable Contracts', () => {
@@ -28,7 +27,7 @@ describe('L2: Stable Contracts', () => {
     for (const exp of expectedExports) {
       if (exp === '.') {
         const mod = await import('@unrdf/v6-core');
-        assert.ok(mod, 'Main export accessible');
+        expect(mod).toBeTruthy();
       }
     }
 
@@ -42,16 +41,16 @@ describe('L2: Stable Contracts', () => {
 
     // Signature: createStore(quads?: Quad[]) => Store
     const store1 = createStore();
-    assert.ok(store1, 'createStore() with no args works');
+    expect(store1).toBeTruthy();
 
     const store2 = createStore([]);
-    assert.ok(store2, 'createStore([]) with empty array works');
+    expect(store2).toBeTruthy();
 
     // Validate Store interface
-    assert.ok(typeof store1.add === 'function', 'Store has add method');
-    assert.ok(typeof store1.delete === 'function', 'Store has delete method');
-    assert.ok(typeof store1.has === 'function', 'Store has has method');
-    assert.ok(typeof store1.match === 'function', 'Store has match method');
+    expect(typeof store1.add === 'function').toBeTruthy();
+    expect(typeof store1.delete === 'function').toBeTruthy();
+    expect(typeof store1.has === 'function').toBeTruthy();
+    expect(typeof store1.match === 'function').toBeTruthy();
 
     console.log('[L2.2] ✅ createStore contract stable');
   });
@@ -71,10 +70,8 @@ describe('L2: Stable Contracts', () => {
 
       // Validate semver format: MAJOR.MINOR.PATCH[-prerelease]
       const semverRegex = /^\d+\.\d+\.\d+(-[a-z0-9.]+)?$/;
-      assert.ok(
-        semverRegex.test(version),
-        `${name} version ${version} follows semver`
-      );
+      expect(
+        semverRegex.test(version).toBeTruthy();
 
       console.log(`[L2.3] ${name} v${version} - valid semver`);
     }
@@ -89,10 +86,8 @@ describe('L2: Stable Contracts', () => {
       const changelog = readFileSync('/home/user/unrdf/CHANGELOG.md', 'utf-8');
 
       // v6 should be documented
-      assert.ok(
-        changelog.includes('6.0.0') || changelog.includes('v6'),
-        'v6 release documented in CHANGELOG'
-      );
+      expect(
+        changelog.includes('6.0.0').toBeTruthy();
 
       console.log('[L2.4] ✅ CHANGELOG documents major version');
     } catch (error) {
@@ -113,15 +108,15 @@ describe('L2: Stable Contracts', () => {
       dataFactory.literal('object')
     );
 
-    assert.ok(quad.subject, 'Quad has subject');
-    assert.ok(quad.predicate, 'Quad has predicate');
-    assert.ok(quad.object, 'Quad has object');
+    expect(quad.subject).toBeTruthy();
+    expect(quad.predicate).toBeTruthy();
+    expect(quad.object).toBeTruthy();
 
     // Store should accept quads
     const store = createStore();
     store.add(quad);
 
-    assert.ok(store.has(quad), 'Store contains added quad');
+    expect(store.has(quad).toBeTruthy();
 
     console.log('[L2.5] ✅ Type definitions match runtime');
   });

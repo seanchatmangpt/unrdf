@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/collab",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
   "type": "module",
   "main": "src/index.mjs",

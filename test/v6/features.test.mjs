@@ -6,8 +6,7 @@
  * @module test/v6/features
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
 // v6-core features
 import {
@@ -46,14 +45,14 @@ describe('V6 Features Tests', () => {
           payload: { decision: 'APPROVE' },
         });
 
-        assert.ok(receipt, 'Receipt should be created');
-        assert.equal(receipt.receiptType, 'execution', 'Should be execution type');
-        assert.equal(receipt.eventType, 'TASK_COMPLETED', 'Should have event type');
-        assert.ok(receipt.id, 'Should have ID');
-        assert.ok(receipt.t_ns, 'Should have nanosecond timestamp');
-        assert.ok(receipt.timestamp_iso, 'Should have ISO timestamp');
-        assert.ok(receipt.payloadHash, 'Should have payload hash');
-        assert.ok(receipt.receiptHash, 'Should have receipt hash');
+        expect(receipt).toBeTruthy();
+        expect(receipt.receiptType).toBe('execution');
+        expect(receipt.eventType).toBe('TASK_COMPLETED');
+        expect(receipt.id).toBeTruthy();
+        expect(receipt.t_ns).toBeTruthy();
+        expect(receipt.timestamp_iso).toBeTruthy();
+        expect(receipt.payloadHash).toBeTruthy();
+        expect(receipt.receiptHash).toBeTruthy();
       });
 
       it('should support all execution event types', async () => {
@@ -72,7 +71,7 @@ describe('V6 Features Tests', () => {
             payload: { decision: 'COMPLETED' },
           });
 
-          assert.equal(receipt.eventType, eventType, `Should create ${eventType} receipt`);
+          expect(receipt.eventType).toBe(eventType);
         }
       });
 
@@ -86,8 +85,8 @@ describe('V6 Features Tests', () => {
 
         const verification = await verifyReceipt(receipt);
 
-        assert.ok(verification.valid, 'Receipt should be valid');
-        assert.ok(verification.checks, 'Should include verification checks');
+        expect(verification.valid).toBeTruthy();
+        expect(verification.checks).toBeTruthy();
       });
     });
 
@@ -110,11 +109,11 @@ describe('V6 Features Tests', () => {
           payload: { action: 'ALLOCATE' },
         });
 
-        assert.ok(receipt, 'Receipt should be created');
-        assert.equal(receipt.receiptType, 'allocation', 'Should be allocation type');
-        assert.equal(receipt.eventType, 'RESOURCE_ALLOCATED', 'Should have event type');
-        assert.ok(receipt.capacity, 'Should have capacity info');
-        assert.equal(receipt.capacity.total, 100, 'Should have capacity total');
+        expect(receipt).toBeTruthy();
+        expect(receipt.receiptType).toBe('allocation');
+        expect(receipt.eventType).toBe('RESOURCE_ALLOCATED');
+        expect(receipt.capacity).toBeTruthy();
+        expect(receipt.capacity.total).toBe(100);
       });
 
       it('should verify allocation receipt', async () => {
@@ -132,7 +131,7 @@ describe('V6 Features Tests', () => {
 
         const verification = await verifyReceipt(receipt);
 
-        assert.ok(verification.valid, 'Allocation receipt should be valid');
+        expect(verification.valid).toBeTruthy();
       });
     });
 
@@ -150,10 +149,10 @@ describe('V6 Features Tests', () => {
           },
         });
 
-        assert.ok(receipt, 'Receipt should be created');
-        assert.equal(receipt.receiptType, 'compile', 'Should be compile type');
-        assert.equal(receipt.grammarType, 'SPARQL', 'Should have grammar type');
-        assert.ok(Array.isArray(receipt.inputHashes), 'Should have input hashes');
+        expect(receipt).toBeTruthy();
+        expect(receipt.receiptType).toBe('compile');
+        expect(receipt.grammarType).toBe('SPARQL');
+        expect(Array.isArray(receipt.inputHashes), 'Should have input hashes');
       });
 
       it('should verify compile receipt', async () => {
@@ -168,7 +167,7 @@ describe('V6 Features Tests', () => {
 
         const verification = await verifyReceipt(receipt);
 
-        assert.ok(verification.valid, 'Compile receipt should be valid');
+        expect(verification.valid).toBeTruthy();
       });
     });
 
@@ -185,10 +184,10 @@ describe('V6 Features Tests', () => {
           payload: { result: 'VALID', method: 'merkle-tree' },
         });
 
-        assert.ok(receipt, 'Receipt should be created');
-        assert.equal(receipt.receiptType, 'verification', 'Should be verification type');
-        assert.ok(Array.isArray(receipt.proofPath), 'Should have proof path');
-        assert.equal(receipt.proofPath.length, 2, 'Should have 2 proof steps');
+        expect(receipt).toBeTruthy();
+        expect(receipt.receiptType).toBe('verification');
+        expect(Array.isArray(receipt.proofPath), 'Should have proof path');
+        expect(receipt.proofPath.length).toBe(2);
       });
 
       it('should verify verification receipt', async () => {
@@ -202,7 +201,7 @@ describe('V6 Features Tests', () => {
 
         const verification = await verifyReceipt(receipt);
 
-        assert.ok(verification.valid, 'Verification receipt should be valid');
+        expect(verification.valid).toBeTruthy();
       });
     });
 
@@ -226,8 +225,8 @@ describe('V6 Features Tests', () => {
           receipt1
         );
 
-        assert.equal(receipt2.previousHash, receipt1.receiptHash, 'Should link to previous');
-        assert.ok(receipt2.t_ns > receipt1.t_ns, 'Should have later timestamp');
+        expect(receipt2.previousHash).toBe(receipt1.receiptHash);
+        expect(receipt2.t_ns > receipt1.t_ns).toBeTruthy();
       });
 
       it('should verify chain link', async () => {
@@ -251,7 +250,7 @@ describe('V6 Features Tests', () => {
 
         const linkVerification = await verifyChainLink(receipt2, receipt1);
 
-        assert.ok(linkVerification.valid, 'Chain link should be valid');
+        expect(linkVerification.valid).toBeTruthy();
       });
 
       it('should detect broken chain', async () => {
@@ -271,24 +270,24 @@ describe('V6 Features Tests', () => {
 
         const linkVerification = await verifyChainLink(receipt2, receipt1);
 
-        assert.ok(!linkVerification.valid, 'Broken chain should be invalid');
-        assert.ok(linkVerification.error, 'Should have error message');
+        expect(linkVerification.valid).toBeFalsy();
+        expect(linkVerification.error).toBeTruthy();
       });
     });
 
     describe('Receipt Types', () => {
       it('should expose all receipt types', () => {
-        assert.ok(RECEIPT_TYPES.EXECUTION, 'Should have EXECUTION');
-        assert.ok(RECEIPT_TYPES.ALLOCATION, 'Should have ALLOCATION');
-        assert.ok(RECEIPT_TYPES.COMPILE, 'Should have COMPILE');
-        assert.ok(RECEIPT_TYPES.VERIFICATION, 'Should have VERIFICATION');
+        expect(RECEIPT_TYPES.EXECUTION).toBeTruthy();
+        expect(RECEIPT_TYPES.ALLOCATION).toBeTruthy();
+        expect(RECEIPT_TYPES.COMPILE).toBeTruthy();
+        expect(RECEIPT_TYPES.VERIFICATION).toBeTruthy();
       });
 
       it('should expose all event types', () => {
-        assert.ok(EXECUTION_EVENT_TYPES.TASK_COMPLETED, 'Should have execution events');
-        assert.ok(ALLOCATION_EVENT_TYPES.RESOURCE_ALLOCATED, 'Should have allocation events');
-        assert.ok(COMPILE_EVENT_TYPES.GRAMMAR_COMPILED, 'Should have compile events');
-        assert.ok(VERIFICATION_EVENT_TYPES.MERKLE_PROOF_VERIFIED, 'Should have verification events');
+        expect(EXECUTION_EVENT_TYPES.TASK_COMPLETED).toBeTruthy();
+        expect(ALLOCATION_EVENT_TYPES.RESOURCE_ALLOCATED).toBeTruthy();
+        expect(COMPILE_EVENT_TYPES.GRAMMAR_COMPILED).toBeTruthy();
+        expect(VERIFICATION_EVENT_TYPES.MERKLE_PROOF_VERIFIED).toBeTruthy();
       });
     });
   });
@@ -303,44 +302,44 @@ describe('V6 Features Tests', () => {
         { package: '@test/package' }
       );
 
-      assert.ok(delta, 'Delta should be created');
-      assert.ok(delta.id, 'Should have ID');
-      assert.ok(delta.timestamp_iso, 'Should have timestamp');
-      assert.ok(Array.isArray(delta.operations), 'Should have operations');
-      assert.equal(delta.operations.length, 1, 'Should have 1 operation');
+      expect(delta).toBeTruthy();
+      expect(delta.id).toBeTruthy();
+      expect(delta.timestamp_iso).toBeTruthy();
+      expect(Array.isArray(delta.operations), 'Should have operations');
+      expect(delta.operations.length).toBe(1);
     });
 
     it('should create delta with multiple operations', async () => {
       const delta1 = await createDelta('add', 's1', 'p1', 'o1');
       const delta2 = await createDelta('delete', 's2', 'p2', 'o2');
 
-      assert.equal(delta1.operations.length, 1, 'Should have 1 operation');
-      assert.equal(delta2.operations.length, 1, 'Should have 1 operation');
+      expect(delta1.operations.length).toBe(1);
+      expect(delta2.operations.length).toBe(1);
     });
 
     it('should validate deltas through gate', async () => {
       const gate = new DeltaGate();
       const delta = await createDelta('add', 's1', 'p1', 'o1');
 
-      assert.ok(gate, 'Gate should be created');
-      assert.ok(delta, 'Delta should be valid');
+      expect(gate).toBeTruthy();
+      expect(delta).toBeTruthy();
     });
   });
 
   describe('Grammar System', () => {
     it('should have grammar version', () => {
-      assert.ok(GRAMMAR_VERSION, 'Grammar version should exist');
-      assert.equal(typeof GRAMMAR_VERSION, 'string', 'Should be string');
+      expect(GRAMMAR_VERSION).toBeTruthy();
+      expect(typeof GRAMMAR_VERSION).toBe('string');
     });
 
     it('should have grammar types', () => {
-      assert.ok(GRAMMAR_TYPES, 'Grammar types should exist');
-      assert.ok(typeof GRAMMAR_TYPES === 'object', 'Should be object');
+      expect(GRAMMAR_TYPES).toBeTruthy();
+      expect(typeof GRAMMAR_TYPES === 'object').toBeTruthy();
     });
 
     it('should have grammar pipeline', () => {
-      assert.ok(grammarClosurePipeline, 'Grammar pipeline should exist');
-      assert.equal(typeof grammarClosurePipeline, 'function', 'Should be function');
+      expect(grammarClosurePipeline).toBeTruthy();
+      expect(typeof grammarClosurePipeline).toBe('function');
     });
   });
 
@@ -348,17 +347,17 @@ describe('V6 Features Tests', () => {
   describe('Documentation System', () => {
     it('should have docs module', () => {
       // Docs module exists and exports pipeline/latex/thesis functions
-      assert.ok(true, 'Docs module is available');
+      expect(true).toBeTruthy();
     });
 
     it('should support thesis generation', () => {
       // Thesis builder functionality is part of v6-core/docs
-      assert.ok(true, 'Thesis generation supported');
+      expect(true).toBeTruthy();
     });
 
     it('should support LaTeX generation', () => {
       // LaTeX generator is part of v6-core/docs
-      assert.ok(true, 'LaTeX generation supported');
+      expect(true).toBeTruthy();
     });
   });
 
@@ -377,7 +376,7 @@ describe('V6 Features Tests', () => {
 
       const duration = performance.now() - start;
 
-      assert.ok(duration < 1000, `Should create 10 receipts in <1s (took ${duration}ms)`);
+      expect(duration < 1000, `Should create 10 receipts in <1s (took ${duration}ms)`);
     });
 
     it('should verify receipts quickly (<50ms)', async () => {
@@ -396,7 +395,7 @@ describe('V6 Features Tests', () => {
 
       const duration = performance.now() - start;
 
-      assert.ok(duration < 500, `Should verify 10 receipts in <500ms (took ${duration}ms)`);
+      expect(duration < 500, `Should verify 10 receipts in <500ms (took ${duration}ms)`);
     });
   });
 
@@ -430,10 +429,10 @@ describe('V6 Features Tests', () => {
       const completeVerify = await verifyReceipt(completeReceipt);
       const chainVerify = await verifyChainLink(completeReceipt, startReceipt);
 
-      assert.ok(startVerify.valid, 'Start receipt should be valid');
-      assert.ok(completeVerify.valid, 'Complete receipt should be valid');
-      assert.ok(chainVerify.valid, 'Chain should be valid');
-      assert.ok(delta.id, 'Delta should exist');
+      expect(startVerify.valid).toBeTruthy();
+      expect(completeVerify.valid).toBeTruthy();
+      expect(chainVerify.valid).toBeTruthy();
+      expect(delta.id).toBeTruthy();
     });
   });
 });

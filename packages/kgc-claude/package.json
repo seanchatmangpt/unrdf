@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-claude",
-  "version": "5.0.0",
+  "version": "6.0.0-rc.3",
   "description": "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration",
   "type": "module",
   "exports": {

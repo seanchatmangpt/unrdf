@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/nextra-docs",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation",
   "type": "module",
   "scripts": {

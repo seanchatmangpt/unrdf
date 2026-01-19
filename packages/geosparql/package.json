@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/geosparql",
-  "version": "6.2.0",
+  "version": "6.0.0-rc.3",
   "description": "OGC GeoSPARQL standard compliance for spatial RDF queries",
   "type": "module",
   "main": "./src/index.mjs",

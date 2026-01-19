@@ -2,15 +2,15 @@
 
 **Research-grade RDF knowledge graphs with batteries included.**
 
-> **Status: v6.0.0-rc.2 (Release Candidate)** - Production-grade architecture, 99%+ test pass rate, 67 packages. See [Release Notes](RELEASE_NOTES.md) for details.
+> **Status: v6.0.0-rc.3 (Release Candidate)** - Production-grade architecture, 99%+ test pass rate, 67 packages. See [Release Notes](RELEASE_NOTES.md) for details.
 
 UNRDF is a streamlined, open-source platform for building intelligent knowledge graph applications. It combines semantic web standards (RDF, SPARQL, SHACL) with modern JavaScript/TypeScript tooling and nanosecond-precision temporal event sourcing.
 
 **Perfect for:** Knowledge management systems, semantic search, event-sourced applications, temporal data tracking, and audit-trail systems.
 
-**Latest Release**: [v6.0.0-rc.2](RELEASE_NOTES.md) - Critical integration fixes, 67 packages, Oxigraph 15K+ ops/sec
+**Latest Release**: [v6.0.0-rc.3](RELEASE_NOTES.md) - Final release candidate, 67 packages, Oxigraph 20K+ ops/sec
 
-[![Version](https://img.shields.io/badge/version-6.0.0--rc.2-blue)](RELEASE_NOTES.md)
+[![Version](https://img.shields.io/badge/version-6.0.0--rc.3-blue)](RELEASE_NOTES.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![Test Pass Rate](https://img.shields.io/badge/tests-99%25%20passing-brightgreen)](PACKAGE_OPERATIONAL_STATUS.md)

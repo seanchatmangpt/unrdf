@@ -3,6 +3,7 @@
 **Start with #01. Add complexity only if needed.**
 
 > **📊 Examples Status**: 10/11 critical examples working (91% success rate)
+> **Version**: v6.0.0-rc.3
 > **Last Updated**: 2026-01-19
 > **See**: [EXAMPLES-STATUS.md](./EXAMPLES-STATUS.md) for detailed status report
 

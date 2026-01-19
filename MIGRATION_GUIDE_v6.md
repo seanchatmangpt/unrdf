@@ -55,14 +55,14 @@ UNRDF v6 introduces a **major architectural shift** to delta-based state managem
 npm uninstall unrdf @unrdf/core @unrdf/hooks
 
 # Install v6 packages
-npm install @unrdf/core@6.0.0-rc.2 \
-            @unrdf/oxigraph@6.0.0-rc.2 \
-            @unrdf/hooks@6.0.0-rc.2
+npm install @unrdf/core@6.0.0-rc.3 \
+            @unrdf/oxigraph@6.0.0-rc.3 \
+            @unrdf/hooks@6.0.0-rc.3
 
 # Or use pnpm (recommended)
-pnpm add @unrdf/core@6.0.0-rc.2 \
-         @unrdf/oxigraph@6.0.0-rc.2 \
-         @unrdf/hooks@6.0.0-rc.2
+pnpm add @unrdf/core@6.0.0-rc.3 \
+         @unrdf/oxigraph@6.0.0-rc.3 \
+         @unrdf/hooks@6.0.0-rc.3
 ```
 
 ### 2. Update Imports
@@ -242,9 +242,9 @@ export function createTriple(input) {
 ```json
 {
   "dependencies": {
-    "@unrdf/core": "6.0.0-rc.2",
-    "@unrdf/oxigraph": "6.0.0-rc.2",
-    "@unrdf/hooks": "6.0.0-rc.2",
+    "@unrdf/core": "6.0.0-rc.3",
+    "@unrdf/oxigraph": "6.0.0-rc.3",
+    "@unrdf/hooks": "6.0.0-rc.3",
     "zod": "^3.25.76"
   },
   "type": "module"

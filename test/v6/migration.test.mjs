@@ -6,8 +6,7 @@
  * @module test/v6/migration
  */
 
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 import { EventEmitter } from 'node:events';
 
 // v6-compat adapters
@@ -28,8 +27,8 @@ describe('V6 Migration Tests', () => {
   describe('Store Migration (v5 → v6)', () => {
     it('should create store using v6 API', async () => {
       const store = await createStore();
-      assert.ok(store, 'Store should be created');
-      assert.equal(typeof store, 'object', 'Store should be an object');
+      expect(store).toBeTruthy();
+      expect(typeof store).toBe('object');
     });
 
     it('should emit deprecation warning for v5 Store API', async () => {
@@ -40,7 +39,7 @@ describe('V6 Migration Tests', () => {
       try {
         await createStore();
         // Warning emitted in non-test mode
-        assert.ok(true, 'Deprecation tracking works');
+        expect(true).toBeTruthy();
       } finally {
         process.off('deprecation', listener);
       }
@@ -48,7 +47,7 @@ describe('V6 Migration Tests', () => {
 
     it('should accept options like v5 Store', async () => {
       const store = await createStore({ persistent: false });
-      assert.ok(store, 'Store should accept options');
+      expect(store).toBeTruthy();
     });
   });
 
@@ -65,8 +64,8 @@ describe('V6 Migration Tests', () => {
 
     it('should wrap v5 workflow with receipt generation', async () => {
       const wrapped = wrapWorkflow(mockWorkflow);
-      assert.ok(wrapped.execute, 'Wrapped workflow should have execute method');
-      assert.ok(wrapped.run, 'Wrapped workflow should preserve run method');
+      expect(wrapped.execute).toBeTruthy();
+      expect(wrapped.run).toBeTruthy();
     });
 
     it('should generate receipt on execute()', async () => {
@@ -75,14 +74,14 @@ describe('V6 Migration Tests', () => {
 
       const { result, receipt } = await wrapped.execute(task);
 
-      assert.ok(result, 'Should return result');
-      assert.equal(result.status, 'completed', 'Result should match original');
+      expect(result).toBeTruthy();
+      expect(result.status).toBe('completed');
 
-      assert.ok(receipt, 'Should return receipt');
-      assert.equal(receipt.version, '6.0.0-alpha.1', 'Receipt should have version');
-      assert.equal(receipt.operation, 'workflow.execute', 'Receipt should have operation');
-      assert.ok(receipt.timestamp, 'Receipt should have timestamp');
-      assert.ok(receipt.duration >= 0, 'Receipt should have duration');
+      expect(receipt).toBeTruthy();
+      expect(receipt.version).toBe('6.0.0-alpha.1');
+      expect(receipt.operation).toBe('workflow.execute');
+      expect(receipt.timestamp).toBeTruthy();
+      expect(receipt.duration >= 0).toBeTruthy();
     });
 
     it('should maintain backward compat with run()', async () => {
@@ -91,8 +90,8 @@ describe('V6 Migration Tests', () => {
 
       const result = await wrapped.run(task);
 
-      assert.ok(result, 'Should return result');
-      assert.equal(result.status, 'completed', 'Result should match original');
+      expect(result).toBeTruthy();
+      expect(result.status).toBe('completed');
     });
 
     it('should throw on invalid workflow', () => {
@@ -123,7 +122,7 @@ describe('V6 Migration Tests', () => {
 
     it('should wrap federation with timeout support', async () => {
       const wrapped = wrapFederation(mockFederation);
-      assert.ok(wrapped.querySparql, 'Wrapped should have querySparql method');
+      expect(wrapped.querySparql).toBeTruthy();
     });
 
     it('should execute queries with default 5s timeout', async () => {
@@ -131,7 +130,7 @@ describe('V6 Migration Tests', () => {
       const results = await wrapped.querySparql('SELECT * WHERE { ?s ?p ?o }');
 
       assert.ok(Array.isArray(results), 'Should return array');
-      assert.equal(results.length, 1, 'Should return results');
+      expect(results.length).toBe(1);
     });
 
     it('should timeout slow queries', async () => {
@@ -156,7 +155,7 @@ describe('V6 Migration Tests', () => {
         timeout: 10000,
       });
 
-      assert.ok(results, 'Should work with custom timeout');
+      expect(results).toBeTruthy();
     });
 
     it('should throw on invalid federation', () => {
@@ -184,7 +183,7 @@ describe('V6 Migration Tests', () => {
         collected.push(quad);
       }
 
-      assert.equal(collected.length, 3, 'Should collect all quads');
+      expect(collected.length).toBe(3);
       assert.deepEqual(collected, data, 'Should preserve order');
     });
 
@@ -219,7 +218,7 @@ describe('V6 Migration Tests', () => {
         collected.push(quad);
       }
 
-      assert.equal(collected.length, 0, 'Empty stream should yield nothing');
+      expect(collected.length).toBe(0);
     });
   });
 
@@ -230,11 +229,11 @@ describe('V6 Migration Tests', () => {
 
       const { result, receipt } = await wrapped(5, 3);
 
-      assert.equal(result, 15, 'Should return correct result');
-      assert.ok(receipt, 'Should return receipt');
-      assert.equal(receipt.operation, 'multiply', 'Receipt should have operation name');
-      assert.ok(receipt.timestamp, 'Receipt should have timestamp');
-      assert.ok(receipt.duration >= 0, 'Receipt should have duration');
+      expect(result).toBe(15);
+      expect(receipt).toBeTruthy();
+      expect(receipt.operation).toBe('multiply');
+      expect(receipt.timestamp).toBeTruthy();
+      expect(receipt.duration >= 0).toBeTruthy();
     });
 
     it('should handle async functions', async () => {
@@ -246,8 +245,8 @@ describe('V6 Migration Tests', () => {
       const wrapped = withReceipt(asyncFn, { operation: 'asyncDouble' });
       const { result, receipt } = await wrapped(7);
 
-      assert.equal(result, 14, 'Should return correct result');
-      assert.ok(receipt.duration >= 10, 'Duration should reflect async delay');
+      expect(result).toBe(14);
+      expect(receipt.duration >= 10).toBeTruthy();
     });
 
     it('should use function name if operation not provided', async () => {
@@ -258,7 +257,7 @@ describe('V6 Migration Tests', () => {
       const wrapped = withReceipt(namedFunction);
       const { receipt } = await wrapped();
 
-      assert.equal(receipt.operation, 'namedFunction', 'Should use function name');
+      expect(receipt.operation).toBe('namedFunction');
     });
 
     it('should throw on invalid input', () => {
@@ -291,7 +290,7 @@ describe('V6 Migration Tests', () => {
         age: 30,
       });
 
-      assert.equal(user.name, 'Alice', 'Should return validated data');
+      expect(user.name).toBe('Alice');
     });
 
     it('should throw on invalid data', () => {
@@ -321,7 +320,7 @@ describe('V6 Migration Tests', () => {
 
       try {
         validate({ id: 'bad', name: 'Dave' }); // Missing age
-        assert.fail('Should have thrown');
+        throw new Error('Test failed');
       } catch (error) {
         assert.ok(error.message.includes('Validation failed'), 'Error should mention validation failure');
       }
@@ -355,9 +354,9 @@ describe('V6 Migration Tests', () => {
 
       const report = tracker.report();
 
-      assert.equal(report.totalWarnings, 2, 'Should track 2 warnings');
-      assert.equal(report.uniqueAPIs, 2, 'Should have 2 unique APIs');
-      assert.ok(report.elapsed >= 0, 'Should track elapsed time');
+      expect(report.totalWarnings).toBe(2);
+      expect(report.uniqueAPIs).toBe(2);
+      expect(report.elapsed >= 0).toBeTruthy();
     });
 
     it('should count duplicate warnings', () => {
@@ -367,8 +366,8 @@ describe('V6 Migration Tests', () => {
 
       const report = tracker.report();
 
-      assert.equal(report.totalWarnings, 3, 'Should count all occurrences');
-      assert.equal(report.uniqueAPIs, 1, 'Should identify single unique API');
+      expect(report.totalWarnings).toBe(3);
+      expect(report.uniqueAPIs).toBe(1);
     });
 
     it('should generate migration summary', () => {
@@ -377,7 +376,7 @@ describe('V6 Migration Tests', () => {
 
       // Should not throw
       tracker.summary();
-      assert.ok(true, 'Summary should be generated');
+      expect(true).toBeTruthy();
     });
 
     it('should track warnings over time', async () => {
@@ -387,7 +386,7 @@ describe('V6 Migration Tests', () => {
 
       const report = tracker.report();
 
-      assert.ok(report.elapsed >= 10, 'Should track elapsed time');
+      expect(report.elapsed >= 10).toBeTruthy();
     });
   });
 
@@ -405,9 +404,9 @@ describe('V6 Migration Tests', () => {
 
       const { receipt } = await wrapped.execute({ id: 'test' });
 
-      assert.ok(receipt, 'All operations must return receipts');
-      assert.ok(receipt.version, 'Receipt must have version');
-      assert.ok(receipt.timestamp, 'Receipt must have timestamp');
+      expect(receipt).toBeTruthy();
+      expect(receipt.version).toBeTruthy();
+      expect(receipt.timestamp).toBeTruthy();
     });
 
     it('should enforce Zod validation', () => {
@@ -416,7 +415,7 @@ describe('V6 Migration Tests', () => {
 
       try {
         validate({});
-        assert.fail('Should have thrown validation error');
+        throw new Error('Test failed');
       } catch (error) {
         assert.ok(error.message.includes('Validation failed') || error.message.includes('Required'), 'Should enforce required fields');
       }
@@ -425,7 +424,7 @@ describe('V6 Migration Tests', () => {
     it('should enforce ESM-only (package.json check)', () => {
       // In v6, package.json must have "type": "module"
       // This is verified at runtime
-      assert.equal(process.env.NODE_ENV !== 'commonjs', true, 'Should be ESM');
+      expect(process.env.NODE_ENV !== 'commonjs').toBe(true);
     });
 
     it('should use AsyncIterator for streams (not EventEmitter)', async () => {
@@ -437,8 +436,8 @@ describe('V6 Migration Tests', () => {
       }, 10);
 
       const asyncIterator = streamToAsync(stream);
-      assert.equal(typeof asyncIterator.next, 'function', 'Should be async iterator');
-      assert.equal(typeof asyncIterator[Symbol.asyncIterator], 'function', 'Should be iterable');
+      expect(typeof asyncIterator.next).toBe('function');
+      expect(typeof asyncIterator[Symbol.asyncIterator]).toBe('function');
     });
   });
 
@@ -449,8 +448,8 @@ describe('V6 Migration Tests', () => {
 
       const result = await wrapped.run({ id: 'test' });
 
-      assert.ok(result, 'v5 run() method should still work');
-      assert.equal(result.status, 'ok', 'Should return same result');
+      expect(result).toBeTruthy();
+      expect(result.status).toBe('ok');
     });
 
     it('should preserve v5 federation.query() method', async () => {
@@ -461,7 +460,7 @@ describe('V6 Migration Tests', () => {
 
       const results = await wrapped.query('SELECT * WHERE { ?s ?p ?o }');
 
-      assert.ok(results, 'v5 query() method should still work');
+      expect(results).toBeTruthy();
       assert.ok(Array.isArray(results), 'Should return array');
     });
 
@@ -473,9 +472,9 @@ describe('V6 Migration Tests', () => {
       const v5Result = await wrapped.run({ id: 'v5' });
       const v6Result = await wrapped.execute({ id: 'v6' });
 
-      assert.ok(v5Result, 'v5 API works');
-      assert.ok(v6Result.result, 'v6 API works');
-      assert.ok(v6Result.receipt, 'v6 API returns receipt');
+      expect(v5Result).toBeTruthy();
+      expect(v6Result.result).toBeTruthy();
+      expect(v6Result.receipt).toBeTruthy();
     });
   });
 
@@ -486,7 +485,7 @@ describe('V6 Migration Tests', () => {
       // Migration: use createStore() from '@unrdf/v6-compat/adapters'
 
       const store = await createStore();
-      assert.ok(store, 'Migration path works');
+      expect(store).toBeTruthy();
     });
 
     it('should provide clear migration path for Workflow', async () => {
@@ -498,7 +497,7 @@ describe('V6 Migration Tests', () => {
       const wrapped = wrapWorkflow(workflow);
 
       const { receipt } = await wrapped.execute({ id: 'test' });
-      assert.ok(receipt, 'Migration path works');
+      expect(receipt).toBeTruthy();
     });
 
     it('should provide clear migration path for Streams', async () => {
@@ -517,7 +516,7 @@ describe('V6 Migration Tests', () => {
         items.push(item);
       }
 
-      assert.equal(items.length, 1, 'Migration path works');
+      expect(items.length).toBe(1);
     });
   });
 });

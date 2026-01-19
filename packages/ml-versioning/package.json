@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/ml-versioning",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities",
   "type": "module",
   "main": "./src/index.mjs",

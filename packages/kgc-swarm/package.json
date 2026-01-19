@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-swarm",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering",
   "type": "module",
   "main": "src/index.mjs",

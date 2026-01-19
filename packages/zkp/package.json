@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/zkp",
-  "version": "6.2.0-alpha.1",
+  "version": "6.0.0-rc.3",
   "description": "Zero-Knowledge SPARQL - Privacy-preserving query proofs using zk-SNARKs",
   "type": "module",
   "main": "./src/index.mjs",

@@ -13,11 +13,7 @@ export default defineConfig({
   test: {
     // Parallel execution - 2-4x speedup
     pool: "forks",
-    poolOptions: {
-      forks: {
-        maxForks: 10,
-      },
-    },
+    maxForks: 10,
 
     // Test timeout - 5s SLA (Andon Principle)
     testTimeout: 5000,

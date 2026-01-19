@@ -5,8 +5,7 @@
  * CRITICAL: Run same operation 100x with same inputs → identical outputs + identical receipts
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, describe, expect } from 'vitest';
 
 describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
   test('[L3.2-DIRECT] Receipt generation is deterministic (100x runs)', async () => {
@@ -37,11 +36,9 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
 
     // All hashes should be identical
     const uniqueHashes = new Set(hashes);
-    assert.equal(
-      uniqueHashes.size,
-      1,
-      `Expected 1 unique hash, got ${uniqueHashes.size}. Hashes: ${JSON.stringify(Array.from(uniqueHashes))}`
-    );
+    expect(
+      uniqueHashes.size).toBe(
+      1);
 
     const finalHash = Array.from(uniqueHashes)[0];
     console.log(`[L3.2] ✅ 100/100 receipts have identical hash: ${finalHash.slice(0, 16)}...`);
@@ -81,11 +78,9 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
     }
 
     const uniqueHashes = new Set(chainHashes);
-    assert.equal(
-      uniqueHashes.size,
-      1,
-      `Expected 1 unique chain hash, got ${uniqueHashes.size}`
-    );
+    expect(
+      uniqueHashes.size).toBe(
+      1);
 
     console.log(`[L3.2-CHAIN] ✅ 100/100 chains have identical final hash: ${Array.from(uniqueHashes)[0].slice(0, 16)}...`);
   });
@@ -132,11 +127,9 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
     }
 
     const uniqueRoots = new Set(merkleRoots);
-    assert.equal(
-      uniqueRoots.size,
-      1,
-      `Expected 1 unique merkle root, got ${uniqueRoots.size}`
-    );
+    expect(
+      uniqueRoots.size).toBe(
+      1);
 
     console.log(`[L3.2-MERKLE] ✅ 100/100 merkle batches have identical root: ${Array.from(uniqueRoots)[0].slice(0, 16)}...`);
   });
