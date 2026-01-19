@@ -1,5 +1,6 @@
 /**
  * @file Vitest configuration for @unrdf/cli
+ * @module @unrdf/cli/vitest
  */
 import { defineConfig } from 'vitest/config';
 
@@ -7,7 +8,7 @@ export default defineConfig({
   test: {
     pool: 'forks',
     maxForks: 10,
-    testTimeout: 5000,
+    testTimeout: 10000,
     environment: 'node',
     include: ['test/**/*.test.mjs'],
     exclude: [

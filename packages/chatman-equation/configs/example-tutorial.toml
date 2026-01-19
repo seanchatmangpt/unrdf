@@ -1,0 +1,160 @@
+# Example Tutorial Configuration
+# Demonstrates tutorial template structure
+
+template = "tutorial.tera"
+output = "tutorials/getting-started.md"
+
+title = "Getting Started with Chatman Equation"
+difficulty = "Beginner"
+duration = 20
+prerequisites = ["Basic JavaScript", "Node.js installed"]
+
+overview = """
+This tutorial will teach you how to use the Chatman Equation to measure
+semantic coherence in conversational AI systems. You'll learn the core
+concepts, implement your first equation, and analyze results.
+"""
+
+learning_objectives = [
+  "Understand the Chatman Equation fundamentals",
+  "Calculate semantic coherence scores",
+  "Interpret equation results",
+  "Optimize for different use cases"
+]
+
+# Steps
+[[steps]]
+title = "Install the Package"
+description = "First, install the @unrdf/chatman-equation package."
+
+commands = [
+  "npm install @unrdf/chatman-equation",
+  "# or with pnpm",
+  "pnpm add @unrdf/chatman-equation"
+]
+
+expected_output = """
++ @unrdf/chatman-equation 1.0.0
+"""
+
+checkpoint = "Verify installation was successful"
+verification = "npm list @unrdf/chatman-equation"
+
+tips = [
+  "Use pnpm for better monorepo support",
+  "Check Node.js version is >= 18.0.0"
+]
+
+[[steps]]
+title = "Create Your First Equation"
+description = "Set up a basic Chatman Equation instance."
+
+explanation = """
+The ChatmanEquation class is the main entry point. It requires configuration
+for context window size and coherence thresholds.
+"""
+
+code = """
+import { ChatmanEquation } from '@unrdf/chatman-equation';
+
+// Create equation with default settings
+const equation = new ChatmanEquation({
+  contextWindow: 100000,
+  coherenceThreshold: 0.85
+});
+
+console.log('Equation created successfully!');
+"""
+
+expected_output = """
+Equation created successfully!
+"""
+
+[[steps.common_errors]]
+type = "ImportError"
+description = "Module not found"
+solution = "Ensure package is installed and using ES modules (.mjs or type: module)"
+
+[[steps]]
+title = "Calculate Coherence"
+description = "Use the equation to calculate semantic coherence."
+
+code = """
+const tokens = [
+  { text: 'hello', embedding: [0.1, 0.2, 0.3], weight: 1.0 },
+  { text: 'world', embedding: [0.15, 0.25, 0.35], weight: 1.0 }
+];
+
+const result = equation.calculateCoherence(tokens);
+
+console.log('Coherence:', result.coherence);
+console.log('Entropy:', result.entropy);
+"""
+
+checkpoint = "You should see coherence and entropy values printed"
+
+tips = [
+  "Start with simple token sequences to understand the baseline",
+  "Coherence values range from 0 (incoherent) to 1 (perfectly coherent)"
+]
+
+# Summary
+summary = """
+You've successfully set up the Chatman Equation and calculated your first
+coherence score! You now understand the basics of semantic coherence
+measurement.
+"""
+
+key_points = [
+  "ChatmanEquation requires contextWindow and coherenceThreshold config",
+  "Tokens need text, embedding, and weight properties",
+  "Coherence scores range from 0 to 1",
+  "Higher coherence indicates better semantic alignment"
+]
+
+# Next Steps
+[[next_steps]]
+title = "Advanced Coherence Techniques"
+url = "./advanced-coherence.md"
+description = "Learn about weighted coherence and custom distance metrics"
+
+[[next_steps]]
+title = "Context Propagation"
+url = "./context-propagation.md"
+description = "Model information flow across conversation turns"
+
+# Exercises
+[[exercises]]
+title = "Calculate Multi-Turn Coherence"
+description = "Measure coherence across multiple conversation turns"
+task = """
+Create a function that takes an array of conversation turns and calculates
+the average coherence across all turns.
+"""
+
+hints = [
+  "Use Array.reduce() to accumulate coherence scores",
+  "Divide by the number of turns for the average"
+]
+
+solution = """
+function calculateMultiTurnCoherence(turns, equation) {
+  const scores = turns.map(turn => {
+    return equation.calculateCoherence(turn.tokens);
+  });
+
+  const avgCoherence = scores.reduce((sum, s) => sum + s.coherence, 0) / scores.length;
+  return avgCoherence;
+}
+"""
+
+# Resources
+[[resources]]
+title = "Chatman Equation Paper"
+url = "https://arxiv.org/example"
+type = "Academic Paper"
+
+[[resources]]
+title = "API Reference"
+url = "./reference/chatman-equation-api.md"
+type = "Documentation"

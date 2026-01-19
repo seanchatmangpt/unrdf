@@ -1,0 +1,220 @@
+---
+to: {{ output_dir }}/index.mjs
+description: Barrel export file for all generated type definitions
+requires:
+  - sparql_results: Array of entity bindings from ontology query
+  - output_dir: Target output directory
+---
+/**
+ * @file Generated Types Index
+ * @module {{ module_name | default("generated/types") }}
+ * @description Barrel exports for all auto-generated type definitions from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * DO NOT EDIT MANUALLY - This file is auto-generated from the RDF ontology.
+ * Re-run the sync command to regenerate: `unrdf sync --types`
+ */
+
+// =============================================================================
+// Entity Types (JSDoc @typedef)
+// =============================================================================
+
+/**
+ * Entity type definitions
+ *
+ * Import entity types using JSDoc:
+ * @example
+ * // @type {import('@your-package/types').User}
+ * const user = { id: '123', name: 'Alice' };
+ *
+ * @example
+ * /**
+ *  * @param {import('@your-package/types').User} user
+ *  * @returns {string}
+ *  *\/
+ * function getUserName(user) {
+ *   return user.name;
+ * }
+ */
+export * from './types/entities.mjs';
+
+// =============================================================================
+// Request/Response Types
+// =============================================================================
+
+/**
+ * Request and response type definitions for API operations
+ *
+ * @example
+ * // @type {import('@your-package/types').CreateUserRequest}
+ * const request = { name: 'Alice', email: 'alice@example.com' };
+ */
+export * from './types/requests.mjs';
+
+// =============================================================================
+// Type Guards and Validators
+// =============================================================================
+
+/**
+ * Type guard functions for runtime validation
+ *
+ * @example
+ * import { isUser, assertUser, validateUser } from '@your-package/types';
+ *
+ * // Type guard (boolean check)
+ * if (isUser(data)) {
+ *   console.log(data.name); // data is typed as User
+ * }
+ *
+ * // Assertion (throws on invalid)
+ * const user = assertUser(data); // throws if invalid
+ *
+ * // Validation (detailed errors)
+ * const result = validateUser(data);
+ * if (!result.success) {
+ *   console.error(result.errors);
+ * }
+ */
+export * from './guards/entities.mjs';
+
+// =============================================================================
+// Re-exports for Convenience
+// =============================================================================
+
+// Entity exports
+import {
+  EntityNames,
+  ALL_ENTITY_NAMES,
+} from './types/entities.mjs';
+
+// Request/Response exports
+import {
+  OperationNames,
+  ALL_OPERATION_NAMES,
+  OperationsByMethod,
+} from './types/requests.mjs';
+
+// Guard exports
+import {
+  entitySchemas,
+  getSchema,
+  hasSchema,
+  getEntityNames,
+  validateBatch,
+} from './guards/entities.mjs';
+
+{% set entities = {} %}
+{% for row in sparql_results %}
+{% set entityName = row["?entityName"] | trim %}
+{% if entityName and not entities[entityName] %}
+{% set _ = entities.__setitem__(entityName, true) %}
+{% endif %}
+{% endfor %}
+
+// Import individual type guards and validators
+import {
+{% for entityName in entities | keys | sort %}
+  is{{ entityName }},
+  assert{{ entityName }},
+  validate{{ entityName }},
+  validateBatch{{ entityName }},
+{% endfor %}
+} from './guards/entities.mjs';
+
+// =============================================================================
+// Constants Export
+// =============================================================================
+
+/**
+ * All constants and registries
+ */
+export const constants = {
+  EntityNames,
+  ALL_ENTITY_NAMES,
+  OperationNames,
+  ALL_OPERATION_NAMES,
+  OperationsByMethod,
+};
+
+// =============================================================================
+// Schema Registry Export
+// =============================================================================
+
+/**
+ * Schema registry for dynamic validation
+ */
+export const schemas = {
+  entities: entitySchemas,
+  getSchema,
+  hasSchema,
+  getEntityNames,
+  validateBatch,
+};
+
+// =============================================================================
+// Type Guards Export
+// =============================================================================
+
+/**
+ * All type guard functions
+ */
+export const guards = {
+{% for entityName in entities | keys | sort %}
+  is{{ entityName }},
+  assert{{ entityName }},
+  validate{{ entityName }},
+  validateBatch{{ entityName }},
+{% endfor %}
+};
+
+// =============================================================================
+// Default Export
+// =============================================================================
+
+/**
+ * Default export with all modules
+ */
+export default {
+  // Constants
+  EntityNames,
+  ALL_ENTITY_NAMES,
+  OperationNames,
+  ALL_OPERATION_NAMES,
+  OperationsByMethod,
+
+  // Schemas
+  entitySchemas,
+  getSchema,
+  hasSchema,
+  getEntityNames,
+
+  // Validators
+  validateBatch,
+{% for entityName in entities | keys | sort %}
+  is{{ entityName }},
+  assert{{ entityName }},
+  validate{{ entityName }},
+  validateBatch{{ entityName }},
+{% endfor %}
+
+  // Grouped exports
+  constants,
+  schemas,
+  guards,
+};
+
+// =============================================================================
+// Version and Metadata
+// =============================================================================
+
+/**
+ * Generated types version and metadata
+ * @constant
+ */
+export const __generated__ = Object.freeze({
+  version: '{{ version | default("1.0.0") }}',
+  timestamp: '{{ now | date("YYYY-MM-DDTHH:mm:ssZ") }}',
+  source: '{{ source | default("rdf-ontology") }}',
+  entityCount: {{ entities | length }},
+  generator: '@unrdf/cli/sync',
+});

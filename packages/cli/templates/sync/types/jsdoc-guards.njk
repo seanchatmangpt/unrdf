@@ -1,0 +1,293 @@
+---
+to: {{ output_dir }}/guards/entities.mjs
+description: Type guard functions for runtime entity validation using Zod schemas
+requires:
+  - sparql_results: Array of entity bindings from ontology query
+  - output_dir: Target output directory
+---
+/**
+ * @file Type Guard Functions
+ * @module {{ module_name | default("generated/guards/entities") }}
+ * @description Auto-generated type guards from RDF ontology for runtime type checking
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ *
+ * DO NOT EDIT MANUALLY - This file is auto-generated from the RDF ontology.
+ * Re-run the sync command to regenerate: `unrdf sync --types`
+ */
+
+import { z } from 'zod';
+
+// =============================================================================
+// Entity Schemas (Zod)
+// =============================================================================
+
+{% set entities = {} %}
+{% for row in sparql_results %}
+{% set entityName = row["?entityName"] | trim %}
+{% if entityName %}
+{% if not entities[entityName] %}
+{% set _ = entities.__setitem__(entityName, {
+  "properties": [],
+  "description": row["?entityDescription"] | default(""),
+  "superClass": row["?superClass"] | default("")
+}) %}
+{% endif %}
+{% set prop = {
+  "name": row["?propertyName"] | trim,
+  "type": row["?propertyType"] | default("string"),
+  "required": row["?required"] | default("false") == "true",
+  "description": row["?propertyDescription"] | default(""),
+  "minLength": row["?minLength"] | default(-1) | int,
+  "maxLength": row["?maxLength"] | default(-1) | int,
+  "minimum": row["?minimum"] | default("") ,
+  "maximum": row["?maximum"] | default(""),
+  "pattern": row["?pattern"] | default(""),
+  "format": row["?format"] | default(""),
+  "enum": row["?enumValues"] | default("")
+} %}
+{% if prop.name %}
+{% set _ = entities[entityName].properties.append(prop) %}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+/**
+ * Entity schemas for runtime validation
+ * @constant
+ */
+export const entitySchemas = {
+{% for entityName, entityData in entities | dictsort %}
+  /**
+   * Schema for {{ entityName }}
+   * {{ entityData.description | truncate(60) }}
+   */
+  {{ entityName | lower }}: z.object({
+{% for prop in entityData.properties | sort(attribute='name') %}
+{% set zodType = prop.type | zod_type %}
+{% set zodChain = zodType %}
+{# Apply string constraints #}
+{% if prop.type == "string" or prop.type == "xsd:string" %}
+{% if prop.minLength >= 0 %}
+{% set zodChain = zodChain + ".min(" + prop.minLength | string + ")" %}
+{% endif %}
+{% if prop.maxLength >= 0 %}
+{% set zodChain = zodChain + ".max(" + prop.maxLength | string + ")" %}
+{% endif %}
+{% if prop.format == "email" %}
+{% set zodChain = zodChain + ".email()" %}
+{% elif prop.format == "uri" or prop.format == "url" %}
+{% set zodChain = zodChain + ".url()" %}
+{% elif prop.format == "uuid" %}
+{% set zodChain = zodChain + ".uuid()" %}
+{% elif prop.pattern %}
+{% set zodChain = zodChain + ".regex(/" + prop.pattern + "/)" %}
+{% endif %}
+{% endif %}
+{# Apply numeric constraints #}
+{% if prop.type == "number" or prop.type == "integer" or prop.type == "xsd:integer" or prop.type == "xsd:decimal" %}
+{% if prop.minimum %}
+{% set zodChain = zodChain + ".min(" + prop.minimum | string + ")" %}
+{% endif %}
+{% if prop.maximum %}
+{% set zodChain = zodChain + ".max(" + prop.maximum | string + ")" %}
+{% endif %}
+{% endif %}
+{# Apply enum constraint #}
+{% if prop.enum %}
+{% set enumValues = prop.enum | split(",") %}
+{% set zodChain = "z.enum([" %}
+{% for val in enumValues %}
+{% set zodChain = zodChain + "'" + val | trim + "'" %}
+{% if not loop.last %}{% set zodChain = zodChain + ", " %}{% endif %}
+{% endfor %}
+{% set zodChain = zodChain + "])" %}
+{% endif %}
+{# Apply optional #}
+{% if not prop.required %}
+{% set zodChain = zodChain + ".optional()" %}
+{% endif %}
+    /** {{ prop.description | default(prop.name) | truncate(50) }} */
+    {{ prop.name }}: {{ zodChain }},
+{% endfor %}
+  }),
+
+{% endfor %}
+};
+
+// =============================================================================
+// Type Guard Functions
+// =============================================================================
+
+{% for entityName, entityData in entities | dictsort %}
+/**
+ * Type guard for {{ entityName }}
+ * {{ entityData.description | wordwrap(70) | replace("\n", "\n * ") }}
+ * @param {unknown} value - Value to check
+ * @returns {value is import('../types/entities.mjs').{{ entityName }}} True if value is a valid {{ entityName }}
+ * @example
+ * if (is{{ entityName }}(data)) {
+ *   // data is typed as {{ entityName }}
+ *   console.log(data.id);
+ * }
+ */
+export function is{{ entityName }}(value) {
+  return entitySchemas.{{ entityName | lower }}.safeParse(value).success;
+}
+
+{% endfor %}
+
+// =============================================================================
+// Assertion Functions
+// =============================================================================
+
+{% for entityName, entityData in entities | dictsort %}
+/**
+ * Asserts that value is a valid {{ entityName }}, throws if not
+ * @param {unknown} value - Value to assert
+ * @param {string} [context] - Context for error message
+ * @throws {Error} If value is not a valid {{ entityName }}
+ * @returns {import('../types/entities.mjs').{{ entityName }}} The validated value
+ * @example
+ * const user = assert{{ entityName }}(input);
+ * // user is now typed as {{ entityName }}
+ */
+export function assert{{ entityName }}(value, context = '{{ entityName }}') {
+  const result = entitySchemas.{{ entityName | lower }}.safeParse(value);
+  if (!result.success) {
+    const errors = result.error.issues
+      .map(e => `${e.path.join('.')}: ${e.message}`)
+      .join(', ');
+    throw new Error(`Invalid ${context}: ${errors}`);
+  }
+  return result.data;
+}
+
+{% endfor %}
+
+// =============================================================================
+// Validation Functions with Detailed Errors
+// =============================================================================
+
+{% for entityName, entityData in entities | dictsort %}
+/**
+ * Validates {{ entityName }} and returns detailed result
+ * @param {unknown} value - Value to validate
+ * @returns {{ "{" }}success: boolean, data?: import('../types/entities.mjs').{{ entityName }}, errors?: Array<{path: string, message: string}>{{ "}" }}
+ * @example
+ * const result = validate{{ entityName }}(input);
+ * if (result.success) {
+ *   console.log(result.data);
+ * } else {
+ *   console.error(result.errors);
+ * }
+ */
+export function validate{{ entityName }}(value) {
+  const result = entitySchemas.{{ entityName | lower }}.safeParse(value);
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+  return {
+    success: false,
+    errors: result.error.issues.map(e => ({
+      path: e.path.join('.'),
+      message: e.message,
+      code: e.code,
+    })),
+  };
+}
+
+{% endfor %}
+
+// =============================================================================
+// Batch Validation
+// =============================================================================
+
+/**
+ * Validate multiple entities of the same type
+ * @template T
+ * @param {unknown[]} values - Values to validate
+ * @param {z.ZodSchema<T>} schema - Zod schema to use
+ * @returns {{ "{" }}valid: T[], invalid: Array<{index: number, value: unknown, errors: Array<{path: string, message: string}>}>{{ "}" }}
+ */
+export function validateBatch(values, schema) {
+  const valid = [];
+  const invalid = [];
+
+  for (let i = 0; i < values.length; i++) {
+    const result = schema.safeParse(values[i]);
+    if (result.success) {
+      valid.push(result.data);
+    } else {
+      invalid.push({
+        index: i,
+        value: values[i],
+        errors: result.error.issues.map(e => ({
+          path: e.path.join('.'),
+          message: e.message,
+        })),
+      });
+    }
+  }
+
+  return { valid, invalid };
+}
+
+{% for entityName in entities | keys | sort %}
+/**
+ * Validate batch of {{ entityName }} entities
+ * @param {unknown[]} values - Values to validate
+ * @returns {{ "{" }}valid: import('../types/entities.mjs').{{ entityName }}[], invalid: Array<{index: number, value: unknown, errors: Array<{path: string, message: string}>}>{{ "}" }}
+ */
+export function validateBatch{{ entityName }}(values) {
+  return validateBatch(values, entitySchemas.{{ entityName | lower }});
+}
+
+{% endfor %}
+
+// =============================================================================
+// Schema Registry
+// =============================================================================
+
+/**
+ * Get schema by entity name
+ * @param {string} entityName - Name of the entity
+ * @returns {z.ZodSchema|undefined} The Zod schema or undefined if not found
+ */
+export function getSchema(entityName) {
+  return entitySchemas[entityName.toLowerCase()];
+}
+
+/**
+ * Check if a schema exists for the given entity name
+ * @param {string} entityName - Name of the entity
+ * @returns {boolean} True if schema exists
+ */
+export function hasSchema(entityName) {
+  return entityName.toLowerCase() in entitySchemas;
+}
+
+/**
+ * Get all available entity names
+ * @returns {string[]} Array of entity names
+ */
+export function getEntityNames() {
+  return Object.keys(entitySchemas);
+}
+
+// =============================================================================
+// Module Exports
+// =============================================================================
+
+export default {
+  entitySchemas,
+{% for entityName in entities | keys | sort %}
+  is{{ entityName }},
+  assert{{ entityName }},
+  validate{{ entityName }},
+  validateBatch{{ entityName }},
+{% endfor %}
+  validateBatch,
+  getSchema,
+  hasSchema,
+  getEntityNames,
+};

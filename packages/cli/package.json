@@ -42,14 +42,19 @@
     "sparql"
   ],
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "@unrdf/core": "workspace:*",
     "@unrdf/decision-fabric": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
+    "@unrdf/kgn": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
+    "gray-matter": "^4.0.3",
+    "nunjucks": "^3.2.4",
     "table": "^6.9.0",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.2",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",

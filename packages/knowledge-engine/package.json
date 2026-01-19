@@ -38,12 +38,14 @@
     "rules"
   ],
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "@noble/hashes": "^1.5.0",
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/streaming": "workspace:*",
     "@xenova/transformers": "^2.17.2",
-    "eyereasoner": "^18.23.0"
+    "eyereasoner": "^18.23.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

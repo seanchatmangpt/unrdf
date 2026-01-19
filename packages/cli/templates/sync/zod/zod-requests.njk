@@ -1,0 +1,284 @@
+---
+to: {{ output_dir }}/schemas/requests.mjs
+description: Generates Zod validation schemas for API requests from RDF ontology
+requires:
+  - sparql_results: Array of SPARQL query results with ?operation, ?inputType, ?outputType, ?paramName, ?paramType, ?required
+  - now: Current timestamp for generation metadata
+  - api_version: API version string (e.g., "v1", "v2")
+filters:
+  - zod_type: Converts RDF/XSD types to Zod schema types
+  - camel_case: Converts to camelCase for JavaScript identifiers
+  - pascal_case: Converts to PascalCase for type names
+---
+/**
+ * @file Request Validation Schemas
+ * @module schemas/requests
+ * @description Auto-generated Zod schemas for API request validation
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ * @version {{ api_version | default("v1") }}
+ *
+ * SPARQL Query Used:
+ * ```sparql
+ * SELECT ?operation ?inputType ?outputType ?paramName ?paramType ?required ?description
+ * WHERE {
+ *   ?op a schema:Action ;
+ *       rdfs:label ?operation ;
+ *       schema:object ?inputType ;
+ *       schema:result ?outputType .
+ *   OPTIONAL {
+ *     ?op schema:potentialAction/schema:actionOption ?param .
+ *     ?param rdfs:label ?paramName ;
+ *            rdfs:range ?paramType .
+ *     OPTIONAL { ?param sh:minCount ?minCount }
+ *     BIND(IF(BOUND(?minCount) && ?minCount > 0, "true", "false") AS ?required)
+ *   }
+ *   OPTIONAL { ?param rdfs:comment ?description }
+ * }
+ * ORDER BY ?operation ?paramName
+ * ```
+ */
+import { z } from 'zod';
+
+{#
+  Template Helper: Group SPARQL results by operation name
+  This creates a mapping of operation -> { input, output, params }
+
+  Expected SPARQL result structure:
+  {
+    "?operation": "createUser",
+    "?inputType": "UserInput",
+    "?outputType": "User",
+    "?paramName": "email",
+    "?paramType": "xsd:string",
+    "?required": "true",
+    "?description": "User email for registration"
+  }
+#}
+{% set operations = {} %}
+{% for row in sparql_results %}
+  {% set opName = row["?operation"] | trim %}
+  {% if opName %}
+    {% if not operations[opName] %}
+      {% set _ = operations.__setitem__(opName, {
+        "inputType": row["?inputType"] | trim,
+        "outputType": row["?outputType"] | trim,
+        "httpMethod": row["?httpMethod"] | default("POST") | trim,
+        "path": row["?path"] | default("/" + opName) | trim,
+        "params": []
+      }) %}
+    {% endif %}
+    {% if row["?paramName"] %}
+      {% set _ = operations[opName]["params"].append({
+        "name": row["?paramName"] | trim,
+        "type": row["?paramType"] | trim,
+        "required": row["?required"] == "true",
+        "description": row["?description"] or "",
+        "location": row["?paramLocation"] | default("body") | trim
+      }) %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+/**
+ * Common request validation schemas
+ */
+export const commonSchemas = {
+  /** Pagination parameters */
+  pagination: z.object({
+    page: z.number().int().min(1).default(1).describe('Page number (1-indexed)'),
+    limit: z.number().int().min(1).max(100).default(20).describe('Items per page'),
+    offset: z.number().int().min(0).optional().describe('Offset for cursor pagination'),
+  }),
+
+  /** Sorting parameters */
+  sorting: z.object({
+    sortBy: z.string().optional().describe('Field to sort by'),
+    sortOrder: z.enum(['asc', 'desc']).default('asc').describe('Sort direction'),
+  }),
+
+  /** Request metadata */
+  requestMeta: z.object({
+    requestId: z.string().uuid().optional().describe('Unique request identifier'),
+    timestamp: z.string().datetime().optional().describe('Request timestamp'),
+    clientVersion: z.string().optional().describe('Client version'),
+  }),
+
+  /** Standard query parameters */
+  queryParams: z.object({
+    fields: z.array(z.string()).optional().describe('Fields to include'),
+    include: z.array(z.string()).optional().describe('Related resources to include'),
+    filter: z.record(z.string(), z.unknown()).optional().describe('Filter criteria'),
+  }),
+};
+
+{% for opName, opData in operations | items %}
+{# Generate request schema for each operation #}
+/**
+ * {{ opName | pascal_case }}Request validation schema
+ * @description Request schema for {{ opName }} operation
+ * @method {{ opData.httpMethod }}
+ * @path {{ opData.path }}
+ */
+export const {{ opName | camel_case }}RequestSchema = z.object({
+{% for param in opData.params %}
+{% if param.location == "body" or param.location == "query" %}
+  /**
+   * {{ param.description or param.name }}
+   * @location {{ param.location }}
+   */
+  {{ param.name | camel_case }}: {{ param.type | zod_type }}{% if not param.required %}.optional(){% endif %}{% if param.description %}.describe('{{ param.description | escape }}'){% endif %},
+{% endif %}
+{% endfor %}
+});
+
+/**
+ * {{ opName | pascal_case }}Request type
+ * @typedef {z.infer<typeof {{ opName | camel_case }}RequestSchema>} {{ opName | pascal_case }}Request
+ */
+
+/**
+ * {{ opName | pascal_case }}PathParams validation schema
+ * @description Path parameter schema for {{ opName }}
+ */
+export const {{ opName | camel_case }}PathParamsSchema = z.object({
+{% for param in opData.params %}
+{% if param.location == "path" %}
+  /** {{ param.description or param.name }} */
+  {{ param.name | camel_case }}: {{ param.type | zod_type }}{% if param.description %}.describe('{{ param.description | escape }}'){% endif %},
+{% endif %}
+{% endfor %}
+});
+
+/**
+ * {{ opName | pascal_case }}QueryParams validation schema
+ * @description Query parameter schema for {{ opName }}
+ */
+export const {{ opName | camel_case }}QueryParamsSchema = z.object({
+{% for param in opData.params %}
+{% if param.location == "query" %}
+  /** {{ param.description or param.name }} */
+  {{ param.name | camel_case }}: {{ param.type | zod_type }}{% if not param.required %}.optional(){% endif %}{% if param.description %}.describe('{{ param.description | escape }}'){% endif %},
+{% endif %}
+{% endfor %}
+}).merge(commonSchemas.pagination.partial()).merge(commonSchemas.sorting.partial());
+
+/**
+ * Complete {{ opName | pascal_case }} request with all parameters
+ */
+export const {{ opName | camel_case }}FullRequestSchema = z.object({
+  body: {{ opName | camel_case }}RequestSchema,
+  params: {{ opName | camel_case }}PathParamsSchema,
+  query: {{ opName | camel_case }}QueryParamsSchema,
+});
+
+/**
+ * Validates {{ opName }} request body
+ * @param {unknown} data - Request body to validate
+ * @returns {{ "{" }}success: boolean, data?: {{ opName | pascal_case }}Request, error?: z.ZodError{{ "}" }}
+ */
+export function validate{{ opName | pascal_case }}Request(data) {
+  return {{ opName | camel_case }}RequestSchema.safeParse(data);
+}
+
+{% endfor %}
+
+/**
+ * Request schema registry
+ * @description Maps operation names to their request schemas
+ */
+export const requestSchemas = {
+{% for opName in operations | keys %}
+  /** {{ opName }} request schema */
+  {{ opName | camel_case }}: {{ opName | camel_case }}RequestSchema,
+{% endfor %}
+};
+
+/**
+ * Path parameter schema registry
+ */
+export const pathParamSchemas = {
+{% for opName in operations | keys %}
+  {{ opName | camel_case }}: {{ opName | camel_case }}PathParamsSchema,
+{% endfor %}
+};
+
+/**
+ * Query parameter schema registry
+ */
+export const queryParamSchemas = {
+{% for opName in operations | keys %}
+  {{ opName | camel_case }}: {{ opName | camel_case }}QueryParamsSchema,
+{% endfor %}
+};
+
+/**
+ * Request validator registry
+ */
+export const requestValidators = {
+{% for opName in operations | keys %}
+  {{ opName | camel_case }}: validate{{ opName | pascal_case }}Request,
+{% endfor %}
+};
+
+/**
+ * Get request schema by operation name
+ * @param {string} operationName - Operation name
+ * @returns {z.ZodSchema | undefined} Zod schema for request
+ */
+export function getRequestSchema(operationName) {
+  const normalized = operationName.replace(/[-_\s]/g, '');
+  const key = normalized.charAt(0).toLowerCase() + normalized.slice(1);
+  return requestSchemas[key];
+}
+
+/**
+ * Validate request by operation name
+ * @param {string} operationName - Operation name
+ * @param {unknown} data - Request data to validate
+ * @returns {{ "{" }}success: boolean, data?: unknown, error?: z.ZodError{{ "}" }}
+ */
+export function validateRequest(operationName, data) {
+  const schema = getRequestSchema(operationName);
+  if (!schema) {
+    return { success: false, error: new Error(`Unknown operation: ${operationName}`) };
+  }
+  return schema.safeParse(data);
+}
+
+/**
+ * List all available operations
+ * @returns {string[]} Array of operation names
+ */
+export function listOperations() {
+  return Object.keys(requestSchemas);
+}
+
+/**
+ * Operation metadata for API documentation
+ */
+export const operationMetadata = {
+{% for opName, opData in operations | items %}
+  {{ opName | camel_case }}: {
+    name: '{{ opName }}',
+    method: '{{ opData.httpMethod }}',
+    path: '{{ opData.path }}',
+    inputType: '{{ opData.inputType }}',
+    outputType: '{{ opData.outputType }}',
+    paramCount: {{ opData.params | length }},
+  },
+{% endfor %}
+};
+
+/**
+ * Generated metadata
+ */
+export const requestMetadata = {
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss.SSSZ") }}',
+  apiVersion: '{{ api_version | default("v1") }}',
+  operationCount: {{ operations | keys | length }},
+  operations: [
+{% for opName in operations | keys %}
+    '{{ opName }}',
+{% endfor %}
+  ],
+};

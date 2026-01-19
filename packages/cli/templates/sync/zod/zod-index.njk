@@ -1,0 +1,209 @@
+---
+to: {{ output_dir }}/schemas/index.mjs
+description: Barrel export file for all generated Zod schemas
+requires:
+  - now: Current timestamp for generation metadata
+  - entities: List of entity names (from entities template)
+  - operations: List of operation names (from requests template)
+  - api_version: API version string
+---
+/**
+ * @file Schema Index
+ * @module schemas
+ * @description Barrel export for all auto-generated Zod validation schemas
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ * @version {{ api_version | default("v1") }}
+ *
+ * Usage:
+ * ```javascript
+ * import { userSchema, validateUser, entitySchemas } from './schemas/index.mjs';
+ * import { createUserRequestSchema, validateRequest } from './schemas/index.mjs';
+ *
+ * // Validate entity
+ * const result = validateUser({ email: 'user@example.com' });
+ *
+ * // Validate request
+ * const reqResult = validateRequest('createUser', requestData);
+ * ```
+ */
+
+// =============================================================================
+// Entity Schemas
+// =============================================================================
+
+export {
+  // Base schemas
+  baseSchemas,
+
+  // Entity schemas
+{% for entityName in entities %}
+  {{ entityName | lower | camel_case }}Schema,
+{% endfor %}
+
+  // Entity validators
+{% for entityName in entities %}
+  validate{{ entityName }},
+  assert{{ entityName }},
+{% endfor %}
+
+  // Registry and utilities
+  entitySchemas,
+  entityValidators,
+  getEntitySchema,
+  validateEntity,
+  listEntities,
+  entityMetadata,
+} from './entities.mjs';
+
+// =============================================================================
+// Request Schemas
+// =============================================================================
+
+export {
+  // Common schemas
+  commonSchemas,
+
+  // Request schemas
+{% for opName in operations %}
+  {{ opName | camel_case }}RequestSchema,
+  {{ opName | camel_case }}PathParamsSchema,
+  {{ opName | camel_case }}QueryParamsSchema,
+  {{ opName | camel_case }}FullRequestSchema,
+{% endfor %}
+
+  // Request validators
+{% for opName in operations %}
+  validate{{ opName | pascal_case }}Request,
+{% endfor %}
+
+  // Registry and utilities
+  requestSchemas,
+  pathParamSchemas,
+  queryParamSchemas,
+  requestValidators,
+  getRequestSchema,
+  validateRequest,
+  listOperations,
+  operationMetadata,
+  requestMetadata,
+} from './requests.mjs';
+
+// =============================================================================
+// Re-export Zod for convenience
+// =============================================================================
+
+export { z } from 'zod';
+
+// =============================================================================
+// Combined Utilities
+// =============================================================================
+
+/**
+ * Validate any data against a named schema
+ * @param {'entity' | 'request'} schemaType - Type of schema
+ * @param {string} name - Entity or operation name
+ * @param {unknown} data - Data to validate
+ * @returns {{ "{" }}success: boolean, data?: unknown, error?: Error | z.ZodError{{ "}" }}
+ */
+export function validate(schemaType, name, data) {
+  switch (schemaType) {
+    case 'entity':
+      return validateEntity(name, data);
+    case 'request':
+      return validateRequest(name, data);
+    default:
+      return { success: false, error: new Error(`Unknown schema type: ${schemaType}`) };
+  }
+}
+
+/**
+ * Get schema by type and name
+ * @param {'entity' | 'request'} schemaType - Type of schema
+ * @param {string} name - Entity or operation name
+ * @returns {z.ZodSchema | undefined} The schema if found
+ */
+export function getSchema(schemaType, name) {
+  switch (schemaType) {
+    case 'entity':
+      return getEntitySchema(name);
+    case 'request':
+      return getRequestSchema(name);
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * List all available schema names
+ * @returns {{ "{" }}entities: string[], operations: string[]{{ "}" }}
+ */
+export function listSchemas() {
+  return {
+    entities: listEntities(),
+    operations: listOperations(),
+  };
+}
+
+// =============================================================================
+// Type Exports (for JSDoc)
+// =============================================================================
+
+/**
+ * @typedef {import('./entities.mjs').entityMetadata} EntityMetadata
+ * @typedef {import('./requests.mjs').requestMetadata} RequestMetadata
+ */
+
+{% for entityName in entities %}
+/**
+ * @typedef {import('./entities.mjs').{{ entityName }}} {{ entityName }}
+ */
+{% endfor %}
+
+{% for opName in operations %}
+/**
+ * @typedef {import('./requests.mjs').{{ opName | pascal_case }}Request} {{ opName | pascal_case }}Request
+ */
+{% endfor %}
+
+// =============================================================================
+// Schema Metadata
+// =============================================================================
+
+/**
+ * Combined metadata for all generated schemas
+ */
+export const schemaMetadata = {
+  generatedAt: '{{ now | date("YYYY-MM-DDTHH:mm:ss.SSSZ") }}',
+  apiVersion: '{{ api_version | default("v1") }}',
+  counts: {
+    entities: {{ entities | length }},
+    operations: {{ operations | length }},
+    total: {{ (entities | length) + (operations | length) }},
+  },
+  entities: [
+{% for entityName in entities %}
+    '{{ entityName }}',
+{% endfor %}
+  ],
+  operations: [
+{% for opName in operations %}
+    '{{ opName }}',
+{% endfor %}
+  ],
+};
+
+/**
+ * Schema version for compatibility checks
+ */
+export const SCHEMA_VERSION = '{{ api_version | default("v1") }}';
+
+/**
+ * Check if schemas are compatible with a version
+ * @param {string} requiredVersion - Required version
+ * @returns {boolean} Whether schemas are compatible
+ */
+export function isCompatibleVersion(requiredVersion) {
+  const [major] = SCHEMA_VERSION.replace(/^v/, '').split('.');
+  const [reqMajor] = requiredVersion.replace(/^v/, '').split('.');
+  return major === reqMajor;
+}

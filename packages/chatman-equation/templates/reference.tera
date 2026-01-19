@@ -1,0 +1,94 @@
+# {{ title }}
+
+**Version**: {{ version }}
+
+---
+
+{% if class %}
+## `{{ class.name }}`
+
+{{ class.description }}
+
+### Constructor
+
+{% for constructor in class.constructor %}
+```typescript
+{{ constructor.signature }}
+```
+
+{{ constructor.description }}
+
+{% if constructor.example %}
+#### Example
+
+```javascript
+{{ constructor.example.code }}
+```
+{% endif %}
+
+{% endfor %}
+
+---
+
+{% endif %}
+
+{% if methods %}
+## Methods
+
+{% for method in methods %}
+### `{{ method.name }}`
+
+```typescript
+{{ method.signature }}
+```
+
+{{ method.description }}
+
+{% if method.example %}
+#### Example
+
+```javascript
+{{ method.example.code }}
+```
+{% endif %}
+
+---
+
+{% endfor %}
+{% endif %}
+
+{% if schema %}
+## {{ schema.name }} Schema
+
+{{ schema.description }}
+
+### Fields
+
+{% for field in schema.fields %}
+#### `{{ field.name }}`
+
+**Type**: `{{ field.type }}`
+{% if field.required %}**Required**{% else %}**Optional**{% endif %}
+
+{{ field.description }}
+
+{% if field.example %}
+**Example**: `{{ field.example }}`
+{% endif %}
+
+{% endfor %}
+
+{% if schema.example %}
+### Example
+
+```json
+{{ schema.example.code }}
+```
+{% endif %}
+
+{% endif %}
+
+---
+
+**Generated from**: `packages/chatman-equation/docs-config/reference.toml`
+**Last updated**: 2026-01-18

@@ -1,0 +1,49 @@
+[project]
+name = "blog-api"
+version = "1.0.0"
+description = "Blog API example for UNRDF sync"
+
+[ontology]
+source = "ontology/blog-api.ttl"
+format = "turtle"
+
+[generation]
+output_dir = "lib"
+
+[[generation.rules]]
+name = "zod-entities"
+description = "Generate Zod validation schemas for entities"
+template = "templates/zod-entities.njk"
+output_file = "schemas/entities.mjs"
+query = """
+SELECT ?entityName ?propertyName ?propertyType ?required ?propertyDescription
+WHERE {
+  ?entity a api:Entity ;
+          api:name ?entityName ;
+          api:hasProperty ?property .
+  ?property api:name ?propertyName ;
+            api:type ?propertyType .
+  OPTIONAL { ?property api:required ?required }
+  OPTIONAL { ?property rdfs:comment ?propertyDescription }
+}
+ORDER BY ?entityName ?propertyName
+"""
+
+[[generation.rules]]
+name = "jsdoc-types"
+description = "Generate JSDoc type definitions"
+template = "templates/jsdoc-types.njk"
+output_file = "types/entities.mjs"
+query = """
+SELECT ?entityName ?propertyName ?propertyType ?required ?propertyDescription
+WHERE {
+  ?entity a api:Entity ;
+          api:name ?entityName ;
+          api:hasProperty ?property .
+  ?property api:name ?propertyName ;
+            api:type ?propertyType .
+  OPTIONAL { ?property api:required ?required }
+  OPTIONAL { ?property rdfs:comment ?propertyDescription }
+}
+ORDER BY ?entityName ?propertyName
+"""

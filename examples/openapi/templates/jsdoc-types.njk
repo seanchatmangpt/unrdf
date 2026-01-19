@@ -1,0 +1,23 @@
+---
+to: types/entities.mjs
+description: Generates JSDoc type definitions for entities
+---
+/**
+ * @file Entity Type Definitions
+ * @description Auto-generated JSDoc types from RDF ontology
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }}
+ */
+
+{% set entities = sparql_results | groupBy("?entityName") %}
+{% for entityName, properties in entities %}
+/**
+ * {{ entityName }} entity
+ * @typedef {Object} {{ entityName }}
+{% for prop in properties %}
+ * @property {{ "{" }}{{ prop["?propertyType"] | jsdocType }}{{ "}" }} {% if prop["?required"] != "true" %}[{% endif %}{{ prop["?propertyName"] }}{% if prop["?required"] != "true" %}]{% endif %} - {{ prop["?propertyDescription"] | default(prop["?propertyName"]) }}
+{% endfor %}
+ */
+
+{% endfor %}
+// Type definitions are JSDoc-only (no runtime exports needed)
+// Use these types via: @type {import('./entities.mjs').User}
