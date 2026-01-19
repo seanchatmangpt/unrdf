@@ -6,7 +6,6 @@
  */
 
 import { z } from 'zod';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
 
 const ReactiveTriggerSchema = z.object({
@@ -33,34 +32,15 @@ const ChangeEventSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
-/**
- * Trigger ID validation schema
- */
-const TriggerIdSchema = z.string().min(1);
-
-/**
- * Subscription ID validation schema
- */
-const SubscriptionIdSchema = z.string().min(1);
-
-/**
- * Feed validation schema
- */
 const FeedSchema = z.object({
-  subscribe: z.function().args(z.any()).returns(z.any()),
-  unsubscribe: z.function().args(z.any()).returns(z.any()).optional(),
+  subscribe: z.any(),
+  unsubscribe: z.any().optional(),
 }).passthrough();
 
-/**
- * Daemon validation schema
- */
 const DaemonSchema = z.object({
-  execute: z.function().args(z.string()).returns(z.promise(z.any())).optional(),
+  execute: z.any().optional(),
 }).passthrough();
 
-/**
- * Pattern validation schema
- */
 const PatternSchema = z.union([
   z.string(),
   z.object({
@@ -71,16 +51,6 @@ const PatternSchema = z.union([
     graph: z.any().optional(),
   })
 ]);
-
-/**
- * Operation ID validation schema
- */
-const OperationIdSchema = z.string().min(1);
-
-/**
- * Metadata validation schema
- */
-const MetadataSchema = z.record(z.any()).optional();
 
 /**
  * Manages reactive subscriptions and pattern matching for daemon operations
@@ -117,11 +87,10 @@ export class ReactiveSubscriptionManager {
    */
   registerTrigger(pattern, operationId, metadata = {}) {
     const validatedPattern = PatternSchema.parse(pattern);
-    const validatedOperationId = OperationIdSchema.parse(operationId);
-    const validatedMetadata = MetadataSchema.parse(metadata) || {};
+    const validatedOperationId = z.string().min(1).parse(operationId);
+    const validatedMetadata = z.record(z.any()).optional().parse(metadata) || {};
 
-    const triggerData = { pattern: validatedPattern, operationId: validatedOperationId, metadata: validatedMetadata };
-    const trigger = ReactiveTriggerSchema.parse(triggerData);
+    const trigger = ReactiveTriggerSchema.parse({ pattern: validatedPattern, operationId: validatedOperationId, metadata: validatedMetadata });
 
     const triggerId = `trigger_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     this.triggers.set(triggerId, {
@@ -139,7 +108,7 @@ export class ReactiveSubscriptionManager {
    * @returns {boolean} Whether trigger was found and removed
    */
   unregisterTrigger(triggerId) {
-    const validated = TriggerIdSchema.parse(triggerId);
+    const validated = z.string().min(1).parse(triggerId);
     const removed = this.triggers.delete(validated);
     if (removed) {
       this.debounceTimers.delete(validated);
@@ -157,31 +126,14 @@ export class ReactiveSubscriptionManager {
    * @private
    */
   matchesPattern(change, pattern) {
-    if (typeof pattern === 'string') {
-      return change.type === pattern;
-    }
+    if (typeof pattern === 'string') return change.type === pattern;
     if (pattern.type && pattern.type !== change.type) return false;
     const q = change.quad;
-    if (pattern.subject) {
-      const subjectValue = pattern.subject?.value !== undefined ? pattern.subject.value : pattern.subject;
-      const quadSubjectValue = q.subject?.value !== undefined ? q.subject?.value : q.subject;
-      if (quadSubjectValue !== subjectValue) return false;
-    }
-    if (pattern.predicate) {
-      const predicateValue = pattern.predicate?.value !== undefined ? pattern.predicate.value : pattern.predicate;
-      const quadPredicateValue = q.predicate?.value !== undefined ? q.predicate?.value : q.predicate;
-      if (quadPredicateValue !== predicateValue) return false;
-    }
-    if (pattern.object) {
-      const objectValue = pattern.object?.value !== undefined ? pattern.object.value : pattern.object;
-      const quadObjectValue = q.object?.value !== undefined ? q.object?.value : q.object;
-      if (quadObjectValue !== objectValue) return false;
-    }
-    if (pattern.graph) {
-      const graphValue = pattern.graph?.value !== undefined ? pattern.graph.value : pattern.graph;
-      const quadGraphValue = q.graph?.value !== undefined ? q.graph?.value : q.graph;
-      if (quadGraphValue !== graphValue) return false;
-    }
+    const getValue = (obj) => obj?.value !== undefined ? obj?.value : obj;
+    if (pattern.subject && getValue(q.subject) !== getValue(pattern.subject)) return false;
+    if (pattern.predicate && getValue(q.predicate) !== getValue(pattern.predicate)) return false;
+    if (pattern.object && getValue(q.object) !== getValue(pattern.object)) return false;
+    if (pattern.graph && getValue(q.graph) !== getValue(pattern.graph)) return false;
     return true;
   }
 
@@ -348,7 +300,7 @@ export class ReactiveSubscriptionManager {
    * @returns {boolean} Whether subscription was found and removed
    */
   unsubscribe(subscriptionId) {
-    const validated = SubscriptionIdSchema.parse(subscriptionId);
+    const validated = z.string().min(1).parse(subscriptionId);
     const subscription = this.subscriptions.get(validated);
     if (!subscription) return false;
 
@@ -479,8 +431,8 @@ export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
 export function registerReactiveTrigger(daemon, pattern, operationId, metadata = {}) {
   DaemonSchema.parse(daemon);
   const validatedPattern = PatternSchema.parse(pattern);
-  const validatedOperationId = OperationIdSchema.parse(operationId);
-  const validatedMetadata = MetadataSchema.parse(metadata) || {};
+  const validatedOperationId = z.string().min(1).parse(operationId);
+  const validatedMetadata = z.record(z.any()).optional().parse(metadata) || {};
 
   if (!daemon._reactiveManager) {
     throw new Error('Daemon must be subscribed to change feeds first');

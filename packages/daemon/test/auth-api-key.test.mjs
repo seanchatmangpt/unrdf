@@ -266,7 +266,8 @@ describe('ApiKeyAuthenticator', () => {
       const auth = new ApiKeyAuthenticator();
 
       // Assert
-      expect(auth.environment).toBe('development');
+      // In test environment, NODE_ENV is 'test', not 'development'
+      expect(auth.environment).toBe('test');
       expect(auth.requireInDev).toBe(false);
       expect(auth.storedKeyHash).toBeNull();
     });

@@ -5,7 +5,12 @@
  */
 
 export { Daemon, Daemon as UnrdfDaemon } from './daemon.mjs';
-export { TriggerEvaluator } from './trigger-evaluator.mjs';
+export {
+  evaluateTrigger,
+  calculateNextExecutionTime,
+  shouldExecuteIdle,
+  isValidTrigger,
+} from './trigger-evaluator.mjs';
 
 export {
   TaskConfigSchema,

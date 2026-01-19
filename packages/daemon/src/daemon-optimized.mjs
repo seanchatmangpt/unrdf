@@ -201,10 +201,8 @@ export class OptimizedDaemon extends EventEmitter {
     }
 
     this.operations.delete(operationId);
-    const index = this.operationQueue.indexOf(operationId);
-    if (index > -1) {
-      this.operationQueue.splice(index, 1);
-    }
+    // Filter instead of indexOf+splice for better performance with large queues
+    this.operationQueue = this.operationQueue.filter(id => id !== operationId);
 
     this.logger.debug(`[Daemon ${this.nodeId}] Operation unscheduled: ${operationId}`);
     return true;

@@ -47,9 +47,12 @@ export const ExecuteQueryOptionsSchema = z.object({
 /**
  * SPARQL query validation schema
  */
-export const SparqlQuerySchema = z.string().min(1).refine(
-  (query) => query.trim().length > 0,
-  { message: 'SPARQL query must be non-empty' }
+export const SparqlQuerySchema = z.string({
+  required_error: 'Invalid SPARQL query: query is required',
+  invalid_type_error: 'Invalid SPARQL query: must be a string'
+}).refine(
+  (query) => query && query.trim().length > 0,
+  { message: 'Invalid SPARQL query: must be a non-empty string' }
 );
 
 /**

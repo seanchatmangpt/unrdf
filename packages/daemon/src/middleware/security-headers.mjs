@@ -4,115 +4,29 @@
  * @description Production-grade security middleware with CSP, CORS, rate limiting, and input sanitization
  */
 
-import { z } from 'zod';
 import { createHash } from 'crypto';
+import {
+  CSPConfigSchema,
+  CORSConfigSchema,
+  RequestLimitsSchema,
+  RateLimitConfigSchema,
+  SecurityHeadersConfigSchema,
+} from './security-schemas.mjs';
+import { SANITIZATION_PATTERNS } from './sanitization-patterns.mjs';
+import { DEFAULT_SECURITY_CONFIG } from './security-defaults.mjs';
+import { generateCSPHeader, generateNonce } from './csp-utils.mjs';
 
-/**
- * Content Security Policy configuration schema
- */
-export const CSPConfigSchema = z.object({
-  defaultSrc: z.array(z.string()).default(["'self'"]),
-  scriptSrc: z.array(z.string()).default(["'self'"]),
-  styleSrc: z.array(z.string()).default(["'self'"]),
-  imgSrc: z.array(z.string()).default(["'self'", 'data:', 'https:']),
-  connectSrc: z.array(z.string()).default(["'self'"]),
-  fontSrc: z.array(z.string()).default(["'self'"]),
-  objectSrc: z.array(z.string()).default(["'none'"]),
-  mediaSrc: z.array(z.string()).default(["'self'"]),
-  frameSrc: z.array(z.string()).default(["'none'"]),
-  reportUri: z.string().optional(),
-  reportOnly: z.boolean().default(false),
-});
-
-/**
- * CORS configuration schema
- */
-export const CORSConfigSchema = z.object({
-  origin: z.union([
-    z.string(),
-    z.array(z.string()),
-    z.function(),
-  ]).default('*'),
-  methods: z.array(z.string()).default(['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']),
-  allowedHeaders: z.array(z.string()).default(['Content-Type', 'Authorization', 'X-API-Key']),
-  exposedHeaders: z.array(z.string()).default([]),
-  credentials: z.boolean().default(false),
-  maxAge: z.number().default(86400), // 24 hours
-  preflightContinue: z.boolean().default(false),
-});
-
-/**
- * Request limits configuration schema
- */
-export const RequestLimitsSchema = z.object({
-  maxBodySize: z.number().default(10 * 1024 * 1024), // 10MB
-  maxHeaderSize: z.number().default(8192), // 8KB
-  maxUrlLength: z.number().default(2048), // 2KB
-  timeout: z.number().default(30000), // 30 seconds
-});
-
-/**
- * Rate limiting configuration schema
- */
-export const RateLimitConfigSchema = z.object({
-  windowMs: z.number().default(60000), // 1 minute
-  maxRequests: z.number().default(100),
-  keyGenerator: z.function().optional(),
-  skipSuccessfulRequests: z.boolean().default(false),
-  skipFailedRequests: z.boolean().default(false),
-});
-
-/**
- * Security headers configuration schema
- */
-export const SecurityHeadersConfigSchema = z.object({
-  csp: CSPConfigSchema.optional(),
-  cors: CORSConfigSchema.optional(),
-  requestLimits: RequestLimitsSchema.optional(),
-  rateLimit: RateLimitConfigSchema.optional(),
-  enableHSTS: z.boolean().default(true),
-  hstsMaxAge: z.number().default(31536000), // 1 year
-  enableNoSniff: z.boolean().default(true),
-  enableXFrameOptions: z.boolean().default(true),
-  xFrameOptions: z.enum(['DENY', 'SAMEORIGIN']).default('DENY'),
-  enableXSSProtection: z.boolean().default(true),
-  enableReferrerPolicy: z.boolean().default(true),
-  referrerPolicy: z.enum([
-    'no-referrer',
-    'no-referrer-when-downgrade',
-    'origin',
-    'origin-when-cross-origin',
-    'same-origin',
-    'strict-origin',
-    'strict-origin-when-cross-origin',
-    'unsafe-url',
-  ]).default('strict-origin-when-cross-origin'),
-  enablePermissionsPolicy: z.boolean().default(true),
-  customHeaders: z.record(z.string(), z.string()).default({}),
-});
-
-/**
- * Input sanitization patterns
- */
-const SANITIZATION_PATTERNS = {
-  // SQL Injection patterns
-  sql: /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)|(-{2})|([';])/gi,
-
-  // XSS patterns
-  xss: /<script[^>]*>[\s\S]*?<\/script>|<\/script>|<script[^>]*>|<iframe[^>]*>[\s\S]*?<\/iframe>|<\/iframe>|<iframe[^>]*>|javascript:|on\w+\s*=/gi,
-
-  // Path traversal
-  pathTraversal: /\.\.[\/\\]/g,
-
-  // Command injection
-  commandInjection: /[;&|`$(){}[\]<>]/g,
-
-  // LDAP injection
-  ldap: /[()&|!*]/g,
-
-  // NoSQL injection
-  nosql: /[${}]/g,
+// Re-export schemas for backward compatibility
+export {
+  CSPConfigSchema,
+  CORSConfigSchema,
+  RequestLimitsSchema,
+  RateLimitConfigSchema,
+  SecurityHeadersConfigSchema,
 };
+
+// Re-export defaults
+export { DEFAULT_SECURITY_CONFIG };
 
 /**
  * SecurityHeadersMiddleware - Comprehensive security middleware
@@ -125,59 +39,24 @@ export class SecurityHeadersMiddleware {
     this.config = SecurityHeadersConfigSchema.parse(config);
     this.rateLimitStore = new Map();
     this.requestTimeouts = new Map();
-
-    // Initialize CSP nonce generator
     this.nonceCache = new Map();
   }
 
   /**
-   * Generate CSP header value
+   * Generate CSP header value (wrapper for backward compatibility)
    * @param {string} [nonce] - Optional nonce for inline scripts
    * @returns {string} CSP header value
    */
   generateCSPHeader(nonce) {
-    const csp = this.config.csp || CSPConfigSchema.parse({});
-    const directives = [];
-
-    const addDirective = (name, values) => {
-      if (values && values.length > 0) {
-        const valueStr = values.map(v => {
-          if (v === "'nonce'" && nonce) {
-            return `'nonce-${nonce}'`;
-          }
-          return v;
-        }).join(' ');
-        directives.push(`${name} ${valueStr}`);
-      }
-    };
-
-    addDirective('default-src', csp.defaultSrc);
-    addDirective('script-src', csp.scriptSrc);
-    addDirective('style-src', csp.styleSrc);
-    addDirective('img-src', csp.imgSrc);
-    addDirective('connect-src', csp.connectSrc);
-    addDirective('font-src', csp.fontSrc);
-    addDirective('object-src', csp.objectSrc);
-    addDirective('media-src', csp.mediaSrc);
-    addDirective('frame-src', csp.frameSrc);
-
-    if (csp.reportUri) {
-      directives.push(`report-uri ${csp.reportUri}`);
-    }
-
-    return directives.join('; ');
+    return generateCSPHeader(this.config.csp, nonce);
   }
 
   /**
-   * Generate random nonce for CSP
+   * Generate random nonce for CSP (wrapper for backward compatibility)
    * @returns {string} Base64 nonce
    */
   generateNonce() {
-    const buffer = Buffer.allocUnsafe(16);
-    for (let i = 0; i < 16; i++) {
-      buffer[i] = Math.floor(Math.random() * 256);
-    }
-    return buffer.toString('base64');
+    return generateNonce();
   }
 
   /**
@@ -401,8 +280,8 @@ export class SecurityHeadersMiddleware {
 
     // Content Security Policy
     if (this.config.csp) {
-      const nonce = options.nonce || this.generateNonce();
-      const cspHeader = this.generateCSPHeader(nonce);
+      const nonce = options.nonce || generateNonce();
+      const cspHeader = generateCSPHeader(this.config.csp, nonce);
       const headerName = this.config.csp.reportOnly
         ? 'Content-Security-Policy-Report-Only'
         : 'Content-Security-Policy';
@@ -599,47 +478,3 @@ export class SecurityHeadersMiddleware {
 export function createSecurityMiddleware(config) {
   return new SecurityHeadersMiddleware(config);
 }
-
-/**
- * Default security configuration (production-ready)
- */
-export const DEFAULT_SECURITY_CONFIG = {
-  csp: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'"],
-    styleSrc: ["'self'", "'unsafe-inline'"], // For compatibility
-    imgSrc: ["'self'", 'data:', 'https:'],
-    connectSrc: ["'self'"],
-    fontSrc: ["'self'"],
-    objectSrc: ["'none'"],
-    mediaSrc: ["'self'"],
-    frameSrc: ["'none'"],
-    reportOnly: false,
-  },
-  cors: {
-    origin: ['http://localhost:3000', 'http://localhost:8080'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
-    credentials: true,
-    maxAge: 86400,
-  },
-  requestLimits: {
-    maxBodySize: 10 * 1024 * 1024, // 10MB
-    maxHeaderSize: 8192,
-    maxUrlLength: 2048,
-    timeout: 30000,
-  },
-  rateLimit: {
-    windowMs: 60000,
-    maxRequests: 100,
-  },
-  enableHSTS: true,
-  hstsMaxAge: 31536000,
-  enableNoSniff: true,
-  enableXFrameOptions: true,
-  xFrameOptions: 'DENY',
-  enableXSSProtection: true,
-  enableReferrerPolicy: true,
-  referrerPolicy: 'strict-origin-when-cross-origin',
-  enablePermissionsPolicy: true,
-};

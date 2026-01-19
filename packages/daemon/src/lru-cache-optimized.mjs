@@ -8,6 +8,7 @@
 /**
  * High-performance LRU cache using Map for O(1) operations
  * Guarantees O(1) get, set, and eviction operations with minimal overhead
+ * Uses Map insertion order (ES6+) for efficient LRU tracking
  * @private
  */
 export class OptimizedLRUCache {
@@ -19,8 +20,7 @@ export class OptimizedLRUCache {
   constructor(maxSize = 1000, options = {}) {
     this.maxSize = maxSize;
     this.compactMetadata = options.compactMetadata !== false;
-    this.cache = new Map();
-    this.accessOrder = [];
+    this.cache = new Map(); // Maintains insertion order in ES6+
     this.stats = {
       hits: 0,
       misses: 0,
@@ -34,22 +34,19 @@ export class OptimizedLRUCache {
    * @param {*} value - Value to store
    */
   set(key, value) {
-    // Remove from access order if exists
+    // If key exists, delete it first to update its position
     if (this.cache.has(key)) {
-      const idx = this.accessOrder.indexOf(key);
-      if (idx > -1) {
-        this.accessOrder.splice(idx, 1);
-      }
+      this.cache.delete(key);
     }
 
-    // Add to cache and mark as most recent
+    // Add to cache (moves to end = most recent)
     this.cache.set(key, value);
-    this.accessOrder.push(key);
 
     // Evict least recently used if over capacity
     if (this.cache.size > this.maxSize) {
-      const lruKey = this.accessOrder.shift();
-      this.cache.delete(lruKey);
+      // First key is the oldest (least recently used)
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
       this.stats.evictions += 1;
     }
   }
@@ -60,18 +57,18 @@ export class OptimizedLRUCache {
    * @returns {*} Cached value or undefined
    */
   get(key) {
-    if (this.cache.has(key)) {
-      // Move to end (most recently used)
-      const idx = this.accessOrder.indexOf(key);
-      if (idx > -1) {
-        this.accessOrder.splice(idx, 1);
-        this.accessOrder.push(key);
-      }
-      this.stats.hits += 1;
-      return this.cache.get(key);
+    if (!this.cache.has(key)) {
+      this.stats.misses += 1;
+      return undefined;
     }
-    this.stats.misses += 1;
-    return undefined;
+
+    // Move to end (most recently used) by deleting and re-adding
+    const value = this.cache.get(key);
+    this.cache.delete(key);
+    this.cache.set(key, value);
+
+    this.stats.hits += 1;
+    return value;
   }
 
   /**
@@ -116,6 +113,5 @@ export class OptimizedLRUCache {
    */
   clear() {
     this.cache.clear();
-    this.accessOrder = [];
   }
 }

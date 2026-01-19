@@ -74,7 +74,12 @@ export class DaemonFederationExecutor {
    */
   async executeQuery(sparqlQuery, options = {}) {
     // Validate inputs
-    const validatedQuery = SparqlQuerySchema.parse(sparqlQuery);
+    let validatedQuery;
+    try {
+      validatedQuery = SparqlQuerySchema.parse(sparqlQuery);
+    } catch (error) {
+      throw new Error('Invalid SPARQL query: must be a non-empty string');
+    }
     const validatedOptions = ExecuteQueryOptionsSchema.parse(options) || {};
 
     const queryId = `query-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;

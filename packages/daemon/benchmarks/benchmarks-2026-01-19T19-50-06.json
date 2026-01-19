@@ -1,0 +1,802 @@
+{
+  "timestamp": "2026-01-19T19:50:06.106Z",
+  "summary": {
+    "totalBenchmarks": 16,
+    "totalRegressions": 3,
+    "criticalRegressions": 3,
+    "warningRegressions": 0,
+    "passRate": "81.25"
+  },
+  "regressions": [
+    {
+      "name": "execution-memory-consumption",
+      "severity": "critical",
+      "isRegression": true,
+      "ratio": "3.9979",
+      "percentChange": "299.79%",
+      "threshold": "1.2500",
+      "baselineValue": 4850000,
+      "currentValue": 19390037.333333332
+    },
+    {
+      "name": "memory-stability-under-load",
+      "severity": "critical",
+      "isRegression": true,
+      "ratio": "6.4410",
+      "percentChange": "544.10%",
+      "threshold": "1.2500",
+      "baselineValue": 3200000,
+      "currentValue": 20611174.3704
+    },
+    {
+      "name": "raft-replication-throughput",
+      "severity": "critical",
+      "isRegression": true,
+      "ratio": "0.1447",
+      "percentChange": "-85.53%",
+      "threshold": "0.8500",
+      "baselineValue": 1200,
+      "currentValue": 173.68
+    }
+  ],
+  "results": {
+    "operation-scheduling-latency": {
+      "benchmark": {
+        "name": "operation-scheduling-latency",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.0165,
+        "min": 0.0087,
+        "max": 1.3957,
+        "stdDev": 0.0649,
+        "variance": 393.04,
+        "sampleCount": 1000,
+        "runs": 10,
+        "operationsPerRun": 100,
+        "timestamp": "2026-01-19T19:49:38.978Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "operation-scheduling-latency",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.15,
+        "min": 0.08,
+        "max": 0.45,
+        "stdDev": 0.08,
+        "variance": 52.5,
+        "description": "Latency to schedule an operation into daemon",
+        "target": "< 0.5ms p99",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.1100",
+        "percentChange": "-89.00%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 0.15,
+        "currentValue": 0.0165
+      }
+    },
+    "operation-scheduling-throughput": {
+      "benchmark": {
+        "name": "operation-scheduling-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 71010.078,
+        "min": 36098.7516,
+        "max": 107850.433,
+        "stdDev": 28629.8078,
+        "variance": 40.32,
+        "sampleCount": 5,
+        "runs": 5,
+        "concurrentOps": 1000,
+        "timestamp": "2026-01-19T19:49:39.141Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "operation-scheduling-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 8500,
+        "min": 7200,
+        "max": 9800,
+        "stdDev": 950,
+        "variance": 11.2,
+        "description": "Throughput of scheduling concurrent operations",
+        "target": "> 8000 ops/sec",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "8.3541",
+        "percentChange": "735.41%",
+        "threshold": "0.8500",
+        "severity": "none",
+        "baselineValue": 8500,
+        "currentValue": 71010.078
+      }
+    },
+    "operation-queue-impact": {
+      "benchmark": {
+        "name": "operation-queue-impact",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.0095,
+        "queueSizeImpact": [
+          {
+            "queueSize": 10,
+            "mean": 0.0085,
+            "variance": 7.9
+          },
+          {
+            "queueSize": 100,
+            "mean": 0.0086,
+            "variance": 10.74
+          },
+          {
+            "queueSize": 1000,
+            "mean": 0.0113,
+            "variance": 26.16
+          },
+          {
+            "queueSize": 5000,
+            "mean": 0.0096,
+            "variance": 23.7
+          }
+        ],
+        "runs": 5,
+        "timestamp": "2026-01-19T19:49:39.465Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "operation-queue-impact",
+        "type": "latency",
+        "unit": "ms",
+        "value": 0.18,
+        "description": "Impact of queue size on scheduling latency",
+        "target": "< 0.3ms across queue sizes",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.0528",
+        "percentChange": "-94.72%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 0.18,
+        "currentValue": 0.0095
+      }
+    },
+    "concurrent-execution-throughput": {
+      "benchmark": {
+        "name": "concurrent-execution-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 46412.5402,
+        "min": 26421.7337,
+        "max": 68795.7104,
+        "stdDev": 16175.3441,
+        "variance": 34.85,
+        "sampleCount": 5,
+        "operationCount": 100,
+        "opDuration": 1,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:49:39.486Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "concurrent-execution-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 5200,
+        "min": 4800,
+        "max": 5800,
+        "stdDev": 380,
+        "variance": 7.3,
+        "description": "Throughput of concurrent operation execution",
+        "target": "> 5000 ops/sec",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "8.9255",
+        "percentChange": "792.55%",
+        "threshold": "0.8500",
+        "severity": "none",
+        "baselineValue": 5200,
+        "currentValue": 46412.5402
+      }
+    },
+    "execution-latency-percentiles": {
+      "benchmark": {
+        "name": "execution-latency-percentiles",
+        "type": "latency",
+        "unit": "ms",
+        "value": 1.796,
+        "p50": "2.1426",
+        "p95": "2.2307",
+        "p99": "2.2883",
+        "min": 0.0397,
+        "max": 2.4285,
+        "stdDev": 0.564,
+        "variance": 31.4,
+        "sampleCount": 250,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:49:39.941Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "execution-latency-percentiles",
+        "type": "latency",
+        "unit": "ms",
+        "value": 1.8,
+        "p50": 1.2,
+        "p95": 3.5,
+        "p99": 5.2,
+        "min": 0.8,
+        "max": 8.5,
+        "description": "Execution latency distribution",
+        "target": "p95 < 5ms, p99 < 10ms",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.9978",
+        "percentChange": "-0.22%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 1.8,
+        "currentValue": 1.796
+      }
+    },
+    "concurrency-impact": {
+      "benchmark": {
+        "name": "concurrency-impact",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 5774.4638,
+        "concurrencyImpact": [
+          {
+            "concurrency": 1,
+            "mean": 184.1888,
+            "variance": 1.05
+          },
+          {
+            "concurrency": 5,
+            "mean": 933.2087,
+            "variance": 1.5
+          },
+          {
+            "concurrency": 10,
+            "mean": 1813.1467,
+            "variance": 0.29
+          },
+          {
+            "concurrency": 50,
+            "mean": 8664.6227,
+            "variance": 2.37
+          },
+          {
+            "concurrency": 100,
+            "mean": 17277.1523,
+            "variance": 2.63
+          }
+        ],
+        "runs": 3,
+        "timestamp": "2026-01-19T19:49:40.833Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "concurrency-impact",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 5100,
+        "description": "Throughput across different concurrency levels",
+        "target": "throughput > 4500 ops/sec at all levels",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "1.1322",
+        "percentChange": "13.22%",
+        "threshold": "0.8500",
+        "severity": "none",
+        "baselineValue": 5100,
+        "currentValue": 5774.4638
+      }
+    },
+    "memory-usage-with-load": {
+      "benchmark": {
+        "name": "memory-usage-with-load",
+        "type": "memory",
+        "unit": "bytes/op",
+        "value": 270.956,
+        "min": -729.93,
+        "max": 1613.47,
+        "stdDev": 771.5349,
+        "variance": 284.75,
+        "measurements": [
+          {
+            "operationCount": 2000,
+            "heapUsedStart": 14389208,
+            "heapUsedEnd": 17616144,
+            "heapDelta": 3226936,
+            "bytesPerOperation": "1613.47",
+            "rssStart": 167649280,
+            "rssEnd": 167649280,
+            "rssDelta": 0
+          },
+          {
+            "operationCount": 4000,
+            "heapUsedStart": 17629608,
+            "heapUsedEnd": 14709880,
+            "heapDelta": -2919728,
+            "bytesPerOperation": "-729.93",
+            "rssStart": 167649280,
+            "rssEnd": 167612416,
+            "rssDelta": -36864
+          },
+          {
+            "operationCount": 6000,
+            "heapUsedStart": 14718064,
+            "heapUsedEnd": 15692648,
+            "heapDelta": 974584,
+            "bytesPerOperation": "162.43",
+            "rssStart": 167612416,
+            "rssEnd": 167849984,
+            "rssDelta": 237568
+          },
+          {
+            "operationCount": 8000,
+            "heapUsedStart": 15700480,
+            "heapUsedEnd": 19000832,
+            "heapDelta": 3300352,
+            "bytesPerOperation": "412.54",
+            "rssStart": 167849984,
+            "rssEnd": 167874560,
+            "rssDelta": 24576
+          },
+          {
+            "operationCount": 10000,
+            "heapUsedStart": 19008648,
+            "heapUsedEnd": 17971304,
+            "heapDelta": -1037344,
+            "bytesPerOperation": "-103.73",
+            "rssStart": 167874560,
+            "rssEnd": 168341504,
+            "rssDelta": 466944
+          }
+        ],
+        "maxOperations": 10000,
+        "steps": 5,
+        "timestamp": "2026-01-19T19:49:41.320Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "memory-usage-with-load",
+        "type": "memory",
+        "unit": "bytes/op",
+        "value": 4200,
+        "min": 3800,
+        "max": 4600,
+        "stdDev": 280,
+        "variance": 6.7,
+        "description": "Memory consumption per queued operation",
+        "target": "< 5000 bytes/op",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.0645",
+        "percentChange": "-93.55%",
+        "threshold": "1.2500",
+        "severity": "none",
+        "baselineValue": 4200,
+        "currentValue": 270.956
+      }
+    },
+    "execution-memory-consumption": {
+      "benchmark": {
+        "name": "execution-memory-consumption",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 19390037.333333332,
+        "peakMemory": 20967856,
+        "snapshots": [
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 17988480,
+            "afterScheduling": 19363088,
+            "beforeExecution": 19363568,
+            "afterExecution": 20967856,
+            "schedulingDelta": 1374608,
+            "executionDelta": 1604288
+          },
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 20980688,
+            "afterScheduling": 15508736,
+            "beforeExecution": 15509216,
+            "afterExecution": 17112272,
+            "schedulingDelta": -5471952,
+            "executionDelta": 1603056
+          },
+          {
+            "operationCount": 1000,
+            "beforeScheduling": 17120664,
+            "afterScheduling": 18486392,
+            "beforeExecution": 18486872,
+            "afterExecution": 20089984,
+            "schedulingDelta": 1365728,
+            "executionDelta": 1603112
+          }
+        ],
+        "operationCount": 1000,
+        "runs": 3,
+        "timestamp": "2026-01-19T19:49:41.376Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "execution-memory-consumption",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 4850000,
+        "peakMemory": 5200000,
+        "description": "Peak memory usage during execution",
+        "target": "< 6MB peak for 1000 operations",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": true,
+        "ratio": "3.9979",
+        "percentChange": "299.79%",
+        "threshold": "1.2500",
+        "severity": "critical",
+        "baselineValue": 4850000,
+        "currentValue": 19390037.333333332
+      }
+    },
+    "memory-stability-under-load": {
+      "benchmark": {
+        "name": "memory-stability-under-load",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 20611174.3704,
+        "heap": {
+          "mean": 20611174.3704,
+          "stdDev": 280530.6067,
+          "variance": 1.36,
+          "min": 20135152,
+          "max": 20991784
+        },
+        "rss": {
+          "mean": 169390080,
+          "stdDev": 0,
+          "variance": 0,
+          "min": 169390080,
+          "max": 169390080
+        },
+        "readingCount": 54,
+        "totalOperations": 350,
+        "duration": 5000,
+        "timestamp": "2026-01-19T19:49:47.377Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "memory-stability-under-load",
+        "type": "memory",
+        "unit": "bytes",
+        "value": 3200000,
+        "description": "Memory stability during sustained operations",
+        "target": "stable within 20% variance",
+        "regressionThreshold": 1.25
+      },
+      "regression": {
+        "isRegression": true,
+        "ratio": "6.4410",
+        "percentChange": "544.10%",
+        "threshold": "1.2500",
+        "severity": "critical",
+        "baselineValue": 3200000,
+        "currentValue": 20611174.3704
+      }
+    },
+    "raft-leader-replication": {
+      "benchmark": {
+        "name": "raft-leader-replication",
+        "type": "latency",
+        "unit": "ms",
+        "value": 2.2218,
+        "min": 0.0915,
+        "max": 12.5253,
+        "stdDev": 0.7488,
+        "variance": 33.7,
+        "sampleCount": 500,
+        "nodeCount": 3,
+        "operationCount": 100,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:49:48.492Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "raft-leader-replication",
+        "type": "latency",
+        "unit": "ms",
+        "value": 8.5,
+        "min": 6.2,
+        "max": 12.8,
+        "stdDev": 1.8,
+        "variance": 21.2,
+        "description": "Raft log replication latency",
+        "target": "< 15ms p95",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.2614",
+        "percentChange": "-73.86%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 8.5,
+        "currentValue": 2.2218
+      }
+    },
+    "raft-consensus-commit": {
+      "benchmark": {
+        "name": "raft-consensus-commit",
+        "type": "latency",
+        "unit": "ms",
+        "value": 1.6349,
+        "min": 0.0737,
+        "max": 4.1804,
+        "stdDev": 0.5301,
+        "variance": 32.43,
+        "sampleCount": 500,
+        "quorumSize": 3,
+        "operationCount": 100,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:49:49.313Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "raft-consensus-commit",
+        "type": "latency",
+        "unit": "ms",
+        "value": 12.3,
+        "min": 9.5,
+        "max": 18.6,
+        "stdDev": 2.4,
+        "variance": 19.5,
+        "description": "Raft consensus commit latency",
+        "target": "< 20ms p95",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.1329",
+        "percentChange": "-86.71%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 12.3,
+        "currentValue": 1.6349
+      }
+    },
+    "raft-replication-throughput": {
+      "benchmark": {
+        "name": "raft-replication-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 173.68,
+        "min": 173.6005,
+        "max": 173.8131,
+        "stdDev": 0.0947,
+        "variance": 0.05,
+        "sampleCount": 3,
+        "nodeCount": 3,
+        "duration": 5000,
+        "runs": 3,
+        "timestamp": "2026-01-19T19:50:05.816Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "raft-replication-throughput",
+        "type": "throughput",
+        "unit": "ops/sec",
+        "value": 1200,
+        "min": 1050,
+        "max": 1380,
+        "stdDev": 115,
+        "variance": 9.6,
+        "description": "Throughput of Raft log replication",
+        "target": "> 1000 ops/sec",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": true,
+        "ratio": "0.1447",
+        "percentChange": "-85.53%",
+        "threshold": "0.8500",
+        "severity": "critical",
+        "baselineValue": 1200,
+        "currentValue": 173.68
+      }
+    },
+    "yawl-sequential-workflow": {
+      "benchmark": {
+        "name": "yawl-sequential-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 27.77,
+        "min": 26.372,
+        "max": 29.0742,
+        "stdDev": 0.9413,
+        "variance": 3.39,
+        "sampleCount": 5,
+        "stepsPerWorkflow": 5,
+        "workflowCount": 20,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:50:05.959Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "yawl-sequential-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 125.5,
+        "min": 110.2,
+        "max": 145.8,
+        "stdDev": 12.3,
+        "variance": 9.8,
+        "description": "Execution time for sequential YAWL workflows",
+        "target": "< 150ms per workflow",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.2213",
+        "percentChange": "-77.87%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 125.5,
+        "currentValue": 27.77
+      }
+    },
+    "yawl-parallel-workflow": {
+      "benchmark": {
+        "name": "yawl-parallel-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 10.9498,
+        "min": 10.4062,
+        "max": 11.5191,
+        "stdDev": 0.4364,
+        "variance": 3.99,
+        "sampleCount": 5,
+        "parallelTasks": 5,
+        "workflowCount": 20,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:50:06.017Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "yawl-parallel-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 85.3,
+        "min": 75.1,
+        "max": 98.6,
+        "stdDev": 8.5,
+        "variance": 10,
+        "description": "Execution time for parallel YAWL workflows",
+        "target": "< 120ms per workflow",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.1284",
+        "percentChange": "-87.16%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 85.3,
+        "currentValue": 10.9498
+      }
+    },
+    "yawl-conditional-workflow": {
+      "benchmark": {
+        "name": "yawl-conditional-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 5.1262,
+        "min": 4.4511,
+        "max": 5.3445,
+        "stdDev": 0.342,
+        "variance": 6.67,
+        "sampleCount": 5,
+        "branchingFactor": 3,
+        "workflowCount": 20,
+        "runs": 5,
+        "timestamp": "2026-01-19T19:50:06.046Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "yawl-conditional-workflow",
+        "type": "latency",
+        "unit": "ms",
+        "value": 95.8,
+        "min": 82.4,
+        "max": 112.5,
+        "stdDev": 10.2,
+        "variance": 10.6,
+        "description": "Execution time for conditional YAWL workflows",
+        "target": "< 130ms per workflow",
+        "regressionThreshold": 1.15
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "0.0535",
+        "percentChange": "-94.65%",
+        "threshold": "1.1500",
+        "severity": "none",
+        "baselineValue": 95.8,
+        "currentValue": 5.1262
+      }
+    },
+    "yawl-mixed-workflow-throughput": {
+      "benchmark": {
+        "name": "yawl-mixed-workflow-throughput",
+        "type": "throughput",
+        "unit": "workflows/sec",
+        "value": 1850.4477,
+        "min": 1820.1457,
+        "max": 1886.9346,
+        "stdDev": 27.615,
+        "variance": 1.49,
+        "sampleCount": 3,
+        "workflowCount": 30,
+        "runs": 3,
+        "timestamp": "2026-01-19T19:50:06.099Z",
+        "nodeVersion": "v22.21.1",
+        "platform": "linux"
+      },
+      "baseline": {
+        "name": "yawl-mixed-workflow-throughput",
+        "type": "throughput",
+        "unit": "workflows/sec",
+        "value": 8.5,
+        "min": 7.8,
+        "max": 9.2,
+        "stdDev": 0.52,
+        "variance": 6.1,
+        "description": "Throughput of mixed YAWL workflow execution",
+        "target": "> 8 workflows/sec",
+        "regressionThreshold": 0.85
+      },
+      "regression": {
+        "isRegression": false,
+        "ratio": "217.6997",
+        "percentChange": "21669.97%",
+        "threshold": "0.8500",
+        "severity": "none",
+        "baselineValue": 8.5,
+        "currentValue": 1850.4477
+      }
+    }
+  }
+}

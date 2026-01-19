@@ -9,6 +9,7 @@ import { DaemonConfigSchema } from './schemas.mjs';
 
 /**
  * Simple LRU cache implementation for completed operations
+ * Uses Map insertion order (ES6+) for O(1) LRU operations
  * @private
  */
 class LRUCache {
@@ -37,12 +38,19 @@ class LRUCache {
   }
 
   /**
-   * Get value from cache
+   * Get value from cache with LRU update
    * @param {string} key - Cache key
    * @returns {*} Cached value or undefined
    */
   get(key) {
-    return this.cache.get(key);
+    if (!this.cache.has(key)) {
+      return undefined;
+    }
+    // Move to end (most recently used)
+    const value = this.cache.get(key);
+    this.cache.delete(key);
+    this.cache.set(key, value);
+    return value;
   }
 
   /**
@@ -165,10 +173,8 @@ export class Daemon extends EventEmitter {
     }
 
     this.operations.delete(operationId);
-    const index = this.operationQueue.indexOf(operationId);
-    if (index > -1) {
-      this.operationQueue.splice(index, 1);
-    }
+    // Filter instead of indexOf+splice for better performance with large queues
+    this.operationQueue = this.operationQueue.filter(id => id !== operationId);
 
     this.logger.debug(`[Daemon ${this.nodeId}] Operation unscheduled: ${operationId}`);
     return true;

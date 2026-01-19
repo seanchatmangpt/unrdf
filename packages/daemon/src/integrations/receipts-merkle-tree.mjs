@@ -26,14 +26,16 @@ export async function buildMerkleTree(receipts) {
     const nextLevel = [];
     for (let i = 0; i < currentLevel.length; i += 2) {
       if (i + 1 < currentLevel.length) {
+        // Normal pair hashing
         const combined = currentLevel[i] + ':' + currentLevel[i + 1];
         const parentHash = await blake3(combined);
         nextLevel.push(parentHash);
       } else {
-        // CVE-2012-2459 mitigation: Duplicate odd leaf and hash with itself
-        // instead of promoting unhashed. This prevents odd-leaf duplication attacks
-        // where an attacker could append a duplicate leaf and maintain the same root.
-        const combined = currentLevel[i] + ':' + currentLevel[i];
+        // CVE-2012-2459 mitigation: Use distinct prefix for odd leaf hashing
+        // This prevents odd-leaf duplication attacks where an attacker could
+        // append a duplicate leaf and maintain the same root.
+        // By using a different marker, H("ODD:"+L+":"+L) != H(L+":"+L)
+        const combined = 'ODD:' + currentLevel[i] + ':' + currentLevel[i];
         const parentHash = await blake3(combined);
         nextLevel.push(parentHash);
       }
@@ -57,9 +59,18 @@ export async function generateInclusionProof(tree, index) {
     const level = tree.levels[levelIdx];
     const siblingIndex = currentIndex % 2 === 0 ? currentIndex + 1 : currentIndex - 1;
     if (siblingIndex < level.length) {
+      // Normal case: has a sibling
       proof.push({
         hash: level[siblingIndex],
         position: currentIndex % 2 === 0 ? 'right' : 'left',
+        isOddLeaf: false,
+      });
+    } else {
+      // Odd leaf case: no sibling, hash with self using ODD prefix
+      proof.push({
+        hash: level[currentIndex],
+        position: 'self',
+        isOddLeaf: true,
       });
     }
     currentIndex = Math.floor(currentIndex / 2);
@@ -74,9 +85,15 @@ export async function verifyInclusionProof(proof) {
     }
     let currentHash = proof.leafHash;
     for (const step of proof.proofPath) {
-      const combined = step.position === 'right'
-        ? currentHash + ':' + step.hash
-        : step.hash + ':' + currentHash;
+      let combined;
+      if (step.isOddLeaf || step.position === 'self') {
+        // Odd leaf case: hash with self using ODD prefix
+        combined = 'ODD:' + currentHash + ':' + currentHash;
+      } else if (step.position === 'right') {
+        combined = currentHash + ':' + step.hash;
+      } else {
+        combined = step.hash + ':' + currentHash;
+      }
       currentHash = await blake3(combined);
     }
     return currentHash === proof.merkleRoot;
