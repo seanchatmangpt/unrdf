@@ -261,20 +261,22 @@ describe('Architecture Validation', () => {
         'src/cancellation/yawl-cancellation.mjs',      // 1785 lines - Core cancellation logic
         'src/resources/yawl-resources.mjs',            // 1580 lines - Resource management system
         'src/events/yawl-events.mjs',                  // 1428 lines - Event processing core
+        'src/engine.mjs',                              // 1327 lines - YAWL engine core (grew with MI patterns)
         'src/patterns.mjs',                            // 1213 lines - Workflow patterns library
         'src/hooks/yawl-hooks.mjs',                    // 1177 lines - Hook execution framework
         'src/types/yawl-schemas.mjs',                  // 1091 lines - Zod schema definitions
         'src/ontology/yawl-ontology.mjs',              // 897 lines - RDF ontology mappings
         'src/store/yawl-store.mjs',                    // 894 lines - Store abstraction layer
         'src/resources/index.mjs',                     // 819 lines - Resource aggregation
-        'src/engine.mjs',                              // 700 lines - YAWL engine core
         'src/cancellation/yawl-cancellation-manager.mjs', // 667 lines - Cancellation manager
         'src/workflow-core.mjs',                       // 638 lines - Workflow core operations
         'src/types/yawl-types.mjs',                    // 604 lines - Type definitions
         'src/api/workflow-creation.mjs',               // 569 lines - Workflow API
         'src/patterns-builders.mjs',                   // 540 lines - Pattern builders
+        'src/multiple-instance/wp15-dynamic.mjs',      // 537 lines - WP15 dynamic MI pattern (from main merge)
         'src/resources/resource-capacity.mjs',         // 537 lines - Resource capacity logic
         'src/events/yawl-events-core.mjs',             // 522 lines - Event core module
+        'src/index.mjs',                               // 514 lines - Main export aggregation
         'src/task-core.mjs',                           // 512 lines - Task core operations
         'src/receipt-batch.mjs',                       // 512 lines - Receipt batch processing
         'src/workflow/workflow-class.mjs',             // 508 lines - Workflow class definition
