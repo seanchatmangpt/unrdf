@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/test-utils",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "Testing utilities for UNRDF development",
   "type": "module",
   "main": "./src/index.mjs",
@@ -31,6 +31,7 @@
   "private": true,
   "dependencies": {
     "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/knowledge-engine": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^4.1.13"
   },

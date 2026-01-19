@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/serverless",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
   "type": "module",
   "main": "src/index.mjs",

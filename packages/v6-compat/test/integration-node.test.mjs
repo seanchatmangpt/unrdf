@@ -1,9 +1,8 @@
 /**
- * P0-003: Integration Tests (Node.js test runner)
+ * P0-003: Integration Tests
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
 import {
   createStore,
   wrapWorkflow,
@@ -14,7 +13,7 @@ import {
 describe('P0-003: v6-compat Integration', () => {
   it('createStore adapter works', async () => {
     const store = await createStore();
-    assert.ok(store);
+    expect(store).toBeDefined();
     console.log('✅ createStore adapter works');
   });
 
@@ -24,13 +23,13 @@ describe('P0-003: v6-compat Integration', () => {
     };
 
     const wrapped = wrapWorkflow(mockWorkflow);
-    assert.ok(wrapped.execute);
-    assert.ok(wrapped.run);
+    expect(wrapped.execute).toBeDefined();
+    expect(wrapped.run).toBeDefined();
 
     const { result, receipt } = await wrapped.execute({ id: 'task-1' });
-    assert.strictEqual(result.status, 'completed');
-    assert.ok(receipt);
-    assert.strictEqual(receipt.operation, 'workflow.execute');
+    expect(result.status).toBe('completed');
+    expect(receipt).toBeDefined();
+    expect(receipt.operation).toBe('workflow.execute');
 
     console.log('✅ wrapWorkflow adds receipt support');
   });
@@ -39,9 +38,9 @@ describe('P0-003: v6-compat Integration', () => {
     const double = withReceipt((x) => x * 2, { operation: 'double' });
 
     const { result, receipt } = await double(5);
-    assert.strictEqual(result, 10);
-    assert.ok(receipt);
-    assert.strictEqual(receipt.operation, 'double');
+    expect(result).toBe(10);
+    expect(receipt).toBeDefined();
+    expect(receipt.operation).toBe('double');
 
     console.log('✅ withReceipt wraps function');
   });
@@ -59,12 +58,12 @@ describe('P0-003: v6-compat Integration', () => {
 
     const issues = tracker.analyzeSource(source, 'test.mjs');
 
-    assert.strictEqual(issues.n3Imports, 2);
-    assert.strictEqual(issues.dateNowCalls, 1);
-    assert.strictEqual(issues.mathRandomCalls, 1);
-    assert.strictEqual(tracker.staticAnalysis.n3Imports, 2);
-    assert.strictEqual(tracker.staticAnalysis.dateNowCalls, 1);
-    assert.strictEqual(tracker.staticAnalysis.mathRandomCalls, 1);
+    expect(issues.n3Imports).toBe(2);
+    expect(issues.dateNowCalls).toBe(1);
+    expect(issues.mathRandomCalls).toBe(1);
+    expect(tracker.staticAnalysis.n3Imports).toBe(2);
+    expect(tracker.staticAnalysis.dateNowCalls).toBe(1);
+    expect(tracker.staticAnalysis.mathRandomCalls).toBe(1);
 
     console.log('✅ MigrationTracker static analysis works');
     console.log(`   N3 imports: ${issues.n3Imports}`);
@@ -82,8 +81,8 @@ describe('P0-003: v6-compat Integration', () => {
 
     const issues = tracker.analyzeSource(source, 'test.mjs');
 
-    assert.strictEqual(issues.workflowRunCalls, 2);
-    assert.strictEqual(tracker.staticAnalysis.workflowRunCalls, 2);
+    expect(issues.workflowRunCalls).toBe(2);
+    expect(tracker.staticAnalysis.workflowRunCalls).toBe(2);
 
     console.log('✅ MigrationTracker counts workflow.run() calls');
     console.log(`   workflow.run() calls: ${issues.workflowRunCalls}`);
@@ -97,9 +96,9 @@ describe('P0-003: v6-compat Integration', () => {
 
     const report = tracker.report();
 
-    assert.ok(report.staticAnalysis);
-    assert.strictEqual(report.staticAnalysis.filesScanned, 1);
-    assert.strictEqual(report.staticAnalysis.n3Imports, 1);
+    expect(report.staticAnalysis).toBeDefined();
+    expect(report.staticAnalysis.filesScanned).toBe(1);
+    expect(report.staticAnalysis.n3Imports).toBe(1);
 
     console.log('✅ MigrationTracker generates report');
     console.log(`   Files scanned: ${report.staticAnalysis.filesScanned}`);

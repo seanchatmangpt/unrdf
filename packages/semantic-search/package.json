@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/semantic-search",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "AI-powered semantic search over RDF knowledge graphs using vector embeddings",
   "type": "module",
   "main": "src/index.mjs",

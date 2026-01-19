@@ -87,3 +87,11 @@ export {
   guardTemporalResultValid,
   guardCacheConfigValid,
 } from './schemas/temporal-sparql-schema.mjs';
+
+// Delta Schemas - RDF Delta Validation
+export {
+  DeltaSchema,
+  SerializedDeltaSchema,
+  guardDeltaValid,
+  guardSerializedDeltaValid,
+} from './schemas/delta-schema.mjs';

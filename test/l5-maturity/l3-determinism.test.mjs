@@ -10,8 +10,7 @@
  * - Evidence: Pass rate 100/100 per operation
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, describe, expect } from 'vitest';
 
 describe('L3: Determinism - 100x Identical Runs', () => {
   test('[L3.1] Store creation is deterministic (100x runs)', async () => {
@@ -26,7 +25,7 @@ describe('L3: Determinism - 100x Identical Runs', () => {
     }
 
     // All stores should be independently created
-    assert.equal(stores.length, 100, 'Created 100 stores');
+    expect(stores.length).toBe(100);
 
     // Each store should behave identically
     for (let i = 0; i < 100; i++) {
@@ -36,7 +35,7 @@ describe('L3: Determinism - 100x Identical Runs', () => {
         dataFactory.literal('test')
       );
       stores[i].add(quad);
-      assert.ok(stores[i].has(quad), `Store ${i} contains quad`);
+      expect(stores[i].has(quad).toBeTruthy();
     }
 
     console.log('[L3.1] ✅ 100/100 store creations identical');
@@ -70,11 +69,9 @@ describe('L3: Determinism - 100x Identical Runs', () => {
 
     // All hashes should be identical
     const uniqueHashes = new Set(hashes);
-    assert.equal(
-      uniqueHashes.size,
-      1,
-      `Expected 1 unique hash, got ${uniqueHashes.size}`
-    );
+    expect(
+      uniqueHashes.size).toBe(
+      1);
 
     console.log('[L3.2] ✅ 100/100 receipts have identical hash:', Array.from(uniqueHashes)[0].slice(0, 16) + '...');
   });
@@ -112,7 +109,7 @@ describe('L3: Determinism - 100x Identical Runs', () => {
 
       // Query should return consistent results
       const matches = Array.from(store.match());
-      assert.equal(matches.length, 3, `Iteration ${i}: Store contains 3 quads`);
+      expect(matches.length).toBe(3);
     }
 
     console.log('[L3.3] ✅ 100/100 iterations have consistent quad counts');
@@ -155,17 +152,13 @@ describe('L3: Determinism - 100x Identical Runs', () => {
 
     // All iterations should return same count
     const uniqueCounts = new Set(results);
-    assert.equal(
-      uniqueCounts.size,
-      1,
-      `Expected 1 unique result count, got ${uniqueCounts.size}`
-    );
+    expect(
+      uniqueCounts.size).toBe(
+      1);
 
-    assert.equal(
-      Array.from(uniqueCounts)[0],
-      2,
-      'Query should return 2 results'
-    );
+    expect(
+      Array.from(uniqueCounts)[0]).toBe(
+      2);
 
     console.log('[L3.4] ✅ 100/100 queries returned identical results');
   });
@@ -195,11 +188,9 @@ describe('L3: Determinism - 100x Identical Runs', () => {
     }
 
     const uniqueHashes = new Set(hashes);
-    assert.equal(
-      uniqueHashes.size,
-      1,
-      `Expected 1 unique hash, got ${uniqueHashes.size}`
-    );
+    expect(
+      uniqueHashes.size).toBe(
+      1);
 
     console.log('[L3.5] ✅ 100/100 delta hashes identical:', Array.from(uniqueHashes)[0].slice(0, 16) + '...');
   });

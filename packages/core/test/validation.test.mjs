@@ -85,15 +85,76 @@ describe('SHACL Validator', () => {
   });
 
   describe('validateGraph', () => {
-    it.skip('should validate conforming data (requires full rdf-validate-shacl integration)', async () => {
-      // This test requires full integration with rdf-validate-shacl library
-      // which needs advanced RDF/JS DatasetCore implementation
-      // The core functionality is tested in other unit tests
+    it('should validate conforming data', async () => {
+      // Arrange
+      const shapes = `
+        @prefix sh: <http://www.w3.org/ns/shacl#> .
+        @prefix ex: <http://example.org/> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+        ex:PersonShape a sh:NodeShape ;
+          sh:targetClass ex:Person ;
+          sh:property [
+            sh:path ex:name ;
+            sh:minCount 1 ;
+            sh:datatype xsd:string ;
+          ] .
+      `;
+
+      const data = [
+        quad(
+          namedNode('http://example.org/john'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/Person')
+        ),
+        quad(
+          namedNode('http://example.org/john'),
+          namedNode('http://example.org/name'),
+          literal('John Doe')
+        ),
+      ];
+
+      // Act
+      const report = await validateGraph(data, shapes);
+
+      // Assert
+      expect(report.conforms).toBe(true);
+      expect(report.results).toEqual([]);
     });
 
-    it.skip('should validate with Oxigraph store data (requires full rdf-validate-shacl integration)', async () => {
-      // This test requires full integration with rdf-validate-shacl library
-      // The storeToDataset conversion is unit tested separately
+    it('should validate with Oxigraph store data', async () => {
+      // Arrange
+      const shapes = `
+        @prefix sh: <http://www.w3.org/ns/shacl#> .
+        @prefix ex: <http://example.org/> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+        ex:PersonShape a sh:NodeShape ;
+          sh:targetClass ex:Person ;
+          sh:property [
+            sh:path ex:name ;
+            sh:minCount 1 ;
+          ] .
+      `;
+
+      const store = createStore();
+      store.add(quad(
+        namedNode('http://example.org/jane'),
+        namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        namedNode('http://example.org/Person')
+      ));
+      store.add(quad(
+        namedNode('http://example.org/jane'),
+        namedNode('http://example.org/name'),
+        literal('Jane Smith')
+      ));
+
+      // Act
+      const report = await validateGraph(store, shapes);
+
+      // Assert
+      expect(report.conforms).toBe(true);
+      expect(report.results).toEqual([]);
     });
 
     it('should respect maxErrors option', async () => {
@@ -482,9 +543,35 @@ describe('RDF Schema Builder', () => {
   });
 
   describe('Integration - Builder + Validator', () => {
-    it.skip('should validate data against builder-generated shapes (requires full rdf-validate-shacl integration)', async () => {
-      // This end-to-end test requires full rdf-validate-shacl integration
-      // Individual components (builder and validator) are tested separately
+    it('should validate data against builder-generated shapes', async () => {
+      // Arrange
+      const shapes = shacl('http://example.org/PersonShape')
+        .targetClass('http://example.org/Person')
+        .property('http://example.org/name')
+          .minCount(1)
+          .datatype('xsd:string')
+        .build();
+
+      const conformingData = [
+        quad(
+          namedNode('http://example.org/alice'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/Person')
+        ),
+        quad(
+          namedNode('http://example.org/alice'),
+          namedNode('http://example.org/name'),
+          literal('Alice')
+        ),
+      ];
+
+      // Act
+      const report = await validateGraph(conformingData, shapes);
+
+      // Assert
+      expect(report).toBeDefined();
+      expect(report.conforms).toBe(true);
+      expect(report.results).toEqual([]);
     });
 
     it('should build shapes that can be serialized', () => {

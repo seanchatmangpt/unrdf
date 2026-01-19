@@ -47,13 +47,13 @@ function createMockFetch(responses = {}) {
 }
 
 beforeEach(() => {
-  vi.useFakeTimers();
+  // Use real timers to prevent async test hangs with promises
+  // vi.useFakeTimers() causes issues with async mocked fetch operations
 });
 
 afterEach(() => {
   global.fetch = originalFetch;
   vi.restoreAllMocks();
-  vi.useRealTimers();
 });
 
 /* ========================================================================= */

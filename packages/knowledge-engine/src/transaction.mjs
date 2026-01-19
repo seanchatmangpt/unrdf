@@ -7,7 +7,7 @@ import { createStore } from '@unrdf/oxigraph';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { blake3 } from '@noble/hashes/blake3.js';
 import { utf8ToBytes, bytesToHex } from '@noble/hashes/utils.js';
-import { canonicalize } from './canonicalize.mjs';
+import { canonicalize } from '@unrdf/core';
 import { createLockchainWriter } from '@unrdf/core/utils/lockchain-writer';
 import { createResolutionLayer } from './resolution-layer.mjs';
 import { createObservabilityManager } from './observability.mjs';
@@ -20,14 +20,10 @@ const tracer = trace.getTracer('unrdf');
 // Import consolidated schemas
 import {
   TransactionDeltaSchema as DeltaSchema,
-  TransactionReceiptSchema,
-  HookResultSchema as TransactionHookResultSchema,
 } from './schemas.mjs';
 
 // Define missing schemas locally
-const QuadSchema = z.any();
 const TransactionHookSchema = z.any();
-const HashSchema = z.string();
 const TransactionOptionsSchema = z.any();
 const ManagerOptionsSchema = z.any();
 

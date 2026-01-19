@@ -9,10 +9,7 @@
 
 import { createStore } from '@unrdf/oxigraph';
 import { randomUUID } from 'crypto';
-import { KnowledgeHookManager } from '@unrdf/knowledge-engine';
-import { _PolicyPackManager } from '@unrdf/knowledge-engine';
-import { _createLockchainWriter } from '@unrdf/knowledge-engine';
-import { _createEffectSandbox } from '@unrdf/knowledge-engine';
+import { KnowledgeHookManager, PolicyPackManager, createLockchainWriter, EffectSandbox } from '@unrdf/knowledge-engine';
 import { z } from 'zod';
 
 /**
@@ -642,3 +639,27 @@ export function createDefaultTestContext() {
     .withManager(new KnowledgeHookManager())
     .build();
 }
+
+// Re-export helper utilities
+export {
+  createTestStore,
+  createTestWorkflow,
+  mockOTEL,
+  waitForCondition,
+  createQuad,
+  measureTime,
+  testBatch,
+  snapshotStore,
+  assertSnapshotsEqual,
+} from './helpers.mjs';
+
+// Re-export test fixtures
+export {
+  sampleRDF,
+  sampleWorkflows,
+  sampleCaseData,
+  sampleHooks,
+  sampleQueries,
+  performanceFixtures,
+  errorScenarios,
+} from './fixtures.mjs';

@@ -1,48 +1,40 @@
 /**
  * 01-minimal-parse-query.mjs
  *
- * The recommended UNRDF entry point: createKnowledgeSubstrateCore()
- * One function gives you everything.
+ * The simplest UNRDF example: createStore() and executeSelectSync()
+ * Demonstrates basic RDF parsing and SPARQL queries.
  *
  * Run: node examples/01-minimal-parse-query.mjs
  */
 
-import { createKnowledgeSubstrateCore } from 'unrdf';
+import { createStore, namedNode, executeSelectSync } from '@unrdf/core';
 
-// One function gives you: transactions, hooks, sandboxing, audit trails, etc.
-const core = await createKnowledgeSubstrateCore();
+console.log('=== Minimal Parse & Query Example ===\n');
 
-// Parse RDF Turtle using the core's parseTurtle method
-const ttl = `
-  @prefix ex: <http://example.org/> .
-  ex:Alice ex:knows ex:Bob .
-  ex:Bob ex:knows ex:Charlie .
-  ex:Charlie ex:knows ex:Diana .
-`;
+// Create an RDF store
+const store = createStore();
 
-const store = core.parseTurtle(ttl);
+// Add some simple triples (Alice knows Bob, Bob knows Charlie, etc.)
+const ex = (name) => namedNode(`http://example.org/${name}`);
+const knows = namedNode('http://example.org/knows');
+
+store.addQuad(ex('Alice'), knows, ex('Bob'));
+store.addQuad(ex('Bob'), knows, ex('Charlie'));
+store.addQuad(ex('Charlie'), knows, ex('Diana'));
+
+console.log(`✅ Added ${store.size} triples to the store\n`);
 
 // Query the store using SPARQL
-const results = core.query(
-  store,
-  `
+const results = executeSelectSync(store, `
   SELECT ?person ?knows WHERE {
     ?person <http://example.org/knows> ?knows .
   }
-`
-);
+`);
 
-console.log('Query results:');
+console.log('--- Query Results ---');
 for (const binding of results) {
   console.log(`  ${binding.get('person').value} knows ${binding.get('knows').value}`);
 }
 
-// Access components for advanced operations
-const txManager = core.getComponent('TransactionManager');
-console.log('\nTransaction manager ready:', txManager !== null);
-
-// Get core status
-console.log('Core status:', core.getStatus());
-
-// Cleanup when done
-await core.cleanup();
+console.log('\n✅ Example complete!\n');
+console.log('Next: Try examples/01-hello-rdf.mjs for more comprehensive examples');

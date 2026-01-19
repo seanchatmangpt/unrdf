@@ -1,7 +1,7 @@
 /**
  * @vitest-environment node
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { dataFactory } from '@unrdf/oxigraph';
 const { namedNode, literal } = dataFactory;
 import {
@@ -14,12 +14,52 @@ import {
   mergeSyncMessages,
 } from '../src/index.mjs';
 
+// Track resources for cleanup
+let activeFeeds = [];
+let activeManagers = [];
+let activeProcessors = [];
+let activeTimeouts = [];
+
 describe('@unrdf/streaming', () => {
+  // Global cleanup after each test
+  afterEach(() => {
+    // Clean up all active feeds
+    for (const feed of activeFeeds) {
+      if (feed && typeof feed.destroy === 'function') {
+        feed.destroy();
+      }
+    }
+    activeFeeds = [];
+
+    // Clean up all active managers (they don't have destroy but we track them)
+    activeManagers = [];
+
+    // Clean up all active processors
+    for (const processor of activeProcessors) {
+      if (processor && typeof processor.destroy === 'function') {
+        processor.destroy();
+      }
+    }
+    activeProcessors = [];
+
+    // Clear all timeouts
+    for (const timeout of activeTimeouts) {
+      clearTimeout(timeout);
+    }
+    activeTimeouts = [];
+
+    // Restore timers if fake timers were used
+    if (vi.isFakeTimers()) {
+      vi.useRealTimers();
+    }
+  });
+
   describe('createChangeFeed', () => {
     let feed;
 
     beforeEach(() => {
       feed = createChangeFeed();
+      activeFeeds.push(feed);
     });
 
     it('should create a change feed', () => {
@@ -105,7 +145,9 @@ describe('@unrdf/streaming', () => {
 
     beforeEach(() => {
       feed = createChangeFeed();
+      activeFeeds.push(feed);
       manager = createSubscriptionManager(feed);
+      activeManagers.push(manager);
     });
 
     it('should create a subscription manager', () => {
@@ -198,7 +240,9 @@ describe('@unrdf/streaming', () => {
 
     beforeEach(() => {
       feed = createChangeFeed();
+      activeFeeds.push(feed);
       processor = createStreamProcessor(feed);
+      activeProcessors.push(processor);
     });
 
     it('should filter changes', () => {
@@ -252,7 +296,9 @@ describe('@unrdf/streaming', () => {
           object: literal('value'),
         };
 
-        processor.batch(3).subscribe(changes => {
+        const batched = processor.batch(3);
+        activeProcessors.push(batched);
+        batched.subscribe(changes => {
           expect(changes).toHaveLength(3);
           resolve();
         });
@@ -263,27 +309,31 @@ describe('@unrdf/streaming', () => {
       });
     });
 
-    it('should debounce changes', () => {
-      return new Promise(resolve => {
-        const quad = {
-          subject: namedNode('http://example.org/s'),
-          predicate: namedNode('http://example.org/p'),
-          object: literal('value'),
-        };
+    it('should debounce changes', async () => {
+      vi.useFakeTimers();
 
-        const callback = vi.fn();
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
 
-        processor.debounce(100).subscribe(callback);
+      const callback = vi.fn();
 
-        feed.emitChange({ type: 'add', quad });
-        feed.emitChange({ type: 'add', quad });
-        feed.emitChange({ type: 'add', quad });
+      const debounced = processor.debounce(100);
+      activeProcessors.push(debounced);
+      debounced.subscribe(callback);
 
-        setTimeout(() => {
-          expect(callback).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 150);
-      });
+      feed.emitChange({ type: 'add', quad });
+      feed.emitChange({ type: 'add', quad });
+      feed.emitChange({ type: 'add', quad });
+
+      // Advance timers past debounce delay
+      await vi.advanceTimersByTimeAsync(150);
+
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
     });
   });
 
@@ -400,7 +450,9 @@ describe('@unrdf/streaming', () => {
   describe('Memory Leak Prevention', () => {
     it('should handle 1000+ subscriptions without memory leak', () => {
       const feed = createChangeFeed();
+      activeFeeds.push(feed);
       const manager = createSubscriptionManager(feed);
+      activeManagers.push(manager);
       const subscriptionIds = [];
 
       // Create 1000 subscriptions
@@ -421,7 +473,9 @@ describe('@unrdf/streaming', () => {
 
     it('should properly clean up subscriptions on unsubscribe', () => {
       const feed = createChangeFeed();
+      activeFeeds.push(feed);
       const manager = createSubscriptionManager(feed);
+      activeManagers.push(manager);
       const callback = vi.fn();
 
       const id = manager.subscribe(callback, {});
@@ -453,7 +507,9 @@ describe('@unrdf/streaming', () => {
     it('should handle 100+ events/sec without blocking', () => {
       return new Promise(resolve => {
         const feed = createChangeFeed();
+        activeFeeds.push(feed);
         const processor = createStreamProcessor(feed);
+        activeProcessors.push(processor);
         let eventCount = 0;
 
         processor.subscribe(() => {
@@ -477,31 +533,36 @@ describe('@unrdf/streaming', () => {
       });
     });
 
-    it('should debounce rapid events correctly', () => {
-      return new Promise(resolve => {
-        const feed = createChangeFeed();
-        const processor = createStreamProcessor(feed);
-        const callback = vi.fn();
+    it('should debounce rapid events correctly', async () => {
+      vi.useFakeTimers();
 
-        processor.debounce(50).subscribe(callback);
+      const feed = createChangeFeed();
+      activeFeeds.push(feed);
+      const processor = createStreamProcessor(feed);
+      activeProcessors.push(processor);
+      const callback = vi.fn();
 
-        const quad = {
-          subject: namedNode('http://example.org/s'),
-          predicate: namedNode('http://example.org/p'),
-          object: literal('value'),
-        };
+      const debounced = processor.debounce(50);
+      activeProcessors.push(debounced);
+      debounced.subscribe(callback);
 
-        // Rapid fire 20 events
-        for (let i = 0; i < 20; i++) {
-          feed.emitChange({ type: 'add', quad });
-        }
+      const quad = {
+        subject: namedNode('http://example.org/s'),
+        predicate: namedNode('http://example.org/p'),
+        object: literal('value'),
+      };
 
-        // Should only trigger once after debounce period
-        setTimeout(() => {
-          expect(callback).toHaveBeenCalledTimes(1);
-          resolve();
-        }, 100);
-      });
+      // Rapid fire 20 events
+      for (let i = 0; i < 20; i++) {
+        feed.emitChange({ type: 'add', quad });
+      }
+
+      // Should only trigger once after debounce period
+      await vi.advanceTimersByTimeAsync(100);
+
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      vi.useRealTimers();
     });
   });
 
@@ -512,6 +573,7 @@ describe('@unrdf/streaming', () => {
   describe('Ring Buffer Eviction', () => {
     it('should evict oldest changes when exceeding max history', () => {
       const feed = createChangeFeed(null, { maxHistorySize: 100 });
+      activeFeeds.push(feed);
 
       const quad = {
         subject: namedNode('http://example.org/s'),
@@ -542,6 +604,7 @@ describe('@unrdf/streaming', () => {
 
     it('should maintain ring buffer with getHistory options', () => {
       const feed = createChangeFeed(null, { maxHistorySize: 50 });
+      activeFeeds.push(feed);
 
       const quad = {
         subject: namedNode('http://example.org/s'),
@@ -575,7 +638,9 @@ describe('@unrdf/streaming', () => {
   describe('Subscription Cleanup', () => {
     it('should clean up all subscriptions when unsubscribing', () => {
       const feed = createChangeFeed();
+      activeFeeds.push(feed);
       const manager = createSubscriptionManager(feed);
+      activeManagers.push(manager);
 
       const callback1 = vi.fn();
       const callback2 = vi.fn();
@@ -596,6 +661,7 @@ describe('@unrdf/streaming', () => {
 
     it('should handle unsubscribe function from subscribe', () => {
       const feed = createChangeFeed();
+      activeFeeds.push(feed);
       const callback = vi.fn();
 
       const unsubscribe = feed.subscribe(callback);
@@ -617,6 +683,7 @@ describe('@unrdf/streaming', () => {
 
     it('should handle removeEventListener cleanup', () => {
       const feed = createChangeFeed();
+      activeFeeds.push(feed);
       const callback = vi.fn();
 
       const handler = event => callback(event.detail);

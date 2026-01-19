@@ -155,12 +155,16 @@ export class RDFStreamParser extends Transform {
     try {
       // Parse all buffered data at once
       if (this.buffer && this.buffer.trim().length > 0) {
-        try {
-          const inputStr = this.buffer.trim();
+        const inputStr = this.buffer.trim();
 
-          // Wait for N3 Parser to complete parsing
-          await new Promise((resolve, reject) => {
+        // Wait for N3 Parser to complete parsing
+        try {
+          let hasCompleted = false;
+
+          await new Promise((resolve, _reject) => {
             this.parser.parse(inputStr + '\n', (error, quad) => {
+              if (hasCompleted) return;
+
               if (error) {
                 this.metrics.errors++;
                 if (this.config.onError) {
@@ -186,6 +190,7 @@ export class RDFStreamParser extends Transform {
                 }
               } else {
                 // quad === null signals end of parsing
+                hasCompleted = true;
                 resolve();
               }
             });
@@ -253,6 +258,22 @@ export class RDFStreamParser extends Transform {
         ? this.metrics.backpressureEvents / this.metrics.chunksEmitted
         : 0,
     };
+  }
+
+  /**
+   * Destroy the parser and clean up resources
+   *
+   * @param {Error} [error] - Optional error
+   * @param {Function} [callback] - Optional callback
+   */
+  _destroy(error, callback) {
+    // Clean up buffers
+    this.buffer = '';
+    this.chunkBuffer = [];
+    this.parser = null;
+
+    // Call parent destroy
+    super._destroy(error, callback);
   }
 }
 

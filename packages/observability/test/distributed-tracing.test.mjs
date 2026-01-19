@@ -5,7 +5,6 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { createDistributedTracing } from '../src/distributed-tracing.mjs';
-import { SpanKind } from '@opentelemetry/api';
 
 describe('DistributedTracing', () => {
   let tracing;

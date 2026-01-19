@@ -7,10 +7,14 @@
  * - Exit codes and error handling
  * - JSON envelope output
  *
+ * NOTE: These tests require SwiftLaTeX WASM binaries to be installed.
+ * If WASM binaries are not available, all tests will be skipped.
+ * To install: Run `node scripts/vendor-tex-engine.mjs`
+ *
  * @module test/latex-cli
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, beforeAll } from 'vitest';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { join } from 'node:path';
@@ -19,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 
 import { createTempDir, cleanupTempDir, validatePDFFormat } from './fixtures/setup.mjs';
+import { checkLatexAvailable } from './fixtures/check-latex-available.mjs';
 
 const execFileAsync = promisify(execFile);
 
@@ -29,15 +34,30 @@ const FIXTURES_DIR = join(__dirname, 'fixtures', 'latex');
 // Path to kgc CLI (assumes we're in packages/kgc-cli/test/)
 const KGC_CLI = join(__dirname, '..', 'src', 'cli.mjs');
 
+// Check if LaTeX WASM binaries are available
+let latexAvailable = false;
+let _skipReason = '';
+
+beforeAll(async () => {
+  const result = await checkLatexAvailable();
+  latexAvailable = result.available;
+  if (!result.available) {
+    _skipReason = result.reason;
+    console.warn(`\n⚠️  LaTeX CLI tests skipped: ${result.reason}\n`);
+  }
+});
+
 let tempCacheDir;
 let tempOutputDir;
 
 beforeEach(async () => {
+  if (!latexAvailable) return;
   tempCacheDir = await createTempDir('cli-cache-');
   tempOutputDir = await createTempDir('cli-output-');
 });
 
 afterEach(async () => {
+  if (!latexAvailable) return;
   await cleanupTempDir(tempCacheDir);
   await cleanupTempDir(tempOutputDir);
 });
@@ -75,7 +95,7 @@ async function runKGC(args, options = {}) {
 // BUILD COMMAND TESTS
 // ============================================================================
 
-describe('kgc latex build', () => {
+describe.skipIf(!latexAvailable)('kgc latex build', () => {
   it('should compile minimal.tex successfully', async () => {
     const inputPath = join(FIXTURES_DIR, 'minimal.tex');
     const outputPath = join(tempOutputDir, 'output.pdf');
@@ -188,7 +208,7 @@ describe('kgc latex build', () => {
 // DIAGNOSE COMMAND TESTS
 // ============================================================================
 
-describe('kgc latex diagnose', () => {
+describe.skipIf(!latexAvailable)('kgc latex diagnose', () => {
   it('should analyze minimal.tex and report no issues', async () => {
     const inputPath = join(FIXTURES_DIR, 'minimal.tex');
 
@@ -237,7 +257,7 @@ describe('kgc latex diagnose', () => {
 // EXIT CODE TESTS
 // ============================================================================
 
-describe('Exit Codes', () => {
+describe.skipIf(!latexAvailable)('Exit Codes', () => {
   it('should exit with 0 on successful compilation', async () => {
     const inputPath = join(FIXTURES_DIR, 'minimal.tex');
     const outputPath = join(tempOutputDir, 'output.pdf');
@@ -283,7 +303,7 @@ describe('Exit Codes', () => {
 // HELP TEXT TESTS
 // ============================================================================
 
-describe('Help Text', () => {
+describe.skipIf(!latexAvailable)('Help Text', () => {
   it('should display help for latex command', async () => {
     const result = await runKGC(['latex', '--help']);
 

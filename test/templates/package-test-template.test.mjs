@@ -21,8 +21,7 @@
  * @module test/templates/package-test-template
  */
 
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, expect } from 'vitest';
 
 // ============================================================================
 // CONFIGURATION - CUSTOMIZE THIS SECTION
@@ -58,12 +57,12 @@ test(`${PACKAGE_NAME} - package.json exists and valid`, async () => {
       assert: { type: 'json' },
     });
 
-    assert.ok(packageJson.default.name);
-    assert.ok(packageJson.default.version);
-    assert.strictEqual(packageJson.default.type, 'module'); // ESM only
+    expect(packageJson.default.name).toBeTruthy();
+    expect(packageJson.default.version).toBeTruthy();
+    expect(packageJson.default.type).toBe('module'); // ESM only
   } catch (error) {
     // If import fails, validate manually
-    assert.ok(true, 'Package.json validation skipped (import not available)');
+    expect(true).toBeTruthy();
   }
 });
 
@@ -79,7 +78,7 @@ test(`${PACKAGE_NAME} - all exports are available`, async () => {
   // }
 
   // Placeholder for packages without imports
-  assert.ok(true, 'Export validation (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - no CommonJS requires`, () => {
@@ -90,7 +89,7 @@ test(`${PACKAGE_NAME} - no CommonJS requires`, () => {
   // Example check (customize for your package):
   const hasCommonJS = false; // Set based on actual check
 
-  assert.strictEqual(hasCommonJS, false, 'Package should use pure ESM');
+  expect(hasCommonJS).toBe(false);
 });
 
 test(`${PACKAGE_NAME} - exports are Zod-validated`, () => {
@@ -100,9 +99,9 @@ test(`${PACKAGE_NAME} - exports are Zod-validated`, () => {
   // const { DataSchema } = await import(PACKAGE_NAME);
   // const validData = { field: 'value' };
   // const result = DataSchema.safeParse(validData);
-  // assert.strictEqual(result.success, true);
+  // expect(result.success).toBe(true);
 
-  assert.ok(true, 'Zod validation (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - package has README`, () => {
@@ -111,7 +110,7 @@ test(`${PACKAGE_NAME} - package has README`, () => {
 
   const hasReadme = true; // Placeholder
 
-  assert.strictEqual(hasReadme, true, 'Package should have README.md');
+  expect(hasReadme).toBe(true);
 });
 
 // ============================================================================
@@ -151,7 +150,7 @@ test(`${PACKAGE_NAME} - operations are deterministic`, () => {
   // const result2 = yourFunction(input);
   // assert.deepStrictEqual(result1, result2);
 
-  assert.ok(true, 'Determinism check (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - idempotent operations`, () => {
@@ -166,7 +165,7 @@ test(`${PACKAGE_NAME} - idempotent operations`, () => {
   // const stateAfterSecond = cloneState(state);
   // assert.deepStrictEqual(stateAfterFirst, stateAfterSecond);
 
-  assert.ok(true, 'Idempotence check (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - serialization is deterministic`, () => {
@@ -176,9 +175,9 @@ test(`${PACKAGE_NAME} - serialization is deterministic`, () => {
   // const obj = { b: 2, a: 1 };
   // const serialized1 = deterministicSerialize(obj);
   // const serialized2 = deterministicSerialize(obj);
-  // assert.strictEqual(serialized1, serialized2);
+  // expect(serialized1).toBe(serialized2);
 
-  assert.ok(true, 'Serialization check (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 // ============================================================================
@@ -199,16 +198,16 @@ test(`${PACKAGE_NAME} - async operations timeout at 5s`, async () => {
 
     try {
       const result = await withTimeout(operation.fn, timeout);
-      assert.ok(result, `${operation.name} should complete within ${timeout}ms`);
+      expect(result).toBeTruthy();
     } catch (error) {
       if (error.message === 'Timeout') {
-        assert.fail(`${operation.name} exceeded timeout of ${timeout}ms`);
+        throw new Error('Test failed');
       }
       throw error;
     }
   }
 
-  assert.ok(true);
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - operations fail gracefully on timeout`, async () => {
@@ -237,11 +236,11 @@ test(`${PACKAGE_NAME} - timeout generates denial receipt`, async () => {
 
   // Example:
   // const result = await executeWithTimeout(slowOperation, 100);
-  // assert.strictEqual(result.success, false);
-  // assert.strictEqual(result.receipt.decision, 'DENY');
-  // assert.strictEqual(result.receipt.reason, 'TIMEOUT');
+  // expect(result.success).toBe(false);
+  // expect(result.receipt.decision).toBe('DENY');
+  // expect(result.receipt.reason).toBe('TIMEOUT');
 
-  assert.ok(true, 'Timeout receipt (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 // ============================================================================
@@ -253,11 +252,11 @@ test(`${PACKAGE_NAME} - mutations produce receipts`, () => {
 
   // Example:
   // const result = mutateState(delta);
-  // assert.ok(result.receipt);
-  // assert.ok(result.receipt.receiptHash);
-  // assert.ok(result.receipt.timestamp_iso);
+  // expect(result.receipt).toBeTruthy();
+  // expect(result.receipt.receiptHash).toBeTruthy();
+  // expect(result.receipt.timestamp_iso).toBeTruthy();
 
-  assert.ok(true, 'Receipt generation (customize for mutations)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - receipts include merkle proofs`, () => {
@@ -265,10 +264,10 @@ test(`${PACKAGE_NAME} - receipts include merkle proofs`, () => {
 
   // Example:
   // const receipt = generateReceipt(operation);
-  // assert.ok(receipt.merkleProof);
+  // expect(receipt.merkleProof).toBeTruthy();
   // assert.ok(Array.isArray(receipt.merkleProof));
 
-  assert.ok(true, 'Merkle proof (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - receipt chain maintains integrity`, () => {
@@ -283,7 +282,7 @@ test(`${PACKAGE_NAME} - receipt chain maintains integrity`, () => {
   //   );
   // }
 
-  assert.ok(true, 'Receipt chain (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 // ============================================================================
@@ -299,7 +298,7 @@ test(`${PACKAGE_NAME} - invalid input rejected`, () => {
   //   /Invalid input/
   // );
 
-  assert.ok(true, 'Error handling (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - errors include context`, () => {
@@ -309,11 +308,11 @@ test(`${PACKAGE_NAME} - errors include context`, () => {
   // try {
   //   failingOperation();
   // } catch (error) {
-  //   assert.ok(error.context);
-  //   assert.ok(error.context.operation);
+  //   expect(error.context).toBeTruthy();
+  //   expect(error.context.operation).toBeTruthy();
   // }
 
-  assert.ok(true, 'Error context (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - rollback on failure`, () => {
@@ -329,7 +328,7 @@ test(`${PACKAGE_NAME} - rollback on failure`, () => {
   //   assert.deepStrictEqual(state, snapshot);
   // }
 
-  assert.ok(true, 'Rollback (customize for your package)');
+  expect(true).toBeTruthy();
 });
 
 // ============================================================================
@@ -340,12 +339,12 @@ test(`${PACKAGE_NAME} - rollback on failure`, () => {
 
 test(`${PACKAGE_NAME} - custom test 1`, () => {
   // Add tests specific to your package functionality
-  assert.ok(true, 'Customize this test');
+  expect(true).toBeTruthy();
 });
 
 test(`${PACKAGE_NAME} - custom test 2`, () => {
   // Add more custom tests as needed
-  assert.ok(true, 'Customize this test');
+  expect(true).toBeTruthy();
 });
 
 console.log(`\n✅ All ${PACKAGE_NAME} tests passed`);

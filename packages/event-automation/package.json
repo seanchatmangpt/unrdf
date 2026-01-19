@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/event-automation",
-  "version": "1.0.0",
+  "version": "6.0.0-rc.3",
   "description": "Event-driven automation for v6.1.0 - automatic delta processing with receipts",
   "type": "module",
   "main": "src/index.mjs",

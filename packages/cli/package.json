@@ -1,16 +1,18 @@
 {
   "name": "@unrdf/cli",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
-    "unrdf": "./src/cli.mjs"
+    "unrdf": "./dist/cli.mjs"
   },
-  "main": "src/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
-    ".": "./src/index.mjs",
-    "./commands": "./src/commands/index.mjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    }
   },
   "sideEffects": false,
   "files": [
@@ -23,8 +25,8 @@
     "test": "vitest run",
     "test:fast": "vitest run",
     "test:watch": "vitest",
-    "build": "unbuild && tsc --emitDeclarationOnly",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build": "unbuild",
+    "build:types": "unbuild",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
     "format": "prettier --write src/ test/",
@@ -41,12 +43,12 @@
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@unrdf/core": "workspace:5.0.0-beta.1",
-    "@unrdf/decision-fabric": "workspace:5.0.0-beta.1",
-    "@unrdf/federation": "workspace:5.0.0-beta.1",
-    "@unrdf/hooks": "workspace:5.0.0-beta.1",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/decision-fabric": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
     "@unrdf/kgn": "workspace:*",
-    "@unrdf/streaming": "workspace:5.0.0-beta.1",
+    "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",

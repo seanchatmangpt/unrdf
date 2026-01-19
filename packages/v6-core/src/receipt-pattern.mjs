@@ -118,6 +118,7 @@ export async function blake3Hash(data) {
 /**
  * Canonicalize object for deterministic hashing
  * Sorts keys lexicographically, removes undefined values
+ * Handles non-serializable objects (class instances, functions)
  *
  * @param {any} obj - Object to canonicalize
  * @returns {string} JSON string with sorted keys
@@ -126,7 +127,14 @@ export function canonicalize(obj) {
   if (obj === null) return 'null';
   if (obj === undefined) return '';
   if (typeof obj === 'bigint') return `"${obj.toString()}"`;
+  if (typeof obj === 'function') return '"[Function]"';
   if (typeof obj !== 'object') return JSON.stringify(obj);
+
+  // Handle class instances (non-plain objects) - use constructor name only
+  // This provides determinism for store/WASM objects without serializing internal state
+  if (obj.constructor && obj.constructor !== Object && obj.constructor !== Array) {
+    return `"[${obj.constructor.name}]"`;
+  }
 
   if (Array.isArray(obj)) {
     return '[' + obj.map(canonicalize).join(',') + ']';
@@ -206,16 +214,21 @@ export function withReceipt(fn, options = {}) {
     // Validate output
     const validatedOutput = outputSchema.parse(result);
 
-    // Build payload
-    const payload = {
+    // Build payload (deterministic - excludes timing info from hash)
+    const payloadForHash = {
       operation,
       input: canonicalize(validatedInput),
       output: canonicalize(validatedOutput),
+    };
+
+    // Build full payload with metadata (timing not included in hash)
+    const payload = {
+      ...payloadForHash,
       duration_ms: endTime - startTime,
     };
 
-    // Hash payload (await BLAKE3)
-    const payloadHash = await blake3Hash(canonicalize(payload));
+    // Hash payload (await BLAKE3) - uses deterministic subset only
+    const payloadHash = await blake3Hash(canonicalize(payloadForHash));
 
     // Build receipt
     const receiptData = {

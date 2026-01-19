@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-durable",
-  "version": "0.1.0",
+  "version": "6.0.0-rc.3",
   "description": "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D",
   "type": "module",
   "main": "src/engine.mjs",
@@ -11,8 +11,8 @@
     "./replay": "./src/replay.mjs"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint src/**/*.mjs test/**/*.mjs"
   },
   "dependencies": {
@@ -22,9 +22,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "eslint": "^8.56.0",
-    "jest": "^29.7.0"
+    "vitest": "^4.0.15"
   },
   "keywords": [
     "workflow",

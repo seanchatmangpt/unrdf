@@ -2,8 +2,9 @@
 
 > **UNRDF**: RDF Knowledge Graph Substrate Platform
 > **Version**: 6.0.0-rc.1
-> **Packages**: 56 packages in pnpm monorepo
+> **Packages**: 67 packages in pnpm monorepo
 > **Language**: JavaScript ESM (.mjs) + JSDoc + Zod
+> **Status**: Research prototype - architecturally complete, not production-validated
 
 ---
 
@@ -50,7 +51,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Package Tiers (56 Total)
+### Package Tiers (67 Total)
 
 **Essential Tier** (7 packages - always needed):
 - `@unrdf/core` - RDF Graph Operations, SPARQL, Foundational Substrate
@@ -71,8 +72,27 @@
 - `@unrdf/consensus` - Production-grade Raft consensus
 - `@unrdf/v6-compat` - V5 to V6 migration bridge
 
-**Optional Tier** - Performance, AI, visualization packages
-**Internal Tier** - Validation, test-utils, docs packages
+**Optional Tier** (30+ packages - specialized use cases):
+- `@unrdf/yawl-*` - YAWL workflow extensions (8 packages: ai, api, durable, kafka, langchain, observability, queue, realtime, viz)
+- `@unrdf/kgc-*` - KGC governance tools (9 packages: claude, cli, docs, multiverse, probe, swarm, tools)
+- `@unrdf/ml-*` - Machine learning (2 packages: inference, versioning)
+- `@unrdf/atomvm` - Erlang VM integration
+- `@unrdf/blockchain` - Blockchain integration
+- `@unrdf/zkp` - Zero-knowledge proofs
+- `@unrdf/geosparql` - Geospatial queries
+- `@unrdf/semantic-search` - Semantic search
+- `@unrdf/graph-analytics` - Graph algorithms
+- `@unrdf/privacy` - Privacy-preserving operations
+- `@unrdf/serverless` - Serverless deployment
+- Additional packages: ai-ml-innovations, caching, codegen, collab, composables, daemon, dark-matter, decision-fabric, diataxis-kit, domain, engine-gateway, event-automation, fusion, nextra, observability, project-engine, rdf-graphql, react, self-healing-workflows, spatial-kg, temporal-discovery
+
+**Internal Tier** (8 packages):
+- `@unrdf/docs` - Documentation site
+- `@unrdf/kgn` - Knowledge graph notebook
+- `@unrdf/test-utils` - Testing utilities
+- `@unrdf/validation` - Validation tools
+- `@unrdf/integration-tests` - Integration test suite
+- `@unrdf/diataxis-kit` - Documentation framework
 
 ---
 
@@ -168,22 +188,31 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 
 ---
 
-## 🚀 Available Agents (54 Total)
+## 🚀 Development Agents & Tools
 
-**Use Hyper-Advanced First**: `production-validator`, `code-analyzer`, `system-architect`, `performance-benchmarker`, `backend-dev`, `task-orchestrator`
+### Task Tool - Specialized Agents
+Use the Task tool with appropriate subagent_type for complex operations:
 
-**Core**: `coder`, `reviewer`, `tester`, `planner`, `researcher`
+**Primary Agents** (Use These First):
+- `Explore` - Fast codebase exploration (quick/medium/thorough levels)
+- `Plan` - Software architecture and implementation planning
+- `production-validator` - Production readiness validation
+- `coder` - Implementation specialist for clean, efficient code
+- `reviewer` - Code review and quality assurance
+- `tester` - Comprehensive testing and test writing
+- `researcher` - Deep research and information gathering
 
-**Specialized**:
-- `cicd-engineer` - GitHub Actions workflows
-- `security-manager` - Security audit and validation
-- `mobile-dev` - React Native development
-- `ml-developer` - Machine learning model development
+**Specialized Agents**:
+- `planner` - Strategic planning and task orchestration
+- `Bash` - Command execution (git, npm, docker operations)
+- `general-purpose` - Multi-step tasks requiring multiple tools
 
-**Verification**:
-- ❓ Is THIS agent RIGHT for the task? (Match expertise)
-- ❓ Did agent RUN command or just write code?
-- ❓ Did I verify output independently?
+**Agent Usage Rules**:
+- ✅ Launch multiple agents concurrently in ONE message (up to 10 max)
+- ✅ Use `Explore` for codebase questions (not direct Grep/Glob)
+- ✅ Verify agent output with commands (NEVER trust claims)
+- ✅ Match agent expertise to task requirements
+- ❌ Do NOT use deprecated `analyst` agent (use `code-analyzer` tools instead)
 
 ---
 
@@ -206,11 +235,17 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 │   ├── yawl/                 # @unrdf/yawl - Workflow engine
 │   ├── knowledge-engine/     # @unrdf/knowledge-engine - Inference
 │   └── ...                   # 44 more packages
-├── test/                      # 547 test files
-├── benchmarks/                # Performance benchmarks
-├── docs/                      # 429 documentation files (Diataxis)
-├── examples/                  # 53 example files
-└── scripts/                   # Development workflow scripts
+├── test/                      # 137 test files
+├── benchmarks/                # Performance benchmarks (core/, advanced/, integration/, v6/, regression/)
+├── docs/                      # 1,269 documentation files (Diataxis)
+├── examples/                  # 125 example files
+├── scripts/                   # 100+ development workflow scripts
+├── .claude/                   # Claude Code configuration
+│   ├── hooks/                # Git hooks and automation
+│   ├── rules/                # Code quality rules
+│   └── helpers/              # Validation helpers
+├── .github/                   # GitHub Actions (25 workflows)
+└── apps/                      # Application projects (docs-site)
 ```
 
 ### Key Dependencies
@@ -303,12 +338,33 @@ pnpm profile:cpu              # CPU profiling
 pnpm profile:mem              # Memory profiling
 ```
 
-### CI/CD Workflows
+### CI/CD Workflows (25 Total)
+**Core Workflows**:
 - **ci.yml** - Main CI (TypeScript gate, lint, test matrix Node 18/20/22)
-- **quality.yml** - Quality gates (80% coverage, 70+ quality score)
-- **release.yml** - Release automation (npm, Docker, GitHub Release)
+- **quality.yml** / **quality-gates.yml** - Quality gates (80% coverage, 70+ quality score)
+- **release.yml** / **v6-release.yml** - Release automation (npm, Docker, GitHub Release)
+- **code-quality.yml** - ESLint, Prettier, JSDoc validation
+- **security.yml** - Security scanning and vulnerability detection
+
+**Testing & Validation**:
 - **v6-tests.yml** - V6 determinism and performance tests
-- **performance-tracking.yml** - Performance regression detection
+- **v6-validate.yml** - V6 validation suite
+- **v6-regression.yml** - V6 regression detection
+- **performance-tracking.yml** / **perf.yml** - Performance regression detection
+- **checks.yml** - Pre-commit and validation checks
+- **thesis-validation.yml** - Academic thesis validation
+- **otel-weaver-validate.yml** - OpenTelemetry validation
+
+**Deployment & Automation**:
+- **deploy-production.yml** / **deploy-staging.yml** - Environment deployments
+- **deploy-benchmark-dashboard.yml** - Performance dashboard
+- **deploy-book.yml** - Documentation book deployment
+- **nextjs.yml** - Next.js application deployment
+- **autofix.yml** - Automated code fixes
+- **dependency-update.yml** - Automated dependency updates
+- **cache-optimization.yml** - Build cache optimization
+- **ggen-integration.yml** - Generated code integration
+- **capability-docs.yml** - Capability documentation generation
 
 ### Quality Thresholds
 | Metric | Threshold | Gate |
@@ -352,9 +408,10 @@ benchmarks/
 ## 🔒 Security & Validation
 
 ### Zod Schema Validation
-- **953 Zod imports** across codebase
-- **321 schema definition files** (`.schema.mjs`)
+- **555 Zod imports** across codebase
+- **77 schema definition files** (`.schema.mjs`)
 - All public APIs validated with Zod
+- Runtime validation at system boundaries
 
 ### Validation Patterns
 ```javascript
@@ -596,12 +653,19 @@ grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v n3-justified | wc
 find packages/*/src -name "*.mjs" -exec wc -l {} + | awk '$1 > 500'
 ```
 
-### Package Manager
+### Package Manager (pnpm ONLY)
 ```bash
-pnpm install          # Install dependencies
-pnpm -r test          # Run all package tests
-pnpm -C packages/core test  # Test specific package
-pnpm add -D <pkg>     # Add dev dependency
+pnpm install                    # Install dependencies
+pnpm -r test                    # Run all package tests
+pnpm -C packages/core test      # Test specific package
+pnpm add -D <pkg>               # Add dev dependency (workspace root)
+pnpm --filter @unrdf/core add <pkg>  # Add to specific package
+
+# Common workspace commands
+pnpm list:packages              # List all packages
+pnpm check:health               # Health check all packages
+pnpm update:deps                # Update dependencies
+pnpm clean:all                  # Clean all build artifacts
 ```
 
 ### Git Workflow
@@ -609,4 +673,69 @@ pnpm add -D <pkg>     # Add dev dependency
 git status            # Check changes
 git add -A && git commit -m "feat: description"
 git push -u origin <branch>
+
+# Branch naming convention
+# Format: claude/<description>-<sessionId>
+# Example: claude/add-feature-S3gJi
+# CRITICAL: Branch must start with 'claude/' and end with session ID or push fails with 403
 ```
+
+### YAWL Workflow Engine (8 Extension Packages)
+
+UNRDF includes comprehensive YAWL (Yet Another Workflow Language) support:
+
+**Core YAWL**:
+- `@unrdf/yawl` - Core YAWL workflow engine
+
+**Extensions**:
+- `@unrdf/yawl-ai` - AI/LLM integration for workflows
+- `@unrdf/yawl-api` - REST API for workflow management
+- `@unrdf/yawl-durable` - Durable execution patterns
+- `@unrdf/yawl-kafka` - Kafka integration for event-driven workflows
+- `@unrdf/yawl-langchain` - LangChain integration
+- `@unrdf/yawl-observability` - OTEL instrumentation for workflows
+- `@unrdf/yawl-queue` - Queue-based task management
+- `@unrdf/yawl-realtime` - Real-time workflow execution
+- `@unrdf/yawl-viz` - Workflow visualization
+
+### KGC (Knowledge Graph Governance) Suite (9 Packages)
+
+Advanced governance and tooling for knowledge graphs:
+
+- `@unrdf/kgc-4d` - 4D temporal event sourcing engine
+- `@unrdf/kgc-runtime` - Governance runtime with Zod schemas
+- `@unrdf/kgc-substrate` - Deterministic KnowledgeStore
+- `@unrdf/kgc-claude` - Claude AI integration
+- `@unrdf/kgc-cli` - Command-line tools
+- `@unrdf/kgc-docs` - Documentation generator
+- `@unrdf/kgc-multiverse` - Multi-universe management
+- `@unrdf/kgc-probe` - Runtime probing and inspection
+- `@unrdf/kgc-swarm` - Swarm coordination
+- `@unrdf/kgc-tools` - Utility tools
+
+### Claude Code Integration
+
+The `.claude/` directory contains Claude Code specific configuration:
+
+```
+.claude/
+├── hooks/                    # Git hooks and automation
+│   ├── hooks-shared.mjs     # Shared hook utilities
+│   ├── on-bounds-exceeded-hook.mjs
+│   ├── on-edit-docs-hook.mjs
+│   ├── on-non-determinism-hook.mjs
+│   └── on-write-docs-hook.mjs
+├── rules/                    # Code quality enforcement
+│   ├── agent-quality.md     # Agent output standards
+│   ├── code-quality.md      # Code quality rules
+│   └── testing-standards.md # Testing requirements
+└── helpers/                  # Validation utilities
+    ├── count-stats.mjs
+    └── validate-file.mjs
+```
+
+**Hooks trigger automatically** on:
+- File edits in docs/ directory
+- Documentation writes
+- Non-deterministic code patterns
+- Context bounds exceeded

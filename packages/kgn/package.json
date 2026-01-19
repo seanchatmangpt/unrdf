@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgn",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
   "type": "module",
   "main": "src/index.js",

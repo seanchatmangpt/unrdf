@@ -57,7 +57,7 @@ export const validateCommand = defineCommand({
       console.log(`Validating graph: ${args.name}`);
 
       // Integrate with real SHACL validation from knowledge-engine
-      const { validateShacl } = await import('../../../knowledge-engine/validate.mjs');
+      const { validateShacl } = await import('../../../../../src/knowledge-engine/validate.mjs');
       const { Parser } = await import('@unrdf/core/rdf/n3-justified-only');
       const { promises: fs } = await import('fs');
       const path = await import('path');
@@ -65,7 +65,7 @@ export const validateCommand = defineCommand({
       // Load graph data - try sidecar first, then fallback to local file
       let store = createStore();
       try {
-        const { createSidecarClient } = await import('../../../sidecar/client.mjs');
+        const { createSidecarClient } = await import('../../../../../sidecar/sidecar/client.mjs');
         const client = createSidecarClient();
         await client.connect();
 

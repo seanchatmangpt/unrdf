@@ -515,5 +515,99 @@
       }
     ],
     "timestamp": "2025-12-27T10:46:55.727Z"
+  },
+  {
+    "transaction_id": "tx_1768724225681_wpfmae",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      },
+      {
+        "id": "undo_admit_c2",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c2"
+        }
+      },
+      {
+        "id": "undo_admit_c3",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c3"
+        }
+      }
+    ],
+    "timestamp": "2026-01-18T08:17:05.692Z"
+  },
+  {
+    "transaction_id": "tx_1768724225712_3mwogh",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      },
+      {
+        "id": "undo_admit_c2",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c2"
+        }
+      }
+    ],
+    "timestamp": "2026-01-18T08:17:05.714Z"
+  },
+  {
+    "transaction_id": "tx_1768795472191_cdyw9",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      },
+      {
+        "id": "undo_admit_c2",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c2"
+        }
+      },
+      {
+        "id": "undo_admit_c3",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c3"
+        }
+      }
+    ],
+    "timestamp": "2026-01-19T04:04:32.218Z"
+  },
+  {
+    "transaction_id": "tx_1768795472239_r5skxr",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      },
+      {
+        "id": "undo_admit_c2",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c2"
+        }
+      }
+    ],
+    "timestamp": "2026-01-19T04:04:32.241Z"
   }
 ]

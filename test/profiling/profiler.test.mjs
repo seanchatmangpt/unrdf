@@ -2,8 +2,7 @@
  * @fileoverview Performance Profiler Tests
  */
 
-import { describe, it, beforeEach } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { trace } from '@opentelemetry/api';
 import { createProfiler, quickProfile } from '../../packages/profiling/profiler.mjs';
 import { LatencyProfiler } from '../../packages/profiling/latency-profiler.mjs';
@@ -23,10 +22,10 @@ describe('Profiler', () => {
         return 42;
       });
 
-      assert.strictEqual(result, 42);
-      assert.ok(profile.latency);
-      assert.ok(profile.latency.duration >= 50);
-      assert.ok(profile.metadata.operationName === 'test-op');
+      expect(result).toBe(42);
+      expect(profile.latency).toBeTruthy();
+      expect(profile.latency.duration >= 50).toBeTruthy();
+      expect(profile.metadata.operationName === 'test-op').toBeTruthy();
     });
 
     it('should track profile history', async () => {
@@ -37,7 +36,7 @@ describe('Profiler', () => {
       }
 
       const history = profiler.getHistory({ operationName: 'history-test' });
-      assert.strictEqual(history.length, 5);
+      expect(history.length).toBe(5);
     });
 
     it('should provide aggregate statistics', async () => {
@@ -48,9 +47,9 @@ describe('Profiler', () => {
       }
 
       const stats = profiler.getStats('stats-test');
-      assert.strictEqual(stats.count, 10);
-      assert.ok(stats.latency.mean > 0);
-      assert.ok(stats.latency.p95 > 0);
+      expect(stats.count).toBe(10);
+      expect(stats.latency.mean > 0).toBeTruthy();
+      expect(stats.latency.p95 > 0).toBeTruthy();
     });
 
     it('should handle operation errors', async () => {
@@ -86,10 +85,10 @@ describe('Profiler', () => {
       await sleep(50);
       const metrics = profiler.stop(sessionId);
 
-      assert.ok(metrics.duration >= 50);
-      assert.ok(metrics.p50 >= 0);
-      assert.ok(metrics.p95 >= 0);
-      assert.ok(metrics.p99 >= 0);
+      expect(metrics.duration >= 50).toBeTruthy();
+      expect(metrics.p50 >= 0).toBeTruthy();
+      expect(metrics.p95 >= 0).toBeTruthy();
+      expect(metrics.p99 >= 0).toBeTruthy();
     });
 
     it('should calculate percentiles correctly', () => {
@@ -100,9 +99,9 @@ describe('Profiler', () => {
       const p90 = profiler.calculatePercentile(values, 90);
       const p99 = profiler.calculatePercentile(values, 99);
 
-      assert.ok(p50 >= 50 && p50 <= 60);
-      assert.ok(p90 >= 90 && p90 <= 100);
-      assert.ok(p99 >= 95);
+      expect(p50 >= 50 && p50 <= 60).toBeTruthy();
+      expect(p90 >= 90 && p90 <= 100).toBeTruthy();
+      expect(p99 >= 95).toBeTruthy();
     });
 
     it('should build histogram buckets', () => {
@@ -110,7 +109,7 @@ describe('Profiler', () => {
       const measurements = [5, 15, 45, 75, 150, 500, 2000];
 
       const metrics = profiler.calculateMetrics(measurements, 2000);
-      assert.ok(metrics.histogram);
+      expect(metrics.histogram).toBeTruthy();
       assert.ok(Object.keys(metrics.histogram).length > 0);
     });
 
@@ -126,8 +125,8 @@ describe('Profiler', () => {
         p95: 100,
       });
 
-      assert.ok(budgetCheck.violations.length > 0);
-      assert.strictEqual(budgetCheck.passed, false);
+      expect(budgetCheck.violations.length > 0).toBeTruthy();
+      expect(budgetCheck.passed).toBe(false);
     });
 
     it('should support checkpoints', () => {
@@ -137,10 +136,10 @@ describe('Profiler', () => {
       const checkpoint1 = profiler.checkpoint(sessionId, 'step1');
       const checkpoint2 = profiler.checkpoint(sessionId, 'step2');
 
-      assert.ok(checkpoint2 > checkpoint1);
+      expect(checkpoint2 > checkpoint1).toBeTruthy();
 
       const metrics = profiler.stop(sessionId);
-      assert.strictEqual(metrics.checkpoints.length, 2);
+      expect(metrics.checkpoints.length).toBe(2);
     });
   });
 
@@ -153,9 +152,9 @@ describe('Profiler', () => {
       await sleep(50);
       const metrics = profiler.stop(sessionId);
 
-      assert.ok(metrics.heapUsedDelta !== undefined);
-      assert.ok(metrics.heapUsedPeak > 0);
-      assert.ok(metrics.trend);
+      expect(metrics.heapUsedDelta !== undefined).toBeTruthy();
+      expect(metrics.heapUsedPeak > 0).toBeTruthy();
+      expect(metrics.trend).toBeTruthy();
     });
 
     it('should detect memory trends', async () => {
@@ -171,7 +170,7 @@ describe('Profiler', () => {
       });
 
       assert.ok(['stable', 'growing', 'shrinking'].includes(metrics.trend.direction));
-      assert.ok(typeof metrics.trend.growthRate === 'number');
+      expect(typeof metrics.trend.growthRate === 'number').toBeTruthy();
     });
 
     it('should check memory budgets', async () => {
@@ -188,24 +187,24 @@ describe('Profiler', () => {
         maxGrowthRate: 1024 * 1024, // 1 MB/s
       });
 
-      assert.ok(typeof budgetCheck.passed === 'boolean');
+      expect(typeof budgetCheck.passed === 'boolean').toBeTruthy();
     });
 
     it('should capture memory snapshots', () => {
       const profiler = new MemoryProfiler();
       const snapshot = profiler.captureMemorySnapshot();
 
-      assert.ok(snapshot.timestamp);
-      assert.ok(snapshot.heapUsed > 0);
-      assert.ok(snapshot.heapTotal > 0);
-      assert.ok(snapshot.rss > 0);
+      expect(snapshot.timestamp).toBeTruthy();
+      expect(snapshot.heapUsed > 0).toBeTruthy();
+      expect(snapshot.heapTotal > 0).toBeTruthy();
+      expect(snapshot.rss > 0).toBeTruthy();
     });
   });
 
   describe('CPU Profiler', () => {
     it('should check availability', () => {
       const available = CpuProfiler.isAvailable();
-      assert.ok(typeof available === 'boolean');
+      expect(typeof available === 'boolean').toBeTruthy();
     });
 
     it('should profile CPU usage when available', async function () {
@@ -224,8 +223,8 @@ describe('Profiler', () => {
         return sum;
       });
 
-      assert.ok(metrics.totalTime > 0);
-      assert.ok(metrics.sampleCount > 0);
+      expect(metrics.totalTime > 0).toBeTruthy();
+      expect(metrics.sampleCount > 0).toBeTruthy();
       assert.ok(Array.isArray(metrics.hotFunctions));
     });
 
@@ -249,7 +248,7 @@ describe('Profiler', () => {
         maxTotalTime: metrics.totalTime + 1000,
       });
 
-      assert.strictEqual(budgetCheck.passed, true);
+      expect(budgetCheck.passed).toBe(true);
     });
   });
 
@@ -269,9 +268,9 @@ describe('Profiler', () => {
       const json = Reporter.toJSON(sampleProfile);
       const parsed = JSON.parse(json);
 
-      assert.ok(parsed.latency);
-      assert.ok(parsed.memory);
-      assert.strictEqual(parsed.metadata.operationName, 'sample');
+      expect(parsed.latency).toBeTruthy();
+      expect(parsed.memory).toBeTruthy();
+      expect(parsed.metadata.operationName).toBe('sample');
     });
 
     it('should format as terminal output', () => {
@@ -303,7 +302,7 @@ describe('Profiler', () => {
 
       const comparison = Reporter.compare(baseline, current);
 
-      assert.ok(typeof comparison.regression === 'boolean');
+      expect(typeof comparison.regression === 'boolean').toBeTruthy();
       assert.ok(Array.isArray(comparison.improvements));
       assert.ok(Array.isArray(comparison.regressions));
     });
@@ -316,9 +315,9 @@ describe('Profiler', () => {
         return 'quick';
       });
 
-      assert.strictEqual(result, 'quick');
-      assert.ok(profile.latency);
-      assert.ok(profile.memory);
+      expect(result).toBe('quick');
+      expect(profile.latency).toBeTruthy();
+      expect(profile.memory).toBeTruthy();
     });
   });
 
@@ -332,7 +331,7 @@ describe('Profiler', () => {
 
       // Metrics are recorded asynchronously
       // Just verify no errors occurred
-      assert.ok(true);
+      expect(true).toBeTruthy();
     });
 
     it('should create proper OTEL spans', async () => {
@@ -346,7 +345,7 @@ describe('Profiler', () => {
           await sleep(10);
         });
 
-        assert.ok(profile);
+        expect(profile).toBeTruthy();
       });
 
       span.end();

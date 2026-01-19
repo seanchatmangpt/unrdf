@@ -2,16 +2,19 @@
 
 **Research-grade RDF knowledge graphs with batteries included.**
 
-> **Status: Research Prototype** - Architecturally complete, not production-validated. See [Limitations](#limitations) for details.
+> **Status: v6.0.0-rc.3 (Release Candidate)** - Production-grade architecture, 99%+ test pass rate, 67 packages. See [Release Notes](RELEASE_NOTES.md) for details.
 
 UNRDF is a streamlined, open-source platform for building intelligent knowledge graph applications. It combines semantic web standards (RDF, SPARQL, SHACL) with modern JavaScript/TypeScript tooling and nanosecond-precision temporal event sourcing.
 
 **Perfect for:** Knowledge management systems, semantic search, event-sourced applications, temporal data tracking, and audit-trail systems.
 
-[![npm version](https://img.shields.io/npm/v/unrdf.svg)](https://www.npmjs.com/package/unrdf)
+**Latest Release**: [v6.0.0-rc.3](RELEASE_NOTES.md) - Final release candidate, 67 packages, Oxigraph 20K+ ops/sec
+
+[![Version](https://img.shields.io/badge/version-6.0.0--rc.3-blue)](RELEASE_NOTES.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![Test Pass Rate](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](permutation-tests/)
+[![Test Pass Rate](https://img.shields.io/badge/tests-99%25%20passing-brightgreen)](PACKAGE_OPERATIONAL_STATUS.md)
+[![Packages](https://img.shields.io/badge/packages-67-blue)](packages/)
 
 > **🎯 Consolidation Notice (Dec 2024):** UNRDF has been streamlined to 3 production-ready packages with 100% test pass rate. See [CONSOLIDATION.md](permutation-tests/EXECUTIVE-SUMMARY.md) for details.
 
@@ -380,7 +383,7 @@ const results = await core.federatedQuery([store1, store2, remoteGraphEndpoint],
 
 ## Production Packages
 
-UNRDF is organized as a **20-package monorepo** with clear separation of concerns:
+UNRDF is organized as a **67-package monorepo** with clear separation of concerns:
 
 ### Essential Packages (Start Here)
 
@@ -413,25 +416,21 @@ UNRDF is organized as a **20-package monorepo** with clear separation of concern
 
 **Full Stack Integration:** Test 11 validates all 3 packages work together ✅ (563ms)
 
-### 🗑️ Removed Packages
+### 📊 Package Health Status (v6.0.0-rc.2)
 
-The following package has been removed based on empirical analysis:
+| Category | Count | Status |
+| -------- | ----- | ------ |
+| **Operational** | 8+ | 99%+ test pass rate |
+| **Partially Operational** | 3+ | Minor issues, core works |
+| **Research Prototypes** | 40+ | Experimental features |
+| **Infrastructure/Docs** | 10+ | Tooling and documentation |
 
-- **`@unrdf/knowledge-engine`** - ❌ REMOVED (47% of codebase, 0% actual usage - all imports were broken)
-  - Functionality available in `@unrdf/core` (canonicalize, query, parse)
-  - Can be recovered from git history if needed
+**Recent Fixes** (rc.2):
+- ✅ `@unrdf/test-utils` - Corrected exports (PolicyPackManager, createLockchainWriter)
+- ✅ `@unrdf/core` - Added missing export specifier for lockchain-writer
+- ✅ `@unrdf/knowledge-engine` - Resolved circular dependency
 
-### 📊 Consolidation Results
-
-| Metric               | Before | After    | Improvement |
-| -------------------- | ------ | -------- | ----------- |
-| Packages             | 4      | 3        | -25%        |
-| LoC                  | 49,609 | ~26,000  | -48%        |
-| Test Pass Rate       | 37.5%  | **100%** | **+62.5%**  |
-| Production Ready     | 50%    | **100%** | **+50%**    |
-| Working Integrations | 2/7    | **6/6**  | **+100%**   |
-
-**Evidence:** See [permutation test results](permutation-tests/EXECUTIVE-SUMMARY.md)
+**Evidence:** See [PACKAGE_OPERATIONAL_STATUS.md](PACKAGE_OPERATIONAL_STATUS.md) for detailed status.
 
 ---
 
@@ -812,7 +811,11 @@ Interested in sponsoring? [Contact us](mailto:sponsors@unrdf.dev)
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
+See [CHANGELOG.md](CHANGELOG.md) for complete version history.
+
+**Latest Release**: [v6.0.0-rc.2 Release Notes](RELEASE_NOTES.md)
+
+**Migration**: [v5 to v6 Migration Guide](MIGRATION_GUIDE_v6.md)
 
 ---
 

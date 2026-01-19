@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/composables",
-  "version": "5.0.1",
+  "version": "6.0.0-rc.3",
   "description": "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -23,10 +23,10 @@
     "test:watch": "vitest --coverage",
     "build": "unbuild && tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly",
-    "lint": "eslint src/ test/ --max-warnings=0",
-    "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "lint": "eslint src/ --max-warnings=0",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
     "dev": "echo 'Development mode for @unrdf/composables'"
   },

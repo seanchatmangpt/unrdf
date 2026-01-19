@@ -18,7 +18,7 @@
  * @returns {object} SHACL validation report
  */
 export function validateShacl(dataStore, shapesString, options = {}) {
-  const { strict = false, includeDetails = true } = options;
+  const { strict: _strict = false, includeDetails = true } = options;
 
   // Simplified SHACL validation
   // In production, use a full SHACL validator like rdf-validate-shacl

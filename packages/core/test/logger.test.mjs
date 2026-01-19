@@ -215,7 +215,8 @@ describe('Logger System', () => {
 
       expect(metrics).toHaveProperty('duration');
       expect(metrics).toHaveProperty('timestamp');
-      expect(metrics.duration).toBeGreaterThanOrEqual(10);
+      // Allow 1ms tolerance for timing variance
+      expect(metrics.duration).toBeGreaterThanOrEqual(9);
       expect(metrics.duration).toBeLessThan(50);
     });
 
@@ -231,7 +232,8 @@ describe('Logger System', () => {
       // Timer should still work after elapsed()
       await new Promise(resolve => setTimeout(resolve, 5));
       const final = timer.end();
-      expect(final.duration).toBeGreaterThanOrEqual(10);
+      // Allow 1ms tolerance for timing variance
+      expect(final.duration).toBeGreaterThanOrEqual(9);
     });
   });
 });

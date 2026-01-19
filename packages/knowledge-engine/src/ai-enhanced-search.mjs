@@ -12,7 +12,7 @@
 import { z } from 'zod';
 import { pipeline, env } from '@xenova/transformers';
 import { query as sparqlQuery } from './query.mjs';
-import { KnowledgeSubstrateCore } from './knowledge-substrate-core.mjs';
+import { KnowledgeSubstrateCore as _KnowledgeSubstrateCore } from './knowledge-substrate-core.mjs';
 
 // Configure Transformers.js to use local models (no external downloads in production)
 env.allowRemoteModels = false;

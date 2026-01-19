@@ -1,0 +1,40 @@
+{
+  "name": "@unrdf/privacy",
+  "version": "6.0.0-rc.3",
+  "description": "Differential privacy for SPARQL queries with (ε, δ)-differential privacy guarantees",
+  "type": "module",
+  "main": "./src/differential-privacy-sparql.mjs",
+  "exports": {
+    ".": "./src/differential-privacy-sparql.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix"
+  },
+  "keywords": [
+    "differential-privacy",
+    "privacy",
+    "sparql",
+    "rdf",
+    "laplace",
+    "gaussian",
+    "privacy-preserving",
+    "epsilon-delta"
+  ],
+  "dependencies": {
+    "hash-wasm": "^4.12.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16",
+    "eslint": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "UNRDF Contributors",
+  "license": "MIT"
+}

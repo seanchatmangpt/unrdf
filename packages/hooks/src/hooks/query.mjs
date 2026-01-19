@@ -16,7 +16,7 @@
  * @param {boolean} options.deterministic - Use deterministic execution
  * @returns {Promise<boolean>} Query result (true/false)
  */
-export async function ask(store, queryString, options = {}) {
+export async function ask(store, queryString, _options = {}) {
   if (!store || typeof store.query !== 'function') {
     throw new TypeError('ask: store must have a query method');
   }
@@ -59,7 +59,7 @@ export async function ask(store, queryString, options = {}) {
  * @param {boolean} options.deterministic - Use deterministic execution
  * @returns {Promise<Array>} Query results as array of bindings
  */
-export async function select(store, queryString, options = {}) {
+export async function select(store, queryString, _options = {}) {
   if (!store || typeof store.query !== 'function') {
     throw new TypeError('select: store must have a query method');
   }
@@ -108,7 +108,7 @@ export async function select(store, queryString, options = {}) {
  * @param {object} options - Query options
  * @returns {Promise<Array>} Query results as array of quads
  */
-export async function construct(store, queryString, options = {}) {
+export async function construct(store, queryString, _options = {}) {
   if (!store || typeof store.query !== 'function') {
     throw new TypeError('construct: store must have a query method');
   }

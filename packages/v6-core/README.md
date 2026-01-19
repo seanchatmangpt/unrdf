@@ -4,8 +4,8 @@
 
 ## Status
 
-**Version**: 6.0.0-alpha.1
-**Status**: Alpha (Not production-ready)
+**Version**: 6.0.0-rc.3
+**Status**: Release Candidate (Production-ready pending final validation)
 **Purpose**: Exploration and experimentation with v6 concepts
 
 ## Overview

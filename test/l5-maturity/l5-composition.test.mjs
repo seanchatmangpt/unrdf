@@ -9,8 +9,7 @@
  * - Run: npm run test:composition
  */
 
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+import { test, describe, expect } from 'vitest';
 
 describe('L5: Full Composition', () => {
   test('[L5.1] Composition: Oxigraph Store + Receipt Generation', async () => {
@@ -46,9 +45,9 @@ describe('L5: Full Composition', () => {
     const receiptHash = receipt.getHash();
 
     // Verify composition
-    assert.ok(store.has(quad), 'Store contains quad');
-    assert.ok(receiptHash.length === 64, 'Receipt hash generated');
-    assert.ok(receipt.decision === 'ALLOW', 'Receipt decision recorded');
+    expect(store.has(quad).toBeTruthy();
+    expect(receiptHash.length === 64).toBeTruthy();
+    expect(receipt.decision === 'ALLOW').toBeTruthy();
 
     console.log('[L5.1] ✅ Store + Receipt composition successful');
   });
@@ -101,10 +100,10 @@ describe('L5: Full Composition', () => {
     });
 
     // Verify full composition
-    assert.ok(store.has(quad1), 'Store contains quad');
-    assert.ok(capsule.hash.length === 64, 'Delta capsule hashed');
-    assert.ok(receipt1.getHash().length === 64, 'Receipt generated');
-    assert.ok(chain.verify(), 'Receipt chain valid');
+    expect(store.has(quad1).toBeTruthy();
+    expect(capsule.hash.length === 64).toBeTruthy();
+    expect(receipt1.getHash().toBeTruthy();
+    expect(chain.verify().toBeTruthy();
 
     console.log('[L5.2] ✅ Store + Delta + Receipt Chain composition successful');
   });
@@ -147,9 +146,9 @@ describe('L5: Full Composition', () => {
     }
 
     // Verify composition
-    assert.equal(Array.from(store.match()).length, 10, 'All quads stored');
-    assert.equal(chain.receipts.length, 10, 'All receipts chained');
-    assert.ok(chain.verify(), 'Chain integrity verified');
+    expect(Array.from(store.match()).length).toBe(10);
+    expect(chain.receipts.length).toBe(10);
+    expect(chain.verify().toBeTruthy();
 
     console.log('[L5.3] ✅ Multi-operation composition successful');
   });
@@ -192,9 +191,9 @@ describe('L5: Full Composition', () => {
     });
 
     // Verify composition
-    assert.equal(results.length, 5, 'Query returns expected results');
-    assert.ok(queryReceipt.getHash().length === 64, 'Query receipt generated');
-    assert.ok(queryReceipt.reason.includes('5 results'), 'Receipt captures query metadata');
+    expect(results.length).toBe(5);
+    expect(queryReceipt.getHash().toBeTruthy();
+    expect(queryReceipt.reason.includes('5 results').toBeTruthy();
 
     console.log('[L5.4] ✅ Query + Receipt composition successful');
   });
@@ -240,8 +239,8 @@ describe('L5: Full Composition', () => {
     const merkleRoot = batcher.batch(receipts);
 
     // Verify composition
-    assert.equal(snapshot1.length, 5, 'Snapshot captures all quads');
-    assert.ok(merkleRoot.length === 64, 'Merkle root generated');
+    expect(snapshot1.length).toBe(5);
+    expect(merkleRoot.length === 64).toBeTruthy();
 
     console.log('[L5.5] ✅ Snapshot + Merkle + Receipt composition successful');
   });
@@ -386,10 +385,10 @@ describe('L5: Full Composition', () => {
     const results = await Promise.all(compositions.map((fn) => fn()));
 
     // Verify all succeeded
-    assert.equal(results.length, 10, 'All 10 compositions executed');
+    expect(results.length).toBe(10);
 
     for (let i = 0; i < results.length; i++) {
-      assert.ok(results[i], `Composition ${i + 1} successful`);
+      expect(results[i]).toBeTruthy();
     }
 
     console.log('[L5.6] ✅ 10/10 module pair compositions successful');

@@ -1,285 +1,110 @@
 /**
- * @file Dark Matter 80/20 Example
+ * @file Dark Matter 80/20 Example - Query Optimization
  * @module dark-matter-80-20-example
  *
  * @description
- * Example demonstrating the Dark Matter 80/20 framework implementation
- * for the KGC JavaScript Sidecar.
+ * Example demonstrating query optimization using the 80/20 principle:
+ * Focus on the 20% of optimizations that deliver 80% of the performance gains.
  */
 
-import { DarkMatterFactory } from '../packages/knowledge-engine/src/dark-matter-core.mjs';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, namedNode, literal, executeSelectSync, FOAF, RDF } from '@unrdf/core';
 
-/**
- * Dark Matter 80/20 Example
- *
- * This example demonstrates how the Dark Matter 80/20 framework
- * delivers maximum value through focused development of core components.
- */
-async function darkMatter8020Example() {
-  console.log('🌌 Dark Matter 80/20 Framework Example');
-  console.log('=====================================\n');
+console.log('🌌 Dark Matter 80/20 Query Optimization Example');
+console.log('='.repeat(50));
 
-  try {
-    // Create Dark Matter core system
-    console.log('🔧 Creating Dark Matter 80/20 system...');
-    const darkMatter = await DarkMatterFactory.createSystem({
-      // Enable all core components (20% that deliver 80% of value)
-      enableTransactionManager: true,
-      enableKnowledgeHookManager: true,
-      enableEffectSandbox: true,
-      enableObservability: true,
-      enablePerformanceOptimizer: true,
-      enableLockchainWriter: true,
+// Create a larger dataset for optimization testing
+console.log('\n📊 Creating test dataset...');
+const store = createStore();
 
-      // Disable optional components (80% that deliver 20% of value)
-      enablePolicyPackManager: false,
-      enableResolutionLayer: false,
+// Add 100 people with various properties
+for (let i = 0; i < 100; i++) {
+  const person = namedNode(`http://example.org/person${i}`);
+  store.addQuad(person, RDF.type, FOAF.Person);
+  store.addQuad(person, FOAF.name, literal(`Person ${i}`));
+  store.addQuad(person, namedNode('http://example.org/age'), literal(String(20 + (i % 50))));
 
-      // 80/20 performance targets
-      performanceTargets: {
-        p50PreHookPipeline: 0.2, // 200µs
-        p99PreHookPipeline: 2, // 2ms
-        receiptWriteMedian: 5, // 5ms
-        hookEngineExecPerMin: 10000, // 10k/min
-        errorIsolation: 1, // 100%
-      },
-    });
-
-    console.log('✅ Dark Matter system created successfully\n');
-
-    // Display system status
-    console.log('📊 System Status:');
-    const status = darkMatter.getStatus();
-    console.log(`   Initialized: ${status.initialized}`);
-    console.log(`   Components: ${status.components.join(', ')}`);
-    console.log(`   Component Count: ${status.components.length}\n`);
-
-    // Display Dark Matter metrics
-    console.log('🎯 Dark Matter 80/20 Metrics:');
-    const metrics = darkMatter.getMetrics();
-    console.log(`   Value Delivery Ratio: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
-    console.log(
-      `   Performance Impact Ratio: ${(metrics.performanceImpactRatio * 100).toFixed(1)}%`
-    );
-    console.log(
-      `   Development Efficiency Ratio: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}%`
-    );
-    console.log(`   Core Components: ${metrics.coreComponentCount}`);
-    console.log(`   Optional Components: ${metrics.optionalComponentCount}\n`);
-
-    // Validate 80/20 principle
-    console.log('🔍 80/20 Principle Validation:');
-    const totalComponents = status.components.length;
-    const coreComponents = metrics.coreComponentCount;
-    const componentRatio = coreComponents / totalComponents;
-
-    console.log(`   Total Components: ${totalComponents}`);
-    console.log(`   Core Components: ${coreComponents}`);
-    console.log(`   Component Ratio: ${(componentRatio * 100).toFixed(1)}%`);
-    console.log(
-      `   80/20 Target: ${metrics.valueDeliveryRatio >= 0.8 ? '✅ ACHIEVED' : '❌ NOT ACHIEVED'}\n`
-    );
-
-    // Demonstrate transaction execution
-    console.log('⚡ Transaction Execution Example:');
-    const store = createStore();
-    const delta = {
-      additions: [
-        {
-          subject: { value: 'http://example.org/subject' },
-          predicate: { value: 'http://example.org/predicate' },
-          object: { value: 'http://example.org/object' },
-          graph: { value: 'http://example.org/graph' },
-        },
-      ],
-      removals: [],
-    };
-
-    const startTime = Date.now();
-    const result = await darkMatter.executeTransaction(store, delta);
-    const duration = Date.now() - startTime;
-
-    console.log(`   Transaction Duration: ${duration}ms`);
-    console.log(`   Transaction Committed: ${result.receipt.committed}`);
-    if (result.receipt.afterHash && typeof result.receipt.afterHash.substring === 'function') {
-      console.log(`   Receipt Hash: ${result.receipt.afterHash.substring(0, 16)}...\n`);
-    } else {
-      console.log(`   Receipt Hash: ${result.receipt.afterHash || 'N/A'}\n`);
+  // Add social connections (20% of people know 80% of others)
+  if (i < 20) {
+    for (let j = 0; j < 80; j++) {
+      const friend = namedNode(`http://example.org/person${j}`);
+      store.addQuad(person, FOAF.knows, friend);
     }
-
-    // Demonstrate hook execution
-    console.log('🎣 Knowledge Hook Execution Example:');
-    const hook = {
-      meta: { name: 'example-hook' },
-      when: {
-        kind: 'sparql-ask',
-        ref: {
-          uri: 'file://example.ask.rq',
-          sha256: 'example-hash',
-          mediaType: 'application/sparql-query',
-        },
-      },
-      run: async _event => {
-        console.log('   Hook executed successfully');
-        return { result: 'success', message: 'Dark Matter 80/20 in action!' };
-      },
-    };
-
-    const event = {
-      name: 'example-hook',
-      payload: { example: 'data' },
-      context: { graph: store },
-    };
-
-    const hookStartTime = Date.now();
-    const hookResult = await darkMatter.executeHook(hook, event);
-    const hookDuration = Date.now() - hookStartTime;
-
-    console.log(`   Hook Duration: ${hookDuration}ms`);
-    console.log(`   Hook Result: ${hookResult.result}`);
-    console.log(`   Hook Message: ${hookResult.message}\n`);
-
-    // Display core components
-    console.log('🔧 Core Components (20% that deliver 80% of value):');
-    const coreComponentsList = darkMatter.getCoreComponents();
-    for (const [name, { weight }] of Object.entries(coreComponentsList)) {
-      console.log(`   ${name}: ${(weight * 100).toFixed(0)}% value weight`);
-    }
-    console.log();
-
-    // Display optional components
-    console.log('🔧 Optional Components (80% that deliver 20% of value):');
-    const optionalComponents = darkMatter.getOptionalComponents();
-    if (Object.keys(optionalComponents).length > 0) {
-      for (const [name, { weight }] of Object.entries(optionalComponents)) {
-        console.log(`   ${name}: ${(weight * 100).toFixed(0)}% value weight`);
-      }
-    } else {
-      console.log('   No optional components enabled');
-    }
-    console.log();
-
-    // Performance summary
-    console.log('📈 Performance Summary:');
-    console.log(`   Transaction Latency: ${duration}ms (target: ≤ 2ms)`);
-    console.log(`   Hook Execution: ${hookDuration}ms (target: ≤ 2ms)`);
-    console.log(
-      `   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}% (target: ≥ 80%)`
-    );
-    console.log(
-      `   Performance Impact: ${(metrics.performanceImpactRatio * 100).toFixed(1)}% (target: ≥ 80%)`
-    );
-    console.log(
-      `   Development Efficiency: ${(metrics.developmentEfficiencyRatio * 100).toFixed(1)}% (target: ≥ 80%)\n`
-    );
-
-    // Cleanup
-    console.log('🧹 Cleaning up Dark Matter system...');
-    await darkMatter.cleanup();
-    console.log('✅ Dark Matter system cleaned up successfully\n');
-
-    // Final summary
-    console.log('🎉 Dark Matter 80/20 Framework Example Complete!');
-    console.log('================================================');
-    console.log('✅ 80/20 principle successfully implemented');
-    console.log('✅ Core components deliver maximum value');
-    console.log('✅ Performance targets achieved');
-    console.log('✅ System ready for production deployment');
-  } catch (error) {
-    console.error('❌ Dark Matter 80/20 example failed:', error.message);
-    console.error('Stack trace:', error.stack);
-    process.exit(1);
   }
 }
 
-/**
- * Minimal Dark Matter 80/20 Example
- *
- * Demonstrates the minimal system with only essential components.
- */
-async function minimalDarkMatterExample() {
-  console.log('\n🌌 Minimal Dark Matter 80/20 Example');
-  console.log('====================================\n');
+console.log(`✅ Created dataset with ${store.size} triples`);
 
-  try {
-    // Create minimal Dark Matter system
-    console.log('🔧 Creating minimal Dark Matter system...');
-    const darkMatter = await DarkMatterFactory.createMinimalSystem();
+// 80/20 Optimization 1: Selective Queries (20% of queries handle 80% of use cases)
+console.log('\n🎯 Optimization 1: Core Queries (80/20 Principle)');
 
-    console.log('✅ Minimal Dark Matter system created successfully\n');
+const startTime1 = performance.now();
+const coreQuery = executeSelectSync(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-    // Display system status
-    const status = darkMatter.getStatus();
-    console.log('📊 Minimal System Status:');
-    console.log(`   Components: ${status.components.join(', ')}`);
-    console.log(`   Component Count: ${status.components.length}\n`);
-
-    // Display metrics
-    const metrics = darkMatter.getMetrics();
-    console.log('🎯 Minimal System Metrics:');
-    console.log(`   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
-    console.log(`   Core Components: ${metrics.coreComponentCount}\n`);
-
-    // Cleanup
-    await darkMatter.cleanup();
-    console.log('✅ Minimal Dark Matter system cleaned up\n');
-  } catch (error) {
-    console.error('❌ Minimal Dark Matter example failed:', error.message);
+  SELECT ?person ?name WHERE {
+    ?person a foaf:Person ;
+            foaf:name ?name .
   }
-}
+  LIMIT 10
+`);
+const duration1 = performance.now() - startTime1;
 
-/**
- * Full Dark Matter 80/20 Example
- *
- * Demonstrates the full system with all components enabled.
- */
-async function fullDarkMatterExample() {
-  console.log('\n🌌 Full Dark Matter 80/20 Example');
-  console.log('=================================\n');
+console.log(`   Query executed in ${duration1.toFixed(2)}ms`);
+console.log(`   Results: ${coreQuery.length} people`);
 
-  try {
-    // Create full Dark Matter system
-    console.log('🔧 Creating full Dark Matter system...');
-    const darkMatter = await DarkMatterFactory.createFullSystem();
+// 80/20 Optimization 2: Indexed Lookups (Most common access pattern)
+console.log('\n🎯 Optimization 2: Filtered Queries (Common Pattern)');
 
-    console.log('✅ Full Dark Matter system created successfully\n');
+const startTime2 = performance.now();
+const filteredQuery = executeSelectSync(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX ex: <http://example.org/>
 
-    // Display system status
-    const status = darkMatter.getStatus();
-    console.log('📊 Full System Status:');
-    console.log(`   Components: ${status.components.join(', ')}`);
-    console.log(`   Component Count: ${status.components.length}\n`);
-
-    // Display metrics
-    const metrics = darkMatter.getMetrics();
-    console.log('🎯 Full System Metrics:');
-    console.log(`   Value Delivery: ${(metrics.valueDeliveryRatio * 100).toFixed(1)}%`);
-    console.log(`   Core Components: ${metrics.coreComponentCount}`);
-    console.log(`   Optional Components: ${metrics.optionalComponentCount}\n`);
-
-    // Cleanup
-    await darkMatter.cleanup();
-    console.log('✅ Full Dark Matter system cleaned up\n');
-  } catch (error) {
-    console.error('❌ Full Dark Matter example failed:', error.message);
+  SELECT ?person ?name ?age WHERE {
+    ?person a foaf:Person ;
+            foaf:name ?name ;
+            ex:age ?age .
+    FILTER(?age >= "30")
   }
+  LIMIT 20
+`);
+const duration2 = performance.now() - startTime2;
+
+console.log(`   Query executed in ${duration2.toFixed(2)}ms`);
+console.log(`   Results: ${filteredQuery.length} matching people`);
+
+// 80/20 Optimization 3: Social Network Queries (Most valuable insights)
+console.log('\n🎯 Optimization 3: Social Network Analysis');
+
+const startTime3 = performance.now();
+const socialQuery = executeSelectSync(store, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+  SELECT ?person ?name (COUNT(?friend) AS ?connections) WHERE {
+    ?person a foaf:Person ;
+            foaf:name ?name .
+    OPTIONAL { ?person foaf:knows ?friend }
+  }
+  GROUP BY ?person ?name
+  ORDER BY DESC(?connections)
+  LIMIT 10
+`);
+const duration3 = performance.now() - startTime3;
+
+console.log(`   Query executed in ${duration3.toFixed(2)}ms`);
+console.log('   Top connectors:');
+for (const binding of socialQuery.slice(0, 5)) {
+  const name = binding.get('name')?.value;
+  const connections = binding.get('connections')?.value || '0';
+  console.log(`     ${name}: ${connections} connections`);
 }
 
-// Run examples
-if (import.meta.url === `file://${process.argv[1]}`) {
-  console.log('🚀 Starting Dark Matter 80/20 Examples...\n');
+// Display 80/20 summary
+console.log('\n📈 80/20 Performance Summary:');
+console.log(`   Core query: ${duration1.toFixed(2)}ms (most frequent)`);
+console.log(`   Filtered query: ${duration2.toFixed(2)}ms (common pattern)`);
+console.log(`   Social analysis: ${duration3.toFixed(2)}ms (high value)`);
+console.log(`   Total dataset: ${store.size} triples`);
 
-  // Run main example
-  await darkMatter8020Example();
-
-  // Run minimal example
-  await minimalDarkMatterExample();
-
-  // Run full example
-  await fullDarkMatterExample();
-
-  console.log('🎉 All Dark Matter 80/20 examples completed successfully!');
-}
-
-export { darkMatter8020Example, minimalDarkMatterExample, fullDarkMatterExample };
+console.log('\n✅ Dark Matter 80/20 example complete!');
+console.log('💡 Focus on the 20% of queries that deliver 80% of the value');
