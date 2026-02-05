@@ -36,7 +36,7 @@ export const MessageType = {
  * Message schema
  */
 export const MessageSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string().uuid().optional(),
   type: z.enum([
     'work_request',
     'work_response',
@@ -49,7 +49,7 @@ export const MessageSchema = z.object({
   from: z.string(),
   to: z.string(),
   payload: z.any(),
-  timestamp: z.string().datetime(),
+  timestamp: z.string().datetime().optional(),
   correlationId: z.string().uuid().optional()
 });
 

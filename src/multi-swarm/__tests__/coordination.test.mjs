@@ -241,14 +241,19 @@ describe('CoordinationHub', () => {
   it('should distribute work', () => {
     hub.registerSwarm('swarm-1', { domain: 'compression', capacity: 10 });
 
-    const swarmId = hub.distributeWork({
+    const workId = hub.distributeWork({
       type: 'compress',
       domain: 'compression',
       payload: { data: [] }
     });
 
-    expect(swarmId).toBe('swarm-1');
+    expect(workId).toBeDefined();
+    expect(typeof workId).toBe('string');
     expect(hub.activeWork.size).toBe(1);
+
+    // Verify the work was assigned to the correct swarm
+    const workItem = hub.activeWork.get(workId);
+    expect(workItem.swarmId).toBe('swarm-1');
   });
 
   it('should handle work completion', () => {
