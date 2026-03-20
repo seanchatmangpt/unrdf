@@ -256,7 +256,16 @@ export class DaemonReceiptGenerator {
         reason: 'Genesis receipt must have previousHash = null',
       });
     } else {
-      validCount += 1;
+      // Verify genesis hash integrity
+      const genesisExpected = await blake3('GENESIS:' + first.payloadHash);
+      if (genesisExpected !== first.receiptHash) {
+        tamperedReceipts.push({
+          receiptId: first.id,
+          reason: 'Genesis receipt hash integrity failed',
+        });
+      } else {
+        validCount += 1;
+      }
     }
 
     // Verify chain links and hash integrity

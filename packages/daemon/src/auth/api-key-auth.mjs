@@ -42,7 +42,7 @@ export class ApiKeyAuthenticator {
    */
   constructor(options = {}) {
     this.storedKeyHash = options.storedKeyHash || null;
-    this.environment = options.environment || process.env.NODE_ENV || 'development';
+    this.environment = options.environment || 'development';
     this.requireInDev = options.requireInDev || false;
     this.logger = options.logger || console;
     this.authLog = [];

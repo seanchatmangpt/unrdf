@@ -6,6 +6,9 @@
 
 import { blake3 } from 'hash-wasm';
 
+/**
+ *
+ */
 export async function buildMerkleTree(receipts) {
   if (receipts.length === 0) {
     throw new Error('Cannot build tree: empty receipts array');
@@ -30,10 +33,10 @@ export async function buildMerkleTree(receipts) {
         const parentHash = await blake3(combined);
         nextLevel.push(parentHash);
       } else {
-        // CVE-2012-2459 mitigation: Duplicate odd leaf and hash with itself
-        // instead of promoting unhashed. This prevents odd-leaf duplication attacks
-        // where an attacker could append a duplicate leaf and maintain the same root.
-        const combined = currentLevel[i] + ':' + currentLevel[i];
+        // CVE-2012-2459 mitigation: Use domain separator for padding nodes
+        // to distinguish them from real leaf pairs. Without this tag, an attacker
+        // could append a duplicate of the last leaf and get the same root hash.
+        const combined = '\x01' + currentLevel[i] + ':' + currentLevel[i];
         const parentHash = await blake3(combined);
         nextLevel.push(parentHash);
       }
@@ -50,6 +53,9 @@ export async function buildMerkleTree(receipts) {
   };
 }
 
+/**
+ *
+ */
 export async function generateInclusionProof(tree, index) {
   const proof = [];
   let currentIndex = index;
@@ -61,12 +67,21 @@ export async function generateInclusionProof(tree, index) {
         hash: level[siblingIndex],
         position: currentIndex % 2 === 0 ? 'right' : 'left',
       });
+    } else {
+      // Odd leaf at end of level - sibling is self with domain separator
+      proof.push({
+        hash: level[currentIndex],
+        position: 'pad',
+      });
     }
     currentIndex = Math.floor(currentIndex / 2);
   }
   return proof;
 }
 
+/**
+ *
+ */
 export async function verifyInclusionProof(proof) {
   try {
     if (!proof || !proof.leafHash || !proof.proofPath || !proof.merkleRoot) {
@@ -74,9 +89,15 @@ export async function verifyInclusionProof(proof) {
     }
     let currentHash = proof.leafHash;
     for (const step of proof.proofPath) {
-      const combined = step.position === 'right'
-        ? currentHash + ':' + step.hash
-        : step.hash + ':' + currentHash;
+      let combined;
+      if (step.position === 'pad') {
+        // Odd leaf padding - uses domain separator matching buildMerkleTree
+        combined = '\x01' + currentHash + ':' + step.hash;
+      } else if (step.position === 'right') {
+        combined = currentHash + ':' + step.hash;
+      } else {
+        combined = step.hash + ':' + currentHash;
+      }
       currentHash = await blake3(combined);
     }
     return currentHash === proof.merkleRoot;

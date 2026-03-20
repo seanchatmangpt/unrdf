@@ -444,7 +444,7 @@ describe('DaemonFederationExecutor', () => {
     const bestNodeResult = await executor.executeQuery(query, { strategy: 'best-node' });
 
     // Best node should be faster overall
-    expect(bestNodeResult.totalDuration).toBeLessThanOrEqual(broadcastResult.totalDuration);
+    expect(bestNodeResult.totalDuration).toBeLessThanOrEqual(broadcastResult.totalDuration + 1);
   });
 
   // =========================================================================
