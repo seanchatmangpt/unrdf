@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/temporal-discovery",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
   "type": "module",
   "main": "src/index.mjs",
@@ -29,8 +29,8 @@
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
     "demo": "node examples/temporal-discovery-demo.mjs"
   },

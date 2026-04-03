@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/fusion",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
   "type": "module",
   "exports": {

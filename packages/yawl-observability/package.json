@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-observability",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL",
   "type": "module",
   "main": "src/index.mjs",

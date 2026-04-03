@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-api",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
   "type": "module",
   "main": "src/server.mjs",

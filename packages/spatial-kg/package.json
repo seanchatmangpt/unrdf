@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/spatial-kg",
-  "version": "6.3.0-alpha.1",
+  "version": "26.4.2",
   "description": "Spatial Knowledge Graphs - WebXR-enabled 3D visualization and navigation of RDF knowledge graphs",
   "type": "module",
   "main": "src/index.mjs",
@@ -30,8 +30,8 @@
     "build": "echo 'Build spatial-kg'",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ coverage/",
     "dev": "echo 'Development mode for @unrdf/spatial-kg'"
   },

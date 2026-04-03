@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-viz",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering",
   "type": "module",
   "main": "src/visualizer.mjs",

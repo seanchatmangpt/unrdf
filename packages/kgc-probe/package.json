@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-probe",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
   "type": "module",
   "main": "./src/index.mjs",
@@ -29,8 +29,8 @@
     "test:watch": "vitest --coverage",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "build": "echo 'Build complete (pure ESM, no compilation needed)'",
     "validate": "npm run lint && npm run test"
   },

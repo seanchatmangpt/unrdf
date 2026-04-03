@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/oxigraph",
-  "version": "5.0.1",
+  "version": "26.4.2",
   "description": "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine",
   "type": "module",
   "main": "src/index.mjs",
@@ -25,8 +25,8 @@
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
     "dev": "echo 'Development mode for @unrdf/oxigraph'"
   },

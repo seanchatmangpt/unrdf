@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/atomvm",
-  "version": "5.0.1",
+  "version": "26.4.2",
   "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
   "type": "module",
   "main": "src/index.mjs",

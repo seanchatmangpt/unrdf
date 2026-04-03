@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/caching",
-  "version": "1.0.0",
+  "version": "26.4.2",
   "description": "Multi-layer caching system for RDF queries with Redis and LRU",
   "type": "module",
   "main": "src/index.mjs",

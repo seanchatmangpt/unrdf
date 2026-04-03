@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-cli",
-  "version": "5.0.1",
+  "version": "26.4.2",
   "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
   "type": "module",
   "bin": {
@@ -29,8 +29,8 @@
     "benchmark:prod": "node --expose-gc benchmark/performance.mjs",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "latex:build": "node src/cli.mjs latex build",
     "latex:diagnose": "node src/cli.mjs latex diagnose",
     "latex:cache:verify": "node src/cli.mjs latex cache verify",

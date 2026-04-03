@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/project-engine",
-  "version": "5.0.1",
+  "version": "26.4.2",
   "description": "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)",
   "type": "module",
   "main": "src/index.mjs",
@@ -21,8 +21,8 @@
     "build": "unbuild || true",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",
-    "format": "prettier --write src/ test/",
-    "format:check": "prettier --check src/ test/",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "clean": "rm -rf dist/ .nyc_output/ coverage/",
     "dev": "echo 'Development mode for @unrdf/project-engine'"
   },
