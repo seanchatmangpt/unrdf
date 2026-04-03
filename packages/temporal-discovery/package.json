@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/temporal-discovery",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
   "type": "module",
   "main": "src/index.mjs",
@@ -47,9 +47,9 @@
     "changepoint"
   ],
   "dependencies": {
-    "@unrdf/kgc-4d": "26.4.2",
-    "@unrdf/semantic-search": "26.4.2",
-    "@unrdf/graph-analytics": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/semantic-search": "26.4.3",
+    "@unrdf/graph-analytics": "26.4.3",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^4.1.13"
   },

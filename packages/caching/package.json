@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/caching",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Multi-layer caching system for RDF queries with Redis and LRU",
   "type": "module",
   "main": "src/index.mjs",
@@ -28,7 +28,7 @@
     "performance"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/oxigraph": "26.4.3",
     "ioredis": "^5.4.1",
     "lru-cache": "^11.0.2",
     "msgpackr": "^1.11.2",

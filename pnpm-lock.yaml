@@ -228,26 +228,26 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/knowledge-engine':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../knowledge-engine
       '@unrdf/ml-inference':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../ml-inference
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/semantic-search':
-        specifier: 26.4.2
-        version: 26.4.2(encoding@0.1.12)
+        specifier: 26.4.3
+        version: link:../semantic-search
       '@unrdf/v6-core':
-        specifier: 26.4.2
-        version: 26.4.2(@unrdf/core@26.4.2)
+        specifier: 26.4.3
+        version: link:../v6-core
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -265,14 +265,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       coi-serviceworker:
         specifier: ^0.1.7
         version: 0.1.7
@@ -296,14 +296,14 @@ importers:
   packages/atomvm/playground:
     dependencies:
       '@unrdf/atomvm':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:..
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../kgc-4d
       coi-serviceworker:
         specifier: ^0.1.7
         version: 0.1.7
@@ -321,11 +321,11 @@ importers:
         specifier: ^1.3.3
         version: 1.8.0
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       ethers:
         specifier: ^6.10.0
         version: 6.16.0
@@ -338,13 +338,13 @@ importers:
     devDependencies:
       vitest:
         specifier: ^1.1.0
-        version: 1.6.1(@types/node@25.5.0)(@vitest/browser@4.1.2(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2))(@vitest/ui@4.1.2(vitest@4.1.2))(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@1.8.0))(lightningcss@1.32.0)(terser@5.46.1)
+        version: 1.6.1(@types/node@25.5.0)(@vitest/browser@4.1.2(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2))(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@1.8.0))(lightningcss@1.32.0)(terser@5.46.1)
 
   packages/caching:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       ioredis:
         specifier: ^5.4.1
         version: 5.10.1
@@ -368,11 +368,11 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgn':
-        specifier: 26.4.2
-        version: 26.4.2(chokidar@3.6.0)
+        specifier: 26.4.3
+        version: link:../kgn
       glob:
         specifier: ^10.3.10
         version: 10.5.0
@@ -393,20 +393,20 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/federation':
-        specifier: 26.4.2
-        version: 26.4.2(encoding@0.1.12)
+        specifier: 26.4.3
+        version: link:../federation
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgn':
-        specifier: 26.4.2
-        version: 26.4.2(chokidar@3.6.0)
+        specifier: 26.4.3
+        version: link:../kgn
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       citty:
         specifier: ^0.1.6
         version: 0.1.6
@@ -439,8 +439,8 @@ importers:
   packages/codegen:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -452,8 +452,8 @@ importers:
   packages/collab:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       lib0:
         specifier: ^0.2.97
         version: 0.2.117
@@ -486,11 +486,11 @@ importers:
   packages/composables:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       vue:
         specifier: ^3.5.25
         version: 3.5.32(typescript@5.9.3)
@@ -508,8 +508,8 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/federation':
-        specifier: 26.4.2
-        version: 26.4.2(encoding@0.1.12)
+        specifier: 26.4.3
+        version: link:../federation
       msgpackr:
         specifier: ^1.11.8
         version: 1.11.9
@@ -554,8 +554,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       jsonld:
         specifier: ^9.0.0
         version: 9.0.0
@@ -585,8 +585,8 @@ importers:
   packages/daemon:
     dependencies:
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       cron-parser:
         specifier: ^5.4.0
         version: 5.5.0
@@ -604,11 +604,11 @@ importers:
   packages/dark-matter:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       typhonjs-escomplex:
         specifier: ^0.1.0
         version: 0.1.0
@@ -623,26 +623,26 @@ importers:
   packages/decision-fabric:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/knowledge-engine':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../knowledge-engine
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       '@unrdf/validation':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../validation
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -767,11 +767,11 @@ importers:
   packages/engine-gateway:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
     devDependencies:
       vitest:
         specifier: ^4.0.15
@@ -783,17 +783,17 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/daemon':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../daemon
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/receipts':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../receipts
       '@unrdf/v6-core':
-        specifier: 26.4.2
-        version: 26.4.2(@unrdf/core@packages+core)
+        specifier: 26.4.3
+        version: link:../v6-core
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -817,11 +817,11 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       prom-client:
         specifier: ^15.0.0
         version: 15.1.3
@@ -839,23 +839,23 @@ importers:
   packages/fusion:
     dependencies:
       '@unrdf/blockchain':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../blockchain
       '@unrdf/caching':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../caching
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       graphql:
         specifier: ^16.8.1
         version: 16.13.2
@@ -876,8 +876,8 @@ importers:
         specifier: ^7.1.0
         version: 7.3.4
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       rbush:
         specifier: ^4.0.1
         version: 4.0.1
@@ -914,11 +914,11 @@ importers:
   packages/hooks:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       citty:
         specifier: ^0.1.6
         version: 0.1.6
@@ -936,11 +936,11 @@ importers:
   packages/hooks/examples/hook-chains:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../..
       n3:
         specifier: ^1.26.0
         version: 1.26.0
@@ -955,11 +955,11 @@ importers:
   packages/hooks/examples/policy-hooks:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../..
       n3:
         specifier: ^1.26.0
         version: 1.26.0
@@ -974,32 +974,32 @@ importers:
   packages/integration-tests:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/federation':
-        specifier: 26.4.2
-        version: 26.4.2(encoding@0.1.12)
+        specifier: 26.4.3
+        version: link:../federation
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-multiverse':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-multiverse
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/receipts':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../receipts
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1017,11 +1017,11 @@ importers:
   packages/kgc-4d:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1048,20 +1048,20 @@ importers:
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:..
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../../oxigraph
       '@unrdf/validation':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../../validation
       '@xyflow/react':
         specifier: ^12.10.0
         version: 12.10.2(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1139,20 +1139,20 @@ importers:
   packages/kgc-claude:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1193,17 +1193,17 @@ importers:
   packages/kgc-multiverse:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/receipts':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../receipts
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1230,23 +1230,23 @@ importers:
   packages/kgc-probe:
     dependencies:
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-substrate':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-substrate
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.2
-        version: 26.4.2(@unrdf/core@packages+core)
+        specifier: 26.4.3
+        version: link:../v6-core
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1267,8 +1267,8 @@ importers:
   packages/kgc-runtime:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       hash-wasm:
         specifier: ^4.11.0
         version: 4.12.0
@@ -1283,14 +1283,14 @@ importers:
   packages/kgc-substrate:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1311,23 +1311,23 @@ importers:
   packages/kgc-swarm:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-substrate':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-substrate
       '@unrdf/kgn':
-        specifier: 26.4.2
-        version: 26.4.2(chokidar@3.6.0)
+        specifier: 26.4.3
+        version: link:../kgn
       '@unrdf/knowledge-engine':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../knowledge-engine
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       hash-wasm:
         specifier: ^4.11.0
         version: 4.12.0
@@ -1351,14 +1351,14 @@ importers:
   packages/kgc-tools:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-runtime':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-runtime
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1373,8 +1373,8 @@ importers:
   packages/kgn:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       fs-extra:
         specifier: ^11.3.1
         version: 11.3.4
@@ -1422,14 +1422,14 @@ importers:
         specifier: ^1.5.0
         version: 1.8.0
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       '@xenova/transformers':
         specifier: ^2.17.2
         version: 2.17.2
@@ -1453,14 +1453,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/streaming':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../streaming
       onnxruntime-node:
         specifier: ^1.20.1
         version: 1.24.3
@@ -1481,14 +1481,14 @@ importers:
         specifier: ^4.22.0
         version: 4.22.0(encoding@0.1.12)(seedrandom@3.0.5)
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       hash-wasm:
         specifier: ^4.12.0
         version: 4.12.0
@@ -1590,11 +1590,11 @@ importers:
   packages/project-engine:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/knowledge-engine':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../knowledge-engine
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -1609,8 +1609,8 @@ importers:
         specifier: ^10.0.2
         version: 10.0.31(graphql@16.13.2)
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       graphql:
         specifier: ^16.8.1
         version: 16.13.2
@@ -1624,11 +1624,11 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       lru-cache:
         specifier: ^11.1.0
         version: 11.2.7
@@ -1655,17 +1655,17 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-multiverse':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-multiverse
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       dilithium-crystals:
         specifier: ^1.0.6
         version: 1.0.6
@@ -1695,14 +1695,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/daemon':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../daemon
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -1714,8 +1714,8 @@ importers:
   packages/semantic-search:
     dependencies:
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@xenova/transformers':
         specifier: ^2.17.2
         version: 2.17.2
@@ -1736,11 +1736,11 @@ importers:
   packages/serverless:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       aws-cdk-lib:
         specifier: ^2.165.0
         version: 2.247.0(constructs@10.6.0)
@@ -1776,8 +1776,8 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       d3-force-3d:
         specifier: ^3.0.5
         version: 3.0.6
@@ -1804,14 +1804,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       citty:
         specifier: ^0.1.6
         version: 0.1.6
@@ -1841,14 +1841,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/graph-analytics':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../graph-analytics
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/semantic-search':
-        specifier: 26.4.2
-        version: 26.4.2(encoding@0.1.12)
+        specifier: 26.4.3
+        version: link:../semantic-search
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -1866,8 +1866,8 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -1879,17 +1879,17 @@ importers:
   packages/v6-compat:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.2
-        version: 26.4.2(@unrdf/core@26.4.2)
+        specifier: 26.4.3
+        version: link:../v6-core
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -1907,29 +1907,29 @@ importers:
   packages/v6-core:
     dependencies:
       '@unrdf/blockchain':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../blockchain
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/kgc-cli':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-cli
       '@unrdf/kgc-substrate':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-substrate
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       citty:
         specifier: ^0.1.5
         version: 0.1.6
@@ -1956,8 +1956,8 @@ importers:
   packages/validation:
     dependencies:
       '@unrdf/knowledge-engine':
-        specifier: 26.4.2
-        version: 26.4.2(@rdfjs/types@2.0.1)
+        specifier: 26.4.3
+        version: link:../knowledge-engine
 
   packages/yawl:
     dependencies:
@@ -1971,14 +1971,14 @@ importers:
         specifier: ^0.6.16
         version: 0.6.17
       '@unrdf/hooks':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       cron-parser:
         specifier: ^4.9.0
         version: 4.9.0
@@ -1996,8 +1996,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@unrdf/daemon':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../daemon
       eslint:
         specifier: ^8.0.0
         version: 8.57.1
@@ -2025,8 +2025,8 @@ importers:
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@2.0.1))(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
     optionalDependencies:
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
 
   packages/yawl-api:
     dependencies:
@@ -2040,11 +2040,11 @@ importers:
         specifier: ^5.2.0
         version: 5.2.5
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       fastify:
         specifier: ^5.2.0
         version: 5.8.4
@@ -2065,11 +2065,11 @@ importers:
   packages/yawl-durable:
     dependencies:
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       hash-wasm:
         specifier: ^4.11.0
         version: 4.12.0
@@ -2090,8 +2090,8 @@ importers:
   packages/yawl-kafka:
     dependencies:
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       avsc:
         specifier: ^5.7.7
         version: 5.7.9
@@ -2118,14 +2118,14 @@ importers:
         specifier: ^0.3.17
         version: 0.3.17(@langchain/core@0.3.80(@opentelemetry/api@1.9.1)(@opentelemetry/exporter-trace-otlp-proto@0.208.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(openai@4.104.0(encoding@0.1.12)(ws@8.20.0)(zod@4.3.6)))(encoding@0.1.12)(ws@8.20.0)
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       langchain:
         specifier: ^0.3.7
         version: 0.3.37(@langchain/core@0.3.80(@opentelemetry/api@1.9.1)(@opentelemetry/exporter-trace-otlp-proto@0.208.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(openai@4.104.0(encoding@0.1.12)(ws@8.20.0)(zod@4.3.6)))(@opentelemetry/api@1.9.1)(@opentelemetry/exporter-trace-otlp-proto@0.208.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(axios@1.14.0)(cheerio@1.2.0)(encoding@0.1.12)(openai@4.104.0(encoding@0.1.12)(ws@8.20.0)(zod@4.3.6))(ws@8.20.0)
@@ -2152,8 +2152,8 @@ importers:
         specifier: ^0.208.0
         version: 0.208.0(@opentelemetry/api@1.9.1)
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       prom-client:
         specifier: ^15.1.3
         version: 15.1.3
@@ -2171,11 +2171,11 @@ importers:
   packages/yawl-queue:
     dependencies:
       '@unrdf/kgc-4d':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../kgc-4d
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       bullmq:
         specifier: ^5.35.2
         version: 5.73.0
@@ -2196,8 +2196,8 @@ importers:
   packages/yawl-realtime:
     dependencies:
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       socket.io:
         specifier: ^4.8.1
         version: 4.8.3
@@ -2218,8 +2218,8 @@ importers:
   packages/yawl-viz:
     dependencies:
       '@unrdf/yawl':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../yawl
       d3:
         specifier: ^7.9.0
         version: 7.9.0
@@ -2261,14 +2261,14 @@ importers:
         specifier: ^1.7.0
         version: 1.9.1
       '@unrdf/core':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../core
       '@unrdf/oxigraph':
-        specifier: 26.4.2
-        version: 26.4.2
+        specifier: 26.4.3
+        version: link:../oxigraph
       '@unrdf/v6-core':
-        specifier: 26.4.2
-        version: 26.4.2(@unrdf/core@26.4.2)
+        specifier: 26.4.3
+        version: link:../v6-core
       circomlibjs:
         specifier: ^0.1.7
         version: 0.1.7
@@ -10318,103 +10318,6 @@ packages:
     peerDependencies:
       '@unovis/ts': 1.6.4
       vue: ^3
-
-  '@unrdf/atomvm@26.4.2':
-    resolution: {integrity: sha512-/KbKOLqQo5WlkR+QEGXoNySO/E9XhcywuENGPTon8baPVN/Wf1uTA+Bk9aO3yt/glDlvbtY/Dbv2OAsq4D7ptQ==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/blockchain@26.4.2':
-    resolution: {integrity: sha512-DPiwH1v5LNDoUI0uqGn6xcMBlxLjdQZ2G4RnpF6gqNjSpWfbyxq0D+9S4ed/EL4TC99iA4t6gh/Alvw0AHBZVw==}
-
-  '@unrdf/caching@26.4.2':
-    resolution: {integrity: sha512-03AVfYUBfbTOhpT4ns0ISLE4DaBaNNrJC+8tv2R30XHOLJg/JMH9JFi8jCsmRICE0fjNcmpMb5OqI9tPaaYGJw==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/core@26.4.2':
-    resolution: {integrity: sha512-3gdurIY/do9VmySxTuDuS5T0NK6cOA0nmDjTyQqbdMaHO68atnqtzU3ULVPub3jqT+0VvzaLFj+IJx3aDfLT/g==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/daemon@26.4.2':
-    resolution: {integrity: sha512-lea2a6Imitd5OavEeAQQZcF5tWXJdIWM2yl+L9dpAo7g0UoiJ8hTBTA5H1QUj88BL1nVREk2Z3t8wse/D6SRqw==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/federation@26.4.2':
-    resolution: {integrity: sha512-PhEw+kFBl/U4Txsn57f5dPKKufcjUODGknP15oap7Aauwa3uNZA69bGxkdMBXMehLtWRR+2E2ertThK7q8qDOw==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/graph-analytics@26.4.2':
-    resolution: {integrity: sha512-XimIp3ju1tV4VLLPvmE7vT4Nf/HN3G7P1aYH1AoPhIRifVTKAlxRdNxYM+bB7g8vBaHGzCQyZd3X13IyLc7bPQ==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/hooks@26.4.2':
-    resolution: {integrity: sha512-jwYZhKjimWCltoOIyl7t0LNHj1mejkMtUMaXblAq54NMibzkv3OcrKlNZo867dFVw1vDkAH+bn2Zyuv5xcA6Yw==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-
-  '@unrdf/kgc-4d@26.4.2':
-    resolution: {integrity: sha512-yh3ACy2Nm6JSM+C4Cy9ibyX+WbyFy4gK/4vICWv/6B8vS4cehsn1QUxbICrVjjKyo8acTr/KmHBAAvLDYjaEag==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/kgc-cli@26.4.2':
-    resolution: {integrity: sha512-BY1/Nx512nJup4bDpZ5x4Q1n/x08w8tHVr2quiNsow+nCcmqRz2YJ9D8zSfMXsd7YmRfu+u6cJj/4Zdx2uJKfg==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-
-  '@unrdf/kgc-multiverse@26.4.2':
-    resolution: {integrity: sha512-vf2jI9UEcNKQu7YYgcKDKQGkXcTUum9gWB1sYIS9Pkv5mmHV3kx1lCQSqlssqDWK+7a/QJjFJjlxY2YhmAixOA==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-    hasBin: true
-
-  '@unrdf/kgc-runtime@26.4.2':
-    resolution: {integrity: sha512-swkfLE/fRMyTncraIAgk6JdH1frQVHV+XvM2+tQgW8tTclcsKpTtjSeDxEQtR4dUjWqBgN0GVFj7+DI3+ptPvw==}
-
-  '@unrdf/kgc-substrate@26.4.2':
-    resolution: {integrity: sha512-TKU8N8RPImMvZD1ThwXuTcAlt6Xh9aOVk+UmhsKOoheVYLDrftyDEaAfls3ELfJzZAAPETOWnP/AAli6ETjDqw==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/kgn@26.4.2':
-    resolution: {integrity: sha512-CPS/iYt7dSJM075KZdDb48kfy9gHW9TmsYVMxEEhxklb1I51nhuAR2hPbhlqJjF2wsyYyIrS9LIbkclMZ+wf6g==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/knowledge-engine@26.4.2':
-    resolution: {integrity: sha512-v62u2a2AFQltzSThSse4SjrizOJPCBZnys0V3DJO/ha6vPx7TuXy5RoNx6ZbaVI1anQXKkKl/crSgmtLdhR+jw==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/ml-inference@26.4.2':
-    resolution: {integrity: sha512-/5x5HBh5V7oOqDeVZKxit7v8lnxVN8JerLhrLWzumCm11mWmouZjzx56qYqzH3WE1dN+kfTL3NxlSUzjHwjQCw==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/oxigraph@26.4.2':
-    resolution: {integrity: sha512-TpFmsC4vR8ibB0onAthbGoMJX2zbkBULg4RX+4W6viLfHoZ0rcYvj6yFEIqG9S1YD7L/LQxPLGLT0kY/REtH8w==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/receipts@26.4.2':
-    resolution: {integrity: sha512-2cHfeZqT0fVAUYAq7Wj+oIBPqIIP+F7UuRlc7crTWV8PgAzCK53NnI3lbggfsHugsIlTzYgb2GMVrg/IihwoWw==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/semantic-search@26.4.2':
-    resolution: {integrity: sha512-6c6WP9lFpdjrzKFTkkDmGax5cU0zK9X6Gh2fWb898Tq0Quq1CHSApieOQU0KpD6G4nv1RfPhJNffovYYSVp27w==}
-    engines: {node: '>=18.0.0'}
-
-  '@unrdf/streaming@26.4.2':
-    resolution: {integrity: sha512-l501MqwNwJRuAUgJF/v2gvzNyj9g4o+s+3arxyNhEcCkxeVrSPoejEJkq7q6iPe5SsobykyprtcAupkAjYioCA==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-
-  '@unrdf/v6-core@26.4.2':
-    resolution: {integrity: sha512-QUug2FxKd6TKZDQVxTVy/5go/jYEhTdK7DJ1wAUuSqutvsERPSBzo5kqwhI8xMLGgOoJKD70fFd8o3tUnqvNxA==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-    peerDependencies:
-      '@unrdf/core': workspace:*
-
-  '@unrdf/validation@26.4.2':
-    resolution: {integrity: sha512-ais+QQfa/8Op9W+6sUs+aBwwV2KVOF6CqG034Sa5mlzlRcqNDOBSsaSwFDYTCeMnaiA8yXg1vd+Ev+qlQX9TeQ==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
-
-  '@unrdf/yawl@26.4.2':
-    resolution: {integrity: sha512-4eA+xZyDdxcpM3qrvDOds9Xbyld+KthNnrzLVHSCJt3QvfLHL9Fm67KfYHGj6Y0L21XhzCrReG6ruYW+scB3Mw==}
-    engines: {node: '>=18.0.0', pnpm: '>=7.0.0'}
 
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     resolution: {integrity: sha512-ppLRUgHVaGRWUx0R0Ut06Mjo9gBaBkg3v/8AxusGLhsIotbBLuRk51rAzqLC8gq6NyyAojEXglNjzf6R948DNw==}
@@ -35256,255 +35159,6 @@ snapshots:
       '@unovis/ts': 1.6.4
       vue: 3.5.32(typescript@5.9.3)
 
-  '@unrdf/atomvm@26.4.2':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@unrdf/core': link:packages/core
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/streaming': link:packages/streaming
-      coi-serviceworker: 0.1.7
-
-  '@unrdf/blockchain@26.4.2':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/yawl': link:packages/yawl
-      ethers: 6.16.0
-      merkletreejs: 0.3.11
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@unrdf/caching@26.4.2':
-    dependencies:
-      '@unrdf/oxigraph': link:packages/oxigraph
-      ioredis: 5.10.1
-      lru-cache: 11.2.7
-      msgpackr: 1.11.9
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - supports-color
-
-  '@unrdf/core@26.4.2':
-    dependencies:
-      '@rdfjs/data-model': 2.1.1
-      '@rdfjs/namespace': 2.0.1
-      '@rdfjs/serializer-jsonld': 2.0.1
-      '@rdfjs/serializer-turtle': 1.1.5
-      '@rdfjs/to-ntriples': 3.0.1
-      '@unrdf/oxigraph': link:packages/oxigraph
-      jsonld: 9.0.0
-      n3: 1.26.0
-      rdf-canonize: 5.0.0
-      rdf-ext: 2.6.0
-      rdf-validate-shacl: 0.6.5
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - supports-color
-
-  '@unrdf/daemon@26.4.2':
-    dependencies:
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      cron-parser: 5.5.0
-      hash-wasm: 4.12.0
-      zod: 4.3.6
-
-  '@unrdf/federation@26.4.2(encoding@0.1.12)':
-    dependencies:
-      '@comunica/query-sparql': 3.3.0(encoding@0.1.12)
-      '@opentelemetry/api': 1.9.1
-      '@unrdf/core': link:packages/core
-      '@unrdf/hooks': link:packages/hooks
-      prom-client: 15.1.3
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - encoding
-
-  '@unrdf/graph-analytics@26.4.2':
-    dependencies:
-      '@dagrejs/graphlib': 2.2.4
-      graphlib: 2.1.8
-      zod: 4.3.6
-
-  '@unrdf/hooks@26.4.2':
-    dependencies:
-      '@unrdf/core': link:packages/core
-      '@unrdf/oxigraph': link:packages/oxigraph
-      citty: 0.1.6
-      zod: 4.3.6
-
-  '@unrdf/kgc-4d@26.4.2':
-    dependencies:
-      '@unrdf/core': link:packages/core
-      '@unrdf/oxigraph': link:packages/oxigraph
-      hash-wasm: 4.12.0
-      isomorphic-git: 1.37.4
-
-  '@unrdf/kgc-cli@26.4.2':
-    dependencies:
-      citty: 0.1.6
-      zod: 4.3.6
-
-  '@unrdf/kgc-multiverse@26.4.2':
-    dependencies:
-      '@unrdf/core': link:packages/core
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/receipts': link:packages/receipts
-      hash-wasm: 4.12.0
-      piscina: 4.9.2
-      zod: 4.3.6
-
-  '@unrdf/kgc-runtime@26.4.2':
-    dependencies:
-      '@unrdf/oxigraph': link:packages/oxigraph
-      hash-wasm: 4.12.0
-      zod: 4.3.6
-
-  '@unrdf/kgc-substrate@26.4.2':
-    dependencies:
-      '@unrdf/core': link:packages/core
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/oxigraph': link:packages/oxigraph
-      hash-wasm: 4.12.0
-      zod: 4.3.6
-
-  '@unrdf/kgn@26.4.2(chokidar@3.6.0)':
-    dependencies:
-      '@unrdf/core': link:packages/core
-      '@unrdf/test-utils': link:packages/test-utils
-      fs-extra: 11.3.4
-      gray-matter: 4.0.3
-      nunjucks: 3.2.4(chokidar@3.6.0)
-      yaml: 2.8.3
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - chokidar
-
-  '@unrdf/knowledge-engine@26.4.2(@rdfjs/types@2.0.1)':
-    dependencies:
-      '@iarna/toml': 2.2.5
-      '@noble/hashes': 1.8.0
-      '@unrdf/core': link:packages/core
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/streaming': link:packages/streaming
-      '@xenova/transformers': 2.17.2
-      eyereasoner: 18.23.2(@rdfjs/types@2.0.1)
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - '@rdfjs/types'
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
-
-  '@unrdf/ml-inference@26.4.2':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@unrdf/core': link:packages/core
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/streaming': link:packages/streaming
-      onnxruntime-node: 1.24.3
-      zod: 4.3.6
-
-  '@unrdf/oxigraph@26.4.2':
-    dependencies:
-      oxigraph: 0.5.6
-      zod: 4.3.6
-
-  '@unrdf/receipts@26.4.2':
-    dependencies:
-      '@noble/curves': 2.0.1
-      '@noble/hashes': 2.0.1
-      '@unrdf/core': link:packages/core
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/kgc-multiverse': link:packages/kgc-multiverse
-      '@unrdf/oxigraph': link:packages/oxigraph
-      dilithium-crystals: 1.0.6
-      hash-wasm: 4.12.0
-      zod: 4.3.6
-
-  '@unrdf/semantic-search@26.4.2(encoding@0.1.12)':
-    dependencies:
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@xenova/transformers': 2.17.2
-      vectra: 0.11.1(encoding@0.1.12)(ws@8.20.0)(zod@4.3.6)
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - bare-abort-controller
-      - bare-buffer
-      - debug
-      - encoding
-      - react-native-b4a
-      - ws
-
-  '@unrdf/streaming@26.4.2':
-    dependencies:
-      '@opentelemetry/api': 1.9.1
-      '@unrdf/core': link:packages/core
-      '@unrdf/hooks': link:packages/hooks
-      '@unrdf/oxigraph': link:packages/oxigraph
-      citty: 0.1.6
-      lru-cache: 10.4.3
-      ws: 8.20.0
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@unrdf/v6-core@26.4.2(@unrdf/core@26.4.2)':
-    dependencies:
-      '@unrdf/blockchain': link:packages/blockchain
-      '@unrdf/core': 26.4.2
-      '@unrdf/hooks': link:packages/hooks
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/kgc-cli': link:packages/kgc-cli
-      '@unrdf/kgc-substrate': link:packages/kgc-substrate
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/yawl': link:packages/yawl
-      citty: 0.1.6
-      hash-wasm: 4.12.0
-      mustache: 4.2.0
-      zod: 4.3.6
-
-  '@unrdf/v6-core@26.4.2(@unrdf/core@packages+core)':
-    dependencies:
-      '@unrdf/blockchain': link:packages/blockchain
-      '@unrdf/core': link:packages/core
-      '@unrdf/hooks': link:packages/hooks
-      '@unrdf/kgc-4d': link:packages/kgc-4d
-      '@unrdf/kgc-cli': link:packages/kgc-cli
-      '@unrdf/kgc-substrate': link:packages/kgc-substrate
-      '@unrdf/oxigraph': link:packages/oxigraph
-      '@unrdf/yawl': link:packages/yawl
-      citty: 0.1.6
-      hash-wasm: 4.12.0
-      mustache: 4.2.0
-      zod: 4.3.6
-
-  '@unrdf/validation@26.4.2(@rdfjs/types@2.0.1)':
-    dependencies:
-      '@unrdf/knowledge-engine': 26.4.2(@rdfjs/types@2.0.1)
-    transitivePeerDependencies:
-      - '@rdfjs/types'
-      - bare-abort-controller
-      - bare-buffer
-      - react-native-b4a
-
-  '@unrdf/yawl@26.4.2':
-    dependencies:
-      '@graphql-tools/schema': 10.0.31(graphql@16.13.2)
-      '@noble/ed25519': 2.3.0
-      '@observablehq/plot': 0.6.17
-      '@unrdf/hooks': 26.4.2
-      '@unrdf/kgc-4d': 26.4.2
-      '@unrdf/oxigraph': 26.4.2
-      cron-parser: 4.9.0
-      d3: 7.9.0
-      graphql: 16.13.2
-      hash-wasm: 4.12.0
-      zod: 4.3.6
-
   '@unrs/resolver-binding-android-arm-eabi@1.11.1':
     optional: true
 
@@ -35640,7 +35294,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@2.0.1))(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@24.1.3)(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       ws: 8.20.0
     transitivePeerDependencies:
       - bufferutil
@@ -35765,7 +35419,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@2.0.1))(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@24.1.3)(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   '@vitest/utils@1.6.1':
     dependencies:
@@ -48469,7 +48123,7 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitest@1.6.1(@types/node@25.5.0)(@vitest/browser@4.1.2(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2))(@vitest/ui@4.1.2(vitest@4.1.2))(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@1.8.0))(lightningcss@1.32.0)(terser@5.46.1):
+  vitest@1.6.1(@types/node@25.5.0)(@vitest/browser@4.1.2(msw@2.12.14(@types/node@25.5.0)(typescript@5.9.3))(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.2))(@vitest/ui@4.1.2)(happy-dom@20.8.9)(jsdom@27.4.0(@noble/hashes@1.8.0))(lightningcss@1.32.0)(terser@5.46.1):
     dependencies:
       '@vitest/expect': 1.6.1
       '@vitest/runner': 1.6.1

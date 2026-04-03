@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-runtime",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
   "type": "module",
   "main": "./src/index.mjs",
@@ -30,7 +30,7 @@
   "author": "UNRDF Team",
   "license": "MIT",
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/oxigraph": "26.4.3",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

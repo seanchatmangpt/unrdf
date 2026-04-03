@@ -80,12 +80,12 @@
     {
       "dir": "/Users/sac/unrdf/packages/ai-ml-innovations",
       "name": "@unrdf/ai-ml-innovations",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/atomvm",
       "name": "@unrdf/atomvm",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/atomvm/playground",
@@ -100,42 +100,42 @@
     {
       "dir": "/Users/sac/unrdf/packages/blockchain",
       "name": "@unrdf/blockchain",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/caching",
       "name": "@unrdf/caching",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/chatman-equation",
       "name": "@unrdf/chatman-equation",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/cli",
       "name": "@unrdf/cli",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/codegen",
       "name": "@unrdf/codegen",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/collab",
       "name": "@unrdf/collab",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/composables",
       "name": "@unrdf/composables",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/consensus",
       "name": "@unrdf/consensus",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/core",
@@ -165,27 +165,27 @@
     {
       "dir": "/Users/sac/unrdf/packages/core",
       "name": "@unrdf/core",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/daemon",
       "name": "@unrdf/daemon",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/dark-matter",
       "name": "@unrdf/dark-matter",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/decision-fabric",
       "name": "@unrdf/decision-fabric",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/diataxis-kit",
       "name": "@unrdf/diataxis-kit",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/apps/docs-site",
@@ -195,17 +195,17 @@
     {
       "dir": "/Users/sac/unrdf/packages/domain",
       "name": "@unrdf/domain",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/engine-gateway",
       "name": "@unrdf/engine-gateway",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/event-automation",
       "name": "@unrdf/event-automation",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/core/examples/basic-store",
@@ -255,12 +255,12 @@
     {
       "dir": "/Users/sac/unrdf/packages/federation",
       "name": "@unrdf/federation",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/fusion",
       "name": "@unrdf/fusion",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/codegen/generated",
@@ -270,7 +270,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/geosparql",
       "name": "@unrdf/geosparql",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/src",
@@ -280,7 +280,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/graph-analytics",
       "name": "@unrdf/graph-analytics",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/hooks",
@@ -310,7 +310,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/hooks",
       "name": "@unrdf/hooks",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/hooks/examples/hook-chains",
@@ -325,12 +325,12 @@
     {
       "dir": "/Users/sac/unrdf/packages/integration-tests",
       "name": "@unrdf/integration-tests",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-4d",
       "name": "@unrdf/kgc-4d",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-4d/playground",
@@ -340,57 +340,57 @@
     {
       "dir": "/Users/sac/unrdf/packages/kgc-claude",
       "name": "@unrdf/kgc-claude",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-cli",
       "name": "@unrdf/kgc-cli",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-docs",
       "name": "@unrdf/kgc-docs",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-multiverse",
       "name": "@unrdf/kgc-multiverse",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-probe",
       "name": "@unrdf/kgc-probe",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-runtime",
       "name": "@unrdf/kgc-runtime",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-substrate",
       "name": "@unrdf/kgc-substrate",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-swarm",
       "name": "@unrdf/kgc-swarm",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgc-tools",
       "name": "@unrdf/kgc-tools",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/kgn",
       "name": "@unrdf/kgn",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/knowledge-engine",
       "name": "@unrdf/knowledge-engine",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-3",
@@ -400,12 +400,12 @@
     {
       "dir": "/Users/sac/unrdf/packages/ml-inference",
       "name": "@unrdf/ml-inference",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/ml-versioning",
       "name": "@unrdf/ml-versioning",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/test/narrative-state-chain",
@@ -415,12 +415,12 @@
     {
       "dir": "/Users/sac/unrdf/packages/nextra",
       "name": "@unrdf/nextra-docs",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/observability",
       "name": "@unrdf/observability",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/oxigraph",
@@ -450,7 +450,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/oxigraph",
       "name": "@unrdf/oxigraph",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/docs/templates/package-template",
@@ -460,7 +460,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/project-engine",
       "name": "@unrdf/project-engine",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/src/projection",
@@ -470,17 +470,17 @@
     {
       "dir": "/Users/sac/unrdf/packages/rdf-graphql",
       "name": "@unrdf/rdf-graphql",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/react",
       "name": "@unrdf/react",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/receipts",
       "name": "@unrdf/receipts",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/src/receipts",
@@ -490,17 +490,17 @@
     {
       "dir": "/Users/sac/unrdf/packages/self-healing-workflows",
       "name": "@unrdf/self-healing-workflows",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/semantic-search",
       "name": "@unrdf/semantic-search",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/serverless",
       "name": "@unrdf/serverless",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/sidecar",
@@ -510,92 +510,92 @@
     {
       "dir": "/Users/sac/unrdf/packages/spatial-kg",
       "name": "@unrdf/spatial-kg",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/streaming",
       "name": "@unrdf/streaming",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/temporal-discovery",
       "name": "@unrdf/temporal-discovery",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/test-utils",
       "name": "@unrdf/test-utils",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/v6-compat",
       "name": "@unrdf/v6-compat",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/v6-core",
       "name": "@unrdf/v6-core",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/validation",
       "name": "@unrdf/validation",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl",
       "name": "@unrdf/yawl",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-ai",
       "name": "@unrdf/yawl-ai",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-api",
       "name": "@unrdf/yawl-api",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-durable",
       "name": "@unrdf/yawl-durable",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-kafka",
       "name": "@unrdf/yawl-kafka",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-langchain",
       "name": "@unrdf/yawl-langchain",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-observability",
       "name": "@unrdf/yawl-observability",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-queue",
       "name": "@unrdf/yawl-queue",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-realtime",
       "name": "@unrdf/yawl-realtime",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/yawl-viz",
       "name": "@unrdf/yawl-viz",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/zkp",
       "name": "@unrdf/zkp",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/packages/atomvm/experiments/docker-cluster",
@@ -615,7 +615,7 @@
     {
       "dir": "/Users/sac/unrdf/packages/docs",
       "name": "docs",
-      "version": "26.4.2"
+      "version": "26.4.3"
     },
     {
       "dir": "/Users/sac/unrdf/vendors/nextra-repo/docs",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/ai-ml-innovations",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Novel AI/ML integration patterns for UNRDF knowledge graphs",
   "type": "module",
   "main": "src/index.mjs",
@@ -30,13 +30,13 @@
     "reasoning"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
-    "@unrdf/knowledge-engine": "26.4.2",
-    "@unrdf/semantic-search": "26.4.2",
-    "@unrdf/ml-inference": "26.4.2",
-    "@unrdf/kgc-4d": "26.4.2",
-    "@unrdf/v6-core": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/knowledge-engine": "26.4.3",
+    "@unrdf/semantic-search": "26.4.3",
+    "@unrdf/ml-inference": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/v6-core": "26.4.3",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^3.25.76"
   },

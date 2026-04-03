@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/test-utils",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Testing utilities for UNRDF development",
   "type": "module",
   "main": "./src/index.mjs",
@@ -39,7 +39,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/oxigraph": "26.4.3",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^4.1.13"
   },

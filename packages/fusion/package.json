@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/fusion",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching",
   "type": "module",
   "exports": {
@@ -23,12 +23,12 @@
   "author": "UNRDF Team",
   "license": "MIT",
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.2",
-    "@unrdf/kgc-4d": "26.4.2",
-    "@unrdf/blockchain": "26.4.2",
-    "@unrdf/hooks": "26.4.2",
-    "@unrdf/caching": "26.4.2",
-    "@unrdf/yawl": "26.4.2",
+    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/blockchain": "26.4.3",
+    "@unrdf/hooks": "26.4.3",
+    "@unrdf/caching": "26.4.3",
+    "@unrdf/yawl": "26.4.3",
     "graphql": "^16.8.1",
     "zod": "^4.2.1"
   },

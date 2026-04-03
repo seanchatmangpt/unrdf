@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/collab",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture",
   "type": "module",
   "main": "src/index.mjs",
@@ -39,7 +39,7 @@
     "semantic-web"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.2",
+    "@unrdf/core": "26.4.3",
     "yjs": "^13.6.18",
     "y-websocket": "^2.0.4",
     "y-indexeddb": "^9.0.12",

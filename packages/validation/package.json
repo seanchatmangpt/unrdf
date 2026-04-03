@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/validation",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "OTEL validation framework for UNRDF development",
   "type": "module",
   "main": "./src/index.mjs",
@@ -42,6 +42,6 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@unrdf/knowledge-engine": "26.4.2"
+    "@unrdf/knowledge-engine": "26.4.3"
   }
 }

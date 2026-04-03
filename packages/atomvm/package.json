@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/atomvm",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly",
   "type": "module",
   "main": "src/index.mjs",
@@ -40,9 +40,9 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.8.0",
-    "@unrdf/core": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
-    "@unrdf/streaming": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/streaming": "26.4.3",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {

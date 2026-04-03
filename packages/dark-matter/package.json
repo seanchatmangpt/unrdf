@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/dark-matter",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)",
   "type": "module",
   "main": "src/index.mjs",
@@ -36,8 +36,8 @@
     "80-20"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
     "typhonjs-escomplex": "^0.1.0"
   },
   "devDependencies": {

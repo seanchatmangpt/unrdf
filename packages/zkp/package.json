@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/zkp",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Zero-Knowledge SPARQL - Privacy-preserving query proofs using zk-SNARKs",
   "type": "module",
   "main": "./src/index.mjs",
@@ -42,8 +42,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^3.25.76",
     "hash-wasm": "^4.12.0",
@@ -59,7 +59,7 @@
     "@vitest/coverage-v8": "^4.0.16"
   },
   "peerDependencies": {
-    "@unrdf/v6-core": "26.4.2"
+    "@unrdf/v6-core": "26.4.3"
   },
   "repository": {
     "type": "git",

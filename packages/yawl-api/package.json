@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-api",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation",
   "type": "module",
   "main": "src/server.mjs",
@@ -30,8 +30,8 @@
     "api-framework"
   ],
   "dependencies": {
-    "@unrdf/yawl": "26.4.2",
-    "@unrdf/kgc-4d": "26.4.2",
+    "@unrdf/yawl": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.3",
     "fastify": "^5.2.0",
     "@fastify/swagger": "^9.3.0",
     "@fastify/swagger-ui": "^5.2.0",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/chatman-equation",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Chatman Equation documentation generation using Tera-compatible templates",
   "type": "module",
   "main": "src/index.mjs",
@@ -30,8 +30,8 @@
     "diataxis"
   ],
   "dependencies": {
-    "@unrdf/kgn": "26.4.2",
-    "@unrdf/core": "26.4.2",
+    "@unrdf/kgn": "26.4.3",
+    "@unrdf/core": "26.4.3",
     "@iarna/toml": "^2.2.5",
     "zod": "^3.25.76",
     "glob": "^10.3.10"

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/daemon",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Background daemon for managing scheduled tasks and event-driven operations",
   "type": "module",
   "main": "src/index.mjs",
@@ -31,7 +31,7 @@
     "task-queue"
   ],
   "dependencies": {
-    "@unrdf/kgc-4d": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.3",
     "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/blockchain",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails",
   "type": "module",
   "main": "src/index.mjs",
@@ -26,8 +26,8 @@
   ],
   "dependencies": {
     "@noble/hashes": "^1.3.3",
-    "@unrdf/kgc-4d": "26.4.2",
-    "@unrdf/yawl": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/yawl": "26.4.3",
     "ethers": "^6.10.0",
     "merkletreejs": "^0.3.11",
     "zod": "^3.22.4"

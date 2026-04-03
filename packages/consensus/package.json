@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/consensus",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Production-grade Raft consensus for distributed workflow coordination",
   "type": "module",
   "main": "src/index.mjs",
@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/federation": "26.4.2",
+    "@unrdf/federation": "26.4.3",
     "msgpackr": "^1.11.8",
     "ws": "^8.18.3",
     "zod": "^4.1.13"

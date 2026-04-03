@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/serverless",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "UNRDF Serverless - One-click AWS deployment for RDF applications",
   "type": "module",
   "main": "src/index.mjs",
@@ -44,8 +44,8 @@
     "deployment"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
     "aws-cdk-lib": "^2.165.0",
     "constructs": "^10.4.2",
     "esbuild": "^0.24.2",

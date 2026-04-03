@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/v6-compat",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
   "type": "module",
   "main": "src/index.mjs",
@@ -37,10 +37,10 @@
     "eslint"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.2",
-    "@unrdf/kgc-4d": "26.4.2",
-    "@unrdf/oxigraph": "26.4.2",
-    "@unrdf/v6-core": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/v6-core": "26.4.3",
     "zod": "^4.1.13"
   },
   "devDependencies": {

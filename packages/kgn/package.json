@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgn",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "Deterministic Nunjucks template system with custom filters and frontmatter support",
   "type": "module",
   "main": "dist/index.mjs",
@@ -42,7 +42,7 @@
     "docs:generate": "node bin/generate-docs.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.2",
+    "@unrdf/core": "26.4.3",
     "fs-extra": "^11.3.1",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",

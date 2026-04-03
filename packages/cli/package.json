@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/cli",
-  "version": "26.4.2",
+  "version": "26.4.3",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
@@ -42,11 +42,11 @@
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@unrdf/core": "26.4.2",
-    "@unrdf/federation": "26.4.2",
-    "@unrdf/hooks": "26.4.2",
-    "@unrdf/kgn": "26.4.2",
-    "@unrdf/streaming": "26.4.2",
+    "@unrdf/core": "26.4.3",
+    "@unrdf/federation": "26.4.3",
+    "@unrdf/hooks": "26.4.3",
+    "@unrdf/kgn": "26.4.3",
+    "@unrdf/streaming": "26.4.3",
     "citty": "^0.1.6",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",
