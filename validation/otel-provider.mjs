@@ -65,7 +65,8 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
     if (existingProvider && existingProvider.constructor.name !== 'NodeTracerProvider') {
       console.warn('[OTEL Provider] Existing provider detected, will replace:', existingProvider.constructor.name);
       // Replace the existing provider with null first, then set ours
-      globalTrace.setTracerProvider(null);
+      // Note: OpenTelemetry API setTracerProvider might not work - just skip replacement
+      // The new provider will be registered separately
     }
 
     console.log('[OTEL Provider] Creating new NodeTracerProvider...');
@@ -138,15 +139,11 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
       spanProcessors: [processor],
     });
 
-    // Register provider globally - this replaces any existing provider
+    // Register provider globally - this is the correct way to set the global tracer provider
     console.log('[OTEL Provider] Calling provider.register()...');
     provider.register();
     console.log('[OTEL Provider] provider.register() called');
-
-    // Set as global tracer provider (this is what actually replaces existing provider)
-    console.log('[OTEL Provider] Setting global tracer provider...');
-    globalTrace.setTracerProvider(provider);
-    console.log('[OTEL Provider] trace.setTracerProvider() called');
+    console.log('[OTEL Provider] TracerProvider is now registered globally');
 
     // Verify registration worked
     const registeredProvider = globalTrace.getTracerProvider();
