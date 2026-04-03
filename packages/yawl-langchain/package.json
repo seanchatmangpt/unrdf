@@ -34,9 +34,9 @@
   "dependencies": {
     "@langchain/core": "^0.3.29",
     "@langchain/openai": "^0.3.17",
-    "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/yawl": "workspace:*",
+    "@unrdf/kgc-4d": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/yawl": "26.4.2",
     "langchain": "^0.3.7",
     "zod": "^4.1.13"
   },

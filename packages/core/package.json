@@ -57,7 +57,7 @@
     "@rdfjs/serializer-jsonld": "^2.0.1",
     "@rdfjs/serializer-turtle": "^1.1.5",
     "@rdfjs/to-ntriples": "^3.0.1",
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/oxigraph": "26.4.2",
     "jsonld": "^9.0.0",
     "n3": "^1.26.0",
     "rdf-canonize": "^5.0.0",

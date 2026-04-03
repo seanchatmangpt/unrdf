@@ -409,7 +409,12 @@ export async function discoverTemplates(dir, options = {}) {
         const ext = extname(entry);
         if (TEMPLATE_EXTENSIONS.includes(ext)) {
           const content = await readFile(fullPath, 'utf-8');
-          const { data: frontmatter } = matter(content);
+          let frontmatter = {};
+          try {
+            frontmatter = matter(content).data;
+          } catch {
+            frontmatter = { _frontmatterParseError: true };
+          }
 
           templates.push({
             name: basename(entry, ext),

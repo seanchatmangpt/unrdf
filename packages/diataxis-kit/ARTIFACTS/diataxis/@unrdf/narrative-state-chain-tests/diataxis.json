@@ -1,0 +1,124 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.25,
+    "reference": 0,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "fb55a41e7cd4f859db58973d075627f8053bad44eb66abf7bbaf3f0e251cda7e",
+    "readmeHeadings": [
+      "Overview",
+      "Test Organization",
+      "Fixtures & Generators",
+      "Running Tests",
+      "Test Counts by Category",
+      "Key Test Scenarios",
+      "Performance SLAs (from specification)",
+      "Determinism Guarantee",
+      "Expected Results After Implementation",
+      "Architecture Alignment",
+      "Debugging Failed Tests",
+      "Integration with CI/CD",
+      "Notes for Backend Dev",
+      "Waiting for Implementation",
+      "Contact"
+    ]
+  },
+  "explanation": {
+    "architecture": "**Status**: Test infrastructure READY. Awaiting backend implementation completion.",
+    "concepts": [
+      "narrative-state-chain",
+      "rdf",
+      "testing",
+      "property-based"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-unrdf-narrative-state-chain-tests-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/narrative-state-chain-tests",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with narrative-state-chain in your project",
+      "id": "howto-integrate-with-narrative-state-chain",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/narrative-state-chain-tests with narrative-state-chain",
+      "title": "Integrate with narrative-state-chain"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/narrative-state-chain-tests",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-unrdf-narrative-state-chain-tests-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "@unrdf/narrative-state-chain-tests Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/narrative-state-chain-tests in your project",
+      "id": "tutorial-getting-started-with-unrdf-narrative-state-chain-tests",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/narrative-state-chain-tests"
+    }
+  ],
+  "version": "1.0.0"
+}

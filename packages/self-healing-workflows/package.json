@@ -39,8 +39,8 @@
     "vitest": "^4.0.16"
   },
   "peerDependencies": {
-    "@unrdf/yawl": "workspace:*",
-    "@unrdf/daemon": "workspace:*",
-    "@unrdf/hooks": "workspace:*"
+    "@unrdf/yawl": "26.4.2",
+    "@unrdf/daemon": "26.4.2",
+    "@unrdf/hooks": "26.4.2"
   }
 }

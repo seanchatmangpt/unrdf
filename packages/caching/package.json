@@ -28,7 +28,7 @@
     "performance"
   ],
   "dependencies": {
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/oxigraph": "26.4.2",
     "ioredis": "^5.4.1",
     "lru-cache": "^11.0.2",
     "msgpackr": "^1.11.2",

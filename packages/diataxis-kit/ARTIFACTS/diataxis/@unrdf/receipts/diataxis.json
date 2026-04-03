@@ -1,0 +1,134 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0,
+    "reference": 0.5,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "8bcba236d5c0f474658f16d0daf4885ec290c9509cf960c052b1374f0969b473",
+    "readmeHeadings": [
+      "Overview",
+      "Modules",
+      "Data Model",
+      "Determinism Guarantee",
+      "Serialization",
+      "Testing",
+      "Use Cases",
+      "Security Properties",
+      "Performance",
+      "Dependencies",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "Cryptographic audit trails for admissibility decisions, validation runs, and projection operations.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-unrdf-receipts-explanation",
+    "source": [
+      "readme"
+    ],
+    "title": "Understanding @unrdf/receipts",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When you need to accomplish common tasks",
+      "id": "howto-use-unrdf-receipts",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
+      "task": "Perform basic operations with @unrdf/receipts",
+      "title": "Use @unrdf/receipts"
+    }
+  ],
+  "packageName": "@unrdf/receipts",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-receipts-reference",
+    "items": [
+      {
+        "description": "Export: ./merkle-root",
+        "example": "import from \"./merkle-root.mjs\"",
+        "name": "./merkle-root",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipt",
+        "example": "import from \"./receipt.mjs\"",
+        "name": "./receipt",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipt-chain",
+        "example": "import from \"./receipt-chain.mjs\"",
+        "name": "./receipt-chain",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./receipt-generator",
+        "example": "import from \"./receipt-generator.mjs\"",
+        "name": "./receipt-generator",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./receipt.mjs\"",
+        "name": "@unrdf/receipts",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/receipts Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @unrdf/receipts in your project",
+      "id": "tutorial-getting-started-with-unrdf-receipts",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/receipts"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -1,0 +1,19 @@
+---
+to: generated/{{ name | lower | replace(' ', '-') }}.html
+inject: false
+rdf: person.ttl
+sparql: |
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name ?title ?mbox WHERE {
+    ?subject foaf:name ?name ;
+             foaf:title ?title ;
+             foaf:mbox ?mbox .
+  }
+---
+<div class="person-card">
+  <h1>{{ name }}</h1>
+  <p class="title">{{ title }}</p>
+  <p class="email">
+    <a href="{{ mbox }}">{{ mbox }}</a>
+  </p>
+</div>

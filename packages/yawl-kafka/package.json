@@ -27,7 +27,7 @@
     "analytics"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
+    "@unrdf/core": "26.4.2",
     "avsc": "^5.7.7",
     "kafkajs": "^2.2.4",
     "zod": "^3.24.1"

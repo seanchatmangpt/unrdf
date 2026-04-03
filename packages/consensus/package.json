@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/federation": "workspace:*",
+    "@unrdf/federation": "26.4.2",
     "msgpackr": "^1.11.8",
     "ws": "^8.18.3",
     "zod": "^4.1.13"

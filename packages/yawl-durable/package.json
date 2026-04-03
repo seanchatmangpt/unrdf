@@ -16,8 +16,8 @@
     "lint": "eslint src/**/*.mjs test/**/*.mjs"
   },
   "dependencies": {
-    "@unrdf/yawl": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/yawl": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.2",
     "hash-wasm": "^4.11.0",
     "zod": "^3.22.4"
   },

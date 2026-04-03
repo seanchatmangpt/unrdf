@@ -1,0 +1,172 @@
+{
+  "confidence": {
+    "explanation": 0,
+    "howtos": 0,
+    "reference": 0.5,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "nextra is a package in the UNRDF ecosystem",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0,
+    "id": "explanation-nextra-explanation",
+    "source": [
+      "inferred"
+    ],
+    "title": "Understanding nextra",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When you need to accomplish common tasks",
+      "id": "howto-use-nextra",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
+      "task": "Perform basic operations with nextra",
+      "title": "Use nextra"
+    }
+  ],
+  "packageName": "nextra",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-nextra-reference",
+    "items": [
+      {
+        "description": "Export: ./*",
+        "example": null,
+        "name": "./*",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./compile",
+        "example": null,
+        "name": "./compile",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./components",
+        "example": null,
+        "name": "./components",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./fetch-filepaths-from-github",
+        "example": null,
+        "name": "./fetch-filepaths-from-github",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./hooks",
+        "example": null,
+        "name": "./hooks",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./icons",
+        "example": null,
+        "name": "./icons",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./locales",
+        "example": null,
+        "name": "./locales",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./merge-meta-with-page-map",
+        "example": null,
+        "name": "./merge-meta-with-page-map",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./package.json",
+        "example": "import from \"./package.json\"",
+        "name": "./package.json",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./page-map",
+        "example": null,
+        "name": "./page-map",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./schemas",
+        "example": null,
+        "name": "./schemas",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./tsdoc",
+        "example": null,
+        "name": "./tsdoc",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "nextra",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "nextra Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use nextra in your project",
+      "id": "tutorial-getting-started-with-nextra",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with nextra"
+    }
+  ],
+  "version": "4.6.1"
+}

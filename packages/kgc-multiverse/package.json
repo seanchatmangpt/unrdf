@@ -33,10 +33,10 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/receipts": "workspace:*",
+    "@unrdf/core": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.2",
+    "@unrdf/receipts": "26.4.2",
     "hash-wasm": "^4.12.0",
     "piscina": "^4.9.0",
     "zod": "^3.25.76"

@@ -10,6 +10,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 vi.mock('fs/promises', () => ({
   mkdir: vi.fn().mockResolvedValue(undefined),
   writeFile: vi.fn().mockResolvedValue(undefined),
+  access: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('../../src/cli/commands/sync/config-parser.mjs', () => ({

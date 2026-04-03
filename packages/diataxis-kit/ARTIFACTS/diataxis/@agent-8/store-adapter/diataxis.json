@@ -1,0 +1,154 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.75,
+    "reference": 0.7,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "a4f29de715db71c18ca85f1d4535e61c4fc983b306eee3ae7b7f1268178c9c7d",
+    "readmeHeadings": [
+      "Overview",
+      "Features",
+      "Installation",
+      "Quick Start",
+      "API Documentation",
+      "Implementation Details",
+      "File Structure",
+      "Testing",
+      "Compliance Checklist",
+      "Integration",
+      "Error Handling",
+      "Performance",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "Agent 8 provides atomic RDF store operations with capsule delta application and receipt generation. This module implements ACID-compliant operations for applying state changes to the RDF store with comprehensive verification and rollback capabilities.",
+    "concepts": [
+      "rdf",
+      "atomic",
+      "store",
+      "capsule",
+      "delta"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-agent-8-store-adapter-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @agent-8/store-adapter",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @agent-8/store-adapter",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with rdf in your project",
+      "id": "howto-integrate-with-rdf",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @agent-8/store-adapter with rdf",
+      "title": "Integrate with rdf"
+    }
+  ],
+  "packageName": "@agent-8/store-adapter",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-agent-8-store-adapter-reference",
+    "items": [
+      {
+        "description": "Export: ./apply",
+        "example": "import from \"./src/apply.mjs\"",
+        "name": "./apply",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./freeze",
+        "example": "import from \"./src/freeze.mjs\"",
+        "name": "./freeze",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./query",
+        "example": "import from \"./src/query.mjs\"",
+        "name": "./query",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./store",
+        "example": "import from \"./src/store.mjs\"",
+        "name": "./store",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./utils",
+        "example": "import from \"./src/utils.mjs\"",
+        "name": "./utils",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@agent-8/store-adapter",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@agent-8/store-adapter Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @agent-8/store-adapter in your project",
+      "id": "tutorial-getting-started-with-agent-8-store-adapter",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @agent-8/store-adapter"
+    }
+  ],
+  "version": "1.0.0"
+}

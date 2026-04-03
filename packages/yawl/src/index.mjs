@@ -454,16 +454,6 @@ export {
   ReceiptSchema as WorkflowReceiptSchema,
 } from './api/index.mjs';
 
-// Re-export workflow-api WITHOUT aliases for backward compatibility and test compatibility
-// These are the primary public API exports that tests expect
-export {
-  createWorkflow,
-  createCase,
-  enableTask,
-  YAWL_NS,
-  YAWL_EVENT_TYPES,
-  TaskSchema,
-} from './api/index.mjs';
 
 // =============================================================================
 // NITRO INTEGRATIONS - Scheduler and Monitor

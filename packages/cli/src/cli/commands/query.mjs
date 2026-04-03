@@ -11,6 +11,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createStore } from '@unrdf/core';
 import { Parser } from '@unrdf/core/rdf/n3-justified-only';
 import { table } from 'table';
+import { detectRdfParserFormat } from '../../lib/rdf-format-detect.mjs';
 
 /**
  * Main query command - execute SPARQL query
@@ -49,7 +50,7 @@ export const queryCommand = defineCommand({
       // Load RDF data
       const store = createStore();
       const content = readFileSync(file, 'utf-8');
-      const rdfFormat = detectFormat(file);
+      const rdfFormat = detectRdfParserFormat(file);
 
       const parser = new Parser({ format: rdfFormat });
       await new Promise((resolve, reject) => {
@@ -168,23 +169,6 @@ export const queryFileCommand = defineCommand({
 });
 
 // Helper functions
-
-/**
- * Detect RDF format from filename
- */
-function detectFormat(filename) {
-  const ext = filename.split('.').pop().toLowerCase();
-  switch (ext) {
-    case 'ttl':
-      return 'Turtle';
-    case 'nt':
-      return 'N-Triples';
-    case 'nq':
-      return 'N-Quads';
-    default:
-      return 'Turtle';
-  }
-}
 
 /**
  * Output results as table

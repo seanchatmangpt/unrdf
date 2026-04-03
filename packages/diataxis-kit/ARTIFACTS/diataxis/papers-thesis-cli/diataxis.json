@@ -1,0 +1,134 @@
+{
+  "confidence": {
+    "explanation": 0.4,
+    "howtos": 0.5,
+    "reference": 0.8,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "papers-thesis-cli is a package in the UNRDF ecosystem",
+    "concepts": [
+      "cli",
+      "academic",
+      "papers",
+      "thesis",
+      "latex"
+    ],
+    "confidenceScore": 0.4,
+    "id": "explanation-papers-thesis-cli-explanation",
+    "source": [
+      "keywords",
+      "inferred"
+    ],
+    "title": "Understanding papers-thesis-cli",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with cli in your project",
+      "id": "howto-integrate-with-cli",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect papers-thesis-cli with cli",
+      "title": "Integrate with cli"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute playground command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "papers-thesis-cli",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-papers-thesis-cli-reference",
+    "items": [
+      {
+        "description": "Export: ./cli",
+        "example": "import from \"./src/cli/index.mjs\"",
+        "name": "./cli",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./domain",
+        "example": "import from \"./src/domain/index.mjs\"",
+        "name": "./domain",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./integration",
+        "example": "import from \"./src/integration/index.mjs\"",
+        "name": "./integration",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "papers-thesis-cli",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: playground",
+        "example": "playground [options]",
+        "name": "playground",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "exports",
+      "bin"
+    ],
+    "title": "papers-thesis-cli Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use papers-thesis-cli in your project",
+      "id": "tutorial-getting-started-with-papers-thesis-cli",
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with papers-thesis-cli"
+    }
+  ],
+  "version": "1.0.0"
+}

@@ -11,8 +11,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
+    "@unrdf/core": "26.4.2",
+    "@unrdf/hooks": "26.4.2",
     "n3": "^1.26.0",
     "zod": "^4.1.13"
   },

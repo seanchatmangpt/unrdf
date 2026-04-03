@@ -52,9 +52,9 @@
     "@graphql-tools/schema": "^10.0.6",
     "@noble/ed25519": "^2.1.0",
     "@observablehq/plot": "^0.6.16",
-    "@unrdf/hooks": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/hooks": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
     "cron-parser": "^4.9.0",
     "d3": "^7.9.0",
     "graphql": "^16.9.0",
@@ -62,7 +62,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@unrdf/daemon": "workspace:*",
+    "@unrdf/daemon": "26.4.2",
     "eslint": "^8.0.0",
     "vitest": "^4.0.15"
   },

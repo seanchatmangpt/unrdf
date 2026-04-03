@@ -31,7 +31,7 @@
     "zod": "^4.1.13"
   },
   "optionalDependencies": {
-    "@unrdf/yawl": "workspace:*"
+    "@unrdf/yawl": "26.4.2"
   },
   "devDependencies": {
     "vitest": "^4.0.15"

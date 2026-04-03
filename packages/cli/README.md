@@ -123,6 +123,13 @@ The command reads your RDF ontology, executes the SPARQL query against it, and r
 
 **Full documentation:** See [docs/sync-command.md](./docs/sync-command.md) for complete configuration reference, template syntax, available filters, and end-to-end examples.
 
+### Template workflows (`template` vs `sync`)
+
+- **`unrdf sync`** — Project-wide codegen from a config file (ontology path, rules, output dir). Same Nunjucks + Hygen semantics as below.
+- **`unrdf template generate`** — Ad-hoc generation: one RDF file, one `.njk` template, optional `--sparql` (or `sparql:` / `rdf:` in frontmatter). Uses the same `renderTemplate` / `renderWithOptions` path as sync.
+- **`unrdf query`** — Full SPARQL (CONSTRUCT, ASK, DESCRIBE). **`unrdf template query`** — SELECT plus template-friendly context for debugging.
+- **Pipelines** — Use `unrdf convert` to normalize formats, then run `template generate` on `.ttl`, `.nt`, `.nq`, etc. Example script: [examples/template-pipeline.mjs](./examples/template-pipeline.mjs).
+
 ## Available Commands
 
 ### Graph Operations
@@ -148,6 +155,9 @@ The command reads your RDF ontology, executes the SPARQL query against it, and r
 ### Code Generation
 
 - `unrdf sync [--config <path>]` - Generate code from RDF ontology (see above)
+- `unrdf template generate [--template <path>] [file]` - Generate from RDF + Nunjucks (see Template workflows)
+- `unrdf template list` - List discovered templates under `templates/sync`
+- `unrdf template query` / `unrdf template extract` - Inspect SELECT context / per-subject properties
 
 ## Advanced Topics
 

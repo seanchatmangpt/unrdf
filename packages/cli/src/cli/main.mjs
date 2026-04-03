@@ -20,12 +20,9 @@ import {
   toNTriplesCommand,
   toJSONCommand,
 } from './commands/convert.mjs';
-import { decisionCommand } from './commands/decision.mjs';
-import { paretoCommand } from './commands/pareto.mjs';
-import { socraticCommand } from './commands/socratic.mjs';
-import { bb8020Command } from './commands/bb8020.mjs';
 import { daemonCommand } from './commands/daemon.mjs';
 import { syncCommand } from './commands/sync.mjs';
+import { templateCommand } from './commands/template.mjs';
 
 /**
  * Main CLI application
@@ -34,8 +31,7 @@ const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '5.0.0-alpha.0',
-    description:
-      'UNRDF CLI - Command-line tools for RDF graph operations and Hyperdimensional Decision Fabric',
+    description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {
     // RDF Graph Operations
@@ -53,12 +49,7 @@ const main = defineCommand({
 
     // Code Generation
     sync: syncCommand,
-
-    // Hyperdimensional Decision Fabric
-    decision: decisionCommand,
-    pareto: paretoCommand,
-    socratic: socraticCommand,
-    bb8020: bb8020Command, // Complete 11-step workflow
+    template: templateCommand,
   },
 });
 

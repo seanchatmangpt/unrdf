@@ -44,8 +44,8 @@
     "deployment"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
     "aws-cdk-lib": "^2.165.0",
     "constructs": "^10.4.2",
     "esbuild": "^0.24.2",

@@ -22,12 +22,12 @@
     "example": "node examples/template-integration.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/kgc-substrate": "workspace:*",
-    "@unrdf/kgn": "workspace:*",
-    "@unrdf/knowledge-engine": "workspace:*",
-    "@unrdf/kgc-4d": "workspace:*",
+    "@unrdf/core": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
+    "@unrdf/kgc-substrate": "26.4.2",
+    "@unrdf/kgn": "26.4.2",
+    "@unrdf/knowledge-engine": "26.4.2",
+    "@unrdf/kgc-4d": "26.4.2",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

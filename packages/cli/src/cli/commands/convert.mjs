@@ -14,6 +14,7 @@ import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { createStore, iterateQuads } from '@unrdf/core';
 import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
+import { detectRdfParserFormat } from '../../lib/rdf-format-detect.mjs';
 
 /**
  * Main convert command
@@ -54,8 +55,8 @@ export const convertCommand = defineCommand({
     }
 
     try {
-      const inputFormat = from || detectFormat(input);
-      const outputFormat = to || detectFormat(output);
+      const inputFormat = from || detectRdfParserFormat(input);
+      const outputFormat = to || detectRdfParserFormat(output);
 
       console.log(`🔄 Converting ${input} (${inputFormat}) -> ${output} (${outputFormat})`);
 
@@ -207,7 +208,7 @@ export const toJSONCommand = defineCommand({
       // Load data
       const store = createStore();
       const content = readFileSync(input, 'utf-8');
-      const inputFormat = detectFormat(input);
+      const inputFormat = detectRdfParserFormat(input);
 
       const parser = new Parser({ format: inputFormat });
       const quads = [];
@@ -248,22 +249,3 @@ export const toJSONCommand = defineCommand({
 });
 
 // Helper functions
-
-/**
- * Detect RDF format from filename
- */
-function detectFormat(filename) {
-  const ext = filename.split('.').pop().toLowerCase();
-  switch (ext) {
-    case 'ttl':
-      return 'Turtle';
-    case 'nt':
-      return 'N-Triples';
-    case 'nq':
-      return 'N-Quads';
-    case 'jsonld':
-      return 'JSON-LD';
-    default:
-      return 'Turtle';
-  }
-}

@@ -30,8 +30,8 @@
     "diataxis"
   ],
   "dependencies": {
-    "@unrdf/kgn": "workspace:*",
-    "@unrdf/core": "workspace:*",
+    "@unrdf/kgn": "26.4.2",
+    "@unrdf/core": "26.4.2",
     "@iarna/toml": "^2.2.5",
     "zod": "^3.25.76",
     "glob": "^10.3.10"

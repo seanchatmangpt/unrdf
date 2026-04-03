@@ -1,0 +1,167 @@
+{
+  "confidence": {
+    "explanation": 1,
+    "howtos": 1,
+    "reference": 1,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [
+      "LINEAGE-KNOWLEDGE-GRAPH.md"
+    ],
+    "examplesFiles": [],
+    "fingerprint": "d1513141d4733775c45fceb5897fbf5583865e43262dc6ffbfffa6463e47430e",
+    "readmeHeadings": [
+      "Overview",
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Validation",
+      "Directory Structure",
+      "Validation Features",
+      "80/20 Principle",
+      "KGC Receipts",
+      "Deployment Manifest",
+      "API Reference",
+      "Examples",
+      "Contributing",
+      "License",
+      "Credits"
+    ]
+  },
+  "explanation": {
+    "architecture": "The **Chatman Equation** is a systematic methodology for creating knowledge graphs through configuration-driven development.",
+    "concepts": [
+      "chatman-equation",
+      "documentation",
+      "tera",
+      "templates",
+      "diataxis"
+    ],
+    "confidenceScore": 1,
+    "id": "explanation-unrdf-chatman-equation-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/chatman-equation",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for @unrdf/chatman-equation",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with chatman-equation in your project",
+      "id": "howto-integrate-with-chatman-equation",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/chatman-equation with chatman-equation",
+      "title": "Integrate with chatman-equation"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute chatman-docs command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@unrdf/chatman-equation",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-chatman-equation-reference",
+    "items": [
+      {
+        "description": "Export: ./config",
+        "example": "import from \"./src/config-loader.mjs\"",
+        "name": "./config",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./filters",
+        "example": "import from \"./src/filters.mjs\"",
+        "name": "./filters",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./template-engine",
+        "example": "import from \"./src/template-engine.mjs\"",
+        "name": "./template-engine",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/chatman-equation",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: chatman-docs",
+        "example": "chatman-docs [options]",
+        "name": "chatman-docs",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "exports",
+      "bin"
+    ],
+    "title": "@unrdf/chatman-equation Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @unrdf/chatman-equation in your project",
+      "id": "tutorial-getting-started-with-unrdf-chatman-equation",
+      "prerequisites": [],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/chatman-equation"
+    }
+  ],
+  "version": "26.4.2"
+}

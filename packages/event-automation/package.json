@@ -36,10 +36,10 @@
     "pnpm": ">=7.0.0"
   },
   "dependencies": {
-    "@unrdf/daemon": "workspace:*",
-    "@unrdf/v6-core": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
-    "@unrdf/receipts": "workspace:*",
+    "@unrdf/daemon": "26.4.2",
+    "@unrdf/v6-core": "26.4.2",
+    "@unrdf/hooks": "26.4.2",
+    "@unrdf/receipts": "26.4.2",
     "@opentelemetry/api": "^1.9.0",
     "hash-wasm": "^4.12.0",
     "zod": "^3.25.76"

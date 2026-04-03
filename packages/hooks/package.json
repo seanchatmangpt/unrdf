@@ -47,8 +47,8 @@
     "validation"
   ],
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "26.4.2",
+    "@unrdf/oxigraph": "26.4.2",
     "citty": "^0.1.6",
     "zod": "^4.1.13"
   },
