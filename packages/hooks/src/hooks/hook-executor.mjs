@@ -267,15 +267,13 @@ export function validateOnly(hooks, quad) {
  * @param {Quad[]} quads - Array of quads to process
  * @param {Object} [options] - Batch options
  * @param {boolean} [options.stopOnError=false] - Stop on first error
- * @returns {{ results: ChainResult[], validCount: number, invalidCount: number }}
+ * @returns {ChainResult[]} Array of execution results
  */
 export function executeBatch(hooks, quads, options = {}) {
   const { stopOnError = false } = options;
 
   /** @type {ChainResult[]} */
   const results = [];
-  let validCount = 0;
-  let invalidCount = 0;
 
   // Zod-free hot path - hooks already validated by defineHook
   for (let i = 0; i < quads.length; i++) {

@@ -415,7 +415,7 @@ describe('Error Handling - Edge Cases', () => {
     const recursiveHook = defineHook({
       name: 'recursive',
       trigger: 'before-add',
-      validate: q => {
+      validate: _q => {
         if (depth++ > 10) throw new Error('Max recursion depth');
         return true;
       },

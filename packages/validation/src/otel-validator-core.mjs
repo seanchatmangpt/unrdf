@@ -174,7 +174,30 @@ export class OTELValidator {
 
     const validationId = randomUUID();
 
+    // Initialize OTEL provider with span processor FIRST
+    // This will collect real OTEL spans via the processor's exporter
+    console.log(`[OTELValidator] Initializing OTEL provider for: ${validationId}`);
+    const { ensureProviderInitialized } = await import('../../../validation/otel-provider.mjs');
+    const independentTracer = await ensureProviderInitialized(validationId, (spanData) => {
+      console.log(`[OTELValidator] Span callback received: ${spanData.name}`);
+      console.log(`[OTELValidator] About to call _addSpan`);
+      // spanData is already converted by otel-provider.mjs
+      // Poka-yoke: _addSpan validates spanData structure
+      this._addSpan(validationId, spanData);
+      console.log(`[OTELValidator] _addSpan completed, collector size: ${this.spanCollector.get(validationId)?.length || 0}`);
+    }, trace);
+    console.log(`[OTELValidator] OTEL provider initialized`);
+
+    // Use the independent tracer instead of the global trace
+    this.tracer = independentTracer;
+    console.log(`[OTELValidator] Using independent tracer for validation`);
+
+    console.log(`[OTELValidator] About to create span for feature: ${feature}`);
+    console.log(`[OTELValidator] Tracer is:`, this.tracer?.constructor?.name);
+
     return await this.tracer.startActiveSpan(`validation.${feature}`, async span => {
+      console.log(`[OTELValidator] Span created: ${span.name}`);
+
       try {
         span.setAttributes({
           'validation.id': validationId,
@@ -194,18 +217,6 @@ export class OTELValidator {
         if (typeof validationId !== 'string' || validationId.length === 0) {
           throw new Error('validationId must be a non-empty string');
         }
-        
-        // Initialize OTEL provider with span processor
-        // This will collect real OTEL spans via the processor's exporter
-        console.log(`[OTELValidator] Initializing OTEL provider for: ${validationId}`);
-        const { ensureProviderInitialized } = await import('../../../validation/otel-provider.mjs');
-        await ensureProviderInitialized(validationId, (spanData) => {
-          console.log(`[OTELValidator] Span callback received: ${spanData.name}`);
-          // spanData is already converted by otel-provider.mjs
-          // Poka-yoke: _addSpan validates spanData structure
-          this._addSpan(validationId, spanData);
-        }, trace);
-        console.log(`[OTELValidator] OTEL provider initialized`);
 
         // Execute the feature (this will generate real OTEL spans)
         console.log(`[OTELValidator] Executing feature: ${feature}`);

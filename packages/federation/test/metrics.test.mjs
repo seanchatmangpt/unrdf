@@ -11,11 +11,6 @@ import {
   recordError,
   updatePeerMetrics,
   trackConcurrentQuery,
-  queryCounter,
-  queryDuration,
-  peerGauge,
-  concurrentQueries,
-  errorCounter,
 } from '../src/federation/metrics.mjs';
 
 /* ========================================================================= */

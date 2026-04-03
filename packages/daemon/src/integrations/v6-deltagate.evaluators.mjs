@@ -19,7 +19,7 @@ export async function checkAdmissibility(delta, context, evaluateCondition, eval
     return { lawful: true };
   }
 
-  const { policyId, constraints = [], preConditions = [] } = delta.admissibility;
+  const { policyId: _policyId, constraints = [], preConditions = [] } = delta.admissibility;
 
   // Check pre-conditions
   for (const condition of preConditions) {

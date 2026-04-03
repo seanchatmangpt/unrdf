@@ -257,7 +257,7 @@ describe('SandboxRestrictions - Validation Results', () => {
 
   it('should return detailed violations', () => {
     const hookFn = function() {
-      const fs = require('fs');
+      require('fs');
       return eval('1 + 1');
     };
 

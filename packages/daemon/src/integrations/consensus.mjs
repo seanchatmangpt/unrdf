@@ -6,7 +6,7 @@
 
 import { EventEmitter } from 'events';
 import { z } from 'zod';
-import { trace, metrics } from '@opentelemetry/api';
+import { metrics } from '@opentelemetry/api';
 import { detectInjection, sanitizeError, validatePayload } from '../security-audit.mjs';
 import { ConsensusOperationState, PartitionState } from './consensus-state.mjs';
 import * as handlers from './consensus-handlers.mjs';

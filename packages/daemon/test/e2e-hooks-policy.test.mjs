@@ -14,9 +14,6 @@ import { createHookScheduler } from '@unrdf/hooks';
 import {
   DaemonHookPolicyAdapter,
   integrateHooksPolicy,
-  PolicySchema,
-  PolicyDecisionSchema,
-  PolicyAuditSchema,
 } from '../src/integrations/hooks-policy.mjs';
 
 /**

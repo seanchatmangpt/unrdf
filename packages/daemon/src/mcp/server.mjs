@@ -6,12 +6,6 @@
 
 import {
   Server,
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  ReadResourceRequestSchema,
-  ListResourcesRequestSchema,
-  GetPromptRequestSchema,
-  ListPromptsRequestSchema,
 } from '@modelcontextprotocol/sdk/server/index.js';
 import { registerTools } from './tools.mjs';
 import { registerResources } from './resources.mjs';

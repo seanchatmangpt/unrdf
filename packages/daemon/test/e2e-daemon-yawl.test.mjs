@@ -13,7 +13,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EventEmitter } from 'events';
-import { z } from 'zod';
 import { Daemon } from '../src/daemon.mjs';
 import { YawlDaemonBridge } from '../src/integrations/yawl.mjs';
 import { ExecutionReceiptSchema } from '../../v6-core/src/receipts/index.mjs';

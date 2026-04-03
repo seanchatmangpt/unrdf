@@ -159,7 +159,7 @@ export class RDFStreamParser extends Transform {
           const inputStr = this.buffer.trim();
 
           // Wait for N3 Parser to complete parsing
-          await new Promise((resolve, reject) => {
+          await new Promise((resolve, _reject) => {
             this.parser.parse(inputStr + '\n', (error, quad) => {
               if (error) {
                 this.metrics.errors++;

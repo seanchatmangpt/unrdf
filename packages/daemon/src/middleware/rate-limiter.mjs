@@ -8,7 +8,6 @@
 
 import {
   RateLimitConfigSchema,
-  BucketStateSchema,
   RateLimitResultSchema,
   RateLimitContextSchema,
   RateLimitStatsSchema,

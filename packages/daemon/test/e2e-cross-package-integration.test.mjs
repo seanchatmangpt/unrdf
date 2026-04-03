@@ -16,7 +16,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EventEmitter } from 'events';
-import { z } from 'zod';
 import { Daemon } from '../src/daemon.mjs';
 
 // =============================================================================

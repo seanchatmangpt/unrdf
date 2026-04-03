@@ -16,11 +16,11 @@ import {
 const { namedNode, literal, quad } = DataFactory;
 
 describe('Integration - Hook Lifecycle', () => {
-  let store;
+  let _store;
   let registry;
 
   beforeEach(() => {
-    store = createStore();
+    _store = createStore();
     registry = createHookRegistry();
   });
 
@@ -83,11 +83,11 @@ describe('Integration - Hook Lifecycle', () => {
 });
 
 describe('Integration - RDF Store with Hooks', () => {
-  let store;
+  let _store;
   let registry;
 
   beforeEach(() => {
-    store = createStore();
+    _store = createStore();
     registry = createHookRegistry();
   });
 

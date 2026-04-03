@@ -389,7 +389,7 @@ describe('YawlDaemonBridge - Task Retry', () => {
 
   it('should use provided backoff policy', async () => {
     const policy = { maxAttempts: 5, backoffMs: 2000 };
-    const result = await bridge.scheduleRetry('case-1', 'task-1', policy);
+    const _result = await bridge.scheduleRetry('case-1', 'task-1', policy);
 
     const state = bridge.taskRetries.get('case-1:task-1');
     expect(state.maxAttempts).toBe(5);

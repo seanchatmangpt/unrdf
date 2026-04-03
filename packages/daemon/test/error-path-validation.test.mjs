@@ -201,7 +201,7 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
       const results = [];
       for (const opId of opIds) {
         try {
-          const result = await daemon.execute(opId);
+          const _result = await daemon.execute(opId);
           results.push({ opId, success: true });
         } catch (error) {
           results.push({ opId, success: false, error: error.message });

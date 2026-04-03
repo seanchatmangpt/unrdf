@@ -811,43 +811,221 @@ try {
 
 ## Built-in Hooks
 
-Pre-defined validation hooks.
+10+ pre-defined hooks for IRI validation, literal processing, and normalization.
+
+### IRI Validation
 
 ```javascript
 import {
+  validateSubjectIRI,
+  validatePredicateIRI,
   validateIRIFormat,
-  rejectBlankNodes,
-  normalizeNamespace,
-  validateLanguageTag,
-  trimLiterals,
-  standardValidation
+  executeHook
 } from '@unrdf/hooks';
 
-// IRI Format Validation
-const iriHook = validateIRIFormat();
+const quad = {
+  subject: { value: 'http://example.org/s' },
+  predicate: { value: 'http://example.org/p' },
+  object: { value: 'test' }
+};
 
-// Blank Node Rejection
-const blankNodeHook = rejectBlankNodes();
+// Validate subject is a named node IRI
+const result = await executeHook(validateSubjectIRI, quad);
+console.log('Valid:', result.valid); // true
 
-// Namespace Normalization
-const normHook = normalizeNamespace();
+// Validate predicate is a named node IRI
+await executeHook(validatePredicateIRI, quad);
 
-// Language Tag Validation
-const langHook = validateLanguageTag();
-
-// Literal Trimming
-const trimHook = trimLiterals();
-
-// Standard Validation Suite
-const standardHooks = standardValidation();
-
-// Use in execution
-const result = await engine.execute(ctx, [
-  iriHook,
-  blankNodeHook,
-  normHook
-]);
+// Validate IRI format (RFC3987)
+await executeHook(validateIRIFormat, quad);
 ```
+
+### Literal Validation
+
+```javascript
+import {
+  validateObjectLiteral,
+  validateLanguageTag,
+  executeHook
+} from '@unrdf/hooks';
+
+const literalQuad = {
+  subject: { value: 'http://example.org/s' },
+  predicate: { value: 'http://example.org/label' },
+  object: { value: 'Hello', language: 'en' }
+};
+
+// Validate literal value (non-empty)
+await executeHook(validateObjectLiteral, literalQuad);
+
+// Validate BCP47 language tags
+await executeHook(validateLanguageTag, literalQuad);
+```
+
+### Node Type Validation
+
+```javascript
+import { rejectBlankNodes, executeHook } from '@unrdf/hooks';
+
+const quad = {
+  subject: { value: 'http://example.org/s', termType: 'NamedNode' },
+  predicate: { value: 'http://example.org/p', termType: 'NamedNode' },
+  object: { value: 'test', termType: 'Literal' }
+};
+
+// Reject blank nodes in any position
+await executeHook(rejectBlankNodes, quad); // passes
+```
+
+### Normalization
+
+```javascript
+import {
+  normalizeNamespace,
+  normalizeLanguageTag,
+  trimLiterals,
+  normalizeLanguageTagPooled,
+  trimLiteralsPooled,
+  executeHook
+} from '@unrdf/hooks';
+
+// Normalize namespace URIs
+const normQuad = await executeHook(normalizeNamespace, quad);
+
+// Normalize language tags to lowercase
+const enQuad = {
+  ...quad,
+  object: { value: 'Hello', language: 'EN-US' }
+};
+const result = await executeHook(normalizeLanguageTag, enQuad);
+console.log(result.quad.object.language); // 'en-us'
+
+// Trim whitespace from literals
+const spacedQuad = {
+  ...quad,
+  object: { value: '  hello  ', termType: 'Literal' }
+};
+const trimmed = await executeHook(trimLiterals, spacedQuad);
+console.log(trimmed.quad.object.value); // 'hello'
+
+// Pooled versions use zero-allocation object pooling
+const pooledResult = await executeHook(normalizeLanguageTagPooled, enQuad);
+console.log(pooledResult.quad.object.language); // 'en-us'
+```
+
+### Composite Validation
+
+```javascript
+import {
+  standardValidation,
+  executeHook,
+  executeHookChain
+} from '@unrdf/hooks';
+
+const quad = {
+  subject: { value: 'http://example.org/s', termType: 'NamedNode' },
+  predicate: { value: 'http://example.org/p', termType: 'NamedNode' },
+  object: { value: 'test', termType: 'Literal' }
+};
+
+// All-in-one validation (IRI format + no blank nodes + valid literals)
+const result = await executeHook(standardValidation, quad);
+console.log('Passed all checks:', result.valid);
+
+// Chain multiple hooks for custom validation
+const hooks = [
+  standardValidation,
+  normalizeLanguageTag,
+  trimLiterals
+];
+
+const chainResult = await executeHookChain(hooks, quad);
+```
+
+### Batch Operations
+
+```javascript
+import {
+  validateSubjectIRI,
+  executeBatch,
+  validateBatch,
+  transformBatch
+} from '@unrdf/hooks';
+
+const quads = [
+  { subject: { value: 'http://example.org/s1' }, ... },
+  { subject: { value: 'http://example.org/s2' }, ... },
+  { subject: { value: 'invalid' }, ... }
+];
+
+// Batch validation
+const results = await executeBatch([validateSubjectIRI], quads);
+results.forEach((r, i) => {
+  console.log(`Quad ${i}: ${r.valid ? 'valid' : 'invalid'}`);
+});
+
+// Returns array of booleans
+const validArray = await validateBatch([validateSubjectIRI], quads);
+
+// Apply transformations to batch
+const normalized = await transformBatch([normalizeLanguageTag], quads);
+```
+
+### Hook List
+
+| Hook | Type | Purpose |
+|------|------|---------|
+| `validateSubjectIRI` | Validator | Subject must be NamedNode |
+| `validatePredicateIRI` | Validator | Predicate must be NamedNode |
+| `validateObjectLiteral` | Validator | Object literal non-empty |
+| `validateIRIFormat` | Validator | RFC3987 IRI structure |
+| `validateLanguageTag` | Validator | BCP47 language tags |
+| `rejectBlankNodes` | Validator | No blank nodes anywhere |
+| `normalizeNamespace` | Normalizer | Standardize namespace URIs |
+| `normalizeLanguageTag` | Normalizer | Lowercase language tags |
+| `trimLiterals` | Normalizer | Remove whitespace |
+| `normalizeLanguageTagPooled` | Normalizer | Pooled normalization |
+| `trimLiteralsPooled` | Normalizer | Pooled trimming |
+| `standardValidation` | Composite | All-in-one validation |
+
+### Performance Features
+
+**Object Pooling** - Pooled variants reduce allocation overhead:
+
+```javascript
+import { normalizeLanguageTagPooled, isPooledQuad } from '@unrdf/hooks';
+
+const result = await executeHook(normalizeLanguageTagPooled, quad);
+console.log('Uses pooled memory:', isPooledQuad(result.quad)); // true
+```
+
+**JIT Compilation** - Hook chains are compiled for speed:
+
+```javascript
+import {
+  compileHookChain,
+  defineHook,
+  executeHookChain
+} from '@unrdf/hooks';
+
+const hooks = [
+  defineHook({ name: 'h1', trigger: 'before-add', validate: () => true }),
+  defineHook({ name: 'h2', trigger: 'before-add', validate: () => true })
+];
+
+// Automatically compiled on first use, then reused
+await executeHookChain(hooks, quad);
+await executeHookChain(hooks, quad); // Faster - uses compiled version
+```
+
+### Testing Built-in Hooks
+
+See `test/builtin-hooks-advanced.test.mjs` for comprehensive test suite covering:
+- All 12+ built-in hooks
+- Edge cases and boundary conditions
+- Hook composition and chaining
+- Batch operations at scale
+- Performance characteristics
 
 ---
 

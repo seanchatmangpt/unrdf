@@ -56,23 +56,17 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
   if (!provider) {
     // Check if a provider is already registered globally
     console.log('[OTEL Provider] Checking if provider exists...');
-    const { trace: globalTrace } = await import('@opentelemetry/api');
-    let existingProvider = globalTrace.getTracerProvider();
+    let existingProvider = trace.getTracerProvider();
     console.log('[OTEL Provider] Existing provider:', existingProvider?.constructor?.name);
 
-    // If a provider exists but isn't ours, we need to replace it
-    // This can happen if OTEL SDK auto-initializes or another module registers a provider
-    if (existingProvider && existingProvider.constructor.name !== 'NodeTracerProvider') {
-      console.warn('[OTEL Provider] Existing provider detected, will replace:', existingProvider.constructor.name);
-      // Replace the existing provider with null first, then set ours
-      // Note: OpenTelemetry API setTracerProvider might not work - just skip replacement
-      // The new provider will be registered separately
-    }
-
-    console.log('[OTEL Provider] Creating new NodeTracerProvider...');
+    // If a provider exists but isn't ours, create a new one
+    // Note: We cannot replace Weaver's ProxyTracerProvider, so we'll create a
+    // separate NodeTracerProvider and use it directly for validation
+    console.log('[OTEL Provider] Creating independent NodeTracerProvider...');
     // Create span exporter that collects spans for all validations
     const spanExporter = {
       export: (spans) => {
+        console.log(`[OTEL Exporter] Processing ${spans.length} spans...`);
         // Poka-yoke: Type guard ensures spans is valid array
         if (!spans) {
           return Promise.resolve({ code: 0 }); // No spans to process
@@ -133,37 +127,26 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
     // Create processor and store reference
     processor = new SimpleSpanProcessor(spanExporter);
 
-    // Create provider with processors in config
-    // TracerConfig.spanProcessors is an array (see BasicTracerProvider.js line 47)
+    // Create provider with processor in constructor
+    // Note: This processor is not registered globally, so spans won't be created
+    // We'll need to manually trigger export or use the provider directly
+    console.log('[OTEL Provider] Creating NodeTracerProvider (independent)...');
     provider = new NodeTracerProvider({
       spanProcessors: [processor],
     });
+    console.log('[OTEL Provider] Provider created (not registered globally)');
 
-    // Register provider globally - this is the correct way to set the global tracer provider
-    console.log('[OTEL Provider] Calling provider.register()...');
-    provider.register();
-    console.log('[OTEL Provider] provider.register() called');
-    console.log('[OTEL Provider] TracerProvider is now registered globally');
+    // Verify provider was created successfully
+    console.log('[OTEL Provider] Provider constructor:', provider?.constructor?.name);
+    console.log('[OTEL Provider] Processor created:', !!processor);
+    console.log('[OTEL Provider] Independent provider ready for use');
 
-    // Verify registration worked
-    const registeredProvider = globalTrace.getTracerProvider();
-    console.log('[OTEL Provider] Registered provider:', registeredProvider?.constructor?.name);
-    console.log('[OTEL Provider] Our provider:', provider.constructor.name);
-    console.log('[OTEL Provider] Are they equal?', registeredProvider === provider);
-
-    if (registeredProvider !== provider) {
-      console.error('[OTEL Provider] Registration failed - provider not active');
-    } else {
-      console.log('[OTEL Provider] Successfully registered NodeTracerProvider');
-    }
-
-    // Ensure registration is complete (synchronous, but verify)
-    // NodeTracerProvider.register() is synchronous, but we wait a tick to ensure
-    // the global API tracer is updated
-    await new Promise(resolve => setImmediate(resolve));
+    // Return the tracer created from our independent provider
+    // This way the validator uses our provider instead of the global one
+    const independentTracer = provider.getTracer('unrdf-validation');
+    console.log('[OTEL Provider] Independent tracer created from provider');
+    return independentTracer;
   }
-
-  return provider;
 }
 
 /**

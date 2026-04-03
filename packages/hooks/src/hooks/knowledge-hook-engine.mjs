@@ -18,7 +18,6 @@
 import { StoreCache } from './store-cache.mjs';
 import { ConditionCache } from './condition-cache.mjs';
 import { BatchedTelemetry } from './telemetry.mjs';
-import { z } from 'zod';
 
 /**
  * Knowledge Hook Engine - Standalone, high-performance hook executor

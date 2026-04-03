@@ -6,7 +6,6 @@
  */
 
 import { z } from 'zod';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
 
 const ReactiveTriggerSchema = z.object({

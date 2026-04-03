@@ -40,7 +40,7 @@ export function createHealthEndpoint(coordinator) {
      */
     async check() {
       const stats = coordinator.getStats();
-      const peers = coordinator.listPeers();
+      const _peers = coordinator.listPeers();
 
       // Determine overall health status
       let status = 'healthy';

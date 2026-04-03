@@ -2,8 +2,7 @@
  * @vitest-environment node
  * @file V6 Streaming Features Test Suite
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Readable } from 'stream';
+import { describe, it, expect, vi } from 'vitest';
 import { dataFactory } from '@unrdf/oxigraph';
 const { namedNode, literal } = dataFactory;
 import {

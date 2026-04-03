@@ -1,12 +1,6 @@
 # @unrdf/hooks - Quick Start Guide
 
-**80/20 Guide**: Get policy enforcement and validation running in 5 minutes.
-
-## One-Command Demo
-
-```bash
-node examples/production-policy-chain.mjs
-```
+Get policy enforcement and hook-based validation running in 5 minutes.
 
 ## Quick Start
 
@@ -16,92 +10,222 @@ node examples/production-policy-chain.mjs
 pnpm add @unrdf/hooks
 ```
 
-### 2. Define a Hook
+### 2. Use Built-in Hooks
 
 ```javascript
-import { defineHook } from '@unrdf/hooks'
+import { executeHook, validateIRIFormat } from '@unrdf/hooks';
 
-defineHook('validate-pii', {
-  type: 'validate-before-write',
-  async check(quad) {
-    // Reject PII without consent
-    if (isPII(quad) && !hasConsent(quad.subject)) {
-      return false
-    }
-    return true
-  }
-})
+const quad = {
+  subject: { value: 'http://example.org/subject' },
+  predicate: { value: 'http://example.org/pred' },
+  object: { value: 'test' }
+};
+
+// Validate quad using built-in hook
+const result = await executeHook(validateIRIFormat, quad);
+console.log('Valid:', result.valid); // true
 ```
 
-### 3. Execute Hook
+### 3. Define Custom Hook
 
 ```javascript
-import { executeHook } from '@unrdf/hooks'
+import { defineHook, executeHook } from '@unrdf/hooks';
 
-const isValid = await executeHook('validate-pii', quad)
-if (!isValid) {
-  throw new Error('PII validation failed')
+// Define a custom validation hook
+const myHook = defineHook({
+  name: 'custom-validator',
+  trigger: 'before-add',
+  validate: (quad) => {
+    // Custom validation logic
+    return quad.subject.value.startsWith('http://');
+  }
+});
+
+// Execute it
+const result = await executeHook(myHook, quad);
+```
+
+### 4. Define Hook with Transform
+
+```javascript
+import { defineHook, executeHook } from '@unrdf/hooks';
+
+const normalizer = defineHook({
+  name: 'uppercase-objects',
+  trigger: 'before-add',
+  transform: (quad) => ({
+    ...quad,
+    object: {
+      ...quad.object,
+      value: quad.object.value.toUpperCase()
+    }
+  })
+});
+
+const result = await executeHook(normalizer, quad);
+console.log('Transformed:', result.quad.object.value); // 'TEST'
+```
+
+### 5. Chain Multiple Hooks
+
+```javascript
+import {
+  defineHook,
+  executeHookChain,
+  validateIRIFormat,
+  trimLiterals
+} from '@unrdf/hooks';
+
+// Create a chain of hooks
+const hooks = [
+  validateIRIFormat,           // Built-in: validate IRI
+  defineHook({
+    name: 'custom-check',
+    trigger: 'before-add',
+    validate: (q) => q.object.value.length > 0
+  }),
+  trimLiterals                 // Built-in: trim whitespace
+];
+
+// Execute entire chain
+const result = await executeHookChain(hooks, quad);
+console.log('Valid:', result.valid);
+console.log('Transformed:', result.quad);
+```
+
+### 6. Batch Operations
+
+```javascript
+import {
+  validateSubjectIRI,
+  validateBatch,
+  executeBatch,
+  transformBatch
+} from '@unrdf/hooks';
+
+const quads = [
+  { subject: { value: 'http://example.org/s1' }, ... },
+  { subject: { value: 'http://example.org/s2' }, ... },
+  { subject: { value: 'invalid' }, ... }
+];
+
+// Get boolean array of validity
+const validArray = await validateBatch([validateSubjectIRI], quads);
+console.log(validArray); // [true, true, false]
+
+// Get detailed results
+const results = await executeBatch([validateSubjectIRI], quads);
+results.forEach((r, i) => {
+  console.log(`Quad ${i}: ${r.valid ? '✓' : '✗'}`);
+});
+
+// Apply transformations
+const normalized = await transformBatch([trimLiterals], quads);
+```
+
+## Built-in Hooks
+
+### Validators
+- `validateSubjectIRI` - Subject must be NamedNode
+- `validatePredicateIRI` - Predicate must be NamedNode
+- `validateIRIFormat` - RFC3987 compliance
+- `validateObjectLiteral` - Non-empty literals
+- `validateLanguageTag` - BCP47 language tags
+- `rejectBlankNodes` - Reject blank nodes
+
+### Normalizers
+- `normalizeLanguageTag` - Lowercase language tags
+- `trimLiterals` - Remove whitespace
+- `normalizeNamespace` - Standardize URIs
+- `normalizeLanguageTagPooled` - Fast with pooling
+- `trimLiteralsPooled` - Fast with pooling
+
+### Composite
+- `standardValidation` - All-in-one validation
+
+## Patterns
+
+### Validate Before Store
+
+```javascript
+import { executeHookChain, standardValidation } from '@unrdf/hooks';
+import { createStore } from '@unrdf/oxigraph';
+
+const store = createStore();
+
+async function addQuad(quad) {
+  const result = await executeHookChain([standardValidation], quad);
+  
+  if (!result.valid) {
+    throw new Error('Quad validation failed');
+  }
+  
+  // Add the (potentially transformed) quad
+  store.add(result.quad);
 }
 ```
 
-### 4. Hook Chains
+### Custom Validation Pipeline
 
 ```javascript
-// Chain multiple hooks
-defineHook('data-quality', {
-  type: 'transform',
-  hooks: [
-    'validate-schema',
-    'validate-pii',
-    'normalize-data',
-    'audit-log'
-  ]
-})
+const pipeline = [
+  defineHook({
+    name: 'reject-internal',
+    trigger: 'before-add',
+    validate: (q) => !q.subject.value.includes('internal')
+  }),
+  defineHook({
+    name: 'normalize',
+    trigger: 'before-add',
+    transform: (q) => ({ ...q, object: { value: q.object.value.trim() } })
+  }),
+  standardValidation
+];
 
-// Execute chain
-await executeHook('data-quality', quad)
+const result = await executeHookChain(pipeline, quad);
 ```
 
-## Hook Types
+### Performance-Optimized Batch
 
-- **validate-before-write**: Validate before storing
-- **transform**: Transform data
-- **audit**: Log operations
-- **notify**: Send notifications
-
-## Use Cases
-
-**Data Validation**:
 ```javascript
-defineHook('schema-validation', {
-  type: 'validate-before-write',
-  async check(quad) {
-    return validateSchema(quad)
-  }
-})
+import {
+  normalizeLanguageTagPooled,
+  trimLiteralsPooled,
+  transformBatch
+} from '@unrdf/hooks';
+
+const quads = largeBatch; // 10,000+ quads
+
+// Pooled versions use object reuse (no allocation)
+const normalized = await transformBatch(
+  [normalizeLanguageTagPooled, trimLiteralsPooled],
+  quads
+);
 ```
 
-**Data Transformation**:
-```javascript
-defineHook('normalize', {
-  type: 'transform',
-  async transform(quad) {
-    return normalizeQuad(quad)
-  }
-})
+## Testing
+
+Run the comprehensive test suite:
+
+```bash
+npm test -- builtin-hooks-advanced
 ```
 
-**Audit Logging**:
-```javascript
-defineHook('audit-log', {
-  type: 'audit',
-  async log(quad, operation) {
-    auditLog.write({ quad, operation, timestamp: Date.now() })
-  }
-})
-```
+This runs 46 tests covering:
+- All 12+ built-in hooks
+- Edge cases (empty literals, invalid IRIs, etc.)
+- Hook chaining and composition
+- Batch operations and scaling
+- Performance baselines
+
+## Examples
+
+See [examples/](./examples/) for:
+- `hook-chains/` - Multi-hook validation pipelines
+- `policy-hooks/` - Policy enforcement examples
 
 ## Support
 
-- Issues: https://github.com/unrdf/unrdf/issues
-- Examples: See [examples/](./examples/)
+- **API Reference**: See [API-REFERENCE.md](./API-REFERENCE.md)
+- **Architecture**: See [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Issues**: https://github.com/unrdf/unrdf/issues

@@ -402,7 +402,7 @@ describe('AlertManager', () => {
       name: 'high_backlog',
       condition: 'queue.backlog > threshold',
       severity: 'warning',
-      evaluate: ({ value, context }) => value > 100,
+      evaluate: ({ value, _context }) => value > 100,
     });
 
     // Act

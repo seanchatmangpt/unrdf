@@ -21,9 +21,8 @@
  * - Graceful degradation (2 tests)
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EventEmitter } from 'events';
-import { z } from 'zod';
 import EcosystemCompositionValidator from './ecosystem-validator.mjs';
 
 /**

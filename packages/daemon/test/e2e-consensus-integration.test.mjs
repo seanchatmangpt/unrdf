@@ -8,7 +8,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { EventEmitter } from 'events';
-import { ConsensusManager, createConsensusManager } from '../src/integrations/consensus.mjs';
+import { ConsensusManager } from '../src/integrations/consensus.mjs';
 
 /**
  * Mock Daemon for testing

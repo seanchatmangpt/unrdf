@@ -14,7 +14,6 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createStore } from '@unrdf/oxigraph';
 import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { KnowledgeHookEngine } from '../src/hooks/knowledge-hook-engine.mjs';
-import { evaluateCondition, createConditionEvaluator } from '../src/hooks/condition-evaluator.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 
@@ -315,10 +314,10 @@ describe('V6: SPARQL CONSTRUCT Effect Execution', () => {
 // ============================================================================
 
 describe('V6: N3 Condition Kind - Forward-Chaining Inference', () => {
-  let store;
+  let _store;
 
   beforeEach(() => {
-    store = createStore();
+    _store = createStore();
   });
 
   it('should define N3 condition with rules and askQuery', () => {
@@ -596,7 +595,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
           }
         `,
       },
-      run: async (event) => {
+      run: async (_event) => {
         return {
           success: true,
           phase: 'complete',
@@ -864,10 +863,10 @@ describe('V6: SHACL Enforcement Modes', () => {
 // ============================================================================
 
 describe('V6: Datalog Conditions', () => {
-  let store;
+  let _store;
 
   beforeEach(() => {
-    store = createStore();
+    _store = createStore();
   });
 
   it('should evaluate simple Datalog facts as true', async () => {

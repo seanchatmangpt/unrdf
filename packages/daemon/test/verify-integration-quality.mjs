@@ -56,7 +56,6 @@ async function runCommand(command, args = [], options = {}) {
 function parseTestOutput(output) {
   const passedMatch = output.match(/(\d+)\s+passed/);
   const failedMatch = output.match(/(\d+)\s+failed/);
-  const filesMatch = output.match(/Test Files.*?(\d+)\s+passed.*?(\d+)?\s*failed/s);
 
   return {
     passed: passedMatch ? parseInt(passedMatch[1], 10) : 0,

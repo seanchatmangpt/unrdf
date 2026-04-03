@@ -11,7 +11,7 @@
  * @param {Object} context - Policy evaluation context
  * @returns {Promise<Object>} Evaluation result with decision and reason
  */
-export async function evaluateApprovalPolicy(policy, context) {
+export async function evaluateApprovalPolicy(policy, _context) {
   if (!policy.config.requiresApproval) {
     return { decision: 'allow', reason: 'Approval not required' };
   }
@@ -31,7 +31,7 @@ export async function evaluateApprovalPolicy(policy, context) {
  * @param {Object} context - Policy evaluation context
  * @returns {Promise<Object>} Evaluation result with decision and reason
  */
-export async function evaluateTimeWindowPolicy(policy, context) {
+export async function evaluateTimeWindowPolicy(policy, _context) {
   const config = policy.config;
   if (!config.timeWindows || config.timeWindows.length === 0) {
     return { decision: 'allow', reason: 'No time windows configured' };

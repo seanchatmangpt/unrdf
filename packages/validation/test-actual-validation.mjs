@@ -19,9 +19,9 @@ try {
   const validator = createOTELValidator();
   console.log('✓ Created validator');
 
-  // Try to call validateFeature with a fake feature
-  const result = await validator.validateFeature('test-feature', {
-    expectedSpans: ['feature.test'],
+  // Try to call validateFeature with a feature that has an executor
+  const result = await validator.validateFeature('cli-parse', {
+    expectedSpans: ['cli.parse', 'cli.output'],
     requiredAttributes: [],
     performanceThresholds: {
       maxLatency: 1000,

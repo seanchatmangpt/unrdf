@@ -15,10 +15,6 @@ import {
   defineHook,
   executeHook,
   executeHookChain,
-  executeHooksByTrigger,
-  registerHook,
-  unregisterHook,
-  getHooksByTrigger,
   clearHooks,
   createHookRegistry,
 } from '../src/index.mjs';

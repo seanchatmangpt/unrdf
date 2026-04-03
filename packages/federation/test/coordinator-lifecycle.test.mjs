@@ -13,8 +13,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { FederationCoordinator, createFederationCoordinator } from '../src/federation/federation-coordinator.mjs';
-import { EventEmitter } from 'events';
+import { createFederationCoordinator } from '../src/federation/federation-coordinator.mjs';
 
 describe('FederationCoordinator Lifecycle Management', () => {
   let coordinator;
@@ -43,7 +42,7 @@ describe('FederationCoordinator Lifecycle Management', () => {
 
       // Verify timer is active
       expect(coordinator.healthCheckTimer).not.toBeNull();
-      const timerId = coordinator.healthCheckTimer;
+      const _timerId = coordinator.healthCheckTimer;
 
       // Shutdown
       await coordinator.shutdown();

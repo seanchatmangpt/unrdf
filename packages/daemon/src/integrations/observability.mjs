@@ -5,7 +5,6 @@
  */
 
 import { ConfigSchema } from './observability.schema.mjs';
-import { detectInjection, sanitizePath, sanitizeError, detectSecrets, validatePayload } from '../security-audit.mjs';
 
 
 /**

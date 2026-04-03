@@ -9,7 +9,6 @@
 import { z } from 'zod';
 import {
   withReceipt,
-  createContext,
   canonicalize,
   blake3Hash,
 } from '../../v6-core/src/receipt-pattern.mjs';

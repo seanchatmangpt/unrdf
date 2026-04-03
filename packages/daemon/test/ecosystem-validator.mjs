@@ -15,7 +15,6 @@
  * - Graceful degradation when modules unavailable
  */
 
-import { EventEmitter } from 'events';
 import { z } from 'zod';
 
 /**

@@ -299,13 +299,6 @@ export class NitroTaskExecutor extends EventEmitter {
       throw new Error(`Operation not found: ${operationId}`);
     }
 
-    // Merge payload into operation context if needed
-    const context = {
-      ...payload,
-      sourceSystem: 'nitro',
-      timestamp: new Date(),
-    };
-
     // Execute via daemon
     return this.daemon.execute(operationId);
   }

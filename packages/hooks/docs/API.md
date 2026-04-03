@@ -1,21 +1,6 @@
 # @unrdf/hooks API Reference
 
-Knowledge Hooks - Policy Definition and Execution Framework
+This document is a pointer to the complete reference.
 
-## Table of Contents
-
-- [Functions](#functions)
-- [Types](#types)
-- [Examples](#examples)
-
-## Functions
-
-TODO: Document API functions
-
-## Types
-
-TODO: Document types
-
-## Examples
-
-See `examples/` directory for complete examples.
+See [API-REFERENCE.md](../API-REFERENCE.md) for the full @unrdf/hooks API documentation,
+including all functions, types, configuration options, and examples.

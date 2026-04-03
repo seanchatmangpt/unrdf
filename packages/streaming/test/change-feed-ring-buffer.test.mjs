@@ -75,7 +75,7 @@ describe('Change Feed Ring Buffer', () => {
 
       // Add subscriber
       const subscriber = vi.fn();
-      const unsubscribe = feed.subscribe(subscriber);
+      const _unsubscribe = feed.subscribe(subscriber);
 
       // Add event listener
       const listener = vi.fn();
