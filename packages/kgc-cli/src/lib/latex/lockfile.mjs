@@ -24,7 +24,7 @@ import {
   pruneLockfile,
   createLockEntry,
   LockEntrySchema,
-  LockfileSchema
+  LockfileSchema,
 } from './cache/lockfile.mjs';
 
 // Re-export everything
@@ -42,7 +42,7 @@ export {
   pruneLockfile,
   createLockEntry,
   LockEntrySchema,
-  LockfileSchema
+  LockfileSchema,
 };
 
 export {
@@ -51,15 +51,10 @@ export {
   listCached,
   getCacheStats,
   clearCache,
-  verifyCached
+  verifyCached,
 } from './cache/store.mjs';
 
-export {
-  exportBundle,
-  importBundle,
-  verifyBundle,
-  listBundle
-} from './cache/bundle.mjs';
+export { exportBundle, importBundle, verifyBundle, listBundle } from './cache/bundle.mjs';
 
 /**
  * Legacy compatibility functions for existing code.
@@ -78,7 +73,7 @@ export function updateLockfileWithResolved(lockfile, resolvedInputs) {
     const entry = createLockEntry({
       name,
       content,
-      cachedPath: path
+      cachedPath: path,
     });
     addEntry(lockfile, entry);
   }
@@ -96,6 +91,6 @@ export function updateLockfileWithSuccess(lockfile, compileInfo) {
   lockfile.lastCompilation = {
     ...compileInfo,
     success: true,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 }

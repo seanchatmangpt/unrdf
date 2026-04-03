@@ -44,11 +44,13 @@ export const EvaluationResultSchema = z.object({
   type: z.string(),
   expression: z.string(),
   evaluatedAt: z.bigint(),
-  proof: z.object({
-    inputHash: z.string(),
-    resultHash: z.string(),
-    method: z.string(),
-  }).optional(),
+  proof: z
+    .object({
+      inputHash: z.string(),
+      resultHash: z.string(),
+      method: z.string(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -203,9 +205,9 @@ export async function evaluateSPARQL(query, data) {
  */
 export function evaluateFunction(expression, data) {
   const safeFunctions = {
-    countItems: (d) => Array.isArray(d.items) ? d.items.length : 0,
-    countKeys: (d) => Object.keys(d).length,
-    countAll: (d) => {
+    countItems: d => (Array.isArray(d.items) ? d.items.length : 0),
+    countKeys: d => Object.keys(d).length,
+    countAll: d => {
       if (Array.isArray(d)) return d.length;
       if (typeof d === 'object') return Object.keys(d).length;
       return 0;
@@ -214,7 +216,9 @@ export function evaluateFunction(expression, data) {
 
   const fn = safeFunctions[expression];
   if (!fn) {
-    throw new Error(`Function ${expression} is not allowed. Allowed: ${Object.keys(safeFunctions).join(', ')}`);
+    throw new Error(
+      `Function ${expression} is not allowed. Allowed: ${Object.keys(safeFunctions).join(', ')}`
+    );
   }
 
   return fn(data);
@@ -304,8 +308,10 @@ export async function evaluateExpression(expression, data) {
  */
 function detectExpressionType(expression) {
   // SPARQL: starts with SELECT or contains COUNT(
-  if (expression.trim().toUpperCase().startsWith('SELECT') ||
-      expression.includes('COUNT(') && expression.includes('?')) {
+  if (
+    expression.trim().toUpperCase().startsWith('SELECT') ||
+    (expression.includes('COUNT(') && expression.includes('?'))
+  ) {
     return { type: ExpressionType.SPARQL, expression };
   }
 
@@ -337,7 +343,7 @@ function simpleHash(input) {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash).toString(16).padStart(8, '0');

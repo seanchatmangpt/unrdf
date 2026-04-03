@@ -101,9 +101,7 @@ const FETCH_TIMEOUT = 10000;
  * @returns {string} Hex-encoded hash
  */
 function computeHash(content) {
-  return createHash('sha256')
-    .update(content)
-    .digest('hex');
+  return createHash('sha256').update(content).digest('hex');
 }
 
 /**
@@ -276,7 +274,10 @@ async function fetchWithTimeout(url, timeout = FETCH_TIMEOUT) {
  * @returns {Promise<Uint8Array>} File content
  * @throws {Error} If all retries exhausted
  */
-async function fetchWithRetry(url, { maxRetries = DEFAULT_MAX_RETRIES, initialDelay = DEFAULT_INITIAL_DELAY }) {
+async function fetchWithRetry(
+  url,
+  { maxRetries = DEFAULT_MAX_RETRIES, initialDelay = DEFAULT_INITIAL_DELAY }
+) {
   let lastError;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -312,13 +313,17 @@ async function fetchWithRetry(url, { maxRetries = DEFAULT_MAX_RETRIES, initialDe
       // Retry with backoff if attempts remain
       if (attempt < maxRetries) {
         const delay = calculateBackoffDelay(attempt, initialDelay);
-        console.warn(`Retry ${attempt + 1}/${maxRetries} for ${url} after ${delay}ms (${error.message})`);
+        console.warn(
+          `Retry ${attempt + 1}/${maxRetries} for ${url} after ${delay}ms (${error.message})`
+        );
         await sleep(delay);
       }
     }
   }
 
-  throw new Error(`Failed after ${maxRetries + 1} attempts: ${lastError?.message || 'Unknown error'}`);
+  throw new Error(
+    `Failed after ${maxRetries + 1} attempts: ${lastError?.message || 'Unknown error'}`
+  );
 }
 
 /**
@@ -331,7 +336,10 @@ async function fetchWithRetry(url, { maxRetries = DEFAULT_MAX_RETRIES, initialDe
  * @returns {Promise<{content: Uint8Array, url: string}>} File content and successful URL
  * @throws {Error} If all URLs and retries fail
  */
-async function fetchFromCtan(filename, { registry = DEFAULT_CTAN_MIRROR, maxRetries, initialDelay }) {
+async function fetchFromCtan(
+  filename,
+  { registry = DEFAULT_CTAN_MIRROR, maxRetries, initialDelay }
+) {
   const urls = buildCtanUrls(filename, registry);
   const errors = [];
 
@@ -350,15 +358,15 @@ async function fetchFromCtan(filename, { registry = DEFAULT_CTAN_MIRROR, maxRetr
   const errorDetails = errors.map(e => `  - ${e.url}\n    Error: ${e.error}`).join('\n');
   throw new Error(
     `Failed to fetch '${filename}' from CTAN after trying ${urls.length} URLs.\n\n` +
-    `URLs attempted:\n${errorDetails}\n\n` +
-    `Possible reasons:\n` +
-    `  - Package not available on CTAN\n` +
-    `  - Network connectivity issues\n` +
-    `  - Mirror temporarily unavailable\n\n` +
-    `Try:\n` +
-    `  1. Check package name spelling\n` +
-    `  2. Verify network connection\n` +
-    `  3. Install package manually: tlmgr install ${extractPackageName(filename)}`
+      `URLs attempted:\n${errorDetails}\n\n` +
+      `Possible reasons:\n` +
+      `  - Package not available on CTAN\n` +
+      `  - Network connectivity issues\n` +
+      `  - Mirror temporarily unavailable\n\n` +
+      `Try:\n` +
+      `  1. Check package name spelling\n` +
+      `  2. Verify network connection\n` +
+      `  3. Install package manually: tlmgr install ${extractPackageName(filename)}`
   );
 }
 
@@ -469,8 +477,8 @@ export async function resolveMissingInputs(options) {
     const details = failures.map(f => `  - ${f.filename}\n    ${f.error}`).join('\n\n');
     throw new Error(
       `Failed to resolve ${failures.length} input(s): ${failedNames}\n\n` +
-      `Details:\n${details}\n\n` +
-      `Successfully resolved: ${result.size} file(s)`
+        `Details:\n${details}\n\n` +
+        `Successfully resolved: ${result.size} file(s)`
     );
   }
 

@@ -196,7 +196,7 @@ export function generateUUID() {
     return crypto.randomUUID();
   }
   // Fallback for older environments
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -217,9 +217,7 @@ export function serializeCaseState(caseState) {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       sorted[key] = serializeCaseState(value);
     } else if (Array.isArray(value)) {
-      sorted[key] = value.map((item) =>
-        typeof item === 'object' ? serializeCaseState(item) : item
-      );
+      sorted[key] = value.map(item => (typeof item === 'object' ? serializeCaseState(item) : item));
     } else {
       sorted[key] = value;
     }
@@ -487,9 +485,7 @@ function buildEventDeltas(eventType, payload, caseId) {
 
     case YAWL_EVENT_TYPES.CONTROL_FLOW_EVALUATED: {
       // Store control flow decision for audit
-      const decisionSubject = dataFactory.namedNode(
-        `${YAWL_NS}decision/${generateUUID()}`
-      );
+      const decisionSubject = dataFactory.namedNode(`${YAWL_NS}decision/${generateUUID()}`);
       deltas.push({
         type: 'add',
         subject: decisionSubject,

@@ -3,6 +3,7 @@
 ## Files Delivered (Absolute Paths)
 
 ### Implementation
+
 ```
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/ctan-map.mjs    (296 LOC)
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/resolve.mjs     (588 LOC)
@@ -10,12 +11,14 @@
 ```
 
 ### Tests
+
 ```
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/ctan-map.test.mjs    (215 LOC)
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/resolve.test.mjs     (245 LOC)
 ```
 
 ### Documentation
+
 ```
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/README.md
 /home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/INTEGRATION-GUIDE.md
@@ -113,6 +116,7 @@ wc -l cache/*.mjs
 ## Common Patterns
 
 ### Production (CTAN)
+
 ```javascript
 const resolved = await resolveMissingInputs({
   missingInputs: ['algorithm2e.sty'],
@@ -121,6 +125,7 @@ const resolved = await resolveMissingInputs({
 ```
 
 ### Testing (Local Fixture)
+
 ```javascript
 const resolved = await resolveMissingInputs({
   missingInputs: ['test.sty'],
@@ -130,6 +135,7 @@ const resolved = await resolveMissingInputs({
 ```
 
 ### No Retry (Fail Fast)
+
 ```javascript
 const resolved = await resolveMissingInputs({
   missingInputs: ['test.sty'],
@@ -139,6 +145,7 @@ const resolved = await resolveMissingInputs({
 ```
 
 ### Aggressive Retry
+
 ```javascript
 const resolved = await resolveMissingInputs({
   missingInputs: ['package.sty'],
@@ -151,6 +158,7 @@ const resolved = await resolveMissingInputs({
 ## Error Handling
 
 All errors include:
+
 - Failed package names
 - Attempted URLs
 - Retry counts
@@ -176,26 +184,26 @@ try {
 
 ## Package Name Exceptions (20+ Mappings)
 
-| Filename | Package |
-|----------|---------|
-| `tikz.sty` | `pgf` |
-| `algpseudocode.sty` | `algorithmicx` |
-| `graphicx.sty` | `graphics` |
-| `amssymb.sty` | `amsfonts` |
-| `beamerarticle.sty` | `beamer` |
-| ... | (see ctan-map.mjs for full list) |
+| Filename            | Package                          |
+| ------------------- | -------------------------------- |
+| `tikz.sty`          | `pgf`                            |
+| `algpseudocode.sty` | `algorithmicx`                   |
+| `graphicx.sty`      | `graphics`                       |
+| `amssymb.sty`       | `amsfonts`                       |
+| `beamerarticle.sty` | `beamer`                         |
+| ...                 | (see ctan-map.mjs for full list) |
 
 ## VFS Path Convention
 
-| Extension | VFS Path Template |
-|-----------|-------------------|
-| `.sty`, `.cls`, `.def` | `texmf/tex/latex/{package}/{file}` |
-| `.bib` | `texmf/bibtex/bib/{package}/{file}` |
-| `.bst` | `texmf/bibtex/bst/{package}/{file}` |
-| `.fd` | `texmf/tex/latex/{package}/{file}` |
-| `.tfm` | `texmf/fonts/tfm/{package}/{file}` |
-| `.ttf` | `texmf/fonts/truetype/{package}/{file}` |
-| Other | `work/{file}` |
+| Extension              | VFS Path Template                       |
+| ---------------------- | --------------------------------------- |
+| `.sty`, `.cls`, `.def` | `texmf/tex/latex/{package}/{file}`      |
+| `.bib`                 | `texmf/bibtex/bib/{package}/{file}`     |
+| `.bst`                 | `texmf/bibtex/bst/{package}/{file}`     |
+| `.fd`                  | `texmf/tex/latex/{package}/{file}`      |
+| `.tfm`                 | `texmf/fonts/tfm/{package}/{file}`      |
+| `.ttf`                 | `texmf/fonts/truetype/{package}/{file}` |
+| Other                  | `work/{file}`                           |
 
 ## Cache Structure
 
@@ -209,12 +217,12 @@ ${cacheDir}/ctan/
 
 ## Performance
 
-| Operation | Time |
-|-----------|------|
-| Cache hit | <5ms |
-| CTAN fetch (1st try) | 100-500ms |
+| Operation              | Time       |
+| ---------------------- | ---------- |
+| Cache hit              | <5ms       |
+| CTAN fetch (1st try)   | 100-500ms  |
 | CTAN fetch (3 retries) | 100-1500ms |
-| VFS merge | <5ms |
+| VFS merge              | <5ms       |
 
 ## Retry Schedule (maxRetries=3, initialDelay=100)
 

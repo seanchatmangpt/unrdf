@@ -140,8 +140,9 @@ export function createParticipantByRoleQuery(roleUri) {
  * });
  */
 export function createAvailableParticipantsQuery(options = {}) {
-  const timeFilter = options.from && options.to
-    ? `
+  const timeFilter =
+    options.from && options.to
+      ? `
       FILTER(?available = true)
       OPTIONAL {
         ?participant yawl:hasAvailabilityWindow ?window .
@@ -150,7 +151,7 @@ export function createAvailableParticipantsQuery(options = {}) {
         FILTER(?start <= "${options.from}"^^xsd:dateTime && ?end >= "${options.to}"^^xsd:dateTime)
       }
     `
-    : 'FILTER(?available = true)';
+      : 'FILTER(?available = true)';
 
   return `
     PREFIX yawl: <http://yawlfoundation.org/yawlschema#>

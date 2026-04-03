@@ -12,11 +12,7 @@
 
 // ===== Example 1: Basic Usage =====
 
-import {
-  observationsToRdf,
-  generateReport,
-  deriveClaims,
-} from './reporter.mjs';
+import { observationsToRdf, generateReport, deriveClaims } from './reporter.mjs';
 
 // Sample observations from probes
 const observations = [
@@ -64,10 +60,7 @@ const observations = [
     domain: 'network',
     timestamp: Date.now() + 400,
     outputs: {
-      allowedUrls: [
-        'https://api.unrdf.dev',
-        'https://data.example.org',
-      ],
+      allowedUrls: ['https://api.unrdf.dev', 'https://data.example.org'],
     },
   },
   {
@@ -155,11 +148,7 @@ try {
   await fs.mkdir(outputDir, { recursive: true });
 
   // Save RDF
-  await fs.writeFile(
-    path.join(outputDir, 'observations.ttl'),
-    turtle,
-    'utf-8'
-  );
+  await fs.writeFile(path.join(outputDir, 'observations.ttl'), turtle, 'utf-8');
   console.log(`\n✅ RDF saved to ${path.join(outputDir, 'observations.ttl')}`);
 
   // Save claims as JSON
@@ -171,11 +160,7 @@ try {
   console.log(`✅ Claims saved to ${path.join(outputDir, 'claims.json')}`);
 
   // Save report
-  await fs.writeFile(
-    path.join(outputDir, 'report.md'),
-    report,
-    'utf-8'
-  );
+  await fs.writeFile(path.join(outputDir, 'report.md'), report, 'utf-8');
   console.log(`✅ Report saved to ${path.join(outputDir, 'report.md')}\n`);
 } catch (error) {
   console.error('Error saving files:', error.message);

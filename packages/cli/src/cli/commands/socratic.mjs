@@ -43,14 +43,16 @@ function formatAnalysis(analysis) {
 
     analysis.assumptions.forEach((assumption, i) => {
       const classEmoji = {
-        'STRONG': '🟢',
-        'MODERATE': '🟡',
-        'WEAK': '🟠',
-        'UNVALIDATED': '🔴',
-        'REFUTED': '⛔'
+        STRONG: '🟢',
+        MODERATE: '🟡',
+        WEAK: '🟠',
+        UNVALIDATED: '🔴',
+        REFUTED: '⛔',
       };
 
-      lines.push(`${i + 1}. ${classEmoji[assumption.classification]} [${assumption.classification}] ${assumption.statement}`);
+      lines.push(
+        `${i + 1}. ${classEmoji[assumption.classification]} [${assumption.classification}] ${assumption.statement}`
+      );
       lines.push(`   Confidence: ${(assumption.confidence * 100).toFixed(0)}%`);
 
       if (assumption.evidence_for.length > 0) {
@@ -82,7 +84,7 @@ function formatAnalysis(analysis) {
     const bySeverity = {
       HIGH: [],
       MEDIUM: [],
-      LOW: []
+      LOW: [],
     };
 
     analysis.challenges.forEach(c => {
@@ -132,7 +134,9 @@ function formatAnalysis(analysis) {
 
     analysis.alternatives.forEach((alt, i) => {
       lines.push(`${i + 1}. ${alt.solution}`);
-      lines.push(`   Value: ${alt.value}  Cost: ${alt.cost}  Efficiency: ${alt.efficiency.toFixed(2)}`);
+      lines.push(
+        `   Value: ${alt.value}  Cost: ${alt.cost}  Efficiency: ${alt.efficiency.toFixed(2)}`
+      );
       lines.push(`   Evidence Strength: ${(alt.evidence_strength * 100).toFixed(0)}%`);
       lines.push('');
     });
@@ -211,7 +215,6 @@ export const socraticCommand = defineCommand({
       if (!analysis.recommendation.proceed) {
         process.exit(1);
       }
-
     } catch (error) {
       console.error('');
       console.error('❌ Error analyzing statement:');

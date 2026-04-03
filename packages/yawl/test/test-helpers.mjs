@@ -10,10 +10,10 @@ export function createTestWorkflow(overrides = {}) {
     id: overrides.id || `workflow-${randomUUID()}`,
     name: overrides.name || 'Test Workflow',
     version: overrides.version || '1.0.0',
-    tasks: overrides.tasks || [],  // ✅ Required by WorkflowSpecSchema
+    tasks: overrides.tasks || [], // ✅ Required by WorkflowSpecSchema
     controlFlow: overrides.controlFlow || [],
     resources: overrides.resources || [],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -27,7 +27,7 @@ export function createTestTask(overrides = {}) {
     id: overrides.id || `task-${randomUUID()}`,
     name: overrides.name || 'Test Task',
     type: overrides.type || 'atomic',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -42,6 +42,6 @@ export function createTestCase(overrides = {}) {
     workflowId: overrides.workflowId || `workflow-${randomUUID()}`,
     status: overrides.status || 'active',
     workItems: overrides.workItems || [],
-    ...overrides
+    ...overrides,
   };
 }

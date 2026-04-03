@@ -12,13 +12,17 @@ describe('SemanticQueryEngine', () => {
     store = createStore();
 
     // Add test data
-    const ex = (local) => namedNode(`http://example.org/${local}`);
-    const schema = (local) => namedNode(`http://schema.org/${local}`);
+    const ex = local => namedNode(`http://example.org/${local}`);
+    const schema = local => namedNode(`http://schema.org/${local}`);
 
     store.add(triple(ex('JavaScript'), schema('name'), literal('JavaScript')));
-    store.add(triple(ex('JavaScript'), schema('description'), literal('programming language for web')));
+    store.add(
+      triple(ex('JavaScript'), schema('description'), literal('programming language for web'))
+    );
     store.add(triple(ex('Python'), schema('name'), literal('Python')));
-    store.add(triple(ex('Python'), schema('description'), literal('programming language for data science')));
+    store.add(
+      triple(ex('Python'), schema('description'), literal('programming language for data science'))
+    );
 
     engine = new SemanticQueryEngine(store);
   });
@@ -200,9 +204,7 @@ describe('SemanticQueryEngine', () => {
       await engine.indexStore();
 
       // Should not throw with valid options
-      await expect(
-        engine.search('test', { limit: 5, threshold: 0.5 })
-      ).resolves.toBeDefined();
+      await expect(engine.search('test', { limit: 5, threshold: 0.5 })).resolves.toBeDefined();
     }, 30000);
   });
 });

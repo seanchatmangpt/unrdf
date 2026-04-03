@@ -293,10 +293,30 @@ describe('ProofChain', () => {
 
   it('should append chained receipts', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p2', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p2', taskId: 'Task1', payload: { decision: 'ENABLE' } },
-      { eventType: 'TASK_STARTED', caseId: 'case-p2', taskId: 'Task1', payload: { decision: 'START' } },
-      { eventType: 'TASK_COMPLETED', caseId: 'case-p2', taskId: 'Task1', payload: { decision: 'COMPLETE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p2',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p2',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
+      {
+        eventType: 'TASK_STARTED',
+        caseId: 'case-p2',
+        taskId: 'Task1',
+        payload: { decision: 'START' },
+      },
+      {
+        eventType: 'TASK_COMPLETED',
+        caseId: 'case-p2',
+        taskId: 'Task1',
+        payload: { decision: 'COMPLETE' },
+      },
     ];
 
     for (const event of events) {
@@ -309,9 +329,24 @@ describe('ProofChain', () => {
 
   it('should verify entire chain', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p3', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p3', taskId: 'Task1', payload: { decision: 'ENABLE' } },
-      { eventType: 'TASK_COMPLETED', caseId: 'case-p3', taskId: 'Task1', payload: { decision: 'COMPLETE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p3',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p3',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
+      {
+        eventType: 'TASK_COMPLETED',
+        caseId: 'case-p3',
+        taskId: 'Task1',
+        payload: { decision: 'COMPLETE' },
+      },
     ];
 
     for (const event of events) {
@@ -325,8 +360,18 @@ describe('ProofChain', () => {
 
   it('should compute Merkle root', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p4', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p4', taskId: 'Task1', payload: { decision: 'ENABLE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p4',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p4',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
     ];
 
     for (const event of events) {
@@ -347,9 +392,24 @@ describe('ProofChain', () => {
 
   it('should get receipts by case', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-A', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'CASE_CREATED', caseId: 'case-B', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-A', taskId: 'Task1', payload: { decision: 'ENABLE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-A',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-B',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-A',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
     ];
 
     for (const event of events) {
@@ -377,13 +437,25 @@ describe('ProofChain', () => {
     const fakeReceipt = await generateReceipt(event, null);
     const chainedReceipt = await generateReceipt(event, fakeReceipt);
 
-    await expect(chain.append(chainedReceipt)).rejects.toThrow('Genesis receipt must have null previousReceiptHash');
+    await expect(chain.append(chainedReceipt)).rejects.toThrow(
+      'Genesis receipt must have null previousReceiptHash'
+    );
   });
 
   it('should serialize and deserialize', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p6', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p6', taskId: 'Task1', payload: { decision: 'ENABLE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p6',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p6',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
     ];
 
     for (const event of events) {
@@ -404,8 +476,18 @@ describe('ProofChain', () => {
 
   it('should export audit trail', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p7', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p7', taskId: 'Task1', payload: { decision: 'ENABLE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p7',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p7',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
     ];
 
     for (const event of events) {
@@ -425,10 +507,30 @@ describe('ProofChain', () => {
 
   it('should generate and verify Merkle proofs', async () => {
     const events = [
-      { eventType: 'CASE_CREATED', caseId: 'case-p8', taskId: 'Start', payload: { decision: 'CREATE' } },
-      { eventType: 'TASK_ENABLED', caseId: 'case-p8', taskId: 'Task1', payload: { decision: 'ENABLE' } },
-      { eventType: 'TASK_STARTED', caseId: 'case-p8', taskId: 'Task1', payload: { decision: 'START' } },
-      { eventType: 'TASK_COMPLETED', caseId: 'case-p8', taskId: 'Task1', payload: { decision: 'COMPLETE' } },
+      {
+        eventType: 'CASE_CREATED',
+        caseId: 'case-p8',
+        taskId: 'Start',
+        payload: { decision: 'CREATE' },
+      },
+      {
+        eventType: 'TASK_ENABLED',
+        caseId: 'case-p8',
+        taskId: 'Task1',
+        payload: { decision: 'ENABLE' },
+      },
+      {
+        eventType: 'TASK_STARTED',
+        caseId: 'case-p8',
+        taskId: 'Task1',
+        payload: { decision: 'START' },
+      },
+      {
+        eventType: 'TASK_COMPLETED',
+        caseId: 'case-p8',
+        taskId: 'Task1',
+        payload: { decision: 'COMPLETE' },
+      },
     ];
 
     for (const event of events) {

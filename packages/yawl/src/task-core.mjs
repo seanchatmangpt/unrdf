@@ -49,8 +49,18 @@ export const TaskStatus_RUNNING = 'running';
  */
 export const VALID_TRANSITIONS = Object.freeze({
   [TaskStatus.DISABLED]: [TaskStatus.ENABLED, TaskStatus.CANCELLED],
-  [TaskStatus.ENABLED]: [TaskStatus.DISABLED, TaskStatus.ACTIVE, TaskStatus.CANCELLED, TaskStatus.TIMEOUT],
-  [TaskStatus.ACTIVE]: [TaskStatus.COMPLETED, TaskStatus.CANCELLED, TaskStatus.FAILED, TaskStatus.TIMEOUT],
+  [TaskStatus.ENABLED]: [
+    TaskStatus.DISABLED,
+    TaskStatus.ACTIVE,
+    TaskStatus.CANCELLED,
+    TaskStatus.TIMEOUT,
+  ],
+  [TaskStatus.ACTIVE]: [
+    TaskStatus.COMPLETED,
+    TaskStatus.CANCELLED,
+    TaskStatus.FAILED,
+    TaskStatus.TIMEOUT,
+  ],
   [TaskStatus.COMPLETED]: [], // Terminal state
   [TaskStatus.CANCELLED]: [], // Terminal state
   [TaskStatus.FAILED]: [], // Terminal state
@@ -67,7 +77,9 @@ export const VALID_TRANSITIONS = Object.freeze({
 export const TaskDefinitionSchema = z.object({
   id: z.string().min(1),
   name: z.string().optional(),
-  kind: z.enum(['AtomicTask', 'CompositeTask', 'MultipleInstanceTask', 'EmptyTask']).default('AtomicTask'),
+  kind: z
+    .enum(['AtomicTask', 'CompositeTask', 'MultipleInstanceTask', 'EmptyTask'])
+    .default('AtomicTask'),
   inputConditions: z.array(z.string()).default([]),
   outputConditions: z.array(z.string()).default([]),
   splitType: z.enum(['sequence', 'and', 'xor', 'or']).default('sequence'),
@@ -90,18 +102,20 @@ export const TaskInstanceSchema = z.object({
   taskDefId: z.string().min(1),
   caseId: z.string().min(1),
   name: z.string().optional(),
-  status: z.enum([
-    'disabled',
-    'enabled',
-    'active',
-    'completed',
-    'cancelled',
-    'failed',
-    'timeout',
-    // Legacy compatibility
-    'inactive',
-    'running',
-  ]).default('disabled'),
+  status: z
+    .enum([
+      'disabled',
+      'enabled',
+      'active',
+      'completed',
+      'cancelled',
+      'failed',
+      'timeout',
+      // Legacy compatibility
+      'inactive',
+      'running',
+    ])
+    .default('disabled'),
   inputData: z.record(z.unknown()).default({}),
   outputData: z.record(z.unknown()).default({}),
   assignedResource: z.string().optional(),

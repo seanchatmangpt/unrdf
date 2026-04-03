@@ -127,12 +127,14 @@ describe('Receipt Batch Generation', () => {
     });
 
     it('should include all required fields', async () => {
-      const events = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: { data: 'test' },
-      }];
+      const events = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: { data: 'test' },
+        },
+      ];
 
       const result = await generateReceiptBatch(events);
       const receipt = result.receipts[0];
@@ -165,22 +167,26 @@ describe('Receipt Batch Generation', () => {
     });
 
     it('should chain from previous receipt', async () => {
-      const events1 = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-      }];
+      const events1 = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+        },
+      ];
 
       const result1 = await generateReceiptBatch(events1);
       const lastReceipt = result1.receipts[0];
 
-      const events2 = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_STARTED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-      }];
+      const events2 = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_STARTED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+        },
+      ];
 
       const result2 = await generateReceiptBatch(events2, {
         previousReceipt: lastReceipt,
@@ -238,23 +244,27 @@ describe('Receipt Batch Generation', () => {
 
   describe('Validation', () => {
     it('should reject invalid event types', async () => {
-      const events = [{
-        eventType: 'INVALID_EVENT_TYPE',
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-      }];
+      const events = [
+        {
+          eventType: 'INVALID_EVENT_TYPE',
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+        },
+      ];
 
       await expect(generateReceiptBatch(events)).rejects.toThrow('Invalid event type');
     });
 
     it('should validate receipts when requested', async () => {
-      const events = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-      }];
+      const events = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+        },
+      ];
 
       // Should not throw
       const result = await generateReceiptBatch(events, { validate: true });
@@ -295,13 +305,15 @@ describe('Receipt Batch Generation', () => {
 
   describe('Optional Fields', () => {
     it('should include optional KGC event ID', async () => {
-      const events = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-        kgcEventId: 'event-123',
-      }];
+      const events = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+          kgcEventId: 'event-123',
+        },
+      ];
 
       const result = await generateReceiptBatch(events);
 
@@ -309,13 +321,15 @@ describe('Receipt Batch Generation', () => {
     });
 
     it('should include optional git ref', async () => {
-      const events = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-        gitRef: 'abc123',
-      }];
+      const events = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+          gitRef: 'abc123',
+        },
+      ];
 
       const result = await generateReceiptBatch(events);
 
@@ -323,13 +337,15 @@ describe('Receipt Batch Generation', () => {
     });
 
     it('should include optional vector clock', async () => {
-      const events = [{
-        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-        caseId: 'case1',
-        taskId: 'task1',
-        payload: {},
-        vectorClock: { node1: 5 },
-      }];
+      const events = [
+        {
+          eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+          caseId: 'case1',
+          taskId: 'task1',
+          payload: {},
+          vectorClock: { node1: 5 },
+        },
+      ];
 
       const result = await generateReceiptBatch(events);
 
@@ -357,12 +373,14 @@ describe('Receipt Batch Verification', () => {
   });
 
   it('should detect invalid payload hash', async () => {
-    const events = [{
-      eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-      caseId: 'case1',
-      taskId: 'task1',
-      payload: {},
-    }];
+    const events = [
+      {
+        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+        caseId: 'case1',
+        taskId: 'task1',
+        payload: {},
+      },
+    ];
 
     const generated = await generateReceiptBatch(events);
 
@@ -376,12 +394,14 @@ describe('Receipt Batch Verification', () => {
   });
 
   it('should detect invalid chain hash', async () => {
-    const events = [{
-      eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
-      caseId: 'case1',
-      taskId: 'task1',
-      payload: {},
-    }];
+    const events = [
+      {
+        eventType: RECEIPT_EVENT_TYPES.TASK_ENABLED,
+        caseId: 'case1',
+        taskId: 'task1',
+        payload: {},
+      },
+    ];
 
     const generated = await generateReceiptBatch(events);
 

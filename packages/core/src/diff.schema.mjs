@@ -138,5 +138,5 @@ export default {
   diffOntologyFromStores: diffOntologyFromStoresSchema,
   diffOntologyFromDelta: diffOntologyFromDeltaSchema,
   summarizeChangesByKind: summarizeChangesByKindSchema,
-  changesForEntity: changesForEntitySchema
+  changesForEntity: changesForEntitySchema,
 };

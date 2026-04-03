@@ -218,9 +218,7 @@ export class EngineCore {
    */
   registerWorkflow(workflowOrSpec) {
     const workflow =
-      workflowOrSpec instanceof YawlWorkflow
-        ? workflowOrSpec
-        : new YawlWorkflow(workflowOrSpec);
+      workflowOrSpec instanceof YawlWorkflow ? workflowOrSpec : new YawlWorkflow(workflowOrSpec);
 
     const validation = workflow.validate();
     if (!validation.valid) {

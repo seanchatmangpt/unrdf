@@ -25,9 +25,7 @@ export function hashFile(content) {
     throw new TypeError('Content must be a Uint8Array');
   }
 
-  return createHash('sha256')
-    .update(content)
-    .digest('hex');
+  return createHash('sha256').update(content).digest('hex');
 }
 
 /**

@@ -32,10 +32,18 @@
  * });
  */
 
-import { Workflow as WorkflowCore, WorkflowSpecSchema, TaskDefSchema, FlowDefSchema } from './workflow-core.mjs';
+import {
+  Workflow as WorkflowCore,
+  WorkflowSpecSchema,
+  TaskDefSchema,
+  FlowDefSchema,
+} from './workflow-core.mjs';
 import * as ValidationMethods from './workflow-validation.mjs';
 import * as PatternMethods from './workflow-patterns.mjs';
-import { workflowToRDF as _workflowToRDF, workflowFromRDF as _workflowFromRDF } from './workflow-rdf.mjs';
+import {
+  workflowToRDF as _workflowToRDF,
+  workflowFromRDF as _workflowFromRDF,
+} from './workflow-rdf.mjs';
 import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
 
 // =============================================================================

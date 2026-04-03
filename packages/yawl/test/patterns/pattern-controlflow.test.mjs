@@ -1,4 +1,3 @@
-
 import {
   createTestWorkflow,
   createTestEngine,
@@ -6,7 +5,7 @@ import {
   SPLIT_TYPE,
   JOIN_TYPE,
   sequence,
-  deferredChoice
+  deferredChoice,
 } from './test-utils.mjs';
 
 /**
@@ -27,7 +26,6 @@ import {
  * - Receipts: Hashes, SPARQL, actor/timestamp, chain verification
  * - Integration: Full lifecycle, error paths, resource contention
  */
-
 
 describe('Control Flow Tests', () => {
   let engine;
@@ -51,13 +49,13 @@ describe('Control Flow Tests', () => {
       workflow.addFlow({
         from: 'process',
         to: 'process',
-        condition: (ctx) => ctx.data.count < 3,
+        condition: ctx => ctx.data.count < 3,
         isCycle: true,
       });
       workflow.addFlow({
         from: 'process',
         to: 'done',
-        condition: (ctx) => ctx.data.count >= 3,
+        condition: ctx => ctx.data.count >= 3,
       });
       workflow.setStart('init');
       workflow.setEnd(['done']);
@@ -111,10 +109,10 @@ describe('Control Flow Tests', () => {
       workflow.addTask({ id: 'level2a' });
       workflow.addTask({ id: 'level2b' });
 
-      workflow.addFlow({ from: 'start', to: 'level1a', condition: (ctx) => ctx.data.path === 'a' });
-      workflow.addFlow({ from: 'start', to: 'level1b', condition: (ctx) => ctx.data.path === 'b' });
-      workflow.addFlow({ from: 'level1a', to: 'level2a', condition: (ctx) => ctx.data.sub === 'a' });
-      workflow.addFlow({ from: 'level1a', to: 'level2b', condition: (ctx) => ctx.data.sub === 'b' });
+      workflow.addFlow({ from: 'start', to: 'level1a', condition: ctx => ctx.data.path === 'a' });
+      workflow.addFlow({ from: 'start', to: 'level1b', condition: ctx => ctx.data.path === 'b' });
+      workflow.addFlow({ from: 'level1a', to: 'level2a', condition: ctx => ctx.data.sub === 'a' });
+      workflow.addFlow({ from: 'level1a', to: 'level2b', condition: ctx => ctx.data.sub === 'b' });
       workflow.setStart('start');
       workflow.setEnd(['level1b', 'level2a', 'level2b']);
 
@@ -135,11 +133,10 @@ describe('Control Flow Tests', () => {
       const level1aItem = yawlCase.getEnabledWorkItems()[0];
       expect(yawlCase.getTaskDefIdForWorkItem(level1aItem.id)).toBe('level1a');
       await engine.startTask(yawlCase.id, level1aItem.id);
-      const { downstreamEnabled } = await engine.completeTask(
-        yawlCase.id,
-        level1aItem.id,
-        { path: 'a', sub: 'b' }
-      );
+      const { downstreamEnabled } = await engine.completeTask(yawlCase.id, level1aItem.id, {
+        path: 'a',
+        sub: 'b',
+      });
 
       // Assert: Should reach level2b
       expect(downstreamEnabled.length).toBe(1);
@@ -175,11 +172,9 @@ describe('Control Flow Tests', () => {
       await engine.startTask(yawlCase.id, waitItem.id);
 
       // Simulate external trigger selecting optionA
-      const { downstreamEnabled } = await engine.completeTask(
-        yawlCase.id,
-        waitItem.id,
-        { selectedOption: 'optionA' }
-      );
+      const { downstreamEnabled } = await engine.completeTask(yawlCase.id, waitItem.id, {
+        selectedOption: 'optionA',
+      });
 
       // Assert: The workflow should continue based on external trigger
       // (In real implementation, deferred choice would enable both and cancel the other)

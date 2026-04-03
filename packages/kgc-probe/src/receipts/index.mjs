@@ -27,7 +27,7 @@ export const RECEIPT_VERSION = '1.0.0';
 export const RECEIPT_TYPES = Object.freeze({
   OBSERVATION: 'probe:observation',
   MERGE: 'probe:merge',
-  VERIFICATION: 'probe:verification'
+  VERIFICATION: 'probe:verification',
 });
 
 // ============================================================================
@@ -63,9 +63,7 @@ export function deterministicSerialize(obj) {
  * @returns {string} Hex-encoded hash
  */
 export function computeHash(data) {
-  const serialized = typeof data === 'string'
-    ? data
-    : deterministicSerialize(data);
+  const serialized = typeof data === 'string' ? data : deterministicSerialize(data);
   return createHash(HASH_ALGORITHM).update(serialized).digest('hex');
 }
 
@@ -117,7 +115,7 @@ export function createObservationReceipt({
   observationIndex,
   payload,
   domain,
-  previousReceipt = null
+  previousReceipt = null,
 }) {
   if (!agentId) throw new Error('agentId is required');
   if (observationIndex < 1) throw new Error('observationIndex must be >= 1');
@@ -139,18 +137,18 @@ export function createObservationReceipt({
     {
       checkType: 'hash_recompute',
       passed: computeHash(payload) === obsHash,
-      details: 'Hash recomputation matches'
+      details: 'Hash recomputation matches',
     },
     {
       checkType: 'serialization_stable',
       passed: deterministicSerialize(payload) === deterministicSerialize(payload),
-      details: 'Serialization is stable'
+      details: 'Serialization is stable',
     },
     {
       checkType: 'payload_integrity',
       passed: typeof payload === 'object' && payload !== null,
-      details: 'Payload is valid object'
-    }
+      details: 'Payload is valid object',
+    },
   ];
 
   // Ensure all checks pass
@@ -178,10 +176,10 @@ export function createObservationReceipt({
       metadata: {
         serializationVersion: RECEIPT_VERSION,
         encoding: 'utf-8',
-        deterministic: true
-      }
+        deterministic: true,
+      },
     },
-    checks
+    checks,
   };
 
   // Compute hashes
@@ -193,7 +191,7 @@ export function createObservationReceipt({
     ...receiptPayload,
     payloadHash,
     previousHash: previousReceiptHash,
-    receiptHash
+    receiptHash,
   };
 }
 
@@ -282,7 +280,7 @@ export function createMergeReceipt({
   mergeId,
   shards,
   conflicts = null,
-  orchestratorId = 'default'
+  orchestratorId = 'default',
 }) {
   if (!mergeId) throw new Error('mergeId is required');
   if (!shards || shards.length === 0) throw new Error('shards is required (non-empty)');
@@ -307,14 +305,14 @@ export function createMergeReceipt({
       version: '1.0.0',
       parameters: {
         leafOrder: 'agentId-ascending',
-        hashFunction: HASH_ALGORITHM
-      }
+        hashFunction: HASH_ALGORITHM,
+      },
     },
     conflicts,
     timestamp_ns: now,
     timestamp_iso,
     orchestratorId,
-    mergedAt: timestamp_iso
+    mergedAt: timestamp_iso,
   };
 
   // Compute hashes
@@ -325,7 +323,7 @@ export function createMergeReceipt({
     ...receiptPayload,
     payloadHash,
     previousHash: null,
-    receiptHash
+    receiptHash,
   };
 }
 
@@ -415,7 +413,7 @@ export function summarizeVerification(receipt) {
     totalChecks: receipt.verifications.length,
     failedChecks: failed.length,
     obsCount: receipt.obsCount,
-    agentCount: receipt.agentCount
+    agentCount: receipt.agentCount,
   };
 }
 
@@ -442,7 +440,7 @@ export function createVerificationReceipt({
   certificateChain,
   obsCount,
   agentCount,
-  verifierId = 'default'
+  verifierId = 'default',
 }) {
   if (!verificationId) throw new Error('verificationId is required');
   if (!mergeReceiptHash) throw new Error('mergeReceiptHash is required');
@@ -472,7 +470,7 @@ export function createVerificationReceipt({
     timestamp_ns: now,
     timestamp_iso,
     verifierId,
-    verifiedAt: timestamp_iso
+    verifiedAt: timestamp_iso,
   };
 
   // Compute hashes
@@ -483,7 +481,7 @@ export function createVerificationReceipt({
     ...receiptPayload,
     payloadHash,
     previousHash: null,
-    receiptHash
+    receiptHash,
   };
 }
 
@@ -503,7 +501,7 @@ export function verifyObservationReceipt(receipt, previousReceipt = null) {
     hasRequiredFields: true,
     obsHashValid: true,
     chainValid: true,
-    receiptHashValid: true
+    receiptHashValid: true,
   };
 
   // Check required fields
@@ -546,7 +544,7 @@ export function verifyObservationReceipt(receipt, previousReceipt = null) {
   return {
     valid: errors.length === 0,
     errors,
-    checks
+    checks,
   };
 }
 
@@ -560,7 +558,7 @@ export function verifyMergeReceipt(receipt) {
   const checks = {
     hasRequiredFields: true,
     merkleRootValid: true,
-    receiptHashValid: true
+    receiptHashValid: true,
   };
 
   // Check required fields
@@ -591,7 +589,7 @@ export function verifyMergeReceipt(receipt) {
   return {
     valid: errors.length === 0,
     errors,
-    checks
+    checks,
   };
 }
 
@@ -605,7 +603,7 @@ export function verifyVerificationReceipt(receipt) {
   const checks = {
     hasRequiredFields: true,
     confidenceValid: true,
-    receiptHashValid: true
+    receiptHashValid: true,
   };
 
   // Check required fields
@@ -636,7 +634,7 @@ export function verifyVerificationReceipt(receipt) {
   return {
     valid: errors.length === 0,
     errors,
-    checks
+    checks,
   };
 }
 
@@ -677,7 +675,7 @@ export class ReceiptChainBuilder {
       observationIndex,
       payload,
       domain,
-      previousReceipt
+      previousReceipt,
     });
 
     chain.push(receipt);
@@ -724,7 +722,7 @@ export class ReceiptChainBuilder {
           agentId,
           chainFinalHash: chain[chain.length - 1].obsHash,
           obsCount: chain.length,
-          domain: chain[0].domain
+          domain: chain[0].domain,
         });
       }
     }
@@ -753,7 +751,7 @@ export class ReceiptChainBuilder {
 
     return {
       valid: allErrors.length === 0,
-      errors: allErrors
+      errors: allErrors,
     };
   }
 
@@ -809,5 +807,5 @@ export default {
 
   // Chain builder
   ReceiptChainBuilder,
-  createReceiptChainBuilder
+  createReceiptChainBuilder,
 };

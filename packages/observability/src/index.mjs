@@ -7,7 +7,11 @@
  * @module @unrdf/observability
  */
 
-export { WorkflowMetrics, createWorkflowMetrics, WorkflowStatus } from './metrics/workflow-metrics.mjs';
+export {
+  WorkflowMetrics,
+  createWorkflowMetrics,
+  WorkflowStatus,
+} from './metrics/workflow-metrics.mjs';
 export { GrafanaExporter, createGrafanaExporter } from './exporters/grafana-exporter.mjs';
 export { AlertManager, createAlertManager, AlertSeverity } from './alerts/alert-manager.mjs';
 
@@ -32,13 +36,21 @@ export async function createObservabilityStack(config = {}) {
   const originalRecordWorkflowComplete = metrics.recordWorkflowComplete.bind(metrics);
   metrics.recordWorkflowComplete = (workflowId, status, duration, pattern) => {
     originalRecordWorkflowComplete(workflowId, status, duration, pattern);
-    alerts.evaluateMetric('workflow_duration', duration, { workflow_id: workflowId, status, pattern });
+    alerts.evaluateMetric('workflow_duration', duration, {
+      workflow_id: workflowId,
+      status,
+      pattern,
+    });
   };
 
   const originalRecordError = metrics.recordError.bind(metrics);
   metrics.recordError = (errorType, workflowId, severity) => {
     originalRecordError(errorType, workflowId, severity);
-    alerts.evaluateMetric('error_count', 1, { error_type: errorType, workflow_id: workflowId, severity });
+    alerts.evaluateMetric('error_count', 1, {
+      error_type: errorType,
+      workflow_id: workflowId,
+      severity,
+    });
   };
 
   return {

@@ -32,9 +32,7 @@ export function evaluateDownstream(completedTaskId, context = {}) {
   const toEnable = [];
 
   // Sort flows by priority (higher first)
-  const sortedFlows = [...outFlows].sort(
-    (a, b) => (b.priority ?? 0) - (a.priority ?? 0)
-  );
+  const sortedFlows = [...outFlows].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   switch (splitType) {
     case SPLIT_TYPE.SEQUENCE:

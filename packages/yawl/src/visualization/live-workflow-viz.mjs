@@ -35,13 +35,15 @@ export const VisualizationConfigSchema = z.object({
   /** Color scheme for visualization */
   colorScheme: z.enum(['light', 'dark', 'custom']).default('light'),
   /** Custom colors */
-  colors: z.object({
-    enabled: z.string().default('#4CAF50'),
-    started: z.string().default('#2196F3'),
-    completed: z.string().default('#8BC34A'),
-    failed: z.string().default('#F44336'),
-    cancelled: z.string().default('#9E9E9E'),
-  }).optional(),
+  colors: z
+    .object({
+      enabled: z.string().default('#4CAF50'),
+      started: z.string().default('#2196F3'),
+      completed: z.string().default('#8BC34A'),
+      failed: z.string().default('#F44336'),
+      cancelled: z.string().default('#9E9E9E'),
+    })
+    .optional(),
 });
 
 /**
@@ -91,9 +93,10 @@ export function createLiveWorkflowVisualizer(engine, config) {
   const validated = VisualizationConfigSchema.parse(config);
 
   // Get or create container element
-  const containerElement = typeof validated.container === 'string'
-    ? document.querySelector(validated.container)
-    : validated.container;
+  const containerElement =
+    typeof validated.container === 'string'
+      ? document.querySelector(validated.container)
+      : validated.container;
 
   if (!containerElement) {
     throw new Error(`Container element not found: ${validated.container}`);
@@ -107,7 +110,7 @@ export function createLiveWorkflowVisualizer(engine, config) {
   let isRunning = false;
 
   // Color mapping based on status
-  const getNodeColor = (status) => {
+  const getNodeColor = status => {
     const colors = validated.colors || {
       enabled: '#4CAF50',
       started: '#2196F3',
@@ -127,7 +130,8 @@ export function createLiveWorkflowVisualizer(engine, config) {
     d3.select(containerElement).selectAll('*').remove();
 
     // Create SVG canvas
-    const svg = d3.select(containerElement)
+    const svg = d3
+      .select(containerElement)
       .append('svg')
       .attr('width', validated.width)
       .attr('height', validated.height)
@@ -138,7 +142,8 @@ export function createLiveWorkflowVisualizer(engine, config) {
     svg.append('g').attr('class', 'nodes');
 
     // Add event timeline container
-    const timeline = d3.select(containerElement)
+    const timeline = d3
+      .select(containerElement)
       .append('div')
       .attr('class', 'event-timeline')
       .style('margin-top', '20px');
@@ -154,25 +159,25 @@ export function createLiveWorkflowVisualizer(engine, config) {
 
     // Render edges
     const edgeGroup = svg.select('.edges');
-    const edgeSelection = edgeGroup.selectAll('line')
-      .data(edges, (d) => `${d.source}-${d.target}`);
+    const edgeSelection = edgeGroup.selectAll('line').data(edges, d => `${d.source}-${d.target}`);
 
-    edgeSelection.enter()
+    edgeSelection
+      .enter()
       .append('line')
-      .attr('x1', (d) => {
-        const source = nodes.find((n) => n.id === d.source);
+      .attr('x1', d => {
+        const source = nodes.find(n => n.id === d.source);
         return source?.x || 0;
       })
-      .attr('y1', (d) => {
-        const source = nodes.find((n) => n.id === d.source);
+      .attr('y1', d => {
+        const source = nodes.find(n => n.id === d.source);
         return source?.y || 0;
       })
-      .attr('x2', (d) => {
-        const target = nodes.find((n) => n.id === d.target);
+      .attr('x2', d => {
+        const target = nodes.find(n => n.id === d.target);
         return target?.x || 0;
       })
-      .attr('y2', (d) => {
-        const target = nodes.find((n) => n.id === d.target);
+      .attr('y2', d => {
+        const target = nodes.find(n => n.id === d.target);
         return target?.y || 0;
       })
       .attr('stroke', '#999')
@@ -183,29 +188,32 @@ export function createLiveWorkflowVisualizer(engine, config) {
 
     // Render nodes
     const nodeGroup = svg.select('.nodes');
-    const nodeSelection = nodeGroup.selectAll('g')
-      .data(nodes, (d) => d.id);
+    const nodeSelection = nodeGroup.selectAll('g').data(nodes, d => d.id);
 
-    const nodeEnter = nodeSelection.enter()
+    const nodeEnter = nodeSelection
+      .enter()
       .append('g')
-      .attr('transform', (d) => `translate(${d.x || 0},${d.y || 0})`);
+      .attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
 
-    nodeEnter.append('circle')
+    nodeEnter
+      .append('circle')
       .attr('r', 30)
-      .attr('fill', (d) => getNodeColor(d.status))
+      .attr('fill', d => getNodeColor(d.status))
       .attr('stroke', '#333')
       .attr('stroke-width', 2);
 
-    nodeEnter.append('text')
+    nodeEnter
+      .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em')
       .attr('fill', '#fff')
-      .text((d) => d.label);
+      .text(d => d.label);
 
-    nodeSelection.select('circle')
+    nodeSelection
+      .select('circle')
       .transition()
       .duration(300)
-      .attr('fill', (d) => getNodeColor(d.status));
+      .attr('fill', d => getNodeColor(d.status));
 
     nodeSelection.exit().remove();
 
@@ -276,7 +284,7 @@ export function createLiveWorkflowVisualizer(engine, config) {
 
     // Update node status based on event type
     if (event.type === YAWL_EVENT_TYPES.TASK_ENABLED) {
-      const node = nodes.find((n) => n.id === event.taskId);
+      const node = nodes.find(n => n.id === event.taskId);
       if (node) {
         node.status = 'enabled';
       } else {
@@ -290,17 +298,17 @@ export function createLiveWorkflowVisualizer(engine, config) {
         });
       }
     } else if (event.type === YAWL_EVENT_TYPES.TASK_STARTED) {
-      const node = nodes.find((n) => n.id === event.taskId);
+      const node = nodes.find(n => n.id === event.taskId);
       if (node) {
         node.status = 'started';
       }
     } else if (event.type === YAWL_EVENT_TYPES.TASK_COMPLETED) {
-      const node = nodes.find((n) => n.id === event.taskId);
+      const node = nodes.find(n => n.id === event.taskId);
       if (node) {
         node.status = 'completed';
       }
     } else if (event.type === YAWL_EVENT_TYPES.TASK_CANCELLED) {
-      const node = nodes.find((n) => n.id === event.taskId);
+      const node = nodes.find(n => n.id === event.taskId);
       if (node) {
         node.status = 'cancelled';
       }
@@ -424,22 +432,28 @@ export function createStaticWorkflowDiagram(workflowSpec, config) {
   const validated = VisualizationConfigSchema.parse(config);
 
   // Extract nodes and edges from workflow spec
-  const nodes = workflowSpec.tasks?.map((task) => ({
-    id: task.id,
-    label: task.name || task.id,
-    type: 'task',
-    status: 'pending',
-  })) || [];
+  const nodes =
+    workflowSpec.tasks?.map(task => ({
+      id: task.id,
+      label: task.name || task.id,
+      type: 'task',
+      status: 'pending',
+    })) || [];
 
-  const edges = workflowSpec.flows?.map((flow) => ({
-    source: flow.from,
-    target: flow.to,
-    label: flow.condition || '',
-  })) || [];
+  const edges =
+    workflowSpec.flows?.map(flow => ({
+      source: flow.from,
+      target: flow.to,
+      label: flow.condition || '',
+    })) || [];
 
   // Use D3 force simulation for layout
-  const simulation = d3.forceSimulation(nodes)
-    .force('link', d3.forceLink(edges).id((d) => d.id))
+  const simulation = d3
+    .forceSimulation(nodes)
+    .force(
+      'link',
+      d3.forceLink(edges).id(d => d.id)
+    )
     .force('charge', d3.forceManyBody().strength(-300))
     .force('center', d3.forceCenter(validated.width / 2, validated.height / 2));
 

@@ -21,5 +21,5 @@ export const measureLatencySchema = {
 };
 
 export default {
-  measureLatency: measureLatencySchema
+  measureLatency: measureLatencySchema,
 };

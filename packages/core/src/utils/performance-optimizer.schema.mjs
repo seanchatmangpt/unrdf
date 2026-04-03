@@ -21,5 +21,5 @@ export const createPerformanceOptimizerSchema = {
 };
 
 export default {
-  createPerformanceOptimizer: createPerformanceOptimizerSchema
+  createPerformanceOptimizer: createPerformanceOptimizerSchema,
 };

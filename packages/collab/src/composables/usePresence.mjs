@@ -45,13 +45,11 @@ export function usePresence(sync, localState = {}) {
 
   // Update users list
   function updateUsers(awarenessState) {
-    users.value = awarenessState.states.filter(
-      (state) => state.clientID !== localClientID.value
-    );
+    users.value = awarenessState.states.filter(state => state.clientID !== localClientID.value);
   }
 
   // Subscribe to awareness changes
-  const unsubscribe = sync.on('awareness', (awarenessState) => {
+  const unsubscribe = sync.on('awareness', awarenessState => {
     updateUsers(awarenessState);
   });
 
@@ -79,7 +77,7 @@ export function usePresence(sync, localState = {}) {
      * Update local presence state
      * @param {Object} state - New state (merged with existing)
      */
-    setLocalState: (state) => {
+    setLocalState: state => {
       const current = sync.getClientAwareness(localClientID.value) || {};
       sync.setAwareness({ ...current, ...state });
     },
@@ -89,7 +87,7 @@ export function usePresence(sync, localState = {}) {
      * @param {number} clientID - Client ID
      * @returns {Object|null} User state
      */
-    getUserState: (clientID) => {
+    getUserState: clientID => {
       return sync.getClientAwareness(clientID);
     },
 
@@ -98,8 +96,8 @@ export function usePresence(sync, localState = {}) {
      * @param {number} clientID - Client ID
      * @returns {boolean} True if online
      */
-    isUserOnline: (clientID) => {
-      return users.value.some((user) => user.clientID === clientID);
+    isUserOnline: clientID => {
+      return users.value.some(user => user.clientID === clientID);
     },
   };
 }

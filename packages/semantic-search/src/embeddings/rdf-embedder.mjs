@@ -10,12 +10,14 @@ const TripleSchema = z.object({
   object: z.object({ value: z.string() }),
 });
 
-const EmbeddingOptionsSchema = z.object({
-  model: z.string().default('Xenova/all-MiniLM-L6-v2'),
-  pooling: z.enum(['mean', 'cls']).default('mean'),
-  normalize: z.boolean().default(true),
-  cache: z.boolean().default(true),
-}).partial();
+const EmbeddingOptionsSchema = z
+  .object({
+    model: z.string().default('Xenova/all-MiniLM-L6-v2'),
+    pooling: z.enum(['mean', 'cls']).default('mean'),
+    normalize: z.boolean().default(true),
+    cache: z.boolean().default(true),
+  })
+  .partial();
 
 /**
  * RDFEmbedder - Convert RDF triples to vector embeddings
@@ -97,7 +99,7 @@ export class RDFEmbedder {
 
     const output = await this.embedder(text, {
       pooling: this.pooling,
-      normalize: this.normalize
+      normalize: this.normalize,
     });
 
     const embedding = Array.from(output.data);

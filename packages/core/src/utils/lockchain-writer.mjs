@@ -52,26 +52,29 @@ const LockchainEntrySchema = z.object({
 /**
  * Schema for validating git commit hash (40 hex chars SHA-1)
  */
-const GitCommitHashSchema = z.string()
+const GitCommitHashSchema = z
+  .string()
   .regex(/^[a-f0-9]{40}$/, 'Invalid git commit hash - must be 40 hex characters');
 
 /**
  * Schema for validating file paths - prevent path traversal and special chars
  */
-const SafeFilePathSchema = z.string()
+const SafeFilePathSchema = z
+  .string()
   .refine(
-    (p) => !p.includes('\0') && !p.includes('\n') && !p.includes('\r'),
+    p => !p.includes('\0') && !p.includes('\n') && !p.includes('\r'),
     'File path contains invalid control characters'
   )
   .refine(
-    (p) => !p.startsWith('-'),
+    p => !p.startsWith('-'),
     'File path cannot start with dash (could be interpreted as flag)'
   );
 
 /**
  * Schema for validating commit messages - prevent injection
  */
-const SafeCommitMessageSchema = z.string()
+const SafeCommitMessageSchema = z
+  .string()
   .min(1, 'Commit message cannot be empty')
   .max(1000, 'Commit message too long');
 

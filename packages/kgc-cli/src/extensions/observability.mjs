@@ -10,12 +10,12 @@ const extension = {
       verbs: {
         metrics: {
           description: 'Get system metrics',
-          handler: async () => ({ uptime: 12345, memory: { used: 100 } })
-        }
-      }
-    }
+          handler: async () => ({ uptime: 12345, memory: { used: 100 } }),
+        },
+      },
+    },
   },
-  priority: 50
+  priority: 50,
 };
 
 export default extension;

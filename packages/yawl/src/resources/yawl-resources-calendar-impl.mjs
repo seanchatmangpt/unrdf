@@ -59,11 +59,13 @@ export function getResourceAvailability(store, resourceId, options = {}) {
     if (bindings.length === 0) {
       return {
         available: true,
-        windows: [{
-          start: (options.from || now.toISOString()),
-          end: (options.to || new Date(now.getTime() + 86400000).toISOString()),
-          available: true,
-        }],
+        windows: [
+          {
+            start: options.from || now.toISOString(),
+            end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+            available: true,
+          },
+        ],
       };
     }
 
@@ -95,11 +97,13 @@ export function getResourceAvailability(store, resourceId, options = {}) {
     if (windows.length === 0) {
       return {
         available: isCurrentlyAvailable,
-        windows: [{
-          start: options.from || now.toISOString(),
-          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-          available: isCurrentlyAvailable,
-        }],
+        windows: [
+          {
+            start: options.from || now.toISOString(),
+            end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+            available: isCurrentlyAvailable,
+          },
+        ],
       };
     }
 
@@ -111,21 +115,30 @@ export function getResourceAvailability(store, resourceId, options = {}) {
     });
 
     return {
-      available: isCurrentlyAvailable && (filteredWindows.length === 0 || filteredWindows.some(w => w.available)),
-      windows: filteredWindows.length > 0 ? filteredWindows : [{
-        start: options.from || now.toISOString(),
-        end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-        available: isCurrentlyAvailable,
-      }],
+      available:
+        isCurrentlyAvailable &&
+        (filteredWindows.length === 0 || filteredWindows.some(w => w.available)),
+      windows:
+        filteredWindows.length > 0
+          ? filteredWindows
+          : [
+              {
+                start: options.from || now.toISOString(),
+                end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+                available: isCurrentlyAvailable,
+              },
+            ],
     };
   } catch {
     return {
       available: true,
-      windows: [{
-        start: options.from || now.toISOString(),
-        end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-        available: true,
-      }],
+      windows: [
+        {
+          start: options.from || now.toISOString(),
+          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+          available: true,
+        },
+      ],
     };
   }
 }
@@ -143,12 +156,14 @@ export function setResourceAvailability(store, resourceId, available, windows = 
   const resourceNode = namedNode(`${YAWL_NS}resource/${resourceId}`);
 
   // Set overall availability
-  store.add(quad(
-    resourceNode,
-    foaf('available'),
-    literal(String(available), namedNode(xsd('boolean'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      resourceNode,
+      foaf('available'),
+      literal(String(available), namedNode(xsd('boolean'))),
+      defaultGraph()
+    )
+  );
 
   // Store time windows
   for (const window of windows) {
@@ -157,25 +172,31 @@ export function setResourceAvailability(store, resourceId, available, windows = 
 
     store.add(quad(resourceNode, yawl('hasAvailabilityWindow'), windowNode, defaultGraph()));
 
-    store.add(quad(
-      windowNode,
-      yawl('scheduleStart'),
-      literal(validated.start, namedNode(xsd('dateTime'))),
-      defaultGraph()
-    ));
+    store.add(
+      quad(
+        windowNode,
+        yawl('scheduleStart'),
+        literal(validated.start, namedNode(xsd('dateTime'))),
+        defaultGraph()
+      )
+    );
 
-    store.add(quad(
-      windowNode,
-      yawl('scheduleEnd'),
-      literal(validated.end, namedNode(xsd('dateTime'))),
-      defaultGraph()
-    ));
+    store.add(
+      quad(
+        windowNode,
+        yawl('scheduleEnd'),
+        literal(validated.end, namedNode(xsd('dateTime'))),
+        defaultGraph()
+      )
+    );
 
-    store.add(quad(
-      windowNode,
-      foaf('available'),
-      literal(String(validated.available), namedNode(xsd('boolean'))),
-      defaultGraph()
-    ));
+    store.add(
+      quad(
+        windowNode,
+        foaf('available'),
+        literal(String(validated.available), namedNode(xsd('boolean'))),
+        defaultGraph()
+      )
+    );
   }
 }

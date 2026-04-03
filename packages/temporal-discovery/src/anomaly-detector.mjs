@@ -4,11 +4,7 @@
  * @description Z-Score and MAD-based anomaly detection for time series
  */
 
-import {
-  AnomalyDetectionOptionsSchema,
-  AnomalySchema,
-  TimeSeriesSchema,
-} from './schemas.mjs';
+import { AnomalyDetectionOptionsSchema, AnomalySchema, TimeSeriesSchema } from './schemas.mjs';
 
 /**
  * Calculate mean of array
@@ -29,7 +25,7 @@ function mean(values) {
 function standardDeviation(values, meanValue) {
   if (values.length === 0) return 0;
   const avg = meanValue !== undefined ? meanValue : mean(values);
-  const squareDiffs = values.map((value) => Math.pow(value - avg, 2));
+  const squareDiffs = values.map(value => Math.pow(value - avg, 2));
   return Math.sqrt(mean(squareDiffs));
 }
 
@@ -44,7 +40,7 @@ function medianAbsoluteDeviation(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)];
 
-  const absoluteDeviations = values.map((v) => Math.abs(v - median));
+  const absoluteDeviations = values.map(v => Math.abs(v - median));
   const sortedDeviations = absoluteDeviations.sort((a, b) => a - b);
 
   return sortedDeviations[Math.floor(sortedDeviations.length / 2)];
@@ -118,7 +114,7 @@ export function detectAnomalies(timeSeries, options = {}) {
     const windowEnd = i;
 
     const window = data.slice(windowStart, windowEnd);
-    const windowValues = window.map((d) => d.value);
+    const windowValues = window.map(d => d.value);
 
     if (windowValues.length < 3) {
       continue;
@@ -212,5 +208,5 @@ export function batchDetectAnomalies(timeSeriesList, options = {}) {
  * const critical = filterBySeverity(anomalies, ['critical', 'high']);
  */
 export function filterBySeverity(anomalies, severities) {
-  return anomalies.filter((anomaly) => severities.includes(anomaly.severity));
+  return anomalies.filter(anomaly => severities.includes(anomaly.severity));
 }

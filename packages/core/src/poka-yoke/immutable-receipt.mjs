@@ -1,11 +1,11 @@
 /**
  * Poka-Yoke Pattern: Immutable Receipts
- * 
+ *
  * Prevents receipt tampering by freezing all receipt objects.
  * Once created, receipts cannot be modified.
- * 
+ *
  * State machine: Building → Sealed (via Object.freeze)
- * 
+ *
  * @module @unrdf/core/poka-yoke/immutable-receipt
  */
 
@@ -72,7 +72,7 @@ function toISO(timestamp_ns) {
 function deepFreeze(obj) {
   // Freeze the object itself
   Object.freeze(obj);
-  
+
   // Recursively freeze all properties
   Object.keys(obj).forEach(key => {
     const value = obj[key];
@@ -80,20 +80,20 @@ function deepFreeze(obj) {
       deepFreeze(value);
     }
   });
-  
+
   return obj;
 }
 
 /**
  * Create an immutable receipt
- * 
+ *
  * POKA-YOKE GUARANTEE:
  * - Returned receipt is deeply frozen (Object.freeze)
  * - Payload is frozen recursively
  * - Any modification attempt will:
  *   - Throw in strict mode
  *   - Silently fail in non-strict mode (still safe)
- * 
+ *
  * @param {string} eventType - Event type
  * @param {any} payload - Event payload (will be frozen)
  * @param {Object} options - Receipt options
@@ -103,7 +103,7 @@ function deepFreeze(obj) {
  * @param {string} [options.chain] - Optional chain hash
  * @param {string} [options.signer] - Optional signer ID
  * @returns {Promise<Object>} Immutable receipt (frozen)
- * 
+ *
  * @example
  * const receipt = await createImmutableReceipt('test', { value: 42 });
  * receipt.hash = 'fake';  // Throws in strict mode, ignored otherwise
@@ -117,15 +117,15 @@ export async function createImmutableReceipt(eventType, payload, options = {}) {
   if (payload === undefined || payload === null) {
     throw new TypeError('createImmutableReceipt: payload is required');
   }
-  
+
   const timestamp = options.timestamp || getCurrentTimestamp();
   const id = generateReceiptId(eventType, timestamp);
   const timestamp_iso = toISO(timestamp);
-  
+
   // Build canonical receipt for hashing
   // Deep clone payload to avoid external mutations
   const payloadCopy = JSON.parse(JSON.stringify(payload));
-  
+
   const canonicalReceipt = {
     chain: options.chain,
     eventType,
@@ -137,25 +137,25 @@ export async function createImmutableReceipt(eventType, payload, options = {}) {
     timestamp: timestamp.toString(),
     timestamp_iso,
   };
-  
+
   // Remove undefined fields
   Object.keys(canonicalReceipt).forEach(key => {
     if (canonicalReceipt[key] === undefined) {
       delete canonicalReceipt[key];
     }
   });
-  
+
   // Sort keys for canonical JSON
   const sortedKeys = Object.keys(canonicalReceipt).sort();
   const canonicalData = {};
   for (const key of sortedKeys) {
     canonicalData[key] = canonicalReceipt[key];
   }
-  
+
   // Compute hash (SHA256)
   const canonicalJson = JSON.stringify(canonicalData);
   const hash = createHash('sha256').update(canonicalJson).digest('hex');
-  
+
   // Build final receipt
   const receipt = {
     id,
@@ -169,10 +169,10 @@ export async function createImmutableReceipt(eventType, payload, options = {}) {
     ...(options.chain && { chain: options.chain }),
     ...(options.signer && { signer: options.signer }),
   };
-  
+
   // Validate with Zod
   const validated = ReceiptSchema.parse(receipt);
-  
+
   // POKA-YOKE: Deep freeze the receipt
   // This makes tampering IMPOSSIBLE (throws in strict mode)
   return deepFreeze(validated);
@@ -196,7 +196,7 @@ export function isDeeplyFrozen(obj) {
   if (!Object.isFrozen(obj)) {
     return false;
   }
-  
+
   // Check all properties recursively
   for (const key of Object.keys(obj)) {
     const value = obj[key];
@@ -206,6 +206,6 @@ export function isDeeplyFrozen(obj) {
       }
     }
   }
-  
+
   return true;
 }

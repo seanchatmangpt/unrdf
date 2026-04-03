@@ -43,16 +43,10 @@ import {
 } from './workflow-execution.mjs';
 
 // Import workflow query functions
-import {
-  createCase,
-  createCaseRDF,
-  CaseOptionsSchema,
-} from './workflow-query.mjs';
+import { createCase, createCaseRDF, CaseOptionsSchema } from './workflow-query.mjs';
 
 // Import workflow cancellation functions
-import {
-  cancelWorkItem,
-} from './workflow-cancellation.mjs';
+import { cancelWorkItem } from './workflow-cancellation.mjs';
 
 // Import workflow time machine functions
 import {

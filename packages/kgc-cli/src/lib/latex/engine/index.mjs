@@ -41,14 +41,7 @@ import { loadEngine, checkEngineAvailability, getEngineInfo } from './load.mjs';
 import { runEngine, parseLog, createTestVFS } from './run.mjs';
 
 // Re-export all public APIs
-export {
-  loadEngine,
-  checkEngineAvailability,
-  getEngineInfo,
-  runEngine,
-  parseLog,
-  createTestVFS
-};
+export { loadEngine, checkEngineAvailability, getEngineInfo, runEngine, parseLog, createTestVFS };
 
 /**
  * Convenience function: Load engine and compile in one call

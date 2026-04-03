@@ -22,11 +22,13 @@ const PerformanceMonitorConfigSchema = z.object({
   enableMemoryTracking: z.boolean().default(true),
   enableLatencyTracking: z.boolean().default(true),
   enableThroughputTracking: z.boolean().default(true),
-  thresholds: z.object({
-    throughputMin: z.number().optional(),
-    latencyMax: z.number().optional(),
-    memoryMax: z.number().optional(),
-  }).optional(),
+  thresholds: z
+    .object({
+      throughputMin: z.number().optional(),
+      latencyMax: z.number().optional(),
+      memoryMax: z.number().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -175,7 +177,7 @@ export class PerformanceMonitor extends EventEmitter {
    * @private
    */
   _collectSample() {
-    return tracer.startActiveSpan('performance-monitor.collect-sample', (span) => {
+    return tracer.startActiveSpan('performance-monitor.collect-sample', span => {
       const now = Date.now();
       const elapsed = now - this.state.lastSample;
 
@@ -191,7 +193,10 @@ export class PerformanceMonitor extends EventEmitter {
         this._trimWindow(this.metrics.throughput);
 
         // Check threshold
-        if (this.config.thresholds?.throughputMin && throughput < this.config.thresholds.throughputMin) {
+        if (
+          this.config.thresholds?.throughputMin &&
+          throughput < this.config.thresholds.throughputMin
+        ) {
           this.emit('threshold-violation', {
             metric: 'throughput',
             value: throughput,
@@ -213,7 +218,10 @@ export class PerformanceMonitor extends EventEmitter {
         this._trimWindow(this.metrics.memory);
 
         // Check threshold
-        if (this.config.thresholds?.memoryMax && memUsage.heapUsed > this.config.thresholds.memoryMax) {
+        if (
+          this.config.thresholds?.memoryMax &&
+          memUsage.heapUsed > this.config.thresholds.memoryMax
+        ) {
           this.emit('threshold-violation', {
             metric: 'memory',
             value: memUsage.heapUsed,
@@ -223,7 +231,8 @@ export class PerformanceMonitor extends EventEmitter {
       }
 
       span.setAttributes({
-        'sample.throughput': this.metrics.throughput[this.metrics.throughput.length - 1]?.value || 0,
+        'sample.throughput':
+          this.metrics.throughput[this.metrics.throughput.length - 1]?.value || 0,
         'sample.memory': this.metrics.memory[this.metrics.memory.length - 1]?.heapUsed || 0,
       });
 
@@ -289,9 +298,10 @@ export class PerformanceMonitor extends EventEmitter {
       memory: memoryStats,
       backpressure: {
         events: this.state.backpressureEvents,
-        rate: this.state.chunksProcessed > 0
-          ? this.state.backpressureEvents / this.state.chunksProcessed
-          : 0,
+        rate:
+          this.state.chunksProcessed > 0
+            ? this.state.backpressureEvents / this.state.chunksProcessed
+            : 0,
       },
       errors: {
         count: this.state.errorsCount,

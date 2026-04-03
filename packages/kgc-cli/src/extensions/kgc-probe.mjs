@@ -16,30 +16,38 @@ import { z } from 'zod';
 // SCHEMAS
 // ============================================================================
 
-const ScanArgsSchema = z.object({
-  universe: z.string().describe('Universe ID to scan'),
-  snapshot: z.string().optional().describe('Optional snapshot reference'),
-  agents: z.array(z.string()).optional().describe('Specific agents to run (all if omitted)'),
-  guards: z.array(z.string()).optional().describe('Specific guards to apply'),
-  distributed: z.boolean().optional().default(false).describe('Enable shard merging'),
-  persist: z.boolean().optional().default(true).describe('Persist results to storage')
-}).describe('Probe scan arguments');
+const ScanArgsSchema = z
+  .object({
+    universe: z.string().describe('Universe ID to scan'),
+    snapshot: z.string().optional().describe('Optional snapshot reference'),
+    agents: z.array(z.string()).optional().describe('Specific agents to run (all if omitted)'),
+    guards: z.array(z.string()).optional().describe('Specific guards to apply'),
+    distributed: z.boolean().optional().default(false).describe('Enable shard merging'),
+    persist: z.boolean().optional().default(true).describe('Persist results to storage'),
+  })
+  .describe('Probe scan arguments');
 
-const ValidateArgsSchema = z.object({
-  artifact_id: z.string().describe('Artifact ID to validate'),
-  strict: z.boolean().optional().default(false).describe('Fail on warnings')
-}).describe('Artifact validation arguments');
+const ValidateArgsSchema = z
+  .object({
+    artifact_id: z.string().describe('Artifact ID to validate'),
+    strict: z.boolean().optional().default(false).describe('Fail on warnings'),
+  })
+  .describe('Artifact validation arguments');
 
-const DiffArgsSchema = z.object({
-  artifact1_id: z.string().describe('First artifact ID'),
-  artifact2_id: z.string().describe('Second artifact ID'),
-  kind: z.enum(['observations', 'summary']).optional().default('summary').describe('Diff type')
-}).describe('Artifact diff arguments');
+const DiffArgsSchema = z
+  .object({
+    artifact1_id: z.string().describe('First artifact ID'),
+    artifact2_id: z.string().describe('Second artifact ID'),
+    kind: z.enum(['observations', 'summary']).optional().default('summary').describe('Diff type'),
+  })
+  .describe('Artifact diff arguments');
 
-const ShardMergeArgsSchema = z.object({
-  universe: z.string().describe('Universe ID'),
-  output_id: z.string().optional().describe('Output artifact ID')
-}).describe('Shard merge arguments');
+const ShardMergeArgsSchema = z
+  .object({
+    universe: z.string().describe('Universe ID'),
+    output_id: z.string().optional().describe('Output artifact ID'),
+  })
+  .describe('Shard merge arguments');
 
 // ============================================================================
 // EXTENSION DEFINITION
@@ -64,9 +72,10 @@ const extension = {
         scan: {
           description: 'Execute full integrity scan on universe with all agents and guards',
           argsSchema: ScanArgsSchema,
-          handler: async (args) => {
+          handler: async args => {
             // Dynamic import to avoid circular dependency
-            const { runProbe, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { runProbe, createMemoryStorage: _createMemoryStorage } =
+              await import('@unrdf/kgc-probe');
 
             try {
               const artifact = await runProbe({
@@ -75,7 +84,7 @@ const extension = {
                 agents: args.agents,
                 guards: args.guards,
                 distributed: args.distributed,
-                persist: args.persist
+                persist: args.persist,
               });
 
               return {
@@ -84,29 +93,30 @@ const extension = {
                 summary: artifact.summary,
                 universe_id: artifact.universe_id,
                 observation_count: artifact.observations.length,
-                execution_time_ms: artifact.metadata.execution_time_ms
+                execution_time_ms: artifact.metadata.execution_time_ms,
               };
             } catch (err) {
               return {
                 status: 'error',
-                error: err.message
+                error: err.message,
               };
             }
           },
           meta: {
             examples: [
               'kgc probe scan --args \'{"universe":"my-universe"}\'',
-              'kgc probe scan --args \'{"universe":"my-universe","snapshot":"snap_123","persist":true}\' --json'
-            ]
-          }
+              'kgc probe scan --args \'{"universe":"my-universe","snapshot":"snap_123","persist":true}\' --json',
+            ],
+          },
         },
 
         validate: {
           description: 'Validate artifact integrity and guard compliance',
           argsSchema: ValidateArgsSchema,
-          handler: async (_args) => {
+          handler: async _args => {
             // Dynamic import
-            const { verifyArtifact: _verifyArtifact, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { verifyArtifact: _verifyArtifact, createMemoryStorage: _createMemoryStorage } =
+              await import('@unrdf/kgc-probe');
 
             try {
               // Would need to load artifact from storage first
@@ -114,27 +124,27 @@ const extension = {
               return {
                 valid: true,
                 violations: [],
-                verified_at: new Date().toISOString()
+                verified_at: new Date().toISOString(),
               };
             } catch (err) {
               return {
                 valid: false,
-                error: err.message
+                error: err.message,
               };
             }
           },
           meta: {
             examples: [
               'kgc probe validate --args \'{"artifact_id":"run-123"}\'',
-              'kgc probe validate --args \'{"artifact_id":"run-123","strict":true}\' --json'
-            ]
-          }
+              'kgc probe validate --args \'{"artifact_id":"run-123","strict":true}\' --json',
+            ],
+          },
         },
 
         diff: {
           description: 'Compare two artifacts and show differences',
           argsSchema: DiffArgsSchema,
-          handler: async (_args) => {
+          handler: async _args => {
             // Dynamic import
             const { diffArtifacts: _diffArtifacts } = await import('@unrdf/kgc-probe');
 
@@ -147,22 +157,22 @@ const extension = {
                 modified: [],
                 summary: {
                   total_changes: 0,
-                  similarity_ratio: 1.0
-                }
+                  similarity_ratio: 1.0,
+                },
               };
             } catch (err) {
               return {
                 status: 'error',
-                error: err.message
+                error: err.message,
               };
             }
           },
           meta: {
             examples: [
               'kgc probe diff --args \'{"artifact1_id":"run-1","artifact2_id":"run-2"}\'',
-              'kgc probe diff --args \'{"artifact1_id":"run-1","artifact2_id":"run-2","kind":"observations"}\' --json'
-            ]
-          }
+              'kgc probe diff --args \'{"artifact1_id":"run-1","artifact2_id":"run-2","kind":"observations"}\' --json',
+            ],
+          },
         },
 
         list: {
@@ -171,11 +181,11 @@ const extension = {
             // Would query storage for all artifacts
             return {
               artifacts: [],
-              count: 0
+              count: 0,
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     // =====================================================================
@@ -188,9 +198,10 @@ const extension = {
         merge: {
           description: 'Merge distributed probe shards',
           argsSchema: ShardMergeArgsSchema,
-          handler: async (args) => {
+          handler: async args => {
             // Dynamic import
-            const { mergeShards: _mergeShards, createMemoryStorage: _createMemoryStorage } = await import('@unrdf/kgc-probe');
+            const { mergeShards: _mergeShards, createMemoryStorage: _createMemoryStorage } =
+              await import('@unrdf/kgc-probe');
 
             try {
               // Would load shards from storage and merge
@@ -198,22 +209,20 @@ const extension = {
               return {
                 status: 'success',
                 shards_merged: 0,
-                output_artifact_id: args.output_id || 'merged_' + Date.now()
+                output_artifact_id: args.output_id || 'merged_' + Date.now(),
               };
             } catch (err) {
               return {
                 status: 'error',
-                error: err.message
+                error: err.message,
               };
             }
           },
           meta: {
-            examples: [
-              'kgc shard merge --args \'{"universe":"my-universe"}\''
-            ]
-          }
-        }
-      }
+            examples: ['kgc shard merge --args \'{"universe":"my-universe"}\''],
+          },
+        },
+      },
     },
 
     // =====================================================================
@@ -232,17 +241,17 @@ const extension = {
               const registry = createGuardRegistry();
               return {
                 guards: registry.list(),
-                count: registry.list().length
+                count: registry.list().length,
               };
             } catch (err) {
               return {
                 status: 'error',
-                error: err.message
+                error: err.message,
               };
             }
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     // =====================================================================
@@ -264,19 +273,19 @@ const extension = {
               return {
                 agents: agents,
                 count: agents.length,
-                description: 'KGC Probe has 10 specialized agents for integrity scanning'
+                description: 'KGC Probe has 10 specialized agents for integrity scanning',
               };
             } catch (err) {
               return {
                 status: 'error',
-                error: err.message
+                error: err.message,
               };
             }
-          }
-        }
-      }
-    }
-  }
+          },
+        },
+      },
+    },
+  },
 };
 
 export default extension;

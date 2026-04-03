@@ -13,9 +13,11 @@ export const RDFTermSchema = z.object({
   termType: z.enum(['NamedNode', 'BlankNode', 'Literal', 'DefaultGraph']),
   value: z.string(),
   language: z.string().optional(),
-  datatype: z.object({
-    value: z.string(),
-  }).optional(),
+  datatype: z
+    .object({
+      value: z.string(),
+    })
+    .optional(),
 });
 
 /**

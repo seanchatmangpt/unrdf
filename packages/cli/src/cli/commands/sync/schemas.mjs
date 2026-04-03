@@ -8,14 +8,7 @@ import { z } from 'zod';
 /**
  * RDF format enum
  */
-export const RDFFormatSchema = z.enum([
-  'turtle',
-  'ntriples',
-  'nquads',
-  'jsonld',
-  'rdfxml',
-  'trig',
-]);
+export const RDFFormatSchema = z.enum(['turtle', 'ntriples', 'nquads', 'jsonld', 'rdfxml', 'trig']);
 
 /**
  * Schema for project configuration
@@ -126,18 +119,31 @@ export const SyncArgsSchema = z.object({
 export function detectRDFFormat(filePath) {
   const ext = filePath.toLowerCase().split('.').pop();
   const formats = {
-    ttl: 'turtle', turtle: 'turtle',
-    nt: 'ntriples', ntriples: 'ntriples',
-    nq: 'nquads', jsonld: 'jsonld', json: 'jsonld',
-    rdf: 'rdfxml', xml: 'rdfxml', owl: 'rdfxml',
+    ttl: 'turtle',
+    turtle: 'turtle',
+    nt: 'ntriples',
+    ntriples: 'ntriples',
+    nq: 'nquads',
+    jsonld: 'jsonld',
+    json: 'jsonld',
+    rdf: 'rdfxml',
+    xml: 'rdfxml',
+    owl: 'rdfxml',
     trig: 'trig',
   };
   return formats[ext] || 'turtle';
 }
 
 export default {
-  SyncConfigSchema, SyncArgsSchema, ProjectConfigSchema,
-  OntologyConfigSchema, GenerationRuleSchema, GenerationConfigSchema,
-  RDFFormatSchema, detectRDFFormat, SyncConfigSchema2, RDFConfigSchema,
+  SyncConfigSchema,
+  SyncArgsSchema,
+  ProjectConfigSchema,
+  OntologyConfigSchema,
+  GenerationRuleSchema,
+  GenerationConfigSchema,
+  RDFFormatSchema,
+  detectRDFFormat,
+  SyncConfigSchema2,
+  RDFConfigSchema,
   TemplateConfigSchema,
 };

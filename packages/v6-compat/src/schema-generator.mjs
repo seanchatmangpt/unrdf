@@ -23,7 +23,7 @@ const TS_TO_ZOD = {
   any: 'z.any()',
   void: 'z.void()',
   null: 'z.null()',
-  undefined: 'z.undefined()'
+  undefined: 'z.undefined()',
 };
 
 /**
@@ -49,7 +49,7 @@ const TS_TO_ZOD = {
  * // })
  */
 export function parseJSDocToZod(jsdoc) {
-  const lines = jsdoc.split('\n').map((l) => l.trim());
+  const lines = jsdoc.split('\n').map(l => l.trim());
   const properties = [];
 
   for (const line of lines) {
@@ -100,21 +100,19 @@ export function generateSchemaFromFunction(fnSource) {
 
   const params = [];
   if (paramMatch) {
-    const paramList = paramMatch[1].split(',').map((p) => p.trim());
+    const paramList = paramMatch[1].split(',').map(p => p.trim());
     for (const param of paramList) {
-      const [_name, type] = param.split(':').map((s) => s.trim());
+      const [_name, type] = param.split(':').map(s => s.trim());
       const zodType = TS_TO_ZOD[type] || 'z.unknown()';
       params.push(zodType);
     }
   }
 
-  const returns = returnMatch
-    ? TS_TO_ZOD[returnMatch[1]] || 'z.unknown()'
-    : 'z.void()';
+  const returns = returnMatch ? TS_TO_ZOD[returnMatch[1]] || 'z.unknown()' : 'z.void()';
 
   return {
     params: params.length > 0 ? `z.tuple([${params.join(', ')}])` : 'z.tuple([])',
-    returns
+    returns,
   };
 }
 
@@ -135,10 +133,7 @@ export function generateSchemaFromFunction(fnSource) {
  * @returns {Promise<Array<{file: string, schema: string, functions: Array}>>}
  */
 export async function generateSchemasForFiles(filePatterns, options = {}) {
-  const {
-    outputSuffix = '.schema.mjs',
-    dryRun = false,
-  } = options;
+  const { outputSuffix = '.schema.mjs', dryRun = false } = options;
 
   // Ensure filePatterns is an array
   const patterns = Array.isArray(filePatterns) ? filePatterns : [filePatterns];
@@ -229,10 +224,10 @@ function extractFunctionsFromSource(source) {
       // Parse params
       const params = paramsStr
         .split(',')
-        .map((p) => p.trim())
+        .map(p => p.trim())
         .filter(Boolean)
-        .map((p) => {
-          const [paramName, defaultValue] = p.split('=').map((s) => s.trim());
+        .map(p => {
+          const [paramName, defaultValue] = p.split('=').map(s => s.trim());
           return { name: paramName, optional: !!defaultValue };
         });
 
@@ -247,7 +242,7 @@ function extractFunctionsFromSource(source) {
       functions.push({
         name,
         jsdoc,
-        params: params.map((p) => ({
+        params: params.map(p => ({
           ...p,
           type: paramTypes[p.name] || 'unknown',
         })),
@@ -290,8 +285,8 @@ function extractParamTypesFromJSDoc(jsdoc) {
  * @returns {string} Generated schema module
  */
 function generateSchemaModule(functions, sourceFile) {
-  const schemas = functions.map((fn) => {
-    const paramsSchema = fn.params.map((p) => {
+  const schemas = functions.map(fn => {
+    const paramsSchema = fn.params.map(p => {
       const zodType = TS_TO_ZOD[p.type] || 'z.unknown()';
       return p.optional ? `${zodType}.optional()` : zodType;
     });
@@ -329,7 +324,7 @@ import { z } from 'zod';
 ${schemas.join('\n\n')}
 
 export default {
-  ${functions.map((fn) => `${fn.name}: ${fn.name}Schema`).join(',\n  ')}
+  ${functions.map(fn => `${fn.name}: ${fn.name}Schema`).join(',\n  ')}
 };
 `;
 }
@@ -341,7 +336,7 @@ export const UserSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
   email: z.string().email(),
-  age: z.number().int().positive().optional()
+  age: z.number().int().positive().optional(),
 });
 
 /**
@@ -353,7 +348,7 @@ export const ReceiptSchema = z.object({
   timestamp: z.number().int().positive(),
   duration: z.number().nonnegative(),
   args: z.string(),
-  result: z.string()
+  result: z.string(),
 });
 
 /**
@@ -375,24 +370,25 @@ export function validateWithErrors(schema, data) {
   if (!result.success) {
     // In Zod v4, errors are in .issues instead of .errors
     const errorList = result.error?.issues || result.error?.errors || [];
-    const errors = errorList.map((e) => ({
+    const errors = errorList.map(e => ({
       path: Array.isArray(e.path) ? e.path.join('.') : String(e.path || ''),
       message: e.message,
-      code: e.code
+      code: e.code,
     }));
 
     return {
       success: false,
       errors,
-      summary: errors.length > 0
-        ? errors.map((e) => `${e.path}: ${e.message}`).join('; ')
-        : 'Validation failed'
+      summary:
+        errors.length > 0
+          ? errors.map(e => `${e.path}: ${e.message}`).join('; ')
+          : 'Validation failed',
     };
   }
 
   return {
     success: true,
-    data: result.data
+    data: result.data,
   };
 }
 

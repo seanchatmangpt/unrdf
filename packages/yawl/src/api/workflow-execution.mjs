@@ -39,12 +39,14 @@ export const WorkItemSchema = z.object({
 /**
  * Schema for enable task options
  */
-export const EnableTaskOptionsSchema = z.object({
-  assignTo: z.string().optional(),
-  priority: z.number().int().min(0).max(100).optional(),
-  deadline: z.string().datetime().optional(),
-  policyPack: z.any().optional(),
-}).optional();
+export const EnableTaskOptionsSchema = z
+  .object({
+    assignTo: z.string().optional(),
+    priority: z.number().int().min(0).max(100).optional(),
+    deadline: z.string().datetime().optional(),
+    policyPack: z.any().optional(),
+  })
+  .optional();
 
 // ============================================================================
 // Core Execution Functions
@@ -108,9 +110,7 @@ export async function enableTask(workItem, options = {}) {
           });
           if (!result) {
             eligibilityResult.eligible = false;
-            eligibilityResult.reasons.push(
-              `Hook ${hook.name || 'unknown'} rejected eligibility`
-            );
+            eligibilityResult.reasons.push(`Hook ${hook.name || 'unknown'} rejected eligibility`);
           }
         } catch (error) {
           hookResults.push({
@@ -127,9 +127,7 @@ export async function enableTask(workItem, options = {}) {
 
   // Fail if not eligible
   if (!eligibilityResult.eligible) {
-    throw new Error(
-      `Resource eligibility check failed: ${eligibilityResult.reasons.join(', ')}`
-    );
+    throw new Error(`Resource eligibility check failed: ${eligibilityResult.reasons.join(', ')}`);
   }
 
   // Update work item status (mutate original for in-place updates)
@@ -323,7 +321,7 @@ export async function completeTask(workItem, result, options = {}) {
           caseId: workItem.caseId,
           endTime,
           result,
-          enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId),
+          enabledDownstreamTasks: enabledDownstreamTasks.map(t => t.taskId),
         },
       },
       []
@@ -339,11 +337,11 @@ export async function completeTask(workItem, result, options = {}) {
       taskId: workItem.taskId,
       caseId: workItem.caseId,
       endTime,
-      enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId),
+      enabledDownstreamTasks: enabledDownstreamTasks.map(t => t.taskId),
       eventId: eventReceipt?.id,
     },
     {
-      conditionsMet: enabledDownstreamTasks.map((t) => `flow_to_${t.taskId}`),
+      conditionsMet: enabledDownstreamTasks.map(t => `flow_to_${t.taskId}`),
     }
   );
 
@@ -382,11 +380,7 @@ export async function evaluateControlFlowAndEnable(workItem, result, caseObj, wo
       if (downstreamWorkItem) {
         // Check if all join conditions are met (for AND-join)
         if (edge.type === CONTROL_FLOW_PATTERNS.AND_JOIN) {
-          const allPredecessorsComplete = checkAllPredecessorsComplete(
-            edge.to,
-            workflow,
-            caseObj
-          );
+          const allPredecessorsComplete = checkAllPredecessorsComplete(edge.to, workflow, caseObj);
           if (!allPredecessorsComplete) {
             continue;
           }
@@ -442,15 +436,14 @@ export function evaluateCondition(condition, result, variables) {
     if (evalCondition === 'false') return false;
 
     // For safety, only evaluate if it matches safe patterns
-    const safePattern =
-      /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
+    const safePattern = /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
     if (!safePattern.test(evalCondition)) {
       console.warn(`Unsafe condition pattern: ${condition}`);
       return true; // Default to true for unsafe patterns
     }
 
     // Use Function constructor for sandboxed evaluation
-     
+
     const evaluator = new Function('return ' + evalCondition);
     return Boolean(evaluator());
   } catch {
@@ -471,10 +464,7 @@ export function checkAllPredecessorsComplete(taskId, workflow, caseObj) {
 
   for (const edge of incomingEdges) {
     const predecessorWorkItem = caseObj.getWorkItem(edge.from);
-    if (
-      predecessorWorkItem &&
-      predecessorWorkItem.status !== WORK_ITEM_STATUS.COMPLETED
-    ) {
+    if (predecessorWorkItem && predecessorWorkItem.status !== WORK_ITEM_STATUS.COMPLETED) {
       return false;
     }
   }

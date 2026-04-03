@@ -23,7 +23,7 @@ import { loadManifest } from './manifest/extensions.mjs';
  */
 async function initializeRegistry() {
   const registry = new Registry({
-    failOnCollision: true
+    failOnCollision: true,
   });
 
   try {
@@ -37,9 +37,7 @@ async function initializeRegistry() {
   if (errors.length > 0) {
     console.error('[kgc-cli] Contract validation errors:');
     errors.forEach(err => {
-      console.error(
-        `  ${err.source}: ${err.noun}:${err.verb} - ${err.issue}`
-      );
+      console.error(`  ${err.source}: ${err.noun}:${err.verb} - ${err.issue}`);
     });
     process.exit(1);
   }
@@ -68,23 +66,25 @@ function buildCittyTree(registry, tree) {
       verbCommands[verb] = defineCommand({
         meta: {
           description: verbData.description,
-          ...(verbData.meta || {})
+          ...(verbData.meta || {}),
         },
         args: {
           // Common options
           json: {
             type: 'boolean',
             default: false,
-            description: 'Output in JSON envelope format'
+            description: 'Output in JSON envelope format',
           },
-          ...(verbData.argsSchema ? {
-            // If command has argsSchema, add a generic args option
-            args: {
-              type: 'string',
-              default: '{}',
-              description: 'JSON string of command arguments'
-            }
-          } : {})
+          ...(verbData.argsSchema
+            ? {
+                // If command has argsSchema, add a generic args option
+                args: {
+                  type: 'string',
+                  default: '{}',
+                  description: 'JSON string of command arguments',
+                },
+              }
+            : {}),
         },
         async run(ctx) {
           try {
@@ -97,7 +97,7 @@ function buildCittyTree(registry, tree) {
               } catch (e) {
                 return outputResult(ctx.args.json, false, {
                   code: 'INVALID_ARGS',
-                  message: `Invalid arguments: ${e.message}`
+                  message: `Invalid arguments: ${e.message}`,
                 });
               }
             }
@@ -109,25 +109,25 @@ function buildCittyTree(registry, tree) {
             return outputResult(ctx.args.json, true, result, {
               source: verbData._source,
               noun,
-              verb
+              verb,
             });
           } catch (e) {
             return outputResult(ctx.args.json, false, {
               code: 'COMMAND_ERROR',
               message: e.message,
-              ...(e.details && { details: e.details })
+              ...(e.details && { details: e.details }),
             });
           }
-        }
+        },
       });
     }
 
     // Create noun subcommand with verb subcommands
     subcommands[noun] = defineCommand({
       meta: {
-        description: nounData.description || `${noun} commands`
+        description: nounData.description || `${noun} commands`,
       },
-      subcommands: verbCommands
+      subcommands: verbCommands,
     });
   }
 
@@ -136,9 +136,9 @@ function buildCittyTree(registry, tree) {
     meta: {
       name: 'kgc',
       description: 'KGC CLI - Deterministic extension registry for UNRDF workspace',
-      version: '5.0.1'
+      version: '5.0.1',
     },
-    subcommands
+    subcommands,
   });
 }
 
@@ -183,7 +183,7 @@ async function main() {
     // Run Citty main loop
     await runMain({
       command,
-      args: process.argv.slice(2)
+      args: process.argv.slice(2),
     });
   } catch (e) {
     console.error(`[kgc-cli] Fatal error: ${e.message}`);

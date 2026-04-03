@@ -137,9 +137,7 @@ export class Layout3D {
   _calculateGravity(node) {
     if (!this.config.centerForce) return { x: 0, y: 0, z: 0 };
 
-    const dist = Math.sqrt(
-      node.position.x ** 2 + node.position.y ** 2 + node.position.z ** 2
-    );
+    const dist = Math.sqrt(node.position.x ** 2 + node.position.y ** 2 + node.position.z ** 2);
 
     if (dist < 0.01) return { x: 0, y: 0, z: 0 };
 
@@ -157,7 +155,7 @@ export class Layout3D {
    * @returns {number} Total displacement (convergence metric)
    */
   step() {
-    return tracer.startActiveSpan('layout3d.step', (span) => {
+    return tracer.startActiveSpan('layout3d.step', span => {
       try {
         const forces = new Map();
 
@@ -241,9 +239,8 @@ export class Layout3D {
           node.position.y += node.velocity.y * this.temperature;
           node.position.z += node.velocity.z * this.temperature;
 
-          totalDisplacement += Math.abs(node.velocity.x) +
-                              Math.abs(node.velocity.y) +
-                              Math.abs(node.velocity.z);
+          totalDisplacement +=
+            Math.abs(node.velocity.x) + Math.abs(node.velocity.y) + Math.abs(node.velocity.z);
         }
 
         // Cool down
@@ -270,7 +267,7 @@ export class Layout3D {
    * @returns {Promise<number>} Final displacement
    */
   async run(maxIterations) {
-    return tracer.startActiveSpan('layout3d.run', async (span) => {
+    return tracer.startActiveSpan('layout3d.run', async span => {
       try {
         const max = maxIterations || this.config.iterations;
         let displacement = Infinity;

@@ -22,7 +22,7 @@ import {
   listEntries,
   mergeLockfiles,
   pruneLockfile,
-  createLockEntry
+  createLockEntry,
 } from './lockfile.mjs';
 
 /**
@@ -51,7 +51,7 @@ describe('Lockfile Management', () => {
       name: 'test.sty',
       content,
       cachedPath: 'packages/test/test.sty',
-      sourceUrl: 'https://example.com/test.sty'
+      sourceUrl: 'https://example.com/test.sty',
     });
 
     assert.equal(entry.name, 'test.sty');
@@ -67,7 +67,7 @@ describe('Lockfile Management', () => {
     const entry = createLockEntry({
       name: 'hyperref.sty',
       content: 'hyperref content',
-      cachedPath: 'packages/hyperref/hyperref.sty'
+      cachedPath: 'packages/hyperref/hyperref.sty',
     });
 
     addEntry(lockfile, entry);
@@ -82,7 +82,7 @@ describe('Lockfile Management', () => {
     const entry = createLockEntry({
       name: 'test.sty',
       content,
-      cachedPath: 'packages/test/test.sty'
+      cachedPath: 'packages/test/test.sty',
     });
 
     addEntry(lockfile, entry);
@@ -96,7 +96,7 @@ describe('Lockfile Management', () => {
     const entry = createLockEntry({
       name: 'test.sty',
       content: 'content',
-      cachedPath: 'packages/test/test.sty'
+      cachedPath: 'packages/test/test.sty',
     });
 
     addEntry(lockfile, entry);
@@ -111,7 +111,7 @@ describe('Lockfile Management', () => {
     const entry = createLockEntry({
       name: 'test.sty',
       content: 'content',
-      cachedPath: 'packages/test/test.sty'
+      cachedPath: 'packages/test/test.sty',
     });
 
     addEntry(lockfile, entry);
@@ -125,21 +125,30 @@ describe('Lockfile Management', () => {
   it('should list all entries sorted', () => {
     const lockfile = createLockfile('xetex');
 
-    addEntry(lockfile, createLockEntry({
-      name: 'c.sty',
-      content: 'c',
-      cachedPath: 'packages/c/c.sty'
-    }));
-    addEntry(lockfile, createLockEntry({
-      name: 'a.sty',
-      content: 'a',
-      cachedPath: 'packages/a/a.sty'
-    }));
-    addEntry(lockfile, createLockEntry({
-      name: 'b.sty',
-      content: 'b',
-      cachedPath: 'packages/b/b.sty'
-    }));
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'c.sty',
+        content: 'c',
+        cachedPath: 'packages/c/c.sty',
+      })
+    );
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'a.sty',
+        content: 'a',
+        cachedPath: 'packages/a/a.sty',
+      })
+    );
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'b.sty',
+        content: 'b',
+        cachedPath: 'packages/b/b.sty',
+      })
+    );
 
     const entries = listEntries(lockfile);
     assert.deepEqual(entries, ['a.sty', 'b.sty', 'c.sty']);
@@ -149,17 +158,23 @@ describe('Lockfile Management', () => {
     const lock1 = createLockfile('xetex');
     const lock2 = createLockfile('xetex');
 
-    addEntry(lock1, createLockEntry({
-      name: 'a.sty',
-      content: 'a',
-      cachedPath: 'packages/a/a.sty'
-    }));
+    addEntry(
+      lock1,
+      createLockEntry({
+        name: 'a.sty',
+        content: 'a',
+        cachedPath: 'packages/a/a.sty',
+      })
+    );
 
-    addEntry(lock2, createLockEntry({
-      name: 'b.sty',
-      content: 'b',
-      cachedPath: 'packages/b/b.sty'
-    }));
+    addEntry(
+      lock2,
+      createLockEntry({
+        name: 'b.sty',
+        content: 'b',
+        cachedPath: 'packages/b/b.sty',
+      })
+    );
 
     const merged = mergeLockfiles(lock1, lock2);
 
@@ -180,21 +195,30 @@ describe('Lockfile Management', () => {
   it('should prune lockfile to valid entries', () => {
     const lockfile = createLockfile('xetex');
 
-    addEntry(lockfile, createLockEntry({
-      name: 'a.sty',
-      content: 'a',
-      cachedPath: 'packages/a/a.sty'
-    }));
-    addEntry(lockfile, createLockEntry({
-      name: 'b.sty',
-      content: 'b',
-      cachedPath: 'packages/b/b.sty'
-    }));
-    addEntry(lockfile, createLockEntry({
-      name: 'c.sty',
-      content: 'c',
-      cachedPath: 'packages/c/c.sty'
-    }));
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'a.sty',
+        content: 'a',
+        cachedPath: 'packages/a/a.sty',
+      })
+    );
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'b.sty',
+        content: 'b',
+        cachedPath: 'packages/b/b.sty',
+      })
+    );
+    addEntry(
+      lockfile,
+      createLockEntry({
+        name: 'c.sty',
+        content: 'c',
+        cachedPath: 'packages/c/c.sty',
+      })
+    );
 
     const pruned = pruneLockfile(lockfile, ['a.sty', 'c.sty']);
 
@@ -208,11 +232,14 @@ describe('Lockfile Management', () => {
 
     try {
       const lockfile = createLockfile('xetex');
-      addEntry(lockfile, createLockEntry({
-        name: 'test.sty',
-        content: 'content',
-        cachedPath: 'packages/test/test.sty'
-      }));
+      addEntry(
+        lockfile,
+        createLockEntry({
+          name: 'test.sty',
+          content: 'content',
+          cachedPath: 'packages/test/test.sty',
+        })
+      );
 
       const lockfilePath = join(tmpDir, 'test.lock.json');
       await saveLockfile(lockfilePath, lockfile);
@@ -277,13 +304,13 @@ describe('Lockfile Management', () => {
       const entry1 = createLockEntry({
         name: 'test1.sty',
         content: content1,
-        cachedPath: 'packages/test1/test1.sty'
+        cachedPath: 'packages/test1/test1.sty',
       });
 
       const entry2 = createLockEntry({
         name: 'test2.sty',
         content: content2,
-        cachedPath: 'packages/test2/test2.sty'
+        cachedPath: 'packages/test2/test2.sty',
       });
 
       addEntry(lockfile, entry1);
@@ -322,7 +349,7 @@ describe('Lockfile Management', () => {
       const entry = createLockEntry({
         name: 'test.sty',
         content: 'original content',
-        cachedPath: 'packages/test/test.sty'
+        cachedPath: 'packages/test/test.sty',
       });
 
       addEntry(lockfile, entry);
@@ -354,7 +381,7 @@ describe('Lockfile Management', () => {
       const entry = createLockEntry({
         name: 'missing.sty',
         content: 'content',
-        cachedPath: 'packages/missing/missing.sty'
+        cachedPath: 'packages/missing/missing.sty',
       });
 
       addEntry(lockfile, entry);

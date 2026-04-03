@@ -78,8 +78,8 @@ describe('Integration: Agent 2 → Agent 3+ Handoff', () => {
     assert.match(mainTex, /\\documentclass/);
 
     // Agent 4 would parse \usepackage{...} here
-    const hasAmsmath = mainTex.includes('amsmath') ||
-      getVfsText(vfs, 'work/preamble.tex')?.includes('amsmath');
+    const hasAmsmath =
+      mainTex.includes('amsmath') || getVfsText(vfs, 'work/preamble.tex')?.includes('amsmath');
 
     assert.equal(hasAmsmath, true);
   });
@@ -96,8 +96,8 @@ describe('Integration: Agent 2 → Agent 3+ Handoff', () => {
 
     // Paths are sorted (depth-first, then alphabetical)
     assert.deepEqual(metadata.paths, [
-      'work/main.tex',        // depth 1
-      'work/preamble.tex',    // depth 1
+      'work/main.tex', // depth 1
+      'work/preamble.tex', // depth 1
       'work/chapters/ch1.tex', // depth 2
     ]);
   });
@@ -122,9 +122,7 @@ describe('Integration: Agent 2 → Agent 3+ Handoff', () => {
     const baseVfs = await packDirectory(testDir);
 
     // Create overlay VFS with custom files
-    const customVfs = new Map([
-      ['work/custom.sty', new Uint8Array([1, 2, 3])],
-    ]);
+    const customVfs = new Map([['work/custom.sty', new Uint8Array([1, 2, 3])]]);
 
     // Merge: custom overrides base
     const merged = mergeVfs(baseVfs, customVfs);

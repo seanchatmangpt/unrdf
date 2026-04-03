@@ -5,11 +5,13 @@ import { z } from 'zod';
 /**
  * Zod schemas for validation
  */
-const QueryOptionsSchema = z.object({
-  limit: z.number().int().positive().default(10),
-  threshold: z.number().min(0).max(1).default(0.5),
-  hybridWeight: z.number().min(0).max(1).default(0.7),
-}).partial();
+const QueryOptionsSchema = z
+  .object({
+    limit: z.number().int().positive().default(10),
+    threshold: z.number().min(0).max(1).default(0.5),
+    hybridWeight: z.number().min(0).max(1).default(0.7),
+  })
+  .partial();
 
 /**
  * SemanticQueryEngine - Natural language queries over RDF knowledge graphs
@@ -139,11 +141,7 @@ export class SemanticQueryEngine {
     const sparqlResults = this.store.query(sparqlQuery);
 
     // Create lookup set for SPARQL results
-    const sparqlSet = new Set(
-      sparqlResults.map(r =>
-        `${r.s.value}|${r.p.value}|${r.o.value}`
-      )
-    );
+    const sparqlSet = new Set(sparqlResults.map(r => `${r.s.value}|${r.p.value}|${r.o.value}`));
 
     // Combine results with hybrid weighting
     const hybrid = semanticResults.map(result => {
@@ -163,9 +161,7 @@ export class SemanticQueryEngine {
     });
 
     // Sort by hybrid score and return top results
-    return hybrid
-      .sort((a, b) => b.hybridScore - a.hybridScore)
-      .slice(0, config.limit);
+    return hybrid.sort((a, b) => b.hybridScore - a.hybridScore).slice(0, config.limit);
   }
 
   /**

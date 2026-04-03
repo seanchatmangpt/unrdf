@@ -71,9 +71,9 @@ export function createYAWLGraphQLAPI(config) {
       ...validated.customResolvers,
       // Add JSON scalar resolver
       JSON: {
-        __parseValue: (value) => value,
-        __serialize: (value) => value,
-        __parseLiteral: (ast) => ast.value,
+        __parseValue: value => value,
+        __serialize: value => value,
+        __parseLiteral: ast => ast.value,
       },
     },
   });

@@ -99,13 +99,15 @@ async function generateInstanceReceipt(instance, action) {
   };
 
   // Hash receipt (BLAKE3 pattern from task-execution.mjs)
-  const receiptHash = await blake3(JSON.stringify({
-    id: receipt.id,
-    instanceId: receipt.instanceId,
-    action: receipt.action,
-    timestamp: receipt.timestamp.toString(),
-    status: receipt.status,
-  }));
+  const receiptHash = await blake3(
+    JSON.stringify({
+      id: receipt.id,
+      instanceId: receipt.instanceId,
+      action: receipt.action,
+      timestamp: receipt.timestamp.toString(),
+      status: receipt.status,
+    })
+  );
 
   receipt.hash = receiptHash;
   return receipt;
@@ -133,12 +135,14 @@ async function generateAggregateReceipt(instanceReceipts, metadata) {
   };
 
   // Hash aggregate receipt
-  const aggregateHash = await blake3(JSON.stringify({
-    id: aggregateReceipt.id,
-    parentTaskId: aggregateReceipt.parentTaskId,
-    pattern: aggregateReceipt.pattern,
-    merkleRoot: aggregateReceipt.merkleRoot,
-  }));
+  const aggregateHash = await blake3(
+    JSON.stringify({
+      id: aggregateReceipt.id,
+      parentTaskId: aggregateReceipt.parentTaskId,
+      pattern: aggregateReceipt.pattern,
+      merkleRoot: aggregateReceipt.merkleRoot,
+    })
+  );
 
   aggregateReceipt.hash = aggregateHash;
   return aggregateReceipt;

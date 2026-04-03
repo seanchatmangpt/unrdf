@@ -128,16 +128,9 @@ const CTAN_PATH_TEMPLATES = {
     'macros/latex/required/{package}',
     'macros/latex/base',
   ],
-  '.cls': [
-    'macros/latex/contrib/{package}',
-    'macros/latex/base',
-  ],
-  '.bib': [
-    'biblio/bibtex/contrib/{package}',
-  ],
-  '.bst': [
-    'biblio/bibtex/bst/{package}',
-  ],
+  '.cls': ['macros/latex/contrib/{package}', 'macros/latex/base'],
+  '.bib': ['biblio/bibtex/contrib/{package}'],
+  '.bst': ['biblio/bibtex/bst/{package}'],
 };
 
 /**
@@ -161,9 +154,7 @@ const VFS_PATH_TEMPLATES = {
  * @returns {string} Hex-encoded hash
  */
 function computeHash(content) {
-  return createHash('sha256')
-    .update(content)
-    .digest('hex');
+  return createHash('sha256').update(content).digest('hex');
 }
 
 /**
@@ -199,9 +190,7 @@ function buildVfsPath(filename) {
   const packageName = extractPackageName(filename);
   const template = VFS_PATH_TEMPLATES[ext] || 'work/{file}';
 
-  return template
-    .replace('{package}', packageName)
-    .replace('{file}', filename);
+  return template.replace('{package}', packageName).replace('{file}', filename);
 }
 
 /**

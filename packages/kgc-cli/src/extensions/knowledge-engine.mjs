@@ -13,12 +13,12 @@ const extension = {
         infer: {
           description: 'Execute inference over knowledge base',
           argsSchema: z.object({ query: z.string() }),
-          handler: async (args) => ({ inferred: true, query: args.query })
-        }
-      }
-    }
+          handler: async args => ({ inferred: true, query: args.query }),
+        },
+      },
+    },
   },
-  priority: 23
+  priority: 23,
 };
 
 export default extension;

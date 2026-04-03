@@ -110,11 +110,11 @@ export function compilePolicy(policy) {
     case PolicyPatterns.SUBJECT_PATTERN: {
       const pattern = policy.config?.pattern;
       if (pattern instanceof RegExp) {
-        compiledFn = (quad) => pattern.test(quad.subject?.value || '');
+        compiledFn = quad => pattern.test(quad.subject?.value || '');
       } else if (typeof pattern === 'string') {
         // Compile string to regex for performance
         const regex = new RegExp(pattern);
-        compiledFn = (quad) => regex.test(quad.subject?.value || '');
+        compiledFn = quad => regex.test(quad.subject?.value || '');
       } else {
         compiledFn = () => true;
       }
@@ -124,10 +124,10 @@ export function compilePolicy(policy) {
     case PolicyPatterns.PREDICATE_PATTERN: {
       const pattern = policy.config?.pattern;
       if (pattern instanceof RegExp) {
-        compiledFn = (quad) => pattern.test(quad.predicate?.value || '');
+        compiledFn = quad => pattern.test(quad.predicate?.value || '');
       } else if (typeof pattern === 'string') {
         const regex = new RegExp(pattern);
-        compiledFn = (quad) => regex.test(quad.predicate?.value || '');
+        compiledFn = quad => regex.test(quad.predicate?.value || '');
       } else {
         compiledFn = () => true;
       }
@@ -137,10 +137,10 @@ export function compilePolicy(policy) {
     case PolicyPatterns.OBJECT_PATTERN: {
       const pattern = policy.config?.pattern;
       if (pattern instanceof RegExp) {
-        compiledFn = (quad) => pattern.test(quad.object?.value || '');
+        compiledFn = quad => pattern.test(quad.object?.value || '');
       } else if (typeof pattern === 'string') {
         const regex = new RegExp(pattern);
-        compiledFn = (quad) => regex.test(quad.object?.value || '');
+        compiledFn = quad => regex.test(quad.object?.value || '');
       } else {
         compiledFn = () => true;
       }
@@ -151,7 +151,7 @@ export function compilePolicy(policy) {
       const namespace = policy.config?.namespace;
       if (namespace) {
         // Optimized prefix check
-        compiledFn = (quad) => {
+        compiledFn = quad => {
           const s = quad.subject?.value || '';
           const p = quad.predicate?.value || '';
           return s.startsWith(namespace) || p.startsWith(namespace);
@@ -310,7 +310,6 @@ export function executeCompiledHook(hook, quad) {
     if (compiledHook.transform && result.valid) {
       result.quad = compiledHook.transform(quad);
     }
-
   } catch (error) {
     result.valid = false;
     result.error = error.message;
@@ -336,7 +335,7 @@ export function executeCompiledChain(hooks, quad) {
   let chainError;
 
   // Compile all hooks upfront
-  const compiledHooks = hooks.map(h => h._compiled ? h : compileHook(h));
+  const compiledHooks = hooks.map(h => (h._compiled ? h : compileHook(h)));
 
   for (const hook of compiledHooks) {
     const result = executeCompiledHook(hook, currentQuad);
@@ -368,7 +367,7 @@ export function executeCompiledChain(hooks, quad) {
  */
 export function batchValidateCompiled(hooks, quads) {
   // Ensure all hooks are compiled
-  const compiledHooks = hooks.map(h => h._compiled ? h : compileHook(h));
+  const compiledHooks = hooks.map(h => (h._compiled ? h : compileHook(h)));
 
   // Filter to validation hooks only
   const validationHooks = compiledHooks.filter(h => h.validate);
@@ -467,7 +466,8 @@ export function getCompilerStats() {
     patternCacheSize: patternCache.size,
     avgCompileTimeMs: compilerStats.totalCompileTimeMs / compilerStats.compiled || 0,
     avgEvalTimeUs: (compilerStats.totalEvalTimeMs / compilerStats.evaluations) * 1000 || 0,
-    cacheHitRate: compilerStats.cacheHits / (compilerStats.cacheHits + compilerStats.cacheMisses) || 0,
+    cacheHitRate:
+      compilerStats.cacheHits / (compilerStats.cacheHits + compilerStats.cacheMisses) || 0,
   };
 }
 

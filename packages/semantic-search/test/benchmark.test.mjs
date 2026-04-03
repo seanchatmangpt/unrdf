@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createStore, dataFactory } from '@unrdf/oxigraph';
-import {
-  RDFEmbedder,
-  SemanticQueryEngine,
-  KnowledgeRecommender,
-} from '../src/index.mjs';
+import { RDFEmbedder, SemanticQueryEngine, KnowledgeRecommender } from '../src/index.mjs';
 
 const { namedNode, literal, triple } = dataFactory;
 
@@ -17,8 +13,8 @@ describe('Performance Benchmarks', () => {
   beforeAll(async () => {
     // Create larger test dataset
     store = createStore();
-    const ex = (local) => namedNode(`http://example.org/${local}`);
-    const schema = (local) => namedNode(`http://schema.org/${local}`);
+    const ex = local => namedNode(`http://example.org/${local}`);
+    const schema = local => namedNode(`http://schema.org/${local}`);
 
     // Add 50 entities with 5 triples each = 250 triples
     for (let i = 0; i < 50; i++) {
@@ -112,11 +108,7 @@ describe('Performance Benchmarks', () => {
     }, 60000);
 
     it('should search in < 1000ms', async () => {
-      const queries = [
-        'entity description',
-        'category value',
-        'test query',
-      ];
+      const queries = ['entity description', 'category value', 'test query'];
 
       for (const query of queries) {
         const start = performance.now();
@@ -215,7 +207,9 @@ describe('Performance Benchmarks', () => {
         const suggestions = await engine.autocomplete(partial, 5);
         const duration = performance.now() - start;
 
-        console.log(`Autocomplete "${partial}": ${duration.toFixed(2)}ms, ${suggestions.length} suggestions`);
+        console.log(
+          `Autocomplete "${partial}": ${duration.toFixed(2)}ms, ${suggestions.length} suggestions`
+        );
         expect(duration).toBeLessThan(1000);
       }
     }, 10000);

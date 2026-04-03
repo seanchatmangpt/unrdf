@@ -16,16 +16,7 @@ export {
 } from './adapter.mjs';
 
 // Re-export commonly used YAWL types for convenience
-export {
-  TaskDefinition,
-  TaskInstance,
-  TaskStatus,
-  Workflow,
-  WorkflowEngine,
-} from '@unrdf/yawl';
+export { TaskDefinition, TaskInstance, TaskStatus, Workflow, WorkflowEngine } from '@unrdf/yawl';
 
 // Re-export RDF utilities
-export {
-  createStore,
-  dataFactory,
-} from '@unrdf/oxigraph';
+export { createStore, dataFactory } from '@unrdf/oxigraph';

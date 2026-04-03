@@ -8,5 +8,5 @@ export { buildCittyTree, initializeRegistry } from './cli.mjs';
 
 export default {
   name: 'kgc-cli',
-  version: '5.0.1'
+  version: '5.0.1',
 };

@@ -26,13 +26,15 @@ import { WorkItemSchema } from './workflow-execution.mjs';
 /**
  * Schema for case creation options
  */
-export const CaseOptionsSchema = z.object({
-  caseId: z.string().optional(),
-  initialVariables: z.record(z.string(), z.any()).optional(),
-  priority: z.number().int().min(0).max(100).optional(),
-  deadline: z.string().datetime().optional(),
-  parent: z.string().optional(),
-}).optional();
+export const CaseOptionsSchema = z
+  .object({
+    caseId: z.string().optional(),
+    initialVariables: z.record(z.string(), z.any()).optional(),
+    priority: z.number().int().min(0).max(100).optional(),
+    deadline: z.string().datetime().optional(),
+    parent: z.string().optional(),
+  })
+  .optional();
 
 // ============================================================================
 // Core Query Functions
@@ -86,7 +88,7 @@ export async function createCase(workflow, options = {}) {
 
   // Get initially enabled work items
   const enabledWorkItems = Array.from(workItems.values()).filter(
-    (wi) => wi.status === WORK_ITEM_STATUS.ENABLED
+    wi => wi.status === WORK_ITEM_STATUS.ENABLED
   );
 
   // Create RDF representation if store available
@@ -105,7 +107,7 @@ export async function createCase(workflow, options = {}) {
           caseId,
           workflowId: workflow.id,
           workItemCount: workItems.size,
-          enabledTaskIds: enabledWorkItems.map((wi) => wi.taskId),
+          enabledTaskIds: enabledWorkItems.map(wi => wi.taskId),
           initialVariables: validOptions?.initialVariables || {},
         },
       },
@@ -161,7 +163,7 @@ export async function createCase(workflow, options = {}) {
      * @returns {Array<Object>} Array of matching work items
      */
     getWorkItemsByStatus(status) {
-      return Array.from(workItems.values()).filter((wi) => wi.status === status);
+      return Array.from(workItems.values()).filter(wi => wi.status === status);
     },
 
     /**
@@ -170,9 +172,7 @@ export async function createCase(workflow, options = {}) {
      */
     isComplete() {
       return Array.from(workItems.values()).every(
-        (wi) =>
-          wi.status === WORK_ITEM_STATUS.COMPLETED ||
-          wi.status === WORK_ITEM_STATUS.CANCELLED
+        wi => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
       );
     },
 
@@ -181,9 +181,7 @@ export async function createCase(workflow, options = {}) {
      * @returns {Array<Object>} Array of enabled work items
      */
     getEnabledWorkItems() {
-      return Array.from(workItems.values()).filter(
-        (wi) => wi.status === WORK_ITEM_STATUS.ENABLED
-      );
+      return Array.from(workItems.values()).filter(wi => wi.status === WORK_ITEM_STATUS.ENABLED);
     },
 
     /**
@@ -191,9 +189,7 @@ export async function createCase(workflow, options = {}) {
      * @returns {Array<Object>} Array of active work items
      */
     getActiveWorkItems() {
-      return Array.from(workItems.values()).filter(
-        (wi) => wi.status === WORK_ITEM_STATUS.ACTIVE
-      );
+      return Array.from(workItems.values()).filter(wi => wi.status === WORK_ITEM_STATUS.ACTIVE);
     },
   };
 }
@@ -213,8 +209,8 @@ export async function createCase(workflow, options = {}) {
 export function createCaseRDF(caseId, workflowId, workItems, store) {
   const deltas = [];
   const df = store._store?.dataFactory || {
-    namedNode: (v) => ({ termType: 'NamedNode', value: v }),
-    literal: (v) => ({ termType: 'Literal', value: v }),
+    namedNode: v => ({ termType: 'NamedNode', value: v }),
+    literal: v => ({ termType: 'Literal', value: v }),
   };
 
   const caseUri = `${YAWL_NS.CASE}${caseId}`;

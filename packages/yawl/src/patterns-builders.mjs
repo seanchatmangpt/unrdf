@@ -52,23 +52,24 @@ export const TaskDefSchema = z.object({
 /**
  * Flow definition schema with validation
  */
-export const FlowDefSchema = z.object({
-  /** Source task ID */
-  from: z.string().min(1).max(100),
-  /** Target task ID */
-  to: z.string().min(1).max(100),
-  /** Condition function for conditional flows */
-  condition: z.function().optional(),
-  /** Evaluation priority (higher = evaluated first) */
-  priority: z.number().int().default(0),
-  /** Whether this flow creates a cycle */
-  isCycle: z.boolean().optional(),
-  /** Whether this is a deferred choice flow */
-  deferred: z.boolean().optional(),
-}).refine(
-  data => data.from !== data.to || data.isCycle === true,
-  { message: 'Source and target must differ unless isCycle is true' }
-);
+export const FlowDefSchema = z
+  .object({
+    /** Source task ID */
+    from: z.string().min(1).max(100),
+    /** Target task ID */
+    to: z.string().min(1).max(100),
+    /** Condition function for conditional flows */
+    condition: z.function().optional(),
+    /** Evaluation priority (higher = evaluated first) */
+    priority: z.number().int().default(0),
+    /** Whether this flow creates a cycle */
+    isCycle: z.boolean().optional(),
+    /** Whether this is a deferred choice flow */
+    deferred: z.boolean().optional(),
+  })
+  .refine(data => data.from !== data.to || data.isCycle === true, {
+    message: 'Source and target must differ unless isCycle is true',
+  });
 
 /**
  * Pattern application context schema
@@ -83,11 +84,15 @@ export const PatternContextSchema = z.object({
   /** Source task IDs (for join patterns) */
   sourceIds: z.array(z.string().min(1)).optional(),
   /** Branch configurations */
-  branches: z.array(z.object({
-    taskId: z.string().min(1),
-    condition: z.function().optional(),
-    priority: z.number().int().optional(),
-  })).optional(),
+  branches: z
+    .array(
+      z.object({
+        taskId: z.string().min(1),
+        condition: z.function().optional(),
+        priority: z.number().int().optional(),
+      })
+    )
+    .optional(),
   /** Loop condition function */
   loopCondition: z.function().optional(),
   /** Workflow data context */
@@ -103,17 +108,21 @@ export const PatternResultSchema = z.object({
   /** Pattern that was applied */
   pattern: z.string(),
   /** Task configuration for source */
-  sourceTask: z.object({
-    id: z.string(),
-    splitType: z.string().optional(),
-    joinType: z.string().optional(),
-  }).optional(),
+  sourceTask: z
+    .object({
+      id: z.string(),
+      splitType: z.string().optional(),
+      joinType: z.string().optional(),
+    })
+    .optional(),
   /** Task configuration for target */
-  targetTask: z.object({
-    id: z.string(),
-    splitType: z.string().optional(),
-    joinType: z.string().optional(),
-  }).optional(),
+  targetTask: z
+    .object({
+      id: z.string(),
+      splitType: z.string().optional(),
+      joinType: z.string().optional(),
+    })
+    .optional(),
   /** Generated flows */
   flows: z.array(FlowDefSchema).default([]),
   /** Candidate task IDs for deferred choice */

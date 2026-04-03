@@ -16,7 +16,7 @@ import { createWorkflowEngine } from '../../src/engine.mjs';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -224,9 +224,7 @@ describe('Daemon Process Manager', () => {
       // Act
       const promises = [];
       for (let i = 0; i < spawnCount; i++) {
-        promises.push(
-          bridge.scheduleRecurringCase(`rapid-wf-${i}`, '* * * * *')
-        );
+        promises.push(bridge.scheduleRecurringCase(`rapid-wf-${i}`, '* * * * *'));
       }
       await Promise.all(promises);
 
@@ -245,9 +243,7 @@ describe('Daemon Process Manager', () => {
       // Assert
       expect(operations).toHaveLength(2);
       expect(operations[0].id).not.toBe(operations[1].id);
-      expect(operations[0].metadata.workflowId).not.toBe(
-        operations[1].metadata.workflowId
-      );
+      expect(operations[0].metadata.workflowId).not.toBe(operations[1].metadata.workflowId);
     });
 
     it('should validate process configuration', async () => {
@@ -255,9 +251,7 @@ describe('Daemon Process Manager', () => {
       const invalidWorkflowId = '';
 
       // Act & Assert
-      await expect(
-        bridge.scheduleRecurringCase(invalidWorkflowId, '* * * * *')
-      ).rejects.toThrow();
+      await expect(bridge.scheduleRecurringCase(invalidWorkflowId, '* * * * *')).rejects.toThrow();
     });
   });
 
@@ -351,7 +345,7 @@ describe('Daemon Process Manager', () => {
 
     it('should track process uptime', async () => {
       // Arrange
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Act
       const health = daemon.getHealth();
@@ -411,9 +405,7 @@ describe('Daemon Process Manager', () => {
       // Arrange
       const handler = vi
         .fn()
-        .mockImplementation(
-          () => new Promise((resolve) => setTimeout(() => resolve({}), 10))
-        );
+        .mockImplementation(() => new Promise(resolve => setTimeout(() => resolve({}), 10)));
       daemon.schedule({ id: 'perf-op', name: 'Perf Op', handler });
 
       // Act
@@ -675,7 +667,7 @@ describe('Daemon Process Manager', () => {
       // Arrange
       const completed = { count: 0 };
       const handler = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 50));
         completed.count++;
         return { done: true };
       });
@@ -759,9 +751,7 @@ describe('Daemon Process Manager', () => {
       await daemon.stop();
 
       // Assert
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('Stopped')
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Stopped'));
     });
 
     it('should clear pending timeouts', async () => {

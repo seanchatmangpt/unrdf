@@ -16,24 +16,28 @@ import { Parser, N3Store } from '../rdf/n3-justified-only.mjs';
 /**
  * Validation options schema
  */
-export const ValidationOptionsSchema = z.object({
-  details: z.boolean().optional().default(true),
-  maxErrors: z.number().int().positive().optional(),
-}).optional();
+export const ValidationOptionsSchema = z
+  .object({
+    details: z.boolean().optional().default(true),
+    maxErrors: z.number().int().positive().optional(),
+  })
+  .optional();
 
 /**
  * Validation report schema
  */
 export const ValidationReportSchema = z.object({
   conforms: z.boolean(),
-  results: z.array(z.object({
-    path: z.string().optional(),
-    message: z.string(),
-    focusNode: z.string().optional(),
-    severity: z.string().optional(),
-    sourceConstraintComponent: z.string().optional(),
-    value: z.string().optional(),
-  })),
+  results: z.array(
+    z.object({
+      path: z.string().optional(),
+      message: z.string(),
+      focusNode: z.string().optional(),
+      severity: z.string().optional(),
+      sourceConstraintComponent: z.string().optional(),
+      value: z.string().optional(),
+    })
+  ),
   details: z.any().optional(),
 });
 

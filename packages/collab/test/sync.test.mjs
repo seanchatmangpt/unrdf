@@ -21,7 +21,7 @@ vi.mock('y-websocket', () => {
         this.awareness = {
           clientID: Math.floor(Math.random() * 1000000),
           states: new Map(),
-          setLocalState: (state) => {
+          setLocalState: state => {
             this.awareness.states.set(this.awareness.clientID, state);
           },
           getStates: () => this.awareness.states,
@@ -61,7 +61,7 @@ vi.mock('y-websocket', () => {
       _emit(event, data) {
         const handlers = this.eventHandlers.get(event);
         if (handlers) {
-          handlers.forEach((h) => h(data));
+          handlers.forEach(h => h(data));
         }
       }
     },
@@ -119,7 +119,7 @@ describe('WebSocketSync', () => {
     it('should connect and report status', async () => {
       let connected = false;
 
-      sync.on('status', (event) => {
+      sync.on('status', event => {
         if (event.status === 'connected') {
           connected = true;
         }
@@ -127,29 +127,29 @@ describe('WebSocketSync', () => {
 
       sync.connect();
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
       expect(connected).toBe(true);
     });
 
     it('should track sync state', async () => {
       let synced = false;
 
-      sync.on('synced', (event) => {
+      sync.on('synced', event => {
         synced = event.isSynced;
       });
 
       sync.connect();
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
       expect(synced).toBe(true);
     });
 
     it('should disconnect cleanly', async () => {
       sync.connect();
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       let disconnected = false;
-      sync.on('status', (event) => {
+      sync.on('status', event => {
         if (event.status === 'disconnected') {
           disconnected = true;
         }
@@ -212,7 +212,7 @@ describe('WebSocketSync', () => {
       unsubscribe();
       sync.connect();
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
       expect(handler).not.toHaveBeenCalled();
     });
   });

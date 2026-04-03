@@ -21,5 +21,5 @@ export const printReceiptSchema = {
 };
 
 export default {
-  printReceipt: printReceiptSchema
+  printReceipt: printReceiptSchema,
 };

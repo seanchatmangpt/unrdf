@@ -23,7 +23,10 @@ export const createAdaptiveMonitorSchema = {
 /**
  * Schema for createMemoryMonitor
  */
-export const createMemoryMonitorParamsSchema = z.tuple([z.unknown().optional(), z.unknown().optional()]);
+export const createMemoryMonitorParamsSchema = z.tuple([
+  z.unknown().optional(),
+  z.unknown().optional(),
+]);
 
 export const createMemoryMonitorReturnSchema = z.unknown();
 
@@ -35,7 +38,10 @@ export const createMemoryMonitorSchema = {
 /**
  * Schema for createEventLoopMonitor
  */
-export const createEventLoopMonitorParamsSchema = z.tuple([z.unknown().optional(), z.unknown().optional()]);
+export const createEventLoopMonitorParamsSchema = z.tuple([
+  z.unknown().optional(),
+  z.unknown().optional(),
+]);
 
 export const createEventLoopMonitorReturnSchema = z.unknown();
 
@@ -60,5 +66,5 @@ export default {
   createAdaptiveMonitor: createAdaptiveMonitorSchema,
   createMemoryMonitor: createMemoryMonitorSchema,
   createEventLoopMonitor: createEventLoopMonitorSchema,
-  createMonitorOrchestrator: createMonitorOrchestratorSchema
+  createMonitorOrchestrator: createMonitorOrchestratorSchema,
 };

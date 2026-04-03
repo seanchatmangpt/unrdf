@@ -88,9 +88,7 @@ describe('YAWL Integration Tests', () => {
 
       // Start the first task
       const startWorkItem = enabledWorkItems[0];
-      const { workItem: startedWorkItem, receipt: startReceipt } = await startTask(
-        startWorkItem
-      );
+      const { workItem: startedWorkItem, receipt: startReceipt } = await startTask(startWorkItem);
 
       expect(startedWorkItem.status).toBe(WORK_ITEM_STATUS.ACTIVE);
       expect(startReceipt).toBeDefined();
@@ -115,11 +113,7 @@ describe('YAWL Integration Tests', () => {
 
       // Start and complete process task
       const { workItem: processStarted } = await startTask(processWorkItem);
-      await completeTask(
-        processStarted,
-        { processedData: 'result' },
-        { caseObj, workflow }
-      );
+      await completeTask(processStarted, { processedData: 'result' }, { caseObj, workflow });
 
       // Get the enabled end task
       const endEnabled = caseObj.getEnabledWorkItems();
@@ -142,9 +136,7 @@ describe('YAWL Integration Tests', () => {
           { id: 'initial', name: 'Initial Task' },
           { id: 'follow-up', name: 'Follow-Up Task' },
         ],
-        controlFlow: [
-          { id: 'flow1', type: 'sequence', from: 'initial', to: 'follow-up' },
-        ],
+        controlFlow: [{ id: 'flow1', type: 'sequence', from: 'initial', to: 'follow-up' }],
       });
 
       const caseObj = await createCase(workflow);
@@ -210,9 +202,9 @@ describe('YAWL Integration Tests', () => {
       // All three parallel tasks should be enabled
       const parallelEnabled = caseObj.getEnabledWorkItems();
       expect(parallelEnabled.length).toBe(3);
-      const enabledTaskIds = parallelEnabled.map((wi) =>
-        caseObj.getTaskDefIdForWorkItem(wi.id)
-      ).sort();
+      const enabledTaskIds = parallelEnabled
+        .map(wi => caseObj.getTaskDefIdForWorkItem(wi.id))
+        .sort();
       expect(enabledTaskIds).toEqual(['taskA', 'taskB', 'taskC']);
 
       // Complete all parallel tasks
@@ -336,7 +328,7 @@ describe('YAWL Integration Tests', () => {
 
       // Both option1 and option2 should be enabled (OR-split allows multiple)
       expect(enabledDownstreamTasks.length).toBeGreaterThanOrEqual(1);
-      const enabledIds = enabledDownstreamTasks.map((t) => t.taskId);
+      const enabledIds = enabledDownstreamTasks.map(t => t.taskId);
       expect(enabledIds).toContain('option1');
       expect(enabledIds).toContain('option2');
     });
@@ -344,7 +336,7 @@ describe('YAWL Integration Tests', () => {
     it('should apply pattern builders correctly', async () => {
       const workflow = new Workflow({
         id: 'pattern-builder-test',
-        tasks: []
+        tasks: [],
       });
 
       // Use pattern builders
@@ -396,9 +388,7 @@ describe('YAWL Integration Tests', () => {
           { id: 'review', name: 'Review', resourcePattern: 'role:reviewer' },
           { id: 'approve', name: 'Approve', resourcePattern: 'role:approver' },
         ],
-        controlFlow: [
-          { id: 'flow1', type: 'sequence', from: 'review', to: 'approve' },
-        ],
+        controlFlow: [{ id: 'flow1', type: 'sequence', from: 'review', to: 'approve' }],
         resources: [
           { id: 'reviewer-role', name: 'Reviewer', type: 'role' },
           { id: 'approver-role', name: 'Approver', type: 'role' },
@@ -435,9 +425,7 @@ describe('YAWL Integration Tests', () => {
     it('should handle resource allocation with policy packs', async () => {
       const workflow = await createWorkflow({
         id: 'policy-workflow',
-        tasks: [
-          { id: 'restricted', name: 'Restricted Task', priority: 90 },
-        ],
+        tasks: [{ id: 'restricted', name: 'Restricted Task', priority: 90 }],
       });
 
       const caseObj = await createCase(workflow);
@@ -514,10 +502,10 @@ describe('YAWL Integration Tests', () => {
       const events = [];
 
       // Subscribe to events
-      engine.on(ENGINE_EVENTS.CASE_CREATED, (data) => events.push({ type: 'CASE_CREATED', data }));
-      engine.on(ENGINE_EVENTS.TASK_ENABLED, (data) => events.push({ type: 'TASK_ENABLED', data }));
-      engine.on(ENGINE_EVENTS.TASK_STARTED, (data) => events.push({ type: 'TASK_STARTED', data }));
-      engine.on(ENGINE_EVENTS.TASK_COMPLETED, (data) =>
+      engine.on(ENGINE_EVENTS.CASE_CREATED, data => events.push({ type: 'CASE_CREATED', data }));
+      engine.on(ENGINE_EVENTS.TASK_ENABLED, data => events.push({ type: 'TASK_ENABLED', data }));
+      engine.on(ENGINE_EVENTS.TASK_STARTED, data => events.push({ type: 'TASK_STARTED', data }));
+      engine.on(ENGINE_EVENTS.TASK_COMPLETED, data =>
         events.push({ type: 'TASK_COMPLETED', data })
       );
 
@@ -537,10 +525,10 @@ describe('YAWL Integration Tests', () => {
 
       // Verify events were emitted
       expect(events.length).toBeGreaterThanOrEqual(4);
-      expect(events.some((e) => e.type === 'CASE_CREATED')).toBe(true);
-      expect(events.some((e) => e.type === 'TASK_ENABLED')).toBe(true);
-      expect(events.some((e) => e.type === 'TASK_STARTED')).toBe(true);
-      expect(events.some((e) => e.type === 'TASK_COMPLETED')).toBe(true);
+      expect(events.some(e => e.type === 'CASE_CREATED')).toBe(true);
+      expect(events.some(e => e.type === 'TASK_ENABLED')).toBe(true);
+      expect(events.some(e => e.type === 'TASK_STARTED')).toBe(true);
+      expect(events.some(e => e.type === 'TASK_COMPLETED')).toBe(true);
     });
   });
 
@@ -646,9 +634,7 @@ describe('YAWL Integration Tests', () => {
       const workItem = caseObj.getEnabledWorkItems()[0];
 
       // Attempt to complete without starting should fail
-      await expect(
-        completeTask(workItem, {}, { caseObj, workflow })
-      ).rejects.toThrow();
+      await expect(completeTask(workItem, {}, { caseObj, workflow })).rejects.toThrow();
 
       // Start task
       const { workItem: started } = await startTask(workItem);
@@ -703,9 +689,7 @@ describe('YAWL Integration Tests', () => {
         createWorkflow({
           id: 'broken-flow',
           tasks: [{ id: 't1', name: 'Task 1' }],
-          controlFlow: [
-            { id: 'bad-flow', type: 'sequence', from: 't1', to: 'nonexistent' },
-          ],
+          controlFlow: [{ id: 'bad-flow', type: 'sequence', from: 't1', to: 'nonexistent' }],
         })
       ).rejects.toThrow();
     });
@@ -756,10 +740,7 @@ describe('YAWL Integration Tests', () => {
       workflow.addFlow({ from: 'start', to: 'middle', splitType: SPLIT_TYPE.SEQUENCE });
       workflow.addFlow({ from: 'middle', to: 'end', splitType: SPLIT_TYPE.SEQUENCE });
 
-      const caseObj = new Case(
-        { id: 'state-case', workflowId: workflow.id },
-        workflow
-      );
+      const caseObj = new Case({ id: 'state-case', workflowId: workflow.id }, workflow);
 
       expect(caseObj.status).toBe(CaseStatus.CREATED);
       expect(caseObj.isComplete()).toBe(false);

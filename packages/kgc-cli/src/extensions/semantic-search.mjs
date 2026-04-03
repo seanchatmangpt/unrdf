@@ -26,39 +26,37 @@ const extension = {
           argsSchema: z.object({
             query: z.string().describe('Search query'),
             limit: z.number().optional().default(10),
-            threshold: z.number().optional().default(0.5)
+            threshold: z.number().optional().default(0.5),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               query: args.query,
-              results: [
-                { id: 'result_1', score: 0.95, label: 'Matching entity' }
-              ],
+              results: [{ id: 'result_1', score: 0.95, label: 'Matching entity' }],
               count: 1,
-              searchTime: '12ms'
+              searchTime: '12ms',
             };
-          }
+          },
         },
         embed: {
           description: 'Generate embeddings for text',
           argsSchema: z.object({
             text: z.string().describe('Text to embed'),
-            model: z.string().optional().default('default')
+            model: z.string().optional().default('default'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               text: args.text.substring(0, 50),
               model: args.model,
               embedding: Array(768).fill(0), // Placeholder vector
-              dimension: 768
+              dimension: 768,
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
-  priority: 22
+  priority: 22,
 };
 
 export default extension;

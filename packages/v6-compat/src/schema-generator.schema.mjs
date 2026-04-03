@@ -73,5 +73,5 @@ export default {
   generateSchemaFromFunction: generateSchemaFromFunctionSchema,
   generateSchemasForFiles: generateSchemasForFilesSchema,
   validateWithErrors: validateWithErrorsSchema,
-  generateTSFromZod: generateTSFromZodSchema
+  generateTSFromZod: generateTSFromZodSchema,
 };

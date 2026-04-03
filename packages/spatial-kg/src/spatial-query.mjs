@@ -26,9 +26,14 @@ class OctreeNode {
    * Check if point is in bounds
    */
   contains(point) {
-    return point.x >= this.bounds.min.x && point.x <= this.bounds.max.x &&
-           point.y >= this.bounds.min.y && point.y <= this.bounds.max.y &&
-           point.z >= this.bounds.min.z && point.z <= this.bounds.max.z;
+    return (
+      point.x >= this.bounds.min.x &&
+      point.x <= this.bounds.max.x &&
+      point.y >= this.bounds.min.y &&
+      point.y <= this.bounds.max.y &&
+      point.z >= this.bounds.min.z &&
+      point.z <= this.bounds.max.z
+    );
   }
 
   /**
@@ -65,15 +70,39 @@ class OctreeNode {
 
     this.children = [
       // Front quadrants
-      new OctreeNode({ min: { x: min.x, y: min.y, z: min.z }, max: { x: midX, y: midY, z: midZ } }, this.capacity),
-      new OctreeNode({ min: { x: midX, y: min.y, z: min.z }, max: { x: max.x, y: midY, z: midZ } }, this.capacity),
-      new OctreeNode({ min: { x: min.x, y: midY, z: min.z }, max: { x: midX, y: max.y, z: midZ } }, this.capacity),
-      new OctreeNode({ min: { x: midX, y: midY, z: min.z }, max: { x: max.x, y: max.y, z: midZ } }, this.capacity),
+      new OctreeNode(
+        { min: { x: min.x, y: min.y, z: min.z }, max: { x: midX, y: midY, z: midZ } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: midX, y: min.y, z: min.z }, max: { x: max.x, y: midY, z: midZ } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: min.x, y: midY, z: min.z }, max: { x: midX, y: max.y, z: midZ } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: midX, y: midY, z: min.z }, max: { x: max.x, y: max.y, z: midZ } },
+        this.capacity
+      ),
       // Back quadrants
-      new OctreeNode({ min: { x: min.x, y: min.y, z: midZ }, max: { x: midX, y: midY, z: max.z } }, this.capacity),
-      new OctreeNode({ min: { x: midX, y: min.y, z: midZ }, max: { x: max.x, y: midY, z: max.z } }, this.capacity),
-      new OctreeNode({ min: { x: min.x, y: midY, z: midZ }, max: { x: midX, y: max.y, z: max.z } }, this.capacity),
-      new OctreeNode({ min: { x: midX, y: midY, z: midZ }, max: { x: max.x, y: max.y, z: max.z } }, this.capacity),
+      new OctreeNode(
+        { min: { x: min.x, y: min.y, z: midZ }, max: { x: midX, y: midY, z: max.z } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: midX, y: min.y, z: midZ }, max: { x: max.x, y: midY, z: max.z } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: min.x, y: midY, z: midZ }, max: { x: midX, y: max.y, z: max.z } },
+        this.capacity
+      ),
+      new OctreeNode(
+        { min: { x: midX, y: midY, z: midZ }, max: { x: max.x, y: max.y, z: max.z } },
+        this.capacity
+      ),
     ];
 
     this.divided = true;
@@ -113,9 +142,14 @@ class OctreeNode {
    * @private
    */
   _intersects(bounds) {
-    return !(bounds.max.x < this.bounds.min.x || bounds.min.x > this.bounds.max.x ||
-             bounds.max.y < this.bounds.min.y || bounds.min.y > this.bounds.max.y ||
-             bounds.max.z < this.bounds.min.z || bounds.min.z > this.bounds.max.z);
+    return !(
+      bounds.max.x < this.bounds.min.x ||
+      bounds.min.x > this.bounds.max.x ||
+      bounds.max.y < this.bounds.min.y ||
+      bounds.min.y > this.bounds.max.y ||
+      bounds.max.z < this.bounds.min.z ||
+      bounds.min.z > this.bounds.max.z
+    );
   }
 
   /**
@@ -123,9 +157,14 @@ class OctreeNode {
    * @private
    */
   _pointInBounds(point, bounds) {
-    return point.x >= bounds.min.x && point.x <= bounds.max.x &&
-           point.y >= bounds.min.y && point.y <= bounds.max.y &&
-           point.z >= bounds.min.z && point.z <= bounds.max.z;
+    return (
+      point.x >= bounds.min.x &&
+      point.x <= bounds.max.x &&
+      point.y >= bounds.min.y &&
+      point.y <= bounds.max.y &&
+      point.z >= bounds.min.z &&
+      point.z <= bounds.max.z
+    );
   }
 }
 
@@ -153,8 +192,12 @@ export class SpatialQueryEngine {
     }
 
     // Calculate bounds
-    let minX = Infinity, minY = Infinity, minZ = Infinity;
-    let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+    let minX = Infinity,
+      minY = Infinity,
+      minZ = Infinity;
+    let maxX = -Infinity,
+      maxY = -Infinity,
+      maxZ = -Infinity;
 
     for (const node of this.nodes.values()) {
       minX = Math.min(minX, node.position.x);
@@ -188,7 +231,7 @@ export class SpatialQueryEngine {
    * @returns {Array<Object>} Nodes within radius
    */
   proximity(options) {
-    return tracer.startActiveSpan('spatial-query.proximity', (span) => {
+    return tracer.startActiveSpan('spatial-query.proximity', span => {
       try {
         const { origin, radius } = SpatialQueryOptionsSchema.parse({
           type: 'proximity',
@@ -214,7 +257,7 @@ export class SpatialQueryEngine {
         const candidates = this.octree.query(bounds);
 
         // Filter by actual distance
-        const results = candidates.filter((node) => {
+        const results = candidates.filter(node => {
           const dx = node.position.x - origin.x;
           const dy = node.position.y - origin.y;
           const dz = node.position.z - origin.z;
@@ -245,9 +288,13 @@ export class SpatialQueryEngine {
    * @returns {Array<Object>} Nodes intersecting ray
    */
   rayCast(options) {
-    return tracer.startActiveSpan('spatial-query.raycast', (span) => {
+    return tracer.startActiveSpan('spatial-query.raycast', span => {
       try {
-        const { origin, direction, radius = 1 } = SpatialQueryOptionsSchema.parse({
+        const {
+          origin,
+          direction,
+          radius = 1,
+        } = SpatialQueryOptionsSchema.parse({
           type: 'ray',
           ...options,
         });
@@ -263,9 +310,8 @@ export class SpatialQueryEngine {
           };
 
           // Project onto ray direction
-          const projection = toNode.x * direction.x +
-                           toNode.y * direction.y +
-                           toNode.z * direction.z;
+          const projection =
+            toNode.x * direction.x + toNode.y * direction.y + toNode.z * direction.z;
 
           if (projection < 0) continue; // Behind ray
 
@@ -310,7 +356,7 @@ export class SpatialQueryEngine {
    * @returns {Array<Object>} K nearest nodes
    */
   kNearestNeighbors(options) {
-    return tracer.startActiveSpan('spatial-query.knn', (span) => {
+    return tracer.startActiveSpan('spatial-query.knn', span => {
       try {
         const { origin, k } = SpatialQueryOptionsSchema.parse({
           type: 'knn',
@@ -350,7 +396,7 @@ export class SpatialQueryEngine {
    * @returns {Array<Object>} Nodes in box
    */
   box(options) {
-    return tracer.startActiveSpan('spatial-query.box', (span) => {
+    return tracer.startActiveSpan('spatial-query.box', span => {
       try {
         const { bounds } = SpatialQueryOptionsSchema.parse({
           type: 'box',

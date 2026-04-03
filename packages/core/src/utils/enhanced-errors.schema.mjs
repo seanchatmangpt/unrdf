@@ -11,7 +11,11 @@ import { z } from 'zod';
 /**
  * Schema for enhanceZodError
  */
-export const enhanceZodErrorParamsSchema = z.tuple([z.unknown(), z.unknown().optional(), z.unknown().optional()]);
+export const enhanceZodErrorParamsSchema = z.tuple([
+  z.unknown(),
+  z.unknown().optional(),
+  z.unknown().optional(),
+]);
 
 export const enhanceZodErrorReturnSchema = z.unknown();
 
@@ -112,5 +116,5 @@ export default {
   isDebugEnabled: isDebugEnabledSchema,
   createDebugger: createDebuggerSchema,
   traceWorkflowStep: traceWorkflowStepSchema,
-  getErrorRecoveryGuide: getErrorRecoveryGuideSchema
+  getErrorRecoveryGuide: getErrorRecoveryGuideSchema,
 };

@@ -44,7 +44,7 @@ export class SpatialKGEngine {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('engine.initialize', async (span) => {
+    return tracer.startActiveSpan('engine.initialize', async span => {
       try {
         await this.renderer.initialize();
 
@@ -77,7 +77,7 @@ export class SpatialKGEngine {
    * @returns {Promise<void>}
    */
   async loadGraph(data) {
-    return tracer.startActiveSpan('engine.load-graph', async (span) => {
+    return tracer.startActiveSpan('engine.load-graph', async span => {
       try {
         // Add nodes to layout
         for (const node of data.nodes) {
@@ -141,7 +141,7 @@ export class SpatialKGEngine {
   _renderLoop() {
     if (!this.running) return;
 
-    tracer.startActiveSpan('engine.render-loop', (span) => {
+    tracer.startActiveSpan('engine.render-loop', span => {
       try {
         // Update LOD based on camera
         const cameraPos = this.renderer.getCameraPosition();

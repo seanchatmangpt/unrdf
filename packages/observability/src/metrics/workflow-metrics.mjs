@@ -187,7 +187,10 @@ export class WorkflowMetrics {
   recordWorkflowComplete(workflowId, status, durationSeconds, pattern = 'unknown') {
     this.workflowActiveGauge.dec({ workflow_id: workflowId, pattern });
     this.workflowExecutionsTotal.inc({ workflow_id: workflowId, status, pattern });
-    this.workflowExecutionDuration.observe({ workflow_id: workflowId, status, pattern }, durationSeconds);
+    this.workflowExecutionDuration.observe(
+      { workflow_id: workflowId, status, pattern },
+      durationSeconds
+    );
   }
 
   /**
@@ -199,8 +202,16 @@ export class WorkflowMetrics {
    * @param {number} durationSeconds - Execution duration in seconds
    */
   recordTaskExecution(workflowId, taskId, taskType, status, durationSeconds) {
-    this.taskExecutionsTotal.inc({ workflow_id: workflowId, task_id: taskId, task_type: taskType, status });
-    this.taskExecutionDuration.observe({ workflow_id: workflowId, task_id: taskId, task_type: taskType }, durationSeconds);
+    this.taskExecutionsTotal.inc({
+      workflow_id: workflowId,
+      task_id: taskId,
+      task_type: taskType,
+      status,
+    });
+    this.taskExecutionDuration.observe(
+      { workflow_id: workflowId, task_id: taskId, task_type: taskType },
+      durationSeconds
+    );
   }
 
   /**
@@ -220,7 +231,10 @@ export class WorkflowMetrics {
    * @param {number} utilizationPercent - Utilization percentage (0-100)
    */
   recordResourceUtilization(resourceType, resourceId, utilizationPercent) {
-    this.resourceUtilization.set({ resource_type: resourceType, resource_id: resourceId }, utilizationPercent);
+    this.resourceUtilization.set(
+      { resource_type: resourceType, resource_id: resourceId },
+      utilizationPercent
+    );
   }
 
   /**

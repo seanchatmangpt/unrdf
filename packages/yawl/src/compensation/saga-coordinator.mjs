@@ -32,7 +32,9 @@ export const SagaTaskSchema = z.object({
   /** Task output (populated after execution) */
   output: z.any().optional(),
   /** Execution status */
-  status: z.enum(['pending', 'executing', 'completed', 'failed', 'compensating', 'compensated']).default('pending'),
+  status: z
+    .enum(['pending', 'executing', 'completed', 'failed', 'compensating', 'compensated'])
+    .default('pending'),
   /** Started at timestamp */
   startedAt: z.coerce.date().optional(),
   /** Completed at timestamp */
@@ -136,7 +138,6 @@ export class SagaCoordinator {
       }
 
       return validated;
-
     } catch (error) {
       // Backward phase: compensate completed tasks
       validated.phase = 'backward';
@@ -174,7 +175,6 @@ export class SagaCoordinator {
         if (this.onTaskCompleted) {
           this.onTaskCompleted({ task, saga });
         }
-
       } catch (error) {
         task.status = 'failed';
         task.error = error;
@@ -190,9 +190,7 @@ export class SagaCoordinator {
    */
   async _executeBackwardPhase(saga) {
     // Get completed tasks in reverse order
-    const completedTasks = saga.tasks
-      .filter(t => t.status === 'completed')
-      .reverse();
+    const completedTasks = saga.tasks.filter(t => t.status === 'completed').reverse();
 
     for (const task of completedTasks) {
       await this._compensateTask(task, saga);
@@ -228,7 +226,6 @@ export class SagaCoordinator {
       }
 
       task.status = 'compensated';
-
     } catch (error) {
       // Compensation failed - log but continue compensating other tasks
       task.status = 'failed';

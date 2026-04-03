@@ -90,7 +90,7 @@ export function evaluateDownstream(workflow, completedTaskId, context = {}) {
       }
       // Use default flow if no match
       if (toEnable.length === 0) {
-        const defaultFlow = sortedFlows.find((f) => f.isDefault);
+        const defaultFlow = sortedFlows.find(f => f.isDefault);
         if (defaultFlow) {
           toEnable.push(defaultFlow.to);
         } else if (sortedFlows.length > 0) {
@@ -160,32 +160,32 @@ export function canEnable(workflow, taskId, completedTasks, activatedTasks = new
   if (inFlows.length === 0) return true; // Start task
 
   const joinType = taskDef.joinType ?? JOIN_TYPE.SEQUENCE;
-  const incomingTaskIds = inFlows.map((f) => f.from);
+  const incomingTaskIds = inFlows.map(f => f.from);
 
   switch (joinType) {
     case JOIN_TYPE.SEQUENCE:
       // Single incoming must be complete
-      return incomingTaskIds.some((id) => completedTasks.has(id));
+      return incomingTaskIds.some(id => completedTasks.has(id));
 
     case JOIN_TYPE.AND:
       // All incoming must be complete (synchronization)
-      return incomingTaskIds.every((id) => completedTasks.has(id));
+      return incomingTaskIds.every(id => completedTasks.has(id));
 
     case JOIN_TYPE.XOR:
       // Any one incoming complete (simple merge)
-      return incomingTaskIds.some((id) => completedTasks.has(id));
+      return incomingTaskIds.some(id => completedTasks.has(id));
 
     case JOIN_TYPE.OR:
       // All ACTIVATED incoming must be complete (structured sync merge)
-      const activated = incomingTaskIds.filter((id) => activatedTasks.has(id));
+      const activated = incomingTaskIds.filter(id => activatedTasks.has(id));
       if (activated.length === 0) {
         // If none activated, any one complete suffices
-        return incomingTaskIds.some((id) => completedTasks.has(id));
+        return incomingTaskIds.some(id => completedTasks.has(id));
       }
-      return activated.every((id) => completedTasks.has(id));
+      return activated.every(id => completedTasks.has(id));
 
     default:
-      return incomingTaskIds.some((id) => completedTasks.has(id));
+      return incomingTaskIds.some(id => completedTasks.has(id));
   }
 }
 

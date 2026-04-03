@@ -38,9 +38,7 @@ export const listCommand = defineCommand({
         console.log('─'.repeat(70));
 
         operations.forEach(op => {
-          console.log(
-            `${op.id.padEnd(25)} ${(op.name || '-').padEnd(30)} ${op.status.padEnd(15)}`
-          );
+          console.log(`${op.id.padEnd(25)} ${(op.name || '-').padEnd(30)} ${op.status.padEnd(15)}`);
         });
 
         console.log('─'.repeat(70));

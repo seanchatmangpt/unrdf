@@ -25,7 +25,7 @@ const ObservationSchema = z.object({
   hash: z.string().describe('SHA256 hash of observation'),
   guardDecision: z.enum(['allowed', 'denied']).describe('Guard evaluation result'),
   guardReason: z.string().optional().describe('Reason for denial'),
-  error: z.string().optional().describe('Error message if operation failed')
+  error: z.string().optional().describe('Error message if operation failed'),
 });
 
 /**
@@ -34,7 +34,7 @@ const ObservationSchema = z.object({
 const ConfigSchema = z.object({
   roots: z.array(z.string()).min(1).describe('Allowed root paths'),
   out: z.string().describe('Output directory for temp files'),
-  budgetMs: z.number().optional().default(5000).describe('Timeout budget in milliseconds')
+  budgetMs: z.number().optional().default(5000).describe('Timeout budget in milliseconds'),
 });
 
 /**
@@ -57,7 +57,7 @@ const FORBIDDEN_PATTERNS = [
   /\.pem$/,
   /\.key$/,
   /id_rsa/,
-  /id_ed25519/
+  /id_ed25519/,
 ];
 
 /**
@@ -75,7 +75,7 @@ function guardPath(targetPath, allowedRoots) {
     if (pattern.test(normalizedPath)) {
       return {
         allowed: false,
-        reason: `Path matches forbidden pattern: ${pattern}`
+        reason: `Path matches forbidden pattern: ${pattern}`,
       };
     }
   }
@@ -89,7 +89,7 @@ function guardPath(targetPath, allowedRoots) {
   if (!withinRoot) {
     return {
       allowed: false,
-      reason: `Path outside allowed roots: ${allowedRoots.join(', ')}`
+      reason: `Path outside allowed roots: ${allowedRoots.join(', ')}`,
     };
   }
 
@@ -126,7 +126,7 @@ function createObservation(method, inputs, outputs, guardDecision, guardReason, 
     timestamp: new Date().toISOString(),
     guardDecision,
     guardReason,
-    error
+    error,
   };
 
   // Compute hash
@@ -134,7 +134,7 @@ function createObservation(method, inputs, outputs, guardDecision, guardReason, 
     method: obs.method,
     inputs: obs.inputs,
     outputs: obs.outputs,
-    guardDecision: obs.guardDecision
+    guardDecision: obs.guardDecision,
   });
 
   return ObservationSchema.parse(obs);
@@ -151,13 +151,7 @@ async function probeReadCapability(targetPath, allowedRoots) {
   const guard = guardPath(targetPath, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'fs.access(R_OK)',
-      { path: targetPath },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('fs.access(R_OK)', { path: targetPath }, {}, 'denied', guard.reason);
   }
 
   try {
@@ -191,13 +185,7 @@ async function probeWriteCapability(targetPath, allowedRoots) {
   const guard = guardPath(targetPath, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'fs.access(W_OK)',
-      { path: targetPath },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('fs.access(W_OK)', { path: targetPath }, {}, 'denied', guard.reason);
   }
 
   try {
@@ -231,13 +219,7 @@ async function probeSymlinkBehavior(outDir, allowedRoots) {
   const guard = guardPath(outDir, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'fs.symlink',
-      { outDir },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('fs.symlink', { outDir }, {}, 'denied', guard.reason);
   }
 
   const target = path.join(outDir, 'probe-symlink-target.txt');
@@ -257,19 +239,14 @@ async function probeSymlinkBehavior(outDir, allowedRoots) {
     const outputs = {
       canCreateSymlink: true,
       canFollowSymlink: stats.isFile(),
-      isSymbolicLink: linkStats.isSymbolicLink()
+      isSymbolicLink: linkStats.isSymbolicLink(),
     };
 
     // Cleanup
     await fs.unlink(link);
     await fs.unlink(target);
 
-    return createObservation(
-      'fs.symlink',
-      { target, link },
-      outputs,
-      'allowed'
-    );
+    return createObservation('fs.symlink', { target, link }, outputs, 'allowed');
   } catch (err) {
     // Cleanup on error
     try {
@@ -367,13 +344,7 @@ async function probeQuotaConstraints(outDir, allowedRoots) {
   const guard = guardPath(outDir, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'quota.detect',
-      { outDir },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('quota.detect', { outDir }, {}, 'denied', guard.reason);
   }
 
   const sizes = [1024, 10240, 102400]; // 1KB, 10KB, 100KB
@@ -392,24 +363,19 @@ async function probeQuotaConstraints(outDir, allowedRoots) {
       results[`${size}B`] = {
         success: true,
         writeTimeMs: writeTime,
-        actualSize: stats.size
+        actualSize: stats.size,
       };
 
       await fs.unlink(testFile);
     } catch (err) {
       results[`${size}B`] = {
         success: false,
-        error: err.message
+        error: err.message,
       };
     }
   }
 
-  return createObservation(
-    'quota.detect',
-    { outDir, testSizes: sizes },
-    results,
-    'allowed'
-  );
+  return createObservation('quota.detect', { outDir, testSizes: sizes }, results, 'allowed');
 }
 
 /**
@@ -423,13 +389,7 @@ async function probeAtomicOperations(outDir, allowedRoots) {
   const guard = guardPath(outDir, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'atomic.operations',
-      { outDir },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('atomic.operations', { outDir }, {}, 'denied', guard.reason);
   }
 
   const source = path.join(outDir, 'probe-atomic-source.txt');
@@ -445,15 +405,24 @@ async function probeAtomicOperations(outDir, allowedRoots) {
     const renameTime = Date.now() - renameStart;
 
     // Verify source gone, dest exists
-    const sourceExists = await fs.access(source).then(() => true).catch(() => false);
-    const destExists = await fs.access(dest).then(() => true).catch(() => false);
+    const sourceExists = await fs
+      .access(source)
+      .then(() => true)
+      .catch(() => false);
+    const destExists = await fs
+      .access(dest)
+      .then(() => true)
+      .catch(() => false);
 
     // Test atomic unlink
     const unlinkStart = Date.now();
     await fs.unlink(dest);
     const unlinkTime = Date.now() - unlinkStart;
 
-    const destExistsAfter = await fs.access(dest).then(() => true).catch(() => false);
+    const destExistsAfter = await fs
+      .access(dest)
+      .then(() => true)
+      .catch(() => false);
 
     return createObservation(
       'atomic.operations',
@@ -462,7 +431,7 @@ async function probeAtomicOperations(outDir, allowedRoots) {
         renameAtomic: !sourceExists && destExists,
         renameTimeMs: renameTime,
         unlinkAtomic: !destExistsAfter,
-        unlinkTimeMs: unlinkTime
+        unlinkTimeMs: unlinkTime,
       },
       'allowed'
     );
@@ -495,13 +464,7 @@ async function probePathNormalization(rootPath, allowedRoots) {
   const guard = guardPath(rootPath, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'path.normalization',
-      { rootPath },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('path.normalization', { rootPath }, {}, 'denied', guard.reason);
   }
 
   const testCases = {
@@ -509,7 +472,7 @@ async function probePathNormalization(rootPath, allowedRoots) {
     relative: path.relative(process.cwd(), rootPath),
     normalized: path.normalize(rootPath),
     withDots: path.normalize(path.join(rootPath, '..', path.basename(rootPath))),
-    withDoubleSlash: rootPath.replace(/\//, '//')
+    withDoubleSlash: rootPath.replace(/\//, '//'),
   };
 
   const results = {};
@@ -517,18 +480,21 @@ async function probePathNormalization(rootPath, allowedRoots) {
   for (const [name, testPath] of Object.entries(testCases)) {
     try {
       const resolved = path.resolve(testPath);
-      const exists = await fs.access(resolved).then(() => true).catch(() => false);
+      const exists = await fs
+        .access(resolved)
+        .then(() => true)
+        .catch(() => false);
 
       results[name] = {
         input: testPath,
         resolved,
         exists,
-        sameAsRoot: resolved === path.resolve(rootPath)
+        sameAsRoot: resolved === path.resolve(rootPath),
       };
     } catch (err) {
       results[name] = {
         input: testPath,
-        error: err.message
+        error: err.message,
       };
     }
   }
@@ -553,18 +519,10 @@ async function probeTempDirectory(allowedRoots) {
 
   // Special case: temp directory is usually allowed
   // But we still check if it's in roots or add special permission
-  const effectiveGuard = guard.allowed || allowedRoots.length === 0
-    ? { allowed: true }
-    : guard;
+  const effectiveGuard = guard.allowed || allowedRoots.length === 0 ? { allowed: true } : guard;
 
   if (!effectiveGuard.allowed) {
-    return createObservation(
-      'tmpdir.access',
-      { tmpdir },
-      {},
-      'denied',
-      effectiveGuard.reason
-    );
+    return createObservation('tmpdir.access', { tmpdir }, {}, 'denied', effectiveGuard.reason);
   }
 
   const testFile = path.join(tmpdir, `kgc-probe-${Date.now()}.txt`);
@@ -580,7 +538,7 @@ async function probeTempDirectory(allowedRoots) {
       {
         tmpdir,
         writable: true,
-        testFileSize: stats.size
+        testFileSize: stats.size,
       },
       'allowed'
     );
@@ -607,13 +565,7 @@ async function probeFileLocking(outDir, allowedRoots) {
   const guard = guardPath(outDir, allowedRoots);
 
   if (!guard.allowed) {
-    return createObservation(
-      'file.locking',
-      { outDir },
-      {},
-      'denied',
-      guard.reason
-    );
+    return createObservation('file.locking', { outDir }, {}, 'denied', guard.reason);
   }
 
   const testFile = path.join(outDir, 'probe-lock-test.txt');
@@ -638,7 +590,7 @@ async function probeFileLocking(outDir, allowedRoots) {
       { testFile },
       {
         exclusiveLocking: false,
-        concurrentAccess: true
+        concurrentAccess: true,
       },
       'allowed'
     );
@@ -689,7 +641,7 @@ export async function probeFilesystem(config) {
           {},
           'denied',
           `Output directory not in allowed roots: ${outGuard.reason}`
-        )
+        ),
       ];
     }
 
@@ -705,7 +657,7 @@ export async function probeFilesystem(config) {
       probeAtomicOperations(out, roots),
       probePathNormalization(roots[0], roots),
       probeTempDirectory(roots),
-      probeFileLocking(out, roots)
+      probeFileLocking(out, roots),
     ]);
 
     const observations = await Promise.race([probes, timeout]);
@@ -720,7 +672,7 @@ export async function probeFilesystem(config) {
         'allowed',
         undefined,
         err.message
-      )
+      ),
     ];
   }
 }

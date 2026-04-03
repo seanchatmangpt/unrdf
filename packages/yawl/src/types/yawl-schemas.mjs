@@ -35,9 +35,7 @@ import {
  *
  * Valid values: inactive, active, completed, suspended, cancelled, failed
  */
-export const CaseStatusSchema = z.enum(
-  /** @type {[string, ...string[]]} */ (CASE_STATUSES)
-);
+export const CaseStatusSchema = z.enum(/** @type {[string, ...string[]]} */ (CASE_STATUSES));
 
 /**
  * Work item status enumeration schema
@@ -53,36 +51,28 @@ export const WorkItemStatusSchema = z.enum(
  *
  * Valid values: atomic, composite, multiple, cancellation
  */
-export const TaskKindSchema = z.enum(
-  /** @type {[string, ...string[]]} */ (TASK_KINDS)
-);
+export const TaskKindSchema = z.enum(/** @type {[string, ...string[]]} */ (TASK_KINDS));
 
 /**
  * Split type enumeration schema
  *
  * Valid values: AND, XOR, OR, none
  */
-export const SplitTypeSchema = z.enum(
-  /** @type {[string, ...string[]]} */ (SPLIT_TYPES)
-);
+export const SplitTypeSchema = z.enum(/** @type {[string, ...string[]]} */ (SPLIT_TYPES));
 
 /**
  * Join type enumeration schema
  *
  * Valid values: AND, XOR, OR, none
  */
-export const JoinTypeSchema = z.enum(
-  /** @type {[string, ...string[]]} */ (JOIN_TYPES)
-);
+export const JoinTypeSchema = z.enum(/** @type {[string, ...string[]]} */ (JOIN_TYPES));
 
 /**
  * Resource type enumeration schema
  *
  * Valid values: human, automated, role, position, capability
  */
-export const ResourceTypeSchema = z.enum(
-  /** @type {[string, ...string[]]} */ (RESOURCE_TYPES)
-);
+export const ResourceTypeSchema = z.enum(/** @type {[string, ...string[]]} */ (RESOURCE_TYPES));
 
 /**
  * Receipt decision enumeration schema
@@ -109,22 +99,24 @@ export const TaskTimerSchema = z.object({
 /**
  * Multiple instance configuration schema
  */
-export const MultipleInstanceConfigSchema = z.object({
-  minimum: z.number().int().nonnegative().optional(),
-  maximum: z.number().int().positive().optional(),
-  threshold: z.number().int().positive().optional(),
-  creationType: z.enum(['static', 'dynamic']).optional(),
-  splitQuery: z.string().min(1).optional(),
-  instanceSync: z.enum(['AND', 'XOR', 'OR']).optional(),
-}).refine(
-  data => {
-    if (data.minimum !== undefined && data.maximum !== undefined) {
-      return data.minimum <= data.maximum;
-    }
-    return true;
-  },
-  { message: 'minimum must be less than or equal to maximum' }
-);
+export const MultipleInstanceConfigSchema = z
+  .object({
+    minimum: z.number().int().nonnegative().optional(),
+    maximum: z.number().int().positive().optional(),
+    threshold: z.number().int().positive().optional(),
+    creationType: z.enum(['static', 'dynamic']).optional(),
+    splitQuery: z.string().min(1).optional(),
+    instanceSync: z.enum(['AND', 'XOR', 'OR']).optional(),
+  })
+  .refine(
+    data => {
+      if (data.minimum !== undefined && data.maximum !== undefined) {
+        return data.minimum <= data.maximum;
+      }
+      return true;
+    },
+    { message: 'minimum must be less than or equal to maximum' }
+  );
 
 /**
  * Work item timer schema
@@ -153,10 +145,11 @@ export const ReceiptStateSchema = z.object({
  * Data variable definition schema
  */
 export const DataVariableSchema = z.object({
-  name: z.string().min(1).max(100).regex(
-    /^[a-zA-Z_][a-zA-Z0-9_]*$/,
-    'Variable name must be a valid identifier'
-  ),
+  name: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, 'Variable name must be a valid identifier'),
   type: z.enum(['string', 'number', 'boolean', 'object', 'array']),
   defaultValue: z.unknown().optional(),
   isInput: z.boolean().optional(),
@@ -224,73 +217,76 @@ export const CaseSchema = z.object({
  * A Task is a building block of YAWL nets. It represents a piece of work
  * with configurable split/join patterns and resource allocation.
  */
-export const TaskSchema = z.object({
-  /** Unique task identifier */
-  id: z.string().min(1).max(100),
+export const TaskSchema = z
+  .object({
+    /** Unique task identifier */
+    id: z.string().min(1).max(100),
 
-  /** Human-readable task name */
-  name: z.string().min(1).max(200),
+    /** Human-readable task name */
+    name: z.string().min(1).max(200),
 
-  /** Task type */
-  kind: TaskKindSchema,
+    /** Task type */
+    kind: TaskKindSchema,
 
-  /** Outgoing flow semantics */
-  split: SplitTypeSchema.default('none'),
+    /** Outgoing flow semantics */
+    split: SplitTypeSchema.default('none'),
 
-  /** Incoming flow semantics */
-  join: JoinTypeSchema.default('none'),
+    /** Incoming flow semantics */
+    join: JoinTypeSchema.default('none'),
 
-  /** Condition IDs that feed into this task */
-  inputConditions: z.array(z.string().min(1)).optional(),
+    /** Condition IDs that feed into this task */
+    inputConditions: z.array(z.string().min(1)).optional(),
 
-  /** Condition IDs produced by this task */
-  outputConditions: z.array(z.string().min(1)).optional(),
+    /** Condition IDs produced by this task */
+    outputConditions: z.array(z.string().min(1)).optional(),
 
-  /** Resource IDs eligible to execute this task */
-  resources: z.array(z.string().min(1)).default([]),
+    /** Resource IDs eligible to execute this task */
+    resources: z.array(z.string().min(1)).default([]),
 
-  /** Sub-net specification ID (for composite tasks) */
-  subNetId: z.string().min(1).max(100).optional(),
+    /** Sub-net specification ID (for composite tasks) */
+    subNetId: z.string().min(1).max(100).optional(),
 
-  /** Timer configuration for auto-enablement */
-  timer: TaskTimerSchema.optional(),
+    /** Timer configuration for auto-enablement */
+    timer: TaskTimerSchema.optional(),
 
-  /** Multiple instance configuration */
-  multipleInstance: MultipleInstanceConfigSchema.optional(),
+    /** Multiple instance configuration */
+    multipleInstance: MultipleInstanceConfigSchema.optional(),
 
-  /** Task IDs cancelled when this completes */
-  cancellationSet: z.array(z.string().min(1)).optional(),
+    /** Task IDs cancelled when this completes */
+    cancellationSet: z.array(z.string().min(1)).optional(),
 
-  /** Data mappings from case to task */
-  inputMappings: z.record(z.string(), z.unknown()).optional(),
+    /** Data mappings from case to task */
+    inputMappings: z.record(z.string(), z.unknown()).optional(),
 
-  /** Data mappings from task to case */
-  outputMappings: z.record(z.string(), z.unknown()).optional(),
+    /** Data mappings from task to case */
+    outputMappings: z.record(z.string(), z.unknown()).optional(),
 
-  /** Task documentation */
-  documentation: z.string().max(2000).optional(),
+    /** Task documentation */
+    documentation: z.string().max(2000).optional(),
 
-  /** Task priority (0-100) */
-  priority: z.number().int().min(0).max(100).optional(),
-}).refine(
-  data => {
-    // Composite tasks must have subNetId
-    if (data.kind === 'composite' && !data.subNetId) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Composite tasks must specify a subNetId' }
-).refine(
-  data => {
-    // Multiple instance tasks must have multipleInstance config
-    if (data.kind === 'multiple' && !data.multipleInstance) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Multiple instance tasks must have multipleInstance configuration' }
-);
+    /** Task priority (0-100) */
+    priority: z.number().int().min(0).max(100).optional(),
+  })
+  .refine(
+    data => {
+      // Composite tasks must have subNetId
+      if (data.kind === 'composite' && !data.subNetId) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Composite tasks must specify a subNetId' }
+  )
+  .refine(
+    data => {
+      // Multiple instance tasks must have multipleInstance config
+      if (data.kind === 'multiple' && !data.multipleInstance) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Multiple instance tasks must have multipleInstance configuration' }
+  );
 
 /**
  * WorkItem schema - Task execution instance
@@ -298,79 +294,83 @@ export const TaskSchema = z.object({
  * A WorkItem is created when a task becomes enabled. It tracks the
  * lifecycle of a specific task execution assigned to a resource.
  */
-export const WorkItemSchema = z.object({
-  /** Unique work item identifier */
-  id: z.string().uuid({ message: 'WorkItem ID must be a valid UUID' }),
+export const WorkItemSchema = z
+  .object({
+    /** Unique work item identifier */
+    id: z.string().uuid({ message: 'WorkItem ID must be a valid UUID' }),
 
-  /** Reference to the task specification */
-  taskId: z.string().min(1).max(100),
+    /** Reference to the task specification */
+    taskId: z.string().min(1).max(100),
 
-  /** Reference to the containing case */
-  caseId: z.string().uuid({ message: 'Case ID must be a valid UUID' }),
+    /** Reference to the containing case */
+    caseId: z.string().uuid({ message: 'Case ID must be a valid UUID' }),
 
-  /** Current work item status */
-  status: WorkItemStatusSchema,
+    /** Current work item status */
+    status: WorkItemStatusSchema,
 
-  /** Resource ID currently responsible */
-  owner: z.string().min(1).max(100).optional(),
+    /** Resource ID currently responsible */
+    owner: z.string().min(1).max(100).optional(),
 
-  /** Resource ID(s) work was offered to */
-  offeredTo: z.string().min(1).max(100).optional(),
+    /** Resource ID(s) work was offered to */
+    offeredTo: z.string().min(1).max(100).optional(),
 
-  /** Work item data payload */
-  data: z.record(z.string(), z.unknown()).optional(),
+    /** Work item data payload */
+    data: z.record(z.string(), z.unknown()).optional(),
 
-  /** Work item creation timestamp */
-  createdAt: z.coerce.date(),
+    /** Work item creation timestamp */
+    createdAt: z.coerce.date(),
 
-  /** When execution started */
-  startedAt: z.coerce.date().optional(),
+    /** When execution started */
+    startedAt: z.coerce.date().optional(),
 
-  /** When execution completed */
-  completedAt: z.coerce.date().optional(),
+    /** When execution completed */
+    completedAt: z.coerce.date().optional(),
 
-  /** Completion result for split routing */
-  result: z.string().min(1).max(100).optional(),
+    /** Completion result for split routing */
+    result: z.string().min(1).max(100).optional(),
 
-  /** Reason for failure */
-  failureReason: z.string().max(1000).optional(),
+    /** Reason for failure */
+    failureReason: z.string().max(1000).optional(),
 
-  /** Instance index for MI tasks */
-  instanceNumber: z.number().int().nonnegative().optional(),
+    /** Instance index for MI tasks */
+    instanceNumber: z.number().int().nonnegative().optional(),
 
-  /** Parent work item for MI tasks */
-  parentWorkItemId: z.string().uuid().optional(),
+    /** Parent work item for MI tasks */
+    parentWorkItemId: z.string().uuid().optional(),
 
-  /** Active timers for this work item */
-  timers: z.array(WorkItemTimerSchema).optional(),
-}).refine(
-  data => {
-    // Started items must have startedAt
-    if (data.status === 'started' && !data.startedAt) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Started work items must have startedAt timestamp' }
-).refine(
-  data => {
-    // Completed items must have completedAt
-    if (data.status === 'completed' && !data.completedAt) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Completed work items must have completedAt timestamp' }
-).refine(
-  data => {
-    // Failed items should have failureReason
-    if (data.status === 'failed' && !data.failureReason) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Failed work items must have failureReason' }
-);
+    /** Active timers for this work item */
+    timers: z.array(WorkItemTimerSchema).optional(),
+  })
+  .refine(
+    data => {
+      // Started items must have startedAt
+      if (data.status === 'started' && !data.startedAt) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Started work items must have startedAt timestamp' }
+  )
+  .refine(
+    data => {
+      // Completed items must have completedAt
+      if (data.status === 'completed' && !data.completedAt) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Completed work items must have completedAt timestamp' }
+  )
+  .refine(
+    data => {
+      // Failed items should have failureReason
+      if (data.status === 'failed' && !data.failureReason) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Failed work items must have failureReason' }
+  );
 
 /**
  * ControlFlow schema - Routing between tasks
@@ -378,38 +378,40 @@ export const WorkItemSchema = z.object({
  * Control flows connect tasks to conditions and conditions to tasks,
  * defining the execution order and routing logic.
  */
-export const ControlFlowSchema = z.object({
-  /** Unique control flow identifier */
-  id: z.string().min(1).max(100),
+export const ControlFlowSchema = z
+  .object({
+    /** Unique control flow identifier */
+    id: z.string().min(1).max(100),
 
-  /** Source task or condition ID */
-  source: z.string().min(1).max(100),
+    /** Source task or condition ID */
+    source: z.string().min(1).max(100),
 
-  /** Target task or condition ID */
-  target: z.string().min(1).max(100),
+    /** Target task or condition ID */
+    target: z.string().min(1).max(100),
 
-  /** Flow direction type */
-  flowType: z.enum(['task-to-condition', 'condition-to-task']).optional(),
+    /** Flow direction type */
+    flowType: z.enum(['task-to-condition', 'condition-to-task']).optional(),
 
-  /** Boolean expression for conditional flows */
-  predicate: z.string().max(1000).optional(),
+    /** Boolean expression for conditional flows */
+    predicate: z.string().max(1000).optional(),
 
-  /** Evaluation order for XOR splits */
-  order: z.number().int().nonnegative().optional(),
+    /** Evaluation order for XOR splits */
+    order: z.number().int().nonnegative().optional(),
 
-  /** True if this is the default flow */
-  isDefault: z.boolean().optional(),
+    /** True if this is the default flow */
+    isDefault: z.boolean().optional(),
 
-  /** Flow documentation */
-  documentation: z.string().max(1000).optional(),
-}).refine(
-  data => {
-    // Source and target must be different (no direct self-loops)
-    // Note: Self-loops in YAWL go through conditions
-    return data.source !== data.target;
-  },
-  { message: 'Control flow source and target must be different' }
-);
+    /** Flow documentation */
+    documentation: z.string().max(1000).optional(),
+  })
+  .refine(
+    data => {
+      // Source and target must be different (no direct self-loops)
+      // Note: Self-loops in YAWL go through conditions
+      return data.source !== data.target;
+    },
+    { message: 'Control flow source and target must be different' }
+  );
 
 /**
  * Resource schema - Participant/tool allocation
@@ -417,52 +419,54 @@ export const ControlFlowSchema = z.object({
  * Resources represent human participants, automated services, or
  * abstract roles that can execute work items.
  */
-export const ResourceSchema = z.object({
-  /** Unique resource identifier */
-  id: z.string().min(1).max(100),
+export const ResourceSchema = z
+  .object({
+    /** Unique resource identifier */
+    id: z.string().min(1).max(100),
 
-  /** Human-readable resource name */
-  name: z.string().min(1).max(200),
+    /** Human-readable resource name */
+    name: z.string().min(1).max(200),
 
-  /** Resource classification */
-  type: ResourceTypeSchema,
+    /** Resource classification */
+    type: ResourceTypeSchema,
 
-  /** Maximum concurrent work items */
-  capacity: z.number().int().positive().default(1),
+    /** Maximum concurrent work items */
+    capacity: z.number().int().positive().default(1),
 
-  /** Current assigned work items */
-  currentLoad: z.number().int().nonnegative().default(0),
+    /** Current assigned work items */
+    currentLoad: z.number().int().nonnegative().default(0),
 
-  /** Whether resource is available */
-  isAvailable: z.boolean().default(true),
+    /** Whether resource is available */
+    isAvailable: z.boolean().default(true),
 
-  /** Roles this resource can fill */
-  roles: z.array(z.string().min(1).max(100)).optional(),
+    /** Roles this resource can fill */
+    roles: z.array(z.string().min(1).max(100)).optional(),
 
-  /** Skills/capabilities */
-  capabilities: z.array(z.string().min(1).max(100)).optional(),
+    /** Skills/capabilities */
+    capabilities: z.array(z.string().min(1).max(100)).optional(),
 
-  /** Supervisor resource ID */
-  supervisor: z.string().min(1).max(100).optional(),
+    /** Supervisor resource ID */
+    supervisor: z.string().min(1).max(100).optional(),
 
-  /** Organizational position */
-  position: z.string().min(1).max(100).optional(),
+    /** Organizational position */
+    position: z.string().min(1).max(100).optional(),
 
-  /** Additional attributes */
-  attributes: z.record(z.string(), z.unknown()).optional(),
+    /** Additional attributes */
+    attributes: z.record(z.string(), z.unknown()).optional(),
 
-  /** Last activity timestamp */
-  lastActive: z.coerce.date().optional(),
+    /** Last activity timestamp */
+    lastActive: z.coerce.date().optional(),
 
-  /** Contact email */
-  email: z.string().email().optional(),
-}).refine(
-  data => {
-    // Current load cannot exceed capacity
-    return data.currentLoad <= data.capacity;
-  },
-  { message: 'Resource currentLoad cannot exceed capacity' }
-);
+    /** Contact email */
+    email: z.string().email().optional(),
+  })
+  .refine(
+    data => {
+      // Current load cannot exceed capacity
+      return data.currentLoad <= data.capacity;
+    },
+    { message: 'Resource currentLoad cannot exceed capacity' }
+  );
 
 /**
  * Receipt schema - Cryptographic proof of decision
@@ -490,10 +494,10 @@ export const ReceiptSchema = z.object({
   timestamp: z.coerce.date(),
 
   /** SHA-256 hash of receipt contents */
-  hash: z.string().length(64).regex(
-    /^[a-f0-9]+$/,
-    'Hash must be a valid SHA-256 hex string'
-  ),
+  hash: z
+    .string()
+    .length(64)
+    .regex(/^[a-f0-9]+$/, 'Hash must be a valid SHA-256 hex string'),
 
   /** Resource ID that made the decision */
   actor: z.string().min(1).max(100).optional(),
@@ -525,7 +529,10 @@ export const YawlNetSpecSchema = z.object({
   name: z.string().min(1).max(200),
 
   /** Semantic version string */
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .optional(),
 
   /** Specification description */
   description: z.string().max(2000).optional(),
@@ -571,34 +578,38 @@ export const YawlNetSpecSchema = z.object({
 /**
  * Schema for validating case status transitions
  */
-export const CaseTransitionSchema = z.object({
-  from: CaseStatusSchema,
-  to: CaseStatusSchema,
-}).refine(
-  data => {
-    const allowed = CASE_STATUS_TRANSITIONS[data.from];
-    return allowed && allowed.includes(data.to);
-  },
-  data => ({
-    message: `Invalid case transition: ${data.from} -> ${data.to}. Allowed: ${CASE_STATUS_TRANSITIONS[data.from]?.join(', ') || 'none'}`,
+export const CaseTransitionSchema = z
+  .object({
+    from: CaseStatusSchema,
+    to: CaseStatusSchema,
   })
-);
+  .refine(
+    data => {
+      const allowed = CASE_STATUS_TRANSITIONS[data.from];
+      return allowed && allowed.includes(data.to);
+    },
+    data => ({
+      message: `Invalid case transition: ${data.from} -> ${data.to}. Allowed: ${CASE_STATUS_TRANSITIONS[data.from]?.join(', ') || 'none'}`,
+    })
+  );
 
 /**
  * Schema for validating work item status transitions
  */
-export const WorkItemTransitionSchema = z.object({
-  from: WorkItemStatusSchema,
-  to: WorkItemStatusSchema,
-}).refine(
-  data => {
-    const allowed = WORK_ITEM_STATUS_TRANSITIONS[data.from];
-    return allowed && allowed.includes(data.to);
-  },
-  data => ({
-    message: `Invalid work item transition: ${data.from} -> ${data.to}. Allowed: ${WORK_ITEM_STATUS_TRANSITIONS[data.from]?.join(', ') || 'none'}`,
+export const WorkItemTransitionSchema = z
+  .object({
+    from: WorkItemStatusSchema,
+    to: WorkItemStatusSchema,
   })
-);
+  .refine(
+    data => {
+      const allowed = WORK_ITEM_STATUS_TRANSITIONS[data.from];
+      return allowed && allowed.includes(data.to);
+    },
+    data => ({
+      message: `Invalid work item transition: ${data.from} -> ${data.to}. Allowed: ${WORK_ITEM_STATUS_TRANSITIONS[data.from]?.join(', ') || 'none'}`,
+    })
+  );
 
 // ============================================================================
 // Resource Eligibility Validation
@@ -607,37 +618,41 @@ export const WorkItemTransitionSchema = z.object({
 /**
  * Schema for validating resource eligibility for a task
  */
-export const ResourceEligibilitySchema = z.object({
-  resource: ResourceSchema,
-  task: TaskSchema,
-}).refine(
-  data => {
-    // Resource must be available
-    if (!data.resource.isAvailable) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Resource is not available' }
-).refine(
-  data => {
-    // Resource must have capacity
-    if (data.resource.currentLoad >= data.resource.capacity) {
-      return false;
-    }
-    return true;
-  },
-  { message: 'Resource has no remaining capacity' }
-).refine(
-  data => {
-    // If task specifies resources, check membership
-    if (data.task.resources.length > 0) {
-      return data.task.resources.includes(data.resource.id);
-    }
-    return true;
-  },
-  { message: 'Resource is not in the task\'s authorized resource list' }
-);
+export const ResourceEligibilitySchema = z
+  .object({
+    resource: ResourceSchema,
+    task: TaskSchema,
+  })
+  .refine(
+    data => {
+      // Resource must be available
+      if (!data.resource.isAvailable) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Resource is not available' }
+  )
+  .refine(
+    data => {
+      // Resource must have capacity
+      if (data.resource.currentLoad >= data.resource.capacity) {
+        return false;
+      }
+      return true;
+    },
+    { message: 'Resource has no remaining capacity' }
+  )
+  .refine(
+    data => {
+      // If task specifies resources, check membership
+      if (data.task.resources.length > 0) {
+        return data.task.resources.includes(data.resource.id);
+      }
+      return true;
+    },
+    { message: "Resource is not in the task's authorized resource list" }
+  );
 
 // ============================================================================
 // Control Flow Validation (Cycle Detection)
@@ -710,10 +725,9 @@ export function validateNoCycles(flows) {
 /**
  * Schema for validating a complete workflow net for cycles
  */
-export const NoCyclesSchema = z.array(ControlFlowSchema).refine(
-  flows => validateNoCycles(flows),
-  { message: 'Control flows contain an invalid cycle' }
-);
+export const NoCyclesSchema = z
+  .array(ControlFlowSchema)
+  .refine(flows => validateNoCycles(flows), { message: 'Control flows contain an invalid cycle' });
 
 // ============================================================================
 // Validation Functions
@@ -973,11 +987,13 @@ export function validateYawlNetSpec(data) {
       return {
         success: false,
         data: null,
-        errors: [{
-          path: 'controlFlows',
-          message: 'Control flows contain an invalid cycle',
-          code: 'custom',
-        }],
+        errors: [
+          {
+            path: 'controlFlows',
+            message: 'Control flows contain an invalid cycle',
+            code: 'custom',
+          },
+        ],
       };
     }
 
@@ -987,22 +1003,26 @@ export function validateYawlNetSpec(data) {
       return {
         success: false,
         data: null,
-        errors: [{
-          path: 'inputConditionId',
-          message: `Input condition '${validated.inputConditionId}' not found in conditions`,
-          code: 'custom',
-        }],
+        errors: [
+          {
+            path: 'inputConditionId',
+            message: `Input condition '${validated.inputConditionId}' not found in conditions`,
+            code: 'custom',
+          },
+        ],
       };
     }
     if (!conditionIds.has(validated.outputConditionId)) {
       return {
         success: false,
         data: null,
-        errors: [{
-          path: 'outputConditionId',
-          message: `Output condition '${validated.outputConditionId}' not found in conditions`,
-          code: 'custom',
-        }],
+        errors: [
+          {
+            path: 'outputConditionId',
+            message: `Output condition '${validated.outputConditionId}' not found in conditions`,
+            code: 'custom',
+          },
+        ],
       };
     }
 

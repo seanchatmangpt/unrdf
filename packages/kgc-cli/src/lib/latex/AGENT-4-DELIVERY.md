@@ -46,6 +46,7 @@
 **Framework**: Vitest
 
 **Test Coverage**:
+
 - ✅ VFS path building
 - ✅ Cache management (stats, clear)
 - ✅ Input validation (Zod schemas)
@@ -58,6 +59,7 @@
 **LOC**: 240 lines
 
 **Demonstrates**:
+
 - Agent 10 (synthesis editor) initiates compilation
 - Agent 3 (engine runner) detects missing inputs
 - Agent 4 (this module) resolves from CTAN
@@ -65,6 +67,7 @@
 - Re-compilation with complete VFS
 
 **Run Example**:
+
 ```bash
 node /home/user/unrdf/packages/kgc-cli/src/lib/latex/integration-example.mjs
 ```
@@ -75,6 +78,7 @@ node /home/user/unrdf/packages/kgc-cli/src/lib/latex/integration-example.mjs
 **LOC**: 107 lines
 
 **Sections**:
+
 - Architecture diagram
 - API reference
 - Cache structure
@@ -95,6 +99,7 @@ ${cacheDir}/ctan/
 ```
 
 **Properties**:
+
 - Content-addressed (same file = same hash = same filename)
 - Atomic updates (index.json written after file)
 - Self-healing (corrupted cache rebuilds automatically)
@@ -102,19 +107,20 @@ ${cacheDir}/ctan/
 
 ## VFS Path Convention
 
-| File Type | VFS Path Template |
-|-----------|-------------------|
-| `.sty` | `texmf/tex/latex/{package}/{file}` |
-| `.cls` | `texmf/tex/latex/{package}/{file}` |
-| `.bib` | `texmf/bibtex/bib/{package}/{file}` |
-| `.bst` | `texmf/bibtex/bst/{package}/{file}` |
-| Other | `work/{file}` |
+| File Type | VFS Path Template                   |
+| --------- | ----------------------------------- |
+| `.sty`    | `texmf/tex/latex/{package}/{file}`  |
+| `.cls`    | `texmf/tex/latex/{package}/{file}`  |
+| `.bib`    | `texmf/bibtex/bib/{package}/{file}` |
+| `.bst`    | `texmf/bibtex/bst/{package}/{file}` |
+| Other     | `work/{file}`                       |
 
 ## CTAN URL Resolution
 
 Resolver tries multiple paths per file type:
 
 **Example**: For `algorithm2e.sty`, tries:
+
 1. `https://mirrors.ctan.org/macros/latex/contrib/algorithm2e/algorithm2e.sty`
 2. `https://mirrors.ctan.org/macros/latex/required/algorithm2e/algorithm2e.sty`
 3. `https://mirrors.ctan.org/macros/latex/base/algorithm2e.sty`
@@ -122,6 +128,7 @@ Resolver tries multiple paths per file type:
 ## Integration with Agent 3 (Engine Runner)
 
 **Flow**:
+
 1. Agent 3 runs LaTeX engine
 2. Engine log shows: `! LaTeX Error: File 'algorithm2e.sty' not found.`
 3. Agent 3 parses missing inputs: `['algorithm2e.sty']`
@@ -134,6 +141,7 @@ Resolver tries multiple paths per file type:
 ## Integration with Agent 10 (Synthesis Editor)
 
 **Pseudo-code**:
+
 ```javascript
 async function compileThesis(texSource) {
   let vfs = { 'work/main.tex': encode(texSource) };
@@ -142,7 +150,7 @@ async function compileThesis(texSource) {
   if (result.missingInputs.length > 0) {
     const resolved = await resolveMissingInputs({
       missingInputs: result.missingInputs,
-      cacheDir: '/home/user/.cache/kgc-latex'
+      cacheDir: '/home/user/.cache/kgc-latex',
     });
     vfs = augmentVfsWithResolvedPackages(vfs, resolved);
     result = await runLatexEngine(vfs);
@@ -154,16 +162,16 @@ async function compileThesis(texSource) {
 
 ## Code Quality Metrics
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Syntax validation | Node --check | ✅ PASS |
-| Total LOC | 585 (impl) + 220 (test) + 240 (example) | ✅ |
-| Exported functions | 5 | ✅ |
-| Test coverage | 80%+ (VFS, cache, errors, validation) | ✅ |
-| JSDoc type hints | 100% (all functions) | ✅ |
-| Input validation | Zod schemas | ✅ |
-| Pure functions | No OTEL in business logic | ✅ |
-| Error messages | Actionable with troubleshooting steps | ✅ |
+| Metric             | Value                                   | Status  |
+| ------------------ | --------------------------------------- | ------- |
+| Syntax validation  | Node --check                            | ✅ PASS |
+| Total LOC          | 585 (impl) + 220 (test) + 240 (example) | ✅      |
+| Exported functions | 5                                       | ✅      |
+| Test coverage      | 80%+ (VFS, cache, errors, validation)   | ✅      |
+| JSDoc type hints   | 100% (all functions)                    | ✅      |
+| Input validation   | Zod schemas                             | ✅      |
+| Pure functions     | No OTEL in business logic               | ✅      |
+| Error messages     | Actionable with troubleshooting steps   | ✅      |
 
 ## Adversarial PM Checklist
 
@@ -187,12 +195,12 @@ async function compileThesis(texSource) {
 
 ### What BREAKS if Wrong?
 
-| Failure | Impact | Mitigation |
-|---------|--------|------------|
-| Cache corruption | Re-fetch from CTAN | Hash validation on read (line 334-340) |
-| Network offline | Build fails | Clear error with manual install instructions |
-| Wrong VFS path | LaTeX can't find package | Unit tests verify path templates |
-| Hash collision | Wrong file loaded | SHA-256 collision astronomically unlikely |
+| Failure          | Impact                   | Mitigation                                   |
+| ---------------- | ------------------------ | -------------------------------------------- |
+| Cache corruption | Re-fetch from CTAN       | Hash validation on read (line 334-340)       |
+| Network offline  | Build fails              | Clear error with manual install instructions |
+| Wrong VFS path   | LaTeX can't find package | Unit tests verify path templates             |
+| Hash collision   | Wrong file loaded        | SHA-256 collision astronomically unlikely    |
 
 ### What's the EVIDENCE?
 
@@ -205,30 +213,34 @@ async function compileThesis(texSource) {
 ## Dependencies
 
 **Runtime**:
+
 - `node:crypto` (SHA-256 hashing)
 - `node:fs` (cache read/write)
 - `node:path` (path manipulation)
 - `zod` (input validation)
 
 **Dev**:
+
 - `vitest` (testing framework)
 
 **Network**:
+
 - Built-in `fetch()` (Node 18+)
 - No external HTTP library needed
 
 ## Performance Characteristics
 
-| Operation | Complexity | Typical Time |
-|-----------|------------|--------------|
-| Cache lookup | O(1) | <5ms |
-| CTAN fetch | O(n) URLs | 100-500ms per package |
-| Cache save | O(1) | <10ms |
-| VFS merge | O(m) files | <5ms |
+| Operation    | Complexity | Typical Time          |
+| ------------ | ---------- | --------------------- |
+| Cache lookup | O(1)       | <5ms                  |
+| CTAN fetch   | O(n) URLs  | 100-500ms per package |
+| Cache save   | O(1)       | <10ms                 |
+| VFS merge    | O(m) files | <5ms                  |
 
 ## Next Steps (For Other Agents)
 
 ### Agent 3 (Engine Runner) TODO:
+
 1. Parse missing inputs from LaTeX log (regex: `! LaTeX Error: File '(.+?)' not found`)
 2. Call `resolveMissingInputs({ missingInputs, cacheDir })`
 3. Use `augmentVfsWithResolvedPackages(vfs, resolved)` to merge
@@ -236,6 +248,7 @@ async function compileThesis(texSource) {
 5. Handle errors (offline, fetch failures) gracefully
 
 ### Agent 10 (Synthesis Editor) TODO:
+
 1. Detect missing inputs from Agent 3 compilation result
 2. Trigger CTAN resolution workflow
 3. Monitor cache stats for user feedback
@@ -243,13 +256,13 @@ async function compileThesis(texSource) {
 
 ## Files Delivered
 
-| File | Path | LOC | Purpose |
-|------|------|-----|---------|
-| **ctan-resolver.mjs** | `src/lib/latex/` | 585 | Main implementation |
-| **ctan-resolver.test.mjs** | `src/lib/latex/` | 220 | Unit tests |
-| **integration-example.mjs** | `src/lib/latex/` | 240 | Integration demo |
-| **README.md** (LaTeX dir) | `src/lib/latex/` | 107 | API documentation |
-| **AGENT-4-DELIVERY.md** | `src/lib/latex/` | This file | Delivery summary |
+| File                        | Path             | LOC       | Purpose             |
+| --------------------------- | ---------------- | --------- | ------------------- |
+| **ctan-resolver.mjs**       | `src/lib/latex/` | 585       | Main implementation |
+| **ctan-resolver.test.mjs**  | `src/lib/latex/` | 220       | Unit tests          |
+| **integration-example.mjs** | `src/lib/latex/` | 240       | Integration demo    |
+| **README.md** (LaTeX dir)   | `src/lib/latex/` | 107       | API documentation   |
+| **AGENT-4-DELIVERY.md**     | `src/lib/latex/` | This file | Delivery summary    |
 
 **Total**: ~1,100 LOC (implementation + tests + examples + docs)
 
@@ -278,6 +291,7 @@ grep "^export" /home/user/unrdf/packages/kgc-cli/src/lib/latex/ctan-resolver.mjs
 **Agent 4 deliverables are production-ready and integration-tested (via mock engine).**
 
 All constraints met:
+
 - ✅ ESM `.mjs` only
 - ✅ Modular (engine runner calls when missing files detected)
 - ✅ Deterministic cache layout

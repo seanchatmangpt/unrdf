@@ -33,7 +33,7 @@ import { z } from 'zod';
 const MetricsConfigSchema = z.object({
   prefix: z.string().default('unrdf'),
   labels: z.record(z.string(), z.string()).default({}),
-  buckets: z.array(z.number()).default([0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10])
+  buckets: z.array(z.number()).default([0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]),
 });
 
 /**
@@ -103,7 +103,7 @@ export function createMetrics(config = {}) {
     const histogram = histograms.get(key) || {
       count: 0,
       sum: 0,
-      buckets: new Map(validated.buckets.map(b => [b, 0]))
+      buckets: new Map(validated.buckets.map(b => [b, 0])),
     };
 
     histogram.count++;
@@ -130,7 +130,7 @@ export function createMetrics(config = {}) {
       end: () => {
         const end = process.hrtime.bigint();
         return Number(end - start) / 1e9; // Convert to seconds
-      }
+      },
     };
   }
 
@@ -156,7 +156,7 @@ export function createMetrics(config = {}) {
     const summary = summaries.get(key) || {
       values: [],
       count: 0,
-      sum: 0
+      sum: 0,
     };
 
     summary.values.push(value);
@@ -217,9 +217,7 @@ export function createMetrics(config = {}) {
 
       // Bucket counts
       for (const [bucket, count] of histogram.buckets) {
-        const labels = baseLabels
-          ? `${baseLabels},le="${bucket}"`
-          : `le="${bucket}"`;
+        const labels = baseLabels ? `${baseLabels},le="${bucket}"` : `le="${bucket}"`;
         lines.push(`${validated.prefix}_${name}_bucket{${labels}} ${count}`);
       }
 
@@ -228,8 +226,12 @@ export function createMetrics(config = {}) {
       lines.push(`${validated.prefix}_${name}_bucket{${labels}} ${histogram.count}`);
 
       // Sum and count
-      lines.push(`${validated.prefix}_${name}_sum${baseLabels ? `{${baseLabels}}` : ''} ${histogram.sum}`);
-      lines.push(`${validated.prefix}_${name}_count${baseLabels ? `{${baseLabels}}` : ''} ${histogram.count}`);
+      lines.push(
+        `${validated.prefix}_${name}_sum${baseLabels ? `{${baseLabels}}` : ''} ${histogram.sum}`
+      );
+      lines.push(
+        `${validated.prefix}_${name}_count${baseLabels ? `{${baseLabels}}` : ''} ${histogram.count}`
+      );
     }
 
     // Summaries
@@ -254,8 +256,12 @@ export function createMetrics(config = {}) {
       lines.push(`${validated.prefix}_${name}{${p99Labels}} ${p99}`);
 
       // Sum and count
-      lines.push(`${validated.prefix}_${name}_sum${baseLabels ? `{${baseLabels}}` : ''} ${summary.sum}`);
-      lines.push(`${validated.prefix}_${name}_count${baseLabels ? `{${baseLabels}}` : ''} ${summary.count}`);
+      lines.push(
+        `${validated.prefix}_${name}_sum${baseLabels ? `{${baseLabels}}` : ''} ${summary.sum}`
+      );
+      lines.push(
+        `${validated.prefix}_${name}_count${baseLabels ? `{${baseLabels}}` : ''} ${summary.count}`
+      );
     }
 
     return lines.join('\n') + '\n';
@@ -270,7 +276,7 @@ export function createMetrics(config = {}) {
       counters: Object.fromEntries(counters),
       gauges: Object.fromEntries(gauges),
       histograms: {},
-      summaries: {}
+      summaries: {},
     };
 
     // Convert histograms
@@ -279,7 +285,7 @@ export function createMetrics(config = {}) {
         count: histogram.count,
         sum: histogram.sum,
         avg: histogram.count > 0 ? histogram.sum / histogram.count : 0,
-        buckets: Object.fromEntries(histogram.buckets)
+        buckets: Object.fromEntries(histogram.buckets),
       };
     }
 
@@ -291,7 +297,7 @@ export function createMetrics(config = {}) {
         avg: summary.count > 0 ? summary.sum / summary.count : 0,
         p50: calculatePercentile(summary.values, 0.5),
         p95: calculatePercentile(summary.values, 0.95),
-        p99: calculatePercentile(summary.values, 0.99)
+        p99: calculatePercentile(summary.values, 0.99),
       };
     }
 
@@ -317,7 +323,7 @@ export function createMetrics(config = {}) {
     startTimer,
     toPrometheus,
     toJSON,
-    reset
+    reset,
   };
 }
 
@@ -328,6 +334,6 @@ export const metrics = createMetrics({
   prefix: 'unrdf',
   labels: {
     service: 'unrdf',
-    version: '5.0.1'
-  }
+    version: '5.0.1',
+  },
 });

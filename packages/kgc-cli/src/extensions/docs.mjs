@@ -12,17 +12,17 @@ import { z } from 'zod';
 const GenerateSchema = z.object({
   type: z.enum(['tutorial', 'how-to', 'reference', 'explanation']).describe('Documentation type'),
   package: z.string().optional().describe('Target package'),
-  output: z.string().optional().describe('Output directory')
+  output: z.string().optional().describe('Output directory'),
 });
 
 const InventorySchema = z.object({
   scope: z.enum(['workspace', 'package']).default('workspace'),
-  format: z.enum(['json', 'markdown', 'yaml']).default('json')
+  format: z.enum(['json', 'markdown', 'yaml']).default('json'),
 });
 
 const VerifySchema = z.object({
   package: z.string().optional().describe('Package to verify'),
-  strict: z.boolean().optional().default(false)
+  strict: z.boolean().optional().default(false),
 });
 
 /**
@@ -40,30 +40,30 @@ const extension = {
         generate: {
           description: 'Generate Diataxis documentation',
           argsSchema: GenerateSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               type: args.type,
               package: args.package || 'all',
               filesGenerated: 0,
               output: args.output || 'docs/',
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         verify: {
           description: 'Verify documentation completeness',
           argsSchema: VerifySchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               package: args.package || 'all',
               complete: true,
               missing: [],
               outdated: [],
-              coverage: 100
+              coverage: 100,
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     inventory: {
@@ -72,15 +72,15 @@ const extension = {
         generate: {
           description: 'Generate package inventory',
           argsSchema: InventorySchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               scope: args.scope,
               format: args.format,
               packages: [],
               count: 0,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         classify: {
           description: 'Classify packages by type',
@@ -88,11 +88,11 @@ const extension = {
             return {
               categories: {},
               uncategorized: [],
-              total: 0
+              total: 0,
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     scaffold: {
@@ -102,36 +102,36 @@ const extension = {
           description: 'Create documentation scaffold',
           argsSchema: z.object({
             package: z.string().describe('Package name'),
-            types: z.array(z.enum(['tutorial', 'how-to', 'reference', 'explanation'])).optional()
+            types: z.array(z.enum(['tutorial', 'how-to', 'reference', 'explanation'])).optional(),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               package: args.package,
               types: args.types || ['tutorial', 'how-to', 'reference', 'explanation'],
               filesCreated: [],
-              path: `docs/${args.package}/`
+              path: `docs/${args.package}/`,
             };
-          }
+          },
         },
         validate: {
           description: 'Validate scaffold structure',
           argsSchema: z.object({
-            package: z.string().describe('Package name')
+            package: z.string().describe('Package name'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               package: args.package,
               valid: true,
               errors: [],
-              warnings: []
+              warnings: [],
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
-  priority: 72
+  priority: 72,
 };
 
 export default extension;

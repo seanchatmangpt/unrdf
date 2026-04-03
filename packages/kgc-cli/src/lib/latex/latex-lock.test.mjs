@@ -25,7 +25,7 @@ import {
   isLockValid,
   mergeLocks,
   pruneLock,
-  LatexLockSchema
+  LatexLockSchema,
 } from './latex-lock.mjs';
 
 describe('LaTeX Lockfile', () => {
@@ -34,7 +34,10 @@ describe('LaTeX Lockfile', () => {
 
   beforeEach(async () => {
     // Create unique temp directory for each test
-    testDir = join(tmpdir(), `latex-lock-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    testDir = join(
+      tmpdir(),
+      `latex-lock-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    );
     await mkdir(testDir, { recursive: true });
     lockPath = join(testDir, 'latex.lock.json');
   });
@@ -80,7 +83,7 @@ describe('LaTeX Lockfile', () => {
         inputName: 'logo.png',
         hash,
         sourceUrl,
-        cachedPath
+        cachedPath,
       });
 
       assert.ok(lock.resolvedInputs['logo.png']);
@@ -96,7 +99,7 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock, {
         inputName: 'local.tex',
         hash: 'xyz789',
-        cachedPath: '/cache/local.tex'
+        cachedPath: '/cache/local.tex',
       });
 
       assert.ok(lock.resolvedInputs['local.tex']);
@@ -109,13 +112,13 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock, {
         inputName: 'file.tex',
         hash: 'old-hash',
-        cachedPath: '/old/path'
+        cachedPath: '/old/path',
       });
 
       recordResolvedInput(lock, {
         inputName: 'file.tex',
         hash: 'new-hash',
-        cachedPath: '/new/path'
+        cachedPath: '/new/path',
       });
 
       assert.equal(lock.resolvedInputs['file.tex'].hash, 'new-hash');
@@ -130,7 +133,7 @@ describe('LaTeX Lockfile', () => {
         inputName: 'main.tex',
         hash: 'abc123',
         sourceUrl: 'https://example.com/main.tex',
-        cachedPath: '/cache/main.tex'
+        cachedPath: '/cache/main.tex',
       });
 
       await saveLatexLock(lockPath, original);
@@ -159,7 +162,7 @@ describe('LaTeX Lockfile', () => {
       const invalid = {
         version: '999.0.0',
         engine: 'invalid-engine',
-        resolvedInputs: 'not-an-object'
+        resolvedInputs: 'not-an-object',
       };
 
       await writeFile(lockPath, JSON.stringify(invalid), 'utf-8');
@@ -232,7 +235,7 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock, {
         inputName: 'test.tex',
         hash: 'hash123',
-        cachedPath: '/cache/test.tex'
+        cachedPath: '/cache/test.tex',
       });
 
       const entry = getResolvedInput(lock, 'test.tex');
@@ -274,14 +277,14 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock1, {
         inputName: 'a.tex',
         hash: 'hash-a',
-        cachedPath: '/a'
+        cachedPath: '/a',
       });
 
       const lock2 = createLatexLock('xetex');
       recordResolvedInput(lock2, {
         inputName: 'b.tex',
         hash: 'hash-b',
-        cachedPath: '/b'
+        cachedPath: '/b',
       });
 
       const merged = mergeLocks(lock1, lock2);
@@ -296,7 +299,7 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock1, {
         inputName: 'conflict.tex',
         hash: 'old-hash',
-        cachedPath: '/old'
+        cachedPath: '/old',
       });
 
       // Wait to ensure newer timestamp
@@ -306,7 +309,7 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock2, {
         inputName: 'conflict.tex',
         hash: 'new-hash',
-        cachedPath: '/new'
+        cachedPath: '/new',
       });
 
       const merged = mergeLocks(lock1, lock2);
@@ -355,13 +358,13 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock1, {
         inputName: 'main.tex',
         hash: 'abc123',
-        cachedPath: '/cache/main.tex'
+        cachedPath: '/cache/main.tex',
       });
       recordResolvedInput(lock1, {
         inputName: 'logo.png',
         hash: 'def456',
         sourceUrl: 'https://example.com/logo.png',
-        cachedPath: '/cache/logo.png'
+        cachedPath: '/cache/logo.png',
       });
 
       await saveLatexLock(lockPath, lock1);
@@ -372,13 +375,13 @@ describe('LaTeX Lockfile', () => {
       recordResolvedInput(lock2, {
         inputName: 'main.tex',
         hash: 'abc123',
-        cachedPath: '/cache/main.tex'
+        cachedPath: '/cache/main.tex',
       });
       recordResolvedInput(lock2, {
         inputName: 'logo.png',
         hash: 'def456',
         sourceUrl: 'https://example.com/logo.png',
-        cachedPath: '/cache/logo.png'
+        cachedPath: '/cache/logo.png',
       });
 
       const lockPath2 = join(testDir, 'latex2.lock.json');
@@ -386,7 +389,7 @@ describe('LaTeX Lockfile', () => {
       const saved2 = await readFile(lockPath2, 'utf-8');
 
       // Strip timestamps for comparison
-      const normalize = (json) => {
+      const normalize = json => {
         const obj = JSON.parse(json);
         delete obj.createdAt;
         delete obj.updatedAt;

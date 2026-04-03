@@ -7,12 +7,14 @@ import { z } from 'zod';
  * CORE ALGORITHM: Entity importance scoring
  */
 
-const PageRankOptionsSchema = z.object({
-  dampingFactor: z.number().min(0).max(1).default(0.85),
-  maxIterations: z.number().int().positive().default(100),
-  tolerance: z.number().positive().default(1e-6),
-  initialValue: z.number().positive().optional(),
-}).passthrough();
+const PageRankOptionsSchema = z
+  .object({
+    dampingFactor: z.number().min(0).max(1).default(0.85),
+    maxIterations: z.number().int().positive().default(100),
+    tolerance: z.number().positive().default(1e-6),
+    initialValue: z.number().positive().optional(),
+  })
+  .passthrough();
 
 /**
  * Compute PageRank scores for all nodes in graph
@@ -32,7 +34,7 @@ export function computePageRank(graph, options = {}) {
   }
 
   const dampingFactor = opts.dampingFactor;
-  const initialValue = opts.initialValue || (1.0 / nodeCount);
+  const initialValue = opts.initialValue || 1.0 / nodeCount;
 
   // Initialize scores
   const scores = new Map();

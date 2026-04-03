@@ -118,7 +118,7 @@ function wrapQueryResult(queryResult, queryType) {
         rows = queryResult.map(item => {
           const row = {};
           // Add Map-like .get() method for backward compatibility
-          row.get = function(key) {
+          row.get = function (key) {
             return this[key];
           };
           for (const [key, val] of item.entries()) {
@@ -141,7 +141,9 @@ function wrapQueryResult(queryResult, queryType) {
         if (Array.isArray(rows)) {
           rows = rows.map(row => {
             if (row && !row.get) {
-              row.get = function(key) { return this[key]; };
+              row.get = function (key) {
+                return this[key];
+              };
             }
             return row;
           });

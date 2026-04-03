@@ -47,7 +47,13 @@ export const removeQuadSchema = {
 /**
  * Schema for getQuads
  */
-export const getQuadsParamsSchema = z.tuple([z.unknown(), z.unknown().optional(), z.unknown().optional(), z.unknown().optional(), z.unknown().optional()]);
+export const getQuadsParamsSchema = z.tuple([
+  z.unknown(),
+  z.unknown().optional(),
+  z.unknown().optional(),
+  z.unknown().optional(),
+  z.unknown().optional(),
+]);
 
 export const getQuadsReturnSchema = z.unknown();
 
@@ -60,5 +66,5 @@ export default {
   createStore: createStoreSchema,
   addQuad: addQuadSchema,
   removeQuad: removeQuadSchema,
-  getQuads: getQuadsSchema
+  getQuads: getQuadsSchema,
 };

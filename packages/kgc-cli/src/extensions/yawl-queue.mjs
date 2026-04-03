@@ -19,9 +19,9 @@ const extension = {
             queueName: z.string().describe('Queue name'),
             redisHost: z.string().default('localhost').describe('Redis host'),
             redisPort: z.number().default(6379).describe('Redis port'),
-            concurrency: z.number().default(10).describe('Worker concurrency')
+            concurrency: z.number().default(10).describe('Worker concurrency'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const queueName = args.queueName || 'default-queue';
             const redisHost = args.redisHost || 'localhost';
             const redisPort = args.redisPort || 6379;
@@ -33,11 +33,11 @@ const extension = {
                 name: queueName,
                 redis: `${redisHost}:${redisPort}`,
                 concurrency,
-                status: 'active'
+                status: 'active',
               },
-              message: `Queue '${queueName}' created`
+              message: `Queue '${queueName}' created`,
             };
-          }
+          },
         },
         enqueue: {
           description: 'Enqueue workflow case for execution',
@@ -46,9 +46,9 @@ const extension = {
             workflowId: z.string().describe('Workflow ID'),
             caseId: z.string().describe('Case ID'),
             priority: z.number().default(0).describe('Job priority (higher = more priority)'),
-            delay: z.number().default(0).describe('Delay in milliseconds')
+            delay: z.number().default(0).describe('Delay in milliseconds'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const queueName = args.queueName || 'default-queue';
             const workflowId = args.workflowId || 'default-workflow';
             const caseId = args.caseId || `case_${Date.now()}`;
@@ -62,16 +62,16 @@ const extension = {
               workflowId,
               caseId,
               priority,
-              estimatedStart: new Date(Date.now() + delay).toISOString()
+              estimatedStart: new Date(Date.now() + delay).toISOString(),
             };
-          }
+          },
         },
         status: {
           description: 'Get queue status and metrics',
           argsSchema: z.object({
-            queueName: z.string().describe('Queue name')
+            queueName: z.string().describe('Queue name'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               success: true,
               queueName: args.queueName || 'default-queue',
@@ -80,22 +80,22 @@ const extension = {
                 active: 0,
                 completed: 0,
                 failed: 0,
-                delayed: 0
+                delayed: 0,
               },
               workers: {
                 active: 0,
-                idle: 0
-              }
+                idle: 0,
+              },
             };
-          }
+          },
         },
         worker: {
           description: 'Start queue worker',
           argsSchema: z.object({
             queueName: z.string().describe('Queue name'),
-            concurrency: z.number().default(10).describe('Worker concurrency')
+            concurrency: z.number().default(10).describe('Worker concurrency'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const queueName = args.queueName || 'default-queue';
             const concurrency = args.concurrency || 10;
 
@@ -105,16 +105,16 @@ const extension = {
                 queueName,
                 concurrency,
                 status: 'active',
-                processedJobs: 0
+                processedJobs: 0,
               },
-              message: `Worker started for queue '${queueName}'`
+              message: `Worker started for queue '${queueName}'`,
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
-  priority: 34
+  priority: 34,
 };
 
 export default extension;

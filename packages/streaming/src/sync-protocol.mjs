@@ -15,12 +15,14 @@ import { z } from 'zod';
  */
 const SyncMessageSchema = z.object({
   version: z.string().default('1.0'),
-  changes: z.array(z.object({
-    type: z.enum(['add', 'remove', 'update']),
-    quad: z.any(),
-    timestamp: z.number(),
-    metadata: z.record(z.any()).optional(),
-  })),
+  changes: z.array(
+    z.object({
+      type: z.enum(['add', 'remove', 'update']),
+      quad: z.any(),
+      timestamp: z.number(),
+      metadata: z.record(z.any()).optional(),
+    })
+  ),
   checksum: z.string(),
   timestamp: z.number(),
   source: z.string().optional(),
@@ -91,10 +93,12 @@ export function calculateChecksum(changes) {
   const sortedChanges = [...changes].sort((a, b) => a.timestamp - b.timestamp);
 
   // Create canonical representation
-  const canonical = sortedChanges.map(change => {
-    const quad = change.quad;
-    return `${change.type}:${quad.subject?.value || ''}:${quad.predicate?.value || ''}:${quad.object?.value || ''}:${change.timestamp}`;
-  }).join('|');
+  const canonical = sortedChanges
+    .map(change => {
+      const quad = change.quad;
+      return `${change.type}:${quad.subject?.value || ''}:${quad.predicate?.value || ''}:${quad.object?.value || ''}:${change.timestamp}`;
+    })
+    .join('|');
 
   // Calculate SHA-256 hash
   return createHash('sha256').update(canonical).digest('hex');

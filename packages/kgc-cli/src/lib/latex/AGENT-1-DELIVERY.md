@@ -15,6 +15,7 @@
 #### Schemas Implemented
 
 **Core Compilation Schemas:**
+
 - `EngineSchema` - LaTeX engine validation (xetex, pdftex)
 - `CompileOptionsSchema` - Main compilation options for `compileLatexToPdf()`
 - `CompileResultSchema` - Return type with success/failure states
@@ -23,6 +24,7 @@
 - `TimestampSchema` - ISO 8601 timestamp validation
 
 **CLI Argument Schemas:**
+
 - `CLIBuildArgsSchema` - `latex build` command
 - `CLIDiagnoseArgsSchema` - `latex diagnose` command
 - `CLICacheAddArgsSchema` - `latex cache add` command
@@ -30,26 +32,32 @@
 - `CLIBundleMakeArgsSchema` - `latex bundle make` command
 
 **Lockfile Schemas (Agent 5):**
+
 - `LockfileSchema` - Main `latex.lock.json` structure
 - `ResolvedDependencySchema` - Individual dependency entries
 
 **Diagnostics Schemas (Agent 6):**
+
 - `DiagnosticsSchema` - Structured error collection
 - `DiagnosticEntrySchema` - Individual error/warning entries
 
 **VFS Schemas (Agent 2):**
+
 - `VFSEntrySchema` - Virtual file system entry
 - `VFSValidationSchema` - VFS validation results
 
 **CTAN Resolver Schemas (Agent 4):**
+
 - `CTANPackageSchema` - CTAN package metadata
 - `ResolutionResultSchema` - Dependency resolution results
 
 **Cache Schemas:**
+
 - `CacheEntrySchema` - Individual cache entry
 - `CacheManifestSchema` - Cache manifest structure
 
 **Engine Schemas (Agent 3):**
+
 - `EngineStatusSchema` - Engine availability status
 - `EnginePassResultSchema` - Single compilation pass result
 
@@ -63,6 +71,7 @@
 #### Integration
 
 All schemas exported via:
+
 ```javascript
 import { CompileOptionsSchema, CompileResultSchema, ... } from '@unrdf/kgc-cli/latex/schemas';
 ```
@@ -95,6 +104,7 @@ import { CompileOptionsSchema, CompileResultSchema, ... } from '@unrdf/kgc-cli/l
 ```
 
 **Usage:**
+
 ```javascript
 // Import main LaTeX module
 import { compileLatexToPdf } from '@unrdf/kgc-cli/latex';
@@ -115,25 +125,30 @@ import { CompileOptionsSchema } from '@unrdf/kgc-cli/latex/schemas';
 #### Exported Modules
 
 **Agent 10 (Compilation):**
+
 - `compileLatexToPdf` - Main orchestrator
 - `generateCacheKey` - Cache key generation
 
 **Agent 3 (Engine):**
+
 - `compileWithSwiftLatex` - WASM engine wrapper
 - `getSupportedEngines` - Engine availability check
 - `validateVFS` - VFS structure validation
 - `createMinimalVFS` - Test VFS creation
 
 **Agent 2 (VFS Collection):**
+
 - `collectProjectFiles` - Project file collection
 
 **Agent 4 (CTAN Resolver):**
+
 - `resolveMissingInputs` - Dependency resolution
 - `augmentVfsWithResolvedPackages` - VFS augmentation
 - `clearCache` - Cache clearing
 - `getCacheStats` - Cache statistics
 
 **Agent 5 (Lockfile):**
+
 - `loadLatexLock` - Load lockfile
 - `saveLatexLock` - Save lockfile
 - `createLatexLock` - Create new lockfile
@@ -147,6 +162,7 @@ import { CompileOptionsSchema } from '@unrdf/kgc-cli/latex/schemas';
 - `LatexLockSchema` - Schema export
 
 **Agent 6 (Diagnostics):**
+
 - `LatexCompileError` - Error class
 - `parseMissingInputsFromLog` - Parse missing files
 - `writeDiagnosticLog` - Write diagnostic log
@@ -156,10 +172,12 @@ import { CompileOptionsSchema } from '@unrdf/kgc-cli/latex/schemas';
 - `LogWriteOptionsSchema` - Schema export
 
 **Agent 1 (Schemas):**
+
 - All 30+ Zod schemas
 - 4 utility functions
 
 **Utilities:**
+
 - `normalizeToVFS` - Path normalization
 - `vfsToRelative` - Convert VFS path to relative
 - `isValidVFSPath` - VFS path validation
@@ -204,6 +222,7 @@ packages/kgc-cli/
 #### Documentation Created
 
 **README files:**
+
 - `/home/user/unrdf/packages/kgc-cli/src/lib/latex/engine/README.md` - Engine module docs
 - `/home/user/unrdf/packages/kgc-cli/src/lib/latex/vfs/README.md` - VFS module docs
 - `/home/user/unrdf/packages/kgc-cli/src/lib/latex/cache/README.md` - Cache module docs
@@ -212,6 +231,7 @@ packages/kgc-cli/
 - `/home/user/unrdf/packages/kgc-cli/scripts/README.md` - Build scripts guide
 
 **Test Fixture:**
+
 - `/home/user/unrdf/packages/kgc-cli/fixtures/minimal/main.tex` - Minimal LaTeX example
 
 ---
@@ -219,14 +239,17 @@ packages/kgc-cli/
 ## Integration Points for Other Agents
 
 ### Agent 2 (VFS Collector)
+
 **Location**: `src/lib/latex/vfs/`
 **Interface**:
+
 ```javascript
 import { collectProjectFiles } from './project-files.mjs';
 const vfs = await collectProjectFiles(projectDir, { include, exclude });
 ```
 
 **Schemas to use**:
+
 - `VFSEntrySchema`
 - `VFSValidationSchema`
 
@@ -235,14 +258,17 @@ const vfs = await collectProjectFiles(projectDir, { include, exclude });
 ---
 
 ### Agent 3 (Engine Runner)
+
 **Location**: `src/lib/latex/engine/`
 **Interface**:
+
 ```javascript
 import { compileWithSwiftLatex } from './swiftlatex-engine.mjs';
 const result = await compileWithSwiftLatex({ engine, vfs, entry, passes });
 ```
 
 **Schemas to use**:
+
 - `EngineSchema`
 - `EngineStatusSchema`
 - `EnginePassResultSchema`
@@ -252,14 +278,17 @@ const result = await compileWithSwiftLatex({ engine, vfs, entry, passes });
 ---
 
 ### Agent 4 (CTAN Resolver)
+
 **Location**: `src/lib/latex/ctan-resolver.mjs` (existing)
 **Interface**:
+
 ```javascript
 import { resolveMissingInputs } from './ctan-resolver.mjs';
 const resolved = await resolveMissingInputs({ missingInputs, cacheDir });
 ```
 
 **Schemas to use**:
+
 - `CTANPackageSchema`
 - `ResolutionResultSchema`
 
@@ -268,16 +297,19 @@ const resolved = await resolveMissingInputs({ missingInputs, cacheDir });
 ---
 
 ### Agent 5 (Lockfile Manager)
+
 **Location**: `src/lib/latex/latex-lock.mjs` (existing)
 **Interface**:
+
 ```javascript
 import { loadLatexLock, saveLatexLock, recordResolvedInput } from './latex-lock.mjs';
-let lock = await loadLatexLock(path) || createLatexLock(engine);
+let lock = (await loadLatexLock(path)) || createLatexLock(engine);
 recordResolvedInput(lock, { inputName, hash, sourceUrl, cachedPath });
 await saveLatexLock(path, lock);
 ```
 
 **Schemas to use**:
+
 - `LockfileSchema`
 - `ResolvedDependencySchema`
 
@@ -286,8 +318,10 @@ await saveLatexLock(path, lock);
 ---
 
 ### Agent 6 (Diagnostics)
+
 **Location**: `src/lib/latex/diagnostics/` (existing)
 **Interface**:
+
 ```javascript
 import { parseMissingInputsFromLog, writeDiagnosticLog } from './diagnostics.mjs';
 const missing = parseMissingInputsFromLog(log);
@@ -295,6 +329,7 @@ await writeDiagnosticLog({ log, projectDir, timestamp });
 ```
 
 **Schemas to use**:
+
 - `DiagnosticsSchema`
 - `DiagnosticEntrySchema`
 
@@ -303,10 +338,12 @@ await writeDiagnosticLog({ log, projectDir, timestamp });
 ---
 
 ### Agent 7-9 (CLI, Testing, Documentation)
+
 **CLI Extension**: `/home/user/unrdf/packages/kgc-cli/src/extensions/latex.mjs`
 **Tests**: `/home/user/unrdf/packages/kgc-cli/test/latex-*.test.mjs`
 
 **Schemas to use**:
+
 - `CLIBuildArgsSchema`
 - `CLIDiagnoseArgsSchema`
 - `CLICacheAddArgsSchema`
@@ -317,19 +354,22 @@ await writeDiagnosticLog({ log, projectDir, timestamp });
 ---
 
 ### Agent 10 (Pipeline Integrator)
+
 **Location**: `src/lib/latex/compile.mjs` (existing)
 **Interface**:
+
 ```javascript
 import { compileLatexToPdf } from './compile.mjs';
 const pdfBytes = await compileLatexToPdf({
   inputTexPath: '/path/to/main.tex',
   projectDir: '/path/to/project',
   engine: 'xetex',
-  passes: 2
+  passes: 2,
 });
 ```
 
 **Schemas to use**:
+
 - `CompileOptionsSchema` - Input validation
 - `CompileResultSchema` - Output structure
 
@@ -340,6 +380,7 @@ const pdfBytes = await compileLatexToPdf({
 ## Validation Results
 
 ### Schema Loading
+
 ```bash
 ✅ schemas.mjs loads correctly
 ✅ Schema validation works: true
@@ -347,6 +388,7 @@ const pdfBytes = await compileLatexToPdf({
 ```
 
 ### Index Module
+
 ```bash
 ✅ index.mjs exports: 56 items - Integration successful
 ✅ Main exports:
@@ -357,6 +399,7 @@ const pdfBytes = await compileLatexToPdf({
 ```
 
 ### Directory Structure
+
 ```bash
 ✅ 16 LaTeX module files
 ✅ 4 Subdirectory READMEs
@@ -366,6 +409,7 @@ const pdfBytes = await compileLatexToPdf({
 ```
 
 ### Package Scripts
+
 ```bash
 ✅ npm run latex:build
 ✅ npm run latex:diagnose
@@ -438,6 +482,7 @@ const pdfBytes = await compileLatexToPdf({
 ## Integration Test
 
 ### Basic Import Test
+
 ```javascript
 import { compileLatexToPdf, CompileOptionsSchema } from '@unrdf/kgc-cli/latex';
 
@@ -446,7 +491,7 @@ const opts = CompileOptionsSchema.parse({
   inputTexPath: '/path/to/main.tex',
   projectDir: '/path/to/project',
   engine: 'xetex',
-  passes: 2
+  passes: 2,
 });
 
 // Compile (would work once WASM is integrated)
@@ -454,6 +499,7 @@ const opts = CompileOptionsSchema.parse({
 ```
 
 ### CLI Test
+
 ```bash
 # Once WASM is integrated:
 npm run latex:build -- --input=fixtures/minimal/main.tex --output=dist/minimal.pdf
@@ -467,6 +513,7 @@ npm run validate:wasm
 ## Adherence to CLAUDE.md Guidelines
 
 ### ✅ Big Bang 80/20 Methodology
+
 - Single-pass implementation using proven Zod patterns
 - Pattern reuse from existing codebase (latex-lock.mjs, diagnostics.mjs)
 - No iterative refinement needed - schemas are declarative
@@ -474,12 +521,14 @@ npm run validate:wasm
 ### ✅ Adversarial PM Verification
 
 **Claims vs Reality:**
+
 - ✅ "Schemas created" → Ran import test, validated 56 exports
 - ✅ "Package.json updated" → Checked scripts exist
 - ✅ "Directories created" → Counted with `ls` and `wc -l`
 - ✅ "Integration works" → Ran node import test, 0 errors
 
 **Evidence:**
+
 ```bash
 ✅ schemas.mjs loads correctly
 ✅ index.mjs exports: 56 items
@@ -489,17 +538,20 @@ npm run validate:wasm
 ```
 
 ### ✅ Code Style Compliance
+
 - **ESM only**: All files use `.mjs` extension
 - **Zod validation**: All schemas use Zod runtime validation
 - **JSDoc types**: Type definitions exported via JSDoc `@typedef`
 - **No TypeScript**: Pure JavaScript in all source files
 
 ### ✅ Batch Operations
+
 - All file creation in single message
 - All directory creation in single `mkdir -p` command
 - All validations run in parallel
 
 ### ✅ Pattern Reuse
+
 - Copied schema patterns from `latex-lock.mjs`
 - Reused path validation from `path-normalize.mjs`
 - Followed existing export structure from other modules

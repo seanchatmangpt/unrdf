@@ -50,14 +50,14 @@ describe('CTAN Resolver', () => {
       const result = augmentVfsWithResolvedPackages(vfs, resolvedMap);
 
       expect(result).toHaveProperty('texmf/tex/latex/algorithm2e/algorithm2e.sty');
-      expect(result['texmf/tex/latex/algorithm2e/algorithm2e.sty']).toEqual(new Uint8Array([1, 2, 3]));
+      expect(result['texmf/tex/latex/algorithm2e/algorithm2e.sty']).toEqual(
+        new Uint8Array([1, 2, 3])
+      );
     });
 
     it('should not mutate input VFS', () => {
       const vfs = { 'work/main.tex': new Uint8Array([1, 2]) };
-      const resolvedMap = new Map([
-        ['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])],
-      ]);
+      const resolvedMap = new Map([['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])]]);
 
       const result = augmentVfsWithResolvedPackages(vfs, resolvedMap);
 

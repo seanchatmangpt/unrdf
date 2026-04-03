@@ -21,5 +21,5 @@ export const measureCpuSchema = {
 };
 
 export default {
-  measureCpu: measureCpuSchema
+  measureCpu: measureCpuSchema,
 };

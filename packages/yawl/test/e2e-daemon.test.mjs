@@ -93,9 +93,8 @@ class MockDeltaGate extends EventEmitter {
       operationsApplied: applied ? delta.operations.length : 0,
       operationsFailed: applied ? 0 : delta.operations.length,
       receiptHash: this._generateHash(receiptId),
-      previousReceiptHash: this.receipts.length > 0
-        ? this.receipts[this.receipts.length - 1].receiptHash
-        : null,
+      previousReceiptHash:
+        this.receipts.length > 0 ? this.receipts[this.receipts.length - 1].receiptHash : null,
     };
 
     this.receipts.push(receipt);
@@ -144,19 +143,19 @@ class YawlDaemonBridge extends EventEmitter {
     this.isRunning = true;
 
     // Subscribe to YAWL events and forward to daemon
-    const unsubCaseCreated = this.yawlEngine.on('case:created', async (event) => {
+    const unsubCaseCreated = this.yawlEngine.on('case:created', async event => {
       if (this.deltaGate) {
         await this._createDeltaForEvent('CASE_CREATED', event);
       }
     });
 
-    const unsubTaskEnabled = this.yawlEngine.on('task:enabled', async (event) => {
+    const unsubTaskEnabled = this.yawlEngine.on('task:enabled', async event => {
       if (this.deltaGate) {
         await this._createDeltaForEvent('TASK_ENABLED', event);
       }
     });
 
-    const unsubTaskCompleted = this.yawlEngine.on('task:completed', async (event) => {
+    const unsubTaskCompleted = this.yawlEngine.on('task:completed', async event => {
       if (this.deltaGate) {
         await this._createDeltaForEvent('TASK_COMPLETED', event);
       }
@@ -286,7 +285,7 @@ describe('E2E: Full Daemon Lifecycle', () => {
     expect(caseResult.case.id).toBeDefined();
 
     // Verify deltas created
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
     expect(deltaGate.receipts.length).toBeGreaterThan(0);
     expect(deltaGate.deltasProcessed).toBeGreaterThan(0);
 
@@ -299,8 +298,8 @@ describe('E2E: Full Daemon Lifecycle', () => {
 
     // Assert - Verify receipts captured lifecycle
     const receipts = deltaGate.receipts;
-    expect(receipts.every((r) => r.applied)).toBe(true);
-    expect(receipts.every((r) => r.receiptHash)).toBeTruthy();
+    expect(receipts.every(r => r.applied)).toBe(true);
+    expect(receipts.every(r => r.receiptHash)).toBeTruthy();
   }, 10000);
 
   it('1.2: should handle graceful shutdown with active operations', async () => {
@@ -367,7 +366,7 @@ describe('E2E: v6-core ΔGate Integration', () => {
 
     // Act
     await yawlEngine.createCase('receipt-workflow', { orderId: 'ORD-001' });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Assert
     expect(receiptListener).toHaveBeenCalled();
@@ -395,7 +394,7 @@ describe('E2E: v6-core ΔGate Integration', () => {
     await yawlEngine.createCase('chain-workflow', { id: 2 });
     await yawlEngine.createCase('chain-workflow', { id: 3 });
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // Assert - Verify chain integrity
     const receipts = deltaGate.receipts;
@@ -425,15 +424,15 @@ describe('E2E: v6-core ΔGate Integration', () => {
     const startWorkItem = caseResult.case.getEnabledWorkItems()[0];
     await caseResult.case.startTask(startWorkItem.id);
 
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     // Assert - Should have deltas for: case create, task enable, task start
     const deltas = deltaGate.deltas;
     expect(deltas.length).toBeGreaterThanOrEqual(2);
 
-    const operations = deltas.flatMap((d) => d.operations);
+    const operations = deltas.flatMap(d => d.operations);
     expect(operations.length).toBeGreaterThan(0);
-    expect(operations.every((op) => op.path.includes('yawl.events'))).toBe(true);
+    expect(operations.every(op => op.path.includes('yawl.events'))).toBe(true);
   }, 10000);
 });
 
@@ -476,7 +475,7 @@ describe('E2E: Multi-Workflow Concurrent Execution', () => {
     }
 
     // Act - Create cases concurrently
-    const casePromises = workflows.map((wf) =>
+    const casePromises = workflows.map(wf =>
       yawlEngine.createCase(wf.id, { workflowIndex: wf.id })
     );
 
@@ -484,13 +483,13 @@ describe('E2E: Multi-Workflow Concurrent Execution', () => {
 
     // Assert
     expect(results.length).toBe(workflowCount);
-    expect(results.every((r) => r.case.id)).toBe(true);
+    expect(results.every(r => r.case.id)).toBe(true);
 
     // Verify all cases tracked
     expect(yawlEngine.cases.size).toBe(workflowCount);
 
     // Verify deltas created for all
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(deltaGate.deltasProcessed).toBeGreaterThanOrEqual(workflowCount);
   }, 15000);
 
@@ -519,14 +518,14 @@ describe('E2E: Multi-Workflow Concurrent Execution', () => {
     // Performance check - should complete in reasonable time
     expect(elapsed).toBeLessThan(5000); // 5 seconds for 50 cases
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // Verify receipt chain integrity
     const receipts = deltaGate.receipts;
     expect(receipts.length).toBeGreaterThanOrEqual(caseCount);
 
     // All receipts should be applied
-    expect(receipts.every((r) => r.applied)).toBe(true);
+    expect(receipts.every(r => r.applied)).toBe(true);
   }, 20000);
 });
 
@@ -564,7 +563,7 @@ describe('E2E: Daemon Restart and Recovery', () => {
     await bridge.start();
 
     await yawlEngine.createCase('recovery-workflow', { phase: 'initial' });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     const initialReceiptCount = deltaGate.receipts.length;
     expect(initialReceiptCount).toBeGreaterThan(0);
@@ -579,7 +578,7 @@ describe('E2E: Daemon Restart and Recovery', () => {
 
     // Create another case
     await yawlEngine.createCase('recovery-workflow', { phase: 'after-restart' });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Assert - New receipts created
     expect(deltaGate.receipts.length).toBeGreaterThan(initialReceiptCount);
@@ -689,7 +688,7 @@ describe('E2E: IPC-Style Event Communication', () => {
 
     // Act
     await yawlEngine.createCase('propagate-workflow', { propagate: true });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Assert - Delta gate received events
     expect(deltaAppliedListener).toHaveBeenCalled();
@@ -745,9 +744,9 @@ describe('E2E: Error Handling and Recovery', () => {
 
   it('6.1: should handle invalid workflow gracefully', async () => {
     // Act & Assert
-    await expect(
-      yawlEngine.createCase('non-existent-workflow', {})
-    ).rejects.toThrow('Workflow non-existent-workflow not found');
+    await expect(yawlEngine.createCase('non-existent-workflow', {})).rejects.toThrow(
+      'Workflow non-existent-workflow not found'
+    );
 
     // Daemon should still be running
     expect(daemon.isRunning).toBe(true);
@@ -789,14 +788,14 @@ describe('E2E: Error Handling and Recovery', () => {
 
     // Act
     await yawlEngine.createCase('reject-workflow', { test: true });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Assert - Should have some rejections but continue
     expect(deltaGate.deltasRejected).toBeGreaterThan(0);
 
     // Second case should succeed
     await yawlEngine.createCase('reject-workflow', { test: 2 });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     expect(deltaGate.deltasProcessed).toBeGreaterThan(0);
   }, 10000);
@@ -820,7 +819,7 @@ describe('E2E: Error Handling and Recovery', () => {
     const results = await Promise.all(promises);
 
     // Assert - Valid cases succeeded
-    const validResults = results.filter((r) => r !== null);
+    const validResults = results.filter(r => r !== null);
     expect(validResults.length).toBe(3);
 
     // Daemon still healthy
@@ -887,7 +886,7 @@ describe('E2E: Performance Benchmarks', () => {
     // Act - Measure receipt generation overhead
     const startTime = Date.now();
     await yawlEngine.createCase('receipt-perf-workflow', { test: true });
-    await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for async receipt
+    await new Promise(resolve => setTimeout(resolve, 50)); // Wait for async receipt
 
     const elapsed = Date.now() - startTime;
 

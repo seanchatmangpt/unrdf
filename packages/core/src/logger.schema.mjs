@@ -47,5 +47,5 @@ export const requestLoggerSchema = {
 export default {
   createLogger: createLoggerSchema,
   performanceTimer: performanceTimerSchema,
-  requestLogger: requestLoggerSchema
+  requestLogger: requestLoggerSchema,
 };

@@ -177,7 +177,7 @@ describe('PNCounter', () => {
 
     c1.merge(c2);
 
-    expect(c1.value()).toBe((50 - 10) + (30 - 5));
+    expect(c1.value()).toBe(50 - 10 + (30 - 5));
   });
 
   it('should be commutative', () => {
@@ -386,11 +386,13 @@ describe('RDFSet', () => {
     });
 
     expect(rdf.size()).toBe(1);
-    expect(rdf.has({
-      subject: 'ex:Alice',
-      predicate: 'rdf:type',
-      object: 'foaf:Person',
-    })).toBe(true);
+    expect(
+      rdf.has({
+        subject: 'ex:Alice',
+        predicate: 'rdf:type',
+        object: 'foaf:Person',
+      })
+    ).toBe(true);
   });
 
   it('should remove triples', () => {
@@ -520,7 +522,7 @@ describe('CRDT Properties (Cross-type)', () => {
       },
     ];
 
-    tests.forEach((test) => {
+    tests.forEach(test => {
       expect(test()).toBe(true);
     });
   });

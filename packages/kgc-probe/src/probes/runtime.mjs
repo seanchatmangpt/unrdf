@@ -84,7 +84,7 @@ function canonicalizeJSON(obj) {
 
   // Sort keys and stringify
   const keys = Object.keys(obj).sort();
-  const pairs = keys.map((key) => {
+  const pairs = keys.map(key => {
     return JSON.stringify(key) + ':' + canonicalizeJSON(obj[key]);
   });
   return '{' + pairs.join(',') + '}';
@@ -188,9 +188,7 @@ function calculateStats(values) {
   const n = sorted.length;
 
   const mean = values.reduce((sum, v) => sum + v, 0) / n;
-  const median = n % 2 === 0
-    ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2
-    : sorted[Math.floor(n / 2)];
+  const median = n % 2 === 0 ? (sorted[n / 2 - 1] + sorted[n / 2]) / 2 : sorted[Math.floor(n / 2)];
 
   const p95Index = Math.ceil(n * 0.95) - 1;
   const p99Index = Math.ceil(n * 0.99) - 1;
@@ -276,8 +274,14 @@ async function testWasmSupport() {
   try {
     // Minimal WASM module (exports nothing, just validates instantiation)
     const wasmBytes = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, // Magic number
-      0x01, 0x00, 0x00, 0x00, // Version
+      0x00,
+      0x61,
+      0x73,
+      0x6d, // Magic number
+      0x01,
+      0x00,
+      0x00,
+      0x00, // Version
     ]);
     await WebAssembly.instantiate(wasmBytes);
     return true;
@@ -302,13 +306,13 @@ async function testWorkerThreads() {
 
     const worker = new Worker(workerCode, { eval: true });
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const timeout = setTimeout(() => {
         worker.terminate();
         resolve(false);
       }, 1000);
 
-      worker.on('message', (msg) => {
+      worker.on('message', msg => {
         clearTimeout(timeout);
         worker.terminate();
         resolve(msg === 'ok');

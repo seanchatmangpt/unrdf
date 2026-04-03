@@ -348,16 +348,14 @@ export async function compileLatexToPdf({
   passes = DEFAULT_PASSES,
 }) {
   // Ensure absolute paths
-  const absInputPath = isAbsolute(inputTexPath)
-    ? inputTexPath
-    : join(process.cwd(), inputTexPath);
+  const absInputPath = isAbsolute(inputTexPath) ? inputTexPath : join(process.cwd(), inputTexPath);
 
-  const absProjectDir = isAbsolute(projectDir)
-    ? projectDir
-    : join(process.cwd(), projectDir);
+  const absProjectDir = isAbsolute(projectDir) ? projectDir : join(process.cwd(), projectDir);
 
   const absCacheDir = cacheDir
-    ? (isAbsolute(cacheDir) ? cacheDir : join(process.cwd(), cacheDir))
+    ? isAbsolute(cacheDir)
+      ? cacheDir
+      : join(process.cwd(), cacheDir)
     : join(absProjectDir, DEFAULT_CACHE_DIR);
 
   // Step A: Validate inputs

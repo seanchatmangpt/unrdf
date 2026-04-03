@@ -86,11 +86,11 @@ export function useCollaboration(options = {}) {
     });
 
     // Update reactive state on connection changes
-    syncProvider.on('status', (event) => {
+    syncProvider.on('status', event => {
       isConnected.value = event.status === 'connected';
     });
 
-    syncProvider.on('synced', (event) => {
+    syncProvider.on('synced', event => {
       isSynced.value = event.isSynced;
     });
   }
@@ -135,15 +135,15 @@ export function useCollaboration(options = {}) {
     triples: computed(() => triples.value),
 
     // Actions
-    addTriple: (triple) => {
+    addTriple: triple => {
       graph.addTriple(triple);
     },
 
-    removeTriple: (triple) => {
+    removeTriple: triple => {
       graph.removeTriple(triple);
     },
 
-    queryTriples: (pattern) => graph.queryTriples(pattern),
+    queryTriples: pattern => graph.queryTriples(pattern),
 
     clear: () => {
       graph.clear();
@@ -160,7 +160,7 @@ export function useCollaboration(options = {}) {
     disconnect: () => syncProvider?.disconnect(),
 
     // Awareness (presence)
-    setAwareness: (state) => syncProvider?.setAwareness(state),
+    setAwareness: state => syncProvider?.setAwareness(state),
     getAwareness: () => syncProvider?.getAllAwareness() || [],
 
     // Persistence

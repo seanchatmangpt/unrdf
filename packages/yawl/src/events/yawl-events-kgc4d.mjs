@@ -72,10 +72,7 @@ export async function reconstructCase(store, gitBackbone, caseId, targetTime) {
           const eventType = typeQuads[0].object.value;
 
           // Filter to YAWL events for this case
-          if (
-            payload.yawl_case_id === caseId ||
-            payload.caseId === caseId
-          ) {
+          if (payload.yawl_case_id === caseId || payload.caseId === caseId) {
             caseEvents.push({
               subject: timeQuad.subject,
               t_ns: eventTime,
@@ -262,10 +259,7 @@ export async function getWorkflowAuditTrail(store, caseId) {
         const gitRef = gitRefQuads.length > 0 ? gitRefQuads[0].object.value : null;
 
         // Check if this is a YAWL event for this case
-        if (
-          payload.yawl_case_id === caseId ||
-          payload.caseId === caseId
-        ) {
+        if (payload.yawl_case_id === caseId || payload.caseId === caseId) {
           const event = {
             eventId: timeQuad.subject.value.split('/').pop(),
             t_ns: eventTime.toString(),
@@ -313,11 +307,13 @@ export async function getWorkflowAuditTrail(store, caseId) {
   });
 
   // Calculate audit trail hash for integrity verification
-  const auditHash = await blake3(serializeCaseState({
-    caseId,
-    events: events.map((e) => ({ id: e.eventId, type: e.type, t_ns: e.t_ns })),
-    eventCount: events.length,
-  }));
+  const auditHash = await blake3(
+    serializeCaseState({
+      caseId,
+      events: events.map(e => ({ id: e.eventId, type: e.type, t_ns: e.t_ns })),
+      eventCount: events.length,
+    })
+  );
 
   return {
     caseId,

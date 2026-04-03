@@ -67,15 +67,9 @@ export class TemporalDiscoveryEngine {
       results.metadata.algorithmsRun.push('anomaly_detection');
 
       if (timeSeriesList.length === 1) {
-        results.anomalies = detectAnomalies(
-          timeSeriesList[0],
-          this.options.anomalyDetection
-        );
+        results.anomalies = detectAnomalies(timeSeriesList[0], this.options.anomalyDetection);
       } else {
-        const anomalyMap = batchDetectAnomalies(
-          timeSeriesList,
-          this.options.anomalyDetection
-        );
+        const anomalyMap = batchDetectAnomalies(timeSeriesList, this.options.anomalyDetection);
         results.anomalies = [];
         for (const anomalies of anomalyMap.values()) {
           results.anomalies.push(...anomalies);
@@ -95,10 +89,7 @@ export class TemporalDiscoveryEngine {
 
     if (this.options.enableCorrelationAnalysis && timeSeriesList.length > 1) {
       results.metadata.algorithmsRun.push('correlation_analysis');
-      results.correlations = findMultipleCorrelations(
-        timeSeriesList,
-        this.options.correlation
-      );
+      results.correlations = findMultipleCorrelations(timeSeriesList, this.options.correlation);
     }
 
     if (this.options.enableChangepointDetection) {
@@ -106,10 +97,7 @@ export class TemporalDiscoveryEngine {
       results.changepoints = [];
 
       for (const series of timeSeriesList) {
-        const changepoints = detectChangepoints(
-          series,
-          this.options.changepoint
-        );
+        const changepoints = detectChangepoints(series, this.options.changepoint);
         results.changepoints.push(...changepoints);
       }
     }
@@ -141,10 +129,7 @@ export class TemporalDiscoveryEngine {
 
     if (this.options.enablePatternMining) {
       results.metadata.algorithmsRun.push('pattern_mining');
-      results.patterns = mineReceiptPatterns(
-        receipts,
-        this.options.patternMining
-      );
+      results.patterns = mineReceiptPatterns(receipts, this.options.patternMining);
     }
 
     const endTime = performance.now();
@@ -202,19 +187,15 @@ export class TemporalDiscoveryEngine {
   getSummary(results) {
     return {
       totalAnomalies: results.anomalies?.length || 0,
-      criticalAnomalies:
-        results.anomalies?.filter((a) => a.severity === 'critical').length || 0,
+      criticalAnomalies: results.anomalies?.filter(a => a.severity === 'critical').length || 0,
       totalTrends: results.trends?.length || 0,
-      increasingTrends:
-        results.trends?.filter((t) => t.direction === 'increasing').length || 0,
-      decreasingTrends:
-        results.trends?.filter((t) => t.direction === 'decreasing').length || 0,
+      increasingTrends: results.trends?.filter(t => t.direction === 'increasing').length || 0,
+      decreasingTrends: results.trends?.filter(t => t.direction === 'decreasing').length || 0,
       totalChangepoints: results.changepoints?.length || 0,
       totalCorrelations: results.correlations?.length || 0,
       strongCorrelations:
-        results.correlations?.filter(
-          (c) => c.strength === 'strong' || c.strength === 'very_strong'
-        ).length || 0,
+        results.correlations?.filter(c => c.strength === 'strong' || c.strength === 'very_strong')
+          .length || 0,
       totalPatterns: results.patterns?.length || 0,
       executionTimeMs: results.metadata?.executionTimeMs || 0,
       algorithmsRun: results.metadata?.algorithmsRun || [],

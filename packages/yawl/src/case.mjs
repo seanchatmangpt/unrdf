@@ -62,18 +62,21 @@ Object.assign(Case.prototype, CaseStateMixin);
  * @param {import('./workflow.mjs').YawlWorkflow} workflow - Workflow definition
  * @returns {Promise<Case>} Restored case
  */
-Case.fromJSON = async function(json, workflow) {
+Case.fromJSON = async function (json, workflow) {
   const { YawlTask } = await import('./task.mjs');
 
-  const caseInstance = new Case({
-    id: json.id,
-    workflowId: json.workflowId,
-    status: json.status,
-    createdAt: json.createdAt ? BigInt(json.createdAt) : undefined,
-    startedAt: json.startedAt ? BigInt(json.startedAt) : undefined,
-    completedAt: json.completedAt ? BigInt(json.completedAt) : undefined,
-    data: json.data,
-  }, workflow);
+  const caseInstance = new Case(
+    {
+      id: json.id,
+      workflowId: json.workflowId,
+      status: json.status,
+      createdAt: json.createdAt ? BigInt(json.createdAt) : undefined,
+      startedAt: json.startedAt ? BigInt(json.startedAt) : undefined,
+      completedAt: json.completedAt ? BigInt(json.completedAt) : undefined,
+      data: json.data,
+    },
+    workflow
+  );
 
   // Restore work items
   for (const wiJson of json.workItems || []) {
@@ -152,11 +155,14 @@ export async function createCase(workflow, options = {}) {
     throw new Error(`Invalid workflow: ${validation.errors.join(', ')}`);
   }
 
-  const caseInstance = new Case({
-    id: caseId,
-    workflowId: workflow.id,
-    data: initialData,
-  }, workflow);
+  const caseInstance = new Case(
+    {
+      id: caseId,
+      workflowId: workflow.id,
+      data: initialData,
+    },
+    workflow
+  );
 
   if (autoStart) {
     await caseInstance.start();

@@ -30,7 +30,15 @@ export class TamperDetector {
 
     try {
       // Check required fields
-      const required = ['id', 'hash', 'timestamp_ns', 'timestamp_iso', 'operation', 'payload', 'previousHash'];
+      const required = [
+        'id',
+        'hash',
+        'timestamp_ns',
+        'timestamp_iso',
+        'operation',
+        'payload',
+        'previousHash',
+      ];
       for (const field of required) {
         if (!(field in receipt)) {
           errors.push(`Missing required field: ${field}`);
@@ -181,7 +189,16 @@ export class TamperDetector {
     };
 
     // Compare all fields
-    const fields = ['id', 'hash', 'timestamp_ns', 'timestamp_iso', 'operation', 'payload', 'previousHash', 'actor'];
+    const fields = [
+      'id',
+      'hash',
+      'timestamp_ns',
+      'timestamp_iso',
+      'operation',
+      'payload',
+      'previousHash',
+      'actor',
+    ];
     for (const field of fields) {
       const origValue = JSON.stringify(original[field]);
       const suspValue = JSON.stringify(suspect[field]);

@@ -9,13 +9,7 @@
  */
 
 // Hash utilities
-export {
-  hashFile,
-  hashVfs,
-  hashVfsByExtension,
-  areVfsEqual,
-  getVfsHashMetadata,
-} from './hash.mjs';
+export { hashFile, hashVfs, hashVfsByExtension, areVfsEqual, getVfsHashMetadata } from './hash.mjs';
 
 // Path normalization
 export {

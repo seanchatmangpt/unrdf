@@ -125,16 +125,18 @@ export async function buildTransitionReceipt({
   };
 
   // Compute receipt hash
-  receipt.hash = await blake3(JSON.stringify({
-    id: receipt.id,
-    taskInstanceId: receipt.taskInstanceId,
-    caseId: receipt.caseId,
-    action: receipt.action,
-    timestamp: receipt.timestamp.toString(),
-    beforeHash: receipt.beforeHash,
-    afterHash: receipt.afterHash,
-    previousReceiptHash: receipt.previousReceiptHash,
-  }));
+  receipt.hash = await blake3(
+    JSON.stringify({
+      id: receipt.id,
+      taskInstanceId: receipt.taskInstanceId,
+      caseId: receipt.caseId,
+      action: receipt.action,
+      timestamp: receipt.timestamp.toString(),
+      beforeHash: receipt.beforeHash,
+      afterHash: receipt.afterHash,
+      previousReceiptHash: receipt.previousReceiptHash,
+    })
+  );
 
   return receipt;
 }
@@ -152,7 +154,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * Serialize to JSON-compatible object
    * @returns {Object}
    */
-  TaskInstanceClass.prototype.toJSON = function() {
+  TaskInstanceClass.prototype.toJSON = function () {
     return serializeTaskInstance(this);
   };
 
@@ -162,7 +164,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {import('./task-core.mjs').TaskDefinition|Object} taskDef - Task definition
    * @returns {import('./task-core.mjs').TaskInstance}
    */
-  TaskInstanceClass.fromJSON = function(json, taskDef) {
+  TaskInstanceClass.fromJSON = function (json, taskDef) {
     return deserializeTaskInstance(json, taskDef);
   };
 }
@@ -178,18 +180,20 @@ const TaskDataSchema = z.object({
   id: z.string().min(1),
   name: z.string().optional(),
   caseId: z.string().optional(),
-  status: z.enum([
-    'inactive',
-    'enabled',
-    'running',
-    'completed',
-    'cancelled',
-    'failed',
-    'timeout',
-    // New status values
-    'disabled',
-    'active',
-  ]).default('inactive'),
+  status: z
+    .enum([
+      'inactive',
+      'enabled',
+      'running',
+      'completed',
+      'cancelled',
+      'failed',
+      'timeout',
+      // New status values
+      'disabled',
+      'active',
+    ])
+    .default('inactive'),
   input: z.record(z.unknown()).optional(),
   output: z.record(z.unknown()).optional(),
   assignedResource: z.string().optional(),
@@ -314,7 +318,11 @@ export class YawlTask {
    * @returns {YawlTask} this
    */
   timedOut() {
-    if (this.status !== 'running' && this.status !== TaskStatus.ENABLED && this.status !== TaskStatus.ACTIVE) {
+    if (
+      this.status !== 'running' &&
+      this.status !== TaskStatus.ENABLED &&
+      this.status !== TaskStatus.ACTIVE
+    ) {
       throw new Error(`Cannot timeout task ${this.id}: current status is ${this.status}`);
     }
     this.status = TaskStatus.TIMEOUT;

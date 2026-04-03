@@ -35,7 +35,11 @@ export const createNamedNodeSchema = {
 /**
  * Schema for createLiteral
  */
-export const createLiteralParamsSchema = z.tuple([z.string(), z.unknown().optional(), z.unknown().optional()]);
+export const createLiteralParamsSchema = z.tuple([
+  z.string(),
+  z.unknown().optional(),
+  z.unknown().optional(),
+]);
 
 export const createLiteralReturnSchema = z.unknown();
 
@@ -86,5 +90,5 @@ export default {
   createLiteral: createLiteralSchema,
   createBlankNode: createBlankNodeSchema,
   createVariable: createVariableSchema,
-  createQuad: createQuadSchema
+  createQuad: createQuadSchema,
 };

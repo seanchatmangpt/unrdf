@@ -11,11 +11,13 @@ import { sparql } from './query-builder.mjs';
 /**
  * Zod schema for property path options (reserved for future validation)
  */
-const _PropertyPathOptionsSchema = z.object({
-  minLength: z.number().int().nonnegative().optional(),
-  maxLength: z.number().int().positive().optional(),
-  inverse: z.boolean().optional(),
-}).strict();
+const _PropertyPathOptionsSchema = z
+  .object({
+    minLength: z.number().int().nonnegative().optional(),
+    maxLength: z.number().int().positive().optional(),
+    inverse: z.boolean().optional(),
+  })
+  .strict();
 
 /**
  * Common RDF/RDFS/OWL prefixes
@@ -154,8 +156,7 @@ export function path(predicate) {
 export function findInstancesOfType(type, options = {}) {
   z.string().min(1).parse(type);
 
-  const builder = sparql()
-    .select('?instance');
+  const builder = sparql().select('?instance');
 
   if (options.properties && options.properties.length > 0) {
     options.properties.forEach((prop, i) => {
@@ -192,9 +193,7 @@ export function findInstancesOfType(type, options = {}) {
 export function findPropertiesOf(resource, options = {}) {
   z.string().min(1).parse(resource);
 
-  const builder = sparql()
-    .select('?property', '?value')
-    .where(`${resource} ?property ?value`);
+  const builder = sparql().select('?property', '?value').where(`${resource} ?property ?value`);
 
   if (options.includeInverse) {
     builder.union(
@@ -221,9 +220,7 @@ export function findByProperty(property, value, options = {}) {
   z.string().min(1).parse(property);
   z.string().min(1).parse(value);
 
-  const builder = sparql()
-    .select('?resource')
-    .where(`?resource ${property} ${value}`);
+  const builder = sparql().select('?resource').where(`?resource ${property} ${value}`);
 
   if (options.limit) {
     builder.limit(options.limit);
@@ -247,9 +244,7 @@ export function textSearch(property, searchTerm, options = {}) {
   z.string().min(1).parse(property);
   z.string().min(1).parse(searchTerm);
 
-  const builder = sparql()
-    .select('?resource', '?value')
-    .where(`?resource ${property} ?value`);
+  const builder = sparql().select('?resource', '?value').where(`?resource ${property} ?value`);
 
   const flags = options.caseInsensitive !== false ? ', "i"' : '';
   builder.filter(`REGEX(?value, "${searchTerm}"${flags})`);
@@ -281,10 +276,7 @@ export function getSubclasses(baseClass, options = {}) {
     pathExpr = 'rdfs:subClassOf+';
   }
 
-  return sparql()
-    .select('?subclass')
-    .where(`?subclass ${pathExpr} ${baseClass}`)
-    .build();
+  return sparql().select('?subclass').where(`?subclass ${pathExpr} ${baseClass}`).build();
 }
 
 /**
@@ -339,10 +331,7 @@ export function findConnectedResources(startResource, options) {
   const maxDepth = options.maxDepth || 3;
   const pathExpr = `${options.via}{1,${maxDepth}}`;
 
-  return sparql()
-    .select('?connected')
-    .where(`${startResource} ${pathExpr} ?connected`)
-    .build();
+  return sparql().select('?connected').where(`${startResource} ${pathExpr} ?connected`).build();
 }
 
 /**
@@ -378,10 +367,12 @@ export function withCommonPrefixes(builderFn) {
  * ], b => b.select('?s', '?label'));
  */
 export function federatedQuery(services, builderFn) {
-  z.array(z.object({
-    endpoint: z.string().url(),
-    patterns: z.array(z.string()),
-  })).parse(services);
+  z.array(
+    z.object({
+      endpoint: z.string().url(),
+      patterns: z.array(z.string()),
+    })
+  ).parse(services);
 
   const builder = sparql();
   builderFn(builder);
@@ -415,19 +406,19 @@ export function federatedQuery(services, builderFn) {
 export function aggregateQuery(options) {
   const schema = z.object({
     groupBy: z.string().min(1),
-    aggregations: z.array(z.object({
-      fn: z.string().min(1),
-      var: z.string().min(1),
-      as: z.string().min(1),
-    })),
+    aggregations: z.array(
+      z.object({
+        fn: z.string().min(1),
+        var: z.string().min(1),
+        as: z.string().min(1),
+      })
+    ),
     wherePattern: z.string().min(1),
   });
 
   const validated = schema.parse(options);
 
-  const aggVars = validated.aggregations.map(
-    agg => `(${agg.fn}(${agg.var}) AS ${agg.as})`
-  );
+  const aggVars = validated.aggregations.map(agg => `(${agg.fn}(${agg.var}) AS ${agg.as})`);
 
   const builder = sparql()
     .select(validated.groupBy, ...aggVars)

@@ -74,10 +74,12 @@ export function validateRegex(data, pattern, message = null) {
 
   return {
     valid: false,
-    errors: [{
-      path: '',
-      message: message || `Value does not match pattern ${regex}`,
-    }],
+    errors: [
+      {
+        path: '',
+        message: message || `Value does not match pattern ${regex}`,
+      },
+    ],
   };
 }
 
@@ -102,10 +104,12 @@ export function validateRange(data, min, max) {
   if (data < min || data > max) {
     return {
       valid: false,
-      errors: [{
-        path: '',
-        message: `Value ${data} is outside range [${min}, ${max}]`,
-      }],
+      errors: [
+        {
+          path: '',
+          message: `Value ${data} is outside range [${min}, ${max}]`,
+        },
+      ],
     };
   }
 

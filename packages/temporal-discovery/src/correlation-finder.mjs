@@ -4,11 +4,7 @@
  * @description Pearson correlation and lagged correlation analysis
  */
 
-import {
-  CorrelationOptionsSchema,
-  CorrelationSchema,
-  TimeSeriesSchema,
-} from './schemas.mjs';
+import { CorrelationOptionsSchema, CorrelationSchema, TimeSeriesSchema } from './schemas.mjs';
 
 /**
  * Calculate Pearson correlation coefficient
@@ -30,9 +26,7 @@ function pearsonCorrelation(x, y) {
   const sumY2 = y.reduce((sum, yi) => sum + yi * yi, 0);
 
   const numerator = n * sumXY - sumX * sumY;
-  const denominator = Math.sqrt(
-    (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
-  );
+  const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
 
   if (denominator === 0) {
     return 0;
@@ -107,15 +101,15 @@ function classifyDirection(coefficient) {
  * @returns {{values1: number[], values2: number[], timestamps: number[]}} Aligned data
  */
 function alignTimeSeries(series1, series2) {
-  const map1 = new Map(series1.data.map((d) => [d.timestamp, d.value]));
-  const map2 = new Map(series2.data.map((d) => [d.timestamp, d.value]));
+  const map1 = new Map(series1.data.map(d => [d.timestamp, d.value]));
+  const map2 = new Map(series2.data.map(d => [d.timestamp, d.value]));
 
-  const commonTimestamps = Array.from(map1.keys()).filter((t) => map2.has(t));
+  const commonTimestamps = Array.from(map1.keys()).filter(t => map2.has(t));
   commonTimestamps.sort((a, b) => a - b);
 
   return {
-    values1: commonTimestamps.map((t) => map1.get(t)),
-    values2: commonTimestamps.map((t) => map2.get(t)),
+    values1: commonTimestamps.map(t => map1.get(t)),
+    values2: commonTimestamps.map(t => map2.get(t)),
     timestamps: commonTimestamps,
   };
 }
@@ -142,10 +136,7 @@ export function findCorrelation(series1, series2, options = {}) {
 
   const { method, minOverlap, lagMax } = validatedOptions;
 
-  const { values1, values2 } = alignTimeSeries(
-    validatedSeries1,
-    validatedSeries2
-  );
+  const { values1, values2 } = alignTimeSeries(validatedSeries1, validatedSeries2);
 
   if (values1.length < minOverlap) {
     return null;
@@ -208,11 +199,7 @@ export function findMultipleCorrelations(timeSeriesList, options = {}) {
 
   for (let i = 0; i < timeSeriesList.length; i++) {
     for (let j = i + 1; j < timeSeriesList.length; j++) {
-      const correlation = findCorrelation(
-        timeSeriesList[i],
-        timeSeriesList[j],
-        options
-      );
+      const correlation = findCorrelation(timeSeriesList[i], timeSeriesList[j], options);
 
       if (correlation !== null) {
         correlations.push(correlation);
@@ -220,9 +207,7 @@ export function findMultipleCorrelations(timeSeriesList, options = {}) {
     }
   }
 
-  correlations.sort(
-    (a, b) => Math.abs(b.coefficient) - Math.abs(a.coefficient)
-  );
+  correlations.sort((a, b) => Math.abs(b.coefficient) - Math.abs(a.coefficient));
 
   return correlations;
 }
@@ -236,5 +221,5 @@ export function findMultipleCorrelations(timeSeriesList, options = {}) {
  * const strong = filterByStrength(correlations, ['strong', 'very_strong']);
  */
 export function filterByStrength(correlations, strengths) {
-  return correlations.filter((corr) => strengths.includes(corr.strength));
+  return correlations.filter(corr => strengths.includes(corr.strength));
 }

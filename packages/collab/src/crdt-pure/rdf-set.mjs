@@ -51,9 +51,7 @@ export class RDFSet {
     this.nodeId = nodeId;
 
     /** @type {ORSet} - Underlying OR-Set for triple storage */
-    this.orSet = initialState
-      ? ORSet.fromJSON(initialState.orSet)
-      : new ORSet(nodeId);
+    this.orSet = initialState ? ORSet.fromJSON(initialState.orSet) : new ORSet(nodeId);
 
     /** @type {VectorClock} - Causal ordering */
     this.vectorClock = initialState
@@ -131,11 +129,11 @@ export class RDFSet {
     const keys = this.orSet.values();
 
     return keys
-      .map((key) => {
+      .map(key => {
         const meta = this.metadata.get(key);
         return meta ? meta.triple : null;
       })
-      .filter((t) => t !== null);
+      .filter(t => t !== null);
   }
 
   /**
@@ -149,7 +147,7 @@ export class RDFSet {
   query(pattern) {
     const triples = this.getTriples();
 
-    return triples.filter((triple) => {
+    return triples.filter(triple => {
       if (pattern.subject && triple.subject !== pattern.subject) return false;
       if (pattern.predicate && triple.predicate !== pattern.predicate) return false;
       if (pattern.object && triple.object !== pattern.object) return false;

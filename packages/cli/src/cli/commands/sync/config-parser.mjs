@@ -226,7 +226,11 @@ function parseSimpleToml(content) {
       } else if (/^\d+\.\d+$/.test(value)) {
         value = parseFloat(value);
       } else if (value.startsWith('[') && value.endsWith(']')) {
-        try { value = JSON.parse(value.replace(/'/g, '"')); } catch (e) { /* keep as string */ }
+        try {
+          value = JSON.parse(value.replace(/'/g, '"'));
+        } catch (e) {
+          /* keep as string */
+        }
       }
 
       currentSection[key] = value;
@@ -445,4 +449,14 @@ export async function findConfigFile(dir) {
   return null;
 }
 
-export default { parseConfig, resolveConfigPaths, substituteEnvVars, validateConfig, createDefaultConfig, serializeConfig, findConfigFile, ConfigParseError, ConfigValidationError };
+export default {
+  parseConfig,
+  resolveConfigPaths,
+  substituteEnvVars,
+  validateConfig,
+  createDefaultConfig,
+  serializeConfig,
+  findConfigFile,
+  ConfigParseError,
+  ConfigValidationError,
+};

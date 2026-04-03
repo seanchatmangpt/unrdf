@@ -6,6 +6,7 @@
 ## Quick Start
 
 ### Import the main API
+
 ```javascript
 import { compileLatexToPdf } from '@unrdf/kgc-cli/latex';
 
@@ -13,21 +14,23 @@ const pdfBytes = await compileLatexToPdf({
   inputTexPath: '/path/to/main.tex',
   projectDir: '/path/to/project',
   engine: 'xetex',
-  passes: 2
+  passes: 2,
 });
 ```
 
 ### Validate inputs with schemas
+
 ```javascript
 import { CompileOptionsSchema } from '@unrdf/kgc-cli/latex/schemas';
 
 const validated = CompileOptionsSchema.parse({
   inputTexPath: '/path/to/main.tex',
-  projectDir: '/path/to/project'
+  projectDir: '/path/to/project',
 });
 ```
 
 ### Use CLI commands
+
 ```bash
 # Build LaTeX document
 npm run latex:build -- --input=fixtures/minimal/main.tex --output=dist/output.pdf
@@ -42,12 +45,14 @@ npm run validate:wasm
 ## File Locations
 
 ### Core Modules
+
 - **Schemas**: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/schemas.mjs`
 - **Main Export**: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/index.mjs`
 - **Orchestrator**: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/compile.mjs`
 - **Engine**: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/swiftlatex-engine.mjs`
 
 ### Agent Modules
+
 - **Agent 2 (VFS)**: `src/lib/latex/vfs/` - Already implemented with 62 tests passing
 - **Agent 3 (Engine)**: `src/lib/latex/engine/` - Needs WASM loader implementation
 - **Agent 4 (Resolver)**: `src/lib/latex/ctan-resolver.mjs` - Already implemented
@@ -55,22 +60,23 @@ npm run validate:wasm
 - **Agent 6 (Diagnostics)**: `src/lib/latex/diagnostics/` - Already implemented with 21 tests passing
 
 ### Supporting
+
 - **Fixtures**: `/home/user/unrdf/packages/kgc-cli/fixtures/`
 - **Scripts**: `/home/user/unrdf/packages/kgc-cli/scripts/`
 - **WASM Vendor**: `/home/user/unrdf/packages/kgc-cli/vendor/swiftlatex/`
 
 ## Integration Status
 
-| Agent | Module | Status | Files | Tests |
-|-------|--------|--------|-------|-------|
-| 1 | Schemas/Integration | ✅ Complete | schemas.mjs, index.mjs | 56 exports validated |
-| 2 | VFS Collection | ✅ Complete | vfs/ | 62/62 passing |
-| 3 | Engine Runner | ⚠️ Mock | swiftlatex-engine.mjs | Needs WASM binaries |
-| 4 | CTAN Resolver | ✅ Complete | ctan-resolver.mjs | Implemented |
-| 5 | Lockfile Manager | ✅ Complete | latex-lock.mjs | 13 tests passing |
-| 6 | Diagnostics | ✅ Complete | diagnostics/ | 21/21 passing |
-| 7-9 | CLI/Test/Docs | ⚠️ Partial | extensions/latex.mjs | CLI wired, needs tests |
-| 10 | Orchestrator | ✅ Complete | compile.mjs | Implemented |
+| Agent | Module              | Status      | Files                  | Tests                  |
+| ----- | ------------------- | ----------- | ---------------------- | ---------------------- |
+| 1     | Schemas/Integration | ✅ Complete | schemas.mjs, index.mjs | 56 exports validated   |
+| 2     | VFS Collection      | ✅ Complete | vfs/                   | 62/62 passing          |
+| 3     | Engine Runner       | ⚠️ Mock     | swiftlatex-engine.mjs  | Needs WASM binaries    |
+| 4     | CTAN Resolver       | ✅ Complete | ctan-resolver.mjs      | Implemented            |
+| 5     | Lockfile Manager    | ✅ Complete | latex-lock.mjs         | 13 tests passing       |
+| 6     | Diagnostics         | ✅ Complete | diagnostics/           | 21/21 passing          |
+| 7-9   | CLI/Test/Docs       | ⚠️ Partial  | extensions/latex.mjs   | CLI wired, needs tests |
+| 10    | Orchestrator        | ✅ Complete | compile.mjs            | Implemented            |
 
 ## What Works Now
 
@@ -89,6 +95,7 @@ npm run validate:wasm
 ### Critical (Blocks compilation)
 
 **Agent 3 - WASM Loader**
+
 - File: `src/lib/latex/engine/loader.mjs`
 - Task: Load SwiftLaTeX WASM modules
 - Required: Download real WASM binaries to `vendor/swiftlatex/`
@@ -97,11 +104,13 @@ npm run validate:wasm
 ### High Priority (Improves UX)
 
 **CLI Commands**
+
 - File: `src/extensions/latex.mjs`
 - Task: Implement `validate` and `clean` commands
 - Current: Placeholder returns "not yet implemented"
 
 **Test Fixtures**
+
 - Directory: `fixtures/`
 - Task: Add article/, thesis/, errors/ examples
 - Current: Only minimal/ exists
@@ -109,16 +118,19 @@ npm run validate:wasm
 ### Medium Priority (Enhancement)
 
 **Cache Management**
+
 - Directory: `src/lib/latex/cache/`
 - Task: Implement manager.mjs, cleanup.mjs, integrity.mjs
 - Current: README documentation only
 
 **Engine Utilities**
+
 - Directory: `src/lib/latex/engine/`
 - Task: Implement loader.mjs, instance-pool.mjs, memory-manager.mjs
 - Current: README documentation only
 
 **Utility Scripts**
+
 - Directory: `scripts/`
 - Task: Implement setup-swiftlatex.mjs, verify-integration.mjs
 - Current: README documentation only
@@ -128,12 +140,14 @@ npm run validate:wasm
 ### Agent 3 (Engine) - Next Steps
 
 1. Download SwiftLaTeX WASM:
+
    ```bash
    # From packages/kgc-cli/
    node scripts/setup-swiftlatex.mjs
    ```
 
 2. Implement loader:
+
    ```javascript
    // src/lib/latex/engine/loader.mjs
    export async function loadEngine(engine, wasmPath) {
@@ -157,6 +171,7 @@ npm run validate:wasm
    - `clean` handler (clear cache)
 
 2. Add integration tests:
+
    ```javascript
    // test/latex-integration.test.mjs
    import { describe, it, expect } from 'vitest';
@@ -166,7 +181,7 @@ npm run validate:wasm
      it('compiles minimal example', async () => {
        const pdf = await compileLatexToPdf({
          inputTexPath: 'fixtures/minimal/main.tex',
-         projectDir: 'fixtures/minimal'
+         projectDir: 'fixtures/minimal',
        });
        expect(pdf).toBeInstanceOf(Uint8Array);
        expect(pdf.length).toBeGreaterThan(1000);
@@ -202,12 +217,15 @@ npm test -- latex
 ## Troubleshooting
 
 ### "WASM engine not found"
+
 **Cause**: SwiftLaTeX binaries are placeholders
 **Fix**: Implement Agent 3's WASM loader and download real binaries
 
 ### "Module not found"
+
 **Cause**: Import path incorrect
 **Fix**: Use package exports:
+
 ```javascript
 // ✅ Correct
 import { ... } from '@unrdf/kgc-cli/latex';
@@ -217,8 +235,10 @@ import { ... } from '@unrdf/kgc-cli/src/lib/latex/index.mjs';
 ```
 
 ### "Validation failed"
+
 **Cause**: Input doesn't match schema
 **Fix**: Check schema requirements:
+
 ```javascript
 import { CompileOptionsSchema } from '@unrdf/kgc-cli/latex/schemas';
 const result = CompileOptionsSchema.safeParse(input);
@@ -228,6 +248,7 @@ console.log(result.error); // See what's wrong
 ## Performance Expectations
 
 Once WASM is integrated:
+
 - **VFS Collection**: ~5-20ms for typical project (< 100 files)
 - **Compilation**: ~50-500ms per pass (depends on document size)
 - **Caching**: ~1-5ms for cache hit

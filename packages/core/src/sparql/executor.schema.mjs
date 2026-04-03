@@ -47,7 +47,11 @@ export const executeSelectSchema = {
 /**
  * Schema for executeConstruct
  */
-export const executeConstructParamsSchema = z.tuple([z.unknown(), z.string(), z.unknown().optional()]);
+export const executeConstructParamsSchema = z.tuple([
+  z.unknown(),
+  z.string(),
+  z.unknown().optional(),
+]);
 
 export const executeConstructReturnSchema = z.unknown();
 
@@ -73,5 +77,5 @@ export default {
   prepareQuery: prepareQuerySchema,
   executeSelect: executeSelectSchema,
   executeConstruct: executeConstructSchema,
-  executeAsk: executeAskSchema
+  executeAsk: executeAskSchema,
 };

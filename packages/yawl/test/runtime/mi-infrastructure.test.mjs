@@ -47,11 +47,7 @@ describe('Minimal MI Infrastructure', () => {
     it('should spawn instances with per-instance input', async () => {
       const result = await spawnInstances('test-task', 3, {
         baseInputData: { shared: 'base' },
-        instanceInputs: [
-          { orderId: 'ORD-1' },
-          { orderId: 'ORD-2' },
-          { orderId: 'ORD-3' },
-        ],
+        instanceInputs: [{ orderId: 'ORD-1' }, { orderId: 'ORD-2' }, { orderId: 'ORD-3' }],
       });
 
       expect(result.instances[0].inputData.orderId).toBe('ORD-1');
@@ -232,7 +228,7 @@ describe('Minimal MI Infrastructure', () => {
 
       const completed = await executeInstances(
         result.instances,
-        async (instance) => {
+        async instance => {
           const start = Date.now();
           // Simulate async work
           await new Promise(resolve => setTimeout(resolve, 50));
@@ -263,7 +259,7 @@ describe('Minimal MI Infrastructure', () => {
 
       const completed = await executeInstances(
         result.instances,
-        async (instance) => {
+        async instance => {
           if (instance.instanceIndex === 2) {
             throw new Error('Simulated failure');
           }
@@ -287,7 +283,7 @@ describe('Minimal MI Infrastructure', () => {
       await expect(
         executeInstances(
           result.instances,
-          async (instance) => {
+          async instance => {
             if (instance.instanceIndex === 2) {
               throw new Error('Simulated failure');
             }
@@ -308,7 +304,7 @@ describe('Minimal MI Infrastructure', () => {
 
       await executeInstancesSequential(
         result.instances,
-        async (instance) => {
+        async instance => {
           executionOrder.push(instance.instanceIndex);
           return { result: `output-${instance.instanceIndex}` };
         },
@@ -420,7 +416,7 @@ describe('Minimal MI Infrastructure', () => {
       const pool = new InstancePool();
       const completed = await executeInstances(
         result.instances,
-        async (instance) => {
+        async instance => {
           // Simulate order processing
           const amount = instance.inputData.amount;
           return {

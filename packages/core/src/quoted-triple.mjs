@@ -192,7 +192,8 @@ export class QuotedTriple {
     if (json.object.termType === 'Literal') {
       object = dataFactory.literal(
         json.object.value,
-        json.object.language || (json.object.datatype ? dataFactory.namedNode(json.object.datatype.value) : undefined)
+        json.object.language ||
+          (json.object.datatype ? dataFactory.namedNode(json.object.datatype.value) : undefined)
       );
     } else {
       object = dataFactory.namedNode(json.object.value);

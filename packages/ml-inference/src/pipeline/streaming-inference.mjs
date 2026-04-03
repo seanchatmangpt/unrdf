@@ -146,7 +146,7 @@ export class StreamingInferencePipeline {
             lastError = error;
             if (attempt < this.options.retryAttempts) {
               await new Promise(resolve =>
-                setTimeout(resolve, this.options.retryDelayMs * (attempt + 1)),
+                setTimeout(resolve, this.options.retryDelayMs * (attempt + 1))
               );
             }
           }
@@ -263,9 +263,7 @@ export class StreamingInferencePipeline {
       ...this.metrics,
       bufferSize: this.buffer.length,
       avgBatchSize:
-        this.metrics.totalBatches > 0
-          ? this.metrics.totalProcessed / this.metrics.totalBatches
-          : 0,
+        this.metrics.totalBatches > 0 ? this.metrics.totalProcessed / this.metrics.totalBatches : 0,
       isPaused: this.isPaused,
       isProcessing: this.isProcessing,
     };

@@ -21,5 +21,5 @@ export const createStoreSchema = {
 };
 
 export default {
-  createStore: createStoreSchema
+  createStore: createStoreSchema,
 };

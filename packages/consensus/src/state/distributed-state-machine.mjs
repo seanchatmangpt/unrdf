@@ -324,7 +324,11 @@ export class DistributedStateMachine extends EventEmitter {
         case StateOperation.UPDATE:
           if (this.state.has(change.key)) {
             this.state.set(change.key, change.value);
-            this.emit('state_changed', { key: change.key, value: change.value, operation: 'update' });
+            this.emit('state_changed', {
+              key: change.key,
+              value: change.value,
+              operation: 'update',
+            });
           }
           break;
 
@@ -343,7 +347,10 @@ export class DistributedStateMachine extends EventEmitter {
       this.changeLog.push({ ...change, index: entry.index });
 
       // Create snapshot if needed
-      if (this.config.enableSnapshots && this.changeLog.length - this.lastSnapshotIndex >= this.config.snapshotInterval) {
+      if (
+        this.config.enableSnapshots &&
+        this.changeLog.length - this.lastSnapshotIndex >= this.config.snapshotInterval
+      ) {
         this.createSnapshot();
       }
     } catch (error) {
@@ -431,7 +438,8 @@ export class DistributedStateMachine extends EventEmitter {
       changeLogSize: this.changeLog.length,
       snapshotCount: this.snapshots.length,
       lastSnapshotIndex: this.lastSnapshotIndex,
-      latestSnapshot: this.snapshots.length > 0 ? this.snapshots[this.snapshots.length - 1].id : null,
+      latestSnapshot:
+        this.snapshots.length > 0 ? this.snapshots[this.snapshots.length - 1].id : null,
     };
   }
 

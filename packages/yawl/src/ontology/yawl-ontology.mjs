@@ -563,16 +563,14 @@ export const dateTimeLiteral = date => {
  * @param {number} value - The integer value
  * @returns {import('oxigraph').Literal} The integer literal
  */
-export const integerLiteral = value =>
-  literal(String(value), namedNode(XSD + 'integer'));
+export const integerLiteral = value => literal(String(value), namedNode(XSD + 'integer'));
 
 /**
  * Create an xsd:boolean literal
  * @param {boolean} value - The boolean value
  * @returns {import('oxigraph').Literal} The boolean literal
  */
-export const booleanLiteral = value =>
-  literal(String(value), namedNode(XSD + 'boolean'));
+export const booleanLiteral = value => literal(String(value), namedNode(XSD + 'boolean'));
 
 /**
  * Create a plain string literal

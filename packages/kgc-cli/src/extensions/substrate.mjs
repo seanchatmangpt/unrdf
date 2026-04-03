@@ -12,18 +12,18 @@ import { z } from 'zod';
 const AppendSchema = z.object({
   entry: z.record(z.any()).describe('Entry to append'),
   storeId: z.string().optional().describe('Target store ID'),
-  validate: z.boolean().optional().default(true)
+  validate: z.boolean().optional().default(true),
 });
 
 const QuerySchema = z.object({
   filter: z.record(z.any()).optional().describe('Query filter'),
   limit: z.number().optional().default(100),
-  offset: z.number().optional().default(0)
+  offset: z.number().optional().default(0),
 });
 
 const SnapshotSchema = z.object({
   storeId: z.string().optional().describe('Store ID'),
-  includeMetadata: z.boolean().optional().default(true)
+  includeMetadata: z.boolean().optional().default(true),
 });
 
 /**
@@ -42,32 +42,32 @@ const extension = {
           description: 'Create new KnowledgeStore',
           argsSchema: z.object({
             storeId: z.string().optional().describe('Store identifier'),
-            config: z.record(z.any()).optional().describe('Store configuration')
+            config: z.record(z.any()).optional().describe('Store configuration'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               storeId: args.storeId || `store_${Date.now()}`,
               created: true,
               entryCount: 0,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         stats: {
           description: 'Get store statistics',
           argsSchema: z.object({
-            storeId: z.string().optional()
+            storeId: z.string().optional(),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               storeId: args.storeId || 'default',
               entryCount: 0,
               size: 0,
-              lastModified: new Date().toISOString()
+              lastModified: new Date().toISOString(),
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     entry: {
@@ -76,45 +76,45 @@ const extension = {
         append: {
           description: 'Append entry to store',
           argsSchema: AppendSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               storeId: args.storeId || 'default',
               entryId: `entry_${Date.now()}`,
               hash: '',
               appended: true,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         query: {
           description: 'Query store entries',
           argsSchema: QuerySchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               entries: [],
               count: 0,
               limit: args.limit,
               offset: args.offset,
-              hasMore: false
+              hasMore: false,
             };
-          }
+          },
         },
         verify: {
           description: 'Verify entry integrity',
           argsSchema: z.object({
             entryId: z.string().describe('Entry identifier'),
-            storeId: z.string().optional()
+            storeId: z.string().optional(),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               entryId: args.entryId,
               valid: true,
               hashMatch: true,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     snapshot: {
@@ -123,35 +123,35 @@ const extension = {
         create: {
           description: 'Create store snapshot',
           argsSchema: SnapshotSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               snapshotId: `snap_${Date.now()}`,
               storeId: args.storeId || 'default',
               entryCount: 0,
               hash: '',
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         restore: {
           description: 'Restore from snapshot',
           argsSchema: z.object({
-            snapshotId: z.string().describe('Snapshot identifier')
+            snapshotId: z.string().describe('Snapshot identifier'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               snapshotId: args.snapshotId,
               restored: true,
               entriesRestored: 0,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
-  priority: 74
+  priority: 74,
 };
 
 export default extension;

@@ -152,7 +152,9 @@ async function trainWithVersioning() {
   const history = await versionStore.getVersionHistory('image-classifier');
   console.log(`📜 Version History (${history.length} versions):`);
   history.forEach((v, i) => {
-    console.log(`   ${i + 1}. ${new Date(v.timestamp).toISOString()} - Accuracy: ${v.metrics.accuracy?.toFixed(4) || 'N/A'}`);
+    console.log(
+      `   ${i + 1}. ${new Date(v.timestamp).toISOString()} - Accuracy: ${v.metrics.accuracy?.toFixed(4) || 'N/A'}`
+    );
   });
   console.log('');
 
@@ -172,7 +174,9 @@ async function trainWithVersioning() {
   console.log(`   Verifications:`);
   verification.verifications.forEach((v, i) => {
     const status = v.valid ? '✅' : '❌';
-    console.log(`      ${i + 1}. ${status} ${v.versionId.substring(0, 8)}... -> ${v.hash.substring(0, 12)}...`);
+    console.log(
+      `      ${i + 1}. ${status} ${v.versionId.substring(0, 8)}... -> ${v.hash.substring(0, 12)}...`
+    );
   });
   console.log('');
 
@@ -187,7 +191,9 @@ async function trainWithVersioning() {
   Object.entries(comparison.metricsDelta).forEach(([key, delta]) => {
     if (delta.change !== undefined) {
       const arrow = delta.change > 0 ? '↑' : '↓';
-      console.log(`      ${key}: ${delta.from.toFixed(4)} → ${delta.to.toFixed(4)} ${arrow} ${Math.abs(delta.change).toFixed(4)}`);
+      console.log(
+        `      ${key}: ${delta.from.toFixed(4)} → ${delta.to.toFixed(4)} ${arrow} ${Math.abs(delta.change).toFixed(4)}`
+      );
     }
   });
   console.log(`   Time Elapsed: ${(comparison.timestampDelta / 1000).toFixed(2)}s\n`);
@@ -197,7 +203,9 @@ async function trainWithVersioning() {
 
   console.log('✨ Training and versioning demonstration complete!');
   console.log(`\n📈 Final Model Performance:`);
-  console.log(`   Accuracy: ${versionReceipts[versionReceipts.length - 1].receipt.event_count} versions created`);
+  console.log(
+    `   Accuracy: ${versionReceipts[versionReceipts.length - 1].receipt.event_count} versions created`
+  );
   console.log(`   All versions cryptographically linked via BLAKE3 hash chain`);
   console.log(`   Time-travel enabled for any point in training history\n`);
 
@@ -216,7 +224,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.log('Example completed successfully');
       process.exit(0);
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Example failed:', error);
       process.exit(1);
     });

@@ -120,7 +120,11 @@ export class YawlTask {
    * @returns {YawlTask} this
    */
   timedOut() {
-    if (this.status !== 'running' && this.status !== TaskStatus.ENABLED && this.status !== TaskStatus.ACTIVE) {
+    if (
+      this.status !== 'running' &&
+      this.status !== TaskStatus.ENABLED &&
+      this.status !== TaskStatus.ACTIVE
+    ) {
       throw new Error(`Cannot timeout task ${this.id}: current status is ${this.status}`);
     }
     this.status = TaskStatus.TIMEOUT;

@@ -18,59 +18,62 @@ const extension = {
           argsSchema: z.object({
             workflowId: z.string().describe('Workflow ID to visualize'),
             format: z.enum(['svg', 'html', 'json']).default('svg').describe('Output format'),
-            layout: z.enum(['hierarchical', 'force', 'petri-net']).default('hierarchical').describe('Layout algorithm')
+            layout: z
+              .enum(['hierarchical', 'force', 'petri-net'])
+              .default('hierarchical')
+              .describe('Layout algorithm'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               success: true,
               workflowId: args.workflowId,
               format: args.format,
               layout: args.layout,
               visualization: `<svg><!-- Workflow ${args.workflowId} --></svg>`,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         snapshot: {
           description: 'Create snapshot of workflow execution state',
           argsSchema: z.object({
             caseId: z.string().describe('Case ID to snapshot'),
-            highlightActive: z.boolean().default(true).describe('Highlight active tasks')
+            highlightActive: z.boolean().default(true).describe('Highlight active tasks'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               success: true,
               caseId: args.caseId,
               snapshot: {
                 activeTasks: [],
                 completedTasks: [],
-                enabledTasks: []
+                enabledTasks: [],
               },
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         export: {
           description: 'Export visualization to file',
           argsSchema: z.object({
             workflowId: z.string().describe('Workflow ID'),
             outputPath: z.string().describe('Output file path'),
-            format: z.enum(['svg', 'png', 'pdf']).default('svg').describe('Export format')
+            format: z.enum(['svg', 'png', 'pdf']).default('svg').describe('Export format'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               success: true,
               workflowId: args.workflowId,
               outputPath: args.outputPath,
               format: args.format,
-              message: `Visualization exported to ${args.outputPath}`
+              message: `Visualization exported to ${args.outputPath}`,
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
-  priority: 32
+  priority: 32,
 };
 
 export default extension;

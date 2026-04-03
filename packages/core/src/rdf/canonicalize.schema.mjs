@@ -60,5 +60,5 @@ export default {
   canonicalize: canonicalizeSchema,
   toNTriples: toNTriplesSchema,
   sortQuads: sortQuadsSchema,
-  isIsomorphic: isIsomorphicSchema
+  isIsomorphic: isIsomorphicSchema,
 };

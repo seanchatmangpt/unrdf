@@ -21,5 +21,5 @@ export const measureMemorySchema = {
 };
 
 export default {
-  measureMemory: measureMemorySchema
+  measureMemory: measureMemorySchema,
 };

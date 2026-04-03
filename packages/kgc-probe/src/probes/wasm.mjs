@@ -105,12 +105,47 @@ export const WasmProbeConfigSchema = z.object({
  * Binary format (WebAssembly binary):
  */
 const MINIMAL_WASM_BYTES = new Uint8Array([
-  0x00, 0x61, 0x73, 0x6d, // Magic number: \0asm
-  0x01, 0x00, 0x00, 0x00, // Version: 1
-  0x01, 0x07, 0x01, 0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f, // Type section: (i32, i32) -> i32
-  0x03, 0x02, 0x01, 0x00, // Function section: func 0 has type 0
-  0x07, 0x07, 0x01, 0x03, 0x61, 0x64, 0x64, 0x00, 0x00, // Export section: "add" = func 0
-  0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0x20, 0x01, 0x6a, 0x0b, // Code section: add implementation
+  0x00,
+  0x61,
+  0x73,
+  0x6d, // Magic number: \0asm
+  0x01,
+  0x00,
+  0x00,
+  0x00, // Version: 1
+  0x01,
+  0x07,
+  0x01,
+  0x60,
+  0x02,
+  0x7f,
+  0x7f,
+  0x01,
+  0x7f, // Type section: (i32, i32) -> i32
+  0x03,
+  0x02,
+  0x01,
+  0x00, // Function section: func 0 has type 0
+  0x07,
+  0x07,
+  0x01,
+  0x03,
+  0x61,
+  0x64,
+  0x64,
+  0x00,
+  0x00, // Export section: "add" = func 0
+  0x0a,
+  0x09,
+  0x01,
+  0x07,
+  0x00,
+  0x20,
+  0x00,
+  0x20,
+  0x01,
+  0x6a,
+  0x0b, // Code section: add implementation
 ]);
 
 /**
@@ -122,9 +157,32 @@ const MINIMAL_WASM_BYTES = new Uint8Array([
  * ```
  */
 const WASM_MEMORY_MODULE = new Uint8Array([
-  0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, // Magic + version
-  0x05, 0x04, 0x01, 0x01, 0x01, 0x0a, // Memory section: initial=1, max=10
-  0x07, 0x0a, 0x01, 0x06, 0x6d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x02, 0x00, // Export "memory"
+  0x00,
+  0x61,
+  0x73,
+  0x6d,
+  0x01,
+  0x00,
+  0x00,
+  0x00, // Magic + version
+  0x05,
+  0x04,
+  0x01,
+  0x01,
+  0x01,
+  0x0a, // Memory section: initial=1, max=10
+  0x07,
+  0x0a,
+  0x01,
+  0x06,
+  0x6d,
+  0x65,
+  0x6d,
+  0x6f,
+  0x72,
+  0x79,
+  0x02,
+  0x00, // Export "memory"
 ]);
 
 // =============================================================================
@@ -327,7 +385,9 @@ async function probeMemorySupport(timeout) {
 
     observations.push(createObservation('wasm.support.memory', true, 'boolean', 'success'));
   } catch (error) {
-    observations.push(createObservation('wasm.support.memory', false, 'boolean', 'error', error.message));
+    observations.push(
+      createObservation('wasm.support.memory', false, 'boolean', 'error', error.message)
+    );
     return observations;
   }
 
@@ -340,7 +400,9 @@ async function probeMemorySupport(timeout) {
 
     observations.push(createObservation('wasm.support.memory.grow', true, 'boolean', 'success'));
   } catch (error) {
-    observations.push(createObservation('wasm.support.memory.grow', false, 'boolean', 'error', error.message));
+    observations.push(
+      createObservation('wasm.support.memory.grow', false, 'boolean', 'error', error.message)
+    );
   }
 
   return observations;
@@ -395,14 +457,18 @@ async function probeSIMDSupport(timeout) {
 
     // WASM module with SIMD v128 instruction (minimal test)
     // This will fail if SIMD is not supported
-    const simdTestBytes = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
-    ]);
+    const simdTestBytes = new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00]);
 
     // Check if SIMD is available via feature detection
-    const hasSIMD = typeof WebAssembly.validate === 'function' && WebAssembly.validate(simdTestBytes);
+    const hasSIMD =
+      typeof WebAssembly.validate === 'function' && WebAssembly.validate(simdTestBytes);
 
-    return createObservation('wasm.support.simd', hasSIMD, 'boolean', hasSIMD ? 'success' : 'unsupported');
+    return createObservation(
+      'wasm.support.simd',
+      hasSIMD,
+      'boolean',
+      hasSIMD ? 'success' : 'unsupported'
+    );
   } catch (error) {
     return createObservation('wasm.support.simd', false, 'boolean', 'error', error.message);
   }
@@ -468,11 +534,27 @@ async function benchmarkCompileTime(samples, timeout) {
 
     const stats = calculateStats(times);
 
-    observations.push(createObservation('wasm.compile.time.mean', stats.mean, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.compile.time.median', stats.median, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.compile.time.min', stats.min, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.compile.time.max', stats.max, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.compile.time.stddev', stats.stddev, 'ms', 'success', undefined, { samples }));
+    observations.push(
+      createObservation('wasm.compile.time.mean', stats.mean, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.compile.time.median', stats.median, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.compile.time.min', stats.min, 'ms', 'success', undefined, { samples })
+    );
+    observations.push(
+      createObservation('wasm.compile.time.max', stats.max, 'ms', 'success', undefined, { samples })
+    );
+    observations.push(
+      createObservation('wasm.compile.time.stddev', stats.stddev, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
   } catch (error) {
     observations.push(createObservation('wasm.compile.time.mean', 0, 'ms', 'error', error.message));
   }
@@ -506,13 +588,35 @@ async function benchmarkInstantiateTime(samples, timeout) {
 
     const stats = calculateStats(times);
 
-    observations.push(createObservation('wasm.instantiate.time.mean', stats.mean, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.instantiate.time.median', stats.median, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.instantiate.time.min', stats.min, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.instantiate.time.max', stats.max, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.instantiate.time.stddev', stats.stddev, 'ms', 'success', undefined, { samples }));
+    observations.push(
+      createObservation('wasm.instantiate.time.mean', stats.mean, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.instantiate.time.median', stats.median, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.instantiate.time.min', stats.min, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.instantiate.time.max', stats.max, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.instantiate.time.stddev', stats.stddev, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
   } catch (error) {
-    observations.push(createObservation('wasm.instantiate.time.mean', 0, 'ms', 'error', error.message));
+    observations.push(
+      createObservation('wasm.instantiate.time.mean', 0, 'ms', 'error', error.message)
+    );
   }
 
   return observations;
@@ -554,12 +658,30 @@ async function benchmarkCallOverhead(samples, timeout) {
 
     const stats = calculateStats(times);
 
-    observations.push(createObservation('wasm.call.overhead.mean', stats.mean, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.call.overhead.median', stats.median, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.call.overhead.min', stats.min, 'ms', 'success', undefined, { samples }));
-    observations.push(createObservation('wasm.call.overhead.max', stats.max, 'ms', 'success', undefined, { samples }));
+    observations.push(
+      createObservation('wasm.call.overhead.mean', stats.mean, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.call.overhead.median', stats.median, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.call.overhead.min', stats.min, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
+    observations.push(
+      createObservation('wasm.call.overhead.max', stats.max, 'ms', 'success', undefined, {
+        samples,
+      })
+    );
   } catch (error) {
-    observations.push(createObservation('wasm.call.overhead.mean', 0, 'ms', 'error', error.message));
+    observations.push(
+      createObservation('wasm.call.overhead.mean', 0, 'ms', 'error', error.message)
+    );
   }
 
   return observations;
@@ -588,8 +710,12 @@ async function benchmarkMemoryGrowth(maxMemoryMB, timeout) {
     const memory = instance.exports.memory;
     const initialPages = memory.buffer.byteLength / (64 * 1024);
 
-    observations.push(createObservation('wasm.memory.initial.pages', initialPages, 'pages', 'success'));
-    observations.push(createObservation('wasm.memory.initial.bytes', memory.buffer.byteLength, 'bytes', 'success'));
+    observations.push(
+      createObservation('wasm.memory.initial.pages', initialPages, 'pages', 'success')
+    );
+    observations.push(
+      createObservation('wasm.memory.initial.bytes', memory.buffer.byteLength, 'bytes', 'success')
+    );
 
     // Try to grow memory
     let currentPages = initialPages;
@@ -612,8 +738,12 @@ async function benchmarkMemoryGrowth(maxMemoryMB, timeout) {
       // Growth failed, record what we achieved
     }
 
-    observations.push(createObservation('wasm.memory.max.pages', maxAchievedPages, 'pages', 'success'));
-    observations.push(createObservation('wasm.memory.max.bytes', maxAchievedPages * 64 * 1024, 'bytes', 'success'));
+    observations.push(
+      createObservation('wasm.memory.max.pages', maxAchievedPages, 'pages', 'success')
+    );
+    observations.push(
+      createObservation('wasm.memory.max.bytes', maxAchievedPages * 64 * 1024, 'bytes', 'success')
+    );
   } catch (error) {
     observations.push(createObservation('wasm.memory.growth', 0, 'pages', 'error', error.message));
   }
@@ -668,7 +798,9 @@ export async function probeWasm(config = {}) {
   try {
     guardWasmSupport();
   } catch (error) {
-    observations.push(createObservation('wasm.environment', false, 'boolean', 'error', error.message));
+    observations.push(
+      createObservation('wasm.environment', false, 'boolean', 'error', error.message)
+    );
     return observations;
   }
 

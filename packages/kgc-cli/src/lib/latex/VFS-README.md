@@ -8,11 +8,11 @@ Collects LaTeX project files into a `Map<string, Uint8Array>` VFS (Virtual File 
 
 ## Deliverables
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `path-normalize.mjs` | 91 | Path normalization utilities |
-| `project-files.mjs` | 254 | File collection and VFS management |
-| `verify-vfs.mjs` | Test | Standalone verification script |
+| File                 | LOC  | Purpose                            |
+| -------------------- | ---- | ---------------------------------- |
+| `path-normalize.mjs` | 91   | Path normalization utilities       |
+| `project-files.mjs`  | 254  | File collection and VFS management |
+| `verify-vfs.mjs`     | Test | Standalone verification script     |
 
 ## Key Exported Functions
 
@@ -68,15 +68,19 @@ Input (filesystem):              Output (VFS):
 ### Included Extensions
 
 **LaTeX Source:**
+
 - `.tex`, `.sty`, `.cls`
 
 **Bibliography:**
+
 - `.bib`, `.bst`
 
 **Graphics:**
+
 - `.png`, `.jpg`, `.jpeg`, `.pdf`, `.svg`
 
 **Documentation:**
+
 - `.md`, `.txt`
 
 ### Excluded Directories
@@ -94,7 +98,7 @@ import { collectProjectFiles, getVFSStats } from '@unrdf/kgc-cli/lib/latex/proje
 const vfs = await collectProjectFiles('/home/user/thesis', {
   include: ['.tex', '.sty'],
   exclude: ['node_modules', 'build'],
-  maxFileSize: 10 * 1024 * 1024  // 10MB
+  maxFileSize: 10 * 1024 * 1024, // 10MB
 });
 
 // Get statistics
@@ -122,6 +126,7 @@ node test/verify-vfs.mjs
 ```
 
 **Expected output:**
+
 ```
 ✅ Path normalization works
 ✅ VFS path validation works
@@ -143,21 +148,25 @@ node test/verify-vfs.mjs
 ## Design Principles
 
 ### 1. Deterministic Output
+
 - Files always sorted in same order
 - Path normalization is consistent
 - Binary content preserved exactly
 
 ### 2. Zero Heavy Dependencies
+
 - Uses only Node.js built-ins
 - No glob libraries
 - Simple extension matching
 
 ### 3. Container Ready
+
 - Paths normalized for Docker/Podman
 - `work/` prefix matches container conventions
 - Cross-platform path handling
 
 ### 4. Fail-Safe
+
 - Validates all paths
 - Rejects path traversal attempts
 - Configurable size limits
@@ -165,6 +174,7 @@ node test/verify-vfs.mjs
 ## Integration with Other Agents
 
 ### Agent 3 (Engine Runner)
+
 ```javascript
 import { collectProjectFiles } from '@unrdf/kgc-cli/lib/latex/project-files';
 
@@ -176,6 +186,7 @@ await runLatexEngine({ vfs, mainFile: 'work/main.tex' });
 ```
 
 ### Agent 4 (Package Resolver)
+
 ```javascript
 // Augment VFS with resolved packages
 const resolvedPackages = await resolveMissingInputs(missingFiles);
@@ -189,6 +200,7 @@ for (const [path, content] of resolvedPackages.entries()) {
 ## Code Quality
 
 **Compliance:**
+
 - ✅ ESM `.mjs` only
 - ✅ No TypeScript in source
 - ✅ JSDoc type annotations
@@ -205,6 +217,7 @@ Generated: 2025-12-27 (Agent 2 delivery)
 ---
 
 **Next Steps (Agent 3):**
+
 - Implement engine runner using this VFS
 - Parse LaTeX logs for missing inputs
 - Coordinate with Agent 4 for package resolution

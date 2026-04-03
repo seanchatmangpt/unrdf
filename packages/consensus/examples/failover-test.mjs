@@ -180,7 +180,9 @@ async function main() {
   for (const node of activeNodes) {
     const key1 = node.state.get('test:key1');
     const key2 = node.state.get('test:key2');
-    console.log(`[${node.config.nodeId}] key1: ${key1 ? '✓ PRESERVED' : '✗ LOST'}, key2: ${key2 ? '✓ PRESERVED' : '✗ LOST'}`);
+    console.log(
+      `[${node.config.nodeId}] key1: ${key1 ? '✓ PRESERVED' : '✗ LOST'}, key2: ${key2 ? '✓ PRESERVED' : '✗ LOST'}`
+    );
   }
 
   // Step 7: Perform new operations on new leader

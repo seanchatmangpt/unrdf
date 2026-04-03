@@ -192,9 +192,9 @@ describe('YAWLLangChainAdapter', () => {
         agent: failingAgent,
       });
 
-      await expect(
-        failingAdapter.execute(taskInstance, {})
-      ).rejects.toThrow('LangChain agent execution failed');
+      await expect(failingAdapter.execute(taskInstance, {})).rejects.toThrow(
+        'LangChain agent execution failed'
+      );
     });
   });
 
@@ -267,9 +267,7 @@ describe('YAWLLangChainAdapter', () => {
       const store = adapter.getRDFStore();
       const quads = [...store.quads()];
 
-      const customPredicate = quads.find(
-        q => q.predicate.value === 'http://test.org/result'
-      );
+      const customPredicate = quads.find(q => q.predicate.value === 'http://test.org/result');
       expect(customPredicate).toBeDefined();
       expect(customPredicate.object.value).toBe('Test analysis result');
     });
@@ -297,10 +295,7 @@ describe('YAWLLangChainAdapter', () => {
     it('should track multiple executions', async () => {
       await adapter.execute(taskInstance, { rdfStore });
 
-      const taskInstance2 = new TaskInstance(
-        adapter.createTaskDefinition(),
-        'case-002'
-      );
+      const taskInstance2 = new TaskInstance(adapter.createTaskDefinition(), 'case-002');
       await adapter.execute(taskInstance2, { rdfStore });
 
       const history = adapter.getExecutionHistory();
@@ -367,7 +362,7 @@ describe('YAWLLangChainAdapter', () => {
     });
 
     it('should create prompt engineering hook', async () => {
-      const hook = createPromptEngineeringHook(async (prompt) => {
+      const hook = createPromptEngineeringHook(async prompt => {
         return `Enhanced: ${prompt}`;
       });
 

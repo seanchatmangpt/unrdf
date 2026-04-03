@@ -5,6 +5,7 @@
 ## Overview
 
 This module provides a complete VFS implementation with guaranteed deterministic behavior. Identical directory contents will **always** produce identical hashes, regardless of:
+
 - File system iteration order
 - Platform (Windows vs POSIX)
 - Map insertion order
@@ -74,25 +75,19 @@ import { normalizePath, isValidVfsPath } from './vfs/index.mjs';
 
 // Normalize Windows paths to POSIX
 normalizePath('foo\\bar\\baz.tex'); // => 'foo/bar/baz.tex'
-normalizePath('./main.tex');        // => 'main.tex'
-normalizePath('/absolute/path');    // => 'absolute/path'
+normalizePath('./main.tex'); // => 'main.tex'
+normalizePath('/absolute/path'); // => 'absolute/path'
 
 // Validate paths
-isValidVfsPath('foo/bar.tex');      // => true
-isValidVfsPath('../etc/passwd');    // => false (path traversal)
-isValidVfsPath('foo//bar.tex');     // => false (double slash)
+isValidVfsPath('foo/bar.tex'); // => true
+isValidVfsPath('../etc/passwd'); // => false (path traversal)
+isValidVfsPath('foo//bar.tex'); // => false (double slash)
 ```
 
 ### Utilities
 
 ```javascript
-import {
-  createVfs,
-  cloneVfs,
-  mergeVfs,
-  getVfsText,
-  setVfsText,
-} from './vfs/index.mjs';
+import { createVfs, cloneVfs, mergeVfs, getVfsText, setVfsText } from './vfs/index.mjs';
 
 // Create empty VFS
 const vfs = createVfs();
@@ -141,6 +136,7 @@ hashVfs(vfs1) === hashVfs(vfs2); // ✅ Always true
 ### Hash Format
 
 Each entry is hashed as:
+
 ```
 [path-length: 4 bytes][path: UTF-8][content-length: 4 bytes][content: binary]
 ```
@@ -150,17 +146,20 @@ This ensures paths like `ab` + `cd` vs `abc` + `d` produce different hashes.
 ## Default Include/Exclude Patterns
 
 ### Included by Default
+
 - `.tex`, `.sty`, `.cls` - LaTeX source
 - `.bib`, `.bst` - Bibliography
 - `.png`, `.jpg`, `.jpeg` - Raster images
 - `.svg`, `.pdf` - Vector graphics
 
 ### Excluded by Default
+
 - `node_modules/`, `.git/`, `.kgc/`
 - `build/`, `dist/`, `.latex-cache/`
 - `.claude-flow/`, `.cache/`
 
 ### Use `packDirectoryClean()` to Also Exclude
+
 - `*.aux`, `*.log`, `*.toc`, `*.out`
 - `*.synctex.gz`, `*.fdb_latexmk`, `*.fls`
 - `*.blg`, `*.bbl`
@@ -168,6 +167,7 @@ This ensures paths like `ab` + `cd` vs `abc` + `d` produce different hashes.
 ## Integration with Other Agents
 
 ### For Agent 3 (Cache Manager)
+
 ```javascript
 import { hashVfs } from './vfs/index.mjs';
 
@@ -181,6 +181,7 @@ if (cachedPdf) {
 ```
 
 ### For Agent 4 (Dependency Resolver)
+
 ```javascript
 import { packDirectory, getVfsText } from './vfs/index.mjs';
 
@@ -192,6 +193,7 @@ const mainTex = getVfsText(vfs, 'work/main.tex');
 ```
 
 ### For Agent 5+ (Compilation)
+
 ```javascript
 import { packDirectory } from './vfs/index.mjs';
 
@@ -207,6 +209,7 @@ engine.compile(vfs, 'work/main.tex');
 **62 tests, 100% passing** (verified with `timeout 5s node --test`)
 
 ### Test Suites
+
 1. **Hash Utilities** (24 tests)
    - Empty/single/multiple file hashing
    - Deterministic ordering verification
@@ -235,9 +238,9 @@ engine.compile(vfs, 'work/main.tex');
 All functions validate inputs and throw descriptive errors:
 
 ```javascript
-hashFile('not a uint8array');    // TypeError: Content must be a Uint8Array
-hashVfs({});                      // TypeError: VFS must be a Map
-normalizePath(null);              // TypeError: Path must be a string
+hashFile('not a uint8array'); // TypeError: Content must be a Uint8Array
+hashVfs({}); // TypeError: VFS must be a Map
+normalizePath(null); // TypeError: Path must be a string
 ```
 
 ## Backward Compatibility

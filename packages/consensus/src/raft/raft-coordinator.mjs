@@ -50,7 +50,13 @@ const RaftConfigSchema = z.object({
  * Workflow command schema
  */
 const WorkflowCommandSchema = z.object({
-  type: z.enum(['START_WORKFLOW', 'STOP_WORKFLOW', 'UPDATE_STATE', 'REGISTER_NODE', 'DEREGISTER_NODE']),
+  type: z.enum([
+    'START_WORKFLOW',
+    'STOP_WORKFLOW',
+    'UPDATE_STATE',
+    'REGISTER_NODE',
+    'DEREGISTER_NODE',
+  ]),
   workflowId: z.string().optional(),
   nodeId: z.string().optional(),
   data: z.any(),
@@ -183,7 +189,6 @@ export class RaftCoordinator extends EventEmitter {
     });
   }
 
-
   /**
    * Set up transport event handlers
    * @private
@@ -246,11 +251,13 @@ export class RaftCoordinator extends EventEmitter {
     }
 
     // Check if we can grant vote
-    const logOk = lastLogTerm > this.getLastLogTerm() ||
-                  (lastLogTerm === this.getLastLogTerm() && lastLogIndex >= this.log.length);
-    const granted = term >= this.currentTerm &&
-                   (this.votedFor === null || this.votedFor === candidateId) &&
-                   logOk;
+    const logOk =
+      lastLogTerm > this.getLastLogTerm() ||
+      (lastLogTerm === this.getLastLogTerm() && lastLogIndex >= this.log.length);
+    const granted =
+      term >= this.currentTerm &&
+      (this.votedFor === null || this.votedFor === candidateId) &&
+      logOk;
 
     if (granted) {
       this.votedFor = candidateId;
@@ -282,9 +289,9 @@ export class RaftCoordinator extends EventEmitter {
     }
 
     // Check log consistency
-    const logOk = prevLogIndex === 0 ||
-                  (prevLogIndex <= this.log.length &&
-                   this.log[prevLogIndex - 1]?.term === prevLogTerm);
+    const logOk =
+      prevLogIndex === 0 ||
+      (prevLogIndex <= this.log.length && this.log[prevLogIndex - 1]?.term === prevLogTerm);
 
     let success = false;
     if (term >= this.currentTerm && logOk) {
@@ -597,8 +604,9 @@ export class RaftCoordinator extends EventEmitter {
       clearTimeout(this.electionTimer);
     }
 
-    const timeout = this.config.electionTimeoutMin +
-                   Math.random() * (this.config.electionTimeoutMax - this.config.electionTimeoutMin);
+    const timeout =
+      this.config.electionTimeoutMin +
+      Math.random() * (this.config.electionTimeoutMax - this.config.electionTimeoutMin);
 
     this.electionTimer = setTimeout(() => {
       if (this.state !== RaftState.LEADER) {

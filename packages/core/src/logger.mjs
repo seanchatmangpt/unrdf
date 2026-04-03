@@ -34,7 +34,7 @@ export const LogLevel = {
   INFO: 30,
   WARN: 40,
   ERROR: 50,
-  FATAL: 60
+  FATAL: 60,
 };
 
 /**
@@ -46,7 +46,7 @@ const LogLevelNames = {
   [LogLevel.INFO]: 'info',
   [LogLevel.WARN]: 'warn',
   [LogLevel.ERROR]: 'error',
-  [LogLevel.FATAL]: 'fatal'
+  [LogLevel.FATAL]: 'fatal',
 };
 
 /**
@@ -57,7 +57,7 @@ const LoggerConfigSchema = z.object({
   level: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
   context: z.record(z.string(), z.any()).default({}),
   pretty: z.boolean().default(false),
-  destination: z.any()
+  destination: z.any(),
 });
 
 /**
@@ -93,7 +93,7 @@ export function createLogger(config) {
       service: validated.service,
       message,
       ...validated.context,
-      ...data
+      ...data,
     };
 
     // Add OTEL trace context if available
@@ -115,14 +115,12 @@ export function createLogger(config) {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        ...(error.cause ? { cause: error.cause } : {})
+        ...(error.cause ? { cause: error.cause } : {}),
       };
     }
 
     // Write to destination
-    const output = validated.pretty
-      ? JSON.stringify(entry, null, 2)
-      : JSON.stringify(entry);
+    const output = validated.pretty ? JSON.stringify(entry, null, 2) : JSON.stringify(entry);
 
     destination.write(output + '\n');
   }
@@ -136,7 +134,7 @@ export function createLogger(config) {
   function child(childContext) {
     return createLogger({
       ...validated,
-      context: { ...validated.context, ...childContext }
+      context: { ...validated.context, ...childContext },
     });
   }
 
@@ -188,7 +186,7 @@ export function createLogger(config) {
       writeLog(LogLevel.INFO, `Performance: ${operation}`, {
         type: 'performance',
         operation,
-        ...metrics
+        ...metrics,
       });
     },
 
@@ -208,7 +206,7 @@ export function createLogger(config) {
           query,
           duration,
           threshold,
-          ...data
+          ...data,
         });
       }
     },
@@ -226,9 +224,9 @@ export function createLogger(config) {
     /**
      * Set log level
      */
-    setLevel: (level) => {
+    setLevel: level => {
       validated.level = level;
-    }
+    },
   };
 }
 
@@ -238,7 +236,7 @@ export function createLogger(config) {
 export const logger = createLogger({
   service: 'unrdf',
   level: process.env.LOG_LEVEL || 'info',
-  pretty: process.env.NODE_ENV !== 'production'
+  pretty: process.env.NODE_ENV !== 'production',
 });
 
 /**
@@ -267,7 +265,7 @@ export function performanceTimer() {
 
       return {
         duration: Math.round(duration * 100) / 100,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     },
 
@@ -277,8 +275,8 @@ export function performanceTimer() {
      */
     elapsed: () => {
       const now = process.hrtime.bigint();
-      return Math.round(Number(now - start) / 1000000 * 100) / 100;
-    }
+      return Math.round((Number(now - start) / 1000000) * 100) / 100;
+    },
   };
 }
 
@@ -296,9 +294,10 @@ export function requestLogger(options = {}) {
 
   return (req, res, next) => {
     const timer = performanceTimer();
-    const requestId = req.headers['x-request-id'] ||
-                      req.id ||
-                      `req_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const requestId =
+      req.headers['x-request-id'] ||
+      req.id ||
+      `req_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
     // Create request-scoped logger
     req.log = loggerInstance.child({ requestId });
@@ -310,27 +309,24 @@ export function requestLogger(options = {}) {
       query: req.query,
       ip: req.ip || req.socket?.remoteAddress,
       userAgent: req.headers['user-agent'],
-      ...(logBody && req.body ? { body: req.body } : {})
+      ...(logBody && req.body ? { body: req.body } : {}),
     });
 
     // Hook into response finish
     const originalEnd = res.end;
-    res.end = function(...args) {
+    res.end = function (...args) {
       const metrics = timer.end();
 
       req.log.info('Request completed', {
         method: req.method,
         path: req.path || req.url,
         statusCode: res.statusCode,
-        duration: metrics.duration
+        duration: metrics.duration,
       });
 
       // Check for slow requests (>100ms)
       if (metrics.duration > 100) {
-        req.log.slowQuery(
-          `${req.method} ${req.path || req.url}`,
-          metrics.duration
-        );
+        req.log.slowQuery(`${req.method} ${req.path || req.url}`, metrics.duration);
       }
 
       return originalEnd.apply(this, args);

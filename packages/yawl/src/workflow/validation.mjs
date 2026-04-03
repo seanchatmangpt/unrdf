@@ -171,9 +171,7 @@ function validateSplitJoinConsistency(workflow, errors, warnings) {
       errors.push(`Task '${taskId}' has sequence join but ${incoming.length} incoming flows`);
     }
     if (
-      (joinType === JOIN_TYPE.AND ||
-        joinType === JOIN_TYPE.XOR ||
-        joinType === JOIN_TYPE.OR) &&
+      (joinType === JOIN_TYPE.AND || joinType === JOIN_TYPE.XOR || joinType === JOIN_TYPE.OR) &&
       incoming.length < 2
     ) {
       warnings.push(
@@ -183,11 +181,9 @@ function validateSplitJoinConsistency(workflow, errors, warnings) {
 
     // XOR split should have at least one flow with condition or default
     if (splitType === SPLIT_TYPE.XOR && outgoing.length > 1) {
-      const hasConditions = outgoing.some((f) => f.condition || f.isDefault);
+      const hasConditions = outgoing.some(f => f.condition || f.isDefault);
       if (!hasConditions) {
-        warnings.push(
-          `Task '${taskId}' has XOR split but no conditions or default flow defined`
-        );
+        warnings.push(`Task '${taskId}' has XOR split but no conditions or default flow defined`);
       }
     }
   }
@@ -250,7 +246,7 @@ function findConvergencePoint(workflow, splitTaskId) {
 
   // Simple heuristic: find first common descendant
   const visited = new Map();
-  const queue = outgoing.map((f) => ({ taskId: f.to, path: new Set([splitTaskId, f.to]) }));
+  const queue = outgoing.map(f => ({ taskId: f.to, path: new Set([splitTaskId, f.to]) }));
 
   while (queue.length > 0) {
     const { taskId, path } = queue.shift();
@@ -326,9 +322,7 @@ function validateCancellationRegions(workflow, errors, warnings) {
     // All tasks in region must exist
     for (const taskId of taskIds) {
       if (!workflow._tasks.has(taskId)) {
-        errors.push(
-          `Cancellation region '${regionId}' references non-existent task '${taskId}'`
-        );
+        errors.push(`Cancellation region '${regionId}' references non-existent task '${taskId}'`);
       }
     }
 

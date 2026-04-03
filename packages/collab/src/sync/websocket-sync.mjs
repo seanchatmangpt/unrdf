@@ -100,26 +100,26 @@ export class WebSocketSync {
    */
   _setupEventForwarding() {
     // Connection status
-    this.provider.on('status', (event) => {
+    this.provider.on('status', event => {
       this._emit('status', event);
     });
 
     // Sync state (when fully synced)
-    this.provider.on('sync', (isSynced) => {
+    this.provider.on('sync', isSynced => {
       this._emit('synced', { isSynced });
     });
 
     // Connection events
-    this.provider.on('connection-close', (event) => {
+    this.provider.on('connection-close', event => {
       this._emit('disconnected', event);
     });
 
-    this.provider.on('connection-error', (event) => {
+    this.provider.on('connection-error', event => {
       this._emit('error', event);
     });
 
     // Awareness changes (presence)
-    this.provider.awareness.on('change', (changes) => {
+    this.provider.awareness.on('change', changes => {
       this._emit('awareness', this._getAwarenessState(changes));
     });
   }
@@ -229,7 +229,7 @@ export class WebSocketSync {
   _emit(event, data) {
     const listeners = this.listeners.get(event);
     if (listeners) {
-      listeners.forEach((listener) => listener(data));
+      listeners.forEach(listener => listener(data));
     }
   }
 

@@ -105,9 +105,7 @@ export class ReceiptChain {
 
     // Enforce monotonic time
     if (timestamp_ns <= this.lastTimestamp) {
-      throw new Error(
-        `Timestamp not monotonic: ${timestamp_ns} <= ${this.lastTimestamp}`
-      );
+      throw new Error(`Timestamp not monotonic: ${timestamp_ns} <= ${this.lastTimestamp}`);
     }
 
     // Generate receipt ID

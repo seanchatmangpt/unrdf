@@ -84,18 +84,20 @@ export async function hashObservations(observations) {
     });
 
   // Stringify core fields
-  const parts = sorted.map(obs => JSON.stringify({
-    agent: obs.agent,
-    timestamp: obs.timestamp,
-    kind: obs.kind,
-    subject: obs.subject,
-    predicate: obs.predicate,
-    object: obs.object,
-    severity: obs.severity,
-    evidence_query: obs.evidence?.query,
-    metrics_confidence: obs.metrics?.confidence,
-    metrics_coverage: obs.metrics?.coverage
-  }));
+  const parts = sorted.map(obs =>
+    JSON.stringify({
+      agent: obs.agent,
+      timestamp: obs.timestamp,
+      kind: obs.kind,
+      subject: obs.subject,
+      predicate: obs.predicate,
+      object: obs.object,
+      severity: obs.severity,
+      evidence_query: obs.evidence?.query,
+      metrics_confidence: obs.metrics?.confidence,
+      metrics_coverage: obs.metrics?.coverage,
+    })
+  );
 
   const combined = parts.join('|');
 
@@ -115,7 +117,7 @@ function computeSimpleHash(data) {
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
     const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
 
@@ -202,7 +204,7 @@ export function diffArtifacts(artifact1, artifact2) {
   const obs2 = artifact2.observations || [];
 
   // Create keys for matching
-  const key = (obs) => `${obs.subject}|${obs.predicate}|${obs.object}`;
+  const key = obs => `${obs.subject}|${obs.predicate}|${obs.object}`;
   const map1 = new Map(obs1.map(o => [key(o), o]));
   const map2 = new Map(obs2.map(o => [key(o), o]));
 
@@ -225,7 +227,7 @@ export function diffArtifacts(artifact1, artifact2) {
   }
 
   // Find modified (same subject/predicate, different attributes)
-  const subPredKey = (obs) => `${obs.subject}|${obs.predicate}`;
+  const subPredKey = obs => `${obs.subject}|${obs.predicate}`;
   const map1BySubPred = new Map();
   const map2BySubPred = new Map();
 
@@ -254,7 +256,7 @@ export function diffArtifacts(artifact1, artifact2) {
         before: obs1List[0].object,
         after: obs2List[0].object,
         old_observation: obs1List[0],
-        new_observation: obs2List[0]
+        new_observation: obs2List[0],
       });
     }
   }
@@ -272,8 +274,8 @@ export function diffArtifacts(artifact1, artifact2) {
       total_changes: added.length + removed.length + modified.length,
       similarity_ratio: similarity,
       artifact1_size: obs1.length,
-      artifact2_size: obs2.length
-    }
+      artifact2_size: obs2.length,
+    },
   };
 }
 
@@ -306,19 +308,23 @@ export async function verifyArtifact(artifact) {
   const expectedChecksum = await hashObservations(artifact.observations);
 
   if (expectedChecksum !== artifact.integrity.checksum) {
-    errors.push(`Checksum mismatch: expected ${expectedChecksum}, got ${artifact.integrity.checksum}`);
+    errors.push(
+      `Checksum mismatch: expected ${expectedChecksum}, got ${artifact.integrity.checksum}`
+    );
   }
 
   // Validate summary
   const computedSummary = computeArtifactSummary(artifact.observations);
   if (computedSummary.total !== artifact.summary.total) {
-    errors.push(`Summary mismatch: expected ${computedSummary.total} observations, got ${artifact.summary.total}`);
+    errors.push(
+      `Summary mismatch: expected ${computedSummary.total} observations, got ${artifact.summary.total}`
+    );
   }
 
   return {
     valid: errors.length === 0,
     errors,
-    verified_at: new Date().toISOString()
+    verified_at: new Date().toISOString(),
   };
 }
 
@@ -345,10 +351,10 @@ export function computeArtifactSummary(observations) {
     by_severity: {
       critical: 0,
       warning: 0,
-      info: 0
+      info: 0,
     },
     confidence_mean: 0,
-    coverage_mean: 0
+    coverage_mean: 0,
   };
 
   let confidenceSum = 0;

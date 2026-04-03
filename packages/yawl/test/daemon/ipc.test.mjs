@@ -15,7 +15,7 @@ import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -133,7 +133,7 @@ describe('Daemon IPC', () => {
     it('should send messages in order', () => {
       // Arrange
       const received = [];
-      engine.on('ipc:ordered', (msg) => received.push(msg));
+      engine.on('ipc:ordered', msg => received.push(msg));
 
       // Act
       engine.sendMessage('ordered', { seq: 1 });
@@ -296,7 +296,7 @@ describe('Daemon IPC', () => {
     it('should receive messages on registered channel', () => {
       // Arrange
       const received = [];
-      engine.receiveMessage('inbox', (msg) => received.push(msg));
+      engine.receiveMessage('inbox', msg => received.push(msg));
 
       // Act
       engine.sendMessage('inbox', { id: 1 });
@@ -338,15 +338,15 @@ describe('Daemon IPC', () => {
     it('should handle async message handlers', async () => {
       // Arrange
       const results = [];
-      const asyncHandler = vi.fn().mockImplementation(async (msg) => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
+      const asyncHandler = vi.fn().mockImplementation(async msg => {
+        await new Promise(resolve => setTimeout(resolve, 10));
         results.push(msg.value);
       });
       engine.receiveMessage('async-channel', asyncHandler);
 
       // Act
       engine.sendMessage('async-channel', { value: 42 });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Assert
       expect(asyncHandler).toHaveBeenCalled();
@@ -387,7 +387,7 @@ describe('Daemon IPC', () => {
     it('should receive messages in FIFO order', () => {
       // Arrange
       const received = [];
-      engine.receiveMessage('fifo', (msg) => received.push(msg.seq));
+      engine.receiveMessage('fifo', msg => received.push(msg.seq));
 
       // Act
       for (let i = 1; i <= 5; i++) {
@@ -419,7 +419,7 @@ describe('Daemon IPC', () => {
     it('should support message filtering', () => {
       // Arrange
       const filtered = [];
-      engine.receiveMessage('filtered', (msg) => {
+      engine.receiveMessage('filtered', msg => {
         if (msg.priority === 'high') {
           filtered.push(msg);
         }
@@ -586,7 +586,7 @@ describe('Daemon IPC', () => {
     it('should support wildcard-like behavior via event prefix', () => {
       // Arrange
       const allMessages = [];
-      engine.on('ipc:message', (data) => allMessages.push(data));
+      engine.on('ipc:message', data => allMessages.push(data));
 
       // Act
       engine.sendMessage('channel-1', { data: 1 });
@@ -749,7 +749,7 @@ describe('Daemon IPC', () => {
 
     it('should validate message structure', () => {
       // Arrange
-      const handler = vi.fn().mockImplementation((msg) => {
+      const handler = vi.fn().mockImplementation(msg => {
         if (!msg || typeof msg !== 'object') {
           throw new Error('Invalid message structure');
         }
@@ -812,7 +812,7 @@ describe('Daemon IPC', () => {
 
     it('should enforce message size limits conceptually', () => {
       // Arrange
-      const handler = vi.fn().mockImplementation((msg) => {
+      const handler = vi.fn().mockImplementation(msg => {
         // Simulate size check
         const size = JSON.stringify(msg).length;
         if (size > 50000) {
@@ -875,7 +875,7 @@ describe('Daemon IPC', () => {
       let sendCount = 0;
       const maxSends = 5;
 
-      const loopHandler = vi.fn().mockImplementation((msg) => {
+      const loopHandler = vi.fn().mockImplementation(msg => {
         sendCount++;
         if (sendCount < maxSends) {
           engine.sendMessage('loop', { count: sendCount });
@@ -893,14 +893,14 @@ describe('Daemon IPC', () => {
     it('should handle timeout in async handlers', async () => {
       // Arrange
       const slowHandler = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
       });
       engine.receiveMessage('timeout-test', slowHandler);
 
       // Act
       const startTime = Date.now();
       engine.sendMessage('timeout-test', {});
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 150));
       const duration = Date.now() - startTime;
 
       // Assert

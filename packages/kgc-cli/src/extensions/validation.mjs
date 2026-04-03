@@ -14,21 +14,21 @@ const ValidateSchemaSchema = z.object({
   data: z.string().describe('RDF data to validate (Turtle/N-Triples)'),
   schemaType: z.enum(['shacl', 'shex', 'owl']).describe('Schema language'),
   schema: z.string().describe('Schema definition'),
-  strict: z.boolean().optional().default(true).describe('Strict validation mode')
+  strict: z.boolean().optional().default(true).describe('Strict validation mode'),
 });
 
 /** Args schema for instance checking */
 const CheckInstanceSchema = z.object({
   instance: z.string().describe('Instance IRI or data'),
   type: z.string().describe('Expected type IRI'),
-  constraints: z.string().optional().describe('Additional constraints as JSON')
+  constraints: z.string().optional().describe('Additional constraints as JSON'),
 });
 
 /** Args schema for OTEL validation */
 const OtelValidateSchema = z.object({
   target: z.string().describe('Target to validate (package, module, span)'),
   mode: z.enum(['comprehensive', 'quick', 'minimal']).optional().default('comprehensive'),
-  threshold: z.number().optional().default(80).describe('Minimum score (0-100)')
+  threshold: z.number().optional().default(80).describe('Minimum score (0-100)'),
 });
 
 /**
@@ -46,31 +46,31 @@ const extension = {
         validate: {
           description: 'Validate RDF data against a schema',
           argsSchema: ValidateSchemaSchema,
-          handler: async (args) => {
+          handler: async args => {
             // Placeholder: actual implementation would import from @unrdf/validation
             return {
               valid: true,
               schemaType: args.schemaType,
               violations: [],
               warnings: [],
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         check: {
           description: 'Check schema consistency',
           argsSchema: z.object({
             schema: z.string().describe('Schema definition'),
-            type: z.enum(['shacl', 'shex', 'owl']).describe('Schema type')
+            type: z.enum(['shacl', 'shex', 'owl']).describe('Schema type'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               schema: args.schema,
               type: args.type,
               consistent: true,
-              errors: []
+              errors: [],
             };
-          }
+          },
         },
         list: {
           description: 'List registered validation schemas',
@@ -80,13 +80,13 @@ const extension = {
                 {
                   id: 'default-shacl',
                   type: 'shacl',
-                  ruleCount: 15
-                }
-              ]
+                  ruleCount: 15,
+                },
+              ],
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     rule: {
@@ -97,48 +97,48 @@ const extension = {
           argsSchema: z.object({
             name: z.string().describe('Rule name'),
             type: z.enum(['constraint', 'inference', 'assertion']).describe('Rule type'),
-            definition: z.string().describe('Rule definition')
+            definition: z.string().describe('Rule definition'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               rule: {
                 name: args.name,
                 type: args.type,
-                definition: args.definition
+                definition: args.definition,
               },
               defined: true,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         list: {
           description: 'List validation rules',
           argsSchema: z.object({
-            type: z.enum(['constraint', 'inference', 'assertion']).optional()
+            type: z.enum(['constraint', 'inference', 'assertion']).optional(),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               rules: [],
-              type: args.type || null
+              type: args.type || null,
             };
-          }
+          },
         },
         execute: {
           description: 'Execute validation rule against data',
           argsSchema: z.object({
             rule: z.string().describe('Rule name'),
-            data: z.string().describe('Data to validate')
+            data: z.string().describe('Data to validate'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               rule: args.rule,
               passed: true,
               violations: [],
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     instance: {
@@ -147,16 +147,16 @@ const extension = {
         check: {
           description: 'Check instance against type constraints',
           argsSchema: CheckInstanceSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               instance: args.instance,
               type: args.type,
               valid: true,
-              violations: []
+              violations: [],
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     otel: {
@@ -165,7 +165,7 @@ const extension = {
         validate: {
           description: 'Run OTEL validation checks',
           argsSchema: OtelValidateSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               target: args.target,
               mode: args.mode,
@@ -175,29 +175,29 @@ const extension = {
               spans: {
                 total: 100,
                 valid: 95,
-                failed: 5
+                failed: 5,
               },
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         report: {
           description: 'Generate OTEL validation report',
           argsSchema: z.object({
             target: z.string().describe('Target to report on'),
-            format: z.enum(['json', 'html', 'text']).optional().default('text')
+            format: z.enum(['json', 'html', 'text']).optional().default('text'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               target: args.target,
               format: args.format,
               report: 'Validation report...',
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
   priority: 22,
@@ -205,8 +205,8 @@ const extension = {
   guards: {
     preconditions: () => {
       // Verify @unrdf/validation is available
-    }
-  }
+    },
+  },
 };
 
 export default extension;

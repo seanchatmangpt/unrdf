@@ -20,10 +20,7 @@
 // Main Compilation API (Agent 10)
 // =============================================================================
 
-export {
-  compileLatexToPdf,
-  generateCacheKey
-} from './compile.mjs';
+export { compileLatexToPdf, generateCacheKey } from './compile.mjs';
 
 // =============================================================================
 // SwiftLaTeX Engine (Agent 3)
@@ -33,16 +30,14 @@ export {
   compileWithSwiftLatex,
   getSupportedEngines,
   validateVFS,
-  createMinimalVFS
+  createMinimalVFS,
 } from './swiftlatex-engine.mjs';
 
 // =============================================================================
 // VFS Collection (Agent 2)
 // =============================================================================
 
-export {
-  collectProjectFiles
-} from './project-files.mjs';
+export { collectProjectFiles } from './project-files.mjs';
 
 // =============================================================================
 // CTAN Resolver (Agent 4)
@@ -52,7 +47,7 @@ export {
   resolveMissingInputs,
   augmentVfsWithResolvedPackages,
   clearCache,
-  getCacheStats
+  getCacheStats,
 } from './ctan-resolver.mjs';
 
 // =============================================================================
@@ -70,7 +65,7 @@ export {
   mergeLocks,
   pruneLock,
   ResolvedInputSchema,
-  LatexLockSchema
+  LatexLockSchema,
 } from './latex-lock.mjs';
 
 // =============================================================================
@@ -84,7 +79,7 @@ export {
   writeLatexRunLog,
   extractErrorSummary,
   isCompileSuccessful,
-  LogWriteOptionsSchema
+  LogWriteOptionsSchema,
 } from './diagnostics.mjs';
 
 // =============================================================================
@@ -120,19 +115,14 @@ export {
   parseCompileOptions,
   parseCLIBuildArgs,
   parseLockfile,
-  createEmptyDiagnostics
+  createEmptyDiagnostics,
 } from './schemas.mjs';
 
 // =============================================================================
 // Utilities
 // =============================================================================
 
-export {
-  normalizeToVFS,
-  vfsToRelative,
-  isValidVFSPath,
-  sortVFSPaths
-} from './path-normalize.mjs';
+export { normalizeToVFS, vfsToRelative, isValidVFSPath, sortVFSPaths } from './path-normalize.mjs';
 
 // =============================================================================
 // Re-export Default

@@ -203,7 +203,9 @@ export class MultiInstanceTracker {
     record.updatedAt = now();
 
     // Set completion time for terminal states
-    if ([InstanceStatus.COMPLETED, InstanceStatus.FAILED, InstanceStatus.CANCELLED].includes(status)) {
+    if (
+      [InstanceStatus.COMPLETED, InstanceStatus.FAILED, InstanceStatus.CANCELLED].includes(status)
+    ) {
       record.completedAt = now();
     }
 
@@ -392,9 +394,10 @@ export class MultiInstanceTracker {
     const aggregate = this.getAggregateStatus(parentTaskId);
     if (aggregate.totalInstances === 0) return 100;
 
-    const completed = aggregate.statusCounts.completed +
-                     aggregate.statusCounts.failed +
-                     aggregate.statusCounts.cancelled;
+    const completed =
+      aggregate.statusCounts.completed +
+      aggregate.statusCounts.failed +
+      aggregate.statusCounts.cancelled;
 
     return (completed / aggregate.totalInstances) * 100;
   }
@@ -442,9 +445,8 @@ export class MultiInstanceTracker {
     return {
       totalInstances: this.instances.size,
       totalParents: this.parentToInstances.size,
-      instancesPerParent: this.parentToInstances.size > 0
-        ? this.instances.size / this.parentToInstances.size
-        : 0,
+      instancesPerParent:
+        this.parentToInstances.size > 0 ? this.instances.size / this.parentToInstances.size : 0,
     };
   }
 }

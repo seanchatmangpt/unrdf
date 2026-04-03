@@ -125,7 +125,11 @@ export const YawlWorkflow = Workflow;
 // =============================================================================
 
 import { workflowToRDF as toRDF, workflowFromRDF as fromRDF } from './rdf.mjs';
-import { WorkflowSpecSchema as WFSpecSchema, TaskDefSchema as TDefSchema, FlowDefSchema as FDefSchema } from './schemas.mjs';
+import {
+  WorkflowSpecSchema as WFSpecSchema,
+  TaskDefSchema as TDefSchema,
+  FlowDefSchema as FDefSchema,
+} from './schemas.mjs';
 import { validateWorkflow as validateWF } from './validation.mjs';
 
 export default {

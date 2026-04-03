@@ -94,13 +94,13 @@ export async function generateSigningKey(keyId) {
 
   // Convert to hex string
   const privateKey = Array.from(privateKeyBytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 
   // Derive public key
   const publicKeyBytes = await getPublicKey(privateKeyBytes);
   const publicKey = Array.from(publicKeyBytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 
   return SigningKeySchema.parse({
@@ -119,13 +119,13 @@ export async function generateSigningKey(keyId) {
  */
 export async function derivePublicKey(privateKey) {
   const privateKeyBytes = new Uint8Array(
-    privateKey.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    privateKey.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
 
   const publicKeyBytes = await getPublicKey(privateKeyBytes);
 
   return Array.from(publicKeyBytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 }
 
@@ -158,20 +158,20 @@ export async function createBlockchainReceipt(event, payload, signingKey, option
 
   // Sign the receipt hash
   const privateKeyBytes = new Uint8Array(
-    validatedKey.privateKey.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    validatedKey.privateKey.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
 
   const hashBytes = new Uint8Array(
-    baseReceipt.hash.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    baseReceipt.hash.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
 
   const signatureBytes = await sign(hashBytes, privateKeyBytes);
   const signature = Array.from(signatureBytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map(b => b.toString(16).padStart(2, '0'))
     .join('');
 
   // Ensure public key is present
-  const publicKey = validatedKey.publicKey || await derivePublicKey(validatedKey.privateKey);
+  const publicKey = validatedKey.publicKey || (await derivePublicKey(validatedKey.privateKey));
 
   // Create blockchain receipt
   const blockchainReceipt = {
@@ -246,16 +246,14 @@ export async function verifyBlockchainReceipt(receipt) {
 
   // Verify Ed25519 signature
   const publicKeyBytes = new Uint8Array(
-    validated.publicKey.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    validated.publicKey.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
 
   const signatureBytes = new Uint8Array(
-    validated.signature.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+    validated.signature.match(/.{1,2}/g).map(byte => parseInt(byte, 16))
   );
 
-  const hashBytes = new Uint8Array(
-    validated.hash.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
-  );
+  const hashBytes = new Uint8Array(validated.hash.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
   const signatureValid = await verify(signatureBytes, hashBytes, publicKeyBytes);
 
@@ -321,7 +319,7 @@ export async function verifyReceiptChain(chain) {
   return {
     valid: allValid,
     chainLength: chain.length,
-    verifiedCount: results.filter((r) => r.valid).length,
+    verifiedCount: results.filter(r => r.valid).length,
     results,
     verifiedAt: toISO(now()),
   };
@@ -347,7 +345,7 @@ export async function createMerkleRoot(receipts) {
   }
 
   // Extract hashes
-  let hashes = receipts.map((r) => r.hash);
+  let hashes = receipts.map(r => r.hash);
 
   // Build Merkle tree
   while (hashes.length > 1) {
@@ -382,7 +380,7 @@ export async function createMerkleRoot(receipts) {
  */
 export async function generateMerkleProof(receipts, index) {
   const proof = [];
-  let hashes = receipts.map((r) => r.hash);
+  let hashes = receipts.map(r => r.hash);
   let currentIndex = index;
 
   while (hashes.length > 1) {
@@ -427,9 +425,7 @@ export async function verifyMerkleProof(merkleProof, expectedRoot) {
   let currentHash = merkleProof.receiptHash;
 
   for (const step of merkleProof.proof) {
-    const combined = step.position === 'left'
-      ? step.hash + currentHash
-      : currentHash + step.hash;
+    const combined = step.position === 'left' ? step.hash + currentHash : currentHash + step.hash;
 
     currentHash = await blake3(combined);
   }

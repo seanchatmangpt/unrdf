@@ -86,5 +86,5 @@ export default {
   traceMethod: traceMethodSchema,
   formatBytes: formatBytesSchema,
   getSystemInfo: getSystemInfoSchema,
-  dumpDebugSnapshot: dumpDebugSnapshotSchema
+  dumpDebugSnapshot: dumpDebugSnapshotSchema,
 };

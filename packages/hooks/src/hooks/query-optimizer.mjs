@@ -16,11 +16,7 @@
  * @returns {object} Query optimizer instance
  */
 export function createQueryOptimizer(options = {}) {
-  const {
-    enableIndexing = true,
-    enableCaching = true,
-    cacheMaxSize = 1000,
-  } = options;
+  const { enableIndexing = true, enableCaching = true, cacheMaxSize = 1000 } = options;
 
   const queryCache = new Map();
   const indexes = new Map();

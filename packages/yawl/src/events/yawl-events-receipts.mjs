@@ -48,13 +48,7 @@ import {
  * });
  */
 export async function createWorkflowReceipt(options) {
-  const {
-    beforeState,
-    afterState,
-    decision,
-    justification = {},
-    gitRef = null,
-  } = options;
+  const { beforeState, afterState, decision, justification = {}, gitRef = null } = options;
 
   // Serialize states deterministically
   const beforeSerialized = serializeCaseState(beforeState);
@@ -172,12 +166,17 @@ export async function createCase(store, specId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'CASE_CREATED', {
-    caseId,
-    specId,
-    timestamp,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'CASE_CREATED',
+    {
+      caseId,
+      specId,
+      timestamp,
+      receipt,
+    },
+    options
+  );
 
   return {
     caseId,
@@ -214,13 +213,18 @@ export async function enableTask(store, caseId, taskId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_ENABLED', {
-    taskId,
-    caseId,
-    workItemId,
-    enabledAt,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_ENABLED',
+    {
+      taskId,
+      caseId,
+      workItemId,
+      enabledAt,
+      receipt,
+    },
+    options
+  );
 
   return {
     workItemId,
@@ -257,11 +261,16 @@ export async function startWorkItem(store, workItemId, caseId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_STARTED', {
-    workItemId,
-    startedAt,
-    receipt,
-  }, { ...options, caseId });
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_STARTED',
+    {
+      workItemId,
+      startedAt,
+      receipt,
+    },
+    { ...options, caseId }
+  );
 
   return {
     workItemId,
@@ -297,12 +306,17 @@ export async function completeWorkItem(store, workItemId, caseId, result, option
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_COMPLETED', {
-    workItemId,
-    completedAt,
-    result,
-    receipt,
-  }, { ...options, caseId });
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_COMPLETED',
+    {
+      workItemId,
+      completedAt,
+      result,
+      receipt,
+    },
+    { ...options, caseId }
+  );
 
   return {
     workItemId,
@@ -325,7 +339,14 @@ export async function completeWorkItem(store, workItemId, caseId, result, option
  * @param {Object} [options={}] - Additional options
  * @returns {Promise<Object>} Control flow decision with receipt
  */
-export async function recordControlFlowEvaluation(store, caseId, taskId, result, sparqlQuery, options = {}) {
+export async function recordControlFlowEvaluation(
+  store,
+  caseId,
+  taskId,
+  result,
+  sparqlQuery,
+  options = {}
+) {
   const timestamp = toISO(now());
 
   // Create receipt
@@ -342,14 +363,19 @@ export async function recordControlFlowEvaluation(store, caseId, taskId, result,
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'CONTROL_FLOW_EVALUATED', {
-    caseId,
-    taskId,
-    result,
-    timestamp,
-    sparqlQuery,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'CONTROL_FLOW_EVALUATED',
+    {
+      caseId,
+      taskId,
+      result,
+      timestamp,
+      sparqlQuery,
+      receipt,
+    },
+    options
+  );
 
   return {
     caseId,

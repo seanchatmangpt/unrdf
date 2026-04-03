@@ -292,14 +292,7 @@ export async function executePassLoop(options) {
     };
   }
 
-  const {
-    compile,
-    vfs,
-    maxPasses,
-    maxResolveRetries,
-    onProgress,
-    onResolve,
-  } = validated;
+  const { compile, vfs, maxPasses, maxResolveRetries, onProgress, onResolve } = validated;
 
   // ============= State =============
   let pass = 0;
@@ -408,11 +401,7 @@ export async function executePassLoop(options) {
     }
 
     // ============= Check Convergence =============
-    const { converged, reason } = checkFixedPoint(
-      prevArtifacts,
-      result.artifacts,
-      lastLog
-    );
+    const { converged, reason } = checkFixedPoint(prevArtifacts, result.artifacts, lastLog);
 
     // Update artifacts for next iteration
     prevArtifacts = result.artifacts;
@@ -480,14 +469,14 @@ export function needsMultiplePass(texContent) {
 
   // Indicators that multiple passes are needed:
   const multiPassIndicators = [
-    /\\tableofcontents/,     // Table of contents
-    /\\listoffigures/,       // List of figures
-    /\\listoftables/,        // List of tables
-    /\\ref\{/,               // Cross-references
-    /\\pageref\{/,           // Page references
-    /\\cite\{/,              // Citations
-    /\\bibliography\{/,      // Bibliography
-    /\\index\{/,             // Index
+    /\\tableofcontents/, // Table of contents
+    /\\listoffigures/, // List of figures
+    /\\listoftables/, // List of tables
+    /\\ref\{/, // Cross-references
+    /\\pageref\{/, // Page references
+    /\\cite\{/, // Citations
+    /\\bibliography\{/, // Bibliography
+    /\\index\{/, // Index
   ];
 
   return multiPassIndicators.some(pattern => pattern.test(texContent));

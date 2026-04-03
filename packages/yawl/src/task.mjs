@@ -71,7 +71,10 @@ export {
 // =============================================================================
 
 import { TaskDefinition, TaskInstance } from './task-core.mjs';
-import { extendTaskDefinition as extendTaskDefinitionValidation, extendTaskInstance as extendTaskInstanceValidation } from './task-validation.mjs';
+import {
+  extendTaskDefinition as extendTaskDefinitionValidation,
+  extendTaskInstance as extendTaskInstanceValidation,
+} from './task-validation.mjs';
 import { extendTaskInstance as extendTaskInstanceExecution } from './task-execution.mjs';
 import { extendTaskInstance as extendTaskInstanceRDF } from './task-rdf.mjs';
 

@@ -18,15 +18,17 @@ export const AdvancedMetricsConfigSchema = z.object({
   serviceVersion: z.string().default('6.0.0'),
   enabled: z.boolean().default(true),
   samplingRate: z.number().min(0).max(1).default(0.01),
-  buckets: z.object({
-    latency: z.array(z.number()).default([1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000]),
-    throughput: z.array(z.number()).default([1, 10, 50, 100, 500, 1000, 5000]),
-    memory: z.array(z.number()).default([1e6, 10e6, 50e6, 100e6, 500e6, 1e9, 5e9]),
-  }).default({
-    latency: [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000],
-    throughput: [1, 10, 50, 100, 500, 1000, 5000],
-    memory: [1e6, 10e6, 50e6, 100e6, 500e6, 1e9, 5e9],
-  }),
+  buckets: z
+    .object({
+      latency: z.array(z.number()).default([1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000]),
+      throughput: z.array(z.number()).default([1, 10, 50, 100, 500, 1000, 5000]),
+      memory: z.array(z.number()).default([1e6, 10e6, 50e6, 100e6, 500e6, 1e9, 5e9]),
+    })
+    .default({
+      latency: [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000],
+      throughput: [1, 10, 50, 100, 500, 1000, 5000],
+      memory: [1e6, 10e6, 50e6, 100e6, 500e6, 1e9, 5e9],
+    }),
 });
 
 /**

@@ -112,5 +112,5 @@ export default {
   validateConfig: validateConfigSchema,
   getGlobalConfig: getGlobalConfigSchema,
   setGlobalConfig: setGlobalConfigSchema,
-  resetGlobalConfig: resetGlobalConfigSchema
+  resetGlobalConfig: resetGlobalConfigSchema,
 };

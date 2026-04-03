@@ -88,10 +88,7 @@ describe('WP12 Specification Compliance', () => {
 
     // SPEC REQUIREMENT 2: No synchronization - downstream enabled after ANY completion
     await engine.startTask(yawlCase.id, instances[0].id);
-    const { downstreamEnabled } = await engine.completeTask(
-      yawlCase.id,
-      instances[0].id
-    );
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, instances[0].id);
 
     expect(downstreamEnabled.length).toBe(1);
     expect(downstreamEnabled[0].taskId).toBe('continue');
@@ -270,9 +267,9 @@ describe('WP13 Specification Compliance', () => {
     }
 
     // SPEC REQUIREMENT: Downstream NOT enabled (barrier not satisfied)
-    let mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    let mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(0);
 
     // Complete last instance
@@ -436,9 +433,9 @@ describe('WP14 Specification Compliance', () => {
     expect(instances.length).toBe(15);
 
     // No additional instances can be added (count fixed at spawn time)
-    await expect(
-      engine.addMIInstance(yawlCase.id, 'batch', { extra: true })
-    ).rejects.toThrow(/static.*creation/);
+    await expect(engine.addMIInstance(yawlCase.id, 'batch', { extra: true })).rejects.toThrow(
+      /static.*creation/
+    );
 
     // COMPLIANCE: ✅ PASS (WP14 = fixed at spawn, WP15 = dynamic addition)
   });
@@ -477,9 +474,9 @@ describe('WP14 Specification Compliance', () => {
     }
 
     // SPEC REQUIREMENT: Barrier not satisfied
-    let mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    let mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(0);
 
     // Complete last
@@ -529,15 +526,15 @@ describe('WP14 Specification Compliance', () => {
     }
 
     // SPEC REQUIREMENT: Threshold reached, downstream enabled
-    const tallyItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'tally'
-    );
+    const tallyItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'tally');
     expect(tallyItems.length).toBe(1);
 
     // Other 40 instances still active
-    const stillActive = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'vote'
-    );
+    const stillActive = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'vote');
     expect(stillActive.length).toBe(40);
 
     // COMPLIANCE: ✅ PASS
@@ -605,9 +602,9 @@ describe('WP15 Specification Compliance', () => {
     await engine.addMIInstance(yawlCase.id, 'handle', { id: 6 });
     await engine.addMIInstance(yawlCase.id, 'handle', { id: 7 });
 
-    instances = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'handle'
-    );
+    instances = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'handle');
 
     // SPEC REQUIREMENT: Total instances increased
     expect(instances.length).toBe(7);
@@ -700,15 +697,15 @@ describe('WP15 Specification Compliance', () => {
     await engine.completeTask(yawlCase.id, instances[2].id);
 
     // SPEC REQUIREMENT: Downstream NOT enabled (new instances still pending)
-    let doneItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'done'
-    );
+    let doneItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'done');
     expect(doneItems.length).toBe(0);
 
     // Complete dynamically added instances
-    instances = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'task'
-    );
+    instances = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'task');
     expect(instances.length).toBe(2);
 
     for (const inst of instances) {
@@ -783,9 +780,9 @@ describe('Cross-Pattern Specification Compliance', () => {
     await engine.startTask(case12.id, inst12[0].id);
     await engine.completeTask(case12.id, inst12[0].id);
 
-    const next12 = case12.getEnabledWorkItems().filter(
-      w => case12.getTaskDefIdForWorkItem(w.id) === 'next'
-    );
+    const next12 = case12
+      .getEnabledWorkItems()
+      .filter(w => case12.getTaskDefIdForWorkItem(w.id) === 'next');
     expect(next12.length).toBe(1); // WP12 characteristic
 
     // WP13: Complete 1 instance -> downstream NOT enabled
@@ -796,9 +793,9 @@ describe('Cross-Pattern Specification Compliance', () => {
     await engine.startTask(case13.id, inst13[0].id);
     await engine.completeTask(case13.id, inst13[0].id);
 
-    const next13 = case13.getEnabledWorkItems().filter(
-      w => case13.getTaskDefIdForWorkItem(w.id) === 'next'
-    );
+    const next13 = case13
+      .getEnabledWorkItems()
+      .filter(w => case13.getTaskDefIdForWorkItem(w.id) === 'next');
     expect(next13.length).toBe(0); // WP13 characteristic
 
     // COMPLIANCE: ✅ PASS - Clear distinction maintained
@@ -896,9 +893,7 @@ describe('Cross-Pattern Specification Compliance', () => {
     });
 
     // WP14: Cannot add instances after creation (static spawn)
-    await expect(
-      engine.addMIInstance(case14.id, 'task', {})
-    ).rejects.toThrow();
+    await expect(engine.addMIInstance(case14.id, 'task', {})).rejects.toThrow();
 
     const { case: case15 } = await engine.createCase('wp15-vs-14-dynamic', {
       instanceCount: 5,

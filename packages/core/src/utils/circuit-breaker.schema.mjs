@@ -34,5 +34,5 @@ export const withCircuitBreakerSchema = {
 
 export default {
   createCircuitBreaker: createCircuitBreakerSchema,
-  withCircuitBreaker: withCircuitBreakerSchema
+  withCircuitBreaker: withCircuitBreakerSchema,
 };

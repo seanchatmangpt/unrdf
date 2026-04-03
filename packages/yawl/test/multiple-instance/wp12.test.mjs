@@ -160,13 +160,13 @@ describe('WP12 - Basic Instance Spawning', () => {
   it('should throw error if instance count is invalid', async () => {
     const taskDef = createTestTaskDef('Task4');
 
-    await expect(
-      spawnInstancesNoSync(taskDef, 'case-004', 0, { tracker })
-    ).rejects.toThrow('Instance count must be positive');
+    await expect(spawnInstancesNoSync(taskDef, 'case-004', 0, { tracker })).rejects.toThrow(
+      'Instance count must be positive'
+    );
 
-    await expect(
-      spawnInstancesNoSync(taskDef, 'case-004', -5, { tracker })
-    ).rejects.toThrow('Instance count must be positive');
+    await expect(spawnInstancesNoSync(taskDef, 'case-004', -5, { tracker })).rejects.toThrow(
+      'Instance count must be positive'
+    );
   });
 
   it('should throw error if instanceInputs length mismatch', async () => {
@@ -350,9 +350,7 @@ describe('WP12 - High Concurrency', () => {
     const result = await spawnInstancesNoSync(taskDef, 'case-012', 100, { tracker });
 
     // Complete all instances concurrently
-    const completions = result.instanceIds.map(id =>
-      executeInstance(id, tracker, false)
-    );
+    const completions = result.instanceIds.map(id => executeInstance(id, tracker, false));
 
     await Promise.all(completions);
 
@@ -419,9 +417,7 @@ describe('WP12 - Receipt Chain Validation', () => {
         expect(receipt.previousReceiptHash).toBeNull();
       } else {
         // Subsequent receipts chain to previous
-        expect(receipt.previousReceiptHash).toBe(
-          result.instanceReceipts[i - 1].receiptHash
-        );
+        expect(receipt.previousReceiptHash).toBe(result.instanceReceipts[i - 1].receiptHash);
       }
     }
   });
@@ -499,7 +495,7 @@ describe('WP12 - Aggregate Status Queries', () => {
     enableInstance(result.instanceIds[1], tracker);
     startInstance(result.instanceIds[1], tracker);
     await executeInstance(result.instanceIds[2], tracker, false); // complete
-    await executeInstance(result.instanceIds[3], tracker, true);  // fail
+    await executeInstance(result.instanceIds[3], tracker, true); // fail
 
     const aggregate = getAggregateStatus(result.parentTaskId, tracker);
 

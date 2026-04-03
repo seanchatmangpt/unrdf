@@ -184,7 +184,7 @@ export class ProofChain {
     }
 
     // Build Merkle tree from receipt hashes
-    let level = this.receipts.map((r) => r.receiptHash);
+    let level = this.receipts.map(r => r.receiptHash);
 
     while (level.length > 1) {
       const nextLevel = [];
@@ -223,7 +223,7 @@ export class ProofChain {
    * @returns {import('./receipt-core.mjs').Receipt|undefined}
    */
   getReceiptById(id) {
-    return this.receipts.find((r) => r.id === id);
+    return this.receipts.find(r => r.id === id);
   }
 
   /**
@@ -233,7 +233,7 @@ export class ProofChain {
    * @returns {import('./receipt-core.mjs').Receipt[]}
    */
   getReceiptsForCase(caseId) {
-    return this.receipts.filter((r) => r.caseId === caseId);
+    return this.receipts.filter(r => r.caseId === caseId);
   }
 
   /**
@@ -243,7 +243,7 @@ export class ProofChain {
    * @returns {import('./receipt-core.mjs').Receipt[]}
    */
   getReceiptsForTask(taskId) {
-    return this.receipts.filter((r) => r.taskId === taskId);
+    return this.receipts.filter(r => r.taskId === taskId);
   }
 
   /**
@@ -258,7 +258,7 @@ export class ProofChain {
     }
 
     const proof = [];
-    let level = this.receipts.map((r) => r.receiptHash);
+    let level = this.receipts.map(r => r.receiptHash);
     let idx = index;
 
     while (level.length > 1) {
@@ -303,9 +303,7 @@ export class ProofChain {
 
     for (const step of proof) {
       const combined =
-        step.position === 'right'
-          ? `${currentHash}:${step.hash}`
-          : `${step.hash}:${currentHash}`;
+        step.position === 'right' ? `${currentHash}:${step.hash}` : `${step.hash}:${currentHash}`;
       currentHash = await blake3(combined);
     }
 
@@ -321,7 +319,7 @@ export class ProofChain {
     return {
       nodeId: this.nodeId,
       vectorClock: this.vectorClock.toJSON(),
-      receipts: this.receipts.map((r) => ({
+      receipts: this.receipts.map(r => ({
         ...r,
         t_ns: r.t_ns.toString(),
       })),
@@ -338,7 +336,7 @@ export class ProofChain {
   static fromJSON(json) {
     const chain = new ProofChain(json.nodeId);
     chain.vectorClock = VectorClock.fromJSON(json.vectorClock);
-    chain.receipts = json.receipts.map((r) => ({
+    chain.receipts = json.receipts.map(r => ({
       ...r,
       t_ns: BigInt(r.t_ns),
     }));
@@ -365,7 +363,7 @@ export class ProofChain {
       chainValid: verifyResult.valid,
       validationError: verifyResult.error || null,
       vectorClock: this.vectorClock.toJSON(),
-      receipts: this.receipts.map((r) => ({
+      receipts: this.receipts.map(r => ({
         id: r.id,
         eventType: r.eventType,
         timestamp_iso: r.timestamp_iso,

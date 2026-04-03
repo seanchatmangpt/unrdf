@@ -1,698 +1,662 @@
-# Troubleshooting Guide
+# UNRDF Troubleshooting Guide
 
-Common issues, solutions, and debugging techniques for UNRDF.
+Common issues and their solutions. If you don't find your issue here, check [GitHub Issues](https://github.com/unrdf/unrdf/issues) or ask in [Discussions](https://github.com/unrdf/unrdf/discussions).
 
 ## Table of Contents
 
 - [Installation Issues](#installation-issues)
-- [Import and Module Errors](#import-and-module-errors)
-- [RDF Parsing Errors](#rdf-parsing-errors)
-- [SPARQL Query Issues](#sparql-query-issues)
-- [Performance Problems](#performance-problems)
-- [Memory Leaks](#memory-leaks)
-- [Test Failures](#test-failures)
-- [Build Errors](#build-errors)
-- [Debugging Techniques](#debugging-techniques)
+- [Build Issues](#build-issues)
+- [Test Issues](#test-issues)
+- [Runtime Issues](#runtime-issues)
+- [Development Workflow Issues](#development-workflow-issues)
+- [Performance Issues](#performance-issues)
 
 ---
 
 ## Installation Issues
 
-### Error: "Cannot find module '@unrdf/core'"
+### "pnpm: command not found"
 
-**Symptoms:**
+**Symptom:**
+```bash
+$ pnpm install
+pnpm: command not found
+```
+
+**Cause:** pnpm is not installed globally.
+
+**Solution:**
+```bash
+npm install -g pnpm
+pnpm --version  # Verify installation
+```
+
+**Alternative (using npm):**
+```bash
+npm install -g @pnpm/exe
+```
+
+---
+
+### "Cannot find module '@unrdf/core'"
+
+**Symptom:**
 ```
 Error: Cannot find module '@unrdf/core'
 ```
 
-**Causes:**
-1. Package not installed
-2. Incorrect import path
-3. Node modules cache corruption
-
-**Solutions:**
-
-```bash
-# 1. Install the package
-pnpm add @unrdf/core
-
-# 2. Clear cache and reinstall
-rm -rf node_modules pnpm-lock.yaml
-pnpm install
-
-# 3. Verify installation
-pnpm list @unrdf/core
-```
-
-**Verification:**
-```javascript
-// ❌ WRONG
-import { createKnowledgeSubstrateCore } from 'unrdf';
-
-// ✅ CORRECT
-import { createKnowledgeSubstrateCore } from '@unrdf/core';
-```
-
----
-
-### Error: "pnpm: command not found"
-
-**Symptoms:**
-```bash
-pnpm install
--bash: pnpm: command not found
-```
+**Cause:** Dependencies not installed or packages not built.
 
 **Solution:**
 ```bash
-# Install pnpm globally
-npm install -g pnpm@8
+# Reinstall dependencies
+pnpm install
+
+# Build all packages
+pnpm run build
 
 # Verify installation
-pnpm --version
-# Expected: 8.x.x
-
-# Alternative: Use npx
-npx pnpm install
+pnpm list --depth 0 | grep @unrdf
 ```
 
 ---
 
-### Error: "Node version incompatible"
+### Node Version Too Old
 
-**Symptoms:**
+**Symptom:**
 ```
-error @unrdf/core@5.0.1: The engine "node" is incompatible with this module.
-Expected version ">=18.0.0". Got "16.14.0"
+Error: The engine "node" is incompatible with this module.
+Expected version ">=18.0.0". Got "16.x.x"
 ```
+
+**Cause:** UNRDF requires Node.js 18 or higher.
 
 **Solution:**
-```bash
-# Check Node version
-node --version
 
-# Upgrade Node.js (using nvm)
+Using nvm:
+```bash
 nvm install 18
 nvm use 18
-
-# Or download from nodejs.org
-# https://nodejs.org/en/download/
+node --version  # Should show v18.x.x or higher
 ```
+
+Or download from [nodejs.org](https://nodejs.org).
 
 ---
 
-## Import and Module Errors
+### Peer Dependency Warnings
 
-### Error: "ERR_MODULE_NOT_FOUND"
-
-**Symptoms:**
+**Symptom:**
 ```
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../index.mjs'
+WARN  Issues with peer dependencies found
 ```
 
-**Causes:**
-1. File extension missing (`.mjs` required)
-2. Incorrect relative path
-3. Circular dependency
+**Cause:** Version conflicts in dependencies.
 
-**Solutions:**
-
-```javascript
-// ❌ WRONG: Missing .mjs extension
-import { query } from './sparql/executor';
-
-// ✅ CORRECT
-import { query } from './sparql/executor.mjs';
-
-// ❌ WRONG: Relative path to N3 (forbidden)
-import { Store } from 'n3';
-
-// ✅ CORRECT: Use Oxigraph
-import { createStore } from '@unrdf/oxigraph';
-```
-
-**Verification:**
+**Solution:**
 ```bash
-# Check for forbidden N3 imports
-grep -r "from 'n3'" packages/*/src --exclude-dir=justified
+# Usually safe to ignore warnings
+# If builds fail, try:
+pnpm install --force
 
-# Should return 0 results (except in justified modules)
+# Or clean and reinstall:
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
 ```
 
 ---
 
-### Error: "Unexpected token 'export'"
+## Build Issues
 
-**Symptoms:**
+### Build Fails with "Permission denied"
+
+**Symptom:**
 ```
-SyntaxError: Unexpected token 'export'
+EACCES: permission denied, mkdir '/home/user/unrdf/packages/core/dist'
 ```
 
-**Cause:** Using CommonJS instead of ES Modules.
+**Cause:** Incorrect file permissions.
+
+**Solution:**
+```bash
+# Fix ownership
+sudo chown -R $(whoami) .
+
+# Retry build
+pnpm run build
+```
+
+---
+
+### "Cannot find module './dist/index.mjs'"
+
+**Symptom:**
+```
+Error: Cannot find module './dist/index.mjs'
+```
+
+**Cause:** Package not built yet.
+
+**Solution:**
+```bash
+# Build all packages
+pnpm run build
+
+# Or build specific package
+pnpm --filter @unrdf/core run build
+```
+
+---
+
+### Build Hangs or Takes Forever
+
+**Symptom:** Build process seems stuck.
+
+**Cause:** Dependency resolution issue or network problem.
+
+**Solution:**
+```bash
+# Cancel build (Ctrl+C)
+
+# Clear pnpm cache
+pnpm store prune
+
+# Reinstall
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+pnpm run build
+```
+
+---
+
+### TypeScript Errors in Build
+
+**Symptom:**
+```
+error TS2307: Cannot find module '@unrdf/core'
+```
+
+**Cause:** TypeScript definitions not generated.
+
+**Solution:**
+```bash
+# Build dependencies first
+pnpm --filter @unrdf/core run build
+pnpm --filter @unrdf/hooks run build
+
+# Then build package with errors
+pnpm --filter @unrdf/YOUR-PACKAGE run build
+```
+
+---
+
+## Test Issues
+
+### Tests Fail After Fresh Install
+
+**Symptom:**
+```
+FAIL packages/core/test/parse.test.mjs
+```
+
+**Cause:** Known test failures or environment issues.
+
+**Solution:**
+```bash
+# Check if it's a known issue
+cat TEST-RESULTS.md  # If exists
+
+# Try rebuilding
+pnpm run build
+pnpm test
+
+# Run specific test to diagnose
+pnpm --filter @unrdf/core test -- parse.test.mjs
+```
+
+---
+
+### "Timeout of 5000ms exceeded"
+
+**Symptom:**
+```
+Error: Timeout of 5000ms exceeded
+```
+
+**Cause:** Test taking too long (network, large dataset, etc.).
 
 **Solution:**
 
-```json
-// package.json - MUST include this
-{
-  "type": "module"
-}
+In test file, increase timeout:
+```javascript
+import { describe, it, expect } from 'vitest';
+
+describe('slow test', () => {
+  it('processes large dataset', async () => {
+    // Increase timeout to 30 seconds
+    vi.setConfig({ testTimeout: 30000 });
+
+    // ... test code
+  });
+});
 ```
 
-```javascript
-// ❌ WRONG: CommonJS syntax
-const { createKnowledgeSubstrateCore } = require('@unrdf/core');
+Or run with timeout flag:
+```bash
+pnpm test -- --testTimeout=30000
+```
 
-// ✅ CORRECT: ES Module syntax
+---
+
+### Tests Pass Locally but Fail in CI
+
+**Symptom:** Tests pass on your machine but fail in GitHub Actions.
+
+**Cause:** Environment differences (file paths, timing, resources).
+
+**Solution:**
+- Check CI logs for specific error
+- Ensure tests don't depend on local file paths
+- Make tests deterministic (avoid race conditions)
+- Add debugging output to CI logs
+
+---
+
+## Runtime Issues
+
+### "Invalid or incomplete RDF data"
+
+**Symptom:**
+```
+Error: Invalid or incomplete RDF data
+```
+
+**Cause:** Malformed Turtle/N-Triples syntax.
+
+**Solution:**
+
+Validate your RDF:
+```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
-```
 
----
-
-## RDF Parsing Errors
-
-### Error: "Unexpected ... in graph at line X"
-
-**Symptoms:**
-```
-Error: Unexpected ">" in graph at line 3.
-```
-
-**Cause:** Invalid Turtle syntax.
-
-**Solution:**
-
-```turtle
-# ❌ WRONG: Missing final period
-@prefix ex: <http://example.org/> .
-ex:Alice ex:knows ex:Bob
-
-# ✅ CORRECT
-@prefix ex: <http://example.org/> .
-ex:Alice ex:knows ex:Bob .
-
-# ❌ WRONG: Malformed URI
-ex:Alice ex:knows <http://example.org/Bob> .
-
-# ✅ CORRECT: Escaped angle brackets
-ex:Alice ex:knows <http://example.org/Bob> .
-```
-
-**Debugging:**
-```javascript
-import { parseTurtle } from '@unrdf/core/rdf';
+const core = await createKnowledgeSubstrateCore();
 
 try {
-  const store = await parseTurtle(turtleData);
+  const store = core.parseRdf(`
+    @prefix ex: <http://example.org/> .
+    ex:Alice ex:knows ex:Bob .
+  `);
+  console.log('Valid RDF');
 } catch (error) {
-  console.error('Parse error:', error.message);
-  console.error('Line:', error.line, 'Column:', error.column);
-
-  // Show context around error
-  const lines = turtleData.split('\n');
-  const contextStart = Math.max(0, error.line - 3);
-  const contextEnd = Math.min(lines.length, error.line + 2);
-
-  console.error('Context:');
-  for (let i = contextStart; i < contextEnd; i++) {
-    console.error(`${i + 1}: ${lines[i]}`);
-  }
+  console.error('Invalid RDF:', error.message);
+  // Check syntax - missing period, quotes, etc.
 }
 ```
 
+Common syntax errors:
+- Missing period (`.`) at end of statement
+- Missing prefix declaration
+- Unescaped quotes in literals
+- Invalid URIs
+
 ---
 
-### Error: "Prefix not defined"
+### "SPARQL query failed"
 
-**Symptoms:**
+**Symptom:**
 ```
-Error: Prefix "foaf" not defined
+Error: SPARQL query failed: Syntax error at line X
 ```
 
-**Cause:** Using prefix without declaring it.
+**Cause:** Invalid SPARQL syntax.
 
 **Solution:**
 
-```turtle
-# ❌ WRONG: Using undeclared prefix
-ex:Alice foaf:name "Alice" .
-
-# ✅ CORRECT: Declare prefix first
-@prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
-ex:Alice foaf:name "Alice" .
-```
-
-**Common RDF Prefixes:**
-```turtle
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix dct: <http://purl.org/dc/terms/> .
-```
-
----
-
-## SPARQL Query Issues
-
-### Error: "SPARQL query returned no results"
-
-**Symptoms:**
+Test query step by step:
 ```javascript
-const results = await query(store, sparql);
-console.log(results); // []
-```
+// Start simple
+const query1 = 'SELECT * WHERE { ?s ?p ?o }';
 
-**Debugging Checklist:**
-
-1. **Verify data exists:**
-   ```javascript
-   console.log('Store size:', store.size);
-   // Should be > 0
-   ```
-
-2. **Check prefixes match:**
-   ```sparql
-   # ❌ WRONG: Mismatched prefix
-   PREFIX ex: <http://example.com/>  # Note: .com
-   SELECT * WHERE {
-     ?s ?p ?o .
-   }
-
-   # When data uses http://example.org/ (Note: .org)
-
-   # ✅ CORRECT: Match data prefixes
-   PREFIX ex: <http://example.org/>
-   SELECT * WHERE {
-     ?s ?p ?o .
-   }
-   ```
-
-3. **Simplify query:**
-   ```sparql
-   # Start simple
-   SELECT * WHERE { ?s ?p ?o }
-
-   # Add constraints incrementally
-   SELECT * WHERE {
-     ?s a ex:Person .
-   }
-
-   SELECT * WHERE {
-     ?s a ex:Person ;
-        ex:name ?name .
-   }
-   ```
-
-4. **Use OPTIONAL for debugging:**
-   ```sparql
-   SELECT * WHERE {
-     ?person a ex:Person .
-     OPTIONAL { ?person ex:name ?name }
-     OPTIONAL { ?person ex:email ?email }
-   }
-   # Shows which properties are missing
-   ```
-
----
-
-### Error: "Query timeout exceeded"
-
-**Symptoms:**
-```
-Error: Query timeout exceeded (30000ms)
-```
-
-**Causes:**
-1. Query too complex
-2. Large dataset
-3. Missing indexes
-
-**Solutions:**
-
-```javascript
-// Increase timeout
-const results = await query(store, sparql, {
-  timeout: 60000  // 60 seconds
-});
-
-// Add LIMIT to reduce results
-const sparql = `
-  SELECT * WHERE {
-    ?s ?p ?o .
+// Add complexity gradually
+const query2 = `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name WHERE {
+    ?person foaf:name ?name
   }
-  LIMIT 1000
 `;
 
-// Use streaming for large results
-import { queryStream } from '@unrdf/streaming';
-
-const stream = queryStream(store, sparql);
-stream.on('data', (binding) => {
-  console.log(binding);
-});
+// Check results
+const results = await core.query(store, query1);
+console.log(results);
 ```
 
-**Optimize query:**
-```sparql
-# ❌ SLOW: Cartesian product
-SELECT * WHERE {
-  ?person1 ex:knows ?person2 .
-  ?person3 ex:knows ?person4 .
-}
-
-# ✅ FAST: Specific pattern
-SELECT * WHERE {
-  ?person1 ex:knows ?person2 .
-  FILTER (?person1 = <http://example.org/Alice>)
-}
-```
+Use a SPARQL validator: https://sparql.org/query-validator.html
 
 ---
 
-## Performance Problems
+### Memory Issues with Large Graphs
 
-### Problem: Slow query execution
-
-**Symptoms:**
-- Queries taking >5 seconds
-- High CPU usage
-- Increased memory consumption
-
-**Diagnosis:**
-
-```bash
-# Enable OTEL tracing
-OTEL_ENABLED=true node your-app.mjs
-
-# View traces in Jaeger
-# http://localhost:16686
+**Symptom:**
 ```
-
-**Solutions:**
-
-1. **Add indexes (Oxigraph backend):**
-   ```javascript
-   import { createStore } from '@unrdf/oxigraph';
-
-   const store = createStore({
-     indexes: ['spo', 'pos', 'osp']  // Common access patterns
-   });
-   ```
-
-2. **Use query cache:**
-   ```javascript
-   import { createKnowledgeSubstrateCore } from '@unrdf/core';
-
-   const core = await createKnowledgeSubstrateCore({
-     enableQueryCache: true,
-     cacheTTL: 300  // 5 minutes
-   });
-   ```
-
-3. **Batch operations:**
-   ```javascript
-   // ❌ SLOW: Individual adds
-   for (const quad of quads) {
-     store.addQuad(quad);
-   }
-
-   // ✅ FAST: Batch add
-   store.addQuads(quads);
-   ```
-
----
-
-### Problem: High memory usage
-
-**Symptoms:**
-```bash
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
 
-**Diagnosis:**
+**Cause:** Loading too much data into memory at once.
 
-```bash
-# Monitor memory
-node --expose-gc --max-old-space-size=4096 your-app.mjs
+**Solution:**
 
-# Heap snapshot
-node --inspect your-app.mjs
-# Chrome DevTools → Memory → Take snapshot
-```
-
-**Solutions:**
-
-1. **Use streaming for large datasets:**
-   ```javascript
-   import { parseStream } from '@unrdf/streaming';
-   import { createReadStream } from 'fs';
-
-   const stream = createReadStream('large-file.ttl');
-   const quadStream = parseStream(stream);
-
-   quadStream.on('data', (quad) => {
-     // Process one quad at a time (constant memory)
-     processQuad(quad);
-   });
-   ```
-
-2. **Call destroy() on stores:**
-   ```javascript
-   const store = createStore();
-   // ... use store ...
-   store.destroy();  // Free memory
-   ```
-
-3. **Limit result sets:**
-   ```sparql
-   SELECT * WHERE {
-     ?s ?p ?o .
-   }
-   LIMIT 10000  -- Prevent unbounded results
-   ```
-
----
-
-## Memory Leaks
-
-### Detection
-
+Use streaming:
 ```javascript
-// Track store instances
-const stores = new Set();
+import { createReadStream } from 'fs';
 
-function createStoreWithTracking() {
-  const store = createStore();
-  stores.add(store);
-  return store;
+// Instead of loading entire file
+// const data = await readFile('huge.ttl', 'utf-8');
+
+// Stream in chunks
+const stream = createReadStream('huge.ttl');
+let buffer = '';
+
+for await (const chunk of stream) {
+  buffer += chunk;
+
+  if (buffer.length > 100000) {
+    // Process chunk
+    const store = core.parseRdf(buffer);
+    // ... process store
+    buffer = '';
+  }
 }
-
-// Periodically check
-setInterval(() => {
-  console.log('Active stores:', stores.size);
-  // Should not continuously grow
-}, 5000);
 ```
 
-### Common Causes
-
-1. **Not calling destroy():**
-   ```javascript
-   // ❌ LEAK
-   function processData() {
-     const store = createStore();
-     // ... use store ...
-     // Missing: store.destroy()
-   }
-
-   // ✅ FIXED
-   function processData() {
-     const store = createStore();
-     try {
-       // ... use store ...
-     } finally {
-       store.destroy();
-     }
-   }
-   ```
-
-2. **Event listener leaks:**
-   ```javascript
-   // ❌ LEAK
-   store.on('change', handler);
-   // Missing: store.off('change', handler)
-
-   // ✅ FIXED
-   store.on('change', handler);
-   try {
-     // ... use store ...
-   } finally {
-     store.off('change', handler);
-   }
-   ```
-
----
-
-## Test Failures
-
-### Error: "Vitest version mismatch"
-
-**Symptoms:**
-```
-Error: Vitest version mismatch
-```
-
-**Solution:**
-
+Or increase Node.js memory:
 ```bash
-# Remove all node_modules
-find . -name "node_modules" -type d -prune -exec rm -rf {} \;
-
-# Remove lock file
-rm pnpm-lock.yaml
-
-# Reinstall with exact versions
-pnpm install --frozen-lockfile
-
-# Verify versions match
-pnpm list vitest
+node --max-old-space-size=8192 your-script.mjs
 ```
 
 ---
 
-### Error: "Test timeout exceeded"
+### "Store is not defined"
 
-**Symptoms:**
+**Symptom:**
 ```
-Test timed out after 5000ms
+ReferenceError: store is not defined
 ```
+
+**Cause:** Trying to use store before creation.
 
 **Solution:**
 
+Ensure proper initialization:
 ```javascript
-// Increase timeout for specific test
-it('long running test', async () => {
-  // Test code
-}, 10000);  // 10 second timeout
-
-// Or in vitest.config.mjs
-export default {
-  test: {
-    testTimeout: 10000
-  }
-};
-```
-
----
-
-## Build Errors
-
-### Error: "Module parse failed"
-
-**Symptoms:**
-```
-Module parse failed: Unexpected token
-```
-
-**Cause:** Build tool doesn't recognize `.mjs` extension.
-
-**Solution:**
-
-```javascript
-// vitest.config.mjs
-export default {
-  test: {
-    include: ['**/*.test.mjs'],
-    globals: true
-  }
-};
-```
-
----
-
-## Debugging Techniques
-
-### Enable Debug Logging
-
-```javascript
-// Set log level
-process.env.LOG_LEVEL = 'debug';
-
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
-const core = await createKnowledgeSubstrateCore({
-  logLevel: 'debug'
+// Create core first
+const core = await createKnowledgeSubstrateCore();
+
+// Then create store
+const store = core.parseRdf('...');
+
+// Now you can use store
+const results = await core.query(store, '...');
+```
+
+---
+
+## Development Workflow Issues
+
+### "Can't push to GitHub"
+
+**Symptom:**
+```
+ERROR: Permission to unrdf/unrdf.git denied
+```
+
+**Cause:** Trying to push to upstream instead of your fork.
+
+**Solution:**
+```bash
+# Check remotes
+git remote -v
+
+# Should see:
+# origin    git@github.com:YOUR-USERNAME/unrdf.git
+# upstream  https://github.com/unrdf/unrdf.git
+
+# Push to YOUR fork
+git push origin feat/your-branch
+
+# NOT to upstream!
+```
+
+---
+
+### Merge Conflicts
+
+**Symptom:**
+```
+CONFLICT (content): Merge conflict in packages/core/src/parse.mjs
+```
+
+**Solution:**
+```bash
+# 1. Update main branch
+git checkout main
+git pull upstream main
+
+# 2. Rebase your feature branch
+git checkout feat/your-feature
+git rebase main
+
+# 3. Resolve conflicts in your editor
+# Look for <<<<<<< HEAD markers
+
+# 4. After fixing conflicts
+git add .
+git rebase --continue
+
+# 5. Force push (only to YOUR fork!)
+git push origin feat/your-feature --force
+```
+
+---
+
+### "Detached HEAD state"
+
+**Symptom:**
+```
+You are in 'detached HEAD' state.
+```
+
+**Cause:** Checked out a specific commit instead of a branch.
+
+**Solution:**
+```bash
+# Create a branch from current position
+git checkout -b fix/my-fix
+
+# Or switch to an existing branch
+git checkout main
+```
+
+---
+
+### Pre-commit Hook Failures
+
+**Symptom:**
+```
+pre-commit hook failed
+```
+
+**Cause:** Lint or test failures.
+
+**Solution:**
+```bash
+# Fix linting issues
+pnpm run lint:fix
+
+# Run tests
+pnpm test
+
+# If you need to commit anyway (not recommended)
+git commit --no-verify
+```
+
+---
+
+## Performance Issues
+
+### Slow SPARQL Queries
+
+**Symptom:** Queries take many seconds to execute.
+
+**Cause:** Inefficient query pattern or large dataset.
+
+**Solution:**
+
+Optimize query:
+```javascript
+// Bad - Cartesian product
+const slow = `
+  SELECT * WHERE {
+    ?s1 ?p1 ?o1 .
+    ?s2 ?p2 ?o2 .
+  }
+`;
+
+// Good - Specific pattern
+const fast = `
+  SELECT ?name WHERE {
+    ?person foaf:name ?name .
+    FILTER (CONTAINS(?name, "Alice"))
+  }
+`;
+```
+
+Use indexes or persistent storage:
+```javascript
+import { createStore } from '@unrdf/oxigraph';
+
+// Persistent store with indexes
+const store = await createStore({
+  type: 'persistent',
+  path: './data/store.db'
 });
 ```
 
-### OTEL Tracing
+---
 
+### High Memory Usage
+
+**Symptom:** Application uses excessive RAM.
+
+**Cause:** Large in-memory stores or memory leaks.
+
+**Solution:**
+
+Monitor memory:
 ```javascript
-// Enable tracing
-process.env.OTEL_ENABLED = 'true';
-process.env.OTEL_EXPORTER_OTLP_ENDPOINT = 'http://localhost:4318';
+console.log('Memory:', process.memoryUsage());
 
-import { trace } from '@opentelemetry/api';
+// Before operation
+const before = process.memoryUsage().heapUsed;
 
-const tracer = trace.getTracer('my-app');
+// ... operation
 
-const span = tracer.startSpan('custom-operation');
-try {
-  // Your code
-} finally {
-  span.end();
-}
+// After operation
+const after = process.memoryUsage().heapUsed;
+console.log('Memory used:', (after - before) / 1024 / 1024, 'MB');
 ```
 
-### Node.js Debugger
+Use streaming for large datasets (see above).
 
+Clear stores when done:
+```javascript
+store.clear();
+store = null;
+```
+
+---
+
+### Slow Package Installation
+
+**Symptom:** `pnpm install` takes very long.
+
+**Cause:** Network issues or large node_modules.
+
+**Solution:**
 ```bash
-# Start with debugger
-node --inspect-brk packages/cli/src/index.mjs
+# Use fast mirror
+pnpm config set registry https://registry.npmmirror.com
 
-# Open Chrome DevTools
-# chrome://inspect
-```
-
-### VSCode Debugging
-
-Create `.vscode/launch.json`:
-
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug UNRDF",
-      "program": "${workspaceFolder}/packages/cli/src/index.mjs",
-      "args": ["query", "data.ttl"],
-      "console": "integratedTerminal"
-    }
-  ]
-}
+# Or clean cache and retry
+pnpm store prune
+pnpm install --force
 ```
 
 ---
 
-## Getting Help
+## Getting More Help
 
-If you're still stuck:
+### Check Existing Resources
 
-1. **Check existing issues:** https://github.com/unrdf/unrdf/issues
-2. **Search discussions:** https://github.com/unrdf/unrdf/discussions
-3. **Ask in Discord:** [Coming soon]
-4. **Open an issue:**
-   - Include UNRDF version (`pnpm list @unrdf/core`)
-   - Include Node.js version (`node --version`)
-   - Provide minimal reproducible example
-   - Include full error message and stack trace
+1. **Search Issues**: https://github.com/unrdf/unrdf/issues
+2. **Read Docs**: Start with [docs/START-HERE.md](START-HERE.md)
+3. **Check Examples**: Look in `examples/` directory
+4. **Review Tests**: Tests show correct usage patterns
+
+### Ask for Help
+
+1. **GitHub Discussions**: https://github.com/unrdf/unrdf/discussions
+   - Best for questions and general help
+   - Tag with relevant labels
+
+2. **Open an Issue**: https://github.com/unrdf/unrdf/issues/new
+   - For bugs or feature requests
+   - Include:
+     - Error message (full stack trace)
+     - Minimal reproduction code
+     - Environment (Node version, OS, package versions)
+     - What you've tried
+
+### Provide Good Bug Reports
+
+Include:
+```markdown
+## Description
+Brief description of the issue
+
+## Environment
+- Node.js version: 18.19.0
+- UNRDF version: 5.0.1
+- OS: Ubuntu 22.04
+- Package manager: pnpm 8.15.0
+
+## Steps to Reproduce
+1. Step 1
+2. Step 2
+3. Step 3
+
+## Expected Behavior
+What should happen
+
+## Actual Behavior
+What actually happens
+
+## Code Sample
+```javascript
+// Minimal code that reproduces the issue
+```
+
+## Error Output
+```
+Full error message and stack trace
+```
+
+## What I've Tried
+- Tried X, didn't work
+- Tried Y, didn't work
+```
 
 ---
 
-**Next:** [Production Deployment Guide](deployment/production.md)
+**Still stuck?** Don't hesitate to ask in [Discussions](https://github.com/unrdf/unrdf/discussions). We're here to help!

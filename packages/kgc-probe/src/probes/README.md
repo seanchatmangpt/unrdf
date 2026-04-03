@@ -27,6 +27,7 @@ The Tooling Surface Probe provides safe, API-based detection of CLI tools, versi
    - Returns `guardDecision` with every observation
 
 3. **Observations Returned**
+
    ```javascript
    {
      method: "tooling.git_version",
@@ -68,11 +69,11 @@ observations.forEach(obs => {
 
 ## Guard Decisions
 
-| Value | Meaning |
-|-------|---------|
+| Value     | Meaning                                               |
+| --------- | ----------------------------------------------------- |
 | `allowed` | Command in allowlist, executed successfully or failed |
-| `denied` | Command NOT in allowlist OR arguments unsafe |
-| `unknown` | Execution unavailable or timeout |
+| `denied`  | Command NOT in allowlist OR arguments unsafe          |
+| `unknown` | Execution unavailable or timeout                      |
 
 ## Security Guarantees
 
@@ -219,7 +220,7 @@ const allObservations = [
 // Generate receipt
 const receipt = {
   timestamp: new Date().toISOString(),
-  agent: "Agent 8 - Tooling Surface Probe",
+  agent: 'Agent 8 - Tooling Surface Probe',
   observations: allObservations,
   guardDecisions: {
     allowed: allObservations.filter(o => o.guardDecision === 'allowed').length,

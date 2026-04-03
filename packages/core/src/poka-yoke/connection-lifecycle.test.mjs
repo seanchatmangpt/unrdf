@@ -1,10 +1,10 @@
 /**
  * Proof: Connection Lifecycle Guard
- * 
+ *
  * Demonstrates that invalid connection operations are IMPOSSIBLE.
- * 
+ *
  * State machine: Disconnected → Connecting → Connected → Closing → Closed
- * 
+ *
  * PROOF REQUIREMENTS:
  * 1. Test RUNS and completes
  * 2. Invalid operations THROW ConnectionStateError
@@ -36,26 +36,26 @@ async function assertThrowsAsync(fn, expectedMessage, testName) {
 // =============================================================================
 async function test1_normalLifecycle() {
   const conn = new GuardedConnection();
-  
+
   // Initially disconnected
   assert.strictEqual(conn.getState(), 'disconnected', 'Should start disconnected');
-  
+
   // Connect
   await conn.connect({ url: 'http://localhost:7878' });
   assert.strictEqual(conn.getState(), 'connected', 'Should be connected');
-  
+
   // Query works when connected
   const result = await conn.query('SELECT * WHERE { ?s ?p ?o }');
   assert.ok(result, 'Query should succeed');
-  
+
   // Get stats works when connected
   const stats = conn.getStats();
   assert.strictEqual(stats.queryCount, 1, 'Query count should be 1');
-  
+
   // Close
   await conn.close();
   assert.strictEqual(conn.getState(), 'closed', 'Should be closed');
-  
+
   console.log('✅ Test 1: Normal lifecycle (Disconnected → Connected → Closed) works');
 }
 
@@ -64,13 +64,13 @@ async function test1_normalLifecycle() {
 // =============================================================================
 async function test2_queryBeforeConnect() {
   const conn = new GuardedConnection();
-  
+
   await assertThrowsAsync(
     () => conn.query('SELECT * WHERE { ?s ?p ?o }'),
     'disconnected',
     'Test 2: Query before connect'
   );
-  
+
   console.log('✅ Test 2: Query before connect prevented');
 }
 
@@ -79,24 +79,24 @@ async function test2_queryBeforeConnect() {
 // =============================================================================
 async function test3_useAfterClose() {
   const conn = new GuardedConnection();
-  
+
   await conn.connect({ url: 'http://localhost:7878' });
-  await conn.query('SELECT * WHERE { ?s ?p ?o }');  // Works
+  await conn.query('SELECT * WHERE { ?s ?p ?o }'); // Works
   await conn.close();
-  
+
   // All operations should now fail
   await assertThrowsAsync(
     () => conn.query('SELECT * WHERE { ?s ?p ?o }'),
     'closed',
     'Test 3a: Query after close'
   );
-  
+
   await assertThrowsAsync(
     () => conn.connect({ url: 'http://localhost:7878' }),
     'closed',
     'Test 3b: Connect after close'
   );
-  
+
   console.log('✅ Test 3: Use-after-close prevented (POKA-YOKE WORKS)');
 }
 
@@ -105,16 +105,16 @@ async function test3_useAfterClose() {
 // =============================================================================
 async function test4_doubleConnect() {
   const conn = new GuardedConnection();
-  
+
   await conn.connect({ url: 'http://localhost:7878' });
-  
+
   // Second connect should fail
   await assertThrowsAsync(
     () => conn.connect({ url: 'http://localhost:7878' }),
     'already connected',
     'Test 4: Double connect'
   );
-  
+
   await conn.close();
   console.log('✅ Test 4: Double-connect prevented');
 }
@@ -124,17 +124,13 @@ async function test4_doubleConnect() {
 // =============================================================================
 async function test5_doubleClose() {
   const conn = new GuardedConnection();
-  
+
   await conn.connect({ url: 'http://localhost:7878' });
   await conn.close();
-  
+
   // Second close should fail
-  await assertThrowsAsync(
-    () => conn.close(),
-    'already closed',
-    'Test 5: Double close'
-  );
-  
+  await assertThrowsAsync(() => conn.close(), 'already closed', 'Test 5: Double close');
+
   console.log('✅ Test 5: Double-close prevented');
 }
 
@@ -143,13 +139,9 @@ async function test5_doubleClose() {
 // =============================================================================
 async function test6_closeBeforeConnect() {
   const conn = new GuardedConnection();
-  
-  await assertThrowsAsync(
-    () => conn.close(),
-    'not connected',
-    'Test 6: Close before connect'
-  );
-  
+
+  await assertThrowsAsync(() => conn.close(), 'not connected', 'Test 6: Close before connect');
+
   console.log('✅ Test 6: Close before connect prevented');
 }
 
@@ -158,14 +150,14 @@ async function test6_closeBeforeConnect() {
 // =============================================================================
 async function runAllTests() {
   console.log('\n=== Poka-Yoke Proof: Connection Lifecycle Guard ===\n');
-  
+
   await test1_normalLifecycle();
   await test2_queryBeforeConnect();
   await test3_useAfterClose();
   await test4_doubleConnect();
   await test5_doubleClose();
   await test6_closeBeforeConnect();
-  
+
   console.log('\n✅ ALL TESTS PASSED (6/6)');
   console.log('🎯 PROOF COMPLETE: Invalid connection operations are IMPOSSIBLE\n');
 }

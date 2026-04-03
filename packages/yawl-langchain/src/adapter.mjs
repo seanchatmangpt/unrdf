@@ -108,7 +108,7 @@ export class YAWLLangChainAdapter {
       timeout: this.config.timeout,
       ...options,
       // Pre-condition: validate RDF context is available
-      preCondition: async (context) => {
+      preCondition: async context => {
         if (this.config.contextQuery) {
           const rdfContext = await this._queryRDFContext(context.inputData.rdfStore);
           if (!rdfContext || rdfContext.length === 0) {
@@ -121,7 +121,7 @@ export class YAWLLangChainAdapter {
         return { valid: true, reason: 'Pre-conditions satisfied' };
       },
       // Post-condition: validate agent output
-      postCondition: async (context) => {
+      postCondition: async context => {
         if (this.config.postHook) {
           return this.config.postHook(context);
         }
@@ -142,9 +142,10 @@ export class YAWLLangChainAdapter {
 
     try {
       // 1. Extract RDF context if configured
-      const rdfContext = this.config.contextQuery && caseData.rdfStore
-        ? await this._queryRDFContext(caseData.rdfStore)
-        : null;
+      const rdfContext =
+        this.config.contextQuery && caseData.rdfStore
+          ? await this._queryRDFContext(caseData.rdfStore)
+          : null;
 
       // 2. Build prompt with context and input data
       const prompt = this._buildPrompt(taskInstance.inputData, rdfContext);
@@ -156,9 +157,10 @@ export class YAWLLangChainAdapter {
       });
 
       // 4. Extract output
-      const output = typeof response === 'string'
-        ? response
-        : response[this.config.outputField] ?? response.output ?? String(response);
+      const output =
+        typeof response === 'string'
+          ? response
+          : (response[this.config.outputField] ?? response.output ?? String(response));
 
       const executionTime = now() - startTime;
 
@@ -279,13 +281,17 @@ export class YAWLLangChainAdapter {
     triples.push(
       quad(taskUri, namedNode(YAWL_LC_NS.agentOutput), literal(output)),
       quad(taskUri, namedNode(YAWL_LC_NS.executedAt), literal(new Date().toISOString())),
-      quad(taskUri, namedNode(YAWL_LC_NS.executionTime), literal(String(executionTime))),
+      quad(taskUri, namedNode(YAWL_LC_NS.executionTime), literal(String(executionTime)))
     );
 
     // Store input data
     if (taskInstance.inputData) {
       triples.push(
-        quad(taskUri, namedNode(YAWL_LC_NS.agentInput), literal(JSON.stringify(taskInstance.inputData)))
+        quad(
+          taskUri,
+          namedNode(YAWL_LC_NS.agentInput),
+          literal(JSON.stringify(taskInstance.inputData))
+        )
       );
     }
 
@@ -298,9 +304,7 @@ export class YAWLLangChainAdapter {
 
     // Store with custom predicate if configured
     if (this.config.rdfPredicate) {
-      triples.push(
-        quad(taskUri, namedNode(this.config.rdfPredicate), literal(output))
-      );
+      triples.push(quad(taskUri, namedNode(this.config.rdfPredicate), literal(output)));
     }
 
     // Add triples to internal store
@@ -372,14 +376,11 @@ export function createLangChainTaskExecutor(config) {
  * @returns {Function} YAWL hook function
  */
 export function createPromptEngineeringHook(promptModifier) {
-  return async (context) => {
+  return async context => {
     const { taskInstance } = context;
 
     if (taskInstance.inputData.prompt) {
-      taskInstance.inputData.prompt = await promptModifier(
-        taskInstance.inputData.prompt,
-        context
-      );
+      taskInstance.inputData.prompt = await promptModifier(taskInstance.inputData.prompt, context);
     }
 
     return { valid: true, reason: 'Prompt engineering hook applied' };

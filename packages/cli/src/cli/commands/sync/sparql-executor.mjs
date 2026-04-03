@@ -89,8 +89,8 @@ export async function executeSparqlQuery(store, query, prefixes = {}, options = 
     if (err.message.includes('timed out')) {
       throw new SparqlExecutionError(
         `Query execution timed out after ${timeout}ms\n` +
-        `  Fix: Simplify query, add LIMIT clause, or increase timeout\n` +
-        `  Query preview: ${query.trim().split('\n')[0].substring(0, 80)}...`,
+          `  Fix: Simplify query, add LIMIT clause, or increase timeout\n` +
+          `  Query preview: ${query.trim().split('\n')[0].substring(0, 80)}...`,
         {
           cause: err,
           query: fullQuery,
@@ -426,11 +426,16 @@ export function validateSparqlQuery(query) {
   const trimmedQuery = query.trim();
 
   // Detect query type
-  const typeMatch = trimmedQuery.match(/^\s*(?:PREFIX[^]*?)?(?:BASE[^]*?)?\s*(SELECT|CONSTRUCT|ASK|DESCRIBE)\b/i);
+  const typeMatch = trimmedQuery.match(
+    /^\s*(?:PREFIX[^]*?)?(?:BASE[^]*?)?\s*(SELECT|CONSTRUCT|ASK|DESCRIBE)\b/i
+  );
   const type = typeMatch ? typeMatch[1].toUpperCase() : null;
 
   if (!type) {
-    issues.push({ type: 'error', message: 'No valid query type found (SELECT, CONSTRUCT, ASK, DESCRIBE)' });
+    issues.push({
+      type: 'error',
+      message: 'No valid query type found (SELECT, CONSTRUCT, ASK, DESCRIBE)',
+    });
   }
 
   // Extract variables from SELECT clause
@@ -450,7 +455,10 @@ export function validateSparqlQuery(query) {
   const openBraces = (trimmedQuery.match(/\{/g) || []).length;
   const closeBraces = (trimmedQuery.match(/\}/g) || []).length;
   if (openBraces !== closeBraces) {
-    issues.push({ type: 'error', message: `Unbalanced braces: ${openBraces} open, ${closeBraces} close` });
+    issues.push({
+      type: 'error',
+      message: `Unbalanced braces: ${openBraces} open, ${closeBraces} close`,
+    });
   }
 
   // Check for undefined prefixes (prefixes used but not declared)
@@ -499,7 +507,13 @@ export function validateSparqlQuery(query) {
  * @returns {Promise<Array>} Query results as array of objects
  * @throws {SparqlExecutionError} If query execution fails
  */
-export async function executeParameterizedQuery(store, template, params = {}, prefixes = {}, options = {}) {
+export async function executeParameterizedQuery(
+  store,
+  template,
+  params = {},
+  prefixes = {},
+  options = {}
+) {
   const query = substituteParameters(template, params);
   return executeSparqlQuery(store, query, prefixes, options);
 }
@@ -551,7 +565,9 @@ function getSyntaxSuggestions(errorMsg) {
   const msg = errorMsg.toLowerCase();
 
   if (msg.includes('prefix') || msg.includes('namespace')) {
-    suggestions.push('Check that all prefixes are declared (e.g., PREFIX foaf: <http://xmlns.com/foaf/0.1/>)');
+    suggestions.push(
+      'Check that all prefixes are declared (e.g., PREFIX foaf: <http://xmlns.com/foaf/0.1/>)'
+    );
   }
 
   if (msg.includes('unexpected') || msg.includes('expected')) {

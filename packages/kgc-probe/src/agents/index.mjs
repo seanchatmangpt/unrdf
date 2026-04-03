@@ -48,7 +48,7 @@ function createObservation({
   object,
   evidence,
   metrics,
-  tags = []
+  tags = [],
 }) {
   return {
     id: randomUUID(),
@@ -62,14 +62,14 @@ function createObservation({
     evidence: {
       query: evidence.query || '',
       result: evidence.result || null,
-      witnesses: evidence.witnesses || []
+      witnesses: evidence.witnesses || [],
     },
     metrics: {
       confidence: metrics.confidence ?? 0.95,
       coverage: metrics.coverage ?? 1.0,
-      latency_ms: metrics.latency_ms ?? 0
+      latency_ms: metrics.latency_ms ?? 0,
     },
-    tags
+    tags,
   };
 }
 
@@ -144,70 +144,76 @@ export class OrchestratorAgent extends Agent {
     const observations = [];
 
     // Observation 1: Merge capability
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:orchestrator',
-      predicate: 'probe:hasMergeCapability',
-      object: 'true',
-      evidence: {
-        query: 'MERGE_CAPABILITY_CHECK',
-        result: { mergeEnabled: true, algorithm: 'lww-deterministic' },
-        witnesses: ['orchestrator:merge-engine']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['orchestrator', 'merge', 'capability']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:orchestrator',
+        predicate: 'probe:hasMergeCapability',
+        object: 'true',
+        evidence: {
+          query: 'MERGE_CAPABILITY_CHECK',
+          result: { mergeEnabled: true, algorithm: 'lww-deterministic' },
+          witnesses: ['orchestrator:merge-engine'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['orchestrator', 'merge', 'capability'],
+      })
+    );
 
     // Observation 2: Receipt capability
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:orchestrator',
-      predicate: 'probe:hasReceiptCapability',
-      object: 'true',
-      evidence: {
-        query: 'RECEIPT_CAPABILITY_CHECK',
-        result: {
-          receiptTypes: ['observation', 'merge', 'verification'],
-          hashAlgorithm: 'blake3'
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:orchestrator',
+        predicate: 'probe:hasReceiptCapability',
+        object: 'true',
+        evidence: {
+          query: 'RECEIPT_CAPABILITY_CHECK',
+          result: {
+            receiptTypes: ['observation', 'merge', 'verification'],
+            hashAlgorithm: 'blake3',
+          },
+          witnesses: ['orchestrator:receipt-chain'],
         },
-        witnesses: ['orchestrator:receipt-chain']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['orchestrator', 'receipt', 'capability']
-    }));
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['orchestrator', 'receipt', 'capability'],
+      })
+    );
 
     // Observation 3: Agent count
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:orchestrator',
-      predicate: 'probe:agentCount',
-      object: '10',
-      evidence: {
-        query: 'AGENT_COUNT_CHECK',
-        result: { count: 10, domains: this.getAgentDomains() },
-        witnesses: []
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['orchestrator', 'agents']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:orchestrator',
+        predicate: 'probe:agentCount',
+        object: '10',
+        evidence: {
+          query: 'AGENT_COUNT_CHECK',
+          result: { count: 10, domains: this.getAgentDomains() },
+          witnesses: [],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['orchestrator', 'agents'],
+      })
+    );
 
     return observations;
   }
@@ -218,9 +224,16 @@ export class OrchestratorAgent extends Agent {
    */
   getAgentDomains() {
     return [
-      'orchestration', 'runtime', 'filesystem', 'wasm',
-      'performance', 'network', 'tooling', 'storage',
-      'concurrency', 'system'
+      'orchestration',
+      'runtime',
+      'filesystem',
+      'wasm',
+      'performance',
+      'network',
+      'tooling',
+      'storage',
+      'concurrency',
+      'system',
     ];
   }
 }
@@ -251,72 +264,78 @@ export class RuntimeAgent extends Agent {
     const observations = [];
 
     // Observation 1: Node version
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:runtime',
-      predicate: 'probe:nodeVersion',
-      object: process.version,
-      evidence: {
-        query: 'NODE_VERSION_CHECK',
-        result: {
-          version: process.version,
-          major: parseInt(process.version.slice(1)),
-          v8Version: process.versions.v8
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:runtime',
+        predicate: 'probe:nodeVersion',
+        object: process.version,
+        evidence: {
+          query: 'NODE_VERSION_CHECK',
+          result: {
+            version: process.version,
+            major: parseInt(process.version.slice(1)),
+            v8Version: process.versions.v8,
+          },
+          witnesses: ['process.version'],
         },
-        witnesses: ['process.version']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['runtime', 'node', 'version']
-    }));
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['runtime', 'node', 'version'],
+      })
+    );
 
     // Observation 2: V8 Engine
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:runtime',
-      predicate: 'probe:v8Version',
-      object: process.versions.v8,
-      evidence: {
-        query: 'V8_VERSION_CHECK',
-        result: { v8: process.versions.v8, features: this.getV8Features() },
-        witnesses: ['process.versions.v8']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['runtime', 'v8', 'engine']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:runtime',
+        predicate: 'probe:v8Version',
+        object: process.versions.v8,
+        evidence: {
+          query: 'V8_VERSION_CHECK',
+          result: { v8: process.versions.v8, features: this.getV8Features() },
+          witnesses: ['process.versions.v8'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['runtime', 'v8', 'engine'],
+      })
+    );
 
     // Observation 3: WASM Support
     const wasmSupported = typeof WebAssembly !== 'undefined';
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:runtime',
-      predicate: 'probe:wasmSupport',
-      object: String(wasmSupported),
-      evidence: {
-        query: 'WASM_SUPPORT_CHECK',
-        result: { supported: wasmSupported },
-        witnesses: ['WebAssembly']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['runtime', 'wasm', 'support']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:runtime',
+        predicate: 'probe:wasmSupport',
+        object: String(wasmSupported),
+        evidence: {
+          query: 'WASM_SUPPORT_CHECK',
+          result: { supported: wasmSupported },
+          witnesses: ['WebAssembly'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['runtime', 'wasm', 'support'],
+      })
+    );
 
     // Observation 4: Worker Threads
     let workersAvailable = false;
@@ -327,25 +346,27 @@ export class RuntimeAgent extends Agent {
       workersAvailable = false;
     }
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:runtime',
-      predicate: 'probe:workerThreads',
-      object: String(workersAvailable),
-      evidence: {
-        query: 'WORKER_THREADS_CHECK',
-        result: { available: workersAvailable },
-        witnesses: ['worker_threads']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['runtime', 'workers', 'threads']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:runtime',
+        predicate: 'probe:workerThreads',
+        object: String(workersAvailable),
+        evidence: {
+          query: 'WORKER_THREADS_CHECK',
+          result: { available: workersAvailable },
+          witnesses: ['worker_threads'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['runtime', 'workers', 'threads'],
+      })
+    );
 
     return observations;
   }
@@ -359,7 +380,7 @@ export class RuntimeAgent extends Agent {
       hasPromise: typeof Promise !== 'undefined',
       hasAsyncIterator: typeof Symbol.asyncIterator !== 'undefined',
       hasBigInt: typeof BigInt !== 'undefined',
-      hasOptionalChaining: true
+      hasOptionalChaining: true,
     };
   }
 }
@@ -391,47 +412,51 @@ export class FilesystemAgent extends Agent {
     const allowedRoots = config.fsRoots || [process.cwd()];
 
     // Observation 1: Working directory
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:filesystem',
-      predicate: 'probe:workingDirectory',
-      object: process.cwd(),
-      evidence: {
-        query: 'CWD_CHECK',
-        result: { cwd: process.cwd(), readable: true },
-        witnesses: ['process.cwd()']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['filesystem', 'cwd']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:filesystem',
+        predicate: 'probe:workingDirectory',
+        object: process.cwd(),
+        evidence: {
+          query: 'CWD_CHECK',
+          result: { cwd: process.cwd(), readable: true },
+          witnesses: ['process.cwd()'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['filesystem', 'cwd'],
+      })
+    );
 
     // Observation 2: Max path length
     const maxPath = process.platform === 'win32' ? 260 : 4096;
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:filesystem',
-      predicate: 'probe:maxPathLength',
-      object: String(maxPath),
-      evidence: {
-        query: 'MAX_PATH_CHECK',
-        result: { maxPath, platform: process.platform },
-        witnesses: ['os.platform']
-      },
-      metrics: {
-        confidence: 0.95,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['filesystem', 'limits']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:filesystem',
+        predicate: 'probe:maxPathLength',
+        object: String(maxPath),
+        evidence: {
+          query: 'MAX_PATH_CHECK',
+          result: { maxPath, platform: process.platform },
+          witnesses: ['os.platform'],
+        },
+        metrics: {
+          confidence: 0.95,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['filesystem', 'limits'],
+      })
+    );
 
     // Observation 3: Write test
     let writeCapable = false;
@@ -444,50 +469,54 @@ export class FilesystemAgent extends Agent {
       writeCapable = false;
     }
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: writeCapable ? 'info' : 'warning',
-      subject: 'probe:filesystem',
-      predicate: 'probe:writeCapable',
-      object: String(writeCapable),
-      evidence: {
-        query: 'WRITE_TEST',
-        result: { writeCapable, testDir: process.cwd() },
-        witnesses: ['fs.writeFile']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['filesystem', 'write', 'capability']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: writeCapable ? 'info' : 'warning',
+        subject: 'probe:filesystem',
+        predicate: 'probe:writeCapable',
+        object: String(writeCapable),
+        evidence: {
+          query: 'WRITE_TEST',
+          result: { writeCapable, testDir: process.cwd() },
+          witnesses: ['fs.writeFile'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['filesystem', 'write', 'capability'],
+      })
+    );
 
     // Observation 4: File count in allowed roots
     for (const root of allowedRoots.slice(0, 3)) {
       if (existsSync(root)) {
         try {
           const files = await fs.readdir(root);
-          observations.push(createObservation({
-            agent: this.id,
-            kind: this.domain,
-            severity: 'info',
-            subject: `probe:filesystem:${root}`,
-            predicate: 'probe:fileCount',
-            object: String(files.length),
-            evidence: {
-              query: 'FILE_COUNT',
-              result: { root, count: files.length },
-              witnesses: files.slice(0, 5)
-            },
-            metrics: {
-              confidence: 1.0,
-              coverage: 0.8,
-              latency_ms: performance.now() - startTime
-            },
-            tags: ['filesystem', 'count', root]
-          }));
+          observations.push(
+            createObservation({
+              agent: this.id,
+              kind: this.domain,
+              severity: 'info',
+              subject: `probe:filesystem:${root}`,
+              predicate: 'probe:fileCount',
+              object: String(files.length),
+              evidence: {
+                query: 'FILE_COUNT',
+                result: { root, count: files.length },
+                witnesses: files.slice(0, 5),
+              },
+              metrics: {
+                confidence: 1.0,
+                coverage: 0.8,
+                latency_ms: performance.now() - startTime,
+              },
+              tags: ['filesystem', 'count', root],
+            })
+          );
         } catch (err) {
           // Skip unreadable directories
         }
@@ -526,31 +555,39 @@ export class WasmAgent extends Agent {
     // Check WASM availability
     const wasmAvailable = typeof WebAssembly !== 'undefined';
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:wasm',
-      predicate: 'probe:available',
-      object: String(wasmAvailable),
-      evidence: {
-        query: 'WASM_AVAILABLE',
-        result: { available: wasmAvailable },
-        witnesses: ['WebAssembly']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['wasm', 'available']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:wasm',
+        predicate: 'probe:available',
+        object: String(wasmAvailable),
+        evidence: {
+          query: 'WASM_AVAILABLE',
+          result: { available: wasmAvailable },
+          witnesses: ['WebAssembly'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['wasm', 'available'],
+      })
+    );
 
     if (wasmAvailable) {
       // Test WASM instantiation with minimal module
       const wasmBytes = new Uint8Array([
-        0x00, 0x61, 0x73, 0x6d, // Magic
-        0x01, 0x00, 0x00, 0x00  // Version
+        0x00,
+        0x61,
+        0x73,
+        0x6d, // Magic
+        0x01,
+        0x00,
+        0x00,
+        0x00, // Version
       ]);
 
       let instantiationTime = 0;
@@ -562,25 +599,27 @@ export class WasmAgent extends Agent {
         instantiationTime = -1;
       }
 
-      observations.push(createObservation({
-        agent: this.id,
-        kind: this.domain,
-        severity: 'info',
-        subject: 'probe:wasm',
-        predicate: 'probe:compileTime',
-        object: String(instantiationTime.toFixed(2)),
-        evidence: {
-          query: 'WASM_COMPILE_TIME',
-          result: { time_ms: instantiationTime, success: instantiationTime >= 0 },
-          witnesses: ['WebAssembly.compile']
-        },
-        metrics: {
-          confidence: 1.0,
-          coverage: 1.0,
-          latency_ms: performance.now() - startTime
-        },
-        tags: ['wasm', 'compile', 'performance']
-      }));
+      observations.push(
+        createObservation({
+          agent: this.id,
+          kind: this.domain,
+          severity: 'info',
+          subject: 'probe:wasm',
+          predicate: 'probe:compileTime',
+          object: String(instantiationTime.toFixed(2)),
+          evidence: {
+            query: 'WASM_COMPILE_TIME',
+            result: { time_ms: instantiationTime, success: instantiationTime >= 0 },
+            witnesses: ['WebAssembly.compile'],
+          },
+          metrics: {
+            confidence: 1.0,
+            coverage: 1.0,
+            latency_ms: performance.now() - startTime,
+          },
+          tags: ['wasm', 'compile', 'performance'],
+        })
+      );
 
       // Memory growth test
       let maxMemory = 0;
@@ -591,25 +630,27 @@ export class WasmAgent extends Agent {
         maxMemory = 0;
       }
 
-      observations.push(createObservation({
-        agent: this.id,
-        kind: this.domain,
-        severity: 'info',
-        subject: 'probe:wasm',
-        predicate: 'probe:initialMemory',
-        object: String(maxMemory),
-        evidence: {
-          query: 'WASM_MEMORY',
-          result: { initial_bytes: maxMemory, pages: maxMemory / 65536 },
-          witnesses: ['WebAssembly.Memory']
-        },
-        metrics: {
-          confidence: 1.0,
-          coverage: 1.0,
-          latency_ms: performance.now() - startTime
-        },
-        tags: ['wasm', 'memory']
-      }));
+      observations.push(
+        createObservation({
+          agent: this.id,
+          kind: this.domain,
+          severity: 'info',
+          subject: 'probe:wasm',
+          predicate: 'probe:initialMemory',
+          object: String(maxMemory),
+          evidence: {
+            query: 'WASM_MEMORY',
+            result: { initial_bytes: maxMemory, pages: maxMemory / 65536 },
+            witnesses: ['WebAssembly.Memory'],
+          },
+          metrics: {
+            confidence: 1.0,
+            coverage: 1.0,
+            latency_ms: performance.now() - startTime,
+          },
+          tags: ['wasm', 'memory'],
+        })
+      );
     }
 
     return observations;
@@ -649,25 +690,27 @@ export class PerformanceAgent extends Agent {
     }
     const jsonTime = (performance.now() - jsonStart) / 100;
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:performance',
-      predicate: 'probe:jsonParseTime',
-      object: String(jsonTime.toFixed(3)),
-      evidence: {
-        query: 'JSON_PARSE_BENCH',
-        result: { avg_ms: jsonTime, iterations: 100, dataSize: testData.length },
-        witnesses: ['JSON.parse']
-      },
-      metrics: {
-        confidence: 0.95,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['performance', 'json', 'benchmark']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:performance',
+        predicate: 'probe:jsonParseTime',
+        object: String(jsonTime.toFixed(3)),
+        evidence: {
+          query: 'JSON_PARSE_BENCH',
+          result: { avg_ms: jsonTime, iterations: 100, dataSize: testData.length },
+          witnesses: ['JSON.parse'],
+        },
+        metrics: {
+          confidence: 0.95,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['performance', 'json', 'benchmark'],
+      })
+    );
 
     // Simple hash benchmark
     const hashStart = performance.now();
@@ -675,32 +718,34 @@ export class PerformanceAgent extends Agent {
     for (let i = 0; i < 10000; i++) {
       let hash = 0;
       for (let j = 0; j < testData.length; j++) {
-        hash = ((hash << 5) - hash) + testData.charCodeAt(j);
+        hash = (hash << 5) - hash + testData.charCodeAt(j);
         hash = hash & hash;
       }
       hashSum += hash;
     }
     const hashTime = (performance.now() - hashStart) / 10000;
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:performance',
-      predicate: 'probe:hashThroughput',
-      object: String((testData.length / hashTime / 1000).toFixed(2)),
-      evidence: {
-        query: 'HASH_BENCH',
-        result: { throughput_mb_s: testData.length / hashTime / 1000, iterations: 10000 },
-        witnesses: ['hash-loop']
-      },
-      metrics: {
-        confidence: 0.9,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['performance', 'hash', 'throughput']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:performance',
+        predicate: 'probe:hashThroughput',
+        object: String((testData.length / hashTime / 1000).toFixed(2)),
+        evidence: {
+          query: 'HASH_BENCH',
+          result: { throughput_mb_s: testData.length / hashTime / 1000, iterations: 10000 },
+          witnesses: ['hash-loop'],
+        },
+        metrics: {
+          confidence: 0.9,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['performance', 'hash', 'throughput'],
+      })
+    );
 
     // Timer resolution
     const timings = [];
@@ -713,25 +758,27 @@ export class PerformanceAgent extends Agent {
     const p50 = timings[50];
     const p99 = timings[99];
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:performance',
-      predicate: 'probe:timerResolution',
-      object: `p50=${p50.toFixed(6)},p99=${p99.toFixed(6)}`,
-      evidence: {
-        query: 'TIMER_RESOLUTION',
-        result: { p50, p99, samples: 100 },
-        witnesses: ['performance.now']
-      },
-      metrics: {
-        confidence: 0.95,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['performance', 'latency', 'timer']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:performance',
+        predicate: 'probe:timerResolution',
+        object: `p50=${p50.toFixed(6)},p99=${p99.toFixed(6)}`,
+        evidence: {
+          query: 'TIMER_RESOLUTION',
+          result: { p50, p99, samples: 100 },
+          witnesses: ['performance.now'],
+        },
+        metrics: {
+          confidence: 0.95,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['performance', 'latency', 'timer'],
+      })
+    );
 
     return observations;
   }
@@ -767,68 +814,74 @@ export class NetworkAgent extends Agent {
     const dns = await import('dns').catch(() => null);
     const netAvailable = dns !== null;
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:network',
-      predicate: 'probe:dnsAvailable',
-      object: String(netAvailable),
-      evidence: {
-        query: 'DNS_AVAILABLE',
-        result: { available: netAvailable },
-        witnesses: ['dns']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['network', 'dns']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:network',
+        predicate: 'probe:dnsAvailable',
+        object: String(netAvailable),
+        evidence: {
+          query: 'DNS_AVAILABLE',
+          result: { available: netAvailable },
+          witnesses: ['dns'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['network', 'dns'],
+      })
+    );
 
     // Observation 2: Allowlist check
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:network',
-      predicate: 'probe:allowlistSize',
-      object: String(allowlist.length),
-      evidence: {
-        query: 'ALLOWLIST_CHECK',
-        result: { count: allowlist.length, urls: allowlist.slice(0, 5) },
-        witnesses: allowlist.slice(0, 3)
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['network', 'allowlist']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:network',
+        predicate: 'probe:allowlistSize',
+        object: String(allowlist.length),
+        evidence: {
+          query: 'ALLOWLIST_CHECK',
+          result: { count: allowlist.length, urls: allowlist.slice(0, 5) },
+          witnesses: allowlist.slice(0, 3),
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['network', 'allowlist'],
+      })
+    );
 
     // Observation 3: Max payload (simulated)
     const maxPayload = 10 * 1024 * 1024; // 10MB default
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:network',
-      predicate: 'probe:maxPayload',
-      object: String(maxPayload),
-      evidence: {
-        query: 'MAX_PAYLOAD',
-        result: { bytes: maxPayload, mb: maxPayload / (1024 * 1024) },
-        witnesses: ['config.maxPayload']
-      },
-      metrics: {
-        confidence: 0.8,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['network', 'limits']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:network',
+        predicate: 'probe:maxPayload',
+        object: String(maxPayload),
+        evidence: {
+          query: 'MAX_PAYLOAD',
+          result: { bytes: maxPayload, mb: maxPayload / (1024 * 1024) },
+          witnesses: ['config.maxPayload'],
+        },
+        metrics: {
+          confidence: 0.8,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['network', 'limits'],
+      })
+    );
 
     return observations;
   }
@@ -866,31 +919,35 @@ export class ToolingAgent extends Agent {
       let version = 'unknown';
 
       try {
-        version = execSync(`${tool} --version 2>/dev/null`, { encoding: 'utf8', timeout: 2000 }).trim().split('\n')[0];
+        version = execSync(`${tool} --version 2>/dev/null`, { encoding: 'utf8', timeout: 2000 })
+          .trim()
+          .split('\n')[0];
         available = true;
       } catch {
         available = false;
       }
 
-      observations.push(createObservation({
-        agent: this.id,
-        kind: this.domain,
-        severity: 'info',
-        subject: `probe:tooling:${tool}`,
-        predicate: 'probe:available',
-        object: String(available),
-        evidence: {
-          query: `TOOL_CHECK_${tool.toUpperCase()}`,
-          result: { tool, available, version },
-          witnesses: [tool]
-        },
-        metrics: {
-          confidence: 1.0,
-          coverage: 1.0,
-          latency_ms: performance.now() - startTime
-        },
-        tags: ['tooling', tool]
-      }));
+      observations.push(
+        createObservation({
+          agent: this.id,
+          kind: this.domain,
+          severity: 'info',
+          subject: `probe:tooling:${tool}`,
+          predicate: 'probe:available',
+          object: String(available),
+          evidence: {
+            query: `TOOL_CHECK_${tool.toUpperCase()}`,
+            result: { tool, available, version },
+            witnesses: [tool],
+          },
+          metrics: {
+            confidence: 1.0,
+            coverage: 1.0,
+            latency_ms: performance.now() - startTime,
+          },
+          tags: ['tooling', tool],
+        })
+      );
     }
 
     return observations;
@@ -926,69 +983,75 @@ export class StorageAgent extends Agent {
     const freeBytes = freemem();
     const totalBytes = totalmem();
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:storage',
-      predicate: 'probe:availableBytes',
-      object: String(freeBytes),
-      evidence: {
-        query: 'FREE_MEMORY',
-        result: { free: freeBytes, total: totalBytes, ratio: freeBytes / totalBytes },
-        witnesses: ['os.freemem']
-      },
-      metrics: {
-        confidence: 0.9,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['storage', 'memory']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:storage',
+        predicate: 'probe:availableBytes',
+        object: String(freeBytes),
+        evidence: {
+          query: 'FREE_MEMORY',
+          result: { free: freeBytes, total: totalBytes, ratio: freeBytes / totalBytes },
+          witnesses: ['os.freemem'],
+        },
+        metrics: {
+          confidence: 0.9,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['storage', 'memory'],
+      })
+    );
 
     // Persistence types
     const persistenceTypes = ['memory', 'file', 'database'];
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:storage',
-      predicate: 'probe:persistenceTypes',
-      object: persistenceTypes.join(','),
-      evidence: {
-        query: 'PERSISTENCE_TYPES',
-        result: { types: persistenceTypes },
-        witnesses: []
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['storage', 'persistence']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:storage',
+        predicate: 'probe:persistenceTypes',
+        object: persistenceTypes.join(','),
+        evidence: {
+          query: 'PERSISTENCE_TYPES',
+          result: { types: persistenceTypes },
+          witnesses: [],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['storage', 'persistence'],
+      })
+    );
 
     // Temp directory
     const tmpDir = process.env.TMPDIR || process.env.TMP || '/tmp';
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:storage',
-      predicate: 'probe:tempDirectory',
-      object: tmpDir,
-      evidence: {
-        query: 'TEMP_DIR',
-        result: { path: tmpDir, exists: existsSync(tmpDir) },
-        witnesses: ['process.env.TMPDIR']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['storage', 'temp']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:storage',
+        predicate: 'probe:tempDirectory',
+        object: tmpDir,
+        evidence: {
+          query: 'TEMP_DIR',
+          result: { path: tmpDir, exists: existsSync(tmpDir) },
+          witnesses: ['process.env.TMPDIR'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['storage', 'temp'],
+      })
+    );
 
     return observations;
   }
@@ -1021,25 +1084,27 @@ export class ConcurrencyAgent extends Agent {
 
     // CPU count (parallelism potential)
     const cpuCount = cpus().length;
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:concurrency',
-      predicate: 'probe:cpuCount',
-      object: String(cpuCount),
-      evidence: {
-        query: 'CPU_COUNT',
-        result: { count: cpuCount, model: cpus()[0]?.model },
-        witnesses: ['os.cpus']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['concurrency', 'cpu']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:concurrency',
+        predicate: 'probe:cpuCount',
+        object: String(cpuCount),
+        evidence: {
+          query: 'CPU_COUNT',
+          result: { count: cpuCount, model: cpus()[0]?.model },
+          witnesses: ['os.cpus'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['concurrency', 'cpu'],
+      })
+    );
 
     // Worker threads capability
     let workersAvailable = false;
@@ -1050,50 +1115,54 @@ export class ConcurrencyAgent extends Agent {
       workersAvailable = false;
     }
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:concurrency',
-      predicate: 'probe:workerThreadsAvailable',
-      object: String(workersAvailable),
-      evidence: {
-        query: 'WORKER_THREADS',
-        result: { available: workersAvailable },
-        witnesses: ['worker_threads']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['concurrency', 'workers']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:concurrency',
+        predicate: 'probe:workerThreadsAvailable',
+        object: String(workersAvailable),
+        evidence: {
+          query: 'WORKER_THREADS',
+          result: { available: workersAvailable },
+          witnesses: ['worker_threads'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['concurrency', 'workers'],
+      })
+    );
 
     // Event loop latency
     const loopStart = performance.now();
     await new Promise(resolve => setImmediate(resolve));
     const loopLatency = performance.now() - loopStart;
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: loopLatency > 10 ? 'warning' : 'info',
-      subject: 'probe:concurrency',
-      predicate: 'probe:eventLoopLatency',
-      object: String(loopLatency.toFixed(3)),
-      evidence: {
-        query: 'EVENT_LOOP_LATENCY',
-        result: { latency_ms: loopLatency },
-        witnesses: ['setImmediate']
-      },
-      metrics: {
-        confidence: 0.9,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['concurrency', 'eventloop']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: loopLatency > 10 ? 'warning' : 'info',
+        subject: 'probe:concurrency',
+        predicate: 'probe:eventLoopLatency',
+        object: String(loopLatency.toFixed(3)),
+        evidence: {
+          query: 'EVENT_LOOP_LATENCY',
+          result: { latency_ms: loopLatency },
+          witnesses: ['setImmediate'],
+        },
+        metrics: {
+          confidence: 0.9,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['concurrency', 'eventloop'],
+      })
+    );
 
     return observations;
   }
@@ -1125,97 +1194,106 @@ export class SystemAgent extends Agent {
     const observations = [];
 
     // Platform
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:system',
-      predicate: 'probe:platform',
-      object: platform(),
-      evidence: {
-        query: 'PLATFORM',
-        result: { platform: platform(), arch: arch() },
-        witnesses: ['os.platform']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['system', 'platform']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:system',
+        predicate: 'probe:platform',
+        object: platform(),
+        evidence: {
+          query: 'PLATFORM',
+          result: { platform: platform(), arch: arch() },
+          witnesses: ['os.platform'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['system', 'platform'],
+      })
+    );
 
     // Architecture
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:system',
-      predicate: 'probe:architecture',
-      object: arch(),
-      evidence: {
-        query: 'ARCHITECTURE',
-        result: { arch: arch() },
-        witnesses: ['os.arch']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['system', 'arch']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:system',
+        predicate: 'probe:architecture',
+        object: arch(),
+        evidence: {
+          query: 'ARCHITECTURE',
+          result: { arch: arch() },
+          witnesses: ['os.arch'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['system', 'arch'],
+      })
+    );
 
     // Containerized detection
     let containerized = false;
     try {
-      containerized = existsSync('/.dockerenv') ||
+      containerized =
+        existsSync('/.dockerenv') ||
         existsSync('/run/.containerenv') ||
         process.env.KUBERNETES_SERVICE_HOST !== undefined;
     } catch {
       containerized = false;
     }
 
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:system',
-      predicate: 'probe:containerized',
-      object: String(containerized),
-      evidence: {
-        query: 'CONTAINER_CHECK',
-        result: { containerized, checks: ['/.dockerenv', 'KUBERNETES_SERVICE_HOST'] },
-        witnesses: []
-      },
-      metrics: {
-        confidence: 0.85,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['system', 'container']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:system',
+        predicate: 'probe:containerized',
+        object: String(containerized),
+        evidence: {
+          query: 'CONTAINER_CHECK',
+          result: { containerized, checks: ['/.dockerenv', 'KUBERNETES_SERVICE_HOST'] },
+          witnesses: [],
+        },
+        metrics: {
+          confidence: 0.85,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['system', 'container'],
+      })
+    );
 
     // Total memory
-    observations.push(createObservation({
-      agent: this.id,
-      kind: this.domain,
-      severity: 'info',
-      subject: 'probe:system',
-      predicate: 'probe:totalMemory',
-      object: String(totalmem()),
-      evidence: {
-        query: 'TOTAL_MEMORY',
-        result: { bytes: totalmem(), gb: (totalmem() / (1024 ** 3)).toFixed(2) },
-        witnesses: ['os.totalmem']
-      },
-      metrics: {
-        confidence: 1.0,
-        coverage: 1.0,
-        latency_ms: performance.now() - startTime
-      },
-      tags: ['system', 'memory']
-    }));
+    observations.push(
+      createObservation({
+        agent: this.id,
+        kind: this.domain,
+        severity: 'info',
+        subject: 'probe:system',
+        predicate: 'probe:totalMemory',
+        object: String(totalmem()),
+        evidence: {
+          query: 'TOTAL_MEMORY',
+          result: { bytes: totalmem(), gb: (totalmem() / 1024 ** 3).toFixed(2) },
+          witnesses: ['os.totalmem'],
+        },
+        metrics: {
+          confidence: 1.0,
+          coverage: 1.0,
+          latency_ms: performance.now() - startTime,
+        },
+        tags: ['system', 'memory'],
+      })
+    );
 
     return observations;
   }
@@ -1296,7 +1374,7 @@ export class AgentRegistry {
    * @returns {Promise<Array>} All observations from all agents
    */
   async probeAll(config = {}) {
-    const promises = this.list().map(async (id) => {
+    const promises = this.list().map(async id => {
       const agent = this.get(id);
       try {
         return await agent.probe(config);
@@ -1316,37 +1394,59 @@ export class AgentRegistry {
 // ============================================================================
 
 /** Create agent registry with all default agents @returns {AgentRegistry} */
-export function createAgentRegistry() { return new AgentRegistry(); }
+export function createAgentRegistry() {
+  return new AgentRegistry();
+}
 
 /** Create orchestrator agent @returns {OrchestratorAgent} */
-export function createOrchestratorAgent() { return new OrchestratorAgent(); }
+export function createOrchestratorAgent() {
+  return new OrchestratorAgent();
+}
 
 /** Create runtime agent @returns {RuntimeAgent} */
-export function createRuntimeAgent() { return new RuntimeAgent(); }
+export function createRuntimeAgent() {
+  return new RuntimeAgent();
+}
 
 /** Create filesystem agent @returns {FilesystemAgent} */
-export function createFilesystemAgent() { return new FilesystemAgent(); }
+export function createFilesystemAgent() {
+  return new FilesystemAgent();
+}
 
 /** Create WASM agent @returns {WasmAgent} */
-export function createWasmAgent() { return new WasmAgent(); }
+export function createWasmAgent() {
+  return new WasmAgent();
+}
 
 /** Create performance agent @returns {PerformanceAgent} */
-export function createPerformanceAgent() { return new PerformanceAgent(); }
+export function createPerformanceAgent() {
+  return new PerformanceAgent();
+}
 
 /** Create network agent @returns {NetworkAgent} */
-export function createNetworkAgent() { return new NetworkAgent(); }
+export function createNetworkAgent() {
+  return new NetworkAgent();
+}
 
 /** Create tooling agent @returns {ToolingAgent} */
-export function createToolingAgent() { return new ToolingAgent(); }
+export function createToolingAgent() {
+  return new ToolingAgent();
+}
 
 /** Create storage agent @returns {StorageAgent} */
-export function createStorageAgent() { return new StorageAgent(); }
+export function createStorageAgent() {
+  return new StorageAgent();
+}
 
 /** Create concurrency agent @returns {ConcurrencyAgent} */
-export function createConcurrencyAgent() { return new ConcurrencyAgent(); }
+export function createConcurrencyAgent() {
+  return new ConcurrencyAgent();
+}
 
 /** Create system agent @returns {SystemAgent} */
-export function createSystemAgent() { return new SystemAgent(); }
+export function createSystemAgent() {
+  return new SystemAgent();
+}
 
 // Backward compatibility aliases
 export const CompletionAgent = OrchestratorAgent;
@@ -1363,40 +1463,60 @@ export const CollaborationAgent = SystemAgent;
 /**
  *
  */
-export function createCompletionAgent() { return new OrchestratorAgent(); }
+export function createCompletionAgent() {
+  return new OrchestratorAgent();
+}
 /**
  *
  */
-export function createConsistencyAgent() { return new RuntimeAgent(); }
+export function createConsistencyAgent() {
+  return new RuntimeAgent();
+}
 /**
  *
  */
-export function createConformanceAgent() { return new FilesystemAgent(); }
+export function createConformanceAgent() {
+  return new FilesystemAgent();
+}
 /**
  *
  */
-export function createCoverageAgent() { return new WasmAgent(); }
+export function createCoverageAgent() {
+  return new WasmAgent();
+}
 /**
  *
  */
-export function createCachingAgent() { return new PerformanceAgent(); }
+export function createCachingAgent() {
+  return new PerformanceAgent();
+}
 /**
  *
  */
-export function createCompletenessAgent() { return new NetworkAgent(); }
+export function createCompletenessAgent() {
+  return new NetworkAgent();
+}
 /**
  *
  */
-export function createCoherenceAgent() { return new ToolingAgent(); }
+export function createCoherenceAgent() {
+  return new ToolingAgent();
+}
 /**
  *
  */
-export function createClusteringAgent() { return new StorageAgent(); }
+export function createClusteringAgent() {
+  return new StorageAgent();
+}
 /**
  *
  */
-export function createClassificationAgent() { return new ConcurrencyAgent(); }
+export function createClassificationAgent() {
+  return new ConcurrencyAgent();
+}
 /**
  *
  */
-export function createCollaborationAgent() { return new SystemAgent(); }
+export function createCollaborationAgent() {
+  return new SystemAgent();
+}

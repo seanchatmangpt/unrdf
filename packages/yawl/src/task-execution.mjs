@@ -27,7 +27,13 @@ import { validateTransition, computeStateHash } from './task-validation.mjs';
  * @param {Object} [justification] - Hook validation justification
  * @returns {Promise<Object>} Receipt object
  */
-export async function generateReceipt(taskInstance, action, beforeStatus, beforeHash, justification = {}) {
+export async function generateReceipt(
+  taskInstance,
+  action,
+  beforeStatus,
+  beforeHash,
+  justification = {}
+) {
   const afterHash = await computeStateHash(taskInstance);
 
   const receipt = {
@@ -52,16 +58,18 @@ export async function generateReceipt(taskInstance, action, beforeStatus, before
   };
 
   // Compute receipt hash for chaining
-  const receiptHash = await blake3(JSON.stringify({
-    id: receipt.id,
-    taskInstanceId: receipt.taskInstanceId,
-    caseId: receipt.caseId,
-    action: receipt.action,
-    timestamp: receipt.timestamp.toString(),
-    beforeHash: receipt.beforeHash,
-    afterHash: receipt.afterHash,
-    previousReceiptHash: receipt.previousReceiptHash,
-  }));
+  const receiptHash = await blake3(
+    JSON.stringify({
+      id: receipt.id,
+      taskInstanceId: receipt.taskInstanceId,
+      caseId: receipt.caseId,
+      action: receipt.action,
+      timestamp: receipt.timestamp.toString(),
+      beforeHash: receipt.beforeHash,
+      afterHash: receipt.afterHash,
+      previousReceiptHash: receipt.previousReceiptHash,
+    })
+  );
 
   receipt.hash = receiptHash;
   taskInstance._lastReceiptHash = receiptHash;
@@ -345,7 +353,12 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [justification] - Hook validation justification
    * @returns {Promise<Object>} Receipt object
    */
-  TaskInstanceClass.prototype.generateReceipt = async function(action, beforeStatus, beforeHash, justification = {}) {
+  TaskInstanceClass.prototype.generateReceipt = async function (
+    action,
+    beforeStatus,
+    beforeHash,
+    justification = {}
+  ) {
     return generateReceipt(this, action, beforeStatus, beforeHash, justification);
   };
 
@@ -354,7 +367,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Enable options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.enable = async function(options = {}) {
+  TaskInstanceClass.prototype.enable = async function (options = {}) {
     return enableTask(this, options);
   };
 
@@ -363,7 +376,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Disable options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.disable = async function(options = {}) {
+  TaskInstanceClass.prototype.disable = async function (options = {}) {
     return disableTask(this, options);
   };
 
@@ -373,7 +386,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Start options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.start = async function(resourceId, options = {}) {
+  TaskInstanceClass.prototype.start = async function (resourceId, options = {}) {
     return startTask(this, resourceId, options);
   };
 
@@ -383,7 +396,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Complete options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.complete = async function(outputData = {}, options = {}) {
+  TaskInstanceClass.prototype.complete = async function (outputData = {}, options = {}) {
     return completeTask(this, outputData, options);
   };
 
@@ -393,7 +406,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Cancel options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.cancel = async function(reason, options = {}) {
+  TaskInstanceClass.prototype.cancel = async function (reason, options = {}) {
     return cancelTask(this, reason, options);
   };
 
@@ -403,7 +416,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Fail options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.fail = async function(error, options = {}) {
+  TaskInstanceClass.prototype.fail = async function (error, options = {}) {
     return failTask(this, error, options);
   };
 
@@ -412,7 +425,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {Object} [options] - Timeout options
    * @returns {Promise<{task: TaskInstance, receipt: Object}>}
    */
-  TaskInstanceClass.prototype.timedOut = async function(options = {}) {
+  TaskInstanceClass.prototype.timedOut = async function (options = {}) {
     return timeoutTask(this, options);
   };
 }

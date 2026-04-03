@@ -162,9 +162,7 @@ export function withSnapshots(Base) {
 
       // Get receipts from case if available
       const yawlCase = this.cases.get(caseId);
-      const receipts = yawlCase
-        ? yawlCase.receipts.map(r => r.toJSON())
-        : [];
+      const receipts = yawlCase ? yawlCase.receipts.map(r => r.toJSON()) : [];
 
       return {
         caseId,

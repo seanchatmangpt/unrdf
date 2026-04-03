@@ -530,7 +530,7 @@ describe('NitroMonitor', () => {
       Object.defineProperty(badEngine, 'resources', {
         get() {
           throw new Error('Resource access error');
-        }
+        },
       });
 
       const errorMonitor = new NitroMonitor({

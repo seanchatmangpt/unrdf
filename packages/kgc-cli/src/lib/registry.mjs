@@ -28,21 +28,28 @@ export const ExtensionSchema = z.object({
         z.object({
           description: z.string(),
           handler: z.function().describe('Handler function (args) => Promise<any>'),
-          argsSchema: z.custom((_val) => true).optional().describe('Zod schema for args validation'),
-          meta: z.record(z.any()).optional().describe('Command metadata')
+          argsSchema: z
+            .custom(_val => true)
+            .optional()
+            .describe('Zod schema for args validation'),
+          meta: z.record(z.any()).optional().describe('Command metadata'),
         })
-      )
+      ),
     })
   ),
   priority: z.number().default(100).describe('Precedence for collision resolution (lower wins)'),
-  guards: z.object({
-    refusals: z.array(z.string()).optional().describe('Patterns this extension refuses'),
-    preconditions: z.function().optional().describe('Validate before loading')
-  }).optional(),
-  receipts: z.object({
-    success: z.record(z.any()).optional().describe('Shape of successful response'),
-    error: z.record(z.any()).optional().describe('Shape of error response')
-  }).optional()
+  guards: z
+    .object({
+      refusals: z.array(z.string()).optional().describe('Patterns this extension refuses'),
+      preconditions: z.function().optional().describe('Validate before loading'),
+    })
+    .optional(),
+  receipts: z
+    .object({
+      success: z.record(z.any()).optional().describe('Shape of successful response'),
+      error: z.record(z.any()).optional().describe('Shape of error response'),
+    })
+    .optional(),
 });
 
 /**
@@ -87,9 +94,7 @@ export class Registry {
     // Validate contract
     const validation = ExtensionSchema.safeParse(extension);
     if (!validation.success) {
-      throw new Error(
-        `Invalid extension ${extension?.id}: ${validation.error.message}`
-      );
+      throw new Error(`Invalid extension ${extension?.id}: ${validation.error.message}`);
     }
 
     const ext = validation.data;
@@ -101,9 +106,7 @@ export class Registry {
       try {
         ext.guards.preconditions();
       } catch (e) {
-        throw new Error(
-          `Extension ${ext.id} guard failed: ${e.message}`
-        );
+        throw new Error(`Extension ${ext.id} guard failed: ${e.message}`);
       }
     }
 
@@ -122,7 +125,7 @@ export class Registry {
             if (this.failOnCollision) {
               throw new Error(
                 `Collision: ${key} claimed by both ${existing} and ${ext.id}. ` +
-                `Add override rule to manifest.`
+                  `Add override rule to manifest.`
               );
             } else {
               // Track but don't fail
@@ -154,8 +157,9 @@ export class Registry {
    */
   _findOverride(collision) {
     return this.overrides.find(
-      o => o.rule === collision.key &&
-           (o.package === collision.existing || o.package === collision.new)
+      o =>
+        o.rule === collision.key &&
+        (o.package === collision.existing || o.package === collision.new)
     );
   }
 
@@ -192,7 +196,7 @@ export class Registry {
         if (!tree.nouns[noun]) {
           tree.nouns[noun] = {
             description: nounData.description || `${noun} commands`,
-            verbs: {}
+            verbs: {},
           };
         }
 
@@ -201,7 +205,7 @@ export class Registry {
             handler: verbData.handler,
             argsSchema: verbData.argsSchema,
             meta: verbData.meta || {},
-            _source: ext.id // Track which package provided this
+            _source: ext.id, // Track which package provided this
           };
         }
       }
@@ -253,24 +257,27 @@ export class Registry {
         for (const [verb, verbData] of Object.entries(nounData.verbs)) {
           if (!verbData.handler || typeof verbData.handler !== 'function') {
             errors.push({
-              noun, verb,
+              noun,
+              verb,
               source: ext.id,
-              issue: 'Missing or invalid handler'
+              issue: 'Missing or invalid handler',
             });
           }
           if (!verbData.description) {
             errors.push({
-              noun, verb,
+              noun,
+              verb,
               source: ext.id,
-              issue: 'Missing description'
+              issue: 'Missing description',
             });
           }
           // argsSchema is optional but if present must be Zod schema
           if (verbData.argsSchema && typeof verbData.argsSchema.parse !== 'function') {
             errors.push({
-              noun, verb,
+              noun,
+              verb,
               source: ext.id,
-              issue: 'argsSchema must be Zod schema (missing .parse method)'
+              issue: 'argsSchema must be Zod schema (missing .parse method)',
             });
           }
         }
@@ -299,8 +306,8 @@ export function createEnvelope(ok, payload, meta = {}) {
       data: payload,
       meta: {
         timestamp: new Date().toISOString(),
-        ...meta
-      }
+        ...meta,
+      },
     };
   } else {
     return {
@@ -311,8 +318,8 @@ export function createEnvelope(ok, payload, meta = {}) {
       ...(payload.hint && { hint: payload.hint }),
       meta: {
         timestamp: new Date().toISOString(),
-        ...meta
-      }
+        ...meta,
+      },
     };
   }
 }

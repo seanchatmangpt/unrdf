@@ -19,12 +19,12 @@ import { z } from 'zod';
  * @typedef {'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'} ObservationSeverity
  */
 export const ObservationSeveritySchema = z.enum([
-  'trace',   // Fine-grained execution flow
-  'debug',   // Developer diagnostics
-  'info',    // Informational observations
-  'warn',    // Potential issues
-  'error',   // Actionable problems
-  'fatal'    // Critical failures
+  'trace', // Fine-grained execution flow
+  'debug', // Developer diagnostics
+  'info', // Informational observations
+  'warn', // Potential issues
+  'error', // Actionable problems
+  'fatal', // Critical failures
 ]);
 
 /**
@@ -32,16 +32,16 @@ export const ObservationSeveritySchema = z.enum([
  * @typedef {'file' | 'dependency' | 'pattern' | 'metric' | 'security' | 'quality' | 'performance' | 'test' | 'documentation' | 'guard'} ObservationCategory
  */
 export const ObservationCategorySchema = z.enum([
-  'file',          // File-level observations (imports, exports, structure)
-  'dependency',    // Package dependencies, versions, vulnerabilities
-  'pattern',       // Code patterns, anti-patterns, idioms
-  'metric',        // Complexity, LOC, coupling metrics
-  'security',      // Security issues, secrets, vulnerabilities
-  'quality',       // Code quality, style violations
-  'performance',   // Performance characteristics, benchmarks
-  'test',          // Test coverage, assertions, flakiness
+  'file', // File-level observations (imports, exports, structure)
+  'dependency', // Package dependencies, versions, vulnerabilities
+  'pattern', // Code patterns, anti-patterns, idioms
+  'metric', // Complexity, LOC, coupling metrics
+  'security', // Security issues, secrets, vulnerabilities
+  'quality', // Code quality, style violations
+  'performance', // Performance characteristics, benchmarks
+  'test', // Test coverage, assertions, flakiness
   'documentation', // Docs completeness, accuracy
-  'guard'          // Poka-yoke guard denials (forbidden operations)
+  'guard', // Poka-yoke guard denials (forbidden operations)
 ]);
 
 /**
@@ -52,18 +52,20 @@ export const SourceLocationSchema = z.object({
   line: z.number().int().positive().optional().describe('Line number (1-indexed)'),
   column: z.number().int().positive().optional().describe('Column number (1-indexed)'),
   endLine: z.number().int().positive().optional().describe('End line number'),
-  endColumn: z.number().int().positive().optional().describe('End column number')
+  endColumn: z.number().int().positive().optional().describe('End column number'),
 });
 
 /**
  * Observation metadata (who, when, how)
  */
 export const ObservationMetadataSchema = z.object({
-  agentId: z.string().describe('Agent that created this observation (e.g., "agent-2-import-analyzer")'),
+  agentId: z
+    .string()
+    .describe('Agent that created this observation (e.g., "agent-2-import-analyzer")'),
   timestamp: z.string().datetime().describe('ISO 8601 timestamp'),
   probeVersion: z.string().describe('KGC Probe version'),
   budgetMs: z.number().int().positive().describe('Time budget allocated (ms)'),
-  actualMs: z.number().int().nonnegative().describe('Actual time spent (ms)')
+  actualMs: z.number().int().nonnegative().describe('Actual time spent (ms)'),
 });
 
 /**
@@ -85,11 +87,13 @@ export const ObservationSchema = z.object({
   category: ObservationCategorySchema,
   severity: ObservationSeveritySchema,
   message: z.string().min(1).describe('Human-readable summary'),
-  location: SourceLocationSchema.optional().describe('Source location (optional for global observations)'),
+  location: SourceLocationSchema.optional().describe(
+    'Source location (optional for global observations)'
+  ),
   data: z.record(z.string(), z.any()).describe('Structured observation payload'),
   metadata: ObservationMetadataSchema,
   tags: z.array(z.string()).default([]).describe('Searchable tags'),
-  receiptHash: z.string().optional().describe('Hash of this observation for verification')
+  receiptHash: z.string().optional().describe('Hash of this observation for verification'),
 });
 
 /**
@@ -111,8 +115,8 @@ export function createObservation(obs) {
     data: obs.data || {},
     metadata: {
       timestamp: new Date().toISOString(),
-      ...obs.metadata
-    }
+      ...obs.metadata,
+    },
   };
 
   const merged = { ...defaults, ...obs };
@@ -137,16 +141,16 @@ export function createGuardDenial({ guardName, reason, agentId, context = {} }) 
     data: {
       guardName,
       reason,
-      context: sanitizeContext(context)
+      context: sanitizeContext(context),
     },
     metadata: {
       agentId,
       probeVersion: '0.1.0',
       budgetMs: 1, // Guards have minimal overhead
       actualMs: 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
-    tags: ['guard-denial', guardName]
+    tags: ['guard-denial', guardName],
   });
 }
 
@@ -189,5 +193,5 @@ export default {
   ObservationMetadataSchema,
   createObservation,
   createGuardDenial,
-  validateObservation
+  validateObservation,
 };

@@ -39,30 +39,16 @@ export const CTAN_PATH_TEMPLATES = {
     'macros/latex/base',
     'macros/latex/exptl/{package}',
   ],
-  '.cls': [
-    'macros/latex/contrib/{package}',
-    'macros/latex/base',
-    'macros/latex/exptl/{package}',
-  ],
+  '.cls': ['macros/latex/contrib/{package}', 'macros/latex/base', 'macros/latex/exptl/{package}'],
   '.def': [
     'macros/latex/contrib/{package}',
     'macros/latex/required/{package}',
     'macros/latex/base',
   ],
-  '.bib': [
-    'biblio/bibtex/contrib/{package}',
-    'biblio/bibtex/base',
-  ],
-  '.bst': [
-    'biblio/bibtex/bst/{package}',
-    'biblio/bibtex/bst/base',
-  ],
-  '.bbx': [
-    'macros/latex/contrib/biblatex/bbx',
-  ],
-  '.cbx': [
-    'macros/latex/contrib/biblatex/cbx',
-  ],
+  '.bib': ['biblio/bibtex/contrib/{package}', 'biblio/bibtex/base'],
+  '.bst': ['biblio/bibtex/bst/{package}', 'biblio/bibtex/bst/base'],
+  '.bbx': ['macros/latex/contrib/biblatex/bbx'],
+  '.cbx': ['macros/latex/contrib/biblatex/cbx'],
 };
 
 /**
@@ -205,9 +191,7 @@ export function buildVfsPath(filename) {
   const packageName = extractPackageName(filename);
   const template = VFS_PATH_TEMPLATES[ext] || 'work/{file}';
 
-  return template
-    .replace('{package}', packageName)
-    .replace('{file}', filename);
+  return template.replace('{package}', packageName).replace('{file}', filename);
 }
 
 /**

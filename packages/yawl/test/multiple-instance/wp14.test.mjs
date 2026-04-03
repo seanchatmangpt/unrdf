@@ -156,19 +156,20 @@ describe('WP14 - Multiple Instances with Runtime A Priori Knowledge', () => {
 
       it('should handle explicit expression object', async () => {
         const data = { items: [1, 2, 3, 4] };
-        const result = await evaluateExpression({
-          type: ExpressionType.JSONPATH,
-          expression: '$.items',
-        }, data);
+        const result = await evaluateExpression(
+          {
+            type: ExpressionType.JSONPATH,
+            expression: '$.items',
+          },
+          data
+        );
 
         expect(result.count).toBe(4);
         expect(result.type).toBe(ExpressionType.JSONPATH);
       });
 
       it('should reject negative literal', async () => {
-        await expect(
-          evaluateExpression('-5', {})
-        ).rejects.toThrow('Invalid literal count');
+        await expect(evaluateExpression('-5', {})).rejects.toThrow('Invalid literal count');
       });
 
       it('should reject non-integer results', async () => {
@@ -343,12 +344,9 @@ describe('WP14 - Multiple Instances with Runtime A Priori Knowledge', () => {
         ],
       };
 
-      const result = await spawnInstancesRuntimeApriori(
-        taskDef,
-        'count($.items)',
-        inputData,
-        { caseId: 'case-wp14-test-1' }
-      );
+      const result = await spawnInstancesRuntimeApriori(taskDef, 'count($.items)', inputData, {
+        caseId: 'case-wp14-test-1',
+      });
 
       // Verify count evaluation
       expect(result.countEvaluation.count).toBe(5);
@@ -389,12 +387,9 @@ describe('WP14 - Multiple Instances with Runtime A Priori Knowledge', () => {
         items: [10, 20, 30, 40],
       };
 
-      const result = await spawnInstancesRuntimeApriori(
-        taskDef,
-        'countItems',
-        inputData,
-        { caseId: 'case-function' }
-      );
+      const result = await spawnInstancesRuntimeApriori(taskDef, 'countItems', inputData, {
+        caseId: 'case-function',
+      });
 
       expect(result.instances).toHaveLength(4);
       expect(result.countEvaluation.count).toBe(4);
@@ -487,12 +482,9 @@ describe('WP14 - Multiple Instances with Runtime A Priori Knowledge', () => {
       };
 
       // When: Spawn instances using WP14
-      const result = await spawnInstancesRuntimeApriori(
-        taskDef,
-        '$.orders',
-        inputData,
-        { caseId: 'case-e2e-orders' }
-      );
+      const result = await spawnInstancesRuntimeApriori(taskDef, '$.orders', inputData, {
+        caseId: 'case-e2e-orders',
+      });
 
       // Then: Verify correct number of instances
       expect(result.instances).toHaveLength(3);
@@ -537,12 +529,9 @@ describe('WP14 - Multiple Instances with Runtime A Priori Knowledge', () => {
 
       const startTime = performance.now();
 
-      const result = await spawnInstancesRuntimeApriori(
-        taskDef,
-        '$.items',
-        inputData,
-        { caseId: 'case-perf-100' }
-      );
+      const result = await spawnInstancesRuntimeApriori(taskDef, '$.items', inputData, {
+        caseId: 'case-perf-100',
+      });
 
       const duration = performance.now() - startTime;
 

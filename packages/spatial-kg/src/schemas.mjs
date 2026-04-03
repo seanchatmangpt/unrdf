@@ -44,39 +44,51 @@ export const Edge3DSchema = z.object({
  * Spatial graph configuration
  */
 export const SpatialGraphConfigSchema = z.object({
-  layout: z.object({
-    iterations: z.number().int().positive().default(100),
-    cooldown: z.number().min(0).max(1).default(0.95),
-    repulsionStrength: z.number().positive().default(100),
-    attractionStrength: z.number().positive().default(0.1),
-    gravityStrength: z.number().nonnegative().default(0.01),
-    centerForce: z.boolean().default(true),
-    dimensions: z.literal(3).default(3),
-  }).default({}),
-  rendering: z.object({
-    targetFPS: z.number().int().positive().default(60),
-    enableVR: z.boolean().default(false),
-    enableAR: z.boolean().default(false),
-    nodeSize: z.number().positive().default(1),
-    edgeWidth: z.number().positive().default(0.1),
-    backgroundColor: z.number().int().default(0x000000),
-  }).default({}),
-  lod: z.object({
-    enabled: z.boolean().default(true),
-    levels: z.array(z.object({
-      distance: z.number().positive(),
-      complexity: z.enum(['high', 'medium', 'low']),
-    })).default([
-      { distance: 10, complexity: 'high' },
-      { distance: 50, complexity: 'medium' },
-      { distance: 100, complexity: 'low' },
-    ]),
-  }).default({}),
-  collaboration: z.object({
-    enabled: z.boolean().default(false),
-    serverUrl: z.string().url().optional(),
-    username: z.string().optional(),
-  }).default({}),
+  layout: z
+    .object({
+      iterations: z.number().int().positive().default(100),
+      cooldown: z.number().min(0).max(1).default(0.95),
+      repulsionStrength: z.number().positive().default(100),
+      attractionStrength: z.number().positive().default(0.1),
+      gravityStrength: z.number().nonnegative().default(0.01),
+      centerForce: z.boolean().default(true),
+      dimensions: z.literal(3).default(3),
+    })
+    .default({}),
+  rendering: z
+    .object({
+      targetFPS: z.number().int().positive().default(60),
+      enableVR: z.boolean().default(false),
+      enableAR: z.boolean().default(false),
+      nodeSize: z.number().positive().default(1),
+      edgeWidth: z.number().positive().default(0.1),
+      backgroundColor: z.number().int().default(0x000000),
+    })
+    .default({}),
+  lod: z
+    .object({
+      enabled: z.boolean().default(true),
+      levels: z
+        .array(
+          z.object({
+            distance: z.number().positive(),
+            complexity: z.enum(['high', 'medium', 'low']),
+          })
+        )
+        .default([
+          { distance: 10, complexity: 'high' },
+          { distance: 50, complexity: 'medium' },
+          { distance: 100, complexity: 'low' },
+        ]),
+    })
+    .default({}),
+  collaboration: z
+    .object({
+      enabled: z.boolean().default(false),
+      serverUrl: z.string().url().optional(),
+      username: z.string().optional(),
+    })
+    .default({}),
 });
 
 /**
@@ -88,10 +100,12 @@ export const SpatialQueryOptionsSchema = z.object({
   direction: Vector3Schema.optional(),
   radius: z.number().positive().optional(),
   k: z.number().int().positive().optional(),
-  bounds: z.object({
-    min: Vector3Schema,
-    max: Vector3Schema,
-  }).optional(),
+  bounds: z
+    .object({
+      min: Vector3Schema,
+      max: Vector3Schema,
+    })
+    .optional(),
 });
 
 /**

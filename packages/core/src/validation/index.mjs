@@ -78,9 +78,4 @@ export {
 } from './shacl-validator.mjs';
 
 // RDF Schema Builder exports
-export {
-  shacl,
-  CommonShapes,
-  ShapeBuilder,
-  PropertyBuilder,
-} from './rdf-schema-builder.mjs';
+export { shacl, CommonShapes, ShapeBuilder, PropertyBuilder } from './rdf-schema-builder.mjs';

@@ -200,7 +200,7 @@ export async function createAISearchEngine(store, config = {}) {
     results.sort((a, b) => b.score - a.score);
     const topResults = results.slice(0, opts.topK);
 
-    return topResults.map((r) => SearchResultSchema.parse(r));
+    return topResults.map(r => SearchResultSchema.parse(r));
   }
 
   /**

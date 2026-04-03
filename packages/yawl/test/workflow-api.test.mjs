@@ -414,10 +414,14 @@ describe('completeTask', () => {
 
   it('enables downstream tasks when case and workflow provided', async () => {
     const workItem = caseObj.getWorkItem('task-1');
-    const result = await completeTask(workItem, { output: 'done' }, {
-      caseObj,
-      workflow,
-    });
+    const result = await completeTask(
+      workItem,
+      { output: 'done' },
+      {
+        caseObj,
+        workflow,
+      }
+    );
 
     expect(result.enabledDownstreamTasks).toHaveLength(1);
     expect(result.enabledDownstreamTasks[0].taskId).toBe('task-2');
@@ -425,10 +429,14 @@ describe('completeTask', () => {
 
   it('receipt contains enabled downstream tasks', async () => {
     const workItem = caseObj.getWorkItem('task-1');
-    const result = await completeTask(workItem, { output: 'done' }, {
-      caseObj,
-      workflow,
-    });
+    const result = await completeTask(
+      workItem,
+      { output: 'done' },
+      {
+        caseObj,
+        workflow,
+      }
+    );
 
     expect(result.receipt.payload.enabledDownstreamTasks).toContain('task-2');
   });

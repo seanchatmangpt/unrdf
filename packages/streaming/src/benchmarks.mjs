@@ -89,7 +89,7 @@ export function createReadableStreamFromString(data, options = {}) {
  * @returns {Promise<Object>} Benchmark results
  */
 export async function benchmarkParsingThroughput(config = {}) {
-  return tracer.startActiveSpan('benchmark.parsing-throughput', async (span) => {
+  return tracer.startActiveSpan('benchmark.parsing-throughput', async span => {
     const results = {
       testName: 'RDF Stream Parsing Throughput',
       timestamp: Date.now(),
@@ -121,7 +121,7 @@ export async function benchmarkParsingThroughput(config = {}) {
           monitor.start();
 
           let quadCount = 0;
-          parser.on('data', (chunk) => {
+          parser.on('data', chunk => {
             if (chunk.type === 'quads') {
               quadCount += chunk.count;
               monitor.recordQuad();
@@ -145,8 +145,10 @@ export async function benchmarkParsingThroughput(config = {}) {
         }
 
         // Calculate averages
-        const avgThroughput = datasetResults.iterations.reduce((sum, it) => sum + it.throughput, 0) / iterations;
-        const avgDuration = datasetResults.iterations.reduce((sum, it) => sum + it.duration, 0) / iterations;
+        const avgThroughput =
+          datasetResults.iterations.reduce((sum, it) => sum + it.throughput, 0) / iterations;
+        const avgDuration =
+          datasetResults.iterations.reduce((sum, it) => sum + it.duration, 0) / iterations;
 
         datasetResults.average = {
           throughput: avgThroughput,
@@ -174,7 +176,7 @@ export async function benchmarkParsingThroughput(config = {}) {
  * @returns {Promise<Object>} Benchmark results
  */
 export async function benchmarkChangeFeedLatency(config = {}) {
-  return tracer.startActiveSpan('benchmark.change-feed-latency', async (span) => {
+  return tracer.startActiveSpan('benchmark.change-feed-latency', async span => {
     const results = {
       testName: 'Change Feed Latency',
       timestamp: Date.now(),
@@ -194,7 +196,7 @@ export async function benchmarkChangeFeedLatency(config = {}) {
         const feed = createChangeFeed();
         const latencies = [];
 
-        feed.subscribe((change) => {
+        feed.subscribe(change => {
           const latency = Date.now() - change.timestamp;
           latencies.push(latency);
         });
@@ -252,7 +254,7 @@ export async function benchmarkChangeFeedLatency(config = {}) {
  * @returns {Promise<Object>} Benchmark results
  */
 export async function benchmarkBackpressure(config = {}) {
-  return tracer.startActiveSpan('benchmark.backpressure', async (span) => {
+  return tracer.startActiveSpan('benchmark.backpressure', async span => {
     const results = {
       testName: 'Backpressure Handling',
       timestamp: Date.now(),
@@ -281,7 +283,7 @@ export async function benchmarkBackpressure(config = {}) {
       let backpressureEvents = 0;
       let processedChunks = 0;
 
-      parser.on('data', (chunk) => {
+      parser.on('data', chunk => {
         if (chunk.type === 'quads') {
           processedChunks++;
           monitor.recordChunk();
@@ -330,7 +332,7 @@ export async function benchmarkBackpressure(config = {}) {
  * @returns {Promise<Object>} Benchmark results
  */
 export async function benchmarkMemoryEfficiency(config = {}) {
-  return tracer.startActiveSpan('benchmark.memory-efficiency', async (span) => {
+  return tracer.startActiveSpan('benchmark.memory-efficiency', async span => {
     const results = {
       testName: 'Memory Efficiency',
       timestamp: Date.now(),
@@ -399,7 +401,7 @@ export async function benchmarkMemoryEfficiency(config = {}) {
  * @returns {Promise<Object>} Complete benchmark results
  */
 export async function runComprehensiveBenchmarks(config = {}) {
-  return tracer.startActiveSpan('benchmark.comprehensive', async (span) => {
+  return tracer.startActiveSpan('benchmark.comprehensive', async span => {
     console.log('🚀 Starting Comprehensive Streaming Benchmarks...\n');
 
     const results = {
@@ -473,7 +475,8 @@ function generateBenchmarkSummary(results) {
     const throughputs = results.benchmarks.parsingThroughput.datasets.flatMap(d =>
       d.iterations.map(it => it.throughput)
     );
-    summary.tests.parsingThroughput.avgThroughput = throughputs.reduce((sum, t) => sum + t, 0) / throughputs.length;
+    summary.tests.parsingThroughput.avgThroughput =
+      throughputs.reduce((sum, t) => sum + t, 0) / throughputs.length;
     summary.tests.parsingThroughput.maxThroughput = Math.max(...throughputs);
   }
 
@@ -485,20 +488,23 @@ function generateBenchmarkSummary(results) {
     const p99s = results.benchmarks.changeFeedLatency.scenarios.flatMap(s =>
       s.iterations.map(it => it.latency.p99)
     );
-    summary.tests.changeFeedLatency.avgLatency = latencies.reduce((sum, l) => sum + l, 0) / latencies.length;
+    summary.tests.changeFeedLatency.avgLatency =
+      latencies.reduce((sum, l) => sum + l, 0) / latencies.length;
     summary.tests.changeFeedLatency.p99Latency = Math.max(...p99s);
   }
 
   // Backpressure
   if (results.benchmarks.backpressure) {
     const rates = results.benchmarks.backpressure.tests.map(t => t.backpressureRate);
-    summary.tests.backpressure.avgBackpressureRate = rates.reduce((sum, r) => sum + r, 0) / rates.length;
+    summary.tests.backpressure.avgBackpressureRate =
+      rates.reduce((sum, r) => sum + r, 0) / rates.length;
   }
 
   // Memory
   if (results.benchmarks.memoryEfficiency) {
     const memPerQuad = results.benchmarks.memoryEfficiency.tests.map(t => t.perQuadMemory);
-    summary.tests.memoryEfficiency.avgMemoryPerQuad = memPerQuad.reduce((sum, m) => sum + m, 0) / memPerQuad.length;
+    summary.tests.memoryEfficiency.avgMemoryPerQuad =
+      memPerQuad.reduce((sum, m) => sum + m, 0) / memPerQuad.length;
   }
 
   return summary;

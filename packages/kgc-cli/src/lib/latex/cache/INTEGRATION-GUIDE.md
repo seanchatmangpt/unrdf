@@ -19,6 +19,7 @@ import { resolveMissingInputs, augmentVfsWithResolvedPackages } from './cache/re
 ## Updated `handleMissingInputs()` Function
 
 **Before** (basic fetch, no retry):
+
 ```javascript
 async function handleMissingInputs({ missingInputs, cacheDir, lockfile }) {
   if (!missingInputs || missingInputs.length === 0) {
@@ -37,6 +38,7 @@ async function handleMissingInputs({ missingInputs, cacheDir, lockfile }) {
 ```
 
 **After** (with retry + fixture support):
+
 ```javascript
 async function handleMissingInputs({ missingInputs, cacheDir, lockfile, registry }) {
   if (!missingInputs || missingInputs.length === 0) {
@@ -47,10 +49,10 @@ async function handleMissingInputs({ missingInputs, cacheDir, lockfile, registry
   const resolvedMap = await resolveMissingInputs({
     missingInputs,
     cacheDir,
-    registry,           // Optional: CTAN mirror or local fixture
-    lockfile,           // Optional: for version pinning
-    maxRetries: 3,      // Exponential backoff retry
-    initialDelay: 100,  // Starting delay in ms
+    registry, // Optional: CTAN mirror or local fixture
+    lockfile, // Optional: for version pinning
+    maxRetries: 3, // Exponential backoff retry
+    initialDelay: 100, // Starting delay in ms
   });
 
   // Agent 5: Update lockfile with resolved dependencies
@@ -80,7 +82,7 @@ export async function compileLatexToPdf({
   engine = DEFAULT_ENGINE,
   cacheDir,
   passes = DEFAULT_PASSES,
-  registry,  // NEW: Optional registry URL (default: CTAN)
+  registry, // NEW: Optional registry URL (default: CTAN)
 }) {
   // ... existing validation code ...
 
@@ -92,7 +94,7 @@ export async function compileLatexToPdf({
     passes,
     projectDir: absProjectDir,
     lockfile,
-    registry,  // Pass through to handleMissingInputs
+    registry, // Pass through to handleMissingInputs
   });
 
   return pdfBytes;
@@ -109,7 +111,7 @@ async function runCompilationPipeline({
   passes,
   projectDir,
   lockfile,
-  registry,  // NEW: Optional registry URL
+  registry, // NEW: Optional registry URL
 }) {
   let currentVFS = vfs;
   let lastLog = '';
@@ -143,7 +145,7 @@ async function runCompilationPipeline({
       missingInputs: result.missingInputs || [],
       cacheDir,
       lockfile,
-      registry,  // Optional: for testing with local fixtures
+      registry, // Optional: for testing with local fixtures
     });
 
     if (resolvedInputs.size === 0) {
@@ -174,6 +176,7 @@ async function runCompilationPipeline({
 ## Testing with Local Fixtures
 
 **Production usage** (default CTAN):
+
 ```javascript
 const pdfBytes = await compileLatexToPdf({
   inputTexPath: '/path/to/main.tex',
@@ -183,13 +186,14 @@ const pdfBytes = await compileLatexToPdf({
 ```
 
 **Testing with local fixture server**:
+
 ```javascript
 // Start local server at http://localhost:3000 with test packages
 const pdfBytes = await compileLatexToPdf({
   inputTexPath: '/path/to/test.tex',
   projectDir: '/path/to/test-project',
   engine: 'xetex',
-  registry: 'http://localhost:3000/fixtures',  // Local fixture server
+  registry: 'http://localhost:3000/fixtures', // Local fixture server
 });
 ```
 
@@ -224,14 +228,14 @@ const pdfBytes = await compileLatexToPdf({
 
 ## Benefits of Enhanced Resolver
 
-| Feature | Old (ctan-resolver.mjs) | New (cache/resolve.mjs) |
-|---------|-------------------------|-------------------------|
-| Retry logic | ❌ No retry | ✅ Exponential backoff (3 attempts) |
-| Fixture support | ❌ CTAN only | ✅ file:// and http://localhost |
-| Configurable delays | ❌ Fixed | ✅ maxRetries, initialDelay params |
-| Timeout | ❌ No timeout | ✅ 10s per request |
-| Error diagnostics | ⚠️ Basic | ✅ Detailed with retry counts |
-| Lockfile integration | ⚠️ Manual | ✅ Automatic version pinning |
+| Feature              | Old (ctan-resolver.mjs) | New (cache/resolve.mjs)             |
+| -------------------- | ----------------------- | ----------------------------------- |
+| Retry logic          | ❌ No retry             | ✅ Exponential backoff (3 attempts) |
+| Fixture support      | ❌ CTAN only            | ✅ file:// and http://localhost     |
+| Configurable delays  | ❌ Fixed                | ✅ maxRetries, initialDelay params  |
+| Timeout              | ❌ No timeout           | ✅ 10s per request                  |
+| Error diagnostics    | ⚠️ Basic                | ✅ Detailed with retry counts       |
+| Lockfile integration | ⚠️ Manual               | ✅ Automatic version pinning        |
 
 ## Backward Compatibility
 
@@ -245,19 +249,19 @@ import { resolveMissingInputs } from './cache/resolve.mjs';
 const resolved = await resolveMissingInputs({
   missingInputs,
   cacheDir,
-  maxRetries: 3,     // NEW
+  maxRetries: 3, // NEW
   initialDelay: 100, // NEW
 });
 ```
 
 ## Performance Impact
 
-| Scenario | Old Resolver | New Resolver |
-|----------|--------------|--------------|
-| Cache hit | <5ms | <5ms (same) |
-| CTAN success (1st try) | 100-500ms | 100-500ms (same) |
-| CTAN failure → retry | ❌ Immediate fail | ✅ 3 retries (100-1500ms) |
-| Network offline | ❌ Immediate fail | ✅ Clear error after retries |
+| Scenario               | Old Resolver      | New Resolver                 |
+| ---------------------- | ----------------- | ---------------------------- |
+| Cache hit              | <5ms              | <5ms (same)                  |
+| CTAN success (1st try) | 100-500ms         | 100-500ms (same)             |
+| CTAN failure → retry   | ❌ Immediate fail | ✅ 3 retries (100-1500ms)    |
+| Network offline        | ❌ Immediate fail | ✅ Clear error after retries |
 
 **Conclusion**: Same performance when successful, better resilience on transient failures.
 

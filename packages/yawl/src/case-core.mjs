@@ -38,7 +38,9 @@ export const CaseStatus = Object.freeze({
 export const CaseDataSchema = z.object({
   id: z.string().min(1),
   workflowId: z.string().min(1),
-  status: z.enum(['created', 'running', 'completed', 'suspended', 'cancelled', 'failed']).default('created'),
+  status: z
+    .enum(['created', 'running', 'completed', 'suspended', 'cancelled', 'failed'])
+    .default('created'),
   createdAt: z.bigint().optional(),
   startedAt: z.bigint().optional(),
   completedAt: z.bigint().optional(),

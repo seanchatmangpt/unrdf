@@ -89,11 +89,7 @@ export async function replayCase(caseId, targetTime, options = {}) {
   }
 
   // Reconstruct state at target time
-  const historicalStore = await reconstructState(
-    options.store,
-    options.gitBackbone,
-    targetTimeNs
-  );
+  const historicalStore = await reconstructState(options.store, options.gitBackbone, targetTimeNs);
 
   // Query historical store for case events
   const caseEvents = await queryCaseEvents(caseId, historicalStore);
@@ -106,20 +102,15 @@ export async function replayCase(caseId, targetTime, options = {}) {
   const workItemHistory = reconstructWorkItemHistory(caseEvents);
 
   // Get case creation event for metadata
-  const creationEvent = caseEvents.find(
-    (e) => e.type === YAWL_EVENT_TYPES.CASE_CREATED
-  );
+  const creationEvent = caseEvents.find(e => e.type === YAWL_EVENT_TYPES.CASE_CREATED);
 
   // Create receipt for replay
-  const receipt = await createReceipt(
-    YAWL_EVENT_TYPES.CASE_REPLAYED,
-    {
-      caseId,
-      targetTime: targetTime.toString(),
-      eventCount: caseEvents.length,
-      reconstructedAt: toISO(t_ns),
-    }
-  );
+  const receipt = await createReceipt(YAWL_EVENT_TYPES.CASE_REPLAYED, {
+    caseId,
+    targetTime: targetTime.toString(),
+    eventCount: caseEvents.length,
+    reconstructedAt: toISO(t_ns),
+  });
 
   // Return historical case object
   return {
@@ -140,7 +131,7 @@ export async function replayCase(caseId, targetTime, options = {}) {
       return Array.from(workItemHistory.values());
     },
     getTaskEvents(taskId) {
-      return caseEvents.filter((e) => e.payload?.taskId === taskId);
+      return caseEvents.filter(e => e.payload?.taskId === taskId);
     },
   };
 }
@@ -262,21 +253,15 @@ export function determineHistoricalCaseStatus(workItemHistory) {
   }
 
   const allComplete = workItems.every(
-    (wi) =>
-      wi.status === WORK_ITEM_STATUS.COMPLETED ||
-      wi.status === WORK_ITEM_STATUS.CANCELLED
+    wi => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
   );
 
   if (allComplete) {
-    const anyCompleted = workItems.some(
-      (wi) => wi.status === WORK_ITEM_STATUS.COMPLETED
-    );
+    const anyCompleted = workItems.some(wi => wi.status === WORK_ITEM_STATUS.COMPLETED);
     return anyCompleted ? 'completed' : 'cancelled';
   }
 
-  const anyActive = workItems.some(
-    (wi) => wi.status === WORK_ITEM_STATUS.ACTIVE
-  );
+  const anyActive = workItems.some(wi => wi.status === WORK_ITEM_STATUS.ACTIVE);
 
   return anyActive ? 'active' : 'pending';
 }

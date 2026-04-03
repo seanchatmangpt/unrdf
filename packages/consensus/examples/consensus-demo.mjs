@@ -76,7 +76,9 @@ async function main() {
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   // Find leader
-  const leader = node1.isLeader ? { node: node1, state: state1, id: 'node-1' } : { node: node2, state: state2, id: 'node-2' };
+  const leader = node1.isLeader
+    ? { node: node1, state: state1, id: 'node-1' }
+    : { node: node2, state: state2, id: 'node-2' };
 
   console.log(`\n✓ Leader: ${leader.id}\n`);
 

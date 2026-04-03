@@ -12,17 +12,17 @@ import { z } from 'zod';
 const RenderSchema = z.object({
   template: z.string().describe('Template path or content'),
   context: z.record(z.any()).optional().describe('Template context variables'),
-  format: z.enum(['html', 'markdown', 'text']).default('text')
+  format: z.enum(['html', 'markdown', 'text']).default('text'),
 });
 
 const ParseSchema = z.object({
   content: z.string().describe('KGN content to parse'),
-  extractFrontmatter: z.boolean().optional().default(true)
+  extractFrontmatter: z.boolean().optional().default(true),
 });
 
 const _LintSchema = z.object({
   templatePath: z.string().describe('Path to template file'),
-  strict: z.boolean().optional().default(false)
+  strict: z.boolean().optional().default(false),
 });
 
 /**
@@ -40,31 +40,31 @@ const extension = {
         render: {
           description: 'Render Nunjucks template',
           argsSchema: RenderSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               template: args.template,
               format: args.format,
               output: '',
               renderTime: '3ms',
-              variablesUsed: []
+              variablesUsed: [],
             };
-          }
+          },
         },
         validate: {
           description: 'Validate template syntax',
           argsSchema: z.object({
-            template: z.string().describe('Template content or path')
+            template: z.string().describe('Template content or path'),
           }),
-          handler: async (_args) => {
+          handler: async _args => {
             return {
               valid: true,
               errors: [],
               warnings: [],
-              filtersUsed: []
+              filtersUsed: [],
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     notation: {
@@ -73,30 +73,30 @@ const extension = {
         parse: {
           description: 'Parse KGN content',
           argsSchema: ParseSchema,
-          handler: async (args) => {
+          handler: async args => {
             return {
               frontmatter: {},
               content: args.content,
               metadata: {},
-              parsed: true
+              parsed: true,
             };
-          }
+          },
         },
         serialize: {
           description: 'Serialize data to KGN format',
           argsSchema: z.object({
             data: z.record(z.any()).describe('Data to serialize'),
-            includeFrontmatter: z.boolean().optional().default(true)
+            includeFrontmatter: z.boolean().optional().default(true),
           }),
-          handler: async (_args) => {
+          handler: async _args => {
             return {
               output: '',
               format: 'kgn',
-              size: 0
+              size: 0,
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     filter: {
@@ -109,31 +109,31 @@ const extension = {
               filters: [],
               count: 0,
               builtIn: [],
-              custom: []
+              custom: [],
             };
-          }
+          },
         },
         test: {
           description: 'Test filter execution',
           argsSchema: z.object({
             filterName: z.string().describe('Filter name'),
             input: z.any().describe('Test input'),
-            args: z.array(z.any()).optional().describe('Filter arguments')
+            args: z.array(z.any()).optional().describe('Filter arguments'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               filter: args.filterName,
               input: args.input,
               output: null,
-              executionTime: '1ms'
+              executionTime: '1ms',
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
-  priority: 62
+  priority: 62,
 };
 
 export default extension;

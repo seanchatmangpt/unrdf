@@ -23,7 +23,7 @@ or enter new name. (Default extension: cls)
 
 Enter file name:
 ! Emergency stop.
-`
+`,
   },
   {
     name: 'Undefined Control Sequence',
@@ -32,7 +32,7 @@ Enter file name:
 l.42 \\includegraphix
                     {logo.pdf}
 ?
-`
+`,
   },
   {
     name: 'Missing Multiple Files + Warnings',
@@ -49,7 +49,7 @@ Overfull \\hbox (5.0pt too wide) in paragraph at lines 50--52
  []\\OT1/cmr/m/n/10 This is a very long line of text
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-`
+`,
   },
   {
     name: 'Successful Compilation',
@@ -70,8 +70,8 @@ PDF statistics:
  12 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
-`
-  }
+`,
+  },
 ];
 
 // =============================================================================
@@ -106,7 +106,9 @@ function runDemo() {
     console.log(`  Success: ${result.success}`);
     console.log(`  Errors: ${result.errors}`);
     console.log(`  Warnings: ${result.warnings}`);
-    console.log(`  Missing inputs: ${result.missingInputs.length > 0 ? result.missingInputs.join(', ') : 'none'}`);
+    console.log(
+      `  Missing inputs: ${result.missingInputs.length > 0 ? result.missingInputs.join(', ') : 'none'}`
+    );
     console.log(`  Rerun needed: ${result.rerunNeeded}`);
     console.log();
 
@@ -137,24 +139,30 @@ function runJsonDemo() {
     const result = parseLatexLog(example.log);
 
     console.log(`// ${example.name}`);
-    console.log(JSON.stringify({
-      name: example.name,
-      result: {
-        success: result.success,
-        errors: result.errors,
-        warnings: result.warnings,
-        missingInputs: result.missingInputs,
-        rerunNeeded: result.rerunNeeded,
-        diagnostics: result.diagnostics.map(d => ({
-          severity: d.severity,
-          code: d.code,
-          message: d.message,
-          file: d.file,
-          line: d.line,
-          suggestion: d.suggestion
-        }))
-      }
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          name: example.name,
+          result: {
+            success: result.success,
+            errors: result.errors,
+            warnings: result.warnings,
+            missingInputs: result.missingInputs,
+            rerunNeeded: result.rerunNeeded,
+            diagnostics: result.diagnostics.map(d => ({
+              severity: d.severity,
+              code: d.code,
+              message: d.message,
+              file: d.file,
+              line: d.line,
+              suggestion: d.suggestion,
+            })),
+          },
+        },
+        null,
+        2
+      )
+    );
     console.log();
   }
 }

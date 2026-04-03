@@ -13,7 +13,7 @@ import {
   compileWithSwiftLatex,
   getSupportedEngines,
   validateVFS,
-  createMinimalVFS
+  createMinimalVFS,
 } from '../swiftlatex-engine.mjs';
 
 describe('SwiftLaTeX Engine Wrapper', () => {
@@ -35,9 +35,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
     });
 
     it('should detect no .tex files', () => {
-      const vfs = new Map([
-        ['readme.md', new Uint8Array()]
-      ]);
+      const vfs = new Map([['readme.md', new Uint8Array()]]);
       const result = validateVFS(vfs, 'main.tex');
 
       expect(result.valid).toBe(false);
@@ -45,9 +43,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
     });
 
     it('should warn about filenames with spaces', () => {
-      const vfs = new Map([
-        ['my file.tex', new TextEncoder().encode('test')]
-      ]);
+      const vfs = new Map([['my file.tex', new TextEncoder().encode('test')]]);
       const result = validateVFS(vfs, 'my file.tex');
 
       expect(result.valid).toBe(false);
@@ -55,9 +51,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
     });
 
     it('should warn about absolute paths', () => {
-      const vfs = new Map([
-        ['/absolute/path.tex', new TextEncoder().encode('test')]
-      ]);
+      const vfs = new Map([['/absolute/path.tex', new TextEncoder().encode('test')]]);
       const result = validateVFS(vfs, '/absolute/path.tex');
 
       expect(result.valid).toBe(false);
@@ -88,7 +82,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
       const result = await compileWithSwiftLatex({
         engine: 'xetex',
         vfs,
-        entry: 'main.tex'
+        entry: 'main.tex',
       });
 
       expect(result.ok).toBe(false);
@@ -101,7 +95,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
       const result = await compileWithSwiftLatex({
         engine: 'invalid-engine',
         vfs: new Map(),
-        entry: 'main.tex'
+        entry: 'main.tex',
       });
 
       expect(result.ok).toBe(false);
@@ -114,7 +108,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
       const result = await compileWithSwiftLatex({
         engine: 'pdftex',
         vfs,
-        entry: 'main.tex'
+        entry: 'main.tex',
         // cacheDir, passes, verbose not specified - should use defaults
       });
 
@@ -128,7 +122,7 @@ describe('SwiftLaTeX Engine Wrapper', () => {
         engine: 'xetex',
         vfs: new Map(),
         entry: 'main.tex',
-        passes: 10  // Max is 5
+        passes: 10, // Max is 5
       });
 
       expect(result.ok).toBe(false);
@@ -184,7 +178,7 @@ or enter new name. (Default extension: cls)
       const result = await compileWithSwiftLatex({
         engine: 'xetex',
         vfs,
-        entry: 'main.tex'
+        entry: 'main.tex',
       });
 
       // Without WASM, should still have missingInputs field
@@ -198,7 +192,7 @@ or enter new name. (Default extension: cls)
       const result = await compileWithSwiftLatex({
         engine: 'pdftex',
         vfs,
-        entry: 'main.tex'
+        entry: 'main.tex',
       });
 
       // Even on failure, artifacts field should exist (may be undefined)
@@ -212,12 +206,12 @@ describe('Engine Interface Documentation', () => {
   it('should document expected EngineInstance interface', () => {
     // This test documents the expected interface from SwiftLaTeX WASM
     const expectedInterface = {
-      setTexContent: 'function',     // Set main.tex content
-      compileLaTeX: 'function',      // Run compilation
-      flushCache: 'function',        // Clear caches
-      getFileContent: 'function',    // Read output file (deprecated)
-      writeMemFSFile: 'function',    // Write to Emscripten FS
-      readMemFSFile: 'function'      // Read from Emscripten FS
+      setTexContent: 'function', // Set main.tex content
+      compileLaTeX: 'function', // Run compilation
+      flushCache: 'function', // Clear caches
+      getFileContent: 'function', // Read output file (deprecated)
+      writeMemFSFile: 'function', // Write to Emscripten FS
+      readMemFSFile: 'function', // Read from Emscripten FS
     };
 
     // Verify documentation exists in type definitions
@@ -231,10 +225,10 @@ describe('Engine Interface Documentation', () => {
       log: 'Compilation log...',
       artifacts: new Map([
         ['main.aux', new Uint8Array()],
-        ['main.log', new Uint8Array()]
+        ['main.log', new Uint8Array()],
       ]),
       missingInputs: ['article.cls', 'graphicx.sty'],
-      error: 'Missing 2 input file(s)'
+      error: 'Missing 2 input file(s)',
     };
 
     expect(exampleResult.ok).toBe(false);

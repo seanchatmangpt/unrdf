@@ -65,12 +65,15 @@ export const InstanceResultSchema = z.object({
   /** Instance output data */
   outputData: z.unknown().optional(),
   /** Instance receipt */
-  receipt: z.object({
-    id: z.string(),
-    taskInstanceId: z.string(),
-    action: z.string(),
-    timestamp: z.string(),
-  }).passthrough().optional(),
+  receipt: z
+    .object({
+      id: z.string(),
+      taskInstanceId: z.string(),
+      action: z.string(),
+      timestamp: z.string(),
+    })
+    .passthrough()
+    .optional(),
   /** Whether instance succeeded */
   success: z.boolean(),
   /** Error if instance failed */
@@ -88,9 +91,13 @@ export const SpawnResultSchema = z.object({
   /** Individual instance results */
   instances: z.array(InstanceResultSchema),
   /** Aggregated receipts */
-  receipts: z.array(z.object({
-    id: z.string(),
-  }).passthrough()),
+  receipts: z.array(
+    z
+      .object({
+        id: z.string(),
+      })
+      .passthrough()
+  ),
   /** Barrier that synchronized instances */
   barrier: z.object({
     id: z.string(),
@@ -162,11 +169,13 @@ export async function spawnInstancesDesignTime(
   const startTime = Date.now();
 
   // Create or use provided barrier
-  const barrier = syncBarrier ?? createSyncBarrier(count, {
-    timeout: validatedOptions.timeout,
-    cancelOnFailure: validatedOptions.cancelOnFailure,
-    id: validatedOptions.barrierId,
-  });
+  const barrier =
+    syncBarrier ??
+    createSyncBarrier(count, {
+      timeout: validatedOptions.timeout,
+      cancelOnFailure: validatedOptions.cancelOnFailure,
+      id: validatedOptions.barrierId,
+    });
 
   // Track spawned instances for cancellation
   const instances = [];
@@ -182,20 +191,14 @@ export async function spawnInstancesDesignTime(
       : { ...inputData, _instanceIndex: i };
 
     // Create instance execution promise
-    const instancePromise = executeInstance(
-      validatedTask,
-      instanceId,
-      i,
-      instanceInput,
-      barrier
-    );
+    const instancePromise = executeInstance(validatedTask, instanceId, i, instanceInput, barrier);
 
     instances.push({ instanceId, index: i });
     instancePromises.push(instancePromise);
   }
 
   // Set up cancellation propagation
-  barrier.onCancel(async (reason) => {
+  barrier.onCancel(async reason => {
     // Note: Individual instances handle their own cancellation
     // This just logs the cancellation event
     console.warn(`Barrier cancelled: ${reason}`);

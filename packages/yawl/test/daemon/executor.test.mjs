@@ -15,7 +15,7 @@ import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -157,13 +157,13 @@ describe('Daemon Workflow Executor', () => {
 
       // Act
       await Promise.all(
-        tasks.map((taskId) => engine.enableTask({ caseId: 'case-parallel', taskId }))
+        tasks.map(taskId => engine.enableTask({ caseId: 'case-parallel', taskId }))
       );
 
       // Assert
       expect(engine.executedTasks.length).toBe(3);
-      const taskIds = engine.executedTasks.map((t) => t.taskId);
-      tasks.forEach((taskId) => {
+      const taskIds = engine.executedTasks.map(t => t.taskId);
+      tasks.forEach(taskId => {
         expect(taskIds).toContain(taskId);
       });
     });
@@ -197,9 +197,7 @@ describe('Daemon Workflow Executor', () => {
 
       // Assert
       expect(result.status).toBe('COMPLETED');
-      const completedTask = engine.executedTasks.find(
-        (t) => t.action === 'complete'
-      );
+      const completedTask = engine.executedTasks.find(t => t.action === 'complete');
       expect(completedTask).toBeDefined();
     });
 
@@ -216,9 +214,7 @@ describe('Daemon Workflow Executor', () => {
 
       // Assert
       expect(result.status).toBe('CANCELLED');
-      const cancelledTask = engine.executedTasks.find(
-        (t) => t.action === 'cancel'
-      );
+      const cancelledTask = engine.executedTasks.find(t => t.action === 'cancel');
       expect(cancelledTask.reason).toBe('User requested');
     });
 
@@ -248,7 +244,7 @@ describe('Daemon Workflow Executor', () => {
       }
 
       // Assert
-      const completions = engine.executedTasks.filter((t) => t.action === 'complete');
+      const completions = engine.executedTasks.filter(t => t.action === 'complete');
       expect(completions.length).toBe(3);
     });
 
@@ -273,7 +269,7 @@ describe('Daemon Workflow Executor', () => {
         id: 'timed-op',
         name: 'Timed Task',
         handler: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 50));
+          await new Promise(resolve => setTimeout(resolve, 50));
           return engine.enableTask({ caseId: 'c1', taskId: 't1' });
         },
       });
@@ -387,9 +383,7 @@ describe('Daemon Workflow Executor', () => {
       });
 
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) =>
-        op.id.includes('yawl-case-exec-wf')
-      );
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-exec-wf'));
 
       // Act
       await daemon.execute(scheduleOp.id);
@@ -408,7 +402,7 @@ describe('Daemon Workflow Executor', () => {
       await bridge.scheduleRecurringCase('event-wf', '* * * * *');
 
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) => op.id.includes('yawl-case-event-wf'));
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-event-wf'));
 
       // Act
       await daemon.execute(scheduleOp.id);
@@ -444,7 +438,7 @@ describe('Daemon Workflow Executor', () => {
       }
 
       // Assert
-      workflows.forEach((wfId) => {
+      workflows.forEach(wfId => {
         expect(bridge.caseSchedules.has(wfId)).toBe(true);
       });
     });
@@ -456,25 +450,23 @@ describe('Daemon Workflow Executor', () => {
       });
 
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) => op.id.includes('yawl-case-unique-wf'));
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-unique-wf'));
 
       // Act
       await daemon.execute(scheduleOp.id);
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
       await daemon.execute(scheduleOp.id);
 
       // Assert
       const cases = Array.from(engine.cases.values());
-      const caseIds = new Set(cases.map((c) => c.id));
+      const caseIds = new Set(cases.map(c => c.id));
       expect(caseIds.size).toBe(cases.length); // All unique
     });
 
     it('should handle schedule execution errors', async () => {
       // Arrange
       const badEngine = new MockYawlEngine();
-      badEngine.createCase = vi
-        .fn()
-        .mockRejectedValue(new Error('Creation failed'));
+      badEngine.createCase = vi.fn().mockRejectedValue(new Error('Creation failed'));
 
       const badBridge = new YawlDaemonBridge(daemon, badEngine, {
         daemonNodeId: 'node-bad',
@@ -484,7 +476,7 @@ describe('Daemon Workflow Executor', () => {
       await badBridge.scheduleRecurringCase('fail-wf', '* * * * *');
 
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) => op.id.includes('yawl-case-fail-wf'));
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-fail-wf'));
 
       // Act & Assert
       await expect(daemon.execute(scheduleOp.id)).rejects.toThrow('Creation failed');
@@ -617,17 +609,11 @@ describe('Daemon Workflow Executor', () => {
 
     it('should validate timeout parameters', async () => {
       // Arrange & Act & Assert
-      await expect(
-        bridge.watchTaskTimeout('', 'task-1', 30000)
-      ).rejects.toThrow();
+      await expect(bridge.watchTaskTimeout('', 'task-1', 30000)).rejects.toThrow();
 
-      await expect(
-        bridge.watchTaskTimeout('case-1', '', 30000)
-      ).rejects.toThrow();
+      await expect(bridge.watchTaskTimeout('case-1', '', 30000)).rejects.toThrow();
 
-      await expect(
-        bridge.watchTaskTimeout('case-1', 'task-1', 500)
-      ).rejects.toThrow();
+      await expect(bridge.watchTaskTimeout('case-1', 'task-1', 500)).rejects.toThrow();
     });
 
     it('should schedule timeout check operation', async () => {
@@ -650,14 +636,14 @@ describe('Daemon Workflow Executor', () => {
 
       // Simulate timeout by manually triggering the handler
       const operation = daemon.operations.get(result.operationId);
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Act
       await daemon.execute(result.operationId);
 
       // Assert - Timeout was reached and task should be cancelled
       const cancelledTask = engine.executedTasks.find(
-        (t) => t.action === 'cancel' && t.caseId === 'case-timeout-enforce'
+        t => t.action === 'cancel' && t.caseId === 'case-timeout-enforce'
       );
       expect(cancelledTask).toBeDefined();
     });
@@ -670,7 +656,7 @@ describe('Daemon Workflow Executor', () => {
       const result = await bridge.watchTaskTimeout('case-event', 'task-1', 1000);
 
       // Simulate timeout
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Act
       await daemon.execute(result.operationId);
@@ -684,7 +670,7 @@ describe('Daemon Workflow Executor', () => {
       const result = await bridge.watchTaskTimeout('case-cleanup', 'task-1', 1000);
 
       // Simulate timeout
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Act
       await daemon.execute(result.operationId);
@@ -729,9 +715,7 @@ describe('Daemon Workflow Executor', () => {
       await bridge.watchTaskTimeout('case-log', 'task-log', 30000);
 
       // Assert
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        expect.stringContaining('Watching timeout')
-      );
+      expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Watching timeout'));
     });
 
     it('should handle timeout check errors gracefully', async () => {
@@ -747,7 +731,7 @@ describe('Daemon Workflow Executor', () => {
       const result = await badBridge.watchTaskTimeout('case-err', 'task-err', 1000);
 
       // Act
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Assert - Should not throw
       await expect(daemon.execute(result.operationId)).resolves.not.toThrow();
@@ -985,9 +969,7 @@ describe('Daemon Workflow Executor', () => {
       await bridge.scheduleRetry('case-log', 'task-log');
 
       // Assert
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('Scheduled retry')
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Scheduled retry'));
     });
   });
 });

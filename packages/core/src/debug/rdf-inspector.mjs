@@ -9,12 +9,14 @@ import { z } from 'zod';
 /**
  * Inspector options schema
  */
-const InspectorOptionsSchema = z.object({
-  includeNamespaces: z.boolean().optional(),
-  includeOrphans: z.boolean().optional(),
-  includeQuality: z.boolean().optional(),
-  sampleSize: z.number().int().positive().optional(),
-}).optional();
+const InspectorOptionsSchema = z
+  .object({
+    includeNamespaces: z.boolean().optional(),
+    includeOrphans: z.boolean().optional(),
+    includeQuality: z.boolean().optional(),
+    sampleSize: z.number().int().positive().optional(),
+  })
+  .optional();
 
 /**
  * Get comprehensive graph statistics
@@ -105,7 +107,7 @@ export function analyzeNamespaces(store) {
   const namespaces = new Map();
 
   for (const quad of store.match(null, null, null, null)) {
-    const extractNS = (iri) => {
+    const extractNS = iri => {
       if (!iri || typeof iri !== 'string') return null;
       const match = iri.match(/^(.+[/#])([^/#]+)$/);
       return match ? match[1] : null;
@@ -204,11 +206,14 @@ export function assessDataQuality(store) {
     }
   }
 
-  const labelCoverage = subjects.size > 0 ? Math.min((triplesWithLabels / subjects.size) * 100, 100) : 0;
-  const typeCoverage = subjects.size > 0 ? Math.min((triplesWithTypes / subjects.size) * 100, 100) : 0;
-  const literalQuality = totalLiterals > 0
-    ? Math.min(((literalsWithLanguage + literalsWithDatatype) / totalLiterals) * 100, 100)
-    : 100;
+  const labelCoverage =
+    subjects.size > 0 ? Math.min((triplesWithLabels / subjects.size) * 100, 100) : 0;
+  const typeCoverage =
+    subjects.size > 0 ? Math.min((triplesWithTypes / subjects.size) * 100, 100) : 0;
+  const literalQuality =
+    totalLiterals > 0
+      ? Math.min(((literalsWithLanguage + literalsWithDatatype) / totalLiterals) * 100, 100)
+      : 100;
 
   const score = Math.round((labelCoverage + typeCoverage + literalQuality) / 3);
 
@@ -258,12 +263,14 @@ export function checkSchemaConformance(store, schema) {
   if (schema.requiredPredicates) {
     for (const subject of subjects) {
       for (const predicate of schema.requiredPredicates) {
-        const matches = Array.from(store.match(
-          { termType: 'NamedNode', value: subject },
-          { termType: 'NamedNode', value: predicate },
-          null,
-          null
-        ));
+        const matches = Array.from(
+          store.match(
+            { termType: 'NamedNode', value: subject },
+            { termType: 'NamedNode', value: predicate },
+            null,
+            null
+          )
+        );
 
         if (matches.length === 0) {
           violations.push({
@@ -277,7 +284,10 @@ export function checkSchemaConformance(store, schema) {
     }
   }
 
-  if (schema.minTriples && Array.from(store.match(null, null, null, null)).length < schema.minTriples) {
+  if (
+    schema.minTriples &&
+    Array.from(store.match(null, null, null, null)).length < schema.minTriples
+  ) {
     violations.push({
       type: 'MIN_TRIPLES_VIOLATION',
       message: `Graph has fewer than ${schema.minTriples} triples`,

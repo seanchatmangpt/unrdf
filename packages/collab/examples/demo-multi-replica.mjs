@@ -139,7 +139,9 @@ function demonstrateRDFSetConvergence() {
 
   // Check add-wins for conflict
   const hasConflictTriple = r1a.has(conflictTriple);
-  console.log(`  Add/Remove conflict resolution: ${hasConflictTriple ? 'ADD WINS ✓' : 'REMOVE WINS ✗'}\n`);
+  console.log(
+    `  Add/Remove conflict resolution: ${hasConflictTriple ? 'ADD WINS ✓' : 'REMOVE WINS ✗'}\n`
+  );
 
   return { converged, finalSize: triples1.length };
 }
@@ -212,7 +214,7 @@ function demonstratePNCounterConvergence() {
   const merged = c1.clone();
   merged.merge(c2).merge(c3);
 
-  const expected = (50 - 10) + (30 - 5) + (20 - 15);
+  const expected = 50 - 10 + (30 - 5) + (20 - 15);
   console.log(`  Final value: ${merged.value()}`);
   console.log(`  Expected: ${expected}`);
   console.log(`  Correct: ${merged.value() === expected ? 'YES ✓' : 'NO ✗'}\n`);
@@ -263,7 +265,7 @@ function benchmarkMergePerformance() {
   replica1.merge(replica2);
   const end2 = performance.now();
   const mergeTime = end2 - start2;
-  const mergeOpsPerSec = (iterations * 2 / mergeTime) * 1000;
+  const mergeOpsPerSec = ((iterations * 2) / mergeTime) * 1000;
 
   console.log(`  Time: ${mergeTime.toFixed(2)}ms`);
   console.log(`  Throughput: ${mergeOpsPerSec.toFixed(0)} ops/sec`);
@@ -317,10 +319,7 @@ function main() {
   console.log(`  Total demo time:       ${totalTime.toFixed(2)}ms\n`);
 
   // Final verdict
-  const allPassed =
-    rdfResult.converged &&
-    gcounterResult.converged &&
-    pncounterResult.correct;
+  const allPassed = rdfResult.converged && gcounterResult.converged && pncounterResult.correct;
 
   if (allPassed) {
     console.log('╔═══════════════════════════════════════════════════════════╗');

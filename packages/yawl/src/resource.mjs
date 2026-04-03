@@ -107,9 +107,7 @@ export class YawlResourcePool {
     const roleResourceIds = this.roleIndex.get(role);
     if (!roleResourceIds) return [];
 
-    return [...roleResourceIds]
-      .map(id => this.resources.get(id))
-      .filter(r => r && r.available);
+    return [...roleResourceIds].map(id => this.resources.get(id)).filter(r => r && r.available);
   }
 
   /**
@@ -134,9 +132,7 @@ export class YawlResourcePool {
     }
 
     // Get candidates
-    let candidates = role
-      ? this.getAvailableResourcesForRole(role)
-      : this.getAvailableResources();
+    let candidates = role ? this.getAvailableResourcesForRole(role) : this.getAvailableResources();
 
     if (candidates.length === 0) {
       // Queue the request

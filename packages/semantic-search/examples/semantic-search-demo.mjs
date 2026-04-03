@@ -15,9 +15,9 @@ function createSampleKnowledgeGraph() {
   const store = createStore();
 
   // Namespaces
-  const ex = (local) => namedNode(`http://example.org/${local}`);
-  const schema = (local) => namedNode(`http://schema.org/${local}`);
-  const rdf = (local) => namedNode(`http://www.w3.org/1999/02/22-rdf-syntax-ns#${local}`);
+  const ex = local => namedNode(`http://example.org/${local}`);
+  const schema = local => namedNode(`http://schema.org/${local}`);
+  const rdf = local => namedNode(`http://www.w3.org/1999/02/22-rdf-syntax-ns#${local}`);
 
   // Programming languages
   const languages = [
@@ -170,10 +170,7 @@ async function demoKnowledgeDiscovery(recommender) {
 async function demoConcepRecommendations(recommender) {
   console.log('\n\n=== DEMO 4: Concept Recommendations ===\n');
 
-  const queries = [
-    'memory safety programming',
-    'dynamic scripting language',
-  ];
+  const queries = ['memory safety programming', 'dynamic scripting language'];
 
   for (const query of queries) {
     console.log(`Query: "${query}"`);
@@ -197,11 +194,7 @@ async function demoConcepRecommendations(recommender) {
 async function demoAutocomplete(engine) {
   console.log('\n=== DEMO 5: Autocomplete Suggestions ===\n');
 
-  const partialQueries = [
-    'program',
-    'safe',
-    'web',
-  ];
+  const partialQueries = ['program', 'safe', 'web'];
 
   for (const partial of partialQueries) {
     console.log(`Partial: "${partial}"`);

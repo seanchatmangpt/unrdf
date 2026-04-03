@@ -25,7 +25,10 @@ export const HookMetaSchema = z.object({
  */
 export const HookConditionRefSchema = z.object({
   uri: z.string().min(1),
-  sha256: z.string().regex(/^[a-f0-9]{64}$/, 'SHA-256 hash must be 64 hex characters').optional(),
+  sha256: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/, 'SHA-256 hash must be 64 hex characters')
+    .optional(),
   mediaType: z.string().optional(),
 });
 
@@ -45,7 +48,10 @@ export const HookConditionSchema = z.object({
  */
 export const HookEffectRefSchema = z.object({
   uri: z.string().min(1),
-  sha256: z.string().regex(/^[a-f0-9]{64}$/, 'SHA-256 hash must be 64 hex characters').optional(),
+  sha256: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/, 'SHA-256 hash must be 64 hex characters')
+    .optional(),
   mediaType: z.string().optional(),
 });
 

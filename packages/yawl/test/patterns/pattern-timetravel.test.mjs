@@ -22,7 +22,6 @@ import { createTestWorkflow, createTestEngine, measureTime, sequence } from './t
  * - Integration: Full lifecycle, error paths, resource contention
  */
 
-
 describe('Time-Travel Tests', () => {
   let engine;
   let tempDir;
@@ -75,10 +74,7 @@ describe('Time-Travel Tests', () => {
       const checkpoint2 = await engine.checkpoint('after-B');
 
       // Reconstruct at checkpoint1
-      const reconstructed = await engine.reconstructCase(
-        yawlCase.id,
-        checkpoint1.timestamp
-      );
+      const reconstructed = await engine.reconstructCase(yawlCase.id, checkpoint1.timestamp);
 
       // Assert: State should match checkpoint1 (A complete, B not started)
       expect(reconstructed.verified).toBe(true);
@@ -106,10 +102,7 @@ describe('Time-Travel Tests', () => {
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
       await engine.startTask(yawlCase.id, workItemA.id);
-      const { receipt: completeAReceipt } = await engine.completeTask(
-        yawlCase.id,
-        workItemA.id
-      );
+      const { receipt: completeAReceipt } = await engine.completeTask(yawlCase.id, workItemA.id);
 
       // Replay to receipt
       const replay = await engine.replayToReceipt(yawlCase.id, completeAReceipt.id);
@@ -183,10 +176,7 @@ describe('Time-Travel Tests', () => {
 
       const workItemA = yawlCase.getEnabledWorkItems()[0];
       await engine.startTask(yawlCase.id, workItemA.id);
-      const { receipt: enableReceipt } = await engine.completeTask(
-        yawlCase.id,
-        workItemA.id
-      );
+      const { receipt: enableReceipt } = await engine.completeTask(yawlCase.id, workItemA.id);
 
       // Replay to specific receipt
       const replay = await engine.replayToReceipt(yawlCase.id, enableReceipt.id);

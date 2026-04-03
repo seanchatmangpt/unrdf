@@ -238,13 +238,10 @@ describe('DistributedTracing', () => {
 
   describe('Async Operations', () => {
     it('should trace async operations with withSpan', async () => {
-      const result = await tracing.withSpan(
-        'async-operation',
-        async () => {
-          await new Promise(resolve => setTimeout(resolve, 10));
-          return 'success';
-        }
-      );
+      const result = await tracing.withSpan('async-operation', async () => {
+        await new Promise(resolve => setTimeout(resolve, 10));
+        return 'success';
+      });
 
       expect(result).toBe('success');
     });

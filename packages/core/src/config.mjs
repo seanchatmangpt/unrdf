@@ -16,25 +16,31 @@ import { z } from 'zod';
  */
 export const ConfigSchema = z.object({
   // Store configuration
-  store: z.object({
-    capacity: z.number().int().min(100).default(10000),
-    validate: z.boolean().default(true),
-  }).default({}),
+  store: z
+    .object({
+      capacity: z.number().int().min(100).default(10000),
+      validate: z.boolean().default(true),
+    })
+    .default({}),
 
   // Query configuration
-  query: z.object({
-    timeout: z.number().int().min(0).default(5000),
-    maxResults: z.number().int().min(1).default(10000),
-  }).default({}),
+  query: z
+    .object({
+      timeout: z.number().int().min(0).default(5000),
+      maxResults: z.number().int().min(1).default(10000),
+    })
+    .default({}),
 
   // Environment
   env: z.enum(['development', 'production', 'test']).default('production'),
 
   // Logging
-  logging: z.object({
-    level: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
-    enabled: z.boolean().default(true),
-  }).default({}),
+  logging: z
+    .object({
+      level: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+      enabled: z.boolean().default(true),
+    })
+    .default({}),
 });
 
 /**
@@ -175,11 +181,7 @@ export function createConfig(explicit = {}, env) {
   const envObject = env ?? (typeof process !== 'undefined' ? process.env : {});
 
   // Merge: defaults < env < explicit
-  const merged = mergeConfig(
-    DEFAULT_CONFIG,
-    parseEnv(envObject),
-    explicit
-  );
+  const merged = mergeConfig(DEFAULT_CONFIG, parseEnv(envObject), explicit);
 
   // Validate
   try {

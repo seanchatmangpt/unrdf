@@ -63,7 +63,10 @@ export const ResourceConstraintSchema = z.object({
 export const YAWLWorkflowSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .default('1.0.0'),
   tasks: z.array(YAWLTaskSchema).min(1),
   controlFlow: z.array(ControlFlowSchema).default([]),
   resources: z.array(ResourceConstraintSchema).optional(),
@@ -123,9 +126,11 @@ ASK {
 
   // All input conditions must be satisfied
   const conditionPatterns = inputConditions
-    .map((cond, i) => `  ?cond${i} rdf:type yawl:Condition ;
+    .map(
+      (cond, i) => `  ?cond${i} rdf:type yawl:Condition ;
         yawl:conditionId "${cond}" ;
-        yawl:satisfied true .`)
+        yawl:satisfied true .`
+    )
     .join('\n');
 
   return `${YAWL_PREFIXES}
@@ -654,11 +659,7 @@ export function createCancellationHandler(task, workflow) {
 
   return (error, context = {}) => {
     const reason =
-      error instanceof Error
-        ? error.message
-        : typeof error === 'string'
-          ? error
-          : 'Task cancelled';
+      error instanceof Error ? error.message : typeof error === 'string' ? error : 'Task cancelled';
 
     const isTimeout = reason.includes('timeout') || reason.includes('Timeout');
 
@@ -705,10 +706,7 @@ function initializeTaskHooks(workflow, conditionEvaluator, priority) {
 
     // Task enablement validator (async)
     if (conditionEvaluator) {
-      validators.set(
-        task.id,
-        createTaskEnablementValidator(task, workflow, conditionEvaluator)
-      );
+      validators.set(task.id, createTaskEnablementValidator(task, workflow, conditionEvaluator));
     }
 
     // Task completion hook (only for tasks with outgoing edges)
@@ -992,7 +990,13 @@ function createPolicyPackAPI(
   cancellationHandlers,
   workflow
 ) {
-  const getters = createGetterMethods(allHooks, validators, routers, allocators, cancellationHandlers);
+  const getters = createGetterMethods(
+    allHooks,
+    validators,
+    routers,
+    allocators,
+    cancellationHandlers
+  );
 
   return {
     manifest,

@@ -12,8 +12,8 @@ describe('KnowledgeRecommender', () => {
     store = createStore();
 
     // Create test knowledge graph
-    const ex = (local) => namedNode(`http://example.org/${local}`);
-    const schema = (local) => namedNode(`http://schema.org/${local}`);
+    const ex = local => namedNode(`http://example.org/${local}`);
+    const schema = local => namedNode(`http://schema.org/${local}`);
 
     // Entity 1: JavaScript
     store.add(triple(ex('JavaScript'), schema('name'), literal('JavaScript')));
@@ -58,8 +58,7 @@ describe('KnowledgeRecommender', () => {
       expect(triples.length).toBeGreaterThan(0);
 
       triples.forEach(t => {
-        const hasEntity =
-          t.subject.value === entityUri || t.object.value === entityUri;
+        const hasEntity = t.subject.value === entityUri || t.object.value === entityUri;
         expect(hasEntity).toBe(true);
       });
     });
@@ -96,9 +95,9 @@ describe('KnowledgeRecommender', () => {
     }, 30000);
 
     it('should throw for entity with no triples', async () => {
-      await expect(
-        recommender.embedEntity('http://example.org/NonExistent')
-      ).rejects.toThrow('No triples found');
+      await expect(recommender.embedEntity('http://example.org/NonExistent')).rejects.toThrow(
+        'No triples found'
+      );
     }, 30000);
   });
 
@@ -106,10 +105,10 @@ describe('KnowledgeRecommender', () => {
     it('should find similar entities', async () => {
       await recommender.initialize();
 
-      const results = await recommender.findSimilarEntities(
-        'http://example.org/JavaScript',
-        { limit: 2, threshold: 0.3 }
-      );
+      const results = await recommender.findSimilarEntities('http://example.org/JavaScript', {
+        limit: 2,
+        threshold: 0.3,
+      });
 
       expect(Array.isArray(results)).toBe(true);
 
@@ -123,19 +122,17 @@ describe('KnowledgeRecommender', () => {
     }, 30000);
 
     it('should respect limit', async () => {
-      const results = await recommender.findSimilarEntities(
-        'http://example.org/Python',
-        { limit: 1 }
-      );
+      const results = await recommender.findSimilarEntities('http://example.org/Python', {
+        limit: 1,
+      });
 
       expect(results.length).toBeLessThanOrEqual(1);
     }, 30000);
 
     it('should filter by threshold', async () => {
-      const results = await recommender.findSimilarEntities(
-        'http://example.org/Rust',
-        { threshold: 0.9 }
-      );
+      const results = await recommender.findSimilarEntities('http://example.org/Rust', {
+        threshold: 0.9,
+      });
 
       results.forEach(result => {
         expect(result.score).toBeGreaterThanOrEqual(0.9);
@@ -147,10 +144,10 @@ describe('KnowledgeRecommender', () => {
     it('should recommend concepts for query', async () => {
       await recommender.initialize();
 
-      const results = await recommender.recommendConcepts(
-        'web development programming',
-        { limit: 3, threshold: 0.2 }
-      );
+      const results = await recommender.recommendConcepts('web development programming', {
+        limit: 3,
+        threshold: 0.2,
+      });
 
       expect(Array.isArray(results)).toBe(true);
 

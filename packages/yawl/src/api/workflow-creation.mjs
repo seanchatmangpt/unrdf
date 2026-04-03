@@ -133,7 +133,10 @@ export const ResourceSchema = z.object({
 export const WorkflowSpecSchema = z.object({
   id: z.string().min(1).max(255),
   name: z.string().min(1).max(255).optional(),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .optional(),
   description: z.string().max(5000).optional(),
   tasks: z.array(TaskSchema).min(1),
   controlFlow: z.array(ControlFlowSchema).optional(),
@@ -146,14 +149,16 @@ export const WorkflowSpecSchema = z.object({
 /**
  * Schema for workflow creation options
  */
-export const WorkflowOptionsSchema = z.object({
-  store: z.any().optional(),
-  gitBackbone: z.any().optional(),
-  hookRegistry: z.any().optional(),
-  policyPacks: z.array(z.any()).optional(),
-  validateSpec: z.boolean().default(true),
-  createRDF: z.boolean().default(true),
-}).optional();
+export const WorkflowOptionsSchema = z
+  .object({
+    store: z.any().optional(),
+    gitBackbone: z.any().optional(),
+    hookRegistry: z.any().optional(),
+    policyPacks: z.array(z.any()).optional(),
+    validateSpec: z.boolean().default(true),
+    createRDF: z.boolean().default(true),
+  })
+  .optional();
 
 /**
  * Schema for receipt
@@ -165,12 +170,14 @@ export const ReceiptSchema = z.object({
   t_ns: z.string(),
   hash: z.string().min(1),
   payload: z.record(z.string(), z.any()),
-  justification: z.object({
-    policyPackId: z.string().optional(),
-    hookResults: z.array(z.any()).optional(),
-    conditionsMet: z.array(z.string()).optional(),
-    resourceEligibility: z.boolean().optional(),
-  }).optional(),
+  justification: z
+    .object({
+      policyPackId: z.string().optional(),
+      hookResults: z.array(z.any()).optional(),
+      conditionsMet: z.array(z.string()).optional(),
+      resourceEligibility: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -395,9 +402,7 @@ export async function createWorkflow(spec, options = {}) {
      */
     getDownstreamTasks(taskId) {
       const edges = controlFlowGraph.outgoing.get(taskId) || [];
-      return edges
-        .map((edge) => taskIndex.get(edge.to))
-        .filter((task) => task !== undefined);
+      return edges.map(edge => taskIndex.get(edge.to)).filter(task => task !== undefined);
     },
 
     /**
@@ -407,9 +412,7 @@ export async function createWorkflow(spec, options = {}) {
      */
     getUpstreamTasks(taskId) {
       const edges = controlFlowGraph.incoming.get(taskId) || [];
-      return edges
-        .map((edge) => taskIndex.get(edge.from))
-        .filter((task) => task !== undefined);
+      return edges.map(edge => taskIndex.get(edge.from)).filter(task => task !== undefined);
     },
 
     /**
@@ -513,8 +516,8 @@ export function findInitialTasks(tasks, controlFlowGraph) {
 export function createWorkflowRDF(spec, store) {
   const deltas = [];
   const df = store._store?.dataFactory || {
-    namedNode: (v) => ({ termType: 'NamedNode', value: v }),
-    literal: (v) => ({ termType: 'Literal', value: v }),
+    namedNode: v => ({ termType: 'NamedNode', value: v }),
+    literal: v => ({ termType: 'Literal', value: v }),
   };
 
   const workflowUri = `${YAWL_NS.WORKFLOW}${spec.id}`;

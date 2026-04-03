@@ -6,13 +6,7 @@
  */
 
 import { describe, test, expect, beforeEach } from 'vitest';
-import {
-  YawlEngine,
-  YawlWorkflow,
-  SPLIT_TYPE,
-  JOIN_TYPE,
-  sequence,
-} from '../../src/index.mjs';
+import { YawlEngine, YawlWorkflow, SPLIT_TYPE, JOIN_TYPE, sequence } from '../../src/index.mjs';
 
 function createTestEngine() {
   return new YawlEngine({ nodeId: `stress-${Date.now()}` });
@@ -104,7 +98,9 @@ describe('WP12 Stress Tests - High Volume Without Synchronization', () => {
     const totalTime = createDuration + spawnDuration + completeDuration;
     expect(totalTime).toBeLessThan(5000);
 
-    console.log(`Stress Test WP12-1000: Create ${createDuration.toFixed(2)}ms, Spawn ${spawnDuration.toFixed(2)}ms, Complete ${completeDuration.toFixed(2)}ms`);
+    console.log(
+      `Stress Test WP12-1000: Create ${createDuration.toFixed(2)}ms, Spawn ${spawnDuration.toFixed(2)}ms, Complete ${completeDuration.toFixed(2)}ms`
+    );
   });
 
   test('Memory efficient - no leak with 1000 instances', async () => {
@@ -255,12 +251,8 @@ describe('WP13 Stress Tests - Barrier Synchronization Under Load', () => {
     const instances = yawlCase.getEnabledWorkItems();
     expect(instances.length).toBe(100); // 50 A + 50 B
 
-    const instancesA = instances.filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'processA'
-    );
-    const instancesB = instances.filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'processB'
-    );
+    const instancesA = instances.filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'processA');
+    const instancesB = instances.filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'processB');
 
     // Complete A instances
     for (const inst of instancesA) {
@@ -269,9 +261,9 @@ describe('WP13 Stress Tests - Barrier Synchronization Under Load', () => {
     }
 
     // Merge NOT enabled yet (B not complete)
-    let mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    let mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(0);
 
     // Complete B instances
@@ -341,9 +333,9 @@ describe('WP15 Stress Tests - Dynamic Instance Addition', () => {
     });
 
     // Assert: 500 total instances
-    instances = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process'
-    );
+    instances = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process');
     expect(instances.length).toBe(500);
 
     // Assert: Addition performance
@@ -384,9 +376,7 @@ describe('WP15 Stress Tests - Dynamic Instance Addition', () => {
 
     // Add 25 new instances concurrently
     for (let i = 0; i < 25; i++) {
-      operations.push(
-        engine.addMIInstance(yawlCase.id, 'process', { id: 50 + i })
-      );
+      operations.push(engine.addMIInstance(yawlCase.id, 'process', { id: 50 + i }));
     }
 
     // Wait for all operations
@@ -509,11 +499,7 @@ describe('Cancellation Propagation Stress', () => {
     expect(children.length).toBe(100);
 
     // Cancel all
-    const { cancelled } = await engine.cancelRegion(
-      yawlCase.id,
-      'all',
-      'Cascading cancel'
-    );
+    const { cancelled } = await engine.cancelRegion(yawlCase.id, 'all', 'Cascading cancel');
 
     // Assert: All 100 cancelled
     expect(cancelled.length).toBe(100);
@@ -539,10 +525,9 @@ describe('Receipt Performance Under Load', () => {
     engine.registerWorkflow(workflow);
 
     // Act
-    const { case: yawlCase, receipt: createReceipt } = await engine.createCase(
-      'receipt-100',
-      { instanceCount: 100 }
-    );
+    const { case: yawlCase, receipt: createReceipt } = await engine.createCase('receipt-100', {
+      instanceCount: 100,
+    });
 
     expect(createReceipt.valid).toBe(true);
 

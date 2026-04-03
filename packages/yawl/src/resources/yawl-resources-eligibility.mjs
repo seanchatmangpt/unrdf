@@ -176,7 +176,8 @@ export function getResourceCapacityStatus(store, resourceId, countAllocations) {
   const currentAllocations = countAllocations(resourceNode);
 
   const available = maxCapacity === -1 ? Infinity : Math.max(0, maxCapacity - currentAllocations);
-  const utilizationPercent = maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
+  const utilizationPercent =
+    maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
 
   return {
     current: currentAllocations,

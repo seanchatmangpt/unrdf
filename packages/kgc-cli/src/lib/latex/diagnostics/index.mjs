@@ -28,7 +28,7 @@ export {
   formatDiagnosticsForCLI,
   createDiagnosticSummary,
   DiagnosticSchema,
-  ParseResultSchema
+  ParseResultSchema,
 } from './parse-log.mjs';
 
 // Default export for convenience

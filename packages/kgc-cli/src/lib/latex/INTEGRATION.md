@@ -25,6 +25,7 @@ Agent 3 Responsibilities:
 ## WASM Loading Strategy
 
 ### Path Resolution
+
 ```javascript
 import.meta.url
     ↓
@@ -36,23 +37,28 @@ resolve(currentDir, '../../../vendor/swiftlatex')
 ```
 
 ### Loading Flow
+
 1. checkEngineFile(engine) - Verify WASM exists
 2. loadEngine(engine, wasmPath) - Initialize Emscripten [TODO]
 3. Engine Ready - Reuse for subsequent compilations
 
 ### Current Status
+
 - ✅ Path resolution, existence checks, graceful errors
 - ⏳ Emscripten initialization (requires WASM binaries)
 
 ## Error Handling
 
 ### Missing WASM Files
+
 Returns actionable error with expected file path.
 
 ### Missing LaTeX Inputs
+
 Returns missingInputs array for Agent 4 (Resolver) integration.
 
 ### Compilation Errors
+
 Returns log with specific error context.
 
 ## Integration with Agent 4 (Resolver)

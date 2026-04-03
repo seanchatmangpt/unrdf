@@ -81,7 +81,7 @@ export async function generateSimpleModel(outputPath, inputSize = 10, outputSize
           dataType: 1, // FLOAT
           floatData: Array.from(
             { length: inputSize * outputSize },
-            () => Math.random() * 0.2 - 0.1,
+            () => Math.random() * 0.2 - 0.1
           ),
         },
         {

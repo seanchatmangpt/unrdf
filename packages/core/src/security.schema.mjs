@@ -112,5 +112,5 @@ export default {
   hashPassword: hashPasswordSchema,
   verifyPassword: verifyPasswordSchema,
   getSecurityHeaders: getSecurityHeadersSchema,
-  validateInput: validateInputSchema
+  validateInput: validateInputSchema,
 };

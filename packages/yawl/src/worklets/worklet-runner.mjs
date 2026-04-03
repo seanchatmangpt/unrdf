@@ -24,12 +24,12 @@ import { createReceipt } from '../receipt-core.mjs';
  * Worklet execution state
  */
 export const WorkletStateSchema = z.enum([
-  'pending',      // Worklet selected, not yet started
-  'executing',    // Sub-workflow running
-  'completed',    // Successfully finished
-  'failed',       // Execution failed
+  'pending', // Worklet selected, not yet started
+  'executing', // Sub-workflow running
+  'completed', // Successfully finished
+  'failed', // Execution failed
   'compensating', // Running compensation logic
-  'compensated',  // Compensation complete
+  'compensated', // Compensation complete
 ]);
 
 /**
@@ -232,18 +232,17 @@ export class WorkletRunner {
     }
 
     // Execute worklet workflow
-    this._executeWorklet(execution, handler, context)
-      .catch(error => {
-        execution.state = 'failed';
-        execution.completedAt = new Date();
-        execution.result = {
-          success: false,
-          action: 'cancel',
-          error: error.message,
-        };
+    this._executeWorklet(execution, handler, context).catch(error => {
+      execution.state = 'failed';
+      execution.completedAt = new Date();
+      execution.result = {
+        success: false,
+        action: 'cancel',
+        error: error.message,
+      };
 
-        this._logWorkletCompletion(execution);
-      });
+      this._logWorkletCompletion(execution);
+    });
 
     return execution;
   }
@@ -262,13 +261,10 @@ export class WorkletRunner {
         result = await handler.workflow(context);
       } else if (typeof handler.workflow === 'object') {
         // Handler is a workflow specification - create sub-case
-        const subCase = await this.engine.launchCase(
-          handler.workflow.id || handler.id,
-          {
-            ...context.caseData,
-            _workletContext: context,
-          }
-        );
+        const subCase = await this.engine.launchCase(handler.workflow.id || handler.id, {
+          ...context.caseData,
+          _workletContext: context,
+        });
 
         execution.subCaseId = subCase.id;
 
@@ -424,8 +420,9 @@ export class WorkletRunner {
    * @returns {WorkletExecution[]} Array of active executions
    */
   getActiveExecutions() {
-    return Array.from(this.executions.values())
-      .filter(e => e.state === 'executing' || e.state === 'compensating');
+    return Array.from(this.executions.values()).filter(
+      e => e.state === 'executing' || e.state === 'compensating'
+    );
   }
 
   /**

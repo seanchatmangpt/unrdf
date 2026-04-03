@@ -70,7 +70,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 1,
     allowsCycles: false,
-    description: 'An activity in a workflow process is enabled after the completion of a preceding activity in the same process.',
+    description:
+      'An activity in a workflow process is enabled after the completion of a preceding activity in the same process.',
   },
 
   /** WP2: Parallel Split (AND-split) - All branches execute */
@@ -82,7 +83,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The divergence of a branch into two or more parallel branches each of which execute concurrently.',
+    description:
+      'The divergence of a branch into two or more parallel branches each of which execute concurrently.',
   },
 
   /** WP3: Synchronization (AND-join) - Wait for all branches */
@@ -94,7 +96,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'and',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The convergence of two or more branches into a single subsequent branch such that the thread of control is passed to the subsequent branch when all input branches have been enabled.',
+    description:
+      'The convergence of two or more branches into a single subsequent branch such that the thread of control is passed to the subsequent branch when all input branches have been enabled.',
   },
 
   /** WP4: Exclusive Choice (XOR-split) - Exactly one branch */
@@ -106,7 +109,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The divergence of a branch into two or more branches such that when the incoming branch is enabled, the thread of control is immediately passed to precisely one of the outgoing branches.',
+    description:
+      'The divergence of a branch into two or more branches such that when the incoming branch is enabled, the thread of control is immediately passed to precisely one of the outgoing branches.',
   },
 
   /** WP5: Simple Merge (XOR-join) - First to arrive proceeds */
@@ -118,7 +122,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'xor',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The convergence of two or more branches into a single subsequent branch. Each enablement of an incoming branch results in the thread of control being passed to the subsequent branch.',
+    description:
+      'The convergence of two or more branches into a single subsequent branch. Each enablement of an incoming branch results in the thread of control being passed to the subsequent branch.',
   },
 
   /** WP6: Multi-Choice (OR-split) - One or more branches */
@@ -130,7 +135,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The divergence of a branch into two or more branches such that when the incoming branch is enabled, the thread of control is immediately passed to one or more of the outgoing branches based on the evaluation of distinct conditions.',
+    description:
+      'The divergence of a branch into two or more branches such that when the incoming branch is enabled, the thread of control is immediately passed to one or more of the outgoing branches based on the evaluation of distinct conditions.',
   },
 
   /** WP7: Structured Synchronizing Merge (OR-join) - Sync activated branches */
@@ -142,7 +148,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'or',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The convergence of two or more branches which diverged earlier in the process into a single subsequent branch such that the thread of control is passed to the subsequent branch when all active incoming branches have been enabled.',
+    description:
+      'The convergence of two or more branches which diverged earlier in the process into a single subsequent branch such that the thread of control is passed to the subsequent branch when all active incoming branches have been enabled.',
   },
 
   /** WP8: Multi-Merge - Tokens merge without synchronization */
@@ -154,7 +161,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'xor',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The convergence of two or more branches into a single subsequent branch. Each enablement of an incoming branch results in the thread of control being passed to the subsequent branch.',
+    description:
+      'The convergence of two or more branches into a single subsequent branch. Each enablement of an incoming branch results in the thread of control being passed to the subsequent branch.',
   },
 
   /** WP9: Structured Discriminator - First of N branches triggers downstream */
@@ -166,7 +174,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'xor',
     minBranches: 2,
     allowsCycles: false,
-    description: 'The convergence of two or more branches into a single subsequent branch following a corresponding parallel split earlier in the process. Once the first branch fires, the subsequent branch is enabled and the remaining branches are withdrawn.',
+    description:
+      'The convergence of two or more branches into a single subsequent branch following a corresponding parallel split earlier in the process. Once the first branch fires, the subsequent branch is enabled and the remaining branches are withdrawn.',
   },
 
   /** WP10: Arbitrary Cycle - Loops in workflow */
@@ -178,7 +187,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'xor',
     minBranches: 1,
     allowsCycles: true,
-    description: 'The ability to represent cycles in a workflow that have more than one entry or exit point.',
+    description:
+      'The ability to represent cycles in a workflow that have more than one entry or exit point.',
   },
 
   /** WP11: Implicit Termination */
@@ -190,7 +200,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 0,
     allowsCycles: false,
-    description: 'A given subprocess should terminate when there are no remaining work items that are able to be done either now or at any time in the future.',
+    description:
+      'A given subprocess should terminate when there are no remaining work items that are able to be done either now or at any time in the future.',
   },
 
   /** WP16: Deferred Choice - External trigger determines branch */
@@ -202,7 +213,8 @@ export const PATTERNS = Object.freeze({
     joinType: 'none',
     minBranches: 2,
     allowsCycles: false,
-    description: 'A point in the workflow process where one of several branches is chosen based on interaction with the operating environment.',
+    description:
+      'A point in the workflow process where one of several branches is chosen based on interaction with the operating environment.',
   },
 
   /** WP19: Cancel Task */

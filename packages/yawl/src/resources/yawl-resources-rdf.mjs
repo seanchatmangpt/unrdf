@@ -8,16 +8,7 @@
  */
 
 import { dataFactory } from '@unrdf/oxigraph';
-import {
-  YAWL_NS,
-  FOAF_NS,
-  RDF_NS,
-  XSD_NS,
-  yawl,
-  foaf,
-  rdf,
-  xsd,
-} from './yawl-resources-types.mjs';
+import { YAWL_NS, FOAF_NS, RDF_NS, XSD_NS, yawl, foaf, rdf, xsd } from './yawl-resources-types.mjs';
 
 const { namedNode, literal, quad, defaultGraph } = dataFactory;
 
@@ -37,19 +28,23 @@ export function storePolicyPackRDF(store, policyPack) {
     store.add(quad(packNode, foaf('name'), literal(policyPack.name), defaultGraph()));
   }
 
-  store.add(quad(
-    packNode,
-    yawl('priority'),
-    literal(String(policyPack.priority || 0), namedNode(xsd('integer'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      packNode,
+      yawl('priority'),
+      literal(String(policyPack.priority || 0), namedNode(xsd('integer'))),
+      defaultGraph()
+    )
+  );
 
-  store.add(quad(
-    packNode,
-    yawl('enabled'),
-    literal(String(policyPack.enabled !== false), namedNode(xsd('boolean'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      packNode,
+      yawl('enabled'),
+      literal(String(policyPack.enabled !== false), namedNode(xsd('boolean'))),
+      defaultGraph()
+    )
+  );
 
   for (const resource of policyPack.resources) {
     const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);
@@ -73,20 +68,19 @@ export function storeResourceRDF(store, resource, resourceNode) {
     store.add(quad(resourceNode, foaf('name'), literal(resource.name), defaultGraph()));
   }
 
-  store.add(quad(
-    resourceNode,
-    yawl('capacity'),
-    literal(String(resource.capacity), namedNode(xsd('integer'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      resourceNode,
+      yawl('capacity'),
+      literal(String(resource.capacity), namedNode(xsd('integer'))),
+      defaultGraph()
+    )
+  );
 
   if (resource.sparql) {
-    store.add(quad(
-      resourceNode,
-      yawl('eligibilitySparql'),
-      literal(resource.sparql),
-      defaultGraph()
-    ));
+    store.add(
+      quad(resourceNode, yawl('eligibilitySparql'), literal(resource.sparql), defaultGraph())
+    );
   }
 }
 
@@ -110,21 +104,25 @@ export function createAllocationRDF(store, allocationId, workItem, resource, dur
   store.add(quad(allocationNode, rdf('type'), yawl('Allocation'), defaultGraph()));
   store.add(quad(allocationNode, yawl('resource'), resourceNode, defaultGraph()));
   store.add(quad(allocationNode, yawl('workItem'), workItemNode, defaultGraph()));
-  store.add(quad(
-    allocationNode,
-    yawl('allocatedAt'),
-    literal(now.toISOString(), namedNode(xsd('dateTime'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      allocationNode,
+      yawl('allocatedAt'),
+      literal(now.toISOString(), namedNode(xsd('dateTime'))),
+      defaultGraph()
+    )
+  );
   store.add(quad(allocationNode, yawl('status'), literal('active'), defaultGraph()));
 
   if (duration) {
-    store.add(quad(
-      allocationNode,
-      yawl('expiresAt'),
-      literal(new Date(now.getTime() + duration).toISOString(), namedNode(xsd('dateTime'))),
-      defaultGraph()
-    ));
+    store.add(
+      quad(
+        allocationNode,
+        yawl('expiresAt'),
+        literal(new Date(now.getTime() + duration).toISOString(), namedNode(xsd('dateTime'))),
+        defaultGraph()
+      )
+    );
   }
 }
 
@@ -179,12 +177,14 @@ export function storeResourcePoolRDF(store, poolConfig) {
     store.add(quad(poolNode, foaf('name'), literal(poolConfig.name), defaultGraph()));
   }
 
-  store.add(quad(
-    poolNode,
-    yawl('allocationStrategy'),
-    literal(poolConfig.allocationStrategy),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      poolNode,
+      yawl('allocationStrategy'),
+      literal(poolConfig.allocationStrategy),
+      defaultGraph()
+    )
+  );
 
   for (const resource of poolConfig.resources) {
     const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);

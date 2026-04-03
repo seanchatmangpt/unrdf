@@ -5,6 +5,7 @@
 ## Contents
 
 Future files (to be implemented by Agent 3):
+
 - `loader.mjs` - WASM module loading and initialization
 - `instance-pool.mjs` - Engine instance pooling for performance
 - `emscripten-shims.mjs` - Emscripten runtime utilities
@@ -19,6 +20,7 @@ This directory contains supporting modules for engine management.
 ## Current Status
 
 ⚠️ WASM binaries are placeholders. Real implementation requires:
+
 1. Download SwiftLaTeX WASM binaries
 2. Add JavaScript glue code
 3. Implement Emscripten module initialization

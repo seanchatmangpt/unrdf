@@ -10,22 +10,22 @@ const extension = {
         deploy: {
           description: 'Deploy serverless function',
           argsSchema: z.object({ name: z.string(), runtime: z.string(), code: z.string() }),
-          handler: async (_args) => ({ deployed: true, functionId: `fn_${Date.now()}` })
+          handler: async _args => ({ deployed: true, functionId: `fn_${Date.now()}` }),
         },
         invoke: {
           description: 'Invoke serverless function',
           argsSchema: z.object({ functionId: z.string(), payload: z.any() }),
-          handler: async (args) => ({ result: {}, functionId: args.functionId })
+          handler: async args => ({ result: {}, functionId: args.functionId }),
         },
         logs: {
           description: 'Get function logs',
           argsSchema: z.object({ functionId: z.string(), tail: z.number().optional() }),
-          handler: async (args) => ({ logs: [], functionId: args.functionId })
-        }
-      }
-    }
+          handler: async args => ({ logs: [], functionId: args.functionId }),
+        },
+      },
+    },
   },
-  priority: 72
+  priority: 72,
 };
 
 export default extension;

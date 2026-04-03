@@ -37,10 +37,12 @@ export const CompensationSpecSchema = z.object({
   /** Timeout for compensation execution (ms) */
   timeoutMs: z.number().int().positive().default(30000),
   /** Retry policy for compensation failures */
-  retryPolicy: z.object({
-    maxAttempts: z.number().int().positive().default(3),
-    backoffMs: z.number().int().positive().default(1000),
-  }).optional(),
+  retryPolicy: z
+    .object({
+      maxAttempts: z.number().int().positive().default(3),
+      backoffMs: z.number().int().positive().default(1000),
+    })
+    .optional(),
   /** Metadata */
   metadata: z.record(z.string(), z.any()).optional(),
 });
@@ -169,8 +171,7 @@ export class CompensationRegistry {
    * @returns {boolean} True if compensation exists
    */
   hasCompensation(taskId) {
-    return this.taskToCompensations.has(taskId) &&
-           this.taskToCompensations.get(taskId).length > 0;
+    return this.taskToCompensations.has(taskId) && this.taskToCompensations.get(taskId).length > 0;
   }
 
   /**
@@ -241,7 +242,7 @@ export class CompensationRegistry {
       specs: Array.from(this.specs.entries()),
       mappings: Array.from(this.mappings.entries()).map(([key, val]) => [
         key,
-        { ...val, registeredAt: val.registeredAt.toISOString() }
+        { ...val, registeredAt: val.registeredAt.toISOString() },
       ]),
       taskToCompensations: Array.from(this.taskToCompensations.entries()),
     };
@@ -261,7 +262,7 @@ export class CompensationRegistry {
     for (const [key, val] of data.mappings) {
       this.mappings.set(key, {
         ...val,
-        registeredAt: new Date(val.registeredAt)
+        registeredAt: new Date(val.registeredAt),
       });
     }
 

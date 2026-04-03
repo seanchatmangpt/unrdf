@@ -11,13 +11,7 @@
  * @version 1.0.0
  */
 
-import {
-  YAWL_NS,
-  FOAF_NS,
-  RDF_NS,
-  XSD_NS,
-  TIME_NS,
-} from './yawl-resources-core.mjs';
+import { YAWL_NS, FOAF_NS, RDF_NS, XSD_NS, TIME_NS } from './yawl-resources-core.mjs';
 
 /* ========================================================================= */
 /* SPARQL Query Helpers                                                      */
@@ -192,14 +186,10 @@ export function mergeTimeWindows(windows) {
     const current = sorted[i];
     const last = merged[merged.length - 1];
 
-    if (
-      current.available === last.available &&
-      new Date(current.start) <= new Date(last.end)
-    ) {
-      last.end = new Date(Math.max(
-        new Date(last.end).getTime(),
-        new Date(current.end).getTime()
-      )).toISOString();
+    if (current.available === last.available && new Date(current.start) <= new Date(last.end)) {
+      last.end = new Date(
+        Math.max(new Date(last.end).getTime(), new Date(current.end).getTime())
+      ).toISOString();
     } else {
       merged.push(current);
     }
@@ -228,14 +218,10 @@ export function calculateAvailableSlots(windows, rangeStart, rangeEnd) {
   const slots = [];
 
   for (const window of availableWindows) {
-    const start = new Date(Math.max(
-      new Date(window.start).getTime(),
-      new Date(rangeStart).getTime()
-    ));
-    const end = new Date(Math.min(
-      new Date(window.end).getTime(),
-      new Date(rangeEnd).getTime()
-    ));
+    const start = new Date(
+      Math.max(new Date(window.start).getTime(), new Date(rangeStart).getTime())
+    );
+    const end = new Date(Math.min(new Date(window.end).getTime(), new Date(rangeEnd).getTime()));
 
     if (start < end) {
       slots.push({
@@ -245,8 +231,10 @@ export function calculateAvailableSlots(windows, rangeStart, rangeEnd) {
     }
   }
 
-  return mergeTimeWindows(slots.map(s => ({ ...s, available: true })))
-    .map(({ start, end }) => ({ start, end }));
+  return mergeTimeWindows(slots.map(s => ({ ...s, available: true }))).map(({ start, end }) => ({
+    start,
+    end,
+  }));
 }
 
 /**
@@ -366,11 +354,7 @@ export function validateTimeWindow(window) {
  * const isDuringWork = isWithinBusinessHours('2024-01-15T14:00:00Z');
  */
 export function isWithinBusinessHours(datetime, businessHours = {}) {
-  const {
-    startHour = 9,
-    endHour = 17,
-    weekdays = [1, 2, 3, 4, 5],
-  } = businessHours;
+  const { startHour = 9, endHour = 17, weekdays = [1, 2, 3, 4, 5] } = businessHours;
 
   const date = new Date(datetime);
   const hour = date.getUTCHours();
@@ -397,11 +381,7 @@ export function isWithinBusinessHours(datetime, businessHours = {}) {
  * );
  */
 export function generateWorkingHoursWindows(startDate, endDate, businessHours = {}) {
-  const {
-    startHour = 9,
-    endHour = 17,
-    weekdays = [1, 2, 3, 4, 5],
-  } = businessHours;
+  const { startHour = 9, endHour = 17, weekdays = [1, 2, 3, 4, 5] } = businessHours;
 
   const windows = [];
   const current = new Date(startDate);

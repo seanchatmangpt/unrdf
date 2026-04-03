@@ -51,11 +51,11 @@ export const TIME_NS = 'http://www.w3.org/2006/time#';
  * Namespace helper functions
  * @public
  */
-export const yawl = (localName) => namedNode(`${YAWL_NS}${localName}`);
-export const foaf = (localName) => namedNode(`${FOAF_NS}${localName}`);
-export const rdf = (localName) => namedNode(`${RDF_NS}${localName}`);
-export const xsd = (localName) => `${XSD_NS}${localName}`;
-export const time = (localName) => namedNode(`${TIME_NS}${localName}`);
+export const yawl = localName => namedNode(`${YAWL_NS}${localName}`);
+export const foaf = localName => namedNode(`${FOAF_NS}${localName}`);
+export const rdf = localName => namedNode(`${RDF_NS}${localName}`);
+export const xsd = localName => `${XSD_NS}${localName}`;
+export const time = localName => namedNode(`${TIME_NS}${localName}`);
 
 /* ========================================================================= */
 /* Resource Type Enum                                                        */

@@ -23,10 +23,7 @@ import {
   getWorkflowAuditTrail,
   YAWL_EVENT_TYPES,
 } from '../src/events/yawl-events.mjs';
-import {
-  createYAWLPolicyPack,
-  createTaskEnablementValidator,
-} from '../src/hooks/yawl-hooks.mjs';
+import { createYAWLPolicyPack, createTaskEnablementValidator } from '../src/hooks/yawl-hooks.mjs';
 
 /* ========================================================================= */
 /* ADVERSARIAL TEST 1: YAWL → KGC-4D → YAWL Round-Trip                      */
@@ -87,9 +84,7 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const events = await store.getAllEvents();
     expect(events.length).toBeGreaterThan(0);
 
-    const caseCreatedEvent = events.find(e =>
-      e.type.includes('CASE_CREATED')
-    );
+    const caseCreatedEvent = events.find(e => e.type.includes('CASE_CREATED'));
     expect(caseCreatedEvent).toBeDefined();
     expect(caseCreatedEvent.payload.caseId).toBe(caseInstance.id);
   });
@@ -159,9 +154,7 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
     const workflow = new YawlWorkflow({
       id: 'receipt-test',
       name: 'Receipt Test',
-      tasks: [
-        { id: 'task1', name: 'Task 1' },
-      ],
+      tasks: [{ id: 'task1', name: 'Task 1' }],
       startTaskId: 'task1',
       endTaskIds: ['task1'],
     });
@@ -220,9 +213,7 @@ describe('ADVERSARIAL: YAWL → KGC-4D → YAWL Round-Trip', () => {
 
     // PROVE: Events are in order
     for (let i = 1; i < audit.events.length; i++) {
-      expect(BigInt(audit.events[i].t_ns)).toBeGreaterThan(
-        BigInt(audit.events[i - 1].t_ns)
-      );
+      expect(BigInt(audit.events[i].t_ns)).toBeGreaterThan(BigInt(audit.events[i - 1].t_ns));
     }
 
     // PROVE: Audit hash is deterministic
@@ -258,9 +249,7 @@ describe('ADVERSARIAL: KGC-4D Offline Failure Scenarios', () => {
     const workflow = new YawlWorkflow({
       id: 'failure-test',
       name: 'Failure Test',
-      tasks: [
-        { id: 'task1', name: 'Task 1' },
-      ],
+      tasks: [{ id: 'task1', name: 'Task 1' }],
       startTaskId: 'task1',
       endTaskIds: ['task1'],
     });
@@ -284,12 +273,7 @@ describe('ADVERSARIAL: KGC-4D Offline Failure Scenarios', () => {
 
     // PROVE: Reconstructing non-existent case returns empty/null state
     const fakeCaseId = 'non-existent-case-id';
-    const reconstructed = await reconstructCase(
-      emptyStore,
-      null,
-      fakeCaseId,
-      now()
-    );
+    const reconstructed = await reconstructCase(emptyStore, null, fakeCaseId, now());
 
     expect(reconstructed.state).toBeNull();
     expect(reconstructed.eventCount).toBe(0);
@@ -356,9 +340,7 @@ describe('ADVERSARIAL: Hook Execution Verification', () => {
         { id: 'task1', kind: 'AtomicTask', inputConditions: ['start-done'] },
         { id: 'task2', kind: 'AtomicTask' },
       ],
-      controlFlow: [
-        { source: 'task1', target: 'task2', predicate: 'approved' },
-      ],
+      controlFlow: [{ source: 'task1', target: 'task2', predicate: 'approved' }],
     };
 
     const policyPack = createYAWLPolicyPack(workflow, {
@@ -410,9 +392,7 @@ describe('ADVERSARIAL: Hook Execution Verification', () => {
 
   it('PROVE: Hook execution failures are caught and recorded', async () => {
     const mockEvaluator = {
-      evaluate: vi
-        .fn()
-        .mockRejectedValue(new Error('SPARQL evaluation failed')),
+      evaluate: vi.fn().mockRejectedValue(new Error('SPARQL evaluation failed')),
     };
 
     const workflow = {
@@ -455,9 +435,7 @@ describe('ADVERSARIAL: Concurrent Case Execution', () => {
     const workflow = new YawlWorkflow({
       id: 'concurrent-workflow',
       name: 'Concurrent Test',
-      tasks: [
-        { id: 'task1', name: 'Task 1' },
-      ],
+      tasks: [{ id: 'task1', name: 'Task 1' }],
       startTaskId: 'task1',
       endTaskIds: ['task1'],
     });
@@ -507,17 +485,13 @@ describe('ADVERSARIAL: Concurrent Case Execution', () => {
     const vectorClock = new VectorClock('node-1');
     vectorClock.increment();
 
-    const eventReceipt = await appendWorkflowEvent(
-      store,
-      YAWL_EVENT_TYPES.CASE_CREATED,
-      {
-        caseId: crypto.randomUUID(),
-        specId: 'test-spec',
-        timestamp: toISO(now()),
-        receipt: receipt1,
-        vectorClock: vectorClock.toJSON(),
-      }
-    );
+    const eventReceipt = await appendWorkflowEvent(store, YAWL_EVENT_TYPES.CASE_CREATED, {
+      caseId: crypto.randomUUID(),
+      specId: 'test-spec',
+      timestamp: toISO(now()),
+      receipt: receipt1,
+      vectorClock: vectorClock.toJSON(),
+    });
 
     // PROVE: Event has vector clock metadata
     expect(eventReceipt).toBeDefined();

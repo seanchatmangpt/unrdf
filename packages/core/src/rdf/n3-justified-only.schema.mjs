@@ -60,5 +60,5 @@ export default {
   streamingParse: streamingParseSchema,
   streamingWrite: streamingWriteSchema,
   createStreamParser: createStreamParserSchema,
-  createStreamWriter: createStreamWriterSchema
+  createStreamWriter: createStreamWriterSchema,
 };

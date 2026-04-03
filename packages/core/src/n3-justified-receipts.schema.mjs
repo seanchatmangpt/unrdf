@@ -21,5 +21,5 @@ export const testN3DeterminismSchema = {
 };
 
 export default {
-  testN3Determinism: testN3DeterminismSchema
+  testN3Determinism: testN3DeterminismSchema,
 };

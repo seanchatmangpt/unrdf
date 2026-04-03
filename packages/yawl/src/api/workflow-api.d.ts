@@ -296,10 +296,7 @@ export const ReceiptSchema: z.ZodType<Receipt>;
  * @throws {ValidationError} If workflow specification is invalid
  * @throws {StoreError} If RDF store operation fails
  */
-export function createWorkflow(
-  spec: WorkflowSpec,
-  options: WorkflowOptions
-): Promise<Receipt>;
+export function createWorkflow(spec: WorkflowSpec, options: WorkflowOptions): Promise<Receipt>;
 
 /**
  * Create a new workflow case (instance)
@@ -333,11 +330,7 @@ export function createWorkflow(
  * @throws {ValidationError} If workflow ID or options are invalid
  * @throws {NotFoundError} If workflow specification doesn't exist
  */
-export function createCase(
-  workflowId: string,
-  store: any,
-  options?: CaseOptions
-): Promise<Receipt>;
+export function createCase(workflowId: string, store: any, options?: CaseOptions): Promise<Receipt>;
 
 /**
  * Enable a task in a workflow case
@@ -396,11 +389,7 @@ export function enableTask(
  * @throws {ValidationError} If IDs are invalid
  * @throws {StateError} If work item is not in "enabled" state
  */
-export function startTask(
-  caseId: string,
-  workItemId: string,
-  store: any
-): Promise<Receipt>;
+export function startTask(caseId: string, workItemId: string, store: any): Promise<Receipt>;
 
 /**
  * Complete a started work item

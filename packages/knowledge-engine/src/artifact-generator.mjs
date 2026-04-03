@@ -101,8 +101,7 @@ export class ArtifactGenerator {
           visibility: closure.observable.visibility,
         },
         darkField: closure.darkField,
-        totalPatterns:
-          closure.observable.patterns.length + closure.darkField.patterns.length,
+        totalPatterns: closure.observable.patterns.length + closure.darkField.patterns.length,
         completeness: closure.completeness,
         generatedAt: Date.now(),
       };

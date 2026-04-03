@@ -78,10 +78,12 @@
 ### 3. Test Suites
 
 **Files**:
+
 - `ctan-map.test.mjs` (215 LOC) - 8 test suites, 25+ tests
 - `resolve.test.mjs` (245 LOC) - 5 test suites, 15+ tests
 
 **Coverage**:
+
 - ✅ VFS path building
 - ✅ CTAN URL construction
 - ✅ Package name extraction (with exceptions)
@@ -94,6 +96,7 @@
 ### 4. Documentation
 
 **Files**:
+
 - `cache/README.md` - API reference, examples, architecture
 - `cache/INTEGRATION-GUIDE.md` - How compile.mjs should call resolver
 - `cache/AGENT-4-SUMMARY.md` - This file
@@ -113,8 +116,8 @@
 await resolveMissingInputs({
   missingInputs: ['algorithm2e.sty'],
   cacheDir: '/cache',
-  maxRetries: 3,       // Configurable 0-10
-  initialDelay: 100,   // Starting delay in ms
+  maxRetries: 3, // Configurable 0-10
+  initialDelay: 100, // Starting delay in ms
 });
 ```
 
@@ -140,13 +143,13 @@ await resolveMissingInputs({
 
 20+ known LaTeX packages with different filenames:
 
-| Filename | Package Name |
-|----------|--------------|
-| `tikz.sty` | `pgf` |
+| Filename            | Package Name   |
+| ------------------- | -------------- |
+| `tikz.sty`          | `pgf`          |
 | `algpseudocode.sty` | `algorithmicx` |
-| `graphicx.sty` | `graphics` |
-| `amssymb.sty` | `amsfonts` |
-| `beamerarticle.sty` | `beamer` |
+| `graphicx.sty`      | `graphics`     |
+| `amssymb.sty`       | `amsfonts`     |
+| `beamerarticle.sty` | `beamer`       |
 
 ### 4. Fetch Timeout
 
@@ -166,9 +169,9 @@ const resolved = await resolveMissingInputs({
       'algorithm2e.sty': {
         url: 'https://mirrors.ctan.org/...',
         hash: 'abc123...',
-      }
-    }
-  }
+      },
+    },
+  },
 });
 ```
 
@@ -184,8 +187,8 @@ import { resolveMissingInputs, augmentVfsWithResolvedPackages } from './cache/re
 const resolved = await resolveMissingInputs({
   missingInputs: result.missingInputs,
   cacheDir,
-  registry,        // Optional: for testing
-  lockfile,        // Optional: for version pinning
+  registry, // Optional: for testing
+  lockfile, // Optional: for version pinning
   maxRetries: 3,
   initialDelay: 100,
 });
@@ -208,6 +211,7 @@ ${cacheDir}/ctan/
 ```
 
 **Properties**:
+
 - Content-addressed (deterministic)
 - Atomic updates
 - Self-healing (corrupted cache rebuilds)
@@ -230,6 +234,7 @@ wc -l cache/*.mjs
 ```
 
 **Output**:
+
 ```
 ✅ Syntax validation PASSED
 
@@ -241,17 +246,17 @@ wc -l cache/*.mjs
 
 ## Code Quality Metrics
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Syntax validation | `node --check` | ✅ PASS |
-| Implementation LOC | 296 + 588 = 884 | ✅ |
-| Test LOC | 215 + 245 = 460 | ✅ |
-| Exported functions | 14 (map) + 4 (resolve) | ✅ |
-| JSDoc type hints | 100% coverage | ✅ |
-| Input validation | Zod schemas | ✅ |
-| Pure functions | No OTEL in business logic | ✅ |
-| Error messages | Actionable with troubleshooting | ✅ |
-| Test coverage | 80%+ (VFS, cache, errors, validation) | ✅ |
+| Metric             | Value                                 | Status  |
+| ------------------ | ------------------------------------- | ------- |
+| Syntax validation  | `node --check`                        | ✅ PASS |
+| Implementation LOC | 296 + 588 = 884                       | ✅      |
+| Test LOC           | 215 + 245 = 460                       | ✅      |
+| Exported functions | 14 (map) + 4 (resolve)                | ✅      |
+| JSDoc type hints   | 100% coverage                         | ✅      |
+| Input validation   | Zod schemas                           | ✅      |
+| Pure functions     | No OTEL in business logic             | ✅      |
+| Error messages     | Actionable with troubleshooting       | ✅      |
+| Test coverage      | 80%+ (VFS, cache, errors, validation) | ✅      |
 
 ## Adversarial PM Checklist
 
@@ -279,13 +284,13 @@ wc -l cache/*.mjs
 
 ### What BREAKS if Wrong?
 
-| Failure | Impact | Mitigation |
-|---------|--------|------------|
-| Retry logic broken | Single transient failure = compilation fails | Unit tests validate retry parameters |
-| Package exceptions missing | `tikz.sty` fetches wrong package | 20+ exceptions pre-configured, tested |
-| Timeout too short | Slow networks always fail | 10s timeout (generous), configurable |
-| Local fixture detection broken | Tests can't use mock servers | `isLocalFixture()` unit tested |
-| Cache corruption | Wrong files served | SHA-256 hash validation on read |
+| Failure                        | Impact                                       | Mitigation                            |
+| ------------------------------ | -------------------------------------------- | ------------------------------------- |
+| Retry logic broken             | Single transient failure = compilation fails | Unit tests validate retry parameters  |
+| Package exceptions missing     | `tikz.sty` fetches wrong package             | 20+ exceptions pre-configured, tested |
+| Timeout too short              | Slow networks always fail                    | 10s timeout (generous), configurable  |
+| Local fixture detection broken | Tests can't use mock servers                 | `isLocalFixture()` unit tested        |
+| Cache corruption               | Wrong files served                           | SHA-256 hash validation on read       |
 
 ### What's the EVIDENCE?
 
@@ -297,18 +302,19 @@ wc -l cache/*.mjs
 
 ## Performance Characteristics
 
-| Operation | Complexity | Typical Time |
-|-----------|------------|--------------|
-| Cache lookup | O(1) | <5ms |
-| CTAN fetch (success 1st try) | O(1) | 100-500ms |
-| CTAN fetch (retry 3x) | O(3) | 100-1500ms |
-| Local fixture fetch | O(1) | <10ms |
-| VFS merge | O(m) files | <5ms |
-| Package metadata | O(1) | <1ms |
+| Operation                    | Complexity | Typical Time |
+| ---------------------------- | ---------- | ------------ |
+| Cache lookup                 | O(1)       | <5ms         |
+| CTAN fetch (success 1st try) | O(1)       | 100-500ms    |
+| CTAN fetch (retry 3x)        | O(3)       | 100-1500ms   |
+| Local fixture fetch          | O(1)       | <10ms        |
+| VFS merge                    | O(m) files | <5ms         |
+| Package metadata             | O(1)       | <1ms         |
 
 ## Dependencies
 
 **Runtime**:
+
 - `node:crypto` (SHA-256 hashing)
 - `node:fs` (cache read/write)
 - `node:path` (path manipulation)
@@ -316,6 +322,7 @@ wc -l cache/*.mjs
 - Built-in `fetch()` (Node 18+)
 
 **Dev**:
+
 - `vitest` (testing framework)
 
 ## Next Steps
@@ -323,43 +330,48 @@ wc -l cache/*.mjs
 ### For Other Agents:
 
 **Agent 3 (Engine Runner)**:
+
 - Parse missing inputs from LaTeX log
 - Call `resolveMissingInputs()` with retry options
 - Handle resolution errors gracefully
 
 **Agent 5 (Lockfile Manager)**:
+
 - Already integrated via `lockfile` parameter
 - Resolver reads pinned URLs from lockfile
 - No changes needed
 
 **Agent 6 (Diagnostics)**:
+
 - Resolver errors include troubleshooting steps
 - Parse retry count from error messages
 - Include CTAN URLs in diagnostic logs
 
 **Agent 10 (Synthesis Editor)**:
+
 - Update `compile.mjs` imports (see INTEGRATION-GUIDE.md)
 - Add optional `registry` parameter for testing
 - Pass retry options to resolver
 
 ## Files Delivered
 
-| File | Path | LOC | Purpose |
-|------|------|-----|---------|
-| **ctan-map.mjs** | `cache/` | 296 | Package name → CTAN URL mapping |
-| **ctan-map.test.mjs** | `cache/` | 215 | Mapping unit tests |
-| **resolve.mjs** | `cache/` | 588 | Main resolver with retry logic |
-| **resolve.test.mjs** | `cache/` | 245 | Resolver unit tests |
-| **README.md** | `cache/` | Updated | API reference |
-| **INTEGRATION-GUIDE.md** | `cache/` | New | Migration guide |
-| **AGENT-4-SUMMARY.md** | `cache/` | This file | Delivery summary |
-| **index.mjs** | `cache/` | Updated | Unified exports |
+| File                     | Path     | LOC       | Purpose                         |
+| ------------------------ | -------- | --------- | ------------------------------- |
+| **ctan-map.mjs**         | `cache/` | 296       | Package name → CTAN URL mapping |
+| **ctan-map.test.mjs**    | `cache/` | 215       | Mapping unit tests              |
+| **resolve.mjs**          | `cache/` | 588       | Main resolver with retry logic  |
+| **resolve.test.mjs**     | `cache/` | 245       | Resolver unit tests             |
+| **README.md**            | `cache/` | Updated   | API reference                   |
+| **INTEGRATION-GUIDE.md** | `cache/` | New       | Migration guide                 |
+| **AGENT-4-SUMMARY.md**   | `cache/` | This file | Delivery summary                |
+| **index.mjs**            | `cache/` | Updated   | Unified exports                 |
 
 **Total**: ~1,344 LOC (implementation + tests) + docs
 
 ## Status: ✅ COMPLETE
 
 All requirements met:
+
 - ✅ `cache/resolve.mjs` - Main resolver (588 LOC)
 - ✅ `cache/ctan-map.mjs` - Package mapping (296 LOC)
 - ✅ Retry logic with exponential backoff (3 attempts, configurable)

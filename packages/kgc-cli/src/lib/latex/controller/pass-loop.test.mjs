@@ -17,7 +17,7 @@ import { executePassLoop, needsMultiplePass, getRecommendedPasses } from './pass
  */
 function createMockCompile(results) {
   let callCount = 0;
-  return async (_pass) => {
+  return async _pass => {
     const result = results[callCount] || results[results.length - 1];
     callCount++;
     return result;
@@ -32,9 +32,12 @@ function successResult(artifacts = null) {
     ok: true,
     pdf: new Uint8Array([0x25, 0x50, 0x44, 0x46]), // "%PDF" header
     log: 'Output written on main.pdf (1 page).',
-    artifacts: artifacts !== undefined ? artifacts : new Map([
-      ['main.log', new TextEncoder().encode('This is pdfTeX')], // .log is NOT a convergence file
-    ]),
+    artifacts:
+      artifacts !== undefined
+        ? artifacts
+        : new Map([
+            ['main.log', new TextEncoder().encode('This is pdfTeX')], // .log is NOT a convergence file
+          ]),
   };
 }
 
@@ -46,9 +49,7 @@ function changedResult(iteration = 1) {
     ok: true,
     pdf: new Uint8Array([0x25, 0x50, 0x44, 0x46]),
     log: 'Output written on main.pdf (1 page).\nLabel(s) may have changed. Rerun to get cross-references right.',
-    artifacts: new Map([
-      ['main.aux', new TextEncoder().encode(`\\relax\\iteration${iteration}`)],
-    ]),
+    artifacts: new Map([['main.aux', new TextEncoder().encode(`\\relax\\iteration${iteration}`)]]),
   };
 }
 
@@ -58,9 +59,10 @@ function changedResult(iteration = 1) {
 function failureResult(missingInputs = []) {
   return {
     ok: false,
-    log: missingInputs.length > 0
-      ? `! LaTeX Error: File \`${missingInputs[0]}' not found.`
-      : '! Undefined control sequence.',
+    log:
+      missingInputs.length > 0
+        ? `! LaTeX Error: File \`${missingInputs[0]}' not found.`
+        : '! Undefined control sequence.',
     missingInputs,
     error: 'Compilation failed',
   };
@@ -96,7 +98,7 @@ describe('Pass Loop - Single-pass success', () => {
       compile,
       vfs,
       maxPasses: 5,
-      onProgress: (event) => events.push(event),
+      onProgress: event => events.push(event),
     });
 
     // Should emit 'compiling' for pass 1, then 'converged' when done
@@ -277,7 +279,7 @@ describe('Pass Loop - Maximum passes', () => {
 describe('Pass Loop - Missing input resolution', () => {
   it('should resolve missing inputs and retry', async () => {
     let compileCount = 0;
-    const compile = async (_pass) => {
+    const compile = async _pass => {
       compileCount++;
       if (compileCount === 1) {
         return failureResult(['fancyhdr.sty']);
@@ -287,9 +289,7 @@ describe('Pass Loop - Missing input resolution', () => {
         ok: true,
         pdf: new Uint8Array([0x25, 0x50, 0x44, 0x46]),
         log: 'Output written on main.pdf (1 page).',
-        artifacts: new Map([
-          ['main.log', new TextEncoder().encode('success')],
-        ]),
+        artifacts: new Map([['main.log', new TextEncoder().encode('success')]]),
       };
     };
 
@@ -298,7 +298,7 @@ describe('Pass Loop - Missing input resolution', () => {
       ['texmf/tex/latex/fancyhdr/fancyhdr.sty', new TextEncoder().encode('% fancyhdr')],
     ]);
 
-    const onResolve = async (missingInputs) => {
+    const onResolve = async missingInputs => {
       assert.deepEqual(missingInputs, ['fancyhdr.sty']);
       return resolvedFiles;
     };
@@ -317,10 +317,7 @@ describe('Pass Loop - Missing input resolution', () => {
   });
 
   it('should emit resolving progress event', async () => {
-    const compile = createMockCompile([
-      failureResult(['tikz.sty']),
-      successResult(),
-    ]);
+    const compile = createMockCompile([failureResult(['tikz.sty']), successResult()]);
 
     const vfs = new Map();
     const events = [];
@@ -333,7 +330,7 @@ describe('Pass Loop - Missing input resolution', () => {
       compile,
       vfs,
       onResolve,
-      onProgress: (event) => events.push(event),
+      onProgress: event => events.push(event),
     });
 
     const resolvingEvent = events.find(e => e.status === 'resolving');

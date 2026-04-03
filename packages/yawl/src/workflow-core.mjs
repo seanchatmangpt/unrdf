@@ -79,7 +79,10 @@ export const WorkflowSpecSchema = z.object({
   /** Human-readable workflow name */
   name: z.string().min(1).max(200).optional(),
   /** Semantic version string */
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .default('1.0.0'),
   /** Workflow description */
   description: z.string().max(5000).optional(),
   /** Task definitions */

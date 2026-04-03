@@ -55,7 +55,7 @@ export function createReceipt(observation, previousHash = null) {
     location: observation.location,
     data: observation.data,
     metadata: observation.metadata,
-    tags: observation.tags.slice().sort() // Stable tag order
+    tags: observation.tags.slice().sort(), // Stable tag order
   };
 
   const hash = hashData(content);
@@ -65,7 +65,7 @@ export function createReceipt(observation, previousHash = null) {
     hash,
     previousHash,
     index: previousHash ? -1 : 0, // Will be set by chain builder
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   return receipt;
@@ -152,7 +152,7 @@ export function createManifest(receipts) {
       firstHash: null,
       lastHash: null,
       chainHash: null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -165,7 +165,7 @@ export function createManifest(receipts) {
     firstHash: receipts[0].hash,
     lastHash: receipts[receipts.length - 1].hash,
     chainHash,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -193,5 +193,5 @@ export default {
   verifyReceiptChain,
   verifyObservation,
   createManifest,
-  verifyManifest
+  verifyManifest,
 };

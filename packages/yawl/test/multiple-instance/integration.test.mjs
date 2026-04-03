@@ -96,19 +96,16 @@ describe('WP12: Multiple Instances Without Synchronization', () => {
 
     // Complete first instance only
     await engine.startTask(yawlCase.id, instances[0].id);
-    const { downstreamEnabled } = await engine.completeTask(
-      yawlCase.id,
-      instances[0].id
-    );
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, instances[0].id);
 
     // Assert: XOR-join - done enabled immediately
     expect(downstreamEnabled.length).toBe(1);
     expect(downstreamEnabled[0].taskId).toBe('done');
 
     // Other instances still running
-    const stillRunning = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process'
-    );
+    const stillRunning = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process');
     expect(stillRunning.length).toBe(4);
   });
 
@@ -186,33 +183,27 @@ describe('WP13: Multiple Instances With A Priori Design-Time Knowledge', () => {
 
     // Complete reviewer 1
     await engine.startTask(yawlCase.id, reviewers[0].id);
-    const { downstreamEnabled: after1 } = await engine.completeTask(
-      yawlCase.id,
-      reviewers[0].id,
-      { approved: true }
-    );
+    const { downstreamEnabled: after1 } = await engine.completeTask(yawlCase.id, reviewers[0].id, {
+      approved: true,
+    });
 
     // Decision NOT enabled yet (AND-join)
     expect(after1.length).toBe(0);
 
     // Complete reviewer 2
     await engine.startTask(yawlCase.id, reviewers[1].id);
-    const { downstreamEnabled: after2 } = await engine.completeTask(
-      yawlCase.id,
-      reviewers[1].id,
-      { approved: true }
-    );
+    const { downstreamEnabled: after2 } = await engine.completeTask(yawlCase.id, reviewers[1].id, {
+      approved: true,
+    });
 
     // Still NOT enabled
     expect(after2.length).toBe(0);
 
     // Complete reviewer 3
     await engine.startTask(yawlCase.id, reviewers[2].id);
-    const { downstreamEnabled: after3 } = await engine.completeTask(
-      yawlCase.id,
-      reviewers[2].id,
-      { approved: true }
-    );
+    const { downstreamEnabled: after3 } = await engine.completeTask(yawlCase.id, reviewers[2].id, {
+      approved: true,
+    });
 
     // Assert: NOW decision is enabled (all 3 completed)
     expect(after3.length).toBe(1);
@@ -337,17 +328,14 @@ describe('WP14: Multiple Instances With A Priori Run-Time Knowledge', () => {
       await engine.completeTask(yawlCase.id, packItems[i].id);
     }
 
-    let shipItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'ship'
-    );
+    let shipItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'ship');
     expect(shipItems.length).toBe(0);
 
     // Complete last item
     await engine.startTask(yawlCase.id, packItems[6].id);
-    const { downstreamEnabled } = await engine.completeTask(
-      yawlCase.id,
-      packItems[6].id
-    );
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, packItems[6].id);
 
     // Assert: Ship now enabled (AND-join satisfied)
     expect(downstreamEnabled.length).toBe(1);
@@ -401,15 +389,15 @@ describe('WP14: Multiple Instances With A Priori Run-Time Knowledge', () => {
     }
 
     // Assert: Analyze enabled (threshold reached)
-    const analyzeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'analyze'
-    );
+    const analyzeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'analyze');
     expect(analyzeItems.length).toBe(1);
 
     // Other 40 instances still active
-    const stillPending = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'respond'
-    );
+    const stillPending = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'respond');
     expect(stillPending.length).toBe(40);
   });
 });
@@ -472,9 +460,9 @@ describe('WP15: Multiple Instances Without A Priori Run-Time Knowledge', () => {
     });
 
     // Assert: 4 tickets now (2 original + 2 new)
-    tickets = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'handle-ticket'
-    );
+    tickets = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'handle-ticket');
     expect(tickets.length).toBe(4);
 
     // Complete all tickets
@@ -533,9 +521,9 @@ describe('WP15: Multiple Instances Without A Priori Run-Time Knowledge', () => {
     await engine.addMIInstance(yawlCase.id, 'process', { id: 7 });
 
     // Assert: 7 total instances (3 started, 2 enabled, 2 new)
-    instances = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process'
-    );
+    instances = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process');
     const started = instances.filter(w => w.status === 'started');
     const enabled = instances.filter(w => w.status === 'enabled');
 
@@ -684,9 +672,9 @@ describe('Combined MI Patterns - Real-World Scenarios', () => {
       reviewerId: 'EXPERT-5',
     });
 
-    reviewers = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'assign-reviewers'
-    );
+    reviewers = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'assign-reviewers');
     expect(reviewers.length).toBe(3); // 2 pending + 1 new
 
     // Complete 3rd review (threshold reached)
@@ -694,9 +682,9 @@ describe('Combined MI Patterns - Real-World Scenarios', () => {
     await engine.completeTask(yawlCase.id, reviewers[0].id, { score: 9 });
 
     // Assert: Editor decision enabled (threshold = 3)
-    const decisionItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'editor-decision'
-    );
+    const decisionItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'editor-decision');
     expect(decisionItems.length).toBe(1);
   });
 });
@@ -736,11 +724,9 @@ describe('MI Pattern Receipt Validation', () => {
 
     const startItem = yawlCase.getEnabledWorkItems()[0];
     await engine.startTask(yawlCase.id, startItem.id);
-    const { receipt: startReceipt } = await engine.completeTask(
-      yawlCase.id,
-      startItem.id,
-      { instanceCount: 3 }
-    );
+    const { receipt: startReceipt } = await engine.completeTask(yawlCase.id, startItem.id, {
+      instanceCount: 3,
+    });
 
     // Assert: Receipts valid
     expect(createReceipt.valid).toBe(true);

@@ -136,13 +136,9 @@ class MockStreamingPipeline {
     return {
       ...this.metrics,
       avgLatencyMs:
-        this.metrics.totalBatches > 0
-          ? this.metrics.totalLatencyMs / this.metrics.totalBatches
-          : 0,
+        this.metrics.totalBatches > 0 ? this.metrics.totalLatencyMs / this.metrics.totalBatches : 0,
       avgBatchSize:
-        this.metrics.totalBatches > 0
-          ? this.metrics.totalProcessed / this.metrics.totalBatches
-          : 0,
+        this.metrics.totalBatches > 0 ? this.metrics.totalProcessed / this.metrics.totalBatches : 0,
     };
   }
 }
@@ -228,11 +224,17 @@ function demo1BasicInference() {
 
   // Generate test input
   const testInput = new Float32Array(
-    Array.from({ length: inputSize }, (_, i) => i * 0.1 + Math.random() * 0.05),
+    Array.from({ length: inputSize }, (_, i) => i * 0.1 + Math.random() * 0.05)
   );
 
   log('Test Input:', 'yellow');
-  log('  ' + Array.from(testInput).map(v => v.toFixed(3)).join(', '), 'reset');
+  log(
+    '  ' +
+      Array.from(testInput)
+        .map(v => v.toFixed(3))
+        .join(', '),
+    'reset'
+  );
 
   // Run inference
   log('\nRunning inference...', 'blue');
@@ -241,7 +243,13 @@ function demo1BasicInference() {
   const inferenceTime = performance.now() - startTime;
 
   log('\nModel Output:', 'green');
-  log('  ' + Array.from(output).map(v => v.toFixed(4)).join(', '), 'reset');
+  log(
+    '  ' +
+      Array.from(output)
+        .map(v => v.toFixed(4))
+        .join(', '),
+    'reset'
+  );
 
   log(`\nInference Time: ${inferenceTime.toFixed(3)}ms`, 'cyan');
   log(`Throughput: ${(1000 / inferenceTime).toFixed(0)} inferences/sec\n`, 'cyan');
@@ -299,9 +307,12 @@ function demo2BatchedInference(model) {
   const optimal = results.find(r => r.throughput === maxThroughput);
   log(
     `  Optimal Batch Size: ${optimal.batchSize} (${optimal.throughput.toFixed(0)} inf/sec)`,
-    'green',
+    'green'
   );
-  log(`  Speedup: ${(maxThroughput / results[0].throughput).toFixed(1)}x vs single inference\n`, 'cyan');
+  log(
+    `  Speedup: ${(maxThroughput / results[0].throughput).toFixed(1)}x vs single inference\n`,
+    'cyan'
+  );
 
   return results;
 }
@@ -405,7 +416,7 @@ async function demo4ModelRegistry() {
     const badge = model.isActive ? '[ACTIVE]' : model.isCanary ? '[CANARY]' : '';
     log(
       `  ${model.version}: ${model.description} (${model.accuracy * 100}%) ${badge}`,
-      model.isActive ? 'green' : 'cyan',
+      model.isActive ? 'green' : 'cyan'
     );
   }
 
@@ -428,8 +439,14 @@ async function demo4ModelRegistry() {
   }
 
   log('\nTraffic Distribution:', 'yellow');
-  log(`  v1.0: ${requestCount['v1.0']} requests (${((requestCount['v1.0'] / 10000) * 100).toFixed(1)}%)`, 'green');
-  log(`  v2.0: ${requestCount['v2.0']} requests (${((requestCount['v2.0'] / 10000) * 100).toFixed(1)}%)`, 'cyan');
+  log(
+    `  v1.0: ${requestCount['v1.0']} requests (${((requestCount['v1.0'] / 10000) * 100).toFixed(1)}%)`,
+    'green'
+  );
+  log(
+    `  v2.0: ${requestCount['v2.0']} requests (${((requestCount['v2.0'] / 10000) * 100).toFixed(1)}%)`,
+    'cyan'
+  );
 
   // Promote canary
   log('\nCanary validation successful, promoting to production...', 'blue');
@@ -518,16 +535,16 @@ async function demo5E2EBenchmark(model) {
  */
 async function main() {
   console.log(
-    `\n${colors.bright}${colors.blue}╔══════════════════════════════════════════════════════════════════╗${colors.reset}`,
+    `\n${colors.bright}${colors.blue}╔══════════════════════════════════════════════════════════════════╗${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}║  UNRDF ML Inference Pipeline - Standalone Demo                  ║${colors.reset}`,
+    `${colors.bright}${colors.blue}║  UNRDF ML Inference Pipeline - Standalone Demo                  ║${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}║  High-Performance ONNX Inference for RDF Streams                ║${colors.reset}`,
+    `${colors.bright}${colors.blue}║  High-Performance ONNX Inference for RDF Streams                ║${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}╚══════════════════════════════════════════════════════════════════╝${colors.reset}\n`,
+    `${colors.bright}${colors.blue}╚══════════════════════════════════════════════════════════════════╝${colors.reset}\n`
   );
 
   try {

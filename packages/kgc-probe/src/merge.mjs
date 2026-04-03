@@ -21,7 +21,7 @@ const SEVERITY_ORDER = {
   warn: 2,
   info: 3,
   debug: 4,
-  trace: 5
+  trace: 5,
 };
 
 /**
@@ -105,14 +105,17 @@ export function deduplicateObservations(observations) {
 
   for (const obs of observations) {
     // Create deterministic content key
-    const key = JSON.stringify({
-      category: obs.category,
-      severity: obs.severity,
-      message: obs.message,
-      location: obs.location,
-      data: obs.data,
-      tags: obs.tags.slice().sort()
-    }, Object.keys(obs).sort());
+    const key = JSON.stringify(
+      {
+        category: obs.category,
+        severity: obs.severity,
+        message: obs.message,
+        location: obs.location,
+        data: obs.data,
+        tags: obs.tags.slice().sort(),
+      },
+      Object.keys(obs).sort()
+    );
 
     if (!seen.has(key)) {
       seen.add(key);
@@ -192,5 +195,5 @@ export default {
   groupByCategory,
   groupBySeverity,
   filterByCategory,
-  filterBySeverity
+  filterBySeverity,
 };

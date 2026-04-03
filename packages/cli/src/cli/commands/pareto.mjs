@@ -37,13 +37,16 @@ function parseFeaturesFile(path) {
       throw new Error('Features file must have "features" array');
     }
 
-    return data.features.map(f => new Feature({
-      id: f.id,
-      name: f.name,
-      value: f.value,
-      cost: f.cost,
-      description: f.description || ''
-    }));
+    return data.features.map(
+      f =>
+        new Feature({
+          id: f.id,
+          name: f.name,
+          value: f.value,
+          cost: f.cost,
+          description: f.description || '',
+        })
+    );
   } catch (error) {
     throw new Error(`Failed to parse features file: ${error.message}`);
   }
@@ -87,7 +90,9 @@ function formatResult(recommendation) {
   lines.push('');
 
   const frontier = recommendation.pareto_frontier;
-  lines.push(`Features on frontier: ${frontier.count} (${frontier.percentage_of_total.toFixed(1)}% of total)`);
+  lines.push(
+    `Features on frontier: ${frontier.count} (${frontier.percentage_of_total.toFixed(1)}% of total)`
+  );
   lines.push('');
 
   if (frontier.features && frontier.features.length > 0) {
@@ -111,10 +116,14 @@ function formatResult(recommendation) {
   lines.push('');
 
   const value = recommendation.value_analysis;
-  lines.push(`Frontier Value: ${value.frontier_value} / ${value.total_value} (${value.percentage.toFixed(1)}%)`);
+  lines.push(
+    `Frontier Value: ${value.frontier_value} / ${value.total_value} (${value.percentage.toFixed(1)}%)`
+  );
 
   if (value.meets_8020) {
-    lines.push(`Status: ✅ MEETS 80/20 RULE (${frontier.percentage_of_total.toFixed(0)}% features → ${value.percentage.toFixed(0)}% value)`);
+    lines.push(
+      `Status: ✅ MEETS 80/20 RULE (${frontier.percentage_of_total.toFixed(0)}% features → ${value.percentage.toFixed(0)}% value)`
+    );
   } else {
     lines.push(`Status: ⚠️  Does not meet strict 80/20 rule`);
   }
@@ -202,7 +211,6 @@ export const paretoCommand = defineCommand({
         console.error('');
         process.exit(1);
       }
-
     } catch (error) {
       console.error('');
       console.error('❌ Error analyzing features:');

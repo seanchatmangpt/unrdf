@@ -6,10 +6,7 @@
  * @module @unrdf/yawl/receipt-verification
  */
 
-import {
-  computeBlake3,
-  computeChainHash,
-} from './receipt-core.mjs';
+import { computeBlake3, computeChainHash } from './receipt-core.mjs';
 
 // =============================================================================
 // Receipt Verification

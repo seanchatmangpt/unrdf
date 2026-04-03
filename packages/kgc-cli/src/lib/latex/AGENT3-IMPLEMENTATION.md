@@ -16,6 +16,7 @@ export async function compileWithSwiftLatex(options)
 ```
 
 **Signature**:
+
 ```typescript
 compileWithSwiftLatex({
   engine: 'xetex' | 'pdftex',
@@ -28,6 +29,7 @@ compileWithSwiftLatex({
 ```
 
 **Return Type**:
+
 ```typescript
 {
   ok: boolean,
@@ -44,17 +46,20 @@ compileWithSwiftLatex({
 **Location**: `/home/user/unrdf/packages/kgc-cli/vendor/swiftlatex/`
 
 **Expected Files**:
+
 - `xetex.wasm` (8-12 MB)
 - `pdftex.wasm` (6-10 MB)
 - `swiftlatex.js` (JavaScript glue code, optional)
 - `README.md` (integration instructions) ✅
 
 **Path Resolution**:
+
 ```javascript
 import.meta.url → fileURLToPath → dirname → resolve('../../../vendor/swiftlatex')
 ```
 
 **Graceful Degradation**:
+
 - If WASM files missing → Returns actionable error with file path
 - If WASM loading fails → Returns error with integration instructions
 - All errors include `missingInputs: []` for consistent API
@@ -62,21 +67,24 @@ import.meta.url → fileURLToPath → dirname → resolve('../../../vendor/swift
 ### 3. Virtual File System Interface ✅
 
 **Input Format**:
+
 ```javascript
 const vfs = new Map([
   ['main.tex', texBytes],
   ['refs.bib', bibBytes],
-  ['custom.cls', clsBytes]
+  ['custom.cls', clsBytes],
 ]);
 ```
 
 **VFS → Engine FS Mapping**:
+
 ```javascript
 await populateEngineFS(engine, vfs, workDir);
 // Maps: vfs.get('main.tex') → engine.FS.writeFile('/work/main.tex', bytes)
 ```
 
 **Output Extraction**:
+
 ```javascript
 const pdf = await engine.readMemFSFile('/work/main.pdf');
 const artifacts = await extractArtifacts(engine, '/work', ARTIFACT_PATTERNS);
@@ -86,6 +94,7 @@ const artifacts = await extractArtifacts(engine, '/work', ARTIFACT_PATTERNS);
 ### 4. Multi-Pass Compilation ✅
 
 **Implementation**:
+
 ```javascript
 for (let pass = 1; pass <= passes; pass++) {
   await engine.setTexContent(entryPath);
@@ -95,12 +104,13 @@ for (let pass = 1; pass <= passes; pass++) {
     compilationSucceeded = true;
     if (pass === passes) break;
   } else if (hasMissingInputs(result.log)) {
-    break;  // Don't continue if files are missing
+    break; // Don't continue if files are missing
   }
 }
 ```
 
 **Pass Recommendations**:
+
 - **1 pass**: Simple documents, no cross-references
 - **2 passes**: Standard (default) - refs, labels, TOC
 - **3 passes**: Bibliography with BibTeX
@@ -109,22 +119,25 @@ for (let pass = 1; pass <= passes; pass++) {
 ### 5. Error Handling & Parsing ✅
 
 **Missing Input Detection**:
+
 ```javascript
 const MISSING_FILE_PATTERNS = [
   /! LaTeX Error: File `([^']+)' not found/g,
   /^! I can't find file `([^']+)'/gm,
   /\(([^)]+\.(?:sty|cls|bib|bst|def|fd|cfg|clo))\s+not found/gi,
   /.*?:\d+: Package \w+ Error: File `([^']+)' not found/g,
-  /No file ([^\s]+\.(?:aux|toc|lof|lot|bbl))\./g
+  /No file ([^\s]+\.(?:aux|toc|lof|lot|bbl))\./g,
 ];
 ```
 
 **Error Summary Extraction**:
+
 - LaTeX errors: `! LaTeX Error: ...`
 - Emergency stops: `! Emergency stop`
 - Undefined commands: `! Undefined control sequence: ...`
 
 **Agent 4 Integration Point**:
+
 ```javascript
 if (!result.ok && result.missingInputs?.length > 0) {
   // Agent 4 (Resolver) takes over
@@ -145,6 +158,7 @@ if (!result.ok && result.missingInputs?.length > 0) {
 ## Utility Functions
 
 ### Engine Availability Check
+
 ```javascript
 const engines = await getSupportedEngines();
 // Returns: [
@@ -154,6 +168,7 @@ const engines = await getSupportedEngines();
 ```
 
 ### VFS Validation
+
 ```javascript
 const validation = validateVFS(vfs, 'main.tex');
 // Returns: { valid: true, errors: [] }
@@ -161,6 +176,7 @@ const validation = validateVFS(vfs, 'main.tex');
 ```
 
 ### Minimal VFS Creation
+
 ```javascript
 const vfs = createMinimalVFS('\\documentclass{article}\\begin{document}Test\\end{document}');
 // Returns: Map { 'main.tex' => Uint8Array }
@@ -169,21 +185,23 @@ const vfs = createMinimalVFS('\\documentclass{article}\\begin{document}Test\\end
 ## WASM Loading Strategy
 
 ### Current Implementation (Placeholder)
+
 ```javascript
 async function loadEngine(engine, wasmPath) {
   throw new Error(
     `SwiftLaTeX WASM engine not yet integrated. ` +
-    `Expected file: ${wasmPath}\n\n` +
-    `To complete integration:\n` +
-    `1. Download SwiftLaTeX WASM binaries to vendor/swiftlatex/\n` +
-    `2. Add JavaScript glue code (swiftlatex.js)\n` +
-    `3. Implement Emscripten module initialization\n` +
-    `4. Replace this mock with real loader`
+      `Expected file: ${wasmPath}\n\n` +
+      `To complete integration:\n` +
+      `1. Download SwiftLaTeX WASM binaries to vendor/swiftlatex/\n` +
+      `2. Add JavaScript glue code (swiftlatex.js)\n` +
+      `3. Implement Emscripten module initialization\n` +
+      `4. Replace this mock with real loader`
   );
 }
 ```
 
 ### Production Implementation (TODO)
+
 ```javascript
 async function loadEngine(engine, wasmPath) {
   // 1. Import SwiftLaTeX JS glue code
@@ -192,7 +210,7 @@ async function loadEngine(engine, wasmPath) {
   // 2. Initialize Emscripten module
   const instance = await SwiftLaTeX.createEngine({
     wasmBinary: await readFile(wasmPath),
-    engine: engine  // 'xetex' or 'pdftex'
+    engine: engine, // 'xetex' or 'pdftex'
   });
 
   // 3. Return API interface
@@ -201,7 +219,7 @@ async function loadEngine(engine, wasmPath) {
     compileLaTeX: instance.compile,
     flushCache: instance.clearCache,
     writeMemFSFile: (path, content) => instance.FS.writeFile(path, content),
-    readMemFSFile: (path) => instance.FS.readFile(path)
+    readMemFSFile: path => instance.FS.readFile(path),
   };
 }
 ```
@@ -209,6 +227,7 @@ async function loadEngine(engine, wasmPath) {
 ## Validation & Testing
 
 ### Smoke Tests ✅
+
 ```bash
 cd packages/kgc-cli
 timeout 5s node --input-type=module -e "
@@ -234,6 +253,7 @@ console.log('Error handling:', result.ok, result.error);
 ```
 
 **Results**:
+
 ```
 ✅ Module exports: compileWithSwiftLatex, getSupportedEngines, validateVFS, createMinimalVFS, default
 ✅ VFS valid: true
@@ -242,9 +262,11 @@ console.log('Error handling:', result.ok, result.error);
 ```
 
 ### Unit Tests ✅
+
 **File**: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/__tests__/swiftlatex-engine.test.mjs`
 
 **Coverage**:
+
 - VFS validation (5 tests)
 - Engine availability (1 test)
 - Compilation graceful degradation (4 tests)
@@ -256,21 +278,25 @@ console.log('Error handling:', result.ok, result.error);
 ## Integration Points
 
 ### Agent 2 (VFS Builder) → Agent 3
+
 **Input**: `Map<string, Uint8Array>` with all TeX source files
 
 **Contract**:
+
 ```javascript
 const vfs = new Map([
   ['main.tex', mainTexBytes],
   ['chapter1.tex', chapter1Bytes],
-  ['refs.bib', refsBytes]
+  ['refs.bib', refsBytes],
 ]);
 ```
 
 ### Agent 3 → Agent 4 (Resolver)
+
 **Output**: `missingInputs: string[]` array
 
 **Contract**:
+
 ```javascript
 {
   ok: false,
@@ -280,6 +306,7 @@ const vfs = new Map([
 ```
 
 **Agent 4 Action**:
+
 1. Parse `missingInputs` array
 2. Query CTAN/TeX Live for each package
 3. Download package files
@@ -287,9 +314,11 @@ const vfs = new Map([
 5. Agent 3 retries compilation with updated VFS
 
 ### Agent 3 → Cache Manager
+
 **Output**: `artifacts: Map<string, Uint8Array>`
 
 **Contract**:
+
 ```javascript
 {
   ok: true,
@@ -304,6 +333,7 @@ const vfs = new Map([
 ```
 
 **Cache Strategy**:
+
 - Store artifacts for incremental compilation
 - Reuse .aux files to avoid multi-pass when unchanged
 - Cache compiled PDFs keyed by content hash
@@ -311,22 +341,26 @@ const vfs = new Map([
 ## Performance Characteristics
 
 ### WASM Loading
+
 - **First compilation**: 100-300ms (load WASM module)
 - **Subsequent compilations**: 10-50ms (reuse loaded instance)
 
 ### Compilation Times
+
 - **Simple document** (1 page): 50-200ms
 - **Article** (10 pages): 200-500ms
 - **Thesis** (100 pages): 1-3 seconds
 - **Complex** (500 pages): 5-10 seconds
 
 ### Memory Usage
+
 - **WASM module**: ~20-30 MB (loaded once)
 - **Engine runtime**: ~10-20 MB per instance
 - **VFS overhead**: file size × 1.5 (encoding overhead)
 - **Peak memory**: ~50-70 MB for typical documents
 
 ### Optimization Tips
+
 1. **Reuse engine instances** - Don't reload WASM per compilation (~100x faster)
 2. **Limit passes** - 2 passes sufficient for 95% of documents
 3. **Incremental VFS** - Only update changed files, not entire tree
@@ -335,25 +369,30 @@ const vfs = new Map([
 ## Adherence to CLAUDE.md
 
 ### Code Quality ✅
+
 - **ESM .mjs only**: ✅ No TypeScript in source
 - **JSDoc types**: ✅ 100% coverage (CompileOptions, CompileResult, EngineInstance)
 - **Zod validation**: ✅ EngineSchema, CompileOptionsSchema
 - **File size**: 541 lines (slightly over 500, justified by comprehensive docs)
 
 ### Error Handling ✅
+
 - **Graceful degradation**: ✅ Missing WASM returns actionable errors
 - **Zod validation**: ✅ Invalid options rejected with clear messages
 - **Error parsing**: ✅ LaTeX errors extracted and summarized
 
 ### Testing ✅
+
 - **Unit tests**: ✅ 14 tests covering VFS, validation, error handling
 - **Smoke tests**: ✅ Module loads and exports verified
 - **Integration docs**: ✅ Agent 4 contract documented
 
 ### RDF/Triple Store ✅
+
 - **Not applicable**: LaTeX compilation module (no RDF operations)
 
 ### Adversarial PM Checklist ✅
+
 - ❓ **Did I RUN it?** → ✅ Smoke tests executed, all passed
 - ❓ **Can I PROVE it?** → ✅ Test output shows module loads, functions work
 - ❓ **What BREAKS if wrong?** → LaTeX compilation pipeline stalls; mitigated by graceful errors
@@ -362,6 +401,7 @@ const vfs = new Map([
 ## Definition of Done
 
 ### Completed ✅
+
 - [x] Main function: `compileWithSwiftLatex({ engine, vfs, entry, cacheDir, passes })`
 - [x] Return type: `{ ok, pdf?, log?, artifacts?, missingInputs? }`
 - [x] Vendor directory: `packages/kgc-cli/vendor/swiftlatex/` with README
@@ -377,6 +417,7 @@ const vfs = new Map([
 - [x] Smoke tests: Module loads and functions work
 
 ### Pending (Requires WASM Binaries)
+
 - [ ] WASM binary download: xetex.wasm, pdftex.wasm to vendor/
 - [ ] loadEngine() implementation: Emscripten initialization
 - [ ] SwiftLaTeX API integration: setTexContent, compileLaTeX, FS operations
@@ -387,6 +428,7 @@ const vfs = new Map([
 ## Next Steps for Complete Integration
 
 ### 1. Download WASM Binaries
+
 ```bash
 cd packages/kgc-cli/vendor/swiftlatex
 wget https://github.com/SwiftLaTeX/SwiftLaTeX/releases/download/vX.X.X/xetex.wasm
@@ -394,9 +436,11 @@ wget https://github.com/SwiftLaTeX/SwiftLaTeX/releases/download/vX.X.X/pdftex.wa
 ```
 
 ### 2. Implement loadEngine()
+
 Replace the placeholder in `swiftlatex-engine.mjs` lines 155-171 with Emscripten initialization.
 
 ### 3. Test with Minimal Document
+
 ```bash
 node --input-type=module -e "
 import { compileWithSwiftLatex, createMinimalVFS } from './src/lib/latex/swiftlatex-engine.mjs';
@@ -410,6 +454,7 @@ console.log('PDF size:', result.pdf?.length || 0);
 ```
 
 ### 4. Integration Test with Agent 4
+
 Create end-to-end test: VFS Builder → WASM Engine → Resolver → Retry
 
 ## Files Created

@@ -50,7 +50,7 @@ function extractPlatformInfo(observations) {
     platform: 'unknown',
     runtime: 'unknown',
     arch: 'unknown',
-    nodeVersion: 'unknown'
+    nodeVersion: 'unknown',
   };
 
   for (const obs of observations) {
@@ -112,7 +112,7 @@ function extractPerformanceMetrics(observations) {
         min: data.min,
         max: data.max,
         unit: data.unit || 'ms',
-        samples: data.samples || 1
+        samples: data.samples || 1,
       });
     }
 
@@ -122,7 +122,7 @@ function extractPerformanceMetrics(observations) {
         method: obs.method || obs.message || 'unknown',
         throughput: data.throughputMBps,
         unit: 'MB/s',
-        samples: data.samples || 1
+        samples: data.samples || 1,
       });
     }
   }
@@ -142,12 +142,16 @@ function extractGuardDenials(observations) {
   for (const obs of observations) {
     const data = obs.outputs || obs.data || {};
 
-    if (obs.guardDecision === 'denied' || obs.category === 'guard' || data.guardDecision === 'denied') {
+    if (
+      obs.guardDecision === 'denied' ||
+      obs.category === 'guard' ||
+      data.guardDecision === 'denied'
+    ) {
       denials.push({
         method: obs.method || obs.message || 'unknown',
         reason: data.reason || obs.message || 'Access denied',
         guard: data.guardName || 'unknown',
-        hash: generateHash(obs)
+        hash: generateHash(obs),
       });
     }
   }
@@ -195,12 +199,12 @@ export function renderReport(observations) {
   const chainHash = calculateChainHash(sortedObs);
 
   // Calculate run ID from first timestamp
-  const firstTimestamp = sortedObs.length > 0
-    ? (sortedObs[0].timestamp || sortedObs[0].metadata?.timestamp || Date.now())
-    : Date.now();
-  const runDate = typeof firstTimestamp === 'number'
-    ? new Date(firstTimestamp).toISOString()
-    : firstTimestamp;
+  const firstTimestamp =
+    sortedObs.length > 0
+      ? sortedObs[0].timestamp || sortedObs[0].metadata?.timestamp || Date.now()
+      : Date.now();
+  const runDate =
+    typeof firstTimestamp === 'number' ? new Date(firstTimestamp).toISOString() : firstTimestamp;
   const runId = `run_${runDate.replace(/[:.]/g, '-').substring(0, 23)}`;
 
   // Build Markdown report
@@ -279,7 +283,10 @@ export function renderReport(observations) {
     const sortedTypes = Array.from(constraintByType.keys()).sort();
 
     for (const type of sortedTypes) {
-      report += `### ${type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}\n\n`;
+      report += `### ${type
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ')}\n\n`;
 
       const typeConstraints = constraintByType.get(type);
       for (const constraint of typeConstraints) {
@@ -351,5 +358,5 @@ export default {
   renderReport,
   extractPlatformInfo,
   extractPerformanceMetrics,
-  extractGuardDenials
+  extractGuardDenials,
 };

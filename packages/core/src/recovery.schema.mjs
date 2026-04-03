@@ -47,7 +47,11 @@ export const withTimeoutSchema = {
 /**
  * Schema for bulkOperation
  */
-export const bulkOperationParamsSchema = z.tuple([z.unknown(), z.unknown(), z.unknown().optional()]);
+export const bulkOperationParamsSchema = z.tuple([
+  z.unknown(),
+  z.unknown(),
+  z.unknown().optional(),
+]);
 
 export const bulkOperationReturnSchema = z.unknown();
 
@@ -73,5 +77,5 @@ export default {
   fallback: fallbackSchema,
   withTimeout: withTimeoutSchema,
   bulkOperation: bulkOperationSchema,
-  withRecovery: withRecoverySchema
+  withRecovery: withRecoverySchema,
 };

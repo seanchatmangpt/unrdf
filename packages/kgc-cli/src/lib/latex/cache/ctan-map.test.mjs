@@ -64,33 +64,23 @@ describe('CTAN Mapping', () => {
 
   describe('buildVfsPath', () => {
     it('should build correct path for .sty file', () => {
-      expect(buildVfsPath('algorithm2e.sty')).toBe(
-        'texmf/tex/latex/algorithm2e/algorithm2e.sty'
-      );
+      expect(buildVfsPath('algorithm2e.sty')).toBe('texmf/tex/latex/algorithm2e/algorithm2e.sty');
     });
 
     it('should build correct path for .cls file', () => {
-      expect(buildVfsPath('beamer.cls')).toBe(
-        'texmf/tex/latex/beamer/beamer.cls'
-      );
+      expect(buildVfsPath('beamer.cls')).toBe('texmf/tex/latex/beamer/beamer.cls');
     });
 
     it('should build correct path for .bib file', () => {
-      expect(buildVfsPath('references.bib')).toBe(
-        'texmf/bibtex/bib/references/references.bib'
-      );
+      expect(buildVfsPath('references.bib')).toBe('texmf/bibtex/bib/references/references.bib');
     });
 
     it('should build correct path for .bst file', () => {
-      expect(buildVfsPath('plain.bst')).toBe(
-        'texmf/bibtex/bst/plain/plain.bst'
-      );
+      expect(buildVfsPath('plain.bst')).toBe('texmf/bibtex/bst/plain/plain.bst');
     });
 
     it('should use package exception for tikz', () => {
-      expect(buildVfsPath('tikz.sty')).toBe(
-        'texmf/tex/latex/pgf/tikz.sty'
-      );
+      expect(buildVfsPath('tikz.sty')).toBe('texmf/tex/latex/pgf/tikz.sty');
     });
 
     it('should fallback to work/ for unknown extension', () => {
@@ -108,20 +98,14 @@ describe('CTAN Mapping', () => {
       expect(urls).toContain(
         'https://mirrors.ctan.org/macros/latex/required/algorithm2e/algorithm2e.sty'
       );
-      expect(urls).toContain(
-        'https://mirrors.ctan.org/macros/latex/base/algorithm2e.sty'
-      );
+      expect(urls).toContain('https://mirrors.ctan.org/macros/latex/base/algorithm2e.sty');
     });
 
     it('should build URLs for .cls file', () => {
       const urls = buildCtanUrls('beamer.cls');
 
-      expect(urls).toContain(
-        'https://mirrors.ctan.org/macros/latex/contrib/beamer/beamer.cls'
-      );
-      expect(urls).toContain(
-        'https://mirrors.ctan.org/macros/latex/base/beamer.cls'
-      );
+      expect(urls).toContain('https://mirrors.ctan.org/macros/latex/contrib/beamer/beamer.cls');
+      expect(urls).toContain('https://mirrors.ctan.org/macros/latex/base/beamer.cls');
     });
 
     it('should use custom mirror', () => {

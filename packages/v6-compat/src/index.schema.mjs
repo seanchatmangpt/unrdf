@@ -59,5 +59,5 @@ export default {
   COMPAT_VERSION: COMPAT_VERSIONSchema,
   isCompatMode: isCompatModeSchema,
   enableCompatMode: enableCompatModeSchema,
-  disableCompatMode: disableCompatModeSchema
+  disableCompatMode: disableCompatModeSchema,
 };

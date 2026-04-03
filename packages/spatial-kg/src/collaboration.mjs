@@ -33,7 +33,7 @@ export class CollaborationManager {
    * @returns {Promise<void>}
    */
   async connect() {
-    return tracer.startActiveSpan('collaboration.connect', async (span) => {
+    return tracer.startActiveSpan('collaboration.connect', async span => {
       try {
         // In real implementation, establish WebSocket/WebRTC connection
         // For now, simulate connection
@@ -113,7 +113,7 @@ export class CollaborationManager {
   _syncState() {
     if (!this.connected || !this.localState) return;
 
-    tracer.startActiveSpan('collaboration.sync', (span) => {
+    tracer.startActiveSpan('collaboration.sync', span => {
       try {
         // Broadcast local state
         this._broadcast(this.localState);

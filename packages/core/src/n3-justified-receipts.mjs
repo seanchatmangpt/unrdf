@@ -7,11 +7,7 @@
  */
 
 import { z } from 'zod';
-import {
-  withReceipt,
-  blake3Hash,
-  canonicalize,
-} from '../../v6-core/src/receipt-pattern.mjs';
+import { withReceipt, blake3Hash, canonicalize } from '../../v6-core/src/receipt-pattern.mjs';
 
 /**
  * Parse Input Schema

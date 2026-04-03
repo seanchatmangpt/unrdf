@@ -10,18 +10,18 @@
 
 ## Agent Implementation Status
 
-| Agent | File | Size | Status | Notes |
-|-------|------|------|--------|-------|
-| **Agent 1** | CLI (external) | - | ⏳ Pending | Awaits `compileLatexToPdf()` integration |
-| **Agent 2** | `project-files.mjs` | 7.9K | ✅ Complete | VFS collection with path normalization |
-| **Agent 3** | `swiftlatex-engine.mjs` | 17K | ⏳ WASM Pending | API complete, needs WASM binaries |
-| **Agent 4** | `ctan-resolver.mjs` | 17K | ✅ Complete | CTAN package resolution + cache |
-| **Agent 5** | `latex-lock.mjs` | 8.3K | ✅ Complete | Deterministic lockfile with Zod |
-| **Agent 6** | `diagnostics.mjs` | 8.6K | ✅ Complete | Error parsing + diagnostic logs |
-| **Agent 7** | Tests (external) | - | ⏳ Pending | Needs fixtures + integration tests |
-| **Agent 8** | Validation (future) | - | ❌ Not Started | PDF/A validation, metadata checks |
-| **Agent 9** | Performance (future) | - | ❌ Not Started | Metrics, benchmarking |
-| **Agent 10** | **`compile.mjs`** | **13K** | **✅ Complete** | **Pipeline integrator** |
+| Agent        | File                    | Size    | Status          | Notes                                    |
+| ------------ | ----------------------- | ------- | --------------- | ---------------------------------------- |
+| **Agent 1**  | CLI (external)          | -       | ⏳ Pending      | Awaits `compileLatexToPdf()` integration |
+| **Agent 2**  | `project-files.mjs`     | 7.9K    | ✅ Complete     | VFS collection with path normalization   |
+| **Agent 3**  | `swiftlatex-engine.mjs` | 17K     | ⏳ WASM Pending | API complete, needs WASM binaries        |
+| **Agent 4**  | `ctan-resolver.mjs`     | 17K     | ✅ Complete     | CTAN package resolution + cache          |
+| **Agent 5**  | `latex-lock.mjs`        | 8.3K    | ✅ Complete     | Deterministic lockfile with Zod          |
+| **Agent 6**  | `diagnostics.mjs`       | 8.6K    | ✅ Complete     | Error parsing + diagnostic logs          |
+| **Agent 7**  | Tests (external)        | -       | ⏳ Pending      | Needs fixtures + integration tests       |
+| **Agent 8**  | Validation (future)     | -       | ❌ Not Started  | PDF/A validation, metadata checks        |
+| **Agent 9**  | Performance (future)    | -       | ❌ Not Started  | Metrics, benchmarking                    |
+| **Agent 10** | **`compile.mjs`**       | **13K** | **✅ Complete** | **Pipeline integrator**                  |
 
 ---
 
@@ -147,6 +147,7 @@ packages/kgc-cli/src/lib/latex/
 ## What Works Now
 
 ✅ **Agent 2 (VFS Collection)**:
+
 - Recursively collect project files
 - Normalize paths to `work/` prefix
 - Filter by extension (.tex, .sty, .bib, images)
@@ -155,6 +156,7 @@ packages/kgc-cli/src/lib/latex/
 - **Test**: `ls -1 *.tex | wc -l` matches VFS size
 
 ✅ **Agent 4 (CTAN Resolver)**:
+
 - Resolve missing packages from CTAN
 - Content-addressed cache (SHA-256 filenames)
 - Deterministic VFS paths (`texmf/tex/latex/{package}/{file}`)
@@ -162,6 +164,7 @@ packages/kgc-cli/src/lib/latex/
 - **Test**: `ctan-resolver.test.mjs` passes
 
 ✅ **Agent 5 (Lockfile Manager)**:
+
 - Load/save lockfile with Zod validation
 - Record resolved inputs (hash, source URL, cached path)
 - Stable JSON serialization (sorted keys)
@@ -169,6 +172,7 @@ packages/kgc-cli/src/lib/latex/
 - **Test**: `latex-lock.test.mjs` passes
 
 ✅ **Agent 6 (Diagnostics)**:
+
 - Parse missing inputs from LaTeX log
 - Extract human-readable error summaries
 - Write diagnostic logs to `.latex-logs/`
@@ -176,6 +180,7 @@ packages/kgc-cli/src/lib/latex/
 - **Test**: Manual verification with sample logs
 
 ✅ **Agent 10 (Pipeline Integrator)**:
+
 - Orchestrate all agents
 - Retry logic (max 2 cycles)
 - Automatic dependency resolution
@@ -188,6 +193,7 @@ packages/kgc-cli/src/lib/latex/
 ## What's Pending
 
 ⏳ **Agent 3 (Engine Runner)**:
+
 - **Blocker**: SwiftLaTeX WASM binaries not in `vendor/swiftlatex/`
 - **What's needed**:
   1. Download `xetex.wasm` and `pdftex.wasm`
@@ -197,7 +203,9 @@ packages/kgc-cli/src/lib/latex/
 - **Workaround**: Create stub that returns minimal PDF bytes for testing
 
 ⏳ **Agent 1 (CLI Entry Point)**:
+
 - **What's needed**:
+
   ```javascript
   // src/cli.mjs or dedicated command
   import { compileLatexToPdf } from './lib/latex/compile.mjs';
@@ -227,6 +235,7 @@ packages/kgc-cli/src/lib/latex/
   ```
 
 ⏳ **Agent 7 (Test Suite)**:
+
 - **What's needed**:
   1. Create test fixtures:
      - `test/fixtures/minimal.tex` - Hello World
@@ -250,11 +259,13 @@ packages/kgc-cli/src/lib/latex/
 ## Next Actions (Priority Order)
 
 ### 1. Agent 3 WASM Integration (CRITICAL PATH)
+
 **Owner**: Agent 3 specialist
 **Blockers**: None
 **Effort**: 2-4 hours
 
 **Steps**:
+
 ```bash
 # Download SwiftLaTeX WASM
 cd packages/kgc-cli
@@ -283,6 +294,7 @@ ls -lh *.wasm
 ```
 
 **Definition of Done**:
+
 - ✅ `vendor/swiftlatex/xetex.wasm` exists
 - ✅ `vendor/swiftlatex/pdftex.wasm` exists
 - ✅ `loadEngine()` returns working engine instance
@@ -291,11 +303,13 @@ ls -lh *.wasm
 ---
 
 ### 2. Create Test Fixtures
+
 **Owner**: Agent 7 specialist
 **Blockers**: None (can start now)
 **Effort**: 30 minutes
 
 **Fixtures**:
+
 ```latex
 % test/fixtures/minimal.tex
 \documentclass{article}
@@ -319,6 +333,7 @@ This should fail.
 ```
 
 **Definition of Done**:
+
 - ✅ Three fixture files created
 - ✅ Fixtures are valid LaTeX (manual compile with `pdflatex` succeeds for minimal)
 - ✅ Fixtures committed to git
@@ -326,11 +341,13 @@ This should fail.
 ---
 
 ### 3. Write Integration Tests
+
 **Owner**: Agent 7 specialist
 **Blockers**: Agent 3 WASM integration, fixtures
 **Effort**: 1 hour
 
 **Test File**: `test/latex/compile.test.mjs`
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { compileLatexToPdf, generateCacheKey } from '../../src/lib/latex/compile.mjs';
@@ -389,12 +406,14 @@ describe('Agent 10: LaTeX Compilation Pipeline', () => {
 ```
 
 **Run Tests**:
+
 ```bash
 cd packages/kgc-cli
 timeout 5s npm test -- compile.test.mjs
 ```
 
 **Definition of Done**:
+
 - ✅ All tests pass
 - ✅ Coverage ≥80%
 - ✅ `timeout 5s npm test` succeeds
@@ -402,11 +421,13 @@ timeout 5s npm test -- compile.test.mjs
 ---
 
 ### 4. Create CLI Command
+
 **Owner**: Agent 1 specialist
 **Blockers**: Agent 3 WASM integration
 **Effort**: 30 minutes
 
 **File**: `src/commands/latex.mjs` (or extend `src/cli.mjs`)
+
 ```javascript
 import { defineCommand } from 'citty';
 import { compileLatexToPdf } from '../lib/latex/compile.mjs';
@@ -468,11 +489,13 @@ export default defineCommand({
 ```
 
 **Usage**:
+
 ```bash
 kgc latex compile thesis/main.tex --output thesis.pdf --engine xetex
 ```
 
 **Definition of Done**:
+
 - ✅ CLI command works
 - ✅ Error messages are user-friendly
 - ✅ Log file path printed on failure
@@ -480,11 +503,13 @@ kgc latex compile thesis/main.tex --output thesis.pdf --engine xetex
 ---
 
 ### 5. End-to-End Integration Test
+
 **Owner**: Agent 7 specialist
 **Blockers**: All above
 **Effort**: 1 hour
 
 **Test**:
+
 ```bash
 # Create real LaTeX project
 mkdir -p test-project
@@ -519,6 +544,7 @@ rm -rf test-project test.pdf
 ```
 
 **Definition of Done**:
+
 - ✅ Real project compiles
 - ✅ PDF is valid (can open in viewer)
 - ✅ Lockfile is created and valid
@@ -529,11 +555,13 @@ rm -rf test-project test.pdf
 ## Metrics & Validation
 
 ### Coverage Targets
+
 - **Unit Tests**: ≥80% line coverage per module
 - **Integration Tests**: End-to-end pipeline coverage
 - **Fixtures**: Minimal, failing, resolvable cases
 
 ### Performance SLAs
+
 ```bash
 # First compile (cold start)
 time kgc latex compile minimal.tex
@@ -549,6 +577,7 @@ time kgc latex compile resolvable-package.tex
 ```
 
 ### OTEL Validation (if applicable)
+
 ```bash
 node validation/run-all.mjs comprehensive
 grep "Score:" validation-output.log  # Must be ≥80/100
@@ -558,19 +587,20 @@ grep "Score:" validation-output.log  # Must be ≥80/100
 
 ## Risks & Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| **SwiftLaTeX WASM unavailable** | HIGH | LOW | Build from source, or use Docker with system TeX |
-| **CTAN download failures** | MEDIUM | MEDIUM | Implement retry logic, fallback mirrors |
-| **PDF non-determinism** | LOW | MEDIUM | Disable LaTeX timestamps in preamble |
-| **Large VFS (>100MB)** | MEDIUM | LOW | Implement streaming VFS (future) |
-| **Lockfile conflicts** | LOW | LOW | Use atomic writes, file locking |
+| Risk                            | Impact | Probability | Mitigation                                       |
+| ------------------------------- | ------ | ----------- | ------------------------------------------------ |
+| **SwiftLaTeX WASM unavailable** | HIGH   | LOW         | Build from source, or use Docker with system TeX |
+| **CTAN download failures**      | MEDIUM | MEDIUM      | Implement retry logic, fallback mirrors          |
+| **PDF non-determinism**         | LOW    | MEDIUM      | Disable LaTeX timestamps in preamble             |
+| **Large VFS (>100MB)**          | MEDIUM | LOW         | Implement streaming VFS (future)                 |
+| **Lockfile conflicts**          | LOW    | LOW         | Use atomic writes, file locking                  |
 
 ---
 
 ## Success Criteria
 
 **Agent 10 is production-ready when**:
+
 - ✅ Syntax valid (`node --check` passes)
 - ✅ Imports match actual modules
 - ⏳ Minimal fixture compiles to valid PDF

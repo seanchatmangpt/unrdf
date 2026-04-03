@@ -8,17 +8,10 @@
  */
 
 // RDF Stream Parser
-export {
-  RDFStreamParser,
-  createRDFStreamParser,
-  parseRDFStream,
-} from './rdf-stream-parser.mjs';
+export { RDFStreamParser, createRDFStreamParser, parseRDFStream } from './rdf-stream-parser.mjs';
 
 // Performance Monitor
-export {
-  PerformanceMonitor,
-  createPerformanceMonitor,
-} from './performance-monitor.mjs';
+export { PerformanceMonitor, createPerformanceMonitor } from './performance-monitor.mjs';
 
 // Stream Processor (basic)
 export { createStreamProcessor } from './streaming/stream-processor.mjs';

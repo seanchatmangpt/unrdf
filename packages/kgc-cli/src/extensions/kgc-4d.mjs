@@ -13,13 +13,13 @@ import { z } from 'zod';
 const CreateSnapshotSchema = z.object({
   universe: z.string().describe('Universe identifier'),
   message: z.string().optional().describe('Snapshot message/description'),
-  tag: z.string().optional().describe('Optional semantic tag')
+  tag: z.string().optional().describe('Optional semantic tag'),
 });
 
 /** Args schema for snapshot restore */
 const RestoreSnapshotSchema = z.object({
   snapshotId: z.string().describe('Snapshot ID to restore'),
-  validate: z.boolean().optional().default(true).describe('Validate on restore')
+  validate: z.boolean().optional().default(true).describe('Validate on restore'),
 });
 
 /**
@@ -37,33 +37,33 @@ const extension = {
         create: {
           description: 'Create a new snapshot of the current universe state',
           argsSchema: CreateSnapshotSchema,
-          handler: async (args) => {
+          handler: async args => {
             // Placeholder: actual implementation would import from @unrdf/kgc-4d
             return {
               snapshotId: `snap_${Date.now()}`,
               universe: args.universe,
               message: args.message || 'Default snapshot',
-              createdAt: new Date().toISOString()
+              createdAt: new Date().toISOString(),
             };
           },
           meta: {
             examples: [
               'kgc snapshot create --args \'{"universe":"my-universe"}\'',
-              'kgc snapshot create --args \'{"universe":"my-universe","message":"Release v1.0"}\''
-            ]
-          }
+              'kgc snapshot create --args \'{"universe":"my-universe","message":"Release v1.0"}\'',
+            ],
+          },
         },
         restore: {
           description: 'Restore universe to a previous snapshot',
           argsSchema: RestoreSnapshotSchema,
-          handler: async (args) => {
+          handler: async args => {
             // Placeholder: actual implementation would import from @unrdf/kgc-4d
             return {
               snapshotId: args.snapshotId,
               restored: true,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         list: {
           description: 'List available snapshots',
@@ -72,12 +72,12 @@ const extension = {
             return {
               snapshots: [
                 { id: 'snap_1', message: 'Initial state', createdAt: '2025-01-01T00:00:00Z' },
-                { id: 'snap_2', message: 'After merge', createdAt: '2025-01-02T00:00:00Z' }
-              ]
+                { id: 'snap_2', message: 'After merge', createdAt: '2025-01-02T00:00:00Z' },
+              ],
             };
-          }
-        }
-      }
+          },
+        },
+      },
     },
 
     universe: {
@@ -87,34 +87,34 @@ const extension = {
           description: 'Create a new 4D universe',
           argsSchema: z.object({
             name: z.string().describe('Universe name'),
-            base: z.string().optional().describe('Base universe to fork from')
+            base: z.string().optional().describe('Base universe to fork from'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               id: `univ_${Date.now()}`,
               name: args.name,
               createdAt: new Date().toISOString(),
-              base: args.base || null
+              base: args.base || null,
             };
-          }
+          },
         },
         inspect: {
           description: 'Inspect universe structure and metadata',
           argsSchema: z.object({
-            id: z.string().describe('Universe ID')
+            id: z.string().describe('Universe ID'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             return {
               id: args.id,
               dimensions: 4,
               entities: 0,
               quads: 0,
-              lastModified: new Date().toISOString()
+              lastModified: new Date().toISOString(),
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
   priority: 10,
@@ -123,19 +123,19 @@ const extension = {
     refusals: ['destructive'],
     preconditions: () => {
       // Verify @unrdf/kgc-4d is available if needed
-    }
+    },
   },
 
   receipts: {
     success: {
       snapshotId: 'string',
-      timestamp: 'string'
+      timestamp: 'string',
     },
     error: {
       code: 'string',
-      message: 'string'
-    }
-  }
+      message: 'string',
+    },
+  },
 };
 
 export default extension;

@@ -102,12 +102,7 @@ describe('YAWL Events', () => {
         decision,
       });
 
-      const verification = await verifyWorkflowReceipt(
-        receipt,
-        beforeState,
-        afterState,
-        decision
-      );
+      const verification = await verifyWorkflowReceipt(receipt, beforeState, afterState, decision);
 
       expect(verification.valid).toBe(true);
       expect(verification.verified.beforeHash).toBe(true);
@@ -181,11 +176,7 @@ describe('YAWL Events', () => {
     it('should start a work item', async () => {
       const caseResult = await createCase(store, 'approval-workflow');
       const enableResult = await enableTask(store, caseResult.caseId, 'Review');
-      const startResult = await startWorkItem(
-        store,
-        enableResult.workItemId,
-        caseResult.caseId
-      );
+      const startResult = await startWorkItem(store, enableResult.workItemId, caseResult.caseId);
 
       expect(startResult.workItemId).toBe(enableResult.workItemId);
       expect(startResult.state).toBe('started');
@@ -244,12 +235,7 @@ describe('YAWL Events', () => {
       const caseResult = await createCase(store, 'approval-workflow');
       const enableResult = await enableTask(store, caseResult.caseId, 'Review');
       await startWorkItem(store, enableResult.workItemId, caseResult.caseId);
-      await completeWorkItem(
-        store,
-        enableResult.workItemId,
-        caseResult.caseId,
-        { approved: true }
-      );
+      await completeWorkItem(store, enableResult.workItemId, caseResult.caseId, { approved: true });
 
       // Get audit trail
       const audit = await getWorkflowAuditTrail(store, caseResult.caseId);
@@ -278,13 +264,7 @@ describe('YAWL Events', () => {
       const caseResult = await createCase(store, 'test-workflow');
       const sparqlQuery = 'ASK WHERE { ?s ?p ?o }';
 
-      await recordControlFlowEvaluation(
-        store,
-        caseResult.caseId,
-        'TestTask',
-        true,
-        sparqlQuery
-      );
+      await recordControlFlowEvaluation(store, caseResult.caseId, 'TestTask', true, sparqlQuery);
 
       const audit = await getWorkflowAuditTrail(store, caseResult.caseId);
 
@@ -304,7 +284,7 @@ describe('YAWL Events', () => {
       const time_T = now();
 
       // Wait a tiny bit and start task (after time_T)
-      await new Promise((r) => setTimeout(r, 1));
+      await new Promise(r => setTimeout(r, 1));
       await startWorkItem(store, enableResult.workItemId, caseResult.caseId);
 
       // Reconstruct at time_T (before start)
@@ -329,22 +309,12 @@ describe('YAWL Events', () => {
       const caseResult = await createCase(store, 'approval-workflow');
       const enableResult = await enableTask(store, caseResult.caseId, 'Review');
       await startWorkItem(store, enableResult.workItemId, caseResult.caseId);
-      await completeWorkItem(
-        store,
-        enableResult.workItemId,
-        caseResult.caseId,
-        { approved: true }
-      );
+      await completeWorkItem(store, enableResult.workItemId, caseResult.caseId, { approved: true });
 
       const time_T = now();
 
       // Reconstruct at final time
-      const reconstructed = await reconstructCase(
-        store,
-        null,
-        caseResult.caseId,
-        time_T
-      );
+      const reconstructed = await reconstructCase(store, null, caseResult.caseId, time_T);
 
       expect(reconstructed.workItems).toHaveLength(1);
       expect(reconstructed.workItems[0].state).toBe('completed');
@@ -354,15 +324,10 @@ describe('YAWL Events', () => {
 
     it('should return empty state before case creation', async () => {
       const time_before = now();
-      await new Promise((r) => setTimeout(r, 1));
+      await new Promise(r => setTimeout(r, 1));
       const caseResult = await createCase(store, 'approval-workflow');
 
-      const reconstructed = await reconstructCase(
-        store,
-        null,
-        caseResult.caseId,
-        time_before
-      );
+      const reconstructed = await reconstructCase(store, null, caseResult.caseId, time_before);
 
       expect(reconstructed.state).toBeNull();
       expect(reconstructed.eventCount).toBe(0);
@@ -373,19 +338,9 @@ describe('YAWL Events', () => {
       const enableResult = await enableTask(store, caseResult.caseId, 'Task1');
       const time_T = now();
 
-      const reconstructed1 = await reconstructCase(
-        store,
-        null,
-        caseResult.caseId,
-        time_T
-      );
+      const reconstructed1 = await reconstructCase(store, null, caseResult.caseId, time_T);
 
-      const reconstructed2 = await reconstructCase(
-        store,
-        null,
-        caseResult.caseId,
-        time_T
-      );
+      const reconstructed2 = await reconstructCase(store, null, caseResult.caseId, time_T);
 
       // Same state should produce same hash (deterministic)
       expect(reconstructed1.stateHash).toBe(reconstructed2.stateHash);
@@ -394,9 +349,9 @@ describe('YAWL Events', () => {
 
   describe('appendWorkflowEvent', () => {
     it('should validate event type', async () => {
-      await expect(
-        appendWorkflowEvent(store, 'INVALID_TYPE', { caseId: 'test' })
-      ).rejects.toThrow('Invalid YAWL event type');
+      await expect(appendWorkflowEvent(store, 'INVALID_TYPE', { caseId: 'test' })).rejects.toThrow(
+        'Invalid YAWL event type'
+      );
     });
 
     it('should accept both short and full event type names', async () => {
@@ -466,8 +421,8 @@ describe('YAWL Events', () => {
       expect(audit2.eventCount).toBe(2); // Created + Enabled
 
       // Verify case isolation
-      const events1Types = audit1.events.map((e) => e.type);
-      const events2Types = audit2.events.map((e) => e.type);
+      const events1Types = audit1.events.map(e => e.type);
+      const events2Types = audit2.events.map(e => e.type);
 
       expect(events1Types).toContain('YAWL_TASK_COMPLETED');
       expect(events2Types).not.toContain('YAWL_TASK_COMPLETED');

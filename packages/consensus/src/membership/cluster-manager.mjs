@@ -121,7 +121,9 @@ export class ClusterManager extends EventEmitter {
     });
 
     this.healthyNodeCountGauge.addCallback(result => {
-      const healthy = Array.from(this.nodeHealth.values()).filter(h => h === NodeHealth.HEALTHY).length;
+      const healthy = Array.from(this.nodeHealth.values()).filter(
+        h => h === NodeHealth.HEALTHY
+      ).length;
       result.observe(healthy);
     });
   }

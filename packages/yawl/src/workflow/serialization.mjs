@@ -33,12 +33,12 @@ export function workflowToJSON(workflow) {
     author: workflow.author,
     startTaskId: workflow._startTaskId,
     endTaskIds: workflow._endTaskIds,
-    tasks: workflow.getTasks().map((task) => ({
+    tasks: workflow.getTasks().map(task => ({
       ...task,
       // Remove function references
       condition: undefined,
     })),
-    flows: workflow.getFlows().map((flow) => ({
+    flows: workflow.getFlows().map(flow => ({
       ...flow,
       // Remove function references
       condition: undefined,

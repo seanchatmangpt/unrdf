@@ -36,7 +36,7 @@ export class GestureController {
    * @returns {Array<Object>} Detected gestures
    */
   processInput(controllerId, state) {
-    return tracer.startActiveSpan('gesture.process-input', (span) => {
+    return tracer.startActiveSpan('gesture.process-input', span => {
       try {
         const gestures = [];
         const timestamp = Date.now();
@@ -50,7 +50,15 @@ export class GestureController {
 
           // Grab/grip
           if (state.buttons.grip > this.grabThreshold) {
-            gestures.push(this._createGesture('grab', controllerId, state.position, timestamp, state.buttons.grip));
+            gestures.push(
+              this._createGesture(
+                'grab',
+                controllerId,
+                state.position,
+                timestamp,
+                state.buttons.grip
+              )
+            );
           }
 
           // Teleport (thumbstick click)
@@ -63,7 +71,9 @@ export class GestureController {
         if (state.handPose) {
           const pinch = this._detectPinch(state.handPose);
           if (pinch.detected) {
-            gestures.push(this._createGesture('pinch', controllerId, pinch.position, timestamp, pinch.strength));
+            gestures.push(
+              this._createGesture('pinch', controllerId, pinch.position, timestamp, pinch.strength)
+            );
           }
         }
 
@@ -129,7 +139,7 @@ export class GestureController {
 
     if (detected) {
       // Strength based on how close fingers are
-      const strength = Math.max(0, 1 - (distance / threshold));
+      const strength = Math.max(0, 1 - distance / threshold);
 
       // Midpoint between fingers
       const position = {

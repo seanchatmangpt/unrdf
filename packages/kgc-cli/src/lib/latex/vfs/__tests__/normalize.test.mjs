@@ -4,11 +4,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  normalizePath,
-  isRelativePath,
-  isValidVfsPath,
-} from '../normalize.mjs';
+import { normalizePath, isRelativePath, isValidVfsPath } from '../normalize.mjs';
 
 describe('VFS Path Normalization', () => {
   describe('normalizePath', () => {
@@ -133,10 +129,7 @@ describe('VFS Path Normalization', () => {
     });
 
     it('should handle complex mixed cases', () => {
-      assert.equal(
-        normalizePath('./foo\\\\bar//baz.tex'),
-        'foo/bar/baz.tex'
-      );
+      assert.equal(normalizePath('./foo\\\\bar//baz.tex'), 'foo/bar/baz.tex');
     });
 
     it('should preserve UTF-8 characters', () => {

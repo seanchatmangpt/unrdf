@@ -22,43 +22,59 @@ import { z } from 'zod';
  * Guard decision result
  * @type {z.ZodSchema}
  */
-export const GuardDecisionSchema = z.object({
-  allowed: z.boolean().describe('Whether the operation is allowed'),
-  reason: z.string().optional().describe('Reason for denial'),
-  guardId: z.string().optional().describe('Guard that made the decision'),
-  pattern: z.string().optional().describe('Pattern that matched'),
-  severity: z.enum(['critical', 'high', 'medium', 'low']).optional(),
-  receipt: z.object({
-    id: z.string(),
-    timestamp: z.string(),
-    operation: z.string(),
-    target: z.string(),
-    decision: z.enum(['allow', 'deny'])
-  }).optional()
-}).describe('Guard decision result');
+export const GuardDecisionSchema = z
+  .object({
+    allowed: z.boolean().describe('Whether the operation is allowed'),
+    reason: z.string().optional().describe('Reason for denial'),
+    guardId: z.string().optional().describe('Guard that made the decision'),
+    pattern: z.string().optional().describe('Pattern that matched'),
+    severity: z.enum(['critical', 'high', 'medium', 'low']).optional(),
+    receipt: z
+      .object({
+        id: z.string(),
+        timestamp: z.string(),
+        operation: z.string(),
+        target: z.string(),
+        decision: z.enum(['allow', 'deny']),
+      })
+      .optional(),
+  })
+  .describe('Guard decision result');
 
 /**
  * Guard configuration schema
  * @type {z.ZodSchema}
  */
-export const GuardConfigSchema = z.object({
-  quality_check: z.object({
-    critical_observations_threshold: z.number().positive().default(50),
-    confidence_min: z.number().min(0).max(1).default(0.6)
-  }).optional(),
-  completeness_check: z.object({
-    coverage_min: z.number().min(0).max(1).default(0.7)
-  }).optional(),
-  severity_limit: z.object({
-    critical_limit: z.number().positive().default(10)
-  }).optional(),
-  network_allowlist: z.array(z.object({
-    hostname: z.string(),
-    paths: z.array(z.string()).default(['**']),
-    methods: z.array(z.string()).default(['GET'])
-  })).optional(),
-  cache_ttl_ms: z.number().positive().default(300000)
-}).describe('Guard thresholds and limits');
+export const GuardConfigSchema = z
+  .object({
+    quality_check: z
+      .object({
+        critical_observations_threshold: z.number().positive().default(50),
+        confidence_min: z.number().min(0).max(1).default(0.6),
+      })
+      .optional(),
+    completeness_check: z
+      .object({
+        coverage_min: z.number().min(0).max(1).default(0.7),
+      })
+      .optional(),
+    severity_limit: z
+      .object({
+        critical_limit: z.number().positive().default(10),
+      })
+      .optional(),
+    network_allowlist: z
+      .array(
+        z.object({
+          hostname: z.string(),
+          paths: z.array(z.string()).default(['**']),
+          methods: z.array(z.string()).default(['GET']),
+        })
+      )
+      .optional(),
+    cache_ttl_ms: z.number().positive().default(300000),
+  })
+  .describe('Guard thresholds and limits');
 
 // ============================================================================
 // LRU CACHE
@@ -115,7 +131,7 @@ class LRUCache {
 
     this.cache.set(key, {
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -143,7 +159,7 @@ class LRUCache {
     return {
       size: this.cache.size,
       maxSize: this.maxSize,
-      hitRate: 0 // Would track hits/misses in production
+      hitRate: 0, // Would track hits/misses in production
     };
   }
 }
@@ -225,7 +241,7 @@ function normalizePath(filePath) {
  * @returns {string}
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -280,7 +296,7 @@ const ENV_VAR_FORBIDDEN_PATTERNS = [
   'ADMIN_*',
   'ROOT_*',
   'MASTER_*',
-  '*PRIVATE*'
+  '*PRIVATE*',
 ];
 
 /**
@@ -324,7 +340,7 @@ const FILE_PATH_FORBIDDEN_PATTERNS = [
   { pattern: '/etc/shadow', category: 'SYSTEM_PASSWORD_DB' },
   { pattern: '/etc/sudoers', category: 'SYSTEM_SUDO' },
   { pattern: '/proc/*/environ', category: 'PROCESS_ENV' },
-  { pattern: '/proc/self/**', category: 'PROCESS_MEMORY' }
+  { pattern: '/proc/self/**', category: 'PROCESS_MEMORY' },
 ];
 
 /**
@@ -337,7 +353,7 @@ const NETWORK_ALLOWED_HOSTS = [
   { hostname: 'github.com', paths: ['**'], methods: ['GET'] },
   { hostname: 'docs.github.com', paths: ['**'], methods: ['GET'] },
   { hostname: 'localhost', paths: ['**'], methods: ['GET', 'POST'] },
-  { hostname: '127.0.0.1', paths: ['**'], methods: ['GET', 'POST'] }
+  { hostname: '127.0.0.1', paths: ['**'], methods: ['GET', 'POST'] },
 ];
 
 /**
@@ -367,7 +383,7 @@ const NETWORK_FORBIDDEN_DOMAINS = [
   '172.29.*',
   '172.30.*',
   '172.31.*',
-  '192.168.*'
+  '192.168.*',
 ];
 
 /**
@@ -392,7 +408,7 @@ const FORBIDDEN_COMMANDS = [
   'nmap',
   'ssh',
   'scp',
-  'rsync'
+  'rsync',
 ];
 
 /**
@@ -400,17 +416,17 @@ const FORBIDDEN_COMMANDS = [
  * @type {string[]}
  */
 const DANGEROUS_SHELL_PATTERNS = [
-  '|',    // Pipe
-  '&',    // Background/AND
-  ';',    // Sequence
-  '>',    // Redirect output
-  '<',    // Redirect input
-  '>>',   // Append
-  '`',    // Backtick substitution
-  '$(',   // Command substitution
-  '${',   // Variable expansion
-  '&&',   // Conditional AND
-  '||'    // Conditional OR
+  '|', // Pipe
+  '&', // Background/AND
+  ';', // Sequence
+  '>', // Redirect output
+  '<', // Redirect input
+  '>>', // Append
+  '`', // Backtick substitution
+  '$(', // Command substitution
+  '${', // Variable expansion
+  '&&', // Conditional AND
+  '||', // Conditional OR
 ];
 
 // ============================================================================
@@ -459,10 +475,7 @@ export class GuardRegistry {
     this.fileForbiddenPatterns = [...FILE_PATH_FORBIDDEN_PATTERNS];
 
     /** @type {{hostname: string, paths: string[], methods: string[]}[]} */
-    this.networkAllowlist = [
-      ...NETWORK_ALLOWED_HOSTS,
-      ...(this.config.network_allowlist || [])
-    ];
+    this.networkAllowlist = [...NETWORK_ALLOWED_HOSTS, ...(this.config.network_allowlist || [])];
 
     // Register default guards
     this.registerDefault();
@@ -476,48 +489,48 @@ export class GuardRegistry {
     // Quality guards (original 5)
     this.register('quality_check', {
       id: 'quality_check',
-      validate: (observations) => this.validateQuality(observations)
+      validate: observations => this.validateQuality(observations),
     });
 
     this.register('completeness_check', {
       id: 'completeness_check',
-      validate: (observations) => this.validateCompleteness(observations)
+      validate: observations => this.validateCompleteness(observations),
     });
 
     this.register('severity_limit', {
       id: 'severity_limit',
-      validate: (observations) => this.validateSeverity(observations)
+      validate: observations => this.validateSeverity(observations),
     });
 
     this.register('integrity_check', {
       id: 'integrity_check',
-      validate: (observations) => this.validateIntegrity(observations)
+      validate: observations => this.validateIntegrity(observations),
     });
 
     this.register('agent_coverage', {
       id: 'agent_coverage',
-      validate: (observations) => this.validateAgentCoverage(observations)
+      validate: observations => this.validateAgentCoverage(observations),
     });
 
     // Security guards (H1-H25)
     this.register('env_var_guard', {
       id: 'env_var_guard',
-      validate: (name) => this.checkEnvironmentVariable(name)
+      validate: name => this.checkEnvironmentVariable(name),
     });
 
     this.register('file_path_guard', {
       id: 'file_path_guard',
-      validate: (path) => this.checkFilePathAccess(path)
+      validate: path => this.checkFilePathAccess(path),
     });
 
     this.register('network_guard', {
       id: 'network_guard',
-      validate: (url) => this.checkNetworkURL(url)
+      validate: url => this.checkNetworkURL(url),
     });
 
     this.register('command_guard', {
       id: 'command_guard',
-      validate: (cmd) => this.checkCommandExecution(cmd)
+      validate: cmd => this.checkCommandExecution(cmd),
     });
   }
 
@@ -568,7 +581,13 @@ export class GuardRegistry {
    */
   validateAll(observations) {
     const allViolations = [];
-    const observationGuards = ['quality_check', 'completeness_check', 'severity_limit', 'integrity_check', 'agent_coverage'];
+    const observationGuards = [
+      'quality_check',
+      'completeness_check',
+      'severity_limit',
+      'integrity_check',
+      'agent_coverage',
+    ];
 
     for (const guardId of observationGuards) {
       const guard = this.guards.get(guardId);
@@ -601,7 +620,14 @@ export class GuardRegistry {
   checkEnvironmentVariable(name) {
     // Input validation
     if (!name || typeof name !== 'string') {
-      return this.createDenial('env-var-access', name || '', 'INVALID_INPUT', 'Invalid variable name format', 'G-H1-ENV', 'high');
+      return this.createDenial(
+        'env-var-access',
+        name || '',
+        'INVALID_INPUT',
+        'Invalid variable name format',
+        'G-H1-ENV',
+        'high'
+      );
     }
 
     // Check cache
@@ -649,7 +675,14 @@ export class GuardRegistry {
   checkFilePathAccess(path, operation = 'read') {
     // Input validation
     if (!path || typeof path !== 'string') {
-      return this.createDenial('fs-' + operation, path || '', 'INVALID_INPUT', 'Invalid file path', 'G-H8-FILE', 'high');
+      return this.createDenial(
+        'fs-' + operation,
+        path || '',
+        'INVALID_INPUT',
+        'Invalid file path',
+        'G-H8-FILE',
+        'high'
+      );
     }
 
     // Check cache
@@ -702,7 +735,14 @@ export class GuardRegistry {
   checkNetworkURL(url, method = 'GET') {
     // Input validation
     if (!url || typeof url !== 'string') {
-      return this.createDenial('network-request', url || '', 'INVALID_INPUT', 'Invalid URL format', 'G-H15-NETWORK', 'high');
+      return this.createDenial(
+        'network-request',
+        url || '',
+        'INVALID_INPUT',
+        'Invalid URL format',
+        'G-H15-NETWORK',
+        'high'
+      );
     }
 
     // Check cache
@@ -717,7 +757,14 @@ export class GuardRegistry {
     try {
       parsed = new URL(url);
     } catch {
-      return this.createDenial('network-request', url, 'INVALID_URL', 'Cannot parse URL', 'G-H15-NETWORK', 'high');
+      return this.createDenial(
+        'network-request',
+        url,
+        'INVALID_URL',
+        'Cannot parse URL',
+        'G-H15-NETWORK',
+        'high'
+      );
     }
 
     const hostname = parsed.hostname;
@@ -796,7 +843,14 @@ export class GuardRegistry {
   checkCommandExecution(command, args = []) {
     // Input validation
     if (!command || typeof command !== 'string') {
-      return this.createDenial('command-execution', command || '', 'INVALID_INPUT', 'Invalid command', 'G-H21-CMD', 'high');
+      return this.createDenial(
+        'command-execution',
+        command || '',
+        'INVALID_INPUT',
+        'Invalid command',
+        'G-H21-CMD',
+        'high'
+      );
     }
 
     // Check cache
@@ -842,7 +896,13 @@ export class GuardRegistry {
         );
 
         this.cache.set(cacheKey, result);
-        this.logAudit('command-execution', fullCommand, false, 'G-H21-SHELL-INJECTION', result.reason);
+        this.logAudit(
+          'command-execution',
+          fullCommand,
+          false,
+          'G-H21-SHELL-INJECTION',
+          result.reason
+        );
         return result;
       }
     }
@@ -862,7 +922,13 @@ export class GuardRegistry {
           );
 
           this.cache.set(cacheKey, result);
-          this.logAudit('command-execution', fullCommand, false, 'G-H21-SHELL-INJECTION', result.reason);
+          this.logAudit(
+            'command-execution',
+            fullCommand,
+            false,
+            'G-H21-SHELL-INJECTION',
+            result.reason
+          );
           return result;
         }
       }
@@ -888,7 +954,7 @@ export class GuardRegistry {
     const violations = [];
     const thresholds = {
       critical_observations: this.config.quality_check?.critical_observations_threshold || 50,
-      confidence_min: this.config.quality_check?.confidence_min || 0.6
+      confidence_min: this.config.quality_check?.confidence_min || 0.6,
     };
 
     const lowConfidence = observations.filter(
@@ -903,14 +969,16 @@ export class GuardRegistry {
           message: 'High count of low-confidence observations',
           count: lowConfidence.length,
           threshold: thresholds.critical_observations,
-          confidence_min: thresholds.confidence_min
-        }
+          confidence_min: thresholds.confidence_min,
+        },
       });
     }
 
-    const avgConfidence = observations.length > 0
-      ? observations.reduce((sum, o) => sum + (o.metrics?.confidence || 0), 0) / observations.length
-      : 1.0;
+    const avgConfidence =
+      observations.length > 0
+        ? observations.reduce((sum, o) => sum + (o.metrics?.confidence || 0), 0) /
+          observations.length
+        : 1.0;
 
     if (avgConfidence < 0.7) {
       violations.push({
@@ -919,8 +987,8 @@ export class GuardRegistry {
         details: {
           message: 'Average confidence below 70%',
           actual: avgConfidence,
-          threshold: 0.7
-        }
+          threshold: 0.7,
+        },
       });
     }
 
@@ -936,7 +1004,7 @@ export class GuardRegistry {
   validateCompleteness(observations) {
     const violations = [];
     const thresholds = {
-      coverage_min: this.config.completeness_check?.coverage_min || 0.7
+      coverage_min: this.config.completeness_check?.coverage_min || 0.7,
     };
 
     const completenessObs = observations.filter(
@@ -947,10 +1015,9 @@ export class GuardRegistry {
       return [];
     }
 
-    const avgCoverage = completenessObs.reduce(
-      (sum, o) => sum + (o.metrics?.coverage || 0),
-      0
-    ) / completenessObs.length;
+    const avgCoverage =
+      completenessObs.reduce((sum, o) => sum + (o.metrics?.coverage || 0), 0) /
+      completenessObs.length;
 
     if (avgCoverage < thresholds.coverage_min) {
       violations.push({
@@ -960,8 +1027,8 @@ export class GuardRegistry {
           message: 'Data coverage below threshold',
           coverage: avgCoverage,
           threshold: thresholds.coverage_min,
-          observations_checked: completenessObs.length
-        }
+          observations_checked: completenessObs.length,
+        },
       });
     }
 
@@ -977,7 +1044,7 @@ export class GuardRegistry {
   validateSeverity(observations) {
     const violations = [];
     const thresholds = {
-      critical_limit: this.config.severity_limit?.critical_limit || 10
+      critical_limit: this.config.severity_limit?.critical_limit || 10,
     };
 
     const criticalCount = observations.filter(o => o.severity === 'critical').length;
@@ -989,8 +1056,8 @@ export class GuardRegistry {
         details: {
           message: 'Critical violations exceed limit',
           count: criticalCount,
-          limit: thresholds.critical_limit
-        }
+          limit: thresholds.critical_limit,
+        },
       });
     }
 
@@ -1023,8 +1090,8 @@ export class GuardRegistry {
         details: {
           message: 'Malformed observations detected',
           count: malformed,
-          total: observations.length
-        }
+          total: observations.length,
+        },
       });
     }
 
@@ -1042,9 +1109,7 @@ export class GuardRegistry {
     const expectedAgents = 10;
 
     const uniqueAgents = new Set(
-      observations
-        .filter(o => !o.agent.startsWith('guard:'))
-        .map(o => o.agent)
+      observations.filter(o => !o.agent.startsWith('guard:')).map(o => o.agent)
     );
 
     const coverageRatio = uniqueAgents.size / expectedAgents;
@@ -1056,8 +1121,8 @@ export class GuardRegistry {
           message: 'Agent coverage below 70%',
           agents_active: uniqueAgents.size,
           agents_expected: expectedAgents,
-          coverage: coverageRatio
-        }
+          coverage: coverageRatio,
+        },
       });
     }
 
@@ -1088,7 +1153,7 @@ export class GuardRegistry {
       target: String(target).substring(0, 100), // Truncate for safety
       decision: 'deny',
       reasonCode,
-      guardId
+      guardId,
     };
 
     return {
@@ -1098,7 +1163,7 @@ export class GuardRegistry {
       guardId,
       severity,
       pattern,
-      receipt
+      receipt,
     };
   }
 
@@ -1118,7 +1183,7 @@ export class GuardRegistry {
       operation,
       decision: allowed ? 'ALLOW' : 'DENY',
       target: String(target).substring(0, 100),
-      reason: reason || null
+      reason: reason || null,
     };
 
     this.auditLog.push(entry);
@@ -1178,11 +1243,12 @@ export class GuardRegistry {
       file: this.fileForbiddenPatterns.length,
       network: NETWORK_FORBIDDEN_DOMAINS.length,
       command: FORBIDDEN_COMMANDS.length + DANGEROUS_SHELL_PATTERNS.length,
-      total: this.envForbiddenPatterns.length +
-             this.fileForbiddenPatterns.length +
-             NETWORK_FORBIDDEN_DOMAINS.length +
-             FORBIDDEN_COMMANDS.length +
-             DANGEROUS_SHELL_PATTERNS.length
+      total:
+        this.envForbiddenPatterns.length +
+        this.fileForbiddenPatterns.length +
+        NETWORK_FORBIDDEN_DOMAINS.length +
+        FORBIDDEN_COMMANDS.length +
+        DANGEROUS_SHELL_PATTERNS.length,
     };
   }
 }
@@ -1209,5 +1275,5 @@ export const PATTERNS = {
   NETWORK_FORBIDDEN_DOMAINS,
   NETWORK_ALLOWED_HOSTS,
   FORBIDDEN_COMMANDS,
-  DANGEROUS_SHELL_PATTERNS
+  DANGEROUS_SHELL_PATTERNS,
 };

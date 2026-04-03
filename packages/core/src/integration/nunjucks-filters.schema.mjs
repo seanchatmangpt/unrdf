@@ -177,5 +177,5 @@ export default {
   label: labelSchema,
   ref: refSchema,
   environment: environmentSchema,
-  configureNunjucks: configureNunjucksSchema
+  configureNunjucks: configureNunjucksSchema,
 };

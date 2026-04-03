@@ -10,11 +10,7 @@
  * - Community detection & clustering
  */
 
-export {
-  rdfToGraph,
-  sparqlResultsToGraph,
-  getGraphStats,
-} from './converter/rdf-to-graph.mjs';
+export { rdfToGraph, sparqlResultsToGraph, getGraphStats } from './converter/rdf-to-graph.mjs';
 
 export {
   computePageRank,

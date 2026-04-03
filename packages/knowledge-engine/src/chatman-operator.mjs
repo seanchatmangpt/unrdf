@@ -105,8 +105,7 @@ export class ChatmanOperator {
       // Update metrics
       this.metrics.closureOperations++;
       this.metrics.averageCompleteness =
-        (this.metrics.averageCompleteness * (this.metrics.closureOperations - 1) +
-          completeness) /
+        (this.metrics.averageCompleteness * (this.metrics.closureOperations - 1) + completeness) /
         this.metrics.closureOperations;
       this.metrics.totalDarkFieldRevealed += darkField.patterns.length;
 

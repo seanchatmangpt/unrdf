@@ -63,9 +63,7 @@ export function withQueries(Base) {
      * @returns {YawlCase[]} Array of active cases
      */
     getActiveCases() {
-      return [...this.cases.values()].filter(
-        c => c.status === CaseStatus.RUNNING
-      );
+      return [...this.cases.values()].filter(c => c.status === CaseStatus.RUNNING);
     }
 
     /**
@@ -74,9 +72,7 @@ export function withQueries(Base) {
      * @returns {YawlCase[]} Array of cases
      */
     getCasesForWorkflow(workflowId) {
-      return [...this.cases.values()].filter(
-        c => c.workflowId === workflowId
-      );
+      return [...this.cases.values()].filter(c => c.workflowId === workflowId);
     }
 
     /**
@@ -85,9 +81,7 @@ export function withQueries(Base) {
      * @returns {YawlCase[]} Array of cases with matching status
      */
     getCasesByStatus(status) {
-      return [...this.cases.values()].filter(
-        c => c.status === status
-      );
+      return [...this.cases.values()].filter(c => c.status === status);
     }
 
     /**

@@ -1,11 +1,11 @@
 /**
  * Poka-Yoke Pattern: Stateful Transaction Manager
- * 
+ *
  * Prevents use-after-cleanup by enforcing a state machine:
  * Active → CleaningUp → Disposed
- * 
+ *
  * Invalid operations throw at runtime with clear error messages.
- * 
+ *
  * @module @unrdf/core/poka-yoke/transaction-states
  */
 
@@ -34,9 +34,9 @@ export class InvalidStateError extends Error {
 
 /**
  * Stateful Transaction Manager with Poka-Yoke guards
- * 
+ *
  * Enforces lifecycle: Active → CleaningUp → Disposed
- * 
+ *
  * @example
  * const txManager = new StatefulTransactionManager();
  * await txManager.apply(store, delta);  // OK (ACTIVE)
@@ -47,14 +47,14 @@ export class StatefulTransactionManager {
   #state = STATE.ACTIVE;
   #hooks = [];
   #lockchainWriter = null;
-  
+
   /**
    *
    */
   constructor(options = {}) {
     this.options = options;
   }
-  
+
   /**
    * Assert manager is in ACTIVE state
    * @private
@@ -69,7 +69,7 @@ export class StatefulTransactionManager {
       throw new InvalidStateError(operation, 'disposed', [STATE.ACTIVE]);
     }
   }
-  
+
   /**
    * Get current state (for testing/observability)
    * @returns {string} Current state
@@ -77,7 +77,7 @@ export class StatefulTransactionManager {
   getState() {
     return this.#state;
   }
-  
+
   /**
    * Apply a transaction
    * @param {Object} store - RDF store
@@ -88,7 +88,7 @@ export class StatefulTransactionManager {
    */
   async apply(store, delta, _options = {}) {
     this.#assertActive('apply transaction');
-    
+
     // Simulate transaction application
     // In real implementation, this would delegate to actual transaction logic
     return {
@@ -100,7 +100,7 @@ export class StatefulTransactionManager {
       },
     };
   }
-  
+
   /**
    * Add a hook to the transaction manager
    * @param {Object} hook - Hook configuration
@@ -108,14 +108,14 @@ export class StatefulTransactionManager {
    */
   addHook(hook) {
     this.#assertActive('add hook');
-    
+
     if (this.#hooks.some(h => h.id === hook.id)) {
       throw new Error(`Hook with id "${hook.id}" already exists`);
     }
-    
+
     this.#hooks.push(hook);
   }
-  
+
   /**
    * Remove a hook by ID
    * @param {string} hookId - Hook ID to remove
@@ -124,14 +124,14 @@ export class StatefulTransactionManager {
    */
   removeHook(hookId) {
     this.#assertActive('remove hook');
-    
+
     const index = this.#hooks.findIndex(h => h.id === hookId);
     if (index === -1) return false;
-    
+
     this.#hooks.splice(index, 1);
     return true;
   }
-  
+
   /**
    * Get all hooks
    * @returns {Array} Array of hooks
@@ -141,7 +141,7 @@ export class StatefulTransactionManager {
     this.#assertActive('get hooks');
     return [...this.#hooks];
   }
-  
+
   /**
    * Cleanup transaction manager
    * Transitions: ACTIVE → CLEANING_UP → DISPOSED
@@ -155,20 +155,20 @@ export class StatefulTransactionManager {
     if (this.#state === STATE.DISPOSED) {
       throw new InvalidStateError('cleanup', 'already disposed', [STATE.ACTIVE]);
     }
-    
+
     // Transition to CLEANING_UP
     this.#state = STATE.CLEANING_UP;
-    
+
     try {
       // Clear hooks
       this.#hooks.length = 0;
-      
+
       // Cleanup lockchain writer (if exists)
       if (this.#lockchainWriter) {
         await this.#lockchainWriter.cleanup?.();
         this.#lockchainWriter = null;
       }
-      
+
       // Simulate async cleanup
       await new Promise(resolve => setTimeout(resolve, 10));
     } finally {

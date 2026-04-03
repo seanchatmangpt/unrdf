@@ -53,83 +53,74 @@ class MockLangChainAgent {
  * Agent 1: Code Analyzer
  * Analyzes code complexity, patterns, and structure
  */
-const codeAnalyzerAgent = new MockLangChainAgent(
-  'code-analyzer',
-  (input) => {
-    const code = input.input || input.code || '';
-    const lines = code.split('\n').length;
-    const complexity = code.includes('for') || code.includes('while') ? 'medium' : 'low';
+const codeAnalyzerAgent = new MockLangChainAgent('code-analyzer', input => {
+  const code = input.input || input.code || '';
+  const lines = code.split('\n').length;
+  const complexity = code.includes('for') || code.includes('while') ? 'medium' : 'low';
 
-    return `Code Analysis Report:
+  return `Code Analysis Report:
 - Total lines: ${lines}
 - Cyclomatic complexity: ${complexity}
 - Patterns detected: ${code.includes('class') ? 'OOP' : 'Functional'}
 - Maintainability score: ${lines < 100 ? '8/10' : '6/10'}
 - Code smells: ${code.includes('var') ? 'Legacy var usage detected' : 'None detected'}`;
-  }
-);
+});
 
 /**
  * Agent 2: Security Reviewer
  * Identifies security vulnerabilities and risks
  */
-const securityReviewerAgent = new MockLangChainAgent(
-  'security-reviewer',
-  (input) => {
-    const code = input.input || input.code || '';
-    const analysis = input.previousAnalysis || '';
+const securityReviewerAgent = new MockLangChainAgent('security-reviewer', input => {
+  const code = input.input || input.code || '';
+  const analysis = input.previousAnalysis || '';
 
-    const vulnerabilities = [];
-    if (code.includes('eval(')) vulnerabilities.push('Code injection risk: eval() usage');
-    if (code.includes('innerHTML')) vulnerabilities.push('XSS risk: innerHTML usage');
-    if (code.includes('http://')) vulnerabilities.push('Insecure protocol: HTTP instead of HTTPS');
+  const vulnerabilities = [];
+  if (code.includes('eval(')) vulnerabilities.push('Code injection risk: eval() usage');
+  if (code.includes('innerHTML')) vulnerabilities.push('XSS risk: innerHTML usage');
+  if (code.includes('http://')) vulnerabilities.push('Insecure protocol: HTTP instead of HTTPS');
 
-    return `Security Review Report:
+  return `Security Review Report:
 - Vulnerabilities found: ${vulnerabilities.length}
 ${vulnerabilities.map(v => `  - ${v}`).join('\n')}
 - Previous analysis context: ${analysis.includes('medium') ? 'Medium complexity requires extra scrutiny' : 'Low complexity'}
 - Risk level: ${vulnerabilities.length > 0 ? 'HIGH' : 'LOW'}
 - Recommendation: ${vulnerabilities.length > 0 ? 'Fix vulnerabilities before deployment' : 'Code passes security review'}`;
-  }
-);
+});
 
 /**
  * Agent 3: Suggestion Generator
  * Generates actionable improvement suggestions based on analysis and security review
  */
-const suggestionGeneratorAgent = new MockLangChainAgent(
-  'suggestion-generator',
-  (input) => {
-    const analysis = input.analysis || '';
-    const security = input.security || '';
+const suggestionGeneratorAgent = new MockLangChainAgent('suggestion-generator', input => {
+  const analysis = input.analysis || '';
+  const security = input.security || '';
 
-    const suggestions = [];
+  const suggestions = [];
 
-    if (analysis.includes('Legacy var')) {
-      suggestions.push('Replace var with const/let for better scoping');
-    }
-    if (security.includes('eval()')) {
-      suggestions.push('Remove eval() calls and use safer alternatives');
-    }
-    if (security.includes('innerHTML')) {
-      suggestions.push('Use textContent or sanitize HTML to prevent XSS');
-    }
-    if (analysis.includes('6/10')) {
-      suggestions.push('Break down large functions into smaller, testable units');
-    }
+  if (analysis.includes('Legacy var')) {
+    suggestions.push('Replace var with const/let for better scoping');
+  }
+  if (security.includes('eval()')) {
+    suggestions.push('Remove eval() calls and use safer alternatives');
+  }
+  if (security.includes('innerHTML')) {
+    suggestions.push('Use textContent or sanitize HTML to prevent XSS');
+  }
+  if (analysis.includes('6/10')) {
+    suggestions.push('Break down large functions into smaller, testable units');
+  }
 
-    if (suggestions.length === 0) {
-      suggestions.push('Code quality is good - consider adding unit tests');
-      suggestions.push('Document public API with JSDoc comments');
-    }
+  if (suggestions.length === 0) {
+    suggestions.push('Code quality is good - consider adding unit tests');
+    suggestions.push('Document public API with JSDoc comments');
+  }
 
-    return `Improvement Suggestions:
+  return `Improvement Suggestions:
 ${suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}
 
 Priority: ${security.includes('HIGH') ? 'CRITICAL - Security fixes required' : 'NORMAL - Quality improvements'}
 Estimated effort: ${suggestions.length * 30} minutes`;
-  }
-);
+});
 
 // =============================================================================
 // RDF Context Setup
@@ -246,7 +237,7 @@ export async function createCodeReviewWorkflow() {
  */
 async function runCodeReviewExample() {
   console.log('🤖 AI Code Review Workflow - YAWL + LangChain Integration\n');
-  console.log('=' .repeat(70));
+  console.log('='.repeat(70));
 
   // Sample code to review
   const sampleCode = `
@@ -264,7 +255,7 @@ function processUserData(userInput) {
 
   console.log('\n📄 Code to Review:');
   console.log(sampleCode);
-  console.log('\n' + '=' .repeat(70));
+  console.log('\n' + '='.repeat(70));
 
   // Create RDF context store
   const rdfStore = createCodeContextStore(sampleCode);
@@ -324,14 +315,18 @@ function processUserData(userInput) {
     }
   }
 
-  console.log('\n' + '=' .repeat(70));
+  console.log('\n' + '='.repeat(70));
   console.log('\n🎉 Code Review Complete!\n');
 
   // Show RDF graph summary
   console.log('📈 RDF Knowledge Graph Summary:');
-  console.log(`   - Total triples stored: ${[...adapters.analyzer.getRDFStore().quads()].length +
-    [...adapters.security.getRDFStore().quads()].length +
-    [...adapters.suggestions.getRDFStore().quads()].length}`);
+  console.log(
+    `   - Total triples stored: ${
+      [...adapters.analyzer.getRDFStore().quads()].length +
+      [...adapters.security.getRDFStore().quads()].length +
+      [...adapters.suggestions.getRDFStore().quads()].length
+    }`
+  );
   console.log(`   - Tasks executed: ${tasks.length}`);
   console.log(`   - Workflow status: ${workflowCase.isComplete() ? 'COMPLETED' : 'IN PROGRESS'}`);
 

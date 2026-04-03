@@ -179,7 +179,7 @@ export class CollaborativeRDFGraph {
    */
   getTriples() {
     const result = [];
-    this.triples.forEach((crdtTriple) => {
+    this.triples.forEach(crdtTriple => {
       if (!crdtTriple.deleted) {
         result.push(crdtTriple.triple);
       }
@@ -204,10 +204,9 @@ export class CollaborativeRDFGraph {
   queryTriples(pattern) {
     const triples = this.getTriples();
 
-    return triples.filter((triple) => {
+    return triples.filter(triple => {
       if (pattern.subject && triple.subject !== pattern.subject) return false;
-      if (pattern.predicate && triple.predicate !== pattern.predicate)
-        return false;
+      if (pattern.predicate && triple.predicate !== pattern.predicate) return false;
       if (pattern.object && triple.object !== pattern.object) return false;
       return true;
     });
@@ -225,7 +224,7 @@ export class CollaborativeRDFGraph {
     const { createStore } = await import('@unrdf/core');
     const store = createStore();
 
-    this.getTriples().forEach((triple) => {
+    this.getTriples().forEach(triple => {
       // Convert to RDF/JS quad
       const subject = triple.subject.startsWith('_:')
         ? dataFactory.blankNode(triple.subject.slice(2))
@@ -301,7 +300,7 @@ export class CollaborativeRDFGraph {
     });
 
     // Notify listeners
-    this.changeListeners.forEach((listener) => listener(changes));
+    this.changeListeners.forEach(listener => listener(changes));
   }
 
   /**
@@ -316,7 +315,7 @@ export class CollaborativeRDFGraph {
     let active = 0;
     let tombstones = 0;
 
-    this.triples.forEach((crdtTriple) => {
+    this.triples.forEach(crdtTriple => {
       if (crdtTriple.deleted) {
         tombstones++;
       } else {

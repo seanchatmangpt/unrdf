@@ -316,11 +316,12 @@ export function createCoordinator(config = {}) {
           if (!result.success) {
             errorCount++;
             // Check if error indicates connection failure (unreachable) vs query error (degraded)
-            const isConnectionError = result.error &&
+            const isConnectionError =
+              result.error &&
               (result.error.includes('Connection refused') ||
-               result.error.includes('timeout') ||
-               result.error.includes('ECONNREFUSED') ||
-               result.error.includes('AbortError'));
+                result.error.includes('timeout') ||
+                result.error.includes('ECONNREFUSED') ||
+                result.error.includes('AbortError'));
 
             peerManager.updateStatus(peerId, isConnectionError ? 'unreachable' : 'degraded');
             recordError(peerId, 'query_failed');

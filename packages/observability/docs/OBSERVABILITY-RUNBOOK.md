@@ -4,13 +4,13 @@ Operational procedures for monitoring, troubleshooting, and maintaining UNRDF ob
 
 ## Quick Reference
 
-| Alert | Severity | Response Time | Action |
-|-------|----------|---------------|--------|
-| ServiceDown | Critical | 1 min | [Service Recovery](#service-down) |
-| InjectionAttempt | Critical | 2 min | [Security Incident](#injection-attempt) |
-| CriticalMemoryUsage | Critical | 5 min | [Memory Issues](#high-memory-usage) |
-| HighP99Latency | Critical | 5 min | [Performance](#high-latency) |
-| LowSuccessRate | Warning | 10 min | [Success Rate](#low-success-rate) |
+| Alert               | Severity | Response Time | Action                                  |
+| ------------------- | -------- | ------------- | --------------------------------------- |
+| ServiceDown         | Critical | 1 min         | [Service Recovery](#service-down)       |
+| InjectionAttempt    | Critical | 2 min         | [Security Incident](#injection-attempt) |
+| CriticalMemoryUsage | Critical | 5 min         | [Memory Issues](#high-memory-usage)     |
+| HighP99Latency      | Critical | 5 min         | [Performance](#high-latency)            |
+| LowSuccessRate      | Warning  | 10 min        | [Success Rate](#low-success-rate)       |
 
 ## Incident Response
 
@@ -21,6 +21,7 @@ Operational procedures for monitoring, troubleshooting, and maintaining UNRDF ob
 **Response Time**: 1 minute
 
 #### Symptoms
+
 - Prometheus shows `up{job="unrdf-*"} == 0`
 - No metrics received in last 60 seconds
 - Health check endpoints unreachable
@@ -44,6 +45,7 @@ netstat -tulpn | grep 9464
 #### Resolution
 
 **Option 1: Restart Service**
+
 ```bash
 # Graceful restart
 systemctl restart unrdf-core
@@ -53,6 +55,7 @@ curl http://localhost:9464/metrics
 ```
 
 **Option 2: Check Configuration**
+
 ```bash
 # Validate config
 node --check /path/to/unrdf/index.mjs
@@ -62,6 +65,7 @@ env | grep UNRDF
 ```
 
 **Option 3: Resource Issues**
+
 ```bash
 # Check disk space
 df -h
@@ -74,6 +78,7 @@ dmesg | grep -i "out of memory"
 ```
 
 #### Prevention
+
 - Set up health check monitoring (every 10s)
 - Configure auto-restart on failure
 - Set resource limits appropriately
@@ -85,6 +90,7 @@ dmesg | grep -i "out of memory"
 **Response Time**: 2 minutes
 
 #### Symptoms
+
 - Alert: `increase(event_total{event_type="security.injection.attempt"}[5m]) > 0`
 - Security events in Grafana dashboard
 - Unusual query patterns
@@ -105,7 +111,9 @@ grep "injection.attempt" /var/log/unrdf/security.log
 #### Resolution
 
 **Immediate Actions**:
+
 1. **Block IP Address**:
+
    ```bash
    # Add to firewall
    sudo ufw deny from <ATTACKER_IP>
@@ -117,6 +125,7 @@ grep "injection.attempt" /var/log/unrdf/security.log
    ```
 
 2. **Review Attack Payload**:
+
    ```javascript
    // Via custom events API
    const events = await getEventsByType('security.injection.attempt');
@@ -128,6 +137,7 @@ grep "injection.attempt" /var/log/unrdf/security.log
    ```
 
 3. **Validate Input Sanitization**:
+
    ```bash
    # Run security audit
    npm run security:audit
@@ -137,6 +147,7 @@ grep "injection.attempt" /var/log/unrdf/security.log
    ```
 
 #### Prevention
+
 - Enable strict input validation
 - Use parameterized queries
 - Implement rate limiting
@@ -149,6 +160,7 @@ grep "injection.attempt" /var/log/unrdf/security.log
 **Response Time**: 5 minutes
 
 #### Symptoms
+
 - Alert: `resource_heap_used_bytes / resource_heap_total_bytes > 0.85`
 - Slow performance
 - Frequent GC activity
@@ -171,6 +183,7 @@ kill -SIGUSR2 <PID>
 #### Resolution
 
 **Option 1: Immediate Relief**
+
 ```bash
 # Trigger manual GC (if --expose-gc enabled)
 curl -X POST http://localhost:3000/api/admin/gc
@@ -180,6 +193,7 @@ curl -X POST http://localhost:3000/api/admin/clear-cache
 ```
 
 **Option 2: Identify Memory Leaks**
+
 ```bash
 # Run leak detection
 npm run memory:leak-check
@@ -190,6 +204,7 @@ node --inspect index.mjs
 ```
 
 **Option 3: Increase Memory**
+
 ```bash
 # Update systemd service
 sudo systemctl edit unrdf-core
@@ -203,6 +218,7 @@ sudo systemctl restart unrdf-core
 ```
 
 #### Prevention
+
 - Set appropriate memory limits
 - Monitor memory growth trends
 - Implement cache eviction policies
@@ -215,6 +231,7 @@ sudo systemctl restart unrdf-core
 **Response Time**: 5 minutes
 
 #### Symptoms
+
 - Alert: `latency_p95_ms > 1000`
 - Slow query responses
 - Timeout warnings in logs
@@ -235,6 +252,7 @@ curl http://localhost:3000/api/events?type=performance.slow_query&limit=20
 #### Resolution
 
 **Option 1: Query Optimization**
+
 ```bash
 # Analyze slow queries
 npm run query:analyze
@@ -246,6 +264,7 @@ curl -X POST http://localhost:3000/api/query/explain \
 ```
 
 **Option 2: Scale Resources**
+
 ```bash
 # Increase worker threads
 export UNRDF_WORKERS=4
@@ -255,6 +274,7 @@ systemctl restart unrdf-core
 ```
 
 **Option 3: Enable Caching**
+
 ```bash
 # Enable query cache
 curl -X POST http://localhost:3000/api/admin/cache/enable
@@ -265,6 +285,7 @@ curl -X POST http://localhost:3000/api/admin/cache/config \
 ```
 
 #### Prevention
+
 - Optimize common query patterns
 - Use query complexity limits
 - Implement connection pooling
@@ -277,6 +298,7 @@ curl -X POST http://localhost:3000/api/admin/cache/config \
 **Response Time**: 10 minutes
 
 #### Symptoms
+
 - Alert: `rate(business_operations_total{result="success"}[5m]) / rate(business_operations_total[5m]) < 0.95`
 - Increased error rate
 - User reports
@@ -297,6 +319,7 @@ curl http://localhost:3000/api/health/dependencies
 #### Resolution
 
 **Option 1: Identify Root Cause**
+
 ```bash
 # Group errors by type
 curl "http://prometheus:9090/api/v1/query?query=topk(5,%20sum%20by%20(error_type)%20(rate(business_failures_by_type%5B5m%5D)))"
@@ -306,6 +329,7 @@ curl http://localhost:16686/api/traces?service=unrdf-core&limit=20
 ```
 
 **Option 2: Rollback Recent Changes**
+
 ```bash
 # Check recent deployments
 git log --since="1 hour ago" --oneline
@@ -316,6 +340,7 @@ npm run deploy
 ```
 
 **Option 3: Circuit Breaker**
+
 ```bash
 # Enable circuit breaker for failing dependencies
 curl -X POST http://localhost:3000/api/admin/circuit-breaker/enable \
@@ -323,6 +348,7 @@ curl -X POST http://localhost:3000/api/admin/circuit-breaker/enable \
 ```
 
 #### Prevention
+
 - Comprehensive error handling
 - Graceful degradation
 - Dependency health checks
@@ -331,6 +357,7 @@ curl -X POST http://localhost:3000/api/admin/circuit-breaker/enable \
 ## Monitoring Checklist
 
 ### Daily Checks
+
 - [ ] Review Grafana dashboard
 - [ ] Check alert status in Alertmanager
 - [ ] Verify metrics ingestion (no staleness)
@@ -338,6 +365,7 @@ curl -X POST http://localhost:3000/api/admin/circuit-breaker/enable \
 - [ ] Check resource utilization trends
 
 ### Weekly Checks
+
 - [ ] Analyze latency trends
 - [ ] Review error patterns
 - [ ] Check disk space on Prometheus/Jaeger
@@ -345,6 +373,7 @@ curl -X POST http://localhost:3000/api/admin/circuit-breaker/enable \
 - [ ] Review alert tuning
 
 ### Monthly Checks
+
 - [ ] Review dashboard effectiveness
 - [ ] Update alert thresholds based on trends
 - [ ] Analyze cost/performance trade-offs
@@ -398,10 +427,10 @@ curl http://localhost:13133/
 // Update sampling rates based on load
 const tracing = createDistributedTracing({
   sampling: {
-    defaultRate: 0.001,   // 0.1% for high-volume production
-    errorRate: 1.0,       // Always sample errors
-    slowThreshold: 5000,  // 5s threshold
-    slowRate: 0.5,        // 50% of slow operations
+    defaultRate: 0.001, // 0.1% for high-volume production
+    errorRate: 1.0, // Always sample errors
+    slowThreshold: 5000, // 5s threshold
+    slowRate: 0.5, // 50% of slow operations
   },
 });
 ```
@@ -481,17 +510,20 @@ systemctl start prometheus
 ## Escalation
 
 ### L1 Support
+
 - Check alert status
 - Review runbook procedures
 - Attempt standard remediation
 
 ### L2 Support (Escalate if)
+
 - Alert persists >15 minutes
 - Multiple cascading failures
 - Security incidents
 - Unknown root cause
 
 ### L3 Support (Escalate if)
+
 - System-wide outage
 - Data loss suspected
 - Critical security breach
@@ -502,16 +534,16 @@ systemctl start prometheus
 ```yaml
 Teams:
   Platform:
-    Slack: "#unrdf-platform"
-    Pagerduty: "@unrdf-oncall"
+    Slack: '#unrdf-platform'
+    Pagerduty: '@unrdf-oncall'
 
   Security:
-    Slack: "#security-incidents"
-    Email: "security@example.com"
+    Slack: '#security-incidents'
+    Email: 'security@example.com'
 
   Infrastructure:
-    Slack: "#infrastructure"
-    Pagerduty: "@infra-oncall"
+    Slack: '#infrastructure'
+    Pagerduty: '@infra-oncall'
 ```
 
 ## Additional Resources

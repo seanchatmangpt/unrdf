@@ -22,11 +22,7 @@ import {
   ResourceType,
   YAWL_NS,
 } from '../src/resources/index.mjs';
-import {
-  createTestWorkflow,
-  createTestTask,
-  createTestCase,
-} from './test-helpers.mjs';
+import { createTestWorkflow, createTestTask, createTestCase } from './test-helpers.mjs';
 
 describe('YawlResourceManager', () => {
   /** @type {YawlResourceManager} */
@@ -76,10 +72,7 @@ describe('YawlResourceManager', () => {
       const policyPack = createPolicyPack({
         id: 'test-pack',
         name: 'Test Policy Pack',
-        resources: [
-          createParticipant({ id: 'user-1' }),
-          createTool({ id: 'tool-1' }),
-        ],
+        resources: [createParticipant({ id: 'user-1' }), createTool({ id: 'tool-1' })],
         priority: 10,
       });
 
@@ -93,17 +86,21 @@ describe('YawlResourceManager', () => {
     });
 
     it('should list policy packs sorted by priority', () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'low-priority',
-        resources: [],
-        priority: 1,
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'low-priority',
+          resources: [],
+          priority: 1,
+        })
+      );
 
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'high-priority',
-        resources: [],
-        priority: 100,
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'high-priority',
+          resources: [],
+          priority: 100,
+        })
+      );
 
       const packs = manager.listPolicyPacks();
       expect(packs[0].id).toBe('high-priority');
@@ -111,10 +108,12 @@ describe('YawlResourceManager', () => {
     });
 
     it('should unregister policy pack', () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'to-remove',
-        resources: [],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'to-remove',
+          resources: [],
+        })
+      );
 
       expect(manager.unregisterPolicyPack('to-remove')).toBe(true);
       expect(manager.getPolicyPack('to-remove')).toBeUndefined();
@@ -123,13 +122,15 @@ describe('YawlResourceManager', () => {
 
   describe('Resource Allocation', () => {
     beforeEach(() => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'allocation-test',
-        resources: [
-          createParticipant({ id: 'alice', capacity: 2 }),
-          createTool({ id: 'service', capacity: -1 }),
-        ],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'allocation-test',
+          resources: [
+            createParticipant({ id: 'alice', capacity: 2 }),
+            createTool({ id: 'service', capacity: -1 }),
+          ],
+        })
+      );
     });
 
     it('should allocate resource and return receipt', async () => {
@@ -153,32 +154,30 @@ describe('YawlResourceManager', () => {
     it('should reject allocation when capacity exceeded', async () => {
       const resource = createParticipant({ id: 'limited', capacity: 1 });
 
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'limited-test',
-        resources: [resource],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'limited-test',
+          resources: [resource],
+        })
+      );
 
       // First allocation should succeed
-      await manager.allocateResource(
-        { id: 'wi-1', taskId: 't', caseId: 'c' },
-        resource
-      );
+      await manager.allocateResource({ id: 'wi-1', taskId: 't', caseId: 'c' }, resource);
 
       // Second allocation should fail
       await expect(
-        manager.allocateResource(
-          { id: 'wi-2', taskId: 't', caseId: 'c' },
-          resource
-        )
+        manager.allocateResource({ id: 'wi-2', taskId: 't', caseId: 'c' }, resource)
       ).rejects.toThrow(/Capacity exceeded/);
     });
 
     it('should deallocate resource', async () => {
       const resource = createParticipant({ id: 'bob', capacity: 1 });
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'dealloc-test',
-        resources: [resource],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'dealloc-test',
+          resources: [resource],
+        })
+      );
 
       const receipt = await manager.allocateResource(
         { id: 'wi-1', taskId: 't', caseId: 'c' },
@@ -200,10 +199,12 @@ describe('YawlResourceManager', () => {
   describe('Capacity Tracking', () => {
     it('should track capacity status', async () => {
       const resource = createParticipant({ id: 'tracked', capacity: 3 });
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'capacity-test',
-        resources: [resource],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'capacity-test',
+          resources: [resource],
+        })
+      );
 
       // Initial state
       let status = manager.getCapacityStatus('tracked');
@@ -212,10 +213,7 @@ describe('YawlResourceManager', () => {
       expect(status.available).toBe(3);
 
       // After one allocation
-      await manager.allocateResource(
-        { id: 'wi-1', taskId: 't', caseId: 'c' },
-        resource
-      );
+      await manager.allocateResource({ id: 'wi-1', taskId: 't', caseId: 'c' }, resource);
 
       status = manager.getCapacityStatus('tracked');
       expect(status.current).toBe(1);
@@ -225,19 +223,15 @@ describe('YawlResourceManager', () => {
 
     it('should list active allocations', async () => {
       const resource = createParticipant({ id: 'active-test', capacity: 5 });
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'active-test',
-        resources: [resource],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'active-test',
+          resources: [resource],
+        })
+      );
 
-      await manager.allocateResource(
-        { id: 'wi-1', taskId: 't', caseId: 'c' },
-        resource
-      );
-      await manager.allocateResource(
-        { id: 'wi-2', taskId: 't', caseId: 'c' },
-        resource
-      );
+      await manager.allocateResource({ id: 'wi-1', taskId: 't', caseId: 'c' }, resource);
+      await manager.allocateResource({ id: 'wi-2', taskId: 't', caseId: 'c' }, resource);
 
       const allocations = manager.getActiveAllocations();
       expect(allocations.length).toBeGreaterThanOrEqual(2);
@@ -246,17 +240,21 @@ describe('YawlResourceManager', () => {
 
   describe('Resource Eligibility', () => {
     it('should get eligible resources ordered by priority', async () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'high-priority',
-        resources: [createParticipant({ id: 'priority-user' })],
-        priority: 100,
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'high-priority',
+          resources: [createParticipant({ id: 'priority-user' })],
+          priority: 100,
+        })
+      );
 
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'low-priority',
-        resources: [createParticipant({ id: 'regular-user' })],
-        priority: 1,
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'low-priority',
+          resources: [createParticipant({ id: 'regular-user' })],
+          priority: 1,
+        })
+      );
 
       const eligible = await manager.getEligibleResources('task-1', 'case-1');
 
@@ -266,13 +264,12 @@ describe('YawlResourceManager', () => {
     });
 
     it('should filter eligible resources by type', async () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'mixed',
-        resources: [
-          createParticipant({ id: 'person-1' }),
-          createTool({ id: 'tool-1' }),
-        ],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'mixed',
+          resources: [createParticipant({ id: 'person-1' }), createTool({ id: 'tool-1' })],
+        })
+      );
 
       const tools = await manager.getEligibleResources('task-1', 'case-1', {
         resourceType: ResourceType.TOOL,
@@ -285,10 +282,12 @@ describe('YawlResourceManager', () => {
 
   describe('Resource Availability', () => {
     it('should get availability for resource', () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'avail-test',
-        resources: [createParticipant({ id: 'avail-user' })],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'avail-test',
+          resources: [createParticipant({ id: 'avail-user' })],
+        })
+      );
 
       const availability = manager.getAvailability('avail-user');
 
@@ -298,10 +297,12 @@ describe('YawlResourceManager', () => {
     });
 
     it('should set and retrieve availability windows', () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'window-test',
-        resources: [createParticipant({ id: 'window-user' })],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'window-test',
+          resources: [createParticipant({ id: 'window-user' })],
+        })
+      );
 
       const now = new Date();
       const later = new Date(now.getTime() + 3600000);
@@ -354,10 +355,14 @@ describe('YawlResourceManager', () => {
       });
 
       const receipt1 = await pool.allocateAny({
-        id: 'wi-1', taskId: 't', caseId: 'c',
+        id: 'wi-1',
+        taskId: 't',
+        caseId: 'c',
       });
       const receipt2 = await pool.allocateAny({
-        id: 'wi-2', taskId: 't', caseId: 'c',
+        id: 'wi-2',
+        taskId: 't',
+        caseId: 'c',
       });
 
       expect(receipt1.resourceId).not.toBe(receipt2.resourceId);
@@ -366,9 +371,7 @@ describe('YawlResourceManager', () => {
     it('should return null when pool exhausted', async () => {
       const pool = manager.createResourcePool({
         id: 'limited-pool',
-        resources: [
-          createParticipant({ id: 'limited-1', capacity: 1 }),
-        ],
+        resources: [createParticipant({ id: 'limited-1', capacity: 1 })],
       });
 
       await pool.allocateAny({ id: 'wi-1', taskId: 't', caseId: 'c' });
@@ -411,10 +414,12 @@ describe('YawlResourceManager', () => {
 
   describe('SPARQL Query', () => {
     it('should execute SPARQL query on store', () => {
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'sparql-test',
-        resources: [createParticipant({ id: 'sparql-user' })],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'sparql-test',
+          resources: [createParticipant({ id: 'sparql-user' })],
+        })
+      );
 
       // Should not throw
       const query = `
@@ -440,10 +445,12 @@ describe('YawlResourceManager', () => {
 
     it('should validate work item in allocation', async () => {
       const resource = createParticipant({ id: 'valid-user' });
-      manager.registerPolicyPack(createPolicyPack({
-        id: 'validation',
-        resources: [resource],
-      }));
+      manager.registerPolicyPack(
+        createPolicyPack({
+          id: 'validation',
+          resources: [resource],
+        })
+      );
 
       await expect(
         manager.allocateResource({ id: '', taskId: 'x', caseId: 'y' }, resource)

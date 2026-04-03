@@ -39,12 +39,7 @@ export const SUPPORTED_INPUT_FORMATS = Object.freeze([
  * Supported output formats
  * @type {ReadonlyArray<string>}
  */
-export const SUPPORTED_OUTPUT_FORMATS = Object.freeze([
-  'jsonld',
-  'ntriples',
-  'rdfxml',
-  'csv',
-]);
+export const SUPPORTED_OUTPUT_FORMATS = Object.freeze(['jsonld', 'ntriples', 'rdfxml', 'csv']);
 
 /**
  * Validation schema for format conversion options
@@ -521,9 +516,7 @@ export const convertFormat = async (input, inputFormat, outputFormat, options = 
   });
 
   if (!validation.success) {
-    const errors = validation.error.errors
-      .map(e => `${e.path.join('.')}: ${e.message}`)
-      .join('; ');
+    const errors = validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
     throw new Error(`Format validation failed: ${errors}`);
   }
 
@@ -540,7 +533,9 @@ export const convertFormat = async (input, inputFormat, outputFormat, options = 
     store = csvToStore(input, options);
   } else {
     // For other formats (turtle, ntriples, rdfxml), you'd use an RDF parser
-    throw new Error(`Input format '${inputFormat}' parser not yet implemented. Supported: ${SUPPORTED_INPUT_FORMATS.join(', ')}`);
+    throw new Error(
+      `Input format '${inputFormat}' parser not yet implemented. Supported: ${SUPPORTED_INPUT_FORMATS.join(', ')}`
+    );
   }
 
   // Serialize store to output format
@@ -559,7 +554,9 @@ export const convertFormat = async (input, inputFormat, outputFormat, options = 
     }
     default: {
       // This should never happen due to Zod validation above
-      throw new Error(`Output format '${outputFormat}' not supported. Supported: ${SUPPORTED_OUTPUT_FORMATS.join(', ')}`);
+      throw new Error(
+        `Output format '${outputFormat}' not supported. Supported: ${SUPPORTED_OUTPUT_FORMATS.join(', ')}`
+      );
     }
   }
 };

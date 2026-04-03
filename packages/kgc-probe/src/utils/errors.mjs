@@ -58,7 +58,7 @@ export class ProbeError extends Error {
       context: this.context,
       recovery: this.recovery,
       timestamp: this.timestamp,
-      stack: this.stack
+      stack: this.stack,
     };
   }
 
@@ -76,7 +76,7 @@ export class ProbeError extends Error {
     if (error instanceof Error) {
       return new ProbeError(error.message, code || 'UNKNOWN_ERROR', {
         originalName: error.name,
-        originalStack: error.stack
+        originalStack: error.stack,
       });
     }
 
@@ -105,11 +105,16 @@ export class GuardViolationError extends ProbeError {
    * @param {string} [receiptId] - Denial receipt ID
    */
   constructor(message, guardId, context = {}, receiptId = undefined) {
-    super(message, 'GUARD_VIOLATION', {
-      ...context,
-      guardId,
-      receiptId
-    }, 'Check guard policy configuration or request access exemption');
+    super(
+      message,
+      'GUARD_VIOLATION',
+      {
+        ...context,
+        guardId,
+        receiptId,
+      },
+      'Check guard policy configuration or request access exemption'
+    );
 
     this.name = 'GuardViolationError';
 
@@ -136,10 +141,15 @@ export class ValidationError extends ProbeError {
    * @param {string} [field] - Field that failed validation
    */
   constructor(message, context = {}, field = undefined) {
-    super(message, 'VALIDATION_ERROR', {
-      ...context,
-      field
-    }, 'Check input format and required fields');
+    super(
+      message,
+      'VALIDATION_ERROR',
+      {
+        ...context,
+        field,
+      },
+      'Check input format and required fields'
+    );
 
     this.name = 'ValidationError';
 
@@ -159,7 +169,7 @@ export class ValidationError extends ProbeError {
     const issues = zodError.issues.map(i => ({
       path: i.path.join('.'),
       message: i.message,
-      code: i.code
+      code: i.code,
     }));
 
     const firstIssue = issues[0];
@@ -187,10 +197,15 @@ export class MergeConflictError extends ProbeError {
    * @param {Array<{claimId: string, agents: string[]}>} conflicts - Conflict details
    */
   constructor(message, conflicts = []) {
-    super(message, 'MERGE_CONFLICT', {
-      conflicts,
-      conflictCount: conflicts.length
-    }, 'Use --on-conflict=list to review conflicts or --on-conflict=merge to auto-resolve');
+    super(
+      message,
+      'MERGE_CONFLICT',
+      {
+        conflicts,
+        conflictCount: conflicts.length,
+      },
+      'Use --on-conflict=list to review conflicts or --on-conflict=merge to auto-resolve'
+    );
 
     this.name = 'MergeConflictError';
 
@@ -217,10 +232,15 @@ export class ReceiptError extends ProbeError {
    * @param {string} [verificationStep] - Which verification step failed
    */
   constructor(message, context = {}, verificationStep = undefined) {
-    super(message, 'RECEIPT_ERROR', {
-      ...context,
-      verificationStep
-    }, 'Regenerate receipts or check artifact integrity');
+    super(
+      message,
+      'RECEIPT_ERROR',
+      {
+        ...context,
+        verificationStep,
+      },
+      'Regenerate receipts or check artifact integrity'
+    );
 
     this.name = 'ReceiptError';
 
@@ -243,10 +263,15 @@ export class ArtifactNotFoundError extends ProbeError {
    * @param {string} [path] - Path searched
    */
   constructor(artifactId, path = undefined) {
-    super(`Artifact not found: ${artifactId}`, 'ARTIFACT_NOT_FOUND', {
-      artifactId,
-      path
-    }, 'Run a probe scan first or check the artifact path');
+    super(
+      `Artifact not found: ${artifactId}`,
+      'ARTIFACT_NOT_FOUND',
+      {
+        artifactId,
+        path,
+      },
+      'Run a probe scan first or check the artifact path'
+    );
 
     this.name = 'ArtifactNotFoundError';
 
@@ -270,10 +295,15 @@ export class TimeoutError extends ProbeError {
    * @param {string} [operation] - Operation that timed out
    */
   constructor(message, timeoutMs, operation = undefined) {
-    super(message, 'TIMEOUT', {
-      timeoutMs,
-      operation
-    }, 'Increase --timeout value or check for performance issues');
+    super(
+      message,
+      'TIMEOUT',
+      {
+        timeoutMs,
+        operation,
+      },
+      'Increase --timeout value or check for performance issues'
+    );
 
     this.name = 'TimeoutError';
 
@@ -297,10 +327,15 @@ export class AgentError extends ProbeError {
    * @param {Error} [cause] - Underlying error
    */
   constructor(message, agentId, cause = undefined) {
-    super(message, 'AGENT_ERROR', {
-      agentId,
-      cause: cause?.message
-    }, 'Check agent configuration and dependencies');
+    super(
+      message,
+      'AGENT_ERROR',
+      {
+        agentId,
+        cause: cause?.message,
+      },
+      'Check agent configuration and dependencies'
+    );
 
     this.name = 'AgentError';
 
@@ -327,10 +362,15 @@ export class StorageError extends ProbeError {
    * @param {Object} [context] - Additional context
    */
   constructor(message, operation, context = {}) {
-    super(message, 'STORAGE_ERROR', {
-      ...context,
-      operation
-    }, 'Check storage permissions and disk space');
+    super(
+      message,
+      'STORAGE_ERROR',
+      {
+        ...context,
+        operation,
+      },
+      'Check storage permissions and disk space'
+    );
 
     this.name = 'StorageError';
 
@@ -374,7 +414,7 @@ export const ErrorCodes = {
   AGENT_ERROR: 'AGENT_ERROR',
   STORAGE_ERROR: 'STORAGE_ERROR',
   CONFIG_ERROR: 'CONFIG_ERROR',
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
 };
 
 /**

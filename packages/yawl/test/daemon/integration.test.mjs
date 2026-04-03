@@ -15,7 +15,7 @@ import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -155,10 +155,10 @@ describe('Daemon Integration', () => {
       const workflowId = 'complete-workflow';
       const eventLog = [];
 
-      engine.on('case:created', (e) => eventLog.push(`case-created:${e.caseId}`));
-      engine.on('task:enabled', (e) => eventLog.push(`task-enabled:${e.taskId}`));
-      engine.on('task:completed', (e) => eventLog.push(`task-completed:${e.taskId}`));
-      engine.on('case:completed', (e) => eventLog.push(`case-completed:${e.caseId}`));
+      engine.on('case:created', e => eventLog.push(`case-created:${e.caseId}`));
+      engine.on('task:enabled', e => eventLog.push(`task-enabled:${e.taskId}`));
+      engine.on('task:completed', e => eventLog.push(`task-completed:${e.taskId}`));
+      engine.on('case:completed', e => eventLog.push(`case-completed:${e.caseId}`));
 
       // Act
       const caseResult = await engine.createCase({ caseId: 'case-001', workflowId });
@@ -256,7 +256,7 @@ describe('Daemon Integration', () => {
       expect(retryResult.maxAttempts).toBe(2);
 
       const errorEvent = engine.eventLog.find(
-        (e) => e.event === 'task:failed' && e.taskId === 'task-1'
+        e => e.event === 'task:failed' && e.taskId === 'task-1'
       );
       expect(errorEvent).toBeDefined();
     });
@@ -267,14 +267,10 @@ describe('Daemon Integration', () => {
       await engine.enableTask({ caseId: 'case-timeout', taskId: 'slow-task' });
 
       // Act
-      const timeoutResult = await bridge.watchTaskTimeout(
-        'case-timeout',
-        'slow-task',
-        2000
-      );
+      const timeoutResult = await bridge.watchTaskTimeout('case-timeout', 'slow-task', 2000);
 
       // Simulate timeout expiry
-      await new Promise((resolve) => setTimeout(resolve, 2100));
+      await new Promise(resolve => setTimeout(resolve, 2100));
       await daemon.execute(timeoutResult.operationId);
 
       // Assert
@@ -298,11 +294,9 @@ describe('Daemon Integration', () => {
 
       // Assert
       const completedCases = Array.from(engine.cases.values()).filter(
-        (c) => c.status === 'COMPLETED'
+        c => c.status === 'COMPLETED'
       );
-      const runningCases = Array.from(engine.cases.values()).filter(
-        (c) => c.status === 'RUNNING'
-      );
+      const runningCases = Array.from(engine.cases.values()).filter(c => c.status === 'RUNNING');
 
       expect(completedCases.length).toBe(1);
       expect(runningCases.length).toBe(2);
@@ -378,14 +372,14 @@ describe('Daemon Integration', () => {
       // Act
       for (const stage of stages) {
         await engine.enableTask({ caseId: 'case-long', taskId: stage });
-        await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate processing
+        await new Promise(resolve => setTimeout(resolve, 10)); // Simulate processing
         await engine.completeTask({ caseId: 'case-long', taskId: stage });
       }
 
       await engine.completeCase('case-long');
 
       // Assert
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         const task = engine.tasks.get(`case-long:${stage}`);
         expect(task.status).toBe('COMPLETED');
       });
@@ -484,7 +478,7 @@ describe('Daemon Integration', () => {
 
       // Act
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) => op.id.includes('yawl-case-scheduled-wf'));
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-scheduled-wf'));
 
       await daemon.execute(scheduleOp.id);
 
@@ -500,13 +494,9 @@ describe('Daemon Integration', () => {
       await engine.enableTask({ caseId: 'case-int-timeout', taskId: 'timed-task' });
 
       // Act
-      const timeoutResult = await bridge.watchTaskTimeout(
-        'case-int-timeout',
-        'timed-task',
-        1000
-      );
+      const timeoutResult = await bridge.watchTaskTimeout('case-int-timeout', 'timed-task', 1000);
 
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
       await daemon.execute(timeoutResult.operationId);
 
       // Assert
@@ -552,19 +542,13 @@ describe('Daemon Integration', () => {
       const bridgeEvents = [];
       const daemonEvents = [];
 
-      bridge.on('case:created-by-schedule', (e) =>
-        bridgeEvents.push(`case-created:${e.caseId}`)
-      );
-      daemon.on('operation:success', (e) =>
-        daemonEvents.push(`op-success:${e.operationId}`)
-      );
+      bridge.on('case:created-by-schedule', e => bridgeEvents.push(`case-created:${e.caseId}`));
+      daemon.on('operation:success', e => daemonEvents.push(`op-success:${e.operationId}`));
 
       await bridge.scheduleRecurringCase('event-share-wf', '* * * * *');
 
       const operations = daemon.listOperations();
-      const scheduleOp = operations.find((op) =>
-        op.id.includes('yawl-case-event-share-wf')
-      );
+      const scheduleOp = operations.find(op => op.id.includes('yawl-case-event-share-wf'));
 
       // Act
       await daemon.execute(scheduleOp.id);
@@ -602,7 +586,7 @@ describe('Daemon Integration', () => {
       await errorBridge.scheduleRecurringCase('error-wf', '* * * * *');
 
       const operations = daemon.listOperations();
-      const errorOp = operations.find((op) => op.id.includes('yawl-case-error-wf'));
+      const errorOp = operations.find(op => op.id.includes('yawl-case-error-wf'));
 
       // Act & Assert
       await expect(daemon.execute(errorOp.id)).rejects.toThrow('Engine error');
@@ -697,9 +681,9 @@ describe('Daemon Integration', () => {
       // Arrange
       const crossEvents = [];
 
-      daemon.on('operation:enqueued', (e) => crossEvents.push(`daemon:${e.operationId}`));
-      bridge.on('bridge:started', (e) => crossEvents.push(`bridge:${e.bridgeId}`));
-      engine.on('case:created', (e) => crossEvents.push(`engine:${e.caseId}`));
+      daemon.on('operation:enqueued', e => crossEvents.push(`daemon:${e.operationId}`));
+      bridge.on('bridge:started', e => crossEvents.push(`bridge:${e.bridgeId}`));
+      engine.on('case:created', e => crossEvents.push(`engine:${e.caseId}`));
 
       // Act
       await bridge.scheduleRecurringCase('cross-wf', '* * * * *');
@@ -707,8 +691,8 @@ describe('Daemon Integration', () => {
 
       // Assert
       expect(crossEvents.length).toBeGreaterThan(0);
-      expect(crossEvents.some((e) => e.startsWith('daemon:'))).toBe(true);
-      expect(crossEvents.some((e) => e.startsWith('engine:'))).toBe(true);
+      expect(crossEvents.some(e => e.startsWith('daemon:'))).toBe(true);
+      expect(crossEvents.some(e => e.startsWith('engine:'))).toBe(true);
     });
   });
 
@@ -788,9 +772,9 @@ describe('Daemon Integration', () => {
 
       // Retry
       await bridge.scheduleRetry(batchId, 'transform', { maxAttempts: 3 });
-      const retryOp = daemon.listOperations().find((op) =>
-        op.id.includes(`yawl-retry-${batchId}:transform`)
-      );
+      const retryOp = daemon
+        .listOperations()
+        .find(op => op.id.includes(`yawl-retry-${batchId}:transform`));
       await daemon.execute(retryOp.id);
 
       // Complete after retry
@@ -819,11 +803,11 @@ describe('Daemon Integration', () => {
       await bridge.watchTaskTimeout(docId, 'manager-review', 2000);
 
       // Simulate timeout expiry
-      await new Promise((resolve) => setTimeout(resolve, 2100));
+      await new Promise(resolve => setTimeout(resolve, 2100));
 
       const timeoutOp = daemon
         .listOperations()
-        .find((op) => op.id.includes(`yawl-timeout-${docId}-manager-review`));
+        .find(op => op.id.includes(`yawl-timeout-${docId}-manager-review`));
       await daemon.execute(timeoutOp.id);
 
       // Assert
@@ -841,14 +825,12 @@ describe('Daemon Integration', () => {
       // Act
       const scheduleOp = daemon
         .listOperations()
-        .find((op) => op.id.includes('yawl-case-daily-report'));
+        .find(op => op.id.includes('yawl-case-daily-report'));
 
       await daemon.execute(scheduleOp.id);
 
       // Assert
-      const reports = Array.from(engine.cases.values()).filter((c) =>
-        c.id.startsWith('REPORT')
-      );
+      const reports = Array.from(engine.cases.values()).filter(c => c.id.startsWith('REPORT'));
       expect(reports.length).toBeGreaterThan(0);
       expect(reports[0].inputData.reportType).toBe('sales');
     });
@@ -874,9 +856,7 @@ describe('Daemon Integration', () => {
       // Enable tasks concurrently
       const enablePromises = [];
       for (let i = 0; i < caseCount; i++) {
-        enablePromises.push(
-          engine.enableTask({ caseId: `HV-${i}`, taskId: 'process' })
-        );
+        enablePromises.push(engine.enableTask({ caseId: `HV-${i}`, taskId: 'process' }));
       }
       await Promise.all(enablePromises);
 
@@ -907,7 +887,7 @@ describe('Daemon Integration', () => {
 
       for (const stage of stages) {
         await engine.enableTask({ caseId: deployId, taskId: stage });
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10));
         await engine.completeTask({ caseId: deployId, taskId: stage });
       }
 
@@ -917,7 +897,7 @@ describe('Daemon Integration', () => {
       const deployment = engine.cases.get(deployId);
       expect(deployment.status).toBe('COMPLETED');
 
-      stages.forEach((stage) => {
+      stages.forEach(stage => {
         const task = engine.tasks.get(`${deployId}:${stage}`);
         expect(task.status).toBe('COMPLETED');
       });
@@ -945,7 +925,7 @@ describe('Daemon Integration', () => {
       await bridge.watchTaskTimeout(customerId, 'kyc-verification', 5000);
 
       // Simulate human completing before timeout
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
       await engine.completeTask({ caseId: customerId, taskId: 'kyc-verification' });
 
       // Final automated task
@@ -1023,11 +1003,9 @@ describe('Daemon Integration', () => {
       const eventLog = [];
 
       // Subscribe to all events
-      daemon.on('operation:enqueued', (e) => eventLog.push({ type: 'daemon', event: e }));
-      bridge.on('case:created-by-schedule', (e) =>
-        eventLog.push({ type: 'bridge', event: e })
-      );
-      engine.on('task:enabled', (e) => eventLog.push({ type: 'engine', event: e }));
+      daemon.on('operation:enqueued', e => eventLog.push({ type: 'daemon', event: e }));
+      bridge.on('case:created-by-schedule', e => eventLog.push({ type: 'bridge', event: e }));
+      engine.on('task:enabled', e => eventLog.push({ type: 'engine', event: e }));
 
       // Act
       await engine.createCase({
@@ -1041,7 +1019,7 @@ describe('Daemon Integration', () => {
       // Assert
       expect(eventLog.length).toBeGreaterThan(0);
 
-      const engineEvents = eventLog.filter((e) => e.type === 'engine');
+      const engineEvents = eventLog.filter(e => e.type === 'engine');
       expect(engineEvents.length).toBeGreaterThan(0);
     });
   });

@@ -8,13 +8,8 @@
  */
 
 import { randomUUID } from 'crypto';
-import {
-  CancellationRegionManager,
-} from './yawl-cancellation-regions.mjs';
-import {
-  TaskCircuitBreaker,
-  CancellationReceiptLogger,
-} from './yawl-cancellation-core.mjs';
+import { CancellationRegionManager } from './yawl-cancellation-regions.mjs';
+import { TaskCircuitBreaker, CancellationReceiptLogger } from './yawl-cancellation-core.mjs';
 
 /**
  * @typedef {Object} CancellationConfig
@@ -374,7 +369,12 @@ export class YawlCancellationManager {
 
     const durationMs = Date.now() - workItem.startedAt.getTime();
 
-    this.receiptLogger.logTimeoutOccurred(workItemId, workItem.taskId, durationMs, workItem.timeoutMs);
+    this.receiptLogger.logTimeoutOccurred(
+      workItemId,
+      workItem.taskId,
+      durationMs,
+      workItem.timeoutMs
+    );
 
     if (this.config.onTimeout) {
       try {
@@ -618,7 +618,11 @@ export class YawlCancellationManager {
    */
   terminate(reason = 'workflow_terminated') {
     for (const [id, workItem] of this.workItems) {
-      if (workItem.state === 'executing' || workItem.state === 'enabled' || workItem.state === 'pending') {
+      if (
+        workItem.state === 'executing' ||
+        workItem.state === 'enabled' ||
+        workItem.state === 'pending'
+      ) {
         this.cancelWorkItem(id, reason);
       }
     }

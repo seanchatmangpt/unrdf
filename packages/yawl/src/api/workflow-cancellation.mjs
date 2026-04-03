@@ -73,9 +73,7 @@ export async function cancelWorkItem(workItem, reason, options = {}) {
     // Find cancellation region for this task
     const task = options.workflow.getTask(workItem.taskId);
     if (task?.cancellationRegion) {
-      const regionTasks = options.workflow.getCancellationRegion(
-        task.cancellationRegion
-      );
+      const regionTasks = options.workflow.getCancellationRegion(task.cancellationRegion);
       for (const taskId of regionTasks) {
         if (taskId !== workItem.taskId) {
           const regionWorkItem = options.caseObj.getWorkItem(taskId);
@@ -119,19 +117,16 @@ export async function cancelWorkItem(workItem, reason, options = {}) {
   }
 
   // Create receipt
-  const receipt = await createReceipt(
-    YAWL_EVENT_TYPES.WORK_ITEM_CANCELLED,
-    {
-      workItemId: workItem.id,
-      taskId: workItem.taskId,
-      caseId: workItem.caseId,
-      previousStatus,
-      reason,
-      cancelledInRegion,
-      cancelTime,
-      eventId: eventReceipt?.id,
-    }
-  );
+  const receipt = await createReceipt(YAWL_EVENT_TYPES.WORK_ITEM_CANCELLED, {
+    workItemId: workItem.id,
+    taskId: workItem.taskId,
+    caseId: workItem.caseId,
+    previousStatus,
+    reason,
+    cancelledInRegion,
+    cancelTime,
+    eventId: eventReceipt?.id,
+  });
 
   return {
     workItem,

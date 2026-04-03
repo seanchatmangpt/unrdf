@@ -30,11 +30,7 @@ export {
   InvariantCheckSchema,
 } from './compensation-executor.mjs';
 
-export {
-  SnapshotManager,
-  createSnapshotManager,
-  StateSnapshotSchema,
-} from './state-snapshots.mjs';
+export { SnapshotManager, createSnapshotManager, StateSnapshotSchema } from './state-snapshots.mjs';
 
 export {
   createMonetaryRefund,

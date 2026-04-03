@@ -21,7 +21,7 @@ export {
   pruneLockfile,
   createLockEntry,
   LockEntrySchema,
-  LockfileSchema
+  LockfileSchema,
 } from './lockfile.mjs';
 
 // Cache store operations
@@ -31,22 +31,14 @@ export {
   listCached,
   getCacheStats,
   clearCache,
-  verifyCached
+  verifyCached,
 } from './store.mjs';
 
 // Bundle operations
-export {
-  exportBundle,
-  importBundle,
-  verifyBundle,
-  listBundle
-} from './bundle.mjs';
+export { exportBundle, importBundle, verifyBundle, listBundle } from './bundle.mjs';
 
 // CTAN package resolution (Agent 4)
-export {
-  resolveMissingInputs,
-  augmentVfsWithResolvedPackages
-} from './resolve.mjs';
+export { resolveMissingInputs, augmentVfsWithResolvedPackages } from './resolve.mjs';
 
 // CTAN package mapping
 export {
@@ -59,5 +51,5 @@ export {
   CTAN_PATH_TEMPLATES,
   VFS_PATH_TEMPLATES,
   PACKAGE_NAME_EXCEPTIONS,
-  DEFAULT_CTAN_MIRROR
+  DEFAULT_CTAN_MIRROR,
 } from './ctan-map.mjs';

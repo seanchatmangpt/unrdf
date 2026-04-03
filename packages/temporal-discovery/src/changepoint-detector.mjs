@@ -110,11 +110,7 @@ function binarySegmentation(data, penalty, minSegmentLength, maxChangepoints) {
 
       const fullCost = segmentCost(data, start, end);
 
-      for (
-        let split = start + minSegmentLength;
-        split < end - minSegmentLength;
-        split++
-      ) {
+      for (let split = start + minSegmentLength; split < end - minSegmentLength; split++) {
         const leftCost = segmentCost(data, start, split);
         const rightCost = segmentCost(data, split, end);
         const splitCost = leftCost + rightCost + penalty;
@@ -180,23 +176,17 @@ export function detectChangepoints(timeSeries, options = {}) {
   const validatedSeries = TimeSeriesSchema.parse(timeSeries);
   const validatedOptions = ChangepointDetectionOptionsSchema.parse(options);
 
-  const { penalty, minSegmentLength, maxChangepoints, method } =
-    validatedOptions;
+  const { penalty, minSegmentLength, maxChangepoints, method } = validatedOptions;
   const { data } = validatedSeries;
 
-  const values = data.map((d) => d.value);
+  const values = data.map(d => d.value);
 
   let changepointIndices;
 
   if (method === 'pelt') {
     changepointIndices = pelt(values, penalty, minSegmentLength);
   } else if (method === 'binary_segmentation') {
-    changepointIndices = binarySegmentation(
-      values,
-      penalty,
-      minSegmentLength,
-      maxChangepoints
-    );
+    changepointIndices = binarySegmentation(values, penalty, minSegmentLength, maxChangepoints);
   } else {
     changepointIndices = pelt(values, penalty, minSegmentLength);
   }
@@ -205,13 +195,10 @@ export function detectChangepoints(timeSeries, options = {}) {
     changepointIndices = changepointIndices.slice(0, maxChangepoints);
   }
 
-  const changepoints = changepointIndices.map((index) => {
-    const beforeMean =
-      index > 0 ? segmentMean(values, 0, index) : values[index];
+  const changepoints = changepointIndices.map(index => {
+    const beforeMean = index > 0 ? segmentMean(values, 0, index) : values[index];
     const afterMean =
-      index < values.length
-        ? segmentMean(values, index, values.length)
-        : values[index];
+      index < values.length ? segmentMean(values, index, values.length) : values[index];
 
     const magnitude = Math.abs(afterMean - beforeMean);
     const cost = segmentCost(values, 0, index);

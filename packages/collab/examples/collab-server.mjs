@@ -49,7 +49,7 @@ wss.on('connection', (ws, req) => {
 
   console.log(`✅ Client connected to room: ${roomName}`);
 
-  ws.on('message', (message) => {
+  ws.on('message', message => {
     const encoder = encoding.createEncoder();
     const decoder = decoding.createDecoder(new Uint8Array(message));
     const messageType = decoding.readVarUint(decoder);
@@ -62,7 +62,7 @@ wss.on('connection', (ws, req) => {
 
       case syncProtocol.messageAwareness: {
         // Broadcast awareness to all clients in room
-        wss.clients.forEach((client) => {
+        wss.clients.forEach(client => {
           if (client !== ws && client.readyState === 1) {
             client.send(message);
           }
@@ -80,7 +80,7 @@ wss.on('connection', (ws, req) => {
     console.log(`❌ Client disconnected from room: ${roomName}`);
   });
 
-  ws.on('error', (error) => {
+  ws.on('error', error => {
     console.error(`⚠️  WebSocket error in room ${roomName}:`, error.message);
   });
 

@@ -16,7 +16,7 @@ const LOG_LEVELS = {
   info: 1,
   warn: 2,
   error: 3,
-  silent: 4
+  silent: 4,
 };
 
 /**
@@ -94,7 +94,7 @@ export class Logger {
     /** @type {LogEntry} */
     const entry = {
       level,
-      message: this.prefix ? `[${this.prefix}] ${message}` : message
+      message: this.prefix ? `[${this.prefix}] ${message}` : message,
     };
 
     if (this.timestamps) {
@@ -165,9 +165,7 @@ export class Logger {
    * @returns {Logger}
    */
   child(childPrefix) {
-    const newPrefix = this.prefix
-      ? `${this.prefix}:${childPrefix}`
-      : childPrefix;
+    const newPrefix = this.prefix ? `${this.prefix}:${childPrefix}` : childPrefix;
 
     return new Logger({
       level: this.level,
@@ -175,7 +173,7 @@ export class Logger {
       prefix: newPrefix,
       timestamps: this.timestamps,
       output: this.output,
-      errorOutput: this.errorOutput
+      errorOutput: this.errorOutput,
     });
   }
 

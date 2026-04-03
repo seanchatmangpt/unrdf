@@ -5,6 +5,7 @@
 ## Contents
 
 Future files:
+
 - `manager.mjs` - Cache CRUD operations
 - `manifest.mjs` - Cache manifest (cache/manifest.json) management
 - `cleanup.mjs` - LRU cleanup and size management
@@ -29,6 +30,7 @@ Future files:
 ## Cache Key
 
 Cache keys are 16-character SHA-256 hash prefixes based on:
+
 - Engine (xetex/pdftex)
 - Compiler version
 - Input file path
@@ -38,5 +40,6 @@ See `/home/user/unrdf/packages/kgc-cli/src/lib/latex/compile.mjs` `generateCache
 ## Schemas
 
 Cache schemas defined in `/home/user/unrdf/packages/kgc-cli/src/lib/latex/schemas.mjs`:
+
 - `CacheEntrySchema`
 - `CacheManifestSchema`

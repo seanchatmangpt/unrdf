@@ -4,7 +4,6 @@
  * Pure JS - no dependencies
  */
 
- 
 /* global Deno, Bun, window, document, navigator, Worker, indexedDB, localStorage, importScripts, self */
 
 /**
@@ -100,7 +99,11 @@ export function detectRuntime() {
  */
 export function isNode() {
   try {
-    return typeof process !== 'undefined' && process.versions?.node !== undefined && typeof window === 'undefined';
+    return (
+      typeof process !== 'undefined' &&
+      process.versions?.node !== undefined &&
+      typeof window === 'undefined'
+    );
   } catch {
     return false;
   }
@@ -139,7 +142,7 @@ export function getCrypto() {
   if (typeof globalThis !== 'undefined' && globalThis.crypto) {
     return globalThis.crypto;
   }
-  
+
   // Browser fallback
   if (typeof window !== 'undefined' && window.crypto) {
     return window.crypto;

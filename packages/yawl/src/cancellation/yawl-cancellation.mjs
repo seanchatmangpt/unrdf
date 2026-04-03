@@ -1681,7 +1681,11 @@ export class YawlCancellationManager {
    */
   terminate(reason = 'workflow_terminated') {
     for (const [id, workItem] of this.workItems) {
-      if (workItem.state === 'executing' || workItem.state === 'enabled' || workItem.state === 'pending') {
+      if (
+        workItem.state === 'executing' ||
+        workItem.state === 'enabled' ||
+        workItem.state === 'pending'
+      ) {
         this.cancelWorkItem(id, reason);
       }
     }

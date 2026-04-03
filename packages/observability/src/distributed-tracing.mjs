@@ -328,7 +328,7 @@ export class DistributedTracing {
     // End all active spans
     for (const [_spanId, spanContext] of this.activeContexts) {
       this.endSpan(spanContext, {
-        attributes: { 'shutdown': true },
+        attributes: { shutdown: true },
       });
     }
 

@@ -401,7 +401,10 @@ async function* parseJsonLd(jsonld, opts) {
 function parseNTripleLine(line) {
   if (!line.endsWith('.')) return null;
 
-  const parts = line.slice(0, -1).trim().match(/(\S+)\s+(\S+)\s+(.+)/);
+  const parts = line
+    .slice(0, -1)
+    .trim()
+    .match(/(\S+)\s+(\S+)\s+(.+)/);
   if (!parts) return null;
 
   const [, s, p, o] = parts;

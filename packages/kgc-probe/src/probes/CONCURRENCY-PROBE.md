@@ -14,50 +14,59 @@ The Concurrency Surface Probe (Agent 4) systematically measures Node.js concurre
 ## Probes Implemented
 
 ### 1. Worker Threads Availability
+
 - **Method**: `concurrency.worker_threads_available`
 - **Measures**: Worker constructor existence, Node.js version compatibility
 - **Outputs**: `available`, `module`, `nodeVersion`
 
 ### 2. SharedArrayBuffer Availability
+
 - **Method**: `concurrency.shared_array_buffer`
 - **Measures**: SharedArrayBuffer constructor and functional test
 - **Outputs**: `available`, `testSize`, `functional`
 
 ### 3. Atomics Support
+
 - **Method**: `concurrency.atomics`
 - **Measures**: Atomics object and basic operations (add, load, store)
 - **Outputs**: `available`, `functional`, `operations[]`
 
 ### 4. Thread Pool Size Detection
+
 - **Method**: `concurrency.thread_pool_size`
 - **Measures**: UV_THREADPOOL_SIZE environment variable and default
 - **Outputs**: `uvThreadpoolSize`, `default`, `effective`
 
 ### 5. Event Loop Latency
+
 - **Method**: `concurrency.event_loop_latency`
 - **Measures**: setImmediate chain latency with statistical analysis
 - **Outputs**: `mean`, `median`, `p95`, `min`, `max`, `stddev`, `unit`, `samples`
 - **Benchmarking**: Configurable samples (default: 10, max: 100)
 
 ### 6. Worker Spawn Time
+
 - **Method**: `concurrency.worker_spawn_time`
 - **Measures**: Time to spawn and initialize worker threads
 - **Outputs**: Statistical metrics (mean, median, p95, min, max, stddev)
 - **Benchmarking**: Configurable samples, 5s timeout per worker
 
 ### 7. Message Passing Overhead
+
 - **Method**: `concurrency.message_passing_overhead`
 - **Measures**: postMessage latency using echo worker pattern
 - **Outputs**: Round-trip time statistics
 - **Benchmarking**: Configurable samples, measures actual IPC overhead
 
 ### 8. Maximum Concurrent Workers
+
 - **Method**: `concurrency.max_concurrent_workers`
 - **Measures**: Maximum workers that can run simultaneously
 - **Outputs**: `maxAchieved`, `limitReached`, `guardLimit`
 - **Guard Constraint**: Hard limit at config.maxWorkers (max 16)
 
 ### 9. Parallel File I/O Contention
+
 - **Method**: `concurrency.parallel_io_contention`
 - **Measures**: Throughput with N parallel readers
 - **Outputs**: `totalTime`, `throughputMBps`, `perReaderStats`
@@ -66,34 +75,44 @@ The Concurrency Surface Probe (Agent 4) systematically measures Node.js concurre
 ## Guard Constraints (Poka-Yoke)
 
 ### 1. Worker Limit
+
 ```javascript
-maxWorkers: z.number().int().positive().max(16).default(16)
+maxWorkers: z.number().int().positive().max(16).default(16);
 ```
+
 - **Hard limit**: 16 workers maximum
 - **User configurable**: Can set lower limit via config
 - **Enforcement**: `Math.min(config.maxWorkers, 16)`
 
 ### 2. Timeout Enforcement
+
 ```javascript
-timeout: z.number().int().positive().max(5000).default(5000)
+timeout: z.number().int().positive().max(5000).default(5000);
 ```
+
 - **Default**: 5000ms (5 seconds)
 - **Maximum**: 5000ms (hard limit)
 - **Applied to**: All worker operations, file I/O, message passing
 
 ### 3. Worker Cleanup
+
 ```javascript
 const activeWorkers = new Set();
-async function cleanupWorkers() { /* ... */ }
+async function cleanupWorkers() {
+  /* ... */
+}
 ```
+
 - **Tracking**: All spawned workers registered in Set
 - **Cleanup**: Automatic on probe completion or error
 - **Implementation**: try/finally blocks ensure cleanup
 
 ### 4. Budget Enforcement
+
 ```javascript
-budgetMs: z.number().int().positive().max(60000).default(30000)
+budgetMs: z.number().int().positive().max(60000).default(30000);
 ```
+
 - **Default budget**: 30 seconds
 - **Maximum budget**: 60 seconds
 - **Respects**: --budget-ms CLI flag
@@ -129,6 +148,7 @@ Each observation follows the canonical format:
 ## Statistical Analysis
 
 All benchmark probes (event loop latency, worker spawn time, message passing) return:
+
 - **mean**: Arithmetic average
 - **median**: 50th percentile
 - **p95**: 95th percentile
@@ -145,7 +165,7 @@ const observations = await probeConcurrency({
   timeout: 5000,
   maxWorkers: 8,
   samples: 10,
-  budgetMs: 30000
+  budgetMs: 30000,
 });
 
 observations.forEach(obs => {
@@ -158,11 +178,13 @@ observations.forEach(obs => {
 **Test Runner**: `/home/user/unrdf/packages/kgc-probe/test-concurrency.mjs`
 
 Run test:
+
 ```bash
 node packages/kgc-probe/test-concurrency.mjs
 ```
 
 Expected output:
+
 - 9 observations generated
 - All required methods present
 - All observations have canonical format
@@ -172,18 +194,21 @@ Expected output:
 ## Implementation Details
 
 ### Worker Thread Safety
+
 - **No shell execution**: Workers created with `eval: true` for inline code
 - **Explicit cleanup**: All workers terminated in finally blocks
 - **Timeout protection**: Every worker operation has 5s timeout
 - **Error isolation**: Worker errors don't crash probe
 
 ### File I/O Testing
+
 - **Temporary directory**: Uses OS tmpdir or config.testDir
 - **Test file size**: 1MB (configurable via implementation)
 - **Parallel readers**: Limited to min(maxWorkers, 4)
 - **Cleanup**: Test directory persists for inspection
 
 ### Performance Characteristics
+
 - **Event loop latency**: ~0.1-2ms typical (depends on system load)
 - **Worker spawn time**: ~20-100ms typical (depends on system)
 - **Message passing**: ~0.5-5ms round-trip typical
@@ -204,6 +229,7 @@ Expected output:
 ## Integration
 
 ### With KGC Probe Orchestrator
+
 ```javascript
 import { probeConcurrency } from './probes/concurrency.mjs';
 
@@ -214,9 +240,11 @@ const probes = {
 ```
 
 ### With OTEL Observability
+
 Observations can be converted to OTEL spans for tracing and metrics.
 
 ### With Receipt System
+
 Each observation can be hashed and linked to receipts for verification.
 
 ## Limitations

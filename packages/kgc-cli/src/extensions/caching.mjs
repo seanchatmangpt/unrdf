@@ -10,12 +10,12 @@ const extension = {
         clear: {
           description: 'Clear cache',
           argsSchema: z.object({ key: z.string().optional() }),
-          handler: async (_args) => ({ cleared: true })
-        }
-      }
-    }
+          handler: async _args => ({ cleared: true }),
+        },
+      },
+    },
   },
-  priority: 51
+  priority: 51,
 };
 
 export default extension;

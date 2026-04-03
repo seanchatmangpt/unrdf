@@ -56,8 +56,13 @@ try {
       this.resourcePool = new YawlResourcePool();
       this.events = [];
     }
-    registerWorkflow(w) { this.workflows.set(w.id, w); return w; }
-    getWorkflow(id) { return this.workflows.get(id); }
+    registerWorkflow(w) {
+      this.workflows.set(w.id, w);
+      return w;
+    }
+    getWorkflow(id) {
+      return this.workflows.get(id);
+    }
   };
 }
 

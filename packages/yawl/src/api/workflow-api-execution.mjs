@@ -64,9 +64,7 @@ export async function enableTask(workItem, options = {}) {
           });
           if (!result) {
             eligibilityResult.eligible = false;
-            eligibilityResult.reasons.push(
-              `Hook ${hook.name || 'unknown'} rejected eligibility`
-            );
+            eligibilityResult.reasons.push(`Hook ${hook.name || 'unknown'} rejected eligibility`);
           }
         } catch (error) {
           hookResults.push({
@@ -83,9 +81,7 @@ export async function enableTask(workItem, options = {}) {
 
   // Fail if not eligible
   if (!eligibilityResult.eligible) {
-    throw new Error(
-      `Resource eligibility check failed: ${eligibilityResult.reasons.join(', ')}`
-    );
+    throw new Error(`Resource eligibility check failed: ${eligibilityResult.reasons.join(', ')}`);
   }
 
   // Update work item status (mutate original for in-place updates)
@@ -95,13 +91,21 @@ export async function enableTask(workItem, options = {}) {
     workItem.priority = validOptions.priority;
   }
 
-  const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_ENABLED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-    assignedResource: validOptions?.assignTo
-  }, {
-    policyPackId: validOptions?.policyPack?.manifest?.id, hookResults,
-    resourceEligibility: eligibilityResult.eligible, conditionsMet: ['resource_eligibility']
-  });
+  const receipt = await createReceipt(
+    YAWL_EVENT_TYPES.TASK_ENABLED,
+    {
+      workItemId: workItem.id,
+      taskId: workItem.taskId,
+      caseId: workItem.caseId,
+      assignedResource: validOptions?.assignTo,
+    },
+    {
+      policyPackId: validOptions?.policyPack?.manifest?.id,
+      hookResults,
+      resourceEligibility: eligibilityResult.eligible,
+      conditionsMet: ['resource_eligibility'],
+    }
+  );
 
   return { workItem, receipt, eligibilityResult };
 }
@@ -157,17 +161,32 @@ export async function startTask(workItem, options = {}) {
 
   let eventReceipt = null;
   if (options.store?.appendEvent) {
-    const { receipt } = await options.store.appendEvent({
-      type: YAWL_EVENT_TYPES.TASK_STARTED,
-      payload: { workItemId: validWorkItem.id, taskId: validWorkItem.taskId, caseId: validWorkItem.caseId, startTime }
-    }, []);
+    const { receipt } = await options.store.appendEvent(
+      {
+        type: YAWL_EVENT_TYPES.TASK_STARTED,
+        payload: {
+          workItemId: validWorkItem.id,
+          taskId: validWorkItem.taskId,
+          caseId: validWorkItem.caseId,
+          startTime,
+        },
+      },
+      []
+    );
     eventReceipt = receipt;
   }
 
-  const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_STARTED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-    startTime, eventId: eventReceipt?.id
-  }, { hookResults });
+  const receipt = await createReceipt(
+    YAWL_EVENT_TYPES.TASK_STARTED,
+    {
+      workItemId: workItem.id,
+      taskId: workItem.taskId,
+      caseId: workItem.caseId,
+      startTime,
+      eventId: eventReceipt?.id,
+    },
+    { hookResults }
+  );
 
   return { workItem, receipt };
 }
@@ -211,18 +230,35 @@ export async function completeTask(workItem, result, options = {}) {
 
   let eventReceipt = null;
   if (options.store?.appendEvent) {
-    const { receipt } = await options.store.appendEvent({
-      type: YAWL_EVENT_TYPES.TASK_COMPLETED,
-      payload: { workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-        endTime, result, enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId) }
-    }, []);
+    const { receipt } = await options.store.appendEvent(
+      {
+        type: YAWL_EVENT_TYPES.TASK_COMPLETED,
+        payload: {
+          workItemId: workItem.id,
+          taskId: workItem.taskId,
+          caseId: workItem.caseId,
+          endTime,
+          result,
+          enabledDownstreamTasks: enabledDownstreamTasks.map(t => t.taskId),
+        },
+      },
+      []
+    );
     eventReceipt = receipt;
   }
 
-  const receipt = await createReceipt(YAWL_EVENT_TYPES.TASK_COMPLETED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId, endTime,
-    enabledDownstreamTasks: enabledDownstreamTasks.map((t) => t.taskId), eventId: eventReceipt?.id
-  }, { conditionsMet: enabledDownstreamTasks.map((t) => `flow_to_${t.taskId}`) });
+  const receipt = await createReceipt(
+    YAWL_EVENT_TYPES.TASK_COMPLETED,
+    {
+      workItemId: workItem.id,
+      taskId: workItem.taskId,
+      caseId: workItem.caseId,
+      endTime,
+      enabledDownstreamTasks: enabledDownstreamTasks.map(t => t.taskId),
+      eventId: eventReceipt?.id,
+    },
+    { conditionsMet: enabledDownstreamTasks.map(t => `flow_to_${t.taskId}`) }
+  );
 
   return { workItem, enabledDownstreamTasks, receipt };
 }
@@ -243,8 +279,13 @@ export async function cancelWorkItem(workItem, reason, options = {}) {
     throw new TypeError('Cancel reason must be a non-empty string');
   }
 
-  if (validWorkItem.status === WORK_ITEM_STATUS.COMPLETED || validWorkItem.status === WORK_ITEM_STATUS.CANCELLED) {
-    throw new Error(`Cannot cancel work item ${validWorkItem.id}: status is ${validWorkItem.status}`);
+  if (
+    validWorkItem.status === WORK_ITEM_STATUS.COMPLETED ||
+    validWorkItem.status === WORK_ITEM_STATUS.CANCELLED
+  ) {
+    throw new Error(
+      `Cannot cancel work item ${validWorkItem.id}: status is ${validWorkItem.status}`
+    );
   }
 
   const t_ns = now();
@@ -262,17 +303,21 @@ export async function cancelWorkItem(workItem, reason, options = {}) {
     // Find cancellation region for this task
     const task = options.workflow.getTask(workItem.taskId);
     if (task?.cancellationRegion) {
-      const regionTasks = options.workflow.getCancellationRegion(
-        task.cancellationRegion
-      );
+      const regionTasks = options.workflow.getCancellationRegion(task.cancellationRegion);
       for (const taskId of regionTasks) {
         if (taskId !== workItem.taskId) {
           const regionWorkItem = options.caseObj.getWorkItem(taskId);
-          if (regionWorkItem && regionWorkItem.status !== WORK_ITEM_STATUS.COMPLETED &&
-              regionWorkItem.status !== WORK_ITEM_STATUS.CANCELLED) {
+          if (
+            regionWorkItem &&
+            regionWorkItem.status !== WORK_ITEM_STATUS.COMPLETED &&
+            regionWorkItem.status !== WORK_ITEM_STATUS.CANCELLED
+          ) {
             regionWorkItem.status = WORK_ITEM_STATUS.CANCELLED;
             regionWorkItem.endTime = cancelTime;
-            regionWorkItem.result = { cancelled: true, reason: `Cancelled by region trigger: ${reason}` };
+            regionWorkItem.result = {
+              cancelled: true,
+              reason: `Cancelled by region trigger: ${reason}`,
+            };
             cancelledInRegion.push(taskId);
           }
         }
@@ -282,17 +327,33 @@ export async function cancelWorkItem(workItem, reason, options = {}) {
 
   let eventReceipt = null;
   if (options.store?.appendEvent) {
-    const { receipt } = await options.store.appendEvent({
-      type: YAWL_EVENT_TYPES.WORK_ITEM_CANCELLED,
-      payload: { workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-        previousStatus, reason, cancelledInRegion, cancelTime }
-    }, []);
+    const { receipt } = await options.store.appendEvent(
+      {
+        type: YAWL_EVENT_TYPES.WORK_ITEM_CANCELLED,
+        payload: {
+          workItemId: workItem.id,
+          taskId: workItem.taskId,
+          caseId: workItem.caseId,
+          previousStatus,
+          reason,
+          cancelledInRegion,
+          cancelTime,
+        },
+      },
+      []
+    );
     eventReceipt = receipt;
   }
 
   const receipt = await createReceipt(YAWL_EVENT_TYPES.WORK_ITEM_CANCELLED, {
-    workItemId: workItem.id, taskId: workItem.taskId, caseId: workItem.caseId,
-    previousStatus, reason, cancelledInRegion, cancelTime, eventId: eventReceipt?.id
+    workItemId: workItem.id,
+    taskId: workItem.taskId,
+    caseId: workItem.caseId,
+    previousStatus,
+    reason,
+    cancelledInRegion,
+    cancelTime,
+    eventId: eventReceipt?.id,
   });
 
   return { workItem, cancelledInRegion, receipt };
@@ -326,11 +387,7 @@ export async function evaluateControlFlowAndEnable(workItem, result, caseObj, wo
       if (downstreamWorkItem) {
         // Check if all join conditions are met (for AND-join)
         if (edge.type === CONTROL_FLOW_PATTERNS.AND_JOIN) {
-          const allPredecessorsComplete = checkAllPredecessorsComplete(
-            edge.to,
-            workflow,
-            caseObj
-          );
+          const allPredecessorsComplete = checkAllPredecessorsComplete(edge.to, workflow, caseObj);
           if (!allPredecessorsComplete) {
             continue;
           }
@@ -386,15 +443,14 @@ export function evaluateCondition(condition, result, variables) {
     if (evalCondition === 'false') return false;
 
     // For safety, only evaluate if it matches safe patterns
-    const safePattern =
-      /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
+    const safePattern = /^[\s\d\w"'.\-+*/%<>=!&|()[\],{}:]+$/;
     if (!safePattern.test(evalCondition)) {
       console.warn(`Unsafe condition pattern: ${condition}`);
       return true; // Default to true for unsafe patterns
     }
 
     // Use Function constructor for sandboxed evaluation
-     
+
     const evaluator = new Function('return ' + evalCondition);
     return Boolean(evaluator());
   } catch {
@@ -415,10 +471,7 @@ export function checkAllPredecessorsComplete(taskId, workflow, caseObj) {
 
   for (const edge of incomingEdges) {
     const predecessorWorkItem = caseObj.getWorkItem(edge.from);
-    if (
-      predecessorWorkItem &&
-      predecessorWorkItem.status !== WORK_ITEM_STATUS.COMPLETED
-    ) {
+    if (predecessorWorkItem && predecessorWorkItem.status !== WORK_ITEM_STATUS.COMPLETED) {
       return false;
     }
   }

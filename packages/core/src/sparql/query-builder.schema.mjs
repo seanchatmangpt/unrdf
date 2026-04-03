@@ -35,7 +35,9 @@ export const FilterSchema = z.string().min(1);
 /**
  * Zod schema for query builder options
  */
-export const QueryBuilderOptionsSchema = z.object({
-  prefixes: z.record(z.string(), z.string()).optional(),
-  baseIRI: z.string().url().optional(),
-}).strict();
+export const QueryBuilderOptionsSchema = z
+  .object({
+    prefixes: z.record(z.string(), z.string()).optional(),
+    baseIRI: z.string().url().optional(),
+  })
+  .strict();

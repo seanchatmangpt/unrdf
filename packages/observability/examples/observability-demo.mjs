@@ -35,7 +35,9 @@ class WorkflowSimulator {
     const pattern = this._randomPattern();
     const taskCount = Math.floor(Math.random() * 10) + 1;
 
-    console.log(`[${new Date().toISOString()}] Starting workflow ${workflowId} (pattern: ${pattern}, tasks: ${taskCount})`);
+    console.log(
+      `[${new Date().toISOString()}] Starting workflow ${workflowId} (pattern: ${pattern}, tasks: ${taskCount})`
+    );
 
     // Record workflow start
     this.metrics.recordWorkflowStart(workflowId, pattern);
@@ -56,7 +58,11 @@ class WorkflowSimulator {
     this.metrics.recordWorkflowComplete(workflowId, status, duration, pattern);
 
     // Evaluate against alert rules
-    await this.alerts.evaluateMetric('workflow_duration', duration, { workflow_id: workflowId, status, pattern });
+    await this.alerts.evaluateMetric('workflow_duration', duration, {
+      workflow_id: workflowId,
+      status,
+      pattern,
+    });
 
     if (!success) {
       this.metrics.recordError('execution_failed', workflowId, 'high');
@@ -71,7 +77,9 @@ class WorkflowSimulator {
       this.metrics.recordCryptoReceipt(workflowId, 'BLAKE3');
     }
 
-    console.log(`[${new Date().toISOString()}] Workflow ${workflowId} ${status} in ${duration.toFixed(2)}s`);
+    console.log(
+      `[${new Date().toISOString()}] Workflow ${workflowId} ${status} in ${duration.toFixed(2)}s`
+    );
 
     return { workflowId, status, duration };
   }
@@ -130,7 +138,10 @@ class WorkflowSimulator {
 
     // Random resource allocations
     if (Math.random() > 0.7) {
-      this.metrics.recordResourceAllocation('compute', Math.random() > 0.9 ? 'failed' : 'allocated');
+      this.metrics.recordResourceAllocation(
+        'compute',
+        Math.random() > 0.9 ? 'failed' : 'allocated'
+      );
     }
   }
 
@@ -205,12 +216,12 @@ async function main() {
   });
 
   // Alert event handlers
-  alerts.on('alert', (alert) => {
+  alerts.on('alert', alert => {
     console.log(`\n🚨 ALERT FIRED: ${alert.name} (${alert.severity})`);
     console.log(`   Metric: ${alert.metric} = ${alert.value} (threshold: ${alert.threshold})`);
   });
 
-  alerts.on('alert:resolved', (alert) => {
+  alerts.on('alert:resolved', alert => {
     console.log(`\n✅ ALERT RESOLVED: ${alert.name}`);
   });
 
@@ -317,7 +328,7 @@ async function main() {
 }
 
 // Run demo
-main().catch((error) => {
+main().catch(error => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

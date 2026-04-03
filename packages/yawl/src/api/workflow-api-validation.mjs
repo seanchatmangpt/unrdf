@@ -134,7 +134,10 @@ export const ResourceSchema = z.object({
 export const WorkflowSpecSchema = z.object({
   id: z.string().min(1).max(255),
   name: z.string().min(1).max(255),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
+  version: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .optional(),
   description: z.string().max(5000).optional(),
   tasks: z.array(TaskSchema).min(1),
   controlFlow: z.array(ControlFlowSchema).optional(),
@@ -147,25 +150,29 @@ export const WorkflowSpecSchema = z.object({
 /**
  * Schema for workflow creation options
  */
-export const WorkflowOptionsSchema = z.object({
-  store: z.any().optional(),
-  gitBackbone: z.any().optional(),
-  hookRegistry: z.any().optional(),
-  policyPacks: z.array(z.any()).optional(),
-  validateSpec: z.boolean().default(true),
-  createRDF: z.boolean().default(true),
-}).optional();
+export const WorkflowOptionsSchema = z
+  .object({
+    store: z.any().optional(),
+    gitBackbone: z.any().optional(),
+    hookRegistry: z.any().optional(),
+    policyPacks: z.array(z.any()).optional(),
+    validateSpec: z.boolean().default(true),
+    createRDF: z.boolean().default(true),
+  })
+  .optional();
 
 /**
  * Schema for case creation options
  */
-export const CaseOptionsSchema = z.object({
-  caseId: z.string().optional(),
-  initialVariables: z.record(z.string(), z.any()).optional(),
-  priority: z.number().int().min(0).max(100).optional(),
-  deadline: z.string().datetime().optional(),
-  parent: z.string().optional(),
-}).optional();
+export const CaseOptionsSchema = z
+  .object({
+    caseId: z.string().optional(),
+    initialVariables: z.record(z.string(), z.any()).optional(),
+    priority: z.number().int().min(0).max(100).optional(),
+    deadline: z.string().datetime().optional(),
+    parent: z.string().optional(),
+  })
+  .optional();
 
 /**
  * Schema for work item
@@ -185,12 +192,14 @@ export const WorkItemSchema = z.object({
 /**
  * Schema for enable task options
  */
-export const EnableTaskOptionsSchema = z.object({
-  assignTo: z.string().optional(),
-  priority: z.number().int().min(0).max(100).optional(),
-  deadline: z.string().datetime().optional(),
-  policyPack: z.any().optional(),
-}).optional();
+export const EnableTaskOptionsSchema = z
+  .object({
+    assignTo: z.string().optional(),
+    priority: z.number().int().min(0).max(100).optional(),
+    deadline: z.string().datetime().optional(),
+    policyPack: z.any().optional(),
+  })
+  .optional();
 
 /**
  * Schema for receipt
@@ -202,12 +211,14 @@ export const ReceiptSchema = z.object({
   t_ns: z.string(),
   hash: z.string().min(1),
   payload: z.record(z.string(), z.any()),
-  justification: z.object({
-    policyPackId: z.string().optional(),
-    hookResults: z.array(z.any()).optional(),
-    conditionsMet: z.array(z.string()).optional(),
-    resourceEligibility: z.boolean().optional(),
-  }).optional(),
+  justification: z
+    .object({
+      policyPackId: z.string().optional(),
+      hookResults: z.array(z.any()).optional(),
+      conditionsMet: z.array(z.string()).optional(),
+      resourceEligibility: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 // ============================================================================

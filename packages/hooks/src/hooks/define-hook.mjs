@@ -102,10 +102,12 @@ export const HookConfigSchema = z.object({
   transform: z.function().optional(),
   metadata: z.record(z.string(), z.any()).optional(),
   // Old format compatibility
-  meta: z.object({
-    name: z.string(),
-    description: z.string().optional(),
-  }).optional(),
+  meta: z
+    .object({
+      name: z.string(),
+      description: z.string().optional(),
+    })
+    .optional(),
   pattern: z.string().optional(),
   run: z.function().optional(),
 });

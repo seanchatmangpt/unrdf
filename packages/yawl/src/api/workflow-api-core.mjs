@@ -145,11 +145,11 @@ export async function createWorkflow(spec, options = {}) {
     },
     getDownstreamTasks(taskId) {
       const edges = controlFlowGraph.outgoing.get(taskId) || [];
-      return edges.map((edge) => taskIndex.get(edge.to)).filter((task) => task !== undefined);
+      return edges.map(edge => taskIndex.get(edge.to)).filter(task => task !== undefined);
     },
     getUpstreamTasks(taskId) {
       const edges = controlFlowGraph.incoming.get(taskId) || [];
-      return edges.map((edge) => taskIndex.get(edge.from)).filter((task) => task !== undefined);
+      return edges.map(edge => taskIndex.get(edge.from)).filter(task => task !== undefined);
     },
     isInitialTask(taskId) {
       return initialTasks.includes(taskId);
@@ -208,7 +208,7 @@ export async function createCase(workflow, options = {}) {
 
   // Get initially enabled work items
   const enabledWorkItems = Array.from(workItems.values()).filter(
-    (wi) => wi.status === WORK_ITEM_STATUS.ENABLED
+    wi => wi.status === WORK_ITEM_STATUS.ENABLED
   );
 
   // Create RDF representation if store available
@@ -227,7 +227,7 @@ export async function createCase(workflow, options = {}) {
           caseId,
           workflowId: workflow.id,
           workItemCount: workItems.size,
-          enabledTaskIds: enabledWorkItems.map((wi) => wi.taskId),
+          enabledTaskIds: enabledWorkItems.map(wi => wi.taskId),
           initialVariables: validOptions?.initialVariables || {},
         },
       },
@@ -267,18 +267,18 @@ export async function createCase(workflow, options = {}) {
       return Array.from(workItems.values());
     },
     getWorkItemsByStatus(status) {
-      return Array.from(workItems.values()).filter((wi) => wi.status === status);
+      return Array.from(workItems.values()).filter(wi => wi.status === status);
     },
     isComplete() {
       return Array.from(workItems.values()).every(
-        (wi) => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
+        wi => wi.status === WORK_ITEM_STATUS.COMPLETED || wi.status === WORK_ITEM_STATUS.CANCELLED
       );
     },
     getEnabledWorkItems() {
-      return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ENABLED);
+      return Array.from(workItems.values()).filter(wi => wi.status === WORK_ITEM_STATUS.ENABLED);
     },
     getActiveWorkItems() {
-      return Array.from(workItems.values()).filter((wi) => wi.status === WORK_ITEM_STATUS.ACTIVE);
+      return Array.from(workItems.values()).filter(wi => wi.status === WORK_ITEM_STATUS.ACTIVE);
     },
   };
 }
@@ -364,8 +364,8 @@ export function findInitialTasks(tasks, controlFlowGraph) {
 export function createWorkflowRDF(spec, store) {
   const deltas = [];
   const df = store._store?.dataFactory || {
-    namedNode: (v) => ({ termType: 'NamedNode', value: v }),
-    literal: (v) => ({ termType: 'Literal', value: v }),
+    namedNode: v => ({ termType: 'NamedNode', value: v }),
+    literal: v => ({ termType: 'Literal', value: v }),
   };
 
   const workflowUri = `${YAWL_NS.WORKFLOW}${spec.id}`;
@@ -430,8 +430,8 @@ export function createWorkflowRDF(spec, store) {
 export function createCaseRDF(caseId, workflowId, workItems, store) {
   const deltas = [];
   const df = store._store?.dataFactory || {
-    namedNode: (v) => ({ termType: 'NamedNode', value: v }),
-    literal: (v) => ({ termType: 'Literal', value: v }),
+    namedNode: v => ({ termType: 'NamedNode', value: v }),
+    literal: v => ({ termType: 'Literal', value: v }),
   };
 
   const caseUri = `${YAWL_NS.CASE}${caseId}`;

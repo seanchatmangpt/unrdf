@@ -15,7 +15,7 @@ import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -104,14 +104,14 @@ describe('Daemon Message Queue', () => {
 
     it('should maintain FIFO order', () => {
       // Arrange
-      const ops = ['op-1', 'op-2', 'op-3'].map((id) => ({
+      const ops = ['op-1', 'op-2', 'op-3'].map(id => ({
         id,
         name: id,
         handler: vi.fn(),
       }));
 
       // Act
-      ops.forEach((op) => daemon.schedule(op));
+      ops.forEach(op => daemon.schedule(op));
 
       // Assert
       expect(daemon.operationQueue).toEqual(['op-1', 'op-2', 'op-3']);
@@ -242,9 +242,7 @@ describe('Daemon Message Queue', () => {
       const order = ['first', 'second', 'third', 'fourth'];
 
       // Act
-      order.forEach((id) =>
-        daemon.schedule({ id, name: id, handler: vi.fn() })
-      );
+      order.forEach(id => daemon.schedule({ id, name: id, handler: vi.fn() }));
 
       // Assert
       expect(daemon.operationQueue).toEqual(order);
@@ -341,7 +339,7 @@ describe('Daemon Message Queue', () => {
       const executed = [];
       const handler1 = vi.fn().mockImplementation(async () => {
         executed.push(1);
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10));
       });
       const handler2 = vi.fn().mockImplementation(async () => {
         executed.push(2);
@@ -532,14 +530,14 @@ describe('Daemon Message Queue', () => {
 
       // Act
       const operations = daemon.listOperations();
-      const withPriorities = operations.map((op) => ({
+      const withPriorities = operations.map(op => ({
         id: op.id,
         priority: op.metadata?.priority || 0,
       }));
 
       // Assert
       expect(withPriorities.length).toBe(5);
-      expect(withPriorities.find((op) => op.id === 'pri-op-2').priority).toBe(5);
+      expect(withPriorities.find(op => op.id === 'pri-op-2').priority).toBe(5);
     });
 
     it('should support default priority', () => {
@@ -682,9 +680,7 @@ describe('Daemon Message Queue', () => {
 
       // Act
       const operations = daemon.listOperations();
-      const priorities = operations
-        .map((op) => op.metadata?.priority || 0)
-        .filter((p) => p > 0);
+      const priorities = operations.map(op => op.metadata?.priority || 0).filter(p => p > 0);
 
       const highest = Math.max(...priorities);
       const lowest = Math.min(...priorities);
@@ -790,7 +786,7 @@ describe('Daemon Message Queue', () => {
       }
 
       // Assert
-      ids.forEach((id) => {
+      ids.forEach(id => {
         expect(daemon.operations.has(id)).toBe(true);
       });
     });

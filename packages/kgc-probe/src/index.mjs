@@ -83,7 +83,7 @@ export {
   createCoherenceAgent,
   createClusteringAgent,
   createClassificationAgent,
-  createCollaborationAgent
+  createCollaborationAgent,
 } from './agents/index.mjs';
 
 // ============================================================================
@@ -97,7 +97,7 @@ export {
   createMemoryStorage,
   createFileStorage,
   createDatabaseStorage,
-  createStorage
+  createStorage,
 } from './storage/index.mjs';
 
 // ============================================================================
@@ -136,7 +136,7 @@ export {
 
   // Chain builder
   ReceiptChainBuilder,
-  createReceiptChainBuilder
+  createReceiptChainBuilder,
 } from './receipts/index.mjs';
 
 // ============================================================================
@@ -150,7 +150,7 @@ export {
   serializeArtifact,
   deserializeArtifact,
   hashObservations,
-  computeArtifactSummary
+  computeArtifactSummary,
 } from './artifact.mjs';
 
 // ============================================================================
@@ -229,7 +229,7 @@ export {
   DiffResultSchema,
   DiffResultType,
   ScanResultSchema,
-  ScanResultType
+  ScanResultType,
 } from './types.mjs';
 
 // ============================================================================
@@ -269,7 +269,7 @@ export {
   createProbeReport,
 
   // Configuration
-  createProbeConfig
+  createProbeConfig,
 } from './types.mjs';
 
 // ============================================================================
@@ -284,7 +284,7 @@ export {
   validateReceipt,
   tryValidateObservation,
   tryValidateFrontmatter,
-  tryValidateReceipt
+  tryValidateReceipt,
 } from './types.mjs';
 
 // ============================================================================
@@ -302,19 +302,14 @@ export {
   MergeArgsSchema,
   DiffArgsSchema,
   ReportArgsSchema,
-  VerifyArgsSchema
+  VerifyArgsSchema,
 } from './cli.mjs';
 
 // ============================================================================
 // UTILITIES (Logger, Errors)
 // ============================================================================
 
-export {
-  Logger,
-  createLogger,
-  defaultLogger,
-  LOG_LEVELS
-} from './utils/logger.mjs';
+export { Logger, createLogger, defaultLogger, LOG_LEVELS } from './utils/logger.mjs';
 
 export {
   ProbeError,
@@ -329,7 +324,7 @@ export {
   ConfigurationError,
   ErrorCodes,
   isProbeError,
-  wrapError
+  wrapError,
 } from './utils/errors.mjs';
 
 // ============================================================================
@@ -343,5 +338,6 @@ export {
 export default {
   name: '@unrdf/kgc-probe',
   version: '1.0.0',
-  description: 'KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation'
+  description:
+    'KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation',
 };

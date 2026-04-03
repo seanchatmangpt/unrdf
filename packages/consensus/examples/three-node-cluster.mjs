@@ -172,8 +172,12 @@ async function runWorkflowOperations(nodes) {
     const stateStats = node.state.getStats();
 
     console.log(`[${nodeId}]:`);
-    console.log(`  Raft: ${raftState.isLeader ? 'LEADER' : 'FOLLOWER'}, term: ${raftState.term}, log: ${raftState.logLength}`);
-    console.log(`  Cluster: ${clusterStats.totalNodes} nodes, ${clusterStats.healthStats.healthy || 0} healthy`);
+    console.log(
+      `  Raft: ${raftState.isLeader ? 'LEADER' : 'FOLLOWER'}, term: ${raftState.term}, log: ${raftState.logLength}`
+    );
+    console.log(
+      `  Cluster: ${clusterStats.totalNodes} nodes, ${clusterStats.healthStats.healthy || 0} healthy`
+    );
     console.log(`  State: ${stateStats.stateSize} entries, ${stateStats.snapshotCount} snapshots`);
   }
 }

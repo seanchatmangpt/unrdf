@@ -201,7 +201,7 @@ function generateUUID() {
     return crypto.randomUUID();
   }
   // Fallback for older environments
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -222,9 +222,7 @@ function serializeCaseState(caseState) {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       sorted[key] = serializeCaseState(value);
     } else if (Array.isArray(value)) {
-      sorted[key] = value.map((item) =>
-        typeof item === 'object' ? serializeCaseState(item) : item
-      );
+      sorted[key] = value.map(item => (typeof item === 'object' ? serializeCaseState(item) : item));
     } else {
       sorted[key] = value;
     }
@@ -967,13 +965,7 @@ function buildReceiptObject(hashes, justification, gitRef) {
  * });
  */
 export async function createWorkflowReceipt(options) {
-  const {
-    beforeState,
-    afterState,
-    decision,
-    justification = {},
-    gitRef,
-  } = options;
+  const { beforeState, afterState, decision, justification = {}, gitRef } = options;
 
   const hashes = await calculateReceiptHashes(beforeState, afterState, decision);
   const receipt = buildReceiptObject(hashes, justification, gitRef);
@@ -1046,9 +1038,15 @@ function getAuditTrailPredicates() {
  */
 function processTimeQuadForEvent(store, timeQuad, caseId, predicates) {
   const eventTime = BigInt(timeQuad.object.value);
-  const payloadQuads = [...store.match(timeQuad.subject, predicates.payloadPredi, null, predicates.eventLogGraph)];
-  const typeQuads = [...store.match(timeQuad.subject, predicates.typePredi, null, predicates.eventLogGraph)];
-  const gitRefQuads = [...store.match(timeQuad.subject, predicates.gitRefPredi, null, predicates.eventLogGraph)];
+  const payloadQuads = [
+    ...store.match(timeQuad.subject, predicates.payloadPredi, null, predicates.eventLogGraph),
+  ];
+  const typeQuads = [
+    ...store.match(timeQuad.subject, predicates.typePredi, null, predicates.eventLogGraph),
+  ];
+  const gitRefQuads = [
+    ...store.match(timeQuad.subject, predicates.gitRefPredi, null, predicates.eventLogGraph),
+  ];
 
   if (payloadQuads.length === 0 || typeQuads.length === 0) {
     return null;
@@ -1149,8 +1147,15 @@ function collectAuditTrailData(store, timeQuads, caseId, predicates) {
  */
 export async function getWorkflowAuditTrail(store, caseId) {
   const predicates = getAuditTrailPredicates();
-  const allEventTimeQuads = [...store.match(null, predicates.tNsPredi, null, predicates.eventLogGraph)];
-  const { events, receipts, sparqlQueries } = collectAuditTrailData(store, allEventTimeQuads, caseId, predicates);
+  const allEventTimeQuads = [
+    ...store.match(null, predicates.tNsPredi, null, predicates.eventLogGraph),
+  ];
+  const { events, receipts, sparqlQueries } = collectAuditTrailData(
+    store,
+    allEventTimeQuads,
+    caseId,
+    predicates
+  );
 
   events.sort((a, b) => {
     const aTime = BigInt(a.t_ns);
@@ -1160,11 +1165,13 @@ export async function getWorkflowAuditTrail(store, caseId) {
     return 0;
   });
 
-  const auditHash = await blake3(serializeCaseState({
-    caseId,
-    events: events.map((e) => ({ id: e.eventId, type: e.type, t_ns: e.t_ns })),
-    eventCount: events.length,
-  }));
+  const auditHash = await blake3(
+    serializeCaseState({
+      caseId,
+      events: events.map(e => ({ id: e.eventId, type: e.type, t_ns: e.t_ns })),
+      eventCount: events.length,
+    })
+  );
 
   return {
     caseId,
@@ -1212,12 +1219,17 @@ export async function createCase(store, specId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'CASE_CREATED', {
-    caseId,
-    specId,
-    timestamp,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'CASE_CREATED',
+    {
+      caseId,
+      specId,
+      timestamp,
+      receipt,
+    },
+    options
+  );
 
   return {
     caseId,
@@ -1254,13 +1266,18 @@ export async function enableTask(store, caseId, taskId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_ENABLED', {
-    taskId,
-    caseId,
-    workItemId,
-    enabledAt,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_ENABLED',
+    {
+      taskId,
+      caseId,
+      workItemId,
+      enabledAt,
+      receipt,
+    },
+    options
+  );
 
   return {
     workItemId,
@@ -1297,11 +1314,16 @@ export async function startWorkItem(store, workItemId, caseId, options = {}) {
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_STARTED', {
-    workItemId,
-    startedAt,
-    receipt,
-  }, { ...options, caseId });
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_STARTED',
+    {
+      workItemId,
+      startedAt,
+      receipt,
+    },
+    { ...options, caseId }
+  );
 
   return {
     workItemId,
@@ -1337,12 +1359,17 @@ export async function completeWorkItem(store, workItemId, caseId, result, option
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'TASK_COMPLETED', {
-    workItemId,
-    completedAt,
-    result,
-    receipt,
-  }, { ...options, caseId });
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'TASK_COMPLETED',
+    {
+      workItemId,
+      completedAt,
+      result,
+      receipt,
+    },
+    { ...options, caseId }
+  );
 
   return {
     workItemId,
@@ -1365,7 +1392,14 @@ export async function completeWorkItem(store, workItemId, caseId, result, option
  * @param {Object} [options={}] - Additional options
  * @returns {Promise<Object>} Control flow decision with receipt
  */
-export async function recordControlFlowEvaluation(store, caseId, taskId, result, sparqlQuery, options = {}) {
+export async function recordControlFlowEvaluation(
+  store,
+  caseId,
+  taskId,
+  result,
+  sparqlQuery,
+  options = {}
+) {
   const timestamp = toISO(now());
 
   // Create receipt
@@ -1382,14 +1416,19 @@ export async function recordControlFlowEvaluation(store, caseId, taskId, result,
   });
 
   // Append event
-  const eventReceipt = await appendWorkflowEvent(store, 'CONTROL_FLOW_EVALUATED', {
-    caseId,
-    taskId,
-    result,
-    timestamp,
-    sparqlQuery,
-    receipt,
-  }, options);
+  const eventReceipt = await appendWorkflowEvent(
+    store,
+    'CONTROL_FLOW_EVALUATED',
+    {
+      caseId,
+      taskId,
+      result,
+      timestamp,
+      sparqlQuery,
+      receipt,
+    },
+    options
+  );
 
   return {
     caseId,

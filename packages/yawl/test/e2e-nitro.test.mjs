@@ -53,10 +53,7 @@ import {
 
 // Daemon and Nitro integration
 import { Daemon } from '@unrdf/daemon';
-import {
-  NitroTaskExecutor,
-  createNitroTaskExecutor,
-} from '@unrdf/daemon/integrations/nitro-tasks';
+import { NitroTaskExecutor, createNitroTaskExecutor } from '@unrdf/daemon/integrations/nitro-tasks';
 
 // Receipt verification
 import { generateReceipt, verifyReceipt } from '../src/receipt.mjs';
@@ -70,7 +67,7 @@ import { generateReceipt, verifyReceipt } from '../src/receipt.mjs';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -181,7 +178,7 @@ class MockNitroTaskRuntime extends EventEmitter {
 
     // Simulate latency
     if (this.latencyMs > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.latencyMs));
+      await new Promise(resolve => setTimeout(resolve, this.latencyMs));
     }
 
     // Simulate failure rate
@@ -250,8 +247,8 @@ class MockNitroTaskRuntime extends EventEmitter {
    * Get execution metrics
    */
   getMetrics() {
-    const successful = this.executionLog.filter((log) => log.success).length;
-    const failed = this.executionLog.filter((log) => !log.success).length;
+    const successful = this.executionLog.filter(log => log.success).length;
+    const failed = this.executionLog.filter(log => !log.success).length;
     const totalDuration = this.executionLog.reduce((sum, log) => sum + log.duration, 0);
 
     return {
@@ -293,7 +290,7 @@ class YawlNitroBridge {
    * Register a YAWL work item for Nitro execution
    */
   async registerWorkItemAsTask(caseId, workItem, taskHandler) {
-    const nitroTaskId = this.nitroRuntime.registerTask(workItem, async (payload) => {
+    const nitroTaskId = this.nitroRuntime.registerTask(workItem, async payload => {
       // Execute the task handler
       const result = await taskHandler(payload);
 
@@ -483,12 +480,12 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       // Track flow
       const flowEvents = [];
-      nitroRuntime.on('task:registered', (e) => flowEvents.push({ type: 'registered', ...e }));
-      nitroRuntime.on('task:started', (e) => flowEvents.push({ type: 'started', ...e }));
-      nitroRuntime.on('task:completed', (e) => flowEvents.push({ type: 'completed', ...e }));
+      nitroRuntime.on('task:registered', e => flowEvents.push({ type: 'registered', ...e }));
+      nitroRuntime.on('task:started', e => flowEvents.push({ type: 'started', ...e }));
+      nitroRuntime.on('task:completed', e => flowEvents.push({ type: 'completed', ...e }));
 
       // Act
-      await bridge.registerWorkItemAsTask(caseObj.id, workItem, async (payload) => ({
+      await bridge.registerWorkItemAsTask(caseObj.id, workItem, async payload => ({
         processed: true,
         input: payload,
       }));
@@ -539,7 +536,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       for (let i = 0; i < steps.length; i++) {
         const workItem = caseObj.getEnabledWorkItems()[0];
-        await bridge.registerWorkItemAsTask(caseObj.id, workItem, async (payload) => ({
+        await bridge.registerWorkItemAsTask(caseObj.id, workItem, async payload => ({
           step: steps[i],
           stepNumber: i + 1,
           previousData: payload,
@@ -554,7 +551,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       // Assert
       expect(results).toHaveLength(4);
-      expect(results.every((r) => r.success)).toBe(true);
+      expect(results.every(r => r.success)).toBe(true);
       expect(results[0].result.step).toBe('prepare');
       expect(results[1].result.step).toBe('process');
       expect(results[2].result.step).toBe('validate');
@@ -617,9 +614,9 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       // Assert
       expect(parallelResults).toHaveLength(3);
-      expect(parallelResults.every((r) => r.success)).toBe(true);
+      expect(parallelResults.every(r => r.success)).toBe(true);
 
-      const taskLetters = parallelResults.map((r) => r.result.parallelTask).sort();
+      const taskLetters = parallelResults.map(r => r.result.parallelTask).sort();
       expect(taskLetters).toEqual(['A', 'B', 'C']);
 
       // Continue with end task
@@ -731,7 +728,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       await bridge.registerWorkItemAsTask(caseObj.id, workItem, async () => {
         // Simulate long-running task
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 200));
         return { completed: true };
       });
 
@@ -909,7 +906,10 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
     it('should handle parallel execution of 50+ tasks via Nitro', async () => {
       // Arrange
       const parallelCount = 50;
-      const tasks = [{ id: 'start', name: 'Start' }, { id: 'end', name: 'End' }];
+      const tasks = [
+        { id: 'start', name: 'Start' },
+        { id: 'end', name: 'End' },
+      ];
       const controlFlow = [];
 
       // Create parallel tasks
@@ -1009,7 +1009,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
         });
       });
 
-      nitroRuntime.on('task:completed', (data) => {
+      nitroRuntime.on('task:completed', data => {
         resourceLog.push({
           event: 'completed',
           timestamp: Date.now(),
@@ -1231,7 +1231,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
       expect(parallel).toHaveLength(2);
 
       await Promise.all(
-        parallel.map(async (item) => {
+        parallel.map(async item => {
           await bridge.registerWorkItemAsTask(caseObj.id, item, async () => ({}));
           return bridge.executeWorkItemViaNitro(caseObj.id, item.id);
         })
@@ -1259,7 +1259,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
 
       const items = caseObj.getEnabledWorkItems();
       await Promise.all(
-        items.map(async (item) => {
+        items.map(async item => {
           await bridge.registerWorkItemAsTask(caseObj.id, item, async () => ({}));
           return bridge.executeWorkItemViaNitro(caseObj.id, item.id);
         })
@@ -1354,9 +1354,7 @@ describe('YAWL-Nitro E2E Integration', { timeout: 30000 }, () => {
       // Arrange
       const workflow = await createWorkflow({
         id: 'cleanup-test',
-        tasks: [
-          { id: 'task1', name: 'Task 1', handler: async () => ({}) },
-        ],
+        tasks: [{ id: 'task1', name: 'Task 1', handler: async () => ({}) }],
       });
 
       yawlEngine.registerWorkflow(workflow);

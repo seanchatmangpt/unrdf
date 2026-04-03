@@ -18,10 +18,12 @@ const DashboardConfigSchema = z.object({
   title: z.string(),
   datasource: z.string().default('Prometheus'),
   refreshInterval: z.string().default('5s'),
-  timeRange: z.object({
-    from: z.string().default('now-1h'),
-    to: z.string().default('now'),
-  }).default({}),
+  timeRange: z
+    .object({
+      from: z.string().default('now-1h'),
+      to: z.string().default('now'),
+    })
+    .default({}),
   tags: z.array(z.string()).default(['unrdf', 'workflow']),
 });
 
@@ -128,10 +130,7 @@ export class GrafanaExporter {
           refId: 'A',
         },
       ],
-      yaxes: [
-        { format: 'short', label: 'Executions/sec' },
-        { format: 'short' },
-      ],
+      yaxes: [{ format: 'short', label: 'Executions/sec' }, { format: 'short' }],
       legend: { show: true, alignAsTable: true, values: true },
     };
   }
@@ -216,10 +215,7 @@ export class GrafanaExporter {
           refId: 'A',
         },
       ],
-      yaxes: [
-        { format: 'short', label: 'Tasks/sec' },
-        { format: 'short' },
-      ],
+      yaxes: [{ format: 'short', label: 'Tasks/sec' }, { format: 'short' }],
     };
   }
 
@@ -241,10 +237,7 @@ export class GrafanaExporter {
           refId: 'A',
         },
       ],
-      yaxes: [
-        { format: 'short', label: 'Errors/sec' },
-        { format: 'short' },
-      ],
+      yaxes: [{ format: 'short', label: 'Errors/sec' }, { format: 'short' }],
       alert: {
         conditions: [
           {
@@ -277,10 +270,7 @@ export class GrafanaExporter {
           refId: 'A',
         },
       ],
-      yaxes: [
-        { format: 'percent', label: 'Utilization %', max: 100, min: 0 },
-        { format: 'short' },
-      ],
+      yaxes: [{ format: 'percent', label: 'Utilization %', max: 100, min: 0 }, { format: 'short' }],
     };
   }
 
@@ -338,10 +328,7 @@ export class GrafanaExporter {
           refId: 'C',
         },
       ],
-      yaxes: [
-        { format: 's', label: 'Latency' },
-        { format: 'short' },
-      ],
+      yaxes: [{ format: 's', label: 'Latency' }, { format: 'short' }],
     };
   }
 

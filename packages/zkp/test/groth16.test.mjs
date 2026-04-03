@@ -5,15 +5,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  Groth16Prover,
-  createGroth16Prover,
-} from '../src/groth16-prover.mjs';
-import {
-  Groth16Verifier,
-  createGroth16Verifier,
-  verifyProof,
-} from '../src/groth16-verifier.mjs';
+import { Groth16Prover, createGroth16Prover } from '../src/groth16-prover.mjs';
+import { Groth16Verifier, createGroth16Verifier, verifyProof } from '../src/groth16-verifier.mjs';
 
 describe('Groth16Prover', () => {
   describe('Constructor', () => {

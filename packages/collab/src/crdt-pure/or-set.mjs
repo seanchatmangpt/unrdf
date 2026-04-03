@@ -56,10 +56,7 @@ export class ORSet {
 
     if (initialState) {
       this.elements = new Map(
-        Object.entries(initialState.elements).map(([k, tags]) => [
-          k,
-          new Set(tags),
-        ])
+        Object.entries(initialState.elements).map(([k, tags]) => [k, new Set(tags)])
       );
       this.tombstones = new Set(initialState.tombstones);
       this.tagCounter = initialState.tagCounter || 0;

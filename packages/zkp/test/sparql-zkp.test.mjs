@@ -33,11 +33,7 @@ describe('SPARQLZKProver', () => {
 
       const results = [{ s: ':Alice' }, { s: ':Bob' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       expect(proof).toBeDefined();
       expect(proof.protocol).toBe('groth16');
@@ -64,49 +60,33 @@ describe('SPARQLZKProver', () => {
 
       const results = [{ person: ':Alice' }, { person: ':Carol' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       expect(proof).toBeDefined();
       expect(publicSignals.resultCount).toBe(2);
     });
 
     it('should handle empty results', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?p WHERE { ?p :age ?age FILTER(?age > 100) }';
 
       const results = [];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       expect(proof).toBeDefined();
       expect(publicSignals.resultCount).toBe(0);
     });
 
     it('should handle single triple', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':name', object: '"Alice"' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':name', object: '"Alice"' }];
 
       const query = 'SELECT ?s ?o WHERE { ?s :name ?o }';
 
       const results = [{ s: ':Alice', o: '"Alice"' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       expect(proof).toBeDefined();
       expect(publicSignals.resultCount).toBe(1);
@@ -115,19 +95,13 @@ describe('SPARQLZKProver', () => {
 
   describe('Proof Verification', () => {
     it('should verify valid proof', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: 'rdf:type', object: 'Person' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: 'rdf:type', object: 'Person' }];
 
       const query = 'SELECT ?s WHERE { ?s rdf:type Person }';
 
       const results = [{ s: ':Alice' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       const valid = await prover.verify(proof, publicSignals);
 
@@ -183,9 +157,7 @@ describe('SPARQLZKProver', () => {
 
   describe('Receipt Integration', () => {
     it('should generate proof with receipt', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
@@ -206,9 +178,7 @@ describe('SPARQLZKProver', () => {
     });
 
     it('should generate unique receipt IDs', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
@@ -268,27 +238,15 @@ describe('SPARQLZKProver', () => {
     });
 
     it('should produce different commitments for different stores', async () => {
-      const triples1 = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples1 = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
-      const triples2 = [
-        { subject: ':Bob', predicate: ':age', object: '30' },
-      ];
+      const triples2 = [{ subject: ':Bob', predicate: ':age', object: '30' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
-      const { publicSignals: ps1 } = await prover.prove(
-        triples1,
-        query,
-        [{ s: ':Alice' }]
-      );
+      const { publicSignals: ps1 } = await prover.prove(triples1, query, [{ s: ':Alice' }]);
 
-      const { publicSignals: ps2 } = await prover.prove(
-        triples2,
-        query,
-        [{ s: ':Bob' }]
-      );
+      const { publicSignals: ps2 } = await prover.prove(triples2, query, [{ s: ':Bob' }]);
 
       expect(ps1.storeCommitment).not.toBe(ps2.storeCommitment);
     });
@@ -296,15 +254,11 @@ describe('SPARQLZKProver', () => {
 
   describe('Input Validation', () => {
     it('should reject invalid triples', async () => {
-      const invalidTriples = [
-        { subject: ':Alice', predicate: ':age' },
-      ];
+      const invalidTriples = [{ subject: ':Alice', predicate: ':age' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
-      await expect(
-        prover.prove(invalidTriples, query, [])
-      ).rejects.toThrow();
+      await expect(prover.prove(invalidTriples, query, [])).rejects.toThrow();
     });
 
     it('should reject too many triples', async () => {
@@ -318,33 +272,27 @@ describe('SPARQLZKProver', () => {
 
       const query = 'SELECT ?s WHERE { ?s :p :o }';
 
-      await expect(
-        prover.prove(triples, query, [])
-      ).rejects.toThrow(/exceeds circuit capacity/);
+      await expect(prover.prove(triples, query, [])).rejects.toThrow(/exceeds circuit capacity/);
     });
 
     it('should reject too many results', async () => {
       const prover = new SPARQLZKProver({ maxResults: 5 });
 
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
       const results = Array.from({ length: 10 }, (_, i) => ({ s: `:s${i}` }));
 
-      await expect(
-        prover.prove(triples, query, results)
-      ).rejects.toThrow(/exceeds circuit capacity/);
+      await expect(prover.prove(triples, query, results)).rejects.toThrow(
+        /exceeds circuit capacity/
+      );
     });
   });
 
   describe('Performance', () => {
     it('should prove small query quickly', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
@@ -360,19 +308,13 @@ describe('SPARQLZKProver', () => {
     });
 
     it('should verify quickly', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
       const results = [{ s: ':Alice' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       const startTime = performance.now();
 
@@ -393,19 +335,13 @@ describe('SPARQLZKProver', () => {
     });
 
     it('should verify with verifyZKProof', async () => {
-      const triples = [
-        { subject: ':Alice', predicate: ':age', object: '25' },
-      ];
+      const triples = [{ subject: ':Alice', predicate: ':age', object: '25' }];
 
       const query = 'SELECT ?s WHERE { ?s :age ?age }';
 
       const results = [{ s: ':Alice' }];
 
-      const { proof, publicSignals } = await prover.prove(
-        triples,
-        query,
-        results
-      );
+      const { proof, publicSignals } = await prover.prove(triples, query, results);
 
       const valid = await verifyZKProof(proof, publicSignals);
 

@@ -21,5 +21,5 @@ export const createMetricsSchema = {
 };
 
 export default {
-  createMetrics: createMetricsSchema
+  createMetrics: createMetricsSchema,
 };

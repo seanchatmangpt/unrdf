@@ -31,31 +31,31 @@ export const EngineSchema = z.enum(['xetex', 'pdftex']);
 /**
  * Absolute file path validation
  */
-export const AbsolutePathSchema = z.string().min(1).refine(
-  (path) => path.startsWith('/'),
-  { message: 'Path must be absolute (start with /)' }
-);
+export const AbsolutePathSchema = z
+  .string()
+  .min(1)
+  .refine(path => path.startsWith('/'), { message: 'Path must be absolute (start with /)' });
 
 /**
  * Relative file path validation
  */
-export const RelativePathSchema = z.string().min(1).refine(
-  (path) => !path.startsWith('/'),
-  { message: 'Path must be relative (not start with /)' }
-);
+export const RelativePathSchema = z
+  .string()
+  .min(1)
+  .refine(path => !path.startsWith('/'), { message: 'Path must be relative (not start with /)' });
 
 /**
  * SHA-256 hash (64 hex chars)
  */
 export const Sha256HashSchema = z.string().regex(/^[a-f0-9]{64}$/i, {
-  message: 'Must be 64-character SHA-256 hex hash'
+  message: 'Must be 64-character SHA-256 hex hash',
 });
 
 /**
  * Short hash (16 hex chars)
  */
 export const ShortHashSchema = z.string().regex(/^[a-f0-9]{16}$/i, {
-  message: 'Must be 16-character hex hash'
+  message: 'Must be 16-character hex hash',
 });
 
 /**
@@ -74,7 +74,7 @@ export const VFSEntrySchema = z.object({
   path: RelativePathSchema,
   content: z.instanceof(Uint8Array),
   size: z.number().int().nonnegative(),
-  hash: Sha256HashSchema.optional()
+  hash: Sha256HashSchema.optional(),
 });
 
 /**
@@ -84,12 +84,14 @@ export const VFSValidationSchema = z.object({
   valid: z.boolean(),
   errors: z.array(z.string()),
   warnings: z.array(z.string()).optional(),
-  stats: z.object({
-    totalFiles: z.number().int().nonnegative(),
-    totalSize: z.number().int().nonnegative(),
-    texFiles: z.number().int().nonnegative(),
-    imageFiles: z.number().int().nonnegative()
-  }).optional()
+  stats: z
+    .object({
+      totalFiles: z.number().int().nonnegative(),
+      totalSize: z.number().int().nonnegative(),
+      texFiles: z.number().int().nonnegative(),
+      imageFiles: z.number().int().nonnegative(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -127,7 +129,7 @@ export const CompileOptionsSchema = z.object({
   verbose: z.boolean().default(false),
 
   /** Fail fast on first error (vs. trying to resolve) */
-  failFast: z.boolean().default(false)
+  failFast: z.boolean().default(false),
 });
 
 /**
@@ -150,7 +152,7 @@ export const CompileResultSchema = z.object({
   diagnostics: z.object({
     errors: z.array(z.string()),
     warnings: z.array(z.string()),
-    missingInputs: z.array(z.string())
+    missingInputs: z.array(z.string()),
   }),
 
   /** Intermediate artifacts (.aux, .toc, .bbl, etc.) */
@@ -160,13 +162,15 @@ export const CompileResultSchema = z.object({
   error: z.string().optional(),
 
   /** Metadata */
-  metadata: z.object({
-    engine: EngineSchema,
-    passes: z.number().int(),
-    cycles: z.number().int(),
-    timestamp: TimestampSchema,
-    cacheKey: ShortHashSchema.optional()
-  }).optional()
+  metadata: z
+    .object({
+      engine: EngineSchema,
+      passes: z.number().int(),
+      cycles: z.number().int(),
+      timestamp: TimestampSchema,
+      cacheKey: ShortHashSchema.optional(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -183,7 +187,7 @@ export const CLIBuildArgsSchema = z.object({
   cacheDir: z.string().optional().describe('Cache directory'),
   passes: z.number().int().min(1).max(5).default(2).describe('Compilation passes'),
   projectRoot: z.string().optional().describe('Project root directory'),
-  verbose: z.boolean().default(false).describe('Verbose logging')
+  verbose: z.boolean().default(false).describe('Verbose logging'),
 });
 
 /**
@@ -192,7 +196,7 @@ export const CLIBuildArgsSchema = z.object({
 export const CLIDiagnoseArgsSchema = z.object({
   input: z.string().describe('Path to main .tex file'),
   projectRoot: z.string().optional().describe('Project root directory'),
-  output: z.string().optional().describe('Diagnostic report output path')
+  output: z.string().optional().describe('Diagnostic report output path'),
 });
 
 /**
@@ -201,7 +205,7 @@ export const CLIDiagnoseArgsSchema = z.object({
 export const CLICacheAddArgsSchema = z.object({
   package: z.string().describe('Package name (e.g., amsmath, geometry)'),
   cacheDir: z.string().optional().describe('Cache directory'),
-  ctanMirror: z.string().url().optional().describe('CTAN mirror URL')
+  ctanMirror: z.string().url().optional().describe('CTAN mirror URL'),
 });
 
 /**
@@ -209,7 +213,7 @@ export const CLICacheAddArgsSchema = z.object({
  */
 export const CLICacheVerifyArgsSchema = z.object({
   cacheDir: z.string().optional().describe('Cache directory to verify'),
-  fix: z.boolean().default(false).describe('Automatically fix issues')
+  fix: z.boolean().default(false).describe('Automatically fix issues'),
 });
 
 /**
@@ -219,7 +223,7 @@ export const CLIBundleMakeArgsSchema = z.object({
   input: z.string().describe('Path to main .tex file'),
   output: z.string().default('bundle.zip').describe('Output bundle path'),
   includeCache: z.boolean().default(false).describe('Include cached packages'),
-  projectRoot: z.string().optional().describe('Project root directory')
+  projectRoot: z.string().optional().describe('Project root directory'),
 });
 
 // =============================================================================
@@ -246,7 +250,7 @@ export const ResolvedDependencySchema = z.object({
   resolvedAt: TimestampSchema.optional(),
 
   /** Package version (if available) */
-  version: z.string().optional()
+  version: z.string().optional(),
 });
 
 /**
@@ -278,10 +282,12 @@ export const LockfileSchema = z.object({
   resolved: z.record(z.string(), ResolvedDependencySchema).default({}),
 
   /** Lockfile metadata */
-  metadata: z.object({
-    projectRoot: z.string().optional(),
-    totalDependencies: z.number().int().nonnegative().optional()
-  }).optional()
+  metadata: z
+    .object({
+      projectRoot: z.string().optional(),
+      totalDependencies: z.number().int().nonnegative().optional(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -311,7 +317,7 @@ export const DiagnosticEntrySchema = z.object({
   code: z.string().optional(),
 
   /** Additional context */
-  context: z.string().optional()
+  context: z.string().optional(),
 });
 
 /**
@@ -331,14 +337,14 @@ export const DiagnosticsSchema = z.object({
   summary: z.object({
     totalErrors: z.number().int().nonnegative(),
     totalWarnings: z.number().int().nonnegative(),
-    totalMissing: z.number().int().nonnegative()
+    totalMissing: z.number().int().nonnegative(),
   }),
 
   /** Timestamp of diagnostics generation */
   timestamp: TimestampSchema,
 
   /** Log file path (if written) */
-  logFile: z.string().optional()
+  logFile: z.string().optional(),
 });
 
 // =============================================================================
@@ -365,7 +371,7 @@ export const CTANPackageSchema = z.object({
   hash: Sha256HashSchema.optional(),
 
   /** Package description */
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 /**
@@ -383,8 +389,8 @@ export const ResolutionResultSchema = z.object({
     ctanMirror: z.string().url().optional(),
     totalResolved: z.number().int().nonnegative(),
     totalFailed: z.number().int().nonnegative(),
-    timestamp: TimestampSchema
-  })
+    timestamp: TimestampSchema,
+  }),
 });
 
 // =============================================================================
@@ -414,7 +420,7 @@ export const CacheEntrySchema = z.object({
   accessedAt: TimestampSchema.optional(),
 
   /** Access count */
-  accessCount: z.number().int().nonnegative().default(0)
+  accessCount: z.number().int().nonnegative().default(0),
 });
 
 /**
@@ -423,11 +429,13 @@ export const CacheEntrySchema = z.object({
 export const CacheManifestSchema = z.object({
   version: z.string().default('1.0.0'),
   entries: z.record(z.string(), CacheEntrySchema),
-  metadata: z.object({
-    totalEntries: z.number().int().nonnegative(),
-    totalSize: z.number().int().nonnegative(),
-    lastCleanup: TimestampSchema.optional()
-  }).optional()
+  metadata: z
+    .object({
+      totalEntries: z.number().int().nonnegative(),
+      totalSize: z.number().int().nonnegative(),
+      lastCleanup: TimestampSchema.optional(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -442,7 +450,7 @@ export const EngineStatusSchema = z.object({
   available: z.boolean(),
   wasmPath: z.string(),
   version: z.string().optional(),
-  initialized: z.boolean().default(false)
+  initialized: z.boolean().default(false),
 });
 
 /**
@@ -453,7 +461,7 @@ export const EnginePassResultSchema = z.object({
   status: z.number().int(),
   pdfGenerated: z.boolean(),
   log: z.string(),
-  duration: z.number().nonnegative().optional()
+  duration: z.number().nonnegative().optional(),
 });
 
 // =============================================================================
@@ -502,9 +510,9 @@ export function createEmptyDiagnostics() {
     summary: {
       totalErrors: 0,
       totalWarnings: 0,
-      totalMissing: 0
+      totalMissing: 0,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 }
 
@@ -562,5 +570,5 @@ export default {
   parseCompileOptions,
   parseCLIBuildArgs,
   parseLockfile,
-  createEmptyDiagnostics
+  createEmptyDiagnostics,
 };

@@ -103,7 +103,7 @@ class YawlNitroEventHandlers extends EventEmitter {
    * Register task started handler
    */
   onTaskStarted(handler) {
-    this.registry.on('task:started', async (payload) => {
+    this.registry.on('task:started', async payload => {
       this.executionLog.push({ event: 'task:started', payload, timestamp: new Date() });
       return await handler(payload);
     });
@@ -113,7 +113,7 @@ class YawlNitroEventHandlers extends EventEmitter {
    * Register task completed handler
    */
   onTaskCompleted(handler) {
-    this.registry.on('task:completed', async (payload) => {
+    this.registry.on('task:completed', async payload => {
       this.executionLog.push({ event: 'task:completed', payload, timestamp: new Date() });
       return await handler(payload);
     });
@@ -123,7 +123,7 @@ class YawlNitroEventHandlers extends EventEmitter {
    * Register task failed handler
    */
   onTaskFailed(handler) {
-    this.registry.on('task:failed', async (payload) => {
+    this.registry.on('task:failed', async payload => {
       this.executionLog.push({ event: 'task:failed', payload, timestamp: new Date() });
       return await handler(payload);
     });
@@ -133,7 +133,7 @@ class YawlNitroEventHandlers extends EventEmitter {
    * Register case completed handler
    */
   onCaseCompleted(handler) {
-    this.registry.on('case:completed', async (payload) => {
+    this.registry.on('case:completed', async payload => {
       this.executionLog.push({ event: 'case:completed', payload, timestamp: new Date() });
       return await handler(payload);
     });
@@ -355,8 +355,8 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
 
     it('should handle async handlers', async () => {
       // Arrange
-      const handler = vi.fn().mockImplementation(async (payload) => {
-        await new Promise((resolve) => setTimeout(resolve, 10));
+      const handler = vi.fn().mockImplementation(async payload => {
+        await new Promise(resolve => setTimeout(resolve, 10));
         return { processed: true, data: payload };
       });
       handlers.onTaskCompleted(handler);
@@ -450,7 +450,7 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
   describe('Middleware Support', () => {
     it('should apply middleware before handlers', async () => {
       // Arrange
-      const middleware = vi.fn().mockImplementation(async (payload) => ({
+      const middleware = vi.fn().mockImplementation(async payload => ({
         ...payload,
         enriched: true,
       }));
@@ -472,9 +472,9 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
 
     it('should apply multiple middleware in order', async () => {
       // Arrange
-      const mw1 = vi.fn().mockImplementation(async (p) => ({ ...p, step1: true }));
-      const mw2 = vi.fn().mockImplementation(async (p) => ({ ...p, step2: true }));
-      const mw3 = vi.fn().mockImplementation(async (p) => ({ ...p, step3: true }));
+      const mw1 = vi.fn().mockImplementation(async p => ({ ...p, step1: true }));
+      const mw2 = vi.fn().mockImplementation(async p => ({ ...p, step2: true }));
+      const mw3 = vi.fn().mockImplementation(async p => ({ ...p, step3: true }));
       const handler = vi.fn().mockResolvedValue({});
 
       handlers.addMiddleware(mw1);
@@ -495,7 +495,7 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
 
     it('should handle middleware transformation', async () => {
       // Arrange
-      const middleware = vi.fn().mockImplementation(async (payload) => ({
+      const middleware = vi.fn().mockImplementation(async payload => ({
         ...payload,
         timestamp: Date.now(),
         metadata: { processed: true },
@@ -614,7 +614,7 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
     it('should support handler chaining via results', async () => {
       // Arrange
       const handler1 = vi.fn().mockResolvedValue({ data: 'step1' });
-      const handler2 = vi.fn().mockImplementation(async (payload) => {
+      const handler2 = vi.fn().mockImplementation(async payload => {
         return { data: 'step2', previous: payload };
       });
 
@@ -631,7 +631,7 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
 
     it('should handle complex data transformations', async () => {
       // Arrange
-      const enrichHandler = vi.fn().mockImplementation(async (payload) => ({
+      const enrichHandler = vi.fn().mockImplementation(async payload => ({
         ...payload,
         enriched: { timestamp: Date.now(), source: 'yawl' },
       }));
@@ -654,8 +654,8 @@ describe('YAWL-Nitro Event Handlers Integration', () => {
   describe('Concurrent Handler Execution', () => {
     it('should handle concurrent event dispatches', async () => {
       // Arrange
-      const handler = vi.fn().mockImplementation(async (payload) => {
-        await new Promise((resolve) => setTimeout(resolve, 5));
+      const handler = vi.fn().mockImplementation(async payload => {
+        await new Promise(resolve => setTimeout(resolve, 5));
         return { processed: payload.taskId };
       });
       handlers.onTaskStarted(handler);

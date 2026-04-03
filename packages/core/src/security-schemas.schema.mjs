@@ -34,5 +34,5 @@ export const validateFieldsSchema = {
 
 export default {
   validateInput: validateInputSchema,
-  validateFields: validateFieldsSchema
+  validateFields: validateFieldsSchema,
 };

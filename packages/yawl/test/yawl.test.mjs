@@ -45,11 +45,7 @@ import {
 } from '../src/index.mjs';
 
 // Test helpers
-import {
-  createTestWorkflow,
-  createTestTask,
-  createTestCase,
-} from './test-helpers.mjs';
+import { createTestWorkflow, createTestTask, createTestCase } from './test-helpers.mjs';
 
 describe('YAWL Ontology', () => {
   describe('Namespace definitions', () => {

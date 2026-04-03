@@ -40,7 +40,7 @@ import {
   saveLockfile,
   addEntry,
   createLockEntry,
-  verifyAllEntries
+  verifyAllEntries,
 } from './cache/lockfile.mjs';
 
 import { setCached, getCached } from './cache/store.mjs';
@@ -55,7 +55,7 @@ const entry = createLockEntry({
   name: 'hyperref.sty',
   content,
   cachedPath: 'packages/hyperref/hyperref.sty',
-  sourceUrl: 'https://ctan.org/pkg/hyperref'
+  sourceUrl: 'https://ctan.org/pkg/hyperref',
 });
 
 // 3. Cache file
@@ -68,10 +68,7 @@ addEntry(lockfile, entry);
 await saveLockfile('./latex.lock.json', lockfile);
 
 // 6. Later: Verify cache integrity
-const { valid, invalid, missing } = await verifyAllEntries(
-  lockfile,
-  cacheDir
-);
+const { valid, invalid, missing } = await verifyAllEntries(lockfile, cacheDir);
 ```
 
 ## 📋 Lockfile Format
@@ -136,6 +133,7 @@ $ node --test src/lib/latex/cache/*.test.mjs
 ```
 
 **Breakdown**:
+
 - Lockfile tests: 16/16 ✅
 - Store tests: 10/10 ✅
 - Bundle tests: 5/5 ✅
@@ -202,15 +200,15 @@ const manifest = await listBundle(bundleDir);
 
 ## 📈 Performance
 
-| Operation | File Count | Time | SLA |
-|-----------|-----------|------|-----|
-| Create lockfile | - | <1ms | ✅ |
-| Load lockfile | 100 entries | 1-5ms | ✅ |
-| Save lockfile | 100 entries | 2-8ms | ✅ |
-| Verify entry | 1 file | 5-10ms | ✅ |
-| Verify all | 100 files | ~50ms | ✅ |
-| Export bundle | 100 files | ~200ms | ✅ |
-| Import bundle | 100 files | ~300ms | ✅ |
+| Operation       | File Count  | Time   | SLA |
+| --------------- | ----------- | ------ | --- |
+| Create lockfile | -           | <1ms   | ✅  |
+| Load lockfile   | 100 entries | 1-5ms  | ✅  |
+| Save lockfile   | 100 entries | 2-8ms  | ✅  |
+| Verify entry    | 1 file      | 5-10ms | ✅  |
+| Verify all      | 100 files   | ~50ms  | ✅  |
+| Export bundle   | 100 files   | ~200ms | ✅  |
+| Import bundle   | 100 files   | ~300ms | ✅  |
 
 All operations well under 5s SLA.
 
@@ -227,6 +225,7 @@ All operations well under 5s SLA.
 ## 🔧 Integration
 
 ### With Agent 4 (Resolver)
+
 ```javascript
 import { createLockEntry, addEntry } from './cache/lockfile.mjs';
 import { setCached } from './cache/store.mjs';
@@ -238,6 +237,7 @@ addEntry(lockfile, entry);
 ```
 
 ### With Agent 6 (Compiler)
+
 ```javascript
 import { loadLockfile, getEntry } from './cache/lockfile.mjs';
 import { getCached } from './cache/store.mjs';
@@ -252,6 +252,7 @@ if (entry) {
 ```
 
 ### With Agent 7 (Post-Processor)
+
 ```javascript
 import { verifyAllEntries } from './cache/lockfile.mjs';
 import { exportBundle } from './cache/bundle.mjs';
@@ -266,14 +267,17 @@ await exportBundle(lockfile, cacheDir, './deployment-bundle/');
 ## 🐛 Troubleshooting
 
 ### Lockfile returns null
+
 - **Cause**: File doesn't exist or invalid schema
 - **Solution**: Create new lockfile with `createLockfile()`
 
 ### Hash mismatch warning
+
 - **Cause**: Cached file modified
 - **Solution**: Delete cache, re-download package
 
 ### Missing files in bundle
+
 - **Cause**: Lockfile out of sync with cache
 - **Solution**: Run `verifyAllEntries()` to identify missing files
 
@@ -286,6 +290,7 @@ await exportBundle(lockfile, cacheDir, './deployment-bundle/');
 ## 👥 Contributors
 
 **Agent 5**: Lockfile & Cache Store implementation
+
 - Lockfile management with Zod validation
 - Content-addressable cache storage
 - Bundle export/import for offline mode

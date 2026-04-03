@@ -8,8 +8,22 @@ import { existsSync, constants } from 'fs';
 import { resolve, dirname, extname } from 'path';
 import { createStore, COMMON_PREFIXES } from '@unrdf/core';
 
-const FORMAT_TO_EXT = { turtle: 'ttl', 'text/turtle': 'ttl', ntriples: 'nt', nquads: 'nq', trig: 'trig', rdfxml: 'rdf' };
-const EXT_TO_FORMAT = { '.ttl': 'turtle', '.nt': 'ntriples', '.nq': 'nquads', '.trig': 'trig', '.rdf': 'rdfxml', '.owl': 'rdfxml' };
+const FORMAT_TO_EXT = {
+  turtle: 'ttl',
+  'text/turtle': 'ttl',
+  ntriples: 'nt',
+  nquads: 'nq',
+  trig: 'trig',
+  rdfxml: 'rdf',
+};
+const EXT_TO_FORMAT = {
+  '.ttl': 'turtle',
+  '.nt': 'ntriples',
+  '.nq': 'nquads',
+  '.trig': 'trig',
+  '.rdf': 'rdfxml',
+  '.owl': 'rdfxml',
+};
 
 /**
  * Load ontology from file into RDF store
@@ -24,7 +38,7 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
   if (!source) {
     throw new Error(
       'Ontology configuration missing required "source" field\n' +
-      '  Fix: Add "source" field to ontology config pointing to your RDF file'
+        '  Fix: Add "source" field to ontology config pointing to your RDF file'
     );
   }
 
@@ -34,9 +48,9 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
   if (!existsSync(absolutePath)) {
     throw new Error(
       `Ontology file not found: ${absolutePath}\n` +
-      `  Configured path: ${source}\n` +
-      `  Base directory: ${baseDir}\n` +
-      `  Fix: Check that the file path is correct and the file exists`
+        `  Configured path: ${source}\n` +
+        `  Base directory: ${baseDir}\n` +
+        `  Fix: Check that the file path is correct and the file exists`
     );
   }
 
@@ -46,7 +60,7 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
   } catch (accessErr) {
     throw new Error(
       `Ontology file is not readable: ${absolutePath}\n` +
-      `  Fix: Check file permissions (should be readable)`
+        `  Fix: Check file permissions (should be readable)`
     );
   }
 
@@ -57,8 +71,8 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
   } catch (readErr) {
     throw new Error(
       `Failed to read ontology file: ${absolutePath}\n` +
-      `  Error: ${readErr.message}\n` +
-      `  Fix: Ensure file is a valid text file with UTF-8 encoding`
+        `  Error: ${readErr.message}\n` +
+        `  Fix: Ensure file is a valid text file with UTF-8 encoding`
     );
   }
 
@@ -102,7 +116,7 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
         `  1. Check ${detectedFormat.toUpperCase()} syntax is valid`,
         `  2. Verify all prefixes are declared with @prefix`,
         `  3. Check for unescaped special characters in literals`,
-        `  4. Ensure all statements end with a period (.)`
+        `  4. Ensure all statements end with a period (.)`,
       ];
 
       if (!format) {
@@ -114,16 +128,16 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
 
       throw new Error(
         `Failed to parse ontology file: ${absolutePath}\n` +
-        `  Format: ${detectedFormat}${lineInfo}\n` +
-        `  Parse error: ${errorMsg}` +
-        formatSuggestions.join('\n')
+          `  Format: ${detectedFormat}${lineInfo}\n` +
+          `  Parse error: ${errorMsg}` +
+          formatSuggestions.join('\n')
       );
     }
   } else {
     // Fallback: Count triples from content (estimate)
-    const tripleLines = content.split('\n').filter(l =>
-      l.trim() && !l.trim().startsWith('@') && !l.trim().startsWith('#')
-    );
+    const tripleLines = content
+      .split('\n')
+      .filter(l => l.trim() && !l.trim().startsWith('@') && !l.trim().startsWith('#'));
     tripleCount = tripleLines.length;
   }
 

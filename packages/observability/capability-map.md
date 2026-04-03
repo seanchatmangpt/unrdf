@@ -20,8 +20,6 @@ Innovative Prometheus/Grafana observability dashboard for UNRDF distributed work
 **Invariants:** tracing, metrics, logs
 **Evidence:** `packages/observability/src/index.mjs`
 
-
-
 ---
 
 ## Package Metadata
@@ -53,17 +51,15 @@ Innovative Prometheus/Grafana observability dashboard for UNRDF distributed work
    - Use for: OTEL Integration operations
    - Runtime: Node.js
 
-
 ### Composition Examples
 
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
-import { /* functions */ } from '@unrdf/observability';
+import {} from /* functions */ '@unrdf/observability';
 
 const store = createStore();
 // Use observability capabilities with store
 ```
-
 
 ---
 

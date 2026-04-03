@@ -66,7 +66,7 @@ async function startWatchMode(args, runSyncFn) {
     green: '\x1b[32m',
   };
   const noColor = !process.stdout.isTTY || process.env.NO_COLOR;
-  if (noColor) Object.keys(c).forEach(k => c[k] = '');
+  if (noColor) Object.keys(c).forEach(k => (c[k] = ''));
 
   let watchPaths = [];
   const watchers = [];
@@ -103,14 +103,20 @@ async function startWatchMode(args, runSyncFn) {
   const setupWatchers = async () => {
     // Close existing watchers
     for (const w of watchers) {
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
     }
     watchers.length = 0;
 
     try {
       watchPaths = await getWatchPaths(args.config);
     } catch (err) {
-      console.error(`${c.yellow}Warning:${c.reset} Could not parse config for watch paths: ${err.message}`);
+      console.error(
+        `${c.yellow}Warning:${c.reset} Could not parse config for watch paths: ${err.message}`
+      );
       watchPaths = [resolve(args.config)];
     }
 
@@ -132,7 +138,7 @@ async function startWatchMode(args, runSyncFn) {
           debouncedRun();
         });
 
-        watcher.on('error', (err) => {
+        watcher.on('error', err => {
           if (args.verbose) {
             console.error(`${c.yellow}Watch error:${c.reset} ${err.message}`);
           }
@@ -157,7 +163,11 @@ async function startWatchMode(args, runSyncFn) {
   process.on('SIGINT', () => {
     console.log('\n' + c.dim + 'Stopping watch mode...' + c.reset);
     for (const w of watchers) {
-      try { w.close(); } catch (e) { /* ignore */ }
+      try {
+        w.close();
+      } catch (e) {
+        /* ignore */
+      }
     }
     process.exit(0);
   });

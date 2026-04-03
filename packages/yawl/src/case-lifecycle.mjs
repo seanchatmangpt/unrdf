@@ -215,9 +215,7 @@ export const CaseLifecycleMixin = {
 
     // Check if case is complete
     const endTaskIds = this.workflow.getEndTaskIds();
-    const allEndTasksComplete = endTaskIds.every(id =>
-      this.completedTasks.has(id)
-    );
+    const allEndTasksComplete = endTaskIds.every(id => this.completedTasks.has(id));
 
     if (allEndTasksComplete) {
       this._status = CaseStatus.COMPLETED;
@@ -320,7 +318,11 @@ export const CaseLifecycleMixin = {
     for (const [workItemId, task] of this.workItems) {
       const taskDefId = this.getTaskDefIdForWorkItem(workItemId);
       if (taskIds.includes(taskDefId) && !task.isTerminal()) {
-        const result = await this.cancelTask(workItemId, reason ?? `Region ${regionId} cancelled`, actor);
+        const result = await this.cancelTask(
+          workItemId,
+          reason ?? `Region ${regionId} cancelled`,
+          actor
+        );
         cancelled.push(result.task);
         newReceipts.push(result.receipt);
       }

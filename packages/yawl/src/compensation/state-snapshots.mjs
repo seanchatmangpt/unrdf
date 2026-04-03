@@ -95,21 +95,24 @@ export class SnapshotManager {
 
     // Create receipt for snapshot if enabled
     if (this.receiptBased) {
-      const receipt = await generateReceipt({
-        eventType: 'WORK_ITEM_CREATED',
-        caseId,
-        taskId: options.taskId || 'snapshot',
-        payload: {
-          decision: 'SNAPSHOT_CREATED',
-          justification: {
-            reasoning: `State snapshot created for compensation rollback`,
-          },
-          context: {
-            snapshotId: snapshot.id,
-            type: snapshot.type,
+      const receipt = await generateReceipt(
+        {
+          eventType: 'WORK_ITEM_CREATED',
+          caseId,
+          taskId: options.taskId || 'snapshot',
+          payload: {
+            decision: 'SNAPSHOT_CREATED',
+            justification: {
+              reasoning: `State snapshot created for compensation rollback`,
+            },
+            context: {
+              snapshotId: snapshot.id,
+              type: snapshot.type,
+            },
           },
         },
-      }, options.previousReceipt);
+        options.previousReceipt
+      );
 
       snapshot.receiptHash = receipt.receiptHash;
     }
@@ -235,8 +238,9 @@ export class SnapshotManager {
     }
 
     // Sort by creation time
-    const sorted = Array.from(this.snapshots.values())
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const sorted = Array.from(this.snapshots.values()).sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    );
 
     // Delete oldest snapshots
     const toDelete = sorted.slice(0, sorted.length - this.maxSnapshots);

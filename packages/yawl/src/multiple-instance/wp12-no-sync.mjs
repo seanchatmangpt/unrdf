@@ -133,15 +133,11 @@ export async function spawnInstancesNoSync(taskDef, caseId, count, options = {})
 
   // Validate instance inputs length if provided
   if (instanceInputs && instanceInputs.length !== count) {
-    throw new Error(
-      `instanceInputs length (${instanceInputs.length}) must match count (${count})`
-    );
+    throw new Error(`instanceInputs length (${instanceInputs.length}) must match count (${count})`);
   }
 
   // Ensure we have a TaskDefinition instance
-  const definition = taskDef instanceof TaskDefinition
-    ? taskDef
-    : new TaskDefinition(taskDef);
+  const definition = taskDef instanceof TaskDefinition ? taskDef : new TaskDefinition(taskDef);
 
   const spawnedAt = now();
   const parentTaskId = `${caseId}-${definition.id}-mi-parent-${Date.now()}`;
@@ -280,15 +276,8 @@ async function generateSingleReceipt(event, previousReceipt) {
  * @returns {Promise<Object>}
  */
 async function generateAggregateReceipt(options) {
-  const {
-    parentTaskId,
-    caseId,
-    taskDefId,
-    instanceIds,
-    instanceReceipts,
-    spawnedAt,
-    count,
-  } = options;
+  const { parentTaskId, caseId, taskDefId, instanceIds, instanceReceipts, spawnedAt, count } =
+    options;
 
   // Compute Merkle root of instance receipt hashes
   const receiptHashes = instanceReceipts.map(r => r.receiptHash);
@@ -452,11 +441,7 @@ export function getCompletionPercentage(parentTaskId, tracker = globalInstanceTr
 // Exports
 // =============================================================================
 
-export {
-  MultiInstanceTracker,
-  globalInstanceTracker,
-  InstanceStatus,
-};
+export { MultiInstanceTracker, globalInstanceTracker, InstanceStatus };
 
 export default {
   spawnInstancesNoSync,

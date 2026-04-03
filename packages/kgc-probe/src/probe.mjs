@@ -47,7 +47,7 @@ export async function runProbe(config) {
     agents: config.agents,
     guards: config.guards,
     distributed: config.distributed || false,
-    persist: config.persist !== false // Default true
+    persist: config.persist !== false, // Default true
   });
 
   if (result.status === 'failed') {

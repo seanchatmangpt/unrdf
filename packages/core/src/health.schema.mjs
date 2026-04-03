@@ -47,5 +47,5 @@ export const createUnrdfHealthChecksSchema = {
 export default {
   createHealthChecks: createHealthChecksSchema,
   createHealthMiddleware: createHealthMiddlewareSchema,
-  createUnrdfHealthChecks: createUnrdfHealthChecksSchema
+  createUnrdfHealthChecks: createUnrdfHealthChecksSchema,
 };

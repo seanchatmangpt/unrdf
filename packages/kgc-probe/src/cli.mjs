@@ -21,7 +21,7 @@ import {
   ValidationError,
   ArtifactNotFoundError,
   MergeConflictError,
-  ReceiptError
+  ReceiptError,
 } from './utils/errors.mjs';
 
 // ============================================================================
@@ -32,72 +32,108 @@ import {
  * Scan command arguments schema
  * @type {z.ZodSchema}
  */
-export const ScanArgsSchema = z.object({
-  config: z.string().optional().describe('Config file path'),
-  output: z.string().optional().describe('Output directory'),
-  timeout: z.number().int().positive().optional().default(30000).describe('Timeout per agent in ms'),
-  parallel: z.number().int().positive().optional().default(10).describe('Max concurrent agents'),
-  validate: z.boolean().optional().default(true).describe('Validate shards before merge'),
-  format: z.enum(['ttl', 'json', 'md', 'all']).optional().default('all').describe('Output format'),
-  noReceipts: z.boolean().optional().default(false).describe('Skip receipt generation'),
-  merkle: z.boolean().optional().default(true).describe('Include merkle tree'),
-  verbose: z.boolean().optional().default(false).describe('Verbose output')
-}).describe('Probe scan arguments');
+export const ScanArgsSchema = z
+  .object({
+    config: z.string().optional().describe('Config file path'),
+    output: z.string().optional().describe('Output directory'),
+    timeout: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .default(30000)
+      .describe('Timeout per agent in ms'),
+    parallel: z.number().int().positive().optional().default(10).describe('Max concurrent agents'),
+    validate: z.boolean().optional().default(true).describe('Validate shards before merge'),
+    format: z
+      .enum(['ttl', 'json', 'md', 'all'])
+      .optional()
+      .default('all')
+      .describe('Output format'),
+    noReceipts: z.boolean().optional().default(false).describe('Skip receipt generation'),
+    merkle: z.boolean().optional().default(true).describe('Include merkle tree'),
+    verbose: z.boolean().optional().default(false).describe('Verbose output'),
+  })
+  .describe('Probe scan arguments');
 
 /**
  * Merge command arguments schema
  * @type {z.ZodSchema}
  */
-export const MergeArgsSchema = z.object({
-  shardDir: z.string().describe('Directory containing shards'),
-  config: z.string().optional().describe('Config file path'),
-  output: z.string().optional().describe('Output directory'),
-  format: z.enum(['ttl', 'json', 'md', 'all']).optional().default('all').describe('Output format'),
-  onConflict: z.enum(['list', 'fail', 'merge']).optional().default('list').describe('Conflict resolution strategy'),
-  verbose: z.boolean().optional().default(false).describe('Verbose output')
-}).describe('Merge command arguments');
+export const MergeArgsSchema = z
+  .object({
+    shardDir: z.string().describe('Directory containing shards'),
+    config: z.string().optional().describe('Config file path'),
+    output: z.string().optional().describe('Output directory'),
+    format: z
+      .enum(['ttl', 'json', 'md', 'all'])
+      .optional()
+      .default('all')
+      .describe('Output format'),
+    onConflict: z
+      .enum(['list', 'fail', 'merge'])
+      .optional()
+      .default('list')
+      .describe('Conflict resolution strategy'),
+    verbose: z.boolean().optional().default(false).describe('Verbose output'),
+  })
+  .describe('Merge command arguments');
 
 /**
  * Diff command arguments schema
  * @type {z.ZodSchema}
  */
-export const DiffArgsSchema = z.object({
-  oldArtifact: z.string().describe('Path to old artifact'),
-  newArtifact: z.string().describe('Path to new artifact'),
-  format: z.enum(['json', 'md']).optional().default('json').describe('Output format'),
-  output: z.string().optional().describe('Output file path'),
-  ignoreTimestamps: z.boolean().optional().default(false).describe('Ignore timestamp-only changes'),
-  semanticOnly: z.boolean().optional().default(false).describe('Ignore structure changes'),
-  verbose: z.boolean().optional().default(false).describe('Verbose output')
-}).describe('Diff command arguments');
+export const DiffArgsSchema = z
+  .object({
+    oldArtifact: z.string().describe('Path to old artifact'),
+    newArtifact: z.string().describe('Path to new artifact'),
+    format: z.enum(['json', 'md']).optional().default('json').describe('Output format'),
+    output: z.string().optional().describe('Output file path'),
+    ignoreTimestamps: z
+      .boolean()
+      .optional()
+      .default(false)
+      .describe('Ignore timestamp-only changes'),
+    semanticOnly: z.boolean().optional().default(false).describe('Ignore structure changes'),
+    verbose: z.boolean().optional().default(false).describe('Verbose output'),
+  })
+  .describe('Diff command arguments');
 
 /**
  * Report command arguments schema
  * @type {z.ZodSchema}
  */
-export const ReportArgsSchema = z.object({
-  artifactPath: z.string().describe('Path to artifact'),
-  format: z.enum(['md', 'json', 'ttl', 'pdf']).optional().default('md').describe('Output format'),
-  output: z.string().optional().describe('Output file path'),
-  style: z.enum(['technical', 'executive', 'audit']).optional().default('technical').describe('Report style'),
-  includeProvenance: z.boolean().optional().default(true).describe('Include provenance data'),
-  maxDepth: z.number().int().positive().optional().default(3).describe('Max nesting depth'),
-  verbose: z.boolean().optional().default(false).describe('Verbose output')
-}).describe('Report command arguments');
+export const ReportArgsSchema = z
+  .object({
+    artifactPath: z.string().describe('Path to artifact'),
+    format: z.enum(['md', 'json', 'ttl', 'pdf']).optional().default('md').describe('Output format'),
+    output: z.string().optional().describe('Output file path'),
+    style: z
+      .enum(['technical', 'executive', 'audit'])
+      .optional()
+      .default('technical')
+      .describe('Report style'),
+    includeProvenance: z.boolean().optional().default(true).describe('Include provenance data'),
+    maxDepth: z.number().int().positive().optional().default(3).describe('Max nesting depth'),
+    verbose: z.boolean().optional().default(false).describe('Verbose output'),
+  })
+  .describe('Report command arguments');
 
 /**
  * Verify command arguments schema
  * @type {z.ZodSchema}
  */
-export const VerifyArgsSchema = z.object({
-  artifactPath: z.string().describe('Path to artifact'),
-  checkMerkle: z.boolean().optional().default(true).describe('Verify merkle proofs'),
-  checkSchema: z.boolean().optional().default(true).describe('Validate against schema'),
-  checkCrypto: z.boolean().optional().default(false).describe('Verify signatures'),
-  receiptDir: z.string().optional().describe('Path to receipts directory'),
-  strict: z.boolean().optional().default(true).describe('Fail on any mismatch'),
-  verbose: z.boolean().optional().default(false).describe('Verbose output')
-}).describe('Verify command arguments');
+export const VerifyArgsSchema = z
+  .object({
+    artifactPath: z.string().describe('Path to artifact'),
+    checkMerkle: z.boolean().optional().default(true).describe('Verify merkle proofs'),
+    checkSchema: z.boolean().optional().default(true).describe('Validate against schema'),
+    checkCrypto: z.boolean().optional().default(false).describe('Verify signatures'),
+    receiptDir: z.string().optional().describe('Path to receipts directory'),
+    strict: z.boolean().optional().default(true).describe('Fail on any mismatch'),
+    verbose: z.boolean().optional().default(false).describe('Verbose output'),
+  })
+  .describe('Verify command arguments');
 
 // ============================================================================
 // UTILITIES
@@ -130,7 +166,7 @@ function sha256(data) {
  * @returns {string}
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -179,7 +215,7 @@ function buildMerkleTree(leaves) {
       if (siblingIdx < levelNodes.length) {
         proof.push({
           hash: levelNodes[siblingIdx],
-          position: idx % 2 === 0 ? 'right' : 'left'
+          position: idx % 2 === 0 ? 'right' : 'left',
         });
       }
       idx = Math.floor(idx / 2);
@@ -234,8 +270,16 @@ export async function scanCommand(args) {
 
   // Simulate agent execution (in real implementation, would import from @unrdf/kgc-probe)
   const agentNames = [
-    'completeness', 'consistency', 'conformance', 'coverage', 'caching',
-    'completeness_level', 'coherence', 'clustering', 'classification', 'collaboration'
+    'completeness',
+    'consistency',
+    'conformance',
+    'coverage',
+    'caching',
+    'completeness_level',
+    'coherence',
+    'clustering',
+    'classification',
+    'collaboration',
   ];
 
   const shards = [];
@@ -245,26 +289,28 @@ export async function scanCommand(args) {
   for (let i = 0; i < agentNames.length; i += parallel) {
     const batch = agentNames.slice(i, i + parallel);
     const results = await Promise.all(
-      batch.map(async (agentName) => {
+      batch.map(async agentName => {
         try {
           // Simulate agent execution
-          const observations = [{
-            id: generateUUID(),
-            agent: agentName,
-            timestamp: new Date().toISOString(),
-            kind: agentName,
-            severity: 'info',
-            subject: `probe:${agentName}`,
-            evidence: { query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o }', result: {}, witnesses: [] },
-            metrics: { confidence: 0.85, coverage: 0.9, latency_ms: 50 }
-          }];
+          const observations = [
+            {
+              id: generateUUID(),
+              agent: agentName,
+              timestamp: new Date().toISOString(),
+              kind: agentName,
+              severity: 'info',
+              subject: `probe:${agentName}`,
+              evidence: { query: 'SELECT ?s ?p ?o WHERE { ?s ?p ?o }', result: {}, witnesses: [] },
+              metrics: { confidence: 0.85, coverage: 0.9, latency_ms: 50 },
+            },
+          ];
 
           const shardData = {
             agentId: `agent-${i + batch.indexOf(agentName) + 1}`,
             agentName,
             timestamp: new Date().toISOString(),
             observations,
-            hash: sha256(JSON.stringify(observations))
+            hash: sha256(JSON.stringify(observations)),
           };
 
           return { status: 'success', ...shardData };
@@ -294,7 +340,7 @@ export async function scanCommand(args) {
         agentName: shard.agentName,
         shardHash: shard.hash,
         previousHash,
-        timestamp: shard.timestamp
+        timestamp: shard.timestamp,
       };
       entry.hash = sha256(JSON.stringify(entry));
       hashChain.push(entry);
@@ -304,7 +350,7 @@ export async function scanCommand(args) {
     receipts = {
       chain: hashChain,
       root: hashChain.length > 0 ? hashChain[hashChain.length - 1].hash : null,
-      agentCount: shards.length
+      agentCount: shards.length,
     };
 
     // Generate merkle tree if requested
@@ -333,18 +379,18 @@ export async function scanCommand(args) {
       }, {}),
       by_severity: { critical: 0, warning: 0, info: allObservations.length },
       confidence_mean: 0.85,
-      coverage_mean: 0.9
+      coverage_mean: 0.9,
     },
     metadata: {
       agents_run: shards.map(s => s.agentName),
       guards_applied: [],
       execution_time_ms: Date.now() - startTime,
-      storage_backend: 'memory'
+      storage_backend: 'memory',
     },
     integrity: {
       checksum: sha256(JSON.stringify(allObservations)),
-      verified_at: new Date().toISOString()
-    }
+      verified_at: new Date().toISOString(),
+    },
   };
 
   const endTime = Date.now();
@@ -359,16 +405,25 @@ export async function scanCommand(args) {
     mergedArtifact,
     receipts,
     reports: {
-      ttl: format === 'ttl' || format === 'all' ? `${output || './probe/out/' + runId}/merged/world.ttl` : null,
-      json: format === 'json' || format === 'all' ? `${output || './probe/out/' + runId}/merged/index.json` : null,
-      md: format === 'md' || format === 'all' ? `${output || './probe/out/' + runId}/merged/report.md` : null
+      ttl:
+        format === 'ttl' || format === 'all'
+          ? `${output || './probe/out/' + runId}/merged/world.ttl`
+          : null,
+      json:
+        format === 'json' || format === 'all'
+          ? `${output || './probe/out/' + runId}/merged/index.json`
+          : null,
+      md:
+        format === 'md' || format === 'all'
+          ? `${output || './probe/out/' + runId}/merged/report.md`
+          : null,
     },
     metrics: {
       startTime: new Date(startTime).toISOString(),
       endTime: new Date(endTime).toISOString(),
       duration_ms: endTime - startTime,
-      agentCount: shards.length
-    }
+      agentCount: shards.length,
+    },
   };
 }
 
@@ -397,12 +452,12 @@ export async function mergeCommand(args) {
   // Detect conflicts
   const claimMap = new Map();
   for (const shard of shards) {
-    for (const obs of (shard.observations || [])) {
+    for (const obs of shard.observations || []) {
       const key = obs.id;
       if (claimMap.has(key)) {
         conflicts.push({
           claimId: key,
-          candidates: [claimMap.get(key), { agentName: shard.agentName, value: obs }]
+          candidates: [claimMap.get(key), { agentName: shard.agentName, value: obs }],
         });
       } else {
         claimMap.set(key, { agentName: shard.agentName, value: obs });
@@ -439,18 +494,18 @@ export async function mergeCommand(args) {
       by_kind: {},
       by_severity: { critical: 0, warning: 0, info: allObservations.length },
       confidence_mean: 0,
-      coverage_mean: 0
+      coverage_mean: 0,
     },
     metadata: {
       agents_run: shards.map(s => s.agentName),
       guards_applied: [],
       execution_time_ms: 0,
-      storage_backend: 'memory'
+      storage_backend: 'memory',
     },
     integrity: {
       checksum: sha256(JSON.stringify(allObservations)),
-      verified_at: new Date().toISOString()
-    }
+      verified_at: new Date().toISOString(),
+    },
   };
 
   return {
@@ -459,7 +514,7 @@ export async function mergeCommand(args) {
     shardCount: shards.length,
     outputDir: output || `./probe/out/${runId}`,
     conflicts,
-    warnings
+    warnings,
   };
 }
 
@@ -473,7 +528,8 @@ export async function mergeCommand(args) {
  */
 export async function diffCommand(args) {
   const validated = DiffArgsSchema.parse(args);
-  const { oldArtifact, newArtifact, format, output, ignoreTimestamps, semanticOnly, verbose } = validated;
+  const { oldArtifact, newArtifact, format, output, ignoreTimestamps, semanticOnly, verbose } =
+    validated;
 
   if (verbose) {
     logger.info('Starting diff', { oldArtifact, newArtifact });
@@ -496,8 +552,8 @@ export async function diffCommand(args) {
       changesetSize: added.length + removed.length + modified.length,
       timestamp: new Date().toISOString(),
       oldSize: 0,
-      newSize: 0
-    }
+      newSize: 0,
+    },
   };
 
   // Format output
@@ -512,7 +568,7 @@ export async function diffCommand(args) {
     ...delta,
     format,
     output: output || null,
-    content: outputContent
+    content: outputContent,
   };
 }
 
@@ -534,7 +590,7 @@ function generateMarkdownDiff(delta) {
     `- Modified: ${delta.summary.modifiedCount} claims`,
     '',
     '## Added Claims',
-    ''
+    '',
   ];
 
   if (delta.added.length === 0) {
@@ -594,7 +650,7 @@ export async function reportCommand(args) {
     generated_at: new Date().toISOString(),
     observations: [],
     summary: { total: 0, by_kind: {}, by_severity: { info: 0, warning: 0, critical: 0 } },
-    metadata: { agents_run: [], execution_time_ms: 0 }
+    metadata: { agents_run: [], execution_time_ms: 0 },
   };
 
   let content;
@@ -607,27 +663,31 @@ export async function reportCommand(args) {
       break;
 
     case 'json':
-      content = JSON.stringify({
-        metadata: {
-          runId: artifact.probe_run_id,
-          timestamp: artifact.generated_at,
-          format: 'json',
-          style
+      content = JSON.stringify(
+        {
+          metadata: {
+            runId: artifact.probe_run_id,
+            timestamp: artifact.generated_at,
+            format: 'json',
+            style,
+          },
+          summary: artifact.summary,
+          capabilities: artifact.observations.map(o => ({
+            id: o.id,
+            agent: o.agent,
+            kind: o.kind,
+            description: o.subject,
+          })),
+          agents: artifact.metadata.agents_run.map((name, i) => ({
+            id: String(i + 1).padStart(2, '0'),
+            name,
+            capabilityCount: artifact.observations.filter(o => o.agent === name).length,
+            timestamp: artifact.generated_at,
+          })),
         },
-        summary: artifact.summary,
-        capabilities: artifact.observations.map(o => ({
-          id: o.id,
-          agent: o.agent,
-          kind: o.kind,
-          description: o.subject
-        })),
-        agents: artifact.metadata.agents_run.map((name, i) => ({
-          id: String(i + 1).padStart(2, '0'),
-          name,
-          capabilityCount: artifact.observations.filter(o => o.agent === name).length,
-          timestamp: artifact.generated_at
-        }))
-      }, null, 2);
+        null,
+        2
+      );
       outputPath = outputPath || './report.json';
       break;
 
@@ -655,9 +715,9 @@ export async function reportCommand(args) {
     stats: {
       claimCount: artifact.observations.length,
       agentCount: artifact.metadata.agents_run.length,
-      coverage: 0.95
+      coverage: 0.95,
     },
-    content
+    content,
   };
 }
 
@@ -687,7 +747,7 @@ function generateMarkdownReport(artifact, style, maxDepth) {
     '## Reference',
     '',
     'Complete capability inventory:',
-    ''
+    '',
   ];
 
   // Group observations by agent
@@ -743,7 +803,7 @@ function generateTurtleReport(artifact, includeProvenance) {
     '    a kgc:ProbeReport ;',
     `    kgc:timestamp "${artifact.generated_at}"^^xsd:dateTime ;`,
     `    kgc:claimCount ${artifact.summary.total} .`,
-    ''
+    '',
   ];
 
   for (const obs of artifact.observations) {
@@ -770,7 +830,8 @@ function generateTurtleReport(artifact, includeProvenance) {
  */
 export async function verifyCommand(args) {
   const validated = VerifyArgsSchema.parse(args);
-  const { artifactPath, checkMerkle, checkSchema, checkCrypto, receiptDir, strict, verbose } = validated;
+  const { artifactPath, checkMerkle, checkSchema, checkCrypto, receiptDir, strict, verbose } =
+    validated;
 
   if (verbose) {
     logger.info('Starting verification', { artifactPath, checkMerkle, checkSchema });
@@ -780,7 +841,7 @@ export async function verifyCommand(args) {
     hashChainValid: false,
     merkleValid: false,
     schemaValid: false,
-    cryptoValid: false
+    cryptoValid: false,
   };
   const mismatches = [];
   const details = [];
@@ -795,7 +856,9 @@ export async function verifyCommand(args) {
   // Merkle verification
   if (checkMerkle) {
     checks.merkleValid = true;
-    details.push('Merkle tree verified: root=0x' + sha256('merkle').substring(0, 16) + ', 10 proofs OK');
+    details.push(
+      'Merkle tree verified: root=0x' + sha256('merkle').substring(0, 16) + ', 10 proofs OK'
+    );
   }
 
   // Schema verification
@@ -821,7 +884,7 @@ export async function verifyCommand(args) {
     mismatches,
     details,
     timestamp: new Date().toISOString(),
-    confidence: valid ? 100 : Math.max(0, 100 - (mismatches.length * 10))
+    confidence: valid ? 100 : Math.max(0, 100 - mismatches.length * 10),
   };
 }
 
@@ -849,9 +912,9 @@ export const probeExtension = {
           meta: {
             examples: [
               'kgc probe scan --output ./results',
-              'kgc probe scan --format md --parallel 5'
-            ]
-          }
+              'kgc probe scan --format md --parallel 5',
+            ],
+          },
         },
 
         merge: {
@@ -861,9 +924,9 @@ export const probeExtension = {
           meta: {
             examples: [
               'kgc probe merge ./probe/out/run-123/shards',
-              'kgc probe merge ./shards --on-conflict=list'
-            ]
-          }
+              'kgc probe merge ./shards --on-conflict=list',
+            ],
+          },
         },
 
         diff: {
@@ -873,9 +936,9 @@ export const probeExtension = {
           meta: {
             examples: [
               'kgc probe diff ./old.json ./new.json',
-              'kgc probe diff ./old.json ./new.json --format md'
-            ]
-          }
+              'kgc probe diff ./old.json ./new.json --format md',
+            ],
+          },
         },
 
         report: {
@@ -885,9 +948,9 @@ export const probeExtension = {
           meta: {
             examples: [
               'kgc probe report ./artifact.json --format md',
-              'kgc probe report ./artifact.json --format json --style executive'
-            ]
-          }
+              'kgc probe report ./artifact.json --format json --style executive',
+            ],
+          },
         },
 
         verify: {
@@ -897,12 +960,12 @@ export const probeExtension = {
           meta: {
             examples: [
               'kgc probe verify ./probe/out/run-123',
-              'kgc probe verify ./artifact.json --check-merkle'
-            ]
-          }
-        }
-      }
-    }
+              'kgc probe verify ./artifact.json --check-merkle',
+            ],
+          },
+        },
+      },
+    },
   },
 
   priority: 20,
@@ -911,7 +974,7 @@ export const probeExtension = {
     refusals: ['destructive'],
     preconditions: async () => {
       return true;
-    }
+    },
   },
 
   receipts: {
@@ -919,14 +982,14 @@ export const probeExtension = {
       runId: 'string',
       outputDir: 'string',
       shardCount: 'integer',
-      timestamp: 'string'
+      timestamp: 'string',
     },
     error: {
       code: 'string',
       message: 'string',
-      details: 'any'
-    }
-  }
+      details: 'any',
+    },
+  },
 };
 
 export default probeExtension;

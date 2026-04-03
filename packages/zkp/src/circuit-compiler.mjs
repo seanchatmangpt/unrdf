@@ -63,7 +63,7 @@ export class CircuitCompiler {
    * console.log(`Circuit has ${circuit.nConstraints} constraints`);
    */
   async compile(sparqlQuery) {
-    return tracer.startActiveSpan('circuit-compiler.compile', async (span) => {
+    return tracer.startActiveSpan('circuit-compiler.compile', async span => {
       try {
         span.setAttribute('query.length', sparqlQuery.length);
 
@@ -77,9 +77,7 @@ export class CircuitCompiler {
         span.setAttribute('query.type', parsed.queryType);
 
         if (parsed.queryType !== 'SELECT') {
-          throw new Error(
-            `Unsupported query type: ${parsed.queryType}. Only SELECT supported.`
-          );
+          throw new Error(`Unsupported query type: ${parsed.queryType}. Only SELECT supported.`);
         }
 
         const publicInputs = [];
@@ -149,12 +147,12 @@ export class CircuitCompiler {
   _extractTriplePatterns(where) {
     const patterns = [];
 
-    const extractFromGroup = (group) => {
+    const extractFromGroup = group => {
       if (!group) return;
 
       if (group.type === 'bgp') {
         patterns.push(
-          ...group.triples.map((t) => ({
+          ...group.triples.map(t => ({
             subject: this._termToString(t.subject),
             predicate: this._termToString(t.predicate),
             object: this._termToString(t.object),
@@ -178,7 +176,7 @@ export class CircuitCompiler {
       extractFromGroup(where);
     }
 
-    return patterns.map((p) => TriplePatternSchema.parse(p));
+    return patterns.map(p => TriplePatternSchema.parse(p));
   }
 
   /**
@@ -188,7 +186,7 @@ export class CircuitCompiler {
   _extractFilters(where) {
     const filters = [];
 
-    const extractFromGroup = (group) => {
+    const extractFromGroup = group => {
       if (!group) return;
 
       if (group.type === 'filter') {
@@ -206,7 +204,7 @@ export class CircuitCompiler {
       extractFromGroup(where);
     }
 
-    return filters.map((f) => FilterConstraintSchema.parse(f));
+    return filters.map(f => FilterConstraintSchema.parse(f));
   }
 
   /**

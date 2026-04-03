@@ -21,7 +21,7 @@ import { EventEmitter } from 'events';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -150,7 +150,7 @@ describe('Daemon Configuration', () => {
       const validLevels = ['debug', 'info', 'warn', 'error'];
 
       // Act & Assert
-      validLevels.forEach((level) => {
+      validLevels.forEach(level => {
         const config = {
           daemonId: generateUUID(),
           name: 'test-daemon',
@@ -225,7 +225,7 @@ describe('Daemon Configuration', () => {
       const validStrategies = ['round-robin', 'least-loaded', 'random', 'affinity'];
 
       // Act & Assert
-      validStrategies.forEach((strategy) => {
+      validStrategies.forEach(strategy => {
         expect(() => DistributionStrategySchema.parse(strategy)).not.toThrow();
       });
     });

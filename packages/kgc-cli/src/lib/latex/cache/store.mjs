@@ -41,10 +41,7 @@ import { join, dirname, relative } from 'node:path';
 export async function getCached(cacheDir, name, expectedHash) {
   try {
     // Search for file in cache (could be in packages/ or fonts/)
-    const searchDirs = [
-      join(cacheDir, 'packages'),
-      join(cacheDir, 'fonts')
-    ];
+    const searchDirs = [join(cacheDir, 'packages'), join(cacheDir, 'fonts')];
 
     for (const searchDir of searchDirs) {
       const found = await findFileRecursive(searchDir, name);
@@ -107,9 +104,7 @@ export async function setCached(cacheDir, name, hash, content, options = {}) {
   // Verify hash before writing
   const actualHash = hashContent(content);
   if (actualHash !== hash) {
-    throw new Error(
-      `Hash mismatch when caching ${name}: expected ${hash}, got ${actualHash}`
-    );
+    throw new Error(`Hash mismatch when caching ${name}: expected ${hash}, got ${actualHash}`);
   }
 
   // Write file
@@ -130,13 +125,10 @@ export async function listCached(cacheDir) {
   const entries = [];
 
   try {
-    const searchDirs = [
-      join(cacheDir, 'packages'),
-      join(cacheDir, 'fonts')
-    ];
+    const searchDirs = [join(cacheDir, 'packages'), join(cacheDir, 'fonts')];
 
     for (const searchDir of searchDirs) {
-      await walkDirectory(searchDir, async (filePath) => {
+      await walkDirectory(searchDir, async filePath => {
         const content = await readFile(filePath);
         const stats = await stat(filePath);
         const hash = hashContent(content);
@@ -148,7 +140,7 @@ export async function listCached(cacheDir) {
           path: filePath,
           relativePath,
           hash,
-          size: stats.size
+          size: stats.size,
         });
       });
     }
@@ -173,7 +165,7 @@ export async function getCacheStats(cacheDir) {
 
   return {
     fileCount: entries.length,
-    totalSize: entries.reduce((sum, entry) => sum + entry.size, 0)
+    totalSize: entries.reduce((sum, entry) => sum + entry.size, 0),
   };
 }
 
@@ -190,9 +182,7 @@ export async function clearCache(cacheDir) {
 
   // Remove all files (use Promise.all for parallel operations)
   await Promise.all(
-    entries.map(entry =>
-      import('node:fs/promises').then(fs => fs.unlink(entry.path))
-    )
+    entries.map(entry => import('node:fs/promises').then(fs => fs.unlink(entry.path)))
   );
 
   return entries.length;

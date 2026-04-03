@@ -56,11 +56,11 @@ const TIME_NS = 'http://www.w3.org/2006/time#';
  * Namespace helper functions
  * @private
  */
-const yawl = (localName) => namedNode(`${YAWL_NS}${localName}`);
-const foaf = (localName) => namedNode(`${FOAF_NS}${localName}`);
-const rdf = (localName) => namedNode(`${RDF_NS}${localName}`);
-const xsd = (localName) => `${XSD_NS}${localName}`;
-const time = (localName) => namedNode(`${TIME_NS}${localName}`);
+const yawl = localName => namedNode(`${YAWL_NS}${localName}`);
+const foaf = localName => namedNode(`${FOAF_NS}${localName}`);
+const rdf = localName => namedNode(`${RDF_NS}${localName}`);
+const xsd = localName => `${XSD_NS}${localName}`;
+const time = localName => namedNode(`${TIME_NS}${localName}`);
 
 /* ========================================================================= */
 /* Zod Schemas for Validation                                                */
@@ -262,8 +262,9 @@ export class YawlResourceManager {
    * @returns {PolicyPack[]}
    */
   listPolicyPacks() {
-    return Array.from(this.#policyPacks.values())
-      .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    return Array.from(this.#policyPacks.values()).sort(
+      (a, b) => (b.priority || 0) - (a.priority || 0)
+    );
   }
 
   /**
@@ -274,46 +275,35 @@ export class YawlResourceManager {
   #storePolicyPackRDF(policyPack) {
     const packNode = namedNode(`${YAWL_NS}policypack/${policyPack.id}`);
 
-    this.#store.add(quad(
-      packNode,
-      rdf('type'),
-      yawl('PolicyPack'),
-      defaultGraph()
-    ));
+    this.#store.add(quad(packNode, rdf('type'), yawl('PolicyPack'), defaultGraph()));
 
     if (policyPack.name) {
-      this.#store.add(quad(
-        packNode,
-        foaf('name'),
-        literal(policyPack.name),
-        defaultGraph()
-      ));
+      this.#store.add(quad(packNode, foaf('name'), literal(policyPack.name), defaultGraph()));
     }
 
-    this.#store.add(quad(
-      packNode,
-      yawl('priority'),
-      literal(String(policyPack.priority || 0), namedNode(xsd('integer'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        packNode,
+        yawl('priority'),
+        literal(String(policyPack.priority || 0), namedNode(xsd('integer'))),
+        defaultGraph()
+      )
+    );
 
-    this.#store.add(quad(
-      packNode,
-      yawl('enabled'),
-      literal(String(policyPack.enabled !== false), namedNode(xsd('boolean'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        packNode,
+        yawl('enabled'),
+        literal(String(policyPack.enabled !== false), namedNode(xsd('boolean'))),
+        defaultGraph()
+      )
+    );
 
     // Store each resource definition
     for (const resource of policyPack.resources) {
       const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);
 
-      this.#store.add(quad(
-        packNode,
-        yawl('hasResource'),
-        resourceNode,
-        defaultGraph()
-      ));
+      this.#store.add(quad(packNode, yawl('hasResource'), resourceNode, defaultGraph()));
 
       this.#storeResourceRDF(resource, resourceNode);
     }
@@ -326,36 +316,25 @@ export class YawlResourceManager {
    * @param {import('@unrdf/oxigraph').NamedNode} resourceNode
    */
   #storeResourceRDF(resource, resourceNode) {
-    this.#store.add(quad(
-      resourceNode,
-      rdf('type'),
-      yawl(resource.type),
-      defaultGraph()
-    ));
+    this.#store.add(quad(resourceNode, rdf('type'), yawl(resource.type), defaultGraph()));
 
     if (resource.name) {
-      this.#store.add(quad(
-        resourceNode,
-        foaf('name'),
-        literal(resource.name),
-        defaultGraph()
-      ));
+      this.#store.add(quad(resourceNode, foaf('name'), literal(resource.name), defaultGraph()));
     }
 
-    this.#store.add(quad(
-      resourceNode,
-      yawl('capacity'),
-      literal(String(resource.capacity), namedNode(xsd('integer'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        resourceNode,
+        yawl('capacity'),
+        literal(String(resource.capacity), namedNode(xsd('integer'))),
+        defaultGraph()
+      )
+    );
 
     if (resource.sparql) {
-      this.#store.add(quad(
-        resourceNode,
-        yawl('eligibilitySparql'),
-        literal(resource.sparql),
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(resourceNode, yawl('eligibilitySparql'), literal(resource.sparql), defaultGraph())
+      );
     }
   }
 
@@ -398,19 +377,14 @@ export class YawlResourceManager {
     if (!capacityCheck.allowed) {
       throw new Error(
         `Capacity exceeded for resource ${validatedResource.id}: ` +
-        `${capacityCheck.current}/${capacityCheck.max}`
+          `${capacityCheck.current}/${capacityCheck.max}`
       );
     }
 
     // Step 2: Check eligibility (SPARQL conditions)
-    const eligibilityCheck = await this.#checkEligibility(
-      validatedResource,
-      validatedWorkItem
-    );
+    const eligibilityCheck = await this.#checkEligibility(validatedResource, validatedWorkItem);
     if (!eligibilityCheck.eligible) {
-      throw new Error(
-        `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`
-      );
+      throw new Error(`Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`);
     }
 
     // Step 3: Get policy pack if specified
@@ -466,31 +440,23 @@ export class YawlResourceManager {
     const allocationNode = namedNode(`${YAWL_NS}allocation/${allocationId}`);
 
     // Check if allocation exists
-    const allocations = this.#store.match(
-      allocationNode,
-      rdf('type'),
-      yawl('Allocation'),
-      null
-    );
+    const allocations = this.#store.match(allocationNode, rdf('type'), yawl('Allocation'), null);
 
     if (!Array.from(allocations).length) {
       return false;
     }
 
     // Mark allocation as deallocated
-    this.#store.add(quad(
-      allocationNode,
-      yawl('status'),
-      literal('deallocated'),
-      defaultGraph()
-    ));
+    this.#store.add(quad(allocationNode, yawl('status'), literal('deallocated'), defaultGraph()));
 
-    this.#store.add(quad(
-      allocationNode,
-      yawl('deallocatedAt'),
-      literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        allocationNode,
+        yawl('deallocatedAt'),
+        literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
+        defaultGraph()
+      )
+    );
 
     return true;
   }
@@ -642,53 +608,37 @@ export class YawlResourceManager {
     const now = new Date();
 
     // Type
-    this.#store.add(quad(
-      allocationNode,
-      rdf('type'),
-      yawl('Allocation'),
-      defaultGraph()
-    ));
+    this.#store.add(quad(allocationNode, rdf('type'), yawl('Allocation'), defaultGraph()));
 
     // Resource reference
-    this.#store.add(quad(
-      allocationNode,
-      yawl('resource'),
-      resourceNode,
-      defaultGraph()
-    ));
+    this.#store.add(quad(allocationNode, yawl('resource'), resourceNode, defaultGraph()));
 
     // Work item reference
-    this.#store.add(quad(
-      allocationNode,
-      yawl('workItem'),
-      workItemNode,
-      defaultGraph()
-    ));
+    this.#store.add(quad(allocationNode, yawl('workItem'), workItemNode, defaultGraph()));
 
     // Allocated timestamp
-    this.#store.add(quad(
-      allocationNode,
-      yawl('allocatedAt'),
-      literal(now.toISOString(), namedNode(xsd('dateTime'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        allocationNode,
+        yawl('allocatedAt'),
+        literal(now.toISOString(), namedNode(xsd('dateTime'))),
+        defaultGraph()
+      )
+    );
 
     // Status
-    this.#store.add(quad(
-      allocationNode,
-      yawl('status'),
-      literal('active'),
-      defaultGraph()
-    ));
+    this.#store.add(quad(allocationNode, yawl('status'), literal('active'), defaultGraph()));
 
     // Expiration if duration specified
     if (duration) {
-      this.#store.add(quad(
-        allocationNode,
-        yawl('expiresAt'),
-        literal(new Date(now.getTime() + duration).toISOString(), namedNode(xsd('dateTime'))),
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(
+          allocationNode,
+          yawl('expiresAt'),
+          literal(new Date(now.getTime() + duration).toISOString(), namedNode(xsd('dateTime'))),
+          defaultGraph()
+        )
+      );
     }
 
     return allocationId;
@@ -862,11 +812,13 @@ export class YawlResourceManager {
         // No availability info = assume available (for tools especially)
         return {
           available: true,
-          windows: [{
-            start: (options.from || now.toISOString()),
-            end: (options.to || new Date(now.getTime() + 86400000).toISOString()),
-            available: true,
-          }],
+          windows: [
+            {
+              start: options.from || now.toISOString(),
+              end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+              available: true,
+            },
+          ],
         };
       }
 
@@ -902,27 +854,33 @@ export class YawlResourceManager {
       });
 
       // Determine final availability: use overall status if we have windows, or check if any window is available
-      const finalAvailable = filteredWindows.length > 0
-        ? isCurrentlyAvailable
-        : isCurrentlyAvailable;
+      const finalAvailable =
+        filteredWindows.length > 0 ? isCurrentlyAvailable : isCurrentlyAvailable;
 
       return {
         available: finalAvailable,
-        windows: filteredWindows.length > 0 ? filteredWindows : [{
-          start: options.from || now.toISOString(),
-          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-          available: isCurrentlyAvailable,
-        }],
+        windows:
+          filteredWindows.length > 0
+            ? filteredWindows
+            : [
+                {
+                  start: options.from || now.toISOString(),
+                  end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+                  available: isCurrentlyAvailable,
+                },
+              ],
       };
     } catch {
       // Fallback: assume available
       return {
         available: true,
-        windows: [{
-          start: options.from || now.toISOString(),
-          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-          available: true,
-        }],
+        windows: [
+          {
+            start: options.from || now.toISOString(),
+            end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+            available: true,
+          },
+        ],
       };
     }
   }
@@ -944,45 +902,50 @@ export class YawlResourceManager {
     const resourceNode = namedNode(`${YAWL_NS}resource/${resourceId}`);
 
     // Set overall availability
-    this.#store.add(quad(
-      resourceNode,
-      foaf('available'),
-      literal(String(available), namedNode(xsd('boolean'))),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        resourceNode,
+        foaf('available'),
+        literal(String(available), namedNode(xsd('boolean'))),
+        defaultGraph()
+      )
+    );
 
     // Store time windows
     for (const window of windows) {
       const validated = TimeWindowSchema.parse(window);
       const windowNode = blankNode();
 
-      this.#store.add(quad(
-        resourceNode,
-        yawl('hasAvailabilityWindow'),
-        windowNode,
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(resourceNode, yawl('hasAvailabilityWindow'), windowNode, defaultGraph())
+      );
 
-      this.#store.add(quad(
-        windowNode,
-        yawl('scheduleStart'),
-        literal(validated.start, namedNode(xsd('dateTime'))),
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(
+          windowNode,
+          yawl('scheduleStart'),
+          literal(validated.start, namedNode(xsd('dateTime'))),
+          defaultGraph()
+        )
+      );
 
-      this.#store.add(quad(
-        windowNode,
-        yawl('scheduleEnd'),
-        literal(validated.end, namedNode(xsd('dateTime'))),
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(
+          windowNode,
+          yawl('scheduleEnd'),
+          literal(validated.end, namedNode(xsd('dateTime'))),
+          defaultGraph()
+        )
+      );
 
-      this.#store.add(quad(
-        windowNode,
-        foaf('available'),
-        literal(String(validated.available), namedNode(xsd('boolean'))),
-        defaultGraph()
-      ));
+      this.#store.add(
+        quad(
+          windowNode,
+          foaf('available'),
+          literal(String(validated.available), namedNode(xsd('boolean'))),
+          defaultGraph()
+        )
+      );
     }
   }
 
@@ -1060,39 +1023,26 @@ export class YawlResourceManager {
   #storeResourcePoolRDF(poolConfig) {
     const poolNode = namedNode(`${YAWL_NS}pool/${poolConfig.id}`);
 
-    this.#store.add(quad(
-      poolNode,
-      rdf('type'),
-      yawl('ResourcePool'),
-      defaultGraph()
-    ));
+    this.#store.add(quad(poolNode, rdf('type'), yawl('ResourcePool'), defaultGraph()));
 
     if (poolConfig.name) {
-      this.#store.add(quad(
-        poolNode,
-        foaf('name'),
-        literal(poolConfig.name),
-        defaultGraph()
-      ));
+      this.#store.add(quad(poolNode, foaf('name'), literal(poolConfig.name), defaultGraph()));
     }
 
-    this.#store.add(quad(
-      poolNode,
-      yawl('allocationStrategy'),
-      literal(poolConfig.allocationStrategy),
-      defaultGraph()
-    ));
+    this.#store.add(
+      quad(
+        poolNode,
+        yawl('allocationStrategy'),
+        literal(poolConfig.allocationStrategy),
+        defaultGraph()
+      )
+    );
 
     for (const resource of poolConfig.resources) {
       const resourceNode = namedNode(`${YAWL_NS}resource/${resource.id}`);
       this.#storeResourceRDF(resource, resourceNode);
 
-      this.#store.add(quad(
-        poolNode,
-        yawl('hasResource'),
-        resourceNode,
-        defaultGraph()
-      ));
+      this.#store.add(quad(poolNode, yawl('hasResource'), resourceNode, defaultGraph()));
     }
   }
 
@@ -1127,7 +1077,8 @@ export class YawlResourceManager {
 
     // Calculate available and utilization
     const available = maxCapacity === -1 ? Infinity : Math.max(0, maxCapacity - currentAllocations);
-    const utilizationPercent = maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
+    const utilizationPercent =
+      maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
 
     return {
       current: currentAllocations,

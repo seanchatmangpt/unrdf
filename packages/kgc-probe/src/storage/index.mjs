@@ -182,9 +182,7 @@ export class MemoryStorage {
    */
   async listArtifacts() {
     const keys = await this.keys();
-    return keys
-      .filter(k => k.startsWith('artifact:'))
-      .map(k => k.replace('artifact:', ''));
+    return keys.filter(k => k.startsWith('artifact:')).map(k => k.replace('artifact:', ''));
   }
 
   /**
@@ -262,7 +260,7 @@ export class FileStorage {
       key,
       value,
       timestamp: Date.now(),
-      version: 1
+      version: 1,
     };
     await fs.writeFile(path, JSON.stringify(data, null, 2), 'utf8');
   }
@@ -435,9 +433,7 @@ export class FileStorage {
    */
   async listArtifacts() {
     const keys = await this.keys();
-    return keys
-      .filter(k => k.startsWith('artifact:'))
-      .map(k => k.replace('artifact:', ''));
+    return keys.filter(k => k.startsWith('artifact:')).map(k => k.replace('artifact:', ''));
   }
 
   /**
@@ -588,7 +584,7 @@ export class DatabaseStorage {
         if (regex.test(key)) {
           results.push({
             key: key.replace(prefix, ''),
-            value: structuredClone(value)
+            value: structuredClone(value),
           });
         }
       }
@@ -633,7 +629,7 @@ export class DatabaseStorage {
         if (matches) {
           results.push({
             key: key.replace(prefix, ''),
-            value: structuredClone(value)
+            value: structuredClone(value),
           });
         }
       }
@@ -762,9 +758,7 @@ export class DatabaseStorage {
    */
   async listArtifacts() {
     const keys = await this.keys();
-    return keys
-      .filter(k => k.startsWith('artifact:'))
-      .map(k => k.replace('artifact:', ''));
+    return keys.filter(k => k.startsWith('artifact:')).map(k => k.replace('artifact:', ''));
   }
 
   /**

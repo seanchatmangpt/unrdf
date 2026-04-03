@@ -20,14 +20,15 @@ export const noN3Imports = {
     docs: {
       description: 'Disallow direct imports from "n3" package',
       category: 'Best Practices',
-      recommended: true
+      recommended: true,
     },
     fixable: 'code',
     schema: [],
     messages: {
-      noN3Import: 'Direct imports from "n3" are forbidden. Use @unrdf/core/rdf/n3-justified-only instead.',
-      useOxigraph: 'Use createStore() from @unrdf/oxigraph instead of new Store() from n3.'
-    }
+      noN3Import:
+        'Direct imports from "n3" are forbidden. Use @unrdf/core/rdf/n3-justified-only instead.',
+      useOxigraph: 'Use createStore() from @unrdf/oxigraph instead of new Store() from n3.',
+    },
   },
 
   create(context) {
@@ -40,27 +41,24 @@ export const noN3Imports = {
             fix(_fixer) {
               // Suggest replacement (won't auto-fix, requires manual review)
               return null;
-            }
+            },
           });
         }
       },
 
       NewExpression(node) {
-        if (
-          node.callee.type === 'Identifier' &&
-          node.callee.name === 'Store'
-        ) {
+        if (node.callee.type === 'Identifier' && node.callee.name === 'Store') {
           context.report({
             node,
             messageId: 'useOxigraph',
             fix(fixer) {
               return fixer.replaceText(node, 'await createStore()');
-            }
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };
 
 /**
@@ -76,13 +74,13 @@ export const noWorkflowRun = {
     docs: {
       description: 'Disallow workflow.run(), use workflow.execute() with receipts',
       category: 'Best Practices',
-      recommended: true
+      recommended: true,
     },
     fixable: 'code',
     schema: [],
     messages: {
-      useExecute: 'Use workflow.execute() instead of workflow.run() to generate receipts.'
-    }
+      useExecute: 'Use workflow.execute() instead of workflow.run() to generate receipts.',
+    },
   },
 
   create(context) {
@@ -98,12 +96,12 @@ export const noWorkflowRun = {
             messageId: 'useExecute',
             fix(fixer) {
               return fixer.replaceText(node.callee.property, 'execute');
-            }
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };
 
 /**
@@ -119,12 +117,12 @@ export const requireZodValidation = {
     docs: {
       description: 'Require Zod schema validation on exported functions',
       category: 'Best Practices',
-      recommended: false
+      recommended: false,
     },
     schema: [],
     messages: {
-      missingZod: 'Exported function "{{name}}" should validate parameters with Zod schema.'
-    }
+      missingZod: 'Exported function "{{name}}" should validate parameters with Zod schema.',
+    },
   },
 
   create(context) {
@@ -144,13 +142,13 @@ export const requireZodValidation = {
             context.report({
               node,
               messageId: 'missingZod',
-              data: { name: fnName }
+              data: { name: fnName },
             });
           }
         }
-      }
+      },
     };
-  }
+  },
 };
 
 /**
@@ -166,12 +164,12 @@ export const requireTimeout = {
     docs: {
       description: 'Require timeout guards on async I/O operations',
       category: 'Best Practices',
-      recommended: true
+      recommended: true,
     },
     schema: [],
     messages: {
-      missingTimeout: 'Async operation should have timeout guard (default 5s).'
-    }
+      missingTimeout: 'Async operation should have timeout guard (default 5s).',
+    },
   },
 
   create(context) {
@@ -189,20 +187,17 @@ export const requireTimeout = {
             const parentText = sourceCode.getText(node.parent);
 
             // Check if Promise.race or timeout wrapper exists
-            if (
-              !parentText.includes('Promise.race') &&
-              !parentText.includes('timeout')
-            ) {
+            if (!parentText.includes('Promise.race') && !parentText.includes('timeout')) {
               context.report({
                 node,
-                messageId: 'missingTimeout'
+                messageId: 'missingTimeout',
               });
             }
           }
         }
-      }
+      },
     };
-  }
+  },
 };
 
 /**
@@ -218,12 +213,12 @@ export const noDateNow = {
     docs: {
       description: 'Disallow Date.now() and Math.random() in business logic (breaks determinism)',
       category: 'Best Practices',
-      recommended: true
+      recommended: true,
     },
     schema: [],
     messages: {
-      noDeterministic: 'Use injected timestamp/random source for deterministic execution.'
-    }
+      noDeterministic: 'Use injected timestamp/random source for deterministic execution.',
+    },
   },
 
   create(context) {
@@ -233,17 +228,16 @@ export const noDateNow = {
           (node.callee.type === 'MemberExpression' &&
             node.callee.object.name === 'Date' &&
             node.callee.property.name === 'now') ||
-          (node.callee.object?.name === 'Math' &&
-            node.callee.property?.name === 'random')
+          (node.callee.object?.name === 'Math' && node.callee.property?.name === 'random')
         ) {
           context.report({
             node,
-            messageId: 'noDeterministic'
+            messageId: 'noDeterministic',
           });
         }
-      }
+      },
     };
-  }
+  },
 };
 
 /**
@@ -269,15 +263,15 @@ export const noDateNow = {
 export const plugin = {
   meta: {
     name: '@unrdf/v6-compat',
-    version: '6.0.0-alpha.1'
+    version: '6.0.0-alpha.1',
   },
   rules: {
     'no-n3-imports': noN3Imports,
     'no-workflow-run': noWorkflowRun,
     'require-zod-validation': requireZodValidation,
     'require-timeout': requireTimeout,
-    'no-date-now': noDateNow
-  }
+    'no-date-now': noDateNow,
+  },
 };
 
 export default plugin;

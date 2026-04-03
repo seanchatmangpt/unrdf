@@ -53,7 +53,7 @@ export class Groth16Verifier {
    * if (valid) console.log('Proof verified!');
    */
   async verify(proof, publicSignals, vkey = null) {
-    return tracer.startActiveSpan('groth16.verify', async (span) => {
+    return tracer.startActiveSpan('groth16.verify', async span => {
       try {
         const startTime = performance.now();
 
@@ -96,17 +96,15 @@ export class Groth16Verifier {
    * ]);
    */
   async batchVerify(proofs) {
-    return tracer.startActiveSpan('groth16.batch-verify', async (span) => {
+    return tracer.startActiveSpan('groth16.batch-verify', async span => {
       try {
         span.setAttribute('batch.size', proofs.length);
 
         const results = await Promise.all(
-          proofs.map(({ proof, publicSignals }) =>
-            this.verify(proof, publicSignals)
-          )
+          proofs.map(({ proof, publicSignals }) => this.verify(proof, publicSignals))
         );
 
-        const successCount = results.filter((r) => r).length;
+        const successCount = results.filter(r => r).length;
 
         span.setAttribute('batch.success', successCount);
         span.setAttribute('batch.failed', proofs.length - successCount);

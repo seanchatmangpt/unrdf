@@ -68,7 +68,7 @@ export const DiagnosticSchema = z.object({
   file: z.string().optional(),
   line: z.number().int().positive().optional(),
   suggestion: z.string().optional(),
-  raw: z.string().optional()
+  raw: z.string().optional(),
 });
 
 /**
@@ -80,7 +80,7 @@ export const ParseResultSchema = z.object({
   rerunNeeded: z.boolean(),
   success: z.boolean(),
   errors: z.number().int().nonnegative(),
-  warnings: z.number().int().nonnegative()
+  warnings: z.number().int().nonnegative(),
 });
 
 // =============================================================================
@@ -103,9 +103,9 @@ const ERROR_PATTERNS = [
     regex: /! LaTeX Error: File [`']([^'`]+\.(?:sty|cls|def|fd|cfg|clo))[''] not found\./gi,
     code: 'MISSING_PACKAGE',
     severity: 'error',
-    extractMessage: (match) => `File '${match[1]}' not found`,
-    extractFile: (match) => match[1],
-    suggestion: (match) => `Install package providing ${match[1]} or add to project`
+    extractMessage: match => `File '${match[1]}' not found`,
+    extractFile: match => match[1],
+    suggestion: match => `Install package providing ${match[1]} or add to project`,
   },
 
   // Missing input files (user files)
@@ -113,19 +113,20 @@ const ERROR_PATTERNS = [
     regex: /! LaTeX Error: File [`']([^'`]+\.tex)[''] not found\./gi,
     code: 'MISSING_INPUT',
     severity: 'error',
-    extractMessage: (match) => `Input file '${match[1]}' not found`,
-    extractFile: (match) => match[1],
-    suggestion: (match) => `Create file ${match[1]} or fix \\input/\\include path`
+    extractMessage: match => `Input file '${match[1]}' not found`,
+    extractFile: match => match[1],
+    suggestion: match => `Create file ${match[1]} or fix \\input/\\include path`,
   },
 
   // Missing graphics files
   {
-    regex: /! Package [\w.]+ Error: File [`'']([^'`'']+\.(?:pdf|png|jpg|jpeg|eps|svg))[''] not found/gi,
+    regex:
+      /! Package [\w.]+ Error: File [`'']([^'`'']+\.(?:pdf|png|jpg|jpeg|eps|svg))[''] not found/gi,
     code: 'MISSING_GRAPHIC',
     severity: 'error',
-    extractMessage: (match) => `Graphic file '${match[1]}' not found`,
-    extractFile: (match) => match[1],
-    suggestion: (match) => `Add ${match[1]} to project or fix file path`
+    extractMessage: match => `Graphic file '${match[1]}' not found`,
+    extractFile: match => match[1],
+    suggestion: match => `Add ${match[1]} to project or fix file path`,
   },
 
   // Can't find file (alternative syntax)
@@ -133,15 +134,15 @@ const ERROR_PATTERNS = [
     regex: /! I can't find file [`']([^'`]+)['']\.?/gi,
     code: 'FILE_NOT_FOUND',
     severity: 'error',
-    extractMessage: (match) => `Cannot find file '${match[1]}'`,
-    extractFile: (match) => match[1],
-    suggestion: (match) => {
+    extractMessage: match => `Cannot find file '${match[1]}'`,
+    extractFile: match => match[1],
+    suggestion: match => {
       const ext = match[1].split('.').pop();
       if (ext === 'sty' || ext === 'cls') {
         return `Install package ${match[1].replace(/\.[^.]+$/, '')}`;
       }
       return `Check file path and name: ${match[1]}`;
-    }
+    },
   },
 
   // Undefined control sequence
@@ -149,17 +150,17 @@ const ERROR_PATTERNS = [
     regex: /! Undefined control sequence\.\s*\nl\.\d+\s+\\([a-zA-Z]+)/gm,
     code: 'UNDEFINED_CONTROL',
     severity: 'error',
-    extractMessage: (match) => `Undefined command: \\${match[1]}`,
-    suggestion: (match) => {
+    extractMessage: match => `Undefined command: \\${match[1]}`,
+    suggestion: match => {
       const cmd = match[1];
       const commonFixes = {
-        'cite': 'Load package: \\usepackage{cite} or \\usepackage{natbib}',
-        'includegraphics': 'Load package: \\usepackage{graphicx}',
-        'includegraphix': 'Load package: \\usepackage{graphicx}', // Common typo
-        'textcolor': 'Load package: \\usepackage{xcolor}',
-        'url': 'Load package: \\usepackage{url} or \\usepackage{hyperref}',
-        'SI': 'Load package: \\usepackage{siunitx}',
-        'toprule': 'Load package: \\usepackage{booktabs}'
+        cite: 'Load package: \\usepackage{cite} or \\usepackage{natbib}',
+        includegraphics: 'Load package: \\usepackage{graphicx}',
+        includegraphix: 'Load package: \\usepackage{graphicx}', // Common typo
+        textcolor: 'Load package: \\usepackage{xcolor}',
+        url: 'Load package: \\usepackage{url} or \\usepackage{hyperref}',
+        SI: 'Load package: \\usepackage{siunitx}',
+        toprule: 'Load package: \\usepackage{booktabs}',
       };
 
       // Exact match
@@ -179,7 +180,7 @@ const ERROR_PATTERNS = [
       }
 
       return `Check command spelling or load required package for \\${cmd}`;
-    }
+    },
   },
 
   // Missing font files
@@ -187,8 +188,8 @@ const ERROR_PATTERNS = [
     regex: /Font.*?=\s*([^\s]+)\s+not found/gi,
     code: 'MISSING_FONT',
     severity: 'error',
-    extractMessage: (match) => `Font '${match[1]}' not found`,
-    suggestion: () => 'Install required font package or use different font'
+    extractMessage: match => `Font '${match[1]}' not found`,
+    suggestion: () => 'Install required font package or use different font',
   },
 
   // Package errors (general)
@@ -196,8 +197,8 @@ const ERROR_PATTERNS = [
     regex: /! Package (\w+) Error: (.+?)(?:\.|$)/gi,
     code: 'PACKAGE_ERROR',
     severity: 'error',
-    extractMessage: (match) => `Package ${match[1]}: ${match[2]}`,
-    suggestion: (match) => `Check ${match[1]} package documentation`
+    extractMessage: match => `Package ${match[1]}: ${match[2]}`,
+    suggestion: match => `Check ${match[1]} package documentation`,
   },
 
   // Emergency stop
@@ -206,7 +207,7 @@ const ERROR_PATTERNS = [
     code: 'EMERGENCY_STOP',
     severity: 'error',
     extractMessage: () => 'Emergency stop - critical error encountered',
-    suggestion: () => 'Review preceding errors in log for root cause'
+    suggestion: () => 'Review preceding errors in log for root cause',
   },
 
   // Missing auxiliary files (not found pattern)
@@ -214,9 +215,9 @@ const ERROR_PATTERNS = [
     regex: /\(([^\s)]+\.(?:aux|toc|lof|lot|bbl))\s+not found\)/gi,
     code: 'MISSING_AUX',
     severity: 'info',
-    extractMessage: (match) => `Auxiliary file '${match[1]}' not found (first run)`,
-    extractFile: (match) => match[1],
-    suggestion: () => 'This is normal on first compilation - will be created'
+    extractMessage: match => `Auxiliary file '${match[1]}' not found (first run)`,
+    extractFile: match => match[1],
+    suggestion: () => 'This is normal on first compilation - will be created',
   },
 
   // File line error pattern (newer format)
@@ -224,11 +225,11 @@ const ERROR_PATTERNS = [
     regex: /^(.+?):(\d+):\s*(.+)$/gm,
     code: 'FILE_LINE_ERROR',
     severity: 'error',
-    extractMessage: (match) => match[3],
-    extractFile: (match) => match[1],
-    extractLine: (match) => parseInt(match[2], 10),
-    suggestion: () => 'Check syntax at indicated line'
-  }
+    extractMessage: match => match[3],
+    extractFile: match => match[1],
+    extractLine: match => parseInt(match[2], 10),
+    suggestion: () => 'Check syntax at indicated line',
+  },
 ];
 
 /**
@@ -240,9 +241,10 @@ const WARNING_PATTERNS = [
     regex: /(?:Overfull|Underfull) \\hbox \((.+?)\) in paragraph at lines (\d+)--(\d+)/gi,
     code: 'BADNESS_HBOX',
     severity: 'warning',
-    extractMessage: (match) => `${match[0].startsWith('Over') ? 'Overfull' : 'Underfull'} hbox (${match[1]}) at lines ${match[2]}-${match[3]}`,
-    extractLine: (match) => parseInt(match[2], 10),
-    suggestion: () => 'Adjust text formatting or allow line breaking'
+    extractMessage: match =>
+      `${match[0].startsWith('Over') ? 'Overfull' : 'Underfull'} hbox (${match[1]}) at lines ${match[2]}-${match[3]}`,
+    extractLine: match => parseInt(match[2], 10),
+    suggestion: () => 'Adjust text formatting or allow line breaking',
   },
 
   // Citation warnings
@@ -250,9 +252,9 @@ const WARNING_PATTERNS = [
     regex: /LaTeX Warning: Citation [`']([^'`]+)[''] (?:on page (\d+) )?undefined/gi,
     code: 'UNDEFINED_CITATION',
     severity: 'warning',
-    extractMessage: (match) => `Citation '${match[1]}' undefined`,
-    extractLine: (match) => match[2] ? parseInt(match[2], 10) : undefined,
-    suggestion: (match) => `Add entry for '${match[1]}' in bibliography or run BibTeX`
+    extractMessage: match => `Citation '${match[1]}' undefined`,
+    extractLine: match => (match[2] ? parseInt(match[2], 10) : undefined),
+    suggestion: match => `Add entry for '${match[1]}' in bibliography or run BibTeX`,
   },
 
   // Reference warnings
@@ -260,9 +262,9 @@ const WARNING_PATTERNS = [
     regex: /LaTeX Warning: Reference [`']([^'`]+)[''] (?:on page (\d+) )?undefined/gi,
     code: 'UNDEFINED_REFERENCE',
     severity: 'warning',
-    extractMessage: (match) => `Reference '${match[1]}' undefined`,
-    extractLine: (match) => match[2] ? parseInt(match[2], 10) : undefined,
-    suggestion: () => 'Check \\label{} exists and rerun compilation'
+    extractMessage: match => `Reference '${match[1]}' undefined`,
+    extractLine: match => (match[2] ? parseInt(match[2], 10) : undefined),
+    suggestion: () => 'Check \\label{} exists and rerun compilation',
   },
 
   // Package warnings
@@ -270,8 +272,8 @@ const WARNING_PATTERNS = [
     regex: /Package (\w+) Warning: (.+?)(?:\.|$)/gi,
     code: 'PACKAGE_WARNING',
     severity: 'warning',
-    extractMessage: (match) => `Package ${match[1]}: ${match[2]}`,
-    suggestion: (match) => `Review ${match[1]} package options`
+    extractMessage: match => `Package ${match[1]}: ${match[2]}`,
+    suggestion: match => `Review ${match[1]} package options`,
   },
 
   // Font shape warnings
@@ -279,9 +281,9 @@ const WARNING_PATTERNS = [
     regex: /LaTeX Font Warning: (.+)/gi,
     code: 'FONT_WARNING',
     severity: 'warning',
-    extractMessage: (match) => match[1],
-    suggestion: () => 'Font substitution occurred - output may differ from expected'
-  }
+    extractMessage: match => match[1],
+    suggestion: () => 'Font substitution occurred - output may differ from expected',
+  },
 ];
 
 /**
@@ -295,7 +297,7 @@ const INFO_PATTERNS = [
     severity: 'info',
     extractMessage: () => 'Labels changed - rerun needed for cross-references',
     suggestion: () => 'Run compilation again to resolve references',
-    rerunHint: true
+    rerunHint: true,
   },
 
   // Rerun LaTeX (general)
@@ -303,9 +305,9 @@ const INFO_PATTERNS = [
     regex: /(?:Rerun LaTeX|Please rerun LaTeX)/gi,
     code: 'RERUN_NEEDED',
     severity: 'info',
-    extractMessage: (match) => match[0],
+    extractMessage: match => match[0],
     suggestion: () => 'Run compilation again',
-    rerunHint: true
+    rerunHint: true,
   },
 
   // Table of contents rerun
@@ -313,10 +315,10 @@ const INFO_PATTERNS = [
     regex: /No file (.+?\.toc)\./gi,
     code: 'TOC_RERUN',
     severity: 'info',
-    extractMessage: (match) => `Table of contents file '${match[1]}' will be created`,
+    extractMessage: match => `Table of contents file '${match[1]}' will be created`,
     suggestion: () => 'Rerun to generate table of contents',
-    rerunHint: true
-  }
+    rerunHint: true,
+  },
 ];
 
 // =============================================================================
@@ -343,7 +345,7 @@ function applyPatterns(log, patterns) {
         severity: pattern.severity,
         code: pattern.code,
         message: pattern.extractMessage(match),
-        raw: match[0].slice(0, 200) // Limit raw excerpt
+        raw: match[0].slice(0, 200), // Limit raw excerpt
       };
 
       // Extract file context if available
@@ -361,9 +363,8 @@ function applyPatterns(log, patterns) {
 
       // Add suggestion (can be string or function)
       if (pattern.suggestion) {
-        diagnostic.suggestion = typeof pattern.suggestion === 'function'
-          ? pattern.suggestion(match)
-          : pattern.suggestion;
+        diagnostic.suggestion =
+          typeof pattern.suggestion === 'function' ? pattern.suggestion(match) : pattern.suggestion;
       }
 
       // Track rerun hints
@@ -391,7 +392,7 @@ function extractMissingInputs(diagnostics) {
     'MISSING_PACKAGE',
     'MISSING_INPUT',
     'MISSING_GRAPHIC',
-    'FILE_NOT_FOUND'
+    'FILE_NOT_FOUND',
   ]);
 
   for (const diag of diagnostics) {
@@ -501,7 +502,7 @@ export function parseLatexLog(log) {
       rerunNeeded: false,
       success: false,
       errors: 0,
-      warnings: 0
+      warnings: 0,
     });
   }
 
@@ -511,11 +512,7 @@ export function parseLatexLog(log) {
   const infoDiags = applyPatterns(log, INFO_PATTERNS);
 
   // Combine and deduplicate
-  const allDiagnostics = [
-    ...errorDiags,
-    ...warningDiags,
-    ...infoDiags
-  ];
+  const allDiagnostics = [...errorDiags, ...warningDiags, ...infoDiags];
 
   const diagnostics = deduplicateDiagnostics(allDiagnostics);
 
@@ -537,7 +534,7 @@ export function parseLatexLog(log) {
     rerunNeeded,
     success,
     errors,
-    warnings
+    warnings,
   };
 
   // Validate output schema
@@ -570,16 +567,23 @@ export function formatDiagnosticsForCLI(diagnostics, options = {}) {
   const { colors = true, verbose = false } = options;
 
   // ANSI color codes
-  const c = colors ? {
-    red: '\x1b[31m',
-    yellow: '\x1b[33m',
-    blue: '\x1b[34m',
-    gray: '\x1b[90m',
-    bold: '\x1b[1m',
-    reset: '\x1b[0m'
-  } : {
-    red: '', yellow: '', blue: '', gray: '', bold: '', reset: ''
-  };
+  const c = colors
+    ? {
+        red: '\x1b[31m',
+        yellow: '\x1b[33m',
+        blue: '\x1b[34m',
+        gray: '\x1b[90m',
+        bold: '\x1b[1m',
+        reset: '\x1b[0m',
+      }
+    : {
+        red: '',
+        yellow: '',
+        blue: '',
+        gray: '',
+        bold: '',
+        reset: '',
+      };
 
   if (diagnostics.length === 0) {
     return `${c.blue}No diagnostics found${c.reset}`;
@@ -620,7 +624,9 @@ export function formatDiagnosticsForCLI(diagnostics, options = {}) {
   }
 
   // Summary
-  lines.push(`${c.bold}Summary:${c.reset} ${errors.length} errors, ${warnings.length} warnings, ${infos.length} info`);
+  lines.push(
+    `${c.bold}Summary:${c.reset} ${errors.length} errors, ${warnings.length} warnings, ${infos.length} info`
+  );
 
   return lines.join('\n');
 }
@@ -638,14 +644,12 @@ function formatDiagnostic(diag, c, verbose) {
   const lines = [];
 
   // Main message with location
-  const location = diag.file
-    ? `${diag.file}${diag.line ? `:${diag.line}` : ''}`
-    : '';
+  const location = diag.file ? `${diag.file}${diag.line ? `:${diag.line}` : ''}` : '';
 
   const prefix = {
     error: `${c.red}✗${c.reset}`,
     warning: `${c.yellow}⚠${c.reset}`,
-    info: `${c.blue}ℹ${c.reset}`
+    info: `${c.blue}ℹ${c.reset}`,
   }[diag.severity];
 
   lines.push(`  ${prefix} ${diag.message}`);
@@ -705,5 +709,5 @@ export default {
   formatDiagnosticsForCLI,
   createDiagnosticSummary,
   DiagnosticSchema,
-  ParseResultSchema
+  ParseResultSchema,
 };

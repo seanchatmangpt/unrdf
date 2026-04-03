@@ -192,7 +192,7 @@ export class YawlReceipt {
       sparqlResult: this.sparqlResult,
       input: this.input,
       output: this.output,
-      downstreamEnabled: this.downstreamEnabled?.map((d) => ({
+      downstreamEnabled: this.downstreamEnabled?.map(d => ({
         taskId: d.taskId,
         enabledAt: d.enabledAt.toString(),
       })),
@@ -209,7 +209,7 @@ export class YawlReceipt {
     const receipt = new YawlReceipt({
       ...json,
       timestamp: BigInt(json.timestamp),
-      downstreamEnabled: json.downstreamEnabled?.map((d) => ({
+      downstreamEnabled: json.downstreamEnabled?.map(d => ({
         taskId: d.taskId,
         enabledAt: BigInt(d.enabledAt),
       })),

@@ -10,22 +10,22 @@ const extension = {
         centrality: {
           description: 'Calculate node centrality',
           argsSchema: z.object({ graphId: z.string(), algorithm: z.string() }),
-          handler: async (args) => ({ centrality: {}, algorithm: args.algorithm })
+          handler: async args => ({ centrality: {}, algorithm: args.algorithm }),
         },
         communities: {
           description: 'Detect graph communities',
           argsSchema: z.object({ graphId: z.string() }),
-          handler: async (args) => ({ communities: [], graphId: args.graphId })
+          handler: async args => ({ communities: [], graphId: args.graphId }),
         },
         paths: {
           description: 'Find shortest paths',
           argsSchema: z.object({ from: z.string(), to: z.string(), graphId: z.string() }),
-          handler: async (_args) => ({ path: [], distance: 0 })
-        }
-      }
-    }
+          handler: async _args => ({ path: [], distance: 0 }),
+        },
+      },
+    },
   },
-  priority: 24
+  priority: 24,
 };
 
 export default extension;

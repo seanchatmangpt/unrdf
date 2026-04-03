@@ -71,7 +71,7 @@ export class LatexCompileError extends Error {
       inputTexPath: this.inputTexPath,
       logFilePath: this.logFilePath,
       missingInputs: this.missingInputs,
-      exitCode: this.exitCode
+      exitCode: this.exitCode,
     };
   }
 }
@@ -105,17 +105,18 @@ export async function writeLatexRunLog({ cacheDir, engine, inputTexPath, logText
     cacheDir: z.string().min(1),
     engine: z.string().min(1),
     inputTexPath: z.string().min(1),
-    logText: z.string()
+    logText: z.string(),
   });
 
   const validated = schema.parse({ cacheDir, engine, inputTexPath, logText });
 
   // Generate timestamp: YYYYMMDD_HHMMSS (ISO-like but filesystem-safe)
   const now = new Date();
-  const timestamp = now.toISOString()
-    .replace(/[:.]/g, '-')    // Replace colons and dots with dashes
-    .replace('T', '_')        // Replace T with underscore
-    .split('.')[0];           // Remove milliseconds
+  const timestamp = now
+    .toISOString()
+    .replace(/[:.]/g, '-') // Replace colons and dots with dashes
+    .replace('T', '_') // Replace T with underscore
+    .split('.')[0]; // Remove milliseconds
 
   // Construct log file path
   const runsDir = join(validated.cacheDir, 'runs');
@@ -132,7 +133,7 @@ export async function writeLatexRunLog({ cacheDir, engine, inputTexPath, logText
     `# Input:  ${validated.inputTexPath}`,
     `# Time:   ${now.toISOString()}`,
     `# ================================================`,
-    ''
+    '',
   ].join('\n');
 
   const fullLog = header + validated.logText;
@@ -188,7 +189,7 @@ export function parseMissingInputsFromLog(logText) {
     cantFindPattern,
     packageErrorPattern,
     simpleFilePattern,
-    parenthesisPattern
+    parenthesisPattern,
   ];
 
   for (const pattern of patterns) {
@@ -267,7 +268,7 @@ export const LogWriteOptionsSchema = z.object({
   cacheDir: z.string().min(1).describe('Cache directory path'),
   engine: z.enum(['pdflatex', 'lualatex', 'xelatex']).describe('LaTeX engine'),
   inputTexPath: z.string().min(1).describe('Input .tex file path'),
-  logText: z.string().describe('Raw log output')
+  logText: z.string().describe('Raw log output'),
 });
 
 // Alias for backward compatibility with Agent 10's interface expectations
@@ -280,5 +281,5 @@ export default {
   parseMissingInputsFromLog,
   extractErrorSummary,
   isCompileSuccessful,
-  LogWriteOptionsSchema
+  LogWriteOptionsSchema,
 };

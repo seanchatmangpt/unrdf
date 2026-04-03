@@ -51,7 +51,11 @@ export const StreamParserOptionsSchema = BaseParserOptionsSchema.extend({
   encoding: z.enum(['utf8', 'utf-8', 'ascii', 'latin1']).default('utf8'),
 
   /** Maximum parser buffer size */
-  maxBufferSize: z.number().int().positive().default(1024 * 1024 * 10), // 10MB
+  maxBufferSize: z
+    .number()
+    .int()
+    .positive()
+    .default(1024 * 1024 * 10), // 10MB
 });
 
 /**

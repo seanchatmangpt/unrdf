@@ -15,7 +15,7 @@ import { YawlDaemonBridge } from '@unrdf/daemon/integrations/yawl';
  * @returns {string} Valid UUID v4
  */
 function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -343,7 +343,7 @@ describe('Daemon Lifecycle', () => {
       await daemon.start();
       const firstStartTime = daemon.startTime;
 
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
       await daemon.start();
 
       // Assert
@@ -370,9 +370,7 @@ describe('Daemon Lifecycle', () => {
       await daemon.start();
 
       // Assert
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('Started')
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Started'));
     });
 
     it('should initialize health tracking on startup', async () => {
@@ -456,7 +454,7 @@ describe('Daemon Lifecycle', () => {
 
     it('should track uptime during running state', async () => {
       // Arrange
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Act
       const health = daemon.getHealth();
@@ -523,9 +521,7 @@ describe('Daemon Lifecycle', () => {
       daemon.schedule({
         id: 'active-op',
         name: 'Active',
-        handler: vi.fn().mockImplementation(
-          () => new Promise((resolve) => setTimeout(resolve, 100))
-        ),
+        handler: vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100))),
       });
 
       // Act
@@ -566,7 +562,7 @@ describe('Daemon Lifecycle', () => {
       ]);
 
       // Assert
-      handlers.forEach((handler) => {
+      handlers.forEach(handler => {
         expect(handler).toHaveBeenCalled();
       });
     });
@@ -752,9 +748,7 @@ describe('Daemon Lifecycle', () => {
       await daemon.stop();
 
       // Assert
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('Stopped')
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Stopped'));
     });
 
     it('should cleanup scheduled operations references', async () => {
@@ -964,12 +958,8 @@ describe('Daemon Lifecycle', () => {
       });
       const history = [];
 
-      daemon.on('daemon:started', (e) =>
-        history.push({ event: 'started', time: e.timestamp })
-      );
-      daemon.on('daemon:stopped', (e) =>
-        history.push({ event: 'stopped', time: e.timestamp })
-      );
+      daemon.on('daemon:started', e => history.push({ event: 'started', time: e.timestamp }));
+      daemon.on('daemon:stopped', e => history.push({ event: 'stopped', time: e.timestamp }));
 
       // Act
       await daemon.start();

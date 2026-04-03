@@ -138,16 +138,20 @@ class LRUCache {
  * @returns {string}
  */
 function normalizeQuery(query) {
-  return query
-    // Remove single-line comments
-    .replace(/#[^\n]*/g, '')
-    // Normalize whitespace
-    .replace(/\s+/g, ' ')
-    // Trim
-    .trim()
-    // Normalize case for keywords (simple approach)
-    .replace(/\b(SELECT|WHERE|FILTER|OPTIONAL|UNION|LIMIT|OFFSET|ORDER|BY|ASC|DESC|GROUP|HAVING|PREFIX|BASE|CONSTRUCT|DESCRIBE|ASK|INSERT|DELETE|LOAD|CLEAR|DROP|CREATE)\b/gi,
-      match => match.toUpperCase());
+  return (
+    query
+      // Remove single-line comments
+      .replace(/#[^\n]*/g, '')
+      // Normalize whitespace
+      .replace(/\s+/g, ' ')
+      // Trim
+      .trim()
+      // Normalize case for keywords (simple approach)
+      .replace(
+        /\b(SELECT|WHERE|FILTER|OPTIONAL|UNION|LIMIT|OFFSET|ORDER|BY|ASC|DESC|GROUP|HAVING|PREFIX|BASE|CONSTRUCT|DESCRIBE|ASK|INSERT|DELETE|LOAD|CLEAR|DROP|CREATE)\b/gi,
+        match => match.toUpperCase()
+      )
+  );
 }
 
 /**
@@ -194,9 +198,7 @@ function analyzeQueryPattern(query) {
 
   // Extract projected variables
   const varMatch = normalized.match(/SELECT\s+(.+?)\s+WHERE/i);
-  const variables = varMatch
-    ? varMatch[1].match(/\?\w+/g) || []
-    : [];
+  const variables = varMatch ? varMatch[1].match(/\?\w+/g) || [] : [];
 
   // Detect features
   const hasFilter = /\bFILTER\s*\(/i.test(normalized);
@@ -313,9 +315,7 @@ export class CachedQueryStore extends OxigraphStore {
     // Cache result
     if (this.cacheResults) {
       // Clone result if array to prevent mutation issues
-      const cachedResult = Array.isArray(result)
-        ? [...result]
-        : result;
+      const cachedResult = Array.isArray(result) ? [...result] : result;
       this.queryCache.set(cacheKey, cachedResult);
     }
 
@@ -344,9 +344,7 @@ export class CachedQueryStore extends OxigraphStore {
     let boundQuery = normalizedQuery;
     for (const [variable, value] of Object.entries(bindings)) {
       const pattern = new RegExp(`\\?${variable}\\b`, 'g');
-      const replacement = typeof value === 'string' && value.startsWith('<')
-        ? value
-        : `<${value}>`;
+      const replacement = typeof value === 'string' && value.startsWith('<') ? value : `<${value}>`;
       boundQuery = boundQuery.replace(pattern, replacement);
     }
 
@@ -490,9 +488,7 @@ export class PreparedQuery {
 
     for (const [variable, value] of Object.entries(bindings)) {
       const pattern = new RegExp(`\\?${variable}\\b`, 'g');
-      const replacement = typeof value === 'string' && value.startsWith('<')
-        ? value
-        : `<${value}>`;
+      const replacement = typeof value === 'string' && value.startsWith('<') ? value : `<${value}>`;
       query = query.replace(pattern, replacement);
     }
 
@@ -507,9 +503,8 @@ export class PreparedQuery {
    */
   execute(store, bindings = {}) {
     this.executions++;
-    const boundQuery = Object.keys(bindings).length > 0
-      ? this.bind(bindings)
-      : this.normalizedQuery;
+    const boundQuery =
+      Object.keys(bindings).length > 0 ? this.bind(bindings) : this.normalizedQuery;
     return store.query(boundQuery);
   }
 }
@@ -540,12 +535,7 @@ export function createCachedStore(options = {}) {
 // Exports
 // =============================================================================
 
-export {
-  LRUCache,
-  normalizeQuery,
-  generateCacheKey,
-  analyzeQueryPattern,
-};
+export { LRUCache, normalizeQuery, generateCacheKey, analyzeQueryPattern };
 
 export default {
   CachedQueryStore,

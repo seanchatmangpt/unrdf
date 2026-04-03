@@ -23,7 +23,7 @@ import {
   formatDiagnosticsForCLI,
   createDiagnosticSummary,
   DiagnosticSchema,
-  ParseResultSchema
+  ParseResultSchema,
 } from '../parse-log.mjs';
 
 // =============================================================================
@@ -233,7 +233,7 @@ describe('Schema Validation', () => {
       message: 'Test message',
       file: 'test.tex',
       line: 42,
-      suggestion: 'Fix this'
+      suggestion: 'Fix this',
     };
 
     const result = DiagnosticSchema.parse(validDiag);
@@ -246,14 +246,14 @@ describe('Schema Validation', () => {
         {
           severity: 'error',
           code: 'TEST',
-          message: 'Test'
-        }
+          message: 'Test',
+        },
       ],
       missingInputs: ['test.sty'],
       rerunNeeded: true,
       success: false,
       errors: 1,
-      warnings: 0
+      warnings: 0,
     };
 
     const result = ParseResultSchema.parse(validResult);
@@ -264,13 +264,10 @@ describe('Schema Validation', () => {
     const invalid = {
       severity: 'critical',
       code: 'TEST',
-      message: 'Test'
+      message: 'Test',
     };
 
-    assert.throws(
-      () => DiagnosticSchema.parse(invalid),
-      'Should reject invalid severity'
-    );
+    assert.throws(() => DiagnosticSchema.parse(invalid), 'Should reject invalid severity');
   });
 
   it('should reject negative line numbers', () => {
@@ -278,13 +275,10 @@ describe('Schema Validation', () => {
       severity: 'error',
       code: 'TEST',
       message: 'Test',
-      line: -5
+      line: -5,
     };
 
-    assert.throws(
-      () => DiagnosticSchema.parse(invalid),
-      'Should reject negative line numbers'
-    );
+    assert.throws(() => DiagnosticSchema.parse(invalid), 'Should reject negative line numbers');
   });
 });
 
@@ -301,13 +295,13 @@ describe('formatDiagnosticsForCLI', () => {
         message: 'Test error message',
         file: 'test.tex',
         line: 42,
-        suggestion: 'Fix this issue'
+        suggestion: 'Fix this issue',
       },
       {
         severity: 'warning',
         code: 'TEST_WARNING',
-        message: 'Test warning message'
-      }
+        message: 'Test warning message',
+      },
     ];
 
     const output = formatDiagnosticsForCLI(diagnostics, { colors: true });
@@ -325,8 +319,8 @@ describe('formatDiagnosticsForCLI', () => {
       {
         severity: 'error',
         code: 'TEST',
-        message: 'Test message'
-      }
+        message: 'Test message',
+      },
     ];
 
     const output = formatDiagnosticsForCLI(diagnostics, { colors: false });
@@ -347,8 +341,8 @@ describe('formatDiagnosticsForCLI', () => {
         severity: 'error',
         code: 'TEST',
         message: 'Test',
-        raw: 'Raw log excerpt here'
-      }
+        raw: 'Raw log excerpt here',
+      },
     ];
 
     const outputVerbose = formatDiagnosticsForCLI(diagnostics, { verbose: true });
@@ -371,7 +365,7 @@ describe('createDiagnosticSummary', () => {
       rerunNeeded: true,
       success: false,
       errors: 3,
-      warnings: 5
+      warnings: 5,
     };
 
     const summary = createDiagnosticSummary(result);
@@ -390,7 +384,7 @@ describe('createDiagnosticSummary', () => {
       rerunNeeded: false,
       success: true,
       errors: 0,
-      warnings: 0
+      warnings: 0,
     };
 
     const summary = createDiagnosticSummary(result);

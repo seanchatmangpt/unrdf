@@ -34,11 +34,7 @@ export {
 } from './expression-evaluator.mjs';
 
 // WP15: Multiple Instances without A Priori Runtime Knowledge
-export {
-  DynamicBarrier,
-  createDynamicBarrier,
-  InstanceStateSchema,
-} from './dynamic-barrier.mjs';
+export { DynamicBarrier, createDynamicBarrier, InstanceStateSchema } from './dynamic-barrier.mjs';
 
 export {
   DynamicMIController,

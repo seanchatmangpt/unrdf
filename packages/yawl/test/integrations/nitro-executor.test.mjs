@@ -118,7 +118,7 @@ class NitroTaskExecutor extends EventEmitter {
    */
   async performExecution(task, context) {
     context.log('Starting execution');
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise(resolve => setTimeout(resolve, 10));
 
     if (task.shouldFail) {
       throw new Error('Simulated failure');
@@ -145,7 +145,7 @@ class NitroTaskExecutor extends EventEmitter {
    */
   async retry(task, options, previousError) {
     task._retryCount = (task._retryCount || 0) + 1;
-    await new Promise((resolve) => setTimeout(resolve, this.retryPolicy.delay));
+    await new Promise(resolve => setTimeout(resolve, this.retryPolicy.delay));
 
     this.emit('execution:retry', { task, attempt: task._retryCount, previousError });
 
@@ -165,14 +165,14 @@ class NitroTaskExecutor extends EventEmitter {
         const result = await Promise.race(executing);
         results.push(result);
         executing.splice(
-          executing.findIndex((p) => p === result),
+          executing.findIndex(p => p === result),
           1
         );
       }
 
-      const promise = this.execute(tasks[i], options).then((r) => {
+      const promise = this.execute(tasks[i], options).then(r => {
         executing.splice(
-          executing.findIndex((p) => p === promise),
+          executing.findIndex(p => p === promise),
           1
         );
         return r;
@@ -325,7 +325,7 @@ describe('YAWL-Nitro Executor Integration', () => {
   describe('Timeout Management', () => {
     it('should timeout long-running tasks', async () => {
       executor.performExecution = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
         return {};
       });
       const task = { taskId: 'task-013' };
@@ -336,7 +336,7 @@ describe('YAWL-Nitro Executor Integration', () => {
 
     it('should respect custom timeout', async () => {
       executor.performExecution = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 20));
+        await new Promise(resolve => setTimeout(resolve, 20));
         return { completed: true };
       });
       const task = { taskId: 'task-014' };
@@ -346,7 +346,7 @@ describe('YAWL-Nitro Executor Integration', () => {
 
     it('should not retry on timeout', async () => {
       executor.performExecution = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
         return {};
       });
       const task = { taskId: 'task-015' };
@@ -419,7 +419,7 @@ describe('YAWL-Nitro Executor Integration', () => {
 
     it('should track retry count', async () => {
       let attemptCount = 0;
-      executor.performExecution = vi.fn().mockImplementation(async (task) => {
+      executor.performExecution = vi.fn().mockImplementation(async task => {
         attemptCount++;
         if (attemptCount < 3) throw new Error('Retry me');
         return { retryCount: task._retryCount };
@@ -468,11 +468,7 @@ describe('YAWL-Nitro Executor Integration', () => {
 
   describe('Batch Execution', () => {
     it('should execute multiple tasks', async () => {
-      const tasks = [
-        { taskId: 'task-026' },
-        { taskId: 'task-027' },
-        { taskId: 'task-028' },
-      ];
+      const tasks = [{ taskId: 'task-026' }, { taskId: 'task-027' }, { taskId: 'task-028' }];
       const results = await executor.executeBatch(tasks);
       expect(results).toHaveLength(3);
     });
@@ -483,7 +479,7 @@ describe('YAWL-Nitro Executor Integration', () => {
       executor.performExecution = vi.fn().mockImplementation(async () => {
         currentConcurrent++;
         maxConcurrent = Math.max(maxConcurrent, currentConcurrent);
-        await new Promise((resolve) => setTimeout(resolve, 20));
+        await new Promise(resolve => setTimeout(resolve, 20));
         currentConcurrent--;
         return {};
       });
@@ -499,8 +495,8 @@ describe('YAWL-Nitro Executor Integration', () => {
         { taskId: 'task-031', shouldFail: false },
       ];
       const results = await executor.executeBatch(tasks);
-      expect(results.filter((r) => r.success)).toHaveLength(2);
-      expect(results.filter((r) => !r.success)).toHaveLength(1);
+      expect(results.filter(r => r.success)).toHaveLength(2);
+      expect(results.filter(r => !r.success)).toHaveLength(1);
     });
   });
 

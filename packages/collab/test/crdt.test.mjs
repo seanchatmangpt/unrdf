@@ -188,8 +188,8 @@ describe('CollaborativeRDFGraph', () => {
 
   describe('Change Notifications', () => {
     it('should notify on triple addition', () => {
-      return new Promise((resolve) => {
-        graph.onChange((changes) => {
+      return new Promise(resolve => {
+        graph.onChange(changes => {
           if (changes.added.length > 0) {
             expect(changes.added).toHaveLength(1);
             expect(changes.added[0].subject).toBe('http://example.org/alice');
@@ -214,8 +214,8 @@ describe('CollaborativeRDFGraph', () => {
 
       graph.addTriple(triple);
 
-      return new Promise((resolve) => {
-        graph.onChange((changes) => {
+      return new Promise(resolve => {
+        graph.onChange(changes => {
           if (changes.removed.length > 0) {
             expect(changes.removed).toHaveLength(1);
             resolve();

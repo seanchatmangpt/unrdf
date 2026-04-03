@@ -11,6 +11,7 @@
 ## Deliverables ✅
 
 ### 1. Hash Module (`hash.mjs`)
+
 - ✅ `hashFile(content: Uint8Array) → string` - SHA256 of single file
 - ✅ `hashVfs(vfs: Map) → string` - Deterministic VFS hash with sorted ordering
 - ✅ `hashVfsByExtension(vfs, extensions) → string` - Hash subset by file type
@@ -18,12 +19,14 @@
 - ✅ `getVfsHashMetadata(vfs) → Object` - Hash + stats
 
 **Determinism guarantees**:
+
 - Paths sorted alphabetically before hashing
 - Hash format: `[path-len][path][content-len][content]` (unambiguous boundaries)
 - Platform-independent (all paths normalized to POSIX)
 - UTF-8 stable encoding
 
 ### 2. Normalize Module (`normalize.mjs`)
+
 - ✅ `normalizePath(path) → string` - Windows → POSIX, remove leading ./
 - ✅ `isRelativePath(path) → boolean` - Check if relative
 - ✅ `isValidVfsPath(path) → boolean` - Validate for VFS usage (no traversal)
@@ -34,11 +37,13 @@
   - `sortVFSPaths(paths) → string[]`
 
 **Path normalization**:
+
 - Handles Windows backslashes correctly
 - Removes duplicate slashes
 - Security validation (no `..`, no `//`)
 
 ### 3. Pack Module (`pack.mjs`)
+
 - ✅ `packDirectory(dirPath, options) → Promise<Map>` - Main packing function
 - ✅ `packDirectoryClean(dirPath, options) → Promise<Map>` - Excludes aux files
 - ✅ Re-exports from `project-files.mjs`:
@@ -48,12 +53,14 @@
   - `filterVFSByExtension(vfs, extensions)`
 
 **Features**:
+
 - Recursive directory traversal
 - Include/exclude pattern matching
 - Stable sorting for determinism
 - File size limits (default 10MB)
 
 ### 4. Index Module (`index.mjs`)
+
 - ✅ Exports all functions from hash, normalize, pack
 - ✅ Additional utilities:
   - `createVfs() → Map` - Create empty VFS
@@ -63,21 +70,25 @@
   - `setVfsText(vfs, path, text)` - Write UTF-8 string
 
 ### 5. Updated Main VFS Module (`vfs.mjs`)
+
 - ✅ Re-exports everything from `vfs/index.mjs`
 - ✅ Backward compatibility alias: `collectProjectFiles` → `packDirectory`
 
 ### 6. Comprehensive Tests
+
 - ✅ `__tests__/hash.test.mjs` - 24 tests
 - ✅ `__tests__/normalize.test.mjs` - 19 tests
 - ✅ `__tests__/pack.test.mjs` - 19 tests
 
 **Test coverage**:
+
 - Hash determinism across multiple runs
 - Path normalization edge cases (Windows, mixed separators, UTF-8)
 - Real filesystem packing with temp directories
 - Change detection (file modifications, additions, deletions)
 
 ### 7. Documentation
+
 - ✅ `README.md` - Complete API documentation with examples
 
 ---
@@ -85,6 +96,7 @@
 ## Evidence of Completion
 
 ### Test Results
+
 ```bash
 $ timeout 5s node --test src/lib/latex/vfs/__tests__/*.test.mjs
 
@@ -99,6 +111,7 @@ $ timeout 5s node --test src/lib/latex/vfs/__tests__/*.test.mjs
 **❓ What BREAKS if wrong?** Cache keys would be non-deterministic, breaking compilation pipeline
 
 ### File Structure
+
 ```
 vfs/
 ├── README.md (6.8K)
@@ -113,6 +126,7 @@ vfs/
 ```
 
 ### Code Metrics
+
 - **Total**: 1,225 lines
 - **Implementation**: ~650 lines
 - **Tests**: ~575 lines
@@ -123,6 +137,7 @@ vfs/
 ## Integration Guide for Other Agents
 
 ### Agent 3 (Cache Manager)
+
 ```javascript
 import { hashVfs, getVfsHashMetadata } from '../vfs/index.mjs';
 
@@ -142,6 +157,7 @@ await cache.set(cacheKey, pdf);
 ```
 
 ### Agent 4 (Dependency Resolver)
+
 ```javascript
 import { packDirectory, getVfsText, filterVFSByExtension } from '../vfs/index.mjs';
 
@@ -157,6 +173,7 @@ const packages = parseUsePackage(mainTex); // Your parser
 ```
 
 ### Agent 5+ (Compilation Pipeline)
+
 ```javascript
 import { packDirectory } from '../vfs/index.mjs';
 
@@ -175,6 +192,7 @@ const pdf = await engine.compile(vfs, 'work/main.tex');
 ## API Summary
 
 ### Import Paths
+
 ```javascript
 // Preferred (specific imports)
 import { hashVfs, packDirectory, normalizePath } from './vfs/index.mjs';
@@ -189,19 +207,23 @@ import { hashVfs } from './vfs/hash.mjs';
 ### Core Functions by Use Case
 
 **Packing files**:
+
 - `packDirectory(dir, opts)` - Main function
 - `packDirectoryClean(dir, opts)` - Excludes aux files
 
 **Hashing**:
+
 - `hashVfs(vfs)` - Deterministic hash (use as cache key)
 - `hashFile(content)` - Single file hash
 - `areVfsEqual(vfs1, vfs2)` - Compare by hash
 
 **Path operations**:
+
 - `normalizePath(path)` - Windows → POSIX
 - `isValidVfsPath(path)` - Security validation
 
 **Utilities**:
+
 - `getVfsText(vfs, path)` - Read as string
 - `setVfsText(vfs, path, text)` - Write string
 - `mergeVfs(...vfsList)` - Combine VFS instances
@@ -211,12 +233,15 @@ import { hashVfs } from './vfs/hash.mjs';
 ## Default Configuration
 
 ### Included Extensions
+
 `.tex`, `.sty`, `.cls`, `.bib`, `.bst`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.pdf`
 
 ### Excluded Directories
+
 `node_modules`, `.git`, `.kgc`, `.latex-cache`, `build`, `dist`, `.claude-flow`, `.cache`
 
 ### Additional Exclusions (with `packDirectoryClean`)
+
 `*.aux`, `*.log`, `*.toc`, `*.out`, `*.synctex.gz`, `*.fdb_latexmk`, `*.fls`, `*.blg`, `*.bbl`
 
 ---
@@ -232,18 +257,21 @@ import { hashVfs } from './vfs/hash.mjs';
 ## Adversarial PM Checklist
 
 ### Claims vs Reality
+
 - ✅ **Claim**: "All tests pass" → **Evidence**: `62 pass, 0 fail` output
 - ✅ **Claim**: "Deterministic hashing" → **Evidence**: Test `should produce deterministic hash (stable ordering)` passes
 - ✅ **Claim**: "Handles Windows paths" → **Evidence**: Test `should convert Windows paths to POSIX` passes
 - ✅ **Claim**: "Stable across runs" → **Evidence**: Test `should maintain hash stability across multiple runs` passes
 
 ### What BREAKS if wrong?
+
 - **Non-deterministic hashing**: Cache would miss identical inputs, causing unnecessary recompilation
 - **Path traversal vulnerability**: Malicious `.tex` files could access `../../etc/passwd`
 - **Platform-specific paths**: Windows builds would produce different hashes than Linux
 - **Incorrect file filtering**: Missing `.sty` files would cause compilation errors
 
 ### Proof of Correctness
+
 1. ✅ RAN all tests with timeout (not just read code)
 2. ✅ READ full test output (verified 62/62, not just summary)
 3. ✅ VERIFIED imports work (tested with `node --eval`)
@@ -254,16 +282,19 @@ import { hashVfs } from './vfs/hash.mjs';
 ## Next Agent Handoff
 
 **Agent 3** can now:
+
 1. Import `hashVfs` from `/home/user/unrdf/packages/kgc-cli/src/lib/latex/vfs/index.mjs`
 2. Use hash as cache key: `const key = hashVfs(vfs)`
 3. Trust that identical inputs produce identical keys (proven by tests)
 
 **Agent 4** can now:
+
 1. Import `packDirectory` and `getVfsText`
 2. Scan `.tex` files for `\usepackage{...}` directives
 3. Build dependency graph from VFS
 
 **All subsequent agents** receive:
+
 - `vfs: Map<string, Uint8Array>` with normalized paths (`work/...`)
 - Deterministic ordering (sorted alphabetically)
 - Complete project contents (all `.tex`, `.sty`, `.cls`, `.bib`, images)

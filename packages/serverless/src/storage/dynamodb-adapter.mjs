@@ -144,7 +144,7 @@ export class DynamoDBAdapter {
 
     for (let i = 0; i < triples.length; i += batchSize) {
       const batch = triples.slice(i, i + batchSize);
-      await Promise.all(batch.map((triple) => this.addTriple(triple)));
+      await Promise.all(batch.map(triple => this.addTriple(triple)));
       added += batch.length;
     }
 

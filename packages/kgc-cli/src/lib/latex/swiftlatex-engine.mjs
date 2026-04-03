@@ -71,7 +71,7 @@ const CompileOptionsSchema = z.object({
   entry: z.string().min(1),
   cacheDir: z.string().default('work'),
   passes: z.number().int().min(1).max(5).default(2),
-  verbose: z.boolean().default(false)
+  verbose: z.boolean().default(false),
 });
 
 // =============================================================================
@@ -81,7 +81,7 @@ const CompileOptionsSchema = z.object({
 /** WASM module filenames for each engine */
 const ENGINE_FILES = {
   xetex: 'xetex.wasm',
-  pdftex: 'pdftex.wasm'
+  pdftex: 'pdftex.wasm',
 };
 
 /** LaTeX error patterns for missing file detection */
@@ -90,7 +90,7 @@ const MISSING_FILE_PATTERNS = [
   /^! I can't find file `([^']+)'/gm,
   /\(([^)]+\.(?:sty|cls|bib|bst|def|fd|cfg|clo))\s+not found/gi,
   /.*?:\d+: Package \w+ Error: File `([^']+)' not found/g,
-  /No file ([^\s]+\.(?:aux|toc|lof|lot|bbl))\./g
+  /No file ([^\s]+\.(?:aux|toc|lof|lot|bbl))\./g,
 ];
 
 /** Output file patterns to capture as artifacts */
@@ -152,12 +152,12 @@ async function loadEngine(engine, wasmPath) {
   // For now, we return a mock structure that shows the interface
   throw new Error(
     `SwiftLaTeX WASM engine not yet integrated. ` +
-    `Expected file: ${wasmPath}\n\n` +
-    `To complete integration:\n` +
-    `1. Download SwiftLaTeX WASM binaries to vendor/swiftlatex/\n` +
-    `2. Add JavaScript glue code (swiftlatex.js)\n` +
-    `3. Implement Emscripten module initialization\n` +
-    `4. Replace this mock with real loader`
+      `Expected file: ${wasmPath}\n\n` +
+      `To complete integration:\n` +
+      `1. Download SwiftLaTeX WASM binaries to vendor/swiftlatex/\n` +
+      `2. Add JavaScript glue code (swiftlatex.js)\n` +
+      `3. Implement Emscripten module initialization\n` +
+      `4. Replace this mock with real loader`
   );
 }
 
@@ -266,7 +266,10 @@ function extractErrorSummary(log) {
   const fatalMatch = log.match(/! Emergency stop/);
   if (fatalMatch) {
     const context = log.slice(Math.max(0, fatalMatch.index - 200), fatalMatch.index);
-    const lastLine = context.split('\n').filter(l => l.trim()).pop();
+    const lastLine = context
+      .split('\n')
+      .filter(l => l.trim())
+      .pop();
     return lastLine || 'Emergency stop encountered';
   }
 
@@ -330,7 +333,7 @@ export async function compileWithSwiftLatex(options) {
     return {
       ok: false,
       error: `Invalid options: ${err.message}`,
-      log: err.errors ? JSON.stringify(err.errors, null, 2) : err.message
+      log: err.errors ? JSON.stringify(err.errors, null, 2) : err.message,
     };
   }
 
@@ -343,12 +346,13 @@ export async function compileWithSwiftLatex(options) {
     return {
       ok: false,
       error: `WASM engine not found: ${engine}`,
-      log: `Expected file: ${wasmPath}\n\n` +
-           `SwiftLaTeX WASM binaries must be placed in vendor/swiftlatex/:\n` +
-           `- xetex.wasm\n` +
-           `- pdftex.wasm\n\n` +
-           `Download from: https://github.com/SwiftLaTeX/SwiftLaTeX`,
-      missingInputs: []
+      log:
+        `Expected file: ${wasmPath}\n\n` +
+        `SwiftLaTeX WASM binaries must be placed in vendor/swiftlatex/:\n` +
+        `- xetex.wasm\n` +
+        `- pdftex.wasm\n\n` +
+        `Download from: https://github.com/SwiftLaTeX/SwiftLaTeX`,
+      missingInputs: [],
     };
   }
 
@@ -361,7 +365,7 @@ export async function compileWithSwiftLatex(options) {
       ok: false,
       error: `Failed to load engine: ${engine}`,
       log: err.message,
-      missingInputs: []
+      missingInputs: [],
     };
   }
 
@@ -373,7 +377,7 @@ export async function compileWithSwiftLatex(options) {
       ok: false,
       error: 'Failed to populate virtual FS',
       log: err.message,
-      missingInputs: []
+      missingInputs: [],
     };
   }
 
@@ -452,9 +456,11 @@ export async function compileWithSwiftLatex(options) {
       log: lastLog,
       artifacts,
       missingInputs,
-      error: errorSummary || (missingInputs.length > 0
-        ? `Missing ${missingInputs.length} input file(s)`
-        : 'Compilation failed - see log for details')
+      error:
+        errorSummary ||
+        (missingInputs.length > 0
+          ? `Missing ${missingInputs.length} input file(s)`
+          : 'Compilation failed - see log for details'),
     };
   }
 
@@ -463,7 +469,7 @@ export async function compileWithSwiftLatex(options) {
     ok: true,
     pdf: pdfContent,
     log: lastLog,
-    artifacts
+    artifacts,
   };
 }
 
@@ -518,7 +524,7 @@ export function validateVFS(vfs, entry) {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -529,9 +535,7 @@ export function validateVFS(vfs, entry) {
  */
 export function createMinimalVFS(texContent) {
   const encoder = new TextEncoder();
-  return new Map([
-    ['main.tex', encoder.encode(texContent)]
-  ]);
+  return new Map([['main.tex', encoder.encode(texContent)]]);
 }
 
 // =============================================================================

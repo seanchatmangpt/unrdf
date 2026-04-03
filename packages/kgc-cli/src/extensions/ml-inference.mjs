@@ -10,12 +10,12 @@ const extension = {
         predict: {
           description: 'Run prediction',
           argsSchema: z.object({ modelId: z.string(), input: z.string() }),
-          handler: async (args) => ({ modelId: args.modelId, prediction: null })
-        }
-      }
-    }
+          handler: async args => ({ modelId: args.modelId, prediction: null }),
+        },
+      },
+    },
   },
-  priority: 40
+  priority: 40,
 };
 
 export default extension;

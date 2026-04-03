@@ -128,13 +128,7 @@ export {
 // ============================================================================
 
 // Graph visualization tools
-export {
-  toDOT,
-  toMermaid,
-  toASCII,
-  toHTML,
-  extractSubgraph,
-} from './viz/graph-visualizer.mjs';
+export { toDOT, toMermaid, toASCII, toHTML, extractSubgraph } from './viz/graph-visualizer.mjs';
 
 // Query explanation and performance analysis
 export {
@@ -166,10 +160,7 @@ export {
 } from './rdf-star.mjs';
 
 // Quoted triple class
-export {
-  QuotedTriple,
-  createQuotedTriple,
-} from './quoted-triple.mjs';
+export { QuotedTriple, createQuotedTriple } from './quoted-triple.mjs';
 
 // Annotation helpers
 export {

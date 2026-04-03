@@ -9,11 +9,13 @@ import { z } from 'zod';
  * CORE ALGORITHM: Shortest paths, all paths, relationship chains
  */
 
-const PathOptionsSchema = z.object({
-  maxDepth: z.number().int().positive().default(5),
-  maxPaths: z.number().int().positive().default(100),
-  weightFunction: z.function().optional(),
-}).passthrough();
+const PathOptionsSchema = z
+  .object({
+    maxDepth: z.number().int().positive().default(5),
+    maxPaths: z.number().int().positive().default(100),
+    weightFunction: z.function().optional(),
+  })
+  .passthrough();
 
 /**
  * Find shortest path between two nodes
@@ -32,10 +34,12 @@ export function findShortestPath(graph, source, target, options = {}) {
   }
 
   // Use Dijkstra's algorithm
-  const weightFn = opts.weightFunction || ((edge) => {
-    const edgeData = graph.edge(edge);
-    return edgeData?.weight || 1;
-  });
+  const weightFn =
+    opts.weightFunction ||
+    (edge => {
+      const edgeData = graph.edge(edge);
+      return edgeData?.weight || 1;
+    });
 
   try {
     const dijkstraResult = alg.dijkstra(graph, source, weightFn);
@@ -166,39 +170,28 @@ export function findCommonNeighbors(graph, node1, node2) {
   }
 
   // Get neighbors
-  const outNeighbors1 = new Set(
-    (graph.outEdges(node1) || []).map(e => e.w)
-  );
-  const outNeighbors2 = new Set(
-    (graph.outEdges(node2) || []).map(e => e.w)
-  );
+  const outNeighbors1 = new Set((graph.outEdges(node1) || []).map(e => e.w));
+  const outNeighbors2 = new Set((graph.outEdges(node2) || []).map(e => e.w));
 
-  const inNeighbors1 = new Set(
-    (graph.inEdges(node1) || []).map(e => e.v)
-  );
-  const inNeighbors2 = new Set(
-    (graph.inEdges(node2) || []).map(e => e.v)
-  );
+  const inNeighbors1 = new Set((graph.inEdges(node1) || []).map(e => e.v));
+  const inNeighbors2 = new Set((graph.inEdges(node2) || []).map(e => e.v));
 
   // Find intersections
-  const commonOutNeighbors = Array.from(outNeighbors1)
-    .filter(n => outNeighbors2.has(n));
+  const commonOutNeighbors = Array.from(outNeighbors1).filter(n => outNeighbors2.has(n));
 
-  const commonInNeighbors = Array.from(inNeighbors1)
-    .filter(n => inNeighbors2.has(n));
+  const commonInNeighbors = Array.from(inNeighbors1).filter(n => inNeighbors2.has(n));
 
   const allNeighbors1 = new Set([...outNeighbors1, ...inNeighbors1]);
   const allNeighbors2 = new Set([...outNeighbors2, ...inNeighbors2]);
 
-  const commonNeighbors = Array.from(allNeighbors1)
-    .filter(n => allNeighbors2.has(n));
+  const commonNeighbors = Array.from(allNeighbors1).filter(n => allNeighbors2.has(n));
 
   return {
     commonOutNeighbors,
     commonInNeighbors,
     commonNeighbors,
-    jaccardSimilarity: commonNeighbors.length /
-      (allNeighbors1.size + allNeighbors2.size - commonNeighbors.length),
+    jaccardSimilarity:
+      commonNeighbors.length / (allNeighbors1.size + allNeighbors2.size - commonNeighbors.length),
   };
 }
 

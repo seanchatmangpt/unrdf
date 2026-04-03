@@ -52,7 +52,9 @@ export async function enableTask(engine, caseId, taskId, actor) {
     if (validator) {
       const validation = await validator(engine.store, { caseId, actor });
       if (!validation.valid) {
-        throw new Error(`Task enablement denied: ${validation.receipt?.justification?.reason || 'Unknown'}`);
+        throw new Error(
+          `Task enablement denied: ${validation.receipt?.justification?.reason || 'Unknown'}`
+        );
       }
     }
   }
@@ -142,10 +144,15 @@ export async function startTask(engine, caseId, workItemId, options = {}) {
   });
 
   if (engine.enableEventLog) {
-    await logTaskEvent(engine, YAWL_EVENT_TYPES.TASK_STARTED, {
-      workItemId,
-      startedAt: toISO(result.task.startedAt),
-    }, caseId);
+    await logTaskEvent(
+      engine,
+      YAWL_EVENT_TYPES.TASK_STARTED,
+      {
+        workItemId,
+        startedAt: toISO(result.task.startedAt),
+      },
+      caseId
+    );
   }
 
   engine.emit(ENGINE_EVENTS.TASK_STARTED, {
@@ -234,11 +241,16 @@ export async function completeTask(engine, caseId, workItemId, output = {}, acto
   });
 
   if (engine.enableEventLog) {
-    await logTaskEvent(engine, YAWL_EVENT_TYPES.TASK_COMPLETED, {
-      workItemId,
-      completedAt: toISO(result.task.completedAt),
-      result: output,
-    }, caseId);
+    await logTaskEvent(
+      engine,
+      YAWL_EVENT_TYPES.TASK_COMPLETED,
+      {
+        workItemId,
+        completedAt: toISO(result.task.completedAt),
+        result: output,
+      },
+      caseId
+    );
   }
 
   engine.emit(ENGINE_EVENTS.TASK_COMPLETED, {
@@ -330,11 +342,16 @@ export async function cancelTask(engine, caseId, workItemId, reason, actor) {
   });
 
   if (engine.enableEventLog) {
-    await logTaskEvent(engine, YAWL_EVENT_TYPES.TASK_CANCELLED, {
-      workItemId,
-      cancelledAt: toISO(now()),
-      reason: reason || 'No reason provided',
-    }, caseId);
+    await logTaskEvent(
+      engine,
+      YAWL_EVENT_TYPES.TASK_CANCELLED,
+      {
+        workItemId,
+        cancelledAt: toISO(now()),
+        reason: reason || 'No reason provided',
+      },
+      caseId
+    );
   }
 
   engine.emit(ENGINE_EVENTS.TASK_CANCELLED, {

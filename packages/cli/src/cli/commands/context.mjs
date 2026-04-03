@@ -38,9 +38,9 @@ const createCommand = defineCommand({
       const context = {
         '@context': {
           '@vocab': `http://example.org/${contextName}#`,
-          'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-          'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-          'xsd': 'http://www.w3.org/2001/XMLSchema#',
+          rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+          rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+          xsd: 'http://www.w3.org/2001/XMLSchema#',
         },
       };
 
@@ -152,10 +152,7 @@ const listCommand = defineCommand({
         console.log(JSON.stringify(prefixes, null, 2));
       } else {
         // Table format
-        const data = Object.entries(prefixes).map(([prefix, namespace]) => [
-          prefix,
-          namespace,
-        ]);
+        const data = Object.entries(prefixes).map(([prefix, namespace]) => [prefix, namespace]);
 
         const tableData = [['Prefix', 'Namespace'], ...data];
 

@@ -25,8 +25,17 @@
 
 import { WorkflowSpecSchema } from './schemas.mjs';
 import { validateWorkflow } from './validation.mjs';
-import { evaluateDownstream as evalDownstream, canEnable as checkCanEnable } from './control-flow.mjs';
-import { lockWorkflow, addTask as mutAddTask, addFlow as mutAddFlow, setStart as mutSetStart, setEnd as mutSetEnd } from './mutations.mjs';
+import {
+  evaluateDownstream as evalDownstream,
+  canEnable as checkCanEnable,
+} from './control-flow.mjs';
+import {
+  lockWorkflow,
+  addTask as mutAddTask,
+  addFlow as mutAddFlow,
+  setStart as mutSetStart,
+  setEnd as mutSetEnd,
+} from './mutations.mjs';
 import { workflowToJSON as toJSON } from './serialization.mjs';
 import { validateTaskDef, validateFlowDef } from '../patterns.mjs';
 

@@ -1,15 +1,15 @@
 /**
  * Poka-Yoke Pattern: Connection Lifecycle Guard
- * 
+ *
  * Enforces strict connection state machine:
  * Disconnected → Connecting → Connected → Closing → Closed
- * 
+ *
  * Prevents:
  * - Use-after-close
  * - Query-while-connecting
  * - Double-close
  * - Double-connect
- * 
+ *
  * @module @unrdf/core/poka-yoke/connection-lifecycle
  */
 
@@ -48,7 +48,7 @@ class MockConnection {
     this.config = config;
     this.queryCount = 0;
   }
-  
+
   async query(sparql) {
     // Simulate async query
     await new Promise(resolve => setTimeout(resolve, 10));
@@ -58,7 +58,7 @@ class MockConnection {
       query: sparql,
     };
   }
-  
+
   async close() {
     // Simulate async close
     await new Promise(resolve => setTimeout(resolve, 10));
@@ -67,15 +67,15 @@ class MockConnection {
 
 /**
  * Guarded Connection with enforced lifecycle
- * 
+ *
  * State machine: Disconnected → Connecting → Connected → Closing → Closed
- * 
+ *
  * POKA-YOKE GUARANTEES:
  * - query() only works in CONNECTED state
  * - connect() cannot be called twice
  * - close() cannot be called twice
  * - All invalid operations throw ConnectionStateError
- * 
+ *
  * @example
  * const conn = new GuardedConnection();
  * await conn.connect({ url: 'http://localhost:7878' });  // OK
@@ -86,7 +86,7 @@ class MockConnection {
 export class GuardedConnection {
   #state = CONN_STATE.DISCONNECTED;
   #conn = null;
-  
+
   /**
    * Assert connection is in CONNECTED state
    * @private
@@ -107,7 +107,7 @@ export class GuardedConnection {
       throw new ConnectionStateError(operation, 'closed', [CONN_STATE.CONNECTED]);
     }
   }
-  
+
   /**
    * Get current connection state (for testing/observability)
    * @returns {string} Current state
@@ -115,7 +115,7 @@ export class GuardedConnection {
   getState() {
     return this.#state;
   }
-  
+
   /**
    * Get connection statistics
    * @returns {Object} Connection stats
@@ -128,14 +128,14 @@ export class GuardedConnection {
       queryCount: this.#conn?.queryCount || 0,
     };
   }
-  
+
   /**
    * Connect to database/store
-   * 
+   *
    * State transitions:
    * - DISCONNECTED → CONNECTING → CONNECTED (success)
    * - DISCONNECTED → CONNECTING → DISCONNECTED (failure)
-   * 
+   *
    * @param {Object} config - Connection configuration
    * @param {string} config.url - Database URL
    * @returns {Promise<void>}
@@ -143,44 +143,30 @@ export class GuardedConnection {
    */
   async connect(config) {
     if (this.#state === CONN_STATE.CONNECTING) {
-      throw new ConnectionStateError(
-        'connect',
-        'already connecting',
-        [CONN_STATE.DISCONNECTED]
-      );
+      throw new ConnectionStateError('connect', 'already connecting', [CONN_STATE.DISCONNECTED]);
     }
     if (this.#state === CONN_STATE.CONNECTED) {
-      throw new ConnectionStateError(
-        'connect',
-        'already connected',
-        [CONN_STATE.DISCONNECTED]
-      );
+      throw new ConnectionStateError('connect', 'already connected', [CONN_STATE.DISCONNECTED]);
     }
     if (this.#state === CONN_STATE.CLOSING) {
-      throw new ConnectionStateError(
-        'connect',
-        'closing',
-        [CONN_STATE.DISCONNECTED]
-      );
+      throw new ConnectionStateError('connect', 'closing', [CONN_STATE.DISCONNECTED]);
     }
     if (this.#state === CONN_STATE.CLOSED) {
-      throw new ConnectionStateError(
-        'connect',
-        'closed (create new instance)',
-        [CONN_STATE.DISCONNECTED]
-      );
+      throw new ConnectionStateError('connect', 'closed (create new instance)', [
+        CONN_STATE.DISCONNECTED,
+      ]);
     }
-    
+
     // Transition to CONNECTING
     this.#state = CONN_STATE.CONNECTING;
-    
+
     try {
       // Attempt connection (async)
       this.#conn = new MockConnection(config);
-      
+
       // Simulate async connection setup
       await new Promise(resolve => setTimeout(resolve, 20));
-      
+
       // Success: transition to CONNECTED
       this.#state = CONN_STATE.CONNECTED;
     } catch (err) {
@@ -190,67 +176,51 @@ export class GuardedConnection {
       throw err;
     }
   }
-  
+
   /**
    * Execute SPARQL query
-   * 
+   *
    * @param {string} sparql - SPARQL query string
    * @returns {Promise<Object>} Query results
    * @throws {ConnectionStateError} If not connected
    */
   async query(sparql) {
     this.#assertConnected('execute query');
-    
+
     if (!sparql || typeof sparql !== 'string') {
       throw new TypeError('query: sparql must be a non-empty string');
     }
-    
+
     return this.#conn.query(sparql);
   }
-  
+
   /**
    * Close connection
-   * 
+   *
    * State transitions:
    * - CONNECTED → CLOSING → CLOSED
-   * 
+   *
    * @returns {Promise<void>}
    * @throws {ConnectionStateError} If not connected
    */
   async close() {
     // Can only close from CONNECTED state
     if (this.#state === CONN_STATE.DISCONNECTED) {
-      throw new ConnectionStateError(
-        'close',
-        'not connected',
-        [CONN_STATE.CONNECTED]
-      );
+      throw new ConnectionStateError('close', 'not connected', [CONN_STATE.CONNECTED]);
     }
     if (this.#state === CONN_STATE.CONNECTING) {
-      throw new ConnectionStateError(
-        'close',
-        'still connecting',
-        [CONN_STATE.CONNECTED]
-      );
+      throw new ConnectionStateError('close', 'still connecting', [CONN_STATE.CONNECTED]);
     }
     if (this.#state === CONN_STATE.CLOSING) {
-      throw new ConnectionStateError(
-        'close',
-        'already closing',
-        [CONN_STATE.CONNECTED]
-      );
+      throw new ConnectionStateError('close', 'already closing', [CONN_STATE.CONNECTED]);
     }
     if (this.#state === CONN_STATE.CLOSED) {
-      throw new ConnectionStateError(
-        'close',
-        'already closed',
-        [CONN_STATE.CONNECTED]
-      );
+      throw new ConnectionStateError('close', 'already closed', [CONN_STATE.CONNECTED]);
     }
-    
+
     // Transition to CLOSING
     this.#state = CONN_STATE.CLOSING;
-    
+
     try {
       // Close connection
       await this.#conn.close();

@@ -363,7 +363,7 @@ export async function workflowFromRDF(store, workflowId, options = {}) {
 
     // Get cancellation set
     const cancelQuads = store.match(taskNode, cancellationSet, null, null);
-    const cancelSet = cancelQuads.map((q) => q.object.value.replace(YAWL_TASK, ''));
+    const cancelSet = cancelQuads.map(q => q.object.value.replace(YAWL_TASK, ''));
 
     // Get priority
     const priorityQuads = store.match(taskNode, namedNode(YAWL + 'priority'), null, null);
@@ -396,8 +396,7 @@ export async function workflowFromRDF(store, workflowId, options = {}) {
       // Check for flow node with properties
       const flowNode = flowUri(task.id, toTaskId);
       const priorityQuads = store.match(flowNode, flowPriority, null, null);
-      const priority =
-        priorityQuads.length > 0 ? parseInt(priorityQuads[0].object.value, 10) : 0;
+      const priority = priorityQuads.length > 0 ? parseInt(priorityQuads[0].object.value, 10) : 0;
 
       const defaultQuads = store.match(flowNode, isDefaultFlow, null, null);
       const isDefault = defaultQuads.length > 0 && defaultQuads[0].object.value === 'true';
@@ -418,7 +417,7 @@ export async function workflowFromRDF(store, workflowId, options = {}) {
 
   // Get end tasks
   const endQuads = store.match(specNode, namedNode(YAWL + 'endTask'), null, null);
-  const endTaskIds = endQuads.map((q) => q.object.value.replace(YAWL_TASK, ''));
+  const endTaskIds = endQuads.map(q => q.object.value.replace(YAWL_TASK, ''));
 
   // Create workflow
   return new Workflow({

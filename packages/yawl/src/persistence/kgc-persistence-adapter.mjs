@@ -15,7 +15,14 @@
  */
 
 import { z } from 'zod';
-import { KGCStore, freezeUniverse, reconstructState, TemporalSPARQL, now, toISO } from '@unrdf/kgc-4d';
+import {
+  KGCStore,
+  freezeUniverse,
+  reconstructState,
+  TemporalSPARQL,
+  now,
+  toISO,
+} from '@unrdf/kgc-4d';
 import { randomUUID } from 'crypto';
 import { EntitySerializer } from './entity-serializer.mjs';
 
@@ -136,20 +143,15 @@ export class KGCPersistenceAdapter {
     const eventId = randomUUID();
 
     for (const triple of triples) {
-      await this.store.insert(
-        triple.subject,
-        triple.predicate,
-        triple.object,
-        {
-          timestamp,
-          eventId,
-          metadata: {
-            operation: 'case.stored',
-            caseId: caseInstance.id,
-            workflowId: caseInstance.workflowId,
-          },
-        }
-      );
+      await this.store.insert(triple.subject, triple.predicate, triple.object, {
+        timestamp,
+        eventId,
+        metadata: {
+          operation: 'case.stored',
+          caseId: caseInstance.id,
+          workflowId: caseInstance.workflowId,
+        },
+      });
     }
 
     this.stats.casesStored++;
@@ -194,19 +196,14 @@ export class KGCPersistenceAdapter {
     const eventId = randomUUID();
 
     for (const triple of triples) {
-      await this.store.insert(
-        triple.subject,
-        triple.predicate,
-        triple.object,
-        {
-          timestamp,
-          eventId,
-          metadata: {
-            operation: 'case.updated',
-            caseId: caseInstance.id,
-          },
-        }
-      );
+      await this.store.insert(triple.subject, triple.predicate, triple.object, {
+        timestamp,
+        eventId,
+        metadata: {
+          operation: 'case.updated',
+          caseId: caseInstance.id,
+        },
+      });
     }
 
     this.stats.casesUpdated++;
@@ -249,19 +246,14 @@ export class KGCPersistenceAdapter {
       object: 'true',
     };
 
-    await this.store.insert(
-      deleteTriple.subject,
-      deleteTriple.predicate,
-      deleteTriple.object,
-      {
-        timestamp,
-        eventId,
-        metadata: {
-          operation: 'case.deleted',
-          caseId,
-        },
-      }
-    );
+    await this.store.insert(deleteTriple.subject, deleteTriple.predicate, deleteTriple.object, {
+      timestamp,
+      eventId,
+      metadata: {
+        operation: 'case.deleted',
+        caseId,
+      },
+    });
 
     this.stats.casesDeleted++;
 

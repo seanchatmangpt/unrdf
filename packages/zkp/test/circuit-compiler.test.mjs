@@ -5,11 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-  CircuitCompiler,
-  createCircuitCompiler,
-  compileSPARQL,
-} from '../src/circuit-compiler.mjs';
+import { CircuitCompiler, createCircuitCompiler, compileSPARQL } from '../src/circuit-compiler.mjs';
 
 describe('CircuitCompiler', () => {
   let compiler;
@@ -109,9 +105,7 @@ describe('CircuitCompiler', () => {
 
       const circuit = await compiler.compile(query);
 
-      const hasComparisonConstraint = circuit.constraints.some(
-        (c) => Object.keys(c.a).length > 1
-      );
+      const hasComparisonConstraint = circuit.constraints.some(c => Object.keys(c.a).length > 1);
 
       expect(hasComparisonConstraint).toBe(true);
     });
@@ -136,9 +130,7 @@ describe('CircuitCompiler', () => {
       const compilerNoOpt = new CircuitCompiler({ optimize: false });
       const circuitNoOpt = await compilerNoOpt.compile(query);
 
-      expect(circuit.constraints.length).toBeLessThanOrEqual(
-        circuitNoOpt.constraints.length
-      );
+      expect(circuit.constraints.length).toBeLessThanOrEqual(circuitNoOpt.constraints.length);
     });
 
     it('should maintain correctness after optimization', async () => {
@@ -354,9 +346,7 @@ describe('CircuitCompiler', () => {
 
       const circuit = await compiler.compile(query);
 
-      const hasFilterConstant = circuit.publicInputs.some((input) =>
-        input.includes('filter_const')
-      );
+      const hasFilterConstant = circuit.publicInputs.some(input => input.includes('filter_const'));
 
       expect(hasFilterConstant).toBe(true);
     });

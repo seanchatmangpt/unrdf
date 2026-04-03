@@ -20,18 +20,18 @@ import { z } from 'zod';
  * Context isolation mode
  */
 export const IsolationModeSchema = z.enum([
-  'full',      // Worklet gets full parent case data
-  'filtered',  // Worklet gets filtered subset of data
-  'none',      // Worklet gets only exception data (no case data)
+  'full', // Worklet gets full parent case data
+  'filtered', // Worklet gets filtered subset of data
+  'none', // Worklet gets only exception data (no case data)
 ]);
 
 /**
  * Data mapping rule
  */
 export const MappingRuleSchema = z.object({
-  source: z.string().min(1),           // Source field path
-  target: z.string().min(1),           // Target field path
-  transform: z.function().optional(),  // Optional transformation function
+  source: z.string().min(1), // Source field path
+  target: z.string().min(1), // Target field path
+  transform: z.function().optional(), // Optional transformation function
   required: z.boolean().default(false),
 });
 
@@ -167,9 +167,7 @@ export class WorkletContextManager {
       const value = this._getFieldValue(workletOutput, mapping.source);
 
       if (value !== undefined) {
-        const transformedValue = mapping.transform
-          ? mapping.transform(value)
-          : value;
+        const transformedValue = mapping.transform ? mapping.transform(value) : value;
 
         this._setFieldValue(updatedData, mapping.target, transformedValue);
       } else if (mapping.required) {
@@ -218,9 +216,7 @@ export class WorkletContextManager {
       const value = this._getFieldValue(data, mapping.source);
 
       if (value !== undefined) {
-        const transformedValue = mapping.transform
-          ? mapping.transform(value)
-          : value;
+        const transformedValue = mapping.transform ? mapping.transform(value) : value;
 
         this._setFieldValue(mapped, mapping.target, transformedValue);
       } else if (mapping.required) {

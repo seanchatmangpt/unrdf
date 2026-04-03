@@ -10,17 +10,17 @@ const extension = {
         config: {
           description: 'Manage CLI configuration',
           argsSchema: z.object({ key: z.string(), value: z.string().optional() }),
-          handler: async (args) => ({ key: args.key, value: args.value || null })
+          handler: async args => ({ key: args.key, value: args.value || null }),
         },
         version: {
           description: 'Show version info',
           argsSchema: z.object({}),
-          handler: async () => ({ version: '1.0.0', node: process.version })
-        }
-      }
-    }
+          handler: async () => ({ version: '1.0.0', node: process.version }),
+        },
+      },
+    },
   },
-  priority: 80
+  priority: 80,
 };
 
 export default extension;

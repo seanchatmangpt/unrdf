@@ -51,7 +51,7 @@ import { executePassLoop } from './pass-loop.mjs';
 
 const result = await executePassLoop({
   // Single compilation function
-  compile: async (passNumber) => {
+  compile: async passNumber => {
     return compileWithSwiftLatex({ vfs, passes: 1 });
   },
 
@@ -63,11 +63,11 @@ const result = await executePassLoop({
   maxResolveRetries: 3,
 
   // Callbacks
-  onProgress: (event) => {
+  onProgress: event => {
     console.log(`Pass ${event.pass}/${event.total}: ${event.status}`);
   },
 
-  onResolve: async (missingInputs) => {
+  onResolve: async missingInputs => {
     return await resolveMissingInputs({ missingInputs, cacheDir });
   },
 });
@@ -85,12 +85,12 @@ if (result.success) {
 
 ```typescript
 interface PassLoopResult {
-  success: boolean;              // Pipeline succeeded
-  pdf?: Uint8Array;              // Generated PDF bytes
-  passes: number;                // Number of passes executed
-  log: string;                   // Final compilation log
-  error?: string;                // Error message if failed
-  terminationReason: string;     // Why loop terminated
+  success: boolean; // Pipeline succeeded
+  pdf?: Uint8Array; // Generated PDF bytes
+  passes: number; // Number of passes executed
+  log: string; // Final compilation log
+  error?: string; // Error message if failed
+  terminationReason: string; // Why loop terminated
 }
 ```
 

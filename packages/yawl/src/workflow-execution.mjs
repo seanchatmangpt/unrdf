@@ -27,7 +27,7 @@ import { SPLIT_TYPE, JOIN_TYPE } from './patterns.mjs';
  * Validate workflow structure and integrity
  * @returns {ValidationResult} Validation result with errors and warnings
  */
-Workflow.prototype.validate = function() {
+Workflow.prototype.validate = function () {
   const errors = [];
   const warnings = [];
   this._validateBasicStructure(errors, warnings);
@@ -40,13 +40,16 @@ Workflow.prototype.validate = function() {
 };
 
 /** Quick check if workflow is valid */
-Workflow.prototype.isValid = function() { return this.validate().valid; };
+Workflow.prototype.isValid = function () {
+  return this.validate().valid;
+};
 
 /** Validate basic structure */
-Workflow.prototype._validateBasicStructure = function(errors, warnings) {
+Workflow.prototype._validateBasicStructure = function (errors, warnings) {
   if (this._tasks.size === 0) errors.push('Workflow has no tasks');
   if (!this._startTaskId) errors.push('Workflow has no start task');
-  else if (!this._tasks.has(this._startTaskId)) errors.push(`Start task '${this._startTaskId}' not found in workflow`);
+  else if (!this._tasks.has(this._startTaskId))
+    errors.push(`Start task '${this._startTaskId}' not found in workflow`);
   if (this._endTaskIds.length === 0) warnings.push('Workflow has no designated end tasks');
   for (const endTaskId of this._endTaskIds) {
     if (!this._tasks.has(endTaskId)) errors.push(`End task '${endTaskId}' not found in workflow`);
@@ -54,11 +57,14 @@ Workflow.prototype._validateBasicStructure = function(errors, warnings) {
 };
 
 /** Validate control flow integrity */
-Workflow.prototype._validateControlFlowIntegrity = function(errors, warnings) {
+Workflow.prototype._validateControlFlowIntegrity = function (errors, warnings) {
   for (const flow of this._flows) {
-    if (!this._tasks.has(flow.from)) errors.push(`Flow references non-existent source task '${flow.from}'`);
-    if (!this._tasks.has(flow.to)) errors.push(`Flow references non-existent target task '${flow.to}'`);
-    if (flow.from === flow.to) warnings.push(`Flow from '${flow.from}' to itself detected (self-loop)`);
+    if (!this._tasks.has(flow.from))
+      errors.push(`Flow references non-existent source task '${flow.from}'`);
+    if (!this._tasks.has(flow.to))
+      errors.push(`Flow references non-existent target task '${flow.to}'`);
+    if (flow.from === flow.to)
+      warnings.push(`Flow from '${flow.from}' to itself detected (self-loop)`);
   }
   const flowSet = new Set();
   for (const flow of this._flows) {
@@ -69,7 +75,7 @@ Workflow.prototype._validateControlFlowIntegrity = function(errors, warnings) {
 };
 
 /** Validate split/join type consistency */
-Workflow.prototype._validateSplitJoinConsistency = function(errors, warnings) {
+Workflow.prototype._validateSplitJoinConsistency = function (errors, warnings) {
   for (const [taskId, task] of this._tasks) {
     const outgoing = this._outgoingFlows.get(taskId) ?? [];
     const incoming = this._incomingFlows.get(taskId) ?? [];
@@ -78,38 +84,59 @@ Workflow.prototype._validateSplitJoinConsistency = function(errors, warnings) {
     if (splitType === SPLIT_TYPE.SEQUENCE && outgoing.length > 1) {
       errors.push(`Task '${taskId}' has sequence split but ${outgoing.length} outgoing flows`);
     }
-    if ((splitType === SPLIT_TYPE.AND || splitType === SPLIT_TYPE.XOR || splitType === SPLIT_TYPE.OR) && outgoing.length < 2) {
-      warnings.push(`Task '${taskId}' has ${splitType} split but only ${outgoing.length} outgoing flow(s)`);
+    if (
+      (splitType === SPLIT_TYPE.AND ||
+        splitType === SPLIT_TYPE.XOR ||
+        splitType === SPLIT_TYPE.OR) &&
+      outgoing.length < 2
+    ) {
+      warnings.push(
+        `Task '${taskId}' has ${splitType} split but only ${outgoing.length} outgoing flow(s)`
+      );
     }
     if (joinType === JOIN_TYPE.SEQUENCE && incoming.length > 1) {
       errors.push(`Task '${taskId}' has sequence join but ${incoming.length} incoming flows`);
     }
-    if ((joinType === JOIN_TYPE.AND || joinType === JOIN_TYPE.XOR || joinType === JOIN_TYPE.OR) && incoming.length < 2) {
-      warnings.push(`Task '${taskId}' has ${joinType} join but only ${incoming.length} incoming flow(s)`);
+    if (
+      (joinType === JOIN_TYPE.AND || joinType === JOIN_TYPE.XOR || joinType === JOIN_TYPE.OR) &&
+      incoming.length < 2
+    ) {
+      warnings.push(
+        `Task '${taskId}' has ${joinType} join but only ${incoming.length} incoming flow(s)`
+      );
     }
     if (splitType === SPLIT_TYPE.XOR && outgoing.length > 1) {
       const hasConditions = outgoing.some(f => f.condition || f.isDefault);
-      if (!hasConditions) warnings.push(`Task '${taskId}' has XOR split but no conditions or default flow defined`);
+      if (!hasConditions)
+        warnings.push(`Task '${taskId}' has XOR split but no conditions or default flow defined`);
     }
   }
   this._validateMatchingSplitJoin(errors, warnings);
 };
 
 /** Validate matching split-join patterns */
-Workflow.prototype._validateMatchingSplitJoin = function(errors, warnings) {
+Workflow.prototype._validateMatchingSplitJoin = function (errors, warnings) {
   for (const [taskId, task] of this._tasks) {
     const splitType = task.splitType ?? SPLIT_TYPE.SEQUENCE;
-    if (splitType === SPLIT_TYPE.AND || splitType === SPLIT_TYPE.XOR || splitType === SPLIT_TYPE.OR) {
+    if (
+      splitType === SPLIT_TYPE.AND ||
+      splitType === SPLIT_TYPE.XOR ||
+      splitType === SPLIT_TYPE.OR
+    ) {
       const convergence = this._findConvergencePoint(taskId);
       if (convergence) {
         const joinTask = this._tasks.get(convergence);
         if (joinTask) {
           const joinType = joinTask.joinType ?? JOIN_TYPE.SEQUENCE;
           if (splitType === SPLIT_TYPE.AND && joinType !== JOIN_TYPE.AND) {
-            warnings.push(`AND-split at '${taskId}' converges at '${convergence}' with ${joinType}-join (expected AND-join)`);
+            warnings.push(
+              `AND-split at '${taskId}' converges at '${convergence}' with ${joinType}-join (expected AND-join)`
+            );
           }
           if (splitType === SPLIT_TYPE.OR && joinType !== JOIN_TYPE.OR) {
-            warnings.push(`OR-split at '${taskId}' converges at '${convergence}' with ${joinType}-join (expected OR-join)`);
+            warnings.push(
+              `OR-split at '${taskId}' converges at '${convergence}' with ${joinType}-join (expected OR-join)`
+            );
           }
         }
       }
@@ -123,7 +150,7 @@ Workflow.prototype._validateMatchingSplitJoin = function(errors, warnings) {
  * @returns {string|null} Convergence task ID or null
  * @private
  */
-Workflow.prototype._findConvergencePoint = function(splitTaskId) {
+Workflow.prototype._findConvergencePoint = function (splitTaskId) {
   const outgoing = this._outgoingFlows.get(splitTaskId) ?? [];
   if (outgoing.length < 2) return null;
 
@@ -160,7 +187,7 @@ Workflow.prototype._findConvergencePoint = function(splitTaskId) {
 };
 
 /** Validate all tasks are reachable from start */
-Workflow.prototype._validateReachability = function(errors, warnings) {
+Workflow.prototype._validateReachability = function (errors, warnings) {
   if (!this._startTaskId) return;
   const visited = new Set();
   const queue = [this._startTaskId];
@@ -179,24 +206,29 @@ Workflow.prototype._validateReachability = function(errors, warnings) {
 };
 
 /** Validate cancellation regions */
-Workflow.prototype._validateCancellationRegions = function(errors, warnings) {
+Workflow.prototype._validateCancellationRegions = function (errors, warnings) {
   for (const [regionId, taskIds] of this._regionToTasks) {
     for (const taskId of taskIds) {
-      if (!this._tasks.has(taskId)) errors.push(`Cancellation region '${regionId}' references non-existent task '${taskId}'`);
+      if (!this._tasks.has(taskId))
+        errors.push(`Cancellation region '${regionId}' references non-existent task '${taskId}'`);
     }
-    if (taskIds.length < 2) warnings.push(`Cancellation region '${regionId}' has only ${taskIds.length} task(s)`);
+    if (taskIds.length < 2)
+      warnings.push(`Cancellation region '${regionId}' has only ${taskIds.length} task(s)`);
   }
   for (const [taskId, task] of this._tasks) {
     if (task.cancellationSet) {
       for (const cancelTaskId of task.cancellationSet) {
-        if (!this._tasks.has(cancelTaskId)) errors.push(`Task '${taskId}' cancellation set references non-existent task '${cancelTaskId}'`);
+        if (!this._tasks.has(cancelTaskId))
+          errors.push(
+            `Task '${taskId}' cancellation set references non-existent task '${cancelTaskId}'`
+          );
       }
     }
   }
 };
 
 /** Validate no invalid cycles exist */
-Workflow.prototype._validateNoCycles = function(errors, warnings) {
+Workflow.prototype._validateNoCycles = function (errors, warnings) {
   const visited = new Set();
   const recStack = new Set();
   const cycles = [];
@@ -236,7 +268,7 @@ Workflow.prototype._validateNoCycles = function(errors, warnings) {
  * const toEnable = workflow.evaluateDownstream('review', { amount: 500 });
  * // Returns ['approve'] if amount < 1000
  */
-Workflow.prototype.evaluateDownstream = function(completedTaskId, context = {}) {
+Workflow.prototype.evaluateDownstream = function (completedTaskId, context = {}) {
   const taskDef = this._tasks.get(completedTaskId);
   if (!taskDef) return [];
 
@@ -247,9 +279,7 @@ Workflow.prototype.evaluateDownstream = function(completedTaskId, context = {}) 
   const toEnable = [];
 
   // Sort flows by priority (higher first)
-  const sortedFlows = [...outFlows].sort(
-    (a, b) => (b.priority ?? 0) - (a.priority ?? 0)
-  );
+  const sortedFlows = [...outFlows].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   switch (splitType) {
     case SPLIT_TYPE.SEQUENCE:
@@ -342,7 +372,7 @@ Workflow.prototype.evaluateDownstream = function(completedTaskId, context = {}) 
  *   // Enable the merge task
  * }
  */
-Workflow.prototype.canEnable = function(taskId, completedTasks, activatedTasks = new Set()) {
+Workflow.prototype.canEnable = function (taskId, completedTasks, activatedTasks = new Set()) {
   const taskDef = this._tasks.get(taskId);
   if (!taskDef) return false;
 

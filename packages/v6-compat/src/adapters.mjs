@@ -37,7 +37,7 @@ ${hint ? `💡 Hint: ${hint}` : ''}
       oldAPI,
       newAPI,
       timestamp: Date.now(),
-      stack: new Error().stack
+      stack: new Error().stack,
     });
   }
 }
@@ -113,7 +113,7 @@ export function wrapWorkflow(workflow) {
         task: task?.id || 'unknown',
         timestamp: Date.now(),
         duration: endTime - startTime,
-        result: typeof result === 'object' ? JSON.stringify(result) : String(result)
+        result: typeof result === 'object' ? JSON.stringify(result) : String(result),
       };
 
       return { result, receipt };
@@ -210,9 +210,14 @@ export async function* streamToAsync(stream) {
   let done = false;
   let error = null;
 
-  stream.on('data', (data) => queue.push(data));
-  stream.on('end', () => { done = true; });
-  stream.on('error', (err) => { error = err; done = true; });
+  stream.on('data', data => queue.push(data));
+  stream.on('end', () => {
+    done = true;
+  });
+  stream.on('error', err => {
+    error = err;
+    done = true;
+  });
 
   while (!done || queue.length > 0) {
     if (error) throw error;
@@ -220,7 +225,7 @@ export async function* streamToAsync(stream) {
       yield queue.shift();
     } else {
       // Wait for next data or end
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
     }
   }
 }
@@ -290,7 +295,7 @@ export function withReceipt(fn, options = {}) {
       timestamp,
       duration: endTime - startTime,
       args: deterministicSerialize(args),
-      result: typeof result === 'object' ? deterministicSerialize(result) : String(result)
+      result: typeof result === 'object' ? deterministicSerialize(result) : String(result),
     };
 
     return { result, receipt };
@@ -322,9 +327,11 @@ export function validateSchema(schema) {
       return schema.parse(data);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const readable = error.errors.map((e) => {
-          return `${e.path.join('.')}: ${e.message}`;
-        }).join(', ');
+        const readable = error.errors
+          .map(e => {
+            return `${e.path.join('.')}: ${e.message}`;
+          })
+          .join(', ');
 
         throw new Error(`Validation failed: ${readable}`);
       }
@@ -361,7 +368,7 @@ export class MigrationTracker {
     this.warnings.push({
       oldAPI,
       newAPI,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -444,7 +451,7 @@ export class MigrationTracker {
    * @returns {Object} Migration report
    */
   report() {
-    const unique = [...new Set(this.warnings.map((w) => w.oldAPI))];
+    const unique = [...new Set(this.warnings.map(w => w.oldAPI))];
     const elapsed = Date.now() - this.start;
 
     return {

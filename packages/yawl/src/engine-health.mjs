@@ -91,9 +91,8 @@ export function withHealth(Base) {
         uptimeNs: (now() - this._stats.startedAt).toString(),
         uptimeMs: Number(now() - this._stats.startedAt) / 1_000_000,
         workflowCount: this.workflows.size,
-        activeCaseCount: [...this.cases.values()].filter(
-          c => c.status === CaseStatus.RUNNING
-        ).length,
+        activeCaseCount: [...this.cases.values()].filter(c => c.status === CaseStatus.RUNNING)
+          .length,
         totalCaseCount: this.cases.size,
         checkpointCount: this.checkpoints.size,
         eventCount: this.events.length,

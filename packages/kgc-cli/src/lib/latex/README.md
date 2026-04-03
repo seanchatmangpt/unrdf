@@ -12,6 +12,7 @@ This module provides deterministic package resolution for LaTeX compilation. Whe
 4. Maintains deterministic cache with `index.json`
 
 **Key Properties**:
+
 - ✅ Pure functions (no OTEL in business logic)
 - ✅ Deterministic caching (content-addressed)
 - ✅ Offline-safe (clear error messages)
@@ -74,6 +75,7 @@ ${cacheDir}/ctan/
 Main resolver function called by Agent 3.
 
 **Parameters**:
+
 - `options.missingInputs`: `string[]` - Missing filenames
 - `options.cacheDir`: `string` - Cache directory path
 - `options.ctanMirror`: `string` (optional) - CTAN mirror URL
@@ -81,10 +83,11 @@ Main resolver function called by Agent 3.
 **Returns**: `Promise<Map<string, Uint8Array>>`
 
 **Example**:
+
 ```javascript
 const resolved = await resolveMissingInputs({
   missingInputs: ['algorithm2e.sty', 'tikz.sty'],
-  cacheDir: '/home/user/.cache/kgc-latex'
+  cacheDir: '/home/user/.cache/kgc-latex',
 });
 ```
 
@@ -96,11 +99,11 @@ Merges resolved packages into VFS.
 
 ## Files Delivered
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `ctan-resolver.mjs` | 585 | Main resolver |
-| `ctan-resolver.test.mjs` | 220 | Unit tests |
-| `README.md` | This file | Documentation |
+| File                     | LOC       | Purpose       |
+| ------------------------ | --------- | ------------- |
+| `ctan-resolver.mjs`      | 585       | Main resolver |
+| `ctan-resolver.test.mjs` | 220       | Unit tests    |
+| `README.md`              | This file | Documentation |
 
 ## Build Timestamp
 

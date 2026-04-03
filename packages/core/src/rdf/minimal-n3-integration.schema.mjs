@@ -138,5 +138,5 @@ export default {
   serialize: serializeSchema,
   query: querySchema,
   update: updateSchema,
-  shouldUseN3: shouldUseN3Schema
+  shouldUseN3: shouldUseN3Schema,
 };

@@ -247,7 +247,6 @@ function grepForPattern(pattern, dir = 'src') {
 // ============================================================================
 
 describe('Architecture Validation', () => {
-
   describe('File Size Limits', () => {
     it('all source files should be <500 lines', () => {
       const srcFiles = getAllSourceFiles('src');
@@ -324,11 +323,7 @@ describe('Architecture Validation', () => {
       const violations = grepForPattern(/from\s+['"]n3['"]/);
 
       // Allowed files (justified N3 usage)
-      const allowedFiles = [
-        'n3-justified-only.mjs',
-        'n3-migration.mjs',
-        'n3-wrapper.mjs',
-      ];
+      const allowedFiles = ['n3-justified-only.mjs', 'n3-migration.mjs', 'n3-wrapper.mjs'];
 
       // Filter out allowed files
       const actualViolations = violations.filter(v => {
@@ -351,9 +346,7 @@ describe('Architecture Validation', () => {
 
       // Filter out test files and migration files
       const actualViolations = violations.filter(v => {
-        return !v.file.includes('test/') &&
-               !v.file.includes('n3-') &&
-               !v.file.includes('.test.');
+        return !v.file.includes('test/') && !v.file.includes('n3-') && !v.file.includes('.test.');
       });
 
       // Report violations for debugging
@@ -393,10 +386,12 @@ describe('Architecture Validation', () => {
 
       // Filter out test files and commented lines
       const actualViolations = violations.filter(v => {
-        return !v.file.includes('test/') &&
-               !v.file.includes('.test.') &&
-               !v.match.trim().startsWith('//') &&
-               !v.match.trim().startsWith('*');
+        return (
+          !v.file.includes('test/') &&
+          !v.file.includes('.test.') &&
+          !v.match.trim().startsWith('//') &&
+          !v.match.trim().startsWith('*')
+        );
       });
 
       // Report violations for debugging (warning only - not enforced strictly)
@@ -464,8 +459,12 @@ describe('Architecture Validation', () => {
       let srcLines = 0;
       let testLines = 0;
 
-      srcFiles.forEach(f => { srcLines += countLines(f); });
-      testFiles.forEach(f => { testLines += countLines(f); });
+      srcFiles.forEach(f => {
+        srcLines += countLines(f);
+      });
+      testFiles.forEach(f => {
+        testLines += countLines(f);
+      });
 
       console.log('\n📏 Lines of Code:');
       console.log(`  - Source: ${srcLines.toLocaleString()} lines`);

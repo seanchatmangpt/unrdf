@@ -73,7 +73,7 @@ export class WebXRRenderer {
    * @returns {Promise<void>}
    */
   async initialize() {
-    return tracer.startActiveSpan('renderer.initialize', async (span) => {
+    return tracer.startActiveSpan('renderer.initialize', async span => {
       try {
         // In real implementation, create Three.js renderer, camera, etc.
         // For testing, just simulate initialization
@@ -100,7 +100,7 @@ export class WebXRRenderer {
    * @returns {Promise<void>}
    */
   async startXRSession(mode) {
-    return tracer.startActiveSpan('renderer.start-xr', async (span) => {
+    return tracer.startActiveSpan('renderer.start-xr', async span => {
       try {
         // In real implementation, request XR session from WebXR API
         // For testing, simulate session start
@@ -137,7 +137,7 @@ export class WebXRRenderer {
    * @returns {void}
    */
   updateNodes(nodes) {
-    return tracer.startActiveSpan('renderer.update-nodes', (span) => {
+    return tracer.startActiveSpan('renderer.update-nodes', span => {
       try {
         // Update existing nodes
         for (const [id, node] of nodes) {
@@ -182,7 +182,7 @@ export class WebXRRenderer {
    * @returns {void}
    */
   updateEdges(edges, nodes) {
-    return tracer.startActiveSpan('renderer.update-edges', (span) => {
+    return tracer.startActiveSpan('renderer.update-edges', span => {
       try {
         // Clear existing edges (simple approach)
         for (const mesh of this.edgeMeshes.values()) {
@@ -220,7 +220,7 @@ export class WebXRRenderer {
    * @returns {void}
    */
   render() {
-    return tracer.startActiveSpan('renderer.render', (span) => {
+    return tracer.startActiveSpan('renderer.render', span => {
       try {
         const now = performance.now();
         this.frameTime = now - this.lastFrameTime;

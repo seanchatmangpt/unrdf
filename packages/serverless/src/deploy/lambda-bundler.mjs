@@ -165,8 +165,8 @@ export class LambdaBundler {
    * ```
    */
   static async bundleAll(configs) {
-    const bundlers = configs.map((config) => new LambdaBundler(config));
-    return Promise.all(bundlers.map((bundler) => bundler.bundle()));
+    const bundlers = configs.map(config => new LambdaBundler(config));
+    return Promise.all(bundlers.map(bundler => bundler.bundle()));
   }
 
   /**

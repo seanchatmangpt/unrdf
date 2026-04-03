@@ -102,9 +102,7 @@ export function observationsToRdf(observations) {
   const validatedObs = z.array(ObservationSchema).parse(observations);
 
   // Sort observations by method name for deterministic output
-  const sortedObs = [...validatedObs].sort((a, b) =>
-    a.method.localeCompare(b.method)
-  );
+  const sortedObs = [...validatedObs].sort((a, b) => a.method.localeCompare(b.method));
 
   // Create RDF store
   const store = createStore();
@@ -116,66 +114,82 @@ export function observationsToRdf(observations) {
     const timestamp = obs.timestamp || Date.now();
 
     // Type declaration
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(`${RDF_NS}type`),
-      dataFactory.namedNode(kgcUri('Observation'))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(kgcUri('Observation'))
+      )
+    );
 
     // Method
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('method')),
-      dataFactory.literal(obs.method)
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('method')),
+        dataFactory.literal(obs.method)
+      )
+    );
 
     // Timestamp (as xsd:dateTime)
     const timestampDate = new Date(timestamp).toISOString();
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('timestamp')),
-      dataFactory.literal(timestampDate, dataFactory.namedNode(`${XSD_NS}dateTime`))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('timestamp')),
+        dataFactory.literal(timestampDate, dataFactory.namedNode(`${XSD_NS}dateTime`))
+      )
+    );
 
     // Hash
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('hash')),
-      dataFactory.literal(hash, dataFactory.namedNode(`${XSD_NS}string`))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('hash')),
+        dataFactory.literal(hash, dataFactory.namedNode(`${XSD_NS}string`))
+      )
+    );
 
     // Outputs (as JSON)
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('outputs')),
-      dataFactory.literal(JSON.stringify(obs.outputs), dataFactory.namedNode(`${RDF_NS}JSON`))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('outputs')),
+        dataFactory.literal(JSON.stringify(obs.outputs), dataFactory.namedNode(`${RDF_NS}JSON`))
+      )
+    );
 
     // Optional: Guard decision
     if (obs.guardDecision) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('guardDecision')),
-        dataFactory.literal(obs.guardDecision, dataFactory.namedNode(`${XSD_NS}string`))
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('guardDecision')),
+          dataFactory.literal(obs.guardDecision, dataFactory.namedNode(`${XSD_NS}string`))
+        )
+      );
     }
 
     // Optional: Error
     if (obs.error) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('error')),
-        dataFactory.literal(obs.error, dataFactory.namedNode(`${XSD_NS}string`))
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('error')),
+          dataFactory.literal(obs.error, dataFactory.namedNode(`${XSD_NS}string`))
+        )
+      );
     }
 
     // Optional: Domain
     if (obs.domain) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('domain')),
-        dataFactory.literal(obs.domain, dataFactory.namedNode(`${XSD_NS}string`))
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('domain')),
+          dataFactory.literal(obs.domain, dataFactory.namedNode(`${XSD_NS}string`))
+        )
+      );
     }
   }
 
@@ -216,9 +230,8 @@ export function deriveClaims(observations) {
   }
 
   // Analyze runtime observations
-  const runtimeObs = validatedObs.filter(o =>
-    o.method?.toLowerCase().includes('runtime') ||
-    o.domain === 'runtime'
+  const runtimeObs = validatedObs.filter(
+    o => o.method?.toLowerCase().includes('runtime') || o.domain === 'runtime'
   );
 
   if (runtimeObs.length > 0) {
@@ -226,8 +239,9 @@ export function deriveClaims(observations) {
     const outputs = runtimeObs.map(o => o.outputs).filter(Boolean);
 
     // Extract Node.js version if present
-    const nodeVersion = outputs.find(o => o.node || o.version)?.node ||
-                       outputs.find(o => o.node || o.version)?.version;
+    const nodeVersion =
+      outputs.find(o => o.node || o.version)?.node ||
+      outputs.find(o => o.node || o.version)?.version;
 
     if (nodeVersion) {
       capabilities.push({
@@ -239,10 +253,11 @@ export function deriveClaims(observations) {
     }
 
     // Check for worker_threads
-    const workerThreads = outputs.some(o =>
-      o.worker_threads === true ||
-      o.workerThreads === true ||
-      (typeof o === 'object' && 'worker_threads' in o)
+    const workerThreads = outputs.some(
+      o =>
+        o.worker_threads === true ||
+        o.workerThreads === true ||
+        (typeof o === 'object' && 'worker_threads' in o)
     );
 
     if (workerThreads) {
@@ -256,9 +271,8 @@ export function deriveClaims(observations) {
   }
 
   // Analyze WASM observations
-  const wasmObs = validatedObs.filter(o =>
-    o.method?.toLowerCase().includes('wasm') ||
-    o.domain === 'wasm'
+  const wasmObs = validatedObs.filter(
+    o => o.method?.toLowerCase().includes('wasm') || o.domain === 'wasm'
   );
 
   if (wasmObs.length > 0) {
@@ -281,10 +295,11 @@ export function deriveClaims(observations) {
   }
 
   // Analyze filesystem observations
-  const fsObs = validatedObs.filter(o =>
-    o.method?.toLowerCase().includes('filesystem') ||
-    o.method?.toLowerCase().includes('fs') ||
-    o.domain === 'filesystem'
+  const fsObs = validatedObs.filter(
+    o =>
+      o.method?.toLowerCase().includes('filesystem') ||
+      o.method?.toLowerCase().includes('fs') ||
+      o.domain === 'filesystem'
   );
 
   if (fsObs.length > 0) {
@@ -292,8 +307,9 @@ export function deriveClaims(observations) {
     const outputs = fsObs.map(o => o.outputs).filter(Boolean);
 
     // Check for restricted paths
-    const allowedPaths = outputs.find(o => o.allowedPaths || o.paths)?.allowedPaths ||
-                        outputs.find(o => o.allowedPaths || o.paths)?.paths;
+    const allowedPaths =
+      outputs.find(o => o.allowedPaths || o.paths)?.allowedPaths ||
+      outputs.find(o => o.allowedPaths || o.paths)?.paths;
 
     if (allowedPaths && Array.isArray(allowedPaths)) {
       constraints.push({
@@ -305,10 +321,11 @@ export function deriveClaims(observations) {
     }
 
     // Check for denied operations
-    const deniedOps = fsObs.filter(o =>
-      o.guardDecision === 'denied' ||
-      o.error?.includes('permission') ||
-      o.error?.includes('denied')
+    const deniedOps = fsObs.filter(
+      o =>
+        o.guardDecision === 'denied' ||
+        o.error?.includes('permission') ||
+        o.error?.includes('denied')
     );
 
     if (deniedOps.length > 0) {
@@ -322,9 +339,8 @@ export function deriveClaims(observations) {
   }
 
   // Analyze network observations
-  const networkObs = validatedObs.filter(o =>
-    o.method?.toLowerCase().includes('network') ||
-    o.domain === 'network'
+  const networkObs = validatedObs.filter(
+    o => o.method?.toLowerCase().includes('network') || o.domain === 'network'
   );
 
   if (networkObs.length > 0) {
@@ -332,8 +348,9 @@ export function deriveClaims(observations) {
     const outputs = networkObs.map(o => o.outputs).filter(Boolean);
 
     // Check for allowlisted URLs
-    const allowedUrls = outputs.find(o => o.allowedUrls || o.urls)?.allowedUrls ||
-                       outputs.find(o => o.allowedUrls || o.urls)?.urls;
+    const allowedUrls =
+      outputs.find(o => o.allowedUrls || o.urls)?.allowedUrls ||
+      outputs.find(o => o.allowedUrls || o.urls)?.urls;
 
     if (allowedUrls && Array.isArray(allowedUrls)) {
       constraints.push({
@@ -345,10 +362,9 @@ export function deriveClaims(observations) {
     }
 
     // Check for denied requests
-    const deniedReqs = networkObs.filter(o =>
-      o.guardDecision === 'denied' ||
-      o.error?.includes('network') ||
-      o.error?.includes('blocked')
+    const deniedReqs = networkObs.filter(
+      o =>
+        o.guardDecision === 'denied' || o.error?.includes('network') || o.error?.includes('blocked')
     );
 
     if (deniedReqs.length > 0) {
@@ -362,10 +378,11 @@ export function deriveClaims(observations) {
   }
 
   // Analyze performance observations
-  const perfObs = validatedObs.filter(o =>
-    o.method?.toLowerCase().includes('performance') ||
-    o.method?.toLowerCase().includes('benchmark') ||
-    o.domain === 'performance'
+  const perfObs = validatedObs.filter(
+    o =>
+      o.method?.toLowerCase().includes('performance') ||
+      o.method?.toLowerCase().includes('benchmark') ||
+      o.domain === 'performance'
   );
 
   if (perfObs.length > 0) {
@@ -427,9 +444,8 @@ export function generateReport(observations) {
     .filter(t => typeof t === 'number')
     .sort((a, b) => a - b);
 
-  const executionTime = timestamps.length >= 2
-    ? timestamps[timestamps.length - 1] - timestamps[0]
-    : 0;
+  const executionTime =
+    timestamps.length >= 2 ? timestamps[timestamps.length - 1] - timestamps[0] : 0;
 
   // Group observations by domain
   const byDomain = new Map();
@@ -494,9 +510,7 @@ export function generateReport(observations) {
     report += `### ${domain.charAt(0).toUpperCase() + domain.slice(1)} (${domainObs.length} observations)\n\n`;
 
     // Sort observations by method name
-    const sortedDomainObs = [...domainObs].sort((a, b) =>
-      a.method.localeCompare(b.method)
-    );
+    const sortedDomainObs = [...domainObs].sort((a, b) => a.method.localeCompare(b.method));
 
     for (const obs of sortedDomainObs) {
       report += `#### ${obs.method}\n\n`;
@@ -539,11 +553,7 @@ export function generateReport(observations) {
 }
 
 // Export schemas for external use
-export {
-  ObservationSchema,
-  CapabilitySchema,
-  ConstraintSchema,
-};
+export { ObservationSchema, CapabilitySchema, ConstraintSchema };
 
 export default {
   observationsToRdf,

@@ -34,7 +34,8 @@ const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '5.0.0-alpha.0',
-    description: 'UNRDF CLI - Command-line tools for RDF graph operations and Hyperdimensional Decision Fabric',
+    description:
+      'UNRDF CLI - Command-line tools for RDF graph operations and Hyperdimensional Decision Fabric',
   },
   subCommands: {
     // RDF Graph Operations

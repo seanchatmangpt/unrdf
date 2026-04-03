@@ -52,7 +52,7 @@ export const QueryOptionsSchema = z.object({
  */
 export const QueryResultSchema = z.union([
   z.array(z.any()), // SELECT results
-  z.boolean(),      // ASK results
+  z.boolean(), // ASK results
   z.array(z.any()), // CONSTRUCT/DESCRIBE results
 ]);
 
@@ -169,11 +169,7 @@ export const createStore = withReceipt(createStoreImpl, {
 export const query = withReceipt(queryImpl, {
   operation: 'sparql-query',
   profile: 'query',
-  inputSchema: z.tuple([
-    z.instanceof(OxigraphStore),
-    z.string(),
-    QueryOptionsSchema.optional(),
-  ]),
+  inputSchema: z.tuple([z.instanceof(OxigraphStore), z.string(), QueryOptionsSchema.optional()]),
   outputSchema: QueryResultSchema,
 });
 

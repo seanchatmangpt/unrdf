@@ -24,7 +24,13 @@
  * @param {number} params.passes - Number of compilation passes
  * @returns {Promise<CompilationResult>}
  */
-export async function compileWithSwiftLatex({ engine, vfs, entry, cacheDir: _cacheDir, passes: _passes }) {
+export async function compileWithSwiftLatex({
+  engine,
+  vfs,
+  entry,
+  cacheDir: _cacheDir,
+  passes: _passes,
+}) {
   // Stub implementation - SwiftLaTeX integration pending
   // Check if entry exists in VFS
   if (!vfs.has(entry)) {
@@ -37,8 +43,22 @@ export async function compileWithSwiftLatex({ engine, vfs, entry, cacheDir: _cac
   // Stub: Generate minimal PDF bytes for testing
   // Real implementation will invoke SwiftLaTeX WASM module
   const stubPdfBytes = new Uint8Array([
-    0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, // %PDF-1.4
-    0x0a, 0x25, 0xc2, 0xa5, 0xc2, 0xb1, 0xc3, 0xab, // binary marker
+    0x25,
+    0x50,
+    0x44,
+    0x46,
+    0x2d,
+    0x31,
+    0x2e,
+    0x34, // %PDF-1.4
+    0x0a,
+    0x25,
+    0xc2,
+    0xa5,
+    0xc2,
+    0xb1,
+    0xc3,
+    0xab, // binary marker
   ]);
 
   return {

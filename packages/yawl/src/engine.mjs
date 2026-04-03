@@ -20,13 +20,7 @@ import { buildReceipt } from './receipt.mjs';
 import { YAWL_EVENT_TYPES } from './events/yawl-events.mjs';
 
 // Import core and mixins
-import {
-  EngineCore,
-  YAWL_NS,
-  YAWL_GRAPHS,
-  ENGINE_EVENTS,
-  HealthStatus,
-} from './engine-core.mjs';
+import { EngineCore, YAWL_NS, YAWL_GRAPHS, ENGINE_EVENTS, HealthStatus } from './engine-core.mjs';
 import { withEvents } from './engine-events.mjs';
 import { withHooks } from './engine-hooks.mjs';
 import { withHealth } from './engine-health.mjs';
@@ -50,13 +44,7 @@ import { withQueries } from './engine-queries.mjs';
  * - TaskExecution (this class - case and task lifecycle methods)
  */
 class WorkflowEngine extends withQueries(
-  withSnapshots(
-    withHealth(
-      withHooks(
-        withEvents(EngineCore)
-      )
-    )
-  )
+  withSnapshots(withHealth(withHooks(withEvents(EngineCore))))
 ) {
   // ===========================================================================
   // Case Management
@@ -82,10 +70,7 @@ class WorkflowEngine extends withQueries(
     }
 
     const caseId = options.caseId || randomUUID();
-    const yawlCase = new YawlCase(
-      { id: caseId, workflowId, data: initialData },
-      workflow
-    );
+    const yawlCase = new YawlCase({ id: caseId, workflowId, data: initialData }, workflow);
 
     this.cases.set(caseId, yawlCase);
     this._stats.casesCreated++;
@@ -165,14 +150,15 @@ class WorkflowEngine extends withQueries(
     }
 
     // Run pre-enablement hook if policy pack exists
-    const validation = await this._executeValidationHook(
-      yawlCase.workflowId,
-      taskId,
-      { caseId, actor }
-    );
+    const validation = await this._executeValidationHook(yawlCase.workflowId, taskId, {
+      caseId,
+      actor,
+    });
 
     if (!validation.valid) {
-      throw new Error(`Task enablement denied: ${validation.receipt?.justification?.reason || 'Unknown'}`);
+      throw new Error(
+        `Task enablement denied: ${validation.receipt?.justification?.reason || 'Unknown'}`
+      );
     }
 
     const result = await yawlCase.enableTask(taskId, actor);
@@ -264,10 +250,14 @@ class WorkflowEngine extends withQueries(
     });
 
     if (this.enableEventLog) {
-      await this._logTaskEvent(YAWL_EVENT_TYPES.TASK_STARTED, {
-        workItemId,
-        startedAt: toISO(result.task.startedAt),
-      }, caseId);
+      await this._logTaskEvent(
+        YAWL_EVENT_TYPES.TASK_STARTED,
+        {
+          workItemId,
+          startedAt: toISO(result.task.startedAt),
+        },
+        caseId
+      );
     }
 
     this.emit(ENGINE_EVENTS.TASK_STARTED, {
@@ -330,11 +320,12 @@ class WorkflowEngine extends withQueries(
     const taskDefId = yawlCase.getTaskDefIdForWorkItem(workItemId);
 
     // Run post-completion hook if policy pack exists
-    const hookRouting = await this._executeRoutingHook(
-      yawlCase.workflowId,
-      taskDefId,
-      { caseId, actor, output, env: output }
-    );
+    const hookRouting = await this._executeRoutingHook(yawlCase.workflowId, taskDefId, {
+      caseId,
+      actor,
+      output,
+      env: output,
+    });
 
     const result = await yawlCase.completeTask(workItemId, output, actor);
 
@@ -352,11 +343,15 @@ class WorkflowEngine extends withQueries(
     });
 
     if (this.enableEventLog) {
-      await this._logTaskEvent(YAWL_EVENT_TYPES.TASK_COMPLETED, {
-        workItemId,
-        completedAt: toISO(result.task.completedAt),
-        result: output,
-      }, caseId);
+      await this._logTaskEvent(
+        YAWL_EVENT_TYPES.TASK_COMPLETED,
+        {
+          workItemId,
+          completedAt: toISO(result.task.completedAt),
+          result: output,
+        },
+        caseId
+      );
     }
 
     this.emit(ENGINE_EVENTS.TASK_COMPLETED, {
@@ -435,12 +430,7 @@ class WorkflowEngine extends withQueries(
     const taskDefId = yawlCase.getTaskDefIdForWorkItem(workItemId);
 
     // Handle cancellation propagation if policy pack exists
-    this._executeCancellationHook(
-      yawlCase.workflowId,
-      taskDefId,
-      reason,
-      { caseId, actor }
-    );
+    this._executeCancellationHook(yawlCase.workflowId, taskDefId, reason, { caseId, actor });
 
     this._appendEvent({
       type: 'TASK_CANCELLED',
@@ -451,11 +441,15 @@ class WorkflowEngine extends withQueries(
     });
 
     if (this.enableEventLog) {
-      await this._logTaskEvent(YAWL_EVENT_TYPES.TASK_CANCELLED, {
-        workItemId,
-        cancelledAt: toISO(now()),
-        reason: reason || 'No reason provided',
-      }, caseId);
+      await this._logTaskEvent(
+        YAWL_EVENT_TYPES.TASK_CANCELLED,
+        {
+          workItemId,
+          cancelledAt: toISO(now()),
+          reason: reason || 'No reason provided',
+        },
+        caseId
+      );
     }
 
     this.emit(ENGINE_EVENTS.TASK_CANCELLED, {
@@ -902,7 +896,7 @@ class WorkflowEngine extends withQueries(
     }
 
     // Wrap callback to handle async execution
-    const asyncHandler = async (event) => {
+    const asyncHandler = async event => {
       try {
         await Promise.resolve(callback(event));
       } catch (error) {
@@ -1155,7 +1149,10 @@ class WorkflowEngine extends withQueries(
       for (let i = 0; i < hashes.length; i += 2) {
         const left = hashes[i];
         const right = hashes[i + 1] || left;
-        const combined = crypto.createHash('sha256').update(left + right).digest('hex');
+        const combined = crypto
+          .createHash('sha256')
+          .update(left + right)
+          .digest('hex');
         newHashes.push(combined);
       }
       hashes.length = 0;
@@ -1258,8 +1255,14 @@ class WorkflowEngine extends withQueries(
         tasksPerSecond: (this._stats.tasksCompleted / (uptimeMs / 1000)).toFixed(2),
       },
       queueDepth: {
-        enabledTasks: this.getRunningCases().reduce((sum, c) => sum + c.getEnabledWorkItems().length, 0),
-        activeTasks: this.getRunningCases().reduce((sum, c) => sum + c.getActiveWorkItems().length, 0),
+        enabledTasks: this.getRunningCases().reduce(
+          (sum, c) => sum + c.getEnabledWorkItems().length,
+          0
+        ),
+        activeTasks: this.getRunningCases().reduce(
+          (sum, c) => sum + c.getActiveWorkItems().length,
+          0
+        ),
       },
     };
   }
@@ -1308,13 +1311,7 @@ export function createWorkflowEngine(config = {}) {
 // Exports
 // =============================================================================
 
-export {
-  WorkflowEngine,
-  YAWL_NS,
-  YAWL_GRAPHS,
-  ENGINE_EVENTS,
-  HealthStatus,
-};
+export { WorkflowEngine, YAWL_NS, YAWL_GRAPHS, ENGINE_EVENTS, HealthStatus };
 
 export default {
   WorkflowEngine,

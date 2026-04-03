@@ -29,11 +29,7 @@ import {
   performResourceAllocation,
   performResourceDeallocation,
 } from './yawl-resources-allocation.mjs';
-import {
-  PolicyPackSchema,
-  ResourceSchema,
-  WorkItemSchema,
-} from './yawl-resources-types.mjs';
+import { PolicyPackSchema, ResourceSchema, WorkItemSchema } from './yawl-resources-types.mjs';
 
 /* ========================================================================= */
 /* Re-export Type Definitions for Backward Compatibility                    */
@@ -169,10 +165,10 @@ export class YawlResourceManager {
    * @returns {PolicyPack[]}
    */
   listPolicyPacks() {
-    return Array.from(this.#policyPacks.values())
-      .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    return Array.from(this.#policyPacks.values()).sort(
+      (a, b) => (b.priority || 0) - (a.priority || 0)
+    );
   }
-
 
   /* ----------------------------------------------------------------------- */
   /* Resource Allocation                                                     */
@@ -261,7 +257,11 @@ export class YawlResourceManager {
    * Get current capacity status for a resource
    */
   getCapacityStatus(resourceId) {
-    return getResourceCapacityStatus(this.#store, resourceId, this.#countActiveAllocations.bind(this));
+    return getResourceCapacityStatus(
+      this.#store,
+      resourceId,
+      this.#countActiveAllocations.bind(this)
+    );
   }
 
   /**

@@ -39,7 +39,7 @@ const CompileOptionsSchema = z.object({
   entry: z.string().min(1),
   passes: z.number().int().min(1).max(5).default(2),
   args: z.array(z.string()).default([]),
-  verbose: z.boolean().default(false)
+  verbose: z.boolean().default(false),
 });
 
 // =============================================================================
@@ -116,13 +116,13 @@ export async function runEngine(engine, options) {
 
   throw new Error(
     `Engine execution not implemented.\n\n` +
-    `This function requires a working engine instance from loadEngine().\n` +
-    `See: packages/kgc-cli/src/lib/latex/engine/load.mjs\n\n` +
-    `Expected API:\n` +
-    `  - engine.writeFile(path, content)\n` +
-    `  - engine.setMainFile(entry)\n` +
-    `  - engine.compile(options)\n` +
-    `  - engine.readFile(path)\n`
+      `This function requires a working engine instance from loadEngine().\n` +
+      `See: packages/kgc-cli/src/lib/latex/engine/load.mjs\n\n` +
+      `Expected API:\n` +
+      `  - engine.writeFile(path, content)\n` +
+      `  - engine.setMainFile(entry)\n` +
+      `  - engine.compile(options)\n` +
+      `  - engine.readFile(path)\n`
   );
 }
 
@@ -137,21 +137,15 @@ export function parseLog(log) {
   const missingInputs = [];
 
   // Error patterns
-  const errorPatterns = [
-    /^! LaTeX Error: (.+)$/gm,
-    /^! (.+)$/gm
-  ];
+  const errorPatterns = [/^! LaTeX Error: (.+)$/gm, /^! (.+)$/gm];
 
   // Warning patterns
-  const warningPatterns = [
-    /^LaTeX Warning: (.+)$/gm,
-    /^Package \w+ Warning: (.+)$/gm
-  ];
+  const warningPatterns = [/^LaTeX Warning: (.+)$/gm, /^Package \w+ Warning: (.+)$/gm];
 
   // Missing file patterns
   const missingPatterns = [
     /! LaTeX Error: File `([^']+)' not found/g,
-    /! I can't find file `([^']+)'/g
+    /! I can't find file `([^']+)'/g,
   ];
 
   for (const pattern of errorPatterns) {
@@ -198,7 +192,5 @@ Hello World from KGC CLI!
 \\end{document}
 `;
 
-  return new Map([
-    ['main.tex', encoder.encode(content || defaultContent)]
-  ]);
+  return new Map([['main.tex', encoder.encode(content || defaultContent)]]);
 }

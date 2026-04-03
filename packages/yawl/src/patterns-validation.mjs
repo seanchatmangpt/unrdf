@@ -280,7 +280,7 @@ export function validateNoCycles(flows) {
   if (result.hasCycle) {
     errors.push(
       `Invalid cycle detected: ${result.cycleNodes.join(' -> ')}. ` +
-      `Mark cycle flows with isCycle: true or restructure workflow.`
+        `Mark cycle flows with isCycle: true or restructure workflow.`
     );
   }
 

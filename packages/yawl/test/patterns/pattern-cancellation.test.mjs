@@ -1,5 +1,12 @@
-
-import { createTestWorkflow, createTestEngine, measureTime, SPLIT_TYPE, JOIN_TYPE, sequence, deferredChoice } from './test-utils.mjs';
+import {
+  createTestWorkflow,
+  createTestEngine,
+  measureTime,
+  SPLIT_TYPE,
+  JOIN_TYPE,
+  sequence,
+  deferredChoice,
+} from './test-utils.mjs';
 
 /**
  * YAWL Workflow Patterns Test Suite
@@ -19,7 +26,6 @@ import { createTestWorkflow, createTestEngine, measureTime, SPLIT_TYPE, JOIN_TYP
  * - Receipts: Hashes, SPARQL, actor/timestamp, chain verification
  * - Integration: Full lifecycle, error paths, resource contention
  */
-
 
 describe('Cancellation Tests', () => {
   let engine;

@@ -50,8 +50,8 @@ export function sanitizeURL(url, allowedDomains = []) {
 
     // Check domain whitelist if provided
     if (allowedDomains.length > 0) {
-      const isAllowed = allowedDomains.some(domain =>
-        parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`)
+      const isAllowed = allowedDomains.some(
+        domain => parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`)
       );
 
       if (!isAllowed) {
@@ -154,7 +154,7 @@ export class RateLimiter {
     return {
       count: bucket.count,
       remaining: Math.max(0, this.maxRequests - bucket.count),
-      resetAt: bucket.resetAt
+      resetAt: bucket.resetAt,
     };
   }
 
@@ -288,10 +288,11 @@ export async function hashPassword(password, salt = null) {
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(password, actualSalt, 100000, 64, 'sha512', (err, derivedKey) => {
       if (err) reject(err);
-      else resolve({
-        hash: derivedKey.toString('hex'),
-        salt: actualSalt
-      });
+      else
+        resolve({
+          hash: derivedKey.toString('hex'),
+          salt: actualSalt,
+        });
     });
   });
 }
@@ -307,10 +308,7 @@ export async function hashPassword(password, salt = null) {
  */
 export async function verifyPassword(password, hash, salt) {
   const { hash: computedHash } = await hashPassword(password, salt);
-  return crypto.timingSafeEqual(
-    Buffer.from(hash, 'hex'),
-    Buffer.from(computedHash, 'hex')
-  );
+  return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(computedHash, 'hex'));
 }
 
 /**
@@ -323,7 +321,8 @@ export async function verifyPassword(password, hash, salt) {
 export function getSecurityHeaders() {
   return {
     // Prevent XSS attacks
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
@@ -339,7 +338,7 @@ export function getSecurityHeaders() {
     'X-Permitted-Cross-Domain-Policies': 'none',
     'Cross-Origin-Embedder-Policy': 'require-corp',
     'Cross-Origin-Opener-Policy': 'same-origin',
-    'Cross-Origin-Resource-Policy': 'same-origin'
+    'Cross-Origin-Resource-Policy': 'same-origin',
   };
 }
 
@@ -362,14 +361,11 @@ export function validateInput(input) {
   const sqlPatterns = [
     /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE)\b)/i,
     /(--|;|\/\*|\*\/)/,
-    /('|(\\'))/
+    /('|(\\'))/,
   ];
 
   // Command injection patterns
-  const cmdPatterns = [
-    /[;&|`$()]/,
-    /\n|\r/
-  ];
+  const cmdPatterns = [/[;&|`$()]/, /\n|\r/];
 
   // Check for SQL injection
   if (sqlPatterns.some(pattern => pattern.test(input))) {
@@ -388,6 +384,6 @@ export function validateInput(input) {
 
   return {
     valid: issues.length === 0,
-    issues
+    issues,
   };
 }

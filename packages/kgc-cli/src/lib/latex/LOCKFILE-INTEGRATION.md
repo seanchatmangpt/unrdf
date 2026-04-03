@@ -106,7 +106,7 @@ async function resolveInput(inputName, sourceUrl, lock, cacheDir) {
     inputName,
     hash,
     sourceUrl,
-    cachedPath
+    cachedPath,
   });
 
   return cachedPath;
@@ -207,6 +207,7 @@ try {
 ## Performance Impact
 
 ### Without Lockfile
+
 ```
 Build 1: Resolve 15 files → 15 network calls → 8.3s
 Build 2: Resolve 15 files → 15 network calls → 8.1s
@@ -214,6 +215,7 @@ Build 3: Resolve 15 files → 15 network calls → 8.4s
 ```
 
 ### With Lockfile
+
 ```
 Build 1: Resolve 15 files → 15 network calls → 8.3s → Create lock
 Build 2: Resolve 15 files → 0 network calls  → 0.4s → Reuse lock
@@ -276,28 +278,31 @@ if (oldLock && oldLock.engine === 'pdftex') {
 ## Definition of Done Checklist
 
 ### ✅ Determinism
+
 - [x] Running build twice yields identical lockfile (except timestamps)
 - [x] Lockfile has stable JSON format (sorted keys)
 - [x] Hash validation prevents cache corruption
 
 ### ✅ Lock Entry Usage
+
 - [x] If lock has entry, resolver uses it
 - [x] Resolver validates hash before using cached file
 - [x] Hash mismatch triggers re-resolution
 
 ### ✅ Performance
+
 - [x] Lock prevents unnecessary network calls
 - [x] Cache hits skip file fetching entirely
 - [x] Subsequent builds are 20x faster (0 network calls)
 
 ## Integration Points Summary
 
-| Component | Responsibility | Integration Point |
-|-----------|----------------|-------------------|
+| Component              | Responsibility  | Integration Point                            |
+| ---------------------- | --------------- | -------------------------------------------- |
 | **Resolver (Agent 4)** | File resolution | `resolveInput()` checks lock before fetching |
-| **Cache Manager** | File storage | Provides `cachedPath` to record in lock |
-| **Build Orchestrator** | Lifecycle | Loads lock at start, saves at end |
-| **Hash Validator** | Integrity check | `validateCachedFile()` before reuse |
+| **Cache Manager**      | File storage    | Provides `cachedPath` to record in lock      |
+| **Build Orchestrator** | Lifecycle       | Loads lock at start, saves at end            |
+| **Hash Validator**     | Integrity check | `validateCachedFile()` before reuse          |
 
 ## Testing
 
@@ -309,6 +314,7 @@ timeout 5s node --test src/lib/latex/latex-lock.test.mjs
 ```
 
 Expected output:
+
 ```
 ✔ LaTeX Lockfile > createLatexLock > creates valid lockfile with default engine
 ✔ LaTeX Lockfile > recordResolvedInput > records input with all fields
@@ -321,12 +327,12 @@ Expected output:
 
 ## Adversarial PM Questions ✓
 
-| Claim | Evidence | Status |
-|-------|----------|--------|
+| Claim                       | Evidence                                       | Status      |
+| --------------------------- | ---------------------------------------------- | ----------- |
 | "Lockfile is deterministic" | Tests show identical output (minus timestamps) | ✅ VERIFIED |
-| "Hash validation works" | `validateCachedFile()` test passes | ✅ VERIFIED |
-| "Prevents network calls" | Integration test shows cache hit path | ✅ VERIFIED |
-| "Stable JSON format" | Tests verify sorted keys | ✅ VERIFIED |
-| "Round-trip integrity" | Load/save test passes | ✅ VERIFIED |
+| "Hash validation works"     | `validateCachedFile()` test passes             | ✅ VERIFIED |
+| "Prevents network calls"    | Integration test shows cache hit path          | ✅ VERIFIED |
+| "Stable JSON format"        | Tests verify sorted keys                       | ✅ VERIFIED |
+| "Round-trip integrity"      | Load/save test passes                          | ✅ VERIFIED |
 
 **Proof Required:** Run `timeout 5s node --test src/lib/latex/latex-lock.test.mjs` and show output with ✅.

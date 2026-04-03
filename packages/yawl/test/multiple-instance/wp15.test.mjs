@@ -79,9 +79,7 @@ describe('DynamicBarrier', () => {
     });
 
     it('should throw when marking unknown instance', async () => {
-      await expect(
-        barrier.markComplete('unknown')
-      ).rejects.toThrow('not found');
+      await expect(barrier.markComplete('unknown')).rejects.toThrow('not found');
     });
   });
 
@@ -257,7 +255,7 @@ describe('DynamicMIController', () => {
   const createTestTask = (delayMs = 0, shouldFail = false) => ({
     id: 'test-task',
     name: 'Test Task',
-    handler: async (data) => {
+    handler: async data => {
       if (delayMs > 0) {
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
@@ -315,9 +313,7 @@ describe('DynamicMIController', () => {
     it('should reject adding instance after signal', async () => {
       await controller.signalComplete();
 
-      await expect(
-        controller.addInstance({ id: 1 })
-      ).rejects.toThrow('signaled as complete');
+      await expect(controller.addInstance({ id: 1 })).rejects.toThrow('signaled as complete');
     });
   });
 
@@ -422,7 +418,7 @@ describe('DynamicMIController', () => {
       const partialFailTask = {
         id: 'partial-fail',
         name: 'Partial Fail',
-        handler: async (data) => {
+        handler: async data => {
           if (data.id === 2) {
             throw new Error('Failed on 2');
           }
@@ -474,9 +470,7 @@ describe('DynamicMIController', () => {
     it('should reject adding after cancel', async () => {
       await controller.cancel();
 
-      await expect(
-        controller.addInstance({ id: 1 })
-      ).rejects.toThrow('cancelled');
+      await expect(controller.addInstance({ id: 1 })).rejects.toThrow('cancelled');
     });
 
     it('should be idempotent for cancel', async () => {
@@ -625,7 +619,7 @@ describe('Edge Cases and Coverage', () => {
   const createTestTask = (delayMs = 0, shouldFail = false) => ({
     id: 'test-task',
     name: 'Test Task',
-    handler: async (data) => {
+    handler: async data => {
       if (delayMs > 0) {
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
@@ -663,10 +657,7 @@ describe('Edge Cases and Coverage', () => {
       receipts: false,
     });
     const customId = 'custom-instance-123';
-    const instanceId = await customController.addInstance(
-      { id: 1 },
-      { instanceId: customId }
-    );
+    const instanceId = await customController.addInstance({ id: 1 }, { instanceId: customId });
 
     expect(instanceId).toBe(customId);
     expect(customController.getInstance(customId)).toBeDefined();
@@ -676,7 +667,7 @@ describe('Edge Cases and Coverage', () => {
     const mixedTask = {
       id: 'mixed',
       name: 'Mixed',
-      handler: async (data) => {
+      handler: async data => {
         if (data.id === 2) throw new Error('Fail');
         return { id: data.id };
       },

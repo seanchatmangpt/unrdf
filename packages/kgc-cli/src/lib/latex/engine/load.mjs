@@ -43,7 +43,7 @@ import { z } from 'zod';
 const EngineOptionsSchema = z.object({
   engine: z.enum(['pdftex', 'xetex']).default('pdftex'),
   vendorDir: z.string().optional(),
-  verbose: z.boolean().default(false)
+  verbose: z.boolean().default(false),
 });
 
 // =============================================================================
@@ -83,7 +83,7 @@ async function checkWasmAvailability(vendorDir) {
         available: false,
         wasmPath,
         jsPath,
-        error: 'WASM binaries are placeholders. Run: node scripts/vendor-tex-engine.mjs'
+        error: 'WASM binaries are placeholders. Run: node scripts/vendor-tex-engine.mjs',
       };
     }
 
@@ -93,7 +93,7 @@ async function checkWasmAvailability(vendorDir) {
       available: false,
       wasmPath,
       jsPath,
-      error: 'WASM binaries not found. Run: node scripts/vendor-tex-engine.mjs'
+      error: 'WASM binaries not found. Run: node scripts/vendor-tex-engine.mjs',
     };
   }
 }
@@ -136,12 +136,12 @@ export async function loadEngine(options = {}) {
   if (!available) {
     throw new Error(
       `SwiftLaTeX WASM engine not available.\n\n` +
-      `Error: ${error}\n\n` +
-      `Expected files:\n` +
-      `  - ${wasmPath}\n` +
-      `  - ${jsPath}\n\n` +
-      `To install:\n` +
-      `  node packages/kgc-cli/scripts/vendor-tex-engine.mjs\n`
+        `Error: ${error}\n\n` +
+        `Expected files:\n` +
+        `  - ${wasmPath}\n` +
+        `  - ${jsPath}\n\n` +
+        `To install:\n` +
+        `  node packages/kgc-cli/scripts/vendor-tex-engine.mjs\n`
     );
   }
 
@@ -179,16 +179,16 @@ export async function loadEngine(options = {}) {
 
   throw new Error(
     `SwiftLaTeX WASM engine loading not yet implemented for Node.js.\n\n` +
-    `The WASM binaries are available at: ${vendorDir}\n` +
-    `But Node.js adaptation requires:\n` +
-    `  1. XMLHttpRequest polyfill or fetch replacement\n` +
-    `  2. Web Worker → direct Module call adaptation\n` +
-    `  3. Emscripten FS integration with VFS\n\n` +
-    `Alternative approaches:\n` +
-    `  A. Use latexjs (npm package, Emscripten-based)\n` +
-    `  B. Shell out to system pdflatex (requires TeX install)\n` +
-    `  C. Complete SwiftLaTeX Node.js adapter (significant effort)\n\n` +
-    `See: packages/kgc-cli/vendor/swiftlatex/README.md for details`
+      `The WASM binaries are available at: ${vendorDir}\n` +
+      `But Node.js adaptation requires:\n` +
+      `  1. XMLHttpRequest polyfill or fetch replacement\n` +
+      `  2. Web Worker → direct Module call adaptation\n` +
+      `  3. Emscripten FS integration with VFS\n\n` +
+      `Alternative approaches:\n` +
+      `  A. Use latexjs (npm package, Emscripten-based)\n` +
+      `  B. Shell out to system pdflatex (requires TeX install)\n` +
+      `  C. Complete SwiftLaTeX Node.js adapter (significant effort)\n\n` +
+      `See: packages/kgc-cli/vendor/swiftlatex/README.md for details`
   );
 }
 
@@ -203,7 +203,7 @@ export async function checkEngineAvailability() {
   return {
     available,
     engine: 'swiftlatex',
-    ...(error && { error })
+    ...(error && { error }),
   };
 }
 
@@ -219,7 +219,7 @@ export async function getEngineInfo() {
     engine: 'swiftlatex',
     available,
     vendorDir,
-    files: { wasm: wasmPath, js: jsPath }
+    files: { wasm: wasmPath, js: jsPath },
   };
 
   if (error) {

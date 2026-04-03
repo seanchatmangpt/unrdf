@@ -32,9 +32,7 @@ describe('Resolver with Retry Logic', () => {
   describe('VFS Augmentation', () => {
     it('should merge resolved files into VFS', () => {
       const vfs = { 'work/main.tex': new Uint8Array([1, 2]) };
-      const resolvedMap = new Map([
-        ['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])],
-      ]);
+      const resolvedMap = new Map([['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])]]);
 
       const result = augmentVfsWithResolvedPackages(vfs, resolvedMap);
 
@@ -46,9 +44,7 @@ describe('Resolver with Retry Logic', () => {
 
     it('should not mutate input VFS', () => {
       const vfs = { 'work/main.tex': new Uint8Array([1, 2]) };
-      const resolvedMap = new Map([
-        ['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])],
-      ]);
+      const resolvedMap = new Map([['texmf/tex/latex/test/test.sty', new Uint8Array([3, 4])]]);
 
       const result = augmentVfsWithResolvedPackages(vfs, resolvedMap);
 

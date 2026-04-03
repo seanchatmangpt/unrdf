@@ -8,13 +8,7 @@ import { z } from 'zod';
 /**
  * RDF Format enumeration
  */
-export const RdfFormatSchema = z.enum([
-  'turtle',
-  'ntriples',
-  'nquads',
-  'trig',
-  'jsonld',
-]);
+export const RdfFormatSchema = z.enum(['turtle', 'ntriples', 'nquads', 'trig', 'jsonld']);
 
 /**
  * Base serializer options
@@ -94,7 +88,11 @@ export const StreamSerializerOptionsSchema = BaseSerializerOptionsSchema.extend(
  */
 export const BatchSerializerOptionsSchema = BaseSerializerOptionsSchema.extend({
   /** Maximum batch size in bytes */
-  maxBatchSize: z.number().int().positive().default(1024 * 1024), // 1MB
+  maxBatchSize: z
+    .number()
+    .int()
+    .positive()
+    .default(1024 * 1024), // 1MB
 
   /** Parallel serialization workers */
   parallel: z.number().int().positive().max(10).default(4),

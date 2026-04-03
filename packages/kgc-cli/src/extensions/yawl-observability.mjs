@@ -10,12 +10,12 @@ const extension = {
         trace: {
           description: 'Trace workflow execution',
           argsSchema: z.object({ executionId: z.string() }),
-          handler: async (args) => ({ executionId: args.executionId, spans: [] })
-        }
-      }
-    }
+          handler: async args => ({ executionId: args.executionId, spans: [] }),
+        },
+      },
+    },
   },
-  priority: 32
+  priority: 32,
 };
 
 export default extension;

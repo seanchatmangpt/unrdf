@@ -33,28 +33,16 @@ export {
 } from './sync-protocol.mjs';
 
 // Validation
-export {
-  validateShacl,
-  validateQuad,
-} from './validate.mjs';
+export { validateShacl, validateQuad } from './validate.mjs';
 
 // Observability
-export {
-  createObservabilityManager,
-} from './observability.mjs';
+export { createObservabilityManager } from './observability.mjs';
 
 // RDF Stream Parser (V6 Features)
-export {
-  RDFStreamParser,
-  createRDFStreamParser,
-  parseRDFStream,
-} from './rdf-stream-parser.mjs';
+export { RDFStreamParser, createRDFStreamParser, parseRDFStream } from './rdf-stream-parser.mjs';
 
 // Performance Monitor (V6 Features)
-export {
-  PerformanceMonitor,
-  createPerformanceMonitor,
-} from './performance-monitor.mjs';
+export { PerformanceMonitor, createPerformanceMonitor } from './performance-monitor.mjs';
 
 // Benchmarks
 export {

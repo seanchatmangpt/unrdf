@@ -91,6 +91,7 @@ $ timeout 10s node --test src/lib/latex/cache/*.test.mjs
 ```
 
 **Evidence**:
+
 - ✅ 33/33 tests passing (100%)
 - ✅ All test suites passing
 - ✅ Execution time: ~830ms (well under 5s SLA)
@@ -120,6 +121,7 @@ $ timeout 10s node --test src/lib/latex/cache/*.test.mjs
 ```
 
 **Validation**:
+
 - ✅ Zod schema enforcement
 - ✅ Sorted keys (deterministic diffs)
 - ✅ SHA-256 hashes (64 hex chars)
@@ -145,7 +147,7 @@ import {
   listEntries,
   mergeLockfiles,
   pruneLockfile,
-  createLockEntry
+  createLockEntry,
 } from './cache/lockfile.mjs';
 
 // Create new lockfile
@@ -154,9 +156,9 @@ const lockfile = createLockfile('xetex');
 // Add entry
 const entry = createLockEntry({
   name: 'hyperref.sty',
-  content: packageContent,  // Uint8Array
+  content: packageContent, // Uint8Array
   cachedPath: 'packages/hyperref/hyperref.sty',
-  sourceUrl: 'https://ctan.org/...'
+  sourceUrl: 'https://ctan.org/...',
 });
 addEntry(lockfile, entry);
 
@@ -164,10 +166,7 @@ addEntry(lockfile, entry);
 await saveLockfile('/path/to/latex.lock.json', lockfile);
 
 // Verify integrity
-const { valid, invalid, missing } = await verifyAllEntries(
-  lockfile,
-  '.latex-cache'
-);
+const { valid, invalid, missing } = await verifyAllEntries(lockfile, '.latex-cache');
 ```
 
 ### Cache Store Operations
@@ -179,16 +178,11 @@ import {
   listCached,
   getCacheStats,
   clearCache,
-  verifyCached
+  verifyCached,
 } from './cache/store.mjs';
 
 // Store file
-const relativePath = await setCached(
-  cacheDir,
-  'hyperref.sty',
-  hash,
-  content
-);
+const relativePath = await setCached(cacheDir, 'hyperref.sty', hash, content);
 
 // Retrieve with hash verification
 const content = await getCached(cacheDir, 'hyperref.sty', hash);
@@ -200,25 +194,13 @@ const { fileCount, totalSize } = await getCacheStats(cacheDir);
 ### Bundle Operations
 
 ```javascript
-import {
-  exportBundle,
-  importBundle,
-  verifyBundle,
-  listBundle
-} from './cache/bundle.mjs';
+import { exportBundle, importBundle, verifyBundle, listBundle } from './cache/bundle.mjs';
 
 // Export bundle
-const manifest = await exportBundle(
-  lockfile,
-  '.latex-cache',
-  './bundle-output'
-);
+const manifest = await exportBundle(lockfile, '.latex-cache', './bundle-output');
 
 // Import bundle
-const { imported, skipped, failed } = await importBundle(
-  './bundle-input',
-  '.latex-cache'
-);
+const { imported, skipped, failed } = await importBundle('./bundle-input', '.latex-cache');
 
 // Verify bundle
 const { valid, invalid, missing } = await verifyBundle('./bundle-input');
@@ -249,16 +231,19 @@ const { valid, invalid, missing } = await verifyBundle('./bundle-input');
 ## 🔒 Security & Integrity
 
 ### Hash Verification
+
 - **Algorithm**: SHA-256 (node:crypto)
 - **When**: Every get/set operation
 - **Enforcement**: Rejects mismatches (throws error)
 
 ### Fail-Safe Design
+
 - Invalid lockfile → returns `null` (not error)
 - Missing files → returns `null` (not error)
 - Hash mismatch → returns `null` (warns to console)
 
 ### Validation
+
 - **Zod schemas**: Compile-time + runtime validation
 - **Type safety**: JSDoc annotations for IDE support
 - **Deterministic output**: Sorted keys for stable diffs
@@ -267,16 +252,16 @@ const { valid, invalid, missing } = await verifyBundle('./bundle-input');
 
 ## 📊 Performance Metrics
 
-| Operation | File Count | Time | SLA |
-|-----------|-----------|------|-----|
-| Create lockfile | - | <1ms | ✅ |
-| Load lockfile | 100 entries | 1-5ms | ✅ |
-| Save lockfile | 100 entries | 2-8ms | ✅ |
-| Verify entry | 1 file | 5-10ms | ✅ |
-| Verify all | 100 files | ~50ms | ✅ |
-| Export bundle | 100 files | ~200ms | ✅ |
-| Import bundle | 100 files | ~300ms | ✅ |
-| Run all tests | 33 tests | 830ms | ✅ (SLA: 5s) |
+| Operation       | File Count  | Time   | SLA          |
+| --------------- | ----------- | ------ | ------------ |
+| Create lockfile | -           | <1ms   | ✅           |
+| Load lockfile   | 100 entries | 1-5ms  | ✅           |
+| Save lockfile   | 100 entries | 2-8ms  | ✅           |
+| Verify entry    | 1 file      | 5-10ms | ✅           |
+| Verify all      | 100 files   | ~50ms  | ✅           |
+| Export bundle   | 100 files   | ~200ms | ✅           |
+| Import bundle   | 100 files   | ~300ms | ✅           |
+| Run all tests   | 33 tests    | 830ms  | ✅ (SLA: 5s) |
 
 **SLA Compliance**: All operations <5s (most <100ms)
 
@@ -285,27 +270,32 @@ const { valid, invalid, missing } = await verifyBundle('./bundle-input');
 ## 🎓 Engineering Standards Met
 
 ### ✅ ESM Only (.mjs)
+
 - All modules use ES modules
 - Proper import/export syntax
 - No CommonJS
 
 ### ✅ Zod Validation
+
 - `LockfileSchema` for lockfile structure
 - `LockEntrySchema` for individual entries
 - `BundleManifestSchema` for bundle metadata
 
 ### ✅ Deterministic JSON
+
 - Sorted keys (alphabetically)
 - 2-space indentation
 - Trailing newline
 - Stable git diffs
 
 ### ✅ node:crypto Hashing
+
 - SHA-256 algorithm
 - Hex-encoded output (64 chars)
 - Consistent across all modules
 
 ### ✅ Error Handling
+
 - Try-catch with proper error messages
 - Fail-safe design (return null, not throw)
 - Console warnings for hash mismatches
@@ -316,21 +306,25 @@ const { valid, invalid, missing } = await verifyBundle('./bundle-input');
 ## 🔗 Integration Points
 
 ### Agent 4 (Resolver)
+
 - Uses `createLockEntry()` after downloading packages
 - Calls `addEntry()` to record resolved inputs
 - Calls `saveLockfile()` after resolution complete
 
 ### Agent 6 (Compiler)
+
 - Calls `loadLockfile()` before compilation
 - Uses `getEntry()` to check if package cached
 - Calls `getCached()` to retrieve cached files
 
 ### Agent 7 (Post-Processor)
+
 - Calls `verifyAllEntries()` after compilation
 - Uses `exportBundle()` for deployment bundles
 - Calls `getCacheStats()` for metrics
 
 ### CLI Commands (Future)
+
 ```bash
 # Add dependencies
 kgc latex cache add --lockfile latex.lock.json
@@ -350,6 +344,7 @@ kgc latex bundle import --bundle ./bundle/ --cache .latex-cache/
 ## 📚 Documentation
 
 ### Schema Documentation
+
 - **LOCKFILE-SCHEMA.md**: 287 lines
 - Complete field descriptions
 - Usage examples
@@ -358,6 +353,7 @@ kgc latex bundle import --bundle ./bundle/ --cache .latex-cache/
 - Migration guide
 
 ### Code Documentation
+
 - **JSDoc annotations**: 100% coverage
 - Type hints for all functions
 - Parameter descriptions
@@ -369,24 +365,28 @@ kgc latex bundle import --bundle ./bundle/ --cache .latex-cache/
 ## 🎯 Adversarial PM Checklist
 
 ### Claims vs Reality
+
 - ✅ **Did I RUN code?** YES - All 33 tests executed
 - ✅ **Did I read FULL output?** YES - Verified 100% pass rate
 - ✅ **What BREAKS if claim wrong?** Tests show hash verification, bundle export/import work
 - ✅ **Can I REPRODUCE from scratch?** YES - Tests are deterministic
 
 ### Evidence Quality
+
 - ✅ **Test output showing success?** YES - 33/33 passing
 - ✅ **File counts with `ls | wc -l`?** YES - 9 files created
 - ✅ **Before/after metrics?** YES - Performance table included
 - ✅ **OTEL spans/logs?** N/A - Pure library code (no OTEL in implementation)
 
 ### Process Quality
+
 - ✅ **Batched operations?** YES - All file writes in parallel
 - ✅ **Timeout all commands?** YES - 10s timeout on tests
 - ✅ **Verified cross-references?** YES - Tests verify lockfile ↔ cache integration
 - ✅ **Measured performance?** YES - 830ms for all tests
 
 ### Red Flags
+
 - ❌ "I think..." → No evidence → **NOT PRESENT**
 - ❌ "Mostly works" → Not acceptable → **NOT PRESENT**
 - ❌ "Code looks good" → Didn't run it → **NOT PRESENT**
@@ -396,17 +396,17 @@ kgc latex bundle import --bundle ./bundle/ --cache .latex-cache/
 
 ## 🏆 Success Criteria
 
-| Criteria | Status | Evidence |
-|----------|--------|----------|
-| Create lockfile.mjs with Zod schemas | ✅ | 467 lines, LockfileSchema + LockEntrySchema |
-| Create store.mjs for cache | ✅ | 237 lines, get/set/list/clear operations |
-| Bundle export/import | ✅ | 253 lines, exportBundle/importBundle/verifyBundle |
-| Document JSON schema | ✅ | LOCKFILE-SCHEMA.md, 287 lines |
-| Hash verification | ✅ | SHA-256 in all modules, tests verify |
-| Deterministic output | ✅ | Sorted keys, stable formatting |
-| 100% test pass rate | ✅ | 33/33 tests passing |
-| <5s execution time | ✅ | 830ms for all tests |
-| ESM + JSDoc + Zod | ✅ | All modules follow standards |
+| Criteria                             | Status | Evidence                                          |
+| ------------------------------------ | ------ | ------------------------------------------------- |
+| Create lockfile.mjs with Zod schemas | ✅     | 467 lines, LockfileSchema + LockEntrySchema       |
+| Create store.mjs for cache           | ✅     | 237 lines, get/set/list/clear operations          |
+| Bundle export/import                 | ✅     | 253 lines, exportBundle/importBundle/verifyBundle |
+| Document JSON schema                 | ✅     | LOCKFILE-SCHEMA.md, 287 lines                     |
+| Hash verification                    | ✅     | SHA-256 in all modules, tests verify              |
+| Deterministic output                 | ✅     | Sorted keys, stable formatting                    |
+| 100% test pass rate                  | ✅     | 33/33 tests passing                               |
+| <5s execution time                   | ✅     | 830ms for all tests                               |
+| ESM + JSDoc + Zod                    | ✅     | All modules follow standards                      |
 
 **Result**: 9/9 criteria met (100%)
 
@@ -434,23 +434,27 @@ Total: 9 files, ~2,000 lines
 ## 🚀 Next Steps (Integration)
 
 ### Agent 4 (Resolver) Integration
+
 1. Import `createLockEntry` and `addEntry`
 2. After downloading package, create lock entry
 3. Add entry to lockfile
 4. Save lockfile after all packages resolved
 
 ### Agent 6 (Compiler) Integration
+
 1. Load lockfile before compilation
 2. Check if packages cached (use `getEntry`)
 3. Retrieve from cache (use `getCached`)
 4. Skip network calls if cached + verified
 
 ### Agent 7 (Post-Processor) Integration
+
 1. Verify all entries after compilation
 2. Export bundle for deployment
 3. Report cache statistics
 
 ### CLI Integration (Future)
+
 1. Create `kgc latex cache` subcommands
 2. Implement `add`, `verify`, `clean` commands
 3. Implement `kgc latex bundle` subcommands
@@ -465,6 +469,7 @@ Total: 9 files, ~2,000 lines
 **Integration Ready**: ✅ YES
 
 **Handoff to**:
+
 - Agent 4 (use lockfile during resolution)
 - Agent 6 (use cache during compilation)
 - Agent 7 (use bundle for deployment)

@@ -92,20 +92,13 @@ function createObservation(probeName, category, observation, value, guardDecisio
  * @returns {Object} Validated observation
  */
 function createErrorObservation(probeName, category, observation, error, guardDecision) {
-  return createObservation(
-    probeName,
-    category,
-    observation,
-    null,
-    guardDecision,
-    {
-      error: {
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
-      },
-    }
-  );
+  return createObservation(probeName, category, observation, null, guardDecision, {
+    error: {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    },
+  });
 }
 
 // =============================================================================
@@ -201,7 +194,15 @@ async function probeBasicPersistence(config) {
       )
     );
   } catch (error) {
-    observations.push(createErrorObservation('persistence', 'storage', 'Basic persistence test failed', error, guardDecision));
+    observations.push(
+      createErrorObservation(
+        'persistence',
+        'storage',
+        'Basic persistence test failed',
+        error,
+        guardDecision
+      )
+    );
   }
 
   return observations;
@@ -272,7 +273,13 @@ async function probeCrossRunPersistence(config) {
     );
   } catch (error) {
     observations.push(
-      createErrorObservation('persistence', 'storage', 'Cross-run persistence test failed', error, guardDecision)
+      createErrorObservation(
+        'persistence',
+        'storage',
+        'Cross-run persistence test failed',
+        error,
+        guardDecision
+      )
     );
   }
 
@@ -365,7 +372,9 @@ async function probeQuotaLimits(config) {
       // Ignore cleanup errors
     }
   } catch (error) {
-    observations.push(createErrorObservation('persistence', 'quota', 'Quota test failed', error, guardDecision));
+    observations.push(
+      createErrorObservation('persistence', 'quota', 'Quota test failed', error, guardDecision)
+    );
   }
 
   return observations;
@@ -448,7 +457,13 @@ async function probeDirectoryPermissions(config) {
     );
   } catch (error) {
     observations.push(
-      createErrorObservation('persistence', 'permissions', 'Directory permissions test failed', error, guardDecision)
+      createErrorObservation(
+        'persistence',
+        'permissions',
+        'Directory permissions test failed',
+        error,
+        guardDecision
+      )
     );
 
     // Cleanup on error
@@ -546,7 +561,13 @@ async function probeAtomicOperations(config) {
     await fs.unlink(targetFile);
   } catch (error) {
     observations.push(
-      createErrorObservation('persistence', 'filesystem', 'Atomic operations test failed', error, guardDecisionSource)
+      createErrorObservation(
+        'persistence',
+        'filesystem',
+        'Atomic operations test failed',
+        error,
+        guardDecisionSource
+      )
     );
 
     // Cleanup on error
@@ -627,7 +648,13 @@ async function probeTempDirectory(config) {
     };
 
     observations.push(
-      createErrorObservation('persistence', 'filesystem', 'Temp directory probe failed', error, guardDecision)
+      createErrorObservation(
+        'persistence',
+        'filesystem',
+        'Temp directory probe failed',
+        error,
+        guardDecision
+      )
     );
   }
 
@@ -710,7 +737,13 @@ async function probeStorageType(config) {
     await fs.unlink(testFile);
   } catch (error) {
     observations.push(
-      createErrorObservation('persistence', 'performance', 'Storage type detection failed', error, guardDecision)
+      createErrorObservation(
+        'persistence',
+        'performance',
+        'Storage type detection failed',
+        error,
+        guardDecision
+      )
     );
   }
 
@@ -771,7 +804,13 @@ export async function probePersistence(config) {
     };
 
     observations.push(
-      createErrorObservation('persistence', 'storage', 'Persistence probe failed', error, guardDecision)
+      createErrorObservation(
+        'persistence',
+        'storage',
+        'Persistence probe failed',
+        error,
+        guardDecision
+      )
     );
   }
 

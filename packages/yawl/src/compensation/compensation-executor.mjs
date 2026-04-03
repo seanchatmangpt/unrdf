@@ -163,7 +163,6 @@ export class CompensationExecutor {
       }
 
       return validated;
-
     } catch (error) {
       validated.status = 'failed';
       validated.error = error;
@@ -207,7 +206,6 @@ export class CompensationExecutor {
         context.output = await this._executeWorkflow(spec, compensationInput);
 
         return;
-
       } catch (error) {
         if (context.attemptNumber >= context.maxAttempts) {
           throw error;
@@ -322,8 +320,7 @@ export class CompensationExecutor {
    * @returns {CompensationContext[]} Executions
    */
   getExecutionsForTask(taskId) {
-    return Array.from(this.executions.values())
-      .filter(ctx => ctx.taskId === taskId);
+    return Array.from(this.executions.values()).filter(ctx => ctx.taskId === taskId);
   }
 
   /**
@@ -336,10 +333,12 @@ export class CompensationExecutor {
       total: executions.length,
       completed: executions.filter(e => e.status === 'completed').length,
       failed: executions.filter(e => e.status === 'failed').length,
-      inProgress: executions.filter(e => e.status === 'executing' || e.status === 'retrying').length,
-      avgAttempts: executions.length > 0
-        ? executions.reduce((sum, e) => sum + e.attemptNumber, 0) / executions.length
-        : 0,
+      inProgress: executions.filter(e => e.status === 'executing' || e.status === 'retrying')
+        .length,
+      avgAttempts:
+        executions.length > 0
+          ? executions.reduce((sum, e) => sum + e.attemptNumber, 0) / executions.length
+          : 0,
     };
   }
 

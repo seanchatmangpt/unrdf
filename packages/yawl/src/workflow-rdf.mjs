@@ -327,9 +327,8 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
 
     // Get task ID
     const taskIdQuads = store.match(taskNode, taskIdProp, null, null);
-    const taskId = taskIdQuads.length > 0
-      ? taskIdQuads[0].object.value
-      : taskNode.value.replace(YAWL_TASK, '');
+    const taskId =
+      taskIdQuads.length > 0 ? taskIdQuads[0].object.value : taskNode.value.replace(YAWL_TASK, '');
 
     // Get task name
     const taskNameQuads = store.match(taskNode, taskNameProp, null, null);
@@ -362,9 +361,8 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
 
     // Get priority
     const priorityQuads = store.match(taskNode, namedNode(YAWL + 'priority'), null, null);
-    const priority = priorityQuads.length > 0
-      ? parseInt(priorityQuads[0].object.value, 10)
-      : undefined;
+    const priority =
+      priorityQuads.length > 0 ? parseInt(priorityQuads[0].object.value, 10) : undefined;
 
     // Get documentation
     const docQuads = store.match(taskNode, namedNode(YAWL + 'documentation'), null, null);
@@ -392,13 +390,10 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
       // Check for flow node with properties
       const flowNode = flowUri(task.id, toTaskId);
       const priorityQuads = store.match(flowNode, flowPriority, null, null);
-      const priority = priorityQuads.length > 0
-        ? parseInt(priorityQuads[0].object.value, 10)
-        : 0;
+      const priority = priorityQuads.length > 0 ? parseInt(priorityQuads[0].object.value, 10) : 0;
 
       const defaultQuads = store.match(flowNode, isDefaultFlow, null, null);
-      const isDefault = defaultQuads.length > 0
-        && defaultQuads[0].object.value === 'true';
+      const isDefault = defaultQuads.length > 0 && defaultQuads[0].object.value === 'true';
 
       flows.push({
         from: task.id,
@@ -411,9 +406,8 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
 
   // Get start task
   const startQuads = store.match(specNode, namedNode(YAWL + 'startTask'), null, null);
-  const startTaskId = startQuads.length > 0
-    ? startQuads[0].object.value.replace(YAWL_TASK, '')
-    : undefined;
+  const startTaskId =
+    startQuads.length > 0 ? startQuads[0].object.value.replace(YAWL_TASK, '') : undefined;
 
   // Get end tasks
   const endQuads = store.match(specNode, namedNode(YAWL + 'endTask'), null, null);

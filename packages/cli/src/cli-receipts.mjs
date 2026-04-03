@@ -7,9 +7,7 @@
  */
 
 import { z } from 'zod';
-import {
-  withReceipt,
-} from '../../v6-core/src/receipt-pattern.mjs';
+import { withReceipt } from '../../v6-core/src/receipt-pattern.mjs';
 
 /**
  * Command Schema

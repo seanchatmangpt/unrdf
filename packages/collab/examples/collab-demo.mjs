@@ -53,7 +53,7 @@ const sync = new WebSocketSync(graph, {
 });
 
 // Track connection state
-sync.on('status', (event) => {
+sync.on('status', event => {
   if (event.status === 'connected') {
     console.log('✅ Connected to server');
   } else if (event.status === 'disconnected') {
@@ -62,7 +62,7 @@ sync.on('status', (event) => {
 });
 
 // Track sync state
-sync.on('synced', (event) => {
+sync.on('synced', event => {
   if (event.isSynced) {
     console.log('🔄 Synced with server');
     showStats();
@@ -70,30 +70,26 @@ sync.on('synced', (event) => {
 });
 
 // Track other users (presence awareness)
-sync.on('awareness', (state) => {
-  const otherUsers = state.states.filter(
-    (s) => s.clientID !== graph.clientID && s.user
-  );
+sync.on('awareness', state => {
+  const otherUsers = state.states.filter(s => s.clientID !== graph.clientID && s.user);
 
   if (state.added.length > 0 || state.removed.length > 0) {
-    console.log(
-      `\n👥 Users online: ${otherUsers.map((u) => u.user.name).join(', ') || 'none'}`
-    );
+    console.log(`\n👥 Users online: ${otherUsers.map(u => u.user.name).join(', ') || 'none'}`);
   }
 });
 
 // Track graph changes
-graph.onChange((changes) => {
+graph.onChange(changes => {
   if (changes.added.length > 0) {
     console.log(`\n➕ Added ${changes.added.length} triple(s):`);
-    changes.added.forEach((t) => {
+    changes.added.forEach(t => {
       console.log(`   ${formatTriple(t)}`);
     });
   }
 
   if (changes.removed.length > 0) {
     console.log(`\n➖ Removed ${changes.removed.length} triple(s):`);
-    changes.removed.forEach((t) => {
+    changes.removed.forEach(t => {
       console.log(`   ${formatTriple(t)}`);
     });
   }
@@ -124,15 +120,13 @@ function shorten(uri) {
 // Helper: Show graph stats
 function showStats() {
   const stats = graph.getStats();
-  console.log(
-    `📊 Stats: ${stats.active} triples, ${stats.tombstones} tombstones`
-  );
+  console.log(`📊 Stats: ${stats.active} triples, ${stats.tombstones} tombstones`);
 }
 
 // Demo: Simulate concurrent editing based on client
 async function runDemo() {
   // Wait for initial sync
-  await new Promise((resolve) => {
+  await new Promise(resolve => {
     const check = setInterval(() => {
       if (sync.isSynced()) {
         clearInterval(check);
@@ -145,7 +139,7 @@ async function runDemo() {
 
   // Each client adds different triples to test conflict resolution
   if (CLIENT_NAME.toLowerCase() === 'alice') {
-    console.log('Adding Alice\'s data...');
+    console.log("Adding Alice's data...");
 
     graph.addTriple({
       subject: 'http://example.org/alice',
@@ -172,7 +166,7 @@ async function runDemo() {
       objectType: 'uri',
     });
   } else if (CLIENT_NAME.toLowerCase() === 'bob') {
-    console.log('Adding Bob\'s data...');
+    console.log("Adding Bob's data...");
 
     await sleep(500); // Offset from Alice
 
@@ -222,7 +216,7 @@ async function runDemo() {
   // Show final state after settling
   await sleep(3000);
   console.log('\n📋 Final graph state:');
-  graph.getTriples().forEach((triple) => {
+  graph.getTriples().forEach(triple => {
     console.log(`   ${formatTriple(triple)}`);
   });
   console.log('');
@@ -230,11 +224,11 @@ async function runDemo() {
 
 // Helper: Sleep
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Run demo
-runDemo().catch((error) => {
+runDemo().catch(error => {
   console.error('❌ Demo error:', error);
   process.exit(1);
 });

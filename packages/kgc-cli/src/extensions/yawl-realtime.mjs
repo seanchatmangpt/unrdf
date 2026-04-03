@@ -18,9 +18,9 @@ const extension = {
           argsSchema: z.object({
             caseId: z.string().describe('Case ID to connect to'),
             userId: z.string().describe('User ID'),
-            serverUrl: z.string().default('ws://localhost:3000').describe('WebSocket server URL')
+            serverUrl: z.string().default('ws://localhost:3000').describe('WebSocket server URL'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const caseId = args.caseId || `case_${Date.now()}`;
             const userId = args.userId || `user_${Date.now()}`;
             const serverUrl = args.serverUrl || 'ws://localhost:3000';
@@ -31,17 +31,27 @@ const extension = {
               userId,
               sessionId: `session_${Date.now()}`,
               serverUrl,
-              connectedUsers: []
+              connectedUsers: [],
             };
-          }
+          },
         },
         subscribe: {
           description: 'Subscribe to workflow events',
           argsSchema: z.object({
             caseId: z.string().describe('Case ID'),
-            events: z.array(z.enum(['task:enabled', 'task:started', 'task:completed', 'case:completed', 'state:changed'])).describe('Events to subscribe to')
+            events: z
+              .array(
+                z.enum([
+                  'task:enabled',
+                  'task:started',
+                  'task:completed',
+                  'case:completed',
+                  'state:changed',
+                ])
+              )
+              .describe('Events to subscribe to'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const caseId = args.caseId || `case_${Date.now()}`;
             const events = args.events || [];
 
@@ -49,18 +59,18 @@ const extension = {
               success: true,
               caseId,
               subscribedEvents: events,
-              subscriptionId: `sub_${Date.now()}`
+              subscriptionId: `sub_${Date.now()}`,
             };
-          }
+          },
         },
         broadcast: {
           description: 'Broadcast event to all connected clients',
           argsSchema: z.object({
             caseId: z.string().describe('Case ID'),
             event: z.string().describe('Event type'),
-            data: z.record(z.any()).describe('Event data')
+            data: z.record(z.any()).describe('Event data'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const caseId = args.caseId || `case_${Date.now()}`;
             const event = args.event || 'unknown';
 
@@ -69,9 +79,9 @@ const extension = {
               caseId,
               event,
               recipientCount: 0,
-              timestamp: new Date().toISOString()
+              timestamp: new Date().toISOString(),
             };
-          }
+          },
         },
         lock: {
           description: 'Acquire optimistic lock on workflow resource',
@@ -79,9 +89,9 @@ const extension = {
             caseId: z.string().describe('Case ID'),
             resourceId: z.string().describe('Resource ID (task, variable, etc.)'),
             userId: z.string().describe('User ID acquiring lock'),
-            timeout: z.number().default(30000).describe('Lock timeout in milliseconds')
+            timeout: z.number().default(30000).describe('Lock timeout in milliseconds'),
           }),
-          handler: async (args) => {
+          handler: async args => {
             const caseId = args.caseId || `case_${Date.now()}`;
             const resourceId = args.resourceId || `resource_${Date.now()}`;
             const userId = args.userId || `user_${Date.now()}`;
@@ -93,14 +103,14 @@ const extension = {
               resourceId,
               lockId: `lock_${Date.now()}`,
               expiresAt: new Date(Date.now() + timeout).toISOString(),
-              owner: userId
+              owner: userId,
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
-  priority: 37
+  priority: 37,
 };
 
 export default extension;

@@ -123,7 +123,7 @@ export class ProbeOrchestrator {
       this.emit('agents_complete', {
         runId,
         agentCount: agentIds.length,
-        observationCount: observations.length
+        observationCount: observations.length,
       });
 
       // Phase 3: Guard Validation
@@ -142,14 +142,14 @@ export class ProbeOrchestrator {
               evidence: {
                 query: `guard_${guardId}`,
                 result: violation.details,
-                witnesses: []
+                witnesses: [],
               },
               metrics: {
                 confidence: 1.0,
                 coverage: 1.0,
-                latency_ms: 0
+                latency_ms: 0,
               },
-              tags: ['guard', guardId]
+              tags: ['guard', guardId],
             });
           }
           this.emit('guard_complete', { guardId, violations: violations.length });
@@ -169,7 +169,10 @@ export class ProbeOrchestrator {
           if (shards && shards.length > 0) {
             shardCount = shards.length;
             // Hash all shards together for determinism
-            const shardData = shards.map(s => s.probe_run_id).sort().join('|');
+            const shardData = shards
+              .map(s => s.probe_run_id)
+              .sort()
+              .join('|');
             shardHash = await this.hashString(shardData);
             this.emit('shards_merged', { shardCount, shardHash });
           }
@@ -200,12 +203,12 @@ export class ProbeOrchestrator {
           guards_applied: guardIds,
           execution_time_ms: executionTime,
           storage_backend: this.storage.type,
-          config: config
+          config: config,
         },
         integrity: {
           checksum: await hashObservations(observations),
-          verified_at: null
-        }
+          verified_at: null,
+        },
       };
 
       // Persistence
@@ -223,13 +226,13 @@ export class ProbeOrchestrator {
         runId,
         status: errors.length === 0 ? 'success' : 'partial',
         executionTime,
-        observationCount: observations.length
+        observationCount: observations.length,
       });
 
       return {
         artifact,
         status: errors.length === 0 ? 'success' : 'partial',
-        errors
+        errors,
       };
     } catch (err) {
       this.emit('scan_error', { runId, error: err.message });
@@ -264,7 +267,7 @@ export class ProbeOrchestrator {
       this.emit('agent_complete', {
         agentId,
         observationCount: results.length,
-        latency: endTime - startTime
+        latency: endTime - startTime,
       });
     } catch (err) {
       errors.push({ agent: agentId, error: err.message });

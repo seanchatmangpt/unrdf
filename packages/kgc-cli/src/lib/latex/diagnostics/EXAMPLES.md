@@ -33,6 +33,7 @@ console.log(`Rerun needed: ${result.rerunNeeded}`);
 ### Example 1: Missing Package Error
 
 **Input Log:**
+
 ```
 ! LaTeX Error: File 'thesis.cls' not found.
 
@@ -44,6 +45,7 @@ Enter file name:
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -70,6 +72,7 @@ Enter file name:
 ```
 
 **CLI Output:**
+
 ```
 Errors (2):
   ✗ File 'thesis.cls' not found
@@ -87,6 +90,7 @@ Summary: 2 errors, 0 warnings, 0 info
 ### Example 2: Undefined Control Sequence
 
 **Input Log:**
+
 ```
 ! Undefined control sequence.
 l.42 \\includegraphix
@@ -95,6 +99,7 @@ l.42 \\includegraphix
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -114,6 +119,7 @@ l.42 \\includegraphix
 ```
 
 **CLI Output:**
+
 ```
 Errors (1):
   ✗ Undefined command: \includegraphix
@@ -127,6 +133,7 @@ Summary: 1 errors, 0 warnings, 0 info
 ### Example 3: Missing Graphic File
 
 **Input Log:**
+
 ```
 ! Package pdftex.def Error: File 'figure1.pdf' not found.
 
@@ -134,6 +141,7 @@ See the pdftex.def package documentation for explanation.
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -158,6 +166,7 @@ See the pdftex.def package documentation for explanation.
 ### Example 4: Citation and Reference Warnings
 
 **Input Log:**
+
 ```
 LaTeX Warning: Citation 'smith2020' on page 3 undefined on input line 142.
 
@@ -167,6 +176,7 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -199,6 +209,7 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 ```
 
 **CLI Output:**
+
 ```
 Warnings (2):
   ⚠ Citation 'smith2020' undefined
@@ -219,12 +230,14 @@ Summary: 0 errors, 2 warnings, 1 info
 ### Example 5: Overfull Hbox Warning
 
 **Input Log:**
+
 ```
 Overfull \\hbox (12.34567pt too wide) in paragraph at lines 89--91
  []\\OT1/cmr/m/n/10 This is a very long line that does not fit within the mar-
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -249,6 +262,7 @@ Overfull \\hbox (12.34567pt too wide) in paragraph at lines 89--91
 ### Example 6: Successful Compilation
 
 **Input Log:**
+
 ```
 Output written on main.pdf (10 pages, 234567 bytes).
 PDF statistics:
@@ -256,6 +270,7 @@ PDF statistics:
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [],
@@ -268,6 +283,7 @@ PDF statistics:
 ```
 
 **CLI Output:**
+
 ```
 No diagnostics found
 ```
@@ -277,6 +293,7 @@ No diagnostics found
 ### Example 7: Complex Multi-Error Scenario
 
 **Input Log:**
+
 ```
 ! LaTeX Error: File 'custom.sty' not found.
 
@@ -296,6 +313,7 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 ```
 
 **Parsed Output:**
+
 ```json
 {
   "diagnostics": [
@@ -348,6 +366,7 @@ LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 ```
 
 **CLI Output:**
+
 ```
 Errors (3):
   ✗ File 'custom.sty' not found
@@ -400,25 +419,25 @@ if (result.missingInputs.length > 0) {
 
 ## Error Code Reference
 
-| Code | Severity | Description | Typical Suggestion |
-|------|----------|-------------|-------------------|
-| `MISSING_PACKAGE` | error | `.sty`, `.cls`, `.def` file not found | Install package or add to project |
-| `MISSING_INPUT` | error | User `.tex` file not found | Create file or fix `\input` path |
-| `MISSING_GRAPHIC` | error | Image file not found | Add file or fix path |
-| `FILE_NOT_FOUND` | error | Generic file not found | Check file path and name |
-| `UNDEFINED_CONTROL` | error | Unknown command used | Load required package |
-| `MISSING_FONT` | error | Font file not found | Install font package |
-| `PACKAGE_ERROR` | error | Package-specific error | Check package docs |
-| `EMERGENCY_STOP` | error | Critical compilation failure | Review preceding errors |
-| `FILE_LINE_ERROR` | error | Modern error format with file:line | Check syntax at line |
-| `BADNESS_HBOX` | warning | Text overfull/underfull | Adjust formatting |
-| `UNDEFINED_CITATION` | warning | BibTeX citation not found | Add to bibliography |
-| `UNDEFINED_REFERENCE` | warning | `\ref{}` target missing | Check `\label{}` exists |
-| `PACKAGE_WARNING` | warning | Package-specific warning | Review package options |
-| `FONT_WARNING` | warning | Font substitution | Output may differ |
-| `RERUN_NEEDED` | info | Cross-references need update | Rerun compilation |
-| `TOC_RERUN` | info | Table of contents needs update | Rerun compilation |
-| `MISSING_AUX` | info | Auxiliary file not yet created | Normal on first run |
+| Code                  | Severity | Description                           | Typical Suggestion                |
+| --------------------- | -------- | ------------------------------------- | --------------------------------- |
+| `MISSING_PACKAGE`     | error    | `.sty`, `.cls`, `.def` file not found | Install package or add to project |
+| `MISSING_INPUT`       | error    | User `.tex` file not found            | Create file or fix `\input` path  |
+| `MISSING_GRAPHIC`     | error    | Image file not found                  | Add file or fix path              |
+| `FILE_NOT_FOUND`      | error    | Generic file not found                | Check file path and name          |
+| `UNDEFINED_CONTROL`   | error    | Unknown command used                  | Load required package             |
+| `MISSING_FONT`        | error    | Font file not found                   | Install font package              |
+| `PACKAGE_ERROR`       | error    | Package-specific error                | Check package docs                |
+| `EMERGENCY_STOP`      | error    | Critical compilation failure          | Review preceding errors           |
+| `FILE_LINE_ERROR`     | error    | Modern error format with file:line    | Check syntax at line              |
+| `BADNESS_HBOX`        | warning  | Text overfull/underfull               | Adjust formatting                 |
+| `UNDEFINED_CITATION`  | warning  | BibTeX citation not found             | Add to bibliography               |
+| `UNDEFINED_REFERENCE` | warning  | `\ref{}` target missing               | Check `\label{}` exists           |
+| `PACKAGE_WARNING`     | warning  | Package-specific warning              | Review package options            |
+| `FONT_WARNING`        | warning  | Font substitution                     | Output may differ                 |
+| `RERUN_NEEDED`        | info     | Cross-references need update          | Rerun compilation                 |
+| `TOC_RERUN`           | info     | Table of contents needs update        | Rerun compilation                 |
+| `MISSING_AUX`         | info     | Auxiliary file not yet created        | Normal on first run               |
 
 ## Advanced Usage
 
@@ -465,7 +484,7 @@ try {
     message: 'Custom error message',
     file: 'test.tex',
     line: 42,
-    suggestion: 'Fix this'
+    suggestion: 'Fix this',
   });
   console.log('Valid diagnostic:', validated);
 } catch (err) {
@@ -498,6 +517,7 @@ node --test packages/kgc-cli/src/lib/latex/diagnostics/__tests__/parse-log.test.
 ```
 
 Test coverage:
+
 - ✅ All error pattern detection
 - ✅ All warning pattern detection
 - ✅ All info pattern detection

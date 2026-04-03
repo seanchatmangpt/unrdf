@@ -32,7 +32,7 @@ export function createResolvers(engine) {
         let filtered = all;
 
         if (status) {
-          filtered = all.filter((c) => c.status === status);
+          filtered = all.filter(c => c.status === status);
         }
 
         return filtered.slice(offset, offset + limit);
@@ -53,9 +53,7 @@ export function createResolvers(engine) {
 
       searchWorkflows: async (_, { query, limit = 10 }) => {
         const all = await engine.listWorkflows();
-        return all
-          .filter((w) => w.name.toLowerCase().includes(query.toLowerCase()))
-          .slice(0, limit);
+        return all.filter(w => w.name.toLowerCase().includes(query.toLowerCase())).slice(0, limit);
       },
 
       workflowStats: async (_, { specId }) => {
@@ -113,7 +111,7 @@ export function createResolvers(engine) {
           const queue = [];
           let resolver = null;
 
-          const listener = (event) => {
+          const listener = event => {
             if (event.caseId === caseId) {
               if (resolver) {
                 resolver(event);
@@ -131,7 +129,7 @@ export function createResolvers(engine) {
               if (queue.length > 0) {
                 yield { caseEvents: queue.shift() };
               } else {
-                await new Promise((resolve) => {
+                await new Promise(resolve => {
                   resolver = resolve;
                 });
                 if (queue.length > 0) {
@@ -151,7 +149,7 @@ export function createResolvers(engine) {
           const queue = [];
           let resolver = null;
 
-          const listener = (event) => {
+          const listener = event => {
             if (event.specId === specId) {
               if (resolver) {
                 resolver(event);
@@ -169,7 +167,7 @@ export function createResolvers(engine) {
               if (queue.length > 0) {
                 yield { workflowEvents: queue.shift() };
               } else {
-                await new Promise((resolve) => {
+                await new Promise(resolve => {
                   resolver = resolve;
                 });
                 if (queue.length > 0) {

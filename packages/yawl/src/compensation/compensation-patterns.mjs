@@ -35,7 +35,7 @@ export function createMonetaryRefund(config) {
       {
         id: 'refund-payment',
         name: 'Process Refund',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const amount = ctx.input[amountField];
           const transactionId = ctx.input[transactionIdField];
 
@@ -84,7 +84,7 @@ export function createInventoryRestock(config) {
       {
         id: 'restock-inventory',
         name: 'Restock Inventory',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const itemId = ctx.input[itemIdField];
           const quantity = ctx.input[quantityField];
 
@@ -127,7 +127,7 @@ export function createReservationCancellation(config) {
       {
         id: 'cancel-reservation',
         name: 'Cancel Reservation',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const reservationId = ctx.input[reservationIdField];
 
           if (!reservationId) {
@@ -177,7 +177,7 @@ export function createNotificationRetraction(config) {
       {
         id: 'retract-notification',
         name: 'Retract Notification',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const recipient = ctx.input[recipientField];
           const message = ctx.input[messageField];
 
@@ -225,7 +225,7 @@ export function createDatabaseRollback(config) {
       {
         id: 'rollback-database',
         name: 'Rollback Database Changes',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const recordId = ctx.input[recordIdField];
           const previousState = ctx.input[previousStateField];
 
@@ -267,7 +267,7 @@ export function createRecordDeletion(config) {
       {
         id: 'delete-record',
         name: 'Delete Record',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const recordId = ctx.input[recordIdField];
 
           if (!recordId) {
@@ -337,7 +337,7 @@ export function createConditionalCompensation(conditionFn, ifTrue, ifFalse) {
       {
         id: 'conditional-compensation',
         name: 'Conditional Compensation',
-        execute: async (ctx) => {
+        execute: async ctx => {
           const condition = await conditionFn(ctx);
 
           const compensationSpec = condition ? ifTrue : ifFalse;

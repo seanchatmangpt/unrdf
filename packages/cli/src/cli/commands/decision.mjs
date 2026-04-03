@@ -29,13 +29,16 @@ function parseFeaturesFile(path) {
       throw new Error('Features file must have "features" array');
     }
 
-    return data.features.map(f => new Feature({
-      id: f.id,
-      name: f.name,
-      value: f.value,
-      cost: f.cost,
-      description: f.description || ''
-    }));
+    return data.features.map(
+      f =>
+        new Feature({
+          id: f.id,
+          name: f.name,
+          value: f.value,
+          cost: f.cost,
+          description: f.description || '',
+        })
+    );
   } catch (error) {
     throw new Error(`Failed to parse features file: ${error.message}`);
   }
@@ -55,9 +58,9 @@ function formatResult(result) {
 
   // Status
   const statusEmoji = {
-    'ACCEPTED': '✅',
-    'REJECTED': '❌',
-    'BLOCKED': '⛔'
+    ACCEPTED: '✅',
+    REJECTED: '❌',
+    BLOCKED: '⛔',
   };
   lines.push(`Status: ${statusEmoji[result.status] || '❓'} ${result.status}`);
 
@@ -123,14 +126,18 @@ function formatResult(result) {
     lines.push('');
 
     if (pareto.pareto_frontier) {
-      lines.push(`Pareto Features: ${pareto.pareto_frontier.count} (${pareto.pareto_frontier.percentage_of_total.toFixed(1)}% of total)`);
+      lines.push(
+        `Pareto Features: ${pareto.pareto_frontier.count} (${pareto.pareto_frontier.percentage_of_total.toFixed(1)}% of total)`
+      );
       lines.push('');
 
       if (pareto.pareto_frontier.features && pareto.pareto_frontier.features.length > 0) {
         lines.push('Top Features (by efficiency):');
         pareto.pareto_frontier.features.slice(0, 5).forEach((f, i) => {
           lines.push(`  ${i + 1}. ${f.name}`);
-          lines.push(`     Value: ${f.value}, Cost: ${f.cost}, Efficiency: ${f.efficiency.toFixed(2)}`);
+          lines.push(
+            `     Value: ${f.value}, Cost: ${f.cost}, Efficiency: ${f.efficiency.toFixed(2)}`
+          );
         });
         lines.push('');
       }
@@ -138,7 +145,9 @@ function formatResult(result) {
 
     if (pareto.value_analysis) {
       lines.push('Value Analysis:');
-      lines.push(`  Frontier captures: ${pareto.value_analysis.percentage.toFixed(1)}% of total value`);
+      lines.push(
+        `  Frontier captures: ${pareto.value_analysis.percentage.toFixed(1)}% of total value`
+      );
       lines.push(`  Meets 80/20 rule: ${pareto.value_analysis.meets_8020 ? 'YES ✅' : 'NO ❌'}`);
       lines.push('');
     }
@@ -253,7 +262,6 @@ export const decisionCommand = defineCommand({
       if (result.status === 'BLOCKED' || result.status === 'REJECTED') {
         process.exit(1);
       }
-
     } catch (error) {
       console.error('');
       console.error('❌ Error processing decision:');

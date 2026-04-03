@@ -37,7 +37,7 @@ export class UnrdfError extends Error {
     if (!this.stack) return;
 
     const lines = this.stack.split('\n');
-    const filtered = lines.filter((line) => {
+    const filtered = lines.filter(line => {
       // Keep error message line
       if (line.includes(this.name)) return true;
 

@@ -28,7 +28,7 @@ export const ResolvedInputSchema = z.object({
   hash: z.string().describe('SHA-256 hash of file content'),
   sourceUrl: z.string().optional().describe('Original source URL (if fetched)'),
   cachedPath: z.string().describe('Absolute path to cached file'),
-  resolvedAt: z.string().describe('ISO timestamp when resolved')
+  resolvedAt: z.string().describe('ISO timestamp when resolved'),
 });
 
 /**
@@ -38,12 +38,14 @@ export const ResolvedInputSchema = z.object({
 export const LatexLockSchema = z.object({
   version: z.literal('1.0.0').describe('Lockfile schema version'),
   engine: z.enum(['xetex', 'pdftex', 'luatex']).describe('LaTeX engine'),
-  resolvedInputs: z.record(
-    z.string().describe('Input name (e.g., dissertation.tex, logo.png)'),
-    ResolvedInputSchema
-  ).describe('Map of input name to resolved metadata'),
+  resolvedInputs: z
+    .record(
+      z.string().describe('Input name (e.g., dissertation.tex, logo.png)'),
+      ResolvedInputSchema
+    )
+    .describe('Map of input name to resolved metadata'),
   createdAt: z.string().describe('ISO timestamp when lockfile created'),
-  updatedAt: z.string().describe('ISO timestamp of last update')
+  updatedAt: z.string().describe('ISO timestamp of last update'),
 });
 
 /**
@@ -96,7 +98,7 @@ export async function saveLatexLock(lockPath, lockObj) {
   // Update timestamp
   const updated = {
     ...lockObj,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
 
   // Validate before writing
@@ -137,7 +139,7 @@ export function recordResolvedInput(lockObj, { inputName, hash, sourceUrl, cache
     hash,
     ...(sourceUrl && { sourceUrl }),
     cachedPath,
-    resolvedAt: new Date().toISOString()
+    resolvedAt: new Date().toISOString(),
   };
 }
 
@@ -154,7 +156,7 @@ export function createLatexLock(engine = 'xetex') {
     engine,
     resolvedInputs: {},
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
 }
 
@@ -268,7 +270,7 @@ export function mergeLocks(lock1, lock2) {
 export function pruneLock(lockObj, validInputs) {
   const pruned = {
     ...lockObj,
-    resolvedInputs: {}
+    resolvedInputs: {},
   };
 
   for (const [name, entry] of Object.entries(lockObj.resolvedInputs)) {

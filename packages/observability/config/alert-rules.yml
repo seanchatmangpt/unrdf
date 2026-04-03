@@ -22,8 +22,8 @@ groups:
           severity: warning
           category: business
         annotations:
-          summary: "Low success rate for {{ $labels.operation }}"
-          description: "Success rate is {{ $value | humanizePercentage }}, below 95% threshold"
+          summary: 'Low success rate for {{ $labels.operation }}'
+          description: 'Success rate is {{ $value | humanizePercentage }}, below 95% threshold'
 
       - alert: CriticalSuccessRate
         expr: |
@@ -36,8 +36,8 @@ groups:
           severity: critical
           category: business
         annotations:
-          summary: "CRITICAL: Success rate for {{ $labels.operation }}"
-          description: "Success rate is {{ $value | humanizePercentage }}, below 90% threshold"
+          summary: 'CRITICAL: Success rate for {{ $labels.operation }}'
+          description: 'Success rate is {{ $value | humanizePercentage }}, below 90% threshold'
 
       - alert: HighSLAViolations
         expr: rate(business_sla_violations[5m]) > 0.1
@@ -46,8 +46,8 @@ groups:
           severity: warning
           category: business
         annotations:
-          summary: "High SLA violation rate"
-          description: "SLA violations at {{ $value }} violations/sec for operation {{ $labels.operation }}"
+          summary: 'High SLA violation rate'
+          description: 'SLA violations at {{ $value }} violations/sec for operation {{ $labels.operation }}'
 
   # Latency Alerts
   - name: latency_metrics
@@ -60,8 +60,8 @@ groups:
           severity: warning
           category: performance
         annotations:
-          summary: "High P95 latency for {{ $labels.operation }}"
-          description: "P95 latency is {{ $value }}ms, exceeding 1000ms threshold"
+          summary: 'High P95 latency for {{ $labels.operation }}'
+          description: 'P95 latency is {{ $value }}ms, exceeding 1000ms threshold'
 
       - alert: HighP99Latency
         expr: latency_p99_ms > 5000
@@ -70,8 +70,8 @@ groups:
           severity: critical
           category: performance
         annotations:
-          summary: "CRITICAL: High P99 latency for {{ $labels.operation }}"
-          description: "P99 latency is {{ $value }}ms, exceeding 5000ms threshold"
+          summary: 'CRITICAL: High P99 latency for {{ $labels.operation }}'
+          description: 'P99 latency is {{ $value }}ms, exceeding 5000ms threshold'
 
       - alert: LatencySpike
         expr: |
@@ -83,8 +83,8 @@ groups:
           severity: warning
           category: performance
         annotations:
-          summary: "Latency spike detected for {{ $labels.operation }}"
-          description: "P95 latency increased by {{ $value | humanizePercentage }} in 5 minutes"
+          summary: 'Latency spike detected for {{ $labels.operation }}'
+          description: 'P95 latency increased by {{ $value | humanizePercentage }} in 5 minutes'
 
   # Throughput Alerts
   - name: throughput_metrics
@@ -97,8 +97,8 @@ groups:
           severity: warning
           category: performance
         annotations:
-          summary: "Low throughput for {{ $labels.operation }}"
-          description: "Throughput is {{ $value }} ops/sec, below expected rate"
+          summary: 'Low throughput for {{ $labels.operation }}'
+          description: 'Throughput is {{ $value }} ops/sec, below expected rate'
 
       - alert: ThroughputDrop
         expr: |
@@ -111,8 +111,8 @@ groups:
           severity: warning
           category: performance
         annotations:
-          summary: "Throughput drop detected"
-          description: "Throughput dropped by {{ $value | humanizePercentage }} in 10 minutes"
+          summary: 'Throughput drop detected'
+          description: 'Throughput dropped by {{ $value | humanizePercentage }} in 10 minutes'
 
   # Resource Alerts
   - name: resource_metrics
@@ -126,8 +126,8 @@ groups:
           severity: warning
           category: resource
         annotations:
-          summary: "High memory usage"
-          description: "Memory usage is {{ $value | humanizePercentage }}, above 85% threshold"
+          summary: 'High memory usage'
+          description: 'Memory usage is {{ $value | humanizePercentage }}, above 85% threshold'
 
       - alert: CriticalMemoryUsage
         expr: |
@@ -137,8 +137,8 @@ groups:
           severity: critical
           category: resource
         annotations:
-          summary: "CRITICAL: Memory usage"
-          description: "Memory usage is {{ $value | humanizePercentage }}, above 95% threshold"
+          summary: 'CRITICAL: Memory usage'
+          description: 'Memory usage is {{ $value | humanizePercentage }}, above 95% threshold'
 
       - alert: HighCPULoad
         expr: resource_cpu_load > 0.80
@@ -147,8 +147,8 @@ groups:
           severity: warning
           category: resource
         annotations:
-          summary: "High CPU load"
-          description: "CPU load is {{ $value | humanizePercentage }}"
+          summary: 'High CPU load'
+          description: 'CPU load is {{ $value | humanizePercentage }}'
 
       - alert: HighEventLoopLag
         expr: |
@@ -158,8 +158,8 @@ groups:
           severity: warning
           category: resource
         annotations:
-          summary: "High event loop lag"
-          description: "P95 event loop lag is {{ $value }}ms, above 100ms threshold"
+          summary: 'High event loop lag'
+          description: 'P95 event loop lag is {{ $value }}ms, above 100ms threshold'
 
   # Security Alerts
   - name: security_events
@@ -172,8 +172,8 @@ groups:
           severity: warning
           category: security
         annotations:
-          summary: "High authentication failure rate"
-          description: "{{ $value }} auth failures per second"
+          summary: 'High authentication failure rate'
+          description: '{{ $value }} auth failures per second'
 
       - alert: InjectionAttempt
         expr: increase(event_total{event_type="security.injection.attempt"}[5m]) > 0
@@ -182,8 +182,8 @@ groups:
           severity: critical
           category: security
         annotations:
-          summary: "Injection attempt detected"
-          description: "{{ $value }} injection attempts in last 5 minutes"
+          summary: 'Injection attempt detected'
+          description: '{{ $value }} injection attempts in last 5 minutes'
 
       - alert: RateLimitExceeded
         expr: rate(event_total{event_type="security.rate_limit.exceeded"}[5m]) > 5
@@ -192,8 +192,8 @@ groups:
           severity: warning
           category: security
         annotations:
-          summary: "High rate limit violations"
-          description: "{{ $value }} rate limit violations per second"
+          summary: 'High rate limit violations'
+          description: '{{ $value }} rate limit violations per second'
 
       - alert: UnauthorizedAccess
         expr: increase(event_total{event_type="security.unauthorized_access"}[5m]) > 5
@@ -202,8 +202,8 @@ groups:
           severity: critical
           category: security
         annotations:
-          summary: "Unauthorized access attempts"
-          description: "{{ $value }} unauthorized access attempts in last 5 minutes"
+          summary: 'Unauthorized access attempts'
+          description: '{{ $value }} unauthorized access attempts in last 5 minutes'
 
   # Error Rate Alerts
   - name: error_rates
@@ -218,8 +218,8 @@ groups:
           severity: warning
           category: errors
         annotations:
-          summary: "High error rate for {{ $labels.operation }}"
-          description: "Error rate is {{ $value | humanizePercentage }}, above 5% threshold"
+          summary: 'High error rate for {{ $labels.operation }}'
+          description: 'Error rate is {{ $value | humanizePercentage }}, above 5% threshold'
 
       - alert: CriticalErrorRate
         expr: |
@@ -230,8 +230,8 @@ groups:
           severity: critical
           category: errors
         annotations:
-          summary: "CRITICAL: Error rate for {{ $labels.operation }}"
-          description: "Error rate is {{ $value | humanizePercentage }}, above 10% threshold"
+          summary: 'CRITICAL: Error rate for {{ $labels.operation }}'
+          description: 'Error rate is {{ $value | humanizePercentage }}, above 10% threshold'
 
   # Service Health
   - name: service_health
@@ -244,8 +244,8 @@ groups:
           severity: critical
           category: availability
         annotations:
-          summary: "Service {{ $labels.job }} is down"
-          description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for 1 minute"
+          summary: 'Service {{ $labels.job }} is down'
+          description: 'Service {{ $labels.job }} on {{ $labels.instance }} has been down for 1 minute'
 
       - alert: OTELCollectorDown
         expr: up{job="otel-collector"} == 0
@@ -254,8 +254,8 @@ groups:
           severity: critical
           category: observability
         annotations:
-          summary: "OpenTelemetry Collector is down"
-          description: "OTEL Collector is unreachable, metrics collection impaired"
+          summary: 'OpenTelemetry Collector is down'
+          description: 'OTEL Collector is unreachable, metrics collection impaired'
 
       - alert: MetricsStaleness
         expr: |
@@ -265,5 +265,5 @@ groups:
           severity: warning
           category: observability
         annotations:
-          summary: "Metrics are stale"
-          description: "No metrics received for {{ $labels.operation }} in last 2 minutes"
+          summary: 'Metrics are stale'
+          description: 'No metrics received for {{ $labels.operation }} in last 2 minutes'

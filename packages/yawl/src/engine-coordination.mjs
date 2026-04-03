@@ -230,9 +230,7 @@ export async function getCaseHistory(engine, caseId) {
 
   // Get receipts from case if available
   const yawlCase = engine.cases.get(caseId);
-  const receipts = yawlCase
-    ? yawlCase.receipts.map(r => r.toJSON())
-    : [];
+  const receipts = yawlCase ? yawlCase.receipts.map(r => r.toJSON()) : [];
 
   return {
     caseId,

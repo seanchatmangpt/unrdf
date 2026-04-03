@@ -177,7 +177,12 @@ export function createYawlStore() {
   const ontologyGraph = namedNode(YAWL + 'ontology');
 
   store.add(
-    quad(namedNode(YAWL), rdfType, namedNode('http://www.w3.org/2002/07/owl#Ontology'), ontologyGraph)
+    quad(
+      namedNode(YAWL),
+      rdfType,
+      namedNode('http://www.w3.org/2002/07/owl#Ontology'),
+      ontologyGraph
+    )
   );
   store.add(quad(namedNode(YAWL), rdfsLabel, stringLiteral('YAWL Ontology'), ontologyGraph));
 
@@ -211,7 +216,13 @@ export function createYawlStore() {
  * });
  */
 export function addCase(store, caseInput) {
-  const { id, specId: specIdValue, status: statusValue = 'active', createdAt: createdAtValue, data } = caseInput;
+  const {
+    id,
+    specId: specIdValue,
+    status: statusValue = 'active',
+    createdAt: createdAtValue,
+    data,
+  } = caseInput;
 
   const caseNode = caseUri(id);
   const graph = caseGraph(id);
@@ -232,7 +243,9 @@ export function addCase(store, caseInput) {
 
   // Add case data if provided
   if (data) {
-    store.add(quad(caseNode, namedNode(YAWL + 'caseData'), stringLiteral(JSON.stringify(data)), graph));
+    store.add(
+      quad(caseNode, namedNode(YAWL + 'caseData'), stringLiteral(JSON.stringify(data)), graph)
+    );
   }
 
   return caseNode;

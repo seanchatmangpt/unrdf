@@ -720,22 +720,16 @@ export async function probePerformance(config = {}) {
 
       const copyStats = await benchmarkBufferCopy(size, benchmarkOptions);
       observations.push(
-        createObservation(
-          'performance',
-          `Buffer copy (${sizeKB}KB)`,
-          copyStats.mbPerSec,
-          null,
-          {
-            operation: 'buffer.copy',
-            bufferSize: `${sizeKB}KB`,
-            unit: 'MB/sec',
-            mean_ms: copyStats.mean,
-            median_ms: copyStats.median,
-            p95_ms: copyStats.p95,
-            p99_ms: copyStats.p99,
-            stddev_ms: copyStats.stddev,
-          }
-        )
+        createObservation('performance', `Buffer copy (${sizeKB}KB)`, copyStats.mbPerSec, null, {
+          operation: 'buffer.copy',
+          bufferSize: `${sizeKB}KB`,
+          unit: 'MB/sec',
+          mean_ms: copyStats.mean,
+          median_ms: copyStats.median,
+          p95_ms: copyStats.p95,
+          p99_ms: copyStats.p99,
+          stddev_ms: copyStats.stddev,
+        })
       );
     }
 

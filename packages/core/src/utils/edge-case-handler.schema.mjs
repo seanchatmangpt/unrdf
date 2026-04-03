@@ -23,7 +23,11 @@ export const safeGetSchema = {
 /**
  * Schema for requireProperties
  */
-export const requirePropertiesParamsSchema = z.tuple([z.unknown(), z.unknown(), z.unknown().optional()]);
+export const requirePropertiesParamsSchema = z.tuple([
+  z.unknown(),
+  z.unknown(),
+  z.unknown().optional(),
+]);
 
 export const requirePropertiesReturnSchema = z.unknown();
 
@@ -242,5 +246,5 @@ export default {
   safeParseInt: safeParseIntSchema,
   clamp: clampSchema,
   safeDivide: safeDivideSchema,
-  retry: retrySchema
+  retry: retrySchema,
 };

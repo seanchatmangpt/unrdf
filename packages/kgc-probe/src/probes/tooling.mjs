@@ -43,10 +43,12 @@ const ObservationSchema = z.object({
  * @property {number} [timeout] - Command timeout in milliseconds (default: 5000)
  * @property {boolean} [strict] - Strict mode - fail on any error (default: false)
  */
-const ProbeConfigSchema = z.object({
-  timeout: z.number().int().positive().max(10000).default(5000),
-  strict: z.boolean().default(false),
-}).default({});
+const ProbeConfigSchema = z
+  .object({
+    timeout: z.number().int().positive().max(10000).default(5000),
+    strict: z.boolean().default(false),
+  })
+  .default({});
 
 // ============================================================================
 // GUARD: COMMAND ALLOWLIST (POKA-YOKE)
@@ -397,15 +399,7 @@ export async function probeTooling(config = {}) {
 
   try {
     // Probe all tools in parallel
-    const [
-      gitObs,
-      nodeObs,
-      npmObs,
-      pnpmObs,
-      shellObs,
-      buildObs,
-      pkgMgrObs,
-    ] = await Promise.all([
+    const [gitObs, nodeObs, npmObs, pnpmObs, shellObs, buildObs, pkgMgrObs] = await Promise.all([
       probeGit(timeout),
       probeNode(timeout),
       probeNpm(timeout),
@@ -420,7 +414,6 @@ export async function probeTooling(config = {}) {
     observations.push(...shellObs);
     observations.push(...buildObs);
     observations.push(pkgMgrObs);
-
   } catch (error) {
     // Process execution unavailable or catastrophic failure
     observations.push({

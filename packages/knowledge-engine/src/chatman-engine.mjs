@@ -291,10 +291,7 @@ export class ChatmanEngine {
       const detectionResult = await this.executeDetection(observable, options);
 
       // Step 3: Derive formation
-      const formationResult = await this.executeFormation(
-        artifactResult.output.artifact,
-        options
-      );
+      const formationResult = await this.executeFormation(artifactResult.output.artifact, options);
 
       const receipt = this._createReceipt('full_pipeline', {
         observable,
@@ -388,8 +385,7 @@ export class ChatmanEngine {
     this.metrics.operationsExecuted++;
     const duration = Date.now() - startTime;
     this.metrics.averageExecutionTime =
-      (this.metrics.averageExecutionTime * (this.metrics.operationsExecuted - 1) +
-        duration) /
+      (this.metrics.averageExecutionTime * (this.metrics.operationsExecuted - 1) + duration) /
       this.metrics.operationsExecuted;
   }
 

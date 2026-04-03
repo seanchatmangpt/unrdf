@@ -374,7 +374,11 @@ export class ImportError extends Error {
       message += `1. Check package.json "exports" field of ${packageName}\n`;
       message += `2. Import from correct subpath (e.g., '${packageName}/submodule')\n`;
       message += `3. Update ${packageName} to latest version: pnpm update ${packageName}\n`;
-    } else if (error instanceof SyntaxError || error.name === 'SyntaxError' || error.message.includes('SyntaxError')) {
+    } else if (
+      error instanceof SyntaxError ||
+      error.name === 'SyntaxError' ||
+      error.message.includes('SyntaxError')
+    ) {
       message += `\n🔍 Syntax error in imported module\n`;
       message += `\n✅ Possible fixes:\n`;
       message += `1. Check ${packageName} is compatible with your Node.js version\n`;

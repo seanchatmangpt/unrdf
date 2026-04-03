@@ -196,12 +196,7 @@ export interface DataFactory {
    * );
    * ```
    */
-  quad(
-    subject: Subject,
-    predicate: Predicate,
-    object: RDFObject,
-    graph?: Graph
-  ): Quad;
+  quad(subject: Subject, predicate: Predicate, object: RDFObject, graph?: Graph): Quad;
 
   /**
    * Create a triple (quad in default graph)

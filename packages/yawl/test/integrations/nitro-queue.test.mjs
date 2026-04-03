@@ -176,7 +176,7 @@ class YawlTaskQueueManager {
    * Execute task (override in tests)
    */
   async executeTask(task) {
-    await new Promise((resolve) => setTimeout(resolve, 5));
+    await new Promise(resolve => setTimeout(resolve, 5));
     return { executed: true, taskId: task.taskId };
   }
 
@@ -212,7 +212,7 @@ class YawlTaskQueueManager {
       if (result) {
         results.push(result);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10));
       }
     }
     return results;
@@ -539,7 +539,7 @@ describe('YAWL-Nitro Queue Integration', () => {
     it('should track processing tasks', async () => {
       // Arrange
       manager.executeTask = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 50));
         return { executed: true };
       });
 
@@ -548,7 +548,7 @@ describe('YAWL-Nitro Queue Integration', () => {
 
       // Act
       const processPromise = manager.processNext();
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       // Assert
       const status = manager.getStatus();
@@ -560,7 +560,7 @@ describe('YAWL-Nitro Queue Integration', () => {
     it('should respect max concurrent limit', async () => {
       // Arrange
       manager.executeTask = vi.fn().mockImplementation(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
         return { executed: true };
       });
 
@@ -573,7 +573,7 @@ describe('YAWL-Nitro Queue Integration', () => {
       for (let i = 0; i < 10; i++) {
         promises.push(manager.processNext());
       }
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       // Assert
       const status = manager.getStatus();
@@ -645,12 +645,10 @@ describe('YAWL-Nitro Queue Integration', () => {
       }
 
       // Act
-      const results = await Promise.all(
-        Array.from({ length: 20 }, () => manager.processNext())
-      );
+      const results = await Promise.all(Array.from({ length: 20 }, () => manager.processNext()));
 
       // Assert
-      const successful = results.filter((r) => r && r.success).length;
+      const successful = results.filter(r => r && r.success).length;
       expect(successful).toBeGreaterThan(0);
     }, 10000);
 
@@ -695,7 +693,7 @@ describe('YAWL-Nitro Queue Integration', () => {
       await manager.submitTask({ taskId: 'medium', priority: 5 }, 5);
 
       const processedOrder = [];
-      manager.executeTask = vi.fn().mockImplementation(async (task) => {
+      manager.executeTask = vi.fn().mockImplementation(async task => {
         processedOrder.push(task.taskId);
         return { executed: true };
       });

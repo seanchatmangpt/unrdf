@@ -28,10 +28,12 @@ const FederatedSourceSchema = z.object({
   /** Source type: sparql, file, or other */
   type: z.enum(['sparql', 'file', 'other']).default('sparql'),
   /** Optional authentication */
-  auth: z.object({
-    username: z.string(),
-    password: z.string(),
-  }).optional(),
+  auth: z
+    .object({
+      username: z.string(),
+      password: z.string(),
+    })
+    .optional(),
   /** Optional headers for HTTP requests */
   headers: z.record(z.string(), z.string()).optional(),
 });
@@ -57,12 +59,15 @@ export const AdvancedFederationConfigSchema = z.object({
 /**
  * Query result binding schema
  */
-const BindingSchema = z.record(z.string(), z.object({
-  value: z.string(),
-  type: z.enum(['uri', 'literal', 'bnode']),
-  datatype: z.string().optional(),
-  'xml:lang': z.string().optional(),
-}));
+const BindingSchema = z.record(
+  z.string(),
+  z.object({
+    value: z.string(),
+    type: z.enum(['uri', 'literal', 'bnode']),
+    datatype: z.string().optional(),
+    'xml:lang': z.string().optional(),
+  })
+);
 
 /**
  * Query execution result schema
@@ -114,7 +119,7 @@ export async function createAdvancedFederationEngine(config) {
   // Initialize UNRDF federation coordinator
   const coordinator = await createCoordinator({
     nodeId: `federation-${Date.now()}`,
-    peers: validated.sources.map((source) => ({
+    peers: validated.sources.map(source => ({
       id: `peer-${source.url}`,
       url: source.url,
       type: source.type,
@@ -140,7 +145,7 @@ export async function createAdvancedFederationEngine(config) {
       });
 
       // Prepare sources for Comunica
-      const comunicaSources = validated.sources.map((source) => ({
+      const comunicaSources = validated.sources.map(source => ({
         type: source.type === 'sparql' ? 'sparql' : 'file',
         value: source.url,
         ...(source.headers && { headers: source.headers }),
@@ -207,7 +212,7 @@ export async function createAdvancedFederationEngine(config) {
       // Use UNRDF's federated query execution
       const results = await executeFederatedQuery({
         query: sparqlQuery,
-        sources: validated.sources.map((s) => s.url),
+        sources: validated.sources.map(s => s.url),
         timeout: validated.timeout,
       });
 
@@ -308,7 +313,7 @@ export async function createAdvancedFederationEngine(config) {
  */
 export async function federatedQuery(endpoints, query) {
   const engine = await createAdvancedFederationEngine({
-    sources: endpoints.map((url) => ({ url, type: 'sparql' })),
+    sources: endpoints.map(url => ({ url, type: 'sparql' })),
     streaming: false,
   });
 
@@ -337,7 +342,7 @@ export async function federatedQuery(endpoints, query) {
  */
 export async function streamFederatedQuery(endpoints, query, onBinding) {
   const engine = await createAdvancedFederationEngine({
-    sources: endpoints.map((url) => ({ url, type: 'sparql' })),
+    sources: endpoints.map(url => ({ url, type: 'sparql' })),
     streaming: true,
   });
 

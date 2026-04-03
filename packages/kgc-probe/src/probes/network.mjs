@@ -125,7 +125,13 @@ async function probeUrlWithHead(url, timeout = 5000) {
 
     // Extract headers (sanitized - no cookies/auth)
     const headers = {};
-    const safeHeaders = ['content-type', 'content-length', 'cache-control', 'etag', 'last-modified'];
+    const safeHeaders = [
+      'content-type',
+      'content-length',
+      'cache-control',
+      'etag',
+      'last-modified',
+    ];
     for (const header of safeHeaders) {
       const value = response.headers.get(header);
       if (value) {
@@ -213,9 +219,10 @@ async function probeTlsValidation(url, timeout = 5000) {
     clearTimeout(timeoutId);
 
     // Distinguish TLS errors from other errors
-    const isTlsError = error.message.includes('certificate') ||
-                       error.message.includes('TLS') ||
-                       error.message.includes('SSL');
+    const isTlsError =
+      error.message.includes('certificate') ||
+      error.message.includes('TLS') ||
+      error.message.includes('SSL');
 
     return {
       capability: 'tls-certificate-validation',
@@ -262,7 +269,9 @@ async function probePayloadLimits(url, timeout = 5000) {
       url,
       metadata: {
         contentLengthBytes,
-        contentLengthMB: contentLengthBytes ? (contentLengthBytes / (1024 * 1024)).toFixed(2) : null,
+        contentLengthMB: contentLengthBytes
+          ? (contentLengthBytes / (1024 * 1024)).toFixed(2)
+          : null,
         hasContentLength: contentLength !== null,
         statusCode: response.status,
       },
@@ -318,7 +327,9 @@ async function probeCacheHeaders(url, timeout = 5000) {
         hasEtag: etag !== null,
         hasLastModified: lastModified !== null,
         hasExpires: expires !== null,
-        cacheable: cacheControl ? !cacheControl.includes('no-store') && !cacheControl.includes('no-cache') : false,
+        cacheable: cacheControl
+          ? !cacheControl.includes('no-store') && !cacheControl.includes('no-cache')
+          : false,
       },
     };
   } catch (error) {
@@ -479,7 +490,6 @@ export async function probeNetwork(config = {}) {
       // Test 5: DNS resolution timing
       const dnsObs = await probeDnsResolution(url, timeout);
       observations.push(dnsObs);
-
     } catch (error) {
       // Catch-all for unexpected errors
       observations.push({

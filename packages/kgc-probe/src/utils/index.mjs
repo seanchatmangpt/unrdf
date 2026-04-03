@@ -7,12 +7,7 @@
  */
 
 // Logger
-export {
-  Logger,
-  createLogger,
-  defaultLogger,
-  LOG_LEVELS
-} from './logger.mjs';
+export { Logger, createLogger, defaultLogger, LOG_LEVELS } from './logger.mjs';
 
 // Error classes
 export {
@@ -28,5 +23,5 @@ export {
   ConfigurationError,
   ErrorCodes,
   isProbeError,
-  wrapError
+  wrapError,
 } from './errors.mjs';

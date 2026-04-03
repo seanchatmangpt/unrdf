@@ -59,7 +59,7 @@ class ObservabilityValidator {
 
       this.addResult({
         claim: 'WorkflowMetrics records and exports metrics',
-        status: (hasWorkflowMetrics && hasTaskMetrics && hasErrorMetrics) ? 'PASS' : 'FAIL',
+        status: hasWorkflowMetrics && hasTaskMetrics && hasErrorMetrics ? 'PASS' : 'FAIL',
         evidence: {
           workflowMetrics: hasWorkflowMetrics,
           taskMetrics: hasTaskMetrics,
@@ -96,7 +96,7 @@ class ObservabilityValidator {
       });
 
       let alertFired = false;
-      alerts.on('alert', (_alert) => {
+      alerts.on('alert', _alert => {
         alertFired = true;
       });
 
@@ -130,7 +130,7 @@ class ObservabilityValidator {
       });
 
       let anomalyDetected = false;
-      alerts.on('alert', (alert) => {
+      alerts.on('alert', alert => {
         if (alert.type === 'anomaly') {
           anomalyDetected = true;
         }
@@ -180,7 +180,7 @@ class ObservabilityValidator {
 
       this.addResult({
         claim: 'GrafanaExporter generates valid dashboard JSON',
-        status: (hasDashboard && hasTitle && hasPanels && validJSON) ? 'PASS' : 'FAIL',
+        status: hasDashboard && hasTitle && hasPanels && validJSON ? 'PASS' : 'FAIL',
         evidence: {
           hasDashboard,
           hasTitle,
@@ -227,7 +227,7 @@ class ObservabilityValidator {
 
       this.addResult({
         claim: 'Alert history tracked correctly',
-        status: (history.length > 0 && stats.total > 0) ? 'PASS' : 'FAIL',
+        status: history.length > 0 && stats.total > 0 ? 'PASS' : 'FAIL',
         evidence: {
           historyCount: history.length,
           totalAlerts: stats.total,
@@ -265,12 +265,16 @@ class ObservabilityValidator {
 
       const hasCounter = prometheusMetrics.includes('# TYPE types_test_executions_total counter');
       const hasGauge = prometheusMetrics.includes('# TYPE types_test_active_workflows gauge');
-      const hasHistogram = prometheusMetrics.includes('# TYPE types_test_execution_duration_seconds histogram');
-      const hasSummary = prometheusMetrics.includes('# TYPE types_test_latency_percentiles summary');
+      const hasHistogram = prometheusMetrics.includes(
+        '# TYPE types_test_execution_duration_seconds histogram'
+      );
+      const hasSummary = prometheusMetrics.includes(
+        '# TYPE types_test_latency_percentiles summary'
+      );
 
       this.addResult({
         claim: 'All Prometheus metric types supported',
-        status: (hasCounter && hasGauge && hasHistogram && hasSummary) ? 'PASS' : 'FAIL',
+        status: hasCounter && hasGauge && hasHistogram && hasSummary ? 'PASS' : 'FAIL',
         evidence: { hasCounter, hasGauge, hasHistogram, hasSummary },
       });
     } catch (error) {
@@ -296,8 +300,16 @@ class ObservabilityValidator {
 
       this.addResult({
         claim: 'Module exports all required functions',
-        status: (hasWorkflowMetrics && hasGrafanaExporter && hasAlertManager && hasObservabilityStack) ? 'PASS' : 'FAIL',
-        evidence: { hasWorkflowMetrics, hasGrafanaExporter, hasAlertManager, hasObservabilityStack },
+        status:
+          hasWorkflowMetrics && hasGrafanaExporter && hasAlertManager && hasObservabilityStack
+            ? 'PASS'
+            : 'FAIL',
+        evidence: {
+          hasWorkflowMetrics,
+          hasGrafanaExporter,
+          hasAlertManager,
+          hasObservabilityStack,
+        },
       });
     } catch (error) {
       this.addResult({

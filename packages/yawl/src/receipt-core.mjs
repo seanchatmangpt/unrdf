@@ -62,25 +62,29 @@ export const JustificationSchema = z.object({
 /**
  * Payload schema - the decision data being receipted
  */
-export const PayloadSchema = z.object({
-  /** The decision made (e.g., 'APPROVE', 'ENABLE', 'COMPLETE') */
-  decision: z.string(),
-  /** Justification for the decision */
-  justification: JustificationSchema.optional(),
-  /** Actor who made the decision */
-  actor: z.string().optional(),
-  /** Additional context data - using any for maximum flexibility */
-  context: z.any().optional(),
-}).passthrough();
+export const PayloadSchema = z
+  .object({
+    /** The decision made (e.g., 'APPROVE', 'ENABLE', 'COMPLETE') */
+    decision: z.string(),
+    /** Justification for the decision */
+    justification: JustificationSchema.optional(),
+    /** Actor who made the decision */
+    actor: z.string().optional(),
+    /** Additional context data - using any for maximum flexibility */
+    context: z.any().optional(),
+  })
+  .passthrough();
 
 /**
  * Vector clock schema for causality tracking
  * Using passthrough to allow flexible VectorClock JSON serialization
  */
-export const VectorClockSchema = z.object({
-  nodeId: z.string().min(1),
-  counters: z.record(z.string(), z.string()),
-}).passthrough();
+export const VectorClockSchema = z
+  .object({
+    nodeId: z.string().min(1),
+    counters: z.record(z.string(), z.string()),
+  })
+  .passthrough();
 
 /**
  * Event type schema using enum values
@@ -136,11 +140,13 @@ export const ReceiptSchema = z.object({
 export const VerificationResultSchema = z.object({
   valid: z.boolean(),
   error: z.string().optional(),
-  checks: z.object({
-    payloadHashValid: z.boolean(),
-    chainHashValid: z.boolean(),
-    timestampValid: z.boolean(),
-  }).optional(),
+  checks: z
+    .object({
+      payloadHashValid: z.boolean(),
+      chainHashValid: z.boolean(),
+      timestampValid: z.boolean(),
+    })
+    .optional(),
 });
 
 // =============================================================================
@@ -214,7 +220,7 @@ export function generateUUID() {
     return crypto.randomUUID();
   }
   // Fallback for older environments
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -242,13 +248,13 @@ export function deterministicSerialize(obj) {
   }
 
   if (Array.isArray(obj)) {
-    const items = obj.map((item) => deterministicSerialize(item));
+    const items = obj.map(item => deterministicSerialize(item));
     return `[${items.join(',')}]`;
   }
 
   // Sort keys alphabetically for deterministic ordering
   const sortedKeys = Object.keys(obj).sort();
-  const pairs = sortedKeys.map((key) => {
+  const pairs = sortedKeys.map(key => {
     const value = obj[key];
     const serializedValue = deterministicSerialize(value);
     return `${JSON.stringify(key)}:${serializedValue}`;

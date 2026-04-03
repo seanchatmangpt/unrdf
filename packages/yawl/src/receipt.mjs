@@ -38,27 +38,19 @@ export {
 // Verification Exports
 // =============================================================================
 
-export {
-  verifyReceipt,
-  verifyChainLink,
-} from './receipt-verification.mjs';
+export { verifyReceipt, verifyChainLink } from './receipt-verification.mjs';
 
 // =============================================================================
 // ProofChain Exports
 // =============================================================================
 
-export {
-  ProofChain,
-} from './receipt-proofchain.mjs';
+export { ProofChain } from './receipt-proofchain.mjs';
 
 // =============================================================================
 // Serialization Exports (Legacy)
 // =============================================================================
 
-export {
-  YawlReceipt,
-  buildReceipt,
-} from './receipt-serialization.mjs';
+export { YawlReceipt, buildReceipt } from './receipt-serialization.mjs';
 
 // =============================================================================
 // Default Export (Full API)
@@ -72,19 +64,11 @@ import {
   generateReceipt,
 } from './receipt-core.mjs';
 
-import {
-  verifyReceipt,
-  verifyChainLink,
-} from './receipt-verification.mjs';
+import { verifyReceipt, verifyChainLink } from './receipt-verification.mjs';
 
-import {
-  ProofChain,
-} from './receipt-proofchain.mjs';
+import { ProofChain } from './receipt-proofchain.mjs';
 
-import {
-  YawlReceipt,
-  buildReceipt,
-} from './receipt-serialization.mjs';
+import { YawlReceipt, buildReceipt } from './receipt-serialization.mjs';
 
 export default {
   // Main API

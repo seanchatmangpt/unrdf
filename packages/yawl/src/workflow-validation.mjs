@@ -143,9 +143,7 @@ export function _validateSplitJoinConsistency(errors, warnings) {
     // Validate split type matches outgoing flow count
     const splitType = task.splitType ?? SPLIT_TYPE.SEQUENCE;
     if (splitType === SPLIT_TYPE.SEQUENCE && outgoing.length > 1) {
-      errors.push(
-        `Task '${taskId}' has sequence split but ${outgoing.length} outgoing flows`
-      );
+      errors.push(`Task '${taskId}' has sequence split but ${outgoing.length} outgoing flows`);
     }
     if (
       (splitType === SPLIT_TYPE.AND ||
@@ -161,14 +159,10 @@ export function _validateSplitJoinConsistency(errors, warnings) {
     // Validate join type matches incoming flow count
     const joinType = task.joinType ?? JOIN_TYPE.SEQUENCE;
     if (joinType === JOIN_TYPE.SEQUENCE && incoming.length > 1) {
-      errors.push(
-        `Task '${taskId}' has sequence join but ${incoming.length} incoming flows`
-      );
+      errors.push(`Task '${taskId}' has sequence join but ${incoming.length} incoming flows`);
     }
     if (
-      (joinType === JOIN_TYPE.AND ||
-        joinType === JOIN_TYPE.XOR ||
-        joinType === JOIN_TYPE.OR) &&
+      (joinType === JOIN_TYPE.AND || joinType === JOIN_TYPE.XOR || joinType === JOIN_TYPE.OR) &&
       incoming.length < 2
     ) {
       warnings.push(
@@ -180,9 +174,7 @@ export function _validateSplitJoinConsistency(errors, warnings) {
     if (splitType === SPLIT_TYPE.XOR && outgoing.length > 1) {
       const hasConditions = outgoing.some(f => f.condition || f.isDefault);
       if (!hasConditions) {
-        warnings.push(
-          `Task '${taskId}' has XOR split but no conditions or default flow defined`
-        );
+        warnings.push(`Task '${taskId}' has XOR split but no conditions or default flow defined`);
       }
     }
   }
@@ -317,9 +309,7 @@ export function _validateCancellationRegions(errors, warnings) {
     // All tasks in region must exist
     for (const taskId of taskIds) {
       if (!this._tasks.has(taskId)) {
-        errors.push(
-          `Cancellation region '${regionId}' references non-existent task '${taskId}'`
-        );
+        errors.push(`Cancellation region '${regionId}' references non-existent task '${taskId}'`);
       }
     }
 

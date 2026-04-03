@@ -19,7 +19,6 @@ import { createTestWorkflow, createTestEngine, measureTime, sequence } from './t
  * - Integration: Full lifecycle, error paths, resource contention
  */
 
-
 describe('Receipt Tests', () => {
   let engine;
 

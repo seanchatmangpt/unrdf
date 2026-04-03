@@ -47,5 +47,5 @@ export const assertErrorSchema = {
 export default {
   createError: createErrorSchema,
   wrapError: wrapErrorSchema,
-  assertError: assertErrorSchema
+  assertError: assertErrorSchema,
 };

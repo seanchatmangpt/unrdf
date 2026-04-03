@@ -10,12 +10,12 @@ const extension = {
         snapshot: {
           description: 'Create model snapshot',
           argsSchema: z.object({ modelId: z.string() }),
-          handler: async (args) => ({ snapshotId: `v_${Date.now()}`, modelId: args.modelId })
-        }
-      }
-    }
+          handler: async args => ({ snapshotId: `v_${Date.now()}`, modelId: args.modelId }),
+        },
+      },
+    },
   },
-  priority: 41
+  priority: 41,
 };
 
 export default extension;

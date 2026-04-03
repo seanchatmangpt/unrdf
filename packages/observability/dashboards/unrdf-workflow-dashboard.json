@@ -31,11 +31,14 @@
             "refId": "A"
           }
         ],
-        "yaxes": [
-          { "format": "ops", "label": "Executions/sec" },
-          { "format": "short" }
-        ],
-        "legend": { "show": true, "alignAsTable": true, "values": true, "current": true, "max": true },
+        "yaxes": [{ "format": "ops", "label": "Executions/sec" }, { "format": "short" }],
+        "legend": {
+          "show": true,
+          "alignAsTable": true,
+          "values": true,
+          "current": true,
+          "max": true
+        },
         "tooltip": { "shared": true, "sort": 2 },
         "fill": 1,
         "linewidth": 2
@@ -102,10 +105,7 @@
             "refId": "A"
           }
         ],
-        "yaxes": [
-          { "format": "ops", "label": "Tasks/sec" },
-          { "format": "short" }
-        ],
+        "yaxes": [{ "format": "ops", "label": "Tasks/sec" }, { "format": "short" }],
         "legend": { "show": true, "alignAsTable": true, "values": true },
         "stack": true
       },
@@ -122,10 +122,7 @@
             "refId": "A"
           }
         ],
-        "yaxes": [
-          { "format": "ops", "label": "Errors/sec" },
-          { "format": "short" }
-        ],
+        "yaxes": [{ "format": "ops", "label": "Errors/sec" }, { "format": "short" }],
         "alert": {
           "conditions": [
             {
@@ -189,10 +186,7 @@
             "refId": "B"
           }
         ],
-        "yaxes": [
-          { "format": "short" },
-          { "format": "decmbytes" }
-        ]
+        "yaxes": [{ "format": "short" }, { "format": "decmbytes" }]
       },
       {
         "id": 8,
@@ -217,11 +211,14 @@
             "refId": "C"
           }
         ],
-        "yaxes": [
-          { "format": "s", "label": "Latency" },
-          { "format": "short" }
-        ],
-        "legend": { "show": true, "alignAsTable": true, "values": true, "current": true, "max": true }
+        "yaxes": [{ "format": "s", "label": "Latency" }, { "format": "short" }],
+        "legend": {
+          "show": true,
+          "alignAsTable": true,
+          "values": true,
+          "current": true,
+          "max": true
+        }
       },
       {
         "id": 9,
@@ -236,10 +233,7 @@
             "refId": "A"
           }
         ],
-        "yaxes": [
-          { "format": "short", "label": "Queue Depth" },
-          { "format": "short" }
-        ]
+        "yaxes": [{ "format": "short", "label": "Queue Depth" }, { "format": "short" }]
       },
       {
         "id": 10,
@@ -254,10 +248,7 @@
             "refId": "A"
           }
         ],
-        "yaxes": [
-          { "format": "ops", "label": "Evaluations/sec" },
-          { "format": "short" }
-        ],
+        "yaxes": [{ "format": "ops", "label": "Evaluations/sec" }, { "format": "short" }],
         "stack": true
       }
     ],

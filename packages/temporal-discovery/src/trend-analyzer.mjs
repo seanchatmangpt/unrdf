@@ -4,12 +4,7 @@
  * @description Trend detection and analysis for temporal data
  */
 
-import {
-  TrendAnalysisOptionsSchema,
-  TrendSchema,
-  TimeSeriesSchema,
-} from './schemas.mjs';
-
+import { TrendAnalysisOptionsSchema, TrendSchema, TimeSeriesSchema } from './schemas.mjs';
 
 /**
  * Calculate exponential moving average
@@ -23,8 +18,7 @@ function exponentialMovingAverage(values, smoothingFactor) {
   const result = [values[0]];
 
   for (let i = 1; i < values.length; i++) {
-    const ema =
-      smoothingFactor * values[i] + (1 - smoothingFactor) * result[i - 1];
+    const ema = smoothingFactor * values[i] + (1 - smoothingFactor) * result[i - 1];
     result.push(ema);
   }
 
@@ -74,9 +68,7 @@ function calculateVolatility(values) {
   const mean = values.reduce((a, b) => a + b, 0) / values.length;
   if (mean === 0) return 0;
 
-  const variance =
-    values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
-    values.length;
+  const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
   return stdDev / Math.abs(mean);
@@ -135,8 +127,8 @@ export function analyzeTrends(timeSeries, options = {}) {
 
   const trends = [];
 
-  const values = data.map((d) => d.value);
-  const timestamps = data.map((d) => d.timestamp);
+  const values = data.map(d => d.value);
+  const timestamps = data.map(d => d.timestamp);
 
   const smoothedValues = exponentialMovingAverage(values, smoothingFactor);
 
@@ -178,7 +170,7 @@ export function analyzeTrends(timeSeries, options = {}) {
  */
 export function getSmoothedSeries(timeSeries, smoothingFactor = 0.3) {
   const validatedSeries = TimeSeriesSchema.parse(timeSeries);
-  const values = validatedSeries.data.map((d) => d.value);
+  const values = validatedSeries.data.map(d => d.value);
   const smoothedValues = exponentialMovingAverage(values, smoothingFactor);
 
   return {

@@ -110,7 +110,7 @@ async function demo1BasicInference() {
 
   // Create test input
   const testInput = new Float32Array(
-    Array.from({ length: inputSize }, (_, i) => i * 0.1 + Math.random() * 0.05),
+    Array.from({ length: inputSize }, (_, i) => i * 0.1 + Math.random() * 0.05)
   );
 
   log('Input:', 'yellow');
@@ -181,7 +181,7 @@ async function demo2BatchedInference(inlineModel) {
   const optimalBatch = results.find(r => r.throughput === maxThroughput);
   log(
     `  Optimal batch size: ${optimalBatch.batchSize} (${optimalBatch.throughput.toFixed(0)} inf/sec)`,
-    'green',
+    'green'
   );
 
   return results;
@@ -267,8 +267,7 @@ async function demo4ModelRegistry() {
   // Mock model loaders
   const createMockModel = version => ({
     loadModel: async () => 5.0,
-    inferBatch: async inputs =>
-      inputs.map(() => ({ output: new Float32Array([version * 0.1]) })),
+    inferBatch: async inputs => inputs.map(() => ({ output: new Float32Array([version * 0.1]) })),
     dispose: async () => {},
     getMetrics: () => ({ totalInferences: 0 }),
   });
@@ -286,7 +285,7 @@ async function demo4ModelRegistry() {
       accuracy: 0.85,
       tags: ['production'],
     },
-    {},
+    {}
   );
   // Override runner with mock
   registry.models.get('v1.0').runner = createMockModel(1.0);
@@ -302,7 +301,7 @@ async function demo4ModelRegistry() {
       accuracy: 0.92,
       tags: ['production', 'improved'],
     },
-    {},
+    {}
   );
   registry.models.get('v1.1').runner = createMockModel(1.1);
 
@@ -317,7 +316,7 @@ async function demo4ModelRegistry() {
       accuracy: 0.95,
       tags: ['experimental'],
     },
-    {},
+    {}
   );
   registry.models.get('v2.0').runner = createMockModel(2.0);
 
@@ -326,7 +325,7 @@ async function demo4ModelRegistry() {
   for (const model of models) {
     log(
       `  ${model.version}: ${model.metadata.description} (accuracy: ${model.metadata.accuracy}) ${model.isActive ? '[ACTIVE]' : ''}`,
-      model.isActive ? 'green' : 'yellow',
+      model.isActive ? 'green' : 'yellow'
     );
   }
 
@@ -336,7 +335,10 @@ async function demo4ModelRegistry() {
 
   const deploymentInfo = registry.getDeploymentInfo();
   log(`  Active: ${deploymentInfo.activeVersion}`, 'green');
-  log(`  Canary: ${deploymentInfo.canaryVersion} (${deploymentInfo.canaryTrafficPercent}%)`, 'cyan');
+  log(
+    `  Canary: ${deploymentInfo.canaryVersion} (${deploymentInfo.canaryTrafficPercent}%)`,
+    'cyan'
+  );
 
   // Simulate traffic
   log('\nSimulating 1000 requests...', 'blue');
@@ -369,16 +371,16 @@ async function demo4ModelRegistry() {
  */
 async function main() {
   console.log(
-    `\n${colors.bright}${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`,
+    `\n${colors.bright}${colors.blue}╔════════════════════════════════════════════════════════════╗${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}║  UNRDF ML Inference Pipeline - Real-time Demo             ║${colors.reset}`,
+    `${colors.bright}${colors.blue}║  UNRDF ML Inference Pipeline - Real-time Demo             ║${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}║  High-Performance ONNX Inference for RDF Streams           ║${colors.reset}`,
+    `${colors.bright}${colors.blue}║  High-Performance ONNX Inference for RDF Streams           ║${colors.reset}`
   );
   console.log(
-    `${colors.bright}${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}\n`,
+    `${colors.bright}${colors.blue}╚════════════════════════════════════════════════════════════╝${colors.reset}\n`
   );
 
   try {
@@ -390,10 +392,7 @@ async function main() {
 
     logSection('Demo Complete');
     log('All demos executed successfully!', 'green');
-    log(
-      '\nKey Features Demonstrated:',
-      'bright',
-    );
+    log('\nKey Features Demonstrated:', 'bright');
     log('  ✓ ONNX model inference', 'green');
     log('  ✓ Batched processing for throughput', 'green');
     log('  ✓ Streaming pipeline with backpressure', 'green');

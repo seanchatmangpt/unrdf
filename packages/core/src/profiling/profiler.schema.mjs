@@ -34,5 +34,5 @@ export const quickProfileSchema = {
 
 export default {
   createProfiler: createProfilerSchema,
-  quickProfile: quickProfileSchema
+  quickProfile: quickProfileSchema,
 };

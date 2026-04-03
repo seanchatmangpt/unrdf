@@ -44,16 +44,16 @@ export async function ensureDir(dirPath) {
 export function detectRDFFormat(filePath) {
   const ext = filePath.toLowerCase().split('.').pop();
   const formatMap = {
-    'ttl': 'turtle',
-    'turtle': 'turtle',
-    'nt': 'n-triples',
-    'ntriples': 'n-triples',
-    'nq': 'n-quads',
-    'nquads': 'n-quads',
-    'jsonld': 'json-ld',
-    'json': 'json-ld',
-    'rdf': 'rdf/xml',
-    'xml': 'rdf/xml',
+    ttl: 'turtle',
+    turtle: 'turtle',
+    nt: 'n-triples',
+    ntriples: 'n-triples',
+    nq: 'n-quads',
+    nquads: 'n-quads',
+    jsonld: 'json-ld',
+    json: 'json-ld',
+    rdf: 'rdf/xml',
+    xml: 'rdf/xml',
   };
   return formatMap[ext] || 'turtle';
 }

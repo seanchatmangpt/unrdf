@@ -56,21 +56,25 @@ export const WP14ResultSchema = z.object({
       type: z.string(),
       count: z.number().int().nonnegative(),
       evaluatedAt: z.bigint(),
-      proof: z.object({
-        inputHash: z.string(),
-        resultHash: z.string(),
-        method: z.string(),
-      }).optional(),
+      proof: z
+        .object({
+          inputHash: z.string(),
+          resultHash: z.string(),
+          method: z.string(),
+        })
+        .optional(),
     }),
     barrier: z.object({
       id: z.string(),
       totalInstances: z.number().int().positive(),
       createdAt: z.bigint(),
     }),
-    instances: z.array(z.object({
-      id: z.string(),
-      instanceIndex: z.number().int().nonnegative(),
-    })),
+    instances: z.array(
+      z.object({
+        id: z.string(),
+        instanceIndex: z.number().int().nonnegative(),
+      })
+    ),
   }),
 });
 
@@ -169,7 +173,7 @@ export function sliceInputData(inputData, instanceCount) {
     if (items.length !== instanceCount) {
       console.warn(
         `Item count (${items.length}) != instance count (${instanceCount}). ` +
-        `Distributing available items.`
+          `Distributing available items.`
       );
     }
 
@@ -225,12 +229,7 @@ export function sliceInputData(inputData, instanceCount) {
  * );
  * // Spawns 5 instances, each with one item
  */
-export async function spawnInstancesRuntimeApriori(
-  task,
-  countExpression,
-  inputData,
-  options = {}
-) {
+export async function spawnInstancesRuntimeApriori(task, countExpression, inputData, options = {}) {
   const startTime = now();
 
   // Step 1: Evaluate count expression
@@ -242,14 +241,14 @@ export async function spawnInstancesRuntimeApriori(
   }
 
   // Step 2: Create or use existing barrier
-  const barrier = options.barrier ?? createBarrier(count, {
-    id: options.barrierId,
-  });
+  const barrier =
+    options.barrier ??
+    createBarrier(count, {
+      id: options.barrierId,
+    });
 
   if (barrier.totalInstances !== count) {
-    throw new Error(
-      `Barrier count mismatch: expected ${count}, got ${barrier.totalInstances}`
-    );
+    throw new Error(`Barrier count mismatch: expected ${count}, got ${barrier.totalInstances}`);
   }
 
   // Step 3: Slice input data per instance
@@ -332,7 +331,8 @@ async function generateWP14Receipt(
     timestamp: now(),
     executionTime: now() - startTime,
     countEvaluation: {
-      expression: typeof countExpression === 'string' ? countExpression : countExpression.expression,
+      expression:
+        typeof countExpression === 'string' ? countExpression : countExpression.expression,
       type: evaluation.type,
       count: evaluation.count,
       evaluatedAt: evaluation.evaluatedAt,
@@ -381,9 +381,11 @@ export async function waitForBarrier(barrier, instances, options = {}) {
       // Check timeout
       if (Date.now() - startTime > timeout) {
         clearInterval(checkInterval);
-        reject(new Error(
-          `Barrier timeout: ${barrier.completedInstances}/${barrier.totalInstances} completed`
-        ));
+        reject(
+          new Error(
+            `Barrier timeout: ${barrier.completedInstances}/${barrier.totalInstances} completed`
+          )
+        );
         return;
       }
 

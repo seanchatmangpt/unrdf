@@ -3,6 +3,7 @@
 ## For Other Agents in the Pipeline
 
 ### Agent 3 (Cache Manager)
+
 ```javascript
 import { hashVfs, getVfsHashMetadata } from './vfs/index.mjs';
 
@@ -11,6 +12,7 @@ const stats = getVfsHashMetadata(vfs); // Get hash + stats
 ```
 
 ### Agent 4 (Dependency Resolver)
+
 ```javascript
 import { getVfsText, filterVFSByExtension } from './vfs/index.mjs';
 
@@ -19,6 +21,7 @@ const texFiles = filterVFSByExtension(vfs, ['.tex']);
 ```
 
 ### Agent 5+ (Compilation)
+
 ```javascript
 import { packDirectory } from './vfs/index.mjs';
 
@@ -29,16 +32,19 @@ const vfs = await packDirectory('/path/to/project');
 ## Import Paths
 
 ### From within `/packages/kgc-cli/src/lib/latex/`
+
 ```javascript
 import { hashVfs, packDirectory } from './vfs/index.mjs';
 ```
 
 ### From project root
+
 ```javascript
 import { hashVfs, packDirectory } from '@unrdf/kgc-cli/lib/latex/vfs/index.mjs';
 ```
 
 ### Backward compatible (legacy)
+
 ```javascript
 import { collectProjectFiles } from './vfs.mjs';
 // collectProjectFiles is aliased to packDirectory
@@ -47,6 +53,7 @@ import { collectProjectFiles } from './vfs.mjs';
 ## All Exports from `vfs/index.mjs`
 
 ### Hashing Functions
+
 - `hashFile(content: Uint8Array) → string`
 - `hashVfs(vfs: Map) → string`
 - `hashVfsByExtension(vfs: Map, extensions: string[]) → string`
@@ -54,6 +61,7 @@ import { collectProjectFiles } from './vfs.mjs';
 - `getVfsHashMetadata(vfs: Map) → { hash, fileCount, totalBytes, paths }`
 
 ### Path Normalization
+
 - `normalizePath(path: string) → string`
 - `normalizeToVFS(absolutePath: string, projectRoot: string) → string`
 - `vfsToRelative(vfsPath: string) → string`
@@ -63,6 +71,7 @@ import { collectProjectFiles } from './vfs.mjs';
 - `sortVFSPaths(paths: string[]) → string[]`
 
 ### Packing Functions
+
 - `packDirectory(dirPath: string, options?: object) → Promise<Map>`
 - `packDirectoryClean(dirPath: string, options?: object) → Promise<Map>`
 - `collectProjectFiles(projectRoot: string, options?: object) → Promise<Map>`
@@ -71,6 +80,7 @@ import { collectProjectFiles } from './vfs.mjs';
 - `filterVFSByExtension(vfs: Map, extensions: string[]) → Map`
 
 ### Utility Functions
+
 - `createVfs() → Map`
 - `cloneVfs(vfs: Map) → Map`
 - `mergeVfs(...vfsList: Map[]) → Map`
@@ -80,6 +90,7 @@ import { collectProjectFiles } from './vfs.mjs';
 ## Quick Examples
 
 ### Pack and Hash (Most Common)
+
 ```javascript
 import { packDirectory, hashVfs } from './vfs/index.mjs';
 
@@ -90,6 +101,7 @@ console.log(`Files: ${vfs.size}`);
 ```
 
 ### Read LaTeX Source
+
 ```javascript
 import { getVfsText } from './vfs/index.mjs';
 
@@ -100,6 +112,7 @@ if (mainTex) {
 ```
 
 ### Modify VFS
+
 ```javascript
 import { setVfsText } from './vfs/index.mjs';
 
@@ -107,6 +120,7 @@ setVfsText(vfs, 'work/generated.tex', '\\section{Auto-generated}');
 ```
 
 ### Filter by File Type
+
 ```javascript
 import { filterVFSByExtension } from './vfs/index.mjs';
 

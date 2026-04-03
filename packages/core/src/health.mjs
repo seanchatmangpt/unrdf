@@ -35,7 +35,7 @@ export const HealthStatus = {
   HEALTHY: 'healthy',
   DEGRADED: 'degraded',
   UNHEALTHY: 'unhealthy',
-  UNKNOWN: 'unknown'
+  UNKNOWN: 'unknown',
 };
 
 /**
@@ -46,7 +46,7 @@ const _DependencyCheckSchema = z.object({
   status: z.enum(['connected', 'disconnected', 'degraded', 'unknown']),
   latency: z.number().optional(),
   error: z.string().optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.unknown()).optional(),
 });
 
 /**
@@ -57,7 +57,7 @@ const HealthCheckConfigSchema = z.object({
   version: z.string(),
   environment: z.string().default('production'),
   dependencies: z.record(z.string(), z.any()).default({}),
-  customChecks: z.record(z.string(), z.any()).default({})
+  customChecks: z.record(z.string(), z.any()).default({}),
 });
 
 /**
@@ -91,7 +91,7 @@ export function createHealthChecks(config) {
       service: validated.serviceName,
       version: validated.version,
       uptime: Date.now() - startTime,
-      pid: process.pid
+      pid: process.pid,
     };
   }
 
@@ -115,13 +115,13 @@ export function createHealthChecks(config) {
           checkFn(),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Health check timeout')), 5000)
-          )
+          ),
         ]);
 
         dependencyResults[name] = {
           status: result ? 'connected' : 'disconnected',
           latency: Date.now() - depStart,
-          ...(typeof result === 'object' && result !== null ? result : {})
+          ...(typeof result === 'object' && result !== null ? result : {}),
         };
 
         if (!result) {
@@ -132,7 +132,7 @@ export function createHealthChecks(config) {
         dependencyResults[name] = {
           status: 'disconnected',
           latency: Date.now() - depStart,
-          error: error.message
+          error: error.message,
         };
         overallStatus = HealthStatus.UNHEALTHY;
       }
@@ -145,7 +145,7 @@ export function createHealthChecks(config) {
           checkFn(),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Custom check timeout')), 5000)
-          )
+          ),
         ]);
 
         if (!result || (typeof result === 'object' && result.status === 'unhealthy')) {
@@ -165,7 +165,7 @@ export function createHealthChecks(config) {
       environment: validated.environment,
       uptime: Date.now() - startTime,
       dependencies: dependencyResults,
-      checkDuration: Date.now() - checkStart
+      checkDuration: Date.now() - checkStart,
     };
   }
 
@@ -188,7 +188,7 @@ export function createHealthChecks(config) {
       requests: {
         total: requestCount,
         errors: errorCount,
-        errorRate: requestCount > 0 ? errorCount / requestCount : 0
+        errorRate: requestCount > 0 ? errorCount / requestCount : 0,
       },
 
       // Process metrics
@@ -196,23 +196,23 @@ export function createHealthChecks(config) {
         pid: process.pid,
         uptime: process.uptime(),
         platform: process.platform,
-        nodeVersion: process.version
+        nodeVersion: process.version,
       },
 
       // Memory metrics (in MB)
       memory: {
-        rss: Math.round(memUsage.rss / 1024 / 1024 * 100) / 100,
-        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024 * 100) / 100,
-        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024 * 100) / 100,
-        external: Math.round(memUsage.external / 1024 / 1024 * 100) / 100,
-        arrayBuffers: Math.round((memUsage.arrayBuffers || 0) / 1024 / 1024 * 100) / 100
+        rss: Math.round((memUsage.rss / 1024 / 1024) * 100) / 100,
+        heapTotal: Math.round((memUsage.heapTotal / 1024 / 1024) * 100) / 100,
+        heapUsed: Math.round((memUsage.heapUsed / 1024 / 1024) * 100) / 100,
+        external: Math.round((memUsage.external / 1024 / 1024) * 100) / 100,
+        arrayBuffers: Math.round(((memUsage.arrayBuffers || 0) / 1024 / 1024) * 100) / 100,
       },
 
       // CPU metrics (in microseconds)
       cpu: {
         user: cpuUsage.user,
-        system: cpuUsage.system
-      }
+        system: cpuUsage.system,
+      },
     };
   }
 
@@ -228,7 +228,9 @@ export function createHealthChecks(config) {
     // Service info
     lines.push(`# HELP unrdf_service_info Service information`);
     lines.push(`# TYPE unrdf_service_info gauge`);
-    lines.push(`unrdf_service_info{service="${metricsData.service}",version="${metricsData.version}",environment="${validated.environment}"} 1`);
+    lines.push(
+      `unrdf_service_info{service="${metricsData.service}",version="${metricsData.version}",environment="${validated.environment}"} 1`
+    );
 
     // Uptime
     lines.push(`# HELP unrdf_uptime_seconds Service uptime in seconds`);
@@ -273,7 +275,7 @@ export function createHealthChecks(config) {
     liveness,
     readiness,
     metrics,
-    prometheus
+    prometheus,
   };
 }
 
@@ -319,7 +321,7 @@ export function createHealthMiddleware(config) {
       const result = await health.prometheus();
       res.setHeader('Content-Type', 'text/plain; version=0.0.4');
       res.status(200).send(result);
-    }
+    },
   };
 }
 
@@ -334,6 +336,6 @@ export function createUnrdfHealthChecks(options = {}) {
     serviceName: options.serviceName || 'unrdf',
     version: options.version || '5.0.1',
     environment: process.env.NODE_ENV || 'production',
-    ...options
+    ...options,
   });
 }

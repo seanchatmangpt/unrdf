@@ -9,15 +9,17 @@ import { z } from 'zod';
 /**
  * Visualization options schema
  */
-const VisualizationOptionsSchema = z.object({
-  limit: z.number().int().positive().optional(),
-  includeNamespaces: z.boolean().optional(),
-  direction: z.enum(['TB', 'LR', 'BT', 'RL']).optional(),
-  nodeShape: z.enum(['box', 'ellipse', 'circle', 'diamond']).optional(),
-  theme: z.enum(['light', 'dark', 'neutral']).optional(),
-  width: z.number().positive().optional(),
-  height: z.number().positive().optional(),
-}).optional();
+const VisualizationOptionsSchema = z
+  .object({
+    limit: z.number().int().positive().optional(),
+    includeNamespaces: z.boolean().optional(),
+    direction: z.enum(['TB', 'LR', 'BT', 'RL']).optional(),
+    nodeShape: z.enum(['box', 'ellipse', 'circle', 'diamond']).optional(),
+    theme: z.enum(['light', 'dark', 'neutral']).optional(),
+    width: z.number().positive().optional(),
+    height: z.number().positive().optional(),
+  })
+  .optional();
 
 /**
  * Subgraph extraction options schema
@@ -96,9 +98,10 @@ export function toDOT(store, options = {}) {
   for (const quad of quads) {
     const subj = shortenIRI(quad.subject.value, prefixes);
     const pred = shortenIRI(quad.predicate.value, prefixes);
-    const obj = quad.object.termType === 'Literal'
-      ? `"${quad.object.value.replace(/"/g, '\\"')}"`
-      : shortenIRI(quad.object.value, prefixes);
+    const obj =
+      quad.object.termType === 'Literal'
+        ? `"${quad.object.value.replace(/"/g, '\\"')}"`
+        : shortenIRI(quad.object.value, prefixes);
 
     nodes.add(subj);
     if (quad.object.termType !== 'Literal') {
@@ -206,9 +209,10 @@ export function toASCII(store, options = {}) {
     const quad = quads[i];
     const subj = shortenIRI(quad.subject.value, prefixes);
     const pred = shortenIRI(quad.predicate.value, prefixes);
-    const obj = quad.object.termType === 'Literal'
-      ? `"${quad.object.value}"`
-      : shortenIRI(quad.object.value, prefixes);
+    const obj =
+      quad.object.termType === 'Literal'
+        ? `"${quad.object.value}"`
+        : shortenIRI(quad.object.value, prefixes);
 
     const isLast = i === quads.length - 1;
     const prefix = isLast ? '└──' : '├──';
@@ -248,9 +252,8 @@ export function toHTML(store, options = {}) {
 
   for (const quad of quads) {
     const subjId = quad.subject.value;
-    const objId = quad.object.termType === 'Literal'
-      ? `literal_${quad.object.value}`
-      : quad.object.value;
+    const objId =
+      quad.object.termType === 'Literal' ? `literal_${quad.object.value}` : quad.object.value;
 
     if (!nodes.has(subjId)) {
       nodes.set(subjId, { id: subjId, label: subjId, type: 'resource' });
@@ -259,7 +262,7 @@ export function toHTML(store, options = {}) {
       nodes.set(objId, {
         id: objId,
         label: quad.object.value,
-        type: quad.object.termType === 'Literal' ? 'literal' : 'resource'
+        type: quad.object.termType === 'Literal' ? 'literal' : 'resource',
       });
     }
 
@@ -275,9 +278,10 @@ export function toHTML(store, options = {}) {
     links,
   };
 
-  const colors = theme === 'dark'
-    ? { bg: '#1a1a1a', text: '#ffffff', resource: '#4CAF50', literal: '#2196F3' }
-    : { bg: '#ffffff', text: '#000000', resource: '#4CAF50', literal: '#2196F3' };
+  const colors =
+    theme === 'dark'
+      ? { bg: '#1a1a1a', text: '#ffffff', resource: '#4CAF50', literal: '#2196F3' }
+      : { bg: '#ffffff', text: '#000000', resource: '#4CAF50', literal: '#2196F3' };
 
   return `<!DOCTYPE html>
 <html>
@@ -393,7 +397,12 @@ export function extractSubgraph(store, options) {
     }
 
     if (opts.predicate) {
-      for (const quad of store.match(null, { termType: 'NamedNode', value: opts.predicate }, null, null)) {
+      for (const quad of store.match(
+        null,
+        { termType: 'NamedNode', value: opts.predicate },
+        null,
+        null
+      )) {
         if (result.length >= maxTriples) break;
         result.push(quad);
       }

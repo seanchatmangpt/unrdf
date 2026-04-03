@@ -16,7 +16,11 @@
  * 6. Agent 10: Returns PDF to user
  */
 
-import { resolveMissingInputs, augmentVfsWithResolvedPackages, getCacheStats } from './ctan-resolver.mjs';
+import {
+  resolveMissingInputs,
+  augmentVfsWithResolvedPackages,
+  getCacheStats,
+} from './ctan-resolver.mjs';
 
 // ============================================================================
 // Mock Engine Runner (Agent 3)
@@ -101,7 +105,9 @@ export async function compileWithAutoResolve(texSource, cacheDir) {
   let result = await mockLatexEngine(vfs);
 
   if (!result.success && result.missingInputs.length > 0) {
-    console.log(`  ⚠ Missing ${result.missingInputs.length} package(s): ${result.missingInputs.join(', ')}\n`);
+    console.log(
+      `  ⚠ Missing ${result.missingInputs.length} package(s): ${result.missingInputs.join(', ')}\n`
+    );
 
     // Step 3: Resolve missing inputs via CTAN
     console.log('[Agent 4] Resolving missing packages from CTAN...');

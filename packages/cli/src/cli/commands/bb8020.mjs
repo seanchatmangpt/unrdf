@@ -86,7 +86,9 @@ function formatWorkflowResult(result) {
     lines.push('METRICS');
     lines.push('─────────────────────────────────────────────────────');
     lines.push('');
-    lines.push(`Specification Entropy: ${result.metrics.specificationEntropy?.toFixed(2) || 'N/A'} bits`);
+    lines.push(
+      `Specification Entropy: ${result.metrics.specificationEntropy?.toFixed(2) || 'N/A'} bits`
+    );
 
     if (result.metrics.codeLines) {
       lines.push(`Code Generated: ${result.metrics.codeLines} lines`);
@@ -94,7 +96,9 @@ function formatWorkflowResult(result) {
 
     if (result.metrics.expectedCorrectness) {
       lines.push(`Expected Correctness: ${result.metrics.expectedCorrectness.percentage}`);
-      lines.push(`Error Probability: ${((1 - result.metrics.expectedCorrectness.probability) * 100).toFixed(4)}%`);
+      lines.push(
+        `Error Probability: ${((1 - result.metrics.expectedCorrectness.probability) * 100).toFixed(4)}%`
+      );
     }
 
     lines.push('');
@@ -108,9 +112,9 @@ function formatWorkflowResult(result) {
 
   result.steps.forEach(step => {
     const stepEmoji = {
-      'success': '✅',
-      'failed': '❌',
-      'skipped': '⏭️ '
+      success: '✅',
+      failed: '❌',
+      skipped: '⏭️ ',
     };
 
     lines.push(`${stepEmoji[step.status]} Step ${step.step}: ${step.name}`);
@@ -162,7 +166,9 @@ function formatWorkflowResult(result) {
       }
 
       if (val.staticAnalysis) {
-        lines.push(`Static Analysis: ✅ PASS (${(val.staticAnalysis.coverage * 100).toFixed(1)}% coverage)`);
+        lines.push(
+          `Static Analysis: ✅ PASS (${(val.staticAnalysis.coverage * 100).toFixed(1)}% coverage)`
+        );
       }
 
       if (val.compliance) {
@@ -202,7 +208,9 @@ function formatWorkflowResult(result) {
     lines.push('4. Deploy: git push');
     lines.push('');
     lines.push(`Expected time to complete: 2-3 hours`);
-    lines.push(`Expected correctness: ${result.metrics?.expectedCorrectness?.percentage || '≥99.99%'}`);
+    lines.push(
+      `Expected correctness: ${result.metrics?.expectedCorrectness?.percentage || '≥99.99%'}`
+    );
   } else {
     lines.push('❌ Workflow failed. Address errors and retry.');
 
@@ -228,25 +236,16 @@ function saveArtifacts(result, outputDir) {
     mkdirSync(outputDir, { recursive: true });
 
     // Save workflow result
-    writeFileSync(
-      join(outputDir, 'workflow-result.json'),
-      JSON.stringify(result, null, 2)
-    );
+    writeFileSync(join(outputDir, 'workflow-result.json'), JSON.stringify(result, null, 2));
 
     // Save generated code
     if (result.artifacts.code) {
-      writeFileSync(
-        join(outputDir, 'generated-code.mjs'),
-        result.artifacts.code
-      );
+      writeFileSync(join(outputDir, 'generated-code.mjs'), result.artifacts.code);
     }
 
     // Save pseudocode
     if (result.artifacts.pseudocode) {
-      writeFileSync(
-        join(outputDir, 'pseudocode.txt'),
-        result.artifacts.pseudocode
-      );
+      writeFileSync(join(outputDir, 'pseudocode.txt'), result.artifacts.pseudocode);
     }
 
     // Save architecture
@@ -258,7 +257,6 @@ function saveArtifacts(result, outputDir) {
     }
 
     console.error(`✅ Artifacts saved to: ${outputDir}`);
-
   } catch (error) {
     console.error(`⚠️  Warning: Failed to save artifacts: ${error.message}`);
   }
@@ -318,21 +316,24 @@ export const bb8020Command = defineCommand({
         codebasePath: args.codebase,
         config: {
           dimension: 10000,
-          similarityThreshold: 0.9
-        }
+          similarityThreshold: 0.9,
+        },
       });
 
       // Execute workflow
       console.error('Executing 11-step workflow...');
       console.error('');
 
-      const result = await orchestrator.execute(spec, spec.features.map(f => ({
-        id: f.id,
-        name: f.name,
-        value: f.value,
-        cost: f.cost,
-        description: f.description || ''
-      })));
+      const result = await orchestrator.execute(
+        spec,
+        spec.features.map(f => ({
+          id: f.id,
+          name: f.name,
+          value: f.value,
+          cost: f.cost,
+          description: f.description || '',
+        }))
+      );
 
       // Save artifacts
       saveArtifacts(result, args.output);
@@ -348,7 +349,6 @@ export const bb8020Command = defineCommand({
 
       // Exit code
       process.exit(result.success ? 0 : 1);
-
     } catch (error) {
       console.error('');
       console.error('❌ BB80/20 workflow failed:');

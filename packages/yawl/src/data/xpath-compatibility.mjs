@@ -17,19 +17,25 @@ import { evaluateJSONPath } from '../multiple-instance/expression-evaluator.mjs'
  */
 const XPATH_MAPPINGS = [
   // count(//item) => $.items
-  { pattern: /^count\(\/\/(\w+)\)$/, replacement: (match) => `$.${match[1]}s` },
+  { pattern: /^count\(\/\/(\w+)\)$/, replacement: match => `$.${match[1]}s` },
 
   // /root/item => $.root.item
-  { pattern: /^\/(\w+(?:\/\w+)*)$/, replacement: (match) => `$.${match[1].replace(/\//g, '.')}` },
+  { pattern: /^\/(\w+(?:\/\w+)*)$/, replacement: match => `$.${match[1].replace(/\//g, '.')}` },
 
   // //item => $.items (assumes plural)
-  { pattern: /^\/\/(\w+)$/, replacement: (match) => `$.${match[1]}s` },
+  { pattern: /^\/\/(\w+)$/, replacement: match => `$.${match[1]}s` },
 
   // /root/item/@id => $.root.item.id
-  { pattern: /^\/(\w+(?:\/\w+)*)\/\@(\w+)$/, replacement: (match) => `$.${match[1].replace(/\//g, '.')}.${match[2]}` },
+  {
+    pattern: /^\/(\w+(?:\/\w+)*)\/\@(\w+)$/,
+    replacement: match => `$.${match[1].replace(/\//g, '.')}.${match[2]}`,
+  },
 
   // count(/root/items/item) => $.root.items
-  { pattern: /^count\(\/(\w+(?:\/\w+)*)\)$/, replacement: (match) => `$.${match[1].replace(/\//g, '.')}` },
+  {
+    pattern: /^count\(\/(\w+(?:\/\w+)*)\)$/,
+    replacement: match => `$.${match[1].replace(/\//g, '.')}`,
+  },
 ];
 
 /**
@@ -113,7 +119,7 @@ export function evaluateXPath(xpath, data) {
 
   console.warn(
     `XPath deprecated: "${xpath}" converted to JSONPath: "${conversion.jsonpath}". ` +
-    `Please update your specification.`
+      `Please update your specification.`
   );
 
   return evaluateJSONPath(conversion.jsonpath, data);

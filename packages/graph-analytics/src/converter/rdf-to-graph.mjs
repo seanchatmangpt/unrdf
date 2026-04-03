@@ -8,14 +8,16 @@ import { z } from 'zod';
  * CRITICAL: Foundation for all graph algorithms
  */
 
-const ConversionOptionsSchema = z.object({
-  directed: z.boolean().default(true),
-  multigraph: z.boolean().default(false),
-  compound: z.boolean().default(false),
-  includePredicateAsEdgeLabel: z.boolean().default(true),
-  nodeIdExtractor: z.function().optional(),
-  edgeWeightExtractor: z.function().optional(),
-}).passthrough();
+const ConversionOptionsSchema = z
+  .object({
+    directed: z.boolean().default(true),
+    multigraph: z.boolean().default(false),
+    compound: z.boolean().default(false),
+    includePredicateAsEdgeLabel: z.boolean().default(true),
+    nodeIdExtractor: z.function().optional(),
+    edgeWeightExtractor: z.function().optional(),
+  })
+  .passthrough();
 
 /**
  * Convert RDF store to graphlib Graph
@@ -34,10 +36,12 @@ export function rdfToGraph(store, options = {}) {
   });
 
   // Default node ID extractor - get URI value
-  const getNodeId = opts.nodeIdExtractor || ((node) => {
-    if (!node) return null;
-    return node.value || node.id || node.toString();
-  });
+  const getNodeId =
+    opts.nodeIdExtractor ||
+    (node => {
+      if (!node) return null;
+      return node.value || node.id || node.toString();
+    });
 
   // Default edge weight extractor - uniform weight of 1
   const getEdgeWeight = opts.edgeWeightExtractor || (() => 1);
@@ -72,14 +76,19 @@ export function rdfToGraph(store, options = {}) {
 
     // Add edge
     // Only use edge label if multigraph is enabled
-    const edgeLabel = (opts.includePredicateAsEdgeLabel && opts.multigraph) ? predicateId : undefined;
+    const edgeLabel = opts.includePredicateAsEdgeLabel && opts.multigraph ? predicateId : undefined;
     const edgeWeight = getEdgeWeight(quad);
 
-    graph.setEdge(subjectId, objectId, {
-      predicate: predicateId,
-      weight: edgeWeight,
-      quad: quad,
-    }, edgeLabel);
+    graph.setEdge(
+      subjectId,
+      objectId,
+      {
+        predicate: predicateId,
+        weight: edgeWeight,
+        quad: quad,
+      },
+      edgeLabel
+    );
   }
 
   return graph;

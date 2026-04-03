@@ -83,13 +83,19 @@ export const streamToAsyncSchema = {
 /**
  * Schema for MigrationTracker constructor
  */
-export const MigrationTrackerConstructorParamsSchema = z.tuple([z.object({
-  context: z.object({
-    t_ns: z.bigint().optional()
-  }).optional(),
-  startTime: z.number().optional(),
-  getNow: z.function().optional()
-}).optional()]);
+export const MigrationTrackerConstructorParamsSchema = z.tuple([
+  z
+    .object({
+      context: z
+        .object({
+          t_ns: z.bigint().optional(),
+        })
+        .optional(),
+      startTime: z.number().optional(),
+      getNow: z.function().optional(),
+    })
+    .optional(),
+]);
 
 export const MigrationTrackerConstructorReturnSchema = z.instanceof(Object);
 
@@ -104,7 +110,7 @@ export const MigrationTrackerConstructorSchema = {
 export const MigrationTrackerTrackParamsSchema = z.tuple([
   z.string(),
   z.string(),
-  z.number().optional()
+  z.number().optional(),
 ]);
 
 export const MigrationTrackerTrackReturnSchema = z.void();
@@ -119,7 +125,7 @@ export const MigrationTrackerTrackSchema = {
  */
 export const MigrationTrackerAnalyzeSourceParamsSchema = z.tuple([
   z.string(),
-  z.string().optional()
+  z.string().optional(),
 ]);
 
 export const MigrationTrackerAnalyzeSourceReturnSchema = z.object({
@@ -140,13 +146,17 @@ export const MigrationTrackerAnalyzeSourceSchema = {
  */
 export const MigrationTrackerScanDirectoryParamsSchema = z.tuple([z.string()]);
 
-export const MigrationTrackerScanDirectoryReturnSchema = z.promise(z.array(z.object({
-  file: z.string(),
-  n3Imports: z.number(),
-  dateNowCalls: z.number(),
-  mathRandomCalls: z.number(),
-  workflowRunCalls: z.number(),
-})));
+export const MigrationTrackerScanDirectoryReturnSchema = z.promise(
+  z.array(
+    z.object({
+      file: z.string(),
+      n3Imports: z.number(),
+      dateNowCalls: z.number(),
+      mathRandomCalls: z.number(),
+      workflowRunCalls: z.number(),
+    })
+  )
+);
 
 export const MigrationTrackerScanDirectorySchema = {
   params: MigrationTrackerScanDirectoryParamsSchema,
@@ -162,18 +172,20 @@ export const MigrationTrackerReportReturnSchema = z.object({
   totalWarnings: z.number(),
   uniqueAPIs: z.number(),
   elapsed: z.number(),
-  warnings: z.array(z.object({
-    oldAPI: z.string(),
-    newAPI: z.string(),
-    timestamp: z.number()
-  })),
+  warnings: z.array(
+    z.object({
+      oldAPI: z.string(),
+      newAPI: z.string(),
+      timestamp: z.number(),
+    })
+  ),
   staticAnalysis: z.object({
     filesScanned: z.number(),
     n3Imports: z.number(),
     dateNowCalls: z.number(),
     mathRandomCalls: z.number(),
     workflowRunCalls: z.number(),
-  })
+  }),
 });
 
 export const MigrationTrackerReportSchema = {
@@ -205,5 +217,5 @@ export default {
   MigrationTrackerAnalyzeSource: MigrationTrackerAnalyzeSourceSchema,
   MigrationTrackerScanDirectory: MigrationTrackerScanDirectorySchema,
   MigrationTrackerReport: MigrationTrackerReportSchema,
-  MigrationTrackerSummary: MigrationTrackerSummarySchema
+  MigrationTrackerSummary: MigrationTrackerSummarySchema,
 };

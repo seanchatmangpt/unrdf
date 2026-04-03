@@ -60,5 +60,5 @@ export default {
   isN3Store: isN3StoreSchema,
   convertN3ToOxigraph: convertN3ToOxigraphSchema,
   ensureOxigraphStore: ensureOxigraphStoreSchema,
-  createN3Store: createN3StoreSchema
+  createN3Store: createN3StoreSchema,
 };

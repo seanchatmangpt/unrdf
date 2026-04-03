@@ -9,7 +9,11 @@
  */
 
 import { resolveMissingInputs, augmentVfsWithResolvedPackages } from './resolve.mjs';
-import { buildCtanUrls, extractPackageName as _extractPackageName, getPackageMetadata } from './ctan-map.mjs';
+import {
+  buildCtanUrls,
+  extractPackageName as _extractPackageName,
+  getPackageMetadata,
+} from './ctan-map.mjs';
 
 // ============================================================================
 // EXAMPLE 1: Production Usage (CTAN with retry)
@@ -35,8 +39,8 @@ async function productionExample() {
       missingInputs,
       cacheDir,
       registry: 'https://mirrors.ctan.org', // Default CTAN
-      maxRetries: 3,                        // Exponential backoff
-      initialDelay: 100,                    // Starting at 100ms
+      maxRetries: 3, // Exponential backoff
+      initialDelay: 100, // Starting at 100ms
     });
 
     console.log(`✅ Resolved ${resolved.size} packages:`);
@@ -45,12 +49,15 @@ async function productionExample() {
     }
 
     // Merge into VFS
-    const vfs = { 'work/main.tex': new Uint8Array([/* ... */]) };
+    const vfs = {
+      'work/main.tex': new Uint8Array([
+        /* ... */
+      ]),
+    };
     const augmentedVfs = augmentVfsWithResolvedPackages(vfs, resolved);
 
     console.log(`\n✅ VFS now has ${Object.keys(augmentedVfs).length} files`);
     return augmentedVfs;
-
   } catch (error) {
     console.error(`❌ Resolution failed: ${error.message}`);
     throw error;
@@ -86,7 +93,6 @@ async function testingExample() {
 
     console.log(`✅ Resolved from local fixture: ${resolved.size} packages`);
     return resolved;
-
   } catch (error) {
     console.error(`❌ Local fixture failed: ${error.message}`);
     throw error;
@@ -146,7 +152,7 @@ async function compileIntegrationExample(
     missingInputs,
     cacheDir,
     registry,
-    lockfile,        // Optional: for version pinning
+    lockfile, // Optional: for version pinning
     maxRetries: 3,
     initialDelay: 100,
   });
@@ -155,7 +161,9 @@ async function compileIntegrationExample(
 
   // Step 2: Augment VFS
   const augmentedVfs = augmentVfsWithResolvedPackages(vfs, resolved);
-  console.log(`✅ VFS augmented: ${Object.keys(vfs).length} → ${Object.keys(augmentedVfs).length} files`);
+  console.log(
+    `✅ VFS augmented: ${Object.keys(vfs).length} → ${Object.keys(augmentedVfs).length} files`
+  );
 
   // Step 3: Update lockfile (Agent 5's job)
   if (lockfile) {
@@ -193,9 +201,15 @@ async function errorHandlingExample() {
     });
   } catch (error) {
     console.log('Expected error caught:');
-    console.log(`  → Message includes: ${error.message.includes('Failed to resolve') ? '✅' : '❌'} "Failed to resolve"`);
-    console.log(`  → Message includes: ${error.message.includes('URLs attempted') ? '✅' : '❌'} "URLs attempted"`);
-    console.log(`  → Message includes: ${error.message.includes('tlmgr install') ? '✅' : '❌'} "tlmgr install"`);
+    console.log(
+      `  → Message includes: ${error.message.includes('Failed to resolve') ? '✅' : '❌'} "Failed to resolve"`
+    );
+    console.log(
+      `  → Message includes: ${error.message.includes('URLs attempted') ? '✅' : '❌'} "URLs attempted"`
+    );
+    console.log(
+      `  → Message includes: ${error.message.includes('tlmgr install') ? '✅' : '❌'} "tlmgr install"`
+    );
   }
 }
 

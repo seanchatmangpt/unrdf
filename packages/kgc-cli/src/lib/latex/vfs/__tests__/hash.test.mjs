@@ -19,10 +19,7 @@ describe('VFS Hash Utilities', () => {
       const hash = hashFile(content);
 
       // SHA256 of empty string
-      assert.equal(
-        hash,
-        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-      );
+      assert.equal(hash, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
     });
 
     it('should hash file content', () => {
@@ -61,16 +58,11 @@ describe('VFS Hash Utilities', () => {
       const hash = hashVfs(vfs);
 
       // SHA256 of empty string
-      assert.equal(
-        hash,
-        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-      );
+      assert.equal(hash, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
     });
 
     it('should hash single file VFS', () => {
-      const vfs = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
       const hash = hashVfs(vfs);
       assert.equal(typeof hash, 'string');
@@ -96,9 +88,7 @@ describe('VFS Hash Utilities', () => {
     });
 
     it('should detect content changes', () => {
-      const vfs1 = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs1 = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
       const vfs2 = new Map([
         ['work/main.tex', new Uint8Array([1, 2, 4])], // Changed last byte
@@ -108,9 +98,7 @@ describe('VFS Hash Utilities', () => {
     });
 
     it('should detect path changes', () => {
-      const vfs1 = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs1 = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
       const vfs2 = new Map([
         ['work/main2.tex', new Uint8Array([1, 2, 3])], // Different path
@@ -120,9 +108,7 @@ describe('VFS Hash Utilities', () => {
     });
 
     it('should detect file additions', () => {
-      const vfs1 = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs1 = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
       const vfs2 = new Map([
         ['work/main.tex', new Uint8Array([1, 2, 3])],
@@ -195,9 +181,7 @@ describe('VFS Hash Utilities', () => {
     });
 
     it('should be case-insensitive for extensions', () => {
-      const vfs = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
       const hash1 = hashVfsByExtension(vfs, ['.tex']);
       const hash2 = hashVfsByExtension(vfs, ['.TEX']);
@@ -222,13 +206,9 @@ describe('VFS Hash Utilities', () => {
     });
 
     it('should return false for different VFS', () => {
-      const vfs1 = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 3])],
-      ]);
+      const vfs1 = new Map([['work/main.tex', new Uint8Array([1, 2, 3])]]);
 
-      const vfs2 = new Map([
-        ['work/main.tex', new Uint8Array([1, 2, 4])],
-      ]);
+      const vfs2 = new Map([['work/main.tex', new Uint8Array([1, 2, 4])]]);
 
       assert.equal(areVfsEqual(vfs1, vfs2), false);
     });
@@ -275,11 +255,7 @@ describe('VFS Hash Utilities', () => {
       const metadata = getVfsHashMetadata(vfs);
 
       // Paths should be sorted
-      assert.deepEqual(metadata.paths, [
-        'work/a.tex',
-        'work/m.tex',
-        'work/z.tex',
-      ]);
+      assert.deepEqual(metadata.paths, ['work/a.tex', 'work/m.tex', 'work/z.tex']);
     });
   });
 
@@ -317,9 +293,7 @@ describe('VFS Hash Utilities', () => {
         largeContent[i] = i % 256;
       }
 
-      const vfs = new Map([
-        ['work/large.tex', largeContent],
-      ]);
+      const vfs = new Map([['work/large.tex', largeContent]]);
 
       const hash1 = hashVfs(vfs);
       const hash2 = hashVfs(vfs);

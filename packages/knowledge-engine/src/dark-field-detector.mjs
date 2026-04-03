@@ -170,12 +170,7 @@ export class DarkFieldDetector {
       'emergent_demand_patterns',
     ];
 
-    return this._generateDetectedPatterns(
-      dimensions,
-      observablePatterns,
-      targetSize,
-      options
-    );
+    return this._generateDetectedPatterns(dimensions, observablePatterns, targetSize, options);
   }
 
   /**
@@ -195,12 +190,7 @@ export class DarkFieldDetector {
       'unwritten_cultural_norms',
     ];
 
-    return this._generateDetectedPatterns(
-      dimensions,
-      observablePatterns,
-      targetSize,
-      options
-    );
+    return this._generateDetectedPatterns(dimensions, observablePatterns, targetSize, options);
   }
 
   /**
@@ -220,12 +210,7 @@ export class DarkFieldDetector {
       'tacit_success_factors',
     ];
 
-    return this._generateDetectedPatterns(
-      dimensions,
-      observablePatterns,
-      targetSize,
-      options
-    );
+    return this._generateDetectedPatterns(dimensions, observablePatterns, targetSize, options);
   }
 
   /**
@@ -245,12 +230,7 @@ export class DarkFieldDetector {
       'tacit_resistance_patterns',
     ];
 
-    return this._generateDetectedPatterns(
-      dimensions,
-      observablePatterns,
-      targetSize,
-      options
-    );
+    return this._generateDetectedPatterns(dimensions, observablePatterns, targetSize, options);
   }
 
   /**

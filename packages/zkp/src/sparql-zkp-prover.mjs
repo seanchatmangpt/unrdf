@@ -160,11 +160,7 @@ export class SPARQLZKProver {
     const witness = await this._generateWitness(validatedTriples, query, results);
 
     // Compute public signals
-    const publicSignals = await this._computePublicSignals(
-      validatedTriples,
-      query,
-      results
-    );
+    const publicSignals = await this._computePublicSignals(validatedTriples, query, results);
 
     // Generate zk-SNARK proof
     // NOTE: In production, this would call actual snarkjs.groth16.fullProve()
@@ -267,9 +263,7 @@ export class SPARQLZKProver {
    */
   async batchProve(queries) {
     return await Promise.all(
-      queries.map(({ triples, query, results }) =>
-        this.prove(triples, query, results)
-      )
+      queries.map(({ triples, query, results }) => this.prove(triples, query, results))
     );
   }
 
@@ -330,9 +324,7 @@ export class SPARQLZKProver {
 
     // Hash all triples
     const hashes = await Promise.all(
-      sorted.map((t) =>
-        blake3(`${t.subject}:${t.predicate}:${t.object}`)
-      )
+      sorted.map(t => blake3(`${t.subject}:${t.predicate}:${t.object}`))
     );
 
     // Build Merkle tree
@@ -361,7 +353,7 @@ export class SPARQLZKProver {
       padded.push({ subject: '', predicate: '', object: '' });
     }
 
-    return padded.map((t) => [
+    return padded.map(t => [
       this._hashToFieldElement(t.subject),
       this._hashToFieldElement(t.predicate),
       this._hashToFieldElement(t.object),
@@ -383,12 +375,12 @@ export class SPARQLZKProver {
 
     const triples = pattern[1]
       .split('.')
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
+      .map(t => t.trim())
+      .filter(t => t.length > 0);
 
     return {
       type: 'BGP',
-      patterns: triples.map((t) => {
+      patterns: triples.map(t => {
         const parts = t.split(/\s+/);
         return {
           subject: parts[0] || '?s',
@@ -444,11 +436,7 @@ export class SPARQLZKProver {
     // );
 
     // For this prototype, generate mock proof structure
-    const mockCurvePoint = () => [
-      this._randomFieldElement(),
-      this._randomFieldElement(),
-      '1',
-    ];
+    const mockCurvePoint = () => [this._randomFieldElement(), this._randomFieldElement(), '1'];
 
     const mockG2Point = () => [
       [this._randomFieldElement(), this._randomFieldElement()],
@@ -478,7 +466,7 @@ export class SPARQLZKProver {
     // e(pi_a, pi_b) = e(vk_alpha, vk_beta) * e(pub, vk_gamma) * e(pi_c, vk_delta)
 
     // Simulate verification time
-    await new Promise((resolve) => setTimeout(resolve, 1));
+    await new Promise(resolve => setTimeout(resolve, 1));
 
     // Always return true for valid-looking proofs (in prototype)
     return (
@@ -608,9 +596,4 @@ export function estimateProofPerformance(tripleCount, resultCount) {
 // =============================================================================
 
 export default SPARQLZKProver;
-export {
-  ZKProofSchema,
-  PublicSignalsSchema,
-  SPARQLQuerySchema,
-  VerificationKeySchema,
-};
+export { ZKProofSchema, PublicSignalsSchema, SPARQLQuerySchema, VerificationKeySchema };

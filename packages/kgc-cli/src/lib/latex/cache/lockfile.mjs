@@ -23,11 +23,14 @@ import { z } from 'zod';
  */
 export const LockEntrySchema = z.object({
   name: z.string().describe('Package or file name (e.g., hyperref.sty)'),
-  hash: z.string().regex(/^[a-f0-9]{64}$/).describe('SHA-256 hash of content'),
+  hash: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .describe('SHA-256 hash of content'),
   sourceUrl: z.string().url().optional().describe('Original source URL (CTAN, etc.)'),
   cachedPath: z.string().describe('Relative path in cache directory'),
   fetchedAt: z.number().int().positive().describe('Unix timestamp (ms) when fetched'),
-  size: z.number().int().nonnegative().optional().describe('File size in bytes')
+  size: z.number().int().nonnegative().optional().describe('File size in bytes'),
 });
 
 /**
@@ -37,12 +40,11 @@ export const LockEntrySchema = z.object({
 export const LockfileSchema = z.object({
   version: z.literal('1.0.0').describe('Lockfile format version'),
   engine: z.enum(['xetex', 'pdftex', 'luatex']).describe('LaTeX engine'),
-  entries: z.record(
-    z.string().describe('Entry key (usually same as name)'),
-    LockEntrySchema
-  ).describe('Map of package name to lock entry'),
+  entries: z
+    .record(z.string().describe('Entry key (usually same as name)'), LockEntrySchema)
+    .describe('Map of package name to lock entry'),
   createdAt: z.number().int().positive().describe('Unix timestamp (ms) when created'),
-  updatedAt: z.number().int().positive().describe('Unix timestamp (ms) last updated')
+  updatedAt: z.number().int().positive().describe('Unix timestamp (ms) last updated'),
 });
 
 /**
@@ -63,7 +65,7 @@ export function createLockfile(engine = 'xetex') {
     engine,
     entries: {},
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
 }
 
@@ -115,7 +117,7 @@ export async function saveLockfile(lockfilePath, lockfile) {
   // Update timestamp
   const updated = {
     ...lockfile,
-    updatedAt: Date.now()
+    updatedAt: Date.now(),
   };
 
   // Validate before writing
@@ -311,7 +313,7 @@ export function mergeLockfiles(lockfile1, lockfile2) {
   // Merge entries (lockfile2 wins on conflict)
   merged.entries = {
     ...lockfile1.entries,
-    ...lockfile2.entries
+    ...lockfile2.entries,
   };
 
   return merged;
@@ -329,7 +331,7 @@ export function pruneLockfile(lockfile, validNames) {
 
   const pruned = {
     ...lockfile,
-    entries: {}
+    entries: {},
   };
 
   for (const [name, entry] of Object.entries(lockfile.entries)) {
@@ -364,6 +366,6 @@ export function createLockEntry({ name, content, cachedPath, sourceUrl }) {
     cachedPath,
     fetchedAt,
     size,
-    ...(sourceUrl && { sourceUrl })
+    ...(sourceUrl && { sourceUrl }),
   };
 }

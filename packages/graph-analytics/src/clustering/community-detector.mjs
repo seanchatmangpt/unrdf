@@ -7,11 +7,13 @@ import { z } from 'zod';
  * ALGORITHMS: Label propagation, modularity-based clustering
  */
 
-const ClusteringOptionsSchema = z.object({
-  maxIterations: z.number().int().positive().default(100),
-  minCommunitySize: z.number().int().positive().default(2),
-  seed: z.number().int().optional(),
-}).passthrough();
+const ClusteringOptionsSchema = z
+  .object({
+    maxIterations: z.number().int().positive().default(100),
+    minCommunitySize: z.number().int().positive().default(2),
+    seed: z.number().int().optional(),
+  })
+  .passthrough();
 
 /**
  * Label Propagation Algorithm for community detection
@@ -136,10 +138,7 @@ export function detectCommunitiesModularity(graph, options = {}) {
         if (!neighborCommunities.has(neighborCommunity)) {
           neighborCommunities.set(neighborCommunity, 0);
         }
-        neighborCommunities.set(
-          neighborCommunity,
-          neighborCommunities.get(neighborCommunity) + 1
-        );
+        neighborCommunities.set(neighborCommunity, neighborCommunities.get(neighborCommunity) + 1);
       }
 
       // Find best community

@@ -25,22 +25,10 @@ export {
   estimateProofPerformance,
 } from './sparql-zkp-prover.mjs';
 
-export {
-  CircuitCompiler,
-  createCircuitCompiler,
-  compileSPARQL,
-} from './circuit-compiler.mjs';
+export { CircuitCompiler, createCircuitCompiler, compileSPARQL } from './circuit-compiler.mjs';
 
-export {
-  Groth16Prover,
-  createGroth16Prover,
-  generateProof,
-} from './groth16-prover.mjs';
+export { Groth16Prover, createGroth16Prover, generateProof } from './groth16-prover.mjs';
 
-export {
-  Groth16Verifier,
-  createGroth16Verifier,
-  verifyProof,
-} from './groth16-verifier.mjs';
+export { Groth16Verifier, createGroth16Verifier, verifyProof } from './groth16-verifier.mjs';
 
 export * from './schemas.mjs';

@@ -133,7 +133,14 @@ export async function caseToRDF(caseInstance, store) {
   }
 
   if (caseInstance.startedAt) {
-    store.add(quad(caseNode, namedNode(YAWL + 'startedAt'), dateTimeLiteral(toISO(caseInstance.startedAt)), graph));
+    store.add(
+      quad(
+        caseNode,
+        namedNode(YAWL + 'startedAt'),
+        dateTimeLiteral(toISO(caseInstance.startedAt)),
+        graph
+      )
+    );
     quadCount++;
   }
 
@@ -172,12 +179,26 @@ export async function caseToRDF(caseInstance, store) {
 
     // Timestamps
     if (workItem.enabledAt) {
-      store.add(quad(wiNode, namedNode(YAWL + 'enabledAt'), dateTimeLiteral(toISO(workItem.enabledAt)), graph));
+      store.add(
+        quad(
+          wiNode,
+          namedNode(YAWL + 'enabledAt'),
+          dateTimeLiteral(toISO(workItem.enabledAt)),
+          graph
+        )
+      );
       quadCount++;
     }
 
     if (workItem.startedAt) {
-      store.add(quad(wiNode, namedNode(YAWL + 'startedAt'), dateTimeLiteral(toISO(workItem.startedAt)), graph));
+      store.add(
+        quad(
+          wiNode,
+          namedNode(YAWL + 'startedAt'),
+          dateTimeLiteral(toISO(workItem.startedAt)),
+          graph
+        )
+      );
       quadCount++;
     }
 
@@ -308,9 +329,8 @@ export async function caseFromRDF(store, caseId, workflow) {
 
     // Get task reference
     const taskRefQuads = [...store.match(wiNode, taskRef, null, graph)];
-    const taskDefId = taskRefQuads.length > 0
-      ? taskRefQuads[0].object.value.replace(YAWL + 'task-', '')
-      : wiId;
+    const taskDefId =
+      taskRefQuads.length > 0 ? taskRefQuads[0].object.value.replace(YAWL + 'task-', '') : wiId;
 
     // Get status
     const wiStatusQuads = [...store.match(wiNode, statusProp, null, graph)];

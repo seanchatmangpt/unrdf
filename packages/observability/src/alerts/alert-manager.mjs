@@ -275,7 +275,7 @@ export class AlertManager extends EventEmitter {
    * @private
    */
   async _sendWebhooks(alert) {
-    const promises = this.webhooks.map(async (webhook) => {
+    const promises = this.webhooks.map(async webhook => {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), webhook.timeout);

@@ -75,7 +75,14 @@ export function findMatchingPolicyPackForResource(policyPacks, resource) {
  * @param {Object} state - Manager state
  * @returns {Promise<any>} Allocation receipt
  */
-export async function performResourceAllocation(store, workItem, resource, options, policyPacks, state) {
+export async function performResourceAllocation(
+  store,
+  workItem,
+  resource,
+  options,
+  policyPacks,
+  state
+) {
   const validatedWorkItem = WorkItemSchema.parse(workItem);
   const validatedResource = ResourceSchema.parse(resource);
 
@@ -83,15 +90,17 @@ export async function performResourceAllocation(store, workItem, resource, optio
   if (!capacityCheck.allowed) {
     throw new Error(
       `Capacity exceeded for resource ${validatedResource.id}: ` +
-      `${capacityCheck.current}/${capacityCheck.max}`
+        `${capacityCheck.current}/${capacityCheck.max}`
     );
   }
 
-  const eligibilityCheck = await checkResourceEligibility(store, validatedResource, validatedWorkItem);
+  const eligibilityCheck = await checkResourceEligibility(
+    store,
+    validatedResource,
+    validatedWorkItem
+  );
   if (!eligibilityCheck.eligible) {
-    throw new Error(
-      `Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`
-    );
+    throw new Error(`Resource ${validatedResource.id} not eligible: ${eligibilityCheck.reason}`);
   }
 
   let policyPackId = options.policyPackId;
@@ -143,12 +152,14 @@ export function performResourceDeallocation(store, allocationId) {
 
   store.add(quad(allocationNode, yawl('status'), literal('deallocated'), defaultGraph()));
 
-  store.add(quad(
-    allocationNode,
-    yawl('deallocatedAt'),
-    literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
-    defaultGraph()
-  ));
+  store.add(
+    quad(
+      allocationNode,
+      yawl('deallocatedAt'),
+      literal(new Date().toISOString(), namedNode(xsd('dateTime'))),
+      defaultGraph()
+    )
+  );
 
   return true;
 }

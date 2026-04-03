@@ -30,12 +30,16 @@ const BundleManifestSchema = z.object({
   engine: z.enum(['xetex', 'pdftex', 'luatex']).describe('LaTeX engine'),
   fileCount: z.number().int().nonnegative().describe('Total number of files in bundle'),
   totalSize: z.number().int().nonnegative().describe('Total size in bytes'),
-  files: z.array(z.object({
-    name: z.string(),
-    relativePath: z.string(),
-    hash: z.string(),
-    size: z.number().int().nonnegative()
-  })).describe('List of files in bundle')
+  files: z
+    .array(
+      z.object({
+        name: z.string(),
+        relativePath: z.string(),
+        hash: z.string(),
+        size: z.number().int().nonnegative(),
+      })
+    )
+    .describe('List of files in bundle'),
 });
 
 /**
@@ -80,7 +84,7 @@ export async function exportBundle(lockfile, cacheDir, outputDir) {
       name: entry.name,
       relativePath: entry.relativePath,
       hash: entry.hash,
-      size: entry.size
+      size: entry.size,
     });
   }
 
@@ -91,7 +95,7 @@ export async function exportBundle(lockfile, cacheDir, outputDir) {
     engine: lockfile.engine,
     fileCount: copiedFiles.length,
     totalSize: copiedFiles.reduce((sum, f) => sum + f.size, 0),
-    files: copiedFiles.sort((a, b) => a.relativePath.localeCompare(b.relativePath))
+    files: copiedFiles.sort((a, b) => a.relativePath.localeCompare(b.relativePath)),
   };
 
   // Validate manifest
@@ -102,11 +106,7 @@ export async function exportBundle(lockfile, cacheDir, outputDir) {
 
   // Write manifest
   const manifestPath = join(outputDir, 'bundle.manifest.json');
-  await writeFile(
-    manifestPath,
-    JSON.stringify(manifestResult.data, null, 2) + '\n',
-    'utf-8'
-  );
+  await writeFile(manifestPath, JSON.stringify(manifestResult.data, null, 2) + '\n', 'utf-8');
 
   return manifestResult.data;
 }

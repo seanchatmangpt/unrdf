@@ -206,17 +206,16 @@ function outputTable(results, isSELECT) {
       return row;
     });
 
-    const tableData = [
-      ['#', ...variables],
-      ...data,
-    ];
+    const tableData = [['#', ...variables], ...data];
 
-    console.log(table(tableData, {
-      header: {
-        alignment: 'center',
-        content: 'Query Results',
-      },
-    }));
+    console.log(
+      table(tableData, {
+        header: {
+          alignment: 'center',
+          content: 'Query Results',
+        },
+      })
+    );
   } else {
     // CONSTRUCT/DESCRIBE results are quads
     const data = results.map((quad, idx) => [
@@ -227,17 +226,16 @@ function outputTable(results, isSELECT) {
       quad.graph ? shortenIRI(quad.graph.value) : '-',
     ]);
 
-    const tableData = [
-      ['#', 'Subject', 'Predicate', 'Object', 'Graph'],
-      ...data,
-    ];
+    const tableData = [['#', 'Subject', 'Predicate', 'Object', 'Graph'], ...data];
 
-    console.log(table(tableData, {
-      header: {
-        alignment: 'center',
-        content: 'Query Results',
-      },
-    }));
+    console.log(
+      table(tableData, {
+        header: {
+          alignment: 'center',
+          content: 'Query Results',
+        },
+      })
+    );
   }
 }
 

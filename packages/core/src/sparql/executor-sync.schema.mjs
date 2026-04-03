@@ -11,7 +11,11 @@ import { z } from 'zod';
 /**
  * Schema for executeQuerySync
  */
-export const executeQuerySyncParamsSchema = z.tuple([z.unknown(), z.string(), z.unknown().optional()]);
+export const executeQuerySyncParamsSchema = z.tuple([
+  z.unknown(),
+  z.string(),
+  z.unknown().optional(),
+]);
 
 export const executeQuerySyncReturnSchema = z.unknown();
 
@@ -23,7 +27,11 @@ export const executeQuerySyncSchema = {
 /**
  * Schema for executeSelectSync
  */
-export const executeSelectSyncParamsSchema = z.tuple([z.unknown(), z.string(), z.unknown().optional()]);
+export const executeSelectSyncParamsSchema = z.tuple([
+  z.unknown(),
+  z.string(),
+  z.unknown().optional(),
+]);
 
 export const executeSelectSyncReturnSchema = z.unknown();
 
@@ -35,7 +43,11 @@ export const executeSelectSyncSchema = {
 /**
  * Schema for executeConstructSync
  */
-export const executeConstructSyncParamsSchema = z.tuple([z.unknown(), z.string(), z.unknown().optional()]);
+export const executeConstructSyncParamsSchema = z.tuple([
+  z.unknown(),
+  z.string(),
+  z.unknown().optional(),
+]);
 
 export const executeConstructSyncReturnSchema = z.unknown();
 
@@ -47,7 +59,11 @@ export const executeConstructSyncSchema = {
 /**
  * Schema for executeAskSync
  */
-export const executeAskSyncParamsSchema = z.tuple([z.unknown(), z.string(), z.unknown().optional()]);
+export const executeAskSyncParamsSchema = z.tuple([
+  z.unknown(),
+  z.string(),
+  z.unknown().optional(),
+]);
 
 export const executeAskSyncReturnSchema = z.boolean();
 
@@ -73,5 +89,5 @@ export default {
   executeSelectSync: executeSelectSyncSchema,
   executeConstructSync: executeConstructSyncSchema,
   executeAskSync: executeAskSyncSchema,
-  prepareQuerySync: prepareQuerySyncSchema
+  prepareQuerySync: prepareQuerySyncSchema,
 };

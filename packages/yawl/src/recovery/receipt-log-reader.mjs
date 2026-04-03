@@ -24,11 +24,13 @@ const ReadReceiptChainOptionsSchema = z.object({
 const ChainValidationResultSchema = z.object({
   valid: z.boolean(),
   receipts: z.array(ReceiptSchema),
-  errors: z.array(z.object({
-    receiptId: z.string(),
-    error: z.string(),
-    receiptIndex: z.number(),
-  })),
+  errors: z.array(
+    z.object({
+      receiptId: z.string(),
+      error: z.string(),
+      receiptIndex: z.number(),
+    })
+  ),
   stats: z.object({
     totalReceipts: z.number(),
     validReceipts: z.number(),

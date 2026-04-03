@@ -27,6 +27,7 @@ export async function compileLatexToPdf({
 ```
 
 **Features**:
+
 - ✅ Automatic dependency resolution (missing packages)
 - ✅ Multi-pass compilation (cross-references, ToC)
 - ✅ Deterministic lockfile management
@@ -37,11 +38,13 @@ export async function compileLatexToPdf({
 ### 2. Error Handling
 
 **Error Types**:
+
 - **Validation Errors**: Thrown immediately (input file not found, etc.)
 - **Compilation Errors**: Wrapped in `LatexCompileError` with diagnostic log
 - **Resolution Errors**: Included in final error with missing inputs list
 
 **Error Object**:
+
 ```javascript
 class LatexCompileError extends Error {
   logFilePath: string;  // Path to diagnostic log file
@@ -67,9 +70,11 @@ Deterministic cache key generation for build reproducibility.
 ## Integration Points
 
 ### Agent 1: CLI Entry Point
+
 **Integration**: Import `compileLatexToPdf` from `./lib/latex/compile.mjs`
 
 **Example**:
+
 ```javascript
 import { compileLatexToPdf } from './lib/latex/compile.mjs';
 
@@ -85,6 +90,7 @@ await fs.writeFile(args.output, pdfBytes);
 ---
 
 ### Agent 2: VFS Collection
+
 **Module**: `project-files.mjs`
 
 **Function Called**: `collectProjectFiles(projectRoot, options)`
@@ -92,6 +98,7 @@ await fs.writeFile(args.output, pdfBytes);
 **Returns**: `Map<string, Uint8Array>` with VFS paths (e.g., `work/main.tex`)
 
 **Integration**:
+
 ```javascript
 import { collectProjectFiles } from './project-files.mjs';
 
@@ -102,6 +109,7 @@ const vfs = await collectProjectFiles(projectDir, {
 ```
 
 **Data Flow**:
+
 ```
 projectDir → collectProjectFiles() → vfs (Map)
                                       ↓
@@ -113,6 +121,7 @@ projectDir → collectProjectFiles() → vfs (Map)
 ---
 
 ### Agent 3: Engine Runner
+
 **Module**: `swiftlatex-engine.mjs`
 
 **Function Called**: `compileWithSwiftLatex({ engine, vfs, entry, cacheDir, passes, verbose })`
@@ -120,6 +129,7 @@ projectDir → collectProjectFiles() → vfs (Map)
 **Returns**: `{ ok, pdf?, log, artifacts?, missingInputs?, error? }`
 
 **Integration**:
+
 ```javascript
 import { compileWithSwiftLatex } from './swiftlatex-engine.mjs';
 
@@ -140,6 +150,7 @@ if (result.ok && result.pdf) {
 ```
 
 **Data Flow**:
+
 ```
 vfs + engine + passes → compileWithSwiftLatex()
                                 ↓
@@ -152,15 +163,18 @@ vfs + engine + passes → compileWithSwiftLatex()
 ---
 
 ### Agent 4: Resolver
+
 **Module**: `ctan-resolver.mjs`
 
 **Functions Called**:
+
 - `resolveMissingInputs({ missingInputs, cacheDir, ctanMirror? })`
 - `augmentVfsWithResolvedPackages(vfs, resolvedMap)`
 
 **Returns**: `Map<string, Uint8Array>` (VFS path → content)
 
 **Integration**:
+
 ```javascript
 import { resolveMissingInputs, augmentVfsWithResolvedPackages } from './ctan-resolver.mjs';
 
@@ -184,6 +198,7 @@ for (const [vfsPath, content] of resolvedMap) {
 ```
 
 **Data Flow**:
+
 ```
 missingInputs → resolveMissingInputs()
                         ↓
@@ -197,15 +212,18 @@ missingInputs → resolveMissingInputs()
 ---
 
 ### Agent 5: Lockfile Manager
+
 **Module**: `latex-lock.mjs`
 
 **Functions Called**:
+
 - `loadLatexLock(lockfilePath)` → `Lockfile | null`
 - `createLatexLock(engine)` → `Lockfile`
 - `recordResolvedInput(lockfile, entry)` → `void` (mutates lockfile)
 - `saveLatexLock(lockfilePath, lockfile)` → `Promise<void>`
 
 **Lockfile Structure**:
+
 ```javascript
 {
   version: '1.0.0',
@@ -224,8 +242,14 @@ missingInputs → resolveMissingInputs()
 ```
 
 **Integration**:
+
 ```javascript
-import { loadLatexLock, saveLatexLock, createLatexLock, recordResolvedInput } from './latex-lock.mjs';
+import {
+  loadLatexLock,
+  saveLatexLock,
+  createLatexLock,
+  recordResolvedInput,
+} from './latex-lock.mjs';
 
 const lockfilePath = join(cacheDir, 'latex.lock.json');
 
@@ -247,6 +271,7 @@ await saveLatexLock(lockfilePath, lockfile);
 ```
 
 **Data Flow**:
+
 ```
 lockfilePath → loadLatexLock() → lockfile?
                                     ↓
@@ -260,16 +285,23 @@ lockfilePath → loadLatexLock() → lockfile?
 ---
 
 ### Agent 6: Diagnostics
+
 **Module**: `diagnostics.mjs`
 
 **Exports Used**:
+
 - `LatexCompileError` (class)
 - `parseMissingInputsFromLog(log)` → `string[]`
 - `writeDiagnosticLog({ log, projectDir, timestamp })` → `Promise<string>`
 
 **Integration**:
+
 ```javascript
-import { LatexCompileError, parseMissingInputsFromLog, writeDiagnosticLog } from './diagnostics.mjs';
+import {
+  LatexCompileError,
+  parseMissingInputsFromLog,
+  writeDiagnosticLog,
+} from './diagnostics.mjs';
 
 // Parse missing inputs (Agent 3 already provides this, but can re-parse)
 const missingInputs = parseMissingInputsFromLog(result.log);
@@ -288,6 +320,7 @@ throw new LatexCompileError(
 ```
 
 **Data Flow**:
+
 ```
 compilation log → parseMissingInputsFromLog() → string[]
                                                     ↓
@@ -301,14 +334,17 @@ final failure → writeDiagnosticLog() → logFilePath
 ---
 
 ### Agent 7: Test Suite
+
 **Integration**: Tests import `compileLatexToPdf` and `generateCacheKey`
 
 **Test Fixtures Needed**:
+
 1. **Minimal fixture**: `\documentclass{article}\begin{document}Hello\end{document}`
 2. **Missing package fixture**: `\usepackage{nonexistent-package}`
 3. **Resolvable package fixture**: `\usepackage{hyperref}`
 
 **Example Test**:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { compileLatexToPdf, generateCacheKey } from '../../src/lib/latex/compile.mjs';
@@ -437,15 +473,18 @@ describe('LaTeX Compilation Pipeline (Agent 10)', () => {
 ## Determinism Guarantees
 
 ### Input Determinism
+
 1. **VFS Ordering**: `collectProjectFiles()` returns sorted `Map` (Agent 2 responsibility)
 2. **Cache Keys**: `generateCacheKey()` uses SHA-256 hash of (input, engine, version)
 3. **Lockfile**: `saveLatexLock()` uses sorted JSON keys (Agent 5 responsibility)
 
 ### Output Determinism
+
 1. **PDF Bytes**: Given same VFS + engine + lockfile → same PDF (SwiftLaTeX determinism)
 2. **Lockfile**: Same dependencies → same lockfile (except timestamps)
 
 ### Concurrency Safety
+
 1. **VFS Immutability**: Each cycle creates new references (Agent 4 mutates in place, but creates new entries)
 2. **Lockfile Sequential**: Only one compilation per project at a time
 3. **No Global State**: Pure function (except file I/O)
@@ -456,12 +495,12 @@ describe('LaTeX Compilation Pipeline (Agent 10)', () => {
 
 ### Error Categories
 
-| Category | Type | Action | Example |
-|----------|------|--------|---------|
-| **Validation** | `Error` | Throw immediately | Input file not found |
-| **Compilation** | `LatexCompileError` | Retry with resolution | Missing packages |
-| **Resolution** | `LatexCompileError` | Fail with diagnostics | Package not on CTAN |
-| **System** | Native `Error` | Propagate | Out of memory, disk full |
+| Category        | Type                | Action                | Example                  |
+| --------------- | ------------------- | --------------------- | ------------------------ |
+| **Validation**  | `Error`             | Throw immediately     | Input file not found     |
+| **Compilation** | `LatexCompileError` | Retry with resolution | Missing packages         |
+| **Resolution**  | `LatexCompileError` | Fail with diagnostics | Package not on CTAN      |
+| **System**      | Native `Error`      | Propagate             | Out of memory, disk full |
 
 ### Error Flow
 
@@ -492,16 +531,19 @@ Compilation Error → Cycle 1: missingInputs detected
 ## Performance Characteristics
 
 ### Target SLAs
+
 - **First Compile**: 2-5 seconds (cold start, no cache)
 - **Subsequent Compiles**: 1-2 seconds (warm cache, lockfile present)
 - **Missing Package Resolution**: ~500ms per package (download + cache)
 
 ### Optimization Strategies
+
 1. **VFS Caching**: Agent 2 can cache VFS if project files unchanged (future)
 2. **Package Caching**: Agent 4 caches in `cacheDir/ctan/`
 3. **Compilation Caching**: SwiftLaTeX caches `.aux`, `.toc` between passes
 
 ### Memory Usage
+
 - **VFS**: 1-10 MB (small projects), 10-100 MB (large with images)
 - **SwiftLaTeX Runtime**: ~50-100 MB (WASM sandbox)
 - **Peak Memory**: ~3x VFS size
@@ -511,16 +553,19 @@ Compilation Error → Cycle 1: missingInputs detected
 ## Testing Strategy
 
 ### Unit Tests
+
 - `generateCacheKey()` determinism
 - `validateInputs()` error cases
 - `handleMissingInputs()` with mock Agent 4
 
 ### Integration Tests
+
 - **Minimal Fixture**: ✅ Compiles to valid PDF
 - **Missing Package**: ✅ Throws `LatexCompileError` with log file
 - **Resolvable Package**: ✅ Succeeds after resolution cycle
 
 ### End-to-End Tests
+
 - **Real Project**: Clone LaTeX project, compile, verify PDF
 - **CLI Invocation**: Actual shell command execution (Agent 1)
 
@@ -543,6 +588,7 @@ Compilation Error → Cycle 1: missingInputs detected
 ## Definition of Done
 
 **Agent 10 (Pipeline Integrator)** ✅ Complete when:
+
 - ✅ `compile.mjs` exports `compileLatexToPdf()` with correct signature
 - ✅ Integration points documented for Agents 1-9
 - ✅ Error handling strategy defined
@@ -552,6 +598,7 @@ Compilation Error → Cycle 1: missingInputs detected
 - ✅ Works with actual agent implementations (not stubs)
 
 **Full Pipeline** ⏳ Complete when:
+
 - ⏳ Agent 3 WASM integration complete (requires SwiftLaTeX binaries)
 - ⏳ Agent 4 CTAN resolver tested (requires network access)
 - ⏳ Minimal fixture compiles end-to-end
@@ -598,20 +645,24 @@ Compilation Error → Cycle 1: missingInputs detected
 ## Adversarial PM Checklist
 
 ✅ **Did I RUN it?**
+
 - ✅ Syntax check passed: `node --check compile.mjs`
 - ⏳ End-to-end test pending (requires Agent 3 WASM integration)
 
 ✅ **Can I PROVE it?**
+
 - ✅ Syntax validation output: (no errors)
 - ✅ Line count: 401 lines
 - ✅ Imports verified against actual modules
 
 ✅ **What BREAKS if I'm wrong?**
+
 - If Agent 3 API mismatched: Compilation will fail (need integration test)
 - If Agent 4 returns wrong VFS paths: Packages won't be found (need fixture test)
 - If Agent 5 lockfile schema wrong: Lockfile load will fail (need round-trip test)
 
 ✅ **What's the EVIDENCE?**
+
 - ✅ File exists: `/home/user/unrdf/packages/kgc-cli/src/lib/latex/compile.mjs`
 - ✅ Syntax valid: `node --check` passed
 - ✅ Imports match actual modules: Verified against existing files

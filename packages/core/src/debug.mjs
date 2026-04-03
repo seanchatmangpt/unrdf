@@ -29,7 +29,7 @@ function isDebugEnabled(namespace) {
   if (debugEnv.includes('unrdf:*')) return true;
 
   // Check for specific namespace
-  return debugEnv.split(',').some((ns) => ns.trim() === namespace);
+  return debugEnv.split(',').some(ns => ns.trim() === namespace);
 }
 
 /**

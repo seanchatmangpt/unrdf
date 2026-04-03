@@ -93,7 +93,7 @@ export class RDFStreamParser extends Transform {
    * @private
    */
   _transform(chunk, encoding, callback) {
-    return tracer.startActiveSpan('rdf-stream-parser.transform', async (span) => {
+    return tracer.startActiveSpan('rdf-stream-parser.transform', async span => {
       try {
         // Convert buffer to string
         const str = typeof chunk === 'string' ? chunk : chunk.toString('utf8');
@@ -246,12 +246,14 @@ export class RDFStreamParser extends Transform {
   getMetrics() {
     return {
       ...this.metrics,
-      throughput: this.metrics.duration > 0
-        ? (this.metrics.quadsProcessed / this.metrics.duration) * 1000
-        : 0,
-      backpressureRate: this.metrics.backpressureEvents > 0
-        ? this.metrics.backpressureEvents / this.metrics.chunksEmitted
-        : 0,
+      throughput:
+        this.metrics.duration > 0
+          ? (this.metrics.quadsProcessed / this.metrics.duration) * 1000
+          : 0,
+      backpressureRate:
+        this.metrics.backpressureEvents > 0
+          ? this.metrics.backpressureEvents / this.metrics.chunksEmitted
+          : 0,
     };
   }
 }
@@ -292,7 +294,7 @@ export async function parseRDFStream(stream, options = {}) {
     const parser = createRDFStreamParser(options);
     const allQuads = [];
 
-    parser.on('data', (chunk) => {
+    parser.on('data', chunk => {
       if (chunk.type === 'quads') {
         allQuads.push(...chunk.data);
       }

@@ -34,13 +34,13 @@ describe('Bundle Operations', () => {
       const entry1 = createLockEntry({
         name: 'pkg1.sty',
         content: content1,
-        cachedPath: await setCached(cacheDir, 'pkg1.sty', hash(content1), content1)
+        cachedPath: await setCached(cacheDir, 'pkg1.sty', hash(content1), content1),
       });
 
       const entry2 = createLockEntry({
         name: 'pkg2.sty',
         content: content2,
-        cachedPath: await setCached(cacheDir, 'pkg2.sty', hash(content2), content2)
+        cachedPath: await setCached(cacheDir, 'pkg2.sty', hash(content2), content2),
       });
 
       addEntry(lockfile, entry1);
@@ -80,7 +80,7 @@ describe('Bundle Operations', () => {
       const entry = createLockEntry({
         name: 'test.sty',
         content,
-        cachedPath: await setCached(cacheDir1, 'test.sty', hash(content), content)
+        cachedPath: await setCached(cacheDir1, 'test.sty', hash(content), content),
       });
 
       addEntry(lockfile, entry);
@@ -115,7 +115,7 @@ describe('Bundle Operations', () => {
       const entry = createLockEntry({
         name: 'test.sty',
         content,
-        cachedPath: await setCached(cacheDir, 'test.sty', hash(content), content)
+        cachedPath: await setCached(cacheDir, 'test.sty', hash(content), content),
       });
 
       addEntry(lockfile, entry);
@@ -147,13 +147,13 @@ describe('Bundle Operations', () => {
       const entry1 = createLockEntry({
         name: 'a.sty',
         content: content1,
-        cachedPath: await setCached(cacheDir, 'a.sty', hash(content1), content1)
+        cachedPath: await setCached(cacheDir, 'a.sty', hash(content1), content1),
       });
 
       const entry2 = createLockEntry({
         name: 'b.sty',
         content: content2,
-        cachedPath: await setCached(cacheDir, 'b.sty', hash(content2), content2)
+        cachedPath: await setCached(cacheDir, 'b.sty', hash(content2), content2),
       });
 
       addEntry(lockfile, entry1);
@@ -179,17 +179,14 @@ describe('Bundle Operations', () => {
       const bundleDir = join(tmpDir, 'bundle');
 
       const invalidLockfile = {
-        version: '999.0.0',  // Invalid version
+        version: '999.0.0', // Invalid version
         engine: 'invalid',
-        entries: {}
+        entries: {},
       };
 
-      await assert.rejects(
-        async () => {
-          await exportBundle(invalidLockfile, cacheDir, bundleDir);
-        },
-        /Invalid lockfile/
-      );
+      await assert.rejects(async () => {
+        await exportBundle(invalidLockfile, cacheDir, bundleDir);
+      }, /Invalid lockfile/);
     } finally {
       await rm(tmpDir, { recursive: true, force: true });
     }

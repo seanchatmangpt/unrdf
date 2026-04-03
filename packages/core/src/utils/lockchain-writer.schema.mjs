@@ -21,5 +21,5 @@ export const createLockchainWriterSchema = {
 };
 
 export default {
-  createLockchainWriter: createLockchainWriterSchema
+  createLockchainWriter: createLockchainWriterSchema,
 };

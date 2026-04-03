@@ -326,7 +326,7 @@ export async function bulkOperation(items, operation, options = {}) {
   for (let i = 0; i < items.length; i += concurrency) {
     const batch = items.slice(i, i + concurrency);
 
-    const results = await Promise.allSettled(batch.map((item) => operation(item)));
+    const results = await Promise.allSettled(batch.map(item => operation(item)));
 
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
@@ -392,7 +392,7 @@ export class RateLimiter {
     const windowStart = now - this.windowMs;
 
     // Remove operations outside current window
-    this.operations = this.operations.filter((time) => time > windowStart);
+    this.operations = this.operations.filter(time => time > windowStart);
 
     // Check if we've hit the limit
     if (this.operations.length >= this.maxOperations) {
@@ -414,7 +414,7 @@ export class RateLimiter {
   getStatus() {
     const now = Date.now();
     const windowStart = now - this.windowMs;
-    const currentCount = this.operations.filter((time) => time > windowStart).length;
+    const currentCount = this.operations.filter(time => time > windowStart).length;
 
     return {
       current: currentCount,
@@ -439,7 +439,7 @@ export class RateLimiter {
  * @returns {Promise<void>}
  */
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**

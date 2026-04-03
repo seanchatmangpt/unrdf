@@ -78,17 +78,46 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
  */
 export function createNunjucksEnvironment(templatesDir) {
   const loader = templatesDir ? new nunjucks.FileSystemLoader(templatesDir) : null;
-  const env = new nunjucks.Environment(loader, { autoescape: false, trimBlocks: true, lstripBlocks: true });
+  const env = new nunjucks.Environment(loader, {
+    autoescape: false,
+    trimBlocks: true,
+    lstripBlocks: true,
+  });
 
   // Case filters
-  env.addFilter('camelCase', s => s?.replace(/[-_\s]+(.)?/g, (_, c) => c?.toUpperCase() || '') || '');
-  env.addFilter('pascalCase', s => { const c = s?.replace(/[-_\s]+(.)?/g, (_, c) => c?.toUpperCase() || '') || ''; return c.charAt(0).toUpperCase() + c.slice(1); });
-  env.addFilter('snakeCase', s => s?.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '').replace(/[-\s]+/g, '_') || '');
-  env.addFilter('kebabCase', s => s?.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '').replace(/[_\s]+/g, '-') || '');
+  env.addFilter(
+    'camelCase',
+    s => s?.replace(/[-_\s]+(.)?/g, (_, c) => c?.toUpperCase() || '') || ''
+  );
+  env.addFilter('pascalCase', s => {
+    const c = s?.replace(/[-_\s]+(.)?/g, (_, c) => c?.toUpperCase() || '') || '';
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  });
+  env.addFilter(
+    'snakeCase',
+    s =>
+      s
+        ?.replace(/([A-Z])/g, '_$1')
+        .toLowerCase()
+        .replace(/^_/, '')
+        .replace(/[-\s]+/g, '_') || ''
+  );
+  env.addFilter(
+    'kebabCase',
+    s =>
+      s
+        ?.replace(/([A-Z])/g, '-$1')
+        .toLowerCase()
+        .replace(/^-/, '')
+        .replace(/[_\s]+/g, '-') || ''
+  );
 
   // RDF filters
   env.addFilter('localName', uri => uri?.split(/[#/]/).pop() || '');
-  env.addFilter('namespace', uri => { const i = Math.max(uri?.lastIndexOf('#') ?? -1, uri?.lastIndexOf('/') ?? -1); return i >= 0 ? uri.substring(0, i + 1) : ''; });
+  env.addFilter('namespace', uri => {
+    const i = Math.max(uri?.lastIndexOf('#') ?? -1, uri?.lastIndexOf('/') ?? -1);
+    return i >= 0 ? uri.substring(0, i + 1) : '';
+  });
   env.addFilter('expand', (prefixedName, prefixes = DEFAULT_PREFIXES) => {
     if (!prefixedName?.includes(':')) return prefixedName;
     const [prefix, local] = prefixedName.split(':', 2);
@@ -101,21 +130,75 @@ export function createNunjucksEnvironment(templatesDir) {
   });
 
   // Type filters
-  env.addFilter('zodType', t => ({ string: 'z.string()', integer: 'z.number().int()', int: 'z.number().int()', float: 'z.number()', boolean: 'z.boolean()', date: 'z.string().date()', anyURI: 'z.string().url()' }[(t || 'string').replace(/^xsd:|^http:.*#/, '')] || 'z.string()'));
-  env.addFilter('jsdocType', t => ({ string: 'string', integer: 'number', int: 'number', float: 'number', boolean: 'boolean' }[(t || 'string').replace(/^xsd:|^http:.*#/, '')] || 'string'));
+  env.addFilter(
+    'zodType',
+    t =>
+      ({
+        string: 'z.string()',
+        integer: 'z.number().int()',
+        int: 'z.number().int()',
+        float: 'z.number()',
+        boolean: 'z.boolean()',
+        date: 'z.string().date()',
+        anyURI: 'z.string().url()',
+      })[(t || 'string').replace(/^xsd:|^http:.*#/, '')] || 'z.string()'
+  );
+  env.addFilter(
+    'jsdocType',
+    t =>
+      ({ string: 'string', integer: 'number', int: 'number', float: 'number', boolean: 'boolean' })[
+        (t || 'string').replace(/^xsd:|^http:.*#/, '')
+      ] || 'string'
+  );
 
   // Data filters
-  env.addFilter('groupBy', (arr, key) => { const g = {}; for (const i of arr || []) { const k = i[key] || i[`?${key}`] || 'undefined'; (g[k] = g[k] || []).push(i); } return g; });
-  env.addFilter('distinctValues', (arr, key) => [...new Set((arr || []).map(i => i[key] || i[`?${key}`]).filter(v => v != null))]);
-  env.addFilter('sortBy', (arr, key, dir = 'asc') => { const s = [...(arr || [])].sort((a, b) => { const av = a[key] || a[`?${key}`] || '', bv = b[key] || b[`?${key}`] || ''; return av < bv ? -1 : av > bv ? 1 : 0; }); return dir === 'desc' ? s.reverse() : s; });
-  env.addFilter('keys', obj => obj ? Object.keys(obj) : []);
-  env.addFilter('values', obj => obj ? Object.values(obj) : []);
-  env.addFilter('items', obj => obj ? Object.entries(obj) : []);
+  env.addFilter('groupBy', (arr, key) => {
+    const g = {};
+    for (const i of arr || []) {
+      const k = i[key] || i[`?${key}`] || 'undefined';
+      (g[k] = g[k] || []).push(i);
+    }
+    return g;
+  });
+  env.addFilter('distinctValues', (arr, key) => [
+    ...new Set((arr || []).map(i => i[key] || i[`?${key}`]).filter(v => v != null)),
+  ]);
+  env.addFilter('sortBy', (arr, key, dir = 'asc') => {
+    const s = [...(arr || [])].sort((a, b) => {
+      const av = a[key] || a[`?${key}`] || '',
+        bv = b[key] || b[`?${key}`] || '';
+      return av < bv ? -1 : av > bv ? 1 : 0;
+    });
+    return dir === 'desc' ? s.reverse() : s;
+  });
+  env.addFilter('keys', obj => (obj ? Object.keys(obj) : []));
+  env.addFilter('values', obj => (obj ? Object.values(obj) : []));
+  env.addFilter('items', obj => (obj ? Object.entries(obj) : []));
 
   // String filters
-  env.addFilter('indent', (s, n = 2) => s?.split('\n').map(l => ' '.repeat(n) + l).join('\n') || '');
-  env.addFilter('quote', (s, c = '"') => `${c}${String(s ?? '').replace(new RegExp(c, 'g'), '\\' + c)}${c}`);
-  env.addFilter('date', (d, f = 'YYYY-MM-DD') => { const dt = d instanceof Date ? d : new Date(); const p = n => String(n).padStart(2, '0'); return f.replace('YYYY', dt.getFullYear()).replace('MM', p(dt.getMonth() + 1)).replace('DD', p(dt.getDate())).replace('HH', p(dt.getHours())).replace('mm', p(dt.getMinutes())).replace('ss', p(dt.getSeconds())); });
+  env.addFilter(
+    'indent',
+    (s, n = 2) =>
+      s
+        ?.split('\n')
+        .map(l => ' '.repeat(n) + l)
+        .join('\n') || ''
+  );
+  env.addFilter(
+    'quote',
+    (s, c = '"') => `${c}${String(s ?? '').replace(new RegExp(c, 'g'), '\\' + c)}${c}`
+  );
+  env.addFilter('date', (d, f = 'YYYY-MM-DD') => {
+    const dt = d instanceof Date ? d : new Date();
+    const p = n => String(n).padStart(2, '0');
+    return f
+      .replace('YYYY', dt.getFullYear())
+      .replace('MM', p(dt.getMonth() + 1))
+      .replace('DD', p(dt.getDate()))
+      .replace('HH', p(dt.getHours()))
+      .replace('mm', p(dt.getMinutes()))
+      .replace('ss', p(dt.getSeconds()));
+  });
 
   return env;
 }
@@ -133,7 +216,7 @@ export async function createTemplateEngine(options = {}) {
   const enginePrefixes = { ...DEFAULT_PREFIXES, ...prefixes };
 
   // Add expand filter with merged prefixes
-  env.addFilter('expand', (prefixedName) => {
+  env.addFilter('expand', prefixedName => {
     if (!prefixedName?.includes(':')) return prefixedName;
     const [prefix, local] = prefixedName.split(':', 2);
     const ns = enginePrefixes[prefix];
@@ -141,7 +224,7 @@ export async function createTemplateEngine(options = {}) {
   });
 
   // Add global functions
-  env.addGlobal('uri', (prefixedName) => {
+  env.addGlobal('uri', prefixedName => {
     if (!prefixedName?.includes(':')) return prefixedName;
     const [prefix, local] = prefixedName.split(':', 2);
     const ns = enginePrefixes[prefix];
@@ -158,7 +241,7 @@ export async function createTemplateEngine(options = {}) {
     return `"${value}"`;
   });
 
-  env.addGlobal('blankNode', (id) => `_:${id}`);
+  env.addGlobal('blankNode', id => `_:${id}`);
 
   return {
     render: (template, context) => env.renderString(template, context),
@@ -177,8 +260,17 @@ export async function createTemplateEngine(options = {}) {
  * @returns {Promise<Object>} Render result
  */
 export async function renderWithOptions(templatePath, sparqlResults, options = {}) {
-  const { dryRun = false, outputDir, force = false, outputPath: overridePath, context = {} } = options;
-  const result = await renderTemplate(templatePath, sparqlResults, { ...context, output_dir: outputDir });
+  const {
+    dryRun = false,
+    outputDir,
+    force = false,
+    outputPath: overridePath,
+    context = {},
+  } = options;
+  const result = await renderTemplate(templatePath, sparqlResults, {
+    ...context,
+    output_dir: outputDir,
+  });
 
   // Allow outputPath override from options
   let finalOutputPath = overridePath || result.outputPath;
@@ -277,9 +369,10 @@ export async function batchRender(templates, sharedContext = {}, options = {}) {
       });
     } catch (err) {
       const lineInfo = extractNunjucksLineInfo(err);
-      const errorDetails = lineInfo.line !== null
-        ? `${err.message} (Line ${lineInfo.line}${lineInfo.column !== null ? `, Column ${lineInfo.column}` : ''})`
-        : err.message;
+      const errorDetails =
+        lineInfo.line !== null
+          ? `${err.message} (Line ${lineInfo.line}${lineInfo.column !== null ? `, Column ${lineInfo.column}` : ''})`
+          : err.message;
 
       results.push({ error: errorDetails, templatePath: absPath });
     }
@@ -389,7 +482,9 @@ function getTemplateSuggestions(errorMsg, context = {}) {
     const varMatch = errorMsg.match(/['"]?(\w+)['"]?\s+is\s+(not\s+)?defined/i);
     if (varMatch) {
       const varName = varMatch[1];
-      suggestions.push(`Variable '${varName}' is not available. Available: ${Object.keys(context).join(', ')}`);
+      suggestions.push(
+        `Variable '${varName}' is not available. Available: ${Object.keys(context).join(', ')}`
+      );
     } else {
       suggestions.push(`Available context variables: ${Object.keys(context).join(', ')}`);
     }
@@ -397,7 +492,9 @@ function getTemplateSuggestions(errorMsg, context = {}) {
 
   if (msg.includes('filter') || msg.includes('unknown filter')) {
     suggestions.push('Check that custom filters are registered with the template engine');
-    suggestions.push('Available filters: camelCase, pascalCase, snakeCase, kebabCase, localName, namespace, expand, etc.');
+    suggestions.push(
+      'Available filters: camelCase, pascalCase, snakeCase, kebabCase, localName, namespace, expand, etc.'
+    );
   }
 
   if (msg.includes('unexpected token') || msg.includes('unexpected end of')) {
@@ -424,4 +521,13 @@ function getTemplateSuggestions(errorMsg, context = {}) {
   return suggestions;
 }
 
-export default { renderTemplate, createNunjucksEnvironment, createTemplateEngine, renderWithOptions, batchRender, discoverTemplates, TEMPLATE_EXTENSIONS, DEFAULT_PREFIXES };
+export default {
+  renderTemplate,
+  createNunjucksEnvironment,
+  createTemplateEngine,
+  renderWithOptions,
+  batchRender,
+  discoverTemplates,
+  TEMPLATE_EXTENSIONS,
+  DEFAULT_PREFIXES,
+};

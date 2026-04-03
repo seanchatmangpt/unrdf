@@ -216,7 +216,7 @@ export class DynamicMIController {
     }
 
     // Start execution immediately
-    this._executeInstance(instanceId).catch((error) => {
+    this._executeInstance(instanceId).catch(error => {
       console.error(`Instance ${instanceId} execution error:`, error);
     });
 
@@ -507,9 +507,7 @@ export class DynamicMIController {
    * @returns {Promise<Object>}
    */
   async exportAuditTrail() {
-    const receiptAudit = this.receiptChain
-      ? await this.receiptChain.exportAuditTrail()
-      : null;
+    const receiptAudit = this.receiptChain ? await this.receiptChain.exportAuditTrail() : null;
 
     return {
       controller: this.getStatus(),

@@ -62,13 +62,10 @@ export class IndexedDBPersist {
     this.options = result.data;
 
     /** @type {IndexeddbPersistence} */
-    this.provider = new IndexeddbPersistence(
-      this.options.dbName,
-      graph.getYDoc()
-    );
+    this.provider = new IndexeddbPersistence(this.options.dbName, graph.getYDoc());
 
     /** @type {Promise<void>} - Resolves when initially synced */
-    this.syncedPromise = new Promise((resolve) => {
+    this.syncedPromise = new Promise(resolve => {
       this.provider.once('synced', () => {
         resolve();
       });
@@ -156,7 +153,7 @@ export class IndexedDBPersist {
   _emit(event, data) {
     const listeners = this.listeners.get(event);
     if (listeners) {
-      listeners.forEach((listener) => listener(data));
+      listeners.forEach(listener => listener(data));
     }
   }
 

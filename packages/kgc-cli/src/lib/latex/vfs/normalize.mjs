@@ -8,12 +8,7 @@
  * @module @unrdf/kgc-cli/lib/latex/vfs/normalize
  */
 
-export {
-  normalizeToVFS,
-  vfsToRelative,
-  isValidVFSPath,
-  sortVFSPaths,
-} from '../path-normalize.mjs';
+export { normalizeToVFS, vfsToRelative, isValidVFSPath, sortVFSPaths } from '../path-normalize.mjs';
 
 import { sep as _sep } from 'node:path';
 

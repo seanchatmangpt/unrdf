@@ -207,7 +207,9 @@ describe('YAWL Performance Regression Tests', () => {
         expect(ratio).toBeLessThan(taskRatio * 1.5); // Max 50% overhead
       }
 
-      console.log(`  ✓ Scaling: 10=${durations[0].toFixed(2)}ms, 20=${durations[1].toFixed(2)}ms, 50=${durations[2].toFixed(2)}ms, 100=${durations[3].toFixed(2)}ms`);
+      console.log(
+        `  ✓ Scaling: 10=${durations[0].toFixed(2)}ms, 20=${durations[1].toFixed(2)}ms, 50=${durations[2].toFixed(2)}ms, 100=${durations[3].toFixed(2)}ms`
+      );
     });
   });
 
@@ -232,7 +234,9 @@ describe('YAWL Performance Regression Tests', () => {
       expect(completedTasks).toBe(100);
       expect(duration).toBeLessThan(1000);
 
-      console.log(`  ✓ Processed 100 tasks in ${duration.toFixed(2)}ms (${(duration / 100).toFixed(2)}ms per task)`);
+      console.log(
+        `  ✓ Processed 100 tasks in ${duration.toFixed(2)}ms (${(duration / 100).toFixed(2)}ms per task)`
+      );
     });
 
     it('should evaluate control flow for 50 tasks in <100ms', () => {
@@ -291,7 +295,9 @@ describe('YAWL Performance Regression Tests', () => {
       expect(receipts.length).toBe(1000);
       expect(duration).toBeLessThan(500);
 
-      console.log(`  ✓ Generated 1000 receipts in ${duration.toFixed(2)}ms (${(duration / 1000).toFixed(3)}ms per receipt)`);
+      console.log(
+        `  ✓ Generated 1000 receipts in ${duration.toFixed(2)}ms (${(duration / 1000).toFixed(3)}ms per receipt)`
+      );
     });
 
     it('should verify 100 receipts in <200ms', async () => {
@@ -317,7 +323,9 @@ describe('YAWL Performance Regression Tests', () => {
 
       expect(duration).toBeLessThan(200);
 
-      console.log(`  ✓ Verified 100 receipts in ${duration.toFixed(2)}ms (${(duration / 100).toFixed(2)}ms per receipt)`);
+      console.log(
+        `  ✓ Verified 100 receipts in ${duration.toFixed(2)}ms (${(duration / 100).toFixed(2)}ms per receipt)`
+      );
     });
 
     it('should handle receipt chain validation efficiently', async () => {
@@ -362,7 +370,9 @@ describe('YAWL Performance Regression Tests', () => {
       expect(result.quadCount).toBeGreaterThan(0);
       expect(duration).toBeLessThan(200);
 
-      console.log(`  ✓ Serialized 50-task workflow to RDF in ${duration.toFixed(2)}ms (${result.quadCount} quads)`);
+      console.log(
+        `  ✓ Serialized 50-task workflow to RDF in ${duration.toFixed(2)}ms (${result.quadCount} quads)`
+      );
     });
 
     it('should deserialize workflow from RDF in <200ms', () => {
@@ -481,7 +491,9 @@ describe('YAWL Performance Regression Tests', () => {
 
       expect(duration).toBeDefined();
 
-      console.log(`  ✓ Workflow creation throughput: ${throughput} workflows/sec (${iterations} workflows in ${duration.toFixed(2)}ms)`);
+      console.log(
+        `  ✓ Workflow creation throughput: ${throughput} workflows/sec (${iterations} workflows in ${duration.toFixed(2)}ms)`
+      );
     });
 
     it('should measure control flow evaluation throughput', () => {
@@ -544,7 +556,9 @@ describe('YAWL Performance Regression Tests', () => {
         expect(ratio).toBeLessThan(taskRatio * 2); // Allow 2x overhead
       }
 
-      console.log(`  ✓ Scalability: ${results.map(r => `${r.tasks}tasks=${r.duration.toFixed(2)}ms`).join(', ')}`);
+      console.log(
+        `  ✓ Scalability: ${results.map(r => `${r.tasks}tasks=${r.duration.toFixed(2)}ms`).join(', ')}`
+      );
     });
 
     it('should maintain performance with deep nesting', () => {

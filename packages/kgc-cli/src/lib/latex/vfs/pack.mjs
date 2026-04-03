@@ -42,10 +42,16 @@ export async function packDirectory(dirPath, options = {}) {
   // Set defaults for LaTeX projects
   const defaultOptions = {
     include: options.include || [
-      '.tex', '.sty', '.cls',      // LaTeX source
-      '.bib', '.bst',               // Bibliography
-      '.png', '.jpg', '.jpeg',      // Raster images
-      '.svg', '.pdf',               // Vector graphics
+      '.tex',
+      '.sty',
+      '.cls', // LaTeX source
+      '.bib',
+      '.bst', // Bibliography
+      '.png',
+      '.jpg',
+      '.jpeg', // Raster images
+      '.svg',
+      '.pdf', // Vector graphics
     ],
     exclude: options.exclude || [
       'node_modules',

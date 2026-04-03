@@ -47,7 +47,7 @@ export function sliceArray(inputData, instanceCount, field = 'items', preserveOr
   if (items.length !== instanceCount) {
     console.warn(
       `Array length (${items.length}) != instance count (${instanceCount}). ` +
-      `Distributing available items.`
+        `Distributing available items.`
     );
   }
 
@@ -86,7 +86,7 @@ export function sliceObject(inputData, instanceCount, field = 'data', preserveOr
   if (entries.length !== instanceCount) {
     console.warn(
       `Object keys (${entries.length}) != instance count (${instanceCount}). ` +
-      `Distributing available entries.`
+        `Distributing available entries.`
     );
   }
 
@@ -214,7 +214,12 @@ export function sliceInputData(inputData, instanceCount, config = {}) {
       if (!validated.expression) {
         throw new Error('Expression strategy requires expression field');
       }
-      return sliceExpression(inputData, instanceCount, validated.expression, validated.preserveOriginal);
+      return sliceExpression(
+        inputData,
+        instanceCount,
+        validated.expression,
+        validated.preserveOriginal
+      );
 
     default:
       throw new Error(`Unknown slicing strategy: ${validated.strategy}`);

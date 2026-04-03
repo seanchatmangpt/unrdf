@@ -24,9 +24,7 @@ describe('NitroScheduler', () => {
         workflowId: 'test-workflow',
         status: 'active',
       }),
-      workflows: new Map([
-        ['test-workflow', { id: 'test-workflow', name: 'Test Workflow' }],
-      ]),
+      workflows: new Map([['test-workflow', { id: 'test-workflow', name: 'Test Workflow' }]]),
     };
 
     scheduler = new NitroScheduler({
@@ -57,10 +55,13 @@ describe('NitroScheduler', () => {
     });
 
     it('should throw error with invalid tick interval', () => {
-      expect(() => new NitroScheduler({
-        engine: mockEngine,
-        tickIntervalMs: 50,
-      })).toThrow('tickIntervalMs must be between');
+      expect(
+        () =>
+          new NitroScheduler({
+            engine: mockEngine,
+            tickIntervalMs: 50,
+          })
+      ).toThrow('tickIntervalMs must be between');
     });
   });
 
@@ -131,11 +132,13 @@ describe('NitroScheduler', () => {
     });
 
     it('should validate cron expression', async () => {
-      await expect(scheduler.addCronSchedule({
-        workflowId: 'test-workflow',
-        expression: 'invalid',
-        timezone: 'UTC',
-      })).rejects.toThrow();
+      await expect(
+        scheduler.addCronSchedule({
+          workflowId: 'test-workflow',
+          expression: 'invalid',
+          timezone: 'UTC',
+        })
+      ).rejects.toThrow();
     });
 
     it('should respect maxExecutions', async () => {

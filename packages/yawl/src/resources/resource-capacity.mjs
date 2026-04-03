@@ -165,7 +165,8 @@ export function getCapacityStatus(store, resourceId, dataFactory) {
 
   // Calculate available and utilization
   const available = maxCapacity === -1 ? -1 : Math.max(0, maxCapacity - currentAllocations);
-  const utilizationPercent = maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
+  const utilizationPercent =
+    maxCapacity === -1 ? 0 : Math.round((currentAllocations / maxCapacity) * 100);
 
   return CapacityStatusSchema.parse({
     current: currentAllocations,
@@ -352,11 +353,13 @@ export function getResourceAvailability(store, resourceId, options = {}, dataFac
       // No availability info = assume available
       return {
         available: true,
-        windows: [{
-          start: options.from || now.toISOString(),
-          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-          available: true,
-        }],
+        windows: [
+          {
+            start: options.from || now.toISOString(),
+            end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+            available: true,
+          },
+        ],
       };
     }
 
@@ -393,21 +396,28 @@ export function getResourceAvailability(store, resourceId, options = {}, dataFac
 
     return {
       available: isCurrentlyAvailable,
-      windows: filteredWindows.length > 0 ? filteredWindows : [{
-        start: options.from || now.toISOString(),
-        end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-        available: isCurrentlyAvailable,
-      }],
+      windows:
+        filteredWindows.length > 0
+          ? filteredWindows
+          : [
+              {
+                start: options.from || now.toISOString(),
+                end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+                available: isCurrentlyAvailable,
+              },
+            ],
     };
   } catch {
     // Fallback: assume available
     return {
       available: true,
-      windows: [{
-        start: options.from || now.toISOString(),
-        end: options.to || new Date(now.getTime() + 86400000).toISOString(),
-        available: true,
-      }],
+      windows: [
+        {
+          start: options.from || now.toISOString(),
+          end: options.to || new Date(now.getTime() + 86400000).toISOString(),
+          available: true,
+        },
+      ],
     };
   }
 }
@@ -422,19 +432,22 @@ export function getResourceAvailability(store, resourceId, options = {}, dataFac
  * @returns {boolean} True if available
  */
 export function isAvailableAt(store, resourceId, dateTime, dataFactory) {
-  const availability = getResourceAvailability(store, resourceId, {
-    from: dateTime,
-    to: dateTime,
-  }, dataFactory);
+  const availability = getResourceAvailability(
+    store,
+    resourceId,
+    {
+      from: dateTime,
+      to: dateTime,
+    },
+    dataFactory
+  );
 
   if (!availability.available) return false;
 
   // Check if any window covers this time
   const dt = new Date(dateTime);
-  return availability.windows.some(w =>
-    w.available &&
-    new Date(w.start) <= dt &&
-    new Date(w.end) >= dt
+  return availability.windows.some(
+    w => w.available && new Date(w.start) <= dt && new Date(w.end) >= dt
   );
 }
 
@@ -486,7 +499,8 @@ export function calculateWorkloadDistribution(store, resourceType) {
       const allocationCount = parseInt(allocations || '0', 10);
       const maxCapacity = parseInt(capacity || '1', 10);
 
-      const utilization = maxCapacity === -1 ? 0 : Math.round((allocationCount / maxCapacity) * 100);
+      const utilization =
+        maxCapacity === -1 ? 0 : Math.round((allocationCount / maxCapacity) * 100);
 
       distribution.push({
         resourceId,

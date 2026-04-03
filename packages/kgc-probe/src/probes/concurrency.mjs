@@ -66,13 +66,15 @@ const ObservationSchema = z.object({
  * @property {number} [budgetMs] - Global timeout budget in milliseconds (default: 30000)
  * @property {string} [testDir] - Directory for I/O tests (default: tmpdir)
  */
-const ProbeConfigSchema = z.object({
-  timeout: z.number().int().positive().max(5000).default(5000),
-  maxWorkers: z.number().int().positive().max(16).default(16),
-  samples: z.number().int().positive().max(100).default(10),
-  budgetMs: z.number().int().positive().max(60000).default(30000),
-  testDir: z.string().optional(),
-}).default({});
+const ProbeConfigSchema = z
+  .object({
+    timeout: z.number().int().positive().max(5000).default(5000),
+    maxWorkers: z.number().int().positive().max(16).default(16),
+    samples: z.number().int().positive().max(100).default(10),
+    budgetMs: z.number().int().positive().max(60000).default(30000),
+    testDir: z.string().optional(),
+  })
+  .default({});
 
 // ============================================================================
 // GUARD: WORKER CLEANUP (POKA-YOKE)
@@ -164,7 +166,6 @@ async function probeWorkerThreadsAvailability() {
     const nodeVersion = process.version;
     outputs.nodeVersion = nodeVersion;
     metadata.minVersion = 'v10.5.0'; // worker_threads introduced in Node 10.5.0
-
   } catch (error) {
     outputs.available = false;
     metadata.error = error.message;
@@ -251,10 +252,18 @@ async function probeAtomics() {
 
       // List available operations
       outputs.operations = [
-        'add', 'and', 'compareExchange', 'exchange', 'load',
-        'or', 'store', 'sub', 'xor', 'wait', 'notify'
+        'add',
+        'and',
+        'compareExchange',
+        'exchange',
+        'load',
+        'or',
+        'store',
+        'sub',
+        'xor',
+        'wait',
+        'notify',
       ].filter(op => typeof Atomics[op] === 'function');
-
     } else {
       outputs.functional = false;
       metadata.reason = outputs.available ? 'SharedArrayBuffer unavailable' : 'Atomics unavailable';
@@ -926,9 +935,7 @@ async function probeMaxConcurrentPromises(maxPromises = 1000, timeout = 5000) {
     // Wait for all with timeout
     await Promise.race([
       Promise.all(promises),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), timeout)
-      ),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout)),
     ]);
 
     const end = performance.now();
@@ -1137,7 +1144,6 @@ export async function probeConcurrency(config = {}) {
       maxPromisesObs,
       streamBackpressureObs
     );
-
   } catch (error) {
     // Catastrophic failure
     observations.push({

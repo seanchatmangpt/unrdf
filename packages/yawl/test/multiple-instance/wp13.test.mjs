@@ -8,10 +8,7 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import {
-  createSyncBarrier,
-  SyncBarrier,
-} from '../../src/multiple-instance/sync-barrier.mjs';
+import { createSyncBarrier, SyncBarrier } from '../../src/multiple-instance/sync-barrier.mjs';
 import {
   spawnInstancesDesignTime,
   createMultipleInstanceTask,
@@ -89,13 +86,23 @@ describe('SyncBarrier - AND-join Synchronization', () => {
     await barrier.arrive({
       instanceId: 'i1',
       result: { data: 'a' },
-      receipt: { id: 'receipt-1', taskInstanceId: 'i1', action: 'complete', timestamp: '2024-01-01T00:00:00Z' },
+      receipt: {
+        id: 'receipt-1',
+        taskInstanceId: 'i1',
+        action: 'complete',
+        timestamp: '2024-01-01T00:00:00Z',
+      },
     });
 
     await barrier.arrive({
       instanceId: 'i2',
       result: { data: 'b' },
-      receipt: { id: 'receipt-2', taskInstanceId: 'i2', action: 'complete', timestamp: '2024-01-01T00:00:01Z' },
+      receipt: {
+        id: 'receipt-2',
+        taskInstanceId: 'i2',
+        action: 'complete',
+        timestamp: '2024-01-01T00:00:01Z',
+      },
     });
 
     const result = await waitPromise;
@@ -220,9 +227,7 @@ describe('SyncBarrier - AND-join Synchronization', () => {
     await waitPromise;
 
     // Assert - Try to arrive after completion
-    await expect(
-      barrier.arrive({ instanceId: 'i3' })
-    ).rejects.toThrow('Barrier');
+    await expect(barrier.arrive({ instanceId: 'i3' })).rejects.toThrow('Barrier');
   });
 
   test('should track barrier state correctly', async () => {
@@ -265,7 +270,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     const task = createMultipleInstanceTask({
       id: 'test-task',
       name: 'Test Task',
-      execute: async (data) => {
+      execute: async data => {
         return { processed: data.value * 2 };
       },
     });
@@ -286,7 +291,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     let completionOrder = [];
     const task = createMultipleInstanceTask({
       id: 'async-task',
-      execute: async (data) => {
+      execute: async data => {
         await new Promise(resolve => setTimeout(resolve, data.delay));
         completionOrder.push(data.index);
         return { completed: data.index };
@@ -294,15 +299,9 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      3,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ index, delay: (3 - index) * 10 }),
-      }
-    );
+    const result = await spawnInstancesDesignTime(task, 3, {}, null, {
+      transformInput: index => ({ index, delay: (3 - index) * 10 }),
+    });
 
     // Assert
     expect(result.success).toBe(true);
@@ -315,17 +314,13 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'sum-task',
-      execute: async (data) => {
+      execute: async data => {
         return { sum: data.a + data.b };
       },
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      4,
-      { a: 5, b: 3 }
-    );
+    const result = await spawnInstancesDesignTime(task, 4, { a: 5, b: 3 });
 
     // Assert
     expect(result.success).toBe(true);
@@ -337,21 +332,15 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'transform-task',
-      execute: async (data) => {
+      execute: async data => {
         return { squared: data.value * data.value };
       },
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      5,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ value: index + 1 }),
-      }
-    );
+    const result = await spawnInstancesDesignTime(task, 5, {}, null, {
+      transformInput: index => ({ value: index + 1 }),
+    });
 
     // Assert
     expect(result.success).toBe(true);
@@ -362,20 +351,14 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'slow-task',
-      execute: async (data) => {
+      execute: async data => {
         await new Promise(resolve => setTimeout(resolve, 200));
         return { completed: true };
       },
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      3,
-      {},
-      null,
-      { timeout: 50 }
-    );
+    const result = await spawnInstancesDesignTime(task, 3, {}, null, { timeout: 50 });
 
     // Assert
     expect(result.success).toBe(false);
@@ -387,7 +370,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     let executionCount = 0;
     const task = createMultipleInstanceTask({
       id: 'failing-task',
-      execute: async (data) => {
+      execute: async data => {
         executionCount++;
         if (data._instanceIndex === 1) {
           throw new Error('Instance 1 failed');
@@ -398,13 +381,10 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      3,
-      {},
-      null,
-      { cancelOnFailure: true, timeout: 5000 }
-    );
+    const result = await spawnInstancesDesignTime(task, 3, {}, null, {
+      cancelOnFailure: true,
+      timeout: 5000,
+    });
 
     // Assert
     expect(result.success).toBe(false);
@@ -415,7 +395,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'partial-fail-task',
-      execute: async (data) => {
+      execute: async data => {
         if (data._instanceIndex === 1) {
           throw new Error('Instance 1 failed');
         }
@@ -424,13 +404,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      3,
-      {},
-      null,
-      { cancelOnFailure: false }
-    );
+    const result = await spawnInstancesDesignTime(task, 3, {}, null, { cancelOnFailure: false });
 
     // Assert
     expect(result.success).toBe(false); // Has failures
@@ -444,7 +418,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'receipt-task',
-      execute: async (data) => {
+      execute: async data => {
         return { processed: true };
       },
     });
@@ -466,18 +440,13 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     const customBarrier = createSyncBarrier(2, { id: 'custom-barrier' });
     const task = createMultipleInstanceTask({
       id: 'barrier-task',
-      execute: async (data) => {
+      execute: async data => {
         return { value: data._instanceIndex };
       },
     });
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      task,
-      2,
-      {},
-      customBarrier
-    );
+    const result = await spawnInstancesDesignTime(task, 2, {}, customBarrier);
 
     // Assert
     expect(result.success).toBe(true);
@@ -491,7 +460,7 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'timed-task',
-      execute: async (data) => {
+      execute: async data => {
         await new Promise(resolve => setTimeout(resolve, 50));
         return { done: true };
       },
@@ -512,39 +481,39 @@ describe('WP13 - Multiple Instances with Design-Time Knowledge', () => {
     };
 
     // Act & Assert
-    await expect(
-      spawnInstancesDesignTime(invalidTask, 3, {})
-    ).rejects.toThrow('must have execute function');
+    await expect(spawnInstancesDesignTime(invalidTask, 3, {})).rejects.toThrow(
+      'must have execute function'
+    );
   });
 
   test('should validate count parameter', async () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'test-task',
-      execute: async (data) => ({ value: 1 }),
+      execute: async data => ({ value: 1 }),
     });
 
     // Act & Assert - Zero count
-    await expect(
-      spawnInstancesDesignTime(task, 0, {})
-    ).rejects.toThrow('Count must be positive integer');
+    await expect(spawnInstancesDesignTime(task, 0, {})).rejects.toThrow(
+      'Count must be positive integer'
+    );
 
     // Negative count
-    await expect(
-      spawnInstancesDesignTime(task, -5, {})
-    ).rejects.toThrow('Count must be positive integer');
+    await expect(spawnInstancesDesignTime(task, -5, {})).rejects.toThrow(
+      'Count must be positive integer'
+    );
 
     // Non-integer count
-    await expect(
-      spawnInstancesDesignTime(task, 3.5, {})
-    ).rejects.toThrow('Count must be positive integer');
+    await expect(spawnInstancesDesignTime(task, 3.5, {})).rejects.toThrow(
+      'Count must be positive integer'
+    );
   });
 
   test('should handle large number of instances', async () => {
     // Arrange
     const task = createMultipleInstanceTask({
       id: 'bulk-task',
-      execute: async (data) => {
+      execute: async data => {
         return { index: data._instanceIndex };
       },
     });
@@ -569,7 +538,7 @@ describe('Multiple Instance Utilities', () => {
     const task = createMultipleInstanceTask({
       id: 'util-task',
       name: 'Utility Task',
-      execute: async (data) => ({ result: data }),
+      execute: async data => ({ result: data }),
     });
 
     // Assert
@@ -615,7 +584,7 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     const sentEmails = [];
     const emailTask = createMultipleInstanceTask({
       id: 'send-email',
-      execute: async (data) => {
+      execute: async data => {
         sentEmails.push(data.recipient);
         return { sent: true, recipient: data.recipient };
       },
@@ -624,15 +593,9 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     const recipients = ['alice@example.com', 'bob@example.com', 'carol@example.com'];
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      emailTask,
-      3,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ recipient: recipients[index] }),
-      }
-    );
+    const result = await spawnInstancesDesignTime(emailTask, 3, {}, null, {
+      transformInput: index => ({ recipient: recipients[index] }),
+    });
 
     // Assert
     expect(result.success).toBe(true);
@@ -645,7 +608,7 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     const apiResults = [];
     const apiTask = createMultipleInstanceTask({
       id: 'fetch-data',
-      execute: async (data) => {
+      execute: async data => {
         const response = { endpoint: data.url, status: 200 };
         apiResults.push(response);
         return response;
@@ -655,15 +618,9 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     const endpoints = ['/api/users', '/api/posts', '/api/comments', '/api/likes', '/api/shares'];
 
     // Act
-    const result = await spawnInstancesDesignTime(
-      apiTask,
-      5,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ url: endpoints[index] }),
-      }
-    );
+    const result = await spawnInstancesDesignTime(apiTask, 5, {}, null, {
+      transformInput: index => ({ url: endpoints[index] }),
+    });
 
     // Assert
     expect(result.success).toBe(true);
@@ -675,7 +632,7 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     // Arrange
     const validationTask = createMultipleInstanceTask({
       id: 'validate-data',
-      execute: async (data) => {
+      execute: async data => {
         if (data.value < 0) {
           throw new Error('Negative value not allowed');
         }
@@ -684,28 +641,16 @@ describe('WP13 Integration - Real-World Scenarios', () => {
     });
 
     // Act - All valid
-    const result1 = await spawnInstancesDesignTime(
-      validationTask,
-      3,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ value: index + 1 }),
-        cancelOnFailure: false,
-      }
-    );
+    const result1 = await spawnInstancesDesignTime(validationTask, 3, {}, null, {
+      transformInput: index => ({ value: index + 1 }),
+      cancelOnFailure: false,
+    });
 
     // Act - One invalid
-    const result2 = await spawnInstancesDesignTime(
-      validationTask,
-      3,
-      {},
-      null,
-      {
-        transformInput: (index) => ({ value: index - 1 }), // index 0 => value -1
-        cancelOnFailure: false,
-      }
-    );
+    const result2 = await spawnInstancesDesignTime(validationTask, 3, {}, null, {
+      transformInput: index => ({ value: index - 1 }), // index 0 => value -1
+      cancelOnFailure: false,
+    });
 
     // Assert
     expect(result1.success).toBe(true);

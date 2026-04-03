@@ -83,6 +83,7 @@ metrics.recordOperation({
 ```
 
 **Available Metrics**:
+
 - `business.operations.total` - Total operations by type and result
 - `business.success_rate` - Success rate gauge (0-1)
 - `business.failures.by_type` - Failures categorized by error type
@@ -108,6 +109,7 @@ metrics.recordLatencyPercentiles('sparql-query', {
 ```
 
 **Available Metrics**:
+
 - `latency.operation_duration_ms` - Histogram with explicit buckets
 - `latency.p50_ms` - Median latency gauge
 - `latency.p90_ms` - P90 latency gauge
@@ -128,6 +130,7 @@ metrics.recordThroughput('sparql-query', 125); // 125 ops/sec
 ```
 
 **Available Metrics**:
+
 - `throughput.ops_per_second` - Current ops/sec gauge
 - `throughput.rate` - Throughput histogram
 - `throughput.peak_ops_per_second` - Peak throughput gauge
@@ -145,6 +148,7 @@ metrics.recordEventLoopLag(15); // 15ms lag
 ```
 
 **Available Metrics**:
+
 - `resource.memory_bytes` - Memory usage histogram
 - `resource.heap_used_bytes` - Heap used gauge
 - `resource.heap_total_bytes` - Heap total gauge
@@ -163,10 +167,10 @@ import { createDistributedTracing } from '@unrdf/observability/distributed-traci
 const tracing = createDistributedTracing({
   serviceName: 'unrdf-api',
   sampling: {
-    defaultRate: 0.01,   // 1% default
-    errorRate: 1.0,      // 100% for errors
+    defaultRate: 0.01, // 1% default
+    errorRate: 1.0, // 100% for errors
     slowThreshold: 1000, // ms
-    slowRate: 0.1,       // 10% for slow ops
+    slowRate: 0.1, // 10% for slow ops
   },
 });
 
@@ -364,6 +368,7 @@ curl -X POST http://grafana:3000/api/dashboards/db \
 ```
 
 Dashboard includes:
+
 - **Business Metrics**: Success rates, failure breakdown
 - **Latency**: P50, P90, P95, P99 percentiles
 - **Throughput**: Operations per second
@@ -392,6 +397,7 @@ Access at: `http://grafana:3000/d/unrdf-observability`
 Prometheus alert rules are pre-configured in `config/alert-rules.yml`.
 
 **Alert Categories**:
+
 1. **Business Metrics**: Success rate, SLA violations
 2. **Performance**: Latency spikes, throughput drops
 3. **Resources**: Memory, CPU, event loop lag
@@ -401,6 +407,7 @@ Prometheus alert rules are pre-configured in `config/alert-rules.yml`.
 ### Example Alerts
 
 **Low Success Rate**:
+
 ```yaml
 - alert: LowSuccessRate
   expr: (rate(business_operations_total{result="success"}[5m]) / rate(business_operations_total[5m])) < 0.95
@@ -410,6 +417,7 @@ Prometheus alert rules are pre-configured in `config/alert-rules.yml`.
 ```
 
 **High P95 Latency**:
+
 ```yaml
 - alert: HighP95Latency
   expr: latency_p95_ms > 1000
@@ -419,6 +427,7 @@ Prometheus alert rules are pre-configured in `config/alert-rules.yml`.
 ```
 
 **Injection Attempt**:
+
 ```yaml
 - alert: InjectionAttempt
   expr: increase(event_total{event_type="security.injection.attempt"}[5m]) > 0
@@ -476,9 +485,12 @@ receivers:
    - Slow operations: 10%
 
 2. **Async Recording**:
+
    ```javascript
    // Non-blocking metric recording
-   metrics.recordOperation({ /* ... */ }); // Returns immediately
+   metrics.recordOperation({
+     /* ... */
+   }); // Returns immediately
    ```
 
 3. **Batching**:
@@ -583,11 +595,11 @@ services:
     image: otel/opentelemetry-collector:latest
     volumes:
       - ./otel-collector-config.yml:/etc/otel-collector-config.yml
-    command: ["--config=/etc/otel-collector-config.yml"]
+    command: ['--config=/etc/otel-collector-config.yml']
     ports:
-      - "4317:4317"  # OTLP gRPC
-      - "4318:4318"  # OTLP HTTP
-      - "8888:8888"  # Metrics endpoint
+      - '4317:4317' # OTLP gRPC
+      - '4318:4318' # OTLP HTTP
+      - '8888:8888' # Metrics endpoint
 ```
 
 ### 5. Configure Prometheus
@@ -614,6 +626,7 @@ curl -X POST http://localhost:3000/api/dashboards/import \
    - Development: 100% all operations
 
 2. **Set SLA Thresholds**:
+
    ```javascript
    metrics.recordOperation({
      operation: 'critical-path',
@@ -624,6 +637,7 @@ curl -X POST http://localhost:3000/api/dashboards/import \
    ```
 
 3. **Correlate Events**:
+
    ```javascript
    const spanContext = tracing.startSpan('workflow');
    tracing.correlateByBusinessId('workflow-123', spanContext);
@@ -635,6 +649,7 @@ curl -X POST http://localhost:3000/api/dashboards/import \
    ```
 
 4. **Monitor Resource Usage**:
+
    ```javascript
    setInterval(() => {
      metrics.recordResourceUtilization();

@@ -45,12 +45,15 @@ export const InstanceCompletionSchema = z.object({
   /** Instance result data */
   result: z.unknown().optional(),
   /** Instance receipt */
-  receipt: z.object({
-    id: z.string(),
-    taskInstanceId: z.string(),
-    action: z.string(),
-    timestamp: z.string(),
-  }).passthrough().optional(),
+  receipt: z
+    .object({
+      id: z.string(),
+      taskInstanceId: z.string(),
+      action: z.string(),
+      timestamp: z.string(),
+    })
+    .passthrough()
+    .optional(),
   /** Whether instance failed */
   failed: z.boolean().default(false),
   /** Error if instance failed */
@@ -68,9 +71,13 @@ export const BarrierResultSchema = z.object({
   /** Individual instance results */
   instances: z.array(InstanceCompletionSchema),
   /** Aggregated receipts */
-  receipts: z.array(z.object({
-    id: z.string(),
-  }).passthrough()),
+  receipts: z.array(
+    z
+      .object({
+        id: z.string(),
+      })
+      .passthrough()
+  ),
   /** Barrier completion timestamp */
   completionTimestamp: z.string().optional(),
   /** Timeout occurred */
@@ -246,9 +253,7 @@ export class SyncBarrier {
       success: this._failures.length === 0 && !this._cancelled && !this._timedOut,
       completedCount: this._arrivals.length,
       instances: this._arrivals,
-      receipts: this._arrivals
-        .filter(a => a.receipt)
-        .map(a => a.receipt),
+      receipts: this._arrivals.filter(a => a.receipt).map(a => a.receipt),
       completionTimestamp: new Date().toISOString(),
       timedOut: this._timedOut,
       cancelled: this._cancelled,

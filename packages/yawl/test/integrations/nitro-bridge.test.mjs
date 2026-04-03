@@ -95,7 +95,7 @@ class MockNitroSystem extends EventEmitter {
       this.emit('task:executing', task);
 
       // Simulate execution
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       task.status = 'completed';
       task.result = { success: true, data: task.payload };
@@ -363,7 +363,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-001', 'task-001');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       expect(forwardSpy).toHaveBeenCalledOnce();
@@ -378,7 +378,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-002', 'task-002');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       const nitroTaskId = bridge.mappings.get('case-002:task-002');
@@ -396,7 +396,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
       await yawlEngine.enableTask('case-003', 'task-003');
       await yawlEngine.enableTask('case-003', 'task-004');
       await yawlEngine.enableTask('case-003', 'task-005');
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Assert
       expect(forwardSpy).toHaveBeenCalledTimes(3);
@@ -410,7 +410,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-004', 'task-006');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       expect(forwardSpy).not.toHaveBeenCalled();
@@ -424,7 +424,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-005', 'task-007');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(executeSpy).toHaveBeenCalledOnce();
@@ -440,7 +440,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-006', 'task-008');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(propagateSpy).toHaveBeenCalledOnce();
@@ -457,7 +457,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-007', 'task-009');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(completeSpy).toHaveBeenCalledOnce();
@@ -481,7 +481,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await nitroSystem.cancelTask('nitro-manual-001');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       expect(cancelSpy).toHaveBeenCalledOnce();
@@ -495,7 +495,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-009', 'task-011');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       const task = completeSpy.mock.calls[0][0];
@@ -511,14 +511,14 @@ describe('YAWL-Nitro Bridge Integration', () => {
       await yawlEngine.createCase({ caseId: 'case-010', workflowId: 'wf-001' });
       await yawlEngine.enableTask('case-010', 'task-012');
       await yawlEngine.enableTask('case-010', 'task-013');
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       const cancelSpy = vi.fn();
       nitroSystem.on('task:cancelled', cancelSpy);
 
       // Act
       await yawlEngine.cancelCase('case-010');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(cancelSpy).toHaveBeenCalledTimes(2);
@@ -529,14 +529,14 @@ describe('YAWL-Nitro Bridge Integration', () => {
       bridge.start();
       await yawlEngine.createCase({ caseId: 'case-011', workflowId: 'wf-002' });
       await yawlEngine.enableTask('case-011', 'task-014');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       const propagateSpy = vi.fn();
       bridge.on('yawl:case:cancelled:propagated', propagateSpy);
 
       // Act
       await yawlEngine.cancelCase('case-011');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(propagateSpy).toHaveBeenCalledOnce();
@@ -555,7 +555,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.cancelCase('case-012');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       expect(propagateSpy).toHaveBeenCalledOnce();
@@ -572,7 +572,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
       // Act
       await yawlEngine.enableTask('case-013', 'task-015');
       await yawlEngine.enableTask('case-013', 'task-016');
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Assert
       expect(bridge.mappings.size).toBe(bridge.reverseMappings.size);
@@ -585,11 +585,11 @@ describe('YAWL-Nitro Bridge Integration', () => {
 
       // Act
       await yawlEngine.enableTask('case-014', 'task-017');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Assert
       expect(bridge.eventLog.length).toBeGreaterThan(0);
-      const forwardEvent = bridge.eventLog.find((e) => e.type === 'yawl:task:forwarded');
+      const forwardEvent = bridge.eventLog.find(e => e.type === 'yawl:task:forwarded');
       expect(forwardEvent).toBeDefined();
     });
 
@@ -597,7 +597,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
       // Arrange
       bridge.start();
       await yawlEngine.enableTask('case-015', 'task-018');
-      await new Promise((resolve) => setTimeout(resolve, 30));
+      await new Promise(resolve => setTimeout(resolve, 30));
 
       // Act
       const stats = bridge.getStatistics();
@@ -623,7 +623,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
       // Arrange
       bridge.start();
       let callCount = 0;
-      nitroSystem.submitTask = vi.fn().mockImplementation((config) => {
+      nitroSystem.submitTask = vi.fn().mockImplementation(config => {
         callCount++;
         if (callCount === 1) {
           return Promise.reject(new Error('First task failed'));
@@ -643,7 +643,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
         // Expected to fail
       }
       await yawlEngine.enableTask('case-017', 'task-021');
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise(resolve => setTimeout(resolve, 20));
 
       // Assert
       expect(callCount).toBe(2);
@@ -673,8 +673,8 @@ describe('YAWL-Nitro Bridge Integration', () => {
       }));
 
       // Act
-      await Promise.all(tasks.map((t) => yawlEngine.enableTask(t.caseId, t.taskId)));
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await Promise.all(tasks.map(t => yawlEngine.enableTask(t.caseId, t.taskId)));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Assert
       expect(bridge.mappings.size).toBe(10);
@@ -692,7 +692,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
         yawlEngine.enableTask('case-019', 'task-111'),
         yawlEngine.enableTask('case-019', 'task-112'),
       ]);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Assert
       expect(completeSpy).toHaveBeenCalledTimes(3);
@@ -708,7 +708,7 @@ describe('YAWL-Nitro Bridge Integration', () => {
         operations.push(yawlEngine.enableTask('case-020', `task-${200 + i}`));
       }
       await Promise.all(operations);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       // Assert
       expect(bridge.mappings.size).toBe(20);

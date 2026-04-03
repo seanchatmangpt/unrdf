@@ -39,24 +39,24 @@ The LaTeX lockfile (`latex.lock.json`) provides deterministic, reproducible buil
 
 ### Top Level
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `version` | `string` | Yes | Lockfile schema version (currently `"1.0.0"`) |
-| `engine` | `string` | Yes | LaTeX engine used (`"xetex"`, `"pdftex"`, or `"luatex"`) |
-| `entries` | `object` | Yes | Map of entry name to lock entry |
-| `createdAt` | `number` | Yes | Unix timestamp (ms) when lockfile was first created |
-| `updatedAt` | `number` | Yes | Unix timestamp (ms) when lockfile was last modified |
+| Field       | Type     | Required | Description                                              |
+| ----------- | -------- | -------- | -------------------------------------------------------- |
+| `version`   | `string` | Yes      | Lockfile schema version (currently `"1.0.0"`)            |
+| `engine`    | `string` | Yes      | LaTeX engine used (`"xetex"`, `"pdftex"`, or `"luatex"`) |
+| `entries`   | `object` | Yes      | Map of entry name to lock entry                          |
+| `createdAt` | `number` | Yes      | Unix timestamp (ms) when lockfile was first created      |
+| `updatedAt` | `number` | Yes      | Unix timestamp (ms) when lockfile was last modified      |
 
 ### Lock Entry
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | `string` | Yes | Package or file name (e.g., `"hyperref.sty"`) |
-| `hash` | `string` | Yes | SHA-256 hash of file content (64 hex chars) |
-| `sourceUrl` | `string` | No | Original source URL (CTAN, GitHub, etc.) |
-| `cachedPath` | `string` | Yes | Relative path in cache directory |
-| `fetchedAt` | `number` | Yes | Unix timestamp (ms) when file was fetched |
-| `size` | `number` | No | File size in bytes |
+| Field        | Type     | Required | Description                                   |
+| ------------ | -------- | -------- | --------------------------------------------- |
+| `name`       | `string` | Yes      | Package or file name (e.g., `"hyperref.sty"`) |
+| `hash`       | `string` | Yes      | SHA-256 hash of file content (64 hex chars)   |
+| `sourceUrl`  | `string` | No       | Original source URL (CTAN, GitHub, etc.)      |
+| `cachedPath` | `string` | Yes      | Relative path in cache directory              |
+| `fetchedAt`  | `number` | Yes      | Unix timestamp (ms) when file was fetched     |
+| `size`       | `number` | No       | File size in bytes                            |
 
 ## Hash Computation
 
@@ -87,6 +87,7 @@ Cache paths follow this structure:
 ```
 
 Examples:
+
 - `packages/hyperref/hyperref.sty`
 - `packages/beamer/beamer.cls`
 - `fonts/texgyre/texgyrepagella-regular.otf`
@@ -95,11 +96,11 @@ Examples:
 
 Lockfiles are **engine-specific**. Changing the engine requires regenerating the lockfile, as different engines may require different package versions or dependencies.
 
-| Engine | Description | Use Case |
-|--------|-------------|----------|
-| `xetex` | Modern Unicode support | Recommended for most documents |
-| `pdftex` | Classic LaTeX | Legacy documents |
-| `luatex` | Lua scripting support | Advanced typesetting |
+| Engine   | Description            | Use Case                       |
+| -------- | ---------------------- | ------------------------------ |
+| `xetex`  | Modern Unicode support | Recommended for most documents |
+| `pdftex` | Classic LaTeX          | Legacy documents               |
+| `luatex` | Lua scripting support  | Advanced typesetting           |
 
 ## Validation Rules
 
@@ -112,6 +113,7 @@ Lockfiles are **engine-specific**. Changing the engine requires regenerating the
 ## Deterministic Output
 
 The lockfile is formatted with:
+
 - **Sorted object keys** (alphabetically)
 - **2-space indentation**
 - **Trailing newline**
@@ -136,9 +138,9 @@ import { addEntry, createLockEntry } from './lockfile.mjs';
 
 const entry = createLockEntry({
   name: 'hyperref.sty',
-  content: packageContent,  // Uint8Array
+  content: packageContent, // Uint8Array
   cachedPath: 'packages/hyperref/hyperref.sty',
-  sourceUrl: 'https://mirrors.ctan.org/...'
+  sourceUrl: 'https://mirrors.ctan.org/...',
 });
 
 addEntry(lockfile, entry);
@@ -187,11 +189,7 @@ Lockfiles can be exported to self-contained bundles:
 ```javascript
 import { exportBundle } from './bundle.mjs';
 
-const manifest = await exportBundle(
-  lockfile,
-  '.latex-cache',
-  './bundle-output'
-);
+const manifest = await exportBundle(lockfile, '.latex-cache', './bundle-output');
 
 // Creates:
 //   bundle-output/
@@ -210,14 +208,17 @@ const manifest = await exportBundle(
 ## Error Handling
 
 ### Invalid Lockfile
+
 - **Load returns `null`**: Treat as missing, create new lockfile
 - **Never throws on load**: Fail-safe design
 
 ### Hash Mismatch
+
 - **Cache invalidated**: Re-fetch package
 - **Logged to console**: Warning message with expected/actual hashes
 
 ### Missing Files
+
 - **Verify reports as missing**: Re-populate cache from bundle or network
 
 ## Performance

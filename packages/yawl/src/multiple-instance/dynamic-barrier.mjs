@@ -96,7 +96,7 @@ export class DynamicBarrier {
    * @private
    */
   async _acquireLock() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const tryAcquire = () => {
         if (!this._mutex) {
           this._mutex = true;
@@ -339,9 +339,11 @@ export class DynamicBarrier {
     }
 
     for (const state of this.instances.values()) {
-      if (state.status !== 'completed' &&
-          state.status !== 'failed' &&
-          state.status !== 'cancelled') {
+      if (
+        state.status !== 'completed' &&
+        state.status !== 'failed' &&
+        state.status !== 'cancelled'
+      ) {
         return false;
       }
     }
@@ -363,11 +365,21 @@ export class DynamicBarrier {
 
     for (const state of this.instances.values()) {
       switch (state.status) {
-        case 'completed': completed++; break;
-        case 'running': running++; break;
-        case 'pending': pending++; break;
-        case 'failed': failed++; break;
-        case 'cancelled': cancelled++; break;
+        case 'completed':
+          completed++;
+          break;
+        case 'running':
+          running++;
+          break;
+        case 'pending':
+          pending++;
+          break;
+        case 'failed':
+          failed++;
+          break;
+        case 'cancelled':
+          cancelled++;
+          break;
       }
     }
 

@@ -17,11 +17,18 @@ import { normalizeToVFS, sortVFSPaths } from './path-normalize.mjs';
  * @type {string[]}
  */
 const DEFAULT_INCLUDES = [
-  '.tex', '.sty', '.cls',        // LaTeX source
-  '.bib', '.bst',                 // Bibliography
-  '.png', '.jpg', '.jpeg',        // Raster images
-  '.pdf', '.svg',                 // Vector graphics
-  '.md', '.txt',                  // Documentation
+  '.tex',
+  '.sty',
+  '.cls', // LaTeX source
+  '.bib',
+  '.bst', // Bibliography
+  '.png',
+  '.jpg',
+  '.jpeg', // Raster images
+  '.pdf',
+  '.svg', // Vector graphics
+  '.md',
+  '.txt', // Documentation
 ];
 
 /**
@@ -35,7 +42,7 @@ const DEFAULT_EXCLUDES = [
   'build',
   '.git',
   '.kgc',
-  'thesis/graphs',                // Exclude generated graphs
+  'thesis/graphs', // Exclude generated graphs
   '.claude-flow',
   '.cache',
 ];
@@ -63,10 +70,12 @@ function shouldExclude(relPath, excludePatterns) {
     const patternNormalized = pattern.split(/[/\\]/).join('/');
 
     // Exact match or prefix match
-    return normalized === patternNormalized ||
-           normalized.startsWith(patternNormalized + '/') ||
-           normalized.includes('/' + patternNormalized + '/') ||
-           normalized.startsWith(patternNormalized);
+    return (
+      normalized === patternNormalized ||
+      normalized.startsWith(patternNormalized + '/') ||
+      normalized.includes('/' + patternNormalized + '/') ||
+      normalized.startsWith(patternNormalized)
+    );
   });
 }
 

@@ -180,7 +180,10 @@ export class RDFStarFactory {
         this.dataFactory.quad(
           subject,
           this.namedNode(RDFSTAR.created),
-          this.literal(validated.created, this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')),
+          this.literal(
+            validated.created,
+            this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')
+          ),
           this.dataFactory.defaultGraph()
         )
       );
@@ -191,7 +194,10 @@ export class RDFStarFactory {
         this.dataFactory.quad(
           subject,
           this.namedNode(RDFSTAR.modified),
-          this.literal(validated.modified, this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')),
+          this.literal(
+            validated.modified,
+            this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')
+          ),
           this.dataFactory.defaultGraph()
         )
       );
@@ -224,7 +230,10 @@ export class RDFStarFactory {
         this.dataFactory.quad(
           subject,
           this.namedNode(RDFSTAR.validFrom),
-          this.literal(validated.validFrom, this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')),
+          this.literal(
+            validated.validFrom,
+            this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')
+          ),
           this.dataFactory.defaultGraph()
         )
       );
@@ -235,7 +244,10 @@ export class RDFStarFactory {
         this.dataFactory.quad(
           subject,
           this.namedNode(RDFSTAR.validTo),
-          this.literal(validated.validTo, this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')),
+          this.literal(
+            validated.validTo,
+            this.namedNode('http://www.w3.org/2001/XMLSchema#dateTime')
+          ),
           this.dataFactory.defaultGraph()
         )
       );
@@ -267,7 +279,10 @@ export class RDFStarFactory {
       this.dataFactory.quad(
         subject,
         this.namedNode(RDFSTAR.confidence),
-        this.literal(validated.confidence.toString(), this.namedNode('http://www.w3.org/2001/XMLSchema#decimal')),
+        this.literal(
+          validated.confidence.toString(),
+          this.namedNode('http://www.w3.org/2001/XMLSchema#decimal')
+        ),
         this.dataFactory.defaultGraph()
       )
     );
@@ -358,7 +373,14 @@ export class RDFStarFactory {
       baseQuad: quotedTriple.triple,
       annotationQuads,
       reificationQuads: [linkQuad, subjectQuad, predicateQuad, objectQuad],
-      allQuads: [quotedTriple.triple, linkQuad, subjectQuad, predicateQuad, objectQuad, ...annotationQuads],
+      allQuads: [
+        quotedTriple.triple,
+        linkQuad,
+        subjectQuad,
+        predicateQuad,
+        objectQuad,
+        ...annotationQuads,
+      ],
     };
   }
 }

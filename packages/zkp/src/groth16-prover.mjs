@@ -55,7 +55,7 @@ export class Groth16Prover {
    * });
    */
   async prove(witness, wasmPath = null, zkeyPath = null) {
-    return tracer.startActiveSpan('groth16.prove', async (span) => {
+    return tracer.startActiveSpan('groth16.prove', async span => {
       try {
         const startTime = performance.now();
 
@@ -63,19 +63,13 @@ export class Groth16Prover {
         const zkey = zkeyPath || this.config.zkeyPath;
 
         if (!wasm || !zkey) {
-          throw new Error(
-            'WASM and zkey paths required. Either pass to constructor or prove()'
-          );
+          throw new Error('WASM and zkey paths required. Either pass to constructor or prove()');
         }
 
         span.setAttribute('circuit.wasm', wasm);
         span.setAttribute('circuit.zkey', zkey);
 
-        const { proof, publicSignals } = await groth16.fullProve(
-          witness,
-          wasm,
-          zkey
-        );
+        const { proof, publicSignals } = await groth16.fullProve(witness, wasm, zkey);
 
         const provingTime = performance.now() - startTime;
 
@@ -113,31 +107,28 @@ export class Groth16Prover {
    * const vkey = await prover.exportVerificationKey();
    */
   async exportVerificationKey(zkeyPath = null) {
-    return tracer.startActiveSpan(
-      'groth16.export-vkey',
-      async (span) => {
-        try {
-          const zkey = zkeyPath || this.config.zkeyPath;
+    return tracer.startActiveSpan('groth16.export-vkey', async span => {
+      try {
+        const zkey = zkeyPath || this.config.zkeyPath;
 
-          if (!zkey) {
-            throw new Error('zkey path required');
-          }
-
-          const vKey = await groth16.exportVerificationKey(zkey);
-
-          span.setAttribute('vkey.nPublic', vKey.nPublic);
-          span.setStatus({ code: 1 });
-
-          return vKey;
-        } catch (error) {
-          span.setStatus({ code: 2, message: error.message });
-          span.recordException(error);
-          throw new Error(`Verification key export failed: ${error.message}`);
-        } finally {
-          span.end();
+        if (!zkey) {
+          throw new Error('zkey path required');
         }
+
+        const vKey = await groth16.exportVerificationKey(zkey);
+
+        span.setAttribute('vkey.nPublic', vKey.nPublic);
+        span.setStatus({ code: 1 });
+
+        return vKey;
+      } catch (error) {
+        span.setStatus({ code: 2, message: error.message });
+        span.recordException(error);
+        throw new Error(`Verification key export failed: ${error.message}`);
+      } finally {
+        span.end();
       }
-    );
+    });
   }
 
   /**

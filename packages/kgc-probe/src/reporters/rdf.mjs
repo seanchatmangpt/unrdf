@@ -80,7 +80,7 @@ function deriveCapabilities(observations) {
         name: `${domain}.${method}`,
         available: true,
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data
+        data,
       });
     }
 
@@ -90,7 +90,7 @@ function deriveCapabilities(observations) {
         name: 'concurrency.worker_threads',
         available: true,
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { module: 'worker_threads' }
+        data: { module: 'worker_threads' },
       });
     }
 
@@ -99,7 +99,7 @@ function deriveCapabilities(observations) {
         name: 'runtime.wasm',
         available: true,
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { support: 'available' }
+        data: { support: 'available' },
       });
     }
   }
@@ -127,12 +127,16 @@ function deriveConstraints(observations) {
     const data = obs.outputs || obs.data || {};
 
     // Check for guard denials
-    if (obs.guardDecision === 'denied' || obs.category === 'guard' || data.guardDecision === 'denied') {
+    if (
+      obs.guardDecision === 'denied' ||
+      obs.category === 'guard' ||
+      data.guardDecision === 'denied'
+    ) {
       constraints.push({
         type: 'guard-denial',
         description: obs.message || 'Operation denied by guard',
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { guard: data.guardName || 'unknown' }
+        data: { guard: data.guardName || 'unknown' },
       });
     }
 
@@ -142,7 +146,7 @@ function deriveConstraints(observations) {
         type: 'error-boundary',
         description: obs.error || data.error || 'Error encountered',
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { errorType: data.errorType || 'unknown' }
+        data: { errorType: data.errorType || 'unknown' },
       });
     }
 
@@ -152,7 +156,7 @@ function deriveConstraints(observations) {
         type: 'memory-limit',
         description: `Maximum memory: ${data.maxMemory}`,
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { limit: data.maxMemory }
+        data: { limit: data.maxMemory },
       });
     }
 
@@ -161,7 +165,7 @@ function deriveConstraints(observations) {
         type: 'stack-depth-limit',
         description: `Maximum stack depth: ${data.maxStackDepth}`,
         derivedFrom: [`urn:kgc:obs:${hash}`],
-        data: { limit: data.maxStackDepth }
+        data: { limit: data.maxStackDepth },
       });
     }
   }
@@ -203,80 +207,85 @@ export async function convertToTurtle(observations) {
     const obsUri = dataFactory.namedNode(`urn:kgc:obs:${hash}`);
 
     // Type declaration
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(`${RDF_NS}type`),
-      dataFactory.namedNode(kgcUri('Observation'))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(kgcUri('Observation'))
+      )
+    );
 
     // Domain (category or inferred from method)
     const domain = obs.domain || obs.category || 'unknown';
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('domain')),
-      dataFactory.literal(domain)
-    ));
+    store.add(
+      dataFactory.quad(obsUri, dataFactory.namedNode(kgcUri('domain')), dataFactory.literal(domain))
+    );
 
     // Method (from method field or message)
     const method = obs.method || obs.message || 'unknown';
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('method')),
-      dataFactory.literal(method)
-    ));
+    store.add(
+      dataFactory.quad(obsUri, dataFactory.namedNode(kgcUri('method')), dataFactory.literal(method))
+    );
 
     // Timestamp
     const timestamp = obs.timestamp || obs.metadata?.timestamp || Date.now();
-    const timestampDate = typeof timestamp === 'number'
-      ? new Date(timestamp).toISOString()
-      : timestamp;
+    const timestampDate =
+      typeof timestamp === 'number' ? new Date(timestamp).toISOString() : timestamp;
 
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('timestamp')),
-      dataFactory.literal(timestampDate, dataFactory.namedNode(`${XSD_NS}dateTime`))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('timestamp')),
+        dataFactory.literal(timestampDate, dataFactory.namedNode(`${XSD_NS}dateTime`))
+      )
+    );
 
     // Hash
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('hash')),
-      dataFactory.literal(hash)
-    ));
+    store.add(
+      dataFactory.quad(obsUri, dataFactory.namedNode(kgcUri('hash')), dataFactory.literal(hash))
+    );
 
     // Outputs (serialize data/outputs as JSON)
     const outputs = obs.outputs || obs.data || {};
-    store.add(dataFactory.quad(
-      obsUri,
-      dataFactory.namedNode(kgcUri('outputs')),
-      dataFactory.literal(JSON.stringify(outputs), dataFactory.namedNode(`${RDF_NS}JSON`))
-    ));
+    store.add(
+      dataFactory.quad(
+        obsUri,
+        dataFactory.namedNode(kgcUri('outputs')),
+        dataFactory.literal(JSON.stringify(outputs), dataFactory.namedNode(`${RDF_NS}JSON`))
+      )
+    );
 
     // Optional: Guard decision
     if (obs.guardDecision) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('guardDecision')),
-        dataFactory.literal(obs.guardDecision)
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('guardDecision')),
+          dataFactory.literal(obs.guardDecision)
+        )
+      );
     }
 
     // Optional: Error
     if (obs.error) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('error')),
-        dataFactory.literal(obs.error)
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('error')),
+          dataFactory.literal(obs.error)
+        )
+      );
     }
 
     // Optional: Severity (if from orchestrator schema)
     if (obs.severity) {
-      store.add(dataFactory.quad(
-        obsUri,
-        dataFactory.namedNode(kgcUri('severity')),
-        dataFactory.literal(obs.severity)
-      ));
+      store.add(
+        dataFactory.quad(
+          obsUri,
+          dataFactory.namedNode(kgcUri('severity')),
+          dataFactory.literal(obs.severity)
+        )
+      );
     }
   }
 
@@ -286,31 +295,35 @@ export async function convertToTurtle(observations) {
     const cap = capabilities[i];
     const capUri = dataFactory.namedNode(`urn:kgc:cap:${i + 1}`);
 
-    store.add(dataFactory.quad(
-      capUri,
-      dataFactory.namedNode(`${RDF_NS}type`),
-      dataFactory.namedNode(kgcUri('Capability'))
-    ));
+    store.add(
+      dataFactory.quad(
+        capUri,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(kgcUri('Capability'))
+      )
+    );
 
-    store.add(dataFactory.quad(
-      capUri,
-      dataFactory.namedNode(kgcUri('name')),
-      dataFactory.literal(cap.name)
-    ));
+    store.add(
+      dataFactory.quad(capUri, dataFactory.namedNode(kgcUri('name')), dataFactory.literal(cap.name))
+    );
 
-    store.add(dataFactory.quad(
-      capUri,
-      dataFactory.namedNode(kgcUri('available')),
-      dataFactory.literal(String(cap.available), dataFactory.namedNode(`${XSD_NS}boolean`))
-    ));
+    store.add(
+      dataFactory.quad(
+        capUri,
+        dataFactory.namedNode(kgcUri('available')),
+        dataFactory.literal(String(cap.available), dataFactory.namedNode(`${XSD_NS}boolean`))
+      )
+    );
 
     // Link to observations
     for (const obsRef of cap.derivedFrom) {
-      store.add(dataFactory.quad(
-        capUri,
-        dataFactory.namedNode(kgcUri('derivedFrom')),
-        dataFactory.namedNode(obsRef)
-      ));
+      store.add(
+        dataFactory.quad(
+          capUri,
+          dataFactory.namedNode(kgcUri('derivedFrom')),
+          dataFactory.namedNode(obsRef)
+        )
+      );
     }
   }
 
@@ -320,31 +333,39 @@ export async function convertToTurtle(observations) {
     const constraint = constraints[i];
     const constraintUri = dataFactory.namedNode(`urn:kgc:constraint:${i + 1}`);
 
-    store.add(dataFactory.quad(
-      constraintUri,
-      dataFactory.namedNode(`${RDF_NS}type`),
-      dataFactory.namedNode(kgcUri('Constraint'))
-    ));
+    store.add(
+      dataFactory.quad(
+        constraintUri,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(kgcUri('Constraint'))
+      )
+    );
 
-    store.add(dataFactory.quad(
-      constraintUri,
-      dataFactory.namedNode(kgcUri('constraintType')),
-      dataFactory.literal(constraint.type)
-    ));
+    store.add(
+      dataFactory.quad(
+        constraintUri,
+        dataFactory.namedNode(kgcUri('constraintType')),
+        dataFactory.literal(constraint.type)
+      )
+    );
 
-    store.add(dataFactory.quad(
-      constraintUri,
-      dataFactory.namedNode(kgcUri('description')),
-      dataFactory.literal(constraint.description)
-    ));
+    store.add(
+      dataFactory.quad(
+        constraintUri,
+        dataFactory.namedNode(kgcUri('description')),
+        dataFactory.literal(constraint.description)
+      )
+    );
 
     // Link to observations
     for (const obsRef of constraint.derivedFrom) {
-      store.add(dataFactory.quad(
-        constraintUri,
-        dataFactory.namedNode(kgcUri('derivedFrom')),
-        dataFactory.namedNode(obsRef)
-      ));
+      store.add(
+        dataFactory.quad(
+          constraintUri,
+          dataFactory.namedNode(kgcUri('derivedFrom')),
+          dataFactory.namedNode(obsRef)
+        )
+      );
     }
   }
 
@@ -371,13 +392,10 @@ export async function convertToTurtle(observations) {
   });
 }
 
-export {
-  deriveCapabilities,
-  deriveConstraints
-};
+export { deriveCapabilities, deriveConstraints };
 
 export default {
   convertToTurtle,
   deriveCapabilities,
-  deriveConstraints
+  deriveConstraints,
 };

@@ -118,16 +118,18 @@ export async function verifyReceiptChain(receipts) {
     }
 
     // Verify receipt hash
-    const computedHash = await blake3(JSON.stringify({
-      id: receipt.id,
-      taskInstanceId: receipt.taskInstanceId,
-      caseId: receipt.caseId,
-      action: receipt.action,
-      timestamp: receipt.timestamp.toString(),
-      beforeHash: receipt.beforeHash,
-      afterHash: receipt.afterHash,
-      previousReceiptHash: receipt.previousReceiptHash,
-    }));
+    const computedHash = await blake3(
+      JSON.stringify({
+        id: receipt.id,
+        taskInstanceId: receipt.taskInstanceId,
+        caseId: receipt.caseId,
+        action: receipt.action,
+        timestamp: receipt.timestamp.toString(),
+        beforeHash: receipt.beforeHash,
+        afterHash: receipt.afterHash,
+        previousReceiptHash: receipt.previousReceiptHash,
+      })
+    );
 
     if (computedHash !== receipt.hash) {
       errors.push(`Receipt ${i} hash mismatch: computed ${computedHash}, stored ${receipt.hash}`);
@@ -152,7 +154,7 @@ export function extendTaskDefinition(TaskDefinitionClass) {
    * @param {Object} context - Validation context
    * @returns {Promise<{valid: boolean, reason?: string}>}
    */
-  TaskDefinitionClass.prototype.validatePreCondition = async function(context) {
+  TaskDefinitionClass.prototype.validatePreCondition = async function (context) {
     return validatePreCondition(this, context);
   };
 
@@ -161,7 +163,7 @@ export function extendTaskDefinition(TaskDefinitionClass) {
    * @param {Object} context - Validation context with output data
    * @returns {Promise<{valid: boolean, reason?: string}>}
    */
-  TaskDefinitionClass.prototype.validatePostCondition = async function(context) {
+  TaskDefinitionClass.prototype.validatePostCondition = async function (context) {
     return validatePostCondition(this, context);
   };
 }
@@ -177,7 +179,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * @param {string} toStatus - Target status
    * @returns {{valid: boolean, reason?: string}}
    */
-  TaskInstanceClass.prototype.validateTransition = function(fromStatus, toStatus) {
+  TaskInstanceClass.prototype.validateTransition = function (fromStatus, toStatus) {
     return validateTransition(fromStatus, toStatus);
   };
 
@@ -185,7 +187,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * Compute state hash for receipts
    * @returns {Promise<string>}
    */
-  TaskInstanceClass.prototype.computeStateHash = async function() {
+  TaskInstanceClass.prototype.computeStateHash = async function () {
     return computeStateHash(this);
   };
 
@@ -193,7 +195,7 @@ export function extendTaskInstance(TaskInstanceClass) {
    * Verify receipt chain integrity
    * @returns {Promise<{valid: boolean, errors: string[]}>}
    */
-  TaskInstanceClass.prototype.verifyReceiptChain = async function() {
+  TaskInstanceClass.prototype.verifyReceiptChain = async function () {
     return verifyReceiptChain(this.receipts);
   };
 }

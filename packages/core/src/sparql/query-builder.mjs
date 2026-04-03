@@ -98,7 +98,7 @@ class QueryBuilder {
    */
   select(...variables) {
     this._queryType = 'SELECT';
-    this._variables = variables.map(v => v.startsWith('?') ? v : `?${v}`);
+    this._variables = variables.map(v => (v.startsWith('?') ? v : `?${v}`));
     return this;
   }
 
@@ -386,10 +386,12 @@ class QueryBuilder {
       }
     }
 
-    if (this._wherePatterns.length > 0 ||
-        this._optionalPatterns.length > 0 ||
-        this._unionPatterns.length > 0 ||
-        this._graphPatterns.size > 0) {
+    if (
+      this._wherePatterns.length > 0 ||
+      this._optionalPatterns.length > 0 ||
+      this._unionPatterns.length > 0 ||
+      this._graphPatterns.size > 0
+    ) {
       parts.push('WHERE {');
 
       this._wherePatterns.forEach(p => {

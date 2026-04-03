@@ -10,17 +10,17 @@ const extension = {
         start: {
           description: 'Start knowledge capture session',
           argsSchema: z.object({ context: z.string(), mode: z.string().optional() }),
-          handler: async (args) => ({ sessionId: `claude_${Date.now()}`, context: args.context })
+          handler: async args => ({ sessionId: `claude_${Date.now()}`, context: args.context }),
         },
         capture: {
           description: 'Capture knowledge from session',
           argsSchema: z.object({ sessionId: z.string() }),
-          handler: async (args) => ({ captured: true, sessionId: args.sessionId })
-        }
-      }
-    }
+          handler: async args => ({ captured: true, sessionId: args.sessionId }),
+        },
+      },
+    },
   },
-  priority: 14
+  priority: 14,
 };
 
 export default extension;

@@ -1,8 +1,8 @@
 /**
  * Demo 1: Isomorphic Crypto - SHA-256 Hashing
- * 
+ *
  * PROOF: Same code produces identical hash in Node.js and Browser
- * 
+ *
  * Pattern: Web Crypto API (universal), with node:crypto fallback
  */
 
@@ -15,7 +15,7 @@ import { detectRuntime, getCrypto } from '../detect.mjs';
  */
 export async function hashSHA256(data) {
   const runtime = detectRuntime();
-  
+
   // Try Web Crypto API first (Node 15+, all browsers, Deno, Bun)
   const crypto = getCrypto();
   if (crypto && crypto.subtle) {
@@ -25,13 +25,13 @@ export async function hashSHA256(data) {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
-  
+
   // Fallback to node:crypto for older Node.js
   if (runtime.type === 'node') {
     const { createHash } = await import('node:crypto');
     return createHash('sha256').update(data).digest('hex');
   }
-  
+
   throw new Error('No crypto implementation available');
 }
 
@@ -44,7 +44,7 @@ export function randomUUID() {
   if (crypto && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  
+
   // Fallback implementation
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
@@ -60,13 +60,13 @@ async function main() {
   console.log('Runtime: ' + runtime.type + ' ' + runtime.version);
   console.log('Features: ' + featuresStr);
   console.log('');
-  
+
   // Test 1: Deterministic hashing
   const testData = 'Hello, UNRDF Cross-Runtime World!';
   const hash = await hashSHA256(testData);
   console.log('Input:  "' + testData + '"');
   console.log('SHA256: ' + hash);
-  
+
   // Known hash for verification (computed independently)
   const expectedHash = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; // empty string
   const emptyHash = await hashSHA256('');
@@ -75,7 +75,7 @@ async function main() {
   console.log('Expected:          ' + expectedHash);
   console.log('Match: ' + (emptyHash === expectedHash ? '✅' : '❌'));
   console.log('');
-  
+
   // Test 2: UUID generation
   const uuid1 = randomUUID();
   const uuid2 = randomUUID();
@@ -83,7 +83,7 @@ async function main() {
   console.log('UUID 2: ' + uuid2);
   console.log('Unique: ' + (uuid1 !== uuid2 ? '✅' : '❌'));
   console.log('');
-  
+
   console.log('✅ Demo 1: Isomorphic Crypto - SUCCESS');
 }
 

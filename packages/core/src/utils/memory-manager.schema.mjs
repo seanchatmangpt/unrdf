@@ -34,5 +34,5 @@ export const createConnectionPoolSchema = {
 
 export default {
   createMemoryManager: createMemoryManagerSchema,
-  createConnectionPool: createConnectionPoolSchema
+  createConnectionPool: createConnectionPoolSchema,
 };

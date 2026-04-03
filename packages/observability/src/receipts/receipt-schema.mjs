@@ -30,7 +30,10 @@ export const ReceiptSchema = z.object({
   timestamp_iso: z.string().datetime(),
   operation: z.string().min(1),
   payload: z.any(),
-  previousHash: z.string().regex(/^[0-9a-f]{64}$/i).nullable(),
+  previousHash: z
+    .string()
+    .regex(/^[0-9a-f]{64}$/i)
+    .nullable(),
   actor: z.string().min(1).optional(),
   metadata: z.record(z.any()).optional(),
 });
@@ -42,10 +45,12 @@ export const MerkleProofSchema = z.object({
   receiptId: z.string(),
   receiptHash: z.string().regex(/^[0-9a-f]{64}$/i),
   root: z.string().regex(/^[0-9a-f]{64}$/i),
-  siblings: z.array(z.object({
-    hash: z.string().regex(/^[0-9a-f]{64}$/i),
-    position: z.enum(['left', 'right']),
-  })),
+  siblings: z.array(
+    z.object({
+      hash: z.string().regex(/^[0-9a-f]{64}$/i),
+      position: z.enum(['left', 'right']),
+    })
+  ),
   index: z.number().int().nonnegative(),
 });
 
@@ -77,12 +82,14 @@ export const VerificationResultSchema = z.object({
   valid: z.boolean(),
   receiptId: z.string().optional(),
   errors: z.array(z.string()).default([]),
-  checks: z.object({
-    hashIntegrity: z.boolean().optional(),
-    chainLink: z.boolean().optional(),
-    temporalOrder: z.boolean().optional(),
-    merkleProof: z.boolean().optional(),
-  }).optional(),
+  checks: z
+    .object({
+      hashIntegrity: z.boolean().optional(),
+      chainLink: z.boolean().optional(),
+      temporalOrder: z.boolean().optional(),
+      merkleProof: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 /**

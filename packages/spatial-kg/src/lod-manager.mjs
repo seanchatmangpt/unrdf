@@ -61,7 +61,7 @@ export class LODManager {
    * @returns {Array<Object>} Nodes that changed LOD level
    */
   updateLevels(nodes) {
-    return tracer.startActiveSpan('lod.update-levels', (span) => {
+    return tracer.startActiveSpan('lod.update-levels', span => {
       try {
         const changes = [];
 
@@ -182,13 +182,13 @@ export class LODManager {
     // Medium detail - render 50%
     if (level === 1) {
       const hash = this._hashString(nodeId);
-      return (hash % 2) === 0;
+      return hash % 2 === 0;
     }
 
     // Low detail - render 25%
     if (level === 2) {
       const hash = this._hashString(nodeId);
-      return (hash % 4) === 0;
+      return hash % 4 === 0;
     }
 
     return false;
@@ -201,7 +201,7 @@ export class LODManager {
   _hashString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = (hash << 5) - hash + str.charCodeAt(i);
       hash = hash & hash;
     }
     return Math.abs(hash);

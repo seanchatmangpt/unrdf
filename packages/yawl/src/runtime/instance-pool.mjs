@@ -90,7 +90,9 @@ export class InstancePool {
    */
   getByParent(parentTaskId) {
     const instanceIds = this._parentToInstances.get(parentTaskId) || new Set();
-    return Array.from(instanceIds).map(id => this._instances.get(id)).filter(Boolean);
+    return Array.from(instanceIds)
+      .map(id => this._instances.get(id))
+      .filter(Boolean);
   }
 
   /**
@@ -106,7 +108,11 @@ export class InstancePool {
 
     instance.status = newStatus;
 
-    if (newStatus === InstanceStatus.COMPLETED || newStatus === InstanceStatus.FAILED || newStatus === InstanceStatus.CANCELLED) {
+    if (
+      newStatus === InstanceStatus.COMPLETED ||
+      newStatus === InstanceStatus.FAILED ||
+      newStatus === InstanceStatus.CANCELLED
+    ) {
       instance.completedAt = now();
     }
   }
@@ -250,7 +256,7 @@ export async function executeInstances(instances, executorFn, options = {}) {
 
   // Execute in parallel (Promise.all pattern from WP12)
   const results = await Promise.all(
-    instances.map(async (instance) => {
+    instances.map(async instance => {
       try {
         // Update to active
         pool.updateStatus(instance.id, InstanceStatus.ACTIVE);
@@ -366,6 +372,7 @@ export function getCompletionPercentage(parentTaskId, options = {}) {
 
   if (status.totalInstances === 0) return 0;
 
-  const terminal = status.statusCounts.completed + status.statusCounts.failed + status.statusCounts.cancelled;
+  const terminal =
+    status.statusCounts.completed + status.statusCounts.failed + status.statusCounts.cancelled;
   return Math.round((terminal / status.totalInstances) * 100);
 }

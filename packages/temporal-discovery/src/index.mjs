@@ -4,28 +4,13 @@
  * @description Pattern mining, anomaly detection, trend analysis, and changepoint detection
  */
 
-export {
-  TemporalDiscoveryEngine,
-  createDiscoveryEngine,
-} from './temporal-discovery-engine.mjs';
+export { TemporalDiscoveryEngine, createDiscoveryEngine } from './temporal-discovery-engine.mjs';
 
-export {
-  apriori,
-  receiptsToTransactions,
-  mineReceiptPatterns,
-} from './pattern-miner.mjs';
+export { apriori, receiptsToTransactions, mineReceiptPatterns } from './pattern-miner.mjs';
 
-export {
-  detectAnomalies,
-  batchDetectAnomalies,
-  filterBySeverity,
-} from './anomaly-detector.mjs';
+export { detectAnomalies, batchDetectAnomalies, filterBySeverity } from './anomaly-detector.mjs';
 
-export {
-  analyzeTrends,
-  getSmoothedSeries,
-  findStrongestTrend,
-} from './trend-analyzer.mjs';
+export { analyzeTrends, getSmoothedSeries, findStrongestTrend } from './trend-analyzer.mjs';
 
 export {
   findCorrelation,

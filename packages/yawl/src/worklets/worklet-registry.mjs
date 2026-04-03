@@ -42,8 +42,9 @@ export const WorkletHandlerSchema = z.object({
   priority: z.number().int().nonnegative(),
   condition: HandlerConditionSchema,
   workflow: z.union([
-    z.function(),                         // Function handler
-    z.object({                            // Workflow specification
+    z.function(), // Function handler
+    z.object({
+      // Workflow specification
       id: z.string().min(1),
       tasks: z.array(z.any()),
     }),
@@ -152,8 +153,7 @@ export class WorkletRegistry {
     this.handlersByException.get(handler.exceptionType).push(handler);
 
     // Sort by priority (lower = higher priority)
-    this.handlersByException.get(handler.exceptionType)
-      .sort((a, b) => a.priority - b.priority);
+    this.handlersByException.get(handler.exceptionType).sort((a, b) => a.priority - b.priority);
 
     return handler;
   }

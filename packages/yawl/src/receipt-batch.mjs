@@ -117,7 +117,7 @@ function generateUUID() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -141,9 +141,7 @@ function deterministicSerialize(obj) {
   }
 
   const sortedKeys = Object.keys(obj).sort();
-  const pairs = sortedKeys.map(key =>
-    `${JSON.stringify(key)}:${deterministicSerialize(obj[key])}`
-  );
+  const pairs = sortedKeys.map(key => `${JSON.stringify(key)}:${deterministicSerialize(obj[key])}`);
   return '{' + pairs.join(',') + '}';
 }
 

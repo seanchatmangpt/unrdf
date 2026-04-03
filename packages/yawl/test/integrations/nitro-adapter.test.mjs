@@ -409,13 +409,11 @@ describe('YAWL-Nitro Adapter Integration', () => {
       ];
 
       // Act
-      const results = await Promise.all(
-        tasks.map((task) => adapter.executeYawlTaskViaNitro(task))
-      );
+      const results = await Promise.all(tasks.map(task => adapter.executeYawlTaskViaNitro(task)));
 
       // Assert
       expect(results).toHaveLength(3);
-      results.forEach((result) => {
+      results.forEach(result => {
         expect(result.success).toBe(true);
       });
     });
@@ -562,10 +560,10 @@ describe('YAWL-Nitro Adapter Integration', () => {
         { caseId: 'case-017', taskId: 'task-020' },
         { caseId: 'case-017', taskId: 'task-021' },
       ];
-      tasks.forEach((task) => adapter.yawlToNitro(task));
+      tasks.forEach(task => adapter.yawlToNitro(task));
 
       // Act
-      const statuses = tasks.map((task) => adapter.getNitroTaskStatus(task.taskId));
+      const statuses = tasks.map(task => adapter.getNitroTaskStatus(task.taskId));
 
       // Assert
       expect(statuses).toEqual(['pending', 'pending', 'pending']);
@@ -626,7 +624,7 @@ describe('YAWL-Nitro Adapter Integration', () => {
       }));
 
       // Act
-      const nitroTasks = tasks.map((task) => adapter.yawlToNitro(task));
+      const nitroTasks = tasks.map(task => adapter.yawlToNitro(task));
 
       // Assert
       expect(nitroTasks).toHaveLength(20);
@@ -642,9 +640,7 @@ describe('YAWL-Nitro Adapter Integration', () => {
       }));
 
       // Act
-      const results = await Promise.all(
-        tasks.map((task) => adapter.executeYawlTaskViaNitro(task))
-      );
+      const results = await Promise.all(tasks.map(task => adapter.executeYawlTaskViaNitro(task)));
 
       // Assert
       expect(results).toHaveLength(10);
@@ -659,10 +655,10 @@ describe('YAWL-Nitro Adapter Integration', () => {
         caseId: 'case-021',
         taskId: `task-${200 + i}`,
       }));
-      tasks.forEach((task) => adapter.yawlToNitro(task));
+      tasks.forEach(task => adapter.yawlToNitro(task));
 
       // Act
-      const results = tasks.map((task) => adapter.cancelNitroTask(task.taskId));
+      const results = tasks.map(task => adapter.cancelNitroTask(task.taskId));
 
       // Assert
       expect(results).toEqual([true, true, true, true, true]);

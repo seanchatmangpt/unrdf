@@ -127,9 +127,9 @@ describe('Zero Instances Edge Cases', () => {
     engine.registerWorkflow(workflow);
 
     // Act & Assert: Should reject 0 instances
-    await expect(
-      engine.createCase('zero-min-violation', { instanceCount: 0 })
-    ).rejects.toThrow(/minimum/i);
+    await expect(engine.createCase('zero-min-violation', { instanceCount: 0 })).rejects.toThrow(
+      /minimum/i
+    );
   });
 });
 
@@ -179,10 +179,7 @@ describe('One Instance Edge Cases (Degenerate MI)', () => {
 
     // Complete it
     await engine.startTask(yawlCase.id, instances[0].id);
-    const { downstreamEnabled } = await engine.completeTask(
-      yawlCase.id,
-      instances[0].id
-    );
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, instances[0].id);
 
     // Assert: End enabled (AND-join of 1 satisfied)
     expect(downstreamEnabled.length).toBe(1);
@@ -209,10 +206,7 @@ describe('One Instance Edge Cases (Degenerate MI)', () => {
 
     const instance = yawlCase.getEnabledWorkItems()[0];
     await engine.startTask(yawlCase.id, instance.id);
-    const { downstreamEnabled } = await engine.completeTask(
-      yawlCase.id,
-      instance.id
-    );
+    const { downstreamEnabled } = await engine.completeTask(yawlCase.id, instance.id);
 
     // Assert: XOR-join fires immediately
     expect(downstreamEnabled.length).toBe(1);
@@ -283,9 +277,9 @@ describe('Instance Failure During Barrier Wait', () => {
     await engine.completeTask(yawlCase.id, instances[4].id);
 
     // Assert: Merge NOT enabled (AND-join failed - one instance failed)
-    const mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    const mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(0);
 
     // Case should be in failed/suspended state
@@ -334,9 +328,9 @@ describe('Instance Failure During Barrier Wait', () => {
     }
 
     // Assert: Merge enabled (threshold reached)
-    let mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    let mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(1);
 
     // Fail remaining instances
@@ -346,9 +340,9 @@ describe('Instance Failure During Barrier Wait', () => {
     }
 
     // Assert: Merge still enabled (threshold was already met)
-    mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(1);
   });
 });
@@ -405,17 +399,14 @@ describe('Timeout During Dynamic Spawning', () => {
     await engine.startTask(yawlCase.id, instances[2].id);
 
     // Simulate timeout
-    const { task: timedOutTask } = await engine.timeoutWorkItem(
-      yawlCase.id,
-      instances[2].id
-    );
+    const { task: timedOutTask } = await engine.timeoutWorkItem(yawlCase.id, instances[2].id);
 
     expect(timedOutTask.status).toBe(TaskStatus.TIMEOUT);
 
     // Assert: Merge NOT enabled (AND-join not satisfied)
-    const mergeItems = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge'
-    );
+    const mergeItems = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'merge');
     expect(mergeItems.length).toBe(0);
   });
 
@@ -444,9 +435,9 @@ describe('Timeout During Dynamic Spawning', () => {
     await engine.addMIInstance(yawlCase.id, 'process', { id: 3 });
 
     // Assert: New instance added successfully
-    const allInstances = yawlCase.getEnabledWorkItems().filter(
-      w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process'
-    );
+    const allInstances = yawlCase
+      .getEnabledWorkItems()
+      .filter(w => yawlCase.getTaskDefIdForWorkItem(w.id) === 'process');
     expect(allInstances.length).toBe(2); // instance 2 + new instance 3
 
     // Complete them
@@ -496,16 +487,10 @@ describe('Concurrent Cancellation + Instance Addition', () => {
     // Concurrent: add instances AND cancel region
     const addPromises = [];
     for (let i = 0; i < 10; i++) {
-      addPromises.push(
-        engine.addMIInstance(yawlCase.id, 'process', { id: 10 + i })
-      );
+      addPromises.push(engine.addMIInstance(yawlCase.id, 'process', { id: 10 + i }));
     }
 
-    const cancelPromise = engine.cancelRegion(
-      yawlCase.id,
-      'all',
-      'Concurrent cancel'
-    );
+    const cancelPromise = engine.cancelRegion(yawlCase.id, 'all', 'Concurrent cancel');
 
     // Wait for both
     const [addResults, cancelResult] = await Promise.all([
@@ -547,11 +532,7 @@ describe('Concurrent Cancellation + Instance Addition', () => {
     }
 
     // Cancel task 'parent' globally
-    const { cancelled } = await engine.cancelTaskGlobal(
-      yawlCase.id,
-      'parent',
-      'Parent cancelled'
-    );
+    const { cancelled } = await engine.cancelTaskGlobal(yawlCase.id, 'parent', 'Parent cancelled');
 
     // Assert: All 20 instances cancelled
     expect(cancelled.length).toBe(20);
@@ -648,9 +629,7 @@ describe('Receipt Integrity Under Concurrent Operations', () => {
       expect(receipt.metadata).toBeDefined();
       // MI receipts should track instance info
       if (receipt.metadata?.workItemId) {
-        expect(instances.map(inst => inst.id)).toContain(
-          receipt.metadata.workItemId
-        );
+        expect(instances.map(inst => inst.id)).toContain(receipt.metadata.workItemId);
       }
     }
   });
@@ -682,13 +661,9 @@ describe('Boundary Value Validation', () => {
     engine.registerWorkflow(workflow);
 
     // Act & Assert: Exactly 7 instances required
-    await expect(
-      engine.createCase('exact-count', { instanceCount: 5 })
-    ).rejects.toThrow(/minimum/);
+    await expect(engine.createCase('exact-count', { instanceCount: 5 })).rejects.toThrow(/minimum/);
 
-    await expect(
-      engine.createCase('exact-count', { instanceCount: 9 })
-    ).rejects.toThrow(/maximum/);
+    await expect(engine.createCase('exact-count', { instanceCount: 9 })).rejects.toThrow(/maximum/);
 
     // Valid: exactly 7
     const { case: yawlCase } = await engine.createCase('exact-count', {

@@ -38,7 +38,7 @@ export const StreamOptionsSchema = z.object({
  * @param {Function} transform - Transform function
  * @returns {Object} Transformed chunk
  */
-function processChunkImpl(chunk, transform = (x) => x) {
+function processChunkImpl(chunk, transform = x => x) {
   const validated = StreamChunkSchema.parse(chunk);
   return {
     ...validated,

@@ -7,10 +7,7 @@
  */
 
 import { z } from 'zod';
-import {
-  withReceipt,
-  createContext,
-} from '../../v6-core/src/receipt-pattern.mjs';
+import { withReceipt, createContext } from '../../v6-core/src/receipt-pattern.mjs';
 
 /**
  * Workflow Schema

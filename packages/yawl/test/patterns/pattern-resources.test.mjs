@@ -20,7 +20,6 @@ import { createTestWorkflow, createTestEngine, measureTime } from './test-utils.
  * - Integration: Full lifecycle, error paths, resource contention
  */
 
-
 describe('Resource Tests', () => {
   let engine;
   let resourcePool;
@@ -73,7 +72,7 @@ describe('Resource Tests', () => {
         id: 'user-2',
         name: 'Bob',
         roles: ['developer'],
-        priority: 10,  // Higher priority
+        priority: 10, // Higher priority
         available: true,
       });
       resourcePool.addResource({
@@ -106,7 +105,7 @@ describe('Resource Tests', () => {
         id: 'user-1',
         name: 'Alice',
         roles: ['specialist'],
-        available: false,  // Already busy
+        available: false, // Already busy
         currentTaskId: 'existing-task',
       });
 

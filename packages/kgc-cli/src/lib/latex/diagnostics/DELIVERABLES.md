@@ -66,6 +66,7 @@ Implemented comprehensive LaTeX log diagnostics parser with pattern detection, s
 ### Pattern Detection (16 Patterns)
 
 **Errors (9 patterns):**
+
 - ✅ Missing package files (.sty, .cls, .def)
 - ✅ Missing input files (.tex)
 - ✅ Missing graphic files (.pdf, .png, .jpg, .eps, .svg)
@@ -77,6 +78,7 @@ Implemented comprehensive LaTeX log diagnostics parser with pattern detection, s
 - ✅ File:line error format
 
 **Warnings (5 patterns):**
+
 - ✅ Overfull/underfull hbox
 - ✅ Undefined citations
 - ✅ Undefined references
@@ -84,6 +86,7 @@ Implemented comprehensive LaTeX log diagnostics parser with pattern detection, s
 - ✅ Font warnings
 
 **Info (3 patterns):**
+
 - ✅ Rerun needed (cross-references)
 - ✅ Table of contents rerun
 - ✅ Missing auxiliary files (first run)
@@ -162,37 +165,40 @@ console.log(formatDiagnosticsForCLI(diagnostics.diagnostics));
 import { parseLatexLog, formatDiagnosticsForCLI } from './diagnostics/index.mjs';
 
 const result = parseLatexLog(await readFile('.latex-cache/runs/latest.log', 'utf8'));
-console.log(formatDiagnosticsForCLI(result.diagnostics, {
-  colors: !options.noColor,
-  verbose: options.verbose
-}));
+console.log(
+  formatDiagnosticsForCLI(result.diagnostics, {
+    colors: !options.noColor,
+    verbose: options.verbose,
+  })
+);
 ```
 
 ## Error Code Reference
 
-| Code | Severity | Description |
-|------|----------|-------------|
-| `MISSING_PACKAGE` | error | Package file not found |
-| `MISSING_INPUT` | error | User .tex file not found |
-| `MISSING_GRAPHIC` | error | Image file not found |
-| `FILE_NOT_FOUND` | error | Generic file not found |
-| `UNDEFINED_CONTROL` | error | Undefined LaTeX command |
-| `MISSING_FONT` | error | Font file not found |
-| `PACKAGE_ERROR` | error | Package-specific error |
-| `EMERGENCY_STOP` | error | Critical compilation failure |
-| `FILE_LINE_ERROR` | error | Modern error format |
-| `BADNESS_HBOX` | warning | Overfull/underfull hbox |
-| `UNDEFINED_CITATION` | warning | BibTeX citation not found |
-| `UNDEFINED_REFERENCE` | warning | \ref{} target missing |
-| `PACKAGE_WARNING` | warning | Package-specific warning |
-| `FONT_WARNING` | warning | Font substitution |
-| `RERUN_NEEDED` | info | Cross-references need update |
-| `TOC_RERUN` | info | TOC needs update |
-| `MISSING_AUX` | info | Auxiliary file not created |
+| Code                  | Severity | Description                  |
+| --------------------- | -------- | ---------------------------- |
+| `MISSING_PACKAGE`     | error    | Package file not found       |
+| `MISSING_INPUT`       | error    | User .tex file not found     |
+| `MISSING_GRAPHIC`     | error    | Image file not found         |
+| `FILE_NOT_FOUND`      | error    | Generic file not found       |
+| `UNDEFINED_CONTROL`   | error    | Undefined LaTeX command      |
+| `MISSING_FONT`        | error    | Font file not found          |
+| `PACKAGE_ERROR`       | error    | Package-specific error       |
+| `EMERGENCY_STOP`      | error    | Critical compilation failure |
+| `FILE_LINE_ERROR`     | error    | Modern error format          |
+| `BADNESS_HBOX`        | warning  | Overfull/underfull hbox      |
+| `UNDEFINED_CITATION`  | warning  | BibTeX citation not found    |
+| `UNDEFINED_REFERENCE` | warning  | \ref{} target missing        |
+| `PACKAGE_WARNING`     | warning  | Package-specific warning     |
+| `FONT_WARNING`        | warning  | Font substitution            |
+| `RERUN_NEEDED`        | info     | Cross-references need update |
+| `TOC_RERUN`           | info     | TOC needs update             |
+| `MISSING_AUX`         | info     | Auxiliary file not created   |
 
 ## Example Output
 
 ### Input Log
+
 ```
 ! LaTeX Error: File 'thesis.cls' not found.
 ! Undefined control sequence.
@@ -201,6 +207,7 @@ LaTeX Warning: Citation 'smith2020' undefined.
 ```
 
 ### Parsed Result
+
 ```json
 {
   "diagnostics": [
@@ -233,6 +240,7 @@ LaTeX Warning: Citation 'smith2020' undefined.
 ```
 
 ### CLI Output
+
 ```
 Errors (2):
   ✗ File 'thesis.cls' not found
@@ -280,11 +288,13 @@ node --test packages/kgc-cli/src/lib/latex/diagnostics/__tests__/parse-log.test.
 ✅ Yes - Demo script runs and produces correct output
 
 **What BREAKS if I'm wrong?**
+
 - Agent 4 won't receive missing files → compilation fails
 - CLI won't show actionable errors → poor UX
 - Rerun detection fails → infinite loops or incomplete PDFs
 
 **What's the EVIDENCE?**
+
 ```
 # tests 21
 # suites 4
@@ -293,6 +303,7 @@ node --test packages/kgc-cli/src/lib/latex/diagnostics/__tests__/parse-log.test.
 ```
 
 Demo output:
+
 - ✅ Colored CLI formatting working
 - ✅ JSON output valid
 - ✅ All patterns detecting correctly

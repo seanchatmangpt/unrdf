@@ -51,7 +51,7 @@ export class SPARQLStarQueryBuilder {
    * @returns {SPARQLStarQueryBuilder} This instance for chaining
    */
   select(vars) {
-    this.selectVars = vars.map((v) => (v.startsWith('?') ? v : `?${v}`));
+    this.selectVars = vars.map(v => (v.startsWith('?') ? v : `?${v}`));
     return this;
   }
 

@@ -53,9 +53,7 @@ function calculateSupport(itemsets, transactions) {
   for (const itemset of itemsets) {
     let count = 0;
     for (const transaction of transactions) {
-      const allItemsPresent = Array.from(itemset).every((item) =>
-        transaction.has(item)
-      );
+      const allItemsPresent = Array.from(itemset).every(item => transaction.has(item));
       if (allItemsPresent) {
         count++;
       }
@@ -103,7 +101,7 @@ export function apriori(transactions, options = {}) {
     }
   }
 
-  let frequentItemsets = Array.from(allItems).map((item) => new Set([item]));
+  let frequentItemsets = Array.from(allItems).map(item => new Set([item]));
   let k = 1;
 
   while (frequentItemsets.length > 0 && k <= maxPatternLength) {
@@ -153,7 +151,7 @@ export function apriori(transactions, options = {}) {
  * const transactions = receiptsToTransactions(receipts);
  */
 export function receiptsToTransactions(receipts) {
-  return receipts.map((receipt) => {
+  return receipts.map(receipt => {
     const items = new Set();
 
     if (receipt.operation) items.add(`op:${receipt.operation}`);

@@ -4,11 +4,13 @@ import { z } from 'zod';
 /**
  * Zod schemas for validation
  */
-const RecommendationOptionsSchema = z.object({
-  limit: z.number().int().positive().default(10),
-  threshold: z.number().min(0).max(1).default(0.6),
-  diversityWeight: z.number().min(0).max(1).default(0.3),
-}).partial();
+const RecommendationOptionsSchema = z
+  .object({
+    limit: z.number().int().positive().default(10),
+    threshold: z.number().min(0).max(1).default(0.6),
+    diversityWeight: z.number().min(0).max(1).default(0.3),
+  })
+  .partial();
 
 /**
  * KnowledgeRecommender - Discover and recommend related concepts
@@ -44,18 +46,10 @@ export class KnowledgeRecommender {
    */
   getEntityTriples(entityUri) {
     // Get triples where entity is subject
-    const asSubject = this.store.match(
-      { value: entityUri },
-      null,
-      null
-    );
+    const asSubject = this.store.match({ value: entityUri }, null, null);
 
     // Get triples where entity is object
-    const asObject = this.store.match(
-      null,
-      null,
-      { value: entityUri }
-    );
+    const asObject = this.store.match(null, null, { value: entityUri });
 
     return [...asSubject, ...asObject];
   }
@@ -208,17 +202,13 @@ export class KnowledgeRecommender {
         let minSimilarity = Infinity;
 
         for (const sel of selected) {
-          const sim = this.approximateSimilarity(
-            remaining[i].entity,
-            sel.entity
-          );
+          const sim = this.approximateSimilarity(remaining[i].entity, sel.entity);
           minSimilarity = Math.min(minSimilarity, sim);
         }
 
         // Combine relevance and diversity
         const combinedScore =
-          remaining[i].score * (1 - diversityWeight) +
-          (1 - minSimilarity) * diversityWeight;
+          remaining[i].score * (1 - diversityWeight) + (1 - minSimilarity) * diversityWeight;
 
         if (combinedScore > bestScore) {
           bestScore = combinedScore;

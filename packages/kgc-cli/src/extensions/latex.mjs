@@ -14,15 +14,29 @@ import { compileLatexToPdf } from '../lib/latex/compile.mjs';
 const BuildSchema = z.object({
   input: z.string().describe('Path to main .tex file (e.g., thesis/main.tex)'),
   output: z.string().optional().default('dist/thesis.pdf').describe('Output PDF path'),
-  engine: z.enum(['pdflatex', 'xelatex', 'lualatex']).optional().default('pdflatex').describe('LaTeX engine to use'),
+  engine: z
+    .enum(['pdflatex', 'xelatex', 'lualatex'])
+    .optional()
+    .default('pdflatex')
+    .describe('LaTeX engine to use'),
   cacheDir: z.string().optional().default('.latex-cache').describe('Cache directory'),
-  passes: z.number().int().min(1).max(5).optional().default(2).describe('Number of compilation passes'),
-  projectRoot: z.string().optional().describe('Project root directory (defaults to dirname(input))')
+  passes: z
+    .number()
+    .int()
+    .min(1)
+    .max(5)
+    .optional()
+    .default(2)
+    .describe('Number of compilation passes'),
+  projectRoot: z
+    .string()
+    .optional()
+    .describe('Project root directory (defaults to dirname(input))'),
 });
 
 /** Args schema for cache management */
 const _CacheClearSchema = z.object({
-  cacheDir: z.string().optional().default('.kgc/cache/latex').describe('Cache directory to clear')
+  cacheDir: z.string().optional().default('.kgc/cache/latex').describe('Cache directory to clear'),
 });
 
 /**
@@ -40,7 +54,7 @@ const extension = {
         build: {
           description: 'Compile LaTeX document to PDF using internal WASM engine',
           argsSchema: BuildSchema,
-          handler: async (args) => {
+          handler: async args => {
             const { promises: fs } = await import('node:fs');
             const { dirname, resolve } = await import('node:path');
 
@@ -56,7 +70,7 @@ const extension = {
                 projectDir: projectRoot,
                 engine: args.engine,
                 cacheDir: args.cacheDir ? resolve(args.cacheDir) : undefined,
-                passes: args.passes
+                passes: args.passes,
               });
 
               // Write output PDF
@@ -67,7 +81,7 @@ const extension = {
                 success: true,
                 output: outputPath,
                 size: pdfBytes.length,
-                message: `Successfully compiled to ${outputPath} (${pdfBytes.length} bytes)`
+                message: `Successfully compiled to ${outputPath} (${pdfBytes.length} bytes)`,
               };
             } catch (error) {
               // Re-throw with structured error
@@ -76,36 +90,36 @@ const extension = {
               err.details = error.details || { error: error.toString() };
               throw err;
             }
-          }
+          },
           // meta omitted due to zod version conflicts
         },
 
         validate: {
           description: 'Validate LaTeX document structure (dry-run compilation)',
-          handler: async (args) => {
+          handler: async args => {
             return {
               valid: true,
               input: args.input || 'unknown',
-              message: 'Validation not yet implemented - placeholder'
+              message: 'Validation not yet implemented - placeholder',
             };
-          }
+          },
         },
 
         clean: {
           description: 'Clear LaTeX compilation cache',
-          handler: async (args) => {
+          handler: async args => {
             return {
               cacheDir: args.cacheDir || '.latex-cache',
               cleared: false,
-              message: 'Cache clearing not yet implemented - placeholder'
+              message: 'Cache clearing not yet implemented - placeholder',
             };
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
 
-  priority: 15 // High priority - core infrastructure
+  priority: 15, // High priority - core infrastructure
 };
 
 export default extension;

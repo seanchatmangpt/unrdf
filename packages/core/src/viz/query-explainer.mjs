@@ -9,11 +9,13 @@ import { z } from 'zod';
 /**
  * Query explanation options schema
  */
-const ExplanationOptionsSchema = z.object({
-  includeStats: z.boolean().optional(),
-  includeOptimizations: z.boolean().optional(),
-  format: z.enum(['text', 'json', 'tree']).optional(),
-}).optional();
+const ExplanationOptionsSchema = z
+  .object({
+    includeStats: z.boolean().optional(),
+    includeOptimizations: z.boolean().optional(),
+    format: z.enum(['text', 'json', 'tree']).optional(),
+  })
+  .optional();
 
 /**
  * Parse SPARQL query into components
@@ -23,11 +25,15 @@ const ExplanationOptionsSchema = z.object({
 function parseQuery(query) {
   const trimmed = query.trim();
 
-  const queryType = /^\s*SELECT/i.test(trimmed) ? 'SELECT'
-    : /^\s*CONSTRUCT/i.test(trimmed) ? 'CONSTRUCT'
-    : /^\s*ASK/i.test(trimmed) ? 'ASK'
-    : /^\s*DESCRIBE/i.test(trimmed) ? 'DESCRIBE'
-    : 'UNKNOWN';
+  const queryType = /^\s*SELECT/i.test(trimmed)
+    ? 'SELECT'
+    : /^\s*CONSTRUCT/i.test(trimmed)
+      ? 'CONSTRUCT'
+      : /^\s*ASK/i.test(trimmed)
+        ? 'ASK'
+        : /^\s*DESCRIBE/i.test(trimmed)
+          ? 'DESCRIBE'
+          : 'UNKNOWN';
 
   const prefixes = [];
   const prefixRegex = /PREFIX\s+(\w+):\s*<([^>]+)>/gi;

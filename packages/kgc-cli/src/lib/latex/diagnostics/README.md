@@ -36,9 +36,11 @@ console.log(`Rerun needed: ${result.rerunNeeded}`);
 Parses LaTeX compilation log and returns structured diagnostics.
 
 **Parameters:**
+
 - `log` (string): Raw LaTeX log output
 
 **Returns:** `ParseResult`
+
 ```typescript
 {
   diagnostics: Diagnostic[],      // All diagnostic entries
@@ -51,6 +53,7 @@ Parses LaTeX compilation log and returns structured diagnostics.
 ```
 
 **Example:**
+
 ```javascript
 const result = parseLatexLog(logText);
 // => { diagnostics: [...], missingInputs: ['thesis.cls'], rerunNeeded: false, ... }
@@ -63,6 +66,7 @@ const result = parseLatexLog(logText);
 Formats diagnostics for terminal display.
 
 **Parameters:**
+
 - `diagnostics` (Diagnostic[]): Diagnostics to format
 - `options` (optional):
   - `colors` (boolean, default: true): Use ANSI colors
@@ -71,6 +75,7 @@ Formats diagnostics for terminal display.
 **Returns:** Formatted string for terminal output
 
 **Example:**
+
 ```javascript
 const formatted = formatDiagnosticsForCLI(result.diagnostics);
 console.log(formatted);
@@ -88,11 +93,13 @@ console.log(formatted);
 Creates human-readable summary.
 
 **Parameters:**
+
 - `result` (ParseResult): Parse result
 
 **Returns:** Summary string
 
 **Example:**
+
 ```javascript
 const summary = createDiagnosticSummary(result);
 // => "Compilation failed. 3 errors, 5 warnings. Missing 2 files. Rerun needed."
@@ -135,25 +142,25 @@ Validates parse result:
 
 ## Error Codes
 
-| Code | Severity | Description |
-|------|----------|-------------|
-| `MISSING_PACKAGE` | error | Package file (.sty, .cls, .def) not found |
-| `MISSING_INPUT` | error | User .tex file not found |
-| `MISSING_GRAPHIC` | error | Image file not found |
-| `FILE_NOT_FOUND` | error | Generic file not found |
-| `UNDEFINED_CONTROL` | error | Undefined LaTeX command |
-| `MISSING_FONT` | error | Font file not found |
-| `PACKAGE_ERROR` | error | Package-specific error |
-| `EMERGENCY_STOP` | error | Critical compilation failure |
-| `FILE_LINE_ERROR` | error | Modern error format (file:line) |
-| `BADNESS_HBOX` | warning | Overfull/underfull hbox |
-| `UNDEFINED_CITATION` | warning | BibTeX citation not found |
-| `UNDEFINED_REFERENCE` | warning | \ref{} target missing |
-| `PACKAGE_WARNING` | warning | Package-specific warning |
-| `FONT_WARNING` | warning | Font substitution |
-| `RERUN_NEEDED` | info | Cross-references need update |
-| `TOC_RERUN` | info | Table of contents needs update |
-| `MISSING_AUX` | info | Auxiliary file not created yet |
+| Code                  | Severity | Description                               |
+| --------------------- | -------- | ----------------------------------------- |
+| `MISSING_PACKAGE`     | error    | Package file (.sty, .cls, .def) not found |
+| `MISSING_INPUT`       | error    | User .tex file not found                  |
+| `MISSING_GRAPHIC`     | error    | Image file not found                      |
+| `FILE_NOT_FOUND`      | error    | Generic file not found                    |
+| `UNDEFINED_CONTROL`   | error    | Undefined LaTeX command                   |
+| `MISSING_FONT`        | error    | Font file not found                       |
+| `PACKAGE_ERROR`       | error    | Package-specific error                    |
+| `EMERGENCY_STOP`      | error    | Critical compilation failure              |
+| `FILE_LINE_ERROR`     | error    | Modern error format (file:line)           |
+| `BADNESS_HBOX`        | warning  | Overfull/underfull hbox                   |
+| `UNDEFINED_CITATION`  | warning  | BibTeX citation not found                 |
+| `UNDEFINED_REFERENCE` | warning  | \ref{} target missing                     |
+| `PACKAGE_WARNING`     | warning  | Package-specific warning                  |
+| `FONT_WARNING`        | warning  | Font substitution                         |
+| `RERUN_NEEDED`        | info     | Cross-references need update              |
+| `TOC_RERUN`           | info     | Table of contents needs update            |
+| `MISSING_AUX`         | info     | Auxiliary file not created yet            |
 
 ## Integration
 
@@ -201,10 +208,12 @@ import { readFile } from 'node:fs/promises';
 const logText = await readFile('.latex-cache/runs/latest.log', 'utf8');
 const result = parseLatexLog(logText);
 
-console.log(formatDiagnosticsForCLI(result.diagnostics, {
-  colors: !options.noColor,
-  verbose: options.verbose
-}));
+console.log(
+  formatDiagnosticsForCLI(result.diagnostics, {
+    colors: !options.noColor,
+    verbose: options.verbose,
+  })
+);
 
 if (options.json) {
   console.log(JSON.stringify(result, null, 2));
@@ -216,25 +225,30 @@ if (options.json) {
 The parser uses comprehensive regex patterns to detect:
 
 ### Missing Files
+
 - `! LaTeX Error: File 'X' not found.`
 - `! I can't find file 'X'.`
 - `! Package X Error: File 'Y' not found.`
 - `(X not found)` (auxiliary files)
 
 ### Undefined Commands
+
 - `! Undefined control sequence.` followed by `l.42 \command`
 - Includes common misspellings (e.g., `\includegraphix`)
 - Fuzzy matching for suggestions
 
 ### Package Errors
+
 - `! Package X Error: ...`
 - `Package X Warning: ...`
 
 ### Formatting Issues
+
 - `Overfull \hbox (Xpt too wide) in paragraph at lines Y--Z`
 - `Underfull \hbox (...) in paragraph at lines Y--Z`
 
 ### Rerun Hints
+
 - `LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.`
 - `Rerun LaTeX`
 - `No file X.toc.` / `No file X.aux.`
@@ -248,6 +262,7 @@ node --test packages/kgc-cli/src/lib/latex/diagnostics/__tests__/parse-log.test.
 ```
 
 Test coverage:
+
 - ✅ All error patterns (8 patterns)
 - ✅ All warning patterns (5 patterns)
 - ✅ All info patterns (3 patterns)

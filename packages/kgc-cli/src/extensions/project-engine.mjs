@@ -10,22 +10,22 @@ const extension = {
         create: {
           description: 'Create new project',
           argsSchema: z.object({ name: z.string(), template: z.string().optional() }),
-          handler: async (args) => ({ projectId: `proj_${Date.now()}`, name: args.name })
+          handler: async args => ({ projectId: `proj_${Date.now()}`, name: args.name }),
         },
         build: {
           description: 'Build project artifacts',
           argsSchema: z.object({ projectId: z.string() }),
-          handler: async (args) => ({ built: true, projectId: args.projectId })
+          handler: async args => ({ built: true, projectId: args.projectId }),
         },
         deploy: {
           description: 'Deploy project',
           argsSchema: z.object({ projectId: z.string(), env: z.string() }),
-          handler: async (args) => ({ deployed: true, env: args.env })
-        }
-      }
-    }
+          handler: async args => ({ deployed: true, env: args.env }),
+        },
+      },
+    },
   },
-  priority: 61
+  priority: 61,
 };
 
 export default extension;

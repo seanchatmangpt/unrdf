@@ -34,5 +34,5 @@ export const validateStoreSchema = {
 
 export default {
   validateQuad: validateQuadSchema,
-  validateStore: validateStoreSchema
+  validateStore: validateStoreSchema,
 };

@@ -10,22 +10,22 @@ const extension = {
         create: {
           description: 'Create collaboration session',
           argsSchema: z.object({ graphId: z.string(), users: z.array(z.string()).optional() }),
-          handler: async (args) => ({ sessionId: `collab_${Date.now()}`, graphId: args.graphId })
+          handler: async args => ({ sessionId: `collab_${Date.now()}`, graphId: args.graphId }),
         },
         join: {
           description: 'Join collaboration session',
           argsSchema: z.object({ sessionId: z.string(), userId: z.string() }),
-          handler: async (args) => ({ joined: true, sessionId: args.sessionId })
+          handler: async args => ({ joined: true, sessionId: args.sessionId }),
         },
         sync: {
           description: 'Synchronize session state',
           argsSchema: z.object({ sessionId: z.string() }),
-          handler: async (_args) => ({ synced: true, changes: 0 })
-        }
-      }
-    }
+          handler: async _args => ({ synced: true, changes: 0 }),
+        },
+      },
+    },
   },
-  priority: 70
+  priority: 70,
 };
 
 export default extension;

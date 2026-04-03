@@ -80,7 +80,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       expect(Array.isArray(observations)).toBe(true);
@@ -91,7 +91,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const obs = observations[0];
@@ -106,7 +106,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: ['/etc'],
         out: '/etc/kgc-probe',
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const deniedObs = observations.find(o => o.guardDecision === 'denied');
@@ -118,7 +118,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: '/tmp/outside-roots',
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const mainObs = observations.find(o => o.method === 'probeFilesystem');
@@ -131,7 +131,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: ['/etc'],
         out: '/etc/test',
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const deniedObs = observations.find(o => o.guardDecision === 'denied');
@@ -145,7 +145,7 @@ describe('Filesystem Probe', () => {
       await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 3000
+        budgetMs: 3000,
       });
       const elapsed = Date.now() - start;
 
@@ -156,7 +156,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const readObs = observations.find(o => o.method === 'fs.access(R_OK)');
@@ -168,7 +168,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const writeObs = observations.find(o => o.method === 'fs.access(W_OK)');
@@ -180,7 +180,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const symlinkObs = observations.find(o => o.method === 'fs.symlink');
@@ -192,7 +192,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const traversalObs = observations.find(o => o.method === 'fs.readdir(recursive)');
@@ -204,13 +204,13 @@ describe('Filesystem Probe', () => {
       const obs1 = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       const obs2 = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       // Methods should be same
@@ -223,7 +223,7 @@ describe('Filesystem Probe', () => {
       const observations = await probeFilesystem({
         roots: [testRoot],
         out: outDir,
-        budgetMs: 5000
+        budgetMs: 5000,
       });
 
       for (const obs of observations) {

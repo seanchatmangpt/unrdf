@@ -87,7 +87,14 @@ class PropertyBuilder {
    * property('foaf:knows').nodeKind('IRI')
    */
   nodeKind(nodeKind) {
-    const validKinds = ['IRI', 'BlankNode', 'Literal', 'BlankNodeOrIRI', 'BlankNodeOrLiteral', 'IRIOrLiteral'];
+    const validKinds = [
+      'IRI',
+      'BlankNode',
+      'Literal',
+      'BlankNodeOrIRI',
+      'BlankNodeOrLiteral',
+      'IRIOrLiteral',
+    ];
     if (!validKinds.includes(nodeKind)) {
       throw new Error(`Invalid node kind: ${nodeKind}`);
     }
@@ -248,11 +255,7 @@ class PropertyBuilder {
     const pathNode = namedNode(this.propertyPath);
 
     // sh:path
-    quads.push(quad(
-      this.propertyNode,
-      namedNode(`${SH}path`),
-      pathNode
-    ));
+    quads.push(quad(this.propertyNode, namedNode(`${SH}path`), pathNode));
 
     // Add constraints
     for (const [key, value] of Object.entries(this.constraints)) {
@@ -377,19 +380,11 @@ class ShapeBuilder {
     const quads = [];
 
     // sh:NodeShape type
-    quads.push(quad(
-      this.shapeNode,
-      namedNode(`${RDF}type`),
-      namedNode(`${SH}NodeShape`)
-    ));
+    quads.push(quad(this.shapeNode, namedNode(`${RDF}type`), namedNode(`${SH}NodeShape`)));
 
     // Target classes
     for (const targetClass of this.targetClasses) {
-      quads.push(quad(
-        this.shapeNode,
-        namedNode(`${SH}targetClass`),
-        namedNode(targetClass)
-      ));
+      quads.push(quad(this.shapeNode, namedNode(`${SH}targetClass`), namedNode(targetClass)));
     }
 
     // Properties
@@ -398,21 +393,13 @@ class ShapeBuilder {
       quads.push(...propertyQuads);
 
       // Link property to shape
-      quads.push(quad(
-        this.shapeNode,
-        namedNode(`${SH}property`),
-        property.propertyNode
-      ));
+      quads.push(quad(this.shapeNode, namedNode(`${SH}property`), property.propertyNode));
     }
 
     // Logical constraints
     for (const constraint of this.logicalConstraints) {
       const listNode = blankNode();
-      quads.push(quad(
-        this.shapeNode,
-        namedNode(`${SH}${constraint.type}`),
-        listNode
-      ));
+      quads.push(quad(this.shapeNode, namedNode(`${SH}${constraint.type}`), listNode));
 
       // Build RDF list (simplified)
       if (constraint.shapes) {

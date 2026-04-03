@@ -216,5 +216,5 @@ export default {
   validateStore: validateStoreSchema,
   validateRDFConstraints: validateRDFConstraintsSchema,
   validateCommonPatterns: validateCommonPatternsSchema,
-  createValidationPipeline: createValidationPipelineSchema
+  createValidationPipeline: createValidationPipelineSchema,
 };

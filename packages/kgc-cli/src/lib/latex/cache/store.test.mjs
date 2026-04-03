@@ -14,7 +14,7 @@ import {
   listCached,
   getCacheStats,
   clearCache,
-  verifyCached
+  verifyCached,
 } from './store.mjs';
 
 /**
@@ -33,12 +33,7 @@ describe('Cache Store', () => {
       const contentHash = hash(content);
 
       // Store
-      const relativePath = await setCached(
-        tmpDir,
-        'test.sty',
-        contentHash,
-        content
-      );
+      const relativePath = await setCached(tmpDir, 'test.sty', contentHash, content);
 
       assert.ok(relativePath.includes('test.sty'));
 
@@ -80,12 +75,9 @@ describe('Cache Store', () => {
       const content = 'test content';
       const wrongHash = hash('different content');
 
-      await assert.rejects(
-        async () => {
-          await setCached(tmpDir, 'test.sty', wrongHash, content);
-        },
-        /Hash mismatch/
-      );
+      await assert.rejects(async () => {
+        await setCached(tmpDir, 'test.sty', wrongHash, content);
+      }, /Hash mismatch/);
     } finally {
       await rm(tmpDir, { recursive: true, force: true });
     }
@@ -98,13 +90,9 @@ describe('Cache Store', () => {
       const content = 'hyperref content';
       const contentHash = hash(content);
 
-      const relativePath = await setCached(
-        tmpDir,
-        'hyperref.sty',
-        contentHash,
-        content,
-        { packageName: 'hyperref' }
-      );
+      const relativePath = await setCached(tmpDir, 'hyperref.sty', contentHash, content, {
+        packageName: 'hyperref',
+      });
 
       assert.ok(relativePath.includes('hyperref/hyperref.sty'));
 
