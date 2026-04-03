@@ -10,8 +10,6 @@ import { z } from 'zod';
 import {
   detectInjection,
   sanitizeError,
-  validatePayload,
-  detectSecrets,
 } from '../security-audit.mjs';
 
 const AuditSchema = z.object({

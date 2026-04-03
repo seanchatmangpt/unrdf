@@ -11,7 +11,6 @@ import { detectInjection, sanitizeError, validatePayload } from '../security-aud
 import { ConsensusOperationState, PartitionState } from './consensus-state.mjs';
 import * as handlers from './consensus-handlers.mjs';
 
-const tracer = trace.getTracer('unrdf-daemon-consensus');
 const meter = metrics.getMeter('unrdf-daemon-consensus');
 
 const ConsensusOperationSchema = z.object({

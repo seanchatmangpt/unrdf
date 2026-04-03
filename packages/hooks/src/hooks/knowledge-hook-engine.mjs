@@ -374,7 +374,6 @@ export class KnowledgeHookEngine {
    * @private
    */
   async generateReceiptWithHash(executionResults, delta, input_hash, output_hash, options = {}) {
-    const nodeId = options.nodeId || 'knowledge-hook-engine';
     const t_ns = options.t_ns || BigInt(Date.now()) * 1000000n;
     const previousReceiptHash = options.previousReceiptHash || null;
 

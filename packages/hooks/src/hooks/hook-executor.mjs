@@ -314,12 +314,7 @@ export function executeBatch(hooks, quads, options = {}) {
 
     results.push({ valid: isValid, quad: currentQuad, error, results: [] });
 
-    if (isValid) {
-      validCount++;
-    } else {
-      invalidCount++;
-      if (stopOnError) break;
-    }
+    if (!isValid && stopOnError) break;
   }
 
   return results;
