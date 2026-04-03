@@ -1045,25 +1045,24 @@ describe('Category 7: End-to-End CLI Tests', () => {
   });
 
   describe('Extension count and coverage', () => {
-    it('should report total extensions and coverage', async () => {
+    it('should report total extensions loaded from manifest', async () => {
       const registry = new Registry({ failOnCollision: false });
       await loadManifest(registry, { failOnMissing: false });
 
       const loaded = registry.extensions.size;
-      const target = 46;
-      const coverage = (loaded / target * 100).toFixed(1);
+      const { extensions } = await import('../src/manifest/extensions.mjs');
+      const available = extensions.filter(e => e.enabled).length;
 
       console.log(`
 📊 Extension Ecosystem Stats:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Loaded:    ${loaded}/${target} extensions
-  Coverage:  ${coverage}%
+  Loaded:    ${loaded}/${available} extensions (available)
   Commands:  ${registry.listCommands().length}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       `);
 
       expect(loaded).toBeGreaterThan(0);
-      expect(loaded).toBeLessThanOrEqual(target);
+      expect(loaded).toBeLessThanOrEqual(available);
     });
 
     it('should list all loaded extensions', async () => {
@@ -1092,9 +1091,12 @@ describe('🎯 Ecosystem Test Summary', () => {
     const registry = new Registry({ failOnCollision: false });
     await loadManifest(registry, { failOnMissing: false });
 
+    const { extensions: manifestExtensions } = await import('../src/manifest/extensions.mjs');
+    const extensions_target = manifestExtensions.filter(e => e.enabled).length;
+
     const stats = {
       extensions_loaded: registry.extensions.size,
-      extensions_target: 46,
+      extensions_target,
       commands_registered: registry.listCommands().length,
       contract_errors: registry.validateContracts().length,
       collision_summary: Object.keys(registry.getCollisionSummary()).length
