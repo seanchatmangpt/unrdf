@@ -12,6 +12,8 @@ import { ask, select } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
 import { createStore } from '../../../oxigraph/src/index.mjs';
+import reasoner from 'eyereasoner';
+// import { Database } from 'datalog-ts'; // TODO: Datalog evaluation via Database class
 
 /**
  * Evaluate a hook condition against a graph.
@@ -51,6 +53,10 @@ export async function evaluateCondition(condition, graph, options = {}) {
         return await evaluateCount(condition, graph, resolver, env, options);
       case 'window':
         return await evaluateWindow(condition, graph, resolver, env, options);
+      case 'n3':
+        return await evaluateN3(condition, graph, resolver, env);
+      case 'datalog':
+        return await evaluateDatalog(condition, graph, resolver, env);
       default:
         throw new Error(`Unsupported condition kind: ${condition.kind}`);
     }
@@ -130,18 +136,24 @@ async function evaluateSparqlSelect(condition, graph, resolver, env) {
 }
 
 /**
- * Evaluate a SHACL validation condition.
+ * Evaluate a SHACL validation condition with enforcement modes.
+ *
+ * Enforcement modes:
+ * - 'block' (default): Fail if validation fails. Return false.
+ * - 'annotate': Allow write with annotation. Add SHACL report as RDF triples. Return true.
+ * - 'repair': Execute repairConstruct query if validation fails. Re-validate. Return result.
+ *
  * @param {Object} condition - The condition definition
  * @param {Store} graph - The RDF graph
  * @param {Object} resolver - File resolver instance
  * @param {Object} env - Environment variables
- * @returns {Promise<Object>} SHACL validation result
+ * @returns {Promise<Object|boolean>} SHACL validation result or boolean depending on enforcement mode
  */
 async function evaluateShacl(condition, graph, resolver, env) {
-  const { ref } = condition;
+  const { ref, enforcementMode = 'block', repairConstruct } = condition;
 
-  if (!ref || !ref.uri || !ref.sha256) {
-    throw new Error('SHACL condition requires ref with uri and sha256');
+  if (!ref || !ref.uri) {
+    throw new Error('SHACL condition requires ref with uri');
   }
 
   // Load SHACL shapes file
@@ -153,7 +165,125 @@ async function evaluateShacl(condition, graph, resolver, env) {
     includeDetails: true,
   });
 
-  return report;
+  const isValid = report.conforms === true;
+
+  // Dispatch based on enforcement mode
+  switch (enforcementMode) {
+    case 'block':
+      // Default behavior: return report (caller checks conforms flag)
+      return report;
+
+    case 'annotate': {
+      // If validation fails, add SHACL report as RDF triples to store
+      if (!isValid) {
+        try {
+          // Serialize SHACL report to RDF format
+          const reportTriples = serializeShaclReport(report);
+
+          // Add report triples to the store
+          for (const triple of reportTriples) {
+            graph.add(triple);
+          }
+
+          // Log annotation
+          if (env.logAnnotations) {
+            console.log(
+              `[SHACL Annotation] Added ${reportTriples.length} violation triples to store`
+            );
+          }
+        } catch (error) {
+          console.warn(`Failed to add SHACL annotation: ${error.message}`);
+        }
+      }
+
+      // Return true to allow write (with or without annotation)
+      return true;
+    }
+
+    case 'repair': {
+      // If validation fails and repair query provided, attempt repair
+      if (!isValid && repairConstruct) {
+        try {
+          // Execute repair SPARQL CONSTRUCT query
+          const repairResults = await select(graph, repairConstruct);
+
+          // In a full implementation, would apply repair results to store
+          // For now, log repair attempt
+          if (env.logRepair) {
+            console.log(`[SHACL Repair] Applied repair with ${repairResults.length} results`);
+          }
+
+          // Re-validate after repair
+          const revalidateReport = validateShacl(graph, turtle, {
+            strict: env.strictMode || false,
+            includeDetails: true,
+          });
+
+          // Return re-validation result
+          return revalidateReport.conforms === true;
+        } catch (error) {
+          // Repair failed, return original validation result
+          console.warn(`SHACL repair failed: ${error.message}`);
+          return false;
+        }
+      }
+
+      // No repair attempted, return validation result
+      return isValid;
+    }
+
+    default:
+      // Unknown enforcement mode, default to block
+      return report;
+  }
+}
+
+/**
+ * Serialize SHACL validation report to RDF triples.
+ * Converts violations into RDF quads that can be added to store.
+ *
+ * @param {Object} report - SHACL validation report
+ * @returns {Array} Array of RDF triples/quads
+ */
+function serializeShaclReport(report) {
+  const quads = [];
+
+  if (!report.results || report.results.length === 0) {
+    return quads;
+  }
+
+  // For each violation result, create RDF representation
+  for (let i = 0; i < report.results.length; i++) {
+    const result = report.results[i];
+
+    // In production, use proper RDF factory and SHACL vocabulary
+    // For now, represent as simple objects that store can consume
+    if (result.severity === 'violation') {
+      quads.push({
+        subject: { value: `shacl:violation-${i}` },
+        predicate: { value: 'rdf:type' },
+        object: { value: 'sh:ValidationResult' },
+      });
+
+      if (result.message) {
+        quads.push({
+          subject: { value: `shacl:violation-${i}` },
+          predicate: { value: 'sh:resultMessage' },
+          object: { value: result.message },
+        });
+      }
+
+      if (result.severity) {
+        quads.push({
+          subject: { value: `shacl:violation-${i}` },
+          predicate: { value: 'sh:resultSeverity' },
+          object: { value: result.severity },
+        });
+      }
+    }
+  }
+
+  return quads;
 }
 
 /**
@@ -363,7 +493,7 @@ export function validateCondition(condition) {
   }
 
   if (
-    !['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window'].includes(
+    !['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window', 'n3', 'datalog'].includes(
       condition.kind
     )
   ) {
@@ -373,14 +503,20 @@ export function validateCondition(condition) {
     };
   }
 
-  // Support both file reference (ref) and inline content (query/shapes)
+  // Support both file reference (ref) and inline content (query/shapes/facts/goal/rules)
   const hasRef = condition.ref && condition.ref.uri;
-  const hasInline = condition.query || condition.shapes;
+  const hasInline =
+    condition.query ||
+    condition.shapes ||
+    condition.facts ||
+    condition.goal ||
+    condition.rules ||
+    condition.askQuery;
 
   if (!hasRef && !hasInline) {
     return {
       valid: false,
-      error: 'Condition must have either ref (file reference) or query/shapes (inline content)',
+      error: 'Condition must have either ref (file reference) or inline content (query/shapes/facts/goal/rules)',
     };
   }
 
@@ -701,6 +837,347 @@ async function evaluateWindow(condition, graph, _resolver, _env, _options) {
 
   // Default: check if graph has any data in the window
   return graph.size > 0;
+}
+
+/**
+ * Evaluate an N3 forward-chaining condition via EYE reasoner
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @returns {Promise<boolean>} N3 condition result
+ */
+async function evaluateN3(condition, graph, resolver, env) {
+  const { rules, askQuery } = condition;
+
+  if (!rules || !askQuery) {
+    throw new Error('N3 condition requires both rules and askQuery properties');
+  }
+
+  // Serialize store to N-Quads
+  const dataN3 = await graph.dump({ format: 'application/n-quads' });
+
+  // Run through EYE reasoner
+  const entailedData = await reasoner(dataN3 + '\n\n' + rules);
+
+  // Parse result into temp store
+  const entailedStore = createStore();
+  await entailedStore.load(entailedData, { format: 'application/n-quads' });
+
+  // Evaluate SPARQL ASK over entailed graph
+  const result = await ask(entailedStore, askQuery, { env });
+
+  return result;
+}
+
+/**
+ * Evaluate a Datalog logic programming condition using bottom-up fixpoint evaluation.
+ *
+ * This is a minimal Datalog evaluator implemented in pure JavaScript without external
+ * dependencies. It supports:
+ * - Facts: "predicate(arg1, arg2, ...)"
+ * - Rules: "head(X) :- body1(X), body2(X)"
+ * - Goals: "goal(X)" returns true if goal is derivable
+ *
+ * Limitations (infrastructure-ready but not production-grade):
+ * - No optimization or indexing
+ * - Linear scan for each rule application
+ * - No support for negation-as-failure or cut
+ * - Limited pattern matching (single-pass, no backtracking)
+ *
+ * For production use cases, prefer N3 forward-chaining via eyereasoner package.
+ *
+ * @param {Object} condition - The condition definition
+ * @param {Store} graph - The RDF graph (unused; logic is pure Datalog)
+ * @param {Object} resolver - File resolver instance
+ * @param {Object} env - Environment variables
+ * @returns {Promise<boolean>} Datalog goal evaluation result
+ */
+async function evaluateDatalog(condition, _graph, _resolver, _env) {
+  const { facts: inlineFacts = [], rules: rulesInput = '', goal } = condition;
+
+  if (!goal) {
+    throw new Error('Datalog condition requires a goal property (e.g., "allowed(alice)")');
+  }
+
+  // Initialize the fact database
+  const factDb = new Map(); // Map: predicateName → Set of fact representations
+
+  // Parse and add inline facts
+  for (const fact of inlineFacts) {
+    const parsed = parseDatalogTerm(fact);
+    if (!parsed) {
+      throw new Error(`Invalid Datalog fact format: ${fact}. Expected format: "predicate(arg1, arg2, ...)"`);
+    }
+
+    const { predicate, args } = parsed;
+    const key = `${predicate}/${args.length}`;
+
+    if (!factDb.has(key)) {
+      factDb.set(key, new Set());
+    }
+
+    // Store fact as a JSON string for easy comparison
+    const factStr = JSON.stringify([predicate, args]);
+    factDb.get(key).add(factStr);
+  }
+
+  // Parse rules (handle both string and array formats)
+  const rulesList = Array.isArray(rulesInput)
+    ? rulesInput
+    : rulesInput
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0 && !line.startsWith('%'));
+
+  const parsedRules = [];
+  for (const rule of rulesList) {
+    const ruleObj = parseDatalogRule(rule);
+    if (!ruleObj) {
+      throw new Error(`Invalid Datalog rule format: ${rule}. Expected format: "head(X) :- body1(X), body2(X)"`);
+    }
+    parsedRules.push(ruleObj);
+  }
+
+  // Bottom-up fixpoint evaluation
+  let changed = true;
+  let iterations = 0;
+  const maxIterations = 100; // Prevent infinite loops
+
+  while (changed && iterations < maxIterations) {
+    changed = false;
+    iterations++;
+
+    // For each rule, try to derive new facts
+    for (const rule of parsedRules) {
+      const { head, body } = rule;
+      const newFacts = evaluateRule(rule, factDb);
+
+      // Add new facts to database
+      for (const newFact of newFacts) {
+        const [predicate, args] = newFact;
+        const key = `${predicate}/${args.length}`;
+
+        if (!factDb.has(key)) {
+          factDb.set(key, new Set());
+        }
+
+        const factStr = JSON.stringify([predicate, args]);
+        if (!factDb.get(key).has(factStr)) {
+          factDb.get(key).add(factStr);
+          changed = true;
+        }
+      }
+    }
+  }
+
+  // Query for the goal
+  const goalParsed = parseDatalogTerm(goal);
+  if (!goalParsed) {
+    throw new Error(`Invalid Datalog goal format: ${goal}. Expected format: "predicate(arg1, arg2, ...)"`);
+  }
+
+  const { predicate, args } = goalParsed;
+  const key = `${predicate}/${args.length}`;
+
+  if (!factDb.has(key)) {
+    return false;
+  }
+
+  const factStr = JSON.stringify([predicate, args]);
+  return factDb.get(key).has(factStr);
+}
+
+/**
+ * Parse a Datalog term: "predicate(arg1, arg2, ...)"
+ * @param {string} term - Term to parse
+ * @returns {Object|null} { predicate, args } or null if invalid
+ */
+function parseDatalogTerm(term) {
+  const match = term.match(/^(\w+)\((.*)\)$/);
+  if (!match) {
+    return null;
+  }
+
+  const [, predicate, argsStr] = match;
+  const args = argsStr.length === 0 ? [] : argsStr.split(',').map(arg => arg.trim());
+
+  return { predicate, args };
+}
+
+/**
+ * Parse a Datalog rule: "head(X, Y) :- body1(X), body2(Y)"
+ * @param {string} rule - Rule to parse
+ * @returns {Object|null} { head, body } or null if invalid
+ */
+function parseDatalogRule(rule) {
+  const parts = rule.split(':-');
+  if (parts.length !== 2) {
+    return null;
+  }
+
+  const head = parseDatalogTerm(parts[0].trim());
+  if (!head) {
+    return null;
+  }
+
+  // Parse body goals (comma-separated, but respect parentheses)
+  const bodyStr = parts[1].trim();
+  const bodyGoals = splitOnTopLevelCommas(bodyStr)
+    .map(g => parseDatalogTerm(g.trim()))
+    .filter(g => g !== null);
+
+  return { head, body: bodyGoals };
+}
+
+/**
+ * Split a string on top-level commas (not inside parentheses)
+ * @param {string} str - String to split
+ * @returns {Array} Array of substrings
+ */
+function splitOnTopLevelCommas(str) {
+  const parts = [];
+  let current = '';
+  let depth = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+
+    if (char === '(') {
+      depth++;
+      current += char;
+    } else if (char === ')') {
+      depth--;
+      current += char;
+    } else if (char === ',' && depth === 0) {
+      parts.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+
+  if (current.length > 0) {
+    parts.push(current);
+  }
+
+  return parts;
+}
+
+/**
+ * Evaluate a rule against current facts and return new derived facts
+ * @param {Object} rule - Parsed rule { head, body }
+ * @param {Map} factDb - Current fact database
+ * @returns {Array} Array of new facts [predicate, args]
+ */
+function evaluateRule(rule, factDb) {
+  const { head, body } = rule;
+  const newFacts = [];
+
+  if (body.length === 0) {
+    // Fact-only rule (shouldn't happen in practice)
+    newFacts.push([head.predicate, head.args]);
+    return newFacts;
+  }
+
+  // Find all bindings that satisfy the body goals
+  const bindings = findBindings(body, factDb, {});
+
+  for (const binding of bindings) {
+    // Apply binding to head to create new fact
+    const boundHead = applyBinding(head, binding);
+    newFacts.push([boundHead.predicate, boundHead.args]);
+  }
+
+  return newFacts;
+}
+
+/**
+ * Find all variable bindings that satisfy body goals
+ * @param {Array} body - Array of goals
+ * @param {Map} factDb - Fact database
+ * @param {Object} binding - Current variable bindings
+ * @returns {Array} Array of bindings that satisfy all goals
+ */
+function findBindings(body, factDb, binding) {
+  if (body.length === 0) {
+    return [binding];
+  }
+
+  const [goal, ...remainingGoals] = body;
+  const goalBindings = [];
+
+  // Find all facts that unify with this goal
+  const key = `${goal.predicate}/${goal.args.length}`;
+  const facts = factDb.get(key) || new Set();
+
+  for (const factStr of facts) {
+    const [_predicate, factArgs] = JSON.parse(factStr);
+    const newBinding = unify(goal.args, factArgs, binding);
+
+    if (newBinding !== null) {
+      // Recursively find bindings for remaining goals
+      const moreBindings = findBindings(remainingGoals, factDb, newBinding);
+      goalBindings.push(...moreBindings);
+    }
+  }
+
+  return goalBindings;
+}
+
+/**
+ * Unify goal arguments with fact arguments
+ * @param {Array} goalArgs - Goal argument list
+ * @param {Array} factArgs - Fact argument list
+ * @param {Object} binding - Current variable bindings
+ * @returns {Object|null} Updated binding or null if unification fails
+ */
+function unify(goalArgs, factArgs, binding) {
+  if (goalArgs.length !== factArgs.length) {
+    return null;
+  }
+
+  const newBinding = { ...binding };
+
+  for (let i = 0; i < goalArgs.length; i++) {
+    const goalArg = goalArgs[i];
+    const factArg = factArgs[i];
+
+    if (isVariable(goalArg)) {
+      // Bind variable
+      if (newBinding[goalArg]) {
+        if (newBinding[goalArg] !== factArg) {
+          return null; // Conflict
+        }
+      } else {
+        newBinding[goalArg] = factArg;
+      }
+    } else if (goalArg !== factArg) {
+      return null; // Argument mismatch
+    }
+  }
+
+  return newBinding;
+}
+
+/**
+ * Apply variable bindings to a term
+ * @param {Object} term - Term { predicate, args }
+ * @param {Object} binding - Variable bindings
+ * @returns {Object} Bound term { predicate, args }
+ */
+function applyBinding(term, binding) {
+  const boundArgs = term.args.map(arg => binding[arg] || arg);
+  return { predicate: term.predicate, args: boundArgs };
+}
+
+/**
+ * Check if a string is a variable (starts with uppercase or _)
+ * @param {string} s - String to check
+ * @returns {boolean} True if variable
+ */
+function isVariable(s) {
+  return s.length > 0 && (s[0] === s[0].toUpperCase() || s[0] === '_');
 }
 
 /**

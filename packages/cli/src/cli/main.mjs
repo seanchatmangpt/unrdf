@@ -23,6 +23,7 @@ import {
 import { daemonCommand } from './commands/daemon.mjs';
 import { syncCommand } from './commands/sync.mjs';
 import { templateCommand } from './commands/template.mjs';
+import { hooksCommand } from './commands/hooks.mjs';
 
 /**
  * Main CLI application
@@ -43,6 +44,9 @@ const main = defineCommand({
     'to-turtle': toTurtleCommand,
     'to-ntriples': toNTriplesCommand,
     'to-json': toJSONCommand,
+
+    // Knowledge Hooks
+    hooks: hooksCommand,
 
     // Background Operations
     daemon: daemonCommand,

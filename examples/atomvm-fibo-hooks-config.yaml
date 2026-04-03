@@ -1,0 +1,391 @@
+# AtomVM + FIBO Hooks Integration Configuration
+# Demonstrates all 6 hook priorities with BEAM VM runtime
+# Last updated: 2026-04-03
+
+atomvm:
+  # BEAM VM Configuration
+  vm:
+    # Erlang module search paths
+    code_paths:
+      - "priv/erl/"
+      - "packages/atomvm/erlang/"
+
+    # BEAM memory allocation
+    memory:
+      heap_size_mb: 256
+      max_heap_size_mb: 1024
+      atom_table_size: 65536
+
+    # Process scheduling
+    scheduling:
+      max_processes: 100000
+      thread_count: auto  # Use system CPU count
+      scheduler_bind: auto
+
+  # Hot code reloading for Erlang modules
+  hot_code_reload:
+    enabled: true
+    watch_interval_ms: 500
+    reload_strategy: "module"  # or "function" for finer control
+
+  # OTEL instrumentation for BEAM processes
+  instrumentation:
+    enabled: true
+    trace_level: "info"  # debug, info, warn, error
+    metrics:
+      process_count: true
+      memory_usage: true
+      gc_metrics: true
+    traces:
+      erlang_calls: true
+      message_passing: true
+      hook_execution: true
+
+# Hooks Framework Configuration
+hooks:
+  # Hook definitions for FIBO ontology
+  definitions:
+    # Priority 1: Receipt generation and chaining
+    - name: "receipt-chain-genesis"
+      priority: 1
+      type: "receipt"
+      condition:
+        kind: "on-store-init"
+      effects:
+        - type: "receipt-create"
+          hash_algorithm: "blake3"
+          profile: "store-initialization"
+
+    # Priority 1 & 4: Receipt verification and integrity
+    - name: "receipt-chain-verify"
+      priority: 1
+      type: "validation"
+      condition:
+        kind: "receipt-verification"
+        algorithm: "blake3"
+        check_previous_hash: true
+      effects:
+        - type: "receipt-verify"
+          require_chain_integrity: true
+          enforce_determinism: true
+
+    # Priority 2: SPARQL CONSTRUCT effects
+    - name: "fibo-compliance-mark"
+      priority: 2
+      type: "transformation"
+      condition:
+        kind: "sparql-ask"
+        query: |
+          ASK {
+            ?entity a fibo:LegalEntity .
+            FILTER NOT EXISTS { ?entity fibo:checked true . }
+          }
+      effects:
+        - type: "sparql-construct"
+          query: |
+            CONSTRUCT {
+              ?entity fibo:checked true ;
+                      fibo:checkedAt ?now ;
+                      fibo:complianceStatus fibo:Compliant .
+            }
+            WHERE {
+              ?entity a fibo:LegalEntity .
+              BIND (NOW() as ?now)
+            }
+
+    # Priority 2: Additional CONSTRUCT for risk assignment
+    - name: "fibo-risk-classification"
+      priority: 2
+      type: "transformation"
+      condition:
+        kind: "sparql-ask"
+        query: |
+          ASK {
+            ?entity fibo:creditRating ?rating .
+            FILTER NOT EXISTS { ?entity fibo:riskLevel ?risk . }
+          }
+      effects:
+        - type: "sparql-construct"
+          query: |
+            CONSTRUCT {
+              ?entity fibo:riskLevel fibo:Classified .
+            }
+            WHERE {
+              ?entity fibo:creditRating ?rating .
+            }
+
+    # Priority 3: SHACL shape validation
+    - name: "fibo-legal-entity-shape-validation"
+      priority: 3
+      type: "validation"
+      condition:
+        kind: "shacl"
+        shape: "fibo:LegalEntityShape"
+        enforcement_mode: "annotate"  # annotate, warn, or enforce
+      effects:
+        - type: "shacl-report"
+          store_violations: true
+          report_to_graph: true
+
+    # Priority 3: SHACL with stricter enforcement
+    - name: "fibo-trade-shape-validation"
+      priority: 3
+      type: "validation"
+      condition:
+        kind: "shacl"
+        shape: "fibo:TradeShape"
+        enforcement_mode: "enforce"  # Blocks non-compliant data
+      effects:
+        - type: "shacl-report"
+          block_on_violation: true
+
+    # Priority 5: N3 forward-chaining rules
+    - name: "fibo-credit-to-risk-inference"
+      priority: 5
+      type: "inference"
+      condition:
+        kind: "n3"
+        rules: |
+          @prefix fibo: <http://purl.org/spec/fibo/ontology/ext/> .
+          @prefix ex: <http://example.org/> .
+          {
+            ?cp fibo:creditRating ?rating .
+            (?rating fibo:AAA fibo:AA fibo:A) list:member ?rating .
+          } => {
+            ?cp fibo:riskLevel fibo:Low .
+          } .
+          {
+            ?cp fibo:creditRating ?rating .
+            (?rating fibo:BBB fibo:BB) list:member ?rating .
+          } => {
+            ?cp fibo:riskLevel fibo:Medium .
+          } .
+      effects:
+        - type: "assert-inferred"
+          add_to_store: true
+
+    # Priority 6: Datalog logic programming
+    - name: "fibo-account-compliance-check"
+      priority: 6
+      type: "inference"
+      condition:
+        kind: "datalog"
+        facts:
+          - "account/1"
+          - "available/2"
+          - "threshold/2"
+        rules:
+          - "compliant(A) :- available(A, X), threshold(A, T), X >= T"
+          - "risky(A) :- available(A, X), threshold(A, T), X < T"
+        goal: "compliant(?Account)"
+      effects:
+        - type: "datalog-assert"
+          assert_positive: true
+          assert_negative: false
+
+# FIBO Ontology Configuration
+fibo:
+  version: "2024.03.01"
+  namespace: "http://purl.org/spec/fibo/ontology/"
+
+  # FIBO JTBDs (Jobs To Be Done)
+  jtbds:
+    - id: "jtbd-compliance-verification"
+      name: "Verify entity complies with regulations"
+      hooks:
+        - "fibo-compliance-mark"
+        - "fibo-legal-entity-shape-validation"
+      priority: "critical"
+
+    - id: "jtbd-risk-assessment"
+      name: "Assess counterparty and transaction risk"
+      hooks:
+        - "fibo-risk-classification"
+        - "fibo-credit-to-risk-inference"
+      priority: "high"
+
+    - id: "jtbd-liquidity-check"
+      name: "Verify sufficient liquidity for settlement"
+      hooks:
+        - "fibo-account-compliance-check"
+      priority: "high"
+
+    - id: "jtbd-audit-trail"
+      name: "Generate audit trail and receipts"
+      hooks:
+        - "receipt-chain-genesis"
+        - "receipt-chain-verify"
+      priority: "critical"
+
+    - id: "jtbd-repair-recovery"
+      name: "Detect and repair invalid states"
+      hooks:
+        - "fibo-legal-entity-shape-validation"
+        - "fibo-account-compliance-check"
+      priority: "medium"
+
+  # Validation shapes (SHACL)
+  shapes:
+    - name: "LegalEntityShape"
+      target: "fibo:LegalEntity"
+      properties:
+        - name: "creditRating"
+          path: "fibo:creditRating"
+          required: true
+          pattern: "fibo:(AAA|AA|A|BBB|BB)"
+
+        - name: "checked"
+          path: "fibo:checked"
+          datatype: "xsd:boolean"
+
+    - name: "TradeShape"
+      target: "fibo:Trade"
+      properties:
+        - name: "counterparty"
+          path: "fibo:counterparty"
+          required: true
+          class: "fibo:LegalEntity"
+
+        - name: "amount"
+          path: "fibo:amount"
+          required: true
+          datatype: "xsd:decimal"
+
+# Receipt Generation Configuration
+receipts:
+  # BLAKE3 hashing for deterministic receipts
+  hash_algorithm: "blake3"
+
+  # Receipt profiles for different operation types
+  profiles:
+    - name: "store-initialization"
+      payload_schema: "StorageInitSchema"
+      chain_previous: true
+      determinism: "strict"
+
+    - name: "hook-execution"
+      payload_schema: "HookExecutionSchema"
+      chain_previous: true
+      determinism: "strict"
+
+    - name: "sparql-construct"
+      payload_schema: "ConstructEffectSchema"
+      chain_previous: true
+      determinism: "strict"
+
+    - name: "shacl-validation"
+      payload_schema: "SHACLReportSchema"
+      chain_previous: true
+      determinism: "strict"
+
+    - name: "n3-inference"
+      payload_schema: "InferenceResultSchema"
+      chain_previous: true
+      determinism: "strict"
+
+    - name: "datalog-evaluation"
+      payload_schema: "DatalogResultSchema"
+      chain_previous: true
+      determinism: "strict"
+
+  # Chain integrity verification
+  chain:
+    verify_on_load: true
+    detect_gaps: true
+    auto_repair: false  # Fail rather than auto-repair
+
+# Performance Tuning
+performance:
+  # Hook execution
+  hooks:
+    execution_timeout_ms: 5000
+    parallel_execution: true
+    max_parallel_hooks: 10
+    batch_size: 100
+
+  # SPARQL queries
+  sparql:
+    query_timeout_ms: 10000
+    result_cache_enabled: true
+    cache_ttl_seconds: 300
+
+  # SHACL validation
+  shacl:
+    validation_timeout_ms: 5000
+    parallel_shapes: true
+
+  # N3 inference
+  n3:
+    rule_timeout_ms: 10000
+    max_derivation_steps: 1000
+    cycle_detection: true
+
+  # Datalog evaluation
+  datalog:
+    query_timeout_ms: 5000
+    stratified_evaluation: true
+    tabling: true
+
+# Erlang Module Mapping
+erlang_modules:
+  # Maps FIBO hooks to Erlang modules for AtomVM execution
+  fibo_hooks:
+    module: "fibo_hooks.erl"
+    callbacks:
+      - "run_all_jtbds/2"
+      - "verify_compliance/2"
+      - "assess_risk/2"
+      - "check_liquidity/2"
+      - "generate_audit_trail/2"
+      - "repair_invalid_states/2"
+
+  receipt_chain:
+    module: "receipt_chain.erl"
+    callbacks:
+      - "create_genesis_receipt/1"
+      - "chain_receipt/2"
+      - "verify_chain/1"
+      - "get_chain_head/0"
+
+# Logging Configuration
+logging:
+  level: "info"  # debug, info, warn, error
+  format: "json"  # json or text
+
+  modules:
+    hooks: "debug"
+    receipts: "info"
+    erlang: "info"
+    sparql: "warn"
+
+# Testing Configuration
+testing:
+  enable_mock_atomvm: true  # Use JS mocks if AtomVM unavailable
+  record_receipts: true     # Save receipt chain to file
+  receipt_file: "/tmp/fibo-demo-receipts.json"
+
+  # Performance assertions
+  assertions:
+    - name: "receipt-generation-latency"
+      metric: "p95_latency_ms"
+      threshold: 5
+
+    - name: "hook-execution-latency"
+      metric: "p95_latency_ms"
+      threshold: 100
+
+    - name: "sparql-query-latency"
+      metric: "p95_latency_ms"
+      threshold: 50
+
+# Deployment Configuration
+deployment:
+  environment: "development"  # development, staging, production
+
+  # Production settings
+  production:
+    receipt_verification: "strict"
+    enforce_shacl: true
+    auto_repair: false
+    persistence: "enabled"
+    replication_factor: 3

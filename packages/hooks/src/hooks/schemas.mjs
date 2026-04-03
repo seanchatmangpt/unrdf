@@ -33,13 +33,34 @@ export const HookConditionRefSchema = z.object({
 });
 
 /**
+ * Schema for SHACL condition with enforcement modes (soft-fail governance)
+ *
+ * Enforcement modes:
+ * - 'block': Default. Fail validation if SHACL constraint violated.
+ * - 'annotate': Allow write but add SHACL report as RDF triples to store.
+ * - 'repair': Attempt to fix violations using SPARQL CONSTRUCT query.
+ */
+export const ShaclConditionSchema = z.object({
+  kind: z.literal('shacl'),
+  ref: HookConditionRefSchema,
+  enforcementMode: z.enum(['block', 'annotate', 'repair']).default('block'),
+  repairConstruct: z.string().optional(),
+});
+
+/**
  * Schema for hook condition
  */
 export const HookConditionSchema = z.object({
-  kind: z.enum(['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window']),
+  kind: z.enum(['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window', 'n3', 'datalog']),
   ref: HookConditionRefSchema.optional(),
   query: z.string().optional(),
   shapes: z.string().optional(),
+  rules: z.string().optional(),
+  askQuery: z.string().optional(),
+  facts: z.array(z.string()).optional(),
+  goal: z.string().optional(),
+  enforcementMode: z.enum(['block', 'annotate', 'repair']).default('block').optional(),
+  repairConstruct: z.string().optional(),
   spec: z.record(z.any()).optional(),
 });
 
@@ -56,15 +77,28 @@ export const HookEffectRefSchema = z.object({
 });
 
 /**
- * Schema for hook effect
+ * Schema for SPARQL CONSTRUCT effect (RDF-native transformation)
  */
-export const HookEffectSchema = z.object({
+export const SparqlConstructEffectSchema = z.object({
+  kind: z.literal('sparql-construct'),
+  query: z.string().min(1),
+});
+
+/**
+ * Schema for JavaScript function effect (legacy)
+ */
+export const FunctionEffectSchema = z.object({
   ref: HookEffectRefSchema.optional(),
   inline: z.function().optional(),
   timeout: z.number().int().positive().max(300000).default(30000),
   retries: z.number().int().nonnegative().max(5).default(1),
   sandbox: z.boolean().default(false),
 });
+
+/**
+ * Schema for hook effect - union of function-based and SPARQL-based effects
+ */
+export const HookEffectSchema = z.union([SparqlConstructEffectSchema, FunctionEffectSchema]);
 
 /**
  * Complete knowledge hook schema

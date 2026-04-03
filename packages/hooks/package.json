@@ -50,6 +50,7 @@
     "@unrdf/core": "26.4.3",
     "@unrdf/oxigraph": "26.4.3",
     "citty": "^0.1.6",
+    "eyereasoner": "^10",
     "zod": "^4.1.13"
   },
   "devDependencies": {

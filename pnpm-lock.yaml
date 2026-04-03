@@ -267,12 +267,18 @@ importers:
       '@unrdf/core':
         specifier: 26.4.3
         version: link:../core
+      '@unrdf/hooks':
+        specifier: 26.4.3
+        version: link:../hooks
       '@unrdf/oxigraph':
         specifier: 26.4.3
         version: link:../oxigraph
       '@unrdf/streaming':
         specifier: 26.4.3
         version: link:../streaming
+      '@unrdf/v6-core':
+        specifier: 26.4.3
+        version: link:../v6-core
       coi-serviceworker:
         specifier: ^0.1.7
         version: 0.1.7
@@ -922,6 +928,9 @@ importers:
       citty:
         specifier: ^0.1.6
         version: 0.1.6
+      eyereasoner:
+        specifier: ^10
+        version: 10.7.6(@rdfjs/types@2.0.1)(encoding@0.1.12)
       zod:
         specifier: ^4.1.13
         version: 4.3.6
@@ -6421,6 +6430,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inrupt/universal-fetch@1.0.3':
+    resolution: {integrity: sha512-AP/nMOuuKvR2YoQkdS77ntuuq5ZYDGStI8Uirp1MCsyPSoBLyNnRjMLjlGqIlaC+5Xp7TYZJ9z/Kl2uUEpXUFw==}
+    engines: {node: ^14.17.0 || ^16.0.0 || ^18.0.0 || ^20.0.0}
 
   '@internationalized/date@3.12.0':
     resolution: {integrity: sha512-/PyIMzK29jtXaGU23qTvNZxvBXRtKbNnGDFD+PY6CZw/Y8Ex8pFUzkuCJCG9aOqmShjqhS9mPqP6Dk5onQY8rQ==}
@@ -13517,6 +13530,12 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
+  eyereasoner@10.7.6:
+    resolution: {integrity: sha512-HcA7td/Dd/XLqsR26aQ7sf6TioxGxwm/2sLiQthO5xo27QM80xhNqycFkY9gM4cfp6/rcJAm4/xMJ29ov66yHA==}
+    hasBin: true
+    peerDependencies:
+      '@rdfjs/types': ^2.0.1
+
   eyereasoner@18.23.2:
     resolution: {integrity: sha512-VMmKOzSENFRSpd7kXRLjWMw6ejxMPBq5PaBYSbgVVGd2QuYviUYPeB5iAeDYRqAPVQ5uoDYqMuRrcxVKCwox1g==}
     engines: {node: '>=18.0.0'}
@@ -19304,6 +19323,10 @@ packages:
 
   sweepline-intersections@1.5.0:
     resolution: {integrity: sha512-AoVmx72QHpKtItPu72TzFL+kcYjd67BPLDoR0LarIk+xyaRg+pDTMFXndIEvZf9xEKnJv6JdhgRMnocoG0D3AQ==}
+
+  swipl-wasm@3.5.9:
+    resolution: {integrity: sha512-6mRZWBGWRn9G2gXKGfWVunv1c2xbqiqmQUsMk/bWlI1LOJHMkyUGElRs6Jwnf8QMae9d2yjvayhWj2Enck369A==}
+    hasBin: true
 
   swipl-wasm@5.2.0:
     resolution: {integrity: sha512-L/IsHdklnRWmNN6ohztEVFaR6gQD1BM/0AbfHjMl1+SGlxAgMl28rBf185RxlAh98pQvoALalk+pYpbvXOisZA==}
@@ -29544,6 +29567,13 @@ snapshots:
     optionalDependencies:
       '@types/node': 25.5.0
 
+  '@inrupt/universal-fetch@1.0.3(encoding@0.1.12)':
+    dependencies:
+      node-fetch: 2.7.0(encoding@0.1.12)
+      undici: 5.29.0
+    transitivePeerDependencies:
+      - encoding
+
   '@internationalized/date@3.12.0':
     dependencies:
       '@swc/helpers': 0.5.21
@@ -39043,6 +39073,14 @@ snapshots:
 
   extend@3.0.2: {}
 
+  eyereasoner@10.7.6(@rdfjs/types@2.0.1)(encoding@0.1.12):
+    dependencies:
+      '@rdfjs/types': 2.0.1
+      n3: 1.26.0
+      swipl-wasm: 3.5.9(encoding@0.1.12)
+    transitivePeerDependencies:
+      - encoding
+
   eyereasoner@18.23.2(@rdfjs/types@2.0.1):
     dependencies:
       '@rdfjs/types': 2.0.1
@@ -46980,6 +47018,13 @@ snapshots:
   sweepline-intersections@1.5.0:
     dependencies:
       tinyqueue: 2.0.3
+
+  swipl-wasm@3.5.9(encoding@0.1.12):
+    dependencies:
+      '@inrupt/universal-fetch': 1.0.3(encoding@0.1.12)
+      '@types/emscripten': 1.41.5
+    transitivePeerDependencies:
+      - encoding
 
   swipl-wasm@5.2.0:
     dependencies:

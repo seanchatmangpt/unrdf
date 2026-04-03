@@ -12,9 +12,9 @@
     "src"
   ],
   "scripts": {
-    "test": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
-    "test:fast": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
-    "test:watch": "echo 'No tests for @unrdf/validation (OTEL validation runs via validation/run-all.mjs)' && exit 0",
+    "test": "timeout 30s pnpm test:fast",
+    "test:fast": "timeout 30s vitest run test.mjs --reporter=verbose",
+    "test:watch": "timeout 60s vitest run test.mjs",
     "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
