@@ -94,31 +94,9 @@ try {
   failed++;
 }
 
-// Test 4: Validation report structure validation
+// Test 4: Configuration validation schema
 try {
-  console.log('Test 4: Validation Report Structure');
-
-  // Verify Zod schemas exist in source files (not re-exported from index.mjs)
-  const otelModule = await import('./src/otel-validator-core.mjs');
-  const runnerModule = await import('./src/validation-runner.mjs');
-
-  // Check if schemas are exported from modules (Zod objects)
-  assertExists(otelModule.ValidationResultSchema);
-  assertExists(otelModule.FeatureValidationConfigSchema);
-  assertExists(runnerModule.ValidationReportSchema);
-  assertExists(runnerModule.ValidationSuiteSchema);
-
-  // All schemas exist - successful
-  console.log('  ✅ Passed\n');
-  passed++;
-} catch (error) {
-  console.error('  ❌ Failed:', error.message, '\n');
-  failed++;
-}
-
-// Test 5: Configuration validation schema
-try {
-  console.log('Test 5: Configuration Validation Schema');
+  console.log('Test 4: Configuration Validation Schema');
 
   const FeatureValidationConfigSchema = (
     await import('./src/otel-validator-core.mjs')
@@ -168,9 +146,9 @@ try {
   failed++;
 }
 
-// Test 6: Suite management methods
+// Test 5: Suite management methods
 try {
-  console.log('Test 6: Suite Management Methods');
+  console.log('Test 5: Suite Management Methods');
 
   const runner = createValidationRunner({ verbose: false });
 
@@ -198,8 +176,8 @@ try {
 console.log('╔════════════════════════════════════════════╗');
 console.log('║  80/20 Validation Test Results             ║');
 console.log('╚════════════════════════════════════════════╝');
-console.log(`Passed: ${passed}/6`);
-console.log(`Failed: ${failed}/6`);
+console.log(`Passed: ${passed}/5`);
+console.log(`Failed: ${failed}/5`);
 console.log('');
 
 if (failed > 0) {

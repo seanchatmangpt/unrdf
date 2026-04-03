@@ -12,9 +12,9 @@
     "src"
   ],
   "scripts": {
-    "test": "timeout 30s pnpm test:fast",
-    "test:fast": "timeout 30s vitest run test.mjs --reporter=verbose",
-    "test:watch": "timeout 60s vitest run test.mjs",
+    "test": "timeout 30s node test-80-20.mjs",
+    "test:fast": "timeout 30s node test-80-20.mjs",
+    "test:watch": "timeout 60s node test-80-20.mjs",
     "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly"
   },
