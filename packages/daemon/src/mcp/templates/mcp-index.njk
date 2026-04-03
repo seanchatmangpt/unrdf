@@ -1,0 +1,98 @@
+---
+description: Complete MCP server index.mjs with all tool registrations
+---
+/**
+ * @file MCP Server Implementation
+ * @module @unrdf/daemon/mcp
+ * @description Model Context Protocol server for UNRDF Daemon
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }} from cli-commands.ttl
+ *
+ * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-index
+ */
+
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
+import { mcpResources } from './resources.mjs';
+import { mcpPrompts } from './prompts.mjs';
+import { cliRegistry } from './cli-registry.mjs';
+import * as handlers from './handlers.mjs';
+
+{% set tools = results | groupBy('toolName') %}
+
+// ─── Tool Input Schemas ────────────────────────────────────────────────────────
+
+{% for toolName, rows in tools | items | sortBy(0) %}
+{% set argGroups = rows | groupBy('argName') %}
+const schema_{{ toolName }} = z.object({
+{% for argName, argRows in argGroups | items %}
+{% if argName and argName != 'undefined' and argName != '?undefined' %}
+{% set arg = argRows[0] %}
+{% set enumVals = argRows | distinctValues('enumVal') %}
+  {{ argName | quote }}: {% if enumVals | length > 0 %}z.enum([{% for val in enumVals %}{{ val | quote }}{% if not loop.last %}, {% endif %}{% endfor %}]){% elif arg.argType == 'boolean' %}z.boolean(){% elif arg.argType == 'number' %}z.number(){% else %}z.string(){% endif %}{% if arg.required != 'true' and arg.required != '"true"' %}.optional(){% endif %}{% if arg.defaultValue %}.default({{ arg.defaultValue | quote }}){% endif %},
+{% endif %}
+{% endfor %}
+}).strict();
+
+{% endfor %}
+
+// ─── Server Factory ────────────────────────────────────────────────────────────
+
+/**
+ * Create and configure the MCP server
+ * @returns {McpServer} Configured MCP server instance
+ */
+export function createMCPServer() {
+  const server = new McpServer({
+    name: 'unrdf-daemon-mcp',
+    version: '26.4.3',
+  });
+
+{% for toolName, rows in tools | items | sortBy(0) %}
+{% set firstRow = rows[0] %}
+  server.tool(
+    '{{ toolName }}',
+    '{{ firstRow.description }}',
+    schema_{{ toolName }},
+    async (args) => {
+      const fn = handlers['{{ toolName }}'];
+      if (!fn) throw new Error('Handler not implemented: {{ toolName }}');
+      return fn(args);
+    }
+  );
+
+{% endfor %}
+  return server;
+}
+
+// ─── Transport Helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Start the MCP server with stdio transport
+ * @returns {Promise<void>}
+ */
+export async function startMCPServer() {
+  const server = createMCPServer();
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error('MCP server connected to stdio');
+}
+
+/**
+ * Start the MCP server with SSE transport (for HTTP)
+ * @param {number} port Port to listen on
+ * @returns {Promise<http.Server>}
+ */
+export async function startMCPServerSSE(port = 8765) {
+  const server = createMCPServer();
+
+  // For SSE transport, we need to handle HTTP differently
+  console.error(`SSE transport requested on port ${port}`);
+  console.error('Note: SSE transport requires HTTP server integration');
+
+  // For now, fall back to stdio
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+export { mcpResources, mcpPrompts };

@@ -1,0 +1,350 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cli: <urn:unrdf:cli:> .
+
+# =============================================================================
+# VOCABULARY — Classes and Properties
+# =============================================================================
+
+cli:Command a rdfs:Class ;
+  rdfs:label "CLI Command" ;
+  rdfs:comment "Represents a unrdf CLI command to be exposed as an MCP tool" .
+
+cli:Argument a rdfs:Class ;
+  rdfs:label "Command Argument" ;
+  rdfs:comment "Represents a command-line argument or option" .
+
+cli:toolName a rdf:Property ;
+  rdfs:domain cli:Command ;
+  rdfs:range xsd:string ;
+  rdfs:comment "MCP tool name (snake_case)" .
+
+cli:description a rdf:Property ;
+  rdfs:domain cli:Command ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Human-readable description" .
+
+cli:cliPath a rdf:Property ;
+  rdfs:domain cli:Command ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Full CLI invocation path (e.g., 'graph create')" .
+
+cli:hasArgument a rdf:Property ;
+  rdfs:domain cli:Command ;
+  rdfs:range cli:Argument ;
+  rdfs:comment "Links Command to its Arguments" .
+
+cli:argName a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Argument name" .
+
+cli:argType a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Argument type: string, boolean, number" .
+
+cli:required a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:boolean ;
+  rdfs:comment "Whether argument is required" .
+
+cli:argDescription a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Argument description" .
+
+cli:defaultValue a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Default value if not provided" .
+
+cli:enumValue a rdf:Property ;
+  rdfs:domain cli:Argument ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Possible enum value (multi-valued)" .
+
+# =============================================================================
+# INSTANCES — GRAPH commands (5)
+# =============================================================================
+
+cli:graph_create a cli:Command ;
+  cli:toolName "graph_create" ;
+  cli:description "Create a new RDF graph" ;
+  cli:cliPath "graph create" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "name" ; cli:argType "string" ; cli:required true ; cli:argDescription "Graph name" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ; cli:defaultValue "<name>.nq" ] .
+
+cli:graph_load a cli:Command ;
+  cli:toolName "graph_load" ;
+  cli:description "Load RDF data into a graph from a file" ;
+  cli:cliPath "graph load" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "RDF file to load" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "graph" ; cli:argType "string" ; cli:required false ; cli:argDescription "Target graph IRI" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "RDF format (turtle, ntriples, jsonld, trig)" ] .
+
+cli:graph_query a cli:Command ;
+  cli:toolName "graph_query" ;
+  cli:description "Execute SPARQL query on a graph file" ;
+  cli:cliPath "graph query" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Graph file to query" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "query" ; cli:argType "string" ; cli:required true ; cli:argDescription "SPARQL query string" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "json" ; cli:enumValue "table" ; cli:enumValue "json" ; cli:enumValue "turtle" ] .
+
+cli:graph_dump a cli:Command ;
+  cli:toolName "graph_dump" ;
+  cli:description "Dump an RDF graph to a file" ;
+  cli:cliPath "graph dump" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Graph file to dump" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required true ; cli:argDescription "Output file path" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "turtle" ; cli:enumValue "turtle" ; cli:enumValue "ntriples" ; cli:enumValue "jsonld" ] .
+
+cli:graph_stats a cli:Command ;
+  cli:toolName "graph_stats" ;
+  cli:description "Get statistics about an RDF graph" ;
+  cli:cliPath "graph stats" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Graph file" ] .
+
+# =============================================================================
+# INSTANCES — QUERY commands (2)
+# =============================================================================
+
+cli:query a cli:Command ;
+  cli:toolName "query" ;
+  cli:description "Execute SPARQL query on a data file" ;
+  cli:cliPath "query" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Data file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "query" ; cli:argType "string" ; cli:required true ; cli:argDescription "SPARQL query" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "json" ] .
+
+cli:query_file a cli:Command ;
+  cli:toolName "query_file" ;
+  cli:description "Execute SPARQL query from a file" ;
+  cli:cliPath "query-file" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "data" ; cli:argType "string" ; cli:required true ; cli:argDescription "Data file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "query" ; cli:argType "string" ; cli:required true ; cli:argDescription "Query file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ] .
+
+# =============================================================================
+# INSTANCES — CONTEXT commands (4)
+# =============================================================================
+
+cli:context_create a cli:Command ;
+  cli:toolName "context_create" ;
+  cli:description "Create a new JSON-LD context" ;
+  cli:cliPath "context create" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "name" ; cli:argType "string" ; cli:required true ; cli:argDescription "Context name" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] .
+
+cli:context_add a cli:Command ;
+  cli:toolName "context_add" ;
+  cli:description "Add a prefix mapping to a context" ;
+  cli:cliPath "context add" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Context file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "prefix" ; cli:argType "string" ; cli:required true ; cli:argDescription "Prefix name" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "namespace" ; cli:argType "string" ; cli:required true ; cli:argDescription "Namespace IRI" ] .
+
+cli:context_list a cli:Command ;
+  cli:toolName "context_list" ;
+  cli:description "List all prefix mappings in a context" ;
+  cli:cliPath "context list" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Context file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "table" ] .
+
+cli:context_remove a cli:Command ;
+  cli:toolName "context_remove" ;
+  cli:description "Remove a prefix mapping from a context" ;
+  cli:cliPath "context remove" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Context file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "prefix" ; cli:argType "string" ; cli:required true ; cli:argDescription "Prefix to remove" ] .
+
+# =============================================================================
+# INSTANCES — CONVERT commands (4)
+# =============================================================================
+
+cli:convert a cli:Command ;
+  cli:toolName "convert" ;
+  cli:description "Convert RDF between formats" ;
+  cli:cliPath "convert" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "input" ; cli:argType "string" ; cli:required true ; cli:argDescription "Input file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required true ; cli:argDescription "Output file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "from" ; cli:argType "string" ; cli:required false ; cli:argDescription "Source format" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "to" ; cli:argType "string" ; cli:required false ; cli:argDescription "Target format" ] .
+
+cli:convert_to_turtle a cli:Command ;
+  cli:toolName "convert_to_turtle" ;
+  cli:description "Convert RDF to Turtle format" ;
+  cli:cliPath "to-turtle" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "input" ; cli:argType "string" ; cli:required true ; cli:argDescription "Input file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] .
+
+cli:convert_to_ntriples a cli:Command ;
+  cli:toolName "convert_to_ntriples" ;
+  cli:description "Convert RDF to N-Triples format" ;
+  cli:cliPath "to-ntriples" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "input" ; cli:argType "string" ; cli:required true ; cli:argDescription "Input file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] .
+
+cli:convert_to_json a cli:Command ;
+  cli:toolName "convert_to_json" ;
+  cli:description "Convert RDF to JSON-LD format" ;
+  cli:cliPath "to-json" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "input" ; cli:argType "string" ; cli:required true ; cli:argDescription "Input file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] .
+
+# =============================================================================
+# INSTANCES — HOOKS commands (5)
+# =============================================================================
+
+cli:hooks_execute a cli:Command ;
+  cli:toolName "hooks_execute" ;
+  cli:description "Execute registered RDF hooks on a store" ;
+  cli:cliPath "hooks execute" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "store" ; cli:argType "string" ; cli:required true ; cli:argDescription "Store file or identifier" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required true ; cli:argDescription "Hooks configuration file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "show-receipts" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Display execution receipts" ] .
+
+cli:hooks_define a cli:Command ;
+  cli:toolName "hooks_define" ;
+  cli:description "Define RDF hooks configuration" ;
+  cli:cliPath "hooks define" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required true ; cli:argDescription "Configuration file to create" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "validate" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Validate configuration" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output file path" ] .
+
+cli:hooks_evaluate_condition a cli:Command ;
+  cli:toolName "hooks_evaluate_condition" ;
+  cli:description "Evaluate a hook condition against a store" ;
+  cli:cliPath "hooks evaluate-condition" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "store" ; cli:argType "string" ; cli:required true ; cli:argDescription "Store file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "condition" ; cli:argType "string" ; cli:required true ; cli:argDescription "Condition expression" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required true ; cli:argDescription "Configuration file" ] .
+
+cli:hooks_list_conditions a cli:Command ;
+  cli:toolName "hooks_list_conditions" ;
+  cli:description "List all available hook conditions" ;
+  cli:cliPath "hooks list-conditions" .
+
+cli:hooks_receipts a cli:Command ;
+  cli:toolName "hooks_receipts" ;
+  cli:description "View execution receipts from hook runs" ;
+  cli:cliPath "hooks receipts" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Receipts file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "table" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "verify" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Verify receipt signatures" ] .
+
+# =============================================================================
+# INSTANCES — DAEMON commands (7)
+# =============================================================================
+
+cli:daemon_list a cli:Command ;
+  cli:toolName "daemon_list" ;
+  cli:description "List all running daemon instances" ;
+  cli:cliPath "daemon list" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "include-metadata" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Include metadata" ] .
+
+cli:daemon_run a cli:Command ;
+  cli:toolName "daemon_run" ;
+  cli:description "Run an operation on the daemon" ;
+  cli:cliPath "daemon run" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "operation" ; cli:argType "string" ; cli:required true ; cli:argDescription "Operation name" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "payload" ; cli:argType "string" ; cli:required false ; cli:argDescription "Operation payload" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "timeout" ; cli:argType "number" ; cli:required false ; cli:argDescription "Operation timeout in seconds" ] .
+
+cli:daemon_schedule a cli:Command ;
+  cli:toolName "daemon_schedule" ;
+  cli:description "Schedule an operation on the daemon" ;
+  cli:cliPath "daemon schedule" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "operation" ; cli:argType "string" ; cli:required true ; cli:argDescription "Operation name" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "trigger" ; cli:argType "string" ; cli:required true ; cli:argDescription "Trigger cron expression" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "payload" ; cli:argType "string" ; cli:required false ; cli:argDescription "Operation payload" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] .
+
+cli:daemon_status a cli:Command ;
+  cli:toolName "daemon_status" ;
+  cli:description "Check daemon status and health" ;
+  cli:cliPath "daemon status" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "include-metrics" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Include performance metrics" ] .
+
+cli:daemon_logs a cli:Command ;
+  cli:toolName "daemon_logs" ;
+  cli:description "View daemon logs" ;
+  cli:cliPath "daemon logs" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "follow" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Follow log output" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "filter" ; cli:argType "string" ; cli:required false ; cli:argDescription "Log filter expression" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "max-lines" ; cli:argType "number" ; cli:required false ; cli:argDescription "Maximum lines to display" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] .
+
+cli:daemon_config a cli:Command ;
+  cli:toolName "daemon_config" ;
+  cli:description "View daemon configuration" ;
+  cli:cliPath "daemon config" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] .
+
+cli:daemon_cluster a cli:Command ;
+  cli:toolName "daemon_cluster" ;
+  cli:description "Manage daemon cluster" ;
+  cli:cliPath "daemon cluster" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "json" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Output as JSON" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "include-metrics" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Include metrics" ] .
+
+# =============================================================================
+# INSTANCES — SYNC command (1)
+# =============================================================================
+
+cli:sync a cli:Command ;
+  cli:toolName "sync" ;
+  cli:description "Synchronize and generate code from RDF ontology" ;
+  cli:cliPath "sync" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "config" ; cli:argType "string" ; cli:required false ; cli:argDescription "Path to .unrdf.toml config" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "dry-run" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Preview without writing files" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "verbose" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Verbose output" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "force" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Force regeneration" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "rule" ; cli:argType "string" ; cli:required false ; cli:argDescription "Run only specified rule" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "output" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format (text or json)" ; cli:defaultValue "text" ] .
+
+# =============================================================================
+# INSTANCES — TEMPLATE commands (4)
+# =============================================================================
+
+cli:template_generate a cli:Command ;
+  cli:toolName "template_generate" ;
+  cli:description "Generate files from a Nunjucks template" ;
+  cli:cliPath "template generate" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "template" ; cli:argType "string" ; cli:required true ; cli:argDescription "Template file path" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required false ; cli:argDescription "Data file (RDF)" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "outputDir" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output directory" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "subject" ; cli:argType "string" ; cli:required false ; cli:argDescription "Subject filter" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "batch" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Batch mode" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "classUri" ; cli:argType "string" ; cli:required false ; cli:argDescription "Class URI filter" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "sparql" ; cli:argType "string" ; cli:required false ; cli:argDescription "SPARQL query" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "dryRun" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Preview without writing" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "force" ; cli:argType "boolean" ; cli:required false ; cli:argDescription "Force overwrite" ] .
+
+cli:template_list a cli:Command ;
+  cli:toolName "template_list" ;
+  cli:description "List available templates" ;
+  cli:cliPath "template list" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "table" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "dir" ; cli:argType "string" ; cli:required false ; cli:argDescription "Template directory" ] .
+
+cli:template_query a cli:Command ;
+  cli:toolName "template_query" ;
+  cli:description "Query template variables and context" ;
+  cli:cliPath "template query" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "Template file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "sparql" ; cli:argType "string" ; cli:required false ; cli:argDescription "SPARQL query" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "json" ] .
+
+cli:template_extract a cli:Command ;
+  cli:toolName "template_extract" ;
+  cli:description "Extract data from RDF using template patterns" ;
+  cli:cliPath "template extract" ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "file" ; cli:argType "string" ; cli:required true ; cli:argDescription "RDF file" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "subject" ; cli:argType "string" ; cli:required false ; cli:argDescription "Subject IRI filter" ] ;
+  cli:hasArgument [ a cli:Argument ; cli:argName "format" ; cli:argType "string" ; cli:required false ; cli:argDescription "Output format" ; cli:defaultValue "json" ] .

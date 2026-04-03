@@ -1,0 +1,168 @@
+# MCP Tool Code Generation
+# Generates MCP server tool registration code from the CLI commands ontology.
+#
+# Usage:
+#   cd packages/daemon/src/mcp
+#   unrdf sync                           # Run all rules
+#   unrdf sync --rule mcp-index          # Single rule
+#   unrdf sync --dry-run                 # Preview output paths
+#
+# PREFIX declarations are auto-injected from cli-commands.ttl — do not
+# redeclare cli:, rdf:, xsd:, etc. in any query below.
+
+[project]
+name = "unrdf-daemon-mcp"
+version = "26.4.3"
+description = "MCP tool registration code generated from CLI command ontology"
+
+[ontology]
+source = "./cli-commands.ttl"
+format = "turtle"
+
+[generation]
+output_dir = "."
+
+# =============================================================================
+# Rule 1: mcp-index
+# Generates the complete index.mjs with all tool registrations.
+# =============================================================================
+[[generation.rules]]
+name = "mcp-index"
+description = "Generate complete MCP server index.mjs with all tool registrations"
+enabled = true
+template = "./templates/mcp-index.njk"
+output_file = "index.mjs"
+mode = "overwrite"
+
+query = """
+SELECT
+  ?toolName
+  ?description
+  ?cliPath
+  ?argName
+  ?argType
+  ?required
+  ?argDescription
+  ?defaultValue
+  ?enumVal
+WHERE {
+  ?cmd a cli:Command ;
+       cli:toolName ?toolName ;
+       cli:description ?description ;
+       cli:cliPath ?cliPath .
+
+  OPTIONAL {
+    ?cmd cli:hasArgument ?arg .
+    ?arg cli:argName ?argName ;
+         cli:argType ?argType .
+    OPTIONAL { ?arg cli:required ?required }
+    OPTIONAL { ?arg cli:argDescription ?argDescription }
+    OPTIONAL { ?arg cli:defaultValue ?defaultValue }
+    OPTIONAL { ?arg cli:enumValue ?enumVal }
+  }
+}
+ORDER BY ?toolName ?argName ?enumVal
+"""
+
+# =============================================================================
+# Rule 2: mcp-tool-defs
+# Generates the JSON schema tool definition objects array for mcp inspect.
+# =============================================================================
+[[generation.rules]]
+name = "mcp-tool-defs"
+description = "Generate tool definition objects array (JSON schema for mcp inspect)"
+enabled = true
+template = "./templates/mcp-tool-defs.njk"
+output_file = "tools-generated.mjs"
+mode = "overwrite"
+
+query = """
+SELECT
+  ?toolName
+  ?description
+  ?argName
+  ?argType
+  ?required
+  ?argDescription
+  ?defaultValue
+  ?enumVal
+WHERE {
+  ?cmd a cli:Command ;
+       cli:toolName ?toolName ;
+       cli:description ?description .
+
+  OPTIONAL {
+    ?cmd cli:hasArgument ?arg .
+    ?arg cli:argName ?argName ;
+         cli:argType ?argType .
+    OPTIONAL { ?arg cli:required ?required }
+    OPTIONAL { ?arg cli:argDescription ?argDescription }
+    OPTIONAL { ?arg cli:defaultValue ?defaultValue }
+    OPTIONAL { ?arg cli:enumValue ?enumVal }
+  }
+}
+ORDER BY ?toolName ?argName ?enumVal
+"""
+
+# =============================================================================
+# Rule 3: mcp-cli-registry
+# Generates a registry mapping tool names to CLI invocation paths.
+# =============================================================================
+[[generation.rules]]
+name = "mcp-cli-registry"
+description = "Generate registry mapping MCP tool names to CLI invocation paths"
+enabled = true
+template = "./templates/mcp-cli-registry.njk"
+output_file = "cli-registry.mjs"
+mode = "overwrite"
+
+query = """
+SELECT
+  ?toolName
+  ?cliPath
+  ?description
+WHERE {
+  ?cmd a cli:Command ;
+       cli:toolName ?toolName ;
+       cli:cliPath ?cliPath ;
+       cli:description ?description .
+}
+ORDER BY ?toolName
+"""
+
+# =============================================================================
+# Rule 4: mcp-handlers
+# Generates fully working handlers that spawn the unrdf CLI.
+# mode = overwrite — 100% generated, never hand-edited.
+# =============================================================================
+[[generation.rules]]
+name = "mcp-handlers"
+description = "Generate working CLI-spawning handlers for every MCP tool"
+enabled = true
+template = "./templates/mcp-handlers.njk"
+output_file = "handlers.mjs"
+mode = "overwrite"
+
+query = """
+SELECT
+  ?toolName
+  ?cliPath
+  ?argName
+  ?argType
+  ?required
+  ?argDescription
+WHERE {
+  ?cmd a cli:Command ;
+       cli:toolName ?toolName ;
+       cli:cliPath ?cliPath .
+
+  OPTIONAL {
+    ?cmd cli:hasArgument ?arg .
+    ?arg cli:argName ?argName ;
+         cli:argType ?argType .
+    OPTIONAL { ?arg cli:required ?required }
+    OPTIONAL { ?arg cli:argDescription ?argDescription }
+  }
+}
+ORDER BY ?toolName ?argName
+"""

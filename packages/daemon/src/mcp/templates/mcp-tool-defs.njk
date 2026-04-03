@@ -1,0 +1,62 @@
+---
+description: Tool definition objects array for mcp inspect
+---
+/**
+ * @file MCP Tool Definitions
+ * @module @unrdf/daemon/mcp/tools-generated
+ * @description Auto-generated tool JSON schema definitions
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }} from cli-commands.ttl
+ *
+ * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-tool-defs
+ */
+
+{% set tools = results | groupBy('toolName') %}
+
+/**
+ * All MCP tool definitions with JSON Schema input schemas
+ * @type {Array<{name: string, description: string, inputSchema: object}>}
+ */
+export const mcpGeneratedTools = [
+{% for toolName, rows in tools | items | sortBy(0) %}
+{% set argGroups = rows | groupBy('argName') %}
+{% set firstRow = rows[0] %}
+  {
+    name: '{{ toolName }}',
+    description: '{{ firstRow.description }}',
+    inputSchema: {
+      type: 'object',
+      properties: {
+{% for argName, argRows in argGroups | items %}
+{% if argName and argName != 'undefined' and argName != '?undefined' %}
+{% set arg = argRows[0] %}
+{% set enumVals = argRows | distinctValues('enumVal') %}
+        {{ argName | quote }}: {
+          type: '{{ arg.argType | default("string") }}',
+{% if arg.argDescription %}
+          description: '{{ arg.argDescription }}',
+{% endif %}
+{% if enumVals | length > 0 %}
+          enum: [{% for val in enumVals %}{{ val | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
+{% endif %}
+{% if arg.defaultValue %}
+          default: '{{ arg.defaultValue }}',
+{% endif %}
+        },
+{% endif %}
+{% endfor %}
+      },
+      required: [{% set reqArgs = [] %}{% for argName, argRows in argGroups | items %}{% if argName and argName != 'undefined' and argName != '?undefined' and (argRows[0].required == 'true' or argRows[0].required == '"true"') %}{% set reqArgs = reqArgs.concat([argName]) %}{% endif %}{% endfor %}{% for arg in reqArgs %}{{ arg | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
+    },
+  },
+{% endfor %}
+];
+
+/**
+ * Export as default for backward compatibility
+ */
+export default mcpGeneratedTools;
+
+/**
+ * Alias for compatibility with mcp.mjs inspect command
+ */
+export const mcpTools = mcpGeneratedTools;

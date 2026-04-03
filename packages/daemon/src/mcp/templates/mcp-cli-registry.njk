@@ -1,0 +1,41 @@
+---
+description: Registry mapping MCP tool names to CLI invocation paths
+---
+/**
+ * @file CLI Registry
+ * @module @unrdf/daemon/mcp/cli-registry
+ * @description Maps MCP tool names to their unrdf CLI invocation paths
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }} from cli-commands.ttl
+ *
+ * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-cli-registry
+ */
+
+/**
+ * Registry mapping each MCP tool name to its CLI path string.
+ * Usage: spawn `unrdf ${cliRegistry[toolName]} [--arg value ...]`
+ * @type {Record<string, string>}
+ */
+export const cliRegistry = {
+{% for row in results | sortBy('toolName') %}
+  '{{ row.toolName }}': '{{ row.cliPath }}',
+{% endfor %}
+};
+
+/**
+ * Tool metadata for documentation and introspection
+ * @type {Array<{name: string, cliPath: string, description: string}>}
+ */
+export const cliRegistryMetadata = [
+{% for row in results | sortBy('toolName') %}
+  {
+    name: '{{ row.toolName }}',
+    cliPath: '{{ row.cliPath }}',
+    description: '{{ row.description }}',
+  },
+{% endfor %}
+];
+
+/**
+ * Export as default for convenience
+ */
+export default cliRegistry;

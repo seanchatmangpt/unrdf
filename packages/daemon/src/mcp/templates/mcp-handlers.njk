@@ -1,0 +1,88 @@
+---
+description: Fully generated CLI-spawning MCP tool handlers — never hand-edited
+---
+/**
+ * @file MCP Tool Handlers
+ * @module @unrdf/daemon/mcp/handlers
+ * @description Auto-generated handlers that delegate to the unrdf CLI.
+ * @generated {{ now | date("YYYY-MM-DD HH:mm:ss") }} from cli-commands.ttl
+ *
+ * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-handlers
+ *
+ * Each handler maps MCP tool arguments to unrdf CLI flags and returns
+ * stdout/stderr as MCP content. Boolean args become bare flags (--flag),
+ * all others become --flag value pairs.
+ */
+
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Resolve unrdf CLI entry point relative to this file
+// handlers.mjs lives at packages/daemon/src/mcp/handlers.mjs
+// main.mjs lives at packages/cli/src/cli/main.mjs
+const CLI_MAIN = resolve(__dirname, '../../../cli/src/cli/main.mjs');
+
+/**
+ * Spawn the unrdf CLI and return MCP-formatted content.
+ * @param {string[]} cliArgs - Arguments to pass after `node CLI_MAIN`
+ * @returns {Promise<{content: Array<{type: string, text: string}>, isError: boolean}>}
+ */
+async function executeCli(cliArgs) {
+  return new Promise((res) => {
+    let stdout = '';
+    let stderr = '';
+
+    const proc = spawn(process.execPath, [CLI_MAIN, ...cliArgs], {
+      env: process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+
+    proc.stdout.on('data', (chunk) => { stdout += chunk; });
+    proc.stderr.on('data', (chunk) => { stderr += chunk; });
+
+    proc.on('close', (code) => {
+      const text = stdout || stderr || '(no output)';
+      res({
+        content: [{ type: 'text', text }],
+        isError: code !== 0,
+      });
+    });
+
+    proc.on('error', (err) => {
+      res({
+        content: [{ type: 'text', text: `Failed to spawn unrdf: ${err.message}` }],
+        isError: true,
+      });
+    });
+  });
+}
+
+{% set tools = results | groupBy('toolName') %}
+
+// ─── Generated Handlers ────────────────────────────────────────────────────────
+
+{% for toolName, rows in tools | items | sortBy(0) %}
+{% set argGroups = rows | groupBy('argName') %}
+/**
+ * {{ rows[0].description }} (CLI: unrdf {{ rows[0].cliPath }})
+ */
+export async function {{ toolName }}(args = {}) {
+  const cliArgs = '{{ rows[0].cliPath }}'.split(' ');
+{% for argName, argRows in argGroups | items %}
+{% if argName and argName != 'undefined' and argName != '?undefined' %}
+{% set arg = argRows[0] %}
+{% if arg.argType == 'boolean' %}
+  if (args['{{ argName }}']) cliArgs.push('--{{ argName }}');
+{% else %}
+  if (args['{{ argName }}'] !== undefined) cliArgs.push('--{{ argName }}', String(args['{{ argName }}']));
+{% endif %}
+{% endif %}
+{% endfor %}
+  return executeCli(cliArgs);
+}
+
+{% endfor %}
