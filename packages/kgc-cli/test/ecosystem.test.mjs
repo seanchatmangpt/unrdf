@@ -1050,7 +1050,7 @@ describe('Category 7: End-to-End CLI Tests', () => {
       await loadManifest(registry, { failOnMissing: false });
 
       const loaded = registry.extensions.size;
-      const target = 45;
+      const target = 46;
       const coverage = (loaded / target * 100).toFixed(1);
 
       console.log(`
@@ -1094,7 +1094,7 @@ describe('🎯 Ecosystem Test Summary', () => {
 
     const stats = {
       extensions_loaded: registry.extensions.size,
-      extensions_target: 45,
+      extensions_target: 46,
       commands_registered: registry.listCommands().length,
       contract_errors: registry.validateContracts().length,
       collision_summary: Object.keys(registry.getCollisionSummary()).length

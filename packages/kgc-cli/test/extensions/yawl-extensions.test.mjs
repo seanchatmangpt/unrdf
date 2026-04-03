@@ -58,10 +58,10 @@ describe('YAWL CLI Extensions', () => {
         const module = await import(path);
         extension = module.default;
 
-        for (const [nounName, noun] of Object.entries(extension.nouns)) {
+        for (const [_nounName, noun] of Object.entries(extension.nouns)) {
           expect(noun.verbs).toBeDefined();
 
-          for (const [verbName, verb] of Object.entries(noun.verbs)) {
+          for (const [_verbName, verb] of Object.entries(noun.verbs)) {
             expect(verb.description).toBeDefined();
             expect(verb.argsSchema).toBeDefined();
             expect(verb.handler).toBeDefined();
