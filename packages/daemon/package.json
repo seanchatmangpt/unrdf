@@ -31,6 +31,7 @@
     "task-queue"
   ],
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
     "@unrdf/kgc-4d": "26.4.3",
     "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",

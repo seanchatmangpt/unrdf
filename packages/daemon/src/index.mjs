@@ -7,6 +7,9 @@
 export { Daemon, Daemon as UnrdfDaemon } from './daemon.mjs';
 export { TriggerEvaluator } from './trigger-evaluator.mjs';
 
+// MCP exports
+export { createMCPServer, startMCPServer } from './mcp/index.mjs';
+
 export {
   TaskConfigSchema,
   ScheduleConfigSchema,

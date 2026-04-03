@@ -24,6 +24,7 @@ import { daemonCommand } from './commands/daemon.mjs';
 import { syncCommand } from './commands/sync.mjs';
 import { templateCommand } from './commands/template.mjs';
 import { hooksCommand } from './commands/hooks.mjs';
+import { mcpCommand } from './commands/mcp.mjs';
 
 /**
  * Main CLI application
@@ -50,6 +51,7 @@ const main = defineCommand({
 
     // Background Operations
     daemon: daemonCommand,
+    mcp: mcpCommand,
 
     // Code Generation
     sync: syncCommand,

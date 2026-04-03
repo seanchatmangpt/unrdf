@@ -31,9 +31,10 @@ function validateNonEmptyString(value, name) {
  *
  * @param {string} [validationId] - Optional validation ID to track spans (must be non-empty string if provided)
  * @param {Function} [onSpanEnd] - Optional callback when span ends (receives span data object)
+ * @param {Object} [trace] - Optional trace object from @opentelemetry/api
  * @throws {Error} If validationId is provided but invalid
  */
-export async function ensureProviderInitialized(validationId, onSpanEnd) {
+export async function ensureProviderInitialized(validationId, onSpanEnd, trace) {
   // Poka-yoke: Validate input if provided
   if (validationId !== undefined) {
     validateNonEmptyString(validationId, 'validationId');
@@ -54,8 +55,7 @@ export async function ensureProviderInitialized(validationId, onSpanEnd) {
 
   if (!provider) {
     // Check if a provider is already registered globally
-    const { trace } = await import('@opentelemetry/api');
-    const existingProvider = trace.getTracerProvider();
+    let existingProvider = trace.getTracerProvider();
     
     // If a provider exists but isn't ours, we need to replace it
     // This can happen if OTEL SDK auto-initializes or another module registers a provider
@@ -131,17 +131,30 @@ export async function ensureProviderInitialized(validationId, onSpanEnd) {
     provider = new NodeTracerProvider({
       spanProcessors: [processor],
     });
-    
+
     // Register provider globally - this replaces any existing provider
+    console.log('[OTEL Provider] Calling provider.register()...');
     provider.register();
-    
+    console.log('[OTEL Provider] provider.register() called');
+
+    // Set as global tracer provider (this is what actually replaces existing provider)
+    const { trace } = await import('@opentelemetry/api');
+    console.log('[OTEL Provider] Setting global tracer provider...');
+    trace.setTracerProvider(provider);
+    console.log('[OTEL Provider] trace.setTracerProvider() called');
+
     // Verify registration worked
     const registeredProvider = trace.getTracerProvider();
-    if (registeredProvider.constructor.name !== 'NodeTracerProvider' && 
-        registeredProvider !== provider) {
+    console.log('[OTEL Provider] Registered provider:', registeredProvider?.constructor?.name);
+    console.log('[OTEL Provider] Our provider:', provider.constructor.name);
+    console.log('[OTEL Provider] Are they equal?', registeredProvider === provider);
+
+    if (registeredProvider !== provider) {
       console.error('[OTEL Provider] Registration failed - provider not active');
+    } else {
+      console.log('[OTEL Provider] Successfully registered NodeTracerProvider');
     }
-    
+
     // Ensure registration is complete (synchronous, but verify)
     // NodeTracerProvider.register() is synchronous, but we wait a tick to ensure
     // the global API tracer is updated

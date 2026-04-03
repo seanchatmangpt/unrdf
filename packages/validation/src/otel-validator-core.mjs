@@ -204,7 +204,7 @@ export class OTELValidator {
           // spanData is already converted by otel-provider.mjs
           // Poka-yoke: _addSpan validates spanData structure
           this._addSpan(validationId, spanData);
-        });
+        }, trace);
         console.log(`[OTELValidator] OTEL provider initialized`);
 
         // Execute the feature (this will generate real OTEL spans)
@@ -1002,3 +1002,6 @@ export class OTELValidator {
 export function createOTELValidator(config = {}) {
   return new OTELValidator(config);
 }
+
+// Export trace for external use (e.g., when passing to ensureProviderInitialized)
+export { trace };

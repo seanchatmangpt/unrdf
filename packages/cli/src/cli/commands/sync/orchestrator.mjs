@@ -5,7 +5,7 @@
  */
 import { mkdir, writeFile, access } from 'fs/promises';
 import { dirname, resolve, relative } from 'path';
-import { constants } from 'fs';
+import { constants, existsSync } from 'fs';
 import { parseConfig } from './config-parser.mjs';
 import { loadOntology } from './ontology-loader.mjs';
 import { executeSparqlQuery } from './sparql-executor.mjs';
@@ -137,7 +137,20 @@ export async function runSync(options) {
         totalBytes += bytes;
         const duration = performance.now() - ruleStart;
 
-        if (dryRun) {
+        // Check skip_existing mode
+        if (rule.mode === 'skip_existing' && existsSync(finalPath)) {
+          console.log(
+            '   ' +
+              c.yellow +
+              'SKIP' +
+              c.reset +
+              ' ' +
+              relative(process.cwd(), finalPath) +
+              ' (already exists)'
+          );
+          results.push({ rule: rule.name, path: finalPath, status: 'skipped', duration, bytes });
+          metrics.filesSkipped++;
+        } else if (dryRun) {
           console.log(
             '   ' +
               c.yellow +

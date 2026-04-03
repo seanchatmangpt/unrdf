@@ -44,6 +44,14 @@ export { RDFStreamParser, createRDFStreamParser, parseRDFStream } from './rdf-st
 // Performance Monitor (V6 Features)
 export { PerformanceMonitor, createPerformanceMonitor } from './performance-monitor.mjs';
 
+// Streaming Admission (Receipt Chaining)
+export {
+  StreamingAdmission,
+  createStreamingAdmission,
+  DeltaConditionSchema,
+  ReceiptSchema,
+} from './stream-admit.mjs';
+
 // Benchmarks
 export {
   generateSyntheticRDF,
