@@ -54,7 +54,7 @@ export const HookDefinitionSchema = z.object({
  * SPARQL CONSTRUCT template for normalizing hook to RDF
  * Generates hook:Hook, hook:name, hook:conditions, hook:effects, hook:priority triples
  */
-const HOOK_NORMALIZATION_TEMPLATE = `
+const _HOOK_NORMALIZATION_TEMPLATE = `
 PREFIX hook: <http://ostar.org/hook/>
 PREFIX schema: <http://ostar.org/schema/hook#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -102,7 +102,7 @@ WHERE {
  * N3 rules for hook dependency composition
  * Forward-chaining to compute transitive dependencies and detect cycles
  */
-const HOOK_COMPOSITION_RULES = `
+const _HOOK_COMPOSITION_RULES = `
 PREFIX hook: <http://ostar.org/hook/>
 PREFIX schema: <http://ostar.org/schema/hook#>
 
@@ -134,7 +134,7 @@ PREFIX schema: <http://ostar.org/schema/hook#>
  * SHACL shape for hook validation (annotate mode)
  * Validates hook structure but doesn't block admission
  */
-const HOOK_SHAPE_SHACL = `
+const _HOOK_SHAPE_SHACL = `
 PREFIX hook: <http://ostar.org/hook/>
 PREFIX schema: <http://ostar.org/schema/hook#>
 PREFIX sh: <http://www.w3.org/ns/shacl#>

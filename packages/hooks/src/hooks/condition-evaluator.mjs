@@ -8,10 +8,8 @@
  */
 
 import { createFileResolver } from './file-resolver.mjs';
-import { ask, select } from './query.mjs';
+import { ask } from './query.mjs';
 import { validateShacl } from './validate.mjs';
-import { createQueryOptimizer } from './query-optimizer.mjs';
-import { createStore } from '../../../oxigraph/src/index.mjs';
 import reasoner from 'eyereasoner';
 // import { Database } from 'datalog-ts'; // TODO: Datalog evaluation via Database class
 

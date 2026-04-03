@@ -16,7 +16,7 @@
  * @param {boolean} options.deterministic - Use deterministic execution
  * @returns {Promise<boolean>} Query result (true/false)
  */
-export async function ask(store, queryString, options = {}) {
+export async function ask(store, queryString, _options = {}) {
   if (!store || typeof store.query !== 'function') {
     throw new TypeError('ask: store must have a query method');
   }

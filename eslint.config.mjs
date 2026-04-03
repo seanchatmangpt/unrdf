@@ -197,6 +197,20 @@ export default [
       'no-undef': 'off' // Disable for re-export barrel files
     }
   },
+  // Daemon integrations - infrastructure utilities with file-level JSDoc
+  {
+    files: ['packages/daemon/src/integrations/**/*.mjs'],
+    rules: {
+      'jsdoc/require-jsdoc': 'off' // Covered by file-level @file JSDoc
+    }
+  },
+  // Hooks - infrastructure utilities with file-level JSDoc
+  {
+    files: ['packages/hooks/src/**/*.mjs'],
+    rules: {
+      'jsdoc/require-jsdoc': 'off' // Covered by file-level @file JSDoc
+    }
+  },
   // Receipts package - needs TextEncoder global (Node.js 11+)
   {
     files: ['packages/receipts/src/**/*.mjs'],
