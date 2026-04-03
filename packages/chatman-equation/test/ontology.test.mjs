@@ -26,7 +26,7 @@ async function loadTurtle(filename) {
   const store = new Store();
 
   return new Promise((resolve, reject) => {
-    parser.parse(content, (error, quad, prefixes) => {
+    parser.parse(content, (error, quad, _prefixes) => {
       if (error) {
         reject(error);
       } else if (quad) {
@@ -353,7 +353,7 @@ describe('Chatman Equation Ontology', () => {
     });
 
     it('should have consistent namespace usage', async () => {
-      const [ontology, examples, shapes] = await Promise.all([
+      const [ontology, _examples, _shapes] = await Promise.all([
         loadTurtle('chatman.ttl'),
         loadTurtle('examples.ttl'),
         loadTurtle('shapes.ttl')

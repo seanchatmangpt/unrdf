@@ -220,6 +220,95 @@ const results = store.query(`
 `);
 ```
 
+### Pattern 7: Bulk Operations with UnrdfStore
+
+```javascript
+import { createStore, bulkAdd, bulkRemove } from '@unrdf/core';
+import { namedNode, literal, quad } from '@unrdf/oxigraph';
+
+// Create UnrdfStore for bulk operations
+const store = createStore(); // Returns UnrdfStore with bulk methods
+
+// Add multiple quads at once (much faster than individual adds)
+const quads = [
+  quad(namedNode('http://example.com/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')),
+  quad(namedNode('http://example.com/bob'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Bob')),
+  quad(namedNode('http://example.com/alice'), namedNode('http://xmlns.com/foaf/0.1/knows'), namedNode('http://example.com/bob')),
+];
+
+store.bulkAdd(quads);
+console.log(`Added ${store.size()} quads`);
+
+// Remove multiple quads by pattern (efficient batch delete)
+const toRemove = store.match(
+  namedNode('http://example.com/bob'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
+  null
+);
+
+store.bulkRemove(toRemove);
+console.log(`Removed ${store.size()} quads`);
+```
+
+### Pattern 8: Graph Diffing
+
+```javascript
+import { createStore, diffGraphFromStores } from '@unrdf/core';
+import { namedNode, literal, quad } from '@unrdf/oxigraph';
+
+// Create two stores with different data
+const storeA = createStore();
+const storeB = createStore();
+
+const { namedNode, literal } = { namedNode, literal }; // Destructure for brevity
+
+storeA.bulkAdd([
+  quad(namedNode('http://example.com/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')),
+  quad(namedNode('http://example.com/bob'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Bob')),
+]);
+
+storeB.bulkAdd([
+  quad(namedNode('http://example.com/alice'), namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')),
+  quad(namedNode('http://example.com/alice'), namedNode('http://xmlns.com/foaf/0.1/age'), literal('30')),
+  quad(namedNode('http://example.com/bob'), namedNode('http://xmlns.com/foaf/0.1/knows'), namedNode('http://example.com/alice')),
+]);
+
+// Diff the stores
+const diff = diffGraphFromStores(storeA, storeB);
+console.log(diff);
+// {
+//   added: [quad(object)],
+//   removed: [quad(predicate)],
+//   modified: []
+// }
+
+// Use with delta for incremental tracking
+const delta = diffGraphFromDelta(storeA, storeB);
+console.log(delta);
+// { added: [...], removed: [...] }
+```
+
+### Pattern 9: Common RDF Prefixes for Normalization
+
+```javascript
+import { COMMON_PREFIXES } from '@unrdf/core';
+
+console.log(COMMON_PREFIXES);
+// {
+//   rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+//   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+//   owl: 'http://www.w3.org/2002/07/owl#',
+//   xsd: 'http://www.w3.org/2001/XMLSchema#',
+//   foaf: 'http://xmlns.com/foaf/0.1/',
+//   dct: 'http://purl.org/dc/terms/',
+//   skos: 'http://www.w3.org/2004/02/skos/core#',
+//   ...more
+// }
+
+// Use for normalizing IRIs in data processing
+const normalized = COMMON_PREFIXES['foaf']; // 'http://xmlns.com/foaf/0.1/'
+```
+
 ## Error Handling
 
 ```javascript

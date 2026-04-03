@@ -13,7 +13,6 @@
  * - Rényi Differential Privacy (RDP)
  */
 
-import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { PrivacyBudgetSchema } from './schemas.mjs';
 
@@ -267,14 +266,6 @@ export class PrivacyBudgetTracker {
 
     return minEpsilon;
   }
-}
-
-/**
- * Helper to generate RDP orders
- * @private
- */
-function range(start, end) {
-  return Array.from({ length: end - start }, (_, i) => start + i);
 }
 
 /**

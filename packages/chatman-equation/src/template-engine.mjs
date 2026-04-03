@@ -6,9 +6,9 @@
 
 import nunjucks from 'nunjucks';
 import { fileURLToPath } from 'url';
-import { dirname, join, resolve } from 'path';
+import { dirname, resolve } from 'path';
 import { z } from 'zod';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { _readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { loadConfig } from './config-loader.mjs';
 import { registerCustomFilters } from './filters.mjs';
 

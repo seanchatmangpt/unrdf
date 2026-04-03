@@ -228,7 +228,7 @@ export const MarketOperators = {
    * @returns {Object} Network value
    */
   networkEffects(observations) {
-    const { total_users = 0, graph_metrics = {} } = observations.user_metrics || observations;
+    const { total_users = 0 } = observations.user_metrics || observations;
     const valuePerConnection = 0.15;
 
     // Metcalfe's Law: V = k * n^2
@@ -249,7 +249,7 @@ export const MarketOperators = {
    * @returns {Object} Trading signals
    */
   timingWindows(observations) {
-    const { indicators = {}, candles = [] } = observations;
+    const { indicators = {} } = observations;
     const signals = [];
 
     // Mean reversion signal

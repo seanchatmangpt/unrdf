@@ -207,18 +207,6 @@ class OxigraphStore {
   }
 
   /**
-   * Get all quads from the store (compatibility method)
-   * @param {Object} [subject] - Optional subject filter
-   * @param {Object} [predicate] - Optional predicate filter
-   * @param {Object} [object] - Optional object filter
-   * @param {Object} [graph] - Optional graph filter
-   * @returns {Array<Object>} Array of quads
-   */
-  getQuads(subject, predicate, object, graph) {
-    return this.match(subject, predicate, object, graph);
-  }
-
-  /**
    * Clear all quads from the store
    * @returns {void}
    */

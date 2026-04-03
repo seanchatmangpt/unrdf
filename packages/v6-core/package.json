@@ -16,6 +16,7 @@
     "./receipts": "./src/receipts.mjs",
     "./receipts/base-receipt": "./src/receipts/base-receipt.mjs",
     "./receipts/merkle": "./src/receipts/merkle/tree.mjs",
+    "./receipt-pattern": "./src/receipt-pattern.mjs",
     "./delta": "./src/delta/index.mjs",
     "./delta/schema": "./src/delta/schema.mjs",
     "./delta/gate": "./src/delta/gate.mjs",

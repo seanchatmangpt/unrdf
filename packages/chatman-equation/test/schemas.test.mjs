@@ -6,9 +6,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   ObservationSchema,
-  DeltaSchema,
-  ClosureOperatorSchema,
-  ArtifactSchema,
   UnificationMappingSchema,
   validateObservation,
   validateDelta,

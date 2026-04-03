@@ -5,10 +5,9 @@
  * Reduces duplication and ensures consistency across benchmark suites.
  */
 
-import { Store } from '@unrdf/oxigraph';
-import { DataFactory } from 'n3';
+import { OxigraphStore, dataFactory } from '@unrdf/oxigraph';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode, literal, quad } = dataFactory;
 
 /**
  * Create a simple hook for basic benchmarks
@@ -90,7 +89,7 @@ export function createEvent(type = 'test:event', payload = {}) {
  * @returns {Store} Oxigraph store with quads
  */
 export function createStore(quadCount = 10) {
-  const store = new Store();
+  const store = new OxigraphStore();
 
   for (let i = 0; i < quadCount; i++) {
     const subject = namedNode(`http://example.org/subject${i}`);

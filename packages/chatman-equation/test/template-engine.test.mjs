@@ -5,8 +5,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TemplateEngine, createTemplateEngine } from '../src/template-engine.mjs';
-import { loadConfig } from '../src/config-loader.mjs';
-import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 

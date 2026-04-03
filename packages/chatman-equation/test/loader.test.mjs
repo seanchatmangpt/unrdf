@@ -221,7 +221,7 @@ describe('loadAndValidateExamples', () => {
 
     // Assert
     expect(Object.keys(results).length).toBeGreaterThan(0);
-    for (const [name, result] of Object.entries(results)) {
+    for (const [_name, result] of Object.entries(results)) {
       expect(result.success).toBe(true);
     }
   });

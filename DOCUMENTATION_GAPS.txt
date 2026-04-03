@@ -1,0 +1,313 @@
+================================================================================
+DOCUMENTATION GAPS CHECKLIST - @unrdf/cli v5.0.0-alpha.0
+================================================================================
+
+CRITICAL BLOCKERS (MUST FIX BEFORE RELEASE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] 1. docs/template-command.md (250 lines)
+    File: /Users/sac/unrdf/packages/cli/docs/template-command.md
+    Status: MISSING
+    Why Critical: Main reference documentation for template feature
+    Must Include:
+      [ ] Overview of template command (what, why, when)
+      [ ] Complete frontmatter directive reference:
+          [ ] to: path/output.mjs
+          [ ] inject: true/false
+          [ ] before: anchor pattern
+          [ ] after: anchor pattern
+          [ ] append: true/false
+          [ ] prepend: true/false
+          [ ] lineAt: N
+          [ ] skipIf: condition
+          [ ] skipUnless: condition
+      [ ] SPARQL context generation:
+          [ ] How query results become template variables
+          [ ] Multi-value variable handling
+          [ ] Type coercion (xsd datatypes)
+          [ ] $rdf special variable (raw results)
+      [ ] Nunjucks filters available:
+          [ ] camelCase
+          [ ] pascalCase
+          [ ] localName(uri)
+          [ ] namespace(uri)
+          [ ] zodType(rdfType)
+      [ ] Batch mode detailed explanation:
+          [ ] When to use --batch
+          [ ] How --class-uri works
+          [ ] ?subject placeholder in SPARQL
+          [ ] Output file per instance
+      [ ] Hygen integration:
+          [ ] Line-based file modifications
+          [ ] Anchor pattern matching
+          [ ] Conditional writing (skipIf)
+      [ ] Error handling:
+          [ ] What to do when SPARQL returns 0 results
+          [ ] RDF file not found
+          [ ] Invalid frontmatter
+          [ ] Template syntax errors
+      [ ] Advanced examples:
+          [ ] Batch generation (one file per class instance)
+          [ ] Conditional file generation
+          [ ] Hygen inject directives
+          [ ] Multiple output files from one template
+
+[ ] 2. docs/GETTING_STARTED.md (150 lines)
+    File: /Users/sac/unrdf/packages/cli/docs/GETTING_STARTED.md
+    Status: MISSING
+    Why Critical: New users have no onboarding path
+    Must Include:
+      [ ] Installation step-by-step
+          [ ] pnpm add @unrdf/cli
+          [ ] pnpm add -g @unrdf/cli
+          [ ] npx @unrdf/cli
+      [ ] Your first template (5-minute quickstart)
+          [ ] Create a minimal RDF file
+          [ ] Create a minimal template
+          [ ] Run unrdf template generate
+          [ ] View the output
+      [ ] What is RDF? (brief for non-RDF users)
+          [ ] Basic concepts
+          [ ] Turtle format
+          [ ] SPARQL queries
+      [ ] What is Nunjucks? (brief intro)
+      [ ] Template anatomy
+          [ ] Frontmatter (YAML front matter)
+          [ ] Body (Nunjucks template)
+          [ ] Example with annotations
+      [ ] Running unrdf template generate
+          [ ] Step 1: Prepare RDF
+          [ ] Step 2: Write template
+          [ ] Step 3: Run command
+          [ ] Step 4: Check output
+      [ ] Common patterns
+          [ ] Single file generation
+          [ ] Batch generation (one per instance)
+          [ ] Conditional skip (skipIf)
+      [ ] Troubleshooting
+          [ ] "SPARQL query returned no results"
+          [ ] "File not found"
+          [ ] "Invalid YAML in template"
+          [ ] "Template not rendering correctly"
+      [ ] Next steps
+          [ ] Read template-command.md for full reference
+          [ ] Check examples/ for complete workflows
+          [ ] Explore sync command for project-wide generation
+
+[ ] 3. docs/sync-command.md (UPDATE - add 50 lines)
+    File: /Users/sac/unrdf/packages/cli/docs/sync-command.md
+    Status: INCOMPLETE (existing file needs updates)
+    Updates Needed:
+      [ ] Section 3.2: ggen.toml schema reference
+          [ ] Add `template` field in generation.rules
+          [ ] Explain output_file templating syntax ({{ name }}, {{ entityName }})
+          [ ] Document Hygen directive support in output_file
+      [ ] New Section: Backwards Compatibility
+          [ ] ggen.toml format stability promise
+          [ ] v5 → v6 upgrade path (if any breaking changes)
+          [ ] Deprecated fields (if any)
+      [ ] New Section: Advanced Hygen Integration
+          [ ] Line-based modifications (before:, after:, lineAt:)
+          [ ] Anchor pattern matching examples
+          [ ] Conditional file generation (skipIf)
+
+[ ] 4. Add version field to JSON output (30 lines code + docs)
+    Files:
+      - /Users/sac/unrdf/packages/cli/src/cli/commands/template.mjs (query command)
+      - /Users/sac/unrdf/packages/cli/src/cli/commands/template.mjs (extract command)
+    Status: MISSING
+    Code Changes Needed:
+      [ ] Update template query command to include version field
+      [ ] Update template extract command to include version field
+      [ ] Format: { "version": "5.0.0-alpha.0", "results": [...] }
+    Documentation Needed:
+      [ ] Add to README.md: JSON Output Format section
+      [ ] Document versioning policy
+      [ ] Promise backwards compatibility
+
+================================================================================
+
+IMPORTANT (SUPPORTING PRODUCTION - 2-3 hours)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] 5. examples/template-pipeline-complete.mjs (120 lines)
+    File: /Users/sac/unrdf/packages/cli/examples/template-pipeline-complete.mjs
+    Status: MISSING (only partial example exists)
+    Current: examples/template-pipeline.mjs (80 lines, basic flow only)
+    Needed: Complete end-to-end showcase of all features
+    Must Demonstrate:
+      [ ] Load RDF from file (Turtle format)
+      [ ] Load RDF from inline content
+      [ ] Extract prefixes from RDF
+      [ ] Execute complex SPARQL SELECT query
+      [ ] Render Nunjucks template with results
+      [ ] Use Nunjucks filters (camelCase, pascalCase, etc.)
+      [ ] Single file generation (basic mode)
+      [ ] Batch generation mode:
+          [ ] Multiple instances of a class
+          [ ] One file per instance
+          [ ] Subject replacement in SPARQL
+      [ ] Conditional file generation:
+          [ ] skipIf directive
+          [ ] skipUnless directive
+      [ ] Hygen directives:
+          [ ] to: path/output.mjs
+          [ ] inject: true
+          [ ] before: anchor pattern
+          [ ] after: anchor pattern
+          [ ] append: true
+          [ ] prepend: true
+      [ ] Dry-run mode:
+          [ ] --dryRun flag
+          [ ] Show what would be generated
+      [ ] Force-overwrite mode:
+          [ ] --force flag
+          [ ] Overwrite existing files
+      [ ] Multiple output files:
+          [ ] Generate multiple files in one run
+      [ ] Error handling:
+          [ ] Graceful error messages
+      [ ] Configuration via frontmatter:
+          [ ] rdf: path/to/file.ttl
+          [ ] sparql: "SELECT ..."
+          [ ] inject: true
+      [ ] Advanced patterns:
+          [ ] Template variables in output paths
+          [ ] Complex SPARQL queries
+          [ ] Multi-row results
+
+[ ] 6. Update packages/cli/README.md (add ~50 lines)
+    File: /Users/sac/unrdf/packages/cli/README.md
+    Status: ADEQUATE overview, needs API stability section
+    Updates Needed:
+      [ ] New Section: API Stability
+          [ ] Versioning policy
+          [ ] Backwards compatibility promise
+          [ ] JSON output format stability
+          [ ] ggen.toml format stability
+          [ ] Error response format stability
+      [ ] New Section: Template Command Reference
+          [ ] Link to docs/template-command.md (when created)
+          [ ] Quick reference of subcommands
+          [ ] Basic example
+      [ ] Update existing links
+          [ ] Add link to GETTING_STARTED.md
+          [ ] Add link to template-command.md
+          [ ] Verify example links still work
+
+================================================================================
+
+NICE-TO-HAVE (POST-PRODUCTION - 2 hours)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ] 7. Create migration guides
+    File: /Users/sac/unrdf/packages/cli/docs/MIGRATION.md (100 lines)
+    Status: MISSING
+    Content:
+      [ ] v5 → v6 upgrade guide
+          [ ] What changed
+          [ ] How to migrate configs
+          [ ] Breaking changes (if any)
+      [ ] Template adoption guide
+          [ ] For Hygen users
+          [ ] For Nunjucks users
+          [ ] For EJS/ERB users
+      [ ] Feature comparison matrix
+          [ ] Features in v5
+          [ ] Features added in v6
+          [ ] Deprecated features
+
+[ ] 8. Create API schema reference
+    File: /Users/sac/unrdf/packages/cli/docs/API.md (150 lines)
+    Status: MISSING
+    Content:
+      [ ] JSON output schema (TypeScript-style JSDoc)
+          [ ] Query command output
+          [ ] Extract command output
+          [ ] Version field
+          [ ] Metadata structure
+      [ ] ggen.toml schema reference
+          [ ] Link to Zod definitions
+          [ ] All field descriptions
+          [ ] Type information
+          [ ] Required vs optional
+      [ ] Error response format
+          [ ] Error message structure
+          [ ] Exit codes
+          [ ] Common error messages
+
+================================================================================
+
+VERIFICATION CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before Release, Verify:
+
+TESTS
+  [ ] timeout 30s pnpm -C packages/cli test:fast
+      Expected: 423/423 passing
+
+LINT
+  [ ] timeout 30s pnpm -C packages/cli lint
+      Expected: 0 errors, 0 warnings
+
+CODE QUALITY
+  [ ] grep -r "TODO\|FIXME" packages/cli/src --include="*.mjs" | wc -l
+      Expected: 0
+
+CLI FUNCTIONALITY
+  [ ] unrdf template --help (shows all subcommands)
+  [ ] unrdf template generate --help (shows all options)
+  [ ] unrdf template list --help (works)
+  [ ] unrdf template query --help (works)
+  [ ] unrdf template extract --help (works)
+
+EXAMPLES
+  [ ] node packages/cli/examples/template-pipeline.mjs (runs without error)
+  [ ] All features work as expected
+
+DOCUMENTATION
+  [ ] ls packages/cli/docs/template-command.md (file exists)
+  [ ] ls packages/cli/docs/GETTING_STARTED.md (file exists)
+  [ ] docs/sync-command.md contains new sections
+  [ ] JSON query output includes version field
+  [ ] JSON extract output includes version field
+  [ ] README.md references all new docs
+
+PACKAGE READY
+  [ ] All critical docs exist
+  [ ] All examples work
+  [ ] All tests pass
+  [ ] All lint checks pass
+  [ ] API contracts documented
+  [ ] Backwards compatibility promised
+
+================================================================================
+
+SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TOTAL GAPS: 8 items
+CRITICAL (blocking release): 4 items
+IMPORTANT (supporting): 2 items
+NICE-TO-HAVE (polish): 2 items
+
+EFFORT TO CRITICAL:
+  - 3-4 hours of focused documentation work
+  - 30 lines of code (JSON versioning)
+
+EFFORT TO PRODUCTION-READY:
+  - 5-7 hours total (critical + important + stabilization)
+
+RECOMMENDATION:
+  Complete items 1-4 (critical) before tagging release.
+  Complete items 5-6 (important) before public announcement.
+  Items 7-8 (polish) can be done post-production.
+
+================================================================================
+
+Report Generated: April 3, 2026
+Last Updated: April 3, 2026
+Status: REVIEW COMPLETE - AWAITING ACTION
+
+================================================================================

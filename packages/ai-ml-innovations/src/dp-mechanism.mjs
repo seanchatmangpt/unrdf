@@ -10,8 +10,6 @@
  * - Noise calibration
  */
 
-import { z } from 'zod';
-import { randomBytes } from 'crypto';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { DPMechanismSchema } from './schemas.mjs';
 

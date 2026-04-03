@@ -149,7 +149,7 @@ class TemporalAttention {
    * @returns {Array<number>} Embedding with positional encoding
    * @private
    */
-  _addPositionalEncoding(embedding, position, maxLen) {
+  _addPositionalEncoding(embedding, position, _maxLen) {
     const encoded = [...embedding];
 
     for (let i = 0; i < this.embeddingDim; i++) {
@@ -710,19 +710,45 @@ export class TemporalGraphNeuralNetwork {
     return a.map((val, i) => val + b[i]);
   }
 
+  /**
+   * Subtract two vectors element-wise
+   * @param {Array<number>} a - First vector
+   * @param {Array<number>} b - Second vector
+   * @returns {Array<number>} Difference vector
+   * @private
+   */
   _subtract(a, b) {
     return a.map((val, i) => val - b[i]);
   }
 
+  /**
+   * Normalize a vector to unit length
+   * @param {Array<number>} vec - Input vector
+   * @returns {Array<number>} Normalized vector
+   * @private
+   */
   _normalize(vec) {
     const norm = this._l2Norm(vec);
     return norm > 0 ? vec.map((val) => val / norm) : vec;
   }
 
+  /**
+   * Compute L2 norm of a vector
+   * @param {Array<number>} vec - Input vector
+   * @returns {number} L2 norm value
+   * @private
+   */
   _l2Norm(vec) {
     return Math.sqrt(vec.reduce((sum, val) => sum + val * val, 0));
   }
 
+  /**
+   * Compute cosine similarity between two vectors
+   * @param {Array<number>} a - First vector
+   * @param {Array<number>} b - Second vector
+   * @returns {number} Similarity value between -1 and 1
+   * @private
+   */
   _cosineSimilarity(a, b) {
     const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
     const normA = this._l2Norm(a);

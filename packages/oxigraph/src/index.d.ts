@@ -406,34 +406,35 @@ export class OxigraphStore {
   get size(): number;
 
   /**
-   * Load quads from Turtle string
+   * Load RDF data into the store
    *
-   * @param turtle - Turtle format string
-   * @param baseIRI - Base IRI for resolving relative IRIs
-   * @returns This store (for chaining)
+   * @param data - Serialized RDF data
+   * @param options - Load options with required format property
+   * @returns void
    *
    * @example
    * ```javascript
-   * store.loadTurtle(`
+   * store.load(`
    *   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
    *   <http://example.org/alice> foaf:name "Alice" .
-   * `, 'http://example.org/');
+   * `, { format: 'turtle', baseIRI: 'http://example.org/' });
    * ```
    */
-  loadTurtle(turtle: string, baseIRI?: string): this;
+  load(data: string, options: { format: string; baseIRI?: string }): void;
 
   /**
-   * Serialize store to Turtle string
+   * Serialize store to RDF format
    *
-   * @returns Turtle format string
+   * @param options - Dump options with required format property
+   * @returns Serialized RDF data
    *
    * @example
    * ```javascript
-   * const turtle = store.toTurtle();
+   * const turtle = store.dump({ format: 'turtle' });
    * console.log(turtle);
    * ```
    */
-  toTurtle(): string;
+  dump(options: { format: string }): string;
 }
 
 // ============================================================================

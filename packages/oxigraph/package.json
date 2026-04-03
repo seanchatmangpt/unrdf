@@ -8,7 +8,10 @@
   "exports": {
     ".": "./src/index.mjs",
     "./store": "./src/store.mjs",
-    "./types": "./src/types.mjs"
+    "./types": "./src/types.mjs",
+    "./query-cache": "./src/query-cache.mjs",
+    "./sparql-star": "./src/sparql-star.mjs",
+    "./store-receipts": "./src/store-receipts.mjs"
   },
   "sideEffects": false,
   "files": [
@@ -40,7 +43,8 @@
   ],
   "dependencies": {
     "oxigraph": "^0.5.2",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "@unrdf/v6-core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

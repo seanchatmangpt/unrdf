@@ -17,7 +17,7 @@ import {
   generateL5Proof,
   getStoreStateHash,
 } from '../src/store-receipts.mjs';
-import { createContext } from '../../v6-core/src/receipt-pattern.mjs';
+import { createContext } from '@unrdf/v6-core/receipt-pattern';
 
 describe('Oxigraph L5 Determinism Tests', () => {
   describe('Determinism: createStore()', () => {

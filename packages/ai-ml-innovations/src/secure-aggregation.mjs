@@ -11,7 +11,6 @@
  * Machine Learning" (2017)
  */
 
-import { z } from 'zod';
 import { randomBytes } from 'crypto';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { SecureAggregationConfigSchema } from './schemas.mjs';
@@ -126,7 +125,7 @@ export class SecureAggregation {
             let maskedVal = val + nodeShares.secret[i % nodeShares.secret.length];
 
             // Subtract shares from other nodes
-            for (const [otherId, share] of Object.entries(nodeShares.shares)) {
+            for (const [_otherId, share] of Object.entries(nodeShares.shares)) {
               maskedVal -= share[i % share.length];
             }
 

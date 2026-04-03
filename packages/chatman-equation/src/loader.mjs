@@ -14,7 +14,6 @@ import {
   ClosureOperatorSchema,
   ArtifactSchema,
   UnificationMappingSchema,
-  ChatmanExampleSchema,
   safeValidate,
 } from './schemas.mjs';
 

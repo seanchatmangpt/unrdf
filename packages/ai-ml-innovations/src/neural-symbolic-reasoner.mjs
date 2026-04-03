@@ -257,7 +257,11 @@ export class NeuralSymbolicReasoner {
         name: shape.name || `Rule ${rules.length}`,
         description: shape.description,
         conditions: shape.conditions || [],
-        conclusion: shape.conclusion || {},
+        conclusion: {
+          subject: shape.conclusion?.subject || '',
+          predicate: shape.conclusion?.predicate || '',
+          object: shape.conclusion?.object || '',
+        },
         confidence: 1.0, // Symbolic rules have full confidence
       };
 
@@ -319,11 +323,23 @@ export class NeuralSymbolicReasoner {
 
     // Add symbolic results with symbolic weight
     for (const s of symbolic) {
-      combined.push({
+      const result = {
         ...s,
         confidence: s.confidence * this.config.symbolicWeight,
         method: 'symbolic',
-      });
+      };
+      // Ensure rule has valid conclusion
+      if (result.rule && (!result.rule.conclusion || !result.rule.conclusion.subject)) {
+        result.rule = {
+          ...result.rule,
+          conclusion: {
+            subject: result.rule?.conclusion?.subject || '',
+            predicate: result.rule?.conclusion?.predicate || '',
+            object: result.rule?.conclusion?.object || '',
+          },
+        };
+      }
+      combined.push(result);
     }
 
     // Add or boost neural results
@@ -332,11 +348,23 @@ export class NeuralSymbolicReasoner {
 
       if (!existing) {
         // New neural inference
-        combined.push({
+        const result = {
           ...n,
           confidence: n.confidence * this.config.neuralWeight,
           method: 'neural',
-        });
+        };
+        // Ensure rule has valid conclusion
+        if (result.rule && (!result.rule.conclusion || !result.rule.conclusion.subject)) {
+          result.rule = {
+            ...result.rule,
+            conclusion: {
+              subject: result.rule?.conclusion?.subject || '',
+              predicate: result.rule?.conclusion?.predicate || '',
+              object: result.rule?.conclusion?.object || '',
+            },
+          };
+        }
+        combined.push(result);
       } else {
         // Both symbolic and neural agree - boost confidence
         existing.confidence = Math.min(
@@ -425,7 +453,7 @@ export class NeuralSymbolicReasoner {
    * Neural inference using embeddings
    * @private
    */
-  async _neuralInference(tripleEmbedding, triple) {
+  async _neuralInference(tripleEmbedding, _triple) {
     const results = [];
 
     // Compare triple embedding with each rule embedding

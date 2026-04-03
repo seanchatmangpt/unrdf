@@ -6,12 +6,6 @@
  */
 
 import { createHash, randomUUID } from 'crypto';
-import {
-  ObservationSchema,
-  DeltaSchema,
-  ClosureOperatorSchema,
-  ArtifactSchema,
-} from './simple-schemas.mjs';
 
 /**
  * Stage 1: Normalize - Validate and normalize inputs

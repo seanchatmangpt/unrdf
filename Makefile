@@ -127,7 +127,7 @@ format-check:
 	@timeout 30s pnpm format:check 2>&1 | tail -10 || true
 	@echo "$(GREEN)✓ Format check complete$(NC)"
 
-publish-check: lint format-check
+publish-check: lint format-check check-workspace-deps
 	@echo "$(BLUE)Validating package readiness...$(NC)"
 	@echo "$(YELLOW)Public packages: $$(make list-public-packages | wc -l)$(NC)"
 	@echo "$(YELLOW)Private packages: $$(make list-private-packages | wc -l)$(NC)"
@@ -139,6 +139,20 @@ publish-check: lint format-check
 		echo "  $$pkg: v$$current"; \
 	done
 	@echo "$(GREEN)✓ Package validation complete$(NC)"
+
+check-workspace-deps:
+	@echo "$(BLUE)Checking for workspace:* dependencies...$(NC)"
+	@workspace_count=$$(grep -r '"workspace:' packages/*/package.json --include="package.json" 2>/dev/null | wc -l || echo 0); \
+	if [ $$workspace_count -gt 0 ]; then \
+		echo "$(RED)ERROR: Found $$workspace_count package(s) with workspace:* dependencies$(NC)"; \
+		echo ""; \
+		echo "$(YELLOW)This will cause npm publish failures. Use 'pnpm pack' instead of 'pnpm publish' for source-only packages.$(NC)"; \
+		echo ""; \
+		grep -r '"workspace:' packages/*/package.json --include="package.json" | sed 's/^/  /'; \
+		exit 1; \
+	else \
+		echo "$(GREEN)✓ No workspace:* dependencies found$(NC)"; \
+	fi
 
 # ============================================================================
 # PUBLISHING

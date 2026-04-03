@@ -51,7 +51,7 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Package Tiers (56 Total)
+### Package Tiers (63 Total)
 
 **Essential Tier** (7 packages - always needed):
 - `@unrdf/core` - RDF Graph Operations, SPARQL, Foundational Substrate
@@ -71,6 +71,10 @@
 - `@unrdf/receipts` - Batch receipt generation with Merkle trees
 - `@unrdf/consensus` - Production-grade Raft consensus
 - `@unrdf/v6-compat` - V5 to V6 migration bridge
+
+**Orphan Tier** (43 packages - zero internal dependents):
+- `ai-ml-innovations`, `atomvm`, `blockchain`, `caching`, `chatman-equation`, `cli`, `codegen`, `collab`, `composables`, `consensus`, `dark-matter`, `decision-fabric`, `diataxis-kit`, `domain`, `engine-gateway`, `event-automation`, `fusion`, `geosparql`, `kgc-claude`, `kgc-docs`, `kgc-probe`, `kgc-swarm`, `kgc-tools`, `ml-versioning`, `observability`, `project-engine`, `rdf-graphql`, `react`, `self-healing-workflows`, `serverless`, `spatial-kg`, `temporal-discovery`, `yawl-ai`, `yawl-api`, `yawl-durable`, `yawl-kafka`, `yawl-langchain`, `yawl-observability`, `yawl-queue`, `yawl-realtime`, `yawl-viz`, `zkp`
+- **Note**: Many may be scaffolding or have zero real implementation. See repo-report.md for detailed analysis.
 
 **Optional Tier** - Performance, AI, visualization packages
 **Internal Tier** - Validation, test-utils, docs packages

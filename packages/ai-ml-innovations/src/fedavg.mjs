@@ -10,7 +10,6 @@
  * from Decentralized Data" (2017)
  */
 
-import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 import { FedAvgConfigSchema } from './schemas.mjs';
 

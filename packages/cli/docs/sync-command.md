@@ -540,6 +540,277 @@ Check template syntax. Common issues:
 - Invalid filter usage
 - Undefined variables (use `| default("")` for optional values)
 
+## Configuration Reference: ggen.toml Schema
+
+### [ontology] Fields
+
+The `[ontology]` section configures RDF data source and parsing behavior.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `source` | string | **required** | Path to RDF file (Turtle, N-Triples, JSON-LD, RDF/XML, etc.) |
+| `format` | string | auto-detect | RDF format: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig` |
+| `base_iri` | string | - | Base IRI for relative URI resolution |
+| `prefixes` | object | - | Custom namespace prefix mappings |
+| `follow_imports` | boolean | `false` | Follow `owl:imports` declarations |
+
+**Example:**
+
+```toml
+[ontology]
+source = "ontology/schema.ttl"
+format = "turtle"
+base_iri = "http://example.org/api/"
+
+[ontology.prefixes]
+api = "http://example.org/api#"
+schema = "http://schema.org/"
+rdfs = "http://www.w3.org/2000/01/rdf-schema#"
+```
+
+### [generation] Fields
+
+The `[generation]` section controls output behavior and rule execution.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `output_dir` | string | `"lib"` | Base output directory for all generated files |
+| `require_audit_trail` | boolean | `false` | Require generation receipts (KGC-4D) |
+| `parallel` | boolean | `false` | Execute rules in parallel (vs sequential) |
+
+**Example:**
+
+```toml
+[generation]
+output_dir = "src/generated"
+require_audit_trail = false
+parallel = false
+```
+
+### [[generation.rules]] Fields (Array)
+
+Each `[[generation.rules]]` section defines one code generation rule.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `name` | string | **required** | Rule identifier (alphanumeric, no spaces) |
+| `description` | string | - | Human-readable description |
+| `query` | string | **required** | SPARQL SELECT query |
+| `template` | string | **required** | Path to Nunjucks template file |
+| `output_file` | string | **required** | Output file path (relative to `output_dir`, supports `{{ }}` templating) |
+| `enabled` | boolean | `true` | Enable/disable rule without removing config |
+| `mode` | string | `"overwrite"` | File write behavior: `overwrite`, `append`, `skip_existing` |
+| `depends_on` | array | - | Array of rule names this rule depends on (executed first) |
+
+**Example:**
+
+```toml
+[[generation.rules]]
+name = "zod-entities"
+description = "Generate Zod validation schemas for entities"
+enabled = true
+mode = "overwrite"
+template = "templates/zod/entities.njk"
+output_file = "schemas/{{ entity_name | kebabCase }}.mjs"
+query = """
+SELECT ?entityName ?propertyName ?propertyType
+WHERE {
+  ?entity a api:Entity ; api:name ?entityName .
+  ?property rdfs:domain ?entity ; rdfs:label ?propertyName ; rdfs:range ?propertyType .
+}
+ORDER BY ?entityName ?propertyName
+"""
+depends_on = []
+```
+
+### Environment Variable Substitution
+
+Configuration values support environment variable substitution with defaults:
+
+```toml
+[ontology]
+source = "${ONTOLOGY_PATH:-ontology/default.ttl}"
+
+[generation]
+output_dir = "${OUTPUT_DIR:-lib}"
+```
+
+**Patterns:**
+
+- `${VAR}` — substitute variable (empty if unset)
+- `${VAR:-default}` — substitute with default value if unset
+- `$VAR` — simple substitution (no default)
+
+## Backwards Compatibility: ggen.toml Format Stability
+
+The `.unrdf.toml` configuration format (formerly `ggen.toml`) maintains backwards compatibility.
+
+### Versioning
+
+- **v5.x → v6.0+** — Format remains stable
+- Breaking changes include major version bump (e.g., v7.0)
+- Deprecations announced 2+ releases in advance
+
+### Guaranteed Stable Fields
+
+These fields **will not change meaning** across minor/patch versions:
+
+- `[ontology].source` — RDF file path
+- `[ontology].format` — RDF format
+- `[generation].output_dir` — Base output directory
+- `[[generation.rules]].name` — Rule identifier
+- `[[generation.rules]].query` — SPARQL query
+- `[[generation.rules]].template` — Template path
+- `[[generation.rules]].output_file` — Output file path
+- `[[generation.rules]].mode` — File write mode
+
+### Migration Path (v5 → v6)
+
+Old `ggen.toml`:
+
+```toml
+[project]
+name = "my-api"
+
+[ontology]
+source = "schema.ttl"
+
+[generation]
+output_dir = "lib"
+
+[[rules]]
+name = "schemas"
+template = "templates/zod.njk"
+output_file = "schemas.mjs"
+query = "SELECT ..."
+```
+
+New `.unrdf.toml` (compatible):
+
+```toml
+# Same structure, just rename file
+[project]
+name = "my-api"
+
+[ontology]
+source = "schema.ttl"
+
+[generation]
+output_dir = "lib"
+
+[[generation.rules]]  # Changed: added generation prefix
+name = "schemas"
+template = "templates/zod.njk"
+output_file = "schemas.mjs"
+query = "SELECT ..."
+```
+
+## Advanced: Hygen Integration
+
+The `unrdf sync` command integrates with **Hygen** (scaffolding generator) for line-based file modifications.
+
+### Supported Hygen Directives
+
+Add these to template frontmatter for advanced file manipulation:
+
+| Directive | Type | Description |
+|-----------|------|-------------|
+| `inject` | boolean | Enable Hygen injection mode (line-based modification) |
+| `before` | string (regex) | Insert content before matching line |
+| `after` | string (regex) | Insert content after matching line |
+| `append` | string (regex) | Append content to file ending with pattern |
+| `prepend` | string (regex) | Prepend content to file starting with pattern |
+| `lineAt` | number | Insert at specific line number |
+| `skipIf` | string (regex) | Skip generation if file contains pattern |
+
+### Hygen Example 1: Inject After Marker
+
+**Template (`templates/add-exports.njk`):**
+
+```yaml
+---
+to: src/index.ts
+inject: true
+after: "^// Auto-generated exports$"
+---
+{% for entity in sparql_results %}
+export { {{ entity["?className"] | pascalCase }}Schema } from './schemas/{{ entity["?className"] | kebabCase }}';
+{% endfor %}
+```
+
+**Input file (`src/index.ts`):**
+
+```typescript
+// Manual exports
+export { userService } from './services/user';
+
+// Auto-generated exports
+```
+
+**Output:**
+
+```typescript
+// Manual exports
+export { userService } from './services/user';
+
+// Auto-generated exports
+export { UserSchema } from './schemas/user';
+export { PostSchema } from './schemas/post';
+```
+
+### Hygen Example 2: Conditional Skip
+
+Skip generation if marker already exists:
+
+```yaml
+---
+to: src/types/index.ts
+inject: true
+skipIf: "Generated at.*2026"
+after: "^// Type definitions$"
+---
+// Generated at {{ now | date("YYYY-MM-DD") }}
+```
+
+### Hygen Example 3: Line-Based Insert
+
+Insert at specific line:
+
+```yaml
+---
+to: src/resolvers/index.ts
+inject: true
+lineAt: 5
+---
+// New imports added by sync
+```
+
+### Anchor Pattern Examples
+
+**Prepend (before):**
+
+```yaml
+before: "^export const schemas"
+```
+
+Matches line starting with `export const schemas`.
+
+**After (insert following):**
+
+```yaml
+after: "^import.*from.*zod"
+```
+
+Matches lines starting with `import ... from ... zod`.
+
+**Append (end of section):**
+
+```yaml
+append: "^};$"
+```
+
+Matches closing brace at line end.
+
 ## See Also
 
 - [Nunjucks Documentation](https://mozilla.github.io/nunjucks/)

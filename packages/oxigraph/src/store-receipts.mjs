@@ -17,7 +17,7 @@ import {
   ReceiptProfileSchema,
   canonicalize,
   blake3Hash,
-} from '../../v6-core/src/receipt-pattern.mjs';
+} from '@unrdf/v6-core/receipt-pattern';
 
 /**
  * Store Configuration Schema

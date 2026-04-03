@@ -339,8 +339,8 @@ function createMockGraph(numTriples) {
 
   // Add iterator
   graph[Symbol.iterator] = function* () {
-    for (const triple of this) {
-      yield triple;
+    for (let i = 0; i < this.length; i++) {
+      yield this[i];
     }
   };
 

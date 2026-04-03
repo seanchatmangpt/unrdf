@@ -36,7 +36,7 @@ function hashObject(obj) {
  * Simulate closure operator application
  */
 function applyClosureOperator(config) {
-  const { observations, closure_operator } = config;
+  const { closure_operator } = config;
 
   // Simple rule application
   const results = {

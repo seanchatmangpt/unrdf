@@ -15,7 +15,6 @@
 
 import { z } from 'zod';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { randomBytes } from 'crypto';
 
 const tracer = trace.getTracer('@unrdf/ai-ml-innovations');
 
@@ -226,7 +225,7 @@ export class FederatedEmbeddingTrainer {
         return {
           model: this.globalModel,
           trainingHistory: this.trainingHistory,
-          stats: this.stats,
+          stats: this.getStats(),
           privacySpent: this.privacySpent,
         };
       } catch (error) {
@@ -342,6 +341,11 @@ export class FederatedEmbeddingTrainer {
    * @returns {Object} Aggregated model
    */
   federatedAveraging(updates, epoch) {
+    // Ensure global model is initialized
+    if (!this.globalModel) {
+      this.globalModel = this.initializeGlobalModel();
+    }
+
     const totalSamples = updates.reduce((sum, u) => sum + u.sampleCount, 0);
     const avgGradients = {};
 
@@ -415,6 +419,9 @@ export class FederatedEmbeddingTrainer {
    * @returns {Object} Cloned model
    */
   cloneModel(model) {
+    if (!model) {
+      throw new Error('Cannot clone null or undefined model');
+    }
     return {
       entityEmbeddings: JSON.parse(JSON.stringify(model.entityEmbeddings)),
       relationEmbeddings: JSON.parse(JSON.stringify(model.relationEmbeddings)),
@@ -491,7 +498,7 @@ export class FederatedEmbeddingTrainer {
    * @param {Object} model - Model to validate
    * @returns {Promise<Object>} Validation metrics
    */
-  async validateFederated(model) {
+  async validateFederated(_model) {
     // Simplified validation (would use actual validation set in production)
     const loss = Math.random() * 0.5; // Placeholder
     const accuracy = 0.8 + Math.random() * 0.15; // Placeholder
