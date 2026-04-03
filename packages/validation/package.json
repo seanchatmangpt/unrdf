@@ -40,7 +40,7 @@
   "homepage": "https://github.com/unrdf/unrdf#readme",
   "author": "UNRDF Contributors",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@unrdf/knowledge-engine": "26.4.3"
   }

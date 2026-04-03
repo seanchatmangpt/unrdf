@@ -11,6 +11,7 @@
 
 import { z } from 'zod';
 import { OxigraphStore } from './store.mjs';
+import { dataFactory } from './index.mjs';
 import {
   withReceipt,
   createContext,
@@ -243,11 +244,11 @@ export async function testComposition(context) {
     previousReceiptHash: receipt1.receiptHash,
   });
 
-  const quad = {
-    subject: { value: 'http://example.org/Alice' },
-    predicate: { value: 'http://xmlns.com/foaf/0.1/name' },
-    object: { value: 'Alice', datatype: 'http://www.w3.org/2001/XMLSchema#string' },
-  };
+  const quad = dataFactory.quad(
+    dataFactory.namedNode('http://example.org/Alice'),
+    dataFactory.namedNode('http://xmlns.com/foaf/0.1/name'),
+    dataFactory.literal('Alice')
+  );
 
   const { result: updatedStore, receipt: receipt2 } = await addQuad(ctx2, store, quad);
 
