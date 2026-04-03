@@ -1,0 +1,72 @@
+{
+  "name": "@unrdf/streaming",
+  "version": "5.0.1",
+  "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
+  "type": "module",
+  "bin": {
+    "validate-streaming": "./examples/validate-streaming.mjs"
+  },
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./processor": "./src/processor.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "examples/",
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "build": "node build.config.mjs",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/streaming'"
+  },
+  "keywords": [
+    "rdf",
+    "streaming",
+    "real-time",
+    "change-feed",
+    "synchronization"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/oxigraph": "workspace:*",
+    "citty": "^0.1.6",
+    "lru-cache": "^10.0.0",
+    "ws": "^8.18.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@rdfjs/data-model": "^2.0.2",
+    "@types/node": "^24.10.1",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/streaming"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

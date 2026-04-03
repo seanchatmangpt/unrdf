@@ -12,6 +12,7 @@
 **CRITICAL**: Before declaring ANY work complete, question everything. Separate claims from reality. Demand evidence, not assertions.
 
 **The Core Questions**:
+
 - **Did you RUN it?** Or just read the code?
 - **Can you PROVE it?** Or are you assuming?
 - **What BREAKS if you're wrong?** Be specific.
@@ -88,6 +89,7 @@ Write "src/feature.mjs"
 ```
 
 **Before "Done"**:
+
 - ❓ Did I RUN every command or just write them?
 - ❓ Did I read output or assume success?
 - ❓ What SPECIFIC tests verify the feature?
@@ -102,6 +104,7 @@ Write "src/feature.mjs"
 **Core Insight**: In well-specified domains, 20% of features = 80% of value. Implement those ONCE, correctly, using proven patterns.
 
 **When to Use**:
+
 - ✅ Well-defined specs (RDF, APIs, DSLs) + existing patterns + H_spec ≤ 16 bits
 - ❌ Exploratory domains, user feedback needed, uncertain requirements
 
@@ -181,6 +184,7 @@ grep "FAILED\|Error" validation-output.log  # MUST be 0 results
 - `ml-developer` - Machine learning model development
 
 **Verification**:
+
 - ❓ Is THIS agent RIGHT for the task? (Match expertise)
 - ❓ Did agent RUN command or just write code?
 - ❓ Did I verify output independently?
@@ -445,6 +449,7 @@ export * from './schemas.mjs';
 ## 🎓 Counter-Practice Lessons
 
 ### 🚫 DON'T DO (Will fail)
+
 1. Add OTEL to implementation modules (observability ≠ business logic)
 2. Add defensive code (guards hide real bugs)
 3. Try to improve working patterns (copy exactly)
@@ -453,6 +458,7 @@ export * from './schemas.mjs';
 6. Import from `'n3'` directly (use `@unrdf/oxigraph`)
 
 ### ✅ WHAT WORKS (Evidence-Based)
+
 - Pure functions with NO OTEL in implementation
 - Zod validation + simple try-catch
 - Batch refactoring in phases
@@ -467,27 +473,32 @@ export * from './schemas.mjs';
 ## 🧠 Working With Claude: Internal Patterns
 
 ### Token Generation
+
 - Sequential generation - early tokens lock direction
 - Hard to backtrack mid-response
 - **Action**: Clarify intent upfront
 
 ### Context Window
+
 - Sweet spot: 50K-100K tokens
 - Degradation: >150K tokens
 - **Action**: Summarize periodically
 
 ### Uncertainty Calibration
+
 - "Not sure" = 70% confident
 - "Let me check" = 20-30% confident
 - Confident ≠ 95%+ (often 60-80%)
 - **Action**: Use OTEL for claims
 
 ### Failure Modes
+
 - **Weak**: Exact counts, nested logic >3 levels
 - **Strong**: Pattern matching, refactoring, planning
 - **Check**: File counts (`ls | wc -l`), exact numbers
 
 ### Quality Degradation
+
 - First response = best thought-through
 - Rapid iteration = patch-over-patch
 - After ~15 messages = coherence drops
@@ -525,24 +536,28 @@ examples/
 **Before declaring complete**:
 
 ### Claims vs Reality
+
 - [ ] Did I RUN code or just read it?
 - [ ] Did I read FULL output or stop at first pass?
 - [ ] What BREAKS if claim is wrong?
 - [ ] Can I REPRODUCE from scratch?
 
 ### Evidence Quality
+
 - [ ] Test output showing success? (Not "tests pass")
 - [ ] File counts with `ls | wc -l`? (Not "~X files")
 - [ ] OTEL spans/logs? (Not "should work")
 - [ ] Before/after metrics? (Not "faster")
 
 ### Process Quality
+
 - [ ] Batched operations in ONE message?
 - [ ] Timeout all commands?
 - [ ] Verified cross-references?
 - [ ] Measured performance?
 
 ### Red Flags (Stop if ANY apply)
+
 - ❌ "I think..." / "should be..." → No evidence
 - ❌ "Mostly works" / "almost done" → Not acceptable
 - ❌ "Code looks good" → Didn't run it
@@ -567,7 +582,7 @@ examples/
 
 **Core Principle**: Claude Flow coordinates, Claude Code creates. **OTEL spans + test output = ONLY validation.**
 
-**The Adversarial PM Question**: *If someone challenged EVERY claim today, which would survive scrutiny?*
+**The Adversarial PM Question**: _If someone challenged EVERY claim today, which would survive scrutiny?_
 
 Answer honestly. That's your real quality level.
 

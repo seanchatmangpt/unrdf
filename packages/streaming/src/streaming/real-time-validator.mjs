@@ -38,7 +38,7 @@ const ValidatorConfigSchema = z.object({
   shapes: z.any(),
   strict: z.boolean().default(false),
   enableCaching: z.boolean().default(true),
-  cacheSize: z.number().min(1).default(100),
+  cacheSize: z.number().min(0).default(100),
   debounceMs: z.number().min(0).default(100),
   observability: z
     .object({
@@ -76,11 +76,19 @@ export class RealTimeValidator extends EventEmitter {
     super();
     this.config = ValidatorConfigSchema.parse(config);
     this.shapesStore = this._initializeShapes(this.config.shapes);
-    this.validationCache = new LRUCache({
-      max: this.config.cacheSize,
-      ttl: 60_000, // 1 minute
-      updateAgeOnGet: true,
-    });
+
+    // Only create LRU cache if cacheSize > 0
+    if (this.config.cacheSize > 0) {
+      this.validationCache = new LRUCache({
+        max: this.config.cacheSize,
+        ttl: 60_000, // 1 minute
+        updateAgeOnGet: true,
+      });
+    } else {
+      // Use a simple Map for cacheSize = 0 (effectively disabled)
+      this.validationCache = new Map();
+    }
+
     this.debounceTimer = null;
     this.pendingValidations = [];
     this.isValidating = false;
@@ -143,8 +151,8 @@ export class RealTimeValidator extends EventEmitter {
         // Generate delta hash for caching
         const deltaHash = this._hashDelta(delta);
 
-        // Check cache if enabled
-        if (this.config.enableCaching) {
+        // Check cache if enabled and cacheSize > 0
+        if (this.config.enableCaching && this.config.cacheSize > 0) {
           const cached = this.validationCache.get(deltaHash);
           if (cached) {
             this.metrics.cacheHits++;
@@ -193,8 +201,8 @@ export class RealTimeValidator extends EventEmitter {
           duration: Date.now() - startTime,
         });
 
-        // Cache result
-        if (this.config.enableCaching) {
+        // Cache result only if cacheSize > 0
+        if (this.config.enableCaching && this.config.cacheSize > 0) {
           this._addToCache(deltaHash, validationResult);
         }
 

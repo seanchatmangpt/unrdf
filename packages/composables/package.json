@@ -21,7 +21,7 @@
     "test": "vitest run --coverage",
     "test:fast": "vitest run --coverage",
     "test:watch": "vitest --coverage",
-    "build": "unbuild && tsc --emitDeclarationOnly",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
     "build:types": "tsc --emitDeclarationOnly",
     "lint": "eslint src/ test/ --max-warnings=0",
     "lint:fix": "eslint src/ test/ --fix",

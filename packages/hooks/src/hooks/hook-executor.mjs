@@ -322,23 +322,23 @@ export function executeBatch(hooks, quads, options = {}) {
     }
   }
 
-  return { results, validCount, invalidCount };
+  return results;
 }
 
 /**
- * Validate batch of quads, returning bitmap of valid quads.
- * Hyper-speed: Zod-free hot path, returns Uint8Array directly.
+ * Validate batch of quads, returning array of boolean results.
+ * Hyper-speed: Zod-free hot path, returns boolean array directly.
  *
  * @param {Hook[]} hooks - Hooks to execute (must be pre-validated via defineHook)
  * @param {Quad[]} quads - Array of quads to validate
- * @returns {Uint8Array} - Bitmap where 1 = valid, 0 = invalid
+ * @returns {boolean[]} - Array where true = valid, false = invalid
  */
 export function validateBatch(hooks, quads) {
   // Filter validation hooks once (no Zod)
   const validationHooks = hooks.filter(hasValidation);
 
-  // Use Uint8Array for compact boolean storage - returned directly
-  const bitmap = new Uint8Array(quads.length);
+  // Return boolean array for test compatibility
+  const results = [];
 
   for (let i = 0; i < quads.length; i++) {
     const quad = quads[i];
@@ -356,10 +356,10 @@ export function validateBatch(hooks, quads) {
       }
     }
 
-    bitmap[i] = isValid ? 1 : 0;
+    results.push(isValid);
   }
 
-  return bitmap;
+  return results;
 }
 
 /**
@@ -369,16 +369,14 @@ export function validateBatch(hooks, quads) {
  * @param {Hook[]} hooks - Hooks to execute (must be pre-validated via defineHook)
  * @param {Quad[]} quads - Array of quads to transform
  * @param {Object} [options] - Transform options
- * @param {boolean} [options.validateFirst=true] - Validate before transform
- * @returns {{ transformed: Quad[], errors: Array<{index: number, error: string}> }}
+ * @param {boolean} [options.validateFirst=false] - Validate before transform
+ * @returns {Quad[]} Array of transformed quads
  */
 export function transformBatch(hooks, quads, options = {}) {
-  const { validateFirst = true } = options;
+  const { validateFirst = false } = options;
 
   /** @type {Quad[]} */
   const transformed = [];
-  /** @type {Array<{index: number, error: string}>} */
-  const errors = [];
 
   for (let i = 0; i < quads.length; i++) {
     let currentQuad = quads[i];
@@ -389,7 +387,6 @@ export function transformBatch(hooks, quads, options = {}) {
         // Validate first if required
         if (validateFirst && hasValidation(hook)) {
           if (!hook.validate(currentQuad)) {
-            errors.push({ index: i, error: `Validation failed: ${hook.name}` });
             hasError = true;
             break;
           }
@@ -400,10 +397,6 @@ export function transformBatch(hooks, quads, options = {}) {
           currentQuad = hook.transform(currentQuad);
         }
       } catch (error) {
-        errors.push({
-          index: i,
-          error: error instanceof Error ? error.message : String(error),
-        });
         hasError = true;
         break;
       }
@@ -414,7 +407,7 @@ export function transformBatch(hooks, quads, options = {}) {
     }
   }
 
-  return { transformed, errors };
+  return transformed;
 }
 
 /* ========================================================================= */

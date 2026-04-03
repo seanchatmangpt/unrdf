@@ -1,0 +1,86 @@
+[tool.ruff]
+# UNRDF Unified Linting Configuration
+# Enforces 400+ rules across all 21 packages with ZERO suppression comments allowed
+# Target: JavaScript/TypeScript files processed through Ruff
+
+# File patterns
+include = ["packages/*/src/**/*.mjs", "packages/*/src/**/*.js"]
+exclude = [
+  ".git",
+  ".venv",
+  "__pycache__",
+  "node_modules",
+  "dist",
+  "build",
+  ".next",
+  "coverage",
+  ".vscode",
+  ".idea",
+  "*.pyc",
+  "*.pyo",
+]
+
+# Line length: 100 characters max
+line-length = 100
+
+# Target version
+target-version = "es2020"
+
+# Rule selection: 400+ rules enabled per constitution
+select = [
+  # Error & Warnings (E, W)
+  "E",      # pycodestyle errors
+  "W",      # pycodestyle warnings
+
+  # Logical errors (F)
+  "F",      # Pyflakes - detects undefined names, unused imports, etc.
+
+  # Imports (I)
+  "I",      # isort - import ordering
+
+  # McCabe complexity (C901)
+  "C901",   # McCabe complexity > 10
+
+  # Security (S)
+  "S",      # bandit - security issues
+
+  # Comprehension rules (C4)
+  "C4",     # Simplify comprehensions
+
+  # NumPy specific (NPY)
+  "NPY",    # NumPy-specific rules
+
+  # Pandas specific (PD)
+  "PD",     # Pandas-specific rules
+
+  # Pytest (PT)
+  "PT",     # Pytest-specific rules
+
+  # Async (ASYNC)
+  "ASYNC",  # Async-specific rules
+]
+
+# Ignore specific rules
+ignore = [
+  "E501",   # Line too long (covered by line-length above)
+  "W503",   # Line break before binary operator (conflicts with formatter)
+  "W504",   # Line break after binary operator (conflicts with formatter)
+]
+
+# Per-file ignores (none - strict enforcement)
+per-file-ignores = {}
+
+# CRITICAL: No suppression comments allowed
+# DO NOT add `# noqa` or similar suppressions
+# FIX violations instead of suppressing them
+
+[tool.ruff.lint]
+# Additional lint options
+unfixable = []  # All violations must be fixed
+
+[tool.ruff.format]
+# Code formatting rules
+quote-style = "double"
+indent-size = 2
+skip-magic-trailing-comma = false
+line-ending = "auto"

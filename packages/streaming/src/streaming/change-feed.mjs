@@ -29,15 +29,19 @@ const ChangeEventSchema = z.object({
     graph: z.any().optional(),
   }),
   timestamp: z.number(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.any().optional(),
 });
 
 /**
  * Configuration schema for change feed
+ * Note: Infinity is validated separately as Zod considers it "not a number"
  */
 const ChangeFeedConfigSchema = z
   .object({
-    maxHistorySize: z.number().positive().optional().default(MAX_HISTORY_SIZE),
+    maxHistorySize: z
+      .union([z.number().nonnegative(), z.literal(Infinity)])
+      .optional()
+      .default(MAX_HISTORY_SIZE),
   })
   .optional()
   .default({});
@@ -70,7 +74,8 @@ export function createChangeFeed(store, config = {}) {
   // Hook into store if provided
   if (store && typeof store.addQuad === 'function' && typeof store.removeQuad === 'function') {
     const originalAddQuad = store.addQuad.bind(store);
-    const originalRemoveQuad = store.removeQuad.bind(store);
+    const originalRemoveQuad = store.removeQuad?.bind(store);
+    const originalRemoveQuads = store.removeQuads?.bind(store);
 
     store.addQuad = function (quad) {
       const result = originalAddQuad(quad);
@@ -86,19 +91,40 @@ export function createChangeFeed(store, config = {}) {
       return result;
     };
 
-    store.removeQuad = function (quad) {
-      const result = originalRemoveQuad(quad);
-      feed.emitChange({
-        type: 'remove',
-        quad: {
-          subject: quad.subject,
-          predicate: quad.predicate,
-          object: quad.object,
-          graph: quad.graph,
-        },
-      });
-      return result;
-    };
+    // Support both N3 Store (removeQuad) and Oxigraph (removeQuads)
+    if (originalRemoveQuad) {
+      store.removeQuad = function (quad) {
+        const result = originalRemoveQuad(quad);
+        feed.emitChange({
+          type: 'remove',
+          quad: {
+            subject: quad.subject,
+            predicate: quad.predicate,
+            object: quad.object,
+            graph: quad.graph,
+          },
+        });
+        return result;
+      };
+    }
+
+    if (originalRemoveQuads) {
+      store.removeQuads = function (quads) {
+        const result = originalRemoveQuads(quads);
+        for (const quad of quads) {
+          feed.emitChange({
+            type: 'remove',
+            quad: {
+              subject: quad.subject,
+              predicate: quad.predicate,
+              object: quad.object,
+              graph: quad.graph,
+            },
+          });
+        }
+        return result;
+      };
+    }
   }
 
   const feed = {
@@ -125,18 +151,35 @@ export function createChangeFeed(store, config = {}) {
           'subscribers.count': subscribers.size,
         });
 
-        changes.push(validated);
-
         // Implement ring buffer: remove oldest change if exceeding max size
-        const trimmed = changes.length > validatedConfig.maxHistorySize;
-        if (trimmed) {
-          changes.shift();
-        }
+        // Handle edge cases: maxHistorySize = 0 (no history), Infinity (unbounded)
+        const maxSize = validatedConfig.maxHistorySize;
 
-        span.setAttributes({
-          'history.size': changes.length,
-          'history.trimmed': trimmed,
-        });
+        if (maxSize === 0) {
+          // Don't store any history
+          span.setAttributes({
+            'history.size': 0,
+            'history.trimmed': false,
+          });
+        } else if (maxSize === Infinity) {
+          // Unbounded - store everything
+          changes.push(validated);
+          span.setAttributes({
+            'history.size': changes.length,
+            'history.trimmed': false,
+          });
+        } else {
+          // Normal ring buffer with size limit
+          changes.push(validated);
+          const trimmed = changes.length > maxSize;
+          if (trimmed) {
+            changes.shift();
+          }
+          span.setAttributes({
+            'history.size': changes.length,
+            'history.trimmed': trimmed,
+          });
+        }
 
         const event = new CustomEvent('change', {
           detail: validated,
@@ -146,7 +189,12 @@ export function createChangeFeed(store, config = {}) {
 
         // Notify subscribers
         for (const callback of subscribers) {
-          callback(validated);
+          try {
+            callback(validated);
+          } catch (error) {
+            console.error('[change-feed] Subscriber callback error:', error);
+            // Don't crash on subscriber errors
+          }
         }
       } catch (error) {
         span.recordException(error);

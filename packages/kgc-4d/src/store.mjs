@@ -14,9 +14,12 @@ if (!GRAPHS || !GRAPHS.UNIVERSE || !GRAPHS.EVENT_LOG || !GRAPHS.SYSTEM) {
 }
 
 // Constants for payload validation (GAP-S1 fix)
-const MAX_PAYLOAD_SIZE_BYTES = 1_000_000;  // 1MB limit
-const PAYLOAD_SIZE_WARNING_BYTES = 100_000;  // 100KB warning threshold
+const MAX_PAYLOAD_SIZE_BYTES = 1_000_000; // 1MB limit
+const PAYLOAD_SIZE_WARNING_BYTES = 100_000; // 100KB warning threshold
 
+/**
+ *
+ */
 export class KGCStore extends UnrdfStore {
   /**
    * @param {Object} options
@@ -24,7 +27,7 @@ export class KGCStore extends UnrdfStore {
    */
   constructor(options = {}) {
     super(options);
-    this.eventCount = 0n;  // GAP-S4 fix: Use BigInt to prevent overflow after 2^53
+    this.eventCount = 0n; // GAP-S4 fix: Use BigInt to prevent overflow after 2^53
     // Initialize vector clock with node ID (or generate one)
     const nodeId = options.nodeId || this._generateNodeId();
     this.vectorClock = new VectorClock(nodeId);
@@ -98,7 +101,11 @@ export class KGCStore extends UnrdfStore {
         );
       }
 
-      if (payloadSize > PAYLOAD_SIZE_WARNING_BYTES && typeof console !== 'undefined' && console.warn) {
+      if (
+        payloadSize > PAYLOAD_SIZE_WARNING_BYTES &&
+        typeof console !== 'undefined' &&
+        console.warn
+      ) {
         console.warn(
           `[KGC Store] Large payload warning: ${payloadSize} bytes (threshold: ${PAYLOAD_SIZE_WARNING_BYTES} bytes)`
         );

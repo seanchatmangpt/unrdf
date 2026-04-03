@@ -1,0 +1,71 @@
+{
+  "timestamp": "2025-12-21T10:18:29.367Z",
+  "nodeVersion": "v24.11.1",
+  "throughput_1k": {
+    "itemCount": 1000,
+    "processedCount": 1000,
+    "duration": "1.42",
+    "throughput": "704679.92",
+    "memoryGrowth": "1014.43 KB",
+    "avgTimePerItem": "0.0014"
+  },
+  "throughput_10k": {
+    "itemCount": 10000,
+    "processedCount": 10000,
+    "duration": "1.88",
+    "throughput": "5305157.99",
+    "memoryGrowth": "NaN undefined",
+    "avgTimePerItem": "0.0002"
+  },
+  "throughput_100k": {
+    "itemCount": 100000,
+    "processedCount": 100000,
+    "duration": "7.93",
+    "throughput": "12611930.89",
+    "memoryGrowth": "2.99 MB",
+    "avgTimePerItem": "0.0001"
+  },
+  "transform_1k": {
+    "itemCount": 1000,
+    "processedCount": 1000,
+    "duration": "2.22",
+    "throughput": "450543.40",
+    "memoryGrowth": "778.36 KB",
+    "avgTimePerItem": "0.0022"
+  },
+  "transform_10k": {
+    "itemCount": 10000,
+    "processedCount": 10000,
+    "duration": "4.18",
+    "throughput": "2394898.67",
+    "memoryGrowth": "NaN undefined",
+    "avgTimePerItem": "0.0004"
+  },
+  "backpressure_1k": {
+    "itemCount": 1000,
+    "processedCount": 1000,
+    "duration": "15.82",
+    "throughput": "63203.13",
+    "memoryGrowth": "NaN undefined",
+    "peakMemory": "8.77 MB",
+    "backpressureHandled": true
+  },
+  "parallel_10_streams": {
+    "streamCount": 10,
+    "itemsPerStream": 1000,
+    "totalItems": 10000,
+    "totalProcessed": 10000,
+    "duration": "1.28",
+    "throughput": "7786900.56",
+    "memoryGrowth": "2.61 MB"
+  },
+  "parallel_100_streams": {
+    "streamCount": 100,
+    "itemsPerStream": 100,
+    "totalItems": 10000,
+    "totalProcessed": 10000,
+    "duration": "2.05",
+    "throughput": "4882714.75",
+    "memoryGrowth": "NaN undefined"
+  }
+}

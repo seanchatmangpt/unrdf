@@ -15,6 +15,7 @@
   "sideEffects": false,
   "files": [
     "src/",
+    "examples/",
     "dist/",
     "README.md",
     "LICENSE"

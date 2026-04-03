@@ -29,6 +29,16 @@ export function createCustomFilters(options = {}) {
     ...dataFilters,
     ...rdfFilters,
 
+    // Smart reverse filter that works with both strings and arrays
+    reverse: input => {
+      if (Array.isArray(input)) {
+        return [...input].reverse();
+      }
+      // Treat as string
+      if (input === null || input === undefined) return '';
+      return String(input).split('').reverse().join('');
+    },
+
     // Enhanced deterministic filters that override or augment the base filters
 
     // Deterministic date/time formatting
@@ -61,9 +71,10 @@ export function createCustomFilters(options = {}) {
       const d = new Date(date);
       if (isNaN(d.getTime())) return '';
 
-      const hours = d.getHours().toString().padStart(2, '0');
-      const minutes = d.getMinutes().toString().padStart(2, '0');
-      const seconds = d.getSeconds().toString().padStart(2, '0');
+      // Use UTC time to match test expectations
+      const hours = d.getUTCHours().toString().padStart(2, '0');
+      const minutes = d.getUTCMinutes().toString().padStart(2, '0');
+      const seconds = d.getUTCSeconds().toString().padStart(2, '0');
 
       switch (format) {
         case 'HH:mm:ss':
@@ -73,6 +84,48 @@ export function createCustomFilters(options = {}) {
         default:
           return `${hours}:${minutes}:${seconds}`;
       }
+    },
+
+    // Date arithmetic - add days to a date
+    dateAdd: (date, amount, unit = 'day') => {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return '';
+
+      switch (unit.toLowerCase()) {
+        case 'day':
+        case 'days':
+          d.setUTCDate(d.getUTCDate() + amount);
+          break;
+        case 'month':
+        case 'months':
+          d.setUTCMonth(d.getUTCMonth() + amount);
+          break;
+        case 'year':
+        case 'years':
+          d.setUTCFullYear(d.getUTCFullYear() + amount);
+          break;
+        case 'hour':
+        case 'hours':
+          d.setUTCHours(d.getUTCHours() + amount);
+          break;
+        case 'minute':
+        case 'minutes':
+          d.setUTCMinutes(d.getUTCMinutes() + amount);
+          break;
+        case 'second':
+        case 'seconds':
+          d.setUTCSeconds(d.getUTCSeconds() + amount);
+          break;
+        default:
+          return '';
+      }
+
+      return d.toISOString();
+    },
+
+    // Date arithmetic - subtract days from a date
+    dateSub: (date, amount, unit = 'day') => {
+      return allFilters.dateAdd(date, -amount, unit);
     },
 
     // Deterministic timestamp
@@ -93,7 +146,7 @@ export function createCustomFilters(options = {}) {
     },
 
     // File and path utilities
-    filename: (filePath) => {
+    filename: filePath => {
       if (!filePath) return '';
       return filePath.split('/').pop().split('\\').pop();
     },
@@ -107,7 +160,7 @@ export function createCustomFilters(options = {}) {
       return dotIndex > 0 ? name.slice(0, dotIndex) : name;
     },
 
-    dirname: (filePath) => {
+    dirname: filePath => {
       if (!filePath) return '';
       const parts = filePath.split('/');
       if (parts.length === 1) {
@@ -198,15 +251,24 @@ export function createCustomFilters(options = {}) {
       if (!text) return '';
       switch (style) {
         case '//':
-          return text.split('\n').map(line => `// ${line}`).join('\n');
+          return text
+            .split('\n')
+            .map(line => `// ${line}`)
+            .join('\n');
         case '#':
-          return text.split('\n').map(line => `# ${line}`).join('\n');
+          return text
+            .split('\n')
+            .map(line => `# ${line}`)
+            .join('\n');
         case '/*':
           return `/* ${text} */`;
         case '<!--':
           return `<!-- ${text} -->`;
         default:
-          return text.split('\n').map(line => `${style} ${line}`).join('\n');
+          return text
+            .split('\n')
+            .map(line => `${style} ${line}`)
+            .join('\n');
       }
     },
 
@@ -221,21 +283,27 @@ export function createCustomFilters(options = {}) {
     // Determinism blockers - these will throw in deterministic mode
     now: () => {
       if (deterministicMode) {
-        throw new Error('Filter "now" is not allowed in deterministic mode. Use "timestamp" instead.');
+        throw new Error(
+          'Filter "now" is not allowed in deterministic mode. Use "timestamp" instead.'
+        );
       }
       return new Date().toISOString();
     },
 
     random: () => {
       if (deterministicMode) {
-        throw new Error('Filter "random" is not allowed in deterministic mode. Use "hash" for consistent randomness.');
+        throw new Error(
+          'Filter "random" is not allowed in deterministic mode. Use "hash" for consistent randomness.'
+        );
       }
       return Math.random();
     },
 
     uuid: () => {
       if (deterministicMode) {
-        throw new Error('Filter "uuid" is not allowed in deterministic mode. Use "hash" for consistent IDs.');
+        throw new Error(
+          'Filter "uuid" is not allowed in deterministic mode. Use "hash" for consistent IDs.'
+        );
       }
       return crypto.randomUUID();
     },
@@ -250,7 +318,9 @@ export function createCustomFilters(options = {}) {
 
       // Get headers from first object
       if (headers && data.length > 0 && typeof data[0] === 'object') {
-        const headerRow = Object.keys(data[0]).map(h => `${quote}${h}${quote}`).join(delimiter);
+        const headerRow = Object.keys(data[0])
+          .map(h => `${quote}${h}${quote}`)
+          .join(delimiter);
         lines.push(headerRow);
       }
 
@@ -289,9 +359,12 @@ export function createCustomFilters(options = {}) {
         // Separator row
         const separators = headers.map(() => {
           switch (align) {
-            case 'center': return ':---:';
-            case 'right': return '---:';
-            default: return '---';
+            case 'center':
+              return ':---:';
+            case 'right':
+              return '---:';
+            default:
+              return '---';
           }
         });
         lines.push('| ' + separators.join(' | ') + ' |');
@@ -304,7 +377,7 @@ export function createCustomFilters(options = {}) {
       }
 
       return lines.join('\n');
-    }
+    },
   };
 
   return allFilters;

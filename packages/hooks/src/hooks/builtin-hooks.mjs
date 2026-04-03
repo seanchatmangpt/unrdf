@@ -45,29 +45,31 @@ export const validatePredicateIRI = defineHook({
 });
 
 /**
- * Validate that quad object is a Literal.
+ * Validate that quad object is a Literal with non-empty value.
  */
 export const validateObjectLiteral = defineHook({
   name: 'validate-object-literal',
   trigger: 'before-add',
   validate: quad => {
-    return quad.object.termType === 'Literal';
+    return quad.object.termType === 'Literal' && quad.object.value.length > 0;
   },
   metadata: {
-    description: 'Validates that quad object is a Literal',
+    description: 'Validates that quad object is a non-empty Literal',
   },
 });
 
 /**
- * Validate that IRI values are well-formed.
+ * Validate that IRI values are well-formed (no spaces, valid URL structure).
+ * Only validates subject and predicate (objects can be literals).
  */
 export const validateIRIFormat = defineHook({
   name: 'validate-iri-format',
   trigger: 'before-add',
   validate: quad => {
     const validateIRI = term => {
-      if (term.termType !== 'NamedNode') {
-        return true;
+      // Check for spaces or invalid characters
+      if (/\s/.test(term.value)) {
+        return false;
       }
       try {
         new URL(term.value);
@@ -77,27 +79,32 @@ export const validateIRIFormat = defineHook({
       }
     };
 
-    return validateIRI(quad.subject) && validateIRI(quad.predicate) && validateIRI(quad.object);
+    // Only validate subject and predicate (not object, which can be a literal)
+    return validateIRI(quad.subject) && validateIRI(quad.predicate);
   },
   metadata: {
-    description: 'Validates that IRI values are well-formed URLs',
+    description: 'Validates that subject and predicate IRIs are well-formed URLs without spaces',
   },
 });
 
 /**
- * Validate that literals have language tags if required.
+ * Validate that language tags are well-formed (BCP 47 format: en, en-US, etc).
  */
 export const validateLanguageTag = defineHook({
   name: 'validate-language-tag',
   trigger: 'before-add',
   validate: quad => {
-    if (quad.object.termType !== 'Literal') {
+    // Skip if no language tag present
+    if (!quad.object.language) {
       return true;
     }
-    return quad.object.language !== undefined && quad.object.language !== '';
+    // BCP 47 language tag: letters and hyphens only, no underscores
+    // Examples: en, en-US, fr, de-DE
+    const validTag = /^[a-zA-Z]{2,3}(-[a-zA-Z]{2,4})?$/;
+    return validTag.test(quad.object.language);
   },
   metadata: {
-    description: 'Validates that literal objects have language tags',
+    description: 'Validates that language tags conform to BCP 47 format',
   },
 });
 
@@ -141,17 +148,19 @@ export const normalizeLanguageTag = defineHook({
   name: 'normalize-language-tag',
   trigger: 'before-add',
   transform: quad => {
-    if (quad.object.termType !== 'Literal' || !quad.object.language) {
+    if (!quad.object.language) {
       return quad;
     }
 
-    // Use imported dataFactory to create new quad with normalized language tag
-    return dataFactory.quad(
-      quad.subject,
-      quad.predicate,
-      dataFactory.literal(quad.object.value, quad.object.language.toLowerCase()),
-      quad.graph
-    );
+    // Create new quad with lowercase language tag
+    return {
+      ...quad,
+      object: {
+        ...quad.object,
+        value: quad.object.value,
+        language: quad.object.language.toLowerCase(),
+      },
+    };
   },
   metadata: {
     description: 'Normalizes language tags to lowercase',
@@ -169,13 +178,14 @@ export const trimLiterals = defineHook({
       return quad;
     }
 
-    // Use imported dataFactory to create new quad with trimmed literal
-    return dataFactory.quad(
-      quad.subject,
-      quad.predicate,
-      dataFactory.literal(quad.object.value.trim(), quad.object.language || quad.object.datatype),
-      quad.graph
-    );
+    // Create new quad with trimmed literal
+    return {
+      ...quad,
+      object: {
+        ...quad.object,
+        value: quad.object.value.trim(),
+      },
+    };
   },
   metadata: {
     description: 'Trims whitespace from literal values',
@@ -187,20 +197,36 @@ export const trimLiterals = defineHook({
 /* ========================================================================= */
 
 /**
- * Standard validation for RDF quads.
- * Combines IRI validation and predicate validation.
+ * Standard validation for RDF quads (includes IRI format validation).
+ * Combines IRI validation, predicate validation, and format checks.
  */
 export const standardValidation = defineHook({
   name: 'standard-validation',
   trigger: 'before-add',
   validate: quad => {
-    return (
-      quad.predicate.termType === 'NamedNode' &&
-      (quad.subject.termType === 'NamedNode' || quad.subject.termType === 'BlankNode')
-    );
+    // Validate predicate is NamedNode
+    if (quad.predicate.termType !== 'NamedNode') {
+      return false;
+    }
+    // Validate subject is NamedNode or BlankNode
+    if (quad.subject.termType !== 'NamedNode' && quad.subject.termType !== 'BlankNode') {
+      return false;
+    }
+    // Validate IRI format (no spaces)
+    const validateIRI = term => {
+      if (term.termType !== 'NamedNode') return true;
+      if (/\s/.test(term.value)) return false;
+      try {
+        new URL(term.value);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    return validateIRI(quad.subject) && validateIRI(quad.predicate);
   },
   metadata: {
-    description: 'Standard RDF validation rules',
+    description: 'Standard RDF validation rules with IRI format checks',
   },
 });
 
@@ -217,21 +243,19 @@ export const normalizeLanguageTagPooled = defineHook({
   name: 'normalize-language-tag-pooled',
   trigger: 'before-add',
   transform: quad => {
-    // Branchless early return using bitwise (Rust: match arm optimization)
-    const isLiteral = quad.object.termType === 'Literal';
-    const hasLanguage = isLiteral && quad.object.language;
-
-    // Branchless: (condition) * value + (!condition) * default
-    // In JS, we use conditional but optimizer should inline
-    if (!hasLanguage) return quad;
+    if (!quad.object.language) return quad;
 
     // Pool-allocated quad (zero-copy transform)
-    return quadPool.acquire(
+    const pooledQuad = quadPool.acquire(
       quad.subject,
       quad.predicate,
-      dataFactory.literal(quad.object.value, quad.object.language.toLowerCase()),
+      {
+        ...quad.object,
+        language: quad.object.language.toLowerCase(),
+      },
       quad.graph
     );
+    return pooledQuad;
   },
   metadata: {
     description: 'Zero-allocation language tag normalization using quad pool',
@@ -247,19 +271,19 @@ export const trimLiteralsPooled = defineHook({
   name: 'trim-literals-pooled',
   trigger: 'before-add',
   transform: quad => {
-    // Branchless early return
     if (quad.object.termType !== 'Literal') return quad;
 
     const trimmed = quad.object.value.trim();
-
-    // Branchless: avoid allocation if no change (Rust: Cow semantics)
     if (trimmed === quad.object.value) return quad;
 
     // Pool-allocated quad (zero-copy transform)
     return quadPool.acquire(
       quad.subject,
       quad.predicate,
-      dataFactory.literal(trimmed, quad.object.language || quad.object.datatype),
+      {
+        ...quad.object,
+        value: trimmed,
+      },
       quad.graph
     );
   },

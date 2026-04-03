@@ -24,6 +24,9 @@ const SW_ACTIVATION_WAIT_MS = 1000;
  * Main application state
  */
 class App {
+  /**
+   *
+   */
   constructor() {
     this.terminal = new TerminalUI();
     this.runtime = null;

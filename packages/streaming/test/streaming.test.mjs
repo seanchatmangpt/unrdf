@@ -48,6 +48,8 @@ describe('@unrdf/streaming', () => {
           quad,
         });
       });
+
+      await eventPromise;
     });
 
     it('should track changes', () => {
@@ -161,6 +163,8 @@ describe('@unrdf/streaming', () => {
           quad: { subject: subject1, predicate, object: literal('3') },
         });
       });
+
+      await filterPromise;
     });
 
     it('should unsubscribe', () => {

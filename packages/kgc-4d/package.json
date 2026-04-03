@@ -54,6 +54,15 @@
     "pnpm": ">=7.0.0"
   },
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/kgc-4d"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
   "author": "UNRDF Contributors",
   "license": "MIT",
   "publishConfig": {
