@@ -41,8 +41,10 @@
   "dependencies": {
     "@opentelemetry/api": "^1.8.0",
     "@unrdf/core": "26.4.3",
+    "@unrdf/hooks": "26.4.3",
     "@unrdf/oxigraph": "26.4.3",
     "@unrdf/streaming": "26.4.3",
+    "@unrdf/v6-core": "26.4.3",
     "coi-serviceworker": "^0.1.7"
   },
   "devDependencies": {

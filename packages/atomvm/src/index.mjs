@@ -101,6 +101,12 @@ export {
   OPERATION_TYPES,
 } from './sla-monitor.mjs';
 
+// Hooks Bridge - BiDirectional JS/Erlang bridge
+export {
+  HooksBridge,
+  HOOKS_BRIDGE_OPERATIONS,
+} from './hooks-bridge.mjs';
+
 // Additional exports from pre-existing modules
 export { CircuitBreaker } from './circuit-breaker.mjs';
 export {
