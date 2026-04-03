@@ -1,0 +1,447 @@
+# FIBO JTBD Governance - Hook Configuration
+# Configuration file for knowledge hooks demonstrating all 6 priorities
+
+version: "1.0.0"
+metadata:
+  name: "FIBO Regulatory Compliance Governance"
+  description: |
+    Knowledge hooks for financial regulatory compliance using Jobs to Be Done (JTBD) framework.
+    Demonstrates all 6 priorities: withReceipt, sparql-construct, SHACL, hash receipts, N3, Datalog.
+  author: "FIBO Governance"
+  created: "2026-04-03"
+
+# ============================================================================
+# GLOBAL CONFIGURATION
+# ============================================================================
+
+global:
+  # Receipts: Cryptographic audit trail
+  receipts:
+    enabled: true
+    algorithm: blake3
+    anchor: git-notes
+    chain: true
+    includePayload: true
+    profile: regulatory-audit
+
+  # Performance
+  performance:
+    maxConcurrency: 10
+    timeout: 30000  # 30 seconds
+    caching:
+      enabled: true
+      ttl: 3600000  # 1 hour
+
+  # Observability
+  observability:
+    enabled: true
+    tracing: true
+    metrics: true
+    logging: true
+
+# ============================================================================
+# JTBD 1: VERIFY REGULATORY COMPLIANCE
+# ============================================================================
+
+hooks:
+  - id: "fibo:verify-regulatory-compliance"
+    name: "Verify Regulatory Compliance"
+    priority: 1
+
+    # Priority 3: SHACL validation with annotate mode
+    validation:
+      kind: shacl
+      shape: "fibo:TradeComplianceShape"
+      enforcementMode: annotate  # Soft-fail: log violations, continue
+      constraints:
+        - "sh:minCount 1"
+        - "sh:maxCount 1"
+        - "sh:datatype xsd:decimal"
+
+    # Priority 2: SPARQL CONSTRUCT effects
+    effects:
+      - kind: sparql-construct
+        name: "Add Compliance Status"
+        query: |
+          PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+          CONSTRUCT {
+            ?trade fibo:hasComplianceStatus fibo:Compliant ;
+                   fibo:auditedAt ?now ;
+                   fibo:auditedBy ?auditor .
+          }
+          WHERE {
+            ?trade fibo:txType ?type ;
+                   fibo:value ?value .
+            BIND (NOW() as ?now)
+            BIND (iri(concat("urn:auditor:", "sec-bot")) as ?auditor)
+          }
+
+    # Priority 1: withReceipt integration
+    receipt:
+      enabled: true
+      algorithm: blake3
+      anchor: git-notes
+      chain: true
+      profile: "regulatory-audit"
+
+    # Graph routing
+    channel:
+      graphs: ["urn:graph:compliance", "urn:graph:audit"]
+      view: "delta"
+
+    # Lifecycle hooks
+    lifecycle:
+      before: "validate-payload"
+      after: "log-audit-trail"
+
+# ============================================================================
+# JTBD 2: ASSESS COUNTERPARTY RISK
+# ============================================================================
+
+  - id: "fibo:assess-counterparty-risk"
+    name: "Assess Counterparty Risk"
+    priority: 5
+
+    # Priority 5: N3 forward-chaining inference
+    inference:
+      kind: n3
+      rules: "fibo-risk-rules.n3"  # External file reference
+
+      # ASK query to verify inference succeeded
+      askQuery: |
+        PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+        ASK { ?cp fibo:riskLevel ?level . }
+
+    # Priority 2: Record risk assessment in RDF
+    effects:
+      - kind: sparql-construct
+        name: "Record Risk Assessment"
+        query: |
+          PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+          CONSTRUCT {
+            ?cp fibo:riskAssessedAt ?now ;
+                fibo:riskAssessmentMethod fibo:N3InferenceEngine .
+          }
+          WHERE {
+            ?cp fibo:riskLevel ?level .
+            BIND (NOW() as ?now)
+          }
+
+    # Priority 1: Receipt chaining
+    receipt:
+      enabled: true
+      algorithm: blake3
+      anchor: merkle-tree
+      chain: true
+      profile: "risk-assessment"
+
+    channel:
+      graphs: ["urn:graph:risk", "urn:graph:counterparty"]
+      view: "snapshot"
+
+# ============================================================================
+# JTBD 3: MANAGE LIQUIDITY POSITIONS
+# ============================================================================
+
+  - id: "fibo:manage-liquidity-positions"
+    name: "Manage Liquidity Positions"
+    priority: 6
+
+    # Priority 6: Datalog constraint satisfaction
+    constraints:
+      kind: datalog
+      factsFile: "fibo-liquidity-facts.pl"
+      rulesFile: "fibo-liquidity-rules.pl"
+      goal: "regulatoryGate"
+
+    # Priority 3: SHACL with block mode (strict)
+    validation:
+      kind: shacl
+      shape: "fibo:LiquidityManagementShape"
+      enforcementMode: block  # STRICT: No exceptions
+      constraints:
+        - "sh:minInclusive 0"
+        - "sh:pattern '^[0-9]+'$"
+
+    # Priority 2: Record liquidity state
+    effects:
+      - kind: sparql-construct
+        name: "Record Liquidity Status"
+        query: |
+          PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+          CONSTRUCT {
+            ?account fibo:liquidityStatus fibo:Adequate ;
+                     fibo:lastCalculatedAt ?now .
+          }
+          WHERE {
+            ?account fibo:availableAmount ?available ;
+                     fibo:reservedAmount ?reserved ;
+                     fibo:minimumThreshold ?threshold .
+            BIND ((?available - ?reserved) as ?usable)
+            FILTER (?usable >= ?threshold)
+            BIND (NOW() as ?now)
+          }
+
+    # Priority 1: Receipt chain
+    receipt:
+      enabled: true
+      algorithm: blake3
+      anchor: git-notes
+      chain: true
+      profile: "liquidity-audit"
+
+    channel:
+      graphs: ["urn:graph:liquidity", "urn:graph:treasury"]
+      view: "snapshot"
+
+    # Error handling
+    errorHandling:
+      onViolation: "block"
+      onTimeout: "alert"
+      onFailure: "rollback"
+
+# ============================================================================
+# JTBD 4: MAINTAIN COMPLIANCE AUDIT TRAIL
+# ============================================================================
+
+  - id: "fibo:maintain-compliance-audit-trail"
+    name: "Maintain Compliance Audit Trail"
+    priority: 3
+
+    # Priority 3: SHACL block mode (strict)
+    validation:
+      kind: shacl
+      shape: "fibo:AuditTrailShape"
+      enforcementMode: block  # NO EXCEPTIONS
+      constraints:
+        - "sh:minCount 1"
+        - "sh:pattern '^[a-f0-9]{64}$'"  # SHA256 hash format
+
+    # Priority 4: Hash receipts for state proof
+    effects:
+      - kind: sparql-construct
+        name: "Create Audit Entry"
+        query: |
+          PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+          CONSTRUCT {
+            ?transaction fibo:hasAuditEntry ?entry .
+            ?entry fibo:inputHash ?inHash ;
+                   fibo:outputHash ?outHash ;
+                   fibo:receiptHash ?rcHash ;
+                   fibo:timestamp ?now .
+          }
+          WHERE {
+            ?transaction a fibo:FinancialTransaction .
+            BIND (NOW() as ?now)
+            BIND ("input-hash-value" as ?inHash)
+            BIND ("output-hash-value" as ?outHash)
+            BIND ("receipt-hash-value" as ?rcHash)
+          }
+
+    # Priority 1: Full receipt chaining
+    receipt:
+      enabled: true
+      algorithm: blake3
+      anchor: git-notes
+      chain: true
+      chainLength: unlimited
+      includePayload: true
+      cryptographic: true
+      profile: "audit-trail-strict"
+
+      # Hash computation
+      hashing:
+        input: blake3
+        output: blake3
+        receipt: blake3
+        chain: blake3
+
+      # Verification
+      verification:
+        chainIntegrity: true
+        previousLinkRequired: true
+        timestampProgression: true
+
+    channel:
+      graphs: ["urn:graph:audit", "urn:graph:compliance"]
+      view: "immutable"
+
+# ============================================================================
+# JTBD 5: AUTO-REPAIR COMPLIANCE VIOLATIONS
+# ============================================================================
+
+  - id: "fibo:repair-compliance-violations"
+    name: "Auto-Repair Compliance Violations"
+    priority: 3
+
+    # Priority 3: SHACL repair mode
+    validation:
+      kind: shacl
+      shape: "fibo:RegulatoryComplianceShape"
+      enforcementMode: repair  # Auto-fix violations
+
+      # Define repairs
+      repairs:
+        - violation: "missing-type"
+          method: "assign-default"
+          value: "fibo:PendingTrade"
+
+        - violation: "negative-value"
+          method: "set-to-zero"
+
+        - violation: "invalid-status"
+          method: "normalize"
+          target: "fibo:Pending"
+
+    # Priority 2: Record remediation
+    effects:
+      - kind: sparql-construct
+        name: "Log Compliance Repair"
+        query: |
+          PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+          CONSTRUCT {
+            ?entity fibo:complianceStatus fibo:FullyCompliant ;
+                    fibo:lastRepairAt ?now .
+          }
+          WHERE {
+            ?entity fibo:repairStatus fibo:Repaired .
+            BIND (NOW() as ?now)
+          }
+
+    # Priority 1: Receipt proof
+    receipt:
+      enabled: true
+      algorithm: blake3
+      anchor: git-notes
+      chain: true
+      profile: "remediation-audit"
+
+    channel:
+      graphs: ["urn:graph:compliance", "urn:graph:repair"]
+      view: "mutable"
+
+    # Auto-repair specific settings
+    autoRepair:
+      enabled: true
+      maxAttempts: 3
+      timeout: 5000
+      rollbackOnFailure: true
+
+# ============================================================================
+# SHARED RULES AND FACTS FILES
+# ============================================================================
+
+rules:
+  - name: "fibo-risk-rules.n3"
+    type: "n3"
+    path: "./fibo-risk-rules.n3"
+    description: "Forward-chaining rules for counterparty risk assessment"
+
+facts:
+  - name: "fibo-liquidity-facts.pl"
+    type: "datalog-facts"
+    path: "./fibo-liquidity-facts.pl"
+    description: "Initial facts for liquidity constraint satisfaction"
+
+  - name: "fibo-liquidity-rules.pl"
+    type: "datalog-rules"
+    path: "./fibo-liquidity-rules.pl"
+    description: "Datalog rules for liquidity compliance"
+
+# ============================================================================
+# SHACL SHAPES
+# ============================================================================
+
+shapes:
+  - id: "fibo:TradeComplianceShape"
+    file: "./fibo-shapes.ttl"
+    enforcementMode: "annotate"
+    description: "Trade compliance validation (soft-fail)"
+
+  - id: "fibo:AuditTrailShape"
+    file: "./fibo-shapes.ttl"
+    enforcementMode: "block"
+    description: "Audit trail integrity (strict)"
+
+  - id: "fibo:LiquidityManagementShape"
+    file: "./fibo-shapes.ttl"
+    enforcementMode: "block"
+    description: "Liquidity constraints (strict)"
+
+  - id: "fibo:RegulatoryComplianceShape"
+    file: "./fibo-shapes.ttl"
+    enforcementMode: "repair"
+    description: "Regulatory compliance (auto-repair)"
+
+# ============================================================================
+# MONITORING AND ALERTING
+# ============================================================================
+
+monitoring:
+  enabled: true
+
+  # Health checks
+  healthChecks:
+    - interval: 60000  # 60 seconds
+      timeout: 5000    # 5 seconds
+      hooks: ["all"]
+
+  # Metrics collection
+  metrics:
+    - name: "hook-execution-latency"
+      unit: "milliseconds"
+      buckets: [1, 5, 10, 50, 100, 500, 1000]
+
+    - name: "receipt-generation-time"
+      unit: "milliseconds"
+
+    - name: "compliance-violations"
+      unit: "count"
+
+  # Alerts
+  alerts:
+    - condition: "latency > 1000"
+      severity: "warning"
+      action: "log"
+
+    - condition: "violations > 5"
+      severity: "critical"
+      action: "notify"
+
+    - condition: "chainIntegrity == false"
+      severity: "critical"
+      action: "escalate"
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  enabled: true
+
+  suites:
+    - name: "compliance-verification"
+      hooks: ["fibo:verify-regulatory-compliance"]
+      timeout: 5000
+
+    - name: "risk-assessment"
+      hooks: ["fibo:assess-counterparty-risk"]
+      timeout: 5000
+
+    - name: "liquidity-management"
+      hooks: ["fibo:manage-liquidity-positions"]
+      timeout: 5000
+
+    - name: "audit-trail"
+      hooks: ["fibo:maintain-compliance-audit-trail"]
+      timeout: 5000
+
+    - name: "auto-repair"
+      hooks: ["fibo:repair-compliance-violations"]
+      timeout: 5000
+
+  coverage:
+    target: 80
+    branches: true
+    lines: true
+    functions: true

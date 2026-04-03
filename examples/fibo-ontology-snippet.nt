@@ -1,0 +1,189 @@
+# FIBO Ontology Snippet for JTBD Governance Case Study
+# Format: N-Triples (one statement per line)
+# Based on Financial Industry Business Ontology (FIBO) from OMG
+
+# Namespace declarations (in comments for reference)
+# PREFIX fibo: <http://www.omg.org/spec/EDMC-FIBO/FBC/>
+# PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+# PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+# PREFIX sh: <http://www.w3.org/ns/shacl#>
+
+# ============================================================================
+# CLASS DEFINITIONS
+# ============================================================================
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Trade> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Trade> <http://www.w3.org/2000/01/rdf-schema#label> "Trade" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Trade> <http://www.w3.org/2000/01/rdf-schema#comment> "A financial transaction involving exchange of securities or derivatives" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FinancialTransaction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FinancialTransaction> <http://www.w3.org/2000/01/rdf-schema#label> "Financial Transaction" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Counterparty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Counterparty> <http://www.w3.org/2000/01/rdf-schema#label> "Counterparty" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Counterparty> <http://www.w3.org/2000/01/rdf-schema#comment> "Party to a transaction or financial agreement" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/LiquidityAccount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/LiquidityAccount> <http://www.w3.org/2000/01/rdf-schema#label> "Liquidity Account" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/ComplianceAuditEntry> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/ComplianceAuditEntry> <http://www.w3.org/2000/01/rdf-schema#label> "Compliance Audit Entry" .
+
+# ============================================================================
+# PROPERTY DEFINITIONS
+# ============================================================================
+
+# Trade properties
+<http://www.omg.org/spec/EDMC-FIBO/FBC/txType> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/txType> <http://www.w3.org/2000/01/rdf-schema#label> "Transaction Type" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/txType> <http://www.w3.org/2000/01/rdf-schema#domain> <http://www.omg.org/spec/EDMC-FIBO/FBC/Trade> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/value> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/value> <http://www.w3.org/2000/01/rdf-schema#label> "Trade Value" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/value> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#decimal> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/counterparty> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/counterparty> <http://www.w3.org/2000/01/rdf-schema#label> "Counterparty" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/status> <http://www.w3.org/2000/01/rdf-schema#label> "Trade Status" .
+
+# Compliance properties
+<http://www.omg.org/spec/EDMC-FIBO/FBC/hasComplianceStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/hasComplianceStatus> <http://www.w3.org/2000/01/rdf-schema#label> "Has Compliance Status" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/hasComplianceStatus> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/auditedAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/auditedAt> <http://www.w3.org/2000/01/rdf-schema#label> "Audited At" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/auditedAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/auditedBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/auditedBy> <http://www.w3.org/2000/01/rdf-schema#label> "Audited By" .
+
+# Risk properties
+<http://www.omg.org/spec/EDMC-FIBO/FBC/creditRating> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/creditRating> <http://www.w3.org/2000/01/rdf-schema#label> "Credit Rating" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/riskLevel> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/riskLevel> <http://www.w3.org/2000/01/rdf-schema#label> "Risk Level" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/defaultHistory> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/defaultHistory> <http://www.w3.org/2000/01/rdf-schema#label> "Default History Count" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/defaultHistory> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#int> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/regulatoryStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/regulatoryStatus> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Status" .
+
+# Liquidity properties
+<http://www.omg.org/spec/EDMC-FIBO/FBC/availableAmount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/availableAmount> <http://www.w3.org/2000/01/rdf-schema#label> "Available Amount" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/availableAmount> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#decimal> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/reservedAmount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/reservedAmount> <http://www.w3.org/2000/01/rdf-schema#label> "Reserved Amount" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/reservedAmount> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#decimal> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/minimumThreshold> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/minimumThreshold> <http://www.w3.org/2000/01/rdf-schema#label> "Minimum Threshold" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/liquidityStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/liquidityStatus> <http://www.w3.org/2000/01/rdf-schema#label> "Liquidity Status" .
+
+# Audit trail properties
+<http://www.omg.org/spec/EDMC-FIBO/FBC/hasAuditEntry> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/hasAuditEntry> <http://www.w3.org/2000/01/rdf-schema#label> "Has Audit Entry" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/inputHash> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/inputHash> <http://www.w3.org/2000/01/rdf-schema#label> "Input Hash" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/inputHash> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/outputHash> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/outputHash> <http://www.w3.org/2000/01/rdf-schema#label> "Output Hash" .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/outputHash> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/receiptHash> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/receiptHash> <http://www.w3.org/2000/01/rdf-schema#label> "Receipt Hash" .
+
+# ============================================================================
+# ENUMERATION VALUES
+# ============================================================================
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Pending> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Pending> <http://www.w3.org/2000/01/rdf-schema#label> "Pending" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Settled> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Settled> <http://www.w3.org/2000/01/rdf-schema#label> "Settled" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Failed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Failed> <http://www.w3.org/2000/01/rdf-schema#label> "Failed" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/EquityTrade> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/EquityTrade> <http://www.w3.org/2000/01/rdf-schema#label> "Equity Trade" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FixedIncomeTrade> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FixedIncomeTrade> <http://www.w3.org/2000/01/rdf-schema#label> "Fixed Income Trade" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/DerivativeTrade> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/DerivativeTrade> <http://www.w3.org/2000/01/rdf-schema#label> "Derivative Trade" .
+
+# Risk level values
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Low> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Low> <http://www.w3.org/2000/01/rdf-schema#label> "Low Risk" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Medium> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Medium> <http://www.w3.org/2000/01/rdf-schema#label> "Medium Risk" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/High> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/High> <http://www.w3.org/2000/01/rdf-schema#label> "High Risk" .
+
+# Compliance status values
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Compliant> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Compliant> <http://www.w3.org/2000/01/rdf-schema#label> "Compliant" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/NonCompliant> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/NonCompliant> <http://www.w3.org/2000/01/rdf-schema#label> "Non-Compliant" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FullyCompliant> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/FullyCompliant> <http://www.w3.org/2000/01/rdf-schema#label> "Fully Compliant" .
+
+# Liquidity status values
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Adequate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Adequate> <http://www.w3.org/2000/01/rdf-schema#label> "Adequate Liquidity" .
+
+# Regulatory status values
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Approved> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Approved> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Approved" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Restricted> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Restricted> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Restricted" .
+
+# Repair status values
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Repaired> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/Repaired> <http://www.w3.org/2000/01/rdf-schema#label> "Repaired" .
+
+<http://www.omg.org/spec/EDMC-FIBO/FBC/AutoRepair> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://www.omg.org/spec/EDMC-FIBO/FBC/AutoRepair> <http://www.w3.org/2000/01/rdf-schema#label> "Automatic Repair" .
+
+# ============================================================================
+# INSTANCE EXAMPLES
+# ============================================================================
+
+# Sample Trade
+<http://example.org/trades/trade-001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.omg.org/spec/EDMC-FIBO/FBC/Trade> .
+<http://example.org/trades/trade-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/txType> <http://www.omg.org/spec/EDMC-FIBO/FBC/EquityTrade> .
+<http://example.org/trades/trade-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/value> "1500000"^^<http://www.w3.org/2001/XMLSchema#decimal> .
+<http://example.org/trades/trade-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/status> <http://www.omg.org/spec/EDMC-FIBO/FBC/Settled> .
+
+# Sample Counterparty
+<http://example.org/counterparties/cp-goldman> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.omg.org/spec/EDMC-FIBO/FBC/Counterparty> .
+<http://example.org/counterparties/cp-goldman> <http://www.omg.org/spec/EDMC-FIBO/FBC/creditRating> "AA"^^<http://www.w3.org/2001/XMLSchema#string> .
+<http://example.org/counterparties/cp-goldman> <http://www.omg.org/spec/EDMC-FIBO/FBC/defaultHistory> "0"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://example.org/counterparties/cp-goldman> <http://www.omg.org/spec/EDMC-FIBO/FBC/regulatoryStatus> <http://www.omg.org/spec/EDMC-FIBO/FBC/Approved> .
+<http://example.org/counterparties/cp-goldman> <http://www.omg.org/spec/EDMC-FIBO/FBC/riskLevel> <http://www.omg.org/spec/EDMC-FIBO/FBC/Low> .
+
+# Sample Liquidity Account
+<http://example.org/accounts/acc-001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.omg.org/spec/EDMC-FIBO/FBC/LiquidityAccount> .
+<http://example.org/accounts/acc-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/availableAmount> "5000000"^^<http://www.w3.org/2001/XMLSchema#decimal> .
+<http://example.org/accounts/acc-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/reservedAmount> "1500000"^^<http://www.w3.org/2001/XMLSchema#decimal> .
+<http://example.org/accounts/acc-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/minimumThreshold> "500000"^^<http://www.w3.org/2001/XMLSchema#decimal> .
+<http://example.org/accounts/acc-001> <http://www.omg.org/spec/EDMC-FIBO/FBC/liquidityStatus> <http://www.omg.org/spec/EDMC-FIBO/FBC/Adequate> .
