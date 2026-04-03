@@ -1,7 +1,7 @@
 {
   "name": "@unrdf/v6-core",
   "version": "26.4.2",
-  "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
+  "description": "UNRDF v6 Core - \u0394Gate control plane, unified receipts, and delta contracts",
   "type": "module",
   "main": "./src/index.mjs",
   "bin": {
