@@ -21,7 +21,7 @@ Tests the complete sync pipeline: **Config → Ontology → SPARQL → Template 
 
 - **Ontology**: User + Post entities (Turtle format)
 - **Template**: Entity constants generator (Nunjucks)
-- **Config**: ggen.toml with one generation rule
+- **Config**: .unrdf.toml with one generation rule
 - **Query**: Extract owl:Class instances
 
 ## Verification (8 Checks)

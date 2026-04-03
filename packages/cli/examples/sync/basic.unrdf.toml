@@ -1,8 +1,8 @@
-# Basic ggen.toml Example
+# Basic `.unrdf.toml` example (copy to project root as `.unrdf.toml` or pass `--config`)
 # Minimal configuration demonstrating the sync command
 #
 # Usage:
-#   unrdf sync --config basic-ggen.toml
+#   unrdf sync --config basic.unrdf.toml
 #
 # This example extracts OWL classes from an ontology and generates
 # JavaScript constants for each class.

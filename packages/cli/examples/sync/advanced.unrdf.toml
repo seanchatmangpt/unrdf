@@ -1,10 +1,10 @@
-# Advanced ggen.toml Example
+# Advanced `.unrdf.toml` example (copy to project root as `.unrdf.toml` or pass `--config`)
 # Demonstrates multiple generation rules with different queries and templates
 #
 # Usage:
-#   unrdf sync --config advanced-ggen.toml
-#   unrdf sync --config advanced-ggen.toml --rule properties  # Run specific rule
-#   unrdf sync --config advanced-ggen.toml --dry-run          # Preview without writing
+#   unrdf sync --config advanced.unrdf.toml
+#   unrdf sync --config advanced.unrdf.toml --rule properties  # Run specific rule
+#   unrdf sync --config advanced.unrdf.toml --dry-run          # Preview without writing
 #
 # This example shows how to:
 # - Define multiple generation rules

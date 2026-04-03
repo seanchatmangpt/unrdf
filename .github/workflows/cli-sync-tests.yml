@@ -286,7 +286,7 @@ jobs:
           printf '%s\n' '---' 'to: properties.mjs' '---' '/**' ' * @file Generated Property Definitions' ' */' '' '{% for row in sparql_results %}' 'export const PROP_{{ row.label | upper }} = {' '  uri: '"'"'{{ row.prop }}'"'"',' '  domain: '"'"'{{ row.domain }}'"'"',' '  range: '"'"'{{ row.range }}'"'"',' '};' '{% endfor %}' > "$TEST_DIR/templates/properties.njk"
 
           # Create comprehensive config
-          cat > "$TEST_DIR/ggen.toml" <<EOFCONFIG
+          cat > "$TEST_DIR/.unrdf.toml" <<EOFCONFIG
           [project]
           name = "validation-test"
           version = "1.0.0"
@@ -336,7 +336,7 @@ jobs:
           # Run sync command with verbose output
           echo "Executing sync command..."
           timeout 15s node packages/cli/src/cli/main.mjs sync \
-            --config "$TEST_DIR/ggen.toml" \
+            --config "$TEST_DIR/.unrdf.toml" \
             --verbose \
             --output text
 

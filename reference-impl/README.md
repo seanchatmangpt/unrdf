@@ -170,7 +170,7 @@ When bb8020 processes the Receipt Validator spec:
 
 ## 🏗️ Architecture: The Trinity
 
-This implementation demonstrates the **unrdf/kgc-4d/ggen trinity**:
+This implementation demonstrates the **unrdf/kgc-4d/codegen** stack:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -192,7 +192,7 @@ This implementation demonstrates the **unrdf/kgc-4d/ggen trinity**:
                     ↓ (measurement function μ)
 ┌──────────────────────────────────────────────────────────┐
 │             LASER (Measurement Function)                 │
-│   ggen: Five-stage transformation pipeline              │
+│   Codegen: Five-stage transformation pipeline           │
 │   1. Normalization: reduce to canonical form            │
 │   2. Extraction: pull proof from axioms                 │
 │   3. Emission: translate to functions                   │

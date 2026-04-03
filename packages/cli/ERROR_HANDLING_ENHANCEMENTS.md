@@ -26,7 +26,7 @@ Enhanced error handling in the sync command modules to provide actionable, detai
 ERR my-rule:
 Template file not found or not readable: /path/to/template.njk
   Rule: my-rule
-  Config: /path/to/ggen.toml
+  Config: /path/to/.unrdf.toml
   Fix: Check that the template path is correct and the file exists
 ```
 

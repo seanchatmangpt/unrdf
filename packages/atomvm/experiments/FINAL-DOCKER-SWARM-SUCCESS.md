@@ -159,7 +159,7 @@ PING_RESULT: pong ✅
 
 ## Metrics Summary
 
-### GGen AgentSwarm Usage
+### AgentSwarm Usage
 - **Total modules**: 14 modules
 - **Total lines**: 1,005+ lines
 - **Success rate**: 82.4% (14/17, 3 timeouts)

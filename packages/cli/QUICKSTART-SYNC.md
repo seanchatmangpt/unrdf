@@ -21,7 +21,7 @@ npx unrdf --version
 
 Follow these steps to generate your first code from an RDF ontology.
 
-### Step 1: Create `ggen.toml` (30 seconds)
+### Step 1: Create `.unrdf.toml` (30 seconds)
 
 Create a configuration file in your project root:
 
@@ -135,7 +135,7 @@ npx unrdf sync
 
 **Expected output:**
 ```
-[unrdf sync] Loading configuration from ggen.toml
+[unrdf sync] Loading configuration from .unrdf.toml
 [unrdf sync] Parsing ontology: ontology/schema.ttl (turtle)
 [unrdf sync] Found 1 generation rules
 
@@ -211,7 +211,7 @@ Invalid: false
 
 - **[Complete Sync Command Guide](./docs/sync-command.md)** - All features and options
 - **[Tutorial: Your First API from RDF](../../docs/diataxis/tutorials/sync-first-api.md)** - 20-minute comprehensive tutorial
-- **[Reference: ggen.toml Configuration](../../docs/diataxis/reference/sync-config.md)** - All configuration options
+- **[Reference: .unrdf.toml Configuration](../../docs/diataxis/reference/sync-config.md)** - All configuration options
 - **[Reference: Template Filters](../../docs/diataxis/reference/sync-filters.md)** - Available Nunjucks filters
 
 ### How-To Guides
@@ -232,7 +232,7 @@ Invalid: false
 Generate Zod schemas, JSDoc types, and OpenAPI specs from one ontology:
 
 ```toml
-# ggen.toml
+# .unrdf.toml
 [project]
 name = "my-api"
 
@@ -379,7 +379,7 @@ unrdf sync [options]
 
 | Option | Alias | Default | Description |
 |--------|-------|---------|-------------|
-| `--config <path>` | - | `ggen.toml` | Path to configuration file |
+| `--config <path>` | - | `.unrdf.toml` | Path to configuration file |
 | `--dry-run` | - | `false` | Preview without writing files |
 | `--verbose` | `-v` | `false` | Enable detailed output |
 | `--force` | `-f` | `false` | Overwrite without prompting |
@@ -391,15 +391,15 @@ unrdf sync [options]
 
 ### Config file not found
 ```
-Error: Configuration file not found: ggen.toml
+Error: Configuration file not found: .unrdf.toml
 ```
-**Solution:** Create `ggen.toml` in your project root or use `--config` to specify path.
+**Solution:** Create `.unrdf.toml` in your project root or use `--config` to specify path.
 
 ### Ontology file not found
 ```
 Error: Ontology file not found: ontology/schema.ttl
 ```
-**Solution:** Check that `ontology.source` path in `ggen.toml` is correct.
+**Solution:** Check that `ontology.source` path in `.unrdf.toml` is correct.
 
 ### SPARQL query returns no results
 ```

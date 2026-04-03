@@ -23,7 +23,7 @@ Generate a simple constant from an RDF class.
 
 **Files needed:**
 - `ontology/hello.ttl`
-- `ggen.toml`
+- `.unrdf.toml`
 - `templates/hello.njk`
 
 **ontology/hello.ttl**:
@@ -36,7 +36,7 @@ ex:Greeting a rdfs:Class ;
     rdfs:comment "A friendly greeting" .
 ```
 
-**ggen.toml**:
+**.unrdf.toml**:
 ```toml
 [project]
 name = "hello-example"
@@ -125,7 +125,7 @@ api:description a owl:DatatypeProperty ;
     rdfs:label "description" .
 ```
 
-**ggen.toml**:
+**.unrdf.toml**:
 ```toml
 [project]
 name = "product-api"

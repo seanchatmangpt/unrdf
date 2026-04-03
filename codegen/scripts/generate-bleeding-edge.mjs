@@ -559,7 +559,7 @@ export default JobQueue;
 async function main() {
   console.log('🔥 Integrating bleeding-edge dependencies...\n');
 
-  const outputDir = path.join(projectRoot, 'ggen', 'generated');
+  const outputDir = path.join(projectRoot, 'codegen', 'generated');
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Generate AI layer

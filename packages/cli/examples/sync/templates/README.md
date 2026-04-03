@@ -112,7 +112,7 @@ WHERE {
 ORDER BY ?entityName ?propertyName
 ```
 
-### 2. Configure `ggen.toml`
+### 2. Configure `.unrdf.toml`
 
 Create a configuration file referencing the templates:
 
@@ -256,7 +256,7 @@ To create custom templates:
    - `description:` - Template description
 3. Customize the Nunjucks template body
 4. Use available filters and context variables
-5. Add template to `ggen.toml` configuration
+5. Add template to `.unrdf.toml` configuration
 
 ## Testing Templates
 

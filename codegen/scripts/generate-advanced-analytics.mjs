@@ -477,7 +477,7 @@ export default OptimizationEngine;
 async function main() {
   console.log('🚀 Generating advanced analytics...\n');
 
-  const outputDir = path.join(projectRoot, 'ggen', 'generated');
+  const outputDir = path.join(projectRoot, 'codegen', 'generated');
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Generate graph analysis

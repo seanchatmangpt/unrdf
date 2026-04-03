@@ -348,7 +348,7 @@ export default PackageLauncher;
 async function main() {
   console.log('🚀 Generating runtime systems...');
 
-  const outputDir = path.join(projectRoot, 'ggen', 'generated');
+  const outputDir = path.join(projectRoot, 'codegen', 'generated');
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Generate runtime loader

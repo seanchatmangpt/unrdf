@@ -65,7 +65,7 @@
 - [x] Clear error messages
 - [x] Documentation in comments
 
-#### ggen Patterns
+#### Code generation patterns
 - [x] Fast tier (pre-commit) and full tier (pre-push)
 - [x] Timeout protection
 - [x] Gate-based validation

@@ -81,7 +81,7 @@ Verify that policy changes produce minimal code changes (only affected component
 ### If rollback does not restore exact state
 - **Symptom**: A_rollback ≠ A_old (different hashes)
 - **Action**: Idempotence violation (μ∘μ ≠ μ)
-- **Fix**: CRITICAL BUG. Rollback is not deterministic. Investigate: ggen version mismatch? O_old corrupted? If cannot restore exactly → CANNOT ROLLBACK SAFELY
+- **Fix**: CRITICAL BUG. Rollback is not deterministic. Investigate: generator version mismatch? O_old corrupted? If cannot restore exactly → CANNOT ROLLBACK SAFELY
 
 ### If blast radius > expected (e.g., 50% for 1-rule change)
 - **Symptom**: More processes changed than rules changed

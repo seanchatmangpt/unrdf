@@ -1,4 +1,4 @@
-name: ggen Integration - Ontology-Driven Code Generation
+name: UNRDF package docs — discovery and generation
 
 on:
   push:
@@ -6,15 +6,15 @@ on:
       - 'packages/*/package.json'
       - 'schema/**'
       - 'templates/**'
-      - 'scripts/ggen-*.mjs'
-      - 'ggen.toml'
+      - 'scripts/unrdf-*.mjs'
+      - '.unrdf.toml'
   pull_request:
     paths:
       - 'packages/*/package.json'
       - 'schema/**'
       - 'templates/**'
-      - 'scripts/ggen-*.mjs'
-      - 'ggen.toml'
+      - 'scripts/unrdf-*.mjs'
+      - '.unrdf.toml'
 
 jobs:
   discover-and-generate:
@@ -29,21 +29,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Discover packages from ontology
         run: |
           echo "🔍 Discovering packages..."
-          node scripts/ggen-package-discovery.mjs
+          node scripts/unrdf-package-discovery.mjs
           echo "✅ Package discovery complete"
 
       - name: Generate code and documentation
         run: |
           echo "🚀 Running integration generation..."
-          node scripts/ggen-generate-integration.mjs
+          node scripts/unrdf-generate-integration.mjs
           echo "✅ Code generation complete"
 
       - name: Verify generated files
@@ -69,10 +74,10 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             echo "⚠️  Generated files differ from committed version"
             echo "📝 Please run generation locally and commit changes:"
-            echo "   node scripts/ggen-package-discovery.mjs"
-            echo "   node scripts/ggen-generate-integration.mjs"
+            echo "   node scripts/unrdf-package-discovery.mjs"
+            echo "   node scripts/unrdf-generate-integration.mjs"
             echo "   git add docs/packages/ src/generated/ schema/packages-discovered.ttl"
-            echo "   git commit -m 'feat(ggen): Update package discovery and generation'"
+            echo "   git commit -m 'chore(docs): sync package discovery and generated docs'"
 
             # In strict mode (on main), fail the check
             if [ "${{ github.ref }}" = "refs/heads/main" ]; then
@@ -109,7 +114,7 @@ jobs:
             const fs = require('fs');
             const stats = JSON.parse(fs.readFileSync('src/generated/GENERATION_STATS.json', 'utf-8'));
 
-            const comment = `## ggen Integration Report
+            const comment = `## UNRDF package docs generation report
 
             ✅ **Generation Status**: Success
 

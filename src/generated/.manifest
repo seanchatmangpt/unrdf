@@ -1,7 +1,7 @@
 {
-  "ggen_version": "5.0.2",
+  "generator_version": "5.0.2",
   "generated_at": "2025-01-01T00:00:00Z",
-  "config_file": "ggen.toml",
+  "config_file": "codegen.toml",
   "ontologies": [
     "schema/domain.ttl",
     "schema/project-structure.ttl"

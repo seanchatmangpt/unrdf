@@ -252,7 +252,7 @@ Receipts are **immutable** and **self-verifying**: anyone with the receipt can i
 **Inputs** (what you started with):
 - `O_old`: Hash of the previous policy specification
 - `ΔO`: Hash of the policy change
-- `ggen_version`: Exact version of the generator used (e.g., "1.0.1")
+- `generator_version`: Exact version of the generator used (e.g., "1.0.1")
 
 **Process** (what happened):
 - `step_1_validation`: Did the policy pass validation? ("PASS" or "FAIL")

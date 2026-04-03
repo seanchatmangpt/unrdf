@@ -12,7 +12,7 @@
 This document integrates:
 1. **The Thesis** (MEGA-PROMPT-THESIS.tex) - Civilizational-scale irreversible construction requires deterministic A = μ(O)
 2. **The Framework** (HOLOGRAPHIC_FRAMEWORK.md) - Practical methodology for holographic precipitation
-3. **The Working System** (unrdf/kgc-4d/ggen CLI) - Existing infrastructure for precipitation
+3. **The Working System** (unrdf/kgc-4d CLI and sync) - Existing infrastructure for precipitation
 4. **The Reference Implementation** (reference-impl/) - Concrete working example
 
 **Result**: A single, cohesive, production-ready system demonstrating thesis validation through working code.
@@ -61,7 +61,7 @@ This document integrates:
 - **Property**: History is geometry of phase space, not log of changes
 - **Example**: Commits that compress specification → emission → precipitation
 
-#### Layer 3: Laser (ggen measurement function μ)
+#### Layer 3: Laser (generator measurement function μ)
 - **What**: Five-stage transformation pipeline
 - **Stages**:
   1. **Normalization** → Reduce to canonical form
@@ -247,7 +247,7 @@ Holographic Framework
     ↓
 Daily methodology: compress → align → precipitate → verify
     ↓
-Existing Infrastructure (unrdf/kgc-4d/ggen)
+Existing Infrastructure (unrdf/kgc-4d + UNRDF sync)
     ↓
 bb8020 command implements five-stage laser pipeline
     ↓
@@ -322,7 +322,7 @@ const receipt = validator.receipt(inputs, verification);
 
 ---
 
-## Part 6: The Unrdf/KGC-4D/GGen Trinity
+## Part 6: The Unrdf / KGC-4D / generator trinity
 
 ### How the Three Layers Work Together
 
@@ -380,7 +380,7 @@ const receipt = validator.receipt(inputs, verification);
     [five-stage laser pipeline]
             ↓ (projection)
         ┌───────────────┐
-        │  ggen/        │
+        │  codegen/     │
         │  decision-    │
         │  fabric       │
         │  (bb8020)     │
@@ -575,7 +575,7 @@ IMPLEMENTATION_COMPLETE.md          → Project summary
 1. Test on other domains (APIs, databases, compilers)
 2. Develop Phase 5 empirical experiments
 3. Publish results comparing traditional vs. holographic approaches
-4. Build upon unrdf/kgc-4d/ggen infrastructure
+4. Build upon unrdf/kgc-4d and UNRDF sync infrastructure
 
 ---
 
@@ -592,7 +592,7 @@ This reference implementation demonstrates that the thesis is not just theoretic
 - ✅ Correctness can be 99.99%+ guaranteed, not probabilistic
 
 **What we demonstrated**:
-- The unrdf/kgc-4d/ggen trinity works as designed
+- The unrdf/kgc-4d + sync pipeline works as designed
 - The bb8020 command executes the five-stage laser pipeline
 - Reference implementation is production-ready immediately
 - Integration with existing CLI is seamless

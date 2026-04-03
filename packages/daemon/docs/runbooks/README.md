@@ -265,7 +265,7 @@ Control Failure Alert
 These runbooks evolve based on operational learnings:
 - **After incident**: Update troubleshooting section with new patterns
 - **After audit**: Add clarifications from auditor questions
-- **After μ upgrade**: Update commands for new ggen versions
+- **After μ upgrade**: Update commands for new generator versions
 
 **Contribution**: Operators should propose runbook improvements via PR (treat runbooks like code).
 

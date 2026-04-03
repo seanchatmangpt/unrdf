@@ -461,14 +461,14 @@ describe('E2E JTBD Test Suite', () => {
         environmentState: 'clean',
         inputs: {
           ontologyVersion: 'v1.0',
-          generatorVersion: 'ggen-1.0.1',
+          generatorVersion: 'sync-1.0.1',
           policySpecification: { rule: 'approval', threshold: 100000 },
         },
         execute: async (daemon, metrics) => {
           const originalOutput = generateHash('approval-enforcer-bytecode');
 
           const handler = vi.fn().mockResolvedValue({
-            generatorVersion: 'ggen-1.0.1',
+            generatorVersion: 'sync-1.0.1',
             output: 'approval-enforcer-bytecode',
             outputHash: originalOutput,
           });
@@ -1156,14 +1156,14 @@ describe('E2E JTBD Test Suite', () => {
         ruleComplexity: 'complex',
         environmentState: 'production-stable',
         inputs: {
-          currentGeneratorVersion: 'ggen-1.0.5',
-          newGeneratorVersion: 'ggen-2.0.0',
+          currentGeneratorVersion: 'sync-1.0.5',
+          newGeneratorVersion: 'sync-2.0.0',
           upgradeReason: 'performance-improvements',
         },
         execute: async (daemon, metrics) => {
           const oldGenHandler = vi.fn().mockResolvedValue({
-            generatorVersion: 'ggen-1.0.5',
-            outputHash: generateHash('enforcer-ggen-1.0.5'),
+            generatorVersion: 'sync-1.0.5',
+            outputHash: generateHash('enforcer-sync-1.0.5'),
             behavior: 'approval-threshold-100k',
           });
 
@@ -1177,8 +1177,8 @@ describe('E2E JTBD Test Suite', () => {
           metrics.recordOperation();
 
           const upgradeHandler = vi.fn().mockResolvedValue({
-            generatorVersion: 'ggen-2.0.0',
-            outputHash: generateHash('enforcer-ggen-2.0.0'),
+            generatorVersion: 'sync-2.0.0',
+            outputHash: generateHash('enforcer-sync-2.0.0'),
             behavior: 'approval-threshold-100k',
             improvementType: 'internal-optimization',
           });

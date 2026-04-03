@@ -20,7 +20,7 @@
 By the end of this tutorial, you will:
 
 1. Create an RDF ontology defining User and Post entities
-2. Configure code generation rules with `ggen.toml`
+2. Configure code generation rules with `.unrdf.toml`
 3. Write Nunjucks templates for Zod schemas and OpenAPI
 4. Generate production-ready code with `unrdf sync`
 5. Verify the generated artifacts work correctly
@@ -228,7 +228,7 @@ This ontology is the single source of truth for your entire API contract.
 
 Create a configuration file that tells `unrdf sync` how to generate code from your ontology.
 
-**Create `ggen.toml`:**
+**Create `.unrdf.toml`:**
 
 ```toml
 [project]
@@ -569,7 +569,7 @@ npx unrdf sync --dry-run --verbose
 **Expected output:**
 
 ```
-[unrdf sync] Loading configuration from ggen.toml
+[unrdf sync] Loading configuration from .unrdf.toml
 [unrdf sync] Parsing ontology: ontology/blog-api.ttl (turtle)
 [unrdf sync] Found 3 generation rules
 
@@ -597,7 +597,7 @@ npx unrdf sync --verbose
 **Expected output:**
 
 ```
-[unrdf sync] Loading configuration from ggen.toml
+[unrdf sync] Loading configuration from .unrdf.toml
 [unrdf sync] Parsing ontology: ontology/blog-api.ttl (turtle)
 [unrdf sync] Found 3 generation rules
 
@@ -776,7 +776,7 @@ You have successfully completed this tutorial. Here is what you accomplished:
 | **RDF Ontology** | Defines entities, properties, and operations semantically |
 | **SPARQL Queries** | Extracts structured data from the ontology |
 | **Nunjucks Templates** | Transforms query results into code |
-| **ggen.toml** | Configures the generation pipeline |
+| **.unrdf.toml** | Configures the generation pipeline |
 | **unrdf sync** | Executes the generation process |
 
 **The power of this approach:**
@@ -803,7 +803,7 @@ You have successfully completed this tutorial. Here is what you accomplished:
 - **[Explanation: SPARQL as a Query Language](../explanation/sparql-for-code-generation.md)** - Why SPARQL
 
 **API Reference:**
-- **[Reference: ggen.toml Configuration](../reference/ggen-toml-schema.md)** - Complete configuration options
+- **[Reference: .unrdf.toml Configuration](../reference/sync-config.md)** - Complete configuration options
 - **[Reference: Template Filters](../reference/template-filters.md)** - All available Nunjucks filters
 - **[CLI Reference: unrdf sync](../reference/cli-sync.md)** - Full command options
 
@@ -817,7 +817,7 @@ You have successfully completed this tutorial. Here is what you accomplished:
 Error: Ontology file not found: ontology/blog-api.ttl
 ```
 
-**Solution:** Verify the path in `ggen.toml` is correct and the file exists.
+**Solution:** Verify the path in `.unrdf.toml` is correct and the file exists.
 
 ### SPARQL query returns no results
 

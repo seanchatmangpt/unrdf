@@ -32,7 +32,7 @@ The script performs a complete sync workflow:
    - Creates a temporary directory
    - Writes a minimal Turtle ontology (User and Post entities)
    - Writes a Nunjucks template for code generation
-   - Writes a ggen.toml configuration file
+   - Writes a .unrdf.toml configuration file
 
 2. **Execution Phase**
    - Imports and calls `runSync()` from orchestrator.mjs
@@ -63,7 +63,7 @@ The script performs a complete sync workflow:
 ℹ Setting up test files...
 ✓ Created ontology: schema.ttl
 ✓ Created template: templates/entities.njk
-✓ Created config: ggen.toml
+✓ Created config: .unrdf.toml
 
 ============================================================
   Running Sync Command

@@ -1,5 +1,5 @@
 /**
- * Auto-generated from ggen ontology
+ * Auto-generated from UNRDF ontology
  * Source: schemas/unrdf-packages.ttl
  * Generated: 2026-01-01T03:08:45.661Z
  */

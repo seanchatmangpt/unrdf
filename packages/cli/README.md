@@ -74,7 +74,7 @@ The `sync` command transforms RDF ontologies into typed code artifacts using SPA
 
 ### Quick Example
 
-**1. Create `ggen.toml` configuration:**
+**1. Create `.unrdf.toml` configuration:**
 
 ```toml
 [project]
@@ -196,7 +196,7 @@ on:
   push:
     paths:
       - 'ontology/**'
-      - 'ggen.toml'
+      - '.unrdf.toml'
 
 jobs:
   sync:
@@ -218,7 +218,7 @@ Set default options via environment variables:
 ```bash
 export UNRDF_DEFAULT_GRAPH=main
 export UNRDF_DEFAULT_FORMAT=turtle
-export UNRDF_CONFIG_PATH=./config/ggen.toml
+export UNRDF_CONFIG_PATH=./config/.unrdf.toml
 
 unrdf graph query --query "SELECT * WHERE { ?s ?p ?o }"
 # Uses UNRDF_DEFAULT_GRAPH automatically

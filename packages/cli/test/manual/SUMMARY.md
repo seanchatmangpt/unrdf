@@ -77,7 +77,7 @@ node packages/cli/test/manual/test-sync.mjs
 ## What Gets Tested
 
 ### Pipeline Stages
-1. Config parsing (ggen.toml → parsed config)
+1. Config parsing (.unrdf.toml → parsed config)
 2. Ontology loading (schema.ttl → RDF store)
 3. SPARQL execution (query → result bindings)
 4. Template rendering (Nunjucks + data → JavaScript)

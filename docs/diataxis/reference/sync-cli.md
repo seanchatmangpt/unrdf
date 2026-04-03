@@ -13,7 +13,7 @@
 unrdf sync [options]
 ```
 
-Generates synchronized code artifacts from RDF ontology based on rules defined in a `ggen.toml` configuration file.
+Generates synchronized code artifacts from RDF ontology based on rules defined in a `.unrdf.toml` configuration file.
 
 ---
 
@@ -21,7 +21,7 @@ Generates synchronized code artifacts from RDF ontology based on rules defined i
 
 | Option | Alias | Type | Default | Description |
 |--------|-------|------|---------|-------------|
-| `--config` | - | string | `ggen.toml` | Path to ggen.toml configuration file |
+| `--config` | - | string | `.unrdf.toml` | Path to .unrdf.toml configuration file |
 | `--dry-run` | - | boolean | `false` | Preview changes without writing files |
 | `--verbose` | `-v` | boolean | `false` | Enable verbose output |
 | `--watch` | `-w` | boolean | `false` | Watch ontology and template files for changes |
@@ -36,8 +36,8 @@ Generates synchronized code artifacts from RDF ontology based on rules defined i
 Specifies the path to the configuration file. Relative paths are resolved from the current working directory.
 
 ```bash
-unrdf sync --config ./config/ggen.toml
-unrdf sync --config /absolute/path/ggen.toml
+unrdf sync --config ./config/.unrdf.toml
+unrdf sync --config /absolute/path/.unrdf.toml
 ```
 
 #### `--dry-run`
@@ -165,7 +165,7 @@ The sync command executes in three phases:
 
 ### Phase 1: Loading Configuration
 
-Parses and validates `ggen.toml`. Exits with code 1 if:
+Parses and validates `.unrdf.toml`. Exits with code 1 if:
 - Configuration file not found
 - TOML parse error
 - Schema validation failure
@@ -196,7 +196,7 @@ For each enabled rule:
 ### Basic Usage
 
 ```bash
-# Run with default configuration (ggen.toml in current directory)
+# Run with default configuration (.unrdf.toml in current directory)
 unrdf sync
 
 # Specify custom configuration file
@@ -281,8 +281,8 @@ Sync complete!
 
 | Error | Cause | Resolution |
 |-------|-------|------------|
-| `Configuration file not found: <path>` | ggen.toml does not exist at specified path | Create configuration file or specify correct path |
-| `TOML parse error` | Invalid TOML syntax | Check ggen.toml syntax |
+| `Configuration file not found: <path>` | .unrdf.toml does not exist at specified path | Create configuration file or specify correct path |
+| `TOML parse error` | Invalid TOML syntax | Check .unrdf.toml syntax |
 | `Ontology file not found` | Source file in `[ontology]` section missing | Verify ontology path |
 | `SPARQL parse error` | Invalid SPARQL query in rule | Check query syntax |
 | `Template not found` | Template file missing | Verify template path |
@@ -291,5 +291,5 @@ Sync complete!
 
 ## See Also
 
-- [ggen.toml Configuration Reference](/home/user/unrdf/docs/diataxis/reference/sync-config.md)
+- [.unrdf.toml Configuration Reference](/home/user/unrdf/docs/diataxis/reference/sync-config.md)
 - [CLI Commands Reference](/home/user/unrdf/docs/diataxis/reference/cli-commands.md)

@@ -18,7 +18,7 @@ You're correct: I was using **mechanical/iterative metaphors** (loom, layers, bu
 - Light-pattern consistency = commit coherence across timeline
 - **Property**: History is not "log of changes" but "geometry of phase space"
 
-**Layer 3: The Laser (ggen measurement function μ)**
+**Layer 3: The Laser (generator measurement function μ)**
 - Five-Stage Transformation Pipeline:
   1. **Normalization** → reduce to canonical form
   2. **Extraction** → pull signal from noise
@@ -124,7 +124,7 @@ Start: High-dimensional substrate (O)
    - Git history IS the interference pattern; it must be smooth
 
 3. ACTIVATE the laser (apply μ)
-   - Run ggen transformation pipeline
+   - Run UNRDF sync / codegen transformation pipeline
    - Watch A precipitate (5-10 seconds, not days)
    - Verify by OFMF: if >1 file, loop to step 1
 

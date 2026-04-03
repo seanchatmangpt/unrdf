@@ -1,7 +1,7 @@
 /**
  * @file Config Parser Tests
  * @module cli/test/sync/config-parser
- * @description Tests for ggen.toml configuration parser
+ * @description Tests for `.unrdf.toml` configuration parser
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -33,7 +33,7 @@ describe('Config Parser', () => {
   });
 
   describe('parseConfig()', () => {
-    it('should parse a valid ggen.toml file', async () => {
+    it('should parse a valid .unrdf.toml file', async () => {
       // Arrange
       const configContent = `
 [project]
@@ -48,7 +48,7 @@ format = "turtle"
 [generation]
 output_dir = "src/generated/"
 `;
-      const configPath = join(testDir, 'ggen.toml');
+      const configPath = join(testDir, '.unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -100,7 +100,7 @@ source = "schema/domain.ttl"
 [generation]
 output_dir = "src/generated/"
 `;
-      const configPath = join(testDir, 'ggen.toml');
+      const configPath = join(testDir, '.unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -117,7 +117,7 @@ output_dir = "src/generated/"
 [ontology]
 source = "schema/domain.ttl"
 `;
-      const configPath = join(testDir, 'ggen.toml');
+      const configPath = join(testDir, '.unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -518,11 +518,11 @@ source = "schema.ttl"
       expect(config.ontology.source).toContain('schema.ttl');
     });
 
-    it('should handle nested sections with dots', async () => {
-      // Arrange
+    it('should parse [ontology.prefixes] subtable into validated schema', async () => {
       const configContent = `
 [ontology]
 source = "schema.ttl"
+format = "turtle"
 
 [ontology.prefixes]
 rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -531,12 +531,10 @@ rdfs = "http://www.w3.org/2000/01/rdf-schema#"
       const configPath = join(testDir, 'nested.toml');
       await writeFile(configPath, configContent);
 
-      // Act - this may fail due to schema validation but parsing should work
-      try {
-        await parseConfig(configPath);
-      } catch {
-        // Expected - prefixes schema might not match
-      }
+      const config = await parseConfig(configPath);
+
+      expect(config.ontology.prefixes.rdf).toBe('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+      expect(config.ontology.prefixes.rdfs).toBe('http://www.w3.org/2000/01/rdf-schema#');
     });
 
     it('should parse string with escaped characters', async () => {
@@ -721,7 +719,7 @@ version = "1.0.0"
 [ontology]
 source = "schema/domain.ttl"
 `;
-      const configPath = join(testDir, 'ggen.toml');
+      const configPath = join(testDir, '.unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -892,62 +890,175 @@ source = "schema/domain.ttl"
   });
 
   describe('findConfigFile()', () => {
-    it('should find ggen.toml in directory', async () => {
-      // Arrange
-      const configPath = join(testDir, 'ggen.toml');
+    it('should find .unrdf.toml in directory', async () => {
+      const configPath = join(testDir, '.unrdf.toml');
       await writeFile(configPath, '[project]\nname = "test"');
 
-      // Act
       const found = await findConfigFile(testDir);
 
-      // Assert
       expect(found).toBe(configPath);
-    });
-
-    it('should find .ggen.toml as fallback', async () => {
-      // Arrange
-      const configPath = join(testDir, '.ggen.toml');
-      await writeFile(configPath, '[project]\nname = "test"');
-
-      // Act
-      const found = await findConfigFile(testDir);
-
-      // Assert
-      expect(found).toBe(configPath);
-    });
-
-    it('should find unrdf.toml as fallback', async () => {
-      // Arrange
-      const configPath = join(testDir, 'unrdf.toml');
-      await writeFile(configPath, '[project]\nname = "test"');
-
-      // Act
-      const found = await findConfigFile(testDir);
-
-      // Assert
-      expect(found).toBe(configPath);
-    });
-
-    it('should prefer ggen.toml over other names', async () => {
-      // Arrange
-      const ggenPath = join(testDir, 'ggen.toml');
-      const unrdfPath = join(testDir, 'unrdf.toml');
-      await writeFile(ggenPath, '[project]\nname = "ggen"');
-      await writeFile(unrdfPath, '[project]\nname = "unrdf"');
-
-      // Act
-      const found = await findConfigFile(testDir);
-
-      // Assert
-      expect(found).toBe(ggenPath);
     });
 
     it('should return null when no config found', async () => {
-      // Act
       const found = await findConfigFile(testDir);
 
-      // Assert
       expect(found).toBeNull();
+    });
+  });
+
+  describe('.unrdf.toml schema surface', () => {
+    it('should parse a config with all major sections and path fields', async () => {
+      const configContent = `
+[project]
+name = "full"
+version = "2.0.0"
+description = "full stack"
+author = "unrdf"
+license = "MIT"
+
+[ontology]
+source = "ontology/schema.ttl"
+format = "turtle"
+follow_imports = true
+
+[generation]
+output_dir = "dist/out"
+templates_dir = "tmpl"
+ontology_dir = "sub"
+parallel = true
+incremental = false
+overwrite = true
+require_audit_trail = true
+
+[[generation.rules]]
+name = "r1"
+description = "first rule"
+query = "SELECT ?s WHERE { ?s ?p ?o }"
+template = "templates/a.njk"
+output_file = "out/a.mjs"
+enabled = false
+mode = "skip_existing"
+
+[sync]
+enabled = false
+on_change = "watch"
+conflict_mode = "skip"
+
+[rdf]
+base_uri = "https://example.org/base/"
+default_prefix = "ex"
+
+[[templates]]
+name = "t1"
+source = "tpls/njk/extra.njk"
+output = "gen/extra.mjs"
+`;
+      const configPath = join(testDir, 'full.toml');
+      await mkdir(join(testDir, 'ontology'), { recursive: true });
+      await mkdir(join(testDir, 'templates'), { recursive: true });
+      await mkdir(join(testDir, 'tmpl'), { recursive: true });
+      await mkdir(join(testDir, 'tpls', 'njk'), { recursive: true });
+      await mkdir(join(testDir, 'sub'), { recursive: true });
+      await mkdir(join(testDir, 'dist', 'out'), { recursive: true });
+      await mkdir(join(testDir, 'gen'), { recursive: true });
+      await writeFile(join(testDir, 'ontology', 'schema.ttl'), '@prefix ex: <http://example.org/> .\n');
+
+      await writeFile(configPath, configContent);
+
+      const config = await parseConfig(configPath);
+
+      expect(config.project.name).toBe('full');
+      expect(config.project.author).toBe('unrdf');
+      expect(config.project.license).toBe('MIT');
+      expect(config.ontology.follow_imports).toBe(true);
+      expect(config.generation.templates_dir).toBe(join(testDir, 'tmpl'));
+      expect(config.generation.ontology_dir).toBe(join(testDir, 'sub'));
+      expect(config.generation.parallel).toBe(true);
+      expect(config.generation.require_audit_trail).toBe(true);
+      expect(config.generation.rules[0].enabled).toBe(false);
+      expect(config.generation.rules[0].description).toBe('first rule');
+      expect(config.generation.rules[0].mode).toBe('skip_existing');
+      expect(config.sync.enabled).toBe(false);
+      expect(config.sync.on_change).toBe('watch');
+      expect(config.sync.conflict_mode).toBe('skip');
+      expect(config.rdf.base_uri).toBe('https://example.org/base/');
+      expect(config.rdf.default_prefix).toBe('ex');
+      expect(config.templates[0].name).toBe('t1');
+      expect(config.templates[0].source).toBe(join(testDir, 'tpls', 'njk', 'extra.njk'));
+      expect(config.templates[0].output).toBe(join(testDir, 'gen', 'extra.mjs'));
+    });
+
+    it('should accept every sync.on_change enum value', async () => {
+      await writeFile(join(testDir, 'schema-onchange.ttl'), '@prefix : <http://x/> .\n');
+      for (const onChange of ['manual', 'auto', 'watch']) {
+        const cfg = `
+[ontology]
+source = "schema-onchange.ttl"
+
+[sync]
+on_change = "${onChange}"
+`;
+        const p = join(testDir, `onchange-${onChange}.toml`);
+        await writeFile(p, cfg);
+        const c = await parseConfig(p);
+        expect(c.sync.on_change).toBe(onChange);
+      }
+    });
+
+    it('should accept every sync.conflict_mode enum value', async () => {
+      await writeFile(join(testDir, 'schema-conflict.ttl'), '@prefix : <http://x/> .\n');
+      for (const m of ['warn', 'error', 'overwrite', 'skip']) {
+        const cfg = `
+[ontology]
+source = "schema-conflict.ttl"
+
+[sync]
+conflict_mode = "${m}"
+`;
+        const p = join(testDir, `conflict-${m}.toml`);
+        await writeFile(p, cfg);
+        const c = await parseConfig(p);
+        expect(c.sync.conflict_mode).toBe(m);
+      }
+    });
+
+    it('should reject invalid sync.on_change', async () => {
+      await writeFile(join(testDir, 'schema-bad-sync.ttl'), '@prefix : <http://x/> .\n');
+      const cfg = `
+[ontology]
+source = "schema-bad-sync.ttl"
+[sync]
+on_change = "invalid"
+`;
+      const p = join(testDir, 'bad-onchange.toml');
+      await writeFile(p, cfg);
+      await expect(parseConfig(p)).rejects.toThrow();
+    });
+
+    it('should reject invalid sync.conflict_mode', async () => {
+      await writeFile(join(testDir, 'schema-bad-conflict.ttl'), '@prefix : <http://x/> .\n');
+      const cfg = `
+[ontology]
+source = "schema-bad-conflict.ttl"
+[sync]
+conflict_mode = "nope"
+`;
+      const p = join(testDir, 'bad-conflict.toml');
+      await writeFile(p, cfg);
+      await expect(parseConfig(p)).rejects.toThrow();
+    });
+
+    it('should reject invalid rdf.base_uri', async () => {
+      await writeFile(join(testDir, 'schema-bad-rdf.ttl'), '@prefix : <http://x/> .\n');
+      const cfg = `
+[ontology]
+source = "schema-bad-rdf.ttl"
+[rdf]
+base_uri = "not-a-url"
+`;
+      const p = join(testDir, 'bad-rdf.toml');
+      await writeFile(p, cfg);
+      await expect(parseConfig(p)).rejects.toThrow();
     });
   });
 

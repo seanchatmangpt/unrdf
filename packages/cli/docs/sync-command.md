@@ -13,7 +13,7 @@ The `sync` command reads an RDF ontology (Turtle, N-Triples, JSON-LD, etc.), exe
 
 ## Quick Start
 
-**1. Create configuration file `ggen.toml`:**
+**1. Create configuration file `.unrdf.toml`:**
 
 ```toml
 [project]
@@ -64,7 +64,7 @@ export const {{ entityName | camelCase }}Schema = z.object({
 unrdf sync
 ```
 
-## Configuration (ggen.toml)
+## Configuration (.unrdf.toml)
 
 ### [project] Section
 
@@ -296,7 +296,7 @@ Date format tokens: `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss`
 Usage: unrdf sync [options]
 
 Options:
-  --config <path>    Path to ggen.toml (default: "ggen.toml")
+  --config <path>    Path to .unrdf.toml (default: ".unrdf.toml")
   --dry-run          Preview changes without writing files
   -v, --verbose      Enable verbose output
   -f, --force        Overwrite existing files without prompting
@@ -353,7 +353,7 @@ api:Post_title api:name "title" ; api:type xsd:string ; api:required true .
 api:Post_authorId api:name "authorId" ; api:type xsd:string ; api:required true .
 ```
 
-### Configuration (`ggen.toml`)
+### Configuration (`.unrdf.toml`)
 
 ```toml
 [project]
@@ -509,10 +509,10 @@ paths:
 ### Config file not found
 
 ```
-Error: Configuration file not found: ggen.toml
+Error: Configuration file not found: .unrdf.toml
 ```
 
-Create `ggen.toml` in your project root or specify path with `--config`.
+Create `.unrdf.toml` in your project root or specify path with `--config`.
 
 ### Ontology file not found
 

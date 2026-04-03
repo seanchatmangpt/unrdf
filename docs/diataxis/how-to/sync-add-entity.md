@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-- Existing project with `ggen.toml` configuration
+- Existing project with `.unrdf.toml` configuration
 - Blog API ontology with User and Post entities
 - `@unrdf/cli` installed
 
@@ -91,7 +91,7 @@ ex:Comment
 Generate all outputs from your updated ontology:
 
 ```bash
-timeout 10s unrdf sync --config ggen.toml
+timeout 10s unrdf sync --config .unrdf.toml
 ```
 
 **Expected result:**

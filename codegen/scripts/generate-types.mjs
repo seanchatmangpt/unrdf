@@ -69,7 +69,7 @@ function parseOntology(filePath) {
 // Generate TypeScript code
 function generateTypeScript(packages) {
   const ts = `/**
- * Auto-generated from ggen ontology
+ * Auto-generated from UNRDF ontology
  * Source: schemas/unrdf-packages.ttl
  * Generated: ${new Date().toISOString()}
  */
@@ -129,7 +129,7 @@ export function findByTier(tier: 'essential' | 'extended' | 'optional'): Package
 // Main
 async function main() {
   const ontologyPath = path.join(projectRoot, 'schemas', 'unrdf-packages.ttl');
-  const outputPath = path.join(projectRoot, 'ggen', 'generated', 'packages.ts');
+  const outputPath = path.join(projectRoot, 'codegen', 'generated', 'packages.ts');
 
   console.log('📝 Parsing ontology...');
   const packages = parseOntology(ontologyPath);
@@ -145,7 +145,7 @@ async function main() {
   console.log(`   Written: ${outputPath}`);
 
   // Generate ESM version
-  const esmPath = path.join(projectRoot, 'ggen', 'generated', 'packages.mjs');
+  const esmPath = path.join(projectRoot, 'codegen', 'generated', 'packages.mjs');
   const esm = typeScript.replace(/export interface/g, 'export').replace(': Package\[]/g', '');
   fs.writeFileSync(esmPath, esm);
   console.log(`   Written: ${esmPath}`);

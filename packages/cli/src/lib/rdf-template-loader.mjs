@@ -310,10 +310,10 @@ export class RdfTemplateLoader {
    * Build full Nunjucks context from store
    * @param {UnrdfStore} store
    * @param {string} [sparqlQuery] - Optional SPARQL to extract specific vars
-   * @param {string} [subjectUri] - Optional subject to focus on
+   * @param {string} [_subjectUri] - Reserved for future subject-scoped context
    * @returns {Object}
    */
-  createTemplateContext(store, sparqlQuery, subjectUri) {
+  createTemplateContext(store, sparqlQuery, _subjectUri) {
     if (!sparqlQuery) {
       // Return generic context with all subjects
       return { $rdf: { subjects: {}, raw: [] } };

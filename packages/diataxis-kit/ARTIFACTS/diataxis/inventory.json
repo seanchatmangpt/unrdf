@@ -263,7 +263,7 @@
       "version": "26.4.2"
     },
     {
-      "dir": "/Users/sac/unrdf/ggen/generated",
+      "dir": "/Users/sac/unrdf/codegen/generated",
       "name": "@unrdf/generated",
       "version": "6.0.0-rc.1"
     },

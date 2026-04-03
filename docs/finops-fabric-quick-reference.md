@@ -5,7 +5,7 @@
 A = μ(O)
 
 A = Erlang platform (executable artifacts)
-μ = ggen (generator + validators + compilers)
+μ = UNRDF generator (validators + compilers)
 O = FIBO ontology + policies + constraints
 ```
 
@@ -73,7 +73,7 @@ O = FIBO ontology + policies + constraints
 - [ ] JTBD #6: Generator improvements applied? (Kaizen: update μ version safely)
 
 ### On Audit (Proof)
-- [ ] JTBD #2: Auditor can replay? (receipt + ggen binary = verify A integrity)
+- [ ] JTBD #2: Auditor can replay? (receipt + generator binary = verify A integrity)
 - [ ] JTBD #3: Control failure diagnosis clear? (blame is on O or μ, never ops)
 
 ---
@@ -86,7 +86,7 @@ O = FIBO ontology + policies + constraints
   "inputs": {
     "O_hash": "0x...",
     "ΔO_hash": "0x...",
-    "ggen_version": "1.0.1"
+    "generator_version": "1.0.1"
   },
   "generation": {
     "duration_ms": 3000,
@@ -131,7 +131,7 @@ O = FIBO ontology + policies + constraints
 System behavior unexpected?
 ├─ Receipt shows violation
 │  ├─ Doctrine invariant broken
-│  │  └─ → Generator (μ) defect; investigate ggen source
+│  │  └─ → Generator (μ) defect; investigate generator source
 │  └─ TPS gate failed
 │     ├─ Ontology gate → O is invalid; compliance team fixes
 │     ├─ Determinism gate → μ is non-deterministic; engineer investigates
@@ -192,7 +192,7 @@ System behavior unexpected?
 |------|-------|
 | **O** | Ontology (FIBO + local policies + constraints) |
 | **ΔO** | Change to ontology (what compliance team submits) |
-| **μ** | Generator (ggen binary; transforms O → A) |
+| **μ** | Generator (generator binary; transforms O → A) |
 | **A** | Artifacts (Erlang platform; processes, modules, etc.) |
 | **Receipt** | Proof of generation (inputs, rules, outputs, hashes) |
 | **Epoch** | Deployment window (e.g., daily, weekly) |
@@ -235,7 +235,7 @@ Operationally sound: TPS gates prevent all defects from shipping
 ## Next Actions
 
 1. **To deploy a change**: Write ΔO, compliance approves, submit to epoch queue
-2. **To audit**: Request receipt + ggen binary version, run replay verification
+2. **To audit**: Request receipt + generator binary version, run replay verification
 3. **To troubleshoot**: Read receipt, follow diagnosis tree, find which artifact is wrong
 4. **To improve**: Kaizen: simplify O or improve μ rules (never hand-edit A)
 5. **To verify system health**: Run JTBD #6 monthly; regenerate O_accumulated and compare hash

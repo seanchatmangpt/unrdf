@@ -91,11 +91,11 @@
 **Given**:
 - O_old, O_new (before/after ontology)
 - Receipt from production deployment
-- Auditor has clean Erlang runtime + ggen binary
+- Auditor has clean Erlang runtime + generator binary
 
 **When**:
-1. Auditor reads receipt: {inputs: O_new, rules: ggen_version, outputs: artifacts}
-2. Auditor computes: μ_auditor(O_new) using receipt's ggen_version
+1. Auditor reads receipt: {inputs: O_new, rules: generator_version, outputs: artifacts}
+2. Auditor computes: μ_auditor(O_new) using receipt's generator_version
 3. Auditor compares: hash(artifacts_from_receipt) vs hash(outputs_from_replay)
 
 **Then**:
@@ -112,7 +112,7 @@
 
 **Failure Modes Detected**:
 - Receipt missing inputs → auditor cannot replay
-- ggen_version not pinned in receipt → auditor cannot reproduce
+- generator_version not pinned in receipt → auditor cannot reproduce
 - Outputs non-deterministic (same O, different A) → defect in μ
 
 ---
@@ -165,7 +165,7 @@
 - [ ] Operations concludes: "Enforcer is correct; failure is not in generated code"
 - [ ] Operations escalates: "This is a μ bug or an O inconsistency, not an operational error"
 - [ ] Doctrine invariant **Fault Containment** enforced: defect is in generation, not execution
-- [ ] Root cause search: Did O change between production and audit? Did ggen version differ?
+- [ ] Root cause search: Did O change between production and audit? Did generator version differ?
 - [ ] Auditor approves: "Controls operated as designed; root cause is in configuration or generation, not operations"
 
 **Proof of Job Done**:
@@ -308,7 +308,7 @@
 
 **When**:
 1. Team retrieves receipt R_t0 (original deployment)
-2. Team executes: μ_restore(O_t0) using exact ggen version from receipt
+2. Team executes: μ_restore(O_t0) using exact generator version from receipt
 3. Team verifies: generated A_restore ≡ A_t0 (hash match)
 4. Team deploys A_restore (supervisor restarts affected processes)
 
@@ -349,7 +349,7 @@
 - [ ] If hashes match: "System is operationally consistent; no drift"
 - [ ] If hashes differ: receipt explains exact differences (and their causes)
 - [ ] Doctrine invariant **Idempotence** verified: μ∘μ = μ (multiple generations are stable)
-- [ ] TPS gate **Determinism**: ggen version + O → A is repeatable
+- [ ] TPS gate **Determinism**: generator version + O → A is repeatable
 - [ ] No "technical debt" accumulation; every past change is explicit and documented
 
 **Proof of Job Done**:
@@ -362,14 +362,14 @@
 ### Test Scenario 6.2: Generational Improvements (Kaizen)
 
 **Given**:
-- ggen v1.0 generated A_v1 (current production)
-- ggen v1.1 is released (cleaner rules, fewer edge cases)
-- Team wants to upgrade ggen without changing O
+- generator v1.0 generated A_v1 (current production)
+- generator v1.1 is released (cleaner rules, fewer edge cases)
+- Team wants to upgrade the generator without changing O
 
 **When**:
-1. Team regenerates A using ggen v1.1: A_v11 = μ_v1.1(O)
+1. Team regenerates A using generator v1.1: A_v11 = μ_v1.1(O)
 2. Team verifies golden tests: A_v11 enforces same policies as A_v1
-3. Team produces receipt: {old_ggen: v1.0, new_ggen: v1.1, A_hash_change: ...}
+3. Team produces receipt: {old_generator: v1.0, new_generator: v1.1, A_hash_change: ...}
 4. If policies are identical, team deploys A_v11
 
 **Then**:
@@ -398,7 +398,7 @@
   "inputs": {
     "O_old": "hash(...)",
     "ΔO": "hash(...)",
-    "ggen_version": "1.0.1"
+    "generator_version": "1.0.1"
   },
   "process": {
     "step_1_validation": "PASS",
@@ -553,7 +553,7 @@ O_old:
        inputs: {
          O_old_hash: "0x1a2b3c...",
          ΔO_hash: "0x4d5e6f...",
-         ggen_version: "1.0.1"
+         generator_version: "1.0.1"
        },
        generation: {
          duration_ms: 1847,

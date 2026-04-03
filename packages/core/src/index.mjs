@@ -48,6 +48,13 @@ export {
 
 export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonicalize.mjs';
 
+// Graph diffing and change tracking
+export {
+  diffGraphFromStores,
+  diffGraphFromDelta,
+  diffOntologyFromGraphDiff,
+} from './diff.mjs';
+
 // Async SPARQL operations (legacy functional API)
 export {
   executeQuery,

@@ -5,7 +5,7 @@ Deploy a financial constraint as operational enforcement (e.g., "approver must b
 
 ## Prerequisites
 - Ontology repository access (O with read/write)
-- μ (ggen) binary available
+- μ (generator) binary available
 - Test environment credentials
 - Production deployment window scheduled (30-min epoch)
 - Compliance team approval for policy change
@@ -55,7 +55,7 @@ Deploy a financial constraint as operational enforcement (e.g., "approver must b
 9. **Generate Audit Receipt**
    - Run: `μ receipt --deployment=production --timestamp=$(date -Iseconds)`
    - Store: Receipt in audit log (for JTBD #2 compliance)
-   - Verify: Receipt includes {O_hash, A_hash, ggen_version, deployment_timestamp}
+   - Verify: Receipt includes {O_hash, A_hash, generator_version, deployment_timestamp}
 
 ## Success Criteria
 - [ ] Policy definition → enforcer generation: <2 minutes

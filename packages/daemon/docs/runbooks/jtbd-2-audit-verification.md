@@ -6,7 +6,7 @@ Produce independently verifiable audit artifacts that prove a policy change was 
 ## Prerequisites
 - Production deployment receipt (from JTBD #1 step 9)
 - Clean Erlang runtime environment (for auditor replay)
-- ggen binary (version specified in receipt)
+- generator binary (version specified in receipt)
 - Access to ontology repository (O_old, O_new)
 - Auditor credentials (read-only)
 
@@ -14,7 +14,7 @@ Produce independently verifiable audit artifacts that prove a policy change was 
 
 1. **Retrieve Deployment Receipt**
    - Locate: Production receipt from audit log
-   - Extract: `{inputs: O_new_hash, rules: ggen_version, outputs: A_hash, timestamp}`
+   - Extract: `{inputs: O_new_hash, rules: generator_version, outputs: A_hash, timestamp}`
    - Verify: Receipt signature is valid
 
 2. **Fetch Ontology Snapshots**
@@ -23,8 +23,8 @@ Produce independently verifiable audit artifacts that prove a policy change was 
    - Document: What changed between O_old and O_new (ΔO)
 
 3. **Replay Generation (Auditor Side)**
-   - Run: `μ_auditor generate --input=O_new --ggen-version={from_receipt}`
-   - Important: Use EXACT ggen version from receipt
+   - Run: `μ_auditor generate --input=O_new --generator-version={from_receipt}`
+   - Important: Use EXACT generator version from receipt
    - Output: A_auditor (auditor's regenerated enforcer)
 
 4. **Verify Integrity**
@@ -34,12 +34,12 @@ Produce independently verifiable audit artifacts that prove a policy change was 
 
 5. **Produce Auditor Receipt**
    - Generate: Auditor's own receipt from replay
-   - Include: `{O_new_hash, ggen_version, A_auditor_hash, auditor_id, timestamp}`
+   - Include: `{O_new_hash, generator_version, A_auditor_hash, auditor_id, timestamp}`
    - Sign: With auditor's private key
 
 6. **Compare Receipts**
    - Verify: Production receipt hash == Auditor receipt hash
-   - Check: Both receipts agree on: O_hash, A_hash, ggen_version
+   - Check: Both receipts agree on: O_hash, A_hash, generator_version
    - Document: "Independent verification confirms correctness"
 
 7. **Build Audit Trail (Multi-Change)**
@@ -64,11 +64,11 @@ Produce independently verifiable audit artifacts that prove a policy change was 
 
 ### If auditor replay fails (A_auditor ≠ A_production)
 - **Symptom**: Hashes do not match after regeneration
-- **Action**: Check ggen version mismatch: auditor may be using wrong μ version
-- **Fix**: Ensure auditor uses EXACT ggen_version from receipt. If versions match but hashes differ → CRITICAL BUG (non-deterministic generation)
+- **Action**: Check generator version mismatch: auditor may be using wrong μ version
+- **Fix**: Ensure auditor uses EXACT generator_version from receipt. If versions match but hashes differ → CRITICAL BUG (non-deterministic generation)
 
 ### If receipt is incomplete
-- **Symptom**: Receipt missing inputs (O_hash), rules (ggen_version), or outputs (A_hash)
+- **Symptom**: Receipt missing inputs (O_hash), rules (generator_version), or outputs (A_hash)
 - **Action**: This violates TPS Replay gate
 - **Fix**: Regenerate receipt from production logs. If logs unavailable → CANNOT VERIFY (audit failure)
 

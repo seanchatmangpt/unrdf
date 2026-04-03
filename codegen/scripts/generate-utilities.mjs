@@ -392,7 +392,7 @@ export default MetadataCache;
 async function main() {
   console.log('🔧 Generating working utility systems...');
 
-  const outputDir = path.join(projectRoot, 'ggen', 'generated');
+  const outputDir = path.join(projectRoot, 'codegen', 'generated');
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Generate resolver

@@ -114,7 +114,7 @@ describe('Sync Orchestrator', () => {
   describe('runSync()', () => {
     it('should process config and generate files successfully', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -126,7 +126,7 @@ describe('Sync Orchestrator', () => {
       expect(result.metrics.errors).toBe(0);
 
       // Verify dependencies were called
-      expect(parseConfig).toHaveBeenCalledWith('/test/ggen.toml');
+      expect(parseConfig).toHaveBeenCalledWith('/test/.unrdf.toml');
       expect(loadOntology).toHaveBeenCalled();
       expect(executeSparqlQuery).toHaveBeenCalledTimes(2);
       expect(renderTemplate).toHaveBeenCalledTimes(2);
@@ -144,7 +144,7 @@ describe('Sync Orchestrator', () => {
 
     it('should not write files in dry-run mode', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', dryRun: true };
+      const options = { config: '/test/.unrdf.toml', dryRun: true };
 
       // Act
       const result = await runSync(options);
@@ -170,7 +170,7 @@ describe('Sync Orchestrator', () => {
 
     it('should output detailed information in verbose mode', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', verbose: true };
+      const options = { config: '/test/.unrdf.toml', verbose: true };
 
       // Act
       const result = await runSync(options);
@@ -181,7 +181,7 @@ describe('Sync Orchestrator', () => {
       // Verify verbose output
       const output = logOutput.join('\n');
       expect(output).toContain('Config:');
-      expect(output).toContain('/test/ggen.toml');
+      expect(output).toContain('/test/.unrdf.toml');
       expect(output).toContain('Project:');
       expect(output).toContain('test-project');
       expect(output).toContain('Rule:');
@@ -192,7 +192,7 @@ describe('Sync Orchestrator', () => {
 
     it('should process only the specified rule when filter is provided', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', rule: 'generate-types' };
+      const options = { config: '/test/.unrdf.toml', rule: 'generate-types' };
 
       // Act
       const result = await runSync(options);
@@ -214,7 +214,7 @@ describe('Sync Orchestrator', () => {
 
     it('should handle non-existent rule filter gracefully', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', rule: 'non-existent-rule' };
+      const options = { config: '/test/.unrdf.toml', rule: 'non-existent-rule' };
 
       // Act
       const result = await runSync(options);
@@ -259,7 +259,7 @@ describe('Sync Orchestrator', () => {
         },
       });
 
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -274,8 +274,8 @@ describe('Sync Orchestrator', () => {
   describe('error handling', () => {
     it('should return error when config file is missing', async () => {
       // Arrange
-      parseConfig.mockRejectedValue(new Error('Configuration file not found: /missing/ggen.toml'));
-      const options = { config: '/missing/ggen.toml' };
+      parseConfig.mockRejectedValue(new Error('Configuration file not found: /missing/.unrdf.toml'));
+      const options = { config: '/missing/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -293,7 +293,7 @@ describe('Sync Orchestrator', () => {
     it('should return error when ontology loading fails', async () => {
       // Arrange
       loadOntology.mockRejectedValue(new Error('Ontology file not found: /test/schema.ttl'));
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -309,7 +309,7 @@ describe('Sync Orchestrator', () => {
         .mockRejectedValueOnce(new Error('SPARQL syntax error'))
         .mockResolvedValueOnce([{ '?schema': 'http://example.org/Schema1' }]);
 
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -334,7 +334,7 @@ describe('Sync Orchestrator', () => {
     it('should handle template rendering failures', async () => {
       // Arrange
       renderTemplate.mockRejectedValue(new Error('Template not found'));
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -351,7 +351,7 @@ describe('Sync Orchestrator', () => {
       errorWithStack.stack = 'Error: Test error\n    at TestFunction (test.mjs:10:5)';
       parseConfig.mockRejectedValue(errorWithStack);
 
-      const options = { config: '/test/ggen.toml', verbose: true };
+      const options = { config: '/test/.unrdf.toml', verbose: true };
 
       // Act
       await runSync(options);
@@ -365,7 +365,7 @@ describe('Sync Orchestrator', () => {
   describe('metrics tracking', () => {
     it('should track rulesProcessed count correctly', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -380,7 +380,7 @@ describe('Sync Orchestrator', () => {
 
     it('should track filesGenerated count correctly', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -399,7 +399,7 @@ describe('Sync Orchestrator', () => {
         content: 'x'.repeat(1000), // 1000 bytes
         outputPath: 'test.mjs',
       });
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -417,7 +417,7 @@ describe('Sync Orchestrator', () => {
         tripleCount: 500,
         prefixes: {},
       });
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -433,7 +433,7 @@ describe('Sync Orchestrator', () => {
 
     it('should track filesSkipped in dry-run mode', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', dryRun: true };
+      const options = { config: '/test/.unrdf.toml', dryRun: true };
 
       // Act
       const result = await runSync(options);
@@ -446,7 +446,7 @@ describe('Sync Orchestrator', () => {
     it('should track errors count correctly', async () => {
       // Arrange - both rules fail
       executeSparqlQuery.mockRejectedValue(new Error('Query failed'));
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -461,7 +461,7 @@ describe('Sync Orchestrator', () => {
 
     it('should track duration for each rule', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -475,7 +475,7 @@ describe('Sync Orchestrator', () => {
 
     it('should track totalDuration for entire sync', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -494,7 +494,7 @@ describe('Sync Orchestrator', () => {
   describe('output formats', () => {
     it('should output JSON when output option is json', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', output: 'json' };
+      const options = { config: '/test/.unrdf.toml', output: 'json' };
 
       // Act
       const result = await runSync(options);
@@ -522,7 +522,7 @@ describe('Sync Orchestrator', () => {
 
     it('should not output JSON when output option is text', async () => {
       // Arrange
-      const options = { config: '/test/ggen.toml', output: 'text' };
+      const options = { config: '/test/.unrdf.toml', output: 'text' };
 
       // Act
       await runSync(options);
@@ -549,7 +549,7 @@ describe('Sync Orchestrator', () => {
         ontology: { source: '/test/schema.ttl', format: 'turtle' },
         generation: { output_dir: '/test/output', rules: [] },
       });
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -571,7 +571,7 @@ describe('Sync Orchestrator', () => {
         ontology: { source: '/test/schema.ttl', format: 'turtle' },
         generation: undefined,
       });
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -604,7 +604,7 @@ describe('Sync Orchestrator', () => {
         outputPath: 'output.mjs',
       });
 
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);
@@ -627,7 +627,7 @@ describe('Sync Orchestrator', () => {
         ontology: { source: '/test/schema.ttl', format: 'turtle' },
         generation: { output_dir: '/test/output', rules: [] },
       });
-      const options = { config: '/test/ggen.toml', verbose: true };
+      const options = { config: '/test/.unrdf.toml', verbose: true };
 
       // Act
       const result = await runSync(options);
@@ -665,7 +665,7 @@ describe('Sync Orchestrator', () => {
         outputPath: 'from-template.mjs', // Template specifies output path
       });
 
-      const options = { config: '/test/ggen.toml' };
+      const options = { config: '/test/.unrdf.toml' };
 
       // Act
       const result = await runSync(options);

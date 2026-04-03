@@ -7,7 +7,7 @@ Verify that accumulated policy changes remain coherent and that the system does 
 - Production system running for ≥3 months
 - All historical receipts (R_t0, R_t1, ..., R_tn)
 - Current O_tn (merged state of all changes)
-- ggen version history
+- generator version history
 - Clean test environment
 
 ## Steps
@@ -48,13 +48,13 @@ Verify that accumulated policy changes remain coherent and that the system does 
    - Expected: Every line of A is traceable to O via receipts
 
 8. **Test Generator Upgrade (Kaizen)**
-   - Identify: New ggen version (e.g., v1.1 with cleaner rules)
+   - Identify: New generator version (e.g., v1.1 with cleaner rules)
    - Run: `μ_v1.1 generate --input=O_tn --output=A_v11`
    - Run golden tests: `μ_v1.1 test --enforcer=A_v11 --golden-suite`
    - Verify: Policy behavior unchanged (only internal improvements)
 
 9. **Generate Kaizen Receipt**
-   - Document: `{old_ggen: v1.0, new_ggen: v1.1, O_unchanged: true, behavior_equivalent: true}`
+   - Document: `{old_generator: v1.0, new_generator: v1.1, O_unchanged: true, behavior_equivalent: true}`
    - Proof: Golden tests prove policy equivalence
    - Deploy: A_v11 with confidence (zero customer impact)
 
@@ -76,8 +76,8 @@ Verify that accumulated policy changes remain coherent and that the system does 
 
 ### If drift detected (A_fresh ≠ A_production)
 - **Symptom**: Fresh generation differs from production
-- **Action**: Investigate cause: manual edits? environment changes? ggen version mismatch?
-- **Fix**: If manual edits found → VIOLATION (revert edits, regenerate from O). If environment → document in receipt. If ggen mismatch → redeploy with correct version
+- **Action**: Investigate cause: manual edits? environment changes? generator version mismatch?
+- **Fix**: If manual edits found → VIOLATION (revert edits, regenerate from O). If environment → document in receipt. If generator mismatch → redeploy with correct version
 
 ### If technical debt found (unexplained code)
 - **Symptom**: Code in A_production not traceable to O via receipts
@@ -85,8 +85,8 @@ Verify that accumulated policy changes remain coherent and that the system does 
 - **Fix**: Archaeology required: git blame, deployment logs. Document findings. Add missing receipts. If cannot explain → may need to regenerate entire A from O
 
 ### If generator upgrade changes policy behavior
-- **Symptom**: Golden tests FAIL with new ggen version
-- **Action**: ggen v1.1 is NOT behavior-equivalent to v1.0
+- **Symptom**: Golden tests FAIL with new generator version
+- **Action**: Generator v1.1 is NOT behavior-equivalent to v1.0
 - **Fix**: DO NOT deploy. This is NOT Kaizen (continuous improvement). This is a breaking change. Requires compliance team review (treat as new ΔO)
 
 ### If compliance team finds unexpected behavior
@@ -97,7 +97,7 @@ Verify that accumulated policy changes remain coherent and that the system does 
 ### If system performance degrades over time
 - **Symptom**: Latency increases, memory usage grows despite no policy changes
 - **Action**: May indicate accumulating inefficiency in generated code
-- **Fix**: Profile A_production. If inefficiency found → upgrade ggen with performance improvements (Kaizen). If external cause (data growth) → scale infrastructure
+- **Fix**: Profile A_production. If inefficiency found → upgrade the generator with performance improvements (Kaizen). If external cause (data growth) → scale infrastructure
 
 ## References
 - Test scenario: JTBD 6.1 (Continuous Compliance Verification)

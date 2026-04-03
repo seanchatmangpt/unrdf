@@ -12,7 +12,7 @@ Generate synchronized code artifacts from a single RDF ontology source:
 - Create templates for OpenAPI specifications
 - Generate Zod validation schemas from ontology
 - Produce JSDoc type definitions with descriptions
-- Configure multiple generation rules in ggen.toml
+- Configure multiple generation rules in .unrdf.toml
 - Verify consistency across all generated outputs
 
 ## Why Synchronized Outputs Matter
@@ -750,10 +750,10 @@ export default createApiClient;
 
 ## Step 5: Configure Generation Rules (3 min)
 
-Create `/tmp/sync-demo/ggen.toml`:
+Create `/tmp/sync-demo/.unrdf.toml`:
 
 ```toml
-# ggen.toml - Multi-Format Code Generation Configuration
+# .unrdf.toml - Multi-Format Code Generation Configuration
 # Generates OpenAPI, Zod schemas, JSDoc types, and API client from RDF ontology
 
 [project]
@@ -1021,7 +1021,7 @@ Run the sync command to generate all outputs:
 
 ```bash
 cd /tmp/sync-demo
-npx unrdf sync --config ggen.toml --verbose
+npx unrdf sync --config .unrdf.toml --verbose
 ```
 
 **Expected Output:**
@@ -1029,7 +1029,7 @@ npx unrdf sync --config ggen.toml --verbose
 UNRDF Sync
 
 Phase 1: Loading configuration...
-   Config: ggen.toml
+   Config: .unrdf.toml
    Project: User Management API
 
 Phase 2: Loading ontology...
@@ -1152,7 +1152,7 @@ You've learned how to:
 
 - Define a comprehensive API ontology with classes, properties, and endpoints
 - Create templates for OpenAPI, Zod, and JSDoc outputs
-- Configure multiple generation rules in `ggen.toml`
+- Configure multiple generation rules in `.unrdf.toml`
 - Generate all artifacts with a single `unrdf sync` command
 - Verify consistency across generated outputs
 
@@ -1171,7 +1171,7 @@ You've learned how to:
 
 - **Tutorial:** [Building Ontologies with Templates](./building-ontologies-with-templates.md) - 20 min
 - **How-to:** [Custom Template Filters](../how-to/sync-custom-filters.md)
-- **Reference:** [ggen.toml Configuration](../reference/sync-config.md)
+- **Reference:** [.unrdf.toml Configuration](../reference/sync-config.md)
 
 ## Key Takeaways
 
@@ -1184,7 +1184,7 @@ You've learned how to:
 ## Troubleshooting
 
 **No results from SPARQL query:**
-- Check prefix definitions in `ggen.toml` match ontology prefixes
+- Check prefix definitions in `.unrdf.toml` match ontology prefixes
 - Verify class URIs in FILTER clauses match ontology exactly
 - Use `--verbose` flag to see query execution details
 

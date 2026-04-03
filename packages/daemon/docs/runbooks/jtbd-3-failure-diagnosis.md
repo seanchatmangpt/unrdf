@@ -18,11 +18,11 @@ When a control fails in production (e.g., approver rule incorrectly allowed/bloc
 
 2. **Retrieve Current Enforcer Receipt**
    - Locate: Receipt R for approval enforcer currently in production
-   - Extract: `{O_hash, A_hash, ggen_version, deployment_timestamp}`
+   - Extract: `{O_hash, A_hash, generator_version, deployment_timestamp}`
    - Verify: Receipt is for current production version (not stale)
 
 3. **Replay Generation in Clean Environment**
-   - Run: `μ generate --input=O_production --ggen-version={from_receipt}`
+   - Run: `μ generate --input=O_production --generator-version={from_receipt}`
    - Output: A_replay
    - Compare: `hash(A_replay) == hash(A_production)`
    - Expected: Hashes match (proves production enforcer is correct artifact from O)
@@ -91,7 +91,7 @@ When a control fails in production (e.g., approver rule incorrectly allowed/bloc
 
 ### If μ engineering disputes bug report
 - **Symptom**: μ team claims enforcer is "correct" despite failure
-- **Action**: Provide EXACT inputs (O, ggen_version), receipt, and golden test showing failure
+- **Action**: Provide EXACT inputs (O, generator_version), receipt, and golden test showing failure
 - **Fix**: If μ team cannot reproduce, possible environment-specific bug. Capture full runtime state (logs, env vars, BEAM dump)
 
 ## References

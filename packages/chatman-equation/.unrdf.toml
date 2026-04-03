@@ -2,9 +2,9 @@
 # Sync configuration for the Chatman Equation package
 #
 # Usage:
-#   unrdf sync --config ggen.toml
-#   unrdf sync --config ggen.toml --rule operators
-#   unrdf sync --config ggen.toml --dry-run
+#   unrdf sync --config .unrdf.toml
+#   unrdf sync --config .unrdf.toml --rule operators
+#   unrdf sync --config .unrdf.toml --dry-run
 #
 # This configuration generates TypeScript-style code from the Chatman Equation
 # ontology, including closure operators, market dynamics entities, and examples.

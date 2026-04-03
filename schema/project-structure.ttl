@@ -104,7 +104,7 @@ unrdf:PackagesDir a unrdf:Directory ;
 unrdf:SchemaDir a unrdf:Directory ;
     unrdf:directoryName "schema" ;
     unrdf:directoryPath "schema/" ;
-    unrdf:directoryPurpose "RDF ontologies for ggen code generation" .
+    unrdf:directoryPurpose "RDF ontologies for ontology-driven code generation" .
 
 unrdf:TemplatesDir a unrdf:Directory ;
     unrdf:directoryName "templates" ;
@@ -114,7 +114,7 @@ unrdf:TemplatesDir a unrdf:Directory ;
 unrdf:GeneratedDir a unrdf:Directory ;
     unrdf:directoryName "generated" ;
     unrdf:directoryPath "src/generated/" ;
-    unrdf:directoryPurpose "Output directory for ggen-generated code" .
+    unrdf:directoryPurpose "Output directory for generated package metadata and docs" .
 
 unrdf:DocsDir a unrdf:Directory ;
     unrdf:directoryName "docs" ;
@@ -182,10 +182,15 @@ unrdf:BestPracticesDoc a unrdf:DocumentationFile ;
 
 # Configuration Files
 
-unrdf:GgenConfig a unrdf:ConfigurationFile ;
-    unrdf:fileName "ggen.toml" ;
+unrdf:UnrdfSyncConfig a unrdf:ConfigurationFile ;
+    unrdf:fileName ".unrdf.toml" ;
     unrdf:configFormat "TOML" ;
-    unrdf:filePurpose "ggen configuration for ontology-driven code generation" .
+    unrdf:filePurpose "unrdf sync configuration for ontology-driven code generation" .
+
+unrdf:CodegenTomlConfig a unrdf:ConfigurationFile ;
+    unrdf:fileName "codegen.toml" ;
+    unrdf:configFormat "TOML" ;
+    unrdf:filePurpose "Legacy ontology/codegen project metadata (optional)" .
 
 unrdf:PackageJsonConfig a unrdf:ConfigurationFile ;
     unrdf:fileName "package.json" ;

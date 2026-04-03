@@ -51,7 +51,7 @@ Your project should look like:
 ```
 blog-codegen/
 ├── package.json
-├── ggen.toml          # Configuration (we'll create this)
+├── .unrdf.toml          # Configuration (we'll create this)
 ├── ontology/
 │   └── blog.ttl       # RDF ontology (we'll create this)
 ├── templates/
@@ -236,7 +236,7 @@ blog:commentCreatedAt a owl:DatatypeProperty ;
 
 ## Step 3: Create Configuration File
 
-Create `ggen.toml` at the project root:
+Create `.unrdf.toml` at the project root:
 
 ```toml
 [project]
@@ -469,7 +469,7 @@ npx unrdf sync --watch --verbose
 UNRDF Sync
 
 Phase 1: Loading configuration...
-   Config: ggen.toml
+   Config: .unrdf.toml
    Project: blog-api
 
 Phase 2: Loading ontology...
@@ -687,10 +687,10 @@ In template, treat as string ID:
 ### Issue: "Configuration file not found"
 
 ```
-Error: Configuration file not found: ggen.toml
+Error: Configuration file not found: .unrdf.toml
 ```
 
-**Solution**: Create `ggen.toml` in your project root, or specify path:
+**Solution**: Create `.unrdf.toml` in your project root, or specify path:
 
 ```bash
 npx unrdf sync --config path/to/config.toml
@@ -706,7 +706,7 @@ Error: Ontology file not found: /path/to/blog.ttl
 
 ```toml
 [ontology]
-source = "ontology/blog.ttl"  # Relative to ggen.toml location
+source = "ontology/blog.ttl"  # Relative to .unrdf.toml location
 ```
 
 ### Issue: "Template rendering failed"

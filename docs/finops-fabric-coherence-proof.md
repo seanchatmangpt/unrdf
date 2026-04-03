@@ -141,7 +141,7 @@ O_new: ApprovalRule {
 **Day 3: Auditor Inspection**
 - Auditor asks: "What controls changed?"
 - Operations team retrieves receipt from Day 1 Evening
-- Auditor downloads ggen v1.0.1 (version pinned in receipt)
+- Auditor downloads the pinned generator v1.0.1 (version pinned in receipt)
 - Auditor computes: μ_v1.0.1(O_new)
 - Auditor verifies: hash(generated_A) = hash(receipt_A) ✓
 - Auditor concludes: "Approval rule was generated from specification; controls are correct-by-construction"
@@ -150,8 +150,8 @@ O_new: ApprovalRule {
 - TPS: Replay Gate — receipt can reproduce exact A ✓
 
 **Day 10: Kaizen (Continuous Improvement)**
-- ggen v1.1 is released (internal optimizations, same behavior)
-- Engineering team regenerates A using ggen v1.1: A_v1.1 = μ_v1.1(O)
+- generator v1.1 is released (internal optimizations, same behavior)
+- Engineering team regenerates A using generator v1.1: A_v1.1 = μ_v1.1(O)
 - Golden tests: both v1.0 and v1.1 policies are equivalent ✓
 - Receipt produced: {generator_version_change: v1.0 → v1.1, behavior_change: none}
 - TPS: Kaizen applied; generator improved without compliance change
@@ -186,7 +186,7 @@ Doctrine invariant PROVENANCE violated
 Response:
   - Generator defect (μ is non-deterministic or buggy)
   - Rollback all deployments using this μ version
-  - Investigate ggen source code
+  - Investigate the generator source code
   - No customer harm yet (audit caught it first)
 ```
 

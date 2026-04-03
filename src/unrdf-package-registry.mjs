@@ -1,7 +1,7 @@
 /**
  * @file src/unrdf-package-registry.mjs
  * @description Runtime package registry and discovery system
- * Built from ggen-discovered ontology data
+ * Built from package-discovery ontology data
  */
 
 import fs from 'fs';

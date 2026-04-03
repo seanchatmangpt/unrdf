@@ -1,4 +1,4 @@
-# ggen.toml Configuration Reference
+# .unrdf.toml Configuration Reference
 
 > **Document Type**: Reference
 > **Audience**: Developers configuring RDF API code generation
@@ -8,11 +8,11 @@
 
 ## File Location
 
-The `ggen.toml` configuration file must be placed in your project root directory. The `unrdf sync` command searches for this file in the current working directory.
+The `.unrdf.toml` configuration file must be placed in your project root directory. The `unrdf sync` command searches for this file in the current working directory.
 
 ```
 project-root/
-├── ggen.toml          # Configuration file (required)
+├── .unrdf.toml          # Configuration file (required)
 ├── ontology/
 │   └── schema.ttl     # RDF ontology source
 ├── templates/
@@ -72,7 +72,7 @@ enabled = true            # Optional - Default: true
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `source` | path | Yes | - | Path to the RDF ontology file (relative to ggen.toml) |
+| `source` | path | Yes | - | Path to the RDF ontology file (relative to .unrdf.toml) |
 | `format` | enum | No | auto | RDF serialization format: `turtle`, `ntriples`, `rdfxml` |
 | `base_iri` | URI | No | `""` | Base IRI for resolving relative IRIs in the ontology |
 | `prefixes` | table | No | `{}` | Prefix-to-namespace mappings for SPARQL queries |
@@ -160,22 +160,22 @@ output_dir = "${GEN_OUTPUT:-lib/generated}"
 
 ## Path Resolution
 
-All relative paths are resolved from the directory containing `ggen.toml`.
+All relative paths are resolved from the directory containing `.unrdf.toml`.
 
 ### Resolution Rules
 
 1. **Absolute paths**: Used as-is
-2. **Relative paths**: Resolved from ggen.toml directory
+2. **Relative paths**: Resolved from .unrdf.toml directory
 3. **Tilde expansion**: `~` expands to user home directory
 
 ### Path Fields
 
 | Field | Resolution Base |
 |-------|-----------------|
-| `ontology.source` | ggen.toml directory |
-| `generation.output_dir` | ggen.toml directory |
-| `generation.templates_dir` | ggen.toml directory |
-| `generation.rules[].template` | `templates_dir` if set, else ggen.toml directory |
+| `ontology.source` | .unrdf.toml directory |
+| `generation.output_dir` | .unrdf.toml directory |
+| `generation.templates_dir` | .unrdf.toml directory |
+| `generation.rules[].template` | `templates_dir` if set, else .unrdf.toml directory |
 | `generation.rules[].output_file` | `output_dir` |
 
 ### Example Resolution
@@ -183,7 +183,7 @@ All relative paths are resolved from the directory containing `ggen.toml`.
 Given this structure:
 ```
 /home/user/project/
-├── ggen.toml
+├── .unrdf.toml
 ├── ontology/
 │   └── schema.ttl
 ├── templates/
@@ -210,7 +210,7 @@ output_file = "models/User.mjs" # Resolves to /home/user/project/lib/models/User
 ## Complete Example
 
 ```toml
-# ggen.toml - RDF API Code Generation Configuration
+# .unrdf.toml - RDF API Code Generation Configuration
 # Full example demonstrating all features
 
 [project]
@@ -325,7 +325,7 @@ WHERE {
 
 ## Validation
 
-The CLI validates `ggen.toml` on load and reports specific errors:
+The CLI validates `.unrdf.toml` on load and reports specific errors:
 
 | Error | Cause | Resolution |
 |-------|-------|------------|

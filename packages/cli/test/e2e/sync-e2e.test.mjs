@@ -116,7 +116,7 @@ ORDER BY ?label
 `;
 
 /**
- * Generate ggen.toml configuration content
+ * Generate .unrdf.toml configuration content
  * @param {string} ontologyPath - Path to ontology file
  * @param {string} templatePath - Path to template file
  * @param {string} outputDir - Output directory
@@ -198,7 +198,7 @@ describe('Sync Command E2E', () => {
     // Set up paths
     ontologyPath = join(testDir, 'schema.ttl');
     templatePath = join(testDir, 'templates', 'entities.njk');
-    configPath = join(testDir, 'ggen.toml');
+    configPath = join(testDir, '.unrdf.toml');
     outputDir = join(testDir, 'generated');
 
     // Create directory structure
@@ -785,7 +785,7 @@ query = "SELECT * WHERE { ?s a owl:Class }"
 template = "${templatePath}"
 output_file = "empty-result.mjs"
 `;
-    const configPath = join(testDir, 'ggen.toml');
+    const configPath = join(testDir, '.unrdf.toml');
     await writeFile(configPath, config);
 
     // Act
@@ -839,7 +839,7 @@ query = "SELECT * WHERE { ?s a <http://www.w3.org/2002/07/owl#Class> } LIMIT 1"
 template = "${templatePath}"
 output_file = "special.mjs"
 `;
-    const configPath = join(testDir, 'ggen.toml');
+    const configPath = join(testDir, '.unrdf.toml');
     await writeFile(configPath, config);
 
     // Act
@@ -885,7 +885,7 @@ query = "SELECT * WHERE { ?s a owl:Class } LIMIT 1"
 template = "${templatePath}"
 output_file = "deep/nested/path/result.mjs"
 `;
-    const configPath = join(testDir, 'ggen.toml');
+    const configPath = join(testDir, '.unrdf.toml');
     await writeFile(configPath, config);
 
     // Act

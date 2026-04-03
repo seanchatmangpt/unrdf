@@ -333,7 +333,7 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
  * @param {Object} [options] - Render options
  * @returns {Promise<Array>} Array of render results
  */
-export async function batchRender(templates, sharedContext = {}, options = {}) {
+export async function batchRender(templates, sharedContext = {}, _options = {}) {
   const results = [];
   for (const template of templates) {
     const { path: templatePath, sparqlResults = [], context = {} } = template;

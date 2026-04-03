@@ -2,7 +2,7 @@
 
 **Objective:** Set up continuous code regeneration during development.
 
-**Prerequisites:** Working `ggen.toml`, ontology file, and at least one template.
+**Prerequisites:** Working `.unrdf.toml`, ontology file, and at least one template.
 
 **Estimated Time:** 5 minutes
 
@@ -42,7 +42,7 @@ Sync complete!
    Duration: 23.4ms
 
 Watching:
-  /project/ggen.toml
+  /project/.unrdf.toml
   /project/ontology/schema.ttl
   /project/templates/entities.njk
 
@@ -128,7 +128,7 @@ nodemon --watch ontology --watch templates -e ttl,njk --exec "unrdf sync"
 
 | File Type | Source |
 |-----------|--------|
-| Config | `--config` argument or `ggen.toml` |
+| Config | `--config` argument or `.unrdf.toml` |
 | Ontology | `[ontology].source` |
 | Templates | `[[generation.rules]].template` |
 

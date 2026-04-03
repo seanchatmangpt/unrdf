@@ -134,7 +134,7 @@ ORDER BY ?label
 // =============================================================================
 
 /**
- * Generates ggen.toml configuration
+ * Generates `.unrdf.toml` configuration
  */
 function generateConfig(ontologyPath, templatePath, outputDir) {
   return `
@@ -210,7 +210,7 @@ async function runTest() {
     printInfo('Setting up test files...');
     const ontologyPath = join(testDir, 'schema.ttl');
     const templatePath = join(testDir, 'templates', 'entities.njk');
-    const configPath = join(testDir, 'ggen.toml');
+    const configPath = join(testDir, '.unrdf.toml');
     const outputDir = join(testDir, 'generated');
 
     await mkdir(join(testDir, 'templates'), { recursive: true });
@@ -225,7 +225,7 @@ async function runTest() {
 
     const config = generateConfig(ontologyPath, templatePath, outputDir);
     await writeFile(configPath, config);
-    printSuccess('Created config: ggen.toml');
+    printSuccess('Created config: .unrdf.toml');
 
     // Step 4: Run sync command
     printSection('Running Sync Command');

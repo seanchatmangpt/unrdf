@@ -513,7 +513,7 @@ jobs:
           EOF
 
           # Create config
-          cat > ggen.toml << EOF
+          cat > .unrdf.toml << EOF
           [project]
           name = "test-project"
           version = "1.0.0"
@@ -533,7 +533,7 @@ jobs:
           EOF
 
           # Run sync command
-          timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config ggen.toml --verbose
+          timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config .unrdf.toml --verbose
 
           # Verify output exists
           if [ ! -f "generated/entities.mjs" ]; then

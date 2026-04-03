@@ -1,7 +1,7 @@
 /**
  * @file Sync Command Schemas
  * @module cli/commands/sync/schemas
- * @description Zod validation schemas for ggen.toml configuration
+ * @description Zod validation schemas for `.unrdf.toml` sync configuration
  */
 import { z } from 'zod';
 
@@ -28,7 +28,7 @@ export const OntologyConfigSchema = z.object({
   source: z.string().min(1),
   format: RDFFormatSchema.default('turtle'),
   base_iri: z.string().url().optional(),
-  prefixes: z.record(z.string()).optional(),
+  prefixes: z.record(z.string(), z.string()).optional(),
   follow_imports: z.boolean().default(false),
 });
 
@@ -87,7 +87,7 @@ export const TemplateConfigSchema = z.object({
 });
 
 /**
- * Main configuration schema for ggen.toml
+ * Main configuration schema for `.unrdf.toml`
  */
 export const SyncConfigSchema = z.object({
   project: ProjectConfigSchema.optional(),
@@ -102,7 +102,7 @@ export const SyncConfigSchema = z.object({
  * CLI arguments schema
  */
 export const SyncArgsSchema = z.object({
-  config: z.string().default('ggen.toml'),
+  config: z.string().default('.unrdf.toml'),
   dryRun: z.boolean().default(false),
   verbose: z.boolean().default(false),
   force: z.boolean().default(false),

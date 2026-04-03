@@ -169,7 +169,7 @@ async function main() {
   console.log(`   Optional: ${byTier.optional.length}`);
 
   // Create output directory
-  const outputDir = path.join(projectRoot, 'ggen', 'generated');
+  const outputDir = path.join(projectRoot, 'codegen', 'generated');
   fs.mkdirSync(outputDir, { recursive: true });
 
   // Generate CommonJS
@@ -207,7 +207,7 @@ async function main() {
 
   console.log(`\n✅ Generated package registry for ${Object.keys(packages).length} packages`);
   console.log(`\nUsage:`);
-  console.log(`  import { REGISTRY, getPackage } from './ggen/generated/index.mjs';`);
+  console.log(`  import { REGISTRY, getPackage } from './codegen/generated/index.mjs';`);
   console.log(`  REGISTRY.packages.forEach(p => console.log(p.name));`);
 }
 

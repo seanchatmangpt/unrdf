@@ -21,7 +21,7 @@
 ### Phase 2: Framework Formalization ✅
 - **Delivered**: HOLOGRAPHIC_FRAMEWORK.md (450 lines)
 - **Correction**: Reframed from mechanical iteration to holographic precipitation
-- **Foundation**: Defined unrdf/kgc-4d/ggen trinity
+- **Foundation**: Defined unrdf/kgc-4d/codegen trinity
 - **Methodology**: 4 daily questions + OFMF theorem
 - **Key Insight**: Specification (H_spec bits) → Code (inevitable)
 
@@ -44,7 +44,7 @@
 - **Delivered**: REFERENCE_IMPLEMENTATION_INTEGRATION.md (607 lines)
 - **Content**: 11-part comprehensive guide
 - **Integration**: Thesis + Framework + CLI + Reference Implementation
-- **Architecture**: Showed how unrdf/kgc-4d/ggen trinity works end-to-end
+- **Architecture**: Showed how unrdf/kgc-4d/codegen trinity works end-to-end
 - **Reproduction**: 5-step walkthrough to recreate reference implementation
 
 ---
@@ -135,7 +135,7 @@ Theorem VERIFIED: H_spec ≤ 20 bits → code ≤ 1 file
 
 ### 2. Framework Formalized
 - ✅ Holographic precipitation model clearly defined
-- ✅ Three layers: Film (unrdf) + Pattern (kgc-4d) + Laser (ggen)
+- ✅ Three layers: Film (unrdf) + Pattern (kgc-4d) + Laser (generator)
 - ✅ OFMF theorem proven and applied
 
 ### 3. Working System Demonstrated
