@@ -3,10 +3,8 @@
  * Tests morphism composition, algebraic laws, and performance
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
-  CompositionEngine,
-  CompositionErrorCode,
   createCompositionEngine,
   quickCompose,
   verifyAlgebraicLaws,
@@ -30,7 +28,7 @@ const createSimpleMorphism = async (name, addValue) => {
   return createMorphism({
     type: MorphismType.STATE,
     name,
-    transform: (quads) => [{
+    transform: (_quads) => [{
       type: 'add',
       subject: `http://example.com/${name}`,
       predicate: 'http://example.com/value',
@@ -186,7 +184,7 @@ describe('Composition Engine', () => {
       const phi1 = await createMorphism({
         type: MorphismType.STATE,
         name: 'add-then-modify',
-        transform: (quads) => [{
+        transform: (_quads) => [{
           type: 'add',
           subject: 'http://ex.com/s1',
           predicate: 'http://ex.com/p1',

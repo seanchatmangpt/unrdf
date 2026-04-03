@@ -21,7 +21,7 @@ describe('Morphism Algebra', () => {
       const phi = await createMorphism({
         type: MorphismType.STATE,
         name: 'test-morphism',
-        transform: (quads) => [],
+        transform: (_quads) => [],
       });
 
       expect(phi.id).toMatch(/^Φ_[a-f0-9]{16}$/);

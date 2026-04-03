@@ -3,17 +3,15 @@
  * Tests Q* invariants: identity stability, RDF semantics, provenance chain
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   QStarErrorCode,
   QStarIDSchema,
-  QStarRDFSchema,
   QStarPROVSchema,
   QStarSnapshotSchema,
   extractIRIs,
   computeCanonicalHash,
   createQStarSnapshot,
-  QStarValidator,
   createQStarValidator,
   validateQStarSnapshot,
 } from '../src/q-star.mjs';
@@ -322,7 +320,7 @@ describe('Q* Validation System', () => {
       const receipts = createTestReceipts(5);
 
       // Make timestamps out of order
-      const temp = receipts[2].Q_PROV.timestamp;
+      const _prevTimestamp = receipts[2].Q_PROV.timestamp;
       receipts[2].Q_PROV.timestamp = receipts[1].Q_PROV.timestamp - 1000000n;
 
       const result = validator.checkProvenanceChain(receipts);

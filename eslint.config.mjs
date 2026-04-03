@@ -197,6 +197,29 @@ export default [
       'no-undef': 'off' // Disable for re-export barrel files
     }
   },
+  // Receipts package - needs TextEncoder global (Node.js 11+)
+  {
+    files: ['packages/receipts/src/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly'
+      }
+    }
+  },
+  // KGC Multiverse package - needs global/setTimeout/performance globals
+  {
+    files: ['packages/kgc-multiverse/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        global: 'readonly',
+        setTimeout: 'readonly',
+        performance: 'readonly'
+      }
+    }
+  },
   // Example files that may use browser APIs
   {
     files: ['examples/**/*.mjs'],

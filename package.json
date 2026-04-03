@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "6.0.0-rc.1",
+  "version": "26.4.3",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -40,7 +40,9 @@
     "dev": "pnpm -r --parallel dev",
     "docs": "pnpm -C packages/core docs",
     "convert-paper": "node scripts/convert-paper.mjs",
-    "precommit": "pnpm lint && pnpm test:fast",
+    "mcp:sync": "node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml",
+    "mcp:sync:dry": "node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml --dry-run --verbose",
+    "precommit": "pnpm run mcp:sync && pnpm lint && pnpm test:fast",
     "quality": "node scripts/quality-report.mjs",
     "quality:json": "node scripts/quality-report.mjs --json",
     "setup-quality": "node scripts/setup-quality.mjs",

@@ -2,7 +2,7 @@
  * @file MCP Tool Definitions
  * @module @unrdf/daemon/mcp/tools-generated
  * @description Auto-generated tool JSON schema definitions
- * @generated 2026-04-03 15:01:06 from cli-commands.ttl
+ * @generated 2026-04-03 15:14:12 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-tool-defs
  */
@@ -19,15 +19,15 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Context file',
         },
-        namespace: {
+        "namespace": {
           type: 'string',
           description: 'Namespace IRI',
         },
-        prefix: {
+        "prefix": {
           type: 'string',
           description: 'Prefix name',
         },
@@ -41,11 +41,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        name: {
+        "name": {
           type: 'string',
           description: 'Context name',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
@@ -59,11 +59,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Context file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'table',
@@ -78,11 +78,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Context file',
         },
-        prefix: {
+        "prefix": {
           type: 'string',
           description: 'Prefix to remove',
         },
@@ -96,19 +96,19 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        from: {
+        "from": {
           type: 'string',
           description: 'Source format',
         },
-        input: {
+        "input": {
           type: 'string',
           description: 'Input file',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file',
         },
-        to: {
+        "to": {
           type: 'string',
           description: 'Target format',
         },
@@ -122,11 +122,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        input: {
+        "input": {
           type: 'string',
           description: 'Input file',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
@@ -140,11 +140,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        input: {
+        "input": {
           type: 'string',
           description: 'Input file',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
@@ -158,11 +158,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        input: {
+        "input": {
           type: 'string',
           description: 'Input file',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
@@ -176,11 +176,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        include-metrics: {
+        "include-metrics": {
           type: 'boolean',
           description: 'Include metrics',
         },
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
@@ -194,7 +194,7 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
@@ -208,11 +208,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        include-metadata: {
+        "include-metadata": {
           type: 'boolean',
           description: 'Include metadata',
         },
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
@@ -226,19 +226,19 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        filter: {
+        "filter": {
           type: 'string',
           description: 'Log filter expression',
         },
-        follow: {
+        "follow": {
           type: 'boolean',
           description: 'Follow log output',
         },
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
-        max-lines: {
+        "max-lines": {
           type: 'number',
           description: 'Maximum lines to display',
         },
@@ -252,19 +252,19 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
-        operation: {
+        "operation": {
           type: 'string',
           description: 'Operation name',
         },
-        payload: {
+        "payload": {
           type: 'string',
           description: 'Operation payload',
         },
-        timeout: {
+        "timeout": {
           type: 'number',
           description: 'Operation timeout in seconds',
         },
@@ -278,19 +278,19 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
-        operation: {
+        "operation": {
           type: 'string',
           description: 'Operation name',
         },
-        payload: {
+        "payload": {
           type: 'string',
           description: 'Operation payload',
         },
-        trigger: {
+        "trigger": {
           type: 'string',
           description: 'Trigger cron expression',
         },
@@ -304,11 +304,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        include-metrics: {
+        "include-metrics": {
           type: 'boolean',
           description: 'Include performance metrics',
         },
-        json: {
+        "json": {
           type: 'boolean',
           description: 'Output as JSON',
         },
@@ -322,12 +322,12 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Output file path',
           default: '<name>.nq',
         },
-        name: {
+        "name": {
           type: 'string',
           description: 'Graph name',
         },
@@ -341,17 +341,17 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Graph file to dump',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           enum: ["jsonld", "ntriples", "turtle"],
           default: 'turtle',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
@@ -365,15 +365,15 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'RDF file to load',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'RDF format (turtle, ntriples, jsonld, trig)',
         },
-        graph: {
+        "graph": {
           type: 'string',
           description: 'Target graph IRI',
         },
@@ -387,17 +387,17 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Graph file to query',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           enum: ["json", "table", "turtle"],
           default: 'json',
         },
-        query: {
+        "query": {
           type: 'string',
           description: 'SPARQL query string',
         },
@@ -411,7 +411,7 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Graph file',
         },
@@ -425,15 +425,15 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        config: {
+        "config": {
           type: 'string',
           description: 'Configuration file to create',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
-        validate: {
+        "validate": {
           type: 'boolean',
           description: 'Validate configuration',
         },
@@ -447,15 +447,15 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        condition: {
+        "condition": {
           type: 'string',
           description: 'Condition expression',
         },
-        config: {
+        "config": {
           type: 'string',
           description: 'Configuration file',
         },
-        store: {
+        "store": {
           type: 'string',
           description: 'Store file',
         },
@@ -469,19 +469,19 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        config: {
+        "config": {
           type: 'string',
           description: 'Hooks configuration file',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output file path',
         },
-        show-receipts: {
+        "show-receipts": {
           type: 'boolean',
           description: 'Display execution receipts',
         },
-        store: {
+        "store": {
           type: 'string',
           description: 'Store file or identifier',
         },
@@ -505,16 +505,16 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Receipts file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'table',
         },
-        verify: {
+        "verify": {
           type: 'boolean',
           description: 'Verify receipt signatures',
         },
@@ -528,16 +528,16 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Data file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'json',
         },
-        query: {
+        "query": {
           type: 'string',
           description: 'SPARQL query',
         },
@@ -551,15 +551,15 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        data: {
+        "data": {
           type: 'string',
           description: 'Data file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
         },
-        query: {
+        "query": {
           type: 'string',
           description: 'Query file',
         },
@@ -573,28 +573,28 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        config: {
+        "config": {
           type: 'string',
           description: 'Path to .unrdf.toml config',
         },
-        dry-run: {
+        "dry-run": {
           type: 'boolean',
           description: 'Preview without writing files',
         },
-        force: {
+        "force": {
           type: 'boolean',
           description: 'Force regeneration',
         },
-        output: {
+        "output": {
           type: 'string',
           description: 'Output format (text or json)',
           default: 'text',
         },
-        rule: {
+        "rule": {
           type: 'string',
           description: 'Run only specified rule',
         },
-        verbose: {
+        "verbose": {
           type: 'boolean',
           description: 'Verbose output',
         },
@@ -608,16 +608,16 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'RDF file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'json',
         },
-        subject: {
+        "subject": {
           type: 'string',
           description: 'Subject IRI filter',
         },
@@ -631,39 +631,39 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        batch: {
+        "batch": {
           type: 'boolean',
           description: 'Batch mode',
         },
-        classUri: {
+        "classUri": {
           type: 'string',
           description: 'Class URI filter',
         },
-        dryRun: {
+        "dryRun": {
           type: 'boolean',
           description: 'Preview without writing',
         },
-        file: {
+        "file": {
           type: 'string',
           description: 'Data file (RDF)',
         },
-        force: {
+        "force": {
           type: 'boolean',
           description: 'Force overwrite',
         },
-        outputDir: {
+        "outputDir": {
           type: 'string',
           description: 'Output directory',
         },
-        sparql: {
+        "sparql": {
           type: 'string',
           description: 'SPARQL query',
         },
-        subject: {
+        "subject": {
           type: 'string',
           description: 'Subject filter',
         },
-        template: {
+        "template": {
           type: 'string',
           description: 'Template file path',
         },
@@ -677,11 +677,11 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        dir: {
+        "dir": {
           type: 'string',
           description: 'Template directory',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'table',
@@ -696,16 +696,16 @@ export const mcpGeneratedTools = [
     inputSchema: {
       type: 'object',
       properties: {
-        file: {
+        "file": {
           type: 'string',
           description: 'Template file',
         },
-        format: {
+        "format": {
           type: 'string',
           description: 'Output format',
           default: 'json',
         },
-        sparql: {
+        "sparql": {
           type: 'string',
           description: 'SPARQL query',
         },

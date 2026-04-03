@@ -55,14 +55,20 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
 
   if (!provider) {
     // Check if a provider is already registered globally
-    let existingProvider = trace.getTracerProvider();
-    
+    console.log('[OTEL Provider] Checking if provider exists...');
+    const { trace: globalTrace } = await import('@opentelemetry/api');
+    let existingProvider = globalTrace.getTracerProvider();
+    console.log('[OTEL Provider] Existing provider:', existingProvider?.constructor?.name);
+
     // If a provider exists but isn't ours, we need to replace it
     // This can happen if OTEL SDK auto-initializes or another module registers a provider
     if (existingProvider && existingProvider.constructor.name !== 'NodeTracerProvider') {
       console.warn('[OTEL Provider] Existing provider detected, will replace:', existingProvider.constructor.name);
+      // Replace the existing provider with null first, then set ours
+      globalTrace.setTracerProvider(null);
     }
-    
+
+    console.log('[OTEL Provider] Creating new NodeTracerProvider...');
     // Create span exporter that collects spans for all validations
     const spanExporter = {
       export: (spans) => {
@@ -138,13 +144,12 @@ export async function ensureProviderInitialized(validationId, onSpanEnd, trace) 
     console.log('[OTEL Provider] provider.register() called');
 
     // Set as global tracer provider (this is what actually replaces existing provider)
-    const { trace } = await import('@opentelemetry/api');
     console.log('[OTEL Provider] Setting global tracer provider...');
-    trace.setTracerProvider(provider);
+    globalTrace.setTracerProvider(provider);
     console.log('[OTEL Provider] trace.setTracerProvider() called');
 
     // Verify registration worked
-    const registeredProvider = trace.getTracerProvider();
+    const registeredProvider = globalTrace.getTracerProvider();
     console.log('[OTEL Provider] Registered provider:', registeredProvider?.constructor?.name);
     console.log('[OTEL Provider] Our provider:', provider.constructor.name);
     console.log('[OTEL Provider] Are they equal?', registeredProvider === provider);

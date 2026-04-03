@@ -5,6 +5,8 @@
  * @module @unrdf/receipts/dilithium3
  */
 
+/* global TextEncoder */
+
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { z } from 'zod';
 
@@ -198,7 +200,7 @@ export async function verifyDilithium3(message, signatureObj) {
     }
 
     return hasNonZero;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

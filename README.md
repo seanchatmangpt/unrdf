@@ -290,7 +290,7 @@ registerHook(myHook);
 
 **Security Audit**: All microframeworks have been security-hardened against OWASP Top 10 vulnerabilities (Dec 2025). See [SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md](SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md) for details.
 
-**v6.0.0 Security Enhancements** (Jan 2026): Enterprise-grade authentication system with BLAKE3 cryptographic hashing, comprehensive security validation across all daemon operations, and zero CRITICAL/HIGH security vulnerabilities. See [packages/daemon/AUTHENTICATION.md](packages/daemon/AUTHENTICATION.md) and [packages/daemon/SECURITY_INTEGRATION_SUMMARY.md](packages/daemon/SECURITY_INTEGRATION_SUMMARY.md) for details.
+**v26.4.3 Security Enhancements** (Jan 2026): Enterprise-grade authentication system with BLAKE3 cryptographic hashing, comprehensive security validation across all daemon operations, and zero CRITICAL/HIGH security vulnerabilities. See [packages/daemon/AUTHENTICATION.md](packages/daemon/AUTHENTICATION.md) and [packages/daemon/SECURITY_INTEGRATION_SUMMARY.md](packages/daemon/SECURITY_INTEGRATION_SUMMARY.md) for details.
 
 ---
 

@@ -1,6 +1,7 @@
 .PHONY: help publish publish-check version-bump pre-publish test lint clean \
 	publish-all publish-packages publish-single tag changelog \
-	validate-npm-auth setup-npm
+	validate-npm-auth setup-npm \
+	mcp-sync mcp-sync-dry
 
 # ============================================================================
 # VARIABLES
@@ -111,6 +112,15 @@ version-bump:
 # ============================================================================
 # VALIDATION & QUALITY GATES
 # ============================================================================
+
+mcp-sync:
+	@echo "$(BLUE)Generating MCP tools from RDF ontology...$(NC)"
+	@node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml
+	@echo "$(GREEN)✓ MCP tools generated$(NC)"
+
+mcp-sync-dry:
+	@echo "$(YELLOW)DRY RUN: MCP tool generation preview$(NC)"
+	@node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml --dry-run --verbose
 
 test:
 	@echo "$(BLUE)Running test suite...$(NC)"

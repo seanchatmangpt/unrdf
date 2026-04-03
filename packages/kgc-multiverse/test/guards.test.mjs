@@ -11,7 +11,6 @@ import {
   guardFreezePreconditions,
   guardDeleteSafety,
   guardCanFork,
-  guardNoUnfreeze,
   guardUniverseState,
   guardQStarID,
   guardUniverseHash,

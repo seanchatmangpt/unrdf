@@ -11,14 +11,11 @@
  * 6. Error Handling (1 test)
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
-  ParallelExecutor,
   createParallelExecutor,
-  DEFAULT_CONFIG,
   benchmark10k,
 } from '../src/parallel-executor.mjs';
-import { TaskType } from '../src/worker-task.mjs';
 
 describe('ParallelExecutor', () => {
   let executor;
@@ -294,7 +291,7 @@ describe('ParallelExecutor', () => {
 
       // Should throw before initialize
       await expect(async () => {
-        for await (const _ of executor.createUniverses(10)) {
+        for await (const __unused of executor.createUniverses(10)) {
           // Should not reach here
         }
       }).rejects.toThrow(/not initialized/);

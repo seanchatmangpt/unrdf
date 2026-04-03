@@ -5,7 +5,6 @@
  */
 
 import { defineCommand, runCommand } from 'citty';
-import { startMCPServer, startMCPServerSSE } from '../../../../daemon/src/mcp/index.mjs';
 
 /**
  * MCP start subcommand
@@ -29,6 +28,8 @@ const startCommand = defineCommand({
   },
   run: async ({ args }) => {
     try {
+      const mcpIndexPath = new URL('../../../../daemon/src/mcp/index.mjs', import.meta.url).pathname;
+      const { startMCPServer, startMCPServerSSE } = await import(mcpIndexPath);
       if (args.transport === 'sse') {
         console.log(`Starting MCP server with SSE transport...`);
         console.log(`Listening on port ${args.port}`);
@@ -53,13 +54,16 @@ const inspectCommand = defineCommand({
     description: 'Inspect MCP server capabilities',
   },
   run: async () => {
+    let tools = [];
+    try {
+      const toolDefsPath = new URL('../../../../daemon/src/mcp/tools-generated.mjs', import.meta.url).pathname;
+      const { mcpGeneratedTools } = await import(toolDefsPath);
+      tools = mcpGeneratedTools.map(t => ({ name: t.name, description: t.description }));
+    } catch {
+      console.error('Warning: tools-generated.mjs not found. Run `unrdf sync --config packages/daemon/src/mcp/.unrdf.toml` first.');
+    }
     const capabilities = {
-      tools: [
-        { name: 'list_endpoints' },
-        { name: 'execute_sparql' },
-        { name: 'get_graph_stats' },
-        { name: 'load_rdf_data' },
-      ],
+      tools,
       resources: [
         { uri: 'sparql://endpoints/config' },
         { uri: 'rdf://ontologies/catalog' },

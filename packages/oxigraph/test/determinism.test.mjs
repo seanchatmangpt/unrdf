@@ -12,9 +12,7 @@ import {
   createStore,
   query,
   addQuad,
-  testDeterminism,
   testComposition,
-  generateL5Proof,
   getStoreStateHash,
 } from '../src/store-receipts.mjs';
 import { createContext } from '@unrdf/v6-core/receipt-pattern';

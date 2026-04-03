@@ -6,8 +6,8 @@
 
 echo "🔍 Running pre-commit quality checks..."
 
-# Run lint-staged for incremental checks on changed files
-pnpm lint-staged
+# Run linting on changed files
+pnpm lint
 
-# Exit with lint-staged's exit code
+# Exit with lint's exit code
 exit $?

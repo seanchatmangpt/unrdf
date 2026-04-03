@@ -1,7 +1,7 @@
-# Claude Code Configuration - UNRDF v6.0.0
+# Claude Code Configuration - UNRDF v26.4.3
 
 > **UNRDF**: Research-grade RDF Knowledge Graph Platform
-> **Version**: 6.0.0-rc.1 (from package.json)
+> **Version**: 26.4.3 (from package.json)
 > **Status**: Research Prototype - Architecturally complete, not production-validated
 > **Language**: JavaScript ESM (.mjs), Zod runtime validation
 > **Package Manager**: pnpm (required - see package.json engines)
@@ -12,7 +12,7 @@
 
 | Fact | Source |
 |------|--------|
-| Version | `cat package.json` → `"version": "6.0.0-rc.1"` |
+| Version | `cat package.json` → `"version": "26.4.3"` |
 | Packages | README.md: 20-package monorepo |
 | Core Packages | @unrdf/core, @unrdf/oxigraph, @unrdf/hooks |
 | Test Pass Rate | 100% (from README.md consolidation results) |

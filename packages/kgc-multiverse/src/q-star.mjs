@@ -95,14 +95,8 @@ export const QStarSnapshotSchema = z.object({
 });
 
 /**
- * Validation Result Schema
+ * Validation Result Schema (Internal - not currently exported)
  */
-const ValidationResultSchema = z.object({
-  valid: z.boolean(),
-  errorCode: z.nativeEnum(QStarErrorCode).optional(),
-  message: z.string().optional(),
-  details: z.record(z.any()).optional(),
-});
 
 /**
  * Extract IRIs from quads

@@ -9,15 +9,9 @@ import { blake3 } from 'hash-wasm';
 import { z } from 'zod';
 
 /**
- * Merkle Node Schema
+ * Merkle Node Schema (Internal - not currently exported)
+ * Reserved for future node-level validation if needed
  */
-const MerkleNodeSchema = z.object({
-  hash: z.string().regex(/^[a-f0-9]{64}$/),     // BLAKE3 hash (64 hex chars)
-  left: z.any().optional(),                      // Left child (recursive)
-  right: z.any().optional(),                     // Right child (recursive)
-  data: z.any().optional(),                      // Leaf data (if leaf node)
-  index: z.number().int().nonnegative(),         // Node index
-});
 
 /**
  * Merkle Proof Schema
@@ -153,9 +147,6 @@ export function generateMerkleProof(tree, leafIndex) {
   }
 
   const proof = [];
-  let currentNode = tree;
-  let currentIndex = leafIndex;
-
   // Find leaf
   let leaf = null;
   function findLeaf(node) {
@@ -240,7 +231,7 @@ export async function verifyMerkleProof(proof, leafHash) {
   // Validate proof schema
   try {
     MerkleProofSchema.parse(proof);
-  } catch (err) {
+  } catch {
     return false;
   }
 

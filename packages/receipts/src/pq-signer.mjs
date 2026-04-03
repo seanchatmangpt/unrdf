@@ -14,8 +14,6 @@ import {
   serializeHybridSignature,
   deserializeHybridSignature,
   getHybridSecurityLevel,
-  HybridKeyPairSchema,
-  HybridSignatureSchema,
 } from './hybrid-signature.mjs';
 import {
   generateDilithium3KeyPair,

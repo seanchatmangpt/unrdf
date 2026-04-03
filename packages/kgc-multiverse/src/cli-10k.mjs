@@ -11,7 +11,6 @@
 
 import { performance } from 'node:perf_hooks';
 import { createParallelExecutor } from './parallel-executor.mjs';
-import { TaskType } from './worker-task.mjs';
 
 /**
  * CLI Configuration
@@ -254,7 +253,7 @@ ${colors.bold}╔═════════════════════
       let frozen = 0;
       let peakMemory = 0;
 
-      for await (const _frozenUniverse of executor.freezeUniversesParallel(universes, {
+      for await (const _ of executor.freezeUniversesParallel(universes, {
         batchSize: CLI_CONFIG.batchSize,
         onProgress: (current) => {
           frozen = current;

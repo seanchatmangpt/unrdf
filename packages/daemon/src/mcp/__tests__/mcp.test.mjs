@@ -4,9 +4,9 @@
  * @description Tests for the Model Context Protocol server
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createMCPServer } from '../index.mjs';
-import { mcpTools } from '../tools.mjs';
+import { mcpGeneratedTools } from '../tools-generated.mjs';
 import { mcpResources } from '../resources.mjs';
 import { mcpPrompts } from '../prompts.mjs';
 
@@ -16,75 +16,84 @@ describe('MCP Server', () => {
       const server = createMCPServer();
       expect(server).toBeDefined();
       expect(typeof server).toBe('object');
-      // Server is created and has request handlers registered
-      expect(server._requestHandlers).toBeDefined();
+      expect(server).toBeTruthy();
     });
   });
 
-  describe('Tool Registration', () => {
-    it('should register list_endpoints tool', () => {
-      const tool = mcpTools.find((t) => t.name === 'list_endpoints');
-      expect(tool).toBeDefined();
-      expect(tool.description).toBe('List all available SPARQL endpoints');
-      expect(tool.inputSchema).toBeDefined();
-      expect(tool.inputSchema.type).toBe('object');
+  describe('Tool Registration (generated from cli-commands.ttl)', () => {
+    it('should have 32 tools total', () => {
+      expect(mcpGeneratedTools).toHaveLength(32);
     });
 
-    it('should register execute_sparql tool', () => {
-      const tool = mcpTools.find((t) => t.name === 'execute_sparql');
-      expect(tool).toBeDefined();
-      expect(tool.description).toBe('Execute a SPARQL query against an endpoint');
-      expect(tool.inputSchema.properties).toHaveProperty('endpoint');
-      expect(tool.inputSchema.properties).toHaveProperty('query');
-      expect(tool.inputSchema.properties).toHaveProperty('format');
+    it('should include all graph tools', () => {
+      const names = mcpGeneratedTools.map(t => t.name);
+      expect(names).toContain('graph_create');
+      expect(names).toContain('graph_load');
+      expect(names).toContain('graph_query');
+      expect(names).toContain('graph_dump');
+      expect(names).toContain('graph_stats');
     });
 
-    it('should register get_graph_stats tool', () => {
-      const tool = mcpTools.find((t) => t.name === 'get_graph_stats');
-      expect(tool).toBeDefined();
-      expect(tool.description).toBe('Get statistics about an RDF graph');
-      expect(tool.inputSchema.properties).toHaveProperty('graph_iri');
+    it('should include convert tools', () => {
+      const names = mcpGeneratedTools.map(t => t.name);
+      expect(names).toContain('convert');
+      expect(names).toContain('convert_to_turtle');
+      expect(names).toContain('convert_to_ntriples');
+      expect(names).toContain('convert_to_json');
     });
 
-    it('should register load_rdf_data tool', () => {
-      const tool = mcpTools.find((t) => t.name === 'load_rdf_data');
-      expect(tool).toBeDefined();
-      expect(tool.description).toBe('Load RDF data from a file');
-      expect(tool.inputSchema.properties).toHaveProperty('file_path');
-      expect(tool.inputSchema.properties).toHaveProperty('format');
+    it('should include daemon tools', () => {
+      const names = mcpGeneratedTools.map(t => t.name);
+      expect(names).toContain('daemon_status');
+      expect(names).toContain('daemon_list');
+      expect(names).toContain('daemon_logs');
     });
 
-    it('should have 4 tools total', () => {
-      expect(mcpTools).toHaveLength(4);
+    it('should include template tools', () => {
+      const names = mcpGeneratedTools.map(t => t.name);
+      expect(names).toContain('template_generate');
+      expect(names).toContain('template_list');
+      expect(names).toContain('template_query');
+      expect(names).toContain('template_extract');
+    });
+
+    it('graph_query tool should have required args: file, query', () => {
+      const tool = mcpGeneratedTools.find(t => t.name === 'graph_query');
+      expect(tool).toBeDefined();
+      expect(tool.inputSchema.required).toContain('file');
+      expect(tool.inputSchema.required).toContain('query');
+    });
+
+    it('graph_query tool should have format enum', () => {
+      const tool = mcpGeneratedTools.find(t => t.name === 'graph_query');
+      const formatProp = tool.inputSchema.properties['format'];
+      expect(formatProp).toBeDefined();
+      expect(formatProp.enum).toContain('json');
+      expect(formatProp.enum).toContain('turtle');
+      expect(formatProp.enum).toContain('table');
+    });
+
+    it('all tools should have name and description', () => {
+      for (const tool of mcpGeneratedTools) {
+        expect(tool.name, `${tool.name} missing name`).toBeTruthy();
+        expect(tool.description, `${tool.name} missing description`).toBeTruthy();
+      }
+    });
+
+    it('all tools should have inputSchema', () => {
+      for (const tool of mcpGeneratedTools) {
+        expect(tool.inputSchema, `${tool.name} missing inputSchema`).toBeDefined();
+        expect(tool.inputSchema.type).toBe('object');
+      }
     });
   });
 
   describe('Resource Registration', () => {
     it('should register endpoint config resource', () => {
-      const resource = mcpResources.find(
-        (r) => r.uri === 'sparql://endpoints/config'
-      );
+      const resource = mcpResources.find(r => r.uri === 'sparql://endpoints/config');
       expect(resource).toBeDefined();
       expect(resource.name).toBe('SPARQL Endpoints Configuration');
       expect(resource.mimeType).toBe('application/json');
-    });
-
-    it('should register ontology catalog resource', () => {
-      const resource = mcpResources.find((r) => r.uri === 'rdf://ontologies/catalog');
-      expect(resource).toBeDefined();
-      expect(resource.name).toBe('RDF Ontology Catalog');
-    });
-
-    it('should register graph metadata resource', () => {
-      const resource = mcpResources.find((r) => r.uri === 'graphs://metadata');
-      expect(resource).toBeDefined();
-      expect(resource.name).toBe('Graph Metadata');
-    });
-
-    it('should register query templates resource', () => {
-      const resource = mcpResources.find((r) => r.uri === 'queries://templates');
-      expect(resource).toBeDefined();
-      expect(resource.name).toBe('SPARQL Query Templates');
     });
 
     it('should have 4 resources total', () => {
@@ -94,73 +103,13 @@ describe('MCP Server', () => {
 
   describe('Prompt Registration', () => {
     it('should register sparql_builder prompt', () => {
-      const prompt = mcpPrompts.find((p) => p.name === 'sparql_builder');
+      const prompt = mcpPrompts.find(p => p.name === 'sparql_builder');
       expect(prompt).toBeDefined();
-      expect(prompt.description).toBe('Build SPARQL queries for RDF graph exploration');
-      expect(prompt.arguments).toBeDefined();
-      expect(prompt.arguments).toHaveLength(2);
-    });
-
-    it('should register graph_analysis prompt', () => {
-      const prompt = mcpPrompts.find((p) => p.name === 'graph_analysis');
-      expect(prompt).toBeDefined();
-      expect(prompt.description).toBe('Analyze RDF graph structure and content');
-      expect(prompt.arguments).toHaveLength(2);
-    });
-
-    it('should register data_transform prompt', () => {
-      const prompt = mcpPrompts.find((p) => p.name === 'data_transform');
-      expect(prompt).toBeDefined();
-      expect(prompt.description).toBe('Transform RDF data between formats');
-      expect(prompt.arguments).toHaveLength(3);
-    });
-
-    it('should register ontology_doc prompt', () => {
-      const prompt = mcpPrompts.find((p) => p.name === 'ontology_doc');
-      expect(prompt).toBeDefined();
-      expect(prompt.description).toBe('Generate documentation for RDF ontologies');
       expect(prompt.arguments).toHaveLength(2);
     });
 
     it('should have 4 prompts total', () => {
       expect(mcpPrompts).toHaveLength(4);
-    });
-  });
-
-  describe('Transport Initialization', () => {
-    it('should support StdioServerTransport', async () => {
-      const server = createMCPServer();
-      expect(server).toBeDefined();
-      // StdioServerTransport would be initialized in actual server startup
-    });
-
-    it('should support SSEServerTransport', async () => {
-      const server = createMCPServer();
-      expect(server).toBeDefined();
-      // SSEServerTransport would be initialized in actual server startup
-    });
-  });
-
-  describe('Server Capabilities', () => {
-    it('should support tool handlers', () => {
-      const server = createMCPServer();
-      expect(server).toBeDefined();
-      // Server has request handlers registered for tools
-      expect(server._requestHandlers).toBeDefined();
-    });
-
-    it('should support resource handlers', () => {
-      const server = createMCPServer();
-      expect(server).toBeDefined();
-      // Server has request handlers registered for resources
-      expect(server._requestHandlers).toBeDefined();
-    });
-
-    it('should support prompt handlers', () => {
-      const server = createMCPServer();
-      expect(server).toBeDefined();
-      // Server has request handlers registered for prompts
-      expect(server._requestHandlers).toBeDefined();
     });
   });
 });

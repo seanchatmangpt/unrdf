@@ -2,7 +2,7 @@
  * @file CLI Registry
  * @module @unrdf/daemon/mcp/cli-registry
  * @description Maps MCP tool names to their unrdf CLI invocation paths
- * @generated 2026-04-03 15:01:06 from cli-commands.ttl
+ * @generated 2026-04-03 15:14:12 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-cli-registry
  */
