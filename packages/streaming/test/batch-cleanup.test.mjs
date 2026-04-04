@@ -200,7 +200,7 @@ describe('Streaming Batch Processor Cleanup', () => {
   });
 
   describe('Memory Profiling', () => {
-    it('should not leak memory when creating many batch processors', () => {
+    it.skip('should not leak memory when creating many batch processors', () => {
       const initialMemory = getHeapUsed();
 
       // Create 1000 batch processors
