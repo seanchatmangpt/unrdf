@@ -41,16 +41,13 @@ cd unrdf
 All development happens on feature branches:
 
 ```bash
-# For this session, use the provided branch
-git checkout claude/rewrite-docs-monorepo-011wca5kv4dmUw4KRSdFnSx4
-
-# Or create a new feature branch
+# Create a new feature branch
 git checkout -b feat/your-feature-name
 ```
 
 ### 3. Install Dependencies
 
-This installs dependencies for **all 17 packages** in the monorepo:
+This installs dependencies for **all 73+ packages** in the monorepo:
 
 ```bash
 pnpm install
@@ -121,7 +118,7 @@ pnpm --filter @unrdf/core run lint
 pnpm run lint:fix
 ```
 
-**Linter:** Ruff (400+ rules enforced)
+**Linter:** ESLint 9 with jsdoc plugin
 
 ### Type Checking
 
@@ -182,6 +179,7 @@ packages/core/
 ```
 
 **Typical workflow:**
+
 1. Make changes in `src/`
 2. Run `pnpm --filter @unrdf/core test` to verify
 3. Run `pnpm --filter @unrdf/core run build` to build
@@ -193,14 +191,14 @@ packages/core/
 
 These scripts run across all packages:
 
-| Script | Purpose |
-|--------|---------|
-| `pnpm test` | Run all tests |
-| `pnpm run build` | Build all packages |
-| `pnpm run lint` | Lint all packages |
-| `pnpm run lint:fix` | Fix lint issues |
-| `pnpm run type-check` | Type check all packages |
-| `pnpm run clean` | Clean all build artifacts |
+| Script                | Purpose                   |
+| --------------------- | ------------------------- |
+| `pnpm test`           | Run all tests             |
+| `pnpm run build`      | Build all packages        |
+| `pnpm run lint`       | Lint all packages         |
+| `pnpm run lint:fix`   | Fix lint issues           |
+| `pnpm run type-check` | Type check all packages   |
+| `pnpm run clean`      | Clean all build artifacts |
 
 ---
 
@@ -222,10 +220,10 @@ node --inspect-brk node_modules/.bin/vitest run packages/core/test/query.test.mj
 Add debug output to your code:
 
 ```javascript
-console.log('Debug:', value);  // Use console.log in development
+console.log('Debug:', value); // Use console.log in development
 
 // For structured logging
-console.error('Error:', error);  // Errors to stderr
+console.error('Error:', error); // Errors to stderr
 ```
 
 ### Interactive REPL
@@ -253,7 +251,7 @@ Understanding the layout helps navigate quickly:
 
 ```
 unrdf/
-├── packages/                    # 17 monorepo packages
+├── packages/                    # 73+ monorepo packages
 │   ├── core/                    # Essential - START HERE
 │   ├── oxigraph/                # Persistent storage
 │   ├── hooks/                   # Autonomous behaviors
@@ -294,6 +292,7 @@ unrdf/
 ### Typical Day
 
 1. **Start work:**
+
    ```bash
    git checkout -b feat/my-feature
    ```
@@ -301,17 +300,20 @@ unrdf/
 2. **Make changes** in `packages/*/src/`
 
 3. **Test locally:**
+
    ```bash
    pnpm --filter @unrdf/core test
    ```
 
 4. **Lint and build:**
+
    ```bash
    pnpm run lint:fix
    pnpm run build
    ```
 
 5. **Run full test suite:**
+
    ```bash
    pnpm test
    ```
@@ -346,6 +348,7 @@ pnpm test
 ### Issue: "pnpm: command not found"
 
 **Solution:** Install pnpm globally:
+
 ```bash
 npm install -g pnpm
 ```
@@ -353,6 +356,7 @@ npm install -g pnpm
 ### Issue: Node version too old
 
 **Solution:** Use Node 18.19.0 or higher:
+
 ```bash
 node --version  # Check version
 nvm install 18  # If using nvm
@@ -361,6 +365,7 @@ nvm install 18  # If using nvm
 ### Issue: "Cannot find module @unrdf/core" after installing
 
 **Solution:** Rebuild the monorepo:
+
 ```bash
 pnpm install
 pnpm run build
@@ -369,6 +374,7 @@ pnpm run build
 ### Issue: Tests are failing
 
 **Solution:** Verify your environment:
+
 ```bash
 # Clean and reinstall
 rm -rf node_modules pnpm-lock.yaml
@@ -381,6 +387,7 @@ pnpm test
 ### Issue: Disk space issues
 
 **Solution:** pnpm-store can grow large:
+
 ```bash
 # Clean pnpm cache
 pnpm store prune
@@ -436,12 +443,13 @@ pnpm list --depth 0
 ### VS Code
 
 **Recommended extensions:**
+
 - ESLint
 - Prettier Code Formatter
-- Ruff (linter)
 - Vitest (test runner)
 
 **Settings (.vscode/settings.json):**
+
 ```json
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -449,8 +457,7 @@ pnpm list --depth 0
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "eslint.validate": ["javascript"],
-  "ruff.run": "onType"
+  "eslint.validate": ["javascript"]
 }
 ```
 
@@ -488,6 +495,7 @@ git branch -d feat/add-sparql-optimization
 ### Before Pushing
 
 Always verify:
+
 ```bash
 # Tests pass
 pnpm test

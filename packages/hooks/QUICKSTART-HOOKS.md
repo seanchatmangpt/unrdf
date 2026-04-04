@@ -18,7 +18,7 @@ import { executeHook, validateIRIFormat } from '@unrdf/hooks';
 const quad = {
   subject: { value: 'http://example.org/subject' },
   predicate: { value: 'http://example.org/pred' },
-  object: { value: 'test' }
+  object: { value: 'test' },
 };
 
 // Validate quad using built-in hook
@@ -35,10 +35,10 @@ import { defineHook, executeHook } from '@unrdf/hooks';
 const myHook = defineHook({
   name: 'custom-validator',
   trigger: 'before-add',
-  validate: (quad) => {
+  validate: quad => {
     // Custom validation logic
     return quad.subject.value.startsWith('http://');
-  }
+  },
 });
 
 // Execute it
@@ -53,13 +53,13 @@ import { defineHook, executeHook } from '@unrdf/hooks';
 const normalizer = defineHook({
   name: 'uppercase-objects',
   trigger: 'before-add',
-  transform: (quad) => ({
+  transform: quad => ({
     ...quad,
     object: {
       ...quad.object,
-      value: quad.object.value.toUpperCase()
-    }
-  })
+      value: quad.object.value.toUpperCase(),
+    },
+  }),
 });
 
 const result = await executeHook(normalizer, quad);
@@ -69,22 +69,17 @@ console.log('Transformed:', result.quad.object.value); // 'TEST'
 ### 5. Chain Multiple Hooks
 
 ```javascript
-import {
-  defineHook,
-  executeHookChain,
-  validateIRIFormat,
-  trimLiterals
-} from '@unrdf/hooks';
+import { defineHook, executeHookChain, validateIRIFormat, trimLiterals } from '@unrdf/hooks';
 
 // Create a chain of hooks
 const hooks = [
-  validateIRIFormat,           // Built-in: validate IRI
+  validateIRIFormat, // Built-in: validate IRI
   defineHook({
     name: 'custom-check',
     trigger: 'before-add',
-    validate: (q) => q.object.value.length > 0
+    validate: q => q.object.value.length > 0,
   }),
-  trimLiterals                 // Built-in: trim whitespace
+  trimLiterals, // Built-in: trim whitespace
 ];
 
 // Execute entire chain
@@ -126,6 +121,7 @@ const normalized = await transformBatch([trimLiterals], quads);
 ## Built-in Hooks
 
 ### Validators
+
 - `validateSubjectIRI` - Subject must be NamedNode
 - `validatePredicateIRI` - Predicate must be NamedNode
 - `validateIRIFormat` - RFC3987 compliance
@@ -134,6 +130,7 @@ const normalized = await transformBatch([trimLiterals], quads);
 - `rejectBlankNodes` - Reject blank nodes
 
 ### Normalizers
+
 - `normalizeLanguageTag` - Lowercase language tags
 - `trimLiterals` - Remove whitespace
 - `normalizeNamespace` - Standardize URIs
@@ -141,6 +138,7 @@ const normalized = await transformBatch([trimLiterals], quads);
 - `trimLiteralsPooled` - Fast with pooling
 
 ### Composite
+
 - `standardValidation` - All-in-one validation
 
 ## Patterns
@@ -155,11 +153,11 @@ const store = createStore();
 
 async function addQuad(quad) {
   const result = await executeHookChain([standardValidation], quad);
-  
+
   if (!result.valid) {
     throw new Error('Quad validation failed');
   }
-  
+
   // Add the (potentially transformed) quad
   store.add(result.quad);
 }
@@ -172,14 +170,14 @@ const pipeline = [
   defineHook({
     name: 'reject-internal',
     trigger: 'before-add',
-    validate: (q) => !q.subject.value.includes('internal')
+    validate: q => !q.subject.value.includes('internal'),
   }),
   defineHook({
     name: 'normalize',
     trigger: 'before-add',
-    transform: (q) => ({ ...q, object: { value: q.object.value.trim() } })
+    transform: q => ({ ...q, object: { value: q.object.value.trim() } }),
   }),
-  standardValidation
+  standardValidation,
 ];
 
 const result = await executeHookChain(pipeline, quad);
@@ -188,19 +186,12 @@ const result = await executeHookChain(pipeline, quad);
 ### Performance-Optimized Batch
 
 ```javascript
-import {
-  normalizeLanguageTagPooled,
-  trimLiteralsPooled,
-  transformBatch
-} from '@unrdf/hooks';
+import { normalizeLanguageTagPooled, trimLiteralsPooled, transformBatch } from '@unrdf/hooks';
 
 const quads = largeBatch; // 10,000+ quads
 
 // Pooled versions use object reuse (no allocation)
-const normalized = await transformBatch(
-  [normalizeLanguageTagPooled, trimLiteralsPooled],
-  quads
-);
+const normalized = await transformBatch([normalizeLanguageTagPooled, trimLiteralsPooled], quads);
 ```
 
 ## Testing
@@ -208,10 +199,11 @@ const normalized = await transformBatch(
 Run the comprehensive test suite:
 
 ```bash
-npm test -- builtin-hooks-advanced
+pnpm test -- builtin-hooks-advanced
 ```
 
 This runs 46 tests covering:
+
 - All 12+ built-in hooks
 - Edge cases (empty literals, invalid IRIs, etc.)
 - Hook chaining and composition
@@ -221,6 +213,7 @@ This runs 46 tests covering:
 ## Examples
 
 See [examples/](./examples/) for:
+
 - `hook-chains/` - Multi-hook validation pipelines
 - `policy-hooks/` - Policy enforcement examples
 

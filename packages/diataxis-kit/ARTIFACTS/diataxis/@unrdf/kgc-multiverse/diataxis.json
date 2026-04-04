@@ -7,28 +7,16 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": [
-      "canary-test.mjs",
-      "proof-100-universes.mjs"
-    ],
+    "examplesFiles": ["canary-test.mjs", "proof-100-universes.mjs"],
     "fingerprint": "28a6e90de876ca387a009ae2051c45f839dcf5f8c7fb7a431646d7dd1e12e01e",
     "readmeHeadings": []
   },
   "explanation": {
     "architecture": "@unrdf/kgc-multiverse is a package in the UNRDF ecosystem",
-    "concepts": [
-      "rdf",
-      "knowledge-graph",
-      "multiverse",
-      "branching",
-      "morphism"
-    ],
+    "concepts": ["rdf", "knowledge-graph", "multiverse", "branching", "morphism"],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-kgc-multiverse-explanation",
-    "source": [
-      "keywords",
-      "inferred"
-    ],
+    "source": ["keywords", "inferred"],
     "title": "Understanding @unrdf/kgc-multiverse",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -42,14 +30,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/kgc-multiverse",
       "title": "Handle Errors"
     },
@@ -57,15 +39,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/kgc-multiverse with rdf",
       "title": "Integrate with rdf"
     },
@@ -73,9 +48,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -151,10 +124,7 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@unrdf/kgc-multiverse Reference"
   },
   "tutorials": [
@@ -162,14 +132,8 @@
       "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/kgc-multiverse in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-multiverse",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "examples",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["examples", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -179,5 +143,5 @@
       "title": "Getting Started with @unrdf/kgc-multiverse"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

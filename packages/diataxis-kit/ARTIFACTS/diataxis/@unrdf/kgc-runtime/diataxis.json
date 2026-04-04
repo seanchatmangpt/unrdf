@@ -6,36 +6,17 @@
     "tutorials": 0.1
   },
   "evidence": {
-    "docsFiles": [
-      "api-stability.md"
-    ],
+    "docsFiles": ["api-stability.md"],
     "examplesFiles": [],
     "fingerprint": "dfe4fd372e5543835de9e975a83fcf0367c517ef7587f71873f7243052ea76b7",
-    "readmeHeadings": [
-      "Features",
-      "Installation",
-      "Usage",
-      "API",
-      "License"
-    ]
+    "readmeHeadings": ["Features", "Installation", "Usage", "API", "License"]
   },
   "explanation": {
     "architecture": "Multi-agent capsule merge and conflict resolution system for KGC (Knowledge Graph Consensus) runtime.",
-    "concepts": [
-      "kgc",
-      "governance",
-      "runtime",
-      "schemas",
-      "zod"
-    ],
+    "concepts": ["kgc", "governance", "runtime", "schemas", "zod"],
     "confidenceScore": 1,
     "id": "explanation-unrdf-kgc-runtime-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "docs",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "docs", "inferred"],
     "title": "Understanding @unrdf/kgc-runtime",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -49,14 +30,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/kgc-runtime",
       "title": "Handle Errors"
     },
@@ -64,15 +39,8 @@
       "confidenceScore": 0.7,
       "context": "When working with kgc in your project",
       "id": "howto-integrate-with-kgc",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/kgc-runtime with kgc",
       "title": "Integrate with kgc"
     }
@@ -119,10 +87,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports",
-      "readme"
-    ],
+    "source": ["exports", "readme"],
     "title": "@unrdf/kgc-runtime Reference"
   },
   "tutorials": [
@@ -131,9 +96,7 @@
       "goal": "Learn how to set up and use @unrdf/kgc-runtime in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-runtime",
       "prerequisites": [],
-      "source": [
-        "keywords"
-      ],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -143,5 +106,5 @@
       "title": "Getting Started with @unrdf/kgc-runtime"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

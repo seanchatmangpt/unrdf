@@ -2,7 +2,7 @@
  * @file MCP Tool Handlers
  * @module @unrdf/daemon/mcp/handlers
  * @description Auto-generated handlers that delegate to the unrdf CLI.
- * @generated 2026-04-03 17:21:19 from cli-commands.ttl
+ * @generated 2026-04-03 17:40:10 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-handlers
  *

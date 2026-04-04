@@ -34,20 +34,10 @@
   },
   "explanation": {
     "architecture": "OGC GeoSPARQL standard compliance for spatial RDF queries. Enterprise-grade geospatial capabilities for UNRDF knowledge graphs.",
-    "concepts": [
-      "geosparql",
-      "ogc",
-      "gis",
-      "spatial",
-      "rdf"
-    ],
+    "concepts": ["geosparql", "ogc", "gis", "spatial", "rdf"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-geosparql-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/geosparql",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -61,14 +51,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/geosparql",
       "title": "Handle Errors"
     },
@@ -76,15 +60,8 @@
       "confidenceScore": 0.7,
       "context": "When working with geosparql in your project",
       "id": "howto-integrate-with-geosparql",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/geosparql with geosparql",
       "title": "Integrate with geosparql"
     }
@@ -137,9 +114,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/geosparql Reference"
   },
   "tutorials": [
@@ -147,14 +122,8 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/geosparql in your project",
       "id": "tutorial-getting-started-with-unrdf-geosparql",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -164,5 +133,5 @@
       "title": "Getting Started with @unrdf/geosparql"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

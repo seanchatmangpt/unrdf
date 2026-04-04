@@ -2,7 +2,7 @@
   "confidence": {
     "explanation": 1,
     "howtos": 1,
-    "reference": 0.8,
+    "reference": 1,
     "tutorials": 1
   },
   "evidence": {
@@ -16,39 +16,38 @@
     ],
     "examplesFiles": [
       "basic.mjs",
+      "hooks-marketplace.mjs",
       "knowledge-hook-manager-usage.mjs",
       "validate-hooks.mjs"
     ],
-    "fingerprint": "b1e0d5a6927a851282917dec1d0b562373347a51645d881ee5ec78e64cfccb06",
+    "fingerprint": "935c87a5763148441f6c5a033fb1da381204dc6c575dbbb8be830e7c9353ee35",
     "readmeHeadings": [
-      "Installation",
-      "📚 Examples",
+      "Overview",
       "Quick Start",
-      "Features",
-      "Use Cases",
+      "9 Condition Kinds",
+      "Effects (Transformations)",
+      "SHACL Enforcement Modes (Priority 3)",
+      "Receipt Chaining (Priority 1 & 4)",
+      "CLI Integration",
+      "FIBO Case Study",
+      "AtomVM Integration",
+      "Performance Characteristics",
+      "Architecture",
       "Documentation",
-      "Depends On",
-      "VOC Usage",
+      "Source Examples",
+      "Testing",
+      "API Quick Reference",
+      "Contributing",
+      "Key Files",
       "License"
     ]
   },
   "explanation": {
-    "architecture": "![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue) ![Production Ready](https://img.shields.",
-    "concepts": [
-      "rdf",
-      "knowledge-graph",
-      "hooks",
-      "policy",
-      "validation"
-    ],
+    "architecture": "![Version](https://img.shields.io/badge/version-6.0.0-blue) ![Production Ready](https://img.shields.",
+    "concepts": ["rdf", "knowledge-graph", "hooks", "policy", "validation"],
     "confidenceScore": 1,
     "id": "explanation-unrdf-hooks-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "docs",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "docs", "inferred"],
     "title": "Understanding @unrdf/hooks",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -62,14 +61,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/hooks",
       "title": "Handle Errors"
     },
@@ -77,15 +70,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/hooks with rdf",
       "title": "Integrate with rdf"
     },
@@ -93,9 +79,7 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": [
-        "bin"
-      ],
+      "source": ["bin"],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -135,10 +119,7 @@
         "type": "bin"
       }
     ],
-    "source": [
-      "exports",
-      "bin"
-    ],
+    "source": ["exports", "bin"],
     "title": "@unrdf/hooks Reference"
   },
   "tutorials": [
@@ -146,14 +127,11 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with @unrdf/hooks\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with @unrdf/hooks\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through basic.mjs",
+        "Work through hooks-marketplace.mjs",
         "Work through knowledge-hook-manager-usage.mjs",
         "Work through validate-hooks.mjs"
       ],
@@ -163,22 +141,16 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/hooks in your project",
       "id": "tutorial-getting-started-with-unrdf-hooks",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "examples",
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["examples", "readme", "keywords"],
       "stepsOutline": [
-        "Installation",
-        "📚 Examples",
-        "VOC Usage"
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
       ],
       "title": "Getting Started with @unrdf/hooks"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

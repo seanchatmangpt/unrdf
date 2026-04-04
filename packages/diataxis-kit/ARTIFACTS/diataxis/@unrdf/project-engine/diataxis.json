@@ -13,18 +13,10 @@
   },
   "explanation": {
     "architecture": "@unrdf/project-engine is a package in the UNRDF ecosystem",
-    "concepts": [
-      "unrdf",
-      "project-engine",
-      "development",
-      "infrastructure"
-    ],
+    "concepts": ["unrdf", "project-engine", "development", "infrastructure"],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-project-engine-explanation",
-    "source": [
-      "keywords",
-      "inferred"
-    ],
+    "source": ["keywords", "inferred"],
     "title": "Understanding @unrdf/project-engine",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -38,15 +30,8 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/project-engine with unrdf",
       "title": "Integrate with unrdf"
     },
@@ -54,14 +39,8 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": [
-        "inferred"
-      ],
-      "steps": [
-        "Check configuration",
-        "Review error messages",
-        "Apply fixes"
-      ],
+      "source": ["inferred"],
+      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -78,9 +57,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/project-engine Reference"
   },
   "tutorials": [
@@ -88,12 +65,8 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/project-engine in your project",
       "id": "tutorial-getting-started-with-unrdf-project-engine",
-      "prerequisites": [
-        "Basic RDF knowledge"
-      ],
-      "source": [
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge"],
+      "source": ["keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -103,5 +76,5 @@
       "title": "Getting Started with @unrdf/project-engine"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

@@ -43,6 +43,7 @@
     "mcp:sync": "node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml",
     "mcp:sync:dry": "node packages/cli/src/cli/main.mjs sync --config packages/daemon/src/mcp/.unrdf.toml --dry-run --verbose",
     "precommit": "pnpm run mcp:sync && pnpm lint && pnpm test:fast",
+    "type-check": "tsc --noEmit",
     "quality": "node scripts/quality-report.mjs",
     "quality:json": "node scripts/quality-report.mjs --json",
     "setup-quality": "node scripts/setup-quality.mjs",
@@ -58,7 +59,6 @@
     "benchmark:integration": "node benchmarks/run-all.mjs integration",
     "benchmark:advanced": "node benchmarks/run-all.mjs advanced",
     "benchmark:regression": "node benchmarks/run-all.mjs regression",
-    "benchmark:report": "node benchmarks/run-all.mjs all",
     "benchmark:baseline": "node benchmarks/run-all.mjs regression --save-baseline",
     "benchmark:compare": "node benchmarks/run-all.mjs all --compare-baseline",
     "benchmark:memory": "node --expose-gc benchmarks/regression/memory-leak-detection.mjs",
@@ -91,6 +91,11 @@
     "unrdf:package-sync": "pnpm run unrdf:discover && pnpm run unrdf:generate",
     "unrdf:verify-packages": "test -f src/generated/package-exports.mjs && test $(ls docs/packages/*.md 2>/dev/null | wc -l) -ge 50 && echo '✅ package docs output verified'"
   },
+  "lint-staged": {
+    "*.{mjs,js}": [
+      "eslint --fix --max-warnings=0"
+    ]
+  },
   "devDependencies": {
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
@@ -113,6 +118,7 @@
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
     "tinybench": "^6.0.0",
     "unbuild": "^3.6.1",

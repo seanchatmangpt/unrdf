@@ -27,20 +27,10 @@
   },
   "explanation": {
     "architecture": "`@unrdf/spatial-kg` provides spatial knowledge graph capabilities with WebXR support for VR/AR experiences. Navigate knowledge graphs in 3D space using VR headsets, AR devices, or standard screens.",
-    "concepts": [
-      "rdf",
-      "knowledge-graph",
-      "spatial",
-      "3d",
-      "webxr"
-    ],
+    "concepts": ["rdf", "knowledge-graph", "spatial", "3d", "webxr"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-spatial-kg-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/spatial-kg",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -54,14 +44,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/spatial-kg",
       "title": "Handle Errors"
     },
@@ -69,15 +53,8 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/spatial-kg with rdf",
       "title": "Integrate with rdf"
     }
@@ -142,9 +119,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/spatial-kg Reference"
   },
   "tutorials": [
@@ -152,14 +127,8 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/spatial-kg in your project",
       "id": "tutorial-getting-started-with-unrdf-spatial-kg",
-      "prerequisites": [
-        "Basic RDF knowledge",
-        "Understanding of graph databases"
-      ],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -169,5 +138,5 @@
       "title": "Getting Started with @unrdf/spatial-kg"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

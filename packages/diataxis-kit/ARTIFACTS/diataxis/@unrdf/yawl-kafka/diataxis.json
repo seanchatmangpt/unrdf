@@ -28,20 +28,10 @@
   },
   "explanation": {
     "architecture": "Events are serialized using Avro for compact, schema-validated payloads. All schemas include cryptographic receipts with BLAKE3 hashes.",
-    "concepts": [
-      "yawl",
-      "kafka",
-      "event-streaming",
-      "avro",
-      "workflow"
-    ],
+    "concepts": ["yawl", "kafka", "event-streaming", "avro", "workflow"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-yawl-kafka-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/yawl-kafka",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -55,14 +45,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/yawl-kafka",
       "title": "Handle Errors"
     },
@@ -70,15 +54,8 @@
       "confidenceScore": 0.7,
       "context": "When working with yawl in your project",
       "id": "howto-integrate-with-yawl",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/yawl-kafka with yawl",
       "title": "Integrate with yawl"
     }
@@ -113,9 +90,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/yawl-kafka Reference"
   },
   "tutorials": [
@@ -124,17 +99,10 @@
       "goal": "Learn how to set up and use @unrdf/yawl-kafka in your project",
       "id": "tutorial-getting-started-with-unrdf-yawl-kafka",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
-      "stepsOutline": [
-        "Installation",
-        "Advanced Usage",
-        "Examples"
-      ],
+      "source": ["readme", "keywords"],
+      "stepsOutline": ["Installation", "Advanced Usage", "Examples"],
       "title": "Getting Started with @unrdf/yawl-kafka"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

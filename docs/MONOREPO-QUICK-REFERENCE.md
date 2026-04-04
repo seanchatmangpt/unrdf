@@ -3,8 +3,9 @@
 **Tired of searching through docs?** This page is your cheat sheet for the entire UNRDF monorepo in one place.
 
 ## Quick Stats
-- **17 packages** (13 public, 4 private)
-- **Root version:** 5.0.0-alpha.0
+
+- **73+ packages** (monorepo with core, extended, and internal packages)
+- **Root version:** 26.4.3
 - **Package manager:** pnpm 8.15.0+
 - **Node:** 18.19.0+
 - **Module type:** ESM with JSDoc (no TypeScript source)
@@ -13,69 +14,73 @@
 
 ## The Essential 3 (Start Here)
 
-| Package | Purpose | Install | Status | Use When |
-|---------|---------|---------|--------|----------|
-| **@unrdf/core** | ⭐ Main RDF library - storage, SPARQL, SHACL | `npm install @unrdf/core` | ✅ Production | **ALWAYS** - foundation for everything |
-| **@unrdf/oxigraph** | Rust-based persistent triple store | `npm install @unrdf/oxigraph` | ✅ Production | You need persistent storage beyond memory |
-| **@unrdf/hooks** | Knowledge Hooks framework (autonomous behaviors) | `npm install @unrdf/hooks` | ✅ Production | You want behaviors that react to data changes |
+| Package             | Purpose                                          | Install                       | Status        | Use When                                      |
+| ------------------- | ------------------------------------------------ | ----------------------------- | ------------- | --------------------------------------------- |
+| **@unrdf/core**     | ⭐ Main RDF library - storage, SPARQL, SHACL     | `npm install @unrdf/core`     | ✅ Production | **ALWAYS** - foundation for everything        |
+| **@unrdf/oxigraph** | Rust-based persistent triple store               | `npm install @unrdf/oxigraph` | ✅ Production | You need persistent storage beyond memory     |
+| **@unrdf/hooks**    | Knowledge Hooks framework (autonomous behaviors) | `npm install @unrdf/hooks`    | ✅ Production | You want behaviors that react to data changes |
 
 ---
 
 ## Extended Features (Build On Top)
 
-| Package | Purpose | Install | Status | Use When |
-|---------|---------|---------|--------|----------|
-| **@unrdf/streaming** | Large graph streaming & real-time sync | `npm install @unrdf/streaming` | ✅ Production | Processing multi-GB graphs without bloating memory |
-| **@unrdf/federation** | Federated/distributed query execution | `npm install @unrdf/federation` | ✅ Production | Querying across multiple RDF stores simultaneously |
-| **@unrdf/knowledge-engine** | Inference, reasoning, rules (EYE engine) | `npm install @unrdf/knowledge-engine` | ✅ Production | You need OWL/semantic reasoning over your graph |
-| **@unrdf/browser** | Browser runtime with IndexedDB support | `npm install @unrdf/browser` | ✅ Production | Building browser-based RDF applications |
-| **@unrdf/cli** | Command-line interface & tools | `npm install @unrdf/cli` | ✅ Production | Running RDF ops from the terminal |
-| **@unrdf/react** | React hooks & integration layer | `npm install @unrdf/react` | v4.1.1 Production | Building React apps with RDF data binding |
-| **@unrdf/composables** | Vue 3 composables (optional extension) | `npm install @unrdf/composables` | 🔶 Alpha | Using UNRDF in Vue 3 applications |
-| **@unrdf/dark-matter** | Query optimization & performance analysis | `npm install @unrdf/dark-matter` | 🔶 Alpha | Optimizing slow SPARQL queries |
-| **@unrdf/project-engine** | Project/workspace management (dev-only) | `npm install @unrdf/project-engine` | 🔶 Alpha | Managing UNRDF projects & workspaces |
-| **@unrdf/engine-gateway** | API gateway & μ(O) enforcement layer | `npm install @unrdf/engine-gateway` | v0.1.0 Production | Building API endpoints over RDF engines |
+| Package                   | Purpose                                   | Install                             | Status            | Use When                                           |
+| ------------------------- | ----------------------------------------- | ----------------------------------- | ----------------- | -------------------------------------------------- |
+| **@unrdf/streaming**      | Large graph streaming & real-time sync    | `npm install @unrdf/streaming`      | ✅ Production     | Processing multi-GB graphs without bloating memory |
+| **@unrdf/federation**     | Federated/distributed query execution     | `npm install @unrdf/federation`     | ✅ Production     | Querying across multiple RDF stores simultaneously |
+| **@unrdf/browser**        | Browser runtime with IndexedDB support    | `npm install @unrdf/browser`        | ✅ Production     | Building browser-based RDF applications            |
+| **@unrdf/cli**            | Command-line interface & tools            | `npm install @unrdf/cli`            | ✅ Production     | Running RDF ops from the terminal                  |
+| **@unrdf/react**          | React hooks & integration layer           | `npm install @unrdf/react`          | v4.1.1 Production | Building React apps with RDF data binding          |
+| **@unrdf/composables**    | Vue 3 composables (optional extension)    | `npm install @unrdf/composables`    | 🔶 Alpha          | Using UNRDF in Vue 3 applications                  |
+| **@unrdf/dark-matter**    | Query optimization & performance analysis | `npm install @unrdf/dark-matter`    | 🔶 Alpha          | Optimizing slow SPARQL queries                     |
+| **@unrdf/project-engine** | Project/workspace management (dev-only)   | `npm install @unrdf/project-engine` | 🔶 Alpha          | Managing UNRDF projects & workspaces               |
+| **@unrdf/engine-gateway** | API gateway & μ(O) enforcement layer      | `npm install @unrdf/engine-gateway` | v0.1.0 Production | Building API endpoints over RDF engines            |
 
 ---
 
 ## Internal Packages (For Contributors Only)
 
-| Package | Purpose | Location | Status | Public |
-|---------|---------|----------|--------|--------|
+| Package               | Purpose                                  | Location              | Status | Public     |
+| --------------------- | ---------------------------------------- | --------------------- | ------ | ---------- |
 | **@unrdf/test-utils** | Testing utilities, fixtures, test stores | `packages/test-utils` | v1.0.0 | ❌ Private |
-| **@unrdf/validation** | OTEL validation framework (internal) | `packages/validation` | v1.0.0 | ❌ Private |
-| **@unrdf/domain** | Domain models & type definitions | `packages/domain` | v1.0.0 | ❌ Private |
+| **@unrdf/validation** | OTEL validation framework (internal)     | `packages/validation` | v1.0.0 | ❌ Private |
+| **@unrdf/domain**     | Domain models & type definitions         | `packages/domain`     | v1.0.0 | ❌ Private |
 
 ---
 
 ## Quick Package Matrix
 
 ### By Status
-- **✅ Production Ready (10):** core, oxigraph, hooks, streaming, federation, knowledge-engine, browser, cli, react, engine-gateway
+
+- **✅ Production Ready (9):** core, oxigraph, hooks, streaming, federation, browser, cli, react, engine-gateway
 - **🔶 Alpha (3):** composables, dark-matter, project-engine
 - **🔒 Internal (3):** test-utils, validation, domain
 
 ### By Category
 
 **RDF Core:**
+
 - `@unrdf/core` (main)
 - `@unrdf/oxigraph` (backend)
 
 **Autonomous Behaviors:**
+
 - `@unrdf/hooks` (framework)
-- `@unrdf/knowledge-engine` (inference)
 
 **Scalability:**
+
 - `@unrdf/streaming` (large graphs)
 - `@unrdf/federation` (distributed)
 
 **Integrations:**
+
 - `@unrdf/browser` (client-side)
 - `@unrdf/react` (React)
 - `@unrdf/composables` (Vue)
 - `@unrdf/cli` (terminal)
 
 **Utilities:**
+
 - `@unrdf/engine-gateway` (API layer)
 - `@unrdf/dark-matter` (optimization)
 - `@unrdf/project-engine` (workspace)
@@ -90,8 +95,7 @@ Every App
 │   ├── @unrdf/oxigraph (for persistence)
 │   ├── @unrdf/hooks (for behaviors)
 │   ├── @unrdf/streaming (optional, for scale)
-│   ├── @unrdf/federation (optional, for distribution)
-│   └── @unrdf/knowledge-engine (optional, for inference)
+│   └── @unrdf/federation (optional, for distribution)
 │
 └── Integration layers (pick one or more):
     ├── @unrdf/browser (for client-side)
@@ -105,6 +109,7 @@ Every App
 ## Common Patterns
 
 ### Pattern 1: Simple In-Memory App
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
@@ -118,6 +123,7 @@ const results = await core.query(store, sparqlQuery);
 ---
 
 ### Pattern 2: Persistent + Reactive
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 import { createOxigraphStore } from '@unrdf/oxigraph';
@@ -129,7 +135,7 @@ const core = await createKnowledgeSubstrateCore({ store });
 defineHook({
   trigger: 'INSERT',
   pattern: '?s ex:status ?o',
-  run: (event) => console.log('Status changed!', event)
+  run: event => console.log('Status changed!', event),
 });
 
 registerHook(hook);
@@ -140,12 +146,13 @@ registerHook(hook);
 ---
 
 ### Pattern 3: Large Graph + Browser
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/browser';
 import { streamLargeGraph } from '@unrdf/streaming';
 
 const core = await createKnowledgeSubstrateCore({
-  backend: 'indexeddb'
+  backend: 'indexeddb',
 });
 
 // Stream multi-GB graph without memory issues
@@ -160,6 +167,7 @@ for await (const quad of stream) {
 ---
 
 ### Pattern 4: Federated Query + React
+
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 import { useRdfQuery } from '@unrdf/react';
@@ -179,7 +187,7 @@ const { data, loading } = useRdfQuery(`
 
 ```
 /home/user/unrdf/
-├── packages/                          # 17 monorepo packages
+├── packages/                          # 73+ monorepo packages
 │   ├── core/                          # @unrdf/core (essential)
 │   ├── oxigraph/                      # @unrdf/oxigraph (persistent backend)
 │   ├── hooks/                         # @unrdf/hooks
@@ -210,13 +218,13 @@ const { data, loading } = useRdfQuery(`
 
 ## Getting Help
 
-| Question | Answer | Resource |
-|----------|--------|----------|
-| What should I use to build my app? | Start with `@unrdf/core` + what you need | [START-HERE.md](START-HERE.md) |
-| How do I set up my dev environment? | Follow pnpm setup & test commands | [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md) |
-| What does each package contain? | Detailed structure and exports | [WORKSPACE-STRUCTURE.md](WORKSPACE-STRUCTURE.md) |
-| How do I add a new package? | Step-by-step package creation guide | [PACKAGE-DEVELOPMENT.md](PACKAGE-DEVELOPMENT.md) |
-| How do I test the monorepo? | Cross-package testing strategies | [TESTING-STRATEGY.md](TESTING-STRATEGY.md) |
+| Question                            | Answer                                   | Resource                                         |
+| ----------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| What should I use to build my app?  | Start with `@unrdf/core` + what you need | [START-HERE.md](START-HERE.md)                   |
+| How do I set up my dev environment? | Follow pnpm setup & test commands        | [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)     |
+| What does each package contain?     | Detailed structure and exports           | [WORKSPACE-STRUCTURE.md](WORKSPACE-STRUCTURE.md) |
+| How do I add a new package?         | Step-by-step package creation guide      | [PACKAGE-DEVELOPMENT.md](PACKAGE-DEVELOPMENT.md) |
+| How do I test the monorepo?         | Cross-package testing strategies         | [TESTING-STRATEGY.md](TESTING-STRATEGY.md)       |
 
 ---
 
@@ -234,25 +242,24 @@ const { data, loading } = useRdfQuery(`
 
 ## Version Matrix
 
-| Package | Version | Status |
-|---------|---------|--------|
-| Root | 5.0.0-alpha.0 | 🔶 Alpha |
-| @unrdf/core | latest | ✅ Production |
-| @unrdf/oxigraph | latest | ✅ Production |
-| @unrdf/hooks | latest | ✅ Production |
-| @unrdf/streaming | latest | ✅ Production |
-| @unrdf/federation | latest | ✅ Production |
-| @unrdf/knowledge-engine | latest | ✅ Production |
-| @unrdf/browser | latest | ✅ Production |
-| @unrdf/cli | latest | ✅ Production |
-| @unrdf/react | v4.1.1 | ✅ Production |
-| @unrdf/composables | latest | 🔶 Alpha |
-| @unrdf/dark-matter | latest | 🔶 Alpha |
-| @unrdf/project-engine | latest | 🔶 Alpha |
-| @unrdf/engine-gateway | v0.1.0 | ✅ Production |
-| @unrdf/test-utils | v1.0.0 | 🔒 Private |
-| @unrdf/validation | v1.0.0 | 🔒 Private |
-| @unrdf/domain | v1.0.0 | 🔒 Private |
+| Package               | Version | Status        |
+| --------------------- | ------- | ------------- |
+| Root                  | 26.4.3  | ✅ Production |
+| @unrdf/core           | latest  | ✅ Production |
+| @unrdf/oxigraph       | latest  | ✅ Production |
+| @unrdf/hooks          | latest  | ✅ Production |
+| @unrdf/streaming      | latest  | ✅ Production |
+| @unrdf/federation     | latest  | ✅ Production |
+| @unrdf/browser        | latest  | ✅ Production |
+| @unrdf/cli            | latest  | ✅ Production |
+| @unrdf/react          | v4.1.1  | ✅ Production |
+| @unrdf/composables    | latest  | 🔶 Alpha      |
+| @unrdf/dark-matter    | latest  | 🔶 Alpha      |
+| @unrdf/project-engine | latest  | 🔶 Alpha      |
+| @unrdf/engine-gateway | v0.1.0  | ✅ Production |
+| @unrdf/test-utils     | v1.0.0  | 🔒 Private    |
+| @unrdf/validation     | v1.0.0  | 🔒 Private    |
+| @unrdf/domain         | v1.0.0  | 🔒 Private    |
 
 ---
 

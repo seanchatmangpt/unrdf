@@ -27,23 +27,12 @@
   },
   "explanation": {
     "architecture": "> Real-time D3.",
-    "concepts": [
-      "yawl",
-      "workflow",
-      "visualization",
-      "d3",
-      "van-der-aalst"
-    ],
+    "concepts": ["yawl", "workflow", "visualization", "d3", "van-der-aalst"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-yawl-viz-explanation",
-    "source": [
-      "keywords",
-      "readme"
-    ],
+    "source": ["keywords", "readme"],
     "title": "Understanding @unrdf/yawl-viz",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -51,14 +40,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/yawl-viz",
       "title": "Handle Errors"
     },
@@ -66,15 +49,8 @@
       "confidenceScore": 0.7,
       "context": "When working with yawl in your project",
       "id": "howto-integrate-with-yawl",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/yawl-viz with yawl",
       "title": "Integrate with yawl"
     }
@@ -91,10 +67,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports",
-      "readme"
-    ],
+    "source": ["exports", "readme"],
     "title": "@unrdf/yawl-viz Reference"
   },
   "tutorials": [
@@ -103,17 +76,10 @@
       "goal": "Learn how to set up and use @unrdf/yawl-viz in your project",
       "id": "tutorial-getting-started-with-unrdf-yawl-viz",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
-      "stepsOutline": [
-        "Installation",
-        "Advanced Usage",
-        "Examples"
-      ],
+      "source": ["readme", "keywords"],
+      "stepsOutline": ["Installation", "Advanced Usage", "Examples"],
       "title": "Getting Started with @unrdf/yawl-viz"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

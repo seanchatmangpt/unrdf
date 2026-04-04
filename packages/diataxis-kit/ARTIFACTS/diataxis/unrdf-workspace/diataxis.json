@@ -28,7 +28,6 @@
       "ANDON-SIGNALS-SUMMARY.md",
       "ANDON_SIGNALS.md",
       "API-DESIGN.md",
-      "API-REFERENCE.md",
       "API_DOCUMENTATION_V6.md",
       "API_STRUCTURE.md",
       "ARCHITECTURE-COHERENCE-REPORT.md",
@@ -135,6 +134,7 @@
       "ECOSYSTEM-ROADMAP.md",
       "ENTERPRISE-DOD-EVALUATION.md",
       "EVIDENCE-INDEX.md",
+      "EXAMPLES-DETAILED.md",
       "EXAMPLES.md",
       "EXPORT-PATTERNS-ANALYSIS.md",
       "FAQ.md",
@@ -169,7 +169,9 @@
       "INDEX.md",
       "INFRASTRUCTURE-VALIDATION-REPORT.md",
       "INIT-PIPELINE.md",
+      "INNOVATIONS-README.md",
       "INTEGRATION-ROADMAP-80-20.md",
+      "INTEGRATION.md",
       "INTEGRATION_ANALYSIS_SUMMARY.md",
       "KGC-4D-DOCUMENTATION-ARCHITECTURE.md",
       "KGC-4D-DOCUMENTATION-DIAGRAMS.md",
@@ -349,6 +351,7 @@
       "WORKSPACE-STRUCTURE.md",
       "ai-semantic-integration.md",
       "api-capability-maps.md",
+      "api-reference.md",
       "architecture-80-20-analysis.md",
       "atomvm-runtime-states.puml",
       "atomvm-system-architecture.puml",
@@ -529,10 +532,15 @@
       "04-validation.mjs",
       "05-advanced-patterns.mjs",
       "ARCHITECTURE.md",
+      "ATOMVM-HOOKS-INTEGRATION-GUIDE.md",
+      "FIBO-CASE-STUDY-INDEX.md",
+      "FIBO-JTBD-GOVERNANCE-README.md",
       "QUICKSTART.md",
       "README.md",
       "ai-semantic-example.mjs",
       "api-reference.kgcmd",
+      "atomvm-fibo-hooks-config.yaml",
+      "atomvm-fibo-hooks-demo.mjs",
       "basic-knowledge-hook.mjs",
       "board-atomvm-poc.mjs",
       "board-decision-poc.mjs",
@@ -547,6 +555,9 @@
       "dark-matter-query-optimization.mjs",
       "debug-context.mjs",
       "define-hook-example.mjs",
+      "fibo-hooks-config.yaml",
+      "fibo-jtbd-governance.mjs",
+      "fibo-ontology-snippet.nt",
       "git-hooks-lifecycle.mjs",
       "git-knowledge-hooks-integration.mjs",
       "hook-lifecycle-test.mjs",
@@ -576,17 +587,19 @@
       "simple-production-test.mjs",
       "single-store-demo.mjs",
       "sparql-query-advanced.mjs",
+      "streaming-admission.mjs",
       "test-async-context.mjs",
       "test-async-jsonld.mjs",
       "test-utils-demo.mjs",
       "tutorial-query.kgcmd",
+      "unrdf-examples-5.0.1.tgz",
       "unrdf-init-pipeline.mjs",
       "unrdf-profiling-integration.mjs",
       "validate-new-features.mjs",
       "yawl-daemon-workflow.mjs",
       "yawl-nitro-workflow.mjs"
     ],
-    "fingerprint": "abab2cb220e1cfebe4e8664c37a60a04983d965018ff11ac97e7b0ec619ad971",
+    "fingerprint": "2fb74d1cc911fdd98333b73291d99a721610a12d343cd6d64536d661b45e1b12",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
@@ -618,19 +631,12 @@
   },
   "explanation": {
     "architecture": "**Research-grade RDF knowledge graphs with batteries included.",
-    "concepts": [
-      "core functionality"
-    ],
+    "concepts": ["core functionality"],
     "confidenceScore": 0.6,
     "id": "explanation-unrdf-workspace-explanation",
-    "source": [
-      "readme",
-      "docs"
-    ],
+    "source": ["readme", "docs"],
     "title": "Understanding unrdf-workspace",
-    "tradeoffs": [
-      "Performance vs. flexibility tradeoffs discussed in README"
-    ]
+    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -638,9 +644,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-workspace",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -653,14 +657,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for unrdf-workspace",
       "title": "Handle Errors"
     }
@@ -677,9 +675,7 @@
         "type": "unknown"
       }
     ],
-    "source": [
-      "inferred"
-    ],
+    "source": ["inferred"],
     "title": "unrdf-workspace Reference"
   },
   "tutorials": [
@@ -687,12 +683,8 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": [
-        "Completed \"Getting Started with unrdf-workspace\""
-      ],
-      "source": [
-        "examples"
-      ],
+      "prerequisites": ["Completed \"Getting Started with unrdf-workspace\""],
+      "source": ["examples"],
       "stepsOutline": [
         "Work through 01-hello-rdf.mjs",
         "Work through 01-minimal-parse-query.mjs",
@@ -707,17 +699,10 @@
       "goal": "Learn how to set up and use unrdf-workspace in your project",
       "id": "tutorial-getting-started-with-unrdf-workspace",
       "prerequisites": [],
-      "source": [
-        "examples",
-        "readme"
-      ],
-      "stepsOutline": [
-        "Installation",
-        "Examples",
-        "CLI Usage"
-      ],
+      "source": ["examples", "readme"],
+      "stepsOutline": ["Installation", "Examples", "CLI Usage"],
       "title": "Getting Started with unrdf-workspace"
     }
   ],
-  "version": "6.0.0-rc.1"
+  "version": "26.4.3"
 }

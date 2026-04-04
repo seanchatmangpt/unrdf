@@ -27,20 +27,10 @@
   },
   "explanation": {
     "architecture": "Event-driven automation for UNRDF v6.1.0 with automatic delta processing, receipt generation, and policy enforcement.",
-    "concepts": [
-      "unrdf",
-      "event-automation",
-      "delta-processing",
-      "receipts",
-      "hooks"
-    ],
+    "concepts": ["unrdf", "event-automation", "delta-processing", "receipts", "hooks"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-event-automation-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/event-automation",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -54,14 +44,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/event-automation",
       "title": "Handle Errors"
     },
@@ -69,15 +53,8 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/event-automation with unrdf",
       "title": "Integrate with unrdf"
     }
@@ -124,9 +101,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/event-automation Reference"
   },
   "tutorials": [
@@ -134,13 +109,8 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/event-automation in your project",
       "id": "tutorial-getting-started-with-unrdf-event-automation",
-      "prerequisites": [
-        "Basic RDF knowledge"
-      ],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "prerequisites": ["Basic RDF knowledge"],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -150,5 +120,5 @@
       "title": "Getting Started with @unrdf/event-automation"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

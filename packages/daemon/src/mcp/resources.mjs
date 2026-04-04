@@ -123,32 +123,36 @@ const mcpResources = [
 
 /**
  * Register all resources with the MCP server
- * @param {Server} server - MCP server instance
+ * @param {McpServer} server - MCP server instance
  * @param {object} options - Configuration options
  */
 export function registerResources(server, options = {}) {
-  // Register list resources handler
-  server.setRequestHandler({ method: 'resources/list' }, async () => ({
-    resources: mcpResources,
-  }));
-
-  // Register read resource handler
-  server.setRequestHandler({ method: 'resources/read' }, async (request) => {
-    const handler = resourceHandlers[request.params.uri];
-    if (!handler) {
-      throw new Error(`Unknown resource: ${request.params.uri}`);
-    }
-    const result = await handler();
-    return {
-      contents: [
-        {
-          uri: result.uri,
-          mimeType: result.mimeType,
-          text: result.contents,
-        },
-      ],
-    };
-  });
+  for (const resource of mcpResources) {
+    server.registerResource(
+      resource.name || resource.uri,
+      resource.uri,
+      {
+        description: resource.description,
+        mimeType: resource.mimeType,
+      },
+      async (_uri) => {
+        const handler = resourceHandlers[resource.uri];
+        if (!handler) {
+          throw new Error(`Unknown resource: ${resource.uri}`);
+        }
+        const result = await handler();
+        return {
+          contents: [
+            {
+              uri: result.uri,
+              mimeType: result.mimeType,
+              text: result.contents,
+            },
+          ],
+        };
+      }
+    );
+  }
 }
 
 // Export resource definitions

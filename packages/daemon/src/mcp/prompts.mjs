@@ -4,6 +4,8 @@
  * @description Prompt definitions for the Model Context Protocol
  */
 
+import { z } from 'zod';
+
 /**
  * Prompt handler functions
  */
@@ -154,22 +156,30 @@ export const mcpPrompts = [
 
 /**
  * Register all prompts with the MCP server
- * @param {Server} server - MCP server instance
+ * @param {McpServer} server - MCP server instance
  * @param {object} options - Configuration options
  */
 export function registerPrompts(server, options = {}) {
-  // Register list prompts handler
-  server.setRequestHandler({ method: 'prompts/list' }, async () => ({
-    prompts: mcpPrompts,
-  }));
+  for (const prompt of mcpPrompts) {
+    const argsSchema = (prompt.arguments || []).length > 0
+      ? Object.fromEntries(
+          (prompt.arguments || []).map(a => [a.name, z.string().describe(a.description || '')])
+        )
+      : undefined;
 
-  // Register get prompt handler
-  server.setRequestHandler({ method: 'prompts/get' }, async (request) => {
-    const handler = promptHandlers[request.params.name];
-    if (!handler) {
-      throw new Error(`Unknown prompt: ${request.params.name}`);
-    }
-    const result = await handler(request.params.arguments || {});
-    return result;
-  });
+    server.registerPrompt(
+      prompt.name,
+      {
+        description: prompt.description,
+        ...(argsSchema && { argsSchema }),
+      },
+      async (args) => {
+        const handler = promptHandlers[prompt.name];
+        if (!handler) {
+          throw new Error(`Unknown prompt: ${prompt.name}`);
+        }
+        return handler(args || {});
+      }
+    );
+  }
 }

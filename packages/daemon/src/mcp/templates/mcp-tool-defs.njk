@@ -45,7 +45,7 @@ export const mcpGeneratedTools = [
 {% endif %}
 {% endfor %}
       },
-      required: [{% set reqArgs = [] %}{% for argName, argRows in argGroups | items %}{% if argName and argName != 'undefined' and argName != '?undefined' and (argRows[0].required == 'true' or argRows[0].required == '"true"') %}{% set reqArgs = reqArgs.concat([argName]) %}{% endif %}{% endfor %}{% for arg in reqArgs %}{{ arg | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
+      required: [{% for name in rows | requiredArgs %}{{ name | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
     },
   },
 {% endfor %}

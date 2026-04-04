@@ -30,20 +30,10 @@
   },
   "explanation": {
     "architecture": "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with automatic OpenAPI documentation, HATEOAS hypermedia controls, and Zod-based validation.",
-    "concepts": [
-      "yawl",
-      "workflow",
-      "rest-api",
-      "fastify",
-      "openapi"
-    ],
+    "concepts": ["yawl", "workflow", "rest-api", "fastify", "openapi"],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-yawl-api-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "inferred"],
     "title": "Understanding @unrdf/yawl-api",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -57,9 +47,7 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-yawl-api",
-      "source": [
-        "readme"
-      ],
+      "source": ["readme"],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -72,14 +60,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/yawl-api",
       "title": "Handle Errors"
     },
@@ -87,15 +69,8 @@
       "confidenceScore": 0.7,
       "context": "When working with yawl in your project",
       "id": "howto-integrate-with-yawl",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/yawl-api with yawl",
       "title": "Integrate with yawl"
     }
@@ -118,9 +93,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports"
-    ],
+    "source": ["exports"],
     "title": "@unrdf/yawl-api Reference"
   },
   "tutorials": [
@@ -129,10 +102,7 @@
       "goal": "Learn how to set up and use @unrdf/yawl-api in your project",
       "id": "tutorial-getting-started-with-unrdf-yawl-api",
       "prerequisites": [],
-      "source": [
-        "readme",
-        "keywords"
-      ],
+      "source": ["readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -142,5 +112,5 @@
       "title": "Getting Started with @unrdf/yawl-api"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

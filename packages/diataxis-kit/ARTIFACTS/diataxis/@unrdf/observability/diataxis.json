@@ -6,13 +6,8 @@
     "tutorials": 1
   },
   "evidence": {
-    "docsFiles": [
-      "OBSERVABILITY-PATTERNS.md",
-      "OBSERVABILITY-RUNBOOK.md"
-    ],
-    "examplesFiles": [
-      "observability-demo.mjs"
-    ],
+    "docsFiles": ["OBSERVABILITY-PATTERNS.md", "OBSERVABILITY-RUNBOOK.md"],
+    "examplesFiles": ["observability-demo.mjs"],
     "fingerprint": "f0d9ccda8a8f896c4f6b8947f1de033a450ed53f9774765fded3e6ead54bf420",
     "readmeHeadings": [
       "Features",
@@ -34,21 +29,10 @@
   },
   "explanation": {
     "architecture": "Record workflow execution start.",
-    "concepts": [
-      "prometheus",
-      "grafana",
-      "metrics",
-      "observability",
-      "monitoring"
-    ],
+    "concepts": ["prometheus", "grafana", "metrics", "observability", "monitoring"],
     "confidenceScore": 1,
     "id": "explanation-unrdf-observability-explanation",
-    "source": [
-      "keywords",
-      "readme",
-      "docs",
-      "inferred"
-    ],
+    "source": ["keywords", "readme", "docs", "inferred"],
     "title": "Understanding @unrdf/observability",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -62,14 +46,8 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": [
-        "tests"
-      ],
-      "steps": [
-        "Set up try-catch blocks",
-        "Handle common error types",
-        "Log errors appropriately"
-      ],
+      "source": ["tests"],
+      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
       "task": "Implement error handling for @unrdf/observability",
       "title": "Handle Errors"
     },
@@ -77,15 +55,8 @@
       "confidenceScore": 0.7,
       "context": "When working with prometheus in your project",
       "id": "howto-integrate-with-prometheus",
-      "source": [
-        "keywords",
-        "inferred"
-      ],
-      "steps": [
-        "Install dependencies",
-        "Set up integration",
-        "Test integration"
-      ],
+      "source": ["keywords", "inferred"],
+      "steps": ["Install dependencies", "Set up integration", "Test integration"],
       "task": "Connect @unrdf/observability with prometheus",
       "title": "Integrate with prometheus"
     }
@@ -120,10 +91,7 @@
         "type": "export"
       }
     ],
-    "source": [
-      "exports",
-      "readme"
-    ],
+    "source": ["exports", "readme"],
     "title": "@unrdf/observability Reference"
   },
   "tutorials": [
@@ -132,11 +100,7 @@
       "goal": "Learn how to set up and use @unrdf/observability in your project",
       "id": "tutorial-getting-started-with-unrdf-observability",
       "prerequisites": [],
-      "source": [
-        "examples",
-        "readme",
-        "keywords"
-      ],
+      "source": ["examples", "readme", "keywords"],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
@@ -146,5 +110,5 @@
       "title": "Getting Started with @unrdf/observability"
     }
   ],
-  "version": "26.4.2"
+  "version": "26.4.3"
 }

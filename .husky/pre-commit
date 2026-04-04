@@ -1,16 +1,9 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
 # UNRDF Pre-commit Quality Gate
-# Enforces code quality standards (linting + fast test suite)
+# Lints only staged files via lint-staged (~2-3s)
+# Tests run on pre-push (see .husky/pre-push)
 
-echo "🔍 Running pre-commit quality checks..."
-
-# Run lint checks
-pnpm lint || exit 1
-
-# Run fast test suite
-pnpm test:fast || exit 1
-
-echo "✓ Pre-commit checks passed"
-exit 0
+echo "Running pre-commit lint..."
+pnpm lint-staged || exit 1
+echo "Pre-commit passed"

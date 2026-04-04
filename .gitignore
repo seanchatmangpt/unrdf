@@ -36,6 +36,7 @@ coordination/orchestration/*
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
+vitest.config.mjs.timestamp-*.mjs
 claude-flow
 # Removed Windows wrapper files per user request
 hive-mind-prompt-*.txt
