@@ -493,9 +493,17 @@ export function validateCondition(condition) {
   }
 
   if (
-    !['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window', 'n3', 'datalog'].includes(
-      condition.kind
-    )
+    ![
+      'sparql-ask',
+      'sparql-select',
+      'shacl',
+      'delta',
+      'threshold',
+      'count',
+      'window',
+      'n3',
+      'datalog',
+    ].includes(condition.kind)
   ) {
     return {
       valid: false,
@@ -516,7 +524,8 @@ export function validateCondition(condition) {
   if (!hasRef && !hasInline) {
     return {
       valid: false,
-      error: 'Condition must have either ref (file reference) or inline content (query/shapes/facts/goal/rules)',
+      error:
+        'Condition must have either ref (file reference) or inline content (query/shapes/facts/goal/rules)',
     };
   }
 
@@ -907,7 +916,9 @@ async function evaluateDatalog(condition, _graph, _resolver, _env) {
   for (const fact of inlineFacts) {
     const parsed = parseDatalogTerm(fact);
     if (!parsed) {
-      throw new Error(`Invalid Datalog fact format: ${fact}. Expected format: "predicate(arg1, arg2, ...)"`);
+      throw new Error(
+        `Invalid Datalog fact format: ${fact}. Expected format: "predicate(arg1, arg2, ...)"`
+      );
     }
 
     const { predicate, args } = parsed;
@@ -934,7 +945,9 @@ async function evaluateDatalog(condition, _graph, _resolver, _env) {
   for (const rule of rulesList) {
     const ruleObj = parseDatalogRule(rule);
     if (!ruleObj) {
-      throw new Error(`Invalid Datalog rule format: ${rule}. Expected format: "head(X) :- body1(X), body2(X)"`);
+      throw new Error(
+        `Invalid Datalog rule format: ${rule}. Expected format: "head(X) :- body1(X), body2(X)"`
+      );
     }
     parsedRules.push(ruleObj);
   }
@@ -973,7 +986,9 @@ async function evaluateDatalog(condition, _graph, _resolver, _env) {
   // Query for the goal
   const goalParsed = parseDatalogTerm(goal);
   if (!goalParsed) {
-    throw new Error(`Invalid Datalog goal format: ${goal}. Expected format: "predicate(arg1, arg2, ...)"`);
+    throw new Error(
+      `Invalid Datalog goal format: ${goal}. Expected format: "predicate(arg1, arg2, ...)"`
+    );
   }
 
   const { predicate, args } = goalParsed;

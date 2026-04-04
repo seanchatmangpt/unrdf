@@ -43,7 +43,7 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@unrdf/core": "26.4.3",
-    "@unrdf/daemon": "workspace:*",
+    "@unrdf/daemon": "26.4.3",
     "@unrdf/federation": "26.4.3",
     "@unrdf/hooks": "26.4.3",
     "@unrdf/kgn": "26.4.3",

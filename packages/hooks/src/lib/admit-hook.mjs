@@ -38,14 +38,18 @@ export const HookDefinitionSchema = z.object({
   name: z.string().min(1).max(100),
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   description: z.string().optional(),
-  conditions: z.array(z.object({
-    kind: z.enum(['sparql-ask', 'sparql-select', 'n3', 'shacl']),
-    query: z.string(),
-  })),
-  effects: z.array(z.object({
-    kind: z.enum(['sparql-construct', 'n3-forward']),
-    query: z.string(),
-  })),
+  conditions: z.array(
+    z.object({
+      kind: z.enum(['sparql-ask', 'sparql-select', 'n3', 'shacl']),
+      query: z.string(),
+    })
+  ),
+  effects: z.array(
+    z.object({
+      kind: z.enum(['sparql-construct', 'n3-forward']),
+      query: z.string(),
+    })
+  ),
   dependsOn: z.array(z.string().uuid()).optional(),
   priority: z.number().int().min(0).max(100).optional(),
 });
@@ -230,12 +234,17 @@ export class HooksMarketplace {
       this._createLiteral(hookUri, `${HOOK_NS.schema}id`, validated.id),
       this._createLiteral(hookUri, `${HOOK_NS.schema}name`, validated.name),
       this._createLiteral(hookUri, `${HOOK_NS.schema}version`, validated.version),
-      this._createLiteral(hookUri, `${HOOK_NS.schema}priority`, validated.priority, `${HOOK_NS.xsd}integer`),
+      this._createLiteral(
+        hookUri,
+        `${HOOK_NS.schema}priority`,
+        validated.priority,
+        `${HOOK_NS.xsd}integer`
+      )
     );
 
     if (validated.description) {
       normalized.triples.push(
-        this._createLiteral(hookUri, `${HOOK_NS.schema}description`, validated.description),
+        this._createLiteral(hookUri, `${HOOK_NS.schema}description`, validated.description)
       );
     }
 
@@ -250,7 +259,7 @@ export class HooksMarketplace {
         },
         this._createLiteral(condUri, `${HOOK_NS.schema}kind`, cond.kind),
         this._createLiteral(condUri, `${HOOK_NS.schema}query`, cond.query),
-        this._createLiteral(condUri, `${HOOK_NS.schema}order`, idx, `${HOOK_NS.xsd}integer`),
+        this._createLiteral(condUri, `${HOOK_NS.schema}order`, idx, `${HOOK_NS.xsd}integer`)
       );
     });
 
@@ -265,7 +274,7 @@ export class HooksMarketplace {
         },
         this._createLiteral(effUri, `${HOOK_NS.schema}kind`, eff.kind),
         this._createLiteral(effUri, `${HOOK_NS.schema}query`, eff.query),
-        this._createLiteral(effUri, `${HOOK_NS.schema}order`, idx, `${HOOK_NS.xsd}integer`),
+        this._createLiteral(effUri, `${HOOK_NS.schema}order`, idx, `${HOOK_NS.xsd}integer`)
       );
     });
 
@@ -414,7 +423,7 @@ export class HooksMarketplace {
           object: { termType: 'NamedNode', value: viol.path },
         },
         this._createLiteral(violUri, `${HOOK_NS.shacl}resultMessage`, viol.message),
-        this._createLiteral(violUri, `${HOOK_NS.shacl}resultSeverity`, viol.severity),
+        this._createLiteral(violUri, `${HOOK_NS.shacl}resultSeverity`, viol.severity)
       );
     });
 
@@ -441,7 +450,10 @@ export class HooksMarketplace {
 
       // Step 4: Record violations
       if (validation.violations.length > 0) {
-        const violationTriples = this._recordViolationsAsRDF(normalized.hookUri, validation.violations);
+        const violationTriples = this._recordViolationsAsRDF(
+          normalized.hookUri,
+          validation.violations
+        );
         this.violations.set(normalized.id, {
           violations: validation.violations,
           triples: violationTriples,
@@ -511,10 +523,13 @@ export class HooksMarketplace {
       admittedCount: admittedWithoutCycles.length,
       rejectedCount: rejected.length + cycleHooks.length,
       admitted: admittedWithoutCycles,
-      rejected: [...rejected, ...cycleHooks.map(h => ({
-        ...h,
-        error: 'Circular dependency detected',
-      }))],
+      rejected: [
+        ...rejected,
+        ...cycleHooks.map(h => ({
+          ...h,
+          error: 'Circular dependency detected',
+        })),
+      ],
       cycles: Array.from(depResult.cycles),
       dependencyGraph: Object.fromEntries(depResult.allDeps),
       hadCycles: depResult.hadCycles,

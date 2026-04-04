@@ -176,9 +176,10 @@ export class StreamingAdmission {
     const deltaHash = await blake3(deltaNormalized);
 
     // Step 4: Generate timestamp
-    const timestamp = typeof process !== 'undefined' && process.hrtime
-      ? process.hrtime.bigint()
-      : BigInt(Date.now()) * 1_000_000n;
+    const timestamp =
+      typeof process !== 'undefined' && process.hrtime
+        ? process.hrtime.bigint()
+        : BigInt(Date.now()) * 1_000_000n;
     const timestampIso = new Date(Number(timestamp / 1_000_000n)).toISOString();
 
     // Step 5: Evaluate delta condition if present
@@ -346,10 +347,11 @@ export class StreamingAdmission {
    * Helper: Check if quad matches any in array
    */
   _quadInArray(quad, array) {
-    return array.some(q =>
-      q.subject?.value === quad.subject?.value &&
-      q.predicate?.value === quad.predicate?.value &&
-      q.object?.value === quad.object?.value
+    return array.some(
+      q =>
+        q.subject?.value === quad.subject?.value &&
+        q.predicate?.value === quad.predicate?.value &&
+        q.object?.value === quad.object?.value
     );
   }
 

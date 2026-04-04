@@ -7,11 +7,7 @@
  */
 
 import { z } from 'zod';
-import {
-  withReceipt,
-  canonicalize,
-  blake3Hash,
-} from '../../v6-core/src/receipt-pattern.mjs';
+import { withReceipt, canonicalize, blake3Hash } from '../../v6-core/src/receipt-pattern.mjs';
 
 /**
  * Federation Query Schema

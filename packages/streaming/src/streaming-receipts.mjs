@@ -7,10 +7,7 @@
  */
 
 import { z } from 'zod';
-import {
-  withReceipt,
-  blake3Hash,
-} from '../../v6-core/src/receipt-pattern.mjs';
+import { withReceipt, blake3Hash } from '../../v6-core/src/receipt-pattern.mjs';
 
 /**
  * Stream Chunk Schema

@@ -51,7 +51,17 @@ export const ShaclConditionSchema = z.object({
  * Schema for hook condition
  */
 export const HookConditionSchema = z.object({
-  kind: z.enum(['sparql-ask', 'sparql-select', 'shacl', 'delta', 'threshold', 'count', 'window', 'n3', 'datalog']),
+  kind: z.enum([
+    'sparql-ask',
+    'sparql-select',
+    'shacl',
+    'delta',
+    'threshold',
+    'count',
+    'window',
+    'n3',
+    'datalog',
+  ]),
   ref: HookConditionRefSchema.optional(),
   query: z.string().optional(),
   shapes: z.string().optional(),

@@ -145,7 +145,13 @@ export class KnowledgeHookEngine {
       const output_hash = await this._computeStoreHash(store);
 
       // Phase 3: Generate receipt with cryptographic hashing
-      const receipt = await this.generateReceiptWithHash(executionResults, delta, input_hash, output_hash, options);
+      const receipt = await this.generateReceiptWithHash(
+        executionResults,
+        delta,
+        input_hash,
+        output_hash,
+        options
+      );
 
       this.telemetry.endSpan(span, 'ok');
 
@@ -461,7 +467,7 @@ export class KnowledgeHookEngine {
 
     const quads = Array.from(store);
     const quadStrings = quads
-      .map((q) => `${q.subject?.value || ''}:${q.predicate?.value || ''}:${q.object?.value || ''}`)
+      .map(q => `${q.subject?.value || ''}:${q.predicate?.value || ''}:${q.object?.value || ''}`)
       .join('|');
 
     let hash = 0;
