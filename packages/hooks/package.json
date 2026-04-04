@@ -47,6 +47,7 @@
     "validation"
   ],
   "dependencies": {
+    "@noble/hashes": "^1.4.0",
     "@unrdf/core": "26.4.3",
     "@unrdf/oxigraph": "26.4.3",
     "citty": "^0.1.6",

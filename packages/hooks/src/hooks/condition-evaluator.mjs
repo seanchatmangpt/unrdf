@@ -8,12 +8,116 @@
  */
 
 import { createFileResolver } from './file-resolver.mjs';
-import { ask, select } from './query.mjs';
+import { ask, select, construct } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
-import { createStore } from '../../../oxigraph/src/index.mjs';
+import { createStore, dataFactory } from '../../../oxigraph/src/index.mjs';
 import reasoner from 'eyereasoner';
 // import { Database } from 'datalog-ts'; // TODO: Datalog evaluation via Database class
+
+/**
+ * SlidingWindow class for temporal event tracking
+ * Maintains a window of events and supports both time-based and event-based windowing
+ */
+class SlidingWindow {
+  /**
+   * @param {number} size - Window size (milliseconds for time-based, count for event-based)
+   * @param {number} [slide] - Slide amount (defaults to size for tumbling window)
+   * @param {boolean} [timeWindow=true] - If true, size is in milliseconds; if false, size is event count
+   */
+  constructor(size, slideAmount = size, timeWindow = true) {
+    this.size = size;
+    this.slideAmount = slideAmount;
+    this.timeWindow = timeWindow;
+    this.events = []; // Array of { timestamp, value, data }
+    this.lastSlideTime = Date.now();
+  }
+
+  /**
+   * Add an event to the window
+   * @param {*} value - The value to add
+   * @param {*} data - Additional data to track
+   */
+  add(value, data = null) {
+    const now = Date.now();
+    this.events.push({
+      timestamp: now,
+      value,
+      data,
+      index: this.events.length,
+    });
+
+    // Clean up expired events
+    this.prune();
+  }
+
+  /**
+   * Get current window contents
+   * @returns {Array} Events within current window
+   */
+  getWindow() {
+    const now = Date.now();
+    if (this.timeWindow) {
+      // Time-based window: keep events within [now - size, now)
+      const cutoff = now - this.size;
+      return this.events.filter(e => e.timestamp > cutoff);
+    }
+    // Event-based window: keep last 'size' events
+    if (this.events.length <= this.size) {
+      return this.events;
+    }
+    return this.events.slice(-this.size);
+  }
+
+  /**
+   * Remove events outside the window
+   */
+  prune() {
+    const now = Date.now();
+    if (this.timeWindow) {
+      const cutoff = now - this.size;
+      this.events = this.events.filter(e => e.timestamp > cutoff);
+    }
+  }
+
+  /**
+   * Slide the window forward
+   * @returns {boolean} True if window slid
+   */
+  slide() {
+    const now = Date.now();
+    const shouldSlide = now - this.lastSlideTime >= this.slideAmount;
+
+    if (shouldSlide) {
+      this.lastSlideTime = now;
+      this.prune();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Clear window state
+   */
+  clear() {
+    this.events = [];
+    this.lastSlideTime = Date.now();
+  }
+
+  /**
+   * Get window size (number of events in current window)
+   * @returns {number}
+   */
+  length() {
+    return this.getWindow().length;
+  }
+}
+
+// Export SlidingWindow for testing and external use
+export { SlidingWindow };
+
+// Global window state storage (keyed by condition ID)
+const _windowStateMap = new WeakMap();
 
 /**
  * Evaluate a hook condition against a graph.
@@ -204,20 +308,33 @@ async function evaluateShacl(condition, graph, resolver, env) {
       // If validation fails and repair query provided, attempt repair
       if (!isValid && repairConstruct) {
         try {
-          // Execute repair SPARQL CONSTRUCT query
-          const repairResults = await select(graph, repairConstruct);
+          // Execute repair SPARQL CONSTRUCT query to get repair quads
+          const repairQuads = await construct(graph, repairConstruct, { env });
 
-          // In a full implementation, would apply repair results to store
-          // For now, log repair attempt
-          if (env.logRepair) {
-            console.log(`[SHACL Repair] Applied repair with ${repairResults.length} results`);
+          // Apply repaired quads to the store
+          let quadsApplied = 0;
+          for (const quad of repairQuads) {
+            graph.add(quad);
+            quadsApplied++;
           }
 
-          // Re-validate after repair
+          // Log repair application
+          if (env.logRepair) {
+            console.log(`[SHACL Repair] Applied ${quadsApplied} repair quads to store`);
+          }
+
+          // Re-validate after repair with updated graph
           const revalidateReport = validateShacl(graph, turtle, {
             strict: env.strictMode || false,
             includeDetails: true,
           });
+
+          // Log revalidation result
+          if (env.logRepair) {
+            console.log(
+              `[SHACL Repair] Revalidation result: ${revalidateReport.conforms ? 'conforms' : 'violations remain'}`
+            );
+          }
 
           // Return re-validation result
           return revalidateReport.conforms === true;
@@ -243,44 +360,65 @@ async function evaluateShacl(condition, graph, resolver, env) {
  * Converts violations into RDF quads that can be added to store.
  *
  * @param {Object} report - SHACL validation report
- * @returns {Array} Array of RDF triples/quads
+ * @returns {Array} Array of valid RDF quads
  */
-function serializeShaclReport(report) {
+export function serializeShaclReport(report) {
   const quads = [];
 
   if (!report.results || report.results.length === 0) {
     return quads;
   }
 
+  // SHACL vocabulary IRIs
+  const SHACL_NS = 'http://www.w3.org/ns/shacl#';
+  const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+
+  // Severity level URIs
+  const SEVERITY_URIS = {
+    violation: `${SHACL_NS}Violation`,
+    warning: `${SHACL_NS}Warning`,
+    info: `${SHACL_NS}Info`,
+  };
+
   // For each violation result, create RDF representation
   for (let i = 0; i < report.results.length; i++) {
     const result = report.results[i];
 
-    // In production, use proper RDF factory and SHACL vocabulary
-    // For now, represent as simple objects that store can consume
-    if (result.severity === 'violation') {
-      quads.push({
-        subject: { value: `shacl:violation-${i}` },
-        predicate: { value: 'rdf:type' },
-        object: { value: 'sh:ValidationResult' },
-      });
+    // Map severity string to SHACL severity URI
+    const severityUri = SEVERITY_URIS[result.severity] || SEVERITY_URIS.violation;
 
-      if (result.message) {
-        quads.push({
-          subject: { value: `shacl:violation-${i}` },
-          predicate: { value: 'sh:resultMessage' },
-          object: { value: result.message },
-        });
-      }
+    // Create unique URI for this validation result
+    const resultUri = `http://example.com/validation/result-${i}`;
+    const resultNode = dataFactory.namedNode(resultUri);
 
-      if (result.severity) {
-        quads.push({
-          subject: { value: `shacl:violation-${i}` },
-          predicate: { value: 'sh:resultSeverity' },
-          object: { value: result.severity },
-        });
-      }
+    // Triple 1: result rdf:type sh:ValidationResult
+    quads.push(
+      dataFactory.quad(
+        resultNode,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(`${SHACL_NS}ValidationResult`)
+      )
+    );
+
+    // Triple 2: result sh:resultMessage "message"
+    if (result.message) {
+      quads.push(
+        dataFactory.quad(
+          resultNode,
+          dataFactory.namedNode(`${SHACL_NS}resultMessage`),
+          dataFactory.literal(result.message)
+        )
+      );
     }
+
+    // Triple 3: result sh:resultSeverity sh:Violation (or Warning/Info)
+    quads.push(
+      dataFactory.quad(
+        resultNode,
+        dataFactory.namedNode(`${SHACL_NS}resultSeverity`),
+        dataFactory.namedNode(severityUri)
+      )
+    );
   }
 
   return quads;
@@ -638,17 +776,19 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
   if (baselineHash && currentHash !== baselineHash) {
     changeMagnitude = 1.0; // Full change detected
   } else if (options.delta) {
-    // Calculate change based on delta size
+    // Calculate change based on delta composition
+    // Positive = more additions (increase), Negative = more removals (decrease)
     const totalQuads = graph.size;
-    const deltaSize =
-      (options.delta.additions?.length || 0) + (options.delta.removals?.length || 0);
-    changeMagnitude = totalQuads > 0 ? deltaSize / totalQuads : 0;
+    const additions = options.delta.additions?.length || 0;
+    const removals = options.delta.removals?.length || 0;
+    const netChange = additions - removals;
+    changeMagnitude = totalQuads > 0 ? netChange / totalQuads : 0;
   }
 
   // Evaluate change type
   switch (change) {
     case 'any':
-      return changeMagnitude > 0;
+      return changeMagnitude !== 0;
     case 'increase':
       return changeMagnitude > threshold;
     case 'decrease':
@@ -790,62 +930,107 @@ async function evaluateCount(condition, graph, _resolver, _env, _options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Window condition result
  */
-async function evaluateWindow(condition, graph, _resolver, _env, _options) {
-  const { spec } = condition;
-  const { size, _slide = size, aggregate, query: windowQuery } = spec;
-
-  // For now, implement a simple window evaluation
-  // In a full implementation, this would maintain sliding windows over time
-
-  if (windowQuery) {
-    const results = await select(graph, windowQuery);
-
-    // Calculate aggregate over results
-    let aggregateValue;
-    switch (aggregate) {
-      case 'sum':
-        aggregateValue = results.reduce((sum, r) => {
-          const val = parseFloat(Object.values(r)[0]?.value || 0);
-          return sum + (isNaN(val) ? 0 : val);
-        }, 0);
-        break;
-      case 'avg':
-        const sum = results.reduce((sum, r) => {
-          const val = parseFloat(Object.values(r)[0]?.value || 0);
-          return sum + (isNaN(val) ? 0 : val);
-        }, 0);
-        aggregateValue = results.length > 0 ? sum / results.length : 0;
-        break;
-      case 'min':
-        aggregateValue = Math.min(
-          ...results.map(r => {
-            const val = parseFloat(Object.values(r)[0]?.value || Infinity);
-            return isNaN(val) ? Infinity : val;
-          })
-        );
-        break;
-      case 'max':
-        aggregateValue = Math.max(
-          ...results.map(r => {
-            const val = parseFloat(Object.values(r)[0]?.value || -Infinity);
-            return isNaN(val) ? -Infinity : val;
-          })
-        );
-        break;
-      case 'count':
-        aggregateValue = results.length;
-        break;
-      default:
-        aggregateValue = results.length;
-    }
-
-    // For window conditions, we typically check if aggregate exceeds threshold
-    // This is a simplified implementation
-    return aggregateValue > 0;
+async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) {
+  const { spec, id } = condition;
+  if (!spec) {
+    throw new Error('Window condition requires a spec property');
   }
 
-  // Default: check if graph has any data in the window
-  return graph.size > 0;
+  const { size, slide = size, aggregate = 'count', query: windowQuery } = spec;
+
+  if (!size || size <= 0) {
+    throw new Error('Window condition spec.size must be positive');
+  }
+
+  // Get or create window state storage from options
+  let windowState = _options.windowState;
+  if (!windowState) {
+    windowState = new Map();
+    if (_options) {
+      _options.windowState = windowState;
+    }
+  }
+
+  // Use condition ID or a hash as key; fallback to stringified spec
+  const stateKey = id || JSON.stringify(spec);
+
+  // Get or create sliding window instance
+  let window = windowState.get(stateKey);
+  if (!window) {
+    // Assume time-based window (size is in milliseconds)
+    window = new SlidingWindow(size, slide, true);
+    windowState.set(stateKey, window);
+  }
+
+  // Execute the window query to get values
+  if (!windowQuery || typeof windowQuery !== 'string') {
+    throw new Error('Window condition requires a query property');
+  }
+
+  const results = await select(graph, windowQuery);
+
+  // Extract numeric values from results
+  const values = results.map(r => {
+    // Get first binding value
+    const firstValue = Object.values(r)[0];
+    if (!firstValue) return null;
+
+    const val = parseFloat(firstValue.value);
+    return isNaN(val) ? null : val;
+  }).filter(v => v !== null);
+
+  // Add values to window
+  for (const val of values) {
+    window.add(val, { timestamp: Date.now() });
+  }
+
+  // Slide window if needed
+  window.slide();
+
+  // Get window contents for aggregation
+  const windowContents = window.getWindow();
+
+  // Calculate aggregate over window contents
+  let aggregateValue;
+  switch (aggregate) {
+    case 'sum':
+      aggregateValue = windowContents.reduce((sum, e) => sum + (e.value || 0), 0);
+      break;
+    case 'avg':
+      if (windowContents.length === 0) {
+        aggregateValue = 0;
+      } else {
+        const sum = windowContents.reduce((s, e) => s + (e.value || 0), 0);
+        aggregateValue = sum / windowContents.length;
+      }
+      break;
+    case 'min':
+      aggregateValue = windowContents.length > 0
+        ? Math.min(...windowContents.map(e => e.value))
+        : Infinity;
+      break;
+    case 'max':
+      aggregateValue = windowContents.length > 0
+        ? Math.max(...windowContents.map(e => e.value))
+        : -Infinity;
+      break;
+    case 'count':
+      aggregateValue = windowContents.length;
+      break;
+    default:
+      aggregateValue = windowContents.length;
+  }
+
+  // Window conditions typically check if aggregate meets a threshold
+  // Return true if we have data in the window
+  // For rate limiting scenarios, check maxMatches if provided in original API
+  const maxMatches = spec.maxMatches;
+  if (maxMatches !== undefined && maxMatches !== null) {
+    return aggregateValue <= maxMatches;
+  }
+
+  // Default: true if window has content
+  return aggregateValue > 0;
 }
 
 /**

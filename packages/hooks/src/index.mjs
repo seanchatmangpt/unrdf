@@ -116,6 +116,8 @@ export {
   evaluateCondition,
   createConditionEvaluator,
   validateCondition,
+  serializeShaclReport,
+  SlidingWindow,
 } from './hooks/condition-evaluator.mjs';
 
 // File Resolver (Content-addressed file loading)

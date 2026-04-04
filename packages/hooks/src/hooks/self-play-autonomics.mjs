@@ -11,6 +11,9 @@
  */
 
 import { randomUUID } from 'crypto';
+import { evaluateCondition } from './condition-evaluator.mjs';
+import { KnowledgeHookEngine } from './knowledge-hook-engine.mjs';
+import { ask, select, construct } from './query.mjs';
 
 /**
  * Build a self-play toolRegistry from knowledge hooks
@@ -20,40 +23,130 @@ import { randomUUID } from 'crypto';
  * @param {Array} hooks - Array of KnowledgeHook definitions
  * @returns {Object} toolRegistry { toolName: { handler, schema } }
  */
-export function buildHooksToolRegistry(store, _hooks = []) {
+export function buildHooksToolRegistry(store, hooks = []) {
+  const engine = new KnowledgeHookEngine(store);
+
   return {
     hooks_evaluate_conditions: {
-      handler: async ({ store: _s, hooks: _h }) => {
-        // Stub: real implementation would call KnowledgeHookEngine.evaluateConditions
-        // For now, return satisfied conditions
+      handler: async ({ store: evalStore, hooks: evalHooks }) => {
+        // Evaluate all conditions and collect results
+        const conditionResults = [];
+        const satisfied = [];
+
+        for (const hook of evalHooks) {
+          try {
+            const result = await evaluateCondition(hook.condition, evalStore);
+            conditionResults.push({
+              hookName: hook.name,
+              condition: hook.condition,
+              satisfied: result,
+            });
+
+            if (result) {
+              satisfied.push(hook);
+            }
+          } catch (err) {
+            conditionResults.push({
+              hookName: hook.name,
+              condition: hook.condition,
+              satisfied: false,
+              error: err.message,
+            });
+          }
+        }
+
+        const successRate = evalHooks.length > 0 ? satisfied.length / evalHooks.length : 0;
+
         return {
-          conditionResults: [],
-          satisfied: [],
-          successRate: 1.0,
+          conditionResults,
+          satisfied,
+          successRate,
         };
       },
     },
+
     hooks_execute_effects: {
-      handler: async ({ store: _s, hooks: _h, delta: _delta }) => {
-        // Stub: real implementation would call KnowledgeHookEngine.execute
-        return {
-          executionResults: [],
-          receipt: {
-            receiptHash: 'stub',
-            input_hash: 'stub',
-            output_hash: 'stub',
-            previousReceiptHash: null,
-            hooksExecuted: 0,
-            successful: 0,
-            failed: 0,
-          },
+      handler: async ({ store: execStore, hooks: execHooks, delta: _delta }) => {
+        // Execute hooks with receipt chaining
+        const context = {
+          nodeId: 'self-play-autonomics',
+          t_ns: BigInt(Date.now() * 1000000),
         };
+
+        try {
+          const result = await engine.execute(context, execHooks);
+
+          return {
+            executionResults: execHooks.map((h) => ({
+              hookName: h.name,
+              status: 'executed',
+            })),
+            receipt: {
+              receiptHash: result.receipt.receiptHash,
+              input_hash: result.receipt.input_hash,
+              output_hash: result.receipt.output_hash,
+              previousReceiptHash: result.receipt.previousReceiptHash || null,
+              hooksExecuted: result.successful + result.failed,
+              successful: result.successful,
+              failed: result.failed,
+              delta: result.receipt.delta,
+              timestamp: result.receipt.timestamp,
+            },
+          };
+        } catch (err) {
+          return {
+            executionResults: execHooks.map((h) => ({
+              hookName: h.name,
+              status: 'failed',
+              error: err.message,
+            })),
+            receipt: null,
+            error: err.message,
+          };
+        }
       },
     },
+
     hooks_query: {
-      handler: async ({ store: _s, query: _query, kind: _kind = 'sparql-ask' }) => {
-        // Stub: real implementation would dispatch by kind (ASK, SELECT, SHACL, etc)
-        return { result: null };
+      handler: async ({ store: queryStore, query: sparqlQuery, kind = 'sparql-ask' }) => {
+        // Execute SPARQL query based on kind
+        try {
+          let result;
+
+          switch (kind.toLowerCase()) {
+            case 'sparql-ask':
+            case 'ask':
+              result = await ask(queryStore, sparqlQuery);
+              break;
+
+            case 'sparql-select':
+            case 'select':
+              result = await select(queryStore, sparqlQuery);
+              break;
+
+            case 'sparql-construct':
+            case 'construct':
+              result = await construct(queryStore, sparqlQuery);
+              break;
+
+            default:
+              // Default to ASK
+              result = await ask(queryStore, sparqlQuery);
+          }
+
+          return {
+            result,
+            kind,
+            success: true,
+          };
+        } catch (err) {
+          return {
+            result: null,
+            kind,
+            success: false,
+            error: err.message,
+          };
+        }
       },
     },
   };

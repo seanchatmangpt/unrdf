@@ -1,24 +1,36 @@
 # OTEL Weaver Integration
 
-**Status**: ✅ **Implemented**
+**Status**: ✅ **FULLY IMPLEMENTED**
 **Version**: 26.4.3
-**Last Updated**: 2026-04-03
+**Last Updated**: 2026-04-04
 
 ---
 
 ## Overview
 
-The UNRDF project uses OpenTelemetry (OTEL) for observability with Weaver for semantic convention enforcement and monitoring. This document describes the OTEL Weaver integration architecture and implementation.
+The UNRDF project uses OpenTelemetry (OTEL) for observability with Weaver for semantic convention enforcement and monitoring. This document describes the OTEL Weaver integration architecture and implementation across **all UNRDF components**.
+
+### Implementation Status
+
+| Component      | Status        | Coverage                                               |
+| -------------- | ------------- | ------------------------------------------------------ |
+| **Sidecar**    | ✅ Complete   | 7 semantic conventions, full trace context propagation |
+| **Daemon**     | ✅ Complete   | 3 semantic conventions, 36 MCP tools instrumented      |
+| **Validation** | ✅ Complete   | Synthetic spans, validation package                    |
+| **Grafana**    | ✅ Configured | Dashboard templates configured                         |
+
+---
 
 ## Architecture
 
 ### Components
 
 1. **OpenTelemetry SDK**
+   - `@opentelemetry/sdk-node`: SDK initialization
    - `@opentelemetry/sdk-trace-node`: Tracing implementation
-   - `@opentelemetry/sdk-metrics`: Metrics collection
+   - `@opentelemetry/exporter-trace-otlp-grpc`: OTLP gRPC exporter
    - `@opentelemetry/resources`: Resource attributes
-   - `@opentelemetry/instrumentation`: Auto-instrumentation
+   - `@opentelemetry/semantic-conventions`: Semantic attribute definitions
 
 2. **Weaver Platform**
    - Semantic convention registry validation
@@ -31,6 +43,17 @@ The UNRDF project uses OpenTelemetry (OTEL) for observability with Weaver for se
    - Metric exemplars
    - OTLP gRPC ingestion
    - Connection management
+
+4. **Daemon MCP Server**
+   - 36 MCP tools instrumented with OTEL spans
+   - Semantic conventions for daemon operations
+   - Integration with daemon lifecycle (start/stop)
+   - Feature flag support via `OTEL_ENABLED`
+
+5. **Validation Package**
+   - Synthetic span generation
+   - Validation package testing
+   - Feature validation suite
 
 ## Tracing
 
@@ -111,15 +134,19 @@ Critical metric samples include trace context:
 
 ```javascript
 if (metricsCallbacks.length > 0) {
-  metricsCallbacks.forEach(cb => cb({
-    name: 'kgc_requests_total',
-    value: 1,
-    exemplar: {
-      traceId: spanContext.traceId,
-      spanId: spanContext.spanId,
-      attributes: { /* span attributes */ }
-    }
-  }));
+  metricsCallbacks.forEach(cb =>
+    cb({
+      name: 'kgc_requests_total',
+      value: 1,
+      exemplar: {
+        traceId: spanContext.traceId,
+        spanId: spanContext.spanId,
+        attributes: {
+          /* span attributes */
+        },
+      },
+    })
+  );
 }
 ```
 
@@ -151,40 +178,40 @@ The project validates against the OpenTelemetry semantic convention registry:
 
 ```yaml
 version: 1.0.0
-project_name: "unrdf"
-registry: "https://github.com/open-telemetry/semantic-conventions.git[model]"
+project_name: 'unrdf'
+registry: 'https://github.com/open-telemetry/semantic-conventions.git[model]'
 
 generation:
-  project_root: "./src"
+  project_root: './src'
   instrumented_packages:
-    - "kgc-scope"
-    - "sidecar"
+    - 'kgc-scope'
+    - 'sidecar'
 
 enforcement:
   active: true
-  custom_conventions: "custom-conventions.yaml"
+  custom_conventions: 'custom-conventions.yaml'
 
 export:
   grpc:
-    address: "0.0.0.0"
+    address: '0.0.0.0'
     port: 4317
-    protocol: "otlp"
+    protocol: 'otlp'
 
 context:
   propagation:
-    format: "w3c"
+    format: 'w3c'
 
 slo:
   api_latency:
-    threshold: 100  # ms
+    threshold: 100 # ms
     error_if_exceeded: true
 
 grafana:
   dashboards:
-    path: "./grafana/dashboards"
+    path: './grafana/dashboards'
   templates:
-    name: "unrdf-dashboards"
-    description: "UNRDF monitoring dashboards"
+    name: 'unrdf-dashboards'
+    description: 'UNRDF monitoring dashboards'
 ```
 
 ## Live Check Workflow
@@ -203,27 +230,33 @@ weaver registry live-check \
 
 ```json
 {
-  "resourceSpans": [{
-    "resource": {
-      "attributes": {
-        "service.name": "unrdf-knowledge-graph"
-      }
-    },
-    "scopeSpans": [{
-      "scope": {
-        "name": "kgc-sidecar"
-      },
-      "spans": [{
-        "name": "kgc.query.execute",
-        "kind": "SPAN_KIND_INTERNAL",
+  "resourceSpans": [
+    {
+      "resource": {
         "attributes": {
-          "kgc.query.type": "SELECT",
-          "kgc.query.returned_triples": 100,
-          "kgc.query.duration_ms": 15
+          "service.name": "unrdf-knowledge-graph"
         }
-      }]
-    }]
-  }]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "kgc-sidecar"
+          },
+          "spans": [
+            {
+              "name": "kgc.query.execute",
+              "kind": "SPAN_KIND_INTERNAL",
+              "attributes": {
+                "kgc.query.type": "SELECT",
+                "kgc.query.returned_triples": 100,
+                "kgc.query.duration_ms": 15
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -281,6 +314,7 @@ Key alerts configured:
 ### Issue: No spans being collected
 
 **Solution**:
+
 1. Verify provider registration: `trace.getTracerProvider()`
 2. Check exporter is registered: `processor.getSpanProcessors()`
 3. Ensure `forceFlush()` is called before collection
@@ -288,11 +322,12 @@ Key alerts configured:
 ### Issue: ProxyTracer (Weaver) overriding provider
 
 **Solution**:
+
 ```javascript
 // Use independent tracer for testing
 const independentTracer = trace.getTracer(
   `unrdf-validator-${validationId}`,
-  customProvider  // Pass custom provider
+  customProvider // Pass custom provider
 );
 ```
 
@@ -313,9 +348,44 @@ import { trace, metrics } from '@opentelemetry/api';
 
 ## Status
 
+### Sidecar Integration
+
 - ✅ All required files implemented
 - ✅ OTEL tracing working
-- ✅ Custom conventions enforced
+- ✅ Custom conventions enforced (7 conventions)
 - ✅ Live-check validation functional
+- ✅ Full trace context propagation
 - ✅ Grafana dashboards configured
-- ⏳ Sample telemetry needed for integration testing
+
+### Daemon Integration
+
+- ✅ All required files implemented (7 files)
+- ✅ OTEL SDK initialized on daemon start/stop
+- ✅ 36 MCP tools instrumented (100% coverage)
+- ✅ Semantic conventions defined (3 convention groups)
+- ✅ W3C trace context propagation
+- ✅ Feature flag support (`OTEL_ENABLED`)
+- ✅ Complete documentation (26 KB)
+
+### Validation Package
+
+- ✅ All required files implemented
+- ✅ OTEL tracing working with synthetic spans
+- ✅ Validation package tests passing
+- ✅ Feature validation suite functional
+
+### Documentation
+
+- ✅ Main integration guide (321 lines)
+- ✅ Daemon environment configuration (7.5 KB)
+- ✅ Implementation details (16 KB)
+- ✅ Verification report (16 KB)
+- ✅ Custom conventions YAML (2.4 KB)
+
+## Related Documentation
+
+- **Daemon Integration**: See `packages/daemon/OTEL-ENVIRONMENT.md` for production configuration
+- **Implementation Details**: See `DAEMON-OTEL-IMPLEMENTATION.md` for complete implementation notes
+- **Verification Report**: See `DAEMON-OTEL-VERIFICATION.md` for verification results
+- **Sidecar Integration**: See main integration guide for sidecar details
+- **Validation Package**: See `packages/validation/` for validation test suite

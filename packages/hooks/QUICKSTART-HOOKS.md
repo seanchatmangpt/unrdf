@@ -210,10 +210,111 @@ This runs 46 tests covering:
 - Batch operations and scaling
 - Performance baselines
 
+## Advanced Features
+
+### SHACL Repair Mode
+
+SHACL validation with automatic repair. When validation fails, repair queries fix data, then re-validate:
+
+```javascript
+{
+  kind: 'shacl',
+  ref: { uri: 'file:///shapes/trade.ttl' },
+  enforcementMode: 'repair',
+  repairConstruct: `
+    CONSTRUCT {
+      ?trade ex:riskScore ?defaultRisk .
+    }
+    WHERE {
+      ?trade a ex:Trade .
+      FILTER NOT EXISTS { ?trade ex:riskScore ?existing }
+      BIND (50 as ?defaultRisk)
+    }
+  `
+}
+```
+
+See [examples/shacl-repair-example.mjs](./examples/shacl-repair-example.mjs) for full example.
+
+### Delta Conditions (Change Detection)
+
+Trigger rules when data grows, shrinks, or changes significantly:
+
+```javascript
+{
+  kind: 'delta',
+  spec: {
+    change: 'increase',  // 'any', 'increase', 'decrease', 'modify'
+    threshold: 0.1       // 10% of total quads
+  }
+}
+```
+
+Use cases:
+
+- Validation after large imports (increase > 10%)
+- Anomaly detection on suspicious deletes
+- Archive triggers on data growth
+
+See [examples/delta-monitoring-example.mjs](./examples/delta-monitoring-example.mjs) for full example.
+
+### Window Conditions (Time-Windowed Aggregation)
+
+Trigger when metrics within time windows meet thresholds:
+
+```javascript
+{
+  kind: 'window',
+  spec: {
+    size: 60000,       // 1 minute window
+    aggregate: 'count', // 'sum', 'avg', 'min', 'max', 'count'
+    query: 'SELECT ?s WHERE { ?s a ex:Request }'
+  }
+}
+```
+
+Use cases:
+
+- Rate limiting: "more than 100 requests/minute"
+- Traffic analysis: "peak usage detection"
+- Quota enforcement: "daily transaction limit"
+
+See [examples/window-condition-example.mjs](./examples/window-condition-example.mjs) for full example.
+
+### N3 Forward-Chaining Reasoning
+
+Derive new facts through semantic rules (via EYE reasoner):
+
+```javascript
+{
+  kind: 'n3',
+  rules: `
+    @prefix : <http://example.org/> .
+    { ?trade a :Trade ; :amount ?amt . ?amt > 1000000 }
+      => { ?trade :requiresCompliance true } .
+    { ?trade :requiresCompliance true }
+      => { ?trade :requiresReview true } .
+  `,
+  askQuery: 'ASK { ?t :requiresReview true }'
+}
+```
+
+Use cases:
+
+- RDFS/OWL reasoning (class hierarchies, property inference)
+- Business rule execution (access control, compliance)
+- Data enrichment (derive properties from rules)
+
+See [examples/n3-reasoning-example.mjs](./examples/n3-reasoning-example.mjs) for full example.
+
 ## Examples
 
 See [examples/](./examples/) for:
 
+- `shacl-repair-example.mjs` - SHACL validation with automatic repair
+- `delta-monitoring-example.mjs` - Change detection and monitoring
+- `window-condition-example.mjs` - Time-windowed aggregation
+- `n3-reasoning-example.mjs` - Semantic inference and reasoning
 - `hook-chains/` - Multi-hook validation pipelines
 - `policy-hooks/` - Policy enforcement examples
 
