@@ -193,16 +193,19 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
 
     engine.register(hook);
 
+    const timestamp1 = BigInt(1704067200000) * 1000000n; // Fixed timestamp 1
+    const timestamp2 = BigInt(1704067201000) * 1000000n; // Fixed timestamp 2 (1 second later)
+
     const result1 = await engine.execute(
       createStore(),
       { adds: [], deletes: [] },
-      { nodeId: 'test-node', t_ns: BigInt(Date.now()) * 1000000n }
+      { nodeId: 'test-node', t_ns: timestamp1 }
     );
 
     const result2 = await engine.execute(
       createStore(),
       { adds: [], deletes: [] },
-      { nodeId: 'test-node', t_ns: BigInt(Date.now()) * 1000000n }
+      { nodeId: 'test-node', t_ns: timestamp2 }
     );
 
     // BLAKE3 produces 64-character hex strings (32 bytes = 256 bits)

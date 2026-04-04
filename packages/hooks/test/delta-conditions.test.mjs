@@ -10,7 +10,6 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '../src/index.mjs';
 
 // Mock delta evaluation function that mirrors the fixed logic
 async function evaluateDelta(condition, graph, deltaInfo) {
@@ -46,7 +45,18 @@ describe('Delta Conditions - Increase Detection', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    let quads = [];
+    graph = {
+      get size() {
+        return quads.length;
+      },
+      add: (quad) => {
+        quads.push(quad);
+      },
+      insert: (quad) => {
+        quads.push(quad);
+      },
+    };
   });
 
   it('should detect increase when more quads are added than removed', async () => {
@@ -110,7 +120,18 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    let quads = [];
+    graph = {
+      get size() {
+        return quads.length;
+      },
+      add: (quad) => {
+        quads.push(quad);
+      },
+      insert: (quad) => {
+        quads.push(quad);
+      },
+    };
   });
 
   it('should detect decrease when removals exceed additions', async () => {
@@ -230,7 +251,18 @@ describe('Delta Conditions - Neutral Change', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    let quads = [];
+    graph = {
+      get size() {
+        return quads.length;
+      },
+      add: (quad) => {
+        quads.push(quad);
+      },
+      insert: (quad) => {
+        quads.push(quad);
+      },
+    };
   });
 
   it('should return zero magnitude when additions equal removals', async () => {
@@ -305,7 +337,18 @@ describe('Delta Conditions - Modify Type', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    let quads = [];
+    graph = {
+      get size() {
+        return quads.length;
+      },
+      add: (quad) => {
+        quads.push(quad);
+      },
+      insert: (quad) => {
+        quads.push(quad);
+      },
+    };
   });
 
   it('should detect modify when absolute change exceeds threshold', async () => {
@@ -378,7 +421,18 @@ describe('Delta Conditions - Any Change Type', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    let quads = [];
+    graph = {
+      get size() {
+        return quads.length;
+      },
+      add: (quad) => {
+        quads.push(quad);
+      },
+      insert: (quad) => {
+        quads.push(quad);
+      },
+    };
   });
 
   it('should detect any change when delta is not neutral', async () => {

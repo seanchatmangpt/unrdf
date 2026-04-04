@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '../src/index.mjs';
+import { createStore } from '@unrdf/oxigraph';
 
 describe('N3 Reasoning Integration', () => {
   let graph;

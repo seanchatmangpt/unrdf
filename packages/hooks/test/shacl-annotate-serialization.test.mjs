@@ -9,7 +9,6 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '../src/index.mjs';
 
 // Mock serializeShaclReport for testing
 function serializeShaclReport(report) {
@@ -22,35 +21,33 @@ function serializeShaclReport(report) {
   for (let i = 0; i < report.results.length; i++) {
     const result = report.results[i];
 
-    // Create RDF representation of violation
-    if (result.severity === 'violation' || result.severity === 'Violation') {
+    // Create RDF representation of all result types (violation, warning, info)
+    if (result.severity) {
       quads.push({
-        subject: { value: `shacl:violation-${i}` },
+        subject: { value: `shacl:result-${i}` },
         predicate: { value: 'rdf:type' },
         object: { value: 'sh:ValidationResult' },
       });
 
       if (result.message) {
         quads.push({
-          subject: { value: `shacl:violation-${i}` },
+          subject: { value: `shacl:result-${i}` },
           predicate: { value: 'sh:resultMessage' },
           object: { value: result.message },
         });
       }
 
-      if (result.severity) {
-        // Map severity to proper URI
-        const severityUri = mapSeverity(result.severity);
-        quads.push({
-          subject: { value: `shacl:violation-${i}` },
-          predicate: { value: 'sh:resultSeverity' },
-          object: { value: severityUri },
-        });
-      }
+      // Map severity to proper URI
+      const severityUri = mapSeverity(result.severity);
+      quads.push({
+        subject: { value: `shacl:result-${i}` },
+        predicate: { value: 'sh:resultSeverity' },
+        object: { value: severityUri },
+      });
 
       if (result.focusNode) {
         quads.push({
-          subject: { value: `shacl:violation-${i}` },
+          subject: { value: `shacl:result-${i}` },
           predicate: { value: 'sh:focusNode' },
           object: { value: result.focusNode },
         });
@@ -58,7 +55,7 @@ function serializeShaclReport(report) {
 
       if (result.resultPath) {
         quads.push({
-          subject: { value: `shacl:violation-${i}` },
+          subject: { value: `shacl:result-${i}` },
           predicate: { value: 'sh:resultPath' },
           object: { value: result.resultPath },
         });
@@ -85,7 +82,11 @@ describe('SHACL Annotate RDF Serialization', () => {
   let graph;
 
   beforeEach(() => {
-    graph = createStore();
+    // Mock store object
+    graph = {
+      add: () => {},
+      size: 0,
+    };
   });
 
   it('should serialize single violation to RDF triples', () => {
@@ -214,8 +215,8 @@ describe('SHACL Annotate RDF Serialization', () => {
     // Check that subjects are properly formatted
     const subjects = [...new Set(quads.map(q => q.subject.value))];
     expect(subjects).toHaveLength(2);
-    expect(subjects[0]).toBe('shacl:violation-0');
-    expect(subjects[1]).toBe('shacl:violation-1');
+    expect(subjects[0]).toBe('shacl:result-0');
+    expect(subjects[1]).toBe('shacl:result-1');
   });
 
   it('should omit focus node when not provided', () => {
@@ -354,7 +355,7 @@ describe('SHACL Annotate RDF Serialization', () => {
     expect(subjects).toHaveLength(10);
 
     for (let i = 0; i < 10; i++) {
-      expect(subjects[i]).toBe(`shacl:violation-${i}`);
+      expect(subjects[i]).toBe(`shacl:result-${i}`);
     }
   });
 
