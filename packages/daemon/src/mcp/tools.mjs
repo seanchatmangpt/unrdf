@@ -4,6 +4,8 @@
  * @description Tool definitions and registration for the Model Context Protocol
  */
 
+import { createKnowledgeSelfPlayLoop } from '../knowledge-self-play.mjs';
+
 /**
  * Tool handler functions
  */
@@ -38,6 +40,26 @@ const toolHandlers = {
     status: 'pending',
     message: 'RDF data loading would be performed here',
   }),
+
+  knowledge_self_play: async (args) => {
+    const { store, engine, maxIterations = 10, triggerType = 'continuous-improvement' } = args;
+    if (!store || !engine) {
+      throw new Error('store and engine are required for knowledge_self_play');
+    }
+    const loop = createKnowledgeSelfPlayLoop(store, engine, { maxIterations, triggerType });
+    const runResult = await loop.run({});
+    loop.materializeEpisodeRDF(runResult);
+    return {
+      episodeId: runResult.episodeId,
+      iterations: runResult.iterations,
+      converged: runResult.converged,
+      totalFeedback: runResult.totalFeedback,
+      avgFeedbackPerIteration: runResult.avgFeedbackPerIteration,
+      startTime: runResult.startTime,
+      endTime: runResult.endTime,
+      receipts: runResult.receipts,
+    };
+  },
 };
 
 /**
@@ -139,6 +161,42 @@ function loadRdfDataTool() {
 }
 
 /**
+ * Run knowledge hooks self-play autonomics loop
+ * @returns {object} Tool definition
+ */
+function knowledgeSelfPlayTool() {
+  return {
+    name: 'knowledge_self_play',
+    description:
+      'Run autonomous knowledge self-play loop where RDF graph state determines hook execution, hooks mutate the graph, and iteration continues until convergence',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        store: {
+          type: 'object',
+          description: 'Oxigraph RDF store instance',
+        },
+        engine: {
+          type: 'object',
+          description: 'KnowledgeHookEngine instance with execute method',
+        },
+        maxIterations: {
+          type: 'number',
+          description: 'Maximum iterations before force-stop',
+          default: 10,
+        },
+        triggerType: {
+          type: 'string',
+          description: 'Hook trigger type to filter on',
+          default: 'continuous-improvement',
+        },
+      },
+      required: ['store', 'engine'],
+    },
+  };
+}
+
+/**
  * All tools available
  */
 const mcpTools = [
@@ -146,6 +204,7 @@ const mcpTools = [
   executeSparqlTool(),
   getGraphStatsTool(),
   loadRdfDataTool(),
+  knowledgeSelfPlayTool(),
 ];
 
 /**
