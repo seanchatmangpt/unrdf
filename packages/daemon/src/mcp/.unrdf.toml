@@ -146,6 +146,7 @@ mode = "overwrite"
 query = """
 SELECT
   ?toolName
+  ?description
   ?cliPath
   ?argName
   ?argType
@@ -154,6 +155,7 @@ SELECT
 WHERE {
   ?cmd a cli:Command ;
        cli:toolName ?toolName ;
+       cli:description ?description ;
        cli:cliPath ?cliPath .
 
   OPTIONAL {

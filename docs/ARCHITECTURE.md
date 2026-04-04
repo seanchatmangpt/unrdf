@@ -1,454 +1,234 @@
-# UNRDF Architecture
-
-Complete system architecture guide for UNRDF v5.0.0+.
-
-## Executive Summary
-
-UNRDF is a production-ready RDF knowledge graph library that transforms static data into intelligent, reactive systems. Built on the **80/20 principle**, it eliminates 80% of the "dark matter" glue code typically required in RDF development.
-
-**Key Architectural Decisions:**
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Language | JavaScript (ESM) | Universal runtime, no compilation |
-| Type Safety | JSDoc + Zod | Runtime validation > compile-time types |
-| RDF Store | N3.Store | Fast, memory-efficient, well-maintained |
-| Query Engine | Comunica | SPARQL 1.1 compliant, performant |
-| Reactivity | Knowledge Hooks | Declarative, auditable triggers |
+# Architecture: O* Innovations 4-6
 
 ---
 
-## System Overview
+## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           UNRDF Architecture                            │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                     Application Interfaces                       │   │
-│  │                                                                   │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │   │
-│  │  │ React Hooks │  │ Composables │  │    CLI      │              │   │
-│  │  │  (40 hooks) │  │ (Vue-style) │  │ (citty)    │              │   │
-│  │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │   │
-│  │         └────────────────┴────────────────┘                      │   │
-│  └─────────────────────────────┬───────────────────────────────────┘   │
-│                                │                                        │
-│  ┌─────────────────────────────┴───────────────────────────────────┐   │
-│  │                      Knowledge Engine                            │   │
-│  │                                                                   │   │
-│  │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐        │   │
-│  │  │  Parse    │ │   Query   │ │ Validate  │ │  Reason   │        │   │
-│  │  │  (N3.js)  │ │ (Comunica)│ │  (SHACL)  │ │   (EYE)   │        │   │
-│  │  └───────────┘ └───────────┘ └───────────┘ └───────────┘        │   │
-│  │                                                                   │   │
-│  │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐        │   │
-│  │  │Canonicalize│ │Transaction│ │ Knowledge │ │  Schemas  │        │   │
-│  │  │ (URDNA)   │ │  Manager  │ │   Hooks   │ │   (Zod)   │        │   │
-│  │  └───────────┘ └───────────┘ └───────────┘ └───────────┘        │   │
-│  └─────────────────────────────┬───────────────────────────────────┘   │
-│                                │                                        │
-│  ┌─────────────────────────────┴───────────────────────────────────┐   │
-│  │                     Foundation Layer                             │   │
-│  │                                                                   │   │
-│  │  ┌───────────────────┐  ┌───────────────────┐                   │   │
-│  │  │     N3.Store      │  │    DataFactory    │                   │   │
-│  │  │  (RDF Storage)    │  │  (Term Creation)  │                   │   │
-│  │  └───────────────────┘  └───────────────────┘                   │   │
-│  │                                                                   │   │
-│  │  ┌───────────────────┐  ┌───────────────────┐                   │   │
-│  │  │    Utilities      │  │   OpenTelemetry   │                   │   │
-│  │  │   (Helpers)       │  │  (Observability)  │                   │   │
-│  │  └───────────────────┘  └───────────────────┘                   │   │
-│  └─────────────────────────────────────────────────────────────────┘   │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ O* INNOVATIONS LAYER (NEW)                             │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  ┌─────────────────┐  ┌─────────────────┐             │
+│  │ Innovation 4    │  │ Innovation 5    │             │
+│  │ Federation      │  │ Hooks Market    │             │
+│  │ Quorum Voting   │  │ place Compose   │             │
+│  │                 │  │                 │             │
+│  │ M-of-N votes    │  │ RDF norms +     │             │
+│  │ + BLAKE3        │  │ N3 deps +       │             │
+│  │ receipts        │  │ SHACL soft-fail │             │
+│  └────────┬────────┘  └────────┬────────┘             │
+│           │                    │                       │
+│  ┌────────▼────────────────────▼────────┐             │
+│  │ Innovation 6: Streaming Admission    │             │
+│  │ Delta receipts + chaining            │             │
+│  │ Input/output/delta BLAKE3 hashes     │             │
+│  └────────┬─────────────────────────────┘             │
+│           │                                            │
+├───────────┼────────────────────────────────────────────┤
+│ HOOKS SYSTEM (EXISTING)                                │
+│                                                        │
+│  Condition Evaluator (SPARQL, SHACL, N3, Datalog)    │
+│  Effect Executor (functions, SPARQL CONSTRUCT)        │
+│  Receipt Chaining (from v6-core)                      │
+│                                                        │
+├──────────────────────────────────────────────────────┤
+│ RDF FOUNDATION                                         │
+│                                                        │
+│  Oxigraph (SPARQL + RDF store)                        │
+│  EYE Reasoner (N3 forward-chaining)                   │
+│  Zod Validation (schemas)                             │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Component Architecture
+## Innovation 4: Federation Quorum Data Flow
 
-### Knowledge Engine
+```
+Input: proposalId, approvals { id → boolean }
+   │
+   ├─→ Validate approvals against validator config (Zod)
+   │
+   ├─→ Compute quorum:
+   │    • Count approving validators OR sum weights
+   │    • Compare to requiredVotes OR requiredWeight
+   │
+   ├─→ Generate receipt:
+   │    • canonicalize(proposalId + approvals)
+   │    • inputHash = BLAKE3(canonical)
+   │    • outputHash = BLAKE3(decision result)
+   │    • receiptHash = BLAKE3(receipt object)
+   │    • previousReceiptHash = link to prior
+   │
+Output: { approved, receipt, approvingValidators }
+```
 
-The core RDF processing engine providing all fundamental operations.
+### Determinism Guarantee
 
-#### Parse Module (`knowledge-engine/parse.mjs`)
+Same input (proposalId + same approvals) produces same receipt hashes across multiple runs:
+- Canonical JSON serialization (sorted keys)
+- Deterministic BLAKE3 hashing
+- No random state
 
-**Responsibility:** RDF serialization and deserialization
+---
 
-**Supported Formats:**
+## Innovation 5: Hooks Marketplace Data Flow
 
-| Format | Parse | Serialize | Implementation |
-|--------|-------|-----------|----------------|
-| Turtle | Yes | Yes | N3.js |
-| N-Quads | Yes | Yes | N3.js |
-| JSON-LD | Yes | Yes | jsonld |
+```
+Input: Hook definition (JSON/YAML)
+   │
+   ├─→ SPARQL CONSTRUCT Normalization
+   │    • Parse hook name, version, dependencies
+   │    • Generate RDF triples:
+   │      ?hook a hook:Hook
+   │      ?hook hook:name "payment-validator"
+   │      ?hook hook:hasCondition ?cond
+   │      ?hook hook:hasEffect ?effect
+   │      ?hook hook:dependsOn "basic-validator"
+   │    • Store in Oxigraph RDF store
+   │
+   ├─→ N3 Forward-Chaining Dependency Resolution
+   │    • N3 rules: { ?h1 hook:dependsOn ?h2 } 
+   │              => { ?h1 hook:allDeps ?h2 }
+   │    • Transitive closure: A→B→C gives A allDeps [B,C]
+   │    • Circular detection: Any node with self-path? Reject.
+   │
+   ├─→ SHACL Soft-Fail Validation (annotate mode)
+   │    • Evaluate against hook shape
+   │    • If violations exist:
+   │      - Generate SHACL report as RDF triples
+   │      - Store violations in marketplace store
+   │      - DO NOT block admission (soft-fail)
+   │    • Violations queryable via SPARQL
+   │
+Output: { admitted=true, violations=[], resolvedDeps=[] }
+```
 
-**Key Functions:**
+### Key Property: Soft-Fail
 
 ```javascript
-parseTurtle(turtle, baseIRI?) -> Promise<N3.Store>
-toTurtle(store, options?) -> Promise<string>
-parseJsonLd(jsonld, options?) -> Promise<N3.Store>
-toJsonLd(store, options?) -> Promise<object>
-toNQuads(store, options?) -> Promise<string>
+// Even if SHACL validation fails:
+const result = await marketplace.admit(badHook);
+// result.admitted = true  ← Always admits
+// result.violations = []  ← Captures failures as RDF
 ```
 
-#### Query Module (`knowledge-engine/query.mjs`)
+Admin can decide later if it's worth fixing based on audit trail.
 
-**Responsibility:** SPARQL query execution
+---
 
-**Query Types:**
+## Innovation 6: Streaming Admission Data Flow
 
-| Type | Function | Returns |
-|------|----------|---------|
-| SELECT | `select()` | `Object[]` (bindings) |
-| ASK | `ask()` | `boolean` |
-| CONSTRUCT | `construct()` | `N3.Store` |
-| DESCRIBE | `describe()` | `N3.Store` |
-| UPDATE | `update()` | `void` |
+```
+Input: deltas (RDF quads to add/remove), condition (optional)
+   │
+   ├─→ Phase 1: Before
+   │    • inputHash = getStoreStateHash(store) 
+   │      [BLAKE3 of all canonical quads]
+   │
+   ├─→ Phase 2: Apply (tentatively)
+   │    • Apply all deltas to store in memory
+   │
+   ├─→ Phase 3: After
+   │    • outputHash = getStoreStateHash(store)
+   │      [BLAKE3 of store with deltas applied]
+   │
+   ├─→ Phase 4: Compute Delta Hash
+   │    • deltaHash = BLAKE3(canonical delta bytes)
+   │
+   ├─→ Phase 5: Generate Receipt
+   │    • receipt.inputHash = hash from Phase 1
+   │    • receipt.outputHash = hash from Phase 3
+   │    • receipt.deltaHash = hash from Phase 4
+   │    • receipt.receiptHash = BLAKE3(receipt object)
+   │    • receipt.previousReceiptHash = link to prior
+   │
+   ├─→ Phase 6: Evaluate Delta Condition (if provided)
+   │    • Condition checks: receipt.outputHash == expected?
+   │    • If fails: ROLLBACK to pre-Phase 2 state, return admitted=false
+   │    • If passes OR no condition: keep deltas, return admitted=true
+   │
+Output: { admitted, receipt with 4 hashes + chain link }
+```
 
-**Implementation:** Comunica query-sparql
+### Determinism Guarantee
 
-#### Validate Module (`knowledge-engine/validate.mjs`)
+Same delta applied to same store state produces identical hashes:
+- inputHash(S) + deltaHash(Δ) → outputHash(S+Δ)
+- Reproducible from receipt alone
 
-**Responsibility:** SHACL validation
+---
 
-**Key Functions:**
+## Determinism Verification
+
+All 3 innovations verify determinism:
 
 ```javascript
-validateShacl(store, shapes, options?) -> Promise<ValidationReport>
-formatValidationReport(report, options?) -> string
-hasValidationErrors(report) -> boolean
-getValidationErrors(report) -> ValidationResult[]
-getValidationWarnings(report) -> ValidationResult[]
-```
+// Test: Run same operation twice
+const result1 = await quorum.decide(proposal, approvals);
+const result2 = await quorum.decide(proposal, approvals);
 
-**Implementation:** rdf-validate-shacl
-
-#### Reason Module (`knowledge-engine/reason.mjs`)
-
-**Responsibility:** N3 rule-based reasoning
-
-**Key Functions:**
-
-```javascript
-reason(store, rules, options?) -> Promise<N3.Store>
-extractInferred(original, reasoned) -> Promise<N3.Store>
-getReasoningStats(original, reasoned) -> ReasoningStats
-```
-
-**Implementation:** eyereasoner
-
-#### Canonicalize Module (`knowledge-engine/canonicalize.mjs`)
-
-**Responsibility:** Deterministic graph hashing and comparison
-
-**Key Functions:**
-
-```javascript
-canonicalize(store, options?) -> Promise<N3.Store>
-isIsomorphic(storeA, storeB) -> Promise<boolean>
-getCanonicalHash(store) -> Promise<string>
-```
-
-**Implementation:** rdf-canonize (URDNA2015)
-
----
-
-### Knowledge Hooks System
-
-The reactive trigger system for knowledge graphs.
-
-#### Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Knowledge Hook System                        │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                   Hook Definition                        │   │
-│  │                                                           │   │
-│  │  defineHook({                                            │   │
-│  │    meta: { name, description, ontology },                │   │
-│  │    channel: { graphs, view },                            │   │
-│  │    when: { kind, ref: { uri, sha256, mediaType } },      │   │
-│  │    determinism: { seed },                                │   │
-│  │    receipt: { anchor },                                  │   │
-│  │    before, run, after                                    │   │
-│  │  })                                                      │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                            │                                    │
-│                            ▼                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                  Evaluation Pipeline                     │   │
-│  │                                                           │   │
-│  │  Channel Filter → Condition Check → Lifecycle Execution  │   │
-│  │       │                │                    │             │   │
-│  │       │                │          ┌────────┴────────┐    │   │
-│  │       │                │          │                 │    │   │
-│  │       ▼                ▼          ▼                 ▼    │   │
-│  │  Named Graphs    SPARQL/SHACL   before()         after() │   │
-│  │  Filtering       Evaluation       │                │    │   │
-│  │                                   │                │    │   │
-│  │                                   ▼                │    │   │
-│  │                                 run()              │    │   │
-│  │                                   │                │    │   │
-│  │                                   └────────────────┘    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                            │                                    │
-│                            ▼                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    Receipt System                        │   │
-│  │                                                           │   │
-│  │  ┌─────────────┐  ┌─────────────┐                       │   │
-│  │  │  git-notes  │  │    none     │                       │   │
-│  │  │  (audit)    │  │  (no-op)    │                       │   │
-│  │  └─────────────┘  └─────────────┘                       │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-#### Hook Contract (80/20)
-
-The contract covers 80% of use cases with minimal configuration:
-
-| Property | Required | Description |
-|----------|----------|-------------|
-| `meta.name` | Yes | Unique hook identifier |
-| `meta.description` | No | Human-readable description |
-| `when.kind` | Yes | Condition type (sparql-ask, sparql-select, shacl) |
-| `when.ref` | Yes | Content-addressed condition reference |
-| `run` | Yes | Main execution function |
-| `before` | No | Pre-execution gate |
-| `after` | No | Post-execution cleanup |
-| `channel` | No | Graph observation scope |
-| `determinism` | No | Reproducibility config |
-| `receipt` | No | Audit trail strategy |
-
----
-
-### React Hooks (40 Hooks)
-
-React integration organized by the 80/20 principle.
-
-#### Tier Structure
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    React Hooks (40 Total)                       │
-│                                                                 │
-│  TIER 1: Essential (5 hooks, 60% usage)                        │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ useKnowledgeEngine, useTransaction, useKnowledgeHook,   │   │
-│  │ useChangeFeed, useDarkMatterCore                        │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  TIER 2: Important (2 hooks, 20% usage)                        │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ useGraphDiff, useSPARQLEditor                           │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  TIER 3: Standard (9 hooks, 15% usage)                         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ useFederatedSystem, useStreamProcessor, useOptimizer,   │   │
-│  │ useSemanticAnalyzer, useGraphMerge, usePolicyPack,      │   │
-│  │ useRecovery, useGraphVisualizer, useResultsPaginator    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  TIER 4: Advanced (24 hooks, 5% usage)                         │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ Available via category imports for advanced use cases   │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-#### Category Imports
-
-```javascript
-// Tier 1 & 2 (default export)
-import { useKnowledgeEngine, useChangeFeed } from 'unrdf/react-hooks';
-
-// Category imports (Tier 3 & 4)
-import * as Federation from 'unrdf/react-hooks/federation';
-import * as Streaming from 'unrdf/react-hooks/streaming';
-import * as DarkMatter from 'unrdf/react-hooks/dark-matter';
-import * as AISemantic from 'unrdf/react-hooks/ai-semantic';
+// Assertion: Same receipt hash
+assert(result1.receipt.receiptHash === result2.receipt.receiptHash);
 ```
 
 ---
 
-## Data Flow
-
-### Parse → Query → Validate Pipeline
+## Receipt Chaining Across Innovations
 
 ```
-┌───────────────────────────────────────────────────────────────────┐
-│                      Data Flow Pipeline                           │
-│                                                                   │
-│  Input (Turtle/JSON-LD)                                          │
-│       │                                                           │
-│       ▼                                                           │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐          │
-│  │   Parse     │───▶│  N3.Store   │───▶│   Query     │          │
-│  │             │    │  (Graph)    │    │  (SPARQL)   │          │
-│  └─────────────┘    └──────┬──────┘    └─────────────┘          │
-│                            │                                      │
-│                            ├─────────────────────┐                │
-│                            │                     │                │
-│                            ▼                     ▼                │
-│                     ┌─────────────┐       ┌─────────────┐        │
-│                     │  Validate   │       │   Reason    │        │
-│                     │  (SHACL)    │       │   (EYE)     │        │
-│                     └─────────────┘       └─────────────┘        │
-│                            │                     │                │
-│                            ▼                     ▼                │
-│                     ┌─────────────┐       ┌─────────────┐        │
-│                     │   Report    │       │  Inferred   │        │
-│                     │ (Violations)│       │   (Store)   │        │
-│                     └─────────────┘       └─────────────┘        │
-│                                                                   │
-└───────────────────────────────────────────────────────────────────┘
+Time progression:
+
+T1: Federation Quorum vote
+    receipt1 = BLAKE3(proposal + votes)
+    receipt1.receiptHash = hash1
+    ↓
+
+T2: Hooks Marketplace admission
+    receipt2.previousReceiptHash = hash1
+    receipt2.receiptHash = hash2
+    ↓
+
+T3: Streaming delta admission
+    receipt3.previousReceiptHash = hash2
+    receipt3.receiptHash = hash3
+
+Complete chain: hash1 → hash2 → hash3
+Proof: Each decision links to the previous one
 ```
 
 ---
 
-## Quality Frameworks Applied
+## Integration Points
 
-### FMEA (Failure Mode and Effects Analysis)
+### With @unrdf/hooks
 
-| Component | Failure Mode | Effect | Mitigation |
-|-----------|--------------|--------|------------|
-| Parse | Invalid syntax | Parse error | Detailed error messages with line numbers |
-| Query | Timeout | Hanging application | Configurable timeouts |
-| Validate | Wrong shapes | False positives | Schema versioning, CI validation |
-| Hooks | Condition tampering | Security breach | SHA-256 integrity checks |
-| Hooks | Missing context | Runtime error | Defensive context checking |
+- Condition evaluator: Innovations 5 & 6 use existing conditions
+- Effect executor: Innovations 5 uses sparql-construct effects
+- Receipt pattern: All use withReceipt() from v6-core
 
-### TRIZ Principles Applied
+### With @unrdf/oxigraph
 
-| Principle | Application |
-|-----------|-------------|
-| Segmentation | Separate before/run/after lifecycle |
-| Prior Action | Content-addressed conditions |
-| Parameter Changes | Determinism seed for reproducibility |
-| Feedback | Receipt anchoring for audit trails |
-| Dynamism | Delta view for change detection |
+- Store: Marketplace uses OxigraphStore
+- SPARQL: Marketplace queries use store.query()
+- getStoreStateHash(): Streaming uses for input/output hashes
 
-### DFLSS Quality Targets
+### With @unrdf/v6-core
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Parse latency | <50ms for 10KB | Performance tests |
-| Query latency | <100ms for simple SELECT | Performance tests |
-| Validation latency | <200ms for 100 shapes | Performance tests |
-| Test coverage | >80% | vitest coverage |
-| API stability | Semver compliant | Automated checks |
+- Receipt pattern: All use withReceipt, createContext, blake3Hash
+- Canonicalize: All use canonical JSON for determinism
 
 ---
 
-## Security Architecture
+## Performance Characteristics
 
-### Input Validation
-
-All public APIs validate input with Zod schemas:
-
-```javascript
-const TurtleInputSchema = z.object({
-  turtle: z.string().min(1),
-  baseIRI: z.string().url().optional()
-});
-```
-
-### Hook Sandboxing
-
-Hook functions execute in isolated contexts:
-
-- No filesystem access
-- No network access (unless configured)
-- Resource limits enforced
-- Isolated from other hooks
-
-### Condition Integrity
-
-SHA-256 verification prevents tampering:
-
-```javascript
-if (sha256(conditionContent) !== hook.when.ref.sha256) {
-  throw new SecurityError('Condition integrity check failed');
-}
-```
+| Component | Bottleneck | Optimization |
+|---|---|---|
+| Federation Quorum | Zod validation | In-memory, <1ms |
+| Marketplace | N3 forward-chaining | Floyd-Warshall O(n³) for deps |
+| Streaming | BLAKE3 hashing | Parallel hash computation |
 
 ---
 
-## Observability
-
-### OpenTelemetry Integration
-
-All operations create spans for tracing:
-
-```javascript
-const span = tracer.startSpan('parseTurtle', {
-  attributes: {
-    'unrdf.operation': 'parse',
-    'unrdf.format': 'turtle',
-    'unrdf.size': turtle.length
-  }
-});
-```
-
-### Metrics Collected
-
-- Operation duration (parse, query, validate, reason)
-- Store size (triple count)
-- Validation results (pass/fail counts)
-- Hook execution stats
-
----
-
-## Deployment Architecture
-
-### Package Structure
-
-```
-npm package: unrdf
-├── unrdf (main)
-├── unrdf/knowledge-engine
-├── unrdf/react-hooks
-├── unrdf/react-hooks/core
-├── unrdf/react-hooks/streaming
-├── unrdf/react-hooks/federation
-├── unrdf/react-hooks/dark-matter
-├── unrdf/react-hooks/ai-semantic
-├── unrdf/composables/*
-└── unrdf/cli
-```
-
-### Environment Requirements
-
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0 (recommended)
-- ESM module system
-
-### Container Support
-
-```dockerfile
-# Dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-COPY . .
-CMD ["node", "src/index.mjs"]
-```
-
----
-
-## Related Documentation
-
-- [System Design Explanation](./explanation/system-design.md) - In-depth design rationale
-- [Knowledge Hooks Architecture](./explanation/knowledge-hooks-architecture.md) - Reactive system design
-- [API Reference](./reference/api-reference.md) - Complete API documentation
-- [Getting Started](./GETTING_STARTED.md) - Quick start guide
+**Version**: 26.4.3 | **Date**: April 3, 2026

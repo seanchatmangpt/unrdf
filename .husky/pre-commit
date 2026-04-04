@@ -2,12 +2,15 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # UNRDF Pre-commit Quality Gate
-# Enforces code quality standards on changed files only (80/20 focus)
+# Enforces code quality standards (linting + fast test suite)
 
 echo "🔍 Running pre-commit quality checks..."
 
-# Run linting on changed files
-pnpm lint
+# Run lint checks
+pnpm lint || exit 1
 
-# Exit with lint's exit code
-exit $?
+# Run fast test suite
+pnpm test:fast || exit 1
+
+echo "✓ Pre-commit checks passed"
+exit 0

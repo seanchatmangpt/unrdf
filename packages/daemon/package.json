@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./daemon": "./src/daemon.mjs",
+    "./mcp": "./src/mcp.mjs",
     "./schemas": "./src/schemas.mjs",
     "./trigger-evaluator": "./src/trigger-evaluator.mjs",
     "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
@@ -31,7 +32,7 @@
     "task-queue"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.11.0",
     "@unrdf/kgc-4d": "26.4.3",
     "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",

@@ -229,12 +229,6 @@ export class OTELValidator {
         const { forceFlush } = await import('../../../validation/otel-provider.mjs');
         await forceFlush();
         console.log(`[OTELValidator] Force flush completed`);
-        
-        // Wait for spans to be exported
-        // SimpleSpanProcessor exports immediately when span ends, but we need to wait for async operations
-        console.log(`[OTELValidator] Waiting 100ms for async span processing`);
-        await new Promise(resolve => setTimeout(resolve, 100));
-        console.log(`[OTELValidator] Wait completed`);
 
         // CRITICAL FIX: Merge synthetic spans from temp storage into spanCollector
         // Feature executors create synthetic spans and store them in _validationTempSpans
@@ -245,9 +239,22 @@ export class OTELValidator {
           tempSpans.forEach(spanData => this._addSpan(validationId, spanData));
         }
 
+        // Poll the collector to ensure all span callbacks have been processed
+        console.log(`[OTELValidator] Polling for span callbacks...`);
+        let maxWait = 200; // Wait up to 200ms for callbacks
+        let waitCount = 0;
+        let collectorSize = this.spanCollector.get(validationId)?.length || 0;
+        while (collectorSize === 0 && waitCount < maxWait) {
+          await new Promise(resolve => setTimeout(resolve, 20));
+          waitCount += 20;
+          collectorSize = this.spanCollector.get(validationId)?.length || 0;
+        }
+        console.log(`[OTELValidator] Span callbacks processed, collector size: ${collectorSize}`);
+
         // Collect and analyze spans
-        console.log(`[OTELValidator] Collecting spans/metrics for: ${validationId}`);
+        console.log(`[OTELValidator] About to collect spans for: ${validationId}`);
         const collectedSpans = this._collectSpans(validationId);
+        console.log(`[OTELValidator] Collected spans:`, collectedSpans);
         const collectedMetrics = this._collectMetrics(validationId);
         console.log(`[OTELValidator] Collected ${collectedSpans?.length || 0} spans, throughput: ${collectedMetrics?.throughput || 0}`);
 
@@ -463,7 +470,12 @@ export class OTELValidator {
    * @private
    */
   _collectSpans(validationId) {
-    return this.spanCollector.get(validationId) || [];
+    console.log(`[OTELValidator] _collectSpans called for ${validationId}`);
+    console.log(`[OTELValidator] spanCollector keys:`, Array.from(this.spanCollector.keys()));
+    console.log(`[OTELValidator] spanCollector.get(${validationId}):`, this.spanCollector.get(validationId));
+    const spans = this.spanCollector.get(validationId) || [];
+    console.log(`[OTELValidator] Returning ${spans.length} spans`);
+    return spans;
   }
 
   /**
