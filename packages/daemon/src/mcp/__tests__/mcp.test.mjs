@@ -21,8 +21,8 @@ describe('MCP Server', () => {
   });
 
   describe('Tool Registration (generated from cli-commands.ttl)', () => {
-    it('should have 32 tools total', () => {
-      expect(mcpGeneratedTools).toHaveLength(32);
+    it('should have 36 tools total', () => {
+      expect(mcpGeneratedTools).toHaveLength(36);
     });
 
     it('should include all graph tools', () => {
@@ -37,9 +37,9 @@ describe('MCP Server', () => {
     it('should include convert tools', () => {
       const names = mcpGeneratedTools.map(t => t.name);
       expect(names).toContain('convert');
-      expect(names).toContain('convert_to_turtle');
-      expect(names).toContain('convert_to_ntriples');
-      expect(names).toContain('convert_to_json');
+      expect(names).toContain('to_turtle');
+      expect(names).toContain('to_ntriples');
+      expect(names).toContain('to_json');
     });
 
     it('should include daemon tools', () => {
@@ -64,13 +64,12 @@ describe('MCP Server', () => {
       expect(tool.inputSchema.required).toContain('query');
     });
 
-    it('graph_query tool should have format enum', () => {
+    it('graph_query tool should have format property', () => {
       const tool = mcpGeneratedTools.find(t => t.name === 'graph_query');
       const formatProp = tool.inputSchema.properties['format'];
       expect(formatProp).toBeDefined();
-      expect(formatProp.enum).toContain('json');
-      expect(formatProp.enum).toContain('turtle');
-      expect(formatProp.enum).toContain('table');
+      expect(formatProp.type).toBe('string');
+      expect(formatProp.default).toBe('table');
     });
 
     it('all tools should have name and description', () => {

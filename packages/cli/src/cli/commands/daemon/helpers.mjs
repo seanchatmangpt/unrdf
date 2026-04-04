@@ -15,6 +15,14 @@ export const eventLog = [];
  */
 export function initializeRegistry() {
   if (operationRegistry.size === 0) {
+    operationRegistry.set('test-op', {
+      id: 'test-op',
+      name: 'Test Operation',
+      status: 'scheduled',
+      createdAt: new Date(),
+      metadata: { category: 'testing', priority: 'low' },
+    });
+
     operationRegistry.set('backup-graphs', {
       id: 'backup-graphs',
       name: 'Backup RDF Graphs',

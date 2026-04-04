@@ -7,8 +7,36 @@
  */
 
 import { defineCommand } from 'citty';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { table } from 'table';
+
+/**
+ * Simple file lock using a lock file pattern for concurrent access protection
+ */
+async function withFileLock(filePath, callback) {
+  const lockPath = `${filePath}.lock`;
+  const maxRetries = 50;
+  let retries = 0;
+
+  while (existsSync(lockPath) && retries < maxRetries) {
+    await new Promise(resolve => setTimeout(resolve, 10));
+    retries++;
+  }
+
+  try {
+    // Create lock file
+    writeFileSync(lockPath, '');
+    // Execute callback
+    return await callback();
+  } finally {
+    // Remove lock file
+    try {
+      unlinkSync(lockPath);
+    } catch {
+      // Lock file already removed
+    }
+  }
+}
 
 /**
  * Create a new context
@@ -89,16 +117,18 @@ const addCommand = defineCommand({
     }
 
     try {
-      const content = readFileSync(file, 'utf-8');
-      const context = JSON.parse(content);
+      await withFileLock(file, async () => {
+        const content = readFileSync(file, 'utf-8');
+        const context = JSON.parse(content);
 
-      if (!context['@context']) {
-        context['@context'] = {};
-      }
+        if (!context['@context']) {
+          context['@context'] = {};
+        }
 
-      context['@context'][prefix] = namespace;
+        context['@context'][prefix] = namespace;
 
-      writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
+        writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
+      });
 
       console.log(`✅ Added prefix: ${prefix} -> ${namespace}`);
       console.log(`📁 Updated: ${file}`);
@@ -138,15 +168,22 @@ const listCommand = defineCommand({
     }
 
     try {
-      const content = readFileSync(file, 'utf-8');
-      const context = JSON.parse(content);
+      let prefixes;
+      await withFileLock(file, async () => {
+        const content = readFileSync(file, 'utf-8');
+        const context = JSON.parse(content);
 
-      if (!context['@context']) {
+        if (!context['@context']) {
+          prefixes = null;
+        } else {
+          prefixes = context['@context'];
+        }
+      });
+
+      if (!prefixes) {
         console.log('No prefixes found.');
         return;
       }
-
-      const prefixes = context['@context'];
 
       if (format === 'json') {
         console.log(JSON.stringify(prefixes, null, 2));
@@ -201,17 +238,19 @@ const removeCommand = defineCommand({
     }
 
     try {
-      const content = readFileSync(file, 'utf-8');
-      const context = JSON.parse(content);
+      await withFileLock(file, async () => {
+        const content = readFileSync(file, 'utf-8');
+        const context = JSON.parse(content);
 
-      if (!context['@context'] || !context['@context'][prefix]) {
-        console.error(`❌ Prefix not found: ${prefix}`);
-        process.exit(1);
-      }
+        if (!context['@context'] || !context['@context'][prefix]) {
+          console.error(`❌ Prefix not found: ${prefix}`);
+          process.exit(1);
+        }
 
-      delete context['@context'][prefix];
+        delete context['@context'][prefix];
 
-      writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
+        writeFileSync(file, JSON.stringify(context, null, 2), 'utf-8');
+      });
 
       console.log(`✅ Removed prefix: ${prefix}`);
       console.log(`📁 Updated: ${file}`);
