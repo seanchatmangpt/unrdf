@@ -7,7 +7,6 @@
  */
 
 import { randomUUID } from 'crypto';
-import { z } from 'zod';
 
 /**
  * Self-play episode (autonomous tool chain execution)

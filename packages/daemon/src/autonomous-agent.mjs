@@ -83,7 +83,7 @@ What should you do? Be specific and actionable.`,
   /**
    * Execute a decision
    */
-  async execute(decision, context = {}) {
+  async execute(decision, _context = {}) {
     try {
       // Parse decision and extract action
       const action = this.parseAction(decision);

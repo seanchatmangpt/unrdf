@@ -8,7 +8,7 @@
  * Requires: GROQ_API_KEY environment variable
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { Store } from 'n3';
 import { DataFactory } from 'n3';
 import { generateText } from 'ai';
@@ -266,7 +266,7 @@ Would this be a good addition? Explain your reasoning in one sentence.`,
           .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value}.`)
           .join('\n');
 
-        const suggestion = await generateText({
+        const _suggestion = await generateText({
           model,
           prompt: `Current graph has ${store.size} triples:
 ${storeContent}

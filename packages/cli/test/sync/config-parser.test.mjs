@@ -6,7 +6,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { writeFile, mkdir, rm } from 'fs/promises';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { tmpdir } from 'os';
 import {
   parseConfig,

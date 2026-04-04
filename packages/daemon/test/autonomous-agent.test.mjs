@@ -3,11 +3,10 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Store } from 'n3';
 import { DataFactory } from 'n3';
 import { AutonomousKnowledgeAgent } from '../src/autonomous-agent.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
+const { namedNode: _namedNode, literal: _literal, quad: _quad } = DataFactory;
 
 describe('AutonomousKnowledgeAgent', { timeout: 30000 }, () => {
   let agent;
@@ -75,9 +74,9 @@ describe('AutonomousKnowledgeAgent', { timeout: 30000 }, () => {
   });
 
   it('should handle reasoning errors gracefully', async () => {
-    let errorCaught = false;
+    let _errorCaught = false;
     agent.on('error', () => {
-      errorCaught = true;
+      _errorCaught = true;
     });
 
     try {

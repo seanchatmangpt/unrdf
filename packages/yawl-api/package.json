@@ -14,8 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src/ test/ --ext .mjs",
-    "lint:fix": "eslint src/ test/ --ext .mjs --fix",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix",
     "typecheck": "tsc --noEmit",
     "validate": "npm run lint && npm run typecheck && npm run test"
   },

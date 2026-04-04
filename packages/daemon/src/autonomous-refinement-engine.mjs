@@ -132,7 +132,7 @@ export class AutonomousRefinementEngine extends EventEmitter {
           query: z.string().describe('SPARQL SELECT or CONSTRUCT query'),
           kind: z.enum(['select', 'construct']).default('select'),
         }),
-        execute: async ({ query, kind }) => {
+        execute: async ({ query, kind: _kind }) => {
           try {
             const results = await store.query(query);
             return {

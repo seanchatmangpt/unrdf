@@ -11,7 +11,6 @@
  */
 
 import { randomUUID } from 'crypto';
-import { z } from 'zod';
 
 /**
  * Build a self-play toolRegistry from knowledge hooks
@@ -21,10 +20,10 @@ import { z } from 'zod';
  * @param {Array} hooks - Array of KnowledgeHook definitions
  * @returns {Object} toolRegistry { toolName: { handler, schema } }
  */
-export function buildHooksToolRegistry(store, hooks = []) {
+export function buildHooksToolRegistry(store, _hooks = []) {
   return {
     hooks_evaluate_conditions: {
-      handler: async ({ store: s, hooks: h }) => {
+      handler: async ({ store: _s, hooks: _h }) => {
         // Stub: real implementation would call KnowledgeHookEngine.evaluateConditions
         // For now, return satisfied conditions
         return {
@@ -35,7 +34,7 @@ export function buildHooksToolRegistry(store, hooks = []) {
       },
     },
     hooks_execute_effects: {
-      handler: async ({ store: s, hooks: h, delta }) => {
+      handler: async ({ store: _s, hooks: _h, delta: _delta }) => {
         // Stub: real implementation would call KnowledgeHookEngine.execute
         return {
           executionResults: [],
@@ -52,7 +51,7 @@ export function buildHooksToolRegistry(store, hooks = []) {
       },
     },
     hooks_query: {
-      handler: async ({ store: s, query, kind = 'sparql-ask' }) => {
+      handler: async ({ store: _s, query: _query, kind: _kind = 'sparql-ask' }) => {
         // Stub: real implementation would dispatch by kind (ASK, SELECT, SHACL, etc)
         return { result: null };
       },
@@ -117,7 +116,7 @@ export function createHooksAwarePolicy(goalCondition = async () => false) {
  * @param {Object} previousResult - from hooks_evaluate_conditions
  * @returns {number} feedback signal (-1 to 1)
  */
-export function computeHooksFeedback(executionResult, previousResult) {
+export function computeHooksFeedback(executionResult, _previousResult) {
   if (!executionResult) return -0.5; // Execution failed
 
   const { receipt } = executionResult;

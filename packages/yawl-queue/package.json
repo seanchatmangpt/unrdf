@@ -14,7 +14,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "example": "node src/examples/data-pipeline.mjs",
-    "lint": "eslint src/ test/ --ext .mjs",
+    "lint": "eslint src/ test/",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [

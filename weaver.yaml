@@ -13,6 +13,7 @@ registry:
   # Custom UNRDF conventions
   local:
     - ./custom-conventions.yaml
+    - ./packages/daemon/custom-conventions.yaml
 
 # Code Generation Settings
 generation:

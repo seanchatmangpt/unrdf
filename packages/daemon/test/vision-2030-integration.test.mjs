@@ -211,7 +211,7 @@ describe('Vision 2030 Phase 1 Integration', () => {
     // 2. Store hypothetical triples from suggestion
     const rdfType = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
     const domainClass = namedNode('http://example.org/Domain');
-    const entity = namedNode('http://example.org/entity-1');
+    const _entity = namedNode('http://example.org/entity-1');
     const prop = namedNode('http://example.org/property');
 
     for (let i = 0; i < 5; i++) {

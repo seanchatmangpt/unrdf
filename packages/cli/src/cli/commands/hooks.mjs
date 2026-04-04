@@ -647,6 +647,274 @@ const receiptsCommand = defineCommand({
 });
 
 /**
+ * Generate hook templates from predefined templates
+ */
+const templateCommand = defineCommand({
+  meta: {
+    name: 'template',
+    description: 'Generate hook templates from predefined templates',
+  },
+  args: {
+    type: {
+      type: 'string',
+      description: 'Template type (fibo, security, compliance, generic)',
+      default: 'generic',
+    },
+    output: {
+      type: 'string',
+      description: 'Output file for generated hooks (JSON)',
+      required: false,
+    },
+  },
+  async run({ args }) {
+    const { type, output } = args;
+
+    let template;
+
+    // Define templates by type
+    switch (type.toLowerCase()) {
+      case 'fibo':
+        template = generateFIBOTemplate();
+        break;
+      case 'security':
+        template = generateSecurityTemplate();
+        break;
+      case 'compliance':
+        template = generateComplianceTemplate();
+        break;
+      case 'generic':
+      default:
+        template = generateGenericTemplate();
+    }
+
+    if (output) {
+      try {
+        writeFileSync(output, JSON.stringify(template, null, 2));
+        console.log(`✅ Template written to ${output}`);
+        console.log(`📊 Generated ${template.length} hooks`);
+      } catch (error) {
+        console.error(`❌ Failed to write output: ${error.message}`);
+        process.exit(1);
+      }
+    } else {
+      console.log(JSON.stringify(template, null, 2));
+    }
+  },
+});
+
+/**
+ * Generate FIBO financial regulatory compliance template
+ */
+function generateFIBOTemplate() {
+  return [
+    {
+      name: 'verify-regulatory-compliance',
+      condition: {
+        kind: 'sparql-ask',
+        query: `
+          PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
+          ASK {
+            ?trade a fibo:Trade ;
+                   fibo:hasComplianceStatus ?status .
+          }
+        `,
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
+            CONSTRUCT {
+              ?trade fibo:verifiedAt ?now ;
+                     fibo:complianceVersion "1.0" .
+            }
+            WHERE {
+              ?trade a fibo:Trade .
+              BIND (NOW() as ?now)
+            }
+          `,
+        },
+      ],
+      metadata: {
+        domain: 'fibo',
+        jobToBeDone: 'Verify Regulatory Compliance',
+        priority: 'high',
+      },
+    },
+    {
+      name: 'assess-counterparty-risk',
+      condition: {
+        kind: 'datalog',
+        facts: [],
+        rules: ['high_risk(X) :- exposure(X, E), E > 1000000'],
+        goal: 'high_risk(counterparty)',
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
+            CONSTRUCT {
+              ?party fibo:riskLevel fibo:HighRisk ;
+                     fibo:requiresApproval true .
+            }
+            WHERE {
+              ?party a fibo:Counterparty .
+            }
+          `,
+        },
+      ],
+      metadata: {
+        domain: 'fibo',
+        jobToBeDone: 'Assess Counterparty Risk',
+        priority: 'high',
+      },
+    },
+    {
+      name: 'maintain-audit-trail',
+      condition: {
+        kind: 'sparql-select',
+        query: `
+          PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
+          SELECT ?transaction WHERE {
+            ?transaction a fibo:Transaction ;
+                        fibo:status fibo:Completed .
+          }
+        `,
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
+            CONSTRUCT {
+              ?transaction fibo:auditedAt ?now ;
+                          fibo:auditStatus fibo:Audited .
+            }
+            WHERE {
+              ?transaction a fibo:Transaction .
+              BIND (NOW() as ?now)
+            }
+          `,
+        },
+      ],
+      metadata: {
+        domain: 'fibo',
+        jobToBeDone: 'Maintain Audit Trail',
+        priority: 'critical',
+      },
+    },
+  ];
+}
+
+/**
+ * Generate security template
+ */
+function generateSecurityTemplate() {
+  return [
+    {
+      name: 'validate-access-control',
+      condition: {
+        kind: 'datalog',
+        facts: ['admin(alice)', 'user(bob)', 'role(admin)', 'role(user)'],
+        rules: ['allowed(X) :- admin(X)', 'allowed(X) :- user(X)'],
+        goal: 'allowed(alice)',
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX sec: <http://example.org/security/>
+            CONSTRUCT {
+              ?user sec:accessGranted true ;
+                    sec:grantedAt ?now .
+            }
+            WHERE {
+              ?user a sec:User .
+              BIND (NOW() as ?now)
+            }
+          `,
+        },
+      ],
+      metadata: {
+        domain: 'security',
+        priority: 'critical',
+      },
+    },
+  ];
+}
+
+/**
+ * Generate compliance template
+ */
+function generateComplianceTemplate() {
+  return [
+    {
+      name: 'check-data-quality',
+      condition: {
+        kind: 'threshold',
+        query: 'SELECT (COUNT(?record) as ?count) WHERE { ?record a :Record }',
+        operator: 'greaterThan',
+        value: 0,
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX dq: <http://example.org/data-quality/>
+            CONSTRUCT {
+              ?record dq:qualityScore ?score ;
+                      dq:checkedAt ?now .
+            }
+            WHERE {
+              ?record a :Record .
+              BIND (0.95 as ?score)
+              BIND (NOW() as ?now)
+            }
+          `,
+        },
+      ],
+      metadata: {
+        domain: 'compliance',
+        priority: 'high',
+      },
+    },
+  ];
+}
+
+/**
+ * Generate generic/example template
+ */
+function generateGenericTemplate() {
+  return [
+    {
+      name: 'example-sparql-ask',
+      condition: {
+        kind: 'sparql-ask',
+        query: 'ASK { ?s ?p ?o }',
+      },
+      effects: [
+        {
+          kind: 'sparql-construct',
+          query: `
+            PREFIX ex: <http://example.org/>
+            CONSTRUCT {
+              ?s ex:processed true .
+            }
+            WHERE {
+              ?s ?p ?o .
+            }
+          `,
+        },
+      ],
+      metadata: {
+        description: 'Basic template demonstrating SPARQL ASK condition',
+      },
+    },
+  ];
+}
+
+/**
  * Main hooks command
  */
 export const hooksCommand = defineCommand({
@@ -660,6 +928,7 @@ export const hooksCommand = defineCommand({
     'evaluate-condition': evaluateConditionCommand,
     'list-conditions': listConditionsCommand,
     receipts: receiptsCommand,
+    template: templateCommand,
   },
 });
 

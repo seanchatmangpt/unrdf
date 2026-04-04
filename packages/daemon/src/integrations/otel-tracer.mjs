@@ -6,7 +6,7 @@
  * Wrapper utilities for OpenTelemetry trace API
  */
 
-import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+import { trace, context as _context, SpanStatusCode } from '@opentelemetry/api';
 
 /**
  * Create a tracer instance

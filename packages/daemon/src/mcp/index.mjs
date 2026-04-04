@@ -716,7 +716,7 @@ export async function startMCPServer() {
  * @returns {Promise<void>}
  * @throws {Error} SSE transport is not yet implemented
  */
-export async function startMCPServerSSE(port = 8765) {
+export async function startMCPServerSSE(_port = 8765) {
   throw new Error(
     'SSE transport is not yet implemented. ' +
     'Use startMCPServer() for stdio transport instead. ' +

@@ -38,7 +38,7 @@ function formatDuration(ms) {
 export async function runSync(options) {
   const startTime = performance.now();
   const args = SyncArgsSchema.parse(options);
-  const { config: configPath, dryRun, verbose, force, rule: ruleFilter, output } = args;
+  const { config: configPath, dryRun, verbose, force: _force, rule: ruleFilter, output } = args;
 
   const results = [];
   const metrics = { rulesProcessed: 0, filesGenerated: 0, filesSkipped: 0, errors: 0 };
