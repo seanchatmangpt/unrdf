@@ -1,52 +1,119 @@
-# UNRDF v5 Documentation Index
+# UNRDF v26.4.3 Documentation Index
 
-Complete guide to understanding the UNRDF v5 monorepo transformation.
+**Welcome to UNRDF documentation.** Choose your path below:
 
-## Start Here
+---
 
-**New to v5?** Start with these in order:
+## 🚀 Getting Started (First Time?)
 
-1. **[QUICK-REFERENCE.md](../QUICK-REFERENCE.md)** (2 min read)
-   - Installation commands
-   - Quick commands
-   - Package list
-   - Installation paths by use case
+1. **[START-HERE.md](START-HERE.md)** — Orientation guide (5 min read)
+2. **[GETTING_STARTED.md](GETTING_STARTED.md)** — Install and run first example (15 min)
+3. **[QUICK-START.md](QUICK-START.md)** — Copy-paste working examples
 
-2. **[v5-README.md](./v5-README.md)** (5 min read)
-   - Welcome and overview
-   - Quick start
-   - 7 VOCs summary
-   - Key design principles
-   - FAQ
+---
 
-3. **[v5-MONOREPO-SUMMARY.md](./v5-MONOREPO-SUMMARY.md)** (15 min read)
-   - Complete transformation overview
-   - The 7 synthetic VOCs in detail
-   - 10 packages explained
-   - Package dependencies
-   - Size comparison
-   - Success metrics
+## 📚 Core Documentation
 
-## Understanding the Architecture
+### For Users Building Apps
 
-For deep understanding of the monorepo design:
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — System design and how things work together
+- **[MONOREPO-QUICK-REFERENCE.md](MONOREPO-QUICK-REFERENCE.md)** — Package overview matrix
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** — Common issues and fixes
+- **[TESTING-STRATEGY.md](TESTING-STRATEGY.md)** — How to write tests
 
-4. **[MONOREPO-STRUCTURE.md](./MONOREPO-STRUCTURE.md)** (10 min read)
-   - Package architecture overview
-   - Each package's purpose and size
-   - Package dependencies diagram
-   - File structure per package
-   - Workspace configuration
+### For Contributors
 
-5. **[MONOREPO-VISUALS.md](./MONOREPO-VISUALS.md)** (10 min read)
-   - Package architecture diagram
-   - User installation paths
-   - VOC to package mapping
-   - Evolution from v4 to v5
-   - Size reduction impact
-   - Versioning timeline
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — How to contribute code
+- **[LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)** — Set up dev environment
+- **[PACKAGE-DEVELOPMENT.md](PACKAGE-DEVELOPMENT.md)** — Create new packages
+- **[adr/](adr/)** — Architecture Decision Records
 
-## VOC Analysis (Why These Changes)
+### For Operations
+
+- **[SECURITY-POLICY.md](SECURITY-POLICY.md)** — Security practices
+- **[MIGRATION.md](MIGRATION.md)** — Upgrade from previous versions
+- **[CHANGELOG.md](CHANGELOG.md)** — Version history and release notes
+
+---
+
+## 📦 Package Documentation
+
+Each package has its own documentation:
+
+```
+packages/
+├── core/README.md               ← RDF storage, SPARQL, SHACL
+├── oxigraph/README.md           ← Persistent backend
+├── hooks/README.md              ← Knowledge Hooks framework
+├── streaming/README.md          ← Large graph streaming
+├── federation/README.md         ← Distributed queries
+├── browser/README.md            ← Browser runtime
+├── cli/README.md                ← Command-line tools
+├── react/README.md              ← React integration
+└── [more packages]
+```
+
+**Start with `@unrdf/core` — it's the foundation for everything.** See [MONOREPO-QUICK-REFERENCE.md](MONOREPO-QUICK-REFERENCE.md) for the full package matrix.
+
+---
+
+## 🎓 API Reference
+
+- **`packages/core/API-REFERENCE.md`** — Core RDF operations
+- **`packages/hooks/API-REFERENCE.md`** — Knowledge Hooks API
+- **`packages/streaming/API-REFERENCE.md`** — Streaming operations
+
+---
+
+## 📋 Quick Navigation
+
+| Need                            | Go To                                                      |
+| ------------------------------- | ---------------------------------------------------------- |
+| "How do I...?"                  | [TROUBLESHOOTING.md](TROUBLESHOOTING.md)                   |
+| "What's the architecture?"      | [ARCHITECTURE.md](ARCHITECTURE.md)                         |
+| "How do I set up development?"  | [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md)               |
+| "I want to contribute"          | [CONTRIBUTING.md](CONTRIBUTING.md)                         |
+| "What changed in this version?" | [CHANGELOG.md](CHANGELOG.md)                               |
+| "How do I upgrade?"             | [MIGRATION.md](MIGRATION.md)                               |
+| "What packages are available?"  | [MONOREPO-QUICK-REFERENCE.md](MONOREPO-QUICK-REFERENCE.md) |
+| "Security/compliance"           | [SECURITY-POLICY.md](SECURITY-POLICY.md)                   |
+
+---
+
+## 📁 Documentation Structure
+
+```
+docs/
+├── INDEX.md                      ← You are here
+├── START-HERE.md                 ← Entry point
+├── GETTING_STARTED.md            ← Hands-on tutorial
+├── ARCHITECTURE.md               ← System design
+├── LOCAL-DEVELOPMENT.md          ← Dev setup
+├── CONTRIBUTING.md               ← Contribution guide
+├── MONOREPO-QUICK-REFERENCE.md   ← Package matrix
+├── TESTING-STRATEGY.md           ← Testing guide
+├── TROUBLESHOOTING.md            ← Help/support
+├── SECURITY-POLICY.md            ← Security info
+├── MIGRATION.md                  ← Upgrade guide
+├── CHANGELOG.md                  ← Version history
+├── PUBLICATION-CHECKLIST.md      ← This release checklist
+├── adr/                          ← Architecture decisions
+├── api/                          ← API reference by package
+├── archive/                      ← Historical docs
+└── [package-specific docs]
+```
+
+---
+
+## ❓ Still Lost?
+
+- **Quick path:** Root README → GETTING_STARTED.md → your-first-example
+- **Deep dive:** Root README → START-HERE.md → ARCHITECTURE.md → package README
+- **Help:** TROUBLESHOOTING.md or GitHub Issues
+
+---
+
+## Architecture Analysis
 
 Understanding the reasoning behind the design:
 
@@ -127,19 +194,19 @@ Verification that everything is ready:
 
 ## Document Purpose Matrix
 
-| Document | Purpose | Read Time | Audience |
-|----------|---------|-----------|----------|
-| v5-README.md | Overview & FAQ | 5 min | Everyone |
-| QUICK-REFERENCE.md | Copy-paste commands | 2 min | Everyone |
-| v5-MONOREPO-SUMMARY.md | Complete picture | 15 min | Decision makers |
-| MONOREPO-STRUCTURE.md | Architecture details | 10 min | Developers |
-| MONOREPO-VISUALS.md | Visual explanations | 10 min | Visual learners |
-| v5-substrate-voc-analysis.md | Design reasoning | 15 min | Architects |
-| v5-voc-to-implementation.md | Implementation plans | 20 min | Developers |
-| MONOREPO-SETUP.md | Dev environment | 10 min | Developers |
-| MONOREPO-MIGRATION.md | Upgrading from v4 | 10 min | Current users |
-| v5-substrate-refactoring-roadmap.md | Long-term plan | 20 min | Project leads |
-| MONOREPO-VALIDATION-CHECKLIST.md | Status check | 5 min | QA/validation |
+| Document                            | Purpose              | Read Time | Audience        |
+| ----------------------------------- | -------------------- | --------- | --------------- |
+| v5-README.md                        | Overview & FAQ       | 5 min     | Everyone        |
+| QUICK-REFERENCE.md                  | Copy-paste commands  | 2 min     | Everyone        |
+| v5-MONOREPO-SUMMARY.md              | Complete picture     | 15 min    | Decision makers |
+| MONOREPO-STRUCTURE.md               | Architecture details | 10 min    | Developers      |
+| MONOREPO-VISUALS.md                 | Visual explanations  | 10 min    | Visual learners |
+| v5-substrate-voc-analysis.md        | Design reasoning     | 15 min    | Architects      |
+| v5-voc-to-implementation.md         | Implementation plans | 20 min    | Developers      |
+| MONOREPO-SETUP.md                   | Dev environment      | 10 min    | Developers      |
+| MONOREPO-MIGRATION.md               | Upgrading from v4    | 10 min    | Current users   |
+| v5-substrate-refactoring-roadmap.md | Long-term plan       | 20 min    | Project leads   |
+| MONOREPO-VALIDATION-CHECKLIST.md    | Status check         | 5 min     | QA/validation   |
 
 ## Quick Navigation
 
@@ -166,29 +233,35 @@ Verification that everything is ready:
 ### By Topic
 
 **Installation & Setup**
+
 - QUICK-REFERENCE.md
 - MONOREPO-SETUP.md
 - v5-README.md
 
 **Architecture & Design**
+
 - MONOREPO-STRUCTURE.md
 - MONOREPO-VISUALS.md
 - v5-substrate-voc-analysis.md
 
 **Implementation**
+
 - v5-voc-to-implementation.md
 - v5-substrate-refactoring-roadmap.md
 
 **Migration**
+
 - MONOREPO-MIGRATION.md
 - v5-README.md#FAQ
 
 **Validation**
+
 - MONOREPO-VALIDATION-CHECKLIST.md
 
 ## Key Concepts
 
 ### The 10 Packages
+
 - **@unrdf/core** - Essential RDF substrate
 - **@unrdf/hooks** - Policy enforcement framework
 - **@unrdf/federation** - Peer queries and discovery
@@ -201,6 +274,7 @@ Verification that everything is ready:
 - **@unrdf/project-engine** - Development-only self-hosting
 
 ### The 7 VOCs (Voices of Customer)
+
 1. Autonomous Knowledge Agent
 2. Real-time Sync Agent
 3. ML Pattern Learning Agent
@@ -210,6 +284,7 @@ Verification that everything is ready:
 7. DevOps Operations
 
 ### Design Principles
+
 1. Substrate is minimum
 2. No forced dependencies
 3. Clear package boundaries
