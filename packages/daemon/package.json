@@ -32,8 +32,11 @@
     "task-queue"
   ],
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.33",
     "@modelcontextprotocol/sdk": "^1.11.0",
+    "@unrdf/hooks": "26.4.3",
     "@unrdf/kgc-4d": "26.4.3",
+    "ai": "^6.0.146",
     "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
