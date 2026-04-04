@@ -2,7 +2,7 @@
  * @file MCP Tool Handlers
  * @module @unrdf/daemon/mcp/handlers
  * @description Auto-generated handlers that delegate to the unrdf CLI.
- * @generated 2026-04-03 17:40:10 from cli-commands.ttl
+ * @generated 2026-04-03 18:28:56 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-handlers
  *
@@ -62,7 +62,7 @@ async function executeCli(cliArgs) {
 // ─── Generated Handlers ────────────────────────────────────────────────────────
 
 /**
- * Add a prefix mapping to a context (CLI: unrdf context add)
+ * Add prefix to context (CLI: unrdf context add)
  */
 export async function context_add(args = {}) {
   const cliArgs = 'context add'.split(' ');
@@ -83,7 +83,7 @@ export async function context_create(args = {}) {
 }
 
 /**
- * List all prefix mappings in a context (CLI: unrdf context list)
+ * List context prefixes (CLI: unrdf context list)
  */
 export async function context_list(args = {}) {
   const cliArgs = 'context list'.split(' ');
@@ -93,7 +93,7 @@ export async function context_list(args = {}) {
 }
 
 /**
- * Remove a prefix mapping from a context (CLI: unrdf context remove)
+ * Remove prefix from context (CLI: unrdf context remove)
  */
 export async function context_remove(args = {}) {
   const cliArgs = 'context remove'.split(' ');
@@ -115,37 +115,7 @@ export async function convert(args = {}) {
 }
 
 /**
- * Convert RDF to JSON-LD format (CLI: unrdf to-json)
- */
-export async function convert_to_json(args = {}) {
-  const cliArgs = 'to-json'.split(' ');
-  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
-  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
-  return executeCli(cliArgs);
-}
-
-/**
- * Convert RDF to N-Triples format (CLI: unrdf to-ntriples)
- */
-export async function convert_to_ntriples(args = {}) {
-  const cliArgs = 'to-ntriples'.split(' ');
-  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
-  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
-  return executeCli(cliArgs);
-}
-
-/**
- * Convert RDF to Turtle format (CLI: unrdf to-turtle)
- */
-export async function convert_to_turtle(args = {}) {
-  const cliArgs = 'to-turtle'.split(' ');
-  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
-  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
-  return executeCli(cliArgs);
-}
-
-/**
- * Manage daemon cluster (CLI: unrdf daemon cluster)
+ * Show Raft cluster status and members (CLI: unrdf daemon cluster)
  */
 export async function daemon_cluster(args = {}) {
   const cliArgs = 'daemon cluster'.split(' ');
@@ -155,7 +125,7 @@ export async function daemon_cluster(args = {}) {
 }
 
 /**
- * View daemon configuration (CLI: unrdf daemon config)
+ * Display current daemon configuration (CLI: unrdf daemon config)
  */
 export async function daemon_config(args = {}) {
   const cliArgs = 'daemon config'.split(' ');
@@ -164,7 +134,7 @@ export async function daemon_config(args = {}) {
 }
 
 /**
- * List all running daemon instances (CLI: unrdf daemon list)
+ * List all configured operations (CLI: unrdf daemon list)
  */
 export async function daemon_list(args = {}) {
   const cliArgs = 'daemon list'.split(' ');
@@ -174,7 +144,7 @@ export async function daemon_list(args = {}) {
 }
 
 /**
- * View daemon logs (CLI: unrdf daemon logs)
+ * View operation logs with filtering (CLI: unrdf daemon logs)
  */
 export async function daemon_logs(args = {}) {
   const cliArgs = 'daemon logs'.split(' ');
@@ -186,7 +156,7 @@ export async function daemon_logs(args = {}) {
 }
 
 /**
- * Run an operation on the daemon (CLI: unrdf daemon run)
+ * Execute operation immediately (CLI: unrdf daemon run)
  */
 export async function daemon_run(args = {}) {
   const cliArgs = 'daemon run'.split(' ');
@@ -198,7 +168,7 @@ export async function daemon_run(args = {}) {
 }
 
 /**
- * Schedule an operation on the daemon (CLI: unrdf daemon schedule)
+ * Add scheduled trigger to operation (CLI: unrdf daemon schedule)
  */
 export async function daemon_schedule(args = {}) {
   const cliArgs = 'daemon schedule'.split(' ');
@@ -210,7 +180,7 @@ export async function daemon_schedule(args = {}) {
 }
 
 /**
- * Check daemon status and health (CLI: unrdf daemon status)
+ * Show daemon health and metrics (CLI: unrdf daemon status)
  */
 export async function daemon_status(args = {}) {
   const cliArgs = 'daemon status'.split(' ');
@@ -230,7 +200,7 @@ export async function graph_create(args = {}) {
 }
 
 /**
- * Dump an RDF graph to a file (CLI: unrdf graph dump)
+ * Export graph data to file (CLI: unrdf graph dump)
  */
 export async function graph_dump(args = {}) {
   const cliArgs = 'graph dump'.split(' ');
@@ -241,7 +211,7 @@ export async function graph_dump(args = {}) {
 }
 
 /**
- * Load RDF data into a graph from a file (CLI: unrdf graph load)
+ * Load RDF data into a graph (CLI: unrdf graph load)
  */
 export async function graph_load(args = {}) {
   const cliArgs = 'graph load'.split(' ');
@@ -252,7 +222,7 @@ export async function graph_load(args = {}) {
 }
 
 /**
- * Execute SPARQL query on a graph file (CLI: unrdf graph query)
+ * Execute SPARQL query on graph (CLI: unrdf graph query)
  */
 export async function graph_query(args = {}) {
   const cliArgs = 'graph query'.split(' ');
@@ -263,7 +233,7 @@ export async function graph_query(args = {}) {
 }
 
 /**
- * Get statistics about an RDF graph (CLI: unrdf graph stats)
+ * Show graph statistics (CLI: unrdf graph stats)
  */
 export async function graph_stats(args = {}) {
   const cliArgs = 'graph stats'.split(' ');
@@ -272,7 +242,7 @@ export async function graph_stats(args = {}) {
 }
 
 /**
- * Define RDF hooks configuration (CLI: unrdf hooks define)
+ * Define hooks from config file (CLI: unrdf hooks define)
  */
 export async function hooks_define(args = {}) {
   const cliArgs = 'hooks define'.split(' ');
@@ -283,7 +253,7 @@ export async function hooks_define(args = {}) {
 }
 
 /**
- * Evaluate a hook condition against a store (CLI: unrdf hooks evaluate-condition)
+ * Evaluate a single condition against a store (CLI: unrdf hooks evaluate-condition)
  */
 export async function hooks_evaluate_condition(args = {}) {
   const cliArgs = 'hooks evaluate-condition'.split(' ');
@@ -294,7 +264,7 @@ export async function hooks_evaluate_condition(args = {}) {
 }
 
 /**
- * Execute registered RDF hooks on a store (CLI: unrdf hooks execute)
+ * Execute hooks against an RDF store (CLI: unrdf hooks execute)
  */
 export async function hooks_execute(args = {}) {
   const cliArgs = 'hooks execute'.split(' ');
@@ -306,15 +276,15 @@ export async function hooks_execute(args = {}) {
 }
 
 /**
- * List all available hook conditions (CLI: unrdf hooks list-conditions)
+ * List available condition kinds (CLI: unrdf hooks list-conditions)
  */
-export async function hooks_list_conditions(_args = {}) {
+export async function hooks_list_conditions(args = {}) {
   const cliArgs = 'hooks list-conditions'.split(' ');
   return executeCli(cliArgs);
 }
 
 /**
- * View execution receipts from hook runs (CLI: unrdf hooks receipts)
+ * Display receipt chain from hook execution results (CLI: unrdf hooks receipts)
  */
 export async function hooks_receipts(args = {}) {
   const cliArgs = 'hooks receipts'.split(' ');
@@ -325,7 +295,44 @@ export async function hooks_receipts(args = {}) {
 }
 
 /**
- * Execute SPARQL query on a data file (CLI: unrdf query)
+ * List all exposed tools, resources, and prompts (CLI: unrdf mcp inspect)
+ */
+export async function mcp_inspect(args = {}) {
+  const cliArgs = 'mcp inspect'.split(' ');
+  if (args['json']) cliArgs.push('--json');
+  return executeCli(cliArgs);
+}
+
+/**
+ * Start the MCP server (CLI: unrdf mcp start)
+ */
+export async function mcp_start(args = {}) {
+  const cliArgs = 'mcp start'.split(' ');
+  if (args['port'] !== undefined) cliArgs.push('--port', String(args['port']));
+  if (args['transport'] !== undefined) cliArgs.push('--transport', String(args['transport']));
+  return executeCli(cliArgs);
+}
+
+/**
+ * Show if MCP server is running (CLI: unrdf mcp status)
+ */
+export async function mcp_status(args = {}) {
+  const cliArgs = 'mcp status'.split(' ');
+  if (args['json']) cliArgs.push('--json');
+  return executeCli(cliArgs);
+}
+
+/**
+ * Stop the running MCP server (CLI: unrdf mcp stop)
+ */
+export async function mcp_stop(args = {}) {
+  const cliArgs = 'mcp stop'.split(' ');
+  if (args['json']) cliArgs.push('--json');
+  return executeCli(cliArgs);
+}
+
+/**
+ * Execute SPARQL query (CLI: unrdf query)
  */
 export async function query(args = {}) {
   const cliArgs = 'query'.split(' ');
@@ -336,7 +343,7 @@ export async function query(args = {}) {
 }
 
 /**
- * Execute SPARQL query from a file (CLI: unrdf query-file)
+ * Execute SPARQL query from file (CLI: unrdf query-file)
  */
 export async function query_file(args = {}) {
   const cliArgs = 'query-file'.split(' ');
@@ -347,7 +354,7 @@ export async function query_file(args = {}) {
 }
 
 /**
- * Synchronize and generate code from RDF ontology (CLI: unrdf sync)
+ * Generate synchronized code artifacts from RDF ontology (CLI: unrdf sync)
  */
 export async function sync(args = {}) {
   const cliArgs = 'sync'.split(' ');
@@ -357,11 +364,12 @@ export async function sync(args = {}) {
   if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
   if (args['rule'] !== undefined) cliArgs.push('--rule', String(args['rule']));
   if (args['verbose']) cliArgs.push('--verbose');
+  if (args['watch']) cliArgs.push('--watch');
   return executeCli(cliArgs);
 }
 
 /**
- * Extract data from RDF using template patterns (CLI: unrdf template extract)
+ * Extract properties for a subject as JSON (template debugging) (CLI: unrdf template extract)
  */
 export async function template_extract(args = {}) {
   const cliArgs = 'template extract'.split(' ');
@@ -372,7 +380,7 @@ export async function template_extract(args = {}) {
 }
 
 /**
- * Generate files from a Nunjucks template (CLI: unrdf template generate)
+ * Generate files from RDF + Nunjucks template (`--template`). RDF path can be positional or `rdf:` in template frontmatter. (CLI: unrdf template generate)
  */
 export async function template_generate(args = {}) {
   const cliArgs = 'template generate'.split(' ');
@@ -389,23 +397,53 @@ export async function template_generate(args = {}) {
 }
 
 /**
- * List available templates (CLI: unrdf template list)
+ * List discovered .njk templates (default: bundled sync templates) (CLI: unrdf template list)
  */
 export async function template_list(args = {}) {
   const cliArgs = 'template list'.split(' ');
-  if (args['dir'] !== undefined) cliArgs.push('--dir', String(args['dir']));
-  if (args['format'] !== undefined) cliArgs.push('--format', String(args['format']));
   return executeCli(cliArgs);
 }
 
 /**
- * Query template variables and context (CLI: unrdf template query)
+ * Run SPARQL SELECT on an RDF file and print template-style context. For CONSTRUCT/ASK/DESCRIBE use `unrdf query`. (CLI: unrdf template query)
  */
 export async function template_query(args = {}) {
   const cliArgs = 'template query'.split(' ');
   if (args['file'] !== undefined) cliArgs.push('--file', String(args['file']));
   if (args['format'] !== undefined) cliArgs.push('--format', String(args['format']));
+  if (args['predicate'] !== undefined) cliArgs.push('--predicate', String(args['predicate']));
   if (args['sparql'] !== undefined) cliArgs.push('--sparql', String(args['sparql']));
+  if (args['subject'] !== undefined) cliArgs.push('--subject', String(args['subject']));
+  return executeCli(cliArgs);
+}
+
+/**
+ * Convert RDF to JSON representation (CLI: unrdf to-json)
+ */
+export async function to_json(args = {}) {
+  const cliArgs = 'to-json'.split(' ');
+  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
+  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
+  return executeCli(cliArgs);
+}
+
+/**
+ * Convert RDF to N-Triples format (CLI: unrdf to-ntriples)
+ */
+export async function to_ntriples(args = {}) {
+  const cliArgs = 'to-ntriples'.split(' ');
+  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
+  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
+  return executeCli(cliArgs);
+}
+
+/**
+ * Convert RDF to Turtle format (CLI: unrdf to-turtle)
+ */
+export async function to_turtle(args = {}) {
+  const cliArgs = 'to-turtle'.split(' ');
+  if (args['input'] !== undefined) cliArgs.push('--input', String(args['input']));
+  if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
   return executeCli(cliArgs);
 }
 

@@ -29,7 +29,7 @@ import { mcpCommand } from './commands/mcp.mjs';
 /**
  * Main CLI application
  */
-const main = defineCommand({
+export const main = defineCommand({
   meta: {
     name: 'unrdf',
     version: '5.0.0-alpha.0',

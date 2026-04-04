@@ -2,7 +2,7 @@
  * @file MCP Tool Definitions
  * @module @unrdf/daemon/mcp/tools-generated
  * @description Auto-generated tool JSON schema definitions
- * @generated 2026-04-03 17:40:10 from cli-commands.ttl
+ * @generated 2026-04-03 18:28:56 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-tool-defs
  */
@@ -15,7 +15,7 @@
 export const mcpGeneratedTools = [
   {
     name: 'context_add',
-    description: 'Add a prefix mapping to a context',
+    description: 'Add prefix to context',
     inputSchema: {
       type: 'object',
       properties: {
@@ -55,7 +55,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'context_list',
-    description: 'List all prefix mappings in a context',
+    description: 'List context prefixes',
     inputSchema: {
       type: 'object',
       properties: {
@@ -65,7 +65,7 @@ export const mcpGeneratedTools = [
         },
         "format": {
           type: 'string',
-          description: 'Output format',
+          description: 'Output format (table, json)',
           default: 'table',
         },
       },
@@ -74,7 +74,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'context_remove',
-    description: 'Remove a prefix mapping from a context',
+    description: 'Remove prefix from context',
     inputSchema: {
       type: 'object',
       properties: {
@@ -84,7 +84,7 @@ export const mcpGeneratedTools = [
         },
         "prefix": {
           type: 'string',
-          description: 'Prefix to remove',
+          description: 'Prefix name to remove',
         },
       },
       required: ["file", "prefix"],
@@ -98,11 +98,11 @@ export const mcpGeneratedTools = [
       properties: {
         "from": {
           type: 'string',
-          description: 'Source format',
+          description: 'Input format (turtle, ntriples, nquads) - auto-detected if not specified',
         },
         "input": {
           type: 'string',
-          description: 'Input file',
+          description: 'Input RDF file',
         },
         "output": {
           type: 'string',
@@ -110,75 +110,21 @@ export const mcpGeneratedTools = [
         },
         "to": {
           type: 'string',
-          description: 'Target format',
+          description: 'Output format (turtle, ntriples, nquads) - auto-detected if not specified',
         },
       },
       required: ["input", "output"],
     },
   },
   {
-    name: 'convert_to_json',
-    description: 'Convert RDF to JSON-LD format',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        "input": {
-          type: 'string',
-          description: 'Input file',
-        },
-        "output": {
-          type: 'string',
-          description: 'Output file path',
-        },
-      },
-      required: ["input"],
-    },
-  },
-  {
-    name: 'convert_to_ntriples',
-    description: 'Convert RDF to N-Triples format',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        "input": {
-          type: 'string',
-          description: 'Input file',
-        },
-        "output": {
-          type: 'string',
-          description: 'Output file path',
-        },
-      },
-      required: ["input"],
-    },
-  },
-  {
-    name: 'convert_to_turtle',
-    description: 'Convert RDF to Turtle format',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        "input": {
-          type: 'string',
-          description: 'Input file',
-        },
-        "output": {
-          type: 'string',
-          description: 'Output file path',
-        },
-      },
-      required: ["input"],
-    },
-  },
-  {
     name: 'daemon_cluster',
-    description: 'Manage daemon cluster',
+    description: 'Show Raft cluster status and members',
     inputSchema: {
       type: 'object',
       properties: {
         "include-metrics": {
           type: 'boolean',
-          description: 'Include metrics',
+          description: 'Include detailed member metrics',
         },
         "json": {
           type: 'boolean',
@@ -190,7 +136,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_config',
-    description: 'View daemon configuration',
+    description: 'Display current daemon configuration',
     inputSchema: {
       type: 'object',
       properties: {
@@ -204,13 +150,13 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_list',
-    description: 'List all running daemon instances',
+    description: 'List all configured operations',
     inputSchema: {
       type: 'object',
       properties: {
         "include-metadata": {
           type: 'boolean',
-          description: 'Include metadata',
+          description: 'Include metadata in output',
         },
         "json": {
           type: 'boolean',
@@ -222,17 +168,17 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_logs',
-    description: 'View daemon logs',
+    description: 'View operation logs with filtering',
     inputSchema: {
       type: 'object',
       properties: {
         "filter": {
           type: 'string',
-          description: 'Log filter expression',
+          description: 'Filter logs by pattern',
         },
         "follow": {
           type: 'boolean',
-          description: 'Follow log output',
+          description: 'Follow log output (stream mode)',
         },
         "json": {
           type: 'boolean',
@@ -248,7 +194,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_run',
-    description: 'Run an operation on the daemon',
+    description: 'Execute operation immediately',
     inputSchema: {
       type: 'object',
       properties: {
@@ -258,15 +204,15 @@ export const mcpGeneratedTools = [
         },
         "operation": {
           type: 'string',
-          description: 'Operation name',
+          description: 'Operation ID to execute',
         },
         "payload": {
           type: 'string',
-          description: 'Operation payload',
+          description: 'Operation payload (JSON string)',
         },
         "timeout": {
           type: 'number',
-          description: 'Operation timeout in seconds',
+          description: 'Execution timeout in milliseconds',
         },
       },
       required: ["operation"],
@@ -274,7 +220,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_schedule',
-    description: 'Schedule an operation on the daemon',
+    description: 'Add scheduled trigger to operation',
     inputSchema: {
       type: 'object',
       properties: {
@@ -284,15 +230,15 @@ export const mcpGeneratedTools = [
         },
         "operation": {
           type: 'string',
-          description: 'Operation name',
+          description: 'Operation ID to schedule',
         },
         "payload": {
           type: 'string',
-          description: 'Operation payload',
+          description: 'Trigger payload (JSON string)',
         },
         "trigger": {
           type: 'string',
-          description: 'Trigger cron expression',
+          description: 'Trigger type (cron, interval, reactive, event)',
         },
       },
       required: ["operation", "trigger"],
@@ -300,13 +246,13 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'daemon_status',
-    description: 'Check daemon status and health',
+    description: 'Show daemon health and metrics',
     inputSchema: {
       type: 'object',
       properties: {
         "include-metrics": {
           type: 'boolean',
-          description: 'Include performance metrics',
+          description: 'Include detailed metrics',
         },
         "json": {
           type: 'boolean',
@@ -324,8 +270,7 @@ export const mcpGeneratedTools = [
       properties: {
         "file": {
           type: 'string',
-          description: 'Output file path',
-          default: '<name>.nq',
+          description: 'Output file path (default: <name>.nq)',
         },
         "name": {
           type: 'string',
@@ -337,23 +282,22 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'graph_dump',
-    description: 'Dump an RDF graph to a file',
+    description: 'Export graph data to file',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'Graph file to dump',
+          description: 'Source graph file',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
-          enum: ["jsonld", "ntriples", "turtle"],
+          description: 'Output format (turtle, ntriples, nquads)',
           default: 'turtle',
         },
         "output": {
           type: 'string',
-          description: 'Output file path',
+          description: 'Output file',
         },
       },
       required: ["file", "output"],
@@ -361,21 +305,21 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'graph_load',
-    description: 'Load RDF data into a graph from a file',
+    description: 'Load RDF data into a graph',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'RDF file to load',
+          description: 'RDF file to load (Turtle, N-Triples, N-Quads)',
         },
         "format": {
           type: 'string',
-          description: 'RDF format (turtle, ntriples, jsonld, trig)',
+          description: 'RDF format (turtle, ntriples, nquads) - auto-detected if not specified',
         },
         "graph": {
           type: 'string',
-          description: 'Target graph IRI',
+          description: 'Target graph name',
         },
       },
       required: ["file"],
@@ -383,7 +327,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'graph_query',
-    description: 'Execute SPARQL query on a graph file',
+    description: 'Execute SPARQL query on graph',
     inputSchema: {
       type: 'object',
       properties: {
@@ -393,9 +337,8 @@ export const mcpGeneratedTools = [
         },
         "format": {
           type: 'string',
-          description: 'Output format',
-          enum: ["json", "table", "turtle"],
-          default: 'json',
+          description: 'Output format (table, json, turtle)',
+          default: 'table',
         },
         "query": {
           type: 'string',
@@ -407,13 +350,13 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'graph_stats',
-    description: 'Get statistics about an RDF graph',
+    description: 'Show graph statistics',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'Graph file',
+          description: 'Graph file to analyze',
         },
       },
       required: ["file"],
@@ -421,21 +364,22 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'hooks_define',
-    description: 'Define RDF hooks configuration',
+    description: 'Define hooks from config file',
     inputSchema: {
       type: 'object',
       properties: {
         "config": {
           type: 'string',
-          description: 'Configuration file to create',
+          description: 'Hooks config file (JSON)',
         },
         "output": {
           type: 'string',
-          description: 'Output file path',
+          description: 'Output file for hook metadata (JSON)',
         },
         "validate": {
           type: 'boolean',
-          description: 'Validate configuration',
+          description: 'Validate without executing',
+          default: 'false',
         },
       },
       required: ["config"],
@@ -443,21 +387,21 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'hooks_evaluate_condition',
-    description: 'Evaluate a hook condition against a store',
+    description: 'Evaluate a single condition against a store',
     inputSchema: {
       type: 'object',
       properties: {
         "condition": {
           type: 'string',
-          description: 'Condition expression',
+          description: 'Condition type (sparql-ask, sparql-select, shacl, delta, threshold, count, window, n3, datalog)',
         },
         "config": {
           type: 'string',
-          description: 'Configuration file',
+          description: 'Condition config as JSON',
         },
         "store": {
           type: 'string',
-          description: 'Store file',
+          description: 'Store file (NQ/Turtle/N-Triples)',
         },
       },
       required: ["condition", "config", "store"],
@@ -465,25 +409,26 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'hooks_execute',
-    description: 'Execute registered RDF hooks on a store',
+    description: 'Execute hooks against an RDF store',
     inputSchema: {
       type: 'object',
       properties: {
         "config": {
           type: 'string',
-          description: 'Hooks configuration file',
+          description: 'Hooks config file (JSON)',
         },
         "output": {
           type: 'string',
-          description: 'Output file path',
+          description: 'Output file for results (JSON)',
         },
         "show-receipts": {
           type: 'boolean',
-          description: 'Display execution receipts',
+          description: 'Show receipt chain with hashes',
+          default: 'false',
         },
         "store": {
           type: 'string',
-          description: 'Store file or identifier',
+          description: 'Store file (NQ/Turtle/N-Triples)',
         },
       },
       required: ["config", "store"],
@@ -491,7 +436,7 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'hooks_list_conditions',
-    description: 'List all available hook conditions',
+    description: 'List available condition kinds',
     inputSchema: {
       type: 'object',
       properties: {
@@ -501,45 +446,108 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'hooks_receipts',
-    description: 'View execution receipts from hook runs',
+    description: 'Display receipt chain from hook execution results',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'Receipts file',
+          description: 'Execution result file (JSON)',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
+          description: 'Output format (json, table)',
           default: 'table',
         },
         "verify": {
           type: 'boolean',
-          description: 'Verify receipt signatures',
+          description: 'Verify receipt chain integrity',
+          default: 'false',
         },
       },
       required: ["file"],
     },
   },
   {
+    name: 'mcp_inspect',
+    description: 'List all exposed tools, resources, and prompts',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "json": {
+          type: 'boolean',
+          description: 'Output as JSON',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'mcp_start',
+    description: 'Start the MCP server',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "port": {
+          type: 'number',
+          description: 'Port for SSE transport (when transport=sse)',
+          default: '3001',
+        },
+        "transport": {
+          type: 'string',
+          description: 'Transport type: stdio or sse',
+          default: 'stdio',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'mcp_status',
+    description: 'Show if MCP server is running',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "json": {
+          type: 'boolean',
+          description: 'Output as JSON',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'mcp_stop',
+    description: 'Stop the running MCP server',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "json": {
+          type: 'boolean',
+          description: 'Output as JSON',
+        },
+      },
+      required: [],
+    },
+  },
+  {
     name: 'query',
-    description: 'Execute SPARQL query on a data file',
+    description: 'Execute SPARQL query',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'Data file',
+          description: 'RDF data file',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
-          default: 'json',
+          description: 'Output format (table, json, csv)',
+          default: 'table',
         },
         "query": {
           type: 'string',
-          description: 'SPARQL query',
+          description: 'SPARQL query string',
         },
       },
       required: ["file", "query"],
@@ -547,21 +555,22 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'query_file',
-    description: 'Execute SPARQL query from a file',
+    description: 'Execute SPARQL query from file',
     inputSchema: {
       type: 'object',
       properties: {
         "data": {
           type: 'string',
-          description: 'Data file',
+          description: 'RDF data file',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
+          description: 'Output format (table, json, csv)',
+          default: 'table',
         },
         "query": {
           type: 'string',
-          description: 'Query file',
+          description: 'SPARQL query file (.sparql)',
         },
       },
       required: ["data", "query"],
@@ -569,34 +578,43 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'sync',
-    description: 'Synchronize and generate code from RDF ontology',
+    description: 'Generate synchronized code artifacts from RDF ontology',
     inputSchema: {
       type: 'object',
       properties: {
         "config": {
           type: 'string',
-          description: 'Path to .unrdf.toml config',
+          description: 'Path to `.unrdf.toml` configuration file',
+          default: '.unrdf.toml',
         },
         "dry-run": {
           type: 'boolean',
-          description: 'Preview without writing files',
+          description: 'Preview changes without writing files',
+          default: 'false',
         },
         "force": {
           type: 'boolean',
-          description: 'Force regeneration',
+          description: 'Overwrite existing files without prompting',
+          default: 'false',
         },
         "output": {
           type: 'string',
-          description: 'Output format (text or json)',
+          description: 'Output format: text or json',
           default: 'text',
         },
         "rule": {
           type: 'string',
-          description: 'Run only specified rule',
+          description: 'Run only the specified rule by name',
         },
         "verbose": {
           type: 'boolean',
-          description: 'Verbose output',
+          description: 'Enable verbose output',
+          default: 'false',
+        },
+        "watch": {
+          type: 'boolean',
+          description: 'Watch ontology and template files for changes',
+          default: 'false',
         },
       },
       required: [],
@@ -604,22 +622,22 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'template_extract',
-    description: 'Extract data from RDF using template patterns',
+    description: 'Extract properties for a subject as JSON (template debugging)',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'RDF file',
+          description: 'RDF data file',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
+          description: 'Output format (json|yaml|table)',
           default: 'json',
         },
         "subject": {
           type: 'string',
-          description: 'Subject IRI filter',
+          description: 'Subject URI',
         },
       },
       required: ["file"],
@@ -627,45 +645,49 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'template_generate',
-    description: 'Generate files from a Nunjucks template',
+    description: 'Generate files from RDF + Nunjucks template (`--template`). RDF path can be positional or `rdf:` in template frontmatter.',
     inputSchema: {
       type: 'object',
       properties: {
         "batch": {
           type: 'boolean',
-          description: 'Batch mode',
+          description: 'One output per instance of `--class-uri`; SPARQL must use ?subject',
+          default: 'false',
         },
         "classUri": {
           type: 'string',
-          description: 'Class URI filter',
+          description: 'RDFS/OWL class IRI for batch mode (with `--batch`)',
         },
         "dryRun": {
           type: 'boolean',
-          description: 'Preview without writing',
+          description: 'Print paths without writing',
+          default: 'false',
         },
         "file": {
           type: 'string',
-          description: 'Data file (RDF)',
+          description: 'RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter.',
         },
         "force": {
           type: 'boolean',
-          description: 'Force overwrite',
+          description: 'Overwrite existing files',
+          default: 'false',
         },
         "outputDir": {
           type: 'string',
-          description: 'Output directory',
+          description: 'Output directory for generated files',
+          default: './generated',
         },
         "sparql": {
           type: 'string',
-          description: 'SPARQL query',
+          description: 'SPARQL SELECT (overrides frontmatter `sparql:`)',
         },
         "subject": {
           type: 'string',
-          description: 'Subject filter',
+          description: 'Focus subject URI; replaces ?subject in SPARQL when present',
         },
         "template": {
           type: 'string',
-          description: 'Template file path',
+          description: 'Template .njk path',
         },
       },
       required: ["template"],
@@ -673,44 +695,97 @@ export const mcpGeneratedTools = [
   },
   {
     name: 'template_list',
-    description: 'List available templates',
+    description: 'List discovered .njk templates (default: bundled sync templates)',
     inputSchema: {
       type: 'object',
       properties: {
-        "dir": {
-          type: 'string',
-          description: 'Template directory',
-        },
-        "format": {
-          type: 'string',
-          description: 'Output format',
-          default: 'table',
-        },
       },
       required: [],
     },
   },
   {
     name: 'template_query',
-    description: 'Query template variables and context',
+    description: 'Run SPARQL SELECT on an RDF file and print template-style context. For CONSTRUCT/ASK/DESCRIBE use `unrdf query`.',
     inputSchema: {
       type: 'object',
       properties: {
         "file": {
           type: 'string',
-          description: 'Template file',
+          description: 'RDF data file',
         },
         "format": {
           type: 'string',
-          description: 'Output format',
-          default: 'json',
+          description: 'Output format (table|json)',
+          default: 'table',
+        },
+        "predicate": {
+          type: 'string',
+          description: 'Find all values of predicate',
         },
         "sparql": {
           type: 'string',
-          description: 'SPARQL query',
+          description: 'SPARQL SELECT query',
+        },
+        "subject": {
+          type: 'string',
+          description: 'Find all predicates for subject',
         },
       },
       required: ["file"],
+    },
+  },
+  {
+    name: 'to_json',
+    description: 'Convert RDF to JSON representation',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "input": {
+          type: 'string',
+          description: 'Input RDF file',
+        },
+        "output": {
+          type: 'string',
+          description: 'Output JSON file',
+        },
+      },
+      required: ["input"],
+    },
+  },
+  {
+    name: 'to_ntriples',
+    description: 'Convert RDF to N-Triples format',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "input": {
+          type: 'string',
+          description: 'Input RDF file',
+        },
+        "output": {
+          type: 'string',
+          description: 'Output N-Triples file',
+        },
+      },
+      required: ["input"],
+    },
+  },
+  {
+    name: 'to_turtle',
+    description: 'Convert RDF to Turtle format',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        "input": {
+          type: 'string',
+          description: 'Input RDF file',
+        },
+        "output": {
+          type: 'string',
+          description: 'Output Turtle file',
+        },
+      },
+      required: ["input"],
     },
   },
 ];

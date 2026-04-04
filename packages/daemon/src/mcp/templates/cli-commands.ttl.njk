@@ -72,6 +72,6 @@ cli:{{ cmd.toolName }} a cli:Command ;
   cli:toolName "{{ cmd.toolName }}" ;
   cli:description "{{ cmd.description }}" ;
   cli:cliPath "{{ cmd.cliPath }}"{% if cmd.args %}{% for arg in cmd.args %} ;
-  cli:hasArgument [ a cli:Argument ; cli:argName "{{ arg.argName }}" ; cli:argType "{{ arg.argType }}" ; cli:required {{ arg.required | lower }} ; cli:argDescription "{{ arg.argDescription }}"{% if arg.defaultValue %} ; cli:defaultValue "{{ arg.defaultValue }}"{% endif %} ]{% endfor %}{% endif %} .
+  cli:hasArgument [ a cli:Argument ; cli:argName "{{ arg.argName }}" ; cli:argType "{{ arg.argType }}" ; cli:required {{ arg.required|string|lower }} ; cli:argDescription "{{ arg.argDescription }}"{% if arg.defaultValue %} ; cli:defaultValue "{{ arg.defaultValue }}"{% endif %} ]{% endfor %}{% endif %} .
 
 {% endfor %}

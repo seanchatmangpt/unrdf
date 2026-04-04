@@ -73,23 +73,20 @@ const generateCommand = defineCommand({
         'RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter.',
       required: false,
     },
-  },
-  options: {
     template: {
       type: 'string',
       description: 'Template .njk path',
-      alias: 't',
+      required: true,
     },
     outputDir: {
       type: 'string',
       description: 'Output directory for generated files',
-      alias: 'o',
       default: './generated',
     },
     subject: {
       type: 'string',
       description: 'Focus subject URI; replaces ?subject in SPARQL when present',
-      alias: 's',
+      required: false,
     },
     batch: {
       type: 'boolean',
@@ -99,11 +96,12 @@ const generateCommand = defineCommand({
     classUri: {
       type: 'string',
       description: 'RDFS/OWL class IRI for batch mode (with `--batch`)',
+      required: false,
     },
     sparql: {
       type: 'string',
       description: 'SPARQL SELECT (overrides frontmatter `sparql:`)',
-      alias: 'q',
+      required: false,
     },
     dryRun: {
       type: 'boolean',
@@ -300,28 +298,26 @@ const templateQueryCommand = defineCommand({
       description: 'RDF data file',
       required: true,
     },
-  },
-  options: {
     sparql: {
       type: 'string',
       description: 'SPARQL SELECT query',
-      alias: 'q',
+      required: false,
     },
     predicate: {
       type: 'string',
       description: 'Find all values of predicate',
-      alias: 'p',
+      required: false,
     },
     subject: {
       type: 'string',
       description: 'Find all predicates for subject',
-      alias: 's',
+      required: false,
     },
     format: {
       type: 'string',
       description: 'Output format (table|json)',
-      alias: 'f',
       default: 'table',
+      required: false,
     },
   },
   async run(ctx) {
@@ -376,18 +372,16 @@ const extractCommand = defineCommand({
       description: 'RDF data file',
       required: true,
     },
-  },
-  options: {
     subject: {
       type: 'string',
       description: 'Subject URI',
-      alias: 's',
+      required: false,
     },
     format: {
       type: 'string',
       description: 'Output format (json|yaml|table)',
-      alias: 'f',
       default: 'json',
+      required: false,
     },
   },
   async run(ctx) {

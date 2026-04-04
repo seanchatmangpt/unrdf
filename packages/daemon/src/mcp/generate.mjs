@@ -10,17 +10,40 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import nunjucks from 'nunjucks';
+import { graphCommand } from '../../../cli/src/cli/commands/graph.mjs';
+import { queryCommand, queryFileCommand } from '../../../cli/src/cli/commands/query.mjs';
+import { contextCommand } from '../../../cli/src/cli/commands/context.mjs';
+import { convertCommand, toTurtleCommand, toNTriplesCommand, toJSONCommand } from '../../../cli/src/cli/commands/convert.mjs';
+import { daemonCommand } from '../../../cli/src/cli/commands/daemon.mjs';
+import { syncCommand } from '../../../cli/src/cli/commands/sync.mjs';
+import { templateCommand } from '../../../cli/src/cli/commands/template.mjs';
+import { hooksCommand } from '../../../cli/src/cli/commands/hooks.mjs';
+import { mcpCommand } from '../../../cli/src/cli/commands/mcp.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
- * Load the main CLI to discover all commands
+ * Build the main CLI command structure
  */
-async function loadCliCommands() {
-  // Import the main CLI command definition
-  const { main } = await import('../../../cli/src/cli/main.mjs');
-  return main;
+function buildCliCommands() {
+  return {
+    subCommands: {
+      graph: graphCommand,
+      query: queryCommand,
+      'query-file': queryFileCommand,
+      context: contextCommand,
+      convert: convertCommand,
+      'to-turtle': toTurtleCommand,
+      'to-ntriples': toNTriplesCommand,
+      'to-json': toJSONCommand,
+      hooks: hooksCommand,
+      daemon: daemonCommand,
+      mcp: mcpCommand,
+      sync: syncCommand,
+      template: templateCommand,
+    },
+  };
 }
 
 /**
@@ -76,7 +99,7 @@ function readVersion() {
 async function generate() {
   try {
     console.log('🔍 Discovering CLI commands...');
-    const main = await loadCliCommands();
+    const main = buildCliCommands();
 
     console.log('📊 Walking command tree...');
     const commands = [];
@@ -97,6 +120,7 @@ async function generate() {
     // Render template
     console.log('🎨 Rendering template...');
     const templateContent = readFileSync(resolve(templateDir, 'cli-commands.ttl.njk'), 'utf-8');
+    console.log(`   Template context: ${commands.length} commands`);
     const rendered = nunjucks.renderString(templateContent, { commands });
 
     // Write output
@@ -106,24 +130,19 @@ async function generate() {
 
     // Run sync to regenerate all MCP files
     console.log('🔄 Running sync to regenerate MCP files...');
-    const { spawn } = await import('child_process');
+    const { runSync } = await import('../../../cli/src/cli/commands/sync/orchestrator.mjs');
     const configPath = resolve(__dirname, '.unrdf.toml');
 
-    const sync = spawn('node', [
-      resolve(__dirname, '../../../cli/src/cli/main.mjs'),
-      'sync',
-      '--config', configPath,
-    ], {
-      cwd: resolve(__dirname, '../../../..'),
-      stdio: 'inherit',
-    });
-
-    const exitCode = await new Promise(resolve => sync.on('close', resolve));
-
-    if (exitCode === 0) {
+    try {
+      await runSync({
+        config: configPath,
+        verbose: false,
+        dryRun: false,
+        force: false,
+      });
       console.log('✅ MCP files regenerated successfully');
-    } else {
-      console.error(`❌ Sync failed with exit code ${exitCode}`);
+    } catch (error) {
+      console.error(`❌ Sync failed: ${error.message}`);
       process.exit(1);
     }
   } catch (error) {
