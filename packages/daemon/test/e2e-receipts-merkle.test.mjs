@@ -518,7 +518,9 @@ describe('DaemonReceiptGenerator - Merkle Integration', () => {
         receipts.push(await generator.generateReceipt(op));
       }
 
-      receipts[2].payloadHash = receipts[2].payloadHash.substring(0, 63) + 'a';
+      // Flip last char to a definitely-different value (avoids hash-already-ends-in-'a' flakiness)
+      const lastChar = receipts[2].payloadHash[63];
+      receipts[2].payloadHash = receipts[2].payloadHash.substring(0, 63) + (lastChar === 'a' ? 'b' : 'a');
 
       // Act
       const tampered = await generator.detectTampering(receipts);
