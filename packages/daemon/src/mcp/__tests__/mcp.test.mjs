@@ -21,7 +21,6 @@ describe('MCP Server', () => {
   });
 
   describe('Tool Registration (generated from cli-commands.ttl)', () => {
-    // Define expected tool categories
     const EXPECTED_TOOL_CATEGORIES = {
       graph: ['graph_create', 'graph_load', 'graph_query', 'graph_dump', 'graph_stats'],
       convert: ['convert', 'to_turtle', 'to_ntriples', 'to_json'],
@@ -29,68 +28,38 @@ describe('MCP Server', () => {
       template: ['template_generate', 'template_list', 'template_query', 'template_extract'],
     };
 
-    it('should have tools registered', () => {
-      // Verify tools are registered without hardcoding exact count
+    it('should have valid tool registry', () => {
+      // Check registration and structure
       expect(mcpGeneratedTools).toBeDefined();
       expect(Array.isArray(mcpGeneratedTools)).toBe(true);
       expect(mcpGeneratedTools.length).toBeGreaterThan(0);
-    });
 
-    it('should include all graph tools', () => {
-      const names = mcpGeneratedTools.map(t => t.name);
-      EXPECTED_TOOL_CATEGORIES.graph.forEach(toolName => {
-        expect(names).toContain(toolName);
+      // Check all tools have required fields
+      const toolNames = mcpGeneratedTools.map(t => t.name);
+      for (const tool of mcpGeneratedTools) {
+        expect(tool.name).toBeTruthy();
+        expect(tool.description).toBeTruthy();
+        expect(tool.inputSchema).toBeDefined();
+        expect(tool.inputSchema.type).toBe('object');
+      }
+
+      // Check all expected categories are present
+      const expectedTools = Object.values(EXPECTED_TOOL_CATEGORIES).flat();
+      expectedTools.forEach(toolName => {
+        expect(toolNames).toContain(toolName);
       });
     });
 
-    it('should include convert tools', () => {
-      const names = mcpGeneratedTools.map(t => t.name);
-      EXPECTED_TOOL_CATEGORIES.convert.forEach(toolName => {
-        expect(names).toContain(toolName);
-      });
-    });
-
-    it('should include daemon tools', () => {
-      const names = mcpGeneratedTools.map(t => t.name);
-      EXPECTED_TOOL_CATEGORIES.daemon.forEach(toolName => {
-        expect(names).toContain(toolName);
-      });
-    });
-
-    it('should include template tools', () => {
-      const names = mcpGeneratedTools.map(t => t.name);
-      EXPECTED_TOOL_CATEGORIES.template.forEach(toolName => {
-        expect(names).toContain(toolName);
-      });
-    });
-
-    it('graph_query tool should have required args: file, query', () => {
+    it('graph_query tool should have correct schema', () => {
       const tool = mcpGeneratedTools.find(t => t.name === 'graph_query');
       expect(tool).toBeDefined();
       expect(tool.inputSchema.required).toContain('file');
       expect(tool.inputSchema.required).toContain('query');
-    });
 
-    it('graph_query tool should have format property', () => {
-      const tool = mcpGeneratedTools.find(t => t.name === 'graph_query');
       const formatProp = tool.inputSchema.properties['format'];
       expect(formatProp).toBeDefined();
       expect(formatProp.type).toBe('string');
       expect(formatProp.default).toBe('table');
-    });
-
-    it('all tools should have name and description', () => {
-      for (const tool of mcpGeneratedTools) {
-        expect(tool.name, `${tool.name} missing name`).toBeTruthy();
-        expect(tool.description, `${tool.name} missing description`).toBeTruthy();
-      }
-    });
-
-    it('all tools should have inputSchema', () => {
-      for (const tool of mcpGeneratedTools) {
-        expect(tool.inputSchema, `${tool.name} missing inputSchema`).toBeDefined();
-        expect(tool.inputSchema.type).toBe('object');
-      }
     });
   });
 
@@ -99,19 +68,18 @@ describe('MCP Server', () => {
       { uri: 'sparql://endpoints/config', name: 'SPARQL Endpoints Configuration', mimeType: 'application/json' },
     ];
 
-    it('should register expected resources', () => {
+    it('should have valid resource registry', () => {
+      expect(mcpResources).toBeDefined();
+      expect(Array.isArray(mcpResources)).toBe(true);
+      expect(mcpResources.length).toBeGreaterThan(0);
+
+      // Verify expected resources are present
       EXPECTED_RESOURCES.forEach(expectedResource => {
         const resource = mcpResources.find(r => r.uri === expectedResource.uri);
         expect(resource).toBeDefined();
         expect(resource.name).toBe(expectedResource.name);
         expect(resource.mimeType).toBe(expectedResource.mimeType);
       });
-    });
-
-    it('should have resources registered', () => {
-      expect(mcpResources).toBeDefined();
-      expect(Array.isArray(mcpResources)).toBe(true);
-      expect(mcpResources.length).toBeGreaterThan(0);
     });
   });
 
@@ -120,19 +88,18 @@ describe('MCP Server', () => {
       { name: 'sparql_builder', minArguments: 1 },
     ];
 
-    it('should register expected prompts', () => {
+    it('should have valid prompt registry', () => {
+      expect(mcpPrompts).toBeDefined();
+      expect(Array.isArray(mcpPrompts)).toBe(true);
+      expect(mcpPrompts.length).toBeGreaterThan(0);
+
+      // Verify expected prompts are present
       EXPECTED_PROMPTS.forEach(expectedPrompt => {
         const prompt = mcpPrompts.find(p => p.name === expectedPrompt.name);
         expect(prompt).toBeDefined();
         expect(prompt.arguments).toBeDefined();
         expect(prompt.arguments.length).toBeGreaterThanOrEqual(expectedPrompt.minArguments);
       });
-    });
-
-    it('should have prompts registered', () => {
-      expect(mcpPrompts).toBeDefined();
-      expect(Array.isArray(mcpPrompts)).toBe(true);
-      expect(mcpPrompts.length).toBeGreaterThan(0);
     });
   });
 });
