@@ -1,7 +1,7 @@
-# Claude Code Configuration - UNRDF v26.4.3
+# Claude Code Configuration - UNRDF v26.4.4
 
 > **UNRDF**: Research-grade RDF Knowledge Graph Platform
-> **Version**: 26.4.3 (from package.json)
+> **Version**: 26.4.4 (from package.json)
 > **Status**: Research Prototype - Architecturally complete, not production-validated
 > **Language**: JavaScript ESM (.mjs), Zod runtime validation
 > **Package Manager**: pnpm (required - see package.json engines)
@@ -12,8 +12,8 @@
 
 | Fact                | Source                                      |
 | ------------------- | ------------------------------------------- |
-| Version             | `cat package.json` → `"version": "26.4.3"`  |
-| Packages            | README.md: 20-package monorepo              |
+| Version             | `cat package.json` → `"version": "26.4.4"`  |
+| Packages            | 56 publishable packages (pnpm workspace)    |
 | Core Packages       | @unrdf/core, @unrdf/oxigraph, @unrdf/hooks  |
 | Test Pass Rate      | 100% (from README.md consolidation results) |
 | Testing Framework   | Vitest 4.0.16                               |
@@ -71,6 +71,9 @@ pnpm dev               # Start dev servers
 pnpm bench             # Run benchmarks
 pnpm bench:baseline    # Baseline comparison
 pnpm profile:cpu       # CPU profiling
+
+# Publishing (npm)
+pnpm publish -r --access public --no-git-checks  # Publish all 56 packages
 ```
 
 ---
@@ -111,6 +114,7 @@ See [README.md Production Packages section](README.md#production-packages) for c
    - Recoverable from git history if needed
 3. **Performance** — Not optimized for production scale (see LIMITATIONS section in README)
 4. **Security** — Security audit complete (Dec 2025); see SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md
+5. **@unrdf/kgc-probe** — Pre-existing test failures; excluded from `test:fast` and `lint` in root package.json. Do not try to fix unless explicitly asked.
 
 ---
 
@@ -167,6 +171,17 @@ See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed design.
 | **docs/LOCAL-DEVELOPMENT.md** | Dev environment setup                        |
 
 ---
+
+## Zod v4 Gotchas
+
+- **`.args()` / `.returns()` removed**: `z.function().args(...)` throws — use bare `z.function()` instead.
+- **`parse()` returns plain object**: Prototype methods are lost when `Schema.parse(instance)` is called on a class instance. Validate-only pattern: call `Schema.parse(obj)` for validation, keep the original reference for use.
+- **`eslint-env` comments ignored**: In flat-config ESLint, use `/* global window, document */` instead of `/* eslint-env browser */`.
+
+## Streaming / Transform Stream Gotchas
+
+- **Object-mode Transform stalls without consumer**: If no `'data'` listener or downstream pipe, a Transform in object mode won't emit `'end'` — its internal buffer fills with pushed objects. Fix: call `stream.resume()` before `stream.pipe()`.
+- **Hash tamper tests are 1/16 flaky**: `hash.slice(0, 63) + 'x'` is a no-op when the last char is already `'x'`. Always use: `const last = hash[63]; hash.slice(0, 63) + (last === 'x' ? 'y' : 'x')`.
 
 ## Hooks Package Gotchas
 
