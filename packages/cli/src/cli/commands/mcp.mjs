@@ -30,4 +30,7 @@ export const mcpCommand = defineCommand({
     inspect: inspectCommand,
     stop: stopCommand,
   },
+  run({ showHelp }) {
+    showHelp();
+  },
 });
