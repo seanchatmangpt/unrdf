@@ -11,56 +11,31 @@ export const operationRegistry = new Map();
 export const eventLog = [];
 
 /**
+ * Default operations loaded on initialization
+ * @type {Array<{id: string, name: string, category: string, priority: string}>}
+ */
+const DEFAULT_OPERATIONS = [
+  { id: 'test-op', name: 'Test Operation', category: 'testing', priority: 'low' },
+  { id: 'backup-graphs', name: 'Backup RDF Graphs', category: 'maintenance', priority: 'high' },
+  { id: 'cleanup-temp', name: 'Cleanup Temporary Files', category: 'maintenance', priority: 'medium' },
+  { id: 'sync-federation', name: 'Synchronize Federation Nodes', category: 'distribution', priority: 'high' },
+  { id: 'compact-storage', name: 'Compact Storage Engine', category: 'optimization', priority: 'low' },
+  { id: 'validate-integrity', name: 'Validate Data Integrity', category: 'validation', priority: 'high' },
+];
+
+/**
  * Initialize the operation registry
  */
 export function initializeRegistry() {
   if (operationRegistry.size === 0) {
-    operationRegistry.set('test-op', {
-      id: 'test-op',
-      name: 'Test Operation',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'testing', priority: 'low' },
-    });
-
-    operationRegistry.set('backup-graphs', {
-      id: 'backup-graphs',
-      name: 'Backup RDF Graphs',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'maintenance', priority: 'high' },
-    });
-
-    operationRegistry.set('cleanup-temp', {
-      id: 'cleanup-temp',
-      name: 'Cleanup Temporary Files',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'maintenance', priority: 'medium' },
-    });
-
-    operationRegistry.set('sync-federation', {
-      id: 'sync-federation',
-      name: 'Synchronize Federation Nodes',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'distribution', priority: 'high' },
-    });
-
-    operationRegistry.set('compact-storage', {
-      id: 'compact-storage',
-      name: 'Compact Storage Engine',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'optimization', priority: 'low' },
-    });
-
-    operationRegistry.set('validate-integrity', {
-      id: 'validate-integrity',
-      name: 'Validate Data Integrity',
-      status: 'scheduled',
-      createdAt: new Date(),
-      metadata: { category: 'validation', priority: 'high' },
+    DEFAULT_OPERATIONS.forEach(op => {
+      operationRegistry.set(op.id, {
+        id: op.id,
+        name: op.name,
+        status: 'scheduled',
+        createdAt: new Date(),
+        metadata: { category: op.category, priority: op.priority },
+      });
     });
   }
 }

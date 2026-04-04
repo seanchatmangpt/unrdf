@@ -10,16 +10,18 @@ import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs';
 import { table } from 'table';
 
+const FILE_LOCK_RETRY_MS = parseInt(process.env.UNRDF_FILE_LOCK_RETRY_MS || '10', 10);
+const FILE_LOCK_MAX_RETRIES = parseInt(process.env.UNRDF_FILE_LOCK_MAX_RETRIES || '50', 10);
+
 /**
  * Simple file lock using a lock file pattern for concurrent access protection
  */
 async function withFileLock(filePath, callback) {
   const lockPath = `${filePath}.lock`;
-  const maxRetries = 50;
   let retries = 0;
 
-  while (existsSync(lockPath) && retries < maxRetries) {
-    await new Promise(resolve => setTimeout(resolve, 10));
+  while (existsSync(lockPath) && retries < FILE_LOCK_MAX_RETRIES) {
+    await new Promise(resolve => setTimeout(resolve, FILE_LOCK_RETRY_MS));
     retries++;
   }
 
