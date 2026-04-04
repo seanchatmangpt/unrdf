@@ -187,7 +187,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 
 # Service Identity
 export OTEL_SERVICE_NAME=unrdf-daemon
-export OTEL_SERVICE_VERSION=26.4.3
+export OTEL_SERVICE_VERSION=26.4.4
 export OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production
 
 # Sampling (1-10%)

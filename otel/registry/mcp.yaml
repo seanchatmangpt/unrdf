@@ -1,0 +1,46 @@
+groups:
+  - id: registry.mcp
+    type: attribute_group
+    display_name: MCP (Model Context Protocol) Attributes
+    brief: >
+      Attributes for Model Context Protocol (MCP) server and tool instrumentation.
+    attributes:
+      - id: mcp.server.name
+        type: string
+        stability: experimental
+        brief: The name of the MCP server handling the request.
+        examples: ['unrdf-daemon']
+
+      - id: mcp.tool.name
+        type: string
+        stability: experimental
+        brief: The name of the MCP tool being invoked.
+        examples: ['context_add', 'hooks_execute', 'graph_query', 'sparql_query']
+
+      - id: mcp.tool.args
+        type: string
+        stability: experimental
+        brief: >
+          JSON-serialized arguments passed to the MCP tool. May be truncated
+          for large payloads.
+        examples: ['{"store":"default","quad":"..."}', '{"trigger":"before-add"}']
+
+      - id: mcp.tool.success
+        type: boolean
+        stability: experimental
+        brief: Whether the MCP tool invocation completed without error.
+
+      - id: mcp.tool.result_size
+        type: int
+        stability: experimental
+        brief: >
+          Size in bytes of the JSON-serialized result returned by the MCP tool.
+        examples: [128, 4096, 65536]
+
+      - id: mcp.tool.error_type
+        type: string
+        stability: experimental
+        brief: >
+          The class or type of error that caused the tool invocation to fail.
+          Follows the same conventions as `error.type`.
+        examples: ['ZodError', 'TypeError', 'SparqlError', 'ValidationError']

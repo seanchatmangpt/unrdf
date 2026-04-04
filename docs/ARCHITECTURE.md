@@ -1,4 +1,4 @@
-# Architecture: O* Innovations 4-6
+# Architecture: O\* Innovations 4-6
 
 ---
 
@@ -67,6 +67,7 @@ Output: { approved, receipt, approvingValidators }
 ### Determinism Guarantee
 
 Same input (proposalId + same approvals) produces same receipt hashes across multiple runs:
+
 - Canonical JSON serialization (sorted keys)
 - Deterministic BLAKE3 hashing
 - No random state
@@ -89,7 +90,7 @@ Input: Hook definition (JSON/YAML)
    │    • Store in Oxigraph RDF store
    │
    ├─→ N3 Forward-Chaining Dependency Resolution
-   │    • N3 rules: { ?h1 hook:dependsOn ?h2 } 
+   │    • N3 rules: { ?h1 hook:dependsOn ?h2 }
    │              => { ?h1 hook:allDeps ?h2 }
    │    • Transitive closure: A→B→C gives A allDeps [B,C]
    │    • Circular detection: Any node with self-path? Reject.
@@ -124,7 +125,7 @@ Admin can decide later if it's worth fixing based on audit trail.
 Input: deltas (RDF quads to add/remove), condition (optional)
    │
    ├─→ Phase 1: Before
-   │    • inputHash = getStoreStateHash(store) 
+   │    • inputHash = getStoreStateHash(store)
    │      [BLAKE3 of all canonical quads]
    │
    ├─→ Phase 2: Apply (tentatively)
@@ -155,6 +156,7 @@ Output: { admitted, receipt with 4 hashes + chain link }
 ### Determinism Guarantee
 
 Same delta applied to same store state produces identical hashes:
+
 - inputHash(S) + deltaHash(Δ) → outputHash(S+Δ)
 - Reproducible from receipt alone
 
@@ -223,12 +225,12 @@ Proof: Each decision links to the previous one
 
 ## Performance Characteristics
 
-| Component | Bottleneck | Optimization |
-|---|---|---|
-| Federation Quorum | Zod validation | In-memory, <1ms |
-| Marketplace | N3 forward-chaining | Floyd-Warshall O(n³) for deps |
-| Streaming | BLAKE3 hashing | Parallel hash computation |
+| Component         | Bottleneck          | Optimization                  |
+| ----------------- | ------------------- | ----------------------------- |
+| Federation Quorum | Zod validation      | In-memory, <1ms               |
+| Marketplace       | N3 forward-chaining | Floyd-Warshall O(n³) for deps |
+| Streaming         | BLAKE3 hashing      | Parallel hash computation     |
 
 ---
 
-**Version**: 26.4.3 | **Date**: April 3, 2026
+**Version**: 26.4.4 | **Date**: April 3, 2026

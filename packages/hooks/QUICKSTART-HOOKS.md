@@ -186,7 +186,17 @@ const pipeline = [
   defineHook({
     name: 'normalize',
     trigger: 'before-add',
-    transform: q => ({ ...q, object: { value: q.object.value.trim() } }),
+    transform: q => ({
+      subject: q.subject,
+      predicate: q.predicate,
+      object: {
+        termType: q.object.termType,
+        value: q.object.value.trim(),
+        datatype: q.object.datatype,
+        language: q.object.language,
+      },
+      graph: q.graph,
+    }),
   }),
   standardValidation,
 ];

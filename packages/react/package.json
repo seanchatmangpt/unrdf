@@ -43,8 +43,8 @@
   ],
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
     "lru-cache": "^11.1.0",
     "zod": "^4.1.13"
   },

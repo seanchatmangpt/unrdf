@@ -78,7 +78,7 @@
 **Status**: 🔧 Fixed in v26.4.4
 
 - **What**: Allow write with annotation - adds SHACL violation report as RDF triples
-- **Was Broken**: RDF serialization of violation report (v26.4.3 and earlier)
+- **Was Broken**: RDF serialization of violation report (v26.4.4 and earlier)
 - **What Was Fixed**:
   - Proper RDF triple generation from SHACL report
   - Correct namespace handling for SHACL vocabulary
@@ -137,7 +137,7 @@
 **Status**: 🔧 Fixed in v26.4.4
 
 - **What**: Evaluate change magnitude (increase/decrease/modify/any)
-- **Was Broken**: Decrease condition never triggered (v26.4.3 and earlier)
+- **Was Broken**: Decrease condition never triggered (v26.4.4 and earlier)
 - **What Was Fixed**:
   - Proper calculation of net change (additions - removals)
   - Correct threshold comparison for decrease (< -threshold)
@@ -227,7 +227,7 @@
 **Status**: 🔧 Improved in v26.4.4
 
 - **What**: Sliding window aggregation over time-series or result sets
-- **Previous Status**: Stub implementation (v26.4.3 and earlier)
+- **Previous Status**: Stub implementation (v26.4.4 and earlier)
 - **What Was Improved**:
   - Proper aggregate function support (sum/avg/min/max/count)
   - Window result parsing and validation
@@ -379,7 +379,7 @@
 **Status**: ✅ Fixed in v26.4.4
 
 - **What**: BLAKE3 deterministic receipt chaining for audit trails
-- **Was Broken**: Content hash not properly computed (v26.4.3)
+- **Was Broken**: Content hash not properly computed (v26.4.4)
 - **What Was Fixed**:
   - Correct Blake3 digest generation from receipt content
   - Proper linkage between receipts (previousReceiptHash)
@@ -529,7 +529,7 @@
 
 ## Migration Guide
 
-### For v26.4.3 → v26.4.4 Upgrades
+### For v26.4.4 → v26.4.4 Upgrades
 
 **Breaking Changes**: None
 
@@ -652,7 +652,7 @@ node -e "import('./packages/hooks/examples/validate-hooks.mjs').then(m => consol
 | Version | Date       | Changes                                                                             |
 | ------- | ---------- | ----------------------------------------------------------------------------------- |
 | 26.4.4  | 2026-04-04 | Fixed SHACL annotate, Delta decrease, BLAKE3 hashing. Improved Window condition.    |
-| 26.4.3  | 2026-04-02 | Removed knowledge-engine package (47% codebase, 0% usage).                          |
+| 26.4.4  | 2026-04-02 | Removed knowledge-engine package (47% codebase, 0% usage).                          |
 | 26.4.0  | 2026-03-15 | Added N3 forward-chaining support via eyereasoner.                                  |
 | 26.0.0  | 2026-01-01 | Initial production release: 9 condition kinds, SHACL enforcement, receipt chaining. |
 

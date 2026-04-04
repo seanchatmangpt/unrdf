@@ -27,8 +27,8 @@
     "task-execution"
   ],
   "dependencies": {
-    "@unrdf/yawl": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/yawl": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
     "bullmq": "^5.35.2",
     "ioredis": "^5.4.2",
     "zod": "^4.1.13"

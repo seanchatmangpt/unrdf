@@ -47,9 +47,9 @@
     "changepoint"
   ],
   "dependencies": {
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/semantic-search": "26.4.3",
-    "@unrdf/graph-analytics": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/semantic-search": "26.4.4",
+    "@unrdf/graph-analytics": "26.4.4",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^4.1.13"
   },

@@ -1,0 +1,86 @@
+groups:
+  - id: registry.unrdf.crypto
+    type: attribute_group
+    display_name: UNRDF Cryptographic Provenance Attributes
+    brief: >
+      Attributes for UNRDF cryptographic signing, verification, and
+      receipt chain instrumentation.
+    attributes:
+      - id: unrdf.crypto.operation
+        type:
+          members:
+            - id: sign
+              value: 'sign'
+              stability: experimental
+              brief: Signing a receipt or quad with a private key.
+            - id: verify
+              value: 'verify'
+              stability: experimental
+              brief: Verifying a signature on a receipt or quad.
+            - id: hash
+              value: 'hash'
+              stability: experimental
+              brief: Computing a cryptographic hash of RDF data.
+            - id: chain_verify
+              value: 'chain-verify'
+              stability: experimental
+              brief: Verifying the integrity of a receipt chain.
+        stability: experimental
+        brief: The cryptographic operation being performed.
+
+      - id: unrdf.crypto.algorithm
+        type:
+          members:
+            - id: sha256
+              value: 'sha256'
+              stability: experimental
+              brief: SHA-256 hash algorithm.
+            - id: sha512
+              value: 'sha512'
+              stability: experimental
+              brief: SHA-512 hash algorithm.
+            - id: ed25519
+              value: 'ed25519'
+              stability: experimental
+              brief: Ed25519 digital signature algorithm.
+            - id: ecdsa_p256
+              value: 'ecdsa-p256'
+              stability: experimental
+              brief: ECDSA with P-256 curve.
+        stability: experimental
+        brief: The cryptographic algorithm used for the operation.
+
+      - id: unrdf.crypto.receipt_id
+        type: string
+        stability: experimental
+        brief: >
+          The UUID identifier of the cryptographic receipt produced or verified.
+        examples: ['a3bb189e-8bf9-3888-9912-ace4e6543002']
+
+      - id: unrdf.crypto.chain_length
+        type: int
+        stability: experimental
+        brief: Number of receipts in the verified chain.
+        examples: [1, 5, 100]
+
+      - id: unrdf.crypto.verification_result
+        type:
+          members:
+            - id: valid
+              value: 'valid'
+              stability: experimental
+              brief: Signature or chain verified successfully.
+            - id: invalid_signature
+              value: 'invalid-signature'
+              stability: experimental
+              brief: Signature verification failed.
+            - id: chain_broken
+              value: 'chain-broken'
+              stability: experimental
+              brief: Receipt chain integrity check failed.
+            - id: missing_receipt
+              value: 'missing-receipt'
+              stability: experimental
+              brief: Expected receipt not found in chain.
+        stability: experimental
+        brief: The result of a cryptographic verification operation.

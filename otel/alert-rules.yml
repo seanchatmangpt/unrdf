@@ -78,29 +78,58 @@ groups:
   - name: slo_burn_rate
     interval: 15s
     rules:
-      # 99.9% SLO - 1h burn rate (alert on page if we burn 14.4x budget)
-      - alert: HighBurnRate99
+      # SLOBurnRate5xx — 5xx error rate burn rate alert
+      # 99.9% SLO: 0.1% error budget. Fast burn (1h window) at 14.4x = critical page.
+      - alert: SLOBurnRate5xx
         expr: |
           (
-            sum(rate(http_requests_total{code=~"5.."}[1h])) by (service)
+            sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[1h])) by (service)
             /
-            sum(rate(http_requests_total[1h])) by (service)
+            sum(rate(http_server_request_duration_seconds_count[1h])) by (service)
           ) > (14.4 * (1 - 0.999))
+          and
+          sum(rate(http_server_request_duration_seconds_count[1h])) by (service) > 0
         for: 2m
         labels:
           severity: critical
+          slo_target: '99.9'
         annotations:
-          summary: '99.9% SLO burn rate exceeded for {{ $labels.service }}'
-      # 99% SLO - 5m burn rate
-      - alert: HighBurnRate99Window
+          summary: '99.9% error SLO burn rate exceeded for {{ $labels.service }}'
+          description: '5xx error rate is burning the 30-day error budget at 14.4x. Immediate action required.'
+
+      # SLOBurnRate5xx — 99% SLO slow burn (5m window)
+      - alert: SLOBurnRate5xxSlow
         expr: |
           (
-            sum(rate(http_requests_total{code=~"5.."}[5m])) by (service)
+            sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[5m])) by (service)
             /
-            sum(rate(http_requests_total[5m])) by (service)
+            sum(rate(http_server_request_duration_seconds_count[5m])) by (service)
           ) > (6 * (1 - 0.99))
+          and
+          sum(rate(http_server_request_duration_seconds_count[5m])) by (service) > 0
         for: 1m
         labels:
           severity: warning
+          slo_target: '99'
         annotations:
-          summary: '99% SLO at risk for {{ $labels.service }}'
+          summary: '99% error SLO at risk for {{ $labels.service }}'
+          description: '5xx error rate is burning the 30-day error budget at 6x. Investigate within the hour.'
+
+      # SLOBurnRateLatency — P99 latency burn rate alert
+      # Alerts when P99 exceeds 500ms threshold, burning the latency SLO budget.
+      - alert: SLOBurnRateLatency
+        expr: |
+          (
+            histogram_quantile(0.99,
+              sum(rate(http_server_request_duration_seconds_bucket[1h])) by (le, service)
+            )
+          ) > 0.5
+          and
+          sum(rate(http_server_request_duration_seconds_count[1h])) by (service) > 0
+        for: 5m
+        labels:
+          severity: warning
+          slo_target: '99'
+        annotations:
+          summary: 'P99 latency SLO burn rate for {{ $labels.service }}'
+          description: 'P99 latency is {{ $value }}s (>500ms threshold). Latency error budget is burning at 6x.'

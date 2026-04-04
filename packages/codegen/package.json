@@ -33,6 +33,6 @@
     "vitest": "^4.0.16"
   },
   "peerDependencies": {
-    "@unrdf/core": "26.4.3"
+    "@unrdf/core": "26.4.4"
   }
 }

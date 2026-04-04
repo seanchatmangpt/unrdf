@@ -80,14 +80,10 @@ const aclPolicy = defineHook({
   name: 'acl-policy',
   trigger: 'before-add',
   validate: quad => {
-    const trustedNamespaces = [
-      'http://example.org/',
-      'http://xmlns.com/foaf/0.1/',
-    ];
+    const trustedNamespaces = ['http://example.org/', 'http://xmlns.com/foaf/0.1/'];
     // Check subject and predicate IRIs
-    return trustedNamespaces.some(ns =>
-      quad.subject.value.startsWith(ns) ||
-      quad.predicate.value.startsWith(ns)
+    return trustedNamespaces.some(
+      ns => quad.subject.value.startsWith(ns) || quad.predicate.value.startsWith(ns)
     );
   },
 });
@@ -162,8 +158,8 @@ registerHook(registry, privacyPolicy);
 registerHook(registry, provenancePolicy);
 
 // Execute all policies
-const results = executeHooksByTrigger(registry, store, 'before-add', quad);
-console.log(`Passed: ${results.passed.length}/${results.total}`);
+const result = await executeHooksByTrigger(registry, 'before-add', quad);
+console.log(`Valid: ${result.valid}, hooks run: ${result.results.length}`);
 ```
 
 ## Testing

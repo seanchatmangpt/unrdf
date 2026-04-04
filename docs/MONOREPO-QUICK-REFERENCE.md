@@ -5,7 +5,7 @@
 ## Quick Stats
 
 - **73+ packages** (monorepo with core, extended, and internal packages)
-- **Root version:** 26.4.3
+- **Root version:** 26.4.4
 - **Package manager:** pnpm 8.15.0+
 - **Node:** 18.19.0+
 - **Module type:** ESM with JSDoc (no TypeScript source)
@@ -244,7 +244,7 @@ const { data, loading } = useRdfQuery(`
 
 | Package               | Version | Status        |
 | --------------------- | ------- | ------------- |
-| Root                  | 26.4.3  | ✅ Production |
+| Root                  | 26.4.4  | ✅ Production |
 | @unrdf/core           | latest  | ✅ Production |
 | @unrdf/oxigraph       | latest  | ✅ Production |
 | @unrdf/hooks          | latest  | ✅ Production |

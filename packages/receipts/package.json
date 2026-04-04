@@ -30,10 +30,10 @@
   "dependencies": {
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
-    "@unrdf/core": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/kgc-multiverse": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/kgc-multiverse": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
     "dilithium-crystals": "^1.0.6",
     "hash-wasm": "^4.12.0",
     "zod": "^3.25.76"

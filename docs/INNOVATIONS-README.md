@@ -1,10 +1,10 @@
-# O* Innovations 4-6: Complete Implementation Guide
+# O\* Innovations 4-6: Complete Implementation Guide
 
-> **O* Claude Code Marketplace** — Three critical innovations for distributed knowledge graph governance
+> **O\* Claude Code Marketplace** — Three critical innovations for distributed knowledge graph governance
 >
 > **Status**: ✅ Complete — 98 tests passing, ~1,300 LoC, 88% avg coverage
 >
-> **Version**: 26.4.3 | **Date**: April 3, 2026
+> **Version**: 26.4.4 | **Date**: April 3, 2026
 
 ---
 
@@ -30,8 +30,8 @@ const decision = await quorum.decide('proposal-123', {
   approvals: { alice: true, bob: true, charlie: false },
 });
 
-console.log(decision.approved);      // true
-console.log(decision.receipt.receiptHash);  // Proof
+console.log(decision.approved); // true
+console.log(decision.receipt.receiptHash); // Proof
 ```
 
 **Use Case**: Distributed validator networks need cryptographic proof of decisions.
@@ -54,8 +54,8 @@ const hook = {
 };
 
 const { admitted, violations } = await marketplace.admit(hook);
-console.log(admitted);     // true (soft-fail)
-console.log(violations);   // SHACL audit trail as RDF
+console.log(admitted); // true (soft-fail)
+console.log(violations); // SHACL audit trail as RDF
 ```
 
 **Use Case**: Governance needs to admit plugins even with violations, but audit trail is critical.
@@ -71,14 +71,14 @@ import { StreamingAdmission } from '../src/lib/stream-admit.mjs';
 
 const stream = new StreamingAdmission(store);
 
-const { admitted, receipt } = await stream.admit(
-  [{ type: 'add', quad: aliceQuad }],
-  { kind: 'delta', checksum: 'blake3' }
-);
+const { admitted, receipt } = await stream.admit([{ type: 'add', quad: aliceQuad }], {
+  kind: 'delta',
+  checksum: 'blake3',
+});
 
-console.log(receipt.inputHash);   // BLAKE3 before
-console.log(receipt.outputHash);  // BLAKE3 after
-console.log(receipt.deltaHash);   // BLAKE3 of delta
+console.log(receipt.inputHash); // BLAKE3 before
+console.log(receipt.outputHash); // BLAKE3 after
+console.log(receipt.deltaHash); // BLAKE3 of delta
 ```
 
 **Use Case**: Streaming data pipelines need cryptographic proof of update lineage.
@@ -87,12 +87,12 @@ console.log(receipt.deltaHash);   // BLAKE3 of delta
 
 ## Test Summary
 
-| Innovation | Tests | Pass | Coverage | Time |
-|---|---|---|---|---|
-| 4: Federation | 32 | 32/32 ✅ | 100% | ~2.5s |
-| 5: Marketplace | 46 | 46/46 ✅ | 91% | ~0.5s |
-| 6: Streaming | 20 | 20/20 ✅ | 84% | ~1.2s |
-| **TOTAL** | **98** | **98/98 ✅** | **~88%** | **~4.2s** |
+| Innovation     | Tests  | Pass         | Coverage | Time      |
+| -------------- | ------ | ------------ | -------- | --------- |
+| 4: Federation  | 32     | 32/32 ✅     | 100%     | ~2.5s     |
+| 5: Marketplace | 46     | 46/46 ✅     | 91%      | ~0.5s     |
+| 6: Streaming   | 20     | 20/20 ✅     | 84%      | ~1.2s     |
+| **TOTAL**      | **98** | **98/98 ✅** | **~88%** | **~4.2s** |
 
 ---
 
@@ -121,7 +121,7 @@ examples/
 
 **3-Layer Stack**:
 
-1. **O* Innovations (New)**
+1. **O\* Innovations (New)**
    - Federation Quorum voting
    - Hooks Marketplace composition
    - Streaming Admission receipts
@@ -149,4 +149,4 @@ examples/
 
 ---
 
-**Status**: ✅ Complete | **Version**: 26.4.3 | **Date**: April 3, 2026
+**Status**: ✅ Complete | **Version**: 26.4.4 | **Date**: April 3, 2026

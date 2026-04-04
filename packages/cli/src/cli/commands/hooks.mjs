@@ -9,13 +9,9 @@
 
 import { defineCommand } from 'citty';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
 import { table } from 'table';
-import {
-  executeHook,
-  evaluateCondition,
-  validateKnowledgeHook,
-  KnowledgeHookSchema,
-} from '@unrdf/hooks';
+import { evaluateCondition, KnowledgeHookSchema } from '@unrdf/hooks';
 import { createStore } from '@unrdf/core';
 import { Parser } from '@unrdf/core/rdf/n3-justified-only';
 
@@ -43,14 +39,14 @@ const executeCommand = defineCommand({
       description: 'Output file for results (JSON)',
       required: false,
     },
-    'show-receipts': {
+    'show-effects': {
       type: 'boolean',
-      description: 'Show receipt chain with hashes',
+      description: 'Show effect execution details per hook',
       default: false,
     },
   },
   async run({ args }) {
-    const { store: storeFile, config: configFile, output, 'show-receipts': showReceipts } = args;
+    const { store: storeFile, config: configFile, output, 'show-effects': showEffects } = args;
 
     // Validate inputs
     if (!existsSync(storeFile)) {
@@ -100,42 +96,62 @@ const executeCommand = defineCommand({
 
       console.log(`✅ Loaded ${hooksConfig.length} hooks`);
 
-      // Execute hooks
+      // Execute hooks: evaluate conditions and apply effects
       console.log('⚙️  Executing hooks...');
       const results = [];
-      const receipts = [];
 
       for (let i = 0; i < hooksConfig.length; i++) {
         const hookDef = hooksConfig[i];
 
         try {
-          // Validate hook definition
-          const validated = validateKnowledgeHook(hookDef);
+          // Parse and validate hook definition
+          const hook = KnowledgeHookSchema.parse(hookDef);
 
-          // Execute hook
-          const result = await executeHook(validated, rdfStore);
+          if (hook.enabled === false) {
+            results.push({
+              id: hook.id,
+              name: hook.meta?.name || 'Unnamed',
+              success: true,
+              satisfied: false,
+              skipped: true,
+              conditionKind: hook.condition?.kind,
+              timestamp: new Date().toISOString(),
+            });
+            continue;
+          }
+
+          // Evaluate condition against the store
+          const conditionResult = await evaluateCondition(hook.condition, rdfStore);
+          const satisfied =
+            conditionResult === true ||
+            (Array.isArray(conditionResult) && conditionResult.length > 0);
+
+          let effectResult = null;
+
+          // Execute effect if condition is satisfied
+          if (satisfied && hook.effect?.kind === 'sparql-construct') {
+            const quads = rdfStore.query(hook.effect.query);
+            let quadsAdded = 0;
+            for (const quad of quads) {
+              rdfStore.add(quad);
+              quadsAdded++;
+            }
+            effectResult = { kind: 'sparql-construct', quadsAdded };
+          }
 
           results.push({
-            id: hookDef.id || `hook-${i}`,
-            name: hookDef.name || 'Unnamed',
+            id: hook.id,
+            name: hook.meta?.name || 'Unnamed',
             success: true,
-            result: result,
+            satisfied,
+            conditionKind: hook.condition?.kind,
+            effectResult,
             timestamp: new Date().toISOString(),
           });
-
-          // Track receipt if available
-          if (result.receipt) {
-            receipts.push({
-              hookId: hookDef.id || `hook-${i}`,
-              receiptHash: result.receipt.receiptHash,
-              previousHash: result.receipt.previousReceiptHash,
-              timestamp: result.receipt.timestamp_iso,
-            });
-          }
         } catch (error) {
           results.push({
             id: hookDef.id || `hook-${i}`,
-            name: hookDef.name || 'Unnamed',
+            name: hookDef.meta?.name || hookDef.name || 'Unnamed',
             success: false,
             error: error.message,
             timestamp: new Date().toISOString(),
@@ -144,38 +160,32 @@ const executeCommand = defineCommand({
       }
 
       // Display summary
-      const successful = results.filter(r => r.success).length;
+      const satisfied = results.filter(r => r.success && r.satisfied).length;
+      const notSatisfied = results.filter(r => r.success && !r.satisfied && !r.skipped).length;
+      const skipped = results.filter(r => r.skipped).length;
       const failed = results.filter(r => !r.success).length;
+      const quadsAdded = results
+        .filter(r => r.effectResult)
+        .reduce((sum, r) => sum + (r.effectResult?.quadsAdded || 0), 0);
 
-      console.log('\n📊 Execution Summary');
+      console.log('\n📊 Hook Execution Summary');
       console.log('═'.repeat(50));
       console.log(`Total Hooks:    ${results.length}`);
-      console.log(`Successful:     ${successful}`);
-      console.log(`Failed:         ${failed}`);
-      console.log(`Success Rate:   ${Math.round((successful / results.length) * 100)}%`);
+      console.log(`Satisfied:      ${satisfied}`);
+      console.log(`Not Satisfied:  ${notSatisfied}`);
+      if (skipped > 0) console.log(`Skipped:        ${skipped}`);
+      console.log(`Errors:         ${failed}`);
+      if (quadsAdded > 0) console.log(`Quads Added:    ${quadsAdded}`);
       console.log('═'.repeat(50));
 
-      // Display receipt chain if requested
-      if (showReceipts && receipts.length > 0) {
-        console.log('\n🔐 Receipt Chain');
-        console.log('═'.repeat(50));
-        const receiptData = receipts.map((r, idx) => [
-          idx + 1,
-          r.hookId,
-          r.receiptHash.substring(0, 16) + '...',
-          r.previousHash ? r.previousHash.substring(0, 16) + '...' : '(genesis)',
-        ]);
-
-        const tableData = [['#', 'Hook ID', 'Receipt Hash', 'Previous Hash'], ...receiptData];
-
-        console.log(
-          table(tableData, {
-            header: {
-              alignment: 'center',
-              content: `Receipt Chain (${receipts.length})`,
-            },
-          })
-        );
+      if (showEffects) {
+        const withEffects = results.filter(r => r.effectResult);
+        if (withEffects.length > 0) {
+          console.log('\n🔧 Effect Details');
+          withEffects.forEach(r => {
+            console.log(`  ${r.name}: ${r.effectResult.kind} → +${r.effectResult.quadsAdded} quads`);
+          });
+        }
       }
 
       // Save to file if requested
@@ -187,9 +197,9 @@ const executeCommand = defineCommand({
             configFile,
             quadsLoaded: quadCount,
             hooksExecuted: results.length,
+            quadsAdded,
           },
           results,
-          receipts: showReceipts ? receipts : [],
         };
 
         writeFileSync(output, JSON.stringify(outputData, null, 2), 'utf-8');
@@ -708,7 +718,8 @@ const templateCommand = defineCommand({
 function generateFIBOTemplate() {
   return [
     {
-      name: 'verify-regulatory-compliance',
+      id: randomUUID(),
+      meta: { name: 'verify-regulatory-compliance', version: '1.0.0', description: 'Verify regulatory compliance status for FIBO trades', tags: ['fibo', 'compliance'] },
       condition: {
         kind: 'sparql-ask',
         query: `
@@ -719,10 +730,9 @@ function generateFIBOTemplate() {
           }
         `,
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
             CONSTRUCT {
               ?trade fibo:verifiedAt ?now ;
@@ -733,26 +743,22 @@ function generateFIBOTemplate() {
               BIND (NOW() as ?now)
             }
           `,
-        },
-      ],
-      metadata: {
-        domain: 'fibo',
-        jobToBeDone: 'Verify Regulatory Compliance',
-        priority: 'high',
       },
+      priority: 80,
+      enabled: true,
     },
     {
-      name: 'assess-counterparty-risk',
+      id: randomUUID(),
+      meta: { name: 'assess-counterparty-risk', version: '1.0.0', description: 'Flag high-risk counterparties for manual approval', tags: ['fibo', 'risk'] },
       condition: {
         kind: 'datalog',
         facts: [],
         rules: ['high_risk(X) :- exposure(X, E), E > 1000000'],
         goal: 'high_risk(counterparty)',
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
             CONSTRUCT {
               ?party fibo:riskLevel fibo:HighRisk ;
@@ -762,16 +768,13 @@ function generateFIBOTemplate() {
               ?party a fibo:Counterparty .
             }
           `,
-        },
-      ],
-      metadata: {
-        domain: 'fibo',
-        jobToBeDone: 'Assess Counterparty Risk',
-        priority: 'high',
       },
+      priority: 80,
+      enabled: true,
     },
     {
-      name: 'maintain-audit-trail',
+      id: randomUUID(),
+      meta: { name: 'maintain-audit-trail', version: '1.0.0', description: 'Mark completed transactions as audited', tags: ['fibo', 'audit'] },
       condition: {
         kind: 'sparql-select',
         query: `
@@ -782,10 +785,9 @@ function generateFIBOTemplate() {
           }
         `,
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX fibo: <https://spec.edmcouncil.org/fibo/ontology/>
             CONSTRUCT {
               ?transaction fibo:auditedAt ?now ;
@@ -796,13 +798,9 @@ function generateFIBOTemplate() {
               BIND (NOW() as ?now)
             }
           `,
-        },
-      ],
-      metadata: {
-        domain: 'fibo',
-        jobToBeDone: 'Maintain Audit Trail',
-        priority: 'critical',
       },
+      priority: 90,
+      enabled: true,
     },
   ];
 }
@@ -813,17 +811,17 @@ function generateFIBOTemplate() {
 function generateSecurityTemplate() {
   return [
     {
-      name: 'validate-access-control',
+      id: randomUUID(),
+      meta: { name: 'validate-access-control', version: '1.0.0', description: 'Grant access to authorized users', tags: ['security', 'access-control'] },
       condition: {
         kind: 'datalog',
         facts: ['admin(alice)', 'user(bob)', 'role(admin)', 'role(user)'],
         rules: ['allowed(X) :- admin(X)', 'allowed(X) :- user(X)'],
         goal: 'allowed(alice)',
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX sec: <http://example.org/security/>
             CONSTRUCT {
               ?user sec:accessGranted true ;
@@ -834,12 +832,9 @@ function generateSecurityTemplate() {
               BIND (NOW() as ?now)
             }
           `,
-        },
-      ],
-      metadata: {
-        domain: 'security',
-        priority: 'critical',
       },
+      priority: 90,
+      enabled: true,
     },
   ];
 }
@@ -850,17 +845,17 @@ function generateSecurityTemplate() {
 function generateComplianceTemplate() {
   return [
     {
-      name: 'check-data-quality',
+      id: randomUUID(),
+      meta: { name: 'check-data-quality', version: '1.0.0', description: 'Annotate records with data quality scores', tags: ['compliance', 'data-quality'] },
       condition: {
         kind: 'threshold',
         query: 'SELECT (COUNT(?record) as ?count) WHERE { ?record a :Record }',
         operator: 'greaterThan',
         value: 0,
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX dq: <http://example.org/data-quality/>
             CONSTRUCT {
               ?record dq:qualityScore ?score ;
@@ -872,12 +867,9 @@ function generateComplianceTemplate() {
               BIND (NOW() as ?now)
             }
           `,
-        },
-      ],
-      metadata: {
-        domain: 'compliance',
-        priority: 'high',
       },
+      priority: 70,
+      enabled: true,
     },
   ];
 }
@@ -888,15 +880,15 @@ function generateComplianceTemplate() {
 function generateGenericTemplate() {
   return [
     {
-      name: 'example-sparql-ask',
+      id: randomUUID(),
+      meta: { name: 'example-sparql-ask', version: '1.0.0', description: 'Basic template demonstrating SPARQL ASK condition with CONSTRUCT effect' },
       condition: {
         kind: 'sparql-ask',
         query: 'ASK { ?s ?p ?o }',
       },
-      effects: [
-        {
-          kind: 'sparql-construct',
-          query: `
+      effect: {
+        kind: 'sparql-construct',
+        query: `
             PREFIX ex: <http://example.org/>
             CONSTRUCT {
               ?s ex:processed true .
@@ -905,11 +897,9 @@ function generateGenericTemplate() {
               ?s ?p ?o .
             }
           `,
-        },
-      ],
-      metadata: {
-        description: 'Basic template demonstrating SPARQL ASK condition',
       },
+      priority: 50,
+      enabled: true,
     },
   ];
 }

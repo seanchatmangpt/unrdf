@@ -22,12 +22,12 @@
     "example": "node examples/template-integration.mjs"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/kgc-substrate": "26.4.3",
-    "@unrdf/kgn": "26.4.3",
-    "@unrdf/knowledge-engine": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/kgc-substrate": "26.4.4",
+    "@unrdf/kgn": "26.4.4",
+    "@unrdf/knowledge-engine": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
     "hash-wasm": "^4.11.0",
     "zod": "^4.1.13"
   },

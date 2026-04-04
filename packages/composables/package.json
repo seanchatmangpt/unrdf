@@ -38,8 +38,8 @@
     "web"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/streaming": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/streaming": "26.4.4",
     "vue": "^3.5.25"
   },
   "peerDependencies": {

@@ -1,0 +1,4 @@
+# OTel Weaver configuration for UNRDF semantic conventions
+# See: https://github.com/open-telemetry/weaver
+schema_base_url: https://opentelemetry.io/schemas/
+semconv_version: 1.28.0

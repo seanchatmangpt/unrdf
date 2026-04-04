@@ -25,7 +25,7 @@ npm install @unrdf/hooks@26.4.5
 
 **Status:** AUTOMATIC - No code changes needed
 
-**Before (v26.4.0-v26.4.3):**
+**Before (v26.4.0-v26.4.4):**
 
 ```javascript
 // Receipts used weak hashing
@@ -47,7 +47,7 @@ const receipt = await engine.execute(hooks, store);
 **Migration:**
 
 - No code changes required
-- Old receipts from v26.4.0-v26.4.3 should be marked as legacy
+- Old receipts from v26.4.0-v26.4.4 should be marked as legacy
 - New receipts will automatically use BLAKE3
 - See [SECURITY-DISCLOSURE.md](SECURITY-DISCLOSURE.md) for detailed security migration
 
@@ -57,7 +57,7 @@ const receipt = await engine.execute(hooks, store);
 
 **Status:** Major feature fix
 
-**Before (v26.4.3 and earlier):**
+**Before (v26.4.4 and earlier):**
 
 ```javascript
 // Repair mode was a stub—it didn't actually repair
@@ -133,7 +133,7 @@ const result2 = await engine.execute([repairHook], store);
 
 **Status:** Major feature fix
 
-**Before (v26.4.3 and earlier):**
+**Before (v26.4.4 and earlier):**
 
 ```javascript
 // Annotate mode generated invalid RDF
@@ -212,7 +212,7 @@ for (const violation of violations) {
 
 **Status:** Major feature fix
 
-**Before (v26.4.3 and earlier):**
+**Before (v26.4.4 and earlier):**
 
 ```javascript
 // Decrease detection never worked
@@ -309,7 +309,7 @@ console.assert(result.successful === true, 'Decrease should be detected');
 
 **Status:** Major feature implementation
 
-**Before (v26.4.3 and earlier):**
+**Before (v26.4.4 and earlier):**
 
 ```javascript
 // Window condition was a stub—only basic structure
@@ -425,7 +425,7 @@ defineHook({
 
 **Status:** Major feature restoration
 
-**Before (v26.4.3 and earlier):**
+**Before (v26.4.4 and earlier):**
 
 ```javascript
 // knowledge-engine was removed, N3 reasoning unavailable
@@ -763,8 +763,8 @@ If you need to downgrade:
 # Go back to v26.4.4 (still recommended to upgrade)
 npm install @unrdf/hooks@26.4.4
 
-# Go back to v26.4.3 (re-introduces security issue)
-npm install @unrdf/hooks@26.4.3  # ⚠️ SECURITY ISSUE
+# Go back to v26.4.4 (re-introduces security issue)
+npm install @unrdf/hooks@26.4.4  # ⚠️ SECURITY ISSUE
 ```
 
 **Note:** Downgrading reintroduces the weak hashing vulnerability. Only downgrade if absolutely necessary and for temporary troubleshooting.
@@ -778,7 +778,7 @@ Complete this checklist before deploying to production:
 - [ ] Upgraded to @unrdf/hooks@26.4.5
 - [ ] Verified @noble/hashes@2.0.1+ is installed
 - [ ] Ran full test suite successfully
-- [ ] Old receipts from v26.4.0-v26.4.3 archived or deleted
+- [ ] Old receipts from v26.4.0-v26.4.4 archived or deleted
 - [ ] New receipts verified to use BLAKE3
 - [ ] All SHACL repair hooks tested (now they actually work)
 - [ ] All SHACL annotate hooks tested (now they generate valid RDF)
@@ -800,7 +800,7 @@ Complete this checklist before deploying to production:
 | ------- | ---------- | ---------- | ----------------------------------------- |
 | 26.4.5  | 2026-04-04 | CURRENT    | Security fix (BLAKE3) + 5 major features  |
 | 26.4.4  | 2026-04-03 | Previous   | Vision 2030 Phase 1 work                  |
-| 26.4.3  | 2026-03-15 | Deprecated | Had weak hashing vulnerability            |
+| 26.4.4  | 2026-03-15 | Deprecated | Had weak hashing vulnerability            |
 | 26.4.2  | 2026-03-01 | Deprecated | Earlier maturity work                     |
 | 26.4.0  | 2026-01-15 | Deprecated | Initial v26.4 release (had vulnerability) |
 

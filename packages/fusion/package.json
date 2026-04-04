@@ -23,12 +23,12 @@
   "author": "UNRDF Team",
   "license": "MIT",
   "dependencies": {
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/blockchain": "26.4.3",
-    "@unrdf/hooks": "26.4.3",
-    "@unrdf/caching": "26.4.3",
-    "@unrdf/yawl": "26.4.3",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/blockchain": "26.4.4",
+    "@unrdf/hooks": "26.4.4",
+    "@unrdf/caching": "26.4.4",
+    "@unrdf/yawl": "26.4.4",
     "graphql": "^16.8.1",
     "zod": "^4.2.1"
   },

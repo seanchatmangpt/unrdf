@@ -24,6 +24,16 @@ scrape_configs:
         target_label: stream
     pipeline_stages:
       - docker: {}
+      # Parse JSON log lines to extract trace_id, level, msg
+      - json:
+          expressions:
+            trace_id: traceID
+            level: level
+            msg: msg
+      # Promote extracted fields as labels
+      - labels:
+          trace_id:
+          level:
       - labeldrop:
           - __meta_docker_container_log_stream
           - __meta_docker_container_id
@@ -38,3 +48,13 @@ scrape_configs:
         labels:
           job: otel-collector
           __path__: /var/log/otel-collector/*.log
+    pipeline_stages:
+      # Parse JSON log lines for trace ID and level
+      - json:
+          expressions:
+            trace_id: traceID
+            level: level
+            msg: msg
+      - labels:
+          trace_id:
+          level:

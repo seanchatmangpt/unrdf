@@ -188,7 +188,7 @@ async start() {
     // Initialize OTEL SDK first
     await initializeOTelSDK({
       serviceName: 'unrdf-daemon',
-      version: '26.4.3',
+      version: '26.4.4',
       environment: process.env.NODE_ENV || 'development',
       otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
     });

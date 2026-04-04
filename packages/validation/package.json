@@ -42,6 +42,6 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@unrdf/knowledge-engine": "26.4.3"
+    "@unrdf/knowledge-engine": "26.4.4"
   }
 }

@@ -30,13 +30,13 @@
     "reasoning"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/knowledge-engine": "26.4.3",
-    "@unrdf/semantic-search": "26.4.3",
-    "@unrdf/ml-inference": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/v6-core": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/knowledge-engine": "26.4.4",
+    "@unrdf/semantic-search": "26.4.4",
+    "@unrdf/ml-inference": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/v6-core": "26.4.4",
     "@opentelemetry/api": "^1.9.0",
     "zod": "^3.25.76"
   },

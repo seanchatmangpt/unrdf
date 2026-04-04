@@ -99,7 +99,7 @@ for (const binding of results) {
 
 | Resource                                                            | Purpose                                   |
 | ------------------------------------------------------------------- | ----------------------------------------- |
-| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all 20 packages         |
+| **[MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md)** | Quick overview of all packages            |
 | **[LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)**               | Setup dev environment, run tests & builds |
 | **[WORKSPACE-STRUCTURE.md](docs/WORKSPACE-STRUCTURE.md)**           | File layout and naming conventions        |
 | **[PACKAGE-DEVELOPMENT.md](docs/PACKAGE-DEVELOPMENT.md)**           | Create and modify packages                |
@@ -275,7 +275,7 @@ registerHook(myHook);
 - Convert between formats
 - Execute SPARQL queries
 
-### 9. **Autonomous Agents & LLM Integration** *(NEW in v26.4.3)*
+### 9. **Autonomous Agents & LLM Integration**
 
 - **Groq LLM Provider** - Real-time inference with `openai/gpt-oss-20b` and advanced reasoning models
 - **Autonomous Agent Framework** - Build multi-step agents with RDF reasoning and tool use
@@ -301,7 +301,7 @@ See [packages/daemon/GROQ-INTEGRATION.md](packages/daemon/GROQ-INTEGRATION.md) a
 
 **Security Audit**: All microframeworks have been security-hardened against OWASP Top 10 vulnerabilities (Dec 2025). See [SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md](SECURITY-REPORT-ADVERSARIAL-FRAMEWORKS.md) for details.
 
-**v26.4.3 Security Enhancements** (Jan 2026): Enterprise-grade authentication system with BLAKE3 cryptographic hashing, comprehensive security validation across all daemon operations, and zero CRITICAL/HIGH security vulnerabilities. See [packages/daemon/AUTHENTICATION.md](packages/daemon/AUTHENTICATION.md) and [packages/daemon/SECURITY_INTEGRATION_SUMMARY.md](packages/daemon/SECURITY_INTEGRATION_SUMMARY.md) for details.
+**v26.4.4 Security Enhancements** (Jan 2026): Enterprise-grade authentication system with BLAKE3 cryptographic hashing, comprehensive security validation across all daemon operations, and zero CRITICAL/HIGH security vulnerabilities. See [packages/daemon/AUTHENTICATION.md](packages/daemon/AUTHENTICATION.md) and [packages/daemon/SECURITY_INTEGRATION_SUMMARY.md](packages/daemon/SECURITY_INTEGRATION_SUMMARY.md) for details.
 
 ---
 
@@ -387,7 +387,7 @@ Combine data from multiple sources:
 const results = await core.federatedQuery([store1, store2, remoteGraphEndpoint], sparqlQuery);
 ```
 
-### 🤖 Autonomous Agents with LLM Reasoning *(NEW in v26.4.3)*
+### 🤖 Autonomous Agents with LLM Reasoning
 
 Build autonomous agents that reason about RDF graphs using Groq LLM:
 
@@ -425,7 +425,7 @@ Perfect for knowledge graph curation, data quality improvement, and automated en
 
 ## Production Packages
 
-UNRDF is organized as a **20-package monorepo** with clear separation of concerns:
+UNRDF is organized as a **56-package monorepo** with clear separation of concerns:
 
 ### Essential Packages (Start Here)
 

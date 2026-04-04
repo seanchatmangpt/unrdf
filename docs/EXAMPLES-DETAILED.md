@@ -1,4 +1,4 @@
-# Detailed Examples: O* Innovations 4-6
+# Detailed Examples: O\* Innovations 4-6
 
 ---
 
@@ -18,7 +18,7 @@ const quorum = new FederationQuorum({
     { id: 'avalanche-validator', weight: 1 },
     { id: 'polygon-validator', weight: 1 },
   ],
-  requiredVotes: 3,  // Need 3 of 5 to approve
+  requiredVotes: 3, // Need 3 of 5 to approve
 });
 
 // Governance decision: Upgrade core protocol
@@ -34,8 +34,8 @@ const approvals = {
 
 const decision = await quorum.decide(proposal, approvals);
 
-console.log('Decision:', decision.approved);  // true (3 votes)
-console.log('Approvers:', decision.approvingValidators);  
+console.log('Decision:', decision.approved); // true (3 votes)
+console.log('Approvers:', decision.approvingValidators);
 // ['ethereum-validator', 'solana-validator', 'cosmos-validator']
 console.log('Receipt Hash:', decision.receipt.receiptHash);
 // Proof that this decision is legitimate
@@ -47,11 +47,11 @@ console.log('Receipt Hash:', decision.receipt.receiptHash);
 // Some validators have more power (e.g., larger stake)
 const quorum = new FederationQuorum({
   validators: [
-    { id: 'large-validator', weight: 5 },    // 50% voting power
+    { id: 'large-validator', weight: 5 }, // 50% voting power
     { id: 'medium-validator-1', weight: 3 }, // 30%
     { id: 'medium-validator-2', weight: 2 }, // 20%
   ],
-  requiredWeight: 6,  // Need 6+ weight (51%)
+  requiredWeight: 6, // Need 6+ weight (51%)
 });
 
 const decision = await quorum.decide('proposal-456', {
@@ -60,8 +60,8 @@ const decision = await quorum.decide('proposal-456', {
   'medium-validator-2': true,
 });
 
-console.log(decision.approved);  // true (5 + 2 = 7 weight)
-console.log(decision.approvingWeight);  // 7
+console.log(decision.approved); // true (5 + 2 = 7 weight)
+console.log(decision.approvingWeight); // 7
 ```
 
 ### Example 3: Receipt Chaining
@@ -129,9 +129,9 @@ const paymentHook = {
 
 const result = await marketplace.admit(paymentHook);
 
-console.log('Admitted:', result.admitted);  // true
-console.log('Hook IRI:', result.hookIRI);   // http://example.org/hook/...
-console.log('Violations:', result.violations);  // [] if valid
+console.log('Admitted:', result.admitted); // true
+console.log('Hook IRI:', result.hookIRI); // http://example.org/hook/...
+console.log('Violations:', result.violations); // [] if valid
 ```
 
 ### Example 2: Dependency Resolution
@@ -169,8 +169,8 @@ const incompleteHook = {
 const result = await marketplace.admit(incompleteHook);
 
 // With soft-fail (annotate mode):
-console.log('Admitted:', result.admitted);  // true!
-console.log('Violations:', result.violations.length);  // > 0
+console.log('Admitted:', result.admitted); // true!
+console.log('Violations:', result.violations.length); // > 0
 
 // Violations are RDF triples (SHACL report)
 // Example triple:
@@ -283,10 +283,10 @@ const deltas = [
 
 const { admitted, receipt } = await stream.admit(deltas);
 
-console.log('Deltas Admitted:', admitted);  // true
-console.log('Input Hash:', receipt.inputHash);    // Store before
-console.log('Output Hash:', receipt.outputHash);  // Store after
-console.log('Delta Hash:', receipt.deltaHash);    // Proof of delta
+console.log('Deltas Admitted:', admitted); // true
+console.log('Input Hash:', receipt.inputHash); // Store before
+console.log('Output Hash:', receipt.outputHash); // Store after
+console.log('Delta Hash:', receipt.deltaHash); // Proof of delta
 ```
 
 ### Example 2: Determinism Verification
@@ -301,17 +301,11 @@ const result2 = await stream.admit([delta]);
 // Determinism guarantee: identical hashes
 console.log('Run 1 - Input Hash:', result1.receipt.inputHash);
 console.log('Run 2 - Input Hash:', result2.receipt.inputHash);
-console.assert(
-  result1.receipt.inputHash === result2.receipt.inputHash,
-  'Input hashes must match!'
-);
+console.assert(result1.receipt.inputHash === result2.receipt.inputHash, 'Input hashes must match!');
 
 console.log('Run 1 - Delta Hash:', result1.receipt.deltaHash);
 console.log('Run 2 - Delta Hash:', result2.receipt.deltaHash);
-console.assert(
-  result1.receipt.deltaHash === result2.receipt.deltaHash,
-  'Delta hashes must match!'
-);
+console.assert(result1.receipt.deltaHash === result2.receipt.deltaHash, 'Delta hashes must match!');
 
 // Even output hash is deterministic (same store state)
 console.assert(
@@ -366,16 +360,13 @@ for (let i = chain.length - 1; i >= 0; i--) {
 const stream = new StreamingAdmission(store);
 
 // Admit delta, verifying output hash matches expected
-const expectedOutputHash = 'abc123...';  // Pre-computed
+const expectedOutputHash = 'abc123...'; // Pre-computed
 
-const { admitted, receipt } = await stream.admit(
-  [delta1, delta2],
-  {
-    kind: 'delta',
-    hash: expectedOutputHash,
-    checksum: 'blake3',
-  }
-);
+const { admitted, receipt } = await stream.admit([delta1, delta2], {
+  kind: 'delta',
+  hash: expectedOutputHash,
+  checksum: 'blake3',
+});
 
 if (!admitted) {
   console.log('Delta rejected! Reason:', receipt.reason);
@@ -395,7 +386,7 @@ let currentReceiptHash = null;
 // Simulate streaming data pipeline
 async function processUpdate(delta) {
   const { admitted, receipt } = await stream.admit([delta]);
-  
+
   if (admitted) {
     currentReceiptHash = receipt.receiptHash;
     console.log(`Update admitted. Receipt: ${currentReceiptHash}`);
@@ -403,7 +394,7 @@ async function processUpdate(delta) {
     console.log(`Update REJECTED: ${receipt.reason}`);
     // Previous state is unchanged (automatic rollback)
   }
-  
+
   return receipt;
 }
 
@@ -456,4 +447,4 @@ console.log('Stream Receipt Chain:', stream.getReceiptChain(...));
 
 ---
 
-**Version**: 26.4.3 | **Date**: April 3, 2026
+**Version**: 26.4.4 | **Date**: April 3, 2026

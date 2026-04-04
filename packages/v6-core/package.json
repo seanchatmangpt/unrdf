@@ -1,7 +1,7 @@
 {
   "name": "@unrdf/v6-core",
   "version": "26.4.4",
-  "description": "UNRDF v6 Core - \u0394Gate control plane, unified receipts, and delta contracts",
+  "description": "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts",
   "type": "module",
   "main": "./src/index.mjs",
   "bin": {
@@ -51,13 +51,13 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@unrdf/kgc-substrate": "26.4.3",
-    "@unrdf/yawl": "26.4.3",
-    "@unrdf/kgc-cli": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/hooks": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/blockchain": "26.4.3",
+    "@unrdf/kgc-substrate": "26.4.4",
+    "@unrdf/yawl": "26.4.4",
+    "@unrdf/kgc-cli": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/hooks": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/blockchain": "26.4.4",
     "citty": "^0.1.5",
     "zod": "^3.22.4",
     "hash-wasm": "^4.11.0",
@@ -69,7 +69,7 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "@unrdf/core": "26.4.3"
+    "@unrdf/core": "26.4.4"
   },
   "repository": {
     "type": "git",

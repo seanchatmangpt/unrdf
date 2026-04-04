@@ -1,0 +1,76 @@
+groups:
+  - id: registry.unrdf.policy
+    type: attribute_group
+    display_name: UNRDF Policy Attributes
+    brief: >
+      Attributes for UNRDF policy pack loading, registration, and enforcement.
+    attributes:
+      - id: unrdf.policy.id
+        type: string
+        stability: experimental
+        brief: The unique identifier of the policy pack being applied.
+        examples: ['acl-policy', 'data-type-policy', 'provenance-policy']
+
+      - id: unrdf.policy.name
+        type: string
+        stability: experimental
+        brief: Human-readable display name of the policy pack.
+        examples: ['ACL Policy', 'Data Type Constraints', 'Provenance Requirements']
+
+      - id: unrdf.policy.trigger
+        type:
+          members:
+            - id: before_add
+              value: 'before-add'
+              stability: experimental
+              brief: Hook fires before a quad is added to the store.
+            - id: after_add
+              value: 'after-add'
+              stability: experimental
+              brief: Hook fires after a quad is added to the store.
+            - id: before_delete
+              value: 'before-delete'
+              stability: experimental
+              brief: Hook fires before a quad is deleted from the store.
+            - id: after_delete
+              value: 'after-delete'
+              stability: experimental
+              brief: Hook fires after a quad is deleted from the store.
+            - id: before_query
+              value: 'before-query'
+              stability: experimental
+              brief: Hook fires before a SPARQL query is executed.
+            - id: after_query
+              value: 'after-query'
+              stability: experimental
+              brief: Hook fires after a SPARQL query completes.
+        stability: experimental
+        brief: The lifecycle trigger point that activates the policy hook.
+
+      - id: unrdf.policy.result
+        type:
+          members:
+            - id: valid
+              value: 'valid'
+              stability: experimental
+              brief: Policy validation passed.
+            - id: invalid
+              value: 'invalid'
+              stability: experimental
+              brief: Policy validation failed.
+            - id: transformed
+              value: 'transformed'
+              stability: experimental
+              brief: Policy applied a transformation to the quad.
+            - id: skipped
+              value: 'skipped'
+              stability: experimental
+              brief: Policy was skipped (not applicable to this quad).
+        stability: experimental
+        brief: The outcome of applying the policy to a quad.
+
+      - id: unrdf.policy.hooks_registered
+        type: int
+        stability: experimental
+        brief: Number of policy hooks registered in the registry.
+        examples: [1, 4, 12]

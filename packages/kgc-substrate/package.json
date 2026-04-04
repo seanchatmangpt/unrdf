@@ -31,9 +31,9 @@
     "deterministic"
   ],
   "dependencies": {
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/core": "26.4.3",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/core": "26.4.4",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

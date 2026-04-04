@@ -1,7 +1,7 @@
 {
   "name": "@unrdf/decision-fabric",
   "version": "26.4.4",
-  "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using \u03bc-operators",
+  "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
   "type": "module",
   "main": "./src/index.mjs",
   "exports": {
@@ -26,13 +26,13 @@
     "socratic-ai"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/hooks": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
-    "@unrdf/knowledge-engine": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
-    "@unrdf/streaming": "26.4.3",
-    "@unrdf/validation": "26.4.3"
+    "@unrdf/core": "26.4.4",
+    "@unrdf/hooks": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
+    "@unrdf/knowledge-engine": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/streaming": "26.4.4",
+    "@unrdf/validation": "26.4.4"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

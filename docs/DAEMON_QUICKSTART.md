@@ -1,6 +1,6 @@
 # @unrdf/daemon — Quick Start Guide
 
-> **Status**: Beta | **Version**: 26.4.3 | **Node**: >= 18.0.0
+> **Status**: Beta | **Version**: 26.4.4 | **Node**: >= 18.0.0
 
 The daemon is UNRDF's background task scheduler. It handles scheduled operations, event-driven execution, enterprise security (BLAKE3 auth), multi-node clustering, and YAWL workflow orchestration.
 
@@ -39,8 +39,8 @@ await daemon.stop();
 ### Lifecycle Events
 
 ```javascript
-daemon.on('daemon:started', (e) => console.log('Started:', e.nodeId));
-daemon.on('daemon:stopped', (e) => console.log('Stopped:', e.nodeId));
+daemon.on('daemon:started', e => console.log('Started:', e.nodeId));
+daemon.on('daemon:stopped', e => console.log('Stopped:', e.nodeId));
 ```
 
 ### Health Check
@@ -81,17 +81,17 @@ console.log(result); // { cleaned: 42 }
 ### List and Remove Tasks
 
 ```javascript
-const ops = daemon.listOperations();       // all scheduled tasks
+const ops = daemon.listOperations(); // all scheduled tasks
 const removed = daemon.unschedule('daily-cleanup'); // true | false
 ```
 
 ### Task Events
 
 ```javascript
-daemon.on('operation:enqueued', (e) => console.log(`Queued: ${e.operationId}`));
-daemon.on('operation:started',  (e) => console.log(`Started: ${e.operationId}`));
-daemon.on('operation:success',  (e) => console.log(`Done: ${e.operationId} (${e.duration}ms)`));
-daemon.on('operation:failure',  (e) => console.error(`Failed: ${e.operationId}`, e.error));
+daemon.on('operation:enqueued', e => console.log(`Queued: ${e.operationId}`));
+daemon.on('operation:started', e => console.log(`Started: ${e.operationId}`));
+daemon.on('operation:success', e => console.log(`Done: ${e.operationId} (${e.duration}ms)`));
+daemon.on('operation:failure', e => console.error(`Failed: ${e.operationId}`, e.error));
 ```
 
 ---
@@ -105,21 +105,21 @@ new Daemon({
   name: 'Descriptive Name',
 
   // Network
-  port: 8080,                    // 1024–65535, default: 8080
+  port: 8080, // 1024–65535, default: 8080
 
   // Concurrency
-  concurrency: 10,               // 1–100, default: 10
+  concurrency: 10, // 1–100, default: 10
 
   // Health
-  healthCheckIntervalMs: 30000,  // default: 30s
-  metricsRetentionMs: 3600000,   // default: 1 hour
+  healthCheckIntervalMs: 30000, // default: 30s
+  metricsRetentionMs: 3600000, // default: 1 hour
 
   // Clustering (optional)
   nodeId: 'node-1',
   clusterId: 'my-cluster',
 
   // Logging
-  logLevel: 'info',              // debug | info | warn | error
+  logLevel: 'info', // debug | info | warn | error
 
   // Retry policy
   globalRetryPolicy: {
@@ -178,10 +178,10 @@ if (result.authenticated) {
 
 ### Dev vs Production
 
-| Mode | Missing Key | Invalid Key |
-|------|------------|-------------|
-| `development` | Warns, allows | Rejects |
-| `production` | Rejects | Rejects |
+| Mode          | Missing Key   | Invalid Key |
+| ------------- | ------------- | ----------- |
+| `development` | Warns, allows | Rejects     |
+| `production`  | Rejects       | Rejects     |
 
 ### Audit Log
 
@@ -246,9 +246,10 @@ await bridge.scheduleRetry('case-001', 'process-task', {
 });
 
 // Distribute tasks across cluster nodes
-await bridge.distributeAndSplitTasks('case-001',
+await bridge.distributeAndSplitTasks(
+  'case-001',
   ['task-a', 'task-b', 'task-c'],
-  { strategy: 'least-loaded' }  // or: round-robin, random, affinity
+  { strategy: 'least-loaded' } // or: round-robin, random, affinity
 );
 ```
 
@@ -286,8 +287,8 @@ const daemon = new Daemon({
   concurrency: 10,
 });
 
-daemon.on('operation:success', (e) => console.log(`Done: ${e.operationId}`));
-daemon.on('operation:failure', (e) => console.error(`Fail: ${e.operationId}`));
+daemon.on('operation:success', e => console.log(`Done: ${e.operationId}`));
+daemon.on('operation:failure', e => console.error(`Fail: ${e.operationId}`));
 
 await daemon.start();
 
@@ -353,18 +354,18 @@ spec:
   template:
     spec:
       containers:
-      - name: daemon
-        image: unrdf/daemon:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: UNRDF_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: daemon-secrets
-              key: api-key
-        - name: NODE_ENV
-          value: "production"
+        - name: daemon
+          image: unrdf/daemon:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: UNRDF_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: daemon-secrets
+                  key: api-key
+            - name: NODE_ENV
+              value: 'production'
 ```
 
 ### Production Checklist
@@ -392,11 +393,11 @@ unrdf daemon cluster           # Cluster node status
 
 ## Further Reading
 
-| Document | Location |
-|----------|----------|
-| Full API reference | `packages/daemon/docs/reference.md` |
-| Architecture explanation | `packages/daemon/docs/explanation.md` |
-| YAWL integration guide | `packages/daemon/docs/yawl-integration-guide.md` |
-| Security hardening | `packages/daemon/docs/security-hardening.md` |
-| Production deployment | `packages/daemon/docs/production-deployment.md` |
-| Operational runbooks | `packages/daemon/docs/operational-runbooks.md` |
+| Document                 | Location                                         |
+| ------------------------ | ------------------------------------------------ |
+| Full API reference       | `packages/daemon/docs/reference.md`              |
+| Architecture explanation | `packages/daemon/docs/explanation.md`            |
+| YAWL integration guide   | `packages/daemon/docs/yawl-integration-guide.md` |
+| Security hardening       | `packages/daemon/docs/security-hardening.md`     |
+| Production deployment    | `packages/daemon/docs/production-deployment.md`  |
+| Operational runbooks     | `packages/daemon/docs/operational-runbooks.md`   |

@@ -29,8 +29,8 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
     "hash-wasm": "^4.12.0",
     "isomorphic-git": "^1.36.1"
   },

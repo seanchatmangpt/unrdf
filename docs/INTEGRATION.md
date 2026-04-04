@@ -1,4 +1,4 @@
-# Integration Guide: O* Innovations 4-6
+# Integration Guide: O\* Innovations 4-6
 
 ---
 
@@ -188,12 +188,14 @@ test('determinism: same input produces same receipt hash', async () => {
 ### Deployment Steps
 
 1. **Review Code**
+
    ```bash
    git log --oneline -6
    # Verify all 3 innovations are in commits
    ```
 
 2. **Merge to Main**
+
    ```bash
    git checkout main
    git merge worktree-ostar-innovations-4-6
@@ -201,17 +203,20 @@ test('determinism: same input produces same receipt hash', async () => {
    ```
 
 3. **Tag Release**
+
    ```bash
    git tag v26.4.4
    git push origin v26.4.4
    ```
 
 4. **Deploy to Staging**
+
    ```bash
    npm deploy --target staging --version 26.4.4
    ```
 
 5. **Run Integration Tests**
+
    ```bash
    timeout 60s npm test:integration
    ```
@@ -233,17 +238,20 @@ test('determinism: same input produces same receipt hash', async () => {
 ### Key Metrics to Track
 
 #### Innovation 4: Federation Quorum
+
 - Voting latency (p95, p99)
 - Proposal approval rate
 - Receipt hash mismatches (should be 0)
 
 #### Innovation 5: Hooks Marketplace
+
 - Hook admission time
 - Dependency resolution cycles
 - SHACL violation rate
 - Circular dependency rejections
 
 #### Innovation 6: Streaming Admission
+
 - Delta admission latency
 - Receipt chain length
 - Condition failure rate
@@ -278,7 +286,7 @@ If issues arise post-deployment:
 ### Option 1: Feature Flag Disable
 
 ```javascript
-const INNOVATIONS_ENABLED = false;  // Disable all 3
+const INNOVATIONS_ENABLED = false; // Disable all 3
 
 if (INNOVATIONS_ENABLED) {
   // Use new innovations
@@ -310,15 +318,17 @@ npm deploy --target production
 **Symptoms**: Same input produces different receipt hashes
 
 **Causes**:
+
 - Non-canonical JSON serialization (keys not sorted)
 - Non-deterministic timestamps (use BigInt with fixed epoch)
 - Random state in code
 
 **Fix**:
+
 ```javascript
 // Use canonicalize() from v6-core
 const canonical = canonicalize(object);
-const hash = blake3Hash(canonical);  // Deterministic
+const hash = blake3Hash(canonical); // Deterministic
 ```
 
 ---
@@ -328,10 +338,12 @@ const hash = blake3Hash(canonical);  // Deterministic
 **Symptoms**: Receipt.previousReceiptHash doesn't match prior receipt
 
 **Causes**:
+
 - Store state changed between operations
 - Concurrent modifications to receipt context
 
 **Fix**:
+
 ```javascript
 // Use same context for chained operations
 const context = createContext({...});
@@ -347,13 +359,14 @@ const result2 = await operation2(context2, ...);
 
 ## Performance Targets
 
-| Operation | Target P95 | Actual |
-|---|---|---|
-| Federation.decide() | <1ms | 0.2ms |
-| Marketplace.admit() | <50ms | 20ms |
-| Stream.admit(100 deltas) | <20ms | 8ms |
+| Operation                | Target P95 | Actual |
+| ------------------------ | ---------- | ------ |
+| Federation.decide()      | <1ms       | 0.2ms  |
+| Marketplace.admit()      | <50ms      | 20ms   |
+| Stream.admit(100 deltas) | <20ms      | 8ms    |
 
 If performance degrades, profile with:
+
 ```bash
 node --prof src/lib/federate.mjs
 node --prof-process isolate-*.log > profile.txt
@@ -370,4 +383,4 @@ node --prof-process isolate-*.log > profile.txt
 
 ---
 
-**Version**: 26.4.3 | **Date**: April 3, 2026
+**Version**: 26.4.4 | **Date**: April 3, 2026

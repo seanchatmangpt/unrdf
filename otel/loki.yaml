@@ -43,4 +43,4 @@ ruler:
     type: local
     local:
       directory: /loki/rules
-  rule_path: /loki/rules-temp
+  rule_path: /loki/rules

@@ -2,7 +2,7 @@
 
 **Status**: ✅ **FULLY IMPLEMENTED AND VALIDATED**
 **Date**: 2026-04-03
-**Version**: 26.4.3
+**Version**: 26.4.4
 **Implementation Duration**: ~2.5 hours
 
 ---
@@ -185,7 +185,7 @@ async start() {
   try {
     await initializeOTelSDK({
       serviceName: 'unrdf-daemon',
-      version: '26.4.3',
+      version: '26.4.4',
       environment: process.env.NODE_ENV || 'development',
       otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
     });

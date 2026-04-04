@@ -421,9 +421,9 @@ export const mcpGeneratedTools = [
           type: 'string',
           description: 'Output file for results (JSON)',
         },
-        "show-receipts": {
+        "show-effects": {
           type: 'boolean',
-          description: 'Show receipt chain with hashes',
+          description: 'Show effect execution details per hook',
           default: 'false',
         },
         "store": {

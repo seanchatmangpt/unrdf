@@ -3,7 +3,7 @@
 **Date:** April 4, 2026  
 **Status:** RESOLVED  
 **Severity:** MEDIUM  
-**Affected Versions:** v26.4.0 - v26.4.3  
+**Affected Versions:** v26.4.0 - v26.4.4  
 **Fixed in:** v26.4.5
 
 ---
@@ -41,7 +41,7 @@ The previous implementation could not guarantee these properties.
 - **Before:** DJB2-style hash (non-cryptographic, deterministic but weak collision resistance)
 - **After:** BLAKE3 (cryptographic, 256-bit output, <1ns/byte performance)
 
-**Receipt Structure (v26.4.3 and earlier):**
+**Receipt Structure (v26.4.4 and earlier):**
 
 ```javascript
 {
@@ -160,7 +160,7 @@ async _computeStoreHash(store) {
 
 ## Migration Guide
 
-### For Users Upgrading from v26.4.0-v26.4.3
+### For Users Upgrading from v26.4.0-v26.4.4
 
 #### Step 1: Upgrade Package
 
@@ -187,14 +187,14 @@ npm install @noble/hashes@^2.0.1
 
 #### Step 3: Regenerate Receipts
 
-All existing receipts created with v26.4.0-v26.4.3 should be considered invalid. We recommend:
+All existing receipts created with v26.4.0-v26.4.4 should be considered invalid. We recommend:
 
 **Option A: Start Fresh (Recommended)**
 
 ```javascript
 // Clear old receipts from your system
 const clearOldReceipts = async () => {
-  // Delete stored receipts from v26.4.0-v26.4.3
+  // Delete stored receipts from v26.4.0-v26.4.4
   // All future receipts will use BLAKE3
   await receiptStore.clear();
 };
@@ -287,21 +287,21 @@ v26.4.4 is available as a temporary rollback. However, v26.4.4 still has the has
 npm install @unrdf/hooks@26.4.4   # Temporary fallback only
 ```
 
-**v26.4.3 (Not Recommended)**
+**v26.4.4 (Not Recommended)**
 
-Rolling back to v26.4.3 re-introduces the security vulnerability. Only do this if:
+Rolling back to v26.4.4 re-introduces the security vulnerability. Only do this if:
 
 - v26.4.5 has a blocking bug (unlikely)
 - Immediate emergency requires it
 - You have documented security exception
 
 ```bash
-npm install @unrdf/hooks@26.4.3   # ⚠️ RE-INTRODUCES VULNERABILITY
+npm install @unrdf/hooks@26.4.4   # ⚠️ RE-INTRODUCES VULNERABILITY
 ```
 
 **If You Must Rollback:**
 
-1. Create isolated network segment for v26.4.3 systems
+1. Create isolated network segment for v26.4.4 systems
 2. Disable receipt-based compliance audits
 3. Implement alternative audit trail (blockchain, WORM storage)
 4. File incident report with security team
@@ -374,8 +374,8 @@ A: Yes. The receipt structure is identical—only the hash algorithm changed fro
 **Q: What if I upgraded to v26.4.4—do I still have the vulnerability?**  
 A: Yes. v26.4.4 still uses weak hashing. You must upgrade to v26.4.5.
 
-**Q: Can I use v26.4.3 receipts to audit historical data?**  
-A: Only for informational purposes. Do not rely on v26.4.3 receipts for compliance verification.
+**Q: Can I use v26.4.4 receipts to audit historical data?**  
+A: Only for informational purposes. Do not rely on v26.4.4 receipts for compliance verification.
 
 **Q: What hash algorithm should I use for my own code?**  
 A: BLAKE3 via `@noble/hashes/blake3`. It's included as a dependency in v26.4.5+.

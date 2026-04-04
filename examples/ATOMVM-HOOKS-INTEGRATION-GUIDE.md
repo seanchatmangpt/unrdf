@@ -1,6 +1,6 @@
 # AtomVM + Hooks Integration Guide
 
-**Version**: 26.4.3  
+**Version**: 26.4.4  
 **Last Updated**: 2026-04-03  
 **Target Audience**: UNRDF developers, knowledge graph engineers, FIBO ontology users
 
@@ -31,13 +31,13 @@ The AtomVM + Hooks integration bridges the **Erlang BEAM runtime** with UNRDF's 
 
 ### Key Benefits
 
-| Aspect | Benefit |
-|--------|---------|
+| Aspect          | Benefit                                              |
+| --------------- | ---------------------------------------------------- |
 | **Performance** | BEAM VM handles I/O, concurrency; hooks handle logic |
 | **Reliability** | Erlang supervisor trees + receipt chain verification |
-| **Scalability** | Distributed BEAM processes across multiple nodes |
-| **Determinism** | BLAKE3 hashing ensures reproducible receipts |
-| **Compliance** | SHACL + FIBO ontologies for regulatory requirements |
+| **Scalability** | Distributed BEAM processes across multiple nodes     |
+| **Determinism** | BLAKE3 hashing ensures reproducible receipts         |
+| **Compliance**  | SHACL + FIBO ontologies for regulatory requirements  |
 
 ---
 
@@ -103,6 +103,7 @@ BEAM/Erlang         Oxigraph Store        JS Evaluation
 **Purpose**: Create deterministic receipts with BLAKE3 hashing and chain integrity.
 
 **When to Use**:
+
 - Genesis receipt on store initialization
 - End of each major operation
 - Audit trail generation
@@ -111,14 +112,14 @@ BEAM/Erlang         Oxigraph Store        JS Evaluation
 
 ```yaml
 hooks:
-  - name: "receipt-chain-genesis"
+  - name: 'receipt-chain-genesis'
     priority: 1
     condition:
-      kind: "on-store-init"
+      kind: 'on-store-init'
     effects:
-      - type: "receipt-create"
-        hash_algorithm: "blake3"
-        profile: "store-initialization"
+      - type: 'receipt-create'
+        hash_algorithm: 'blake3'
+        profile: 'store-initialization'
 ```
 
 **Example Code**:
@@ -127,14 +128,14 @@ hooks:
 const payload = {
   operation: 'store-initialization',
   nodeId: 'node-1',
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 };
 
 const payloadHash = await blake3Hash(canonicalize(payload));
 const receiptHash = await blake3Hash({
   payload,
-  previousHash: null,  // Genesis
-  payloadHash
+  previousHash: null, // Genesis
+  payloadHash,
 });
 
 console.log('Genesis receipt:', receiptHash);
@@ -149,6 +150,7 @@ console.log('Genesis receipt:', receiptHash);
 **Purpose**: Transform RDF graphs with SPARQL CONSTRUCT queries.
 
 **When to Use**:
+
 - Data enrichment (add inferred properties)
 - Compliance marking (add checked timestamps)
 - Risk classification (assign risk levels)
@@ -157,17 +159,17 @@ console.log('Genesis receipt:', receiptHash);
 
 ```yaml
 hooks:
-  - name: "fibo-compliance-mark"
+  - name: 'fibo-compliance-mark'
     priority: 2
     condition:
-      kind: "sparql-ask"
+      kind: 'sparql-ask'
       query: |
         ASK {
           ?entity a fibo:LegalEntity .
           FILTER NOT EXISTS { ?entity fibo:checked true . }
         }
     effects:
-      - type: "sparql-construct"
+      - type: 'sparql-construct'
         query: |
           CONSTRUCT {
             ?entity fibo:checked true ;
@@ -202,6 +204,7 @@ const constructResult = await store.executeConstruct(`
 **Purpose**: Validate RDF graphs against SHACL shapes with enforcement modes.
 
 **Enforcement Modes**:
+
 - `annotate`: Add SHACL report to graph (non-blocking)
 - `warn`: Log violations without blocking
 - `enforce`: Block operations on violations
@@ -210,14 +213,14 @@ const constructResult = await store.executeConstruct(`
 
 ```yaml
 hooks:
-  - name: "fibo-legal-entity-shape"
+  - name: 'fibo-legal-entity-shape'
     priority: 3
     condition:
-      kind: "shacl"
-      shape: "fibo:LegalEntityShape"
-      enforcement_mode: "annotate"  # or "warn" or "enforce"
+      kind: 'shacl'
+      shape: 'fibo:LegalEntityShape'
+      enforcement_mode: 'annotate' # or "warn" or "enforce"
     effects:
-      - type: "shacl-report"
+      - type: 'shacl-report'
         store_violations: true
 ```
 
@@ -250,6 +253,7 @@ const report = await shaclValidator.validate(shape, store);
 **Purpose**: Verify receipt chain integrity and detect tampering.
 
 **When to Use**:
+
 - End of transaction (verify all receipts present)
 - Before committing to storage
 - Audit compliance checks
@@ -258,14 +262,14 @@ const report = await shaclValidator.validate(shape, store);
 
 ```yaml
 hooks:
-  - name: "receipt-chain-verify"
+  - name: 'receipt-chain-verify'
     priority: 4
     condition:
-      kind: "receipt-verification"
-      algorithm: "blake3"
+      kind: 'receipt-verification'
+      algorithm: 'blake3'
       check_previous_hash: true
     effects:
-      - type: "receipt-verify"
+      - type: 'receipt-verify'
         require_chain_integrity: true
         enforce_determinism: true
 ```
@@ -299,6 +303,7 @@ console.log('Chain valid:', valid);
 **Purpose**: Execute N3 rules for complex inference on RDF graphs.
 
 **When to Use**:
+
 - Multi-step derivations
 - Credit rating → Risk level mapping
 - Complex business rules
@@ -307,10 +312,10 @@ console.log('Chain valid:', valid);
 
 ```yaml
 hooks:
-  - name: "fibo-credit-to-risk"
+  - name: 'fibo-credit-to-risk'
     priority: 5
     condition:
-      kind: "n3"
+      kind: 'n3'
       rules: |
         @prefix fibo: <http://purl.org/spec/fibo/ontology/> .
         {
@@ -320,7 +325,7 @@ hooks:
           ?cp fibo:riskLevel fibo:Low .
         } .
     effects:
-      - type: "assert-inferred"
+      - type: 'assert-inferred'
         add_to_store: true
 ```
 
@@ -344,6 +349,7 @@ console.log('Derived facts:', derivedFacts.length);
 **Purpose**: Execute Datalog queries for constraint checking and goal solving.
 
 **When to Use**:
+
 - Account compliance checking (available >= threshold)
 - Multi-condition queries
 - Constraint satisfaction problems
@@ -352,35 +358,29 @@ console.log('Derived facts:', derivedFacts.length);
 
 ```yaml
 hooks:
-  - name: "account-compliance"
+  - name: 'account-compliance'
     priority: 6
     condition:
-      kind: "datalog"
+      kind: 'datalog'
       facts:
-        - "account/1"
-        - "available/2"
-        - "threshold/2"
+        - 'account/1'
+        - 'available/2'
+        - 'threshold/2'
       rules:
-        - "compliant(A) :- available(A, X), threshold(A, T), X >= T"
-        - "risky(A) :- available(A, X), threshold(A, T), X < T"
-      goal: "compliant(?Account)"
+        - 'compliant(A) :- available(A, X), threshold(A, T), X >= T'
+        - 'risky(A) :- available(A, X), threshold(A, T), X < T'
+      goal: 'compliant(?Account)'
     effects:
-      - type: "datalog-assert"
+      - type: 'datalog-assert'
         assert_positive: true
 ```
 
 **Example Code**:
 
 ```javascript
-const facts = [
-  'account(acc-001)',
-  'available(acc-001, 1000000)',
-  'threshold(acc-001, 100000)'
-];
+const facts = ['account(acc-001)', 'available(acc-001, 1000000)', 'threshold(acc-001, 100000)'];
 
-const rules = [
-  'compliant(A) :- available(A, X), threshold(A, T), X >= T'
-];
+const rules = ['compliant(A) :- available(A, X), threshold(A, T), X >= T'];
 
 const goal = 'compliant(?Account)';
 const results = await datalogEval.query(facts, rules, goal);
@@ -400,11 +400,11 @@ console.log('Compliant accounts:', results);
 const FIBO = {
   // Core ontology
   LegalEntity: 'http://purl.org/spec/fibo/ontology/core/Parties/LegalEntity',
-  
+
   // Credit/Risk
   creditRating: 'http://purl.org/spec/fibo/ontology/ext/creditRating',
   riskLevel: 'http://purl.org/spec/fibo/ontology/ext/riskLevel',
-  
+
   // Compliance
   complianceStatus: 'http://purl.org/spec/fibo/ontology/ext/complianceStatus',
   checked: 'http://purl.org/spec/fibo/ontology/ext/checked',
@@ -422,7 +422,7 @@ const FIBO = {
 fibo:LegalEntityShape
   a sh:NodeShape ;
   sh:targetClass fibo:LegalEntity ;
-  
+
   # Credit rating is required and must be valid
   sh:property [
     sh:path fibo:creditRating ;
@@ -430,7 +430,7 @@ fibo:LegalEntityShape
     sh:in (fibo:AAA fibo:AA fibo:A fibo:BBB fibo:BB) ;
     sh:severity sh:Violation
   ] ;
-  
+
   # Must be checked within 30 days
   sh:property [
     sh:path fibo:checkedAt ;
@@ -451,6 +451,7 @@ JTBDs represent high-level business processes that integrate multiple hooks and 
 **Goal**: Ensure entities comply with regulatory requirements.
 
 **Hooks**:
+
 1. Priority 2: Mark entity as checked (SPARQL CONSTRUCT)
 2. Priority 3: Validate against SHACL shape
 3. Priority 1: Create receipt for compliance verification
@@ -462,19 +463,19 @@ JTBDs represent high-level business processes that integrate multiple hooks and 
 async function verifyCompliance(entity) {
   // 1. Mark as checked
   await executeConstructHook(entity);
-  
+
   // 2. Validate SHACL
   const report = await validateSHACL(entity);
   if (report.conforms === false) {
     throw new Error('Compliance violation');
   }
-  
+
   // 3. Create receipt
   const receipt = await createReceipt('compliance-verification', entity);
-  
+
   // 4. Verify chain
   await verifyChain(receipt);
-  
+
   return receipt;
 }
 ```
@@ -484,6 +485,7 @@ async function verifyCompliance(entity) {
 **Goal**: Assess counterparty and transaction risk.
 
 **Hooks**:
+
 1. Priority 2: Assign risk levels (SPARQL CONSTRUCT)
 2. Priority 5: Apply N3 rules for derived risk
 3. Priority 1: Create risk assessment receipt
@@ -494,14 +496,14 @@ async function verifyCompliance(entity) {
 async function assessRisk(counterparty) {
   // 1. Assign initial risk
   await executeConstructHook(counterparty);
-  
+
   // 2. Apply inference rules
   const derivedRisk = await applyN3Rules(counterparty);
-  
+
   // 3. Create receipt
   return await createReceipt('risk-assessment', {
     counterparty,
-    derivedRisk
+    derivedRisk,
   });
 }
 ```
@@ -511,6 +513,7 @@ async function assessRisk(counterparty) {
 **Goal**: Verify sufficient liquidity for settlement.
 
 **Hooks**:
+
 1. Priority 6: Check account compliance (Datalog)
 2. Priority 2: Mark settlement status
 3. Priority 1: Create settlement receipt
@@ -524,10 +527,10 @@ async function checkLiquidity(account) {
   if (!compliant) {
     throw new Error('Insufficient liquidity');
   }
-  
+
   // 2. Mark settlement ready
   await executeConstructHook(account);
-  
+
   // 3. Create receipt
   return await createReceipt('liquidity-check', account);
 }
@@ -538,6 +541,7 @@ async function checkLiquidity(account) {
 **Goal**: Generate complete audit trail with receipt chain.
 
 **Hooks**:
+
 1. Priority 1: Create genesis receipt
 2. Priority 4: Verify chain integrity after each operation
 3. Priority 1: Create final audit receipt
@@ -547,21 +551,21 @@ async function checkLiquidity(account) {
 ```javascript
 async function generateAuditTrail(caseId) {
   const chain = [];
-  
+
   // 1. Genesis
   chain.push(await createGenesisReceipt(caseId));
-  
+
   // 2. Verify after each operation
   for (const operation of operations) {
     const receipt = await executeOperation(operation);
     chain.push(receipt);
-    
+
     await verifyChain(chain);
   }
-  
+
   // 3. Final audit receipt
   chain.push(await createAuditReceipt(caseId, chain));
-  
+
   return chain;
 }
 ```
@@ -571,6 +575,7 @@ async function generateAuditTrail(caseId) {
 **Goal**: Detect and repair invalid states in the graph.
 
 **Hooks**:
+
 1. Priority 3: Detect violations (SHACL)
 2. Priority 2: Apply repair operations (CONSTRUCT)
 3. Priority 1: Create repair receipt
@@ -581,12 +586,12 @@ async function generateAuditTrail(caseId) {
 async function repairInvalidStates() {
   // 1. Detect violations
   const violations = await validateSHACL();
-  
+
   // 2. Apply repairs
   for (const violation of violations) {
     await applyRepairConstructs(violation);
   }
-  
+
   // 3. Create receipt
   return await createReceipt('repair-and-recovery');
 }
@@ -598,34 +603,34 @@ async function repairInvalidStates() {
 
 ### Latency by Priority (P95)
 
-| Priority | Operation | P95 Latency | Notes |
-|----------|-----------|-------------|-------|
-| 1 | Receipt creation | <1ms | BLAKE3 hashing (no I/O) |
-| 2 | SPARQL CONSTRUCT | 10-50ms | Oxigraph query execution |
-| 3 | SHACL validation | 50-200ms | Shape complexity dependent |
-| 4 | Hash chain verify | 0.1ms/receipt | Linear, no I/O |
-| 5 | N3 rule inference | 5-100ms | Rule complexity dependent |
-| 6 | Datalog evaluation | 1-50ms | Query complexity dependent |
+| Priority | Operation          | P95 Latency   | Notes                      |
+| -------- | ------------------ | ------------- | -------------------------- |
+| 1        | Receipt creation   | <1ms          | BLAKE3 hashing (no I/O)    |
+| 2        | SPARQL CONSTRUCT   | 10-50ms       | Oxigraph query execution   |
+| 3        | SHACL validation   | 50-200ms      | Shape complexity dependent |
+| 4        | Hash chain verify  | 0.1ms/receipt | Linear, no I/O             |
+| 5        | N3 rule inference  | 5-100ms       | Rule complexity dependent  |
+| 6        | Datalog evaluation | 1-50ms        | Query complexity dependent |
 
 ### Throughput (ops/sec)
 
-| Operation | Throughput |
-|-----------|-----------|
-| Receipt creation | ~10K/sec |
-| SPARQL CONSTRUCT | ~20/sec (small graphs) |
-| SHACL validation | ~5/sec |
-| Hash chain verify | ~1M receipts/sec |
-| N3 inference | ~100/sec |
-| Datalog query | ~500-1K/sec |
+| Operation         | Throughput             |
+| ----------------- | ---------------------- |
+| Receipt creation  | ~10K/sec               |
+| SPARQL CONSTRUCT  | ~20/sec (small graphs) |
+| SHACL validation  | ~5/sec                 |
+| Hash chain verify | ~1M receipts/sec       |
+| N3 inference      | ~100/sec               |
+| Datalog query     | ~500-1K/sec            |
 
 ### Memory Footprint
 
-| Component | Memory (MB) |
-|-----------|------------|
-| BEAM VM (baseline) | 10-20 |
-| Oxigraph store (100K triples) | 50-100 |
-| Hooks engine | 5-10 |
-| Receipt chain (1K receipts) | <1 |
+| Component                     | Memory (MB) |
+| ----------------------------- | ----------- |
+| BEAM VM (baseline)            | 10-20       |
+| Oxigraph store (100K triples) | 50-100      |
+| Hooks engine                  | 5-10        |
+| Receipt chain (1K receipts)   | <1          |
 
 ### Scaling Characteristics
 
@@ -653,11 +658,11 @@ pnpm --filter @unrdf/atomvm test:watch
 ```yaml
 # 2-node cluster, persistence enabled
 deployment:
-  environment: "staging"
+  environment: 'staging'
   nodes: 2
-  persistence: "sqlite"
+  persistence: 'sqlite'
   replication_factor: 2
-  receipt_verification: "strict"
+  receipt_verification: 'strict'
 ```
 
 ### Production Environment
@@ -665,12 +670,12 @@ deployment:
 ```yaml
 # Multi-node cluster, high availability
 deployment:
-  environment: "production"
+  environment: 'production'
   nodes: 5
-  persistence: "postgresql"
+  persistence: 'postgresql'
   replication_factor: 3
-  receipt_verification: "strict"
-  backup_frequency: "hourly"
+  receipt_verification: 'strict'
+  backup_frequency: 'hourly'
   monitor_sla: true
   alert_thresholds:
     latency_p95_ms: 100
@@ -708,24 +713,24 @@ spec:
         app: unrdf-atomvm-hooks
     spec:
       containers:
-      - name: atomvm-hooks
-        image: unrdf/atomvm-hooks:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ID
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: PERSISTENCE
-          value: "postgresql"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
+        - name: atomvm-hooks
+          image: unrdf/atomvm-hooks:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PERSISTENCE
+              value: 'postgresql'
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+            limits:
+              memory: '1Gi'
+              cpu: '1000m'
 ```
 
 ---
@@ -889,7 +894,7 @@ const payload = { timestamp: context.timestamp_iso };
 
 ```yaml
 shacl:
-  validation_timeout_ms: 10000  # Was 5000
+  validation_timeout_ms: 10000 # Was 5000
 ```
 
 ---

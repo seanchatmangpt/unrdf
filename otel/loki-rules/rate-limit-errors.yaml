@@ -4,20 +4,21 @@ groups:
       - alert: HighErrorRate
         expr: |
           sum(rate({container=~".*unrdf.*"} |= "error" [5m])) by (container)
-          / sum(rate({container=~".*unrdf.*"} [5m])) by (container)
-          > 0.1
+          /
+          sum(rate({container=~".*unrdf.*"} [5m])) by (container) > 0.1
         for: 5m
         labels:
           severity: warning
         annotations:
           summary: 'High error rate in {{ $labels.container }}'
-          description: '{{ $labels.container }} has >10% error logs in the last 5m'
+          description: 'Error rate is {{ $value | humanizePercentage }} (>10%)'
+
       - alert: ServiceDown
         expr: |
-          sum(rate({container=~".*unrdf.*"} [10m])) by (container) == 0
+          absent_over_time({container=~".*unrdf.*"}[10m])
         for: 10m
         labels:
           severity: critical
         annotations:
-          summary: 'No logs from {{ $labels.container }}'
-          description: '{{ $labels.container }} has produced zero logs in 10m'
+          summary: 'Service {{ $labels.container }} appears down'
+          description: 'No logs received from {{ $labels.container }} in 10 minutes'

@@ -1,0 +1,207 @@
+groups:
+  # ── MCP Metrics ──────────────────────────────────────────────────────────────
+
+  - id: metric.mcp.tool.duration
+    type: metric
+    metric_name: mcp.tool.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of MCP tool invocations, from request receipt to response sent.
+    attributes:
+      - ref: mcp.server.name
+        requirement_level: required
+      - ref: mcp.tool.name
+        requirement_level: required
+      - ref: mcp.tool.success
+        requirement_level: required
+      - ref: mcp.tool.error_type
+        requirement_level:
+          conditionally_required: 'Required when `mcp.tool.success` is `false`.'
+
+  - id: metric.mcp.tool.invocations
+    type: metric
+    metric_name: mcp.tool.invocations
+    instrument: counter
+    unit: '{invocation}'
+    stability: experimental
+    brief: >
+      Total number of MCP tool invocations.
+    attributes:
+      - ref: mcp.server.name
+        requirement_level: required
+      - ref: mcp.tool.name
+        requirement_level: required
+      - ref: mcp.tool.success
+        requirement_level: required
+
+  - id: metric.mcp.tool.result_size
+    type: metric
+    metric_name: mcp.tool.result_size
+    instrument: histogram
+    unit: 'By'
+    stability: experimental
+    brief: >
+      Distribution of MCP tool result payload sizes in bytes.
+    attributes:
+      - ref: mcp.server.name
+        requirement_level: required
+      - ref: mcp.tool.name
+        requirement_level: required
+
+  # ── CLI Metrics ───────────────────────────────────────────────────────────────
+
+  - id: metric.unrdf.cli.command.duration
+    type: metric
+    metric_name: unrdf.cli.command.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of UNRDF CLI command executions from invocation to exit.
+    attributes:
+      - ref: unrdf.cli.command
+        requirement_level: required
+      - ref: unrdf.cli.subcommand
+        requirement_level: recommended
+      - ref: unrdf.cli.exit_code
+        requirement_level: required
+
+  - id: metric.unrdf.cli.command.invocations
+    type: metric
+    metric_name: unrdf.cli.command.invocations
+    instrument: counter
+    unit: '{invocation}'
+    stability: experimental
+    brief: >
+      Total number of UNRDF CLI command invocations.
+    attributes:
+      - ref: unrdf.cli.command
+        requirement_level: required
+      - ref: unrdf.cli.subcommand
+        requirement_level: recommended
+      - ref: unrdf.cli.exit_code
+        requirement_level: required
+
+  # ── Hook Metrics ──────────────────────────────────────────────────────────────
+
+  - id: metric.unrdf.hook.evaluation.duration
+    type: metric
+    metric_name: unrdf.hook.evaluation.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of knowledge hook condition evaluation.
+    attributes:
+      - ref: unrdf.hook.condition_kind
+        requirement_level: required
+      - ref: unrdf.hook.satisfied
+        requirement_level: required
+      - ref: unrdf.hook.name
+        requirement_level: recommended
+
+  - id: metric.unrdf.hook.evaluations
+    type: metric
+    metric_name: unrdf.hook.evaluations
+    instrument: counter
+    unit: '{evaluation}'
+    stability: experimental
+    brief: >
+      Total number of knowledge hook condition evaluations.
+    attributes:
+      - ref: unrdf.hook.condition_kind
+        requirement_level: required
+      - ref: unrdf.hook.satisfied
+        requirement_level: required
+
+  - id: metric.unrdf.hook.quads_added
+    type: metric
+    metric_name: unrdf.hook.quads_added
+    instrument: counter
+    unit: '{quad}'
+    stability: experimental
+    brief: >
+      Total number of RDF quads added to the store by hook effects.
+    attributes:
+      - ref: unrdf.hook.effect_kind
+        requirement_level: required
+      - ref: unrdf.hook.name
+        requirement_level: recommended
+
+  # ── RDF Store Metrics ─────────────────────────────────────────────────────────
+
+  - id: metric.unrdf.rdf.operation.duration
+    type: metric
+    metric_name: unrdf.rdf.operation.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of RDF store operations.
+    attributes:
+      - ref: unrdf.rdf.operation
+        requirement_level: required
+      - ref: unrdf.rdf.store_backend
+        requirement_level: required
+      - ref: unrdf.rdf.graph_name
+        requirement_level: recommended
+
+  - id: metric.unrdf.rdf.quad_count
+    type: metric
+    metric_name: unrdf.rdf.quad_count
+    instrument: updowncounter
+    unit: '{quad}'
+    stability: experimental
+    brief: >
+      Current number of RDF quads in the store. Updated after add/delete operations.
+    attributes:
+      - ref: unrdf.rdf.store_backend
+        requirement_level: required
+      - ref: unrdf.rdf.graph_name
+        requirement_level: recommended
+
+  - id: metric.unrdf.rdf.query.duration
+    type: metric
+    metric_name: unrdf.rdf.query.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of SPARQL query execution.
+    attributes:
+      - ref: unrdf.rdf.operation
+        requirement_level: required
+      - ref: unrdf.rdf.store_backend
+        requirement_level: required
+      - ref: unrdf.rdf.sparql_query_length
+        requirement_level: recommended
+
+  # ── Transaction Metrics ───────────────────────────────────────────────────────
+
+  - id: metric.unrdf.transaction.duration
+    type: metric
+    metric_name: unrdf.transaction.duration
+    instrument: histogram
+    unit: 's'
+    stability: experimental
+    brief: >
+      Duration of RDF store transactions from begin to commit or rollback.
+    attributes:
+      - ref: unrdf.transaction.result
+        requirement_level: required
+      - ref: unrdf.transaction.isolation_level
+        requirement_level: recommended
+
+  - id: metric.unrdf.transaction.operations
+    type: metric
+    metric_name: unrdf.transaction.operations
+    instrument: histogram
+    unit: '{operation}'
+    stability: experimental
+    brief: >
+      Number of RDF operations performed per transaction.
+    attributes:
+      - ref: unrdf.transaction.result
+        requirement_level: required

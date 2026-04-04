@@ -30,8 +30,8 @@
     "api-framework"
   ],
   "dependencies": {
-    "@unrdf/yawl": "26.4.3",
-    "@unrdf/kgc-4d": "26.4.3",
+    "@unrdf/yawl": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.4",
     "fastify": "^5.2.0",
     "@fastify/swagger": "^9.3.0",
     "@fastify/swagger-ui": "^5.2.0",

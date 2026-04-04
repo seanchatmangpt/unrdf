@@ -1,6 +1,6 @@
 # @unrdf/validation
 
-![Version](https://img.shields.io/badge/version-26.4.3-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+![Version](https://img.shields.io/badge/version-26.4.4-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
 
 **OTEL Validation Framework for UNRDF**
 
@@ -25,15 +25,15 @@ Traditional unit tests test isolated functions in isolation. OTEL validation tes
 
 ## Core Exports
 
-| Export | Description |
-|--------|-------------|
-| `createOTELValidator` | Creates an OTEL-based validator instance |
-| `createValidationRunner` | Creates a validation runner for feature suites |
-| `createValidationHelpers` | Helper utilities for validation operations |
-| `OTELValidator` | Main validator class |
-| `ValidationRunner` | Validation suite runner class |
-| `ValidationResultSchema` | Zod schema for validation results |
-| `FeatureValidationConfigSchema` | Zod schema for feature configurations |
+| Export                          | Description                                    |
+| ------------------------------- | ---------------------------------------------- |
+| `createOTELValidator`           | Creates an OTEL-based validator instance       |
+| `createValidationRunner`        | Creates a validation runner for feature suites |
+| `createValidationHelpers`       | Helper utilities for validation operations     |
+| `OTELValidator`                 | Main validator class                           |
+| `ValidationRunner`              | Validation suite runner class                  |
+| `ValidationResultSchema`        | Zod schema for validation results              |
+| `FeatureValidationConfigSchema` | Zod schema for feature configurations          |
 
 ## Quick Start
 
@@ -49,11 +49,11 @@ const result = await validator.validateFeature('hook-execution', {
   expectedSpans: ['hook.validate-before-write'],
   requiredAttributes: ['hook.name', 'quad.subject'],
   performanceThresholds: {
-    maxLatency: 1000,    // 1 second
-    maxErrorRate: 0.01,  // 1% error rate
-    minThroughput: 100,  // 100 operations/sec
-    maxMemoryUsage: 100  // 100 MB
-  }
+    maxLatency: 1000, // 1 second
+    maxErrorRate: 0.01, // 1% error rate
+    minThroughput: 100, // 100 operations/sec
+    maxMemoryUsage: 100, // 100 MB
+  },
 });
 
 console.log(result);
@@ -74,7 +74,7 @@ import { createValidationRunner } from '@unrdf/validation';
 const runner = createValidationRunner({
   timeout: 30000,
   retries: 0,
-  verbose: true
+  verbose: true,
 });
 
 const report = await runner.runSuite({
@@ -90,9 +90,9 @@ const report = await runner.runSuite({
           maxLatency: 1000,
           maxErrorRate: 0.01,
           minThroughput: 100,
-          maxMemoryUsage: 100
-        }
-      }
+          maxMemoryUsage: 100,
+        },
+      },
     },
     {
       name: 'hook-post-write-transform',
@@ -102,11 +102,11 @@ const report = await runner.runSuite({
         performanceThresholds: {
           maxLatency: 2000,
           maxErrorRate: 0.005,
-          minThroughput: 50
-        }
-      }
-    }
-  ]
+          minThroughput: 50,
+        },
+      },
+    },
+  ],
 });
 
 console.log(`Suite score: ${report.summary.score}/100`);
@@ -142,8 +142,8 @@ const validator = createOTELValidator({
   maxSpansPerValidation: 1000,
   spanAttributes: {
     environment: 'production',
-    version: '26.4.3'
-  }
+    version: '26.4.4',
+  },
 });
 ```
 
@@ -154,41 +154,33 @@ const featureConfig = {
   name: 'feature-name',
   config: {
     // Spans that MUST appear during execution
-    expectedSpans: [
-      'feature.start',
-      'feature.process',
-      'feature.complete'
-    ],
+    expectedSpans: ['feature.start', 'feature.process', 'feature.complete'],
 
     // Attributes that MUST exist on spans
-    requiredAttributes: [
-      'feature.name',
-      'execution.duration',
-      'result.status'
-    ],
+    requiredAttributes: ['feature.name', 'execution.duration', 'result.status'],
 
     // Performance thresholds
     performanceThresholds: {
-      maxLatency: 5000,        // Max execution time in ms
-      maxErrorRate: 0.02,      // Max error rate (0-1)
-      minThroughput: 10,       // Min operations per second
-      maxMemoryUsage: 200      // Max memory usage in MB
+      maxLatency: 5000, // Max execution time in ms
+      maxErrorRate: 0.02, // Max error rate (0-1)
+      minThroughput: 10, // Min operations per second
+      maxMemoryUsage: 200, // Max memory usage in MB
     },
 
     // Custom validation rules
     validationRules: [
       {
         name: 'check-error-logging',
-        condition: (spans) => {
-          const errorSpans = spans.filter(s =>
-            s.attributes['error'] === 'true' && s.name === 'feature.error'
+        condition: spans => {
+          const errorSpans = spans.filter(
+            s => s.attributes['error'] === 'true' && s.name === 'feature.error'
           );
           return errorSpans.length > 0;
         },
-        severity: 'warning'
-      }
-    ]
-  }
+        severity: 'warning',
+      },
+    ],
+  },
 };
 ```
 
@@ -199,15 +191,16 @@ const featureConfig = {
 const result = {
   feature: 'hook-validate-before-write',
   passed: true,
-  score: 95,                    // 0-100 score
-  duration: 450,                // Execution time in ms
+  score: 95, // 0-100 score
+  duration: 450, // Execution time in ms
   metrics: {
-    latency: 450,               // Average latency
-    errorRate: 0.002,           // Error rate (0-1)
-    throughput: 150,            // Operations/sec
-    memoryUsage: 85             // Memory usage in MB
+    latency: 450, // Average latency
+    errorRate: 0.002, // Error rate (0-1)
+    throughput: 150, // Operations/sec
+    memoryUsage: 85, // Memory usage in MB
   },
-  spans: [                      // Collected OTEL spans
+  spans: [
+    // Collected OTEL spans
     {
       name: 'hook.validate-before-write',
       status: 'ok',
@@ -216,14 +209,15 @@ const result = {
         'hook.name': 'validate-pii',
         'quad.subject': 'http://example.com/alice',
         'hook.type': 'validate-before-write',
-        'validation.valid': 'true'
-      }
-    }
+        'validation.valid': 'true',
+      },
+    },
   ],
-  violations: [                 // Validation failures
-    'Latency exceeds threshold: 450ms > 400ms'
+  violations: [
+    // Validation failures
+    'Latency exceeds threshold: 450ms > 400ms',
   ],
-  timestamp: '2026-04-03T12:00:00.000Z'
+  timestamp: '2026-04-03T12:00:00.000Z',
 };
 
 // Check result
@@ -251,8 +245,8 @@ const result = await validator.validateFeature('hook-execution', {
     maxLatency: 1000,
     maxErrorRate: 0.01,
     minThroughput: 100,
-    maxMemoryUsage: 100
-  }
+    maxMemoryUsage: 100,
+  },
 });
 
 if (!result.passed) {
@@ -275,9 +269,9 @@ const baseline = await validator.validateFeature('query-performance', {
   expectedSpans: ['sparql.query.select'],
   requiredAttributes: ['query.duration'],
   performanceThresholds: {
-    maxLatency: 1000,  // 1 second
-    minThroughput: 1000
-  }
+    maxLatency: 1000, // 1 second
+    minThroughput: 1000,
+  },
 });
 
 // Compare with current
@@ -286,8 +280,8 @@ const current = await validator.validateFeature('query-performance', {
   requiredAttributes: ['query.duration'],
   performanceThresholds: {
     maxLatency: 1000,
-    minThroughput: 1000
-  }
+    minThroughput: 1000,
+  },
 });
 
 if (current.score < baseline.score - 10) {
@@ -307,7 +301,7 @@ import { createValidationRunner } from '@unrdf/validation';
 const runner = createValidationRunner({
   timeout: 60000,
   retries: 2,
-  verbose: false
+  verbose: false,
 });
 
 async function runCIValidation() {
@@ -320,27 +314,29 @@ async function runCIValidation() {
           config: {
             expectedSpans: ['sparql.query.select'],
             requiredAttributes: ['query.duration'],
-            performanceThresholds: { maxLatency: 5000, minThroughput: 50 }
-          }
+            performanceThresholds: { maxLatency: 5000, minThroughput: 50 },
+          },
         },
         {
           name: 'hook-execution',
           config: {
             expectedSpans: ['hook.validate-before-write'],
             requiredAttributes: ['hook.name'],
-            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01 }
-          }
-        }
-      ]
+            performanceThresholds: { maxLatency: 1000, maxErrorRate: 0.01 },
+          },
+        },
+      ],
     });
 
     if (report.summary.failed > 0) {
       console.error('CI Validation FAILED');
       console.error(`Score: ${report.summary.score}/100`);
       console.error('Failed features:');
-      report.features.filter(f => !f.passed).forEach(f => {
-        console.error(`  - ${f.name}: ${f.score}/100`);
-      });
+      report.features
+        .filter(f => !f.passed)
+        .forEach(f => {
+          console.error(`  - ${f.name}: ${f.score}/100`);
+        });
       process.exit(1);
     } else {
       console.log('CI Validation PASSED');
@@ -377,7 +373,7 @@ const passesThresholds = helpers.passesThresholds(result.metrics, {
   maxLatency: 1000,
   maxErrorRate: 0.01,
   minThroughput: 100,
-  maxMemoryUsage: 100
+  maxMemoryUsage: 100,
 });
 console.log('Passes thresholds:', passesThresholds); // true
 
@@ -411,14 +407,11 @@ See `src/index.mjs` for complete API documentation.
 // Create validator
 const validator = createOTELValidator({
   serviceName: 'validation',
-  validationTimeout: 30000
+  validationTimeout: 30000,
 });
 
 // Validate feature
-const result = await validator.validateFeature(
-  'feature-name',
-  config
-);
+const result = await validator.validateFeature('feature-name', config);
 
 // Get collected metrics
 const metrics = validator.getMetrics();

@@ -5,7 +5,7 @@
 **Author:** Sean Chatman  
 **Affiliation:** UNRDF Research Platform  
 **Date:** April 2026  
-**Version:** 26.4.3
+**Version:** 26.4.4
 
 ---
 
@@ -36,6 +36,7 @@ We validate through an integrated test suite: 12 tests passing consistently, rea
 ### 1.1 The Semantic Web's AI Gap
 
 For three decades, semantic web practitioners have developed powerful standards:
+
 - **RDF** - Graph representation with globally unique identifiers
 - **SPARQL** - Compositional query language
 - **SHACL** - Shape validation with explicit constraints
@@ -44,6 +45,7 @@ For three decades, semantic web practitioners have developed powerful standards:
 Yet these systems remain largely disconnected from contemporary AI. Current integration approaches fall into three problematic categories:
 
 **Category A: Embedding-Based** (Knowledge Graph Embeddings, Vector Databases)
+
 - Convert RDF triples to continuous embeddings, losing discrete semantic structure
 - Reasoning happens in vector space, not with RDF semantics
 - No auditability—impossible to trace why an embedding suggested a relation
@@ -51,6 +53,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - Example: DistMult scores (Alice, knows, Bob) = 0.87, but why? Cannot explain.
 
 **Category B: LLM-as-Oracle** (Retrieval-Augmented Generation)
+
 - Feed RDF data as text context to LLMs
 - LLMs generate free-form natural language predictions
 - Converting LLM output back to valid RDF is manual and error-prone
@@ -58,6 +61,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 - Example: "Based on the graph, Alice probably works at TechCorp." But we can't execute that suggestion.
 
 **Category C: Symbolic Reasoning Only** (Inference Engines)
+
 - Use rule engines (SWRL, N3, Datalog) to derive new triples
 - Requires human-written rules—doesn't scale to knowledge discovery
 - No learning or adaptation—same rules produce same results forever
@@ -65,9 +69,10 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 
 ### 1.2 The Gap We Address
 
-**Core Problem**: How can an LLM reason about a knowledge graph *iteratively*, make structured decisions about what the graph needs, and autonomously improve it—while maintaining RDF schema compliance, auditability, and semantic validity?
+**Core Problem**: How can an LLM reason about a knowledge graph _iteratively_, make structured decisions about what the graph needs, and autonomously improve it—while maintaining RDF schema compliance, auditability, and semantic validity?
 
 **What Was Missing**:
+
 1. A protocol for LLMs to **query** graphs (SPARQL SELECT/CONSTRUCT) within the reasoning loop
 2. Tool definitions making SPARQL updates (INSERT, CONSTRUCT) directly callable by LLMs
 3. **Provenance linking** LLM decisions to graph mutations via cryptographic receipts
@@ -82,7 +87,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 
 ### 2.1 Tight Coupling via Model Context Protocol (MCP)
 
-**Previous State**: LLMs were standalone reasoning engines. RDF expertise and LLM engineering were separate concerns. No system existed for LLMs to query and mutate graphs *within* a reasoning loop.
+**Previous State**: LLMs were standalone reasoning engines. RDF expertise and LLM engineering were separate concerns. No system existed for LLMs to query and mutate graphs _within_ a reasoning loop.
 
 **Our Contribution**: A **three-layer architecture** making LLM and RDF operations inseparable:
 
@@ -117,6 +122,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 ```
 
 **Why This Is Novel**:
+
 - First integration of LLM tool-calling with SPARQL as a first-class tool
 - Enables multi-step reasoning where each step inspects graph state
 - LLM is not a predictor (embedding-based) nor an oracle (text-in-text-out); it's a **reasoner over structured data**
@@ -126,6 +132,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 **Previous State**: When LLMs suggested knowledge, you had no way to audit why. Was it reasoning or hallucination? Which training data influenced it? Impossible to know.
 
 **Our Contribution**: Every LLM decision produces a **receipt**—a cryptographic proof linking:
+
 - Input (RDF state before decision)
 - Decision (tool name and arguments)
 - Output (triples added/removed)
@@ -149,6 +156,7 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 ```
 
 **Why This Is Novel**:
+
 - First integration of cryptographic receipts with LLM decision chains
 - Enables auditing: "What LLM decisions led to this graph state?"
 - Prevents tampering: receipt chain is immutable (like blockchain)
@@ -163,11 +171,11 @@ Yet these systems remain largely disconnected from contemporary AI. Current inte
 ```javascript
 // User defines shape constraints
 const personShape = {
-  targetClass: "foaf:Person",
+  targetClass: 'foaf:Person',
   properties: {
-    "foaf:name": { datatype: "xsd:string", minCount: 1 },
-    "foaf:age": { datatype: "xsd:integer", maxInclusive: 150 },
-    "foaf:knows": { class: "foaf:Person" },
+    'foaf:name': { datatype: 'xsd:string', minCount: 1 },
+    'foaf:age': { datatype: 'xsd:integer', maxInclusive: 150 },
+    'foaf:knows': { class: 'foaf:Person' },
   },
 };
 
@@ -178,6 +186,7 @@ const personShape = {
 ```
 
 **Why This Is Novel**:
+
 - First system where LLM reasoning is constrained by schema during inference (not after)
 - Prevents hallucinations at mutation time, not review time
 - Enables autonomous operation without human approval loop
@@ -203,10 +212,11 @@ pnpm test packages/daemon/test/groq-mcp-integration.test.mjs
 ```
 
 **Why This Is Novel**:
+
 - First LLM+RDF paper with real integration tests (not mocked)
 - Proves the system works under actual latency, variance, and API failures
 - Reproducible: anyone can run same tests with their Groq key
-- Non-deterministic output accepted: tests verify *behavior*, not exact LLM text
+- Non-deterministic output accepted: tests verify _behavior_, not exact LLM text
 
 ### 2.5 Local-First, Vendor-Agnostic Deployment
 
@@ -233,6 +243,7 @@ const result = await generateText({
 ```
 
 **Why This Is Novel**:
+
 - First LLM+RDF system designed for provider agnosticity
 - Can switch providers without changing business logic
 - Scales: can distribute reasoning across multiple providers
@@ -250,11 +261,11 @@ The main orchestrator implementing the autonomous feedback loop:
 ```javascript
 const engine = new AutonomousRefinementEngine({
   graphId: 'my-knowledge-graph',
-  goalTriples: 100,              // Stop when graph has 100+ triples
-  maxIterations: 50,             // Max refinement episodes
-  shaclValidation: true,         // Validate all mutations
-  enableSnapshots: true,         // KGC 4D time-travel
-  enableBlockchain: true,        // Immutable receipt history
+  goalTriples: 100, // Stop when graph has 100+ triples
+  maxIterations: 50, // Max refinement episodes
+  shaclValidation: true, // Validate all mutations
+  enableSnapshots: true, // KGC 4D time-travel
+  enableBlockchain: true, // Immutable receipt history
 });
 
 // Run refinement
@@ -266,6 +277,7 @@ console.log(`Receipt chain: ${report.receipts.length} decisions`);
 ```
 
 **Key Algorithm**:
+
 1. **Evaluate conditions**: Query RDF with SPARQL to understand current state
 2. **Get semantic context**: Retrieve similar triples via embeddings
 3. **LLM decision**: Call Groq with context, receive structured decision
@@ -300,12 +312,12 @@ const hooks = [
       ?p2 foaf:workplace ?company .
       FILTER(?p1 != ?p2)
     }`,
-  }
+  },
 ];
 
 // Run autonomous loop until goal reached
 const result = await runHooksAutonomics(store, hooks, {
-  goalCondition: async (store) => store.size >= 100,
+  goalCondition: async store => store.size >= 100,
   episodeCount: 20,
 });
 
@@ -316,6 +328,7 @@ console.log(`Success rate: ${result.stats.successRate}`);
 
 **Receipt Chaining**:
 Each hook execution produces a receipt with `previousReceiptHash`, creating an immutable chain:
+
 ```
 Receipt_1 → Receipt_2 → Receipt_3 → ... → Receipt_N
    ↓           ↓           ↓                  ↓
@@ -326,21 +339,21 @@ hash(...)  hash(prev_1) hash(prev_2)    hash(prev_N-1)
 
 The autonomous refinement engine integrates with 13 UNRDF modules:
 
-| Module | Role | Example |
-|--------|------|---------|
-| **KGC 4D** | Time-travel snapshots | Restore graph to episode 5 state |
-| **Blockchain** | Immutable receipt history | Verify receipt chain is unmodified |
-| **Hooks** | Reactive enrichment rules | Auto-link colleagues by workplace |
-| **KGC Probe** | Integrity scanning | Check referential integrity after mutation |
-| **Oxigraph** | Persistent storage | 1GB+ graphs with SPARQL |
-| **Federation** | Multi-store queries | Query across DBpedia, Wikidata, local |
-| **Semantic Search** | Context retrieval | Find similar triples for LLM context |
-| **ML Inference** | Feature extraction | Graph embeddings guide LLM |
-| **ML Versioning** | Model tracking | Version each refinement's LLM model |
-| **Observability** | Distributed tracing | Jaeger traces every decision |
-| **Caching** | Performance optimization | Cache SPARQL condition evals |
-| **Graph Analytics** | Quality metrics | Monitor density, clustering, degree |
-| **Streaming** | Real-time sync | Replicate refined graphs to edge nodes |
+| Module              | Role                      | Example                                    |
+| ------------------- | ------------------------- | ------------------------------------------ |
+| **KGC 4D**          | Time-travel snapshots     | Restore graph to episode 5 state           |
+| **Blockchain**      | Immutable receipt history | Verify receipt chain is unmodified         |
+| **Hooks**           | Reactive enrichment rules | Auto-link colleagues by workplace          |
+| **KGC Probe**       | Integrity scanning        | Check referential integrity after mutation |
+| **Oxigraph**        | Persistent storage        | 1GB+ graphs with SPARQL                    |
+| **Federation**      | Multi-store queries       | Query across DBpedia, Wikidata, local      |
+| **Semantic Search** | Context retrieval         | Find similar triples for LLM context       |
+| **ML Inference**    | Feature extraction        | Graph embeddings guide LLM                 |
+| **ML Versioning**   | Model tracking            | Version each refinement's LLM model        |
+| **Observability**   | Distributed tracing       | Jaeger traces every decision               |
+| **Caching**         | Performance optimization  | Cache SPARQL condition evals               |
+| **Graph Analytics** | Quality metrics           | Monitor density, clustering, degree        |
+| **Streaming**       | Real-time sync            | Replicate refined graphs to edge nodes     |
 
 ---
 
@@ -431,20 +444,21 @@ Total: 25 tests passing | Coverage: 73.68% of self-play-autonomics.mjs
 
 ### 4.3 Performance Metrics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| **LLM Query Latency** | 1-3s per query | Groq API latency |
-| **SPARQL Execution** | <10ms | Local N3 store |
-| **SHACL Validation** | <5ms | Per mutation |
-| **Receipt Generation** | <1ms | Blake3 hash |
-| **Feedback Loop Iteration** | 2-5s total | Query + LLM + validation + commit |
-| **Episode Duration** | 5-15s | 3-4 iterations to goal |
-| **Memory per Episode** | ~10MB | Store + context + receipts |
-| **Graph Growth Rate** | 0.5-2 triples/iteration | Depends on domain and goal |
+| Metric                      | Value                   | Notes                             |
+| --------------------------- | ----------------------- | --------------------------------- |
+| **LLM Query Latency**       | 1-3s per query          | Groq API latency                  |
+| **SPARQL Execution**        | <10ms                   | Local N3 store                    |
+| **SHACL Validation**        | <5ms                    | Per mutation                      |
+| **Receipt Generation**      | <1ms                    | Blake3 hash                       |
+| **Feedback Loop Iteration** | 2-5s total              | Query + LLM + validation + commit |
+| **Episode Duration**        | 5-15s                   | 3-4 iterations to goal            |
+| **Memory per Episode**      | ~10MB                   | Store + context + receipts        |
+| **Graph Growth Rate**       | 0.5-2 triples/iteration | Depends on domain and goal        |
 
 ### 4.4 Convergence Analysis
 
 **Autonomous Improvement Loop Test**:
+
 ```
 Iteration 1:
   State: 2 triples
@@ -519,7 +533,9 @@ for (let episode = 0; episode < maxEpisodes; episode++) {
   snapshots.push(before);
 
   // Run LLM refinement...
-  const decision = await groq.generateText({ /* ... */ });
+  const decision = await groq.generateText({
+    /* ... */
+  });
   await store.addQuad(decision.triple);
 
   // After LLM mutation
@@ -547,9 +563,7 @@ const engine = new AutonomousRefinementEngine(config);
 await engine.refine(store, groqProvider);
 
 const episodes = engine.getEpisodes();
-const receipts = episodes
-  .filter(ep => ep.receipt)
-  .map(ep => ep.receipt);
+const receipts = episodes.filter(ep => ep.receipt).map(ep => ep.receipt);
 
 // Link to blockchain
 for (const receipt of receipts) {
@@ -594,7 +608,7 @@ const hooks = [
 
 // Autonomous loop: evaluate → execute if satisfied → record receipt
 const result = await runHooksAutonomics(store, hooks, {
-  goalCondition: async (store) => store.size >= 500,
+  goalCondition: async store => store.size >= 500,
   episodeCount: 100,
 });
 
@@ -610,13 +624,13 @@ console.log(`Receipt chain: ${result.receiptChain.length} decisions`);
 After each mutation, verify graph integrity:
 
 ```javascript
-engine.on('episode-complete', async (episode) => {
+engine.on('episode-complete', async episode => {
   const probeResults = await kgcProbe.scan(store, {
     checks: [
-      'schema-compliance',      // All triples match SHACL shapes
-      'type-consistency',       // URIs have consistent types
-      'referential-integrity',  // All references resolve
-      'duplicate-detection',    // No duplicate triples
+      'schema-compliance', // All triples match SHACL shapes
+      'type-consistency', // URIs have consistent types
+      'referential-integrity', // All references resolve
+      'duplicate-detection', // No duplicate triples
     ],
   });
 
@@ -641,8 +655,8 @@ Enrich reasoning with external knowledge:
 ```javascript
 const federated = await federation.create({
   stores: [
-    store,                              // Local RDF store
-    'https://dbpedia.org/sparql',       // DBpedia
+    store, // Local RDF store
+    'https://dbpedia.org/sparql', // DBpedia
     'https://query.wikidata.org/sparql', // Wikidata
   ],
 });
@@ -667,10 +681,7 @@ Provide LLM with semantically similar triples:
 
 ```javascript
 // During LLM reasoning, retrieve semantic context
-const semanticContext = await semanticSearch.findSimilar(
-  currentTriple,
-  { k: 10, threshold: 0.7 }
-);
+const semanticContext = await semanticSearch.findSimilar(currentTriple, { k: 10, threshold: 0.7 });
 
 // Groq receives:
 // "Current state: [10 triples]
@@ -734,7 +745,7 @@ const engine = new AutonomousRefinementEngine(
 Track graph health throughout refinement:
 
 ```javascript
-engine.on('episode-complete', async (episode) => {
+engine.on('episode-complete', async episode => {
   const metrics = await analytics.analyze(store);
 
   console.log('Graph Metrics:');
@@ -763,6 +774,7 @@ engine.on('episode-complete', async (episode) => {
 **Problem**: LLMs occasionally generate incorrect or nonsensical suggestions, even with SHACL validation.
 
 **Current Mitigation**: SHACL prevents schema violations, but not semantic inaccuracy.
+
 - Example: Groq adds `(alice, foaf:age, 5000)` — valid datatype, violates reality
 - Solution: Domain-specific validation rules can constrain further
 
@@ -775,6 +787,7 @@ engine.on('episode-complete', async (episode) => {
 **Bottleneck**: SPARQL queries become slower; semantic search becomes expensive.
 
 **Future Work**:
+
 - Implement approximate nearest-neighbor search for semantic context
 - Use graph partitioning to refine subgraphs in parallel
 - Benchmark on realistic enterprise-scale graphs (10M+ triples)
@@ -785,7 +798,7 @@ engine.on('episode-complete', async (episode) => {
 
 **Impact**: Refinement behavior varies between runs; difficult to debug or guarantee outcomes.
 
-**Mitigation**: Test suite verifies *behavior* (goal reached), not exact output. Acceptable for autonomous systems.
+**Mitigation**: Test suite verifies _behavior_ (goal reached), not exact output. Acceptable for autonomous systems.
 
 **Future**: Add deterministic mode (temperature=0) for critical applications.
 
@@ -844,6 +857,7 @@ The architecture we present is the foundation, but 2030 demands scale, speed, an
 ### 7.2 Three Adoption Phases (2026-2030)
 
 #### Phase 1: Early Adoption (2026-2027) - Research & Enterprise Pilots
+
 - **Use Cases**: Knowledge base enrichment, ontology learning, data quality improvement
 - **Scale**: Sub-1M triples, single-domain graphs
 - **Model**: Groq + smaller open models (Llama, Mistral)
@@ -853,6 +867,7 @@ The architecture we present is the foundation, but 2030 demands scale, speed, an
 **Milestone**: 100+ active deployments, 500M total triples managed
 
 #### Phase 2: Production Scaling (2027-2028) - Multi-Domain, Multi-Provider
+
 - **Use Cases**: Enterprise data integration, cross-domain discovery, automated ontology mapping
 - **Scale**: 1M-100M triples, federated across 5+ knowledge graphs
 - **Model**: Multi-provider (Groq, Claude, Llama via Vercel AI SDK); specialized models per domain
@@ -862,6 +877,7 @@ The architecture we present is the foundation, but 2030 demands scale, speed, an
 **Milestone**: 1000+ active deployments, 10B+ total triples managed
 
 #### Phase 3: Autonomous Intelligence (2028-2030) - Truly Self-Improving
+
 - **Use Cases**: Scientific discovery, causal inference, cross-discipline knowledge synthesis
 - **Scale**: Billion-triple knowledge graphs; real-time incremental refinement
 - **Model**: Specialized task-specific models; ensemble reasoning; multi-hop LLM chains
@@ -875,11 +891,13 @@ The architecture we present is the foundation, but 2030 demands scale, speed, an
 #### 7.3.1 From Single-LLM to Ensemble Reasoning
 
 **Today (2026)**:
+
 ```
 Graph → SPARQL context → Single LLM → Decision → Mutation → Receipt
 ```
 
 **2030**:
+
 ```
 Graph → Multi-hop reasoning chain:
   ├─ LLM₁ (hypothesis generation)
@@ -887,7 +905,7 @@ Graph → Multi-hop reasoning chain:
   ├─ LLM₃ (causal inference)
   ├─ Symbolic reasoner (rule application)
   └─ Neuro-symbolic fusion → Consensus decision → Mutation
-  
+
 Each step: confidence score, uncertainty quantification
 Final: High-confidence mutations only
 ```
@@ -897,6 +915,7 @@ Final: High-confidence mutations only
 **Today**: SHACL validates against pre-defined shapes
 
 **2030**: System learns ontology structure autonomously
+
 ```javascript
 // System observes patterns:
 // - All people have foaf:name (minCount 1)
@@ -905,7 +924,7 @@ Final: High-confidence mutations only
 
 // Generates SHACL shapes automatically
 const learnedShape = await ontologyLearner.infer(store, {
-  minSupport: 0.9,      // 90% of instances follow pattern
+  minSupport: 0.9, // 90% of instances follow pattern
   confidenceThreshold: 0.95,
 });
 // Result: shape that validates but also teaches ontology structure
@@ -913,20 +932,21 @@ const learnedShape = await ontologyLearner.infer(store, {
 
 #### 7.3.3 From Cryptographic Receipts to Verifiable Computation
 
-**Today**: Receipts prove *what* LLM decided
+**Today**: Receipts prove _what_ LLM decided
 
-**2030**: Zero-knowledge proofs of *why* LLM decided it
+**2030**: Zero-knowledge proofs of _why_ LLM decided it
+
 ```javascript
 // Groq + SPARQL reasoning can be verified via ZK proofs
 const proof = await generateZKProof({
-  claim: "LLM decided to add (alice, age, 30)",
+  claim: 'LLM decided to add (alice, age, 30)',
   evidence: [
-    "SPARQL query results: 10 similar triples with ages 25-35",
-    "SHACL validation: age must be 0-150",
-    "Domain knowledge: alice is 30 years old",
+    'SPARQL query results: 10 similar triples with ages 25-35',
+    'SHACL validation: age must be 0-150',
+    'Domain knowledge: alice is 30 years old',
   ],
-  model: "openai/gpt-4-turbo",
-  modelCheckpoint: "2026-04-01T00:00:00Z",
+  model: 'openai/gpt-4-turbo',
+  modelCheckpoint: '2026-04-01T00:00:00Z',
 });
 
 // Verifier can check proof without re-running LLM
@@ -939,20 +959,19 @@ console.log(`Decision justified: ${isValid}`); // ✓ true
 **Today**: Episodes take 2-5 seconds (batch processing)
 
 **2030**: Real-time incremental refinement as data arrives
+
 ```javascript
 // Stream of RDF triples arrives continuously
 const tripleStream = readRDFStream('kafka://knowledge-events');
 
-tripleStream.on('triple', async (triple) => {
+tripleStream.on('triple', async triple => {
   // Immediately evaluate conditions
   const conditionMatches = await hooks.evaluate(store, triple);
-  
+
   if (conditionMatches.length > 0) {
     // Execute effects in parallel (no latency)
-    await Promise.all(
-      conditionMatches.map(h => hooks.execute(store, h))
-    );
-    
+    await Promise.all(conditionMatches.map(h => hooks.execute(store, h)));
+
     // Receive feedback from LLM in background
     // (doesn't block stream processing)
     const suggestion = await groq.suggest(store, triple);
@@ -982,21 +1001,21 @@ class AutonomousAgent {
   async reason(task) {
     // 1. Query own knowledge graph for context
     const context = await this.kg.query(task);
-    
+
     // 2. LLM reasons about task using context
     const decision = await this.llm.generateText({
       prompt: `Task: ${task}\nKnown facts: ${context}`,
     });
-    
+
     // 3. Execute decision; log as new knowledge
     const result = await this.execute(decision);
-    
+
     // 4. Learn from result; refine knowledge graph
     await this.kg.refine({
       observation: result,
       feedback: this.evaluateFeedback(result),
     });
-    
+
     return result;
   }
 }
@@ -1038,10 +1057,10 @@ console.log(`
 
 // Autonomously designs experiments to test hypotheses
 await causalEngine.proposeExperiment({
-  hypothesis: "Flexible work improves retention more than salary",
-  design: "A/B test: 50 employees get flex work, 50 get salary bump",
-  expectedEffect: "Flex work retention +12%, Salary retention +8%",
-  duration: "6 months",
+  hypothesis: 'Flexible work improves retention more than salary',
+  design: 'A/B test: 50 employees get flex work, 50 get salary bump',
+  expectedEffect: 'Flex work retention +12%, Salary retention +8%',
+  duration: '6 months',
 });
 ```
 
@@ -1055,20 +1074,20 @@ const complianceKG = new AutonomousKnowledgeGraph({
   ontology: 'gdpr-ontology',
   constraints: [
     // EU GDPR constraints
-    "PersonalData.storage_duration ≤ 3 years",
-    "ProcessingBasis ∈ {Consent, LegalObligation, Contract, ...}",
-    "PersonData.subject has right(access, rectification, erasure)",
+    'PersonalData.storage_duration ≤ 3 years',
+    'ProcessingBasis ∈ {Consent, LegalObligation, Contract, ...}',
+    'PersonData.subject has right(access, rectification, erasure)',
   ],
   hooks: [
     // Auto-delete aged data
     {
-      condition: "PersonalData.created < now - 3 years",
-      effect: "DELETE PersonalData (with audit trail)",
+      condition: 'PersonalData.created < now - 3 years',
+      effect: 'DELETE PersonalData (with audit trail)',
     },
     // Warn on consent expiry
     {
-      condition: "Consent.expires < now + 30 days",
-      effect: "ALERT: Re-obtain consent or cease processing",
+      condition: 'Consent.expires < now + 30 days',
+      effect: 'ALERT: Re-obtain consent or cease processing',
     },
   ],
 });
@@ -1099,10 +1118,12 @@ await myKG.import('customers.csv', 'purchase.csv', 'suppliers.csv');
 // - Identifies patterns
 // - Generates insights
 
-console.log(await myKG.analyze({
-  question: "Which supplier is most reliable?"
-  // Answer: Fuzzy match on suppliers + purchase history + delivery metrics
-}));
+console.log(
+  await myKG.analyze({
+    question: 'Which supplier is most reliable?',
+    // Answer: Fuzzy match on suppliers + purchase history + delivery metrics
+  })
+);
 ```
 
 **Impact**: Data intelligence becomes a utility, like electricity. Available to SMBs, startups, nonprofits.
@@ -1118,9 +1139,9 @@ console.log(await myKG.analyze({
 const discoveryAgent = new AutonomousKnowledgeAgent();
 
 await discoveryAgent.loadKnowledge([
-  'pubmed_abstracts',     // 35M papers
-  'protein_database',     // 200M sequences
-  'drug_interactions',    // 50M known interactions
+  'pubmed_abstracts', // 35M papers
+  'protein_database', // 200M sequences
+  'drug_interactions', // 50M known interactions
 ]);
 
 // System runs continuously:
@@ -1183,6 +1204,7 @@ Combine neural networks (LLMs, embeddings) with symbolic reasoning (SPARQL, rule
 #### 7.6.2 Embodied Knowledge Graphs
 
 Knowledge graphs for robots: not just facts, but sensorimotor understanding.
+
 - Grasp: "A mug is graspable by handle"
 - Navigation: "Doorways lead to new spaces"
 - Manipulation: "Push fork, food transfers to mouth"
@@ -1217,6 +1239,7 @@ This work answers a fundamental question: **Can autonomous AI systems be made tr
 The answer is **yes**—if reasoning is grounded in structured knowledge, constrained by schema, auditable via receipts, and validated before commitment. This is not a property of any single component; it emerges from their tight integration.
 
 The implications extend far beyond knowledge graphs:
+
 - **Autonomous agents** can have persistent, interpretable knowledge
 - **Scientific discovery** can be accelerated 10x by machines proposing hypotheses
 - **Regulatory compliance** can be automated while remaining auditable
@@ -1231,36 +1254,42 @@ By 2030, we expect autonomous knowledge systems to be as common as databases are
 ## 9. References
 
 ### Semantic Web Standards
+
 - W3C SPARQL 1.1 Specification (2013) - https://www.w3.org/TR/sparql11-query/
 - W3C RDF 1.1 Specification (2014) - https://www.w3.org/TR/rdf11-concepts/
 - W3C SHACL Specification (2017) - https://www.w3.org/TR/shacl/
 - W3C OWL 2.0 Specification (2012) - https://www.w3.org/TR/owl2-overview/
 
 ### LLM & Tool Use
+
 - Vercel AI SDK Documentation (2024) - https://sdk.vercel.ai/
 - Anthropic's Tool Use Specification (2024) - https://docs.anthropic.com/docs/build-a-system-with-tools
 - Model Context Protocol (MCP) Specification (2024) - https://modelcontextprotocol.io/
 - Groq API Reference (2024) - https://console.groq.com/docs/
 
 ### Knowledge Graphs & AI
+
 - Knowledge Graph Embeddings (Nickel et al., 2016) - A Review of Relational Machine Learning for Knowledge Graphs
 - Neuro-Symbolic Integration (Garcez & Lamb, 2020) - Neurosymbolic AI: The 3rd Wave
 - Retrieval-Augmented Generation (Lewis et al., 2020) - Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
 - SPARQL as Semantic Web Query Language (Prud'hommeaux & Seaborne, 2008) - SPARQL Query Language for RDF
 
 ### Related UNRDF Work
+
 - UNRDF Architecture (docs/ARCHITECTURE.md, 2025)
 - Knowledge Hooks Framework (packages/hooks/README.md, 2025)
 - Daemon Integration Modules (packages/daemon/README.md, 2025)
 - Autonomous Refinement Guide (packages/daemon/AUTONOMOUS-REFINEMENT-GUIDE.md, 2026)
 
 ### Integration Test Suite & Implementation
+
 - groq-mcp-integration.test.mjs (packages/daemon/test/, 2026) - 12 passing tests, 50+ real API calls
 - self-play-autonomics.test.mjs (packages/hooks/test/, 2026) - 25 passing tests, receipt chain validation
 - autonomous-refinement-engine.mjs (packages/daemon/src/, 2026) - Core implementation, ~550 lines
 - self-play-autonomics.mjs (packages/hooks/src/hooks/, 2026) - Autonomous loop engine, ~330 lines
 
 ### Documentation
+
 - LOCAL-AGENTS-GUIDE.md (packages/daemon/, 2026) - Building autonomous agents locally
 - GROQ-INTEGRATION.md (packages/daemon/, 2026) - Groq provider configuration
 - MCP-SELF-PLAY.md (packages/daemon/, 2026) - MCP server integration
@@ -1416,12 +1445,14 @@ node agent.mjs
 ---
 
 **Version History**
+
 - v1.0 (April 2026): Initial thesis position paper
 - v2.0 (April 2026): Updated with implementation validation and Vision 2030
 
 **Status**: Research-grade prototype, production-ready for pilot deployments
 
-**Next Steps**: 
+**Next Steps**:
+
 - Scale to 100M+ triple graphs
 - Add reinforcement learning for goal-directed refinement
 - Deploy to production knowledge engineering pipelines

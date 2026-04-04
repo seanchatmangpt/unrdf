@@ -270,7 +270,7 @@ export async function hooks_execute(args = {}) {
   const cliArgs = 'hooks execute'.split(' ');
   if (args['config'] !== undefined) cliArgs.push('--config', String(args['config']));
   if (args['output'] !== undefined) cliArgs.push('--output', String(args['output']));
-  if (args['show-receipts']) cliArgs.push('--show-receipts');
+  if (args['show-effects']) cliArgs.push('--show-effects');
   if (args['store'] !== undefined) cliArgs.push('--store', String(args['store']));
   return executeCli(cliArgs);
 }
