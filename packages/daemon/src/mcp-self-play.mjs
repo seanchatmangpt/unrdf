@@ -217,6 +217,57 @@ export class SelfPlayAgent {
 }
 
 /**
+ * Factory function for random tool selection policy (fixed signature)
+ * @param {Array<string>} toolNames - Available tool names
+ * @returns {Function} decisionFn(episode, previousResult) => { toolName, input } | null
+ */
+export function createRandomPolicy(toolNames) {
+  return async (episode, _previousResult) => {
+    if (episode.steps.length >= 5) return null;
+    const toolName = toolNames[Math.floor(Math.random() * toolNames.length)];
+    return { toolName, input: { file: episode.context.graphFile } };
+  };
+}
+
+/**
+ * Factory function for greedy feedback policy (fixed signature)
+ * Selects tools with highest success rate, with inter-episode history
+ * @param {Object} toolRegistry - { toolName: { handler, schema } }
+ * @returns {Function} decisionFn(episode, previousResult) => { toolName, input } | null
+ */
+export function createGreedyPolicy(toolRegistry) {
+  const history = {}; // toolName → { success, total }
+
+  return async (episode, _previousResult) => {
+    if (episode.steps.length >= 10) return null;
+
+    // Update history from latest step
+    const last = episode.steps.at(-1);
+    if (last) {
+      history[last.toolName] ??= { success: 0, total: 0 };
+      history[last.toolName].total++;
+      if (last.metadata.success) history[last.toolName].success++;
+    }
+
+    // Pick tool with best success rate (try untested tools first)
+    const toolNames = Object.keys(toolRegistry);
+    const untested = toolNames.find(n => !history[n]);
+    if (untested) {
+      return { toolName: untested, input: { file: episode.context.graphFile } };
+    }
+
+    // Find best rate
+    const best = toolNames.reduce((a, b) => {
+      const ra = history[a].success / history[a].total;
+      const rb = history[b].success / history[b].total;
+      return ra >= rb ? a : b;
+    });
+
+    return { toolName: best, input: { file: episode.context.graphFile } };
+  };
+}
+
+/**
  * Pre-built decision functions (policies)
  */
 export const SelfPlayPolicies = {
@@ -271,49 +322,6 @@ export const SelfPlayPolicies = {
 
     // End episode
     return null;
-  },
-
-  /**
-   * Random tool selection (baseline exploration)
-   */
-  randomDecision: async (episode, _previousResult, toolNames) => {
-    if (episode.steps.length >= 5) return null;
-    const toolName = toolNames[Math.floor(Math.random() * toolNames.length)];
-    return {
-      toolName,
-      input: { file: episode.context.graphFile },
-    };
-  },
-
-  /**
-   * Greedy feedback maximization
-   */
-  greedyFeedbackDecision: async (episode, _previousResult, toolRegistry) => {
-    if (episode.steps.length >= 10) return null;
-
-    // Select tool with highest historical success rate
-    const toolNames = Object.keys(toolRegistry);
-    let bestTool = toolNames[0];
-    let bestRate = 0;
-
-    for (const toolName of toolNames) {
-      const steps = episode.steps.filter(s => s.toolName === toolName);
-      if (steps.length === 0) {
-        bestTool = toolName; // Try untested tools
-        break;
-      }
-      const successCount = steps.filter(s => s.metadata.success).length;
-      const rate = successCount / steps.length;
-      if (rate > bestRate) {
-        bestRate = rate;
-        bestTool = toolName;
-      }
-    }
-
-    return {
-      toolName: bestTool,
-      input: { file: episode.context.graphFile },
-    };
   },
 };
 

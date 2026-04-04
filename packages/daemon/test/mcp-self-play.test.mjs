@@ -9,6 +9,8 @@ import {
   SelfPlayEpisode,
   SelfPlayAgent,
   SelfPlayPolicies,
+  createRandomPolicy,
+  createGreedyPolicy,
   runSelfPlayLoop,
 } from '../src/mcp-self-play.mjs';
 
@@ -177,18 +179,16 @@ describe('SelfPlayPolicies', () => {
     expect(decision4).toBeNull();
   });
 
-  it('should have randomDecision policy', async () => {
+  it('should have createRandomPolicy factory', async () => {
     const toolNames = Object.keys(toolRegistry);
-    const decision = await SelfPlayPolicies.randomDecision(episode, null, toolNames);
+    const policy = createRandomPolicy(toolNames);
+    const decision = await policy(episode, null);
     expect(toolNames).toContain(decision.toolName);
   });
 
-  it('should have greedyFeedbackDecision policy', async () => {
-    const decision = await SelfPlayPolicies.greedyFeedbackDecision(
-      episode,
-      null,
-      toolRegistry
-    );
+  it('should have createGreedyPolicy factory', async () => {
+    const policy = createGreedyPolicy(toolRegistry);
+    const decision = await policy(episode, null);
     expect(Object.keys(toolRegistry)).toContain(decision.toolName);
   });
 });

@@ -323,3 +323,12 @@ export async function stopMCPServer() {
   _startTime = null;
   return { stopped: true };
 }
+
+export function buildMCPToolRegistry() {
+  return Object.fromEntries(
+    TOOLS.map(t => [t.name, {
+      handler: async (input) => runCLI(t.args(input)),
+      schema: t.schema,
+    }])
+  );
+}
