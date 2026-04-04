@@ -15,14 +15,14 @@ console.assert(receipt.receipt.id, 'Event has ID');
 console.assert(receipt.receipt.event_count === 1, 'Event count incremented');
   });
 
-  test('store example 3 (line 221)', async () => {
+  test('store example 3 (line 228)', async () => {
     const store = new KGCStore();
 console.assert(store.getEventCount() === 0, 'Initial count is 0');
 await store.appendEvent({ type: 'CREATE' }, []);
 console.assert(store.getEventCount() === 1, 'Count incremented');
   });
 
-  test('store example 4 (line 251)', async () => {
+  test('store example 4 (line 258)', async () => {
     const store = new KGCStore();
 await store.appendEvent({ type: 'CREATE' }, []);
 const stats = store.getEventLogStats();

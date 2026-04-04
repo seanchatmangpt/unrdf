@@ -7,7 +7,11 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["consensus-demo.mjs", "failover-test.mjs", "three-node-cluster.mjs"],
+    "examplesFiles": [
+      "consensus-demo.mjs",
+      "failover-test.mjs",
+      "three-node-cluster.mjs"
+    ],
     "fingerprint": "5bc092461454d2caf6f019b851bbf44a4fb1e92bb9784c4492c4829a9e28f506",
     "readmeHeadings": [
       "Features",
@@ -24,12 +28,23 @@
   },
   "explanation": {
     "architecture": "Production-grade Raft consensus implementation for distributed workflow coordination.",
-    "concepts": ["raft", "consensus", "distributed", "workflow", "coordination"],
+    "concepts": [
+      "raft",
+      "consensus",
+      "distributed",
+      "workflow",
+      "coordination"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-consensus-explanation",
-    "source": ["keywords", "readme"],
+    "source": [
+      "keywords",
+      "readme"
+    ],
     "title": "Understanding @unrdf/consensus",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -37,8 +52,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/consensus",
       "title": "Handle Errors"
     },
@@ -46,8 +67,15 @@
       "confidenceScore": 0.7,
       "context": "When working with raft in your project",
       "id": "howto-integrate-with-raft",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/consensus with raft",
       "title": "Integrate with raft"
     }
@@ -88,7 +116,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/consensus Reference"
   },
   "tutorials": [
@@ -96,8 +126,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with @unrdf/consensus\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/consensus\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through consensus-demo.mjs",
         "Work through failover-test.mjs",
@@ -110,7 +144,11 @@
       "goal": "Learn how to set up and use @unrdf/consensus in your project",
       "id": "tutorial-getting-started-with-unrdf-consensus",
       "prerequisites": [],
-      "source": ["examples", "readme", "keywords"],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

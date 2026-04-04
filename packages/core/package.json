@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/core",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate",
   "type": "module",
   "main": "src/index.mjs",

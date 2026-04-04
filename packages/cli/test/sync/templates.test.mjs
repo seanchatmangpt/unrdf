@@ -426,7 +426,7 @@ describe('Template Verification', () => {
           const ifCloses = (body.match(/\{%\s*endif\s*%\}/g) || []).length;
           expect(ifOpens, `${templateName} should have balanced if blocks`).toBe(ifCloses);
 
-          const setOpens = (body.match(/\{%\s*set\s/g) || []).length;
+          const _setOpens = (body.match(/\{%\s*set\s/g) || []).length;
           const macroOpens = (body.match(/\{%\s*macro\s/g) || []).length;
           const macroCloses = (body.match(/\{%\s*endmacro\s*%\}/g) || []).length;
           expect(macroOpens, `${templateName} should have balanced macros`).toBe(macroCloses);

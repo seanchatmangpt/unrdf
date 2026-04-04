@@ -7,7 +7,6 @@ import { createStore, dataFactory } from '@unrdf/oxigraph';
 import {
   executeSparqlQuery,
   executeParameterizedQuery,
-  buildPrefixDeclarations,
   validateSparqlQuery
 } from '../../../../src/cli/commands/sync/sparql-executor.mjs';
 

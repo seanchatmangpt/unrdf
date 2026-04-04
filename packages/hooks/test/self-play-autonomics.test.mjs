@@ -332,10 +332,10 @@ describe('runHooksAutonomics', () => {
     const hooks = [];
     const episodeEnds = [];
 
-    const result = await runHooksAutonomics(store, hooks, {
+    const _result = await runHooksAutonomics(store, hooks, {
       episodeCount: 2,
       maxStepsPerEpisode: 5,
-      onEpisodeEnd: (ep) => {
+      onEpisodeEnd: ep => {
         episodeEnds.push(ep.episodeId);
       },
     });

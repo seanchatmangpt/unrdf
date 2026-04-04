@@ -86,8 +86,7 @@ describe('HooksMarketplace - Normalization', () => {
     const normalized = marketplace.normalizeHookToRDF(hook);
 
     const typeTriple = normalized.triples.find(
-      t => t.predicate.value === `${HOOK_NS.rdf}type` &&
-           t.object.value === `${HOOK_NS.hook}Hook`
+      t => t.predicate.value === `${HOOK_NS.rdf}type` && t.object.value === `${HOOK_NS.hook}Hook`
     );
 
     expect(typeTriple).toBeDefined();
@@ -98,13 +97,11 @@ describe('HooksMarketplace - Normalization', () => {
     const normalized = marketplace.normalizeHookToRDF(hook);
 
     const nameTriple = normalized.triples.find(
-      t => t.predicate.value === `${HOOK_NS.schema}name` &&
-           t.object.value === hook.name
+      t => t.predicate.value === `${HOOK_NS.schema}name` && t.object.value === hook.name
     );
 
     const versionTriple = normalized.triples.find(
-      t => t.predicate.value === `${HOOK_NS.schema}version` &&
-           t.object.value === hook.version
+      t => t.predicate.value === `${HOOK_NS.schema}version` && t.object.value === hook.version
     );
 
     const priorityTriple = normalized.triples.find(
@@ -134,9 +131,7 @@ describe('HooksMarketplace - Normalization', () => {
 
   it('should normalize effects to RDF', () => {
     const hook = createValidHook({
-      effects: [
-        { kind: 'sparql-construct', query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }' },
-      ],
+      effects: [{ kind: 'sparql-construct', query: 'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }' }],
     });
 
     const normalized = marketplace.normalizeHookToRDF(hook);
@@ -183,8 +178,9 @@ describe('HooksMarketplace - Normalization', () => {
 
     const normalized = marketplace.normalizeHookToRDF(hook);
     const depTriple = normalized.triples.find(
-      t => t.predicate.value === `${HOOK_NS.schema}dependsOn` &&
-           t.object.value === `${HOOK_NS.hook}${depId}`
+      t =>
+        t.predicate.value === `${HOOK_NS.schema}dependsOn` &&
+        t.object.value === `${HOOK_NS.hook}${depId}`
     );
 
     expect(depTriple).toBeDefined();
@@ -233,9 +229,7 @@ describe('HooksMarketplace - Dependency Resolution', () => {
   it('should detect direct self-dependency cycle', () => {
     const hookUri1 = `${HOOK_NS.hook}hook-1`;
 
-    const hooksByUri = new Map([
-      [hookUri1, { dependsOn: [hookUri1] }],
-    ]);
+    const hooksByUri = new Map([[hookUri1, { dependsOn: [hookUri1] }]]);
 
     const result = marketplace.resolveDependenciesViaRules(hooksByUri);
 

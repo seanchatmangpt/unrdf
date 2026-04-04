@@ -18,10 +18,19 @@
   },
   "explanation": {
     "architecture": "@unrdf/knowledge-engine is a package in the UNRDF ecosystem",
-    "concepts": ["rdf", "knowledge-engine", "inference", "reasoning", "rules"],
+    "concepts": [
+      "rdf",
+      "knowledge-engine",
+      "inference",
+      "reasoning",
+      "rules"
+    ],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-knowledge-engine-explanation",
-    "source": ["keywords", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/knowledge-engine",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -35,8 +44,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/knowledge-engine",
       "title": "Handle Errors"
     },
@@ -44,8 +59,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/knowledge-engine with rdf",
       "title": "Integrate with rdf"
     }
@@ -86,7 +108,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/knowledge-engine Reference"
   },
   "tutorials": [
@@ -94,8 +118,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with @unrdf/knowledge-engine\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/knowledge-engine\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through ai-search-example.mjs",
         "Work through chatman-direct-example.mjs",
@@ -108,8 +136,13 @@
       "confidenceScore": 0.7,
       "goal": "Learn how to set up and use @unrdf/knowledge-engine in your project",
       "id": "tutorial-getting-started-with-unrdf-knowledge-engine",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["examples", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

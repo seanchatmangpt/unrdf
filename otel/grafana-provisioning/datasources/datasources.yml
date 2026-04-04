@@ -1,0 +1,53 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    editable: true
+    jsonData:
+      httpMethod: GET
+      tracesToLogs:
+        datasourceId: loki
+        tags: ['job', 'instance', 'pod', 'container']
+        labelValues: ['job', 'instance']
+        filterByTraceID: true
+        filterBySpanID: false
+      tracesToMetrics:
+        datasourceId: prometheus
+        tags: [{ key: 'service.name', value: 'name' }]
+        queries:
+          - name: 'Rate (%s)'
+            query: 'sum(rate({{ .Labels }}[$__rate_interval])) by ({{ .GroupBy }})'
+      serviceMap:
+        datasourceId: prometheus
+
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: '"traceID":"([a-f0-9]+)"'
+          name: TraceID
+          url: '$${__value.raw}'
+
+  - name: Pyroscope
+    type: grafana-pyroscope-datasource
+    uid: pyroscope
+    access: proxy
+    url: http://pyroscope:4040
+    editable: true

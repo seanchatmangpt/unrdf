@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-kafka",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "Apache Kafka event streaming integration for YAWL workflows with Avro serialization",
   "type": "module",
   "main": "src/index.mjs",

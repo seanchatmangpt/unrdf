@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { registerResources } from './resources.mjs';
 import { registerPrompts } from './prompts.mjs';
 import * as handlers from './handlers.mjs';
+import { withMcpSpan } from './otel-instrumentation.mjs';
 
 
 /**
@@ -42,7 +43,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['context_add'];
       if (!fn) throw new Error('Handler not implemented: context_add');
-      return fn(args);
+      return withMcpSpan('context_add', fn)(args);
     }
   );
 
@@ -58,7 +59,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['context_create'];
       if (!fn) throw new Error('Handler not implemented: context_create');
-      return fn(args);
+      return withMcpSpan('context_create', fn)(args);
     }
   );
 
@@ -74,7 +75,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['context_list'];
       if (!fn) throw new Error('Handler not implemented: context_list');
-      return fn(args);
+      return withMcpSpan('context_list', fn)(args);
     }
   );
 
@@ -90,7 +91,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['context_remove'];
       if (!fn) throw new Error('Handler not implemented: context_remove');
-      return fn(args);
+      return withMcpSpan('context_remove', fn)(args);
     }
   );
 
@@ -108,7 +109,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['convert'];
       if (!fn) throw new Error('Handler not implemented: convert');
-      return fn(args);
+      return withMcpSpan('convert', fn)(args);
     }
   );
 
@@ -124,7 +125,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_cluster'];
       if (!fn) throw new Error('Handler not implemented: daemon_cluster');
-      return fn(args);
+      return withMcpSpan('daemon_cluster', fn)(args);
     }
   );
 
@@ -139,7 +140,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_config'];
       if (!fn) throw new Error('Handler not implemented: daemon_config');
-      return fn(args);
+      return withMcpSpan('daemon_config', fn)(args);
     }
   );
 
@@ -155,7 +156,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_list'];
       if (!fn) throw new Error('Handler not implemented: daemon_list');
-      return fn(args);
+      return withMcpSpan('daemon_list', fn)(args);
     }
   );
 
@@ -173,7 +174,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_logs'];
       if (!fn) throw new Error('Handler not implemented: daemon_logs');
-      return fn(args);
+      return withMcpSpan('daemon_logs', fn)(args);
     }
   );
 
@@ -191,7 +192,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_run'];
       if (!fn) throw new Error('Handler not implemented: daemon_run');
-      return fn(args);
+      return withMcpSpan('daemon_run', fn)(args);
     }
   );
 
@@ -209,7 +210,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_schedule'];
       if (!fn) throw new Error('Handler not implemented: daemon_schedule');
-      return fn(args);
+      return withMcpSpan('daemon_schedule', fn)(args);
     }
   );
 
@@ -225,7 +226,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['daemon_status'];
       if (!fn) throw new Error('Handler not implemented: daemon_status');
-      return fn(args);
+      return withMcpSpan('daemon_status', fn)(args);
     }
   );
 
@@ -241,7 +242,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['graph_create'];
       if (!fn) throw new Error('Handler not implemented: graph_create');
-      return fn(args);
+      return withMcpSpan('graph_create', fn)(args);
     }
   );
 
@@ -258,7 +259,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['graph_dump'];
       if (!fn) throw new Error('Handler not implemented: graph_dump');
-      return fn(args);
+      return withMcpSpan('graph_dump', fn)(args);
     }
   );
 
@@ -275,7 +276,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['graph_load'];
       if (!fn) throw new Error('Handler not implemented: graph_load');
-      return fn(args);
+      return withMcpSpan('graph_load', fn)(args);
     }
   );
 
@@ -292,7 +293,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['graph_query'];
       if (!fn) throw new Error('Handler not implemented: graph_query');
-      return fn(args);
+      return withMcpSpan('graph_query', fn)(args);
     }
   );
 
@@ -307,7 +308,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['graph_stats'];
       if (!fn) throw new Error('Handler not implemented: graph_stats');
-      return fn(args);
+      return withMcpSpan('graph_stats', fn)(args);
     }
   );
 
@@ -324,7 +325,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['hooks_define'];
       if (!fn) throw new Error('Handler not implemented: hooks_define');
-      return fn(args);
+      return withMcpSpan('hooks_define', fn)(args);
     }
   );
 
@@ -341,7 +342,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['hooks_evaluate_condition'];
       if (!fn) throw new Error('Handler not implemented: hooks_evaluate_condition');
-      return fn(args);
+      return withMcpSpan('hooks_evaluate_condition', fn)(args);
     }
   );
 
@@ -359,7 +360,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['hooks_execute'];
       if (!fn) throw new Error('Handler not implemented: hooks_execute');
-      return fn(args);
+      return withMcpSpan('hooks_execute', fn)(args);
     }
   );
 
@@ -373,7 +374,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['hooks_list_conditions'];
       if (!fn) throw new Error('Handler not implemented: hooks_list_conditions');
-      return fn(args);
+      return withMcpSpan('hooks_list_conditions', fn)(args);
     }
   );
 
@@ -390,7 +391,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['hooks_receipts'];
       if (!fn) throw new Error('Handler not implemented: hooks_receipts');
-      return fn(args);
+      return withMcpSpan('hooks_receipts', fn)(args);
     }
   );
 
@@ -405,7 +406,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['mcp_inspect'];
       if (!fn) throw new Error('Handler not implemented: mcp_inspect');
-      return fn(args);
+      return withMcpSpan('mcp_inspect', fn)(args);
     }
   );
 
@@ -421,7 +422,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['mcp_start'];
       if (!fn) throw new Error('Handler not implemented: mcp_start');
-      return fn(args);
+      return withMcpSpan('mcp_start', fn)(args);
     }
   );
 
@@ -436,7 +437,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['mcp_status'];
       if (!fn) throw new Error('Handler not implemented: mcp_status');
-      return fn(args);
+      return withMcpSpan('mcp_status', fn)(args);
     }
   );
 
@@ -451,7 +452,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['mcp_stop'];
       if (!fn) throw new Error('Handler not implemented: mcp_stop');
-      return fn(args);
+      return withMcpSpan('mcp_stop', fn)(args);
     }
   );
 
@@ -468,7 +469,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['query'];
       if (!fn) throw new Error('Handler not implemented: query');
-      return fn(args);
+      return withMcpSpan('query', fn)(args);
     }
   );
 
@@ -485,7 +486,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['query_file'];
       if (!fn) throw new Error('Handler not implemented: query_file');
-      return fn(args);
+      return withMcpSpan('query_file', fn)(args);
     }
   );
 
@@ -506,7 +507,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['sync'];
       if (!fn) throw new Error('Handler not implemented: sync');
-      return fn(args);
+      return withMcpSpan('sync', fn)(args);
     }
   );
 
@@ -523,7 +524,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['template_extract'];
       if (!fn) throw new Error('Handler not implemented: template_extract');
-      return fn(args);
+      return withMcpSpan('template_extract', fn)(args);
     }
   );
 
@@ -546,7 +547,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['template_generate'];
       if (!fn) throw new Error('Handler not implemented: template_generate');
-      return fn(args);
+      return withMcpSpan('template_generate', fn)(args);
     }
   );
 
@@ -560,7 +561,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['template_list'];
       if (!fn) throw new Error('Handler not implemented: template_list');
-      return fn(args);
+      return withMcpSpan('template_list', fn)(args);
     }
   );
 
@@ -579,7 +580,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['template_query'];
       if (!fn) throw new Error('Handler not implemented: template_query');
-      return fn(args);
+      return withMcpSpan('template_query', fn)(args);
     }
   );
 
@@ -595,7 +596,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['to_json'];
       if (!fn) throw new Error('Handler not implemented: to_json');
-      return fn(args);
+      return withMcpSpan('to_json', fn)(args);
     }
   );
 
@@ -611,7 +612,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['to_ntriples'];
       if (!fn) throw new Error('Handler not implemented: to_ntriples');
-      return fn(args);
+      return withMcpSpan('to_ntriples', fn)(args);
     }
   );
 
@@ -627,7 +628,7 @@ export function createMCPServer() {
     async (args) => {
       const fn = handlers['to_turtle'];
       if (!fn) throw new Error('Handler not implemented: to_turtle');
-      return fn(args);
+      return withMcpSpan('to_turtle', fn)(args);
     }
   );
 
@@ -715,7 +716,7 @@ export async function startMCPServer() {
  * @returns {Promise<void>}
  * @throws {Error} SSE transport is not yet implemented
  */
-export async function startMCPServerSSE(port = 8765) {
+export async function startMCPServerSSE(_port = 8765) {
   throw new Error(
     'SSE transport is not yet implemented. ' +
     'Use startMCPServer() for stdio transport instead. ' +

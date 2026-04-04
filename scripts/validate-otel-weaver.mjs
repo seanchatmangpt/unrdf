@@ -188,7 +188,7 @@ if (existsSync(middlewarePath)) {
 // Check gRPC client trace propagation
 console.log('\n🌐 Checking gRPC Client Trace Propagation...\n');
 
-const clientPath = join(process.cwd(), 'src/sidecar/client.mjs');
+const clientPath = join(process.cwd(), 'sidecar/sidecar/client.mjs');
 if (existsSync(clientPath)) {
   const clientContent = readFileSync(clientPath, 'utf-8');
 

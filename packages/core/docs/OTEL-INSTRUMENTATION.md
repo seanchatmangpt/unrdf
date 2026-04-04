@@ -177,10 +177,7 @@ const breaker = createOTELCircuitBreaker({
 For testing with OTEL validation, use the validation package:
 
 ```javascript
-import {
-  OTELValidator,
-  createSpanData,
-} from '@unrdf/validation';
+import { OTELValidator, createSpanData } from '@unrdf/validation';
 
 const validator = new OTELValidator();
 
@@ -206,25 +203,25 @@ console.log('Validation score:', result.score);
 
 ### TransactionManager Spans
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `transaction.additions` | number | Number of quads to add |
-| `transaction.removals` | number | Number of quads to remove |
-| `transaction.actor` | string | Actor performing the transaction |
-| `transaction.committed` | boolean | Whether transaction succeeded |
-| `transaction.duration_ms` | number | Total duration in milliseconds |
-| `transaction.hook_results` | number | Number of hook results |
-| `transaction.error` | string | Error message if failed |
+| Attribute                  | Type    | Description                      |
+| -------------------------- | ------- | -------------------------------- |
+| `transaction.additions`    | number  | Number of quads to add           |
+| `transaction.removals`     | number  | Number of quads to remove        |
+| `transaction.actor`        | string  | Actor performing the transaction |
+| `transaction.committed`    | boolean | Whether transaction succeeded    |
+| `transaction.duration_ms`  | number  | Total duration in milliseconds   |
+| `transaction.hook_results` | number  | Number of hook results           |
+| `transaction.error`        | string  | Error message if failed          |
 
 ### CircuitBreaker Spans
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `circuit.state` | string | Current state (closed/open/half_open) |
-| `circuit.failure_count` | number | Number of consecutive failures |
-| `circuit.name` | string | Circuit breaker name |
-| `circuit.success` | boolean | Whether execution succeeded |
-| `circuit.rejected` | boolean | Whether circuit rejected the call |
+| Attribute               | Type    | Description                           |
+| ----------------------- | ------- | ------------------------------------- |
+| `circuit.state`         | string  | Current state (closed/open/half_open) |
+| `circuit.failure_count` | number  | Number of consecutive failures        |
+| `circuit.name`          | string  | Circuit breaker name                  |
+| `circuit.success`       | boolean | Whether execution succeeded           |
+| `circuit.rejected`      | boolean | Whether circuit rejected the call     |
 
 ## Best Practices
 
@@ -253,9 +250,7 @@ app.get('/data/:id', async (req, res) => {
     });
 
     try {
-      const data = await breaker.execute(() =>
-        fetchFromExternalAPI(req.params.id)
-      );
+      const data = await breaker.execute(() => fetchFromExternalAPI(req.params.id));
       res.json(data);
     } catch (error) {
       span.recordException(error);
@@ -292,9 +287,7 @@ describe('TransactionManager OTEL', () => {
 
     const result = await tx.apply(store, delta);
 
-    expect(spans).toContainEqual(
-      expect.objectContaining({ name: 'transaction.apply' })
-    );
+    expect(spans).toContainEqual(expect.objectContaining({ name: 'transaction.apply' }));
   });
 });
 ```
@@ -303,4 +296,5 @@ describe('TransactionManager OTEL', () => {
 
 - [KNOWLEDGE-HOOKS-PERFORMANCE.md](./KNOWLEDGE-HOOKS-PERFORMANCE.md) - Hook performance considerations
 - [Validation Package](../validation/) - OTEL validation utilities
+- [Daemon OTEL Integration](../../daemon/OTEL-ENVIRONMENT.md) - Daemon environment configuration
 - [OpenTelemetry Docs](https://opentelemetry.io/) - Official OTEL documentation

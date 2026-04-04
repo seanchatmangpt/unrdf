@@ -43,11 +43,11 @@ describe('Integration - Hook Lifecycle', () => {
     );
 
     // Execute hooks
-    const results = executeHooksByTrigger(registry, 'before-add', testQuad);
+    const chainResult = executeHooksByTrigger(registry, 'before-add', testQuad);
 
-    expect(results).toHaveLength(1);
-    expect(results[0].valid).toBe(true);
-    expect(results[0].hookName).toBe('integration-validator');
+    expect(chainResult.results).toHaveLength(1);
+    expect(chainResult.valid).toBe(true);
+    expect(chainResult.results[0].hookName).toBe('integration-validator');
   });
 
   it('should chain multiple hooks correctly', () => {
@@ -118,8 +118,8 @@ describe('Integration - RDF Store with Hooks', () => {
     const validResult = executeHooksByTrigger(registry, 'before-add', validQuad);
     const invalidResult = executeHooksByTrigger(registry, 'before-add', invalidQuad);
 
-    expect(validResult[0].valid).toBe(true);
-    expect(invalidResult[0].valid).toBe(false);
+    expect(validResult.valid).toBe(true);
+    expect(invalidResult.valid).toBe(false);
   });
 
   it('should transform quads before adding to store', () => {
@@ -146,8 +146,8 @@ describe('Integration - RDF Store with Hooks', () => {
 
     const results = executeHooksByTrigger(registry, 'before-add', originalQuad);
 
-    expect(results[0].valid).toBe(true);
-    expect(results[0].quad.predicate.value).toContain('http://new.example.org/');
+    expect(results.valid).toBe(true);
+    expect(results.quad.predicate.value).toContain('http://new.example.org/');
   });
 });
 
@@ -254,7 +254,7 @@ describe('Integration - Performance with Multiple Hooks', () => {
     const results = executeHooksByTrigger(registry, 'before-add', testQuad);
     const duration = performance.now() - start;
 
-    expect(results).toHaveLength(100);
+    expect(results.results).toHaveLength(100);
     expect(duration).toBeLessThan(100); // Should complete in < 100ms
   });
 
@@ -326,7 +326,7 @@ describe('Integration - Concurrent Hook Execution', () => {
 
     expect(results).toHaveLength(100);
     results.forEach(result => {
-      expect(result[0].valid).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 });

@@ -34,7 +34,7 @@ export const startCommand = defineCommand({
       }
 
       console.log(`Starting MCP server...`);
-      const server = await startMCPServer({
+      const _server = await startMCPServer({
         transport,
         port: transport === 'sse' ? port : undefined,
       });

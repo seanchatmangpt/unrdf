@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
   "bin": {
@@ -47,10 +47,12 @@
     "validation"
   ],
   "dependencies": {
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
+    "@noble/hashes": "^1.4.0",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
     "citty": "^0.1.6",
     "eyereasoner": "^10",
+    "sparqljs": "^3.7.3",
     "zod": "^4.1.13"
   },
   "devDependencies": {

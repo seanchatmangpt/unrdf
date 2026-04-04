@@ -48,10 +48,7 @@ export class BatchedTelemetry {
 
     try {
       return this.tracer.startSpan(name, {
-        attributes: {
-          'hook.transaction': true,
-          ...attributes,
-        },
+        attributes,
       });
     } catch {
       return null;
@@ -68,7 +65,7 @@ export class BatchedTelemetry {
    * @param {string} key - Attribute key
    * @param {*} value - Attribute value
    */
-  setAttribute(span, key, value) {
+  addPendingAttribute(span, key, value) {
     if (!this.enabled || !span) {
       return;
     }
@@ -78,7 +75,7 @@ export class BatchedTelemetry {
 
     // Schedule batch flush if not already scheduled
     if (!this.flushTimeout) {
-      this.flushTimeout = setTimeout(() => this.flush(), this.flushInterval);
+      this.flushTimeout = setTimeout(() => this.flushPendingAttributes(), this.flushInterval);
     }
   }
 
@@ -88,7 +85,7 @@ export class BatchedTelemetry {
    * This reduces the number of span attribute mutations
    * by batching them together rather than setting each individually.
    */
-  flush() {
+  flushPendingAttributes() {
     try {
       for (const { span, key, value } of this.pendingAttributes) {
         try {
@@ -137,7 +134,7 @@ export class BatchedTelemetry {
     try {
       // Flush any pending attributes first
       if (this.pendingAttributes.length > 0) {
-        this.flush();
+        this.flushPendingAttributes();
       }
 
       // End span with status
@@ -149,11 +146,23 @@ export class BatchedTelemetry {
   }
 
   /**
+   * Cleanup telemetry (flush and clear state)
+   */
+  cleanup() {
+    if (this.flushTimeout) {
+      clearTimeout(this.flushTimeout);
+      this.flushTimeout = null;
+    }
+    this.flushPendingAttributes();
+    this.pendingAttributes = [];
+  }
+
+  /**
    * Disable telemetry (for production or testing)
    */
   disable() {
     this.enabled = false;
-    this.flush();
+    this.cleanup();
   }
 
   /**
@@ -161,6 +170,20 @@ export class BatchedTelemetry {
    */
   enable() {
     this.enabled = true;
+  }
+
+  /**
+   * Alias for addPendingAttribute (backward compatibility)
+   */
+  setAttribute(span, key, value) {
+    return this.addPendingAttribute(span, key, value);
+  }
+
+  /**
+   * Alias for flushPendingAttributes (backward compatibility)
+   */
+  flush() {
+    return this.flushPendingAttributes();
   }
 }
 

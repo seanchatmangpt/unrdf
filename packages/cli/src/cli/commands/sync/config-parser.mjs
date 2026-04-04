@@ -133,7 +133,7 @@ export async function parseConfig(configPath, options = {}) {
 function parseSimpleToml(content) {
   const result = {};
   let currentSection = result;
-  let currentArraySection = null;
+  // let currentArraySection = null; // Unused variable reserved for future array handling
   let inMultilineString = false;
   let multilineKey = '';
   let multilineValue = '';
@@ -173,7 +173,7 @@ function parseSimpleToml(content) {
       const newItem = {};
       parent[lastPart].push(newItem);
       currentSection = newItem;
-      currentArraySection = parent[lastPart];
+      // currentArraySection = parent[lastPart]; // Unused variable reserved for future array handling
       continue;
     }
 
@@ -186,7 +186,7 @@ function parseSimpleToml(content) {
         if (!currentSection[part]) currentSection[part] = {};
         currentSection = currentSection[part];
       }
-      currentArraySection = null;
+      // currentArraySection = null; // Unused variable reserved for future array handling
       continue;
     }
 

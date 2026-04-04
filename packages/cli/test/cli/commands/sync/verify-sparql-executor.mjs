@@ -159,7 +159,7 @@ try {
 
 // Test executeSparqlQuery with mock store
 const mockStore = {
-  query: (q) => {
+  query: (_q) => {
     const results = new Map();
     results.set('class', { termType: 'NamedNode', value: 'http://example.org/Person' });
     return [results];

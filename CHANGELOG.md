@@ -1,5 +1,57 @@
 # CHANGELOG
 
+## [26.4.4] - 2026-04-03
+
+### Major Features
+
+**Knowledge Hooks Self-Play Autonomics Loop** (NEW):
+- Closed-loop autonomous improvement system for RDF graphs
+- Graph state drives hook execution; hooks mutate the graph via SPARQL CONSTRUCT
+- Terminates on convergence (stable state) or max iterations
+- Cryptographic receipt chain provides tamper-evident audit trail
+- Episode metadata materializes back into the store as RDF quads
+- Feedback scoring tracks progress per iteration
+- See [docs/MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md) for full guide
+
+**MCP SDK Official Integration**:
+- Replaced custom MCP protocol implementation with official `@modelcontextprotocol/sdk`
+- Generated MCP server wired to CLI with proper Zod schemas
+- Added `pnpm mcp:generate` script for standalone MCP tool regeneration
+- Added `status` and `inspect` exports for MCP server introspection
+
+**@unrdf/daemon Promoted to Production**:
+- Daemon package moved from experimental to production-ready (Essential tier)
+- 43/43 self-play autonomics tests passing
+- Enterprise-grade security retained from v6.0.0
+
+### Bug Fixes
+
+- fix(mcp): wire generated MCP server to CLI, fix Zod schemas, add status/inspect exports
+- fix: remove unused imports and variables in federation, streaming, and hooks
+- fix(mcp): move template command options to args for MCP tool generation
+- fix: disable JSDoc for all daemon src and fix unused variable warnings
+
+### Documentation
+
+- New: [MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md) -- Self-play autonomics guide with examples and API reference
+- New: MCP self-play loop documentation and examples
+- Updated: README.md with daemon production status and MCP section
+- Prepared documentation for v26.4.3 publication
+
+### Chores
+
+- Removed unused `@unrdf/test-utils` package
+- Fixed YAWL and CLI package formatting
+- Added `.env.example` template for development setup
+- DX improvements: lint-staged, VSCode config, docs cleanup
+- Clean up daemon lint warnings
+
+### Breaking Changes
+
+**None** -- v26.4.4 is fully backward compatible with v26.4.3.
+
+---
+
 ## [6.0.0] - 2026-01-11
 
 ### 🎉 Production Release - Phase 1+2 Complete

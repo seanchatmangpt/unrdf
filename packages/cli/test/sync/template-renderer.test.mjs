@@ -27,7 +27,7 @@ const OUTPUT_DIR = join(TEST_DIR, 'output');
 /**
  * Sample SPARQL results for testing
  */
-const SAMPLE_SPARQL_RESULTS = [
+const _SAMPLE_SPARQL_RESULTS = [
   {
     s: { value: 'http://example.org/User' },
     p: { value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' },

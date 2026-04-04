@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/chatman-equation",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "Chatman Equation documentation generation using Tera-compatible templates",
   "type": "module",
   "main": "src/index.mjs",

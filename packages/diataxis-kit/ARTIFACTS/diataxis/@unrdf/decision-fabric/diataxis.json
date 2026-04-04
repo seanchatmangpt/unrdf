@@ -28,12 +28,23 @@
   },
   "explanation": {
     "architecture": "The Decision Fabric implements the 2030 vision for eclipsing \"Database as Canvas\" whiteboards through mathematical inevitability.",
-    "concepts": ["rdf", "knowledge-graph", "decision-support", "hyperdimensional", "mu-operators"],
+    "concepts": [
+      "rdf",
+      "knowledge-graph",
+      "decision-support",
+      "hyperdimensional",
+      "mu-operators"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-decision-fabric-explanation",
-    "source": ["keywords", "readme"],
+    "source": [
+      "keywords",
+      "readme"
+    ],
     "title": "Understanding @unrdf/decision-fabric",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -41,8 +52,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/decision-fabric",
       "title": "Handle Errors"
     },
@@ -50,8 +67,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/decision-fabric with rdf",
       "title": "Integrate with rdf"
     }
@@ -92,7 +116,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/decision-fabric Reference"
   },
   "tutorials": [
@@ -100,8 +126,14 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/decision-fabric in your project",
       "id": "tutorial-getting-started-with-unrdf-decision-fabric",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

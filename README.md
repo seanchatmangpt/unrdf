@@ -275,7 +275,18 @@ registerHook(myHook);
 - Convert between formats
 - Execute SPARQL queries
 
-### 9. **Security & Validation**
+### 9. **Autonomous Agents & LLM Integration** *(NEW in v26.4.3)*
+
+- **Groq LLM Provider** - Real-time inference with `openai/gpt-oss-20b` and advanced reasoning models
+- **Autonomous Agent Framework** - Build multi-step agents with RDF reasoning and tool use
+- **Tool Orchestration** - Let LLMs decide which tools to call based on RDF context
+- **Chicago TDD Integration Tests** - Real integration tests with actual Groq API calls
+- **MCP Protocol** - Model Context Protocol for tool definition and execution
+- **Local Deployment** - Run agents locally without external hosting (no Vercel dependency)
+
+See [packages/daemon/GROQ-INTEGRATION.md](packages/daemon/GROQ-INTEGRATION.md) and [packages/daemon/LOCAL-AGENTS-GUIDE.md](packages/daemon/LOCAL-AGENTS-GUIDE.md) for complete guides.
+
+### 10. **Security & Validation**
 
 - ✅ Input sanitization via Zod schemas
 - ✅ Handler sandboxing (isolated execution)
@@ -376,6 +387,40 @@ Combine data from multiple sources:
 const results = await core.federatedQuery([store1, store2, remoteGraphEndpoint], sparqlQuery);
 ```
 
+### 🤖 Autonomous Agents with LLM Reasoning *(NEW in v26.4.3)*
+
+Build autonomous agents that reason about RDF graphs using Groq LLM:
+
+```javascript
+import { getGroqProvider } from '@unrdf/daemon';
+import { generateText } from 'ai';
+
+const provider = getGroqProvider();
+const model = provider.getDefaultModel();
+
+// Agent with RDF-aware tools
+const result = await generateText({
+  model,
+  prompt: 'Analyze this RDF graph and suggest enrichments',
+  tools: {
+    queryGraph: {
+      description: 'Query the knowledge graph',
+      execute: async ({ query }) => await store.query(query),
+    },
+    enrichGraph: {
+      description: 'Add triples to improve the graph',
+      execute: async ({ triple }) => await store.add(triple),
+    },
+  },
+  toolChoice: 'auto',
+  maxTokens: 1000,
+});
+
+console.log('Agent reasoning:', result.text);
+```
+
+Perfect for knowledge graph curation, data quality improvement, and automated enrichment without external API dependencies.
+
 ---
 
 ## Production Packages
@@ -387,7 +432,7 @@ UNRDF is organized as a **20-package monorepo** with clear separation of concern
 - **`@unrdf/core`** - RDF storage, SPARQL queries, SHACL validation ⭐
 - **`@unrdf/oxigraph`** - Rust-based persistent triple store backend
 - **`@unrdf/hooks`** - Knowledge Hooks autonomous behaviors framework
-- **`@unrdf/daemon`** - Background operation orchestrator with enterprise-grade security ⭐ NEW
+- **`@unrdf/daemon`** - Background orchestrator, self-play autonomics, enterprise security, Groq LLM integration ⭐
 
 ### Extended Features
 
@@ -409,9 +454,24 @@ UNRDF is organized as a **20-package monorepo** with clear separation of concern
 
 - **`@unrdf/test-utils`** - Shared testing infrastructure
 - **`@unrdf/validation`** - OTEL validation & compliance checking
-- **`@unrdf/domain`** - Type definitions & schemas (Zod)
 
 **Full Stack Integration:** Test 11 validates all 3 packages work together ✅ (563ms)
+
+### MCP Integration: Self-Play Autonomics
+
+UNRDF v26.4.4 introduces **Knowledge Self-Play Autonomics** -- a closed-loop system where the RDF graph autonomously improves itself. Knowledge Hooks evaluate SPARQL conditions, fire CONSTRUCT effects that mutate the graph, and the loop repeats until the graph converges to a stable state. Each iteration produces a cryptographic receipt forming a tamper-evident chain.
+
+This enables use cases like automated data quality improvement, self-healing ontologies, and continuous knowledge graph enrichment without manual intervention.
+
+```javascript
+import { createKnowledgeSelfPlayLoop } from '@unrdf/daemon/knowledge-self-play';
+
+const loop = createKnowledgeSelfPlayLoop(store, engine);
+const result = await loop.run();
+// result.converged === true when graph reaches stable state
+```
+
+See [MCP Integration Guide](docs/MCP_INTEGRATION.md) for full documentation, API reference, and examples.
 
 ### 🗑️ Removed Packages
 

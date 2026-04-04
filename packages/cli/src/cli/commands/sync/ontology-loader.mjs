@@ -5,7 +5,7 @@
  */
 import { readFile, access } from 'fs/promises';
 import { existsSync, constants } from 'fs';
-import { resolve, dirname, extname } from 'path';
+import { resolve, extname } from 'path';
 import { createStore, COMMON_PREFIXES } from '@unrdf/core';
 
 const FORMAT_TO_EXT = {

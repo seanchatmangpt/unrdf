@@ -105,8 +105,14 @@ describe('Policy Compilation', () => {
       const compiled = compilePolicy(policy);
 
       const quad1 = { subject: { value: 'http://example.org/s' }, predicate: { value: 'p' } };
-      const quad2 = { subject: { value: 'http://other.org/s' }, predicate: { value: 'http://example.org/p' } };
-      const quad3 = { subject: { value: 'http://other.org/s' }, predicate: { value: 'http://other.org/p' } };
+      const quad2 = {
+        subject: { value: 'http://other.org/s' },
+        predicate: { value: 'http://example.org/p' },
+      };
+      const quad3 = {
+        subject: { value: 'http://other.org/s' },
+        predicate: { value: 'http://other.org/p' },
+      };
 
       expect(compiled(quad1)).toBe(true); // Subject matches
       expect(compiled(quad2)).toBe(true); // Predicate matches
@@ -114,7 +120,7 @@ describe('Policy Compilation', () => {
     });
 
     it('should compile CUSTOM policy with function', () => {
-      const customFn = (quad) => quad.subject.value.length > 10;
+      const customFn = quad => quad.subject.value.length > 10;
       const policy = {
         type: PolicyPatterns.CUSTOM,
         evaluate: customFn,
@@ -227,7 +233,7 @@ describe('Hook Compilation', () => {
     it('should compile hook with validation', () => {
       const hook = {
         name: 'test-hook',
-        validate: (quad) => quad.subject.value.startsWith('http://'),
+        validate: quad => quad.subject.value.startsWith('http://'),
       };
 
       const compiled = compileHook(hook);
@@ -255,7 +261,7 @@ describe('Hook Compilation', () => {
     it('should compile hook with transform', () => {
       const hook = {
         name: 'test-hook',
-        transform: (quad) => ({ ...quad, transformed: true }),
+        transform: quad => ({ ...quad, transformed: true }),
       };
 
       const compiled = compileHook(hook);
@@ -287,7 +293,7 @@ describe('Hook Compilation', () => {
       const hooks = [
         { name: 'hook1', validate: () => true },
         { name: 'hook2', validate: () => true },
-        { name: 'hook3', transform: (q) => q },
+        { name: 'hook3', transform: q => q },
       ];
 
       const compiled = compileHooks(hooks);
@@ -332,7 +338,7 @@ describe('Compiled Execution', () => {
     it('should execute compiled hook with validation', () => {
       const hook = {
         name: 'test-hook',
-        validate: (quad) => quad.subject.value === 'valid',
+        validate: quad => quad.subject.value === 'valid',
       };
 
       const quad1 = { subject: { value: 'valid' } };
@@ -348,7 +354,7 @@ describe('Compiled Execution', () => {
     it('should execute hook with transformation', () => {
       const hook = {
         name: 'test-hook',
-        transform: (quad) => ({ ...quad, transformed: true }),
+        transform: quad => ({ ...quad, transformed: true }),
       };
 
       const quad = { subject: { value: 'test' } };
@@ -361,7 +367,9 @@ describe('Compiled Execution', () => {
     it('should handle validation errors', () => {
       const hook = {
         name: 'test-hook',
-        validate: () => { throw new Error('Validation error'); },
+        validate: () => {
+          throw new Error('Validation error');
+        },
       };
 
       const quad = { subject: { value: 'test' } };
@@ -389,15 +397,15 @@ describe('Compiled Execution', () => {
       const hooks = [
         {
           name: 'hook1',
-          validate: (quad) => quad.subject.value.length > 0,
+          validate: quad => quad.subject.value.length > 0,
         },
         {
           name: 'hook2',
-          transform: (quad) => ({ ...quad, processed: true }),
+          transform: quad => ({ ...quad, processed: true }),
         },
         {
           name: 'hook3',
-          validate: (quad) => quad.processed === true,
+          validate: quad => quad.processed === true,
         },
       ];
 
@@ -445,7 +453,7 @@ describe('Compiled Execution', () => {
       const hooks = [
         {
           name: 'hook1',
-          validate: (quad) => quad.subject.value.startsWith('valid'),
+          validate: quad => quad.subject.value.startsWith('valid'),
         },
       ];
 
@@ -463,9 +471,7 @@ describe('Compiled Execution', () => {
     });
 
     it('should handle empty hooks array', () => {
-      const quads = [
-        { subject: { value: 'test' } },
-      ];
+      const quads = [{ subject: { value: 'test' } }];
 
       const bitmap = batchValidateCompiled([], quads);
 
@@ -476,13 +482,13 @@ describe('Compiled Execution', () => {
       const hooks = [
         {
           name: 'hook1',
-          validate: () => { throw new Error('Error'); },
+          validate: () => {
+            throw new Error('Error');
+          },
         },
       ];
 
-      const quads = [
-        { subject: { value: 'test' } },
-      ];
+      const quads = [{ subject: { value: 'test' } }];
 
       const bitmap = batchValidateCompiled(hooks, quads);
 
@@ -490,9 +496,7 @@ describe('Compiled Execution', () => {
     });
 
     it('should compile hooks before batch validation', () => {
-      const hooks = [
-        { name: 'hook1', validate: () => true },
-      ];
+      const hooks = [{ name: 'hook1', validate: () => true }];
 
       const quads = Array(100).fill({ subject: { value: 'test' } });
 
@@ -609,7 +613,7 @@ describe('Performance Benchmarks', () => {
   it('should execute compiled hooks quickly', () => {
     const hook = {
       name: 'test-hook',
-      validate: (quad) => quad.subject.value.length > 0,
+      validate: quad => quad.subject.value.length > 0,
     };
     const compiled = compileHook(hook);
 
@@ -643,8 +647,8 @@ describe('Performance Benchmarks', () => {
 
   it('should validate batches efficiently', () => {
     const hooks = [
-      { name: 'hook1', validate: (quad) => quad.subject.value.length > 0 },
-      { name: 'hook2', validate: (quad) => quad.subject.value.length < 1000 },
+      { name: 'hook1', validate: quad => quad.subject.value.length > 0 },
+      { name: 'hook2', validate: quad => quad.subject.value.length < 1000 },
     ];
 
     const quads = Array(1000).fill({ subject: { value: 'test' } });

@@ -3,7 +3,7 @@
 ![Version](https://img.shields.io/badge/version-6.0.0-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
 
 > Production-grade policy definition and execution framework for RDF knowledge graphs
-> 
+>
 > Implements 9 condition kinds, deterministic receipt chaining, SPARQL transformations, SHACL enforcement, N3 forward-chaining inference, and Datalog logic programming
 
 ## Overview
@@ -36,7 +36,7 @@ const store = createStore();
 const engine = new KnowledgeHookEngine(store);
 const context = createContext({
   nodeId: 'my-app',
-  t_ns: BigInt(Date.now() * 1000000)
+  t_ns: BigInt(Date.now() * 1000000),
 });
 
 // Define a hook with SHACL condition (soft-fail annotation)
@@ -45,11 +45,12 @@ const hook = createKnowledgeHook({
   condition: {
     kind: 'shacl',
     ref: { uri: 'file:///shapes/compliance.ttl' },
-    enforcementMode: 'annotate'  // Log violations but don't block
+    enforcementMode: 'annotate', // Log violations but don't block
   },
-  effects: [{
-    kind: 'sparql-construct',
-    query: `
+  effects: [
+    {
+      kind: 'sparql-construct',
+      query: `
       CONSTRUCT {
         ?s ex:status ex:Valid ;
            ex:validatedAt ?now .
@@ -58,17 +59,18 @@ const hook = createKnowledgeHook({
         ?s ?p ?o .
         BIND (NOW() as ?now)
       }
-    `
-  }]
+    `,
+    },
+  ],
 });
 
 // Execute with receipt chaining
 const result = await engine.execute(context, [hook]);
 
 // Access deterministic receipt chain
-console.log('Receipt Hash:', result.receipt.receiptHash);        // BLAKE3(entire receipt)
-console.log('Input Hash:', result.receipt.input_hash);          // BLAKE3(store before)
-console.log('Output Hash:', result.receipt.output_hash);        // BLAKE3(store after)
+console.log('Receipt Hash:', result.receipt.receiptHash); // BLAKE3(entire receipt)
+console.log('Input Hash:', result.receipt.input_hash); // BLAKE3(store before)
+console.log('Output Hash:', result.receipt.output_hash); // BLAKE3(store after)
 console.log('Previous Hash:', result.receipt.previousReceiptHash); // Links to prior op
 ```
 
@@ -114,6 +116,7 @@ Validates store against SHACL shape. Three enforcement modes for soft-fail gover
 ```
 
 **Enforcement Modes**:
+
 - `block`: Fail if violations exist (strict governance)
 - `annotate`: Execute but add violations as RDF triples (soft-fail + audit trail)
 - `repair`: Auto-fix via SPARQL CONSTRUCT then re-validate (self-healing)
@@ -265,10 +268,10 @@ Execute custom logic. Included for backwards compatibility.
 Prevents hook execution if SHACL validation fails. Strict governance.
 
 ```javascript
-{ 
-  kind: 'shacl', 
+{
+  kind: 'shacl',
   ref: { uri: 'file:///shapes/strict.ttl' },
-  enforcementMode: 'block' 
+  enforcementMode: 'block'
 }
 // Hook blocked if shape violations exist
 // Result: Clean state or error
@@ -306,9 +309,9 @@ Auto-repairs violations via SPARQL CONSTRUCT, then re-validates.
       ?violation ex:repaired true .
       ?entity ex:status ex:Repaired .
     }
-    WHERE { 
-      ?violation a sh:ValidationResult . 
-      ?violation sh:focusNode ?entity 
+    WHERE {
+      ?violation a sh:ValidationResult .
+      ?violation sh:focusNode ?entity
     }
   `
 }
@@ -348,7 +351,7 @@ const receipt1 = await engine.execute(ctx1, hooks1);
 const receipt2 = await engine.execute(
   createContext({
     ...ctx2,
-    previousReceiptHash: receipt1.receipt.receiptHash
+    previousReceiptHash: receipt1.receipt.receiptHash,
   }),
   hooks2
 );
@@ -423,7 +426,7 @@ const bridge = new HooksBridge(store);
 const hookId = await bridge.registerHook({
   name: 'erlang-compliance',
   condition: { kind: 'shacl', ref: { uri: '...' } },
-  effects: [{ kind: 'sparql-construct', query: '...' }]
+  effects: [{ kind: 'sparql-construct', query: '...' }],
 });
 
 // From Erlang: evaluate condition
@@ -431,7 +434,7 @@ const result = await bridge.evaluateCondition({
   kind: 'datalog',
   facts: ['user(alice)'],
   rules: ['allowed(X) :- user(X)'],
-  goal: 'allowed(alice)'
+  goal: 'allowed(alice)',
 });
 
 // Full workflow with receipt
@@ -440,15 +443,15 @@ const receipt = await bridge.executeHooks(context, [hook]);
 
 ## Performance Characteristics
 
-| Operation | Latency | Notes |
-|-----------|---------|-------|
-| Receipt Creation | <1ms | BLAKE3 hashing |
-| SPARQL ASK | 1-5ms | Depends on query complexity |
-| SPARQL SELECT | 2-8ms | Result binding overhead |
-| SHACL Validation | 5-15ms | Shape size dependent |
-| N3 Inference | 10-100ms | Rule complexity & triple count |
-| Datalog Goal | 1-30ms | Fixpoint iterations |
-| Full Hook Execution | <150ms | All conditions + effects + receipt |
+| Operation           | Latency  | Notes                              |
+| ------------------- | -------- | ---------------------------------- |
+| Receipt Creation    | <1ms     | BLAKE3 hashing                     |
+| SPARQL ASK          | 1-5ms    | Depends on query complexity        |
+| SPARQL SELECT       | 2-8ms    | Result binding overhead            |
+| SHACL Validation    | 5-15ms   | Shape size dependent               |
+| N3 Inference        | 10-100ms | Rule complexity & triple count     |
+| Datalog Goal        | 1-30ms   | Fixpoint iterations                |
+| Full Hook Execution | <150ms   | All conditions + effects + receipt |
 
 ## Architecture
 
@@ -529,18 +532,18 @@ pnpm benchmark
 class KnowledgeHookEngine {
   // Register a hook with 6 priorities
   registerHook(hook: KnowledgeHook): string;
-  
+
   // Evaluate any of 9 condition kinds
   async evaluateCondition(
     condition: Condition
   ): Promise<boolean>;
-  
+
   // Execute hooks with receipt chaining
   async execute(
     context: ExecutionContext,
     hooks: KnowledgeHook[]
   ): Promise<ExecutionResult>;
-  
+
   // Get receipt chain (BLAKE3 linked)
   getReceiptChain(): Receipt[];
 }
@@ -564,6 +567,7 @@ See [API-REFERENCE.md](./API-REFERENCE.md) for complete schema.
 See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for development guidelines.
 
 All code follows:
+
 - 100% ESM (.mjs)
 - JSDoc documentation
 - Zod validation
@@ -580,4 +584,16 @@ All code follows:
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE) for full text.
+
+### Third-Party Dependencies
+
+This package depends on the following notable third-party libraries:
+
+| Dependency                                                 | License      | Purpose                                                      |
+| ---------------------------------------------------------- | ------------ | ------------------------------------------------------------ |
+| [eyereasoner](https://github.com/eyereasoner/eye-js)       | MIT          | N3 forward-chaining inference via EYE reasoner (WebAssembly) |
+| [swipl-wasm](https://github.com/nickmcdowall/swipl-wasm)   | BSD-2-Clause | SWI-Prolog runtime bundled by eyereasoner                    |
+| [@noble/hashes](https://github.com/paulmillr/noble-hashes) | MIT          | BLAKE3 cryptographic hashing for receipt chains              |
+
+All dependencies use permissive open-source licenses compatible with MIT.

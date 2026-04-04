@@ -7,7 +7,10 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["kgc-markdown-renderer-example.mjs", "proof-appendix-demo.mjs"],
+    "examplesFiles": [
+      "kgc-markdown-renderer-example.mjs",
+      "proof-appendix-demo.mjs"
+    ],
     "fingerprint": "0f89d0d0b6ecdf33aa2dfe30c4a76be15cd95d8cc8e929558898b3d32b30065f",
     "readmeHeadings": [
       "Quick Start",
@@ -20,10 +23,20 @@
   },
   "explanation": {
     "architecture": "Ledger location: `ARTIFACTS/last7days-ledger.",
-    "concepts": ["unrdf", "fusion", "integration", "kgc-4d", "blockchain"],
+    "concepts": [
+      "unrdf",
+      "fusion",
+      "integration",
+      "kgc-4d",
+      "blockchain"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-fusion-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/fusion",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -37,8 +50,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/fusion",
       "title": "Handle Errors"
     },
@@ -46,8 +65,15 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/fusion with unrdf",
       "title": "Integrate with unrdf"
     }
@@ -64,7 +90,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/fusion Reference"
   },
   "tutorials": [
@@ -72,8 +100,15 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/fusion in your project",
       "id": "tutorial-getting-started-with-unrdf-fusion",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

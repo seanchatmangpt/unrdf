@@ -19,3 +19,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Third-Party Licenses
+
+This package includes or depends on the following third-party components:
+
+### eyereasoner (eye-js)
+- **License**: MIT
+- **Copyright**: Copyright (c) 2022 Jesse Wright
+- **Repository**: https://github.com/eyereasoner/eye-js
+- **Description**: EYE reasoner for browser and Node.js via WebAssembly
+
+### swipl-wasm (SWI-Prolog WebAssembly)
+- **License**: BSD-2-Clause (Simplified BSD)
+- **Copyright**: Copyright (c) SWI-Prolog contributors
+- **Repository**: https://github.com/nickmcdowall/swipl-wasm
+- **Description**: SWI-Prolog compiled to WebAssembly, bundled by eyereasoner
+
+### @noble/hashes
+- **License**: MIT
+- **Copyright**: Copyright (c) 2022 Paul Miller
+- **Repository**: https://github.com/paulmillr/noble-hashes
+- **Description**: Cryptographic hash functions (BLAKE3) for receipt hashing

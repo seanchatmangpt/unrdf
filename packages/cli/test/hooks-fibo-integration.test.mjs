@@ -87,11 +87,11 @@ function createAccountQuad(id, balance) {
 
 describe('FIBO JTBD Governance Integration', () => {
   let registry;
-  let context;
+  let _context;
 
   beforeEach(() => {
     registry = createHookRegistry();
-    context = createContext({
+    _context = createContext({
       nodeId: 'fibo-test-node',
       t_ns: 1704067200000000000n,
     });
@@ -696,7 +696,7 @@ describe('FIBO JTBD Governance Integration', () => {
         defineHook({
           name: 'jtbd-5-repair',
           trigger: 'before-add',
-          validate: (q) => true,
+          validate: (_q) => true,
         }),
       ];
 
@@ -720,17 +720,17 @@ describe('FIBO JTBD Governance Integration', () => {
         defineHook({
           name: 'first',
           trigger: 'before-add',
-          validate: (q) => { order.push(1); return true; },
+          validate: (_q) => { order.push(1); return true; },
         }),
         defineHook({
           name: 'second',
           trigger: 'before-add',
-          validate: (q) => { order.push(2); return true; },
+          validate: (_q) => { order.push(2); return true; },
         }),
         defineHook({
           name: 'third',
           trigger: 'before-add',
-          validate: (q) => { order.push(3); return true; },
+          validate: (_q) => { order.push(3); return true; },
         }),
       ];
 

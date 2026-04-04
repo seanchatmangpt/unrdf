@@ -34,10 +34,20 @@
   },
   "explanation": {
     "architecture": "All algorithms support extensive configuration via Zod-validated schemas. See `src/schemas.mjs` for complete schema definitions.",
-    "concepts": ["rdf", "temporal", "knowledge-discovery", "pattern-mining", "anomaly-detection"],
+    "concepts": [
+      "rdf",
+      "temporal",
+      "knowledge-discovery",
+      "pattern-mining",
+      "anomaly-detection"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-temporal-discovery-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/temporal-discovery",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -51,7 +61,9 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-temporal-discovery",
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -64,8 +76,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/temporal-discovery",
       "title": "Handle Errors"
     },
@@ -73,8 +91,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/temporal-discovery with rdf",
       "title": "Integrate with rdf"
     }
@@ -127,7 +152,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/temporal-discovery Reference"
   },
   "tutorials": [
@@ -135,8 +162,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with @unrdf/temporal-discovery\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/temporal-discovery\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through anomaly-detection-example.mjs",
         "Work through changepoint-detection-example.mjs",
@@ -150,8 +181,14 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/temporal-discovery in your project",
       "id": "tutorial-getting-started-with-unrdf-temporal-discovery",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

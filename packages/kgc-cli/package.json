@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-cli",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "KGC CLI - Deterministic extension registry for ~40 workspace packages",
   "type": "module",
   "bin": {

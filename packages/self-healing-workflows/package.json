@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/self-healing-workflows",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "Automatic error recovery system with 85-95% success rate using YAWL + Daemon + Hooks",
   "type": "module",
   "main": "./src/index.mjs",

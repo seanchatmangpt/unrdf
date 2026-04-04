@@ -5,6 +5,7 @@ Background daemon for managing scheduled tasks and event-driven operations in UN
 ## Features
 
 ### Core Daemon
+
 - **Scheduled Task Execution** - Execute operations based on cron, intervals, or events
 - **Clustering Support** - Coordinate task execution across multiple daemon nodes
 - **Event-Driven Architecture** - React to system events with automatic task execution
@@ -14,6 +15,7 @@ Background daemon for managing scheduled tasks and event-driven operations in UN
 - **Concurrency Control** - Limit concurrent operations with queue management
 
 ### Security (NEW in v6.0.0)
+
 - **API Key Authentication** - BLAKE3 hashing with constant-time verification
 - **Environment-Aware Security** - Development mode graceful degradation, production enforcement
 - **Comprehensive Validation** - Injection detection (SQL, SPARQL, command)
@@ -35,10 +37,14 @@ Background daemon for managing scheduled tasks and event-driven operations in UN
 7. **kgc-4d-sourcing.mjs** - KGC 4D temporal event sourcing with time-travel capabilities
 8. **knowledge-rules.mjs** - Inference engine integration for rule-based reasoning
 9. **observability.mjs** - OpenTelemetry (OTEL) integration with distributed tracing
-10. **receipts-merkle.mjs** - Merkle tree receipt generation with cryptographic proofs
-11. **streaming.mjs** - Real-time RDF streaming with change feed support
-12. **v6-deltagate.mjs** - ΔGate control plane integration for unified receipt management
-13. **yawl.mjs** - YAWL workflow orchestration with RDF-native task execution
+10. **otel-sdk.mjs** - OTEL SDK initialization with BatchSpanProcessor and OTLP exporter
+11. **otel-tracer.mjs** - Tracer utilities for span creation and management
+12. **otel-context.mjs** - W3C trace context propagation for daemon → sidecar
+13. **receipts-merkle.mjs** - Merkle tree receipt generation with cryptographic proofs
+14. **streaming.mjs** - Real-time RDF streaming with change feed support
+15. **v6-deltagate.mjs** - ΔGate control plane integration for unified receipt management
+16. **yawl.mjs** - YAWL workflow orchestration with RDF-native task execution
+17. **otel-instrumentation.mjs** - MCP tool OTEL span instrumentation (36 tools)
 
 ## Installation
 
@@ -81,9 +87,11 @@ await daemon.stop();
 ## Core Components
 
 ### Daemon Class
+
 Main controller for managing scheduled operations and clustering.
 
 **Key Methods**:
+
 - `start()` - Start the daemon
 - `stop()` - Stop the daemon
 - `schedule(operation)` - Register an operation
@@ -94,15 +102,19 @@ Main controller for managing scheduled operations and clustering.
 - `getMetrics()` - Get performance metrics
 
 ### TriggerEvaluator
+
 Evaluates events against trigger patterns and determines which tasks to execute.
 
 **Key Methods**:
+
 - `registerTrigger(eventName, pattern, actions)` - Register trigger pattern
 - `evaluate(event)` - Evaluate event and get matched task IDs
 - `matches(event, trigger)` - Check event-trigger match
 
 ### Schemas
+
 Comprehensive Zod validation schemas for configuration and operations:
+
 - `DaemonConfigSchema` - Daemon configuration
 - `ScheduledOperationSchema` - Operation definition
 - `OperationReceiptSchema` - Operation execution record
@@ -149,6 +161,7 @@ const daemon = new Daemon({
 ## Events
 
 The daemon emits events for monitoring:
+
 - `daemon:started` - Daemon has started
 - `daemon:stopped` - Daemon has stopped
 - `operation:enqueued` - Operation added to queue
@@ -157,7 +170,7 @@ The daemon emits events for monitoring:
 - `operation:failure` - Operation failed
 
 ```javascript
-daemon.on('operation:success', (event) => {
+daemon.on('operation:success', event => {
   console.log(`Operation ${event.operationId} took ${event.duration}ms`);
 });
 ```
@@ -165,6 +178,7 @@ daemon.on('operation:success', (event) => {
 ## Health & Metrics
 
 ### Health Status
+
 ```javascript
 const health = daemon.getHealth();
 // {
@@ -181,6 +195,7 @@ const health = daemon.getHealth();
 ```
 
 ### Metrics
+
 ```javascript
 const metrics = daemon.getMetrics();
 // {
@@ -198,6 +213,7 @@ const metrics = daemon.getMetrics();
 ## Testing
 
 Run tests with:
+
 ```bash
 pnpm test
 pnpm test:watch
@@ -213,14 +229,14 @@ import { createAuthenticator } from '@unrdf/daemon';
 
 // Generate API key for production
 const { authenticator, key } = await createAuthenticator({
-  environment: 'production'
+  environment: 'production',
 });
 
 console.log('API Key:', key); // Distribute to authorized users
 
 // Authenticate requests
 const result = await authenticator.authenticate({
-  headers: { 'x-api-key': providedKey }
+  headers: { 'x-api-key': providedKey },
 });
 
 if (result.authenticated) {
@@ -229,6 +245,7 @@ if (result.authenticated) {
 ```
 
 **Security Features**:
+
 - BLAKE3 cryptographic hashing (256-bit)
 - Constant-time verification (timing attack prevention)
 - Environment variable support (`UNRDF_API_KEY`)
@@ -240,6 +257,7 @@ See [AUTHENTICATION.md](AUTHENTICATION.md) for complete authentication documenta
 ### Security Validation
 
 All daemon operations include:
+
 - Input validation against injection attacks
 - Secret detection in outputs
 - Path traversal prevention
@@ -305,12 +323,14 @@ const results = await federation.executeFederatedQuery(sparqlQuery);
 ## Examples
 
 See the `examples/` directory for complete working examples:
+
 - `01-basic.mjs` - Basic daemon setup and operations
 - `06-api-key-authentication.mjs` - API key authentication examples (NEW)
 
 ## Documentation
 
 ### Core Documentation
+
 - [README.md](README.md) - This file (overview and quick start)
 - [AUTHENTICATION.md](AUTHENTICATION.md) - Complete authentication guide
 - [SECURITY_INTEGRATION_SUMMARY.md](SECURITY_INTEGRATION_SUMMARY.md) - Security implementation
@@ -318,11 +338,13 @@ See the `examples/` directory for complete working examples:
 - [ERROR_PATH_VALIDATION_SUMMARY.md](ERROR_PATH_VALIDATION_SUMMARY.md) - Error handling
 
 ### Additional Documentation
+
 - `docs/README.md` - Detailed daemon documentation
 - `benchmarks/` - Performance benchmarks
 - `test/` - Comprehensive test suite (100% pass rate)
 
 ### Migration & Deployment
+
 - [../../docs/MIGRATING_TO_V6.md](../../docs/MIGRATING_TO_V6.md) - v6 migration guide
 - [../../docs/SECURITY_MIGRATION.md](../../docs/SECURITY_MIGRATION.md) - Security migration
 - [../../docs/deployment/](../../docs/deployment/) - Deployment guides
@@ -358,13 +380,13 @@ export {
 
 ## Performance
 
-| Operation | Latency | Memory |
-|-----------|---------|--------|
-| Task execution | <10ms | ~5MB |
-| Authentication | <5ms | ~256 bytes |
-| Receipt generation | <1ms | ~64 bytes |
-| Security validation | <1ms | ~128 bytes |
-| SPARQL query (integrated) | ~10ms | ~10MB |
+| Operation                 | Latency | Memory     |
+| ------------------------- | ------- | ---------- |
+| Task execution            | <10ms   | ~5MB       |
+| Authentication            | <5ms    | ~256 bytes |
+| Receipt generation        | <1ms    | ~64 bytes  |
+| Security validation       | <1ms    | ~128 bytes |
+| SPARQL query (integrated) | ~10ms   | ~10MB      |
 
 See `benchmarks/` directory for detailed performance measurements.
 

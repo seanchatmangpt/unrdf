@@ -24,10 +24,20 @@
   },
   "explanation": {
     "architecture": "**UNRDF v6 Alpha** - Receipt-driven RDF with Merkle proofs, delta proposals, and versioned grammar.",
-    "concepts": ["unrdf", "v6", "deltagate", "control-plane", "receipts"],
+    "concepts": [
+      "unrdf",
+      "v6",
+      "deltagate",
+      "control-plane",
+      "receipts"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-v6-core-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/v6-core",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -41,8 +51,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/v6-core",
       "title": "Handle Errors"
     },
@@ -50,8 +66,15 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/v6-core with unrdf",
       "title": "Integrate with unrdf"
     },
@@ -59,7 +82,9 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": ["bin"],
+      "source": [
+        "bin"
+      ],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -195,7 +220,10 @@
         "type": "bin"
       }
     ],
-    "source": ["exports", "bin"],
+    "source": [
+      "exports",
+      "bin"
+    ],
     "title": "@unrdf/v6-core Reference"
   },
   "tutorials": [
@@ -203,8 +231,13 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/v6-core in your project",
       "id": "tutorial-getting-started-with-unrdf-v6-core",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

@@ -64,10 +64,21 @@
   },
   "explanation": {
     "architecture": "Run AtomVM (Erlang/BEAM VM) in the browser and Node.js using WebAssembly.",
-    "concepts": ["atomvm", "erlang", "beam", "wasm", "browser"],
+    "concepts": [
+      "atomvm",
+      "erlang",
+      "beam",
+      "wasm",
+      "browser"
+    ],
     "confidenceScore": 1,
     "id": "explanation-unrdf-atomvm-explanation",
-    "source": ["keywords", "readme", "docs", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "docs",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/atomvm",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -81,8 +92,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/atomvm",
       "title": "Handle Errors"
     },
@@ -90,8 +107,15 @@
       "confidenceScore": 0.7,
       "context": "When working with atomvm in your project",
       "id": "howto-integrate-with-atomvm",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/atomvm with atomvm",
       "title": "Integrate with atomvm"
     }
@@ -114,7 +138,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/atomvm Reference"
   },
   "tutorials": [
@@ -122,8 +148,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with @unrdf/atomvm\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with @unrdf/atomvm\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through README.md",
         "Work through demo-message-passing.mjs",
@@ -138,7 +168,11 @@
       "goal": "Learn how to set up and use @unrdf/atomvm in your project",
       "id": "tutorial-getting-started-with-unrdf-atomvm",
       "prerequisites": [],
-      "source": ["examples", "readme", "keywords"],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

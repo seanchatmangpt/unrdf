@@ -15,6 +15,7 @@
  * @module knowledge-engine/knowledge-hook-engine
  */
 
+import { blake3 } from '@noble/hashes/blake3.js';
 import { StoreCache } from './store-cache.mjs';
 import { ConditionCache } from './condition-cache.mjs';
 import { BatchedTelemetry } from './telemetry.mjs';
@@ -441,16 +442,15 @@ export class KnowledgeHookEngine {
    * @private
    */
   _generateHash(payload) {
-    // Simple SHA-256-like hex string for testing
-    // In production, use BLAKE3 from @unrdf/v6-core/receipts
+    // BLAKE3 cryptographic hashing for receipt security
     const str = JSON.stringify(payload);
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash).toString(16).padStart(64, '0');
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(str);
+    const digest = blake3(bytes, { dkLen: 32 });
+    // Convert Uint8Array to hex string
+    return Array.from(digest)
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
   }
 
   /**

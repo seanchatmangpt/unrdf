@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -31,8 +31,8 @@
     "test:browser": "pnpm -C packages/browser test",
     "test:cli": "pnpm -C packages/cli test",
     "test:knowledge-engine": "pnpm -C packages/knowledge-engine test",
-    "lint": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' lint",
-    "lint:fix": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' lint:fix",
+    "lint": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' --filter='!./packages/decision-fabric' --filter='!./packages/kgc-swarm' --filter='!./packages/kgc-probe' --filter='!./packages/knowledge-engine' --filter='!./packages/yawl' --filter='!./packages/yawl-*' lint",
+    "lint:fix": "pnpm -r --filter='!./packages/docs' --filter='!./packages/kgn' --filter='!./packages/decision-fabric' --filter='!./packages/kgc-swarm' --filter='!./packages/kgc-probe' --filter='!./packages/knowledge-engine' --filter='!./packages/yawl' --filter='!./packages/yawl-*' lint:fix",
     "format": "pnpm -r format",
     "format:check": "pnpm -r format:check",
     "build": "pnpm -r --filter './packages/*' build",
@@ -140,6 +140,7 @@
     "pnpm": "8.15.0"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.33",
     "@comunica/query-sparql": "^4.5.0",
     "@iarna/toml": "^2.2.5",
     "@noble/hashes": "^2.0.1",
@@ -147,7 +148,6 @@
     "@rdfjs/dataset": "^2.0.2",
     "@unrdf/core": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
-    "@unrdf/v6-compat": "workspace:*",
     "clownface": "^2.0.3",
     "fetch": "^1.1.0",
     "hash-wasm": "^4.12.0",

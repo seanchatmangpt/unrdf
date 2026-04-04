@@ -35,6 +35,7 @@
       "ARCHITECTURE_REVIEW_MU_O_REFACTORING.md",
       "AUTONOMIC-MAPEK-README.md",
       "AUTONOMIC-VALIDATION-FINAL-REPORT.md",
+      "AUTONOMOUS-REFINEMENT-GUIDE.md",
       "BB8020-FIX-IMPLEMENTATION-PLAN.md",
       "BETA1-RELEASE-SUMMARY.md",
       "BIBLIOGRAPHY.bib",
@@ -80,6 +81,7 @@
       "COMPOSITION-LATTICE.md",
       "CONSENSUS-VALIDATION-REPORT.md",
       "CONTRIBUTING.md",
+      "DAEMON_QUICKSTART.md",
       "DEBUGGING.md",
       "DEFINITION-OF-DONE.md",
       "DEPENDENCY-ALIGNMENT.csv",
@@ -190,6 +192,7 @@
       "LINTING-VERIFICATION-REPORT.md",
       "LOCAL-DEVELOPMENT.md",
       "MANIFESTO.md",
+      "MCP_INTEGRATION.md",
       "MEASUREMENT-DASHBOARD-DESIGN.md",
       "MERGE-CHANGELOG.md",
       "MERGE-ORCHESTRATOR.quick-ref.md",
@@ -226,6 +229,7 @@
       "PACKAGE-STUDY-KGC-HOOKS-CORE.md",
       "PACKAGE-STUDY-SUMMARY.md",
       "PACKAGES.md",
+      "PACKAGE_MATURITY.md",
       "PAPERS_POLICY.md",
       "PERFORMANCE-BENCHMARK-REPORT.md",
       "PERFORMANCE-MISSION-COMPLETE.md",
@@ -248,6 +252,7 @@
       "PHASE-4-SYSTEM-ARCHITECTURE-OVERVIEW.md",
       "PHASE3A_VALIDATION_REPORT.md",
       "PHD-THESIS-2028-REVOLUTION.md",
+      "PHD-THESIS-LLM-RDF-AUTONOMY.md",
       "PHD-THESIS-UNRDF-2028-REVOLUTION-FINAL.md",
       "PHD-THESIS-UNRDF-2028-REVOLUTION-UPGRADE.md",
       "PHD-THESIS-UNRDF-2028-REVOLUTION.md",
@@ -264,6 +269,7 @@
       "PRODUCTION-VALIDATION-SUMMARY.md",
       "PRODUCTION_VALIDATION_REPORT.md",
       "PROJECT-ENGINE-CAPABILITIES.md",
+      "PUBLICATION-CHECKLIST.md",
       "QUALITY_GATES_V5.md",
       "QUICK-START.md",
       "RATE-LIMITING-IMPLEMENTATION.md",
@@ -599,7 +605,7 @@
       "yawl-daemon-workflow.mjs",
       "yawl-nitro-workflow.mjs"
     ],
-    "fingerprint": "2fb74d1cc911fdd98333b73291d99a721610a12d343cd6d64536d661b45e1b12",
+    "fingerprint": "2695dd8dfee31976f6798c5af3cec227575947b4839cb87a1f619faa77b33f90",
     "readmeHeadings": [
       "🎯 New to UNRDF? Start Here!",
       "🚀 Quick Start",
@@ -631,12 +637,19 @@
   },
   "explanation": {
     "architecture": "**Research-grade RDF knowledge graphs with batteries included.",
-    "concepts": ["core functionality"],
+    "concepts": [
+      "core functionality"
+    ],
     "confidenceScore": 0.6,
     "id": "explanation-unrdf-workspace-explanation",
-    "source": ["readme", "docs"],
+    "source": [
+      "readme",
+      "docs"
+    ],
     "title": "Understanding unrdf-workspace",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -644,7 +657,9 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-workspace",
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -657,8 +672,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for unrdf-workspace",
       "title": "Handle Errors"
     }
@@ -675,7 +696,9 @@
         "type": "unknown"
       }
     ],
-    "source": ["inferred"],
+    "source": [
+      "inferred"
+    ],
     "title": "unrdf-workspace Reference"
   },
   "tutorials": [
@@ -683,8 +706,12 @@
       "confidenceScore": 0.8,
       "goal": "Complete your first practical examples",
       "id": "tutorial-first-steps",
-      "prerequisites": ["Completed \"Getting Started with unrdf-workspace\""],
-      "source": ["examples"],
+      "prerequisites": [
+        "Completed \"Getting Started with unrdf-workspace\""
+      ],
+      "source": [
+        "examples"
+      ],
       "stepsOutline": [
         "Work through 01-hello-rdf.mjs",
         "Work through 01-minimal-parse-query.mjs",
@@ -699,8 +726,15 @@
       "goal": "Learn how to set up and use unrdf-workspace in your project",
       "id": "tutorial-getting-started-with-unrdf-workspace",
       "prerequisites": [],
-      "source": ["examples", "readme"],
-      "stepsOutline": ["Installation", "Examples", "CLI Usage"],
+      "source": [
+        "examples",
+        "readme"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "Examples",
+        "CLI Usage"
+      ],
       "title": "Getting Started with unrdf-workspace"
     }
   ],

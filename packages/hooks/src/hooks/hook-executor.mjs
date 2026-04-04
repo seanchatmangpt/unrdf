@@ -65,6 +65,18 @@ export const ChainResultSchema = z.object({
  * }
  */
 export function executeHook(hook, quad, options = {}) {
+  // Validate input quad
+  if (!quad || typeof quad !== 'object') {
+    throw new TypeError(
+      `Invalid quad provided to executeHook: expected object, got ${typeof quad}`
+    );
+  }
+
+  // Validate quad has required properties
+  if (!quad.subject || !quad.predicate || !quad.object) {
+    throw new TypeError('Quad must have subject, predicate, and object properties');
+  }
+
   // Fast path: skip Zod if hook was created via defineHook (_validated flag)
   const validatedHook = hook._validated ? hook : HookSchema.parse(hook);
 
@@ -75,71 +87,61 @@ export function executeHook(hook, quad, options = {}) {
     hookName: validatedHook.name,
   };
 
-  try {
-    // Execute validation if present
-    if (hasValidation(validatedHook)) {
-      const validationResult = validatedHook.validate(quad);
+  // Execute validation if present - let errors propagate
+  if (hasValidation(validatedHook)) {
+    const validationResult = validatedHook.validate(quad);
 
-      // POKA-YOKE: Non-boolean validation return guard (RPN 280 → 28)
-      if (typeof validationResult !== 'boolean') {
-        console.warn(
-          `[POKA-YOKE] Hook "${validatedHook.name}": validate() returned ${typeof validationResult}, expected boolean. Coercing to boolean.`
-        );
-        result.warning = `Non-boolean validation return (${typeof validationResult}) coerced to boolean`;
-      }
-
-      if (!validationResult) {
-        result.valid = false;
-        result.error = `Validation failed for hook: ${validatedHook.name}`;
-        return result;
-      }
+    // POKA-YOKE: Non-boolean validation return guard (RPN 280 → 28)
+    if (typeof validationResult !== 'boolean') {
+      console.warn(
+        `[POKA-YOKE] Hook "${validatedHook.name}": validate() returned ${typeof validationResult}, expected boolean. Coercing to boolean.`
+      );
+      result.warning = `Non-boolean validation return (${typeof validationResult}) coerced to boolean`;
     }
 
-    // Execute transformation if present
-    if (hasTransformation(validatedHook)) {
-      const transformed = validatedHook.transform(quad);
-
-      // POKA-YOKE: Transform return type validation (RPN 280 → 28)
-      if (!transformed || typeof transformed !== 'object') {
-        throw new TypeError(
-          `Hook "${validatedHook.name}": transform() must return a Quad object, got ${typeof transformed}`
-        );
-      }
-
-      // POKA-YOKE: Check for required Quad properties
-      if (!transformed.subject || !transformed.predicate || !transformed.object) {
-        throw new TypeError(
-          `Hook "${validatedHook.name}": transform() returned object missing subject/predicate/object`
-        );
-      }
-
-      // POKA-YOKE: Pooled quad leak detection (warn if returning pooled quad)
-      if (transformed._pooled && options.warnPooledQuads !== false) {
-        console.warn(
-          `[POKA-YOKE] Hook "${validatedHook.name}": returned pooled quad. Clone before storing to prevent memory issues.`
-        );
-        result.warning = 'Pooled quad returned - consider cloning';
-      }
-
-      result.quad = transformed;
+    if (!validationResult) {
+      result.valid = false;
+      result.error = `Validation failed for hook: ${validatedHook.name}`;
+      return result;
     }
-
-    return result;
-  } catch (error) {
-    result.valid = false;
-    result.error = error instanceof Error ? error.message : String(error);
-
-    // POKA-YOKE: Stack trace preservation (RPN 504 → 50)
-    result.errorDetails = {
-      hookName: validatedHook.name,
-      hookTrigger: validatedHook.trigger,
-      stack: error instanceof Error ? error.stack : undefined,
-      originalError: error instanceof Error ? error : undefined,
-      rawError: !(error instanceof Error) ? error : undefined,
-    };
-
-    return result;
   }
+
+  // Execute transformation if present - let errors propagate
+  if (hasTransformation(validatedHook)) {
+    const transformed = validatedHook.transform(quad);
+
+    // POKA-YOKE: Transform return type validation (RPN 280 → 28)
+    if (transformed === null || transformed === undefined) {
+      result.valid = false;
+      result.quad = transformed;
+      return result;
+    }
+
+    if (typeof transformed !== 'object') {
+      throw new TypeError(
+        `Hook "${validatedHook.name}": transform() must return a Quad object, got ${typeof transformed}`
+      );
+    }
+
+    // POKA-YOKE: Check for required Quad properties
+    if (!transformed.subject || !transformed.predicate || !transformed.object) {
+      throw new TypeError(
+        `Hook "${validatedHook.name}": transform() returned object missing subject/predicate/object`
+      );
+    }
+
+    // POKA-YOKE: Pooled quad leak detection (warn if returning pooled quad)
+    if (transformed._pooled && options.warnPooledQuads !== false) {
+      console.warn(
+        `[POKA-YOKE] Hook "${validatedHook.name}": returned pooled quad. Clone before storing to prevent memory issues.`
+      );
+      result.warning = 'Pooled quad returned - consider cloning';
+    }
+
+    result.quad = transformed;
+  }
+
+  return result;
 }
 
 /**
@@ -158,7 +160,17 @@ export function executeHook(hook, quad, options = {}) {
  * }
  */
 export function executeHookChain(hooks, quad) {
-  // Fast path: trust pre-validated hooks (skip Zod array parse)
+  // Validate input
+  if (!Array.isArray(hooks)) {
+    throw new TypeError('hooks must be an array');
+  }
+
+  // Check for null/undefined hooks
+  for (let i = 0; i < hooks.length; i++) {
+    if (hooks[i] === null || hooks[i] === undefined) {
+      throw new Error(`Hook at index ${i} is ${hooks[i]}`);
+    }
+  }
 
   /** @type {HookResult[]} */
   const results = [];
@@ -176,7 +188,7 @@ export function executeHookChain(hooks, quad) {
       break;
     }
 
-    if (result.quad) {
+    if (result.quad !== undefined) {
       currentQuad = result.quad;
     }
   }
@@ -187,24 +199,44 @@ export function executeHookChain(hooks, quad) {
     quad: currentQuad,
     results,
     error: chainError,
+    failedHook: !chainValid ? results[results.length - 1]?.hookName : undefined,
   };
 }
 
 /**
  * Execute hooks for a specific trigger type.
+ * Accepts either a registry or an array of hooks.
  *
- * @param {Hook[]} hooks - All registered hooks
+ * @param {HookRegistry|Hook[]} hooksOrRegistry - Hooks array or registry
  * @param {import('./define-hook.mjs').HookTrigger} trigger - Trigger type to execute
  * @param {Quad} quad - Quad to process
- * @returns {ChainResult} - Execution result
+ * @returns {HookResult[]} - Array of hook execution results
  *
  * @example
- * const result = executeHooksByTrigger(allHooks, 'before-add', quad);
+ * const results = executeHooksByTrigger(registry, 'before-add', quad);
  */
-export function executeHooksByTrigger(hooks, trigger, quad) {
-  // Fast path: trust pre-validated hooks (skip Zod array parse)
-  const matchingHooks = hooks.filter(h => h.trigger === trigger);
-  return executeHookChain(matchingHooks, quad);
+export function executeHooksByTrigger(hooksOrRegistry, trigger, quad) {
+  let hooks;
+
+  // Handle registry object
+  if (hooksOrRegistry && typeof hooksOrRegistry === 'object' && hooksOrRegistry.hooks instanceof Map) {
+    // Extract hooks for the specific trigger from registry
+    const triggerSet = hooksOrRegistry.triggerIndex.get(trigger);
+    if (!triggerSet) {
+      hooks = [];
+    } else {
+      hooks = Array.from(triggerSet).map(name => hooksOrRegistry.hooks.get(name));
+    }
+  } else if (Array.isArray(hooksOrRegistry)) {
+    // Direct hooks array
+    hooks = hooksOrRegistry.filter(h => h.trigger === trigger);
+  } else {
+    // Invalid input
+    hooks = [];
+  }
+
+  // Execute and return the full chain result
+  return executeHookChain(hooks, quad);
 }
 
 /**

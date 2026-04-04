@@ -94,23 +94,27 @@ export const HookTriggerSchema = z.enum([
   'audit-trail',
 ]);
 
-export const HookConfigSchema = z.object({
-  name: z.string().min(1, 'Hook name is required').optional(),
-  trigger: HookTriggerSchema,
-  // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
-  validate: z.function().optional(),
-  transform: z.function().optional(),
-  metadata: z.record(z.string(), z.any()).optional(),
-  // Old format compatibility
-  meta: z
-    .object({
-      name: z.string(),
-      description: z.string().optional(),
-    })
-    .optional(),
-  pattern: z.string().optional(),
-  run: z.function().optional(),
-});
+export const HookConfigSchema = z
+  .object({
+    name: z.string().min(1, 'Hook name is required'),
+    trigger: HookTriggerSchema,
+    // Note: No return type enforcement - runtime POKA-YOKE guard handles non-boolean returns
+    validate: z.function().optional(),
+    transform: z.function().optional(),
+    metadata: z.record(z.string(), z.any()).optional(),
+    // Old format compatibility
+    meta: z
+      .object({
+        name: z.string(),
+        description: z.string().optional(),
+      })
+      .optional(),
+    pattern: z.string().optional(),
+    run: z.function().optional(),
+  })
+  .refine(obj => obj.validate || obj.transform || obj.run, {
+    message: 'Hook must define either validate, transform, or run function',
+  });
 
 export const HookSchema = z.object({
   name: z.string(),
@@ -143,18 +147,14 @@ export const HookSchema = z.object({
 export function defineHook(config) {
   const validated = HookConfigSchema.parse(config);
 
-  // Support old format with meta.name and run()
-  const name = validated.name || validated.meta?.name;
+  // name is now required by schema, validate and transform checked via refine
+  const name = validated.name;
   const validate = validated.validate;
   const transform = validated.transform || validated.run;
   const metadata = validated.metadata || {
     description: validated.meta?.description,
     pattern: validated.pattern,
   };
-
-  if (!validate && !transform) {
-    throw new Error('Hook must define either validate, transform, or run function');
-  }
 
   return {
     name,

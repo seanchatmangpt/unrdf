@@ -42,28 +42,28 @@ const SENSITIVE_PATTERNS = {
   // Database connection strings
   credentials: [
     /\b(?:postgres|mysql|mongodb):\/\/[^:\s]+:[^@\s]+@[^\s]+/gi, // DB URLs with passwords
-    /password\s*[:=]\s*["']?[^"'\s]+["']?/gi, // password= or password:
-    /api[_-]?key\s*[:=]\s*["']?[^"'\s]+["']?/gi, // API keys
+    /password\s*[:=]\s*["']?[^"'\s]+["']?/g, // password= or password: (lowercase only)
+    /api[_-]?key\s*[:=]\s*["']?[^"'\s]+["']?/g, // api_key= or api-key= (lowercase only)
     /secret\s*[:=]\s*["']?[^"'\s]+["']?/gi, // secrets
     /token\s*[:=]\s*["']?[^"'\s]+["']?/gi, // tokens
     /authorization\s*:\s*["']?[^"'\s]+["']?/gi, // auth headers
   ],
 
-  // Environment variables
+  // Environment variables (ALL_CAPS only to avoid overlap with credentials)
   environmentVars: [
-    /\bDATABASE_URL\s*=\s*[^\s]+/gi,
-    /API_KEY\s*=\s*[^\s]+/gi,
-    /SECRET\s*=\s*[^\s]+/gi,
-    /PASSWORD\s*=\s*[^\s]+/gi,
-    /TOKEN\s*=\s*[^\s]+/gi,
-    /\w+_KEY\s*=\s*[^\s]+/gi,
-    /\w+_SECRET\s*=\s*[^\s]+/gi,
+    /\bDATABASE_URL\s*=\s*[^\s]+/g,
+    /API_KEY\s*=\s*[^\s]+/g,
+    /SECRET\s*=\s*[^\s]+/g,
+    /PASSWORD\s*=\s*[^\s]+/g,
+    /TOKEN\s*=\s*[^\s]+/g,
+    /[A-Z][A-Z0-9_]*_KEY\s*=\s*[^\s]+/g,
+    /[A-Z][A-Z0-9_]*_SECRET\s*=\s*[^\s]+/g,
   ],
 
   // Stack trace patterns
   stackTraces: [
-    /\bat\s+[^\s]+\s+\([^)]+:\d+:\d+\)/g, // at Function (file:line:col)
-    /at\s+[^(]+\([^)]+\)/g, // at Function(...)
+    /\bat\s+[^\s]+\s+\([^)]*:\d+:\d+\)/g, // at Function (file:line:col) - allow empty parens before colon
+    /at\s+[^(]+\([^)]*\)/g, // at Function(...) - allow empty parens
     /^\s*at\s.+$/gm, // Full stack trace lines
   ],
 };
@@ -101,6 +101,11 @@ export class ErrorSanitizer {
     // Remove environment variables
     if (this.options.removeEnvironmentVars) {
       message = this._removeEnvironmentVars(message);
+    }
+
+    // Remove stack traces
+    if (this.options.removeStackTraces) {
+      message = this._removeStackTraces(message);
     }
 
     // If sanitization removed too much, return generic message
@@ -147,15 +152,12 @@ export class ErrorSanitizer {
     let sanitized = text;
 
     for (const pattern of SENSITIVE_PATTERNS.credentials) {
-      sanitized = sanitized.replace(pattern, match => {
-        if (match.includes('://')) {
-          // Replace password in connection string
-          return match.replace(/:\/\/[^:]+:[^@]+@/, '://***:***@');
-        }
-        // Replace entire credential assignment
-        return match.split(/[:=]/)[0] + '=***';
-      });
+      // Completely remove matched credential patterns
+      sanitized = sanitized.replace(pattern, '');
     }
+
+    // Clean up extra whitespace left by removed patterns
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
 
     return sanitized;
   }
@@ -170,7 +172,7 @@ export class ErrorSanitizer {
     let sanitized = text;
 
     for (const pattern of SENSITIVE_PATTERNS.filePaths) {
-      sanitized = sanitized.replace(pattern, '[file path removed]');
+      sanitized = sanitized.replace(pattern, '');
     }
 
     return sanitized;
@@ -186,10 +188,30 @@ export class ErrorSanitizer {
     let sanitized = text;
 
     for (const pattern of SENSITIVE_PATTERNS.environmentVars) {
-      sanitized = sanitized.replace(pattern, match => {
-        return match.split('=')[0] + '=***';
-      });
+      sanitized = sanitized.replace(pattern, '');
     }
+
+    // Clean up extra whitespace left by removed patterns
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
+
+    return sanitized;
+  }
+
+  /**
+   * Remove stack trace patterns from text
+   * @param {string} text - Text to sanitize
+   * @returns {string} Sanitized text
+   * @private
+   */
+  _removeStackTraces(text) {
+    let sanitized = text;
+
+    for (const pattern of SENSITIVE_PATTERNS.stackTraces) {
+      sanitized = sanitized.replace(pattern, '');
+    }
+
+    // Clean up extra whitespace left by removed patterns
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
 
     return sanitized;
   }

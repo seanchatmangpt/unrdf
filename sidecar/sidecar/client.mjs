@@ -20,6 +20,7 @@ import { createConnectionPool } from './connection-pool.mjs';
 import { createHealthMonitor, HealthStatus, createHealthCheckResult } from './health-check.mjs';
 import { createTelemetryInterceptor, createTimeoutInterceptor, composeInterceptors } from './interceptors.mjs';
 import { EventEmitter } from 'events';
+import { trace } from '@opentelemetry/api';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

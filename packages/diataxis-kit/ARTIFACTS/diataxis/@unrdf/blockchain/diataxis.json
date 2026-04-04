@@ -7,7 +7,10 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["blockchain-demo.mjs", "gas-analyzer.mjs"],
+    "examplesFiles": [
+      "blockchain-demo.mjs",
+      "gas-analyzer.mjs"
+    ],
     "fingerprint": "05c8d8fc6cf36bbf2887da9d709efdfc3195216e59f1ba1c0481ecceb6eb7b69",
     "readmeHeadings": [
       "Features",
@@ -29,10 +32,20 @@
   },
   "explanation": {
     "architecture": "Blockchain integration for UNRDF - Cryptographic receipt anchoring and immutable audit trails using Ethereum smart contracts.",
-    "concepts": ["blockchain", "ethereum", "receipts", "merkle-tree", "audit-trail"],
+    "concepts": [
+      "blockchain",
+      "ethereum",
+      "receipts",
+      "merkle-tree",
+      "audit-trail"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-blockchain-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/blockchain",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,8 +59,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/blockchain",
       "title": "Handle Errors"
     },
@@ -55,8 +74,15 @@
       "confidenceScore": 0.7,
       "context": "When working with blockchain in your project",
       "id": "howto-integrate-with-blockchain",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/blockchain with blockchain",
       "title": "Integrate with blockchain"
     }
@@ -91,7 +117,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/blockchain Reference"
   },
   "tutorials": [
@@ -99,8 +127,14 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/blockchain in your project",
       "id": "tutorial-getting-started-with-unrdf-blockchain",
-      "prerequisites": ["Understanding of graph databases"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

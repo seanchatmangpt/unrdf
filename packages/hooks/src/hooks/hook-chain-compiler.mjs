@@ -100,9 +100,16 @@ export function compileHookChain(hooks) {
 
   // Generate inline transformation steps
   const transformSteps = hooks
-    .map((h, i) => (hasTransformation(h) ? `quad = hooks[${i}].transform(quad);` : ''))
+    .map((h, i) => {
+      if (hasTransformation(h)) {
+        return `quad = hooks[${i}].transform(quad);
+    if (quad === null || quad === undefined) return { valid: false, quad };`;
+      }
+      return '';
+    })
     .filter(Boolean)
     .join('\n    ');
+
 
   // Compile the chain function
   const fnBody = `
@@ -147,6 +154,9 @@ function createInterpretedChain(hooks) {
 
       if (hasTransformation(hook)) {
         currentQuad = hook.transform(currentQuad);
+        if (currentQuad === null || currentQuad === undefined) {
+          return { valid: false, quad: currentQuad, failedHook: hook.name };
+        }
       }
     }
 

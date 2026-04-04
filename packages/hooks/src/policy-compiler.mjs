@@ -413,10 +413,15 @@ export function precompilePolicies(policies) {
 
   for (const policy of policies) {
     try {
+      if (!policy || typeof policy !== 'object') {
+        errors.push(`Policy: Invalid policy definition (received ${typeof policy})`);
+        continue;
+      }
       compilePolicy(policy);
       compiled++;
     } catch (error) {
-      errors.push(`Policy ${policy.type}: ${error.message}`);
+      const policyType = policy?.type || 'unknown';
+      errors.push(`Policy ${policyType}: ${error.message}`);
     }
   }
 
@@ -435,10 +440,15 @@ export function precompileHooks(hooks) {
 
   for (const hook of hooks) {
     try {
+      if (!hook || typeof hook !== 'object') {
+        errors.push(`Hook: Invalid hook definition (received ${typeof hook})`);
+        continue;
+      }
       compileHook(hook);
       compiled++;
     } catch (error) {
-      errors.push(`Hook ${hook.name || 'anonymous'}: ${error.message}`);
+      const hookName = hook?.name || 'anonymous';
+      errors.push(`Hook ${hookName}: ${error.message}`);
     }
   }
 

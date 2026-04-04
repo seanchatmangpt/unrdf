@@ -1,6 +1,6 @@
 {
   "generatedAt": "2000-01-01T00:00:00.000Z",
-  "packageCount": 276,
+  "packageCount": 270,
   "packages": [
     {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-8",
@@ -369,11 +369,6 @@
     },
     {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/domain",
-      "name": "@unrdf/domain",
-      "version": "26.4.3"
-    },
-    {
-      "dir": "/Users/sac/unrdf/packages/domain",
       "name": "@unrdf/domain",
       "version": "26.4.3"
     },
@@ -788,11 +783,6 @@
       "version": "26.4.3"
     },
     {
-      "dir": "/Users/sac/unrdf/packages/ml-versioning",
-      "name": "@unrdf/ml-versioning",
-      "version": "26.4.3"
-    },
-    {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/test/narrative-state-chain",
       "name": "@unrdf/narrative-state-chain-tests",
       "version": "1.0.0"
@@ -968,11 +958,6 @@
       "version": "26.4.3"
     },
     {
-      "dir": "/Users/sac/unrdf/packages/semantic-search",
-      "name": "@unrdf/semantic-search",
-      "version": "26.4.3"
-    },
-    {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/serverless",
       "name": "@unrdf/serverless",
       "version": "26.4.3"
@@ -1028,17 +1013,7 @@
       "version": "26.4.3"
     },
     {
-      "dir": "/Users/sac/unrdf/packages/test-utils",
-      "name": "@unrdf/test-utils",
-      "version": "26.4.3"
-    },
-    {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/v6-compat",
-      "name": "@unrdf/v6-compat",
-      "version": "26.4.3"
-    },
-    {
-      "dir": "/Users/sac/unrdf/packages/v6-compat",
       "name": "@unrdf/v6-compat",
       "version": "26.4.3"
     },
@@ -1074,11 +1049,6 @@
     },
     {
       "dir": "/Users/sac/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-ai",
-      "name": "@unrdf/yawl-ai",
-      "version": "26.4.3"
-    },
-    {
-      "dir": "/Users/sac/unrdf/packages/yawl-ai",
       "name": "@unrdf/yawl-ai",
       "version": "26.4.3"
     },

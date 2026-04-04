@@ -6,6 +6,7 @@
 
 import { EventEmitter } from 'events';
 import { DaemonConfigSchema } from './schemas.mjs';
+import { initializeOTelSDK, shutdownOTelSDK } from './integrations/otel-sdk.mjs';
 
 /**
  * Simple LRU cache implementation for completed operations
@@ -105,6 +106,18 @@ export class Daemon extends EventEmitter {
       return;
     }
 
+    try {
+      // Initialize OTEL SDK first
+      await initializeOTelSDK({
+        serviceName: 'unrdf-daemon',
+        version: '26.4.3',
+        environment: process.env.NODE_ENV || 'development',
+        otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
+      });
+    } catch (error) {
+      this.logger.warn('[Daemon] OTEL SDK initialization failed, continuing without tracing:', error.message);
+    }
+
     this.isRunning = true;
     this.startTime = Date.now();
     this.logger.info(`[Daemon ${this.nodeId}] Started`);
@@ -118,6 +131,13 @@ export class Daemon extends EventEmitter {
   async stop() {
     if (!this.isRunning) {
       return;
+    }
+
+    try {
+      // Shutdown OTEL SDK last
+      await shutdownOTelSDK();
+    } catch (error) {
+      this.logger.warn('[Daemon] OTEL SDK shutdown failed:', error.message);
     }
 
     this.isRunning = false;

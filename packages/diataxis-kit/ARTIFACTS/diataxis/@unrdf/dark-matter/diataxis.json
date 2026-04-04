@@ -13,10 +13,19 @@
   },
   "explanation": {
     "architecture": "@unrdf/dark-matter is a package in the UNRDF ecosystem",
-    "concepts": ["rdf", "optimization", "performance", "sparql", "80-20"],
+    "concepts": [
+      "rdf",
+      "optimization",
+      "performance",
+      "sparql",
+      "80-20"
+    ],
     "confidenceScore": 0.4,
     "id": "explanation-unrdf-dark-matter-explanation",
-    "source": ["keywords", "inferred"],
+    "source": [
+      "keywords",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/dark-matter",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +39,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/dark-matter with rdf",
       "title": "Integrate with rdf"
     },
@@ -39,8 +55,14 @@
       "confidenceScore": 0.4,
       "context": "When encountering issues during usage",
       "id": "howto-troubleshoot-common-issues",
-      "source": ["inferred"],
-      "steps": ["Check configuration", "Review error messages", "Apply fixes"],
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
       "task": "Resolve common problems and errors",
       "title": "Troubleshoot Common Issues"
     }
@@ -69,7 +91,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/dark-matter Reference"
   },
   "tutorials": [
@@ -77,8 +101,13 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/dark-matter in your project",
       "id": "tutorial-getting-started-with-unrdf-dark-matter",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

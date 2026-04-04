@@ -3,7 +3,7 @@
  * @module cli/commands/sync/sparql-executor.test
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach as _beforeEach, vi } from 'vitest';
 import {
   executeSparqlQuery,
   executeParameterizedQuery,

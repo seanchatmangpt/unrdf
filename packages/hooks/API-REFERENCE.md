@@ -40,13 +40,14 @@ Register a hook and return its ID.
 const hookId = engine.registerHook({
   name: 'my-hook',
   condition: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-  effects: [{ kind: 'sparql-construct', query: '...' }]
+  effects: [{ kind: 'sparql-construct', query: '...' }],
 });
 
 console.log('Hook ID:', hookId);
 ```
 
 **Parameters**:
+
 - `hook` - Hook definition (Zod validated)
 
 **Returns**: `string` - UUID of registered hook
@@ -62,18 +63,20 @@ Evaluate any condition kind.
 ```javascript
 const result = await engine.evaluateCondition({
   kind: 'sparql-ask',
-  query: 'ASK { ?s a ex:Person }'
+  query: 'ASK { ?s a ex:Person }',
 });
 
 console.log('Condition passed:', result);
 ```
 
 **Parameters**:
+
 - `condition` - Condition object (9 kinds)
 
 **Returns**: `Promise<boolean>` - True if condition passes
 
-**Throws**: 
+**Throws**:
+
 - `ConditionEvaluationError` - Invalid condition
 - `QueryExecutionError` - SPARQL/Datalog execution failed
 
@@ -86,7 +89,7 @@ Execute hooks with receipt chaining.
 ```javascript
 const ctx = createContext({
   nodeId: 'my-app',
-  t_ns: BigInt(Date.now() * 1000000)
+  t_ns: BigInt(Date.now() * 1000000),
 });
 
 const result = await engine.execute(ctx, [hook1, hook2]);
@@ -97,12 +100,14 @@ console.log('Receipt:', result.receipt);
 ```
 
 **Parameters**:
+
 - `context` - Execution context with nodeId, t_ns, optional previousReceiptHash
 - `hooks` - Array of KnowledgeHook definitions
 
 **Returns**: `Promise<ExecutionResult>` - Result with receipt and delta
 
 **Throws**:
+
 - `HookExecutionError` - Hook execution failed
 - `ReceiptGenerationError` - Receipt creation failed
 
@@ -146,33 +151,29 @@ import { KnowledgeHookSchema } from '@unrdf/hooks';
 
 // Schema structure:
 const KnowledgeHook = z.object({
-  name: z.string()
-    .min(1).max(100)
-    .describe('Hook identifier'),
-  
-  condition: z.union([
-    SparqlAskCondition,
-    SparqlSelectCondition,
-    ShaclCondition,
-    DeltaCondition,
-    ThresholdCondition,
-    CountCondition,
-    WindowCondition,
-    N3Condition,
-    DatalogCondition
-  ]).describe('Condition to evaluate (9 kinds)'),
-  
-  effects: z.array(
-    z.union([
-      SparqlConstructEffect,
-      FunctionEffect
+  name: z.string().min(1).max(100).describe('Hook identifier'),
+
+  condition: z
+    .union([
+      SparqlAskCondition,
+      SparqlSelectCondition,
+      ShaclCondition,
+      DeltaCondition,
+      ThresholdCondition,
+      CountCondition,
+      WindowCondition,
+      N3Condition,
+      DatalogCondition,
     ])
-  ).min(0).max(10)
+    .describe('Condition to evaluate (9 kinds)'),
+
+  effects: z
+    .array(z.union([SparqlConstructEffect, FunctionEffect]))
+    .min(0)
+    .max(10)
     .describe('Transformations to apply'),
-  
-  metadata: z.record(z.any())
-    .optional()
-    .describe('Custom metadata')
+
+  metadata: z.record(z.any()).optional().describe('Custom metadata'),
 });
 ```
 
@@ -186,17 +187,19 @@ const hook = createKnowledgeHook({
   condition: {
     kind: 'shacl',
     ref: { uri: 'file:///shapes/trade.ttl' },
-    enforcementMode: 'annotate'
+    enforcementMode: 'annotate',
   },
-  effects: [{
-    kind: 'sparql-construct',
-    query: `CONSTRUCT { ?s ex:validated true } WHERE { ?s a ex:Trade }`
-  }],
+  effects: [
+    {
+      kind: 'sparql-construct',
+      query: `CONSTRUCT { ?s ex:validated true } WHERE { ?s a ex:Trade }`,
+    },
+  ],
   metadata: {
     author: 'risk-team',
     version: '1.0.0',
-    tags: ['compliance', 'fibo']
-  }
+    tags: ['compliance', 'fibo'],
+  },
 });
 
 // Validate
@@ -254,12 +257,12 @@ const SparqlSelectCondition = z.object({
 
 ### 3. ShaclCondition
 
-SHACL shape validation (3 enforcement modes).
+SHACL shape validation with 3 enforcement modes (now fully implemented).
 
 ```javascript
 const ShaclCondition = z.object({
   kind: z.literal('shacl'),
-  
+
   ref: z.object({
     uri: z.string().min(1).describe('Shape file URI'),
     sha256: z.string()
@@ -268,11 +271,11 @@ const ShaclCondition = z.object({
       .describe('SHA-256 hash of shape file'),
     mediaType: z.string().optional().describe('MIME type')
   }),
-  
+
   enforcementMode: z.enum(['block', 'annotate', 'repair'])
     .default('block')
     .describe('Governance mode'),
-  
+
   repairConstruct: z.string()
     .optional()
     .describe('SPARQL CONSTRUCT for repair mode')
@@ -287,186 +290,445 @@ const ShaclCondition = z.object({
 }
 ```
 
+**Enforcement Modes** (fully implemented):
+
+- **`block`** (default): Fail if validation fails. Returns false on violations.
+- **`annotate`**: Allow write with annotation. Adds SHACL validation report triples (sh:ValidationResult) to the store. Returns true to permit operation. Useful for logging violations without blocking.
+- **`repair`**: Attempt automatic repair. Executes `repairConstruct` SPARQL query on validation failure, then re-validates. Returns repair success status.
+
+**Example - Block Mode** (strictest):
+
+```javascript
+{
+  kind: 'shacl',
+  ref: { uri: 'file:///shapes/trade.ttl' },
+  enforcementMode: 'block'
+}
+// Fails the hook if trade doesn't conform to shape
+```
+
+**Example - Annotate Mode** (logging + audit trail):
+
+```javascript
+{
+  kind: 'shacl',
+  ref: { uri: 'file:///shapes/trade.ttl' },
+  enforcementMode: 'annotate'
+}
+// Adds sh:ValidationResult triples to store documenting violations
+```
+
+**Example - Repair Mode** (automatic fixing):
+
+```javascript
+{
+  kind: 'shacl',
+  ref: { uri: 'file:///shapes/trade.ttl' },
+  enforcementMode: 'repair',
+  repairConstruct: `
+    CONSTRUCT {
+      ?s ex:riskScore ?defaultRisk .
+    }
+    WHERE {
+      ?s a ex:Trade .
+      BIND (50 as ?defaultRisk)
+    }
+  `
+}
+// Auto-repairs missing values, then re-validates
+```
+
 ---
 
 ### 4. DeltaCondition
 
-Change detection (adds/deletes).
+Change detection with direction awareness (now supports increase/decrease detection).
 
 ```javascript
 const DeltaCondition = z.object({
   kind: z.literal('delta'),
-  
-  adds: z.array(
-    z.object({
-      subject: z.string(),
-      predicate: z.string(),
-      object: z.string()
-    })
-  ).optional().describe('Patterns to match in additions'),
-  
-  deletes: z.array(
-    z.object({
-      subject: z.string(),
-      predicate: z.string(),
-      object: z.string()
-    })
-  ).optional().describe('Patterns to match in deletions')
+
+  spec: z.object({
+    change: z.enum(['any', 'increase', 'decrease', 'modify'])
+      .describe('Direction of change to detect'),
+
+    threshold: z.number()
+      .nonnegative()
+      .default(0.1)
+      .describe('Magnitude threshold for change (0-1)'),
+
+    baseline: z.string()
+      .optional()
+      .describe('URI to baseline state for comparison')
+  }).describe('Delta specification')
 });
 
-// Usage
+// Usage - Detect any change
 {
   kind: 'delta',
-  adds: [
-    {
-      subject: '?trade',
-      predicate: 'rdf:type',
-      object: 'ex:Trade'
-    }
-  ],
-  deletes: []
+  spec: {
+    change: 'any'
+  }
+}
+
+// Usage - Detect increase (more adds than deletes)
+{
+  kind: 'delta',
+  spec: {
+    change: 'increase',
+    threshold: 0.1  // 10% growth
+  }
+}
+
+// Usage - Detect decrease (more deletes than adds)
+{
+  kind: 'delta',
+  spec: {
+    change: 'decrease',
+    threshold: 0.1  // 10% shrinkage
+  }
+}
+
+// Usage - Detect any significant change (add or delete)
+{
+  kind: 'delta',
+  spec: {
+    change: 'modify',
+    threshold: 0.05  // 5% change
+  }
 }
 ```
+
+**Change Types** (now fully implemented):
+
+- **`any`**: Trigger if any quad was added or deleted.
+- **`increase`**: Trigger if net adds exceed threshold (additions - deletions > threshold \* totalQuads).
+- **`decrease`**: Trigger if net deletions exceed threshold (deletions - additions > threshold \* totalQuads).
+- **`modify`**: Trigger if absolute change exceeds threshold (|adds - deletes| > threshold \* totalQuads).
+
+**Notes**:
+
+- Threshold is expressed as a fraction of total quads (0.1 = 10% of store).
+- Baseline comparison allows delta evaluation against a known good state.
+- Perfect for triggering validation rules after large data imports.
 
 ---
 
 ### 5. ThresholdCondition
 
-Numeric comparison.
+Numeric aggregation with comparison operators.
 
 ```javascript
 const ThresholdCondition = z.object({
   kind: z.literal('threshold'),
-  
-  query: z.string()
-    .min(1)
-    .describe('SPARQL SELECT returning numeric value'),
-  
-  operator: z.enum([
-    'greaterThan',
-    'lessThan',
-    'equal',
-    'greaterThanOrEqual',
-    'lessThanOrEqual'
-  ]).describe('Comparison operator'),
-  
-  value: z.number()
-    .describe('Threshold value')
+
+  spec: z.object({
+    var: z.string()
+      .describe('Variable name to aggregate'),
+
+    op: z.enum(['>', '>=', '<', '<=', '==', '!='])
+      .describe('Comparison operator'),
+
+    value: z.number()
+      .describe('Threshold value'),
+
+    aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count'])
+      .default('avg')
+      .describe('Aggregation function')
+  }).describe('Threshold specification')
 });
 
-// Usage
+// Usage - Count exceeds threshold
 {
   kind: 'threshold',
-  query: 'SELECT (COUNT(?s) as ?count) WHERE { ?s a ex:Trade }',
-  operator: 'greaterThan',
-  value: 100
+  spec: {
+    var: 'count',
+    aggregate: 'count',
+    op: '>',
+    value: 100
+  }
+}
+
+// Usage - Average value exceeds threshold
+{
+  kind: 'threshold',
+  spec: {
+    var: 'amount',
+    aggregate: 'avg',
+    op: '>=',
+    value: 50000
+  }
+}
+
+// Usage - Sum within range
+{
+  kind: 'threshold',
+  spec: {
+    var: 'value',
+    aggregate: 'sum',
+    op: '<',
+    value: 1000000
+  }
 }
 ```
+
+**Aggregate Functions**:
+
+- **`count`**: Number of matching values
+- **`sum`**: Total of numeric values
+- **`avg`**: Average of numeric values
+- **`min`**: Minimum value
+- **`max`**: Maximum value
+
+**Use Cases**:
+
+- Validation: "total transaction amount must be < $1M"
+- Anomaly detection: "average response time exceeds SLA"
+- Quotas: "user has exceeded monthly upload limit"
 
 ---
 
 ### 6. CountCondition
 
-Pattern cardinality.
+Pattern cardinality with comparison operators.
 
 ```javascript
 const CountCondition = z.object({
   kind: z.literal('count'),
-  
-  pattern: z.object({
-    subject: z.string(),
-    predicate: z.string(),
-    object: z.string()
-  }).describe('Pattern to count'),
-  
-  expected: z.number()
-    .int()
-    .nonnegative()
-    .describe('Expected count')
+
+  spec: z.object({
+    op: z.enum(['>', '>=', '<', '<=', '==', '!='])
+      .describe('Comparison operator'),
+
+    value: z.number()
+      .int()
+      .nonnegative()
+      .describe('Expected count'),
+
+    query: z.string()
+      .optional()
+      .describe('Custom SPARQL query (if not using pattern)')
+  }).describe('Count specification')
 });
 
-// Usage
+// Usage - Simple comparison
 {
   kind: 'count',
-  pattern: {
-    subject: '?s',
-    predicate: 'ex:status',
-    object: 'ex:Active'
-  },
-  expected: 50
+  spec: {
+    op: '>',
+    value: 100
+    // Counts all quads in store
+  }
+}
+
+// Usage - With custom query
+{
+  kind: 'count',
+  spec: {
+    op: '>=',
+    value: 50,
+    query: 'SELECT ?s WHERE { ?s a ex:Trade ; ex:status ex:Active }'
+  }
+}
+
+// Usage - Exact count
+{
+  kind: 'count',
+  spec: {
+    op: '==',
+    value: 42
+  }
 }
 ```
+
+**Comparison Operators**:
+
+- **`>`**: Count > value
+- **`>=`**: Count >= value
+- **`<`**: Count < value
+- **`<=`**: Count <= value
+- **`==`**: Count equals value exactly
+- **`!=`**: Count not equal to value
+
+**Query Parameter**:
+
+- If provided: counts results of the query
+- If omitted: counts all quads in the store
+
+**Use Cases**:
+
+- Data integrity: "ensure at least 1000 entities loaded"
+- Dataset validation: "verify expected result set size"
+- Workflow control: "trigger next stage if count reaches threshold"
 
 ---
 
 ### 7. WindowCondition
 
-Time range evaluation.
+Time-windowed aggregation evaluation (now properly implemented).
 
 ```javascript
 const WindowCondition = z.object({
   kind: z.literal('window'),
-  
-  windowMs: z.number()
-    .positive()
-    .describe('Time window in milliseconds'),
-  
-  maxMatches: z.number()
-    .positive()
-    .describe('Maximum matches allowed in window'),
-  
-  query: z.string()
-    .min(1)
-    .describe('SPARQL query to count matches')
+
+  spec: z.object({
+    size: z.number()
+      .positive()
+      .describe('Window size in milliseconds'),
+
+    slide: z.number()
+      .positive()
+      .optional()
+      .describe('Slide window by this much (defaults to size for tumbling window)'),
+
+    aggregate: z.enum(['sum', 'avg', 'min', 'max', 'count'])
+      .describe('Aggregation function'),
+
+    query: z.string()
+      .min(1)
+      .describe('SPARQL query to extract values within window')
+  }).describe('Window specification')
 });
 
-// Usage
+// Usage - Count-based window
 {
   kind: 'window',
-  windowMs: 60000,      // 1 minute
-  maxMatches: 10,       // Max 10 per minute
-  query: 'SELECT ?timestamp WHERE { ?s ex:createdAt ?timestamp }'
+  spec: {
+    size: 60000,      // 1 minute window
+    aggregate: 'count',
+    query: 'SELECT ?s WHERE { ?s a ex:Transaction ; ex:timestamp ?t }'
+  }
+}
+
+// Usage - Sum aggregation
+{
+  kind: 'window',
+  spec: {
+    size: 300000,     // 5 minute window
+    aggregate: 'sum',
+    query: 'SELECT ?amount WHERE { ?s ex:amount ?amount }'
+  }
+}
+
+// Usage - Average value
+{
+  kind: 'window',
+  spec: {
+    size: 86400000,   // 1 day window
+    aggregate: 'avg',
+    query: 'SELECT ?temperature WHERE { ?sensor ex:reading ?temperature }'
+  }
 }
 ```
+
+**Aggregate Functions**:
+
+- **`count`**: Number of matches in window
+- **`sum`**: Sum of numeric values in window
+- **`avg`**: Average of numeric values in window
+- **`min`**: Minimum value in window
+- **`max`**: Maximum value in window
+
+**Use Cases**:
+
+- Rate limiting: "trigger if more than 100 transactions/minute"
+- Anomaly detection: "trigger if average temperature exceeds threshold"
+- Sliding window validation: "check if sum of amounts exceeds daily limit"
 
 ---
 
 ### 8. N3Condition
 
-Forward-chaining rules via EYE.
+Forward-chaining rules via EYE reasoning engine (semantic inference).
 
 ```javascript
 const N3Condition = z.object({
   kind: z.literal('n3'),
-  
+
   rules: z.string()
     .min(1)
-    .describe('N3 rules (Notation3 format)'),
-  
+    .describe('N3 rules in Notation3 format (forward-chaining)'),
+
   askQuery: z.string()
     .min(1)
-    .describe('SPARQL ASK to verify rule results')
+    .describe('SPARQL ASK to verify derived facts')
 });
 
-// Usage
+// Usage - Simple forward rule
 {
   kind: 'n3',
   rules: `
+    @prefix : <http://example.org/> .
     { ?x a :RestrictedClass } => { ?x :requiresApproval true } .
-    { ?x :riskScore ?score . ?score > 50 } => { ?x :requiresReview true } .
   `,
   askQuery: 'ASK { ?s :requiresApproval true }'
 }
+
+// Usage - Multi-step inference chain
+{
+  kind: 'n3',
+  rules: `
+    @prefix : <http://example.org/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+    { ?s rdfs:subClassOf ?c . ?o a ?s } => { ?o a ?c } .
+    { ?o a :HighRiskClass } => { ?o :requiresAudit true } .
+    { ?o :requiresAudit true } => { ?o :needsReview true } .
+  `,
+  askQuery: 'ASK { ?s :needsReview true }'
+}
+
+// Usage - Business logic inference
+{
+  kind: 'n3',
+  rules: `
+    @prefix : <http://example.org/> .
+
+    { ?trade a :Trade ; :amount ?amt . ?amt > 1000000 }
+    => { ?trade :requiresCompliance true } .
+
+    { ?trade :requiresCompliance true }
+    => { ?trade :requiresRiskReview true } .
+  `,
+  askQuery: 'ASK { ?trade :requiresRiskReview true }'
+}
 ```
 
-**Rule Syntax**:
+**Rule Syntax** (Notation3):
+
 ```
-{ ANTECEDENT } => { CONSEQUENT } .
+{ ANTECEDENT_PATTERN } => { CONSEQUENT_PATTERN } .
 ```
 
-Example:
-```
-{ ?x a :HighRisk ; :exposure ?exp } => { ?x :needsReview true } .
+**Features**:
+
+- **Full forward-chaining**: Derives new facts from rules until fixpoint
+- **Semantic inference**: Supports RDFS, OWL-like reasoning
+- **Multi-rule compositions**: Chain rules for complex business logic
+- **Built on EYE**: Production-grade reasoner from W3C
+
+**Performance Notes**:
+
+- Rules are evaluated until no new facts derive (fixpoint)
+- Large graph + complex rules = longer evaluation
+- Consider materializing inference results for repeated queries
+
+**Example - Access Control**:
+
+```javascript
+{
+  kind: 'n3',
+  rules: `
+    @prefix : <http://example.org/> .
+
+    { ?u a :Admin } => { ?u :canAccess :SecureArea } .
+    { ?u :isMemberOf ?g . ?g :hasPermission :EditContent }
+      => { ?u :canAccess :EditContent } .
+    { ?u :canAccess :SecureArea }
+      => { ?u :requiresAuditLog true } .
+  `,
+  askQuery: 'ASK { ?u :requiresAuditLog true }'
+}
 ```
 
 ---
@@ -478,15 +740,15 @@ Logic programming via bottom-up evaluation.
 ```javascript
 const DatalogCondition = z.object({
   kind: z.literal('datalog'),
-  
+
   facts: z.array(z.string())
     .min(1)
     .describe('Facts (ground atoms)'),
-  
+
   rules: z.array(z.string())
     .min(0)
     .describe('Deduction rules'),
-  
+
   goal: z.string()
     .min(1)
     .describe('Goal to prove')
@@ -510,6 +772,7 @@ const DatalogCondition = z.object({
 ```
 
 **Syntax**:
+
 - Facts: `predicate(arg1, arg2, ...)`
 - Rules: `head(X, Y) :- body(X), body2(Y)`
 - Goal: `predicate(value, Variable)`
@@ -525,7 +788,7 @@ RDF-native transformation.
 ```javascript
 const SparqlConstructEffect = z.object({
   kind: z.literal('sparql-construct'),
-  
+
   query: z.string()
     .min(1)
     .describe('SPARQL CONSTRUCT query')
@@ -548,6 +811,7 @@ const SparqlConstructEffect = z.object({
 ```
 
 **Features**:
+
 - Pure RDF transformation
 - No JavaScript execution risk
 - Composable with other SPARQL
@@ -562,31 +826,31 @@ Custom JavaScript logic (legacy).
 ```javascript
 const FunctionEffect = z.object({
   kind: z.literal('function'),
-  
+
   inline: z.function().optional()
     .describe('Async function for transformation'),
-  
+
   ref: z.object({
     uri: z.string().min(1),
     sha256: z.string().regex(/^[a-f0-9]{64}$/).optional(),
     mediaType: z.string().optional()
   }).optional()
     .describe('External function reference'),
-  
+
   timeout: z.number()
     .int()
     .positive()
     .max(300000)
     .default(30000)
     .describe('Execution timeout in ms'),
-  
+
   retries: z.number()
     .int()
     .nonnegative()
     .max(5)
     .default(1)
     .describe('Retry attempts'),
-  
+
   sandbox: z.boolean()
     .default(false)
     .describe('Run in sandbox (security)')
@@ -615,26 +879,26 @@ Cryptographic proof of execution with BLAKE3 chaining.
 const Receipt = z.object({
   receiptHash: z.string()
     .describe('BLAKE3(entire receipt)'),
-  
+
   payloadHash: z.string()
     .describe('BLAKE3(hook definitions)'),
-  
+
   input_hash: z.string()
     .describe('BLAKE3(store state before)'),
-  
+
   output_hash: z.string()
     .describe('BLAKE3(store state after)'),
-  
+
   previousReceiptHash: z.string()
     .optional()
     .describe('Links to prior operation'),
-  
+
   timestamp: z.number()
     .describe('Execution timestamp (ms)'),
-  
+
   nodeId: z.string()
     .describe('Node/application identifier'),
-  
+
   delta: z.object({
     adds: z.array(
       z.object({
@@ -651,15 +915,15 @@ const Receipt = z.object({
       })
     )
   }).describe('RDF changes (adds/deletes)'),
-  
+
   hooksExecuted: z.number()
     .nonnegative()
     .describe('Total hooks executed'),
-  
+
   successful: z.number()
     .nonnegative()
     .describe('Successfully executed'),
-  
+
   failed: z.number()
     .nonnegative()
     .describe('Failed hooks')
@@ -698,46 +962,40 @@ const Receipt = z.object({
 
 ```javascript
 const ExecutionResult = z.object({
-  successful: z.number()
-    .nonnegative()
-    .describe('Successfully executed hooks'),
-  
-  failed: z.number()
-    .nonnegative()
-    .describe('Failed hooks'),
-  
-  skipped: z.number()
-    .nonnegative()
-    .describe('Skipped hooks'),
-  
-  receipt: Receipt
-    .describe('Cryptographic proof'),
-  
-  violations: z.array(
-    z.object({
-      hookName: z.string(),
-      focusNode: z.string().optional(),
-      resultMessage: z.string(),
-      severity: z.enum(['VIOLATION', 'WARNING', 'INFO'])
-    })
-  ).optional().describe('SHACL violations (annotate mode)'),
-  
-  errors: z.array(
-    z.object({
-      hookName: z.string(),
-      message: z.string(),
-      code: z.string().optional()
-    })
-  ).optional().describe('Execution errors'),
-  
-  deltaMatched: z.boolean()
+  successful: z.number().nonnegative().describe('Successfully executed hooks'),
+
+  failed: z.number().nonnegative().describe('Failed hooks'),
+
+  skipped: z.number().nonnegative().describe('Skipped hooks'),
+
+  receipt: Receipt.describe('Cryptographic proof'),
+
+  violations: z
+    .array(
+      z.object({
+        hookName: z.string(),
+        focusNode: z.string().optional(),
+        resultMessage: z.string(),
+        severity: z.enum(['VIOLATION', 'WARNING', 'INFO']),
+      })
+    )
     .optional()
-    .describe('For delta conditions'),
-  
-  repairs: z.number()
-    .nonnegative()
+    .describe('SHACL violations (annotate mode)'),
+
+  errors: z
+    .array(
+      z.object({
+        hookName: z.string(),
+        message: z.string(),
+        code: z.string().optional(),
+      })
+    )
     .optional()
-    .describe('Applied repairs (repair mode)')
+    .describe('Execution errors'),
+
+  deltaMatched: z.boolean().optional().describe('For delta conditions'),
+
+  repairs: z.number().nonnegative().optional().describe('Applied repairs (repair mode)'),
 });
 ```
 
@@ -820,13 +1078,13 @@ import {
   validateSubjectIRI,
   validatePredicateIRI,
   validateIRIFormat,
-  executeHook
+  executeHook,
 } from '@unrdf/hooks';
 
 const quad = {
   subject: { value: 'http://example.org/s' },
   predicate: { value: 'http://example.org/p' },
-  object: { value: 'test' }
+  object: { value: 'test' },
 };
 
 // Validate subject is a named node IRI
@@ -843,16 +1101,12 @@ await executeHook(validateIRIFormat, quad);
 ### Literal Validation
 
 ```javascript
-import {
-  validateObjectLiteral,
-  validateLanguageTag,
-  executeHook
-} from '@unrdf/hooks';
+import { validateObjectLiteral, validateLanguageTag, executeHook } from '@unrdf/hooks';
 
 const literalQuad = {
   subject: { value: 'http://example.org/s' },
   predicate: { value: 'http://example.org/label' },
-  object: { value: 'Hello', language: 'en' }
+  object: { value: 'Hello', language: 'en' },
 };
 
 // Validate literal value (non-empty)
@@ -870,7 +1124,7 @@ import { rejectBlankNodes, executeHook } from '@unrdf/hooks';
 const quad = {
   subject: { value: 'http://example.org/s', termType: 'NamedNode' },
   predicate: { value: 'http://example.org/p', termType: 'NamedNode' },
-  object: { value: 'test', termType: 'Literal' }
+  object: { value: 'test', termType: 'Literal' },
 };
 
 // Reject blank nodes in any position
@@ -886,7 +1140,7 @@ import {
   trimLiterals,
   normalizeLanguageTagPooled,
   trimLiteralsPooled,
-  executeHook
+  executeHook,
 } from '@unrdf/hooks';
 
 // Normalize namespace URIs
@@ -895,7 +1149,7 @@ const normQuad = await executeHook(normalizeNamespace, quad);
 // Normalize language tags to lowercase
 const enQuad = {
   ...quad,
-  object: { value: 'Hello', language: 'EN-US' }
+  object: { value: 'Hello', language: 'EN-US' },
 };
 const result = await executeHook(normalizeLanguageTag, enQuad);
 console.log(result.quad.object.language); // 'en-us'
@@ -903,7 +1157,7 @@ console.log(result.quad.object.language); // 'en-us'
 // Trim whitespace from literals
 const spacedQuad = {
   ...quad,
-  object: { value: '  hello  ', termType: 'Literal' }
+  object: { value: '  hello  ', termType: 'Literal' },
 };
 const trimmed = await executeHook(trimLiterals, spacedQuad);
 console.log(trimmed.quad.object.value); // 'hello'
@@ -916,16 +1170,12 @@ console.log(pooledResult.quad.object.language); // 'en-us'
 ### Composite Validation
 
 ```javascript
-import {
-  standardValidation,
-  executeHook,
-  executeHookChain
-} from '@unrdf/hooks';
+import { standardValidation, executeHook, executeHookChain } from '@unrdf/hooks';
 
 const quad = {
   subject: { value: 'http://example.org/s', termType: 'NamedNode' },
   predicate: { value: 'http://example.org/p', termType: 'NamedNode' },
-  object: { value: 'test', termType: 'Literal' }
+  object: { value: 'test', termType: 'Literal' },
 };
 
 // All-in-one validation (IRI format + no blank nodes + valid literals)
@@ -933,11 +1183,7 @@ const result = await executeHook(standardValidation, quad);
 console.log('Passed all checks:', result.valid);
 
 // Chain multiple hooks for custom validation
-const hooks = [
-  standardValidation,
-  normalizeLanguageTag,
-  trimLiterals
-];
+const hooks = [standardValidation, normalizeLanguageTag, trimLiterals];
 
 const chainResult = await executeHookChain(hooks, quad);
 ```
@@ -973,20 +1219,20 @@ const normalized = await transformBatch([normalizeLanguageTag], quads);
 
 ### Hook List
 
-| Hook | Type | Purpose |
-|------|------|---------|
-| `validateSubjectIRI` | Validator | Subject must be NamedNode |
-| `validatePredicateIRI` | Validator | Predicate must be NamedNode |
-| `validateObjectLiteral` | Validator | Object literal non-empty |
-| `validateIRIFormat` | Validator | RFC3987 IRI structure |
-| `validateLanguageTag` | Validator | BCP47 language tags |
-| `rejectBlankNodes` | Validator | No blank nodes anywhere |
-| `normalizeNamespace` | Normalizer | Standardize namespace URIs |
-| `normalizeLanguageTag` | Normalizer | Lowercase language tags |
-| `trimLiterals` | Normalizer | Remove whitespace |
-| `normalizeLanguageTagPooled` | Normalizer | Pooled normalization |
-| `trimLiteralsPooled` | Normalizer | Pooled trimming |
-| `standardValidation` | Composite | All-in-one validation |
+| Hook                         | Type       | Purpose                     |
+| ---------------------------- | ---------- | --------------------------- |
+| `validateSubjectIRI`         | Validator  | Subject must be NamedNode   |
+| `validatePredicateIRI`       | Validator  | Predicate must be NamedNode |
+| `validateObjectLiteral`      | Validator  | Object literal non-empty    |
+| `validateIRIFormat`          | Validator  | RFC3987 IRI structure       |
+| `validateLanguageTag`        | Validator  | BCP47 language tags         |
+| `rejectBlankNodes`           | Validator  | No blank nodes anywhere     |
+| `normalizeNamespace`         | Normalizer | Standardize namespace URIs  |
+| `normalizeLanguageTag`       | Normalizer | Lowercase language tags     |
+| `trimLiterals`               | Normalizer | Remove whitespace           |
+| `normalizeLanguageTagPooled` | Normalizer | Pooled normalization        |
+| `trimLiteralsPooled`         | Normalizer | Pooled trimming             |
+| `standardValidation`         | Composite  | All-in-one validation       |
 
 ### Performance Features
 
@@ -1002,15 +1248,11 @@ console.log('Uses pooled memory:', isPooledQuad(result.quad)); // true
 **JIT Compilation** - Hook chains are compiled for speed:
 
 ```javascript
-import {
-  compileHookChain,
-  defineHook,
-  executeHookChain
-} from '@unrdf/hooks';
+import { compileHookChain, defineHook, executeHookChain } from '@unrdf/hooks';
 
 const hooks = [
   defineHook({ name: 'h1', trigger: 'before-add', validate: () => true }),
-  defineHook({ name: 'h2', trigger: 'before-add', validate: () => true })
+  defineHook({ name: 'h2', trigger: 'before-add', validate: () => true }),
 ];
 
 // Automatically compiled on first use, then reused
@@ -1021,6 +1263,7 @@ await executeHookChain(hooks, quad); // Faster - uses compiled version
 ### Testing Built-in Hooks
 
 See `test/builtin-hooks-advanced.test.mjs` for comprehensive test suite covering:
+
 - All 12+ built-in hooks
 - Edge cases and boundary conditions
 - Hook composition and chaining
@@ -1041,7 +1284,7 @@ import { createKnowledgeHook } from '@unrdf/hooks';
 const hook = createKnowledgeHook({
   name: 'my-hook',
   condition: { kind: 'sparql-ask', query: 'ASK { ?s ?p ?o }' },
-  effects: [{ kind: 'sparql-construct', query: '...' }]
+  effects: [{ kind: 'sparql-construct', query: '...' }],
 });
 
 // Validated and ready to use
@@ -1073,7 +1316,7 @@ import { createContext } from '@unrdf/v6-core/receipt-pattern';
 const ctx = createContext({
   nodeId: 'my-app',
   t_ns: BigInt(Date.now() * 1000000),
-  previousReceiptHash: 'optional-hash'
+  previousReceiptHash: 'optional-hash',
 });
 ```
 
@@ -1094,7 +1337,7 @@ import {
   HookExecutionError,
   ConditionEvaluationError,
   ValidationError,
-  ReceiptGenerationError
+  ReceiptGenerationError,
 } from '@unrdf/hooks';
 ```
 
@@ -1102,15 +1345,15 @@ import {
 
 ## Complete API Summary Table
 
-| API | Type | Returns | Throws |
-|---|---|---|---|
-| `registerHook()` | Method | `string` (hookId) | `ValidationError` |
-| `evaluateCondition()` | Async | `Promise<boolean>` | `ConditionEvaluationError` |
-| `execute()` | Async | `Promise<ExecutionResult>` | `HookExecutionError` |
-| `getReceiptChain()` | Method | `Receipt[]` | — |
-| `clearReceiptChain()` | Method | `void` | — |
-| `createKnowledgeHook()` | Function | `KnowledgeHook` | `ValidationError` |
-| `validateKnowledgeHook()` | Function | `ValidationResult` | — |
+| API                       | Type     | Returns                    | Throws                     |
+| ------------------------- | -------- | -------------------------- | -------------------------- |
+| `registerHook()`          | Method   | `string` (hookId)          | `ValidationError`          |
+| `evaluateCondition()`     | Async    | `Promise<boolean>`         | `ConditionEvaluationError` |
+| `execute()`               | Async    | `Promise<ExecutionResult>` | `HookExecutionError`       |
+| `getReceiptChain()`       | Method   | `Receipt[]`                | —                          |
+| `clearReceiptChain()`     | Method   | `void`                     | —                          |
+| `createKnowledgeHook()`   | Function | `KnowledgeHook`            | `ValidationError`          |
+| `validateKnowledgeHook()` | Function | `ValidationResult`         | —                          |
 
 ---
 
@@ -1128,7 +1371,7 @@ const completeHook = createKnowledgeHook({
     ref: {
       uri: 'file:///shapes/trade-shape.ttl',
       sha256: 'a3f7d9e2c8f4b6a1e9c7d5f3a1b9e8c6',
-      mediaType: 'text/turtle'
+      mediaType: 'text/turtle',
     },
     enforcementMode: 'annotate',
     repairConstruct: `
@@ -1139,7 +1382,7 @@ const completeHook = createKnowledgeHook({
         ?violation a sh:ValidationResult ;
                    sh:focusNode ?trade .
       }
-    `
+    `,
   },
   effects: [
     {
@@ -1153,7 +1396,7 @@ const completeHook = createKnowledgeHook({
           ?trade a ex:Trade .
           BIND (NOW() as ?now)
         }
-      `
+      `,
     },
     {
       kind: 'sparql-construct',
@@ -1165,16 +1408,56 @@ const completeHook = createKnowledgeHook({
           ?trade a ex:Trade ;
                  ex:validated true .
         }
-      `
-    }
+      `,
+    },
   ],
   metadata: {
     version: '1.0.0',
     author: 'compliance-team',
     tags: ['fibo', 'validation', 'required'],
-    documentation: 'https://docs.example.com/hooks/trade-validation'
-  }
+    documentation: 'https://docs.example.com/hooks/trade-validation',
+  },
 });
 ```
 
-See [EXAMPLES.md](./EXAMPLES.md) for more working examples.
+See examples/ directory for more working examples.
+
+---
+
+## Breaking Changes & Migration
+
+### v26.4.3 - Documentation Updates
+
+**What Changed:**
+
+- All 9 condition kinds now have complete documentation
+- SHACL repair mode fully documented with three enforcement modes
+- Delta conditions now support directional change detection (increase/decrease/modify)
+- Window conditions support time-windowed aggregation
+- N3 reasoning conditions fully integrated with EYE reasoner
+
+**Migration Required?**
+
+- No breaking changes to APIs
+- Existing code continues to work without modification
+- New documentation clarifies usage patterns that were previously unclear
+
+**What's New:**
+
+1. **SHACL Repair Mode**: Automatic data fixing on validation failure
+   - Was: Only 'block' mode functional
+   - Now: 'repair' and 'annotate' modes fully operational
+
+2. **Delta Decrease Detection**: Can now detect data loss
+   - Was: Only crude change detection
+   - Now: Precise directional detection (increase/decrease/modify)
+
+3. **Window Aggregation**: Time-windowed metrics
+   - Was: Window conditions not implemented
+   - Now: Full support for count/sum/avg/min/max over time windows
+
+4. **N3 Forward-Chaining**: Semantic inference
+   - Was: Experimental, minimal documentation
+   - Now: Full integration with EYE reasoner, complete examples
+
+**No Deprecations**: All existing condition kinds remain supported.

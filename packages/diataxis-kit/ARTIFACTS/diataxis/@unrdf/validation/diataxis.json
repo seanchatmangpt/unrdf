@@ -27,10 +27,19 @@
   },
   "explanation": {
     "architecture": "![Version](https://img.shields.io/badge/version-26.4.3-blue) ![Production Ready](https://img.shields.",
-    "concepts": ["rdf", "validation", "otel", "observability"],
+    "concepts": [
+      "rdf",
+      "validation",
+      "otel",
+      "observability"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-validation-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/validation",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -44,7 +53,9 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-validation",
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -57,8 +68,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/validation",
       "title": "Handle Errors"
     },
@@ -66,8 +83,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/validation with rdf",
       "title": "Integrate with rdf"
     }
@@ -84,7 +108,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/validation Reference"
   },
   "tutorials": [
@@ -92,8 +118,13 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/validation in your project",
       "id": "tutorial-getting-started-with-unrdf-validation",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

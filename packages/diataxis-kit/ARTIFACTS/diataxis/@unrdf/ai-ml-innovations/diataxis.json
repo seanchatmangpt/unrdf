@@ -7,7 +7,10 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["end-to-end-demo.mjs", "federated-learning-example.mjs"],
+    "examplesFiles": [
+      "end-to-end-demo.mjs",
+      "federated-learning-example.mjs"
+    ],
     "fingerprint": "91af44e50b5d7b3149007034bac3d594b2760b2b2a6e13c48207b89823cf9c75",
     "readmeHeadings": [
       "Overview",
@@ -27,12 +30,23 @@
   },
   "explanation": {
     "architecture": "Novel AI/ML integration patterns for UNRDF knowledge graphs.",
-    "concepts": ["unrdf", "ai", "ml", "knowledge-graph", "gnn"],
+    "concepts": [
+      "unrdf",
+      "ai",
+      "ml",
+      "knowledge-graph",
+      "gnn"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-ai-ml-innovations-explanation",
-    "source": ["keywords", "readme"],
+    "source": [
+      "keywords",
+      "readme"
+    ],
     "title": "Understanding @unrdf/ai-ml-innovations",
-    "tradeoffs": ["Performance vs. flexibility tradeoffs discussed in README"]
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
   },
   "generatedAt": "2000-01-01T00:00:00.000Z",
   "howtos": [
@@ -40,8 +54,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/ai-ml-innovations",
       "title": "Handle Errors"
     },
@@ -49,8 +69,15 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/ai-ml-innovations with unrdf",
       "title": "Integrate with unrdf"
     }
@@ -85,7 +112,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/ai-ml-innovations Reference"
   },
   "tutorials": [
@@ -93,8 +123,15 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/ai-ml-innovations in your project",
       "id": "tutorial-getting-started-with-unrdf-ai-ml-innovations",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

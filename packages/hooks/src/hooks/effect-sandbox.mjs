@@ -39,13 +39,17 @@ const SandboxConfigSchema = z.object({
 /**
  * Schema for sandbox execution context
  */
-const SandboxContextSchema = z.object({
-  event: z.any(),
-  store: z.any(),
-  delta: z.any(),
-  metadata: z.record(z.any()).optional(),
-  allowedFunctions: z.array(z.string()).default(['emitEvent', 'log', 'assert']),
-});
+const SandboxContextSchema = z
+  .object({
+    event: z.any(),
+    store: z.any(),
+    delta: z.any(),
+    metadata: z.record(z.any()).optional(),
+    allowedFunctions: z.array(z.string()).default(['emitEvent', 'log', 'assert']),
+  })
+  .refine(obj => 'event' in obj && 'store' in obj && 'delta' in obj, {
+    message: 'event, store, and delta fields are required',
+  });
 
 /**
  * Schema for sandbox execution result
@@ -175,7 +179,7 @@ export class EffectSandbox {
         ...result,
         executionId,
         duration,
-        success: true,
+        success: result?.success !== false,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -478,7 +482,13 @@ export class EffectSandbox {
 
     const terminationPromises = Array.from(this.workers.values()).map(worker => {
       return new Promise(resolve => {
-        worker.terminate();
+        if (worker?.terminate && typeof worker.terminate === 'function') {
+          try {
+            worker.terminate();
+          } catch (_e) {
+            // Ignore termination errors
+          }
+        }
         resolve();
       });
     });

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-realtime",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "Real-time collaboration framework for YAWL workflows using Socket.io",
   "type": "module",
   "main": "src/index.mjs",
@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "dev": "node src/examples/approval-collab.mjs",
-    "lint": "eslint src/ test/ --ext .mjs",
+    "lint": "eslint src/ test/",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [

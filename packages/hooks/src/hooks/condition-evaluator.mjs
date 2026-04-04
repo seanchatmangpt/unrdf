@@ -8,12 +8,363 @@
  */
 
 import { createFileResolver } from './file-resolver.mjs';
-import { ask, select } from './query.mjs';
+import { ask, select, construct } from './query.mjs';
 import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
-import { createStore } from '../../../oxigraph/src/index.mjs';
+import { createStore, dataFactory } from '../../../oxigraph/src/index.mjs';
 import reasoner from 'eyereasoner';
-// import { Database } from 'datalog-ts'; // TODO: Datalog evaluation via Database class
+import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs';
+import { z } from 'zod';
+
+// ─── SPARQL Injection Prevention ────────────────────────────────────────────
+const sparqlParser = new SparqlParser();
+const sparqlGenerator = new SparqlGenerator();
+
+/** Safe SPARQL variable name: letters, digits, underscore; must start with letter/underscore */
+const SAFE_SPARQL_VAR_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+/**
+ * Zod schema for SPARQL parameter values.
+ * Allows: string, number, boolean, RDF NamedNode/BlankNode/Literal terms.
+ * Rejects: plain objects, arrays, functions, null, undefined.
+ */
+export const SparqlParamSchema = z.union([
+  z.string(),
+  z.number().finite(),
+  z.boolean(),
+  z.object({
+    termType: z.enum(['NamedNode', 'BlankNode', 'Literal']),
+    value: z.string(),
+  }),
+]);
+
+/**
+ * Validate that a string is a safe SPARQL variable name.
+ * @param {string} name - Variable name to validate
+ * @returns {string} The validated name
+ * @throws {Error} If name contains injection characters
+ */
+export function validateSparqlVariableName(name) {
+  if (typeof name !== 'string' || !SAFE_SPARQL_VAR_RE.test(name)) {
+    throw new Error(
+      `Invalid SPARQL variable name: "${String(name)}". ` +
+        'Must match /^[a-zA-Z_][a-zA-Z0-9_]*$/.'
+    );
+  }
+  return name;
+}
+
+/**
+ * Validate and parse a SPARQL query string to prevent injection.
+ * Only allows read-only query types (SELECT, ASK, CONSTRUCT, DESCRIBE).
+ * Rejects UPDATE, SERVICE, and LOAD operations.
+ * @param {string} queryString - SPARQL query to validate
+ * @returns {object} Parsed query AST
+ * @throws {Error} If query is invalid or disallowed
+ */
+export function validateSparqlQuery(queryString) {
+  if (typeof queryString !== 'string' || queryString.trim().length === 0) {
+    throw new Error('SPARQL query must be a non-empty string');
+  }
+
+  let parsed;
+  try {
+    parsed = sparqlParser.parse(queryString);
+  } catch (error) {
+    throw new Error(`Invalid SPARQL syntax: ${error.message}`);
+  }
+
+  // Reject UPDATE operations (INSERT DATA, DELETE, DROP, CLEAR, CREATE, LOAD)
+  if (parsed.type === 'update') {
+    throw new Error('SPARQL UPDATE operations are not allowed in condition queries');
+  }
+
+  // Walk AST JSON to reject SERVICE clauses (federated query escape)
+  const astJson = JSON.stringify(parsed);
+  if (astJson.includes('"type":"service"')) {
+    throw new Error('SERVICE clauses are not allowed in condition queries');
+  }
+
+  return parsed;
+}
+
+/**
+ * Safely bind parameter values into a SPARQL query via AST manipulation.
+ * @param {string} queryTemplate - SPARQL query with ?variable placeholders
+ * @param {Object<string, *>} params - Variable-name → value map
+ * @returns {string} Generated SPARQL with values bound
+ */
+export function bindSparqlParams(queryTemplate, params = {}) {
+  if (!params || Object.keys(params).length === 0) {
+    return queryTemplate;
+  }
+
+  // Validate every parameter key and value
+  const replacements = new Map();
+  for (const [key, value] of Object.entries(params)) {
+    const varName = key.startsWith('?') ? key.slice(1) : key;
+    validateSparqlVariableName(varName);
+
+    const result = SparqlParamSchema.safeParse(value);
+    if (!result.success) {
+      throw new Error(
+        `Invalid SPARQL parameter value for ?${varName}: ${result.error.message}`
+      );
+    }
+    replacements.set(varName, toRdfTerm(value));
+  }
+
+  // Parse template → AST, replace variables, regenerate
+  const parsed = sparqlParser.parse(queryTemplate);
+  replaceVariablesInAst(parsed, replacements);
+  return sparqlGenerator.stringify(parsed);
+}
+
+/** Convert a JS value to a sparqljs-compatible RDF term node. */
+function toRdfTerm(value) {
+  if (typeof value === 'string') {
+    return { termType: 'Literal', value };
+  }
+  if (typeof value === 'number') {
+    return {
+      termType: 'Literal',
+      value: String(value),
+      datatype: {
+        termType: 'NamedNode',
+        value: 'http://www.w3.org/2001/XMLSchema#decimal',
+      },
+    };
+  }
+  if (typeof value === 'boolean') {
+    return {
+      termType: 'Literal',
+      value: String(value),
+      datatype: {
+        termType: 'NamedNode',
+        value: 'http://www.w3.org/2001/XMLSchema#boolean',
+      },
+    };
+  }
+  if (value && value.termType) {
+    return value;
+  }
+  throw new Error(`Cannot convert value to RDF term: ${typeof value}`);
+}
+
+/** Recursively replace Variable nodes in a sparqljs AST. */
+function replaceVariablesInAst(node, replacements) {
+  if (!node || typeof node !== 'object') return;
+  if (Array.isArray(node)) {
+    for (let i = 0; i < node.length; i++) {
+      if (node[i]?.termType === 'Variable' && replacements.has(node[i].value)) {
+        node[i] = replacements.get(node[i].value);
+      } else {
+        replaceVariablesInAst(node[i], replacements);
+      }
+    }
+    return;
+  }
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (val && typeof val === 'object') {
+      if (val.termType === 'Variable' && replacements.has(val.value)) {
+        node[key] = replacements.get(val.value);
+      } else {
+        replaceVariablesInAst(val, replacements);
+      }
+    }
+  }
+}
+
+/**
+ * SlidingWindow class for temporal event tracking
+ * Maintains a window of events and supports both time-based and event-based windowing
+ */
+class SlidingWindow {
+  /** @type {number} Memory warning threshold in bytes (100MB) */
+  static MEMORY_WARN_BYTES = 100 * 1024 * 1024;
+  /** @type {number} Memory hard limit in bytes (500MB) */
+  static MEMORY_LIMIT_BYTES = 500 * 1024 * 1024;
+
+  /**
+   * @param {number} size - Window size (milliseconds for time-based, count for event-based)
+   * @param {number} [slide] - Slide amount (defaults to size for tumbling window)
+   * @param {boolean} [timeWindow=true] - If true, size is in milliseconds; if false, size is event count
+   * @param {number} [maxHistorySize=10000] - Maximum number of events to retain (LRU eviction)
+   */
+  constructor(size, slideAmount = size, timeWindow = true, maxHistorySize = 10000) {
+    this.size = size;
+    this.slideAmount = slideAmount;
+    this.timeWindow = timeWindow;
+    this.maxHistorySize = maxHistorySize;
+    this.events = []; // Array of { timestamp, value, data }
+    this.lastSlideTime = Date.now();
+
+    // Metrics tracking
+    this._metrics = {
+      totalEvictions: 0,
+      totalEventsAdded: 0,
+      peakEventCount: 0,
+      lastMemoryEstimate: 0,
+      memoryWarnings: 0,
+    };
+  }
+
+  /**
+   * Estimate approximate memory usage of the event queue in bytes.
+   * Each event object has: timestamp (8), value (variable), data (variable), index (8).
+   * We estimate ~200 bytes per event as a conservative baseline for object overhead + pointers.
+   * @returns {number} Estimated memory usage in bytes
+   */
+  estimateMemoryUsage() {
+    const perEventOverhead = 200;
+    const estimate = this.events.length * perEventOverhead;
+    this._metrics.lastMemoryEstimate = estimate;
+    return estimate;
+  }
+
+  /**
+   * Add an event to the window
+   * @param {*} value - The value to add
+   * @param {*} data - Additional data to track
+   * @throws {Error} If estimated memory exceeds 500MB hard limit
+   */
+  add(value, data = null) {
+    // Enforce maxHistorySize via LRU eviction (remove oldest first)
+    while (this.events.length >= this.maxHistorySize) {
+      this.events.shift();
+      this._metrics.totalEvictions++;
+    }
+
+    const now = Date.now();
+    this.events.push({
+      timestamp: now,
+      value,
+      data,
+      index: this._metrics.totalEventsAdded,
+    });
+    this._metrics.totalEventsAdded++;
+
+    // Track peak
+    if (this.events.length > this._metrics.peakEventCount) {
+      this._metrics.peakEventCount = this.events.length;
+    }
+
+    // Memory monitoring (check every 1000 events to avoid overhead)
+    if (this._metrics.totalEventsAdded % 1000 === 0) {
+      this._checkMemoryLimits();
+    }
+
+    // Clean up expired events
+    this.prune();
+  }
+
+  /**
+   * Check memory limits and warn/throw as appropriate
+   * @private
+   */
+  _checkMemoryLimits() {
+    const memEstimate = this.estimateMemoryUsage();
+
+    if (memEstimate > SlidingWindow.MEMORY_LIMIT_BYTES) {
+      throw new Error(
+        `SlidingWindow memory limit exceeded: ${(memEstimate / 1024 / 1024).toFixed(1)}MB > 500MB limit. ` +
+          `Events: ${this.events.length}, consider reducing maxHistorySize (current: ${this.maxHistorySize})`
+      );
+    }
+
+    if (memEstimate > SlidingWindow.MEMORY_WARN_BYTES) {
+      this._metrics.memoryWarnings++;
+      console.warn(
+        `[SlidingWindow] Memory warning: ~${(memEstimate / 1024 / 1024).toFixed(1)}MB used ` +
+          `(${this.events.length} events, limit: ${this.maxHistorySize})`
+      );
+    }
+  }
+
+  /**
+   * Get current window contents
+   * @returns {Array} Events within current window
+   */
+  getWindow() {
+    const now = Date.now();
+    if (this.timeWindow) {
+      // Time-based window: keep events within [now - size, now)
+      const cutoff = now - this.size;
+      return this.events.filter(e => e.timestamp > cutoff);
+    }
+    // Event-based window: keep last 'size' events
+    if (this.events.length <= this.size) {
+      return this.events;
+    }
+    return this.events.slice(-this.size);
+  }
+
+  /**
+   * Remove events outside the window
+   */
+  prune() {
+    const now = Date.now();
+    if (this.timeWindow) {
+      const cutoff = now - this.size;
+      this.events = this.events.filter(e => e.timestamp > cutoff);
+    }
+  }
+
+  /**
+   * Slide the window forward
+   * @returns {boolean} True if window slid
+   */
+  slide() {
+    const now = Date.now();
+    const shouldSlide = now - this.lastSlideTime >= this.slideAmount;
+
+    if (shouldSlide) {
+      this.lastSlideTime = now;
+      this.prune();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Clear window state
+   */
+  clear() {
+    this.events = [];
+    this.lastSlideTime = Date.now();
+  }
+
+  /**
+   * Get window size (number of events in current window)
+   * @returns {number}
+   */
+  length() {
+    return this.getWindow().length;
+  }
+
+  /**
+   * Get telemetry metrics for this window
+   * @returns {Object} Metrics snapshot
+   */
+  getMetrics() {
+    return {
+      totalEvictions: this._metrics.totalEvictions,
+      totalEventsAdded: this._metrics.totalEventsAdded,
+      currentEventCount: this.events.length,
+      peakEventCount: this._metrics.peakEventCount,
+      estimatedMemoryBytes: this.estimateMemoryUsage(),
+      maxHistorySize: this.maxHistorySize,
+      memoryWarnings: this._metrics.memoryWarnings,
+    };
+  }
+}
+
+// Export SlidingWindow for testing and external use
+export { SlidingWindow };
+
+// Global window state storage (keyed by condition ID)
+const _windowStateMap = new WeakMap();
 
 /**
  * Evaluate a hook condition against a graph.
@@ -55,8 +406,6 @@ export async function evaluateCondition(condition, graph, options = {}) {
         return await evaluateWindow(condition, graph, resolver, env, options);
       case 'n3':
         return await evaluateN3(condition, graph, resolver, env);
-      case 'datalog':
-        return await evaluateDatalog(condition, graph, resolver, env);
       default:
         throw new Error(`Unsupported condition kind: ${condition.kind}`);
     }
@@ -160,7 +509,7 @@ async function evaluateShacl(condition, graph, resolver, env) {
   const { turtle } = await resolver.loadShacl(ref.uri, ref.sha256);
 
   // Execute SHACL validation
-  const report = validateShacl(graph, turtle, {
+  const report = await validateShacl(graph, turtle, {
     strict: env.strictMode || false,
     includeDetails: true,
   });
@@ -204,20 +553,33 @@ async function evaluateShacl(condition, graph, resolver, env) {
       // If validation fails and repair query provided, attempt repair
       if (!isValid && repairConstruct) {
         try {
-          // Execute repair SPARQL CONSTRUCT query
-          const repairResults = await select(graph, repairConstruct);
+          // Execute repair SPARQL CONSTRUCT query to get repair quads
+          const repairQuads = await construct(graph, repairConstruct, { env });
 
-          // In a full implementation, would apply repair results to store
-          // For now, log repair attempt
-          if (env.logRepair) {
-            console.log(`[SHACL Repair] Applied repair with ${repairResults.length} results`);
+          // Apply repaired quads to the store
+          let quadsApplied = 0;
+          for (const quad of repairQuads) {
+            graph.add(quad);
+            quadsApplied++;
           }
 
-          // Re-validate after repair
-          const revalidateReport = validateShacl(graph, turtle, {
+          // Log repair application
+          if (env.logRepair) {
+            console.log(`[SHACL Repair] Applied ${quadsApplied} repair quads to store`);
+          }
+
+          // Re-validate after repair with updated graph
+          const revalidateReport = await validateShacl(graph, turtle, {
             strict: env.strictMode || false,
             includeDetails: true,
           });
+
+          // Log revalidation result
+          if (env.logRepair) {
+            console.log(
+              `[SHACL Repair] Revalidation result: ${revalidateReport.conforms ? 'conforms' : 'violations remain'}`
+            );
+          }
 
           // Return re-validation result
           return revalidateReport.conforms === true;
@@ -243,44 +605,65 @@ async function evaluateShacl(condition, graph, resolver, env) {
  * Converts violations into RDF quads that can be added to store.
  *
  * @param {Object} report - SHACL validation report
- * @returns {Array} Array of RDF triples/quads
+ * @returns {Array} Array of valid RDF quads
  */
-function serializeShaclReport(report) {
+export function serializeShaclReport(report) {
   const quads = [];
 
   if (!report.results || report.results.length === 0) {
     return quads;
   }
 
+  // SHACL vocabulary IRIs
+  const SHACL_NS = 'http://www.w3.org/ns/shacl#';
+  const RDF_NS = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+
+  // Severity level URIs
+  const SEVERITY_URIS = {
+    violation: `${SHACL_NS}Violation`,
+    warning: `${SHACL_NS}Warning`,
+    info: `${SHACL_NS}Info`,
+  };
+
   // For each violation result, create RDF representation
   for (let i = 0; i < report.results.length; i++) {
     const result = report.results[i];
 
-    // In production, use proper RDF factory and SHACL vocabulary
-    // For now, represent as simple objects that store can consume
-    if (result.severity === 'violation') {
-      quads.push({
-        subject: { value: `shacl:violation-${i}` },
-        predicate: { value: 'rdf:type' },
-        object: { value: 'sh:ValidationResult' },
-      });
+    // Map severity string to SHACL severity URI
+    const severityUri = SEVERITY_URIS[result.severity] || SEVERITY_URIS.violation;
 
-      if (result.message) {
-        quads.push({
-          subject: { value: `shacl:violation-${i}` },
-          predicate: { value: 'sh:resultMessage' },
-          object: { value: result.message },
-        });
-      }
+    // Create unique URI for this validation result
+    const resultUri = `http://example.com/validation/result-${i}`;
+    const resultNode = dataFactory.namedNode(resultUri);
 
-      if (result.severity) {
-        quads.push({
-          subject: { value: `shacl:violation-${i}` },
-          predicate: { value: 'sh:resultSeverity' },
-          object: { value: result.severity },
-        });
-      }
+    // Triple 1: result rdf:type sh:ValidationResult
+    quads.push(
+      dataFactory.quad(
+        resultNode,
+        dataFactory.namedNode(`${RDF_NS}type`),
+        dataFactory.namedNode(`${SHACL_NS}ValidationResult`)
+      )
+    );
+
+    // Triple 2: result sh:resultMessage "message"
+    if (result.message) {
+      quads.push(
+        dataFactory.quad(
+          resultNode,
+          dataFactory.namedNode(`${SHACL_NS}resultMessage`),
+          dataFactory.literal(result.message)
+        )
+      );
     }
+
+    // Triple 3: result sh:resultSeverity sh:Violation (or Warning/Info)
+    quads.push(
+      dataFactory.quad(
+        resultNode,
+        dataFactory.namedNode(`${SHACL_NS}resultSeverity`),
+        dataFactory.namedNode(severityUri)
+      )
+    );
   }
 
   return quads;
@@ -638,17 +1021,19 @@ async function evaluateDelta(condition, graph, resolver, env, options) {
   if (baselineHash && currentHash !== baselineHash) {
     changeMagnitude = 1.0; // Full change detected
   } else if (options.delta) {
-    // Calculate change based on delta size
+    // Calculate change based on delta composition
+    // Positive = more additions (increase), Negative = more removals (decrease)
     const totalQuads = graph.size;
-    const deltaSize =
-      (options.delta.additions?.length || 0) + (options.delta.removals?.length || 0);
-    changeMagnitude = totalQuads > 0 ? deltaSize / totalQuads : 0;
+    const additions = options.delta.additions?.length || 0;
+    const removals = options.delta.removals?.length || 0;
+    const netChange = additions - removals;
+    changeMagnitude = totalQuads > 0 ? netChange / totalQuads : 0;
   }
 
   // Evaluate change type
   switch (change) {
     case 'any':
-      return changeMagnitude > 0;
+      return changeMagnitude !== 0;
     case 'increase':
       return changeMagnitude > threshold;
     case 'decrease':
@@ -673,7 +1058,10 @@ async function evaluateThreshold(condition, graph, _resolver, _env, _options) {
   const { spec } = condition;
   const { var: variable, op, value, aggregate = 'avg' } = spec;
 
-  // Execute query to get values
+  // Validate variable name to prevent SPARQL injection
+  validateSparqlVariableName(variable);
+
+  // Execute query to get values (variable is now guaranteed safe)
   const query = `
     SELECT ?${variable} WHERE {
       ?s ?p ?${variable}
@@ -754,7 +1142,8 @@ async function evaluateCount(condition, graph, _resolver, _env, _options) {
   let count;
 
   if (countQuery) {
-    // Use custom query for counting
+    // Validate query to prevent SPARQL injection
+    validateSparqlQuery(countQuery);
     const results = await select(graph, countQuery);
     count = results.length;
   } else {
@@ -790,62 +1179,110 @@ async function evaluateCount(condition, graph, _resolver, _env, _options) {
  * @param {Object} options - Evaluation options
  * @returns {Promise<boolean>} Window condition result
  */
-async function evaluateWindow(condition, graph, _resolver, _env, _options) {
-  const { spec } = condition;
-  const { size, _slide = size, aggregate, query: windowQuery } = spec;
-
-  // For now, implement a simple window evaluation
-  // In a full implementation, this would maintain sliding windows over time
-
-  if (windowQuery) {
-    const results = await select(graph, windowQuery);
-
-    // Calculate aggregate over results
-    let aggregateValue;
-    switch (aggregate) {
-      case 'sum':
-        aggregateValue = results.reduce((sum, r) => {
-          const val = parseFloat(Object.values(r)[0]?.value || 0);
-          return sum + (isNaN(val) ? 0 : val);
-        }, 0);
-        break;
-      case 'avg':
-        const sum = results.reduce((sum, r) => {
-          const val = parseFloat(Object.values(r)[0]?.value || 0);
-          return sum + (isNaN(val) ? 0 : val);
-        }, 0);
-        aggregateValue = results.length > 0 ? sum / results.length : 0;
-        break;
-      case 'min':
-        aggregateValue = Math.min(
-          ...results.map(r => {
-            const val = parseFloat(Object.values(r)[0]?.value || Infinity);
-            return isNaN(val) ? Infinity : val;
-          })
-        );
-        break;
-      case 'max':
-        aggregateValue = Math.max(
-          ...results.map(r => {
-            const val = parseFloat(Object.values(r)[0]?.value || -Infinity);
-            return isNaN(val) ? -Infinity : val;
-          })
-        );
-        break;
-      case 'count':
-        aggregateValue = results.length;
-        break;
-      default:
-        aggregateValue = results.length;
-    }
-
-    // For window conditions, we typically check if aggregate exceeds threshold
-    // This is a simplified implementation
-    return aggregateValue > 0;
+async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) {
+  const { spec, id } = condition;
+  if (!spec) {
+    throw new Error('Window condition requires a spec property');
   }
 
-  // Default: check if graph has any data in the window
-  return graph.size > 0;
+  const { size, slide = size, aggregate = 'count', query: windowQuery } = spec;
+
+  if (!size || size <= 0) {
+    throw new Error('Window condition spec.size must be positive');
+  }
+
+  // Get or create window state storage from options
+  let windowState = _options.windowState;
+  if (!windowState) {
+    windowState = new Map();
+    if (_options) {
+      _options.windowState = windowState;
+    }
+  }
+
+  // Use condition ID or a hash as key; fallback to stringified spec
+  const stateKey = id || JSON.stringify(spec);
+
+  // Get or create sliding window instance
+  let window = windowState.get(stateKey);
+  if (!window) {
+    // Assume time-based window (size is in milliseconds)
+    window = new SlidingWindow(size, slide, true);
+    windowState.set(stateKey, window);
+  }
+
+  // Execute the window query to get values
+  if (!windowQuery || typeof windowQuery !== 'string') {
+    throw new Error('Window condition requires a query property');
+  }
+
+  // Validate query to prevent SPARQL injection
+  validateSparqlQuery(windowQuery);
+
+  const results = await select(graph, windowQuery);
+
+  // Extract numeric values from results
+  const values = results
+    .map(r => {
+      // Get first binding value
+      const firstValue = Object.values(r)[0];
+      if (!firstValue) return null;
+
+      const val = parseFloat(firstValue.value);
+      return isNaN(val) ? null : val;
+    })
+    .filter(v => v !== null);
+
+  // Add values to window
+  for (const val of values) {
+    window.add(val, { timestamp: Date.now() });
+  }
+
+  // Slide window if needed
+  window.slide();
+
+  // Get window contents for aggregation
+  const windowContents = window.getWindow();
+
+  // Calculate aggregate over window contents
+  let aggregateValue;
+  switch (aggregate) {
+    case 'sum':
+      aggregateValue = windowContents.reduce((sum, e) => sum + (e.value || 0), 0);
+      break;
+    case 'avg':
+      if (windowContents.length === 0) {
+        aggregateValue = 0;
+      } else {
+        const sum = windowContents.reduce((s, e) => s + (e.value || 0), 0);
+        aggregateValue = sum / windowContents.length;
+      }
+      break;
+    case 'min':
+      aggregateValue =
+        windowContents.length > 0 ? Math.min(...windowContents.map(e => e.value)) : Infinity;
+      break;
+    case 'max':
+      aggregateValue =
+        windowContents.length > 0 ? Math.max(...windowContents.map(e => e.value)) : -Infinity;
+      break;
+    case 'count':
+      aggregateValue = windowContents.length;
+      break;
+    default:
+      aggregateValue = windowContents.length;
+  }
+
+  // Window conditions typically check if aggregate meets a threshold
+  // Return true if we have data in the window
+  // For rate limiting scenarios, check maxMatches if provided in original API
+  const maxMatches = spec.maxMatches;
+  if (maxMatches !== undefined && maxMatches !== null) {
+    return aggregateValue <= maxMatches;
+  }
+
+  // Default: true if window has content
+  return aggregateValue > 0;
 }
 
 /**
@@ -878,327 +1315,6 @@ async function evaluateN3(condition, graph, resolver, env) {
 
   return result;
 }
-
-/**
- * Evaluate a Datalog logic programming condition using bottom-up fixpoint evaluation.
- *
- * This is a minimal Datalog evaluator implemented in pure JavaScript without external
- * dependencies. It supports:
- * - Facts: "predicate(arg1, arg2, ...)"
- * - Rules: "head(X) :- body1(X), body2(X)"
- * - Goals: "goal(X)" returns true if goal is derivable
- *
- * Limitations (infrastructure-ready but not production-grade):
- * - No optimization or indexing
- * - Linear scan for each rule application
- * - No support for negation-as-failure or cut
- * - Limited pattern matching (single-pass, no backtracking)
- *
- * For production use cases, prefer N3 forward-chaining via eyereasoner package.
- *
- * @param {Object} condition - The condition definition
- * @param {Store} graph - The RDF graph (unused; logic is pure Datalog)
- * @param {Object} resolver - File resolver instance
- * @param {Object} env - Environment variables
- * @returns {Promise<boolean>} Datalog goal evaluation result
- */
-async function evaluateDatalog(condition, _graph, _resolver, _env) {
-  const { facts: inlineFacts = [], rules: rulesInput = '', goal } = condition;
-
-  if (!goal) {
-    throw new Error('Datalog condition requires a goal property (e.g., "allowed(alice)")');
-  }
-
-  // Initialize the fact database
-  const factDb = new Map(); // Map: predicateName → Set of fact representations
-
-  // Parse and add inline facts
-  for (const fact of inlineFacts) {
-    const parsed = parseDatalogTerm(fact);
-    if (!parsed) {
-      throw new Error(
-        `Invalid Datalog fact format: ${fact}. Expected format: "predicate(arg1, arg2, ...)"`
-      );
-    }
-
-    const { predicate, args } = parsed;
-    const key = `${predicate}/${args.length}`;
-
-    if (!factDb.has(key)) {
-      factDb.set(key, new Set());
-    }
-
-    // Store fact as a JSON string for easy comparison
-    const factStr = JSON.stringify([predicate, args]);
-    factDb.get(key).add(factStr);
-  }
-
-  // Parse rules (handle both string and array formats)
-  const rulesList = Array.isArray(rulesInput)
-    ? rulesInput
-    : rulesInput
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0 && !line.startsWith('%'));
-
-  const parsedRules = [];
-  for (const rule of rulesList) {
-    const ruleObj = parseDatalogRule(rule);
-    if (!ruleObj) {
-      throw new Error(
-        `Invalid Datalog rule format: ${rule}. Expected format: "head(X) :- body1(X), body2(X)"`
-      );
-    }
-    parsedRules.push(ruleObj);
-  }
-
-  // Bottom-up fixpoint evaluation
-  let changed = true;
-  let iterations = 0;
-  const maxIterations = 100; // Prevent infinite loops
-
-  while (changed && iterations < maxIterations) {
-    changed = false;
-    iterations++;
-
-    // For each rule, try to derive new facts
-    for (const rule of parsedRules) {
-      const newFacts = evaluateRule(rule, factDb);
-
-      // Add new facts to database
-      for (const newFact of newFacts) {
-        const [predicate, args] = newFact;
-        const key = `${predicate}/${args.length}`;
-
-        if (!factDb.has(key)) {
-          factDb.set(key, new Set());
-        }
-
-        const factStr = JSON.stringify([predicate, args]);
-        if (!factDb.get(key).has(factStr)) {
-          factDb.get(key).add(factStr);
-          changed = true;
-        }
-      }
-    }
-  }
-
-  // Query for the goal
-  const goalParsed = parseDatalogTerm(goal);
-  if (!goalParsed) {
-    throw new Error(
-      `Invalid Datalog goal format: ${goal}. Expected format: "predicate(arg1, arg2, ...)"`
-    );
-  }
-
-  const { predicate, args } = goalParsed;
-  const key = `${predicate}/${args.length}`;
-
-  if (!factDb.has(key)) {
-    return false;
-  }
-
-  const factStr = JSON.stringify([predicate, args]);
-  return factDb.get(key).has(factStr);
-}
-
-/**
- * Parse a Datalog term: "predicate(arg1, arg2, ...)"
- * @param {string} term - Term to parse
- * @returns {Object|null} { predicate, args } or null if invalid
- */
-function parseDatalogTerm(term) {
-  const match = term.match(/^(\w+)\((.*)\)$/);
-  if (!match) {
-    return null;
-  }
-
-  const [, predicate, argsStr] = match;
-  const args = argsStr.length === 0 ? [] : argsStr.split(',').map(arg => arg.trim());
-
-  return { predicate, args };
-}
-
-/**
- * Parse a Datalog rule: "head(X, Y) :- body1(X), body2(Y)"
- * @param {string} rule - Rule to parse
- * @returns {Object|null} { head, body } or null if invalid
- */
-function parseDatalogRule(rule) {
-  const parts = rule.split(':-');
-  if (parts.length !== 2) {
-    return null;
-  }
-
-  const head = parseDatalogTerm(parts[0].trim());
-  if (!head) {
-    return null;
-  }
-
-  // Parse body goals (comma-separated, but respect parentheses)
-  const bodyStr = parts[1].trim();
-  const bodyGoals = splitOnTopLevelCommas(bodyStr)
-    .map(g => parseDatalogTerm(g.trim()))
-    .filter(g => g !== null);
-
-  return { head, body: bodyGoals };
-}
-
-/**
- * Split a string on top-level commas (not inside parentheses)
- * @param {string} str - String to split
- * @returns {Array} Array of substrings
- */
-function splitOnTopLevelCommas(str) {
-  const parts = [];
-  let current = '';
-  let depth = 0;
-
-  for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-
-    if (char === '(') {
-      depth++;
-      current += char;
-    } else if (char === ')') {
-      depth--;
-      current += char;
-    } else if (char === ',' && depth === 0) {
-      parts.push(current);
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-
-  if (current.length > 0) {
-    parts.push(current);
-  }
-
-  return parts;
-}
-
-/**
- * Evaluate a rule against current facts and return new derived facts
- * @param {Object} rule - Parsed rule { head, body }
- * @param {Map} factDb - Current fact database
- * @returns {Array} Array of new facts [predicate, args]
- */
-function evaluateRule(rule, factDb) {
-  const { head, body } = rule;
-  const newFacts = [];
-
-  if (body.length === 0) {
-    // Fact-only rule (shouldn't happen in practice)
-    newFacts.push([head.predicate, head.args]);
-    return newFacts;
-  }
-
-  // Find all bindings that satisfy the body goals
-  const bindings = findBindings(body, factDb, {});
-
-  for (const binding of bindings) {
-    // Apply binding to head to create new fact
-    const boundHead = applyBinding(head, binding);
-    newFacts.push([boundHead.predicate, boundHead.args]);
-  }
-
-  return newFacts;
-}
-
-/**
- * Find all variable bindings that satisfy body goals
- * @param {Array} body - Array of goals
- * @param {Map} factDb - Fact database
- * @param {Object} binding - Current variable bindings
- * @returns {Array} Array of bindings that satisfy all goals
- */
-function findBindings(body, factDb, binding) {
-  if (body.length === 0) {
-    return [binding];
-  }
-
-  const [goal, ...remainingGoals] = body;
-  const goalBindings = [];
-
-  // Find all facts that unify with this goal
-  const key = `${goal.predicate}/${goal.args.length}`;
-  const facts = factDb.get(key) || new Set();
-
-  for (const factStr of facts) {
-    const [_predicate, factArgs] = JSON.parse(factStr);
-    const newBinding = unify(goal.args, factArgs, binding);
-
-    if (newBinding !== null) {
-      // Recursively find bindings for remaining goals
-      const moreBindings = findBindings(remainingGoals, factDb, newBinding);
-      goalBindings.push(...moreBindings);
-    }
-  }
-
-  return goalBindings;
-}
-
-/**
- * Unify goal arguments with fact arguments
- * @param {Array} goalArgs - Goal argument list
- * @param {Array} factArgs - Fact argument list
- * @param {Object} binding - Current variable bindings
- * @returns {Object|null} Updated binding or null if unification fails
- */
-function unify(goalArgs, factArgs, binding) {
-  if (goalArgs.length !== factArgs.length) {
-    return null;
-  }
-
-  const newBinding = { ...binding };
-
-  for (let i = 0; i < goalArgs.length; i++) {
-    const goalArg = goalArgs[i];
-    const factArg = factArgs[i];
-
-    if (isVariable(goalArg)) {
-      // Bind variable
-      if (newBinding[goalArg]) {
-        if (newBinding[goalArg] !== factArg) {
-          return null; // Conflict
-        }
-      } else {
-        newBinding[goalArg] = factArg;
-      }
-    } else if (goalArg !== factArg) {
-      return null; // Argument mismatch
-    }
-  }
-
-  return newBinding;
-}
-
-/**
- * Apply variable bindings to a term
- * @param {Object} term - Term { predicate, args }
- * @param {Object} binding - Variable bindings
- * @returns {Object} Bound term { predicate, args }
- */
-function applyBinding(term, binding) {
-  const boundArgs = term.args.map(arg => binding[arg] || arg);
-  return { predicate: term.predicate, args: boundArgs };
-}
-
-/**
- * Check if a string is a variable (starts with uppercase or _)
- * @param {string} s - String to check
- * @returns {boolean} True if variable
- */
-function isVariable(s) {
-  return s.length > 0 && (s[0] === s[0].toUpperCase() || s[0] === '_');
-}
-
-/**
- * Hash a store for delta comparison
- * @param {Store} store - RDF store
- * @returns {Promise<string>} Store hash
- */
 async function hashStore(store) {
   // Simple hash implementation - in production, use proper canonicalization
   const quads = Array.from(store);

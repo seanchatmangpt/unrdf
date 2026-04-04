@@ -1,0 +1,76 @@
+groups:
+  - name: unrdf-otel
+    interval: 15s
+    rules:
+      # OTEL Collector is not sending spans
+      - alert: OtelCollectorNoSpans
+        expr: sum(rate(otelcol_exporter_sent_spans{service_name="unrdf-daemon"}[5m])) == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'OTEL Collector not sending spans'
+          description: 'No spans have been exported by the OTEL collector in the last 5 minutes.'
+
+      # OTEL Collector export errors
+      - alert: OtelCollectorExportErrors
+        expr: sum(rate(otelcol_exporter_send_failed_spans{service_name="unrdf-daemon"}[5m])) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'OTEL Collector export failures'
+          description: 'The OTEL collector is failing to export {{ $value }} spans/s.'
+
+      # Export queue backing up
+      - alert: OtelCollectorQueueBackup
+        expr: otelcol_exporter_queue_size{service_name="unrdf-daemon"} > 4000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'OTEL Collector export queue backing up'
+          description: 'Export queue size is {{ $value }}, threshold is 4000.'
+
+      # Prometheus target down
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Prometheus target down: {{ $labels.job }}'
+          description: 'Target {{ $labels.instance }} for job {{ $labels.job }} has been down for more than 2 minutes.'
+
+      # Loki ingestion rate drops to zero
+      - alert: LokiNoLogs
+        expr: sum(rate(loki_ingester_lines_received_total[5m])) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Loki not receiving logs'
+          description: 'No log lines have been received by Loki in the last 10 minutes.'
+
+  - name: tempo
+    interval: 15s
+    rules:
+      # Tempo distributor errors
+      - alert: TempoIngestionErrors
+        expr: sum(rate(tempo_distributor_ingestion_errors_total[5m])) > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Tempo ingestion errors'
+          description: 'Tempo is experiencing {{ $value }} ingestion errors/s.'
+
+      # Tempo request latency high
+      - alert: TempoHighLatency
+        expr: histogram_quantile(0.95, sum(rate(tempo_request_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Tempo P95 latency above 2s'
+          description: 'Tempo P95 query latency is {{ $value }}s.'

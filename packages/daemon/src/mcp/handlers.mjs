@@ -278,7 +278,7 @@ export async function hooks_execute(args = {}) {
 /**
  * List available condition kinds (CLI: unrdf hooks list-conditions)
  */
-export async function hooks_list_conditions(args = {}) {
+export async function hooks_list_conditions(_args = {}) {
   const cliArgs = 'hooks list-conditions'.split(' ');
   return executeCli(cliArgs);
 }
@@ -399,7 +399,7 @@ export async function template_generate(args = {}) {
 /**
  * List discovered .njk templates (default: bundled sync templates) (CLI: unrdf template list)
  */
-export async function template_list(args = {}) {
+export async function template_list(_args = {}) {
   const cliArgs = 'template list'.split(' ');
   return executeCli(cliArgs);
 }

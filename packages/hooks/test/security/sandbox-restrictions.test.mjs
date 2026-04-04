@@ -18,7 +18,7 @@ describe('SandboxRestrictions - Construction', () => {
     const restrictions = new SandboxRestrictions({
       allowFileSystem: true,
       timeoutMs: 10000,
-      memoryLimitMB: 100
+      memoryLimitMB: 100,
     });
     expect(restrictions.config.allowFileSystem).toBe(true);
     expect(restrictions.config.timeoutMs).toBe(10000);
@@ -96,7 +96,7 @@ describe('SandboxRestrictions - Code Validation', () => {
   });
 
   it('should validate hook code with blocked modules', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       const fs = require('fs');
       return fs.readFileSync('/etc/passwd');
     };
@@ -107,7 +107,7 @@ describe('SandboxRestrictions - Code Validation', () => {
   });
 
   it('should allow safe code', () => {
-    const hookFn = function(event) {
+    const hookFn = function (event) {
       return event.data + 1;
     };
 
@@ -117,7 +117,7 @@ describe('SandboxRestrictions - Code Validation', () => {
   });
 
   it('should block dangerous modules in code', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       const http = require('http');
       return http.get('http://evil.com');
     };
@@ -127,7 +127,7 @@ describe('SandboxRestrictions - Code Validation', () => {
   });
 
   it('should block eval usage', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       return eval('1 + 1');
     };
 
@@ -136,7 +136,7 @@ describe('SandboxRestrictions - Code Validation', () => {
   });
 
   it('should block Function constructor', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       return new Function('return 1')();
     };
 
@@ -153,7 +153,7 @@ describe('SandboxRestrictions - Execution', () => {
   });
 
   it('should execute safe hook function', async () => {
-    const hookFn = function(event) {
+    const hookFn = function (event) {
       return { result: event.value + 1 };
     };
 
@@ -162,7 +162,7 @@ describe('SandboxRestrictions - Execution', () => {
   });
 
   it('should reject hook with dangerous code', async () => {
-    const hookFn = function() {
+    const hookFn = function () {
       const fs = require('fs');
       return fs.readFileSync('/etc/passwd');
     };
@@ -173,8 +173,10 @@ describe('SandboxRestrictions - Execution', () => {
   });
 
   it('should timeout long-running hooks', async () => {
-    const hookFn = function() {
-      while(true) { /* infinite loop */ }
+    const hookFn = function () {
+      while (true) {
+        /* infinite loop */
+      }
     };
 
     const result = await restrictions.executeRestricted(hookFn, {});
@@ -211,7 +213,7 @@ describe('SandboxRestrictions - Deep Freeze', () => {
 
 describe('SandboxRestrictions - Permission Checks', () => {
   it('should deny filesystem when disabled', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       const fs = require('fs');
       return fs.readFileSync('/file.txt');
     };
@@ -222,7 +224,7 @@ describe('SandboxRestrictions - Permission Checks', () => {
   });
 
   it('should allow network when enabled', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       return fetch('http://example.com');
     };
 
@@ -232,7 +234,7 @@ describe('SandboxRestrictions - Permission Checks', () => {
   });
 
   it('should deny process access when disabled', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       return process.exit(0);
     };
 
@@ -256,7 +258,7 @@ describe('SandboxRestrictions - Validation Results', () => {
   });
 
   it('should return detailed violations', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       require('fs');
       return eval('1 + 1');
     };
@@ -266,7 +268,6 @@ describe('SandboxRestrictions - Validation Results', () => {
     expect(result.violations.length).toBeGreaterThan(1);
   });
 });
-
 
 describe('SandboxRestrictions - Edge Cases', () => {
   let restrictions;
@@ -282,7 +283,7 @@ describe('SandboxRestrictions - Edge Cases', () => {
   });
 
   it('should handle unicode in code', () => {
-    const hookFn = function() {
+    const hookFn = function () {
       const 变量 = 1;
       return 变量;
     };
@@ -291,7 +292,7 @@ describe('SandboxRestrictions - Edge Cases', () => {
   });
 
   it('should handle arrow functions', () => {
-    const hookFn = (event) => event.value + 1;
+    const hookFn = event => event.value + 1;
     const result = restrictions.validateHookCode(hookFn);
     expect(result.valid).toBe(true);
   });
@@ -299,13 +300,15 @@ describe('SandboxRestrictions - Edge Cases', () => {
 
 describe('SandboxRestrictions - Factory Function', () => {
   it('should create restrictions via factory', async () => {
-    const { createSandboxRestrictions } = await import('../../src/hooks/security/sandbox-restrictions.mjs');
+    const { createSandboxRestrictions } =
+      await import('../../src/hooks/security/sandbox-restrictions.mjs');
     const restrictions = createSandboxRestrictions({ timeoutMs: 3000 });
     expect(restrictions.config.timeoutMs).toBe(3000);
   });
 
   it('should have default instance', async () => {
-    const { defaultSandboxRestrictions } = await import('../../src/hooks/security/sandbox-restrictions.mjs');
+    const { defaultSandboxRestrictions } =
+      await import('../../src/hooks/security/sandbox-restrictions.mjs');
     expect(defaultSandboxRestrictions).toBeDefined();
     expect(defaultSandboxRestrictions.config).toBeDefined();
   });
@@ -315,9 +318,9 @@ describe('SandboxRestrictions - Concurrent Usage', () => {
   it('should handle concurrent restriction checks', async () => {
     const restrictions = new SandboxRestrictions();
 
-    const checks = Array(100).fill(null).map(() =>
-      Promise.resolve(restrictions.createRestrictedContext())
-    );
+    const checks = Array(100)
+      .fill(null)
+      .map(() => Promise.resolve(restrictions.createRestrictedContext()));
 
     const contexts = await Promise.all(checks);
     expect(contexts).toHaveLength(100);

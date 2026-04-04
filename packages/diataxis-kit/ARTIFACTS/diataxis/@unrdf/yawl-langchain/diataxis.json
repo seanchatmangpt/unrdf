@@ -7,7 +7,9 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["code-review-workflow.mjs"],
+    "examplesFiles": [
+      "code-review-workflow.mjs"
+    ],
     "fingerprint": "650e2d0c785353456815c1838ecd4412d2e59645ab08b7481abdf4c5212e666a",
     "readmeHeadings": [
       "Overview",
@@ -32,10 +34,20 @@
   },
   "explanation": {
     "architecture": "See [`examples/code-review-workflow.mjs`](./examples/code-review-workflow.",
-    "concepts": ["yawl", "langchain", "workflow", "ai", "llm"],
+    "concepts": [
+      "yawl",
+      "langchain",
+      "workflow",
+      "ai",
+      "llm"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-yawl-langchain-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/yawl-langchain",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -49,8 +61,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/yawl-langchain",
       "title": "Handle Errors"
     },
@@ -58,8 +76,15 @@
       "confidenceScore": 0.7,
       "context": "When working with yawl in your project",
       "id": "howto-integrate-with-yawl",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/yawl-langchain with yawl",
       "title": "Integrate with yawl"
     }
@@ -88,7 +113,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/yawl-langchain Reference"
   },
   "tutorials": [
@@ -96,8 +124,15 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/yawl-langchain in your project",
       "id": "tutorial-getting-started-with-unrdf-yawl-langchain",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
