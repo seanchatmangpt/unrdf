@@ -31,10 +31,20 @@
   },
   "explanation": {
     "architecture": "Distributed YAWL workflow execution using BullMQ and Redis.",
-    "concepts": ["yawl", "bullmq", "workflow", "distributed", "queue"],
+    "concepts": [
+      "yawl",
+      "bullmq",
+      "workflow",
+      "distributed",
+      "queue"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-yawl-queue-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/yawl-queue",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -48,8 +58,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/yawl-queue",
       "title": "Handle Errors"
     },
@@ -57,8 +73,15 @@
       "confidenceScore": 0.7,
       "context": "When working with yawl in your project",
       "id": "howto-integrate-with-yawl",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/yawl-queue with yawl",
       "title": "Integrate with yawl"
     }
@@ -87,7 +110,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/yawl-queue Reference"
   },
   "tutorials": [
@@ -96,7 +122,10 @@
       "goal": "Learn how to set up and use @unrdf/yawl-queue in your project",
       "id": "tutorial-getting-started-with-unrdf-yawl-queue",
       "prerequisites": [],
-      "source": ["readme", "keywords"],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

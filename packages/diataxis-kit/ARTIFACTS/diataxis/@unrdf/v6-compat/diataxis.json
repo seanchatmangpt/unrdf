@@ -9,14 +9,30 @@
     "docsFiles": [],
     "examplesFiles": [],
     "fingerprint": "076f34c3ebe78f52d2d204dc6fb41e87ade908c953e9530d8a14908f0a558650",
-    "readmeHeadings": ["Features", "Installation", "Usage", "Migration Tracking", "License"]
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Usage",
+      "Migration Tracking",
+      "License"
+    ]
   },
   "explanation": {
     "architecture": "**UNRDF v6 Compatibility Layer** - Migration bridge from v5 to v6.",
-    "concepts": ["unrdf", "migration", "compatibility", "v5", "v6"],
+    "concepts": [
+      "unrdf",
+      "migration",
+      "compatibility",
+      "v5",
+      "v6"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-v6-compat-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/v6-compat",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -30,8 +46,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/v6-compat",
       "title": "Handle Errors"
     },
@@ -39,8 +61,15 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/v6-compat with unrdf",
       "title": "Integrate with unrdf"
     }
@@ -75,7 +104,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/v6-compat Reference"
   },
   "tutorials": [
@@ -83,8 +114,12 @@
       "confidenceScore": 0.1,
       "goal": "Learn how to set up and use @unrdf/v6-compat in your project",
       "id": "tutorial-getting-started-with-unrdf-v6-compat",
-      "prerequisites": ["Basic RDF knowledge"],
-      "source": ["keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

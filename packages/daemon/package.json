@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/daemon",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "Background daemon for managing scheduled tasks and event-driven operations",
   "type": "module",
   "main": "src/index.mjs",
@@ -34,6 +34,12 @@
   "dependencies": {
     "@ai-sdk/groq": "^3.0.33",
     "@modelcontextprotocol/sdk": "^1.11.0",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.26.0",
+    "@opentelemetry/resources": "^1.17.0",
+    "@opentelemetry/sdk-node": "^0.26.0",
+    "@opentelemetry/sdk-trace-node": "^1.17.0",
+    "@opentelemetry/semantic-conventions": "^1.17.0",
     "@unrdf/hooks": "26.4.3",
     "@unrdf/kgc-4d": "26.4.3",
     "ai": "^6.0.146",

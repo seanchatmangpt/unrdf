@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/ml-inference",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams",
   "type": "module",
   "main": "src/index.mjs",

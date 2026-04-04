@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-langchain",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context",
   "type": "module",
   "main": "src/index.mjs",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-substrate",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log",
   "type": "module",
   "main": "./src/index.mjs",

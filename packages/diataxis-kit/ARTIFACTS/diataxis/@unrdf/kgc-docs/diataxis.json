@@ -24,10 +24,20 @@
   },
   "explanation": {
     "architecture": "KGC Markdown parser and dynamic documentation generator with cryptographic proof anchoring.",
-    "concepts": ["kgc", "markdown", "documentation", "diataxis", "proof"],
+    "concepts": [
+      "kgc",
+      "markdown",
+      "documentation",
+      "diataxis",
+      "proof"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-kgc-docs-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/kgc-docs",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -41,8 +51,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/kgc-docs",
       "title": "Handle Errors"
     },
@@ -50,8 +66,15 @@
       "confidenceScore": 0.7,
       "context": "When working with kgc in your project",
       "id": "howto-integrate-with-kgc",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/kgc-docs with kgc",
       "title": "Integrate with kgc"
     },
@@ -59,7 +82,9 @@
       "confidenceScore": 1,
       "context": "When you need to use the package from the command line",
       "id": "howto-use-the-cli",
-      "source": ["bin"],
+      "source": [
+        "bin"
+      ],
       "steps": [
         "Install package globally or locally",
         "Run CLI command with options",
@@ -123,7 +148,11 @@
         "type": "bin"
       }
     ],
-    "source": ["exports", "bin", "readme"],
+    "source": [
+      "exports",
+      "bin",
+      "readme"
+    ],
     "title": "@unrdf/kgc-docs Reference"
   },
   "tutorials": [
@@ -132,7 +161,10 @@
       "goal": "Learn how to set up and use @unrdf/kgc-docs in your project",
       "id": "tutorial-getting-started-with-unrdf-kgc-docs",
       "prerequisites": [],
-      "source": ["readme", "keywords"],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

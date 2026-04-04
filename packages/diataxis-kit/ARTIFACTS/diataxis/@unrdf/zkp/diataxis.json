@@ -29,10 +29,20 @@
   },
   "explanation": {
     "architecture": "1. **SPARQL ZK Prover** (`sparql-zkp-prover.",
-    "concepts": ["unrdf", "zkp", "zk-snark", "zero-knowledge", "sparql"],
+    "concepts": [
+      "unrdf",
+      "zkp",
+      "zk-snark",
+      "zero-knowledge",
+      "sparql"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-zkp-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/zkp",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -46,8 +56,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/zkp",
       "title": "Handle Errors"
     },
@@ -55,8 +71,15 @@
       "confidenceScore": 0.7,
       "context": "When working with unrdf in your project",
       "id": "howto-integrate-with-unrdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/zkp with unrdf",
       "title": "Integrate with unrdf"
     }
@@ -103,7 +126,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/zkp Reference"
   },
   "tutorials": [
@@ -111,8 +137,14 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/zkp in your project",
       "id": "tutorial-getting-started-with-unrdf-zkp",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",

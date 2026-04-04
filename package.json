@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.4.3",
+  "version": "26.4.4",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -140,6 +140,7 @@
     "pnpm": "8.15.0"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.33",
     "@comunica/query-sparql": "^4.5.0",
     "@iarna/toml": "^2.2.5",
     "@noble/hashes": "^2.0.1",

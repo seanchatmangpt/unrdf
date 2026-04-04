@@ -32,10 +32,20 @@
   },
   "explanation": {
     "architecture": "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation from ontologies.",
-    "concepts": ["rdf", "graphql", "sparql", "ontology", "knowledge-graph"],
+    "concepts": [
+      "rdf",
+      "graphql",
+      "sparql",
+      "ontology",
+      "knowledge-graph"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-rdf-graphql-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/rdf-graphql",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -49,8 +59,14 @@
       "confidenceScore": 0.5,
       "context": "When you need robust error handling in production",
       "id": "howto-handle-errors",
-      "source": ["tests"],
-      "steps": ["Set up try-catch blocks", "Handle common error types", "Log errors appropriately"],
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
       "task": "Implement error handling for @unrdf/rdf-graphql",
       "title": "Handle Errors"
     },
@@ -58,8 +74,15 @@
       "confidenceScore": 0.7,
       "context": "When working with rdf in your project",
       "id": "howto-integrate-with-rdf",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/rdf-graphql with rdf",
       "title": "Integrate with rdf"
     }
@@ -94,7 +117,10 @@
         "type": "export"
       }
     ],
-    "source": ["exports", "readme"],
+    "source": [
+      "exports",
+      "readme"
+    ],
     "title": "@unrdf/rdf-graphql Reference"
   },
   "tutorials": [
@@ -102,9 +128,19 @@
       "confidenceScore": 0.4,
       "goal": "Learn how to set up and use @unrdf/rdf-graphql in your project",
       "id": "tutorial-getting-started-with-unrdf-rdf-graphql",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["readme", "keywords"],
-      "stepsOutline": ["Installation", "YAWL Workflow Example", "Advanced Usage"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "YAWL Workflow Example",
+        "Advanced Usage"
+      ],
       "title": "Getting Started with @unrdf/rdf-graphql"
     }
   ],

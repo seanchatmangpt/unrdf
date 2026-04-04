@@ -7,7 +7,10 @@
   },
   "evidence": {
     "docsFiles": [],
-    "examplesFiles": ["cache-demo.mjs", "standalone-demo.mjs"],
+    "examplesFiles": [
+      "cache-demo.mjs",
+      "standalone-demo.mjs"
+    ],
     "fingerprint": "2b49f46a92952a9b0acd63deb32c1411c3cfd98c209a8f1943bc9c46bae637ff",
     "readmeHeadings": [
       "Features",
@@ -24,10 +27,20 @@
   },
   "explanation": {
     "architecture": "Multi-layer caching system for RDF queries with high-performance distributed caching.",
-    "concepts": ["cache", "redis", "lru", "rdf", "sparql"],
+    "concepts": [
+      "cache",
+      "redis",
+      "lru",
+      "rdf",
+      "sparql"
+    ],
     "confidenceScore": 0.7,
     "id": "explanation-unrdf-caching-explanation",
-    "source": ["keywords", "readme", "inferred"],
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
     "title": "Understanding @unrdf/caching",
     "tradeoffs": [
       "Ease of use vs. advanced configuration options",
@@ -41,7 +54,9 @@
       "confidenceScore": 1,
       "context": "When you need to customize package behavior",
       "id": "howto-configure-unrdf-caching",
-      "source": ["readme"],
+      "source": [
+        "readme"
+      ],
       "steps": [
         "Create configuration file",
         "Define configuration options",
@@ -54,8 +69,15 @@
       "confidenceScore": 0.7,
       "context": "When working with cache in your project",
       "id": "howto-integrate-with-cache",
-      "source": ["keywords", "inferred"],
-      "steps": ["Install dependencies", "Set up integration", "Test integration"],
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
       "task": "Connect @unrdf/caching with cache",
       "title": "Integrate with cache"
     }
@@ -90,7 +112,9 @@
         "type": "export"
       }
     ],
-    "source": ["exports"],
+    "source": [
+      "exports"
+    ],
     "title": "@unrdf/caching Reference"
   },
   "tutorials": [
@@ -98,8 +122,15 @@
       "confidenceScore": 0.9999999999999999,
       "goal": "Learn how to set up and use @unrdf/caching in your project",
       "id": "tutorial-getting-started-with-unrdf-caching",
-      "prerequisites": ["Basic RDF knowledge", "Understanding of graph databases"],
-      "source": ["examples", "readme", "keywords"],
+      "prerequisites": [
+        "Basic RDF knowledge",
+        "Understanding of graph databases"
+      ],
+      "source": [
+        "examples",
+        "readme",
+        "keywords"
+      ],
       "stepsOutline": [
         "Install the package",
         "Import required modules",
