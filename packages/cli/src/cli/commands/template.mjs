@@ -16,15 +16,9 @@ import matter from 'gray-matter';
 import { table } from 'table';
 import { COMMON_PREFIXES } from '@unrdf/core';
 
-import {
-  RdfTemplateLoader,
-  extractPrefixesFromTurtle,
-} from '../../lib/rdf-template-loader.mjs';
+import { RdfTemplateLoader, extractPrefixesFromTurtle } from '../../lib/rdf-template-loader.mjs';
 import { executeSparqlQuery } from './sync/sparql-executor.mjs';
-import {
-  renderWithOptions,
-  discoverTemplates,
-} from './sync/template-renderer.mjs';
+import { renderWithOptions, discoverTemplates } from './sync/template-renderer.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TEMPLATES_DIR = resolve(__dirname, '../../../templates/sync');
@@ -99,8 +93,7 @@ const generateCommand = defineCommand({
     },
     batch: {
       type: 'boolean',
-      description:
-        'One output per instance of `--class-uri`; SPARQL must use ?subject',
+      description: 'One output per instance of `--class-uri`; SPARQL must use ?subject',
       default: false,
     },
     classUri: {
@@ -146,9 +139,7 @@ const generateCommand = defineCommand({
       rdfPath = typeof r === 'string' && isAbsolute(r) ? r : resolve(templateDir, String(r));
     }
     if (!rdfPath) {
-      console.error(
-        'Error: Provide an RDF file path, or set `rdf:` in the template frontmatter.'
-      );
+      console.error('Error: Provide an RDF file path, or set `rdf:` in the template frontmatter.');
       process.exit(1);
     }
 
@@ -287,12 +278,7 @@ const listCommand = defineCommand({
 
     const data = [
       ['Name', 'Path', 'to', 'Description'],
-      ...templates.map(t => [
-        t.name,
-        t.path,
-        t.hasOutputPath ? 'yes' : 'no',
-        t.description ?? '',
-      ]),
+      ...templates.map(t => [t.name, t.path, t.hasOutputPath ? 'yes' : 'no', t.description ?? '']),
     ];
     console.log(table(data));
   },

@@ -144,8 +144,8 @@ const executeCommand = defineCommand({
       }
 
       // Display summary
-      const successful = results.filter((r) => r.success).length;
-      const failed = results.filter((r) => !r.success).length;
+      const successful = results.filter(r => r.success).length;
+      const failed = results.filter(r => !r.success).length;
 
       console.log('\n📊 Execution Summary');
       console.log('═'.repeat(50));
@@ -266,7 +266,7 @@ const defineHooksCommand = defineCommand({
               valid: true,
               conditions: hookDef.condition
                 ? Array.isArray(hookDef.condition)
-                  ? hookDef.condition.map((c) => c.kind)
+                  ? hookDef.condition.map(c => c.kind)
                   : [hookDef.condition.kind]
                 : [],
               hasEffect: !!hookDef.effect,
@@ -274,7 +274,9 @@ const defineHooksCommand = defineCommand({
             });
           } else {
             invalidCount++;
-            const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+            const errorMsg = result.error.errors
+              .map(e => `${e.path.join('.')}: ${e.message}`)
+              .join('; ');
             metadata.push({
               index: i,
               id: hookDef.id || `hook-${i}`,
@@ -303,12 +305,12 @@ const defineHooksCommand = defineCommand({
       console.log('═'.repeat(50));
 
       // Display as table
-      const tableData = metadata.map((m) => [
+      const tableData = metadata.map(m => [
         m.index + 1,
         m.id,
         m.name,
         m.valid ? '✅' : '❌',
-        m.valid ? (m.conditions?.join(', ') || '-') : '-',
+        m.valid ? m.conditions?.join(', ') || '-' : '-',
         m.valid ? (m.hasEffect ? m.effectType : '-') : '-',
       ]);
 
@@ -324,10 +326,10 @@ const defineHooksCommand = defineCommand({
       );
 
       // Show errors if any
-      const errors = metadata.filter((m) => !m.valid);
+      const errors = metadata.filter(m => !m.valid);
       if (errors.length > 0) {
         console.log('\n⚠️  Validation Errors:');
-        errors.forEach((err) => {
+        errors.forEach(err => {
           console.log(`  - ${err.id}: ${err.error}`);
         });
       }
@@ -375,7 +377,8 @@ const evaluateConditionCommand = defineCommand({
     },
     condition: {
       type: 'string',
-      description: 'Condition type (sparql-ask, sparql-select, shacl, delta, threshold, count, window, n3, datalog)',
+      description:
+        'Condition type (sparql-ask, sparql-select, shacl, delta, threshold, count, window, n3, datalog)',
       required: true,
     },
     config: {
@@ -507,12 +510,14 @@ const listConditionsCommand = defineCommand({
       {
         kind: 'n3',
         description: 'N3 logic rules evaluation',
-        example: '{ "rules": "@prefix : <http://example.org/>. { ?s :prop ?o } => { ?s :inferred true }." }',
+        example:
+          '{ "rules": "@prefix : <http://example.org/>. { ?s :prop ?o } => { ?s :inferred true }." }',
       },
       {
         kind: 'datalog',
         description: 'Datalog rule evaluation',
-        example: '{ "rules": ["parent(alice, bob).", "ancestor(X,Y) :- parent(X,Y)."], "goal": "ancestor(alice, bob)" }',
+        example:
+          '{ "rules": ["parent(alice, bob).", "ancestor(X,Y) :- parent(X,Y)."], "goal": "ancestor(alice, bob)" }',
       },
     ];
 

@@ -163,7 +163,7 @@ export function createNunjucksEnvironment(templatesDir) {
   env.addFilter('distinctValues', (arr, key) => [
     ...new Set((arr || []).map(i => i[key] || i[`?${key}`]).filter(v => v != null)),
   ]);
-  env.addFilter('requiredArgs', (arr) => {
+  env.addFilter('requiredArgs', arr => {
     if (!arr || !Array.isArray(arr)) return [];
     const seen = new Set();
     const result = [];

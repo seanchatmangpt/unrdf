@@ -63,7 +63,9 @@ export const inspectCommand = defineCommand({
         }
 
         console.log('═'.repeat(70));
-        console.log(`\nTotal: ${(capabilities.tools?.length || 0)} tools, ${(capabilities.resources?.length || 0)} resources, ${(capabilities.prompts?.length || 0)} prompts`);
+        console.log(
+          `\nTotal: ${capabilities.tools?.length || 0} tools, ${capabilities.resources?.length || 0} resources, ${capabilities.prompts?.length || 0} prompts`
+        );
       }
     } catch (error) {
       console.error(`❌ Error inspecting MCP server: ${error.message}`);
