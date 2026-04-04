@@ -35,3 +35,12 @@ schema_config:
 
 analytics:
   reporting_enabled: false
+
+ruler:
+  enable_alertmanager_v2: true
+  alertmanager_url: http://alertmanager:9093
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+  rule_path: /loki/rules-temp

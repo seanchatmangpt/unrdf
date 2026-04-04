@@ -1147,17 +1147,22 @@ import {
 const normQuad = await executeHook(normalizeNamespace, quad);
 
 // Normalize language tags to lowercase
+// Use explicit quad properties, not spread (N3 quads use prototype getters)
 const enQuad = {
-  ...quad,
-  object: { value: 'Hello', language: 'EN-US' },
+  subject: quad.subject,
+  predicate: quad.predicate,
+  object: { termType: 'Literal', value: 'Hello', language: 'EN-US', datatype: null },
+  graph: quad.graph,
 };
 const result = await executeHook(normalizeLanguageTag, enQuad);
 console.log(result.quad.object.language); // 'en-us'
 
 // Trim whitespace from literals
 const spacedQuad = {
-  ...quad,
-  object: { value: '  hello  ', termType: 'Literal' },
+  subject: quad.subject,
+  predicate: quad.predicate,
+  object: { termType: 'Literal', value: '  hello  ', datatype: null, language: '' },
+  graph: quad.graph,
 };
 const trimmed = await executeHook(trimLiterals, spacedQuad);
 console.log(trimmed.quad.object.value); // 'hello'
@@ -1187,6 +1192,31 @@ const hooks = [standardValidation, normalizeLanguageTag, trimLiterals];
 
 const chainResult = await executeHookChain(hooks, quad);
 ```
+
+### Trigger-based Execution
+
+`executeHooksByTrigger(hooksOrRegistry, trigger, quad)` — execute only the hooks matching a specific trigger, returning the full `ChainResult`.
+
+```javascript
+import { executeHooksByTrigger, createHookRegistry, registerHook } from '@unrdf/hooks';
+
+const registry = createHookRegistry();
+registerHook(registry, myBeforeAddHook);
+registerHook(registry, myAfterAddHook);
+
+// Only 'before-add' hooks run; returns ChainResult (not an array)
+const result = executeHooksByTrigger(registry, 'before-add', quad);
+console.log(result.valid); // boolean — did all hooks pass?
+console.log(result.quad); // final (possibly transformed) quad
+console.log(result.results.length); // how many hooks ran
+
+// Also works with a plain array of hooks
+const result2 = executeHooksByTrigger([hook1, hook2], 'before-add', quad);
+```
+
+**Returns**: `ChainResult` — `{ valid, quad, results, error, failedHook }`
+
+---
 
 ### Batch Operations
 

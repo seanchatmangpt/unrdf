@@ -30,6 +30,14 @@ processors:
     send_batch_size: 1024
     send_batch_max_size: 2048
 
+  transform/logs:
+    error_mode: ignore
+    traceStatements:
+      - context: log
+        statements:
+          - set(attributes["loki.trace_id"], attributes["trace_id"]) where attributes["trace_id"] != nil
+          - set(attributes["loki.span_id"], attributes["span_id"]) where attributes["span_id"] != nil
+
   resource:
     attributes:
       - key: service.name
@@ -87,5 +95,5 @@ service:
 
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [batch, transform/logs]
       exporters: [loki, debug]

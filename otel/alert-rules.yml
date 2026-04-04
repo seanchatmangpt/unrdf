@@ -74,3 +74,33 @@ groups:
         annotations:
           summary: 'Tempo P95 latency above 2s'
           description: 'Tempo P95 query latency is {{ $value }}s.'
+
+  - name: slo_burn_rate
+    interval: 15s
+    rules:
+      # 99.9% SLO - 1h burn rate (alert on page if we burn 14.4x budget)
+      - alert: HighBurnRate99
+        expr: |
+          (
+            sum(rate(http_requests_total{code=~"5.."}[1h])) by (service)
+            /
+            sum(rate(http_requests_total[1h])) by (service)
+          ) > (14.4 * (1 - 0.999))
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: '99.9% SLO burn rate exceeded for {{ $labels.service }}'
+      # 99% SLO - 5m burn rate
+      - alert: HighBurnRate99Window
+        expr: |
+          (
+            sum(rate(http_requests_total{code=~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) > (6 * (1 - 0.99))
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: '99% SLO at risk for {{ $labels.service }}'

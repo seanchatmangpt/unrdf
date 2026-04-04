@@ -1,0 +1,26 @@
+# Add to docker-compose.yml services section to replace Promtail with Alloy
+#
+# Grafana Alloy is a unified agent that replaces Promtail and adds trace
+# forwarding capability (logs + metrics + traces in a single process).
+#
+# 1. Replace the promtail service with:
+#
+#   alloy:
+#     image: grafana/alloy:v1.6.0
+#     container_name: unrdf-alloy
+#     command: ['run', '/etc/alloy/config.yaml']
+#     volumes:
+#       - ./alloy-config.yaml:/etc/alloy/config.yaml:ro
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - alloy-data:/var/lib/alloy/data
+#     ports:
+#       - '12345:12345' # Alloy UI
+#     depends_on:
+#       loki:
+#         condition: service_healthy
+#     restart: unless-stopped
+#
+# 2. Add to volumes section:
+#   alloy-data:
+#
+# 3. Remove the promtail service and its references

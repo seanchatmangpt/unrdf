@@ -54,17 +54,28 @@ const normalizer = defineHook({
   name: 'uppercase-objects',
   trigger: 'before-add',
   transform: quad => ({
-    ...quad,
+    // Explicitly copy quad properties — object spread doesn't reliably copy
+    // N3 quad prototype getters. Always use explicit assignment.
+    subject: quad.subject,
+    predicate: quad.predicate,
     object: {
-      ...quad.object,
+      termType: quad.object.termType,
       value: quad.object.value.toUpperCase(),
+      datatype: quad.object.datatype,
+      language: quad.object.language,
     },
+    graph: quad.graph,
   }),
 });
 
 const result = await executeHook(normalizer, quad);
 console.log('Transformed:', result.quad.object.value); // 'TEST'
 ```
+
+> **Note:** Transforms must return an object with `subject`, `predicate`, and `object` properties.
+> Use explicit property copying rather than `{...quad}` spread — N3 quad objects store
+> `subject`/`predicate`/`object`/`graph` as prototype getters in some implementations,
+> which are not copied by the spread operator.
 
 ### 5. Chain Multiple Hooks
 

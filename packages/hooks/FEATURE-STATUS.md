@@ -417,7 +417,49 @@
   - No network access
   - No child process spawning
   - No require() beyond allowlist
-- **Known Limitations**: None
+  - Restricted globals: `setTimeout`, `setInterval`, `eval`, `Function`, `fetch`, `XMLHttpRequest`
+- **Known Limitations**:
+  - Synchronous infinite loops cannot be interrupted by `setTimeout`-based timeouts (JavaScript single-threaded constraint). Async hooks that `await` can be timed out correctly. Truly blocking code requires Worker threads.
+- **Migration Path**: No breaking changes expected
+
+---
+
+### Error Sanitizer
+
+**Status**: ✅ Production Ready
+
+- **What**: Removes sensitive data from error messages before logging/surfacing
+- **Stability**: Stable since v26.4.4
+- **Test Coverage**: 100% (security/error-sanitizer.test.mjs — 33 tests)
+- **Sanitization Patterns**:
+  - Database connection strings (postgres://, mysql://, mongodb://)
+  - API keys and credentials (lowercase `password=`, `api_key=`, `secret=`, `token=`, `authorization:`)
+  - Environment variables (ALL_CAPS names: `DATABASE_URL=`, `API_KEY=`, `PASSWORD=`, etc.)
+  - Unix/Windows/Docker file paths
+  - Node.js stack traces (`at Function (file:line:col)`)
+- **API**:
+
+  ```javascript
+  import { ErrorSanitizer, createErrorSanitizer, sanitizeError } from '@unrdf/hooks/security';
+
+  const sanitizer = new ErrorSanitizer({
+    removeCredentials: true, // default: true
+    removeFilePaths: true, // default: true
+    removeEnvironmentVars: true, // default: true
+    removeStackTraces: true, // default: true
+    genericErrorMessage: 'An error occurred', // fallback when all content removed
+  });
+
+  sanitizer.sanitize('Login failed: password=secret123');
+  // → 'Login failed:'
+
+  sanitizer.sanitize(new Error('Failed at /app/db.js:42'));
+  // → 'Failed at'
+  ```
+
+- **Known Limitations**:
+  - Case-sensitive for credential patterns: `password=` (lowercase) is caught, `PASSWORD=` is treated as an environment variable.
+  - Patterns are removed entirely, not masked (no `***` substitution).
 - **Migration Path**: No breaking changes expected
 
 ---
@@ -479,6 +521,7 @@
 | SPARQL CONSTRUCT | ✅ Ready    | 100%     | v6-features.test.mjs                                    |
 | BLAKE3 Receipts  | ✅ Fixed    | 95%      | v6-features.test.mjs                                    |
 | Sandbox          | ✅ Ready    | 100%     | security/sandbox-restrictions.test.mjs                  |
+| Error Sanitizer  | ✅ Ready    | 100%     | security/error-sanitizer.test.mjs                       |
 | Validation       | ✅ Ready    | 100%     | error-handling.test.mjs                                 |
 | File Integrity   | ✅ Ready    | 100%     | file-resolver.test.mjs                                  |
 

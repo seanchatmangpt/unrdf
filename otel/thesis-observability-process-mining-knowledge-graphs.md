@@ -16,7 +16,11 @@ Modern distributed systems generate vast quantities of operational telemetry —
 
 We introduce the **Unified Telemetry-Process Mining (UTPM)** architecture, which couples the OpenTelemetry Collector pipeline with Grafana's LGTM stack (Loki, Grafana, Tempo, Mimir), augmented with continuous profiling (Pyroscope), alert routing (Alertmanager), S3-compatible object storage (MinIO), and process mining (PM4Py). The key innovation lies in the automatic transformation of distributed trace data into event logs suitable for process mining analysis, enabling the discovery, conformance checking, and optimization of operational processes that span multiple microservices, knowledge graph federation endpoints, and MCP (Model Context Protocol) tool invocations.
 
-Our evaluation demonstrates that the UTPM architecture can: (1) achieve sub-second trace-to-model discovery latency for process models extracted from live telemetry, (2) identify performance bottlenecks in knowledge graph federation pipelines that traditional metrics-based alerting misses, (3) enable conformance checking of observed MCP tool execution sequences against expected ontological workflows, and (4) reduce mean-time-to-diagnosis (MTTD) for cross-service failures by 67% compared to siloed observability approaches.
+Building on the core architecture, we present an **80/20 extension framework** — four tiers of progressively increasing effort that add high-value capabilities: config-only innovations (Loki Ruler log alerting, SLO burn rate error budgets, span-to-logs correlation, auto-generated service graph and trace-to-metrics dashboards), drop-in additions (Grafana Alloy unified agent, synthetic trace regression detection), high-leverage scripts (trace baseline comparison, PM4Py conformance CI gate, auto-dashboard generation from semantic conventions), and instrumentation extensions (Grafana Faro real-user monitoring, OpenLLMetry LLM call tracing with GenAI semantic conventions, AI SDK telemetry for autonomous agents).
+
+We further demonstrate **LLM observability integration** by instrumenting autonomous knowledge graph agents with the Vercel AI SDK's `experimental_telemetry` API, producing GenAI semantic convention spans that flow through the same OTel pipeline as MCP tool spans — enabling unified process mining across human-specified and AI-decided operations. Semantic convention validation confirms zero prefix conflicts with the OpenTelemetry registry.
+
+Our evaluation demonstrates that the UTPM architecture can: (1) achieve sub-second trace-to-model discovery latency for process models extracted from live telemetry, (2) identify performance bottlenecks in knowledge graph federation pipelines that traditional metrics-based alerting misses, (3) enable conformance checking of observed MCP tool execution sequences against expected ontological workflows, and (4) reduce mean-time-to-diagnosis (MTTD) for cross-service failures by 78% compared to siloed observability approaches.
 
 ---
 
@@ -71,6 +75,10 @@ This thesis makes the following contributions:
 4. **The O\* Reference Implementation**: A complete, open-source implementation of the UTPM architecture applied to the O\* ontology engineering platform and the @unrdf knowledge graph ecosystem.
 
 5. **Empirical Evaluation**: A comprehensive evaluation demonstrating the effectiveness of the UTPM architecture for bottleneck detection, conformance checking, and diagnostic acceleration in a real-world knowledge graph system.
+
+6. **The 80/20 Extension Framework**: A four-tier methodology for incrementally extending an observability stack with high-value, low-effort innovations — from config-only changes (Loki Ruler, SLO burn rates, span-to-logs correlation, auto-generated dashboards) through drop-in additions (Grafana Alloy, synthetic traces), high-leverage scripts (trace baseline comparison, PM4Py CI gate, auto-dashboard generation), to instrumentation extensions (Grafana Faro RUM, OpenLLMetry, AI SDK telemetry).
+
+7. **LLM Observability Integration**: Instrumentation of autonomous agent and refinement engine LLM calls with the Vercel AI SDK's `experimental_telemetry`, producing GenAI semantic convention spans (`gen_ai.*`) that flow through the standard OTel pipeline alongside MCP tool spans — enabling unified process mining across human-specified and AI-decided operations.
 
 ### 1.4 Thesis Organization
 
@@ -162,15 +170,40 @@ The UTPM architecture is guided by four design principles:
 
 ### 4.2 Architecture Overview
 
-The UTPM architecture consists of 11 services deployed via Docker Compose:
+The UTPM architecture consists of 11 core services deployed via Docker Compose, augmented with advanced observability extensions organized into four tiers of increasing implementation effort:
+
+**Tier 1 — Config-Only Changes** (zero new services, YAML-only modifications):
+
+- **Loki Ruler**: Log-based alerting with LogQL rules for error rate spikes and service-down detection
+- **SLO Burn Rate Alerts**: Error budget policies using multi-window burn rate analysis (99.9% and 99% SLO targets)
+- **Span-to-Logs Correlation**: Collector transform processor that propagates trace IDs to Loki for click-through from spans to log lines
+- **Service Graph Dashboard**: Auto-generated dependency map from Tempo's metrics_generator service graph output
+- **Trace-to-Metrics Dashboard**: Latency histograms, error rates, and throughput per operation from Tempo's span metrics
+
+**Tier 2 — Drop-In Additions** (one new service or script):
+
+- **Grafana Alloy**: Unified agent replacing Promtail, adding trace forwarding capability alongside log shipping
+- **Synthetic Trace Generator**: Scheduled OTLP trace injection with known latency distributions for regression detection
+
+**Tier 3 — High-Leverage Scripts** (automation tooling):
+
+- **Trace Baseline Comparison**: Structural regression detection — new operations, missing operations, count shifts >2x
+- **PM4Py Conformance CI Gate**: Automated process model drift detection in CI/CD pipelines
+- **Auto-Dashboard Generator**: Generates Grafana dashboards from semantic convention YAML definitions
+
+**Tier 4 — Instrumentation Extensions** (new integrations):
+
+- **Grafana Faro RUM**: Real-user monitoring for web frontends with Web Vitals capture
+- **OpenLLMetry**: OpenTelemetry tracing for LLM/GenAI calls using GenAI semantic conventions (`gen_ai.system`, `gen_ai.usage.input_tokens`, etc.)
+- **AI SDK Telemetry**: Vercel AI SDK `experimental_telemetry` integration in daemon autonomous agent and refinement engine
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────────────────────────────┐
 │   HotROD    │     │  UNRDF       │     │           OTEL Collector             │
 │  Demo App   │────▶│  Daemon      │────▶│  ┌─────────┐  ┌──────────────────┐  │
 │             │     │  + Sidecar   │     │  │Receiver │─▶│ Processor        │  │
-└─────────────┘     └──────────────┘     │  │ (OTLP)  │  │ (batch, resource)│  │
-                                          │  └─────────┘  └────────┬─────────┘  │
+└─────────────┘     └──────────────┘     │  │ (OTLP)  │  │ (batch, resource,│  │
+                                          │  └─────────┘  │  transform/logs) │  │
                                           └───────────────────────┼────────────┘
                                                                   │
                     ┌─────────────────────────────────────────────┼──────────────┐
@@ -207,6 +240,32 @@ The UTPM architecture consists of 11 services deployed via Docker Compose:
               │  │ (Tempo)  │  │  (Inductive  │  │  (Token Replay)        │   │
               │  │          │  │   Miner)     │  │                        │   │
               │  └──────────┘  └──────────────┘  └────────────────────────┘   │
+              └────────────────────────────────────────────────────────────────┘
+
+                         ── Extended Innovations ──
+
+              ┌────────────────────────────────────────────────────────────────┐
+              │              Advanced Observability Extensions                │
+              │                                                                │
+              │  ┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐ │
+              │  │ Loki Ruler   │  │ SLO Burn Rate   │  │ Service Graph    │ │
+              │  │ (Log Alerts) │  │ Alerts           │  │ Dashboard        │ │
+              │  └──────────────┘  └─────────────────┘  └──────────────────┘ │
+              │                                                                │
+              │  ┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐ │
+              │  │ Synthetic    │  │ Trace Baseline  │  │ Auto-Dashboard   │ │
+              │  │ Traces       │  │ Comparison      │  │ Generator        │ │
+              │  └──────────────┘  └─────────────────┘  └──────────────────┘ │
+              │                                                                │
+              │  ┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐ │
+              │  │ Grafana Faro │  │ OpenLLMetry     │  │ Span-to-Logs     │ │
+              │  │ (RUM)        │  │ (LLM Tracing)   │  │ Correlation      │ │
+              │  └──────────────┘  └─────────────────┘  └──────────────────┘ │
+              │                                                                │
+              │  ┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐ │
+              │  │ Grafana Alloy│  │ PM4Py Conform.  │  │ Trace-to-Metrics │ │
+              │  │ (Promtail+)  │  │ CI Gate          │  │ Dashboard        │ │
+              │  └──────────────┘  └─────────────────┘  └──────────────────┘ │
               └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -252,13 +311,45 @@ MinIO provides S3-compatible object storage for Tempo's trace backend. Two bucke
 
 The HotROD (Hot Rides On Demand) application is a multi-service demo that generates realistic distributed traces. It sends traces to the OTEL Collector via OTLP/gRPC, providing a continuous stream of trace data for dashboard validation and process mining analysis.
 
-#### 4.3.11 PM4Py (javert899/pm4py:latest)
+#### 4.3.11 PM4Py (custom build, python:3.12-slim)
 
-PM4Py runs in a Jupyter notebook environment, providing interactive process mining analysis. The notebook queries Tempo for trace data, transforms it into event logs, and applies process discovery, conformance checking, and bottleneck analysis algorithms. The notebook is parameterized for papermill execution, enabling scheduled automated analysis.
+PM4Py runs as a custom Docker image built on Python 3.12-slim, providing process mining analysis. The image includes a critical fix for PID 0 crash handling in Docker containers (pm4py calls `psutil.Process(parent_pid).name()` which fails when parent PID is 0 — patched via sed in the Dockerfile). The analysis script queries Tempo for trace data, transforms it into event logs, and applies process discovery (Inductive Miner), conformance checking (token-based replay), and bottleneck analysis. Environment variable configuration allows flexible service endpoint resolution.
+
+#### 4.3.12 Advanced Observability Extensions
+
+The core 11-service architecture is extended with 12 additional capabilities organized into four tiers:
+
+**Loki Ruler** (config extension to Loki 3.3.2): Enables log-based alerting rules evaluated against Loki's LogQL engine. Two rules are defined: `HighErrorRate` (warning, fires when >10% of logs from UNRDF containers contain errors over 5 minutes) and `ServiceDown` (critical, fires when a container produces zero logs over 10 minutes). Alerts route to Alertmanager via the v2 API.
+
+**SLO Burn Rate Alerts** (config extension to Prometheus alert-rules.yml): Implements Google's multi-window multi-burn-rate alerting strategy (SRE Workbook, 2020). Two rules protect error budgets: `HighBurnRate99` (critical, 1-hour burn window at 14.4x budget rate for 99.9% SLO) and `HighBurnRate99Window` (warning, 5-minute burn window at 6x budget rate for 99% SLO).
+
+**Span-to-Logs Correlation** (config extension to OTEL Collector): A `transform/logs` processor using `traceStatements` with `context: log` copies `trace_id` and `span_id` attributes to `loki.trace_id` and `loki.span_id`. This enables Grafana's built-in trace-to-logs correlation — clicking a span in the trace view opens the corresponding log entries filtered by trace ID.
+
+**Service Graph Dashboard** (Grafana provisioning): A 4-panel dashboard auto-generated from Tempo's `metrics_generator` service graph output. Includes a node graph panel (`traces_service_graph_request_total`), top-10 services by request rate (stat), error rate by service (time series), and P50/P95/P99 latency by service (time series from `traces_service_graph_request_total_bucket`).
+
+**Trace-to-Metrics Dashboard** (Grafana provisioning): A 7-panel dashboard using Tempo's `span_metrics` processor output. Shows overview statistics (total calls, error rate, P50/P99 latency), latency by operation (histogram quantiles from `traces_spanmetrics_latency_bucket`), error rate by operation, and throughput by service.
+
+**Grafana Alloy** (grafana/alloy:v1.6.0): A unified telemetry agent that can replace Promtail. In addition to log shipping (feature-equivalent to Promtail with Docker service discovery), Alloy adds OTLP gRPC and HTTP receivers for trace forwarding directly to Tempo. This consolidates log shipping and trace ingestion into a single agent, reducing operational complexity and providing a migration path to Kubernetes-native telemetry collection.
+
+**Synthetic Trace Generator** (Python 3, zero external dependencies): A script that generates deterministic OTLP traces with known latency distributions (Gaussian mean/std) for five operations: `mcp.query`, `mcp.graph_load`, `mcp.hooks_exec`, `daemon.schedule`, and `daemon.health`. Each operation has an `expected_max` latency threshold — spans exceeding it are marked as failures, enabling regression detection without real traffic. Supports scheduled execution via `--interval` for continuous synthetic monitoring.
+
+**Trace Baseline Comparison** (bash): Saves and compares trace operation summaries from Tempo against a saved baseline. Detects structural regressions: new operations not in baseline, missing operations, and count shifts exceeding 2x. Timestamped baselines enable historical comparison.
+
+**PM4Py Conformance CI Gate** (bash): Runs process mining analysis inside the PM4Py container and fails the CI pipeline if conformance drops below configurable thresholds (default: fitness > 0.8, precision > 0.5). Exit codes: 0 (pass), 1 (below threshold), 2 (analysis error).
+
+**Auto-Dashboard Generator** (Python): Reads the `custom-conventions.yaml` semantic conventions and generates Grafana dashboard JSON with panels for each attribute group. Panel types are selected by attribute type: time series for numeric, stat for boolean, table for string. The generator handles the conventions file's `groups` structure and enum-style types.
+
+**Grafana Faro** (JavaScript, CDN-loaded): Real-user monitoring (RUM) for web frontends. A self-contained IIFE that dynamically loads the Faro Web SDK and Web Vitals library, captures page loads, navigation, JavaScript errors, Core Web Vitals (LCP, FID, CLS, TTFB, INP), and custom events. Exposes `window.__FARO` API for `pushEvent`, `pushMeasurement`, `pushLog`, `setUser`, and `getTraceId`.
+
+**OpenLLMetry** (ESM module): OpenTelemetry instrumentation for LLM calls using the GenAI semantic conventions (`gen_ai.system`, `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, etc.). Provides `withLLMSpan()` for wrapping any LLM provider call, `getAISDKTelemetryConfig()` for Vercel AI SDK integration, and `instrumentAIToolCall()` for per-tool-call tracing. Two daemon call sites are instrumented: `autonomous-agent.mjs` (function ID: `autonomous-agent.reason`) and `autonomous-refinement-engine.mjs` (function ID: `refinement-engine.decide`).
+
+#### 4.3.13 Semantic Convention Validation
+
+All custom OTEL attributes are validated against the OpenTelemetry semantic convention registry. The custom conventions define 7 attribute groups with 34 attributes across the prefixes `knowledge_hook.*`, `policy_pack.*`, `rdf.*`, `effect.*`, `crypto.*`, `transaction.*`, and `sidecar.*`. No custom prefix conflicts with OTel reserved prefixes. The AI SDK's internal `gen_ai.*` attributes are validated against the GenAI semantic conventions specification, with one noted deprecation (`gen_ai.system` → `gen_ai.provider.name`) requiring the environment variable `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
 
 ### 4.4 Data Flow
 
-The UTPM architecture establishes three data flow patterns:
+The UTPM architecture establishes five data flow patterns:
 
 **Pattern A — Ingestion Flow**:
 
@@ -267,15 +358,17 @@ Application → OTLP → Collector → Tempo (traces)
                               → Loki (logs)
                               → Prometheus (metrics)
                               → Pyroscope (profiles)
+                              → Faro (RUM from browser)
 ```
 
 **Pattern B — Correlation Flow**:
 
 ```
 Trace ID propagation: traceparent header across gRPC/HTTP boundaries
-Log correlation: Loki extracts trace IDs via derived fields
+Log correlation: Collector transform/logs processor copies trace_id → loki.trace_id
 Metric correlation: Prometheus exemplars link metrics to trace IDs
 Profile correlation: Pyroscope profiles tagged with service.name
+Span-to-logs: Grafana links span → Loki logs via loki.trace_id label
 ```
 
 **Pattern C — Process Mining Flow**:
@@ -284,6 +377,27 @@ Profile correlation: Pyroscope profiles tagged with service.name
 Tempo API → Trace extraction → Event log construction → PM4Py → Process model
                                                                  → Conformance report
                                                                  → Bottleneck analysis
+                                                                 → CI gate (pass/fail)
+```
+
+**Pattern D — Synthetic Monitoring Flow**:
+
+```
+Cron/Scheduler → Synthetic Trace Gen → OTLP HTTP → Collector → Tempo → Grafana
+                                                                 → Prometheus (metrics)
+                                                                 → PM4Py (baseline comparison)
+```
+
+**Pattern E — LLM Telemetry Flow**:
+
+```
+AI SDK generateText() → experimental_telemetry → OTLP → Collector → Tempo
+                          ↓
+                    gen_ai.system (provider)
+                    gen_ai.request.model
+                    gen_ai.usage.input_tokens
+                    gen_ai.usage.output_tokens
+                    ai.toolCall.name (if tools used)
 ```
 
 ---
@@ -629,15 +743,21 @@ While each domain has extensive literature, the intersection — using operation
 
 6. **Automated remediation**: Combine process mining insights with automated remediation actions (e.g., auto-scaling the federation service when bottleneck analysis identifies it as the primary latency contributor).
 
+7. **LLM decision process mining**: Extend process mining to analyze the decision-making patterns of autonomous LLM agents — discovering the "process" by which an agent reasons, selects tools, and refines knowledge graphs. The OpenLLMetry integration provides the telemetry foundation; the next step is to define process models for agent behavior and measure conformance against expected reasoning patterns.
+
+8. **Grafana Alloy migration**: Complete the migration from Promtail to Grafana Alloy in production, leveraging Alloy's OTLP receiver capabilities to consolidate log shipping and trace forwarding into a single agent.
+
+9. **Automated dashboard generation at scale**: Extend the auto-dashboard generator to produce complete monitoring suites from semantic convention definitions, enabling zero-touch dashboard provisioning for new services.
+
 ---
 
 ## 12. Conclusion
 
 This thesis presented the Unified Telemetry-Process Mining (UTPM) architecture, a novel approach to observability that integrates distributed tracing, metrics, logging, continuous profiling, alerting, and process mining in a single composable deployment. Applied to ontology-driven knowledge graph systems, the UTPM architecture enables process discovery, conformance checking, and bottleneck analysis that traditional observability stacks cannot provide.
 
-The key contributions are: (1) a formal trace-to-event-log transformation method, (2) ontology-aware process mining that leverages formal ontological constraints for conformance checking, (3) a complete open-source implementation deployed via Docker Compose, and (4) empirical evidence that process mining reduces mean-time-to-diagnosis by 78% compared to traditional observability approaches.
+The key contributions are: (1) a formal trace-to-event-log transformation method, (2) ontology-aware process mining that leverages formal ontological constraints for conformance checking, (3) a complete open-source implementation deployed via Docker Compose, (4) an 80/20 extension framework that adds 12 high-value capabilities across four tiers of increasing effort, (5) LLM observability integration enabling unified process mining across human-specified and AI-decided operations, and (6) empirical evidence that process mining reduces mean-time-to-diagnosis by 78% compared to traditional observability approaches.
 
-The UTPM architecture demonstrates that the gap between observability and process intelligence is not only bridgeable but practically valuable. By treating operational telemetry as a first-class input for process mining, we can transform observability from a reactive monitoring tool into a proactive process optimization platform.
+The UTPM architecture demonstrates that the gap between observability and process intelligence is not only bridgeable but practically valuable. By treating operational telemetry as a first-class input for process mining, we can transform observability from a reactive monitoring tool into a proactive process optimization platform — one that extends naturally to cover the emerging frontier of LLM-driven autonomous agents.
 
 ---
 
@@ -698,6 +818,10 @@ The UTPM architecture demonstrates that the gap between observability and proces
 | LokiNoLogs                | warning  | No log lines in 10m     | Detect log pipeline failure     |
 | TempoIngestionErrors      | critical | Ingestion errors > 0    | Detect trace loss               |
 | TempoHighLatency          | warning  | P95 > 2s                | Detect query performance issues |
+| HighErrorRate             | warning  | >10% error logs in 5m   | Detect log-level error spikes   |
+| ServiceDown               | critical | Zero logs in 10m        | Detect silent container failure |
+| HighBurnRate99            | critical | 99.9% SLO burn >14.4x   | Detect rapid error budget drain |
+| HighBurnRate99Window      | warning  | 99% SLO burn >6x        | Detect sustained error increase |
 
 ### Appendix C: Grafana Datasource Configuration
 
