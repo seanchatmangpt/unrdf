@@ -6,6 +6,7 @@ dist
 .eslintcache
 *.log*
 *.env*
+!.env.example
 .lh/
 .lockchain/
 .next
