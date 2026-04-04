@@ -293,7 +293,7 @@ export class NitroTaskExecutor extends EventEmitter {
    * @param {Object} payload - Task payload
    * @returns {Promise<*>} Operation result
    */
-  async _executeViaNitro(operationId, payload = {}) {
+  async _executeViaNitro(operationId, _payload = {}) {
     const operation = this.daemon.operations.get(operationId);
     if (!operation) {
       throw new Error(`Operation not found: ${operationId}`);

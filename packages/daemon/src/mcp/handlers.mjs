@@ -308,7 +308,7 @@ export async function hooks_execute(args = {}) {
 /**
  * List all available hook conditions (CLI: unrdf hooks list-conditions)
  */
-export async function hooks_list_conditions(args = {}) {
+export async function hooks_list_conditions(_args = {}) {
   const cliArgs = 'hooks list-conditions'.split(' ');
   return executeCli(cliArgs);
 }

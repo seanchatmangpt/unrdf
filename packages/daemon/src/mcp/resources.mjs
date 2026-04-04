@@ -124,9 +124,9 @@ const mcpResources = [
 /**
  * Register all resources with the MCP server
  * @param {McpServer} server - MCP server instance
- * @param {object} options - Configuration options
+ * @param {object} _options - Configuration options
  */
-export function registerResources(server, options = {}) {
+export function registerResources(server, _options = {}) {
   for (const resource of mcpResources) {
     server.registerResource(
       resource.name || resource.uri,

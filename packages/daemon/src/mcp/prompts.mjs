@@ -157,9 +157,9 @@ export const mcpPrompts = [
 /**
  * Register all prompts with the MCP server
  * @param {McpServer} server - MCP server instance
- * @param {object} options - Configuration options
+ * @param {object} _options - Configuration options
  */
-export function registerPrompts(server, options = {}) {
+export function registerPrompts(server, _options = {}) {
   for (const prompt of mcpPrompts) {
     const argsSchema = (prompt.arguments || []).length > 0
       ? Object.fromEntries(

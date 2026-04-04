@@ -1000,11 +1000,11 @@ export async function startMCPServer() {
 
 /**
  * Start the MCP server with SSE transport (for HTTP)
- * @param {number} port Port to listen on
+ * @param {number} _port Port to listen on
  * @returns {Promise<void>}
  * @throws {Error} SSE transport is not yet implemented
  */
-export async function startMCPServerSSE(port = 8765) {
+export async function startMCPServerSSE(_port = 8765) {
   throw new Error(
     'SSE transport is not yet implemented. ' +
     'Use startMCPServer() for stdio transport instead. ' +

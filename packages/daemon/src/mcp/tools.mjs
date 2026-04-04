@@ -151,9 +151,9 @@ const mcpTools = [
 /**
  * Register all tools with the MCP server
  * @param {Server} server - MCP server instance
- * @param {object} options - Configuration options
+ * @param {object} _options - Configuration options
  */
-export function registerTools(server, options = {}) {
+export function registerTools(server, _options = {}) {
   // Register list tools handler
   server.setRequestHandler({ method: 'tools/list' }, async () => ({
     tools: mcpTools,

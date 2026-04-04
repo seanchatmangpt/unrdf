@@ -761,7 +761,7 @@ describe('Daemon', () => {
         daemonId: generateUUID(),
         name: 'test-daemon',
       });
-      const opId = daemon.config.daemonId;
+      const _opId = daemon.config.daemonId;
 
       // Act
       await daemon.start();

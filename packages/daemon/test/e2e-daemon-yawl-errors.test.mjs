@@ -233,7 +233,7 @@ class MockYawlDaemonBridge extends EventEmitter {
   }
 
   async executeTaskWithRetry(caseId, taskId, taskFn, retryPolicy = {}) {
-    const key = `${caseId}:${taskId}`;
+    const _key = `${caseId}:${taskId}`;
     const maxAttempts = retryPolicy.maxAttempts || 3;
     const backoffMs = retryPolicy.backoffMs || 1000;
 
@@ -437,7 +437,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
       });
 
       // Act
-      const { caseId: returnedCaseId } = bridge.watchTaskTimeout(
+      const { caseId: _returnedCaseId } = bridge.watchTaskTimeout(
         caseId,
         taskId,
         timeoutMs
