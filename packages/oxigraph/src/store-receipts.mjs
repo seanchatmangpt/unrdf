@@ -15,7 +15,7 @@ import { dataFactory } from './index.mjs';
 import {
   withReceipt,
   createContext,
-  ReceiptProfileSchema,
+  _ReceiptProfileSchema,
   canonicalize,
   blake3Hash,
 } from '@unrdf/v6-core/receipt-pattern';

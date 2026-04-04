@@ -5,26 +5,13 @@
  * @module @unrdf/receipts/pq-merkle
  */
 
-import { blake3 } from 'hash-wasm';
 import { sha3_256, sha3_512 } from '@noble/hashes/sha3.js';
 import { z } from 'zod';
 import {
   signDilithium3,
   verifyDilithium3,
-  generateDilithium3KeyPair,
 } from './dilithium3.mjs';
-
-/**
- * XMSS Node Schema
- */
-const XMSSNodeSchema = z.object({
-  hash: z.string(),
-  left: z.any().optional(),
-  right: z.any().optional(),
-  data: z.any().optional(),
-  index: z.number().int().nonnegative(),
-  signature: z.any().optional(), // Optional PQ signature
-});
+import { TextEncoder } from 'util';
 
 /**
  * XMSS Proof Schema

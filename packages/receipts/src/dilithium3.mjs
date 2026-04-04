@@ -5,6 +5,7 @@
  * @module @unrdf/receipts/dilithium3
  */
 
+import { TextEncoder } from 'util';
 import { sha3_256 } from '@noble/hashes/sha3.js';
 import { z } from 'zod';
 
