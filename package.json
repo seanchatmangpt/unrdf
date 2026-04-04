@@ -20,7 +20,7 @@
   "scripts": {
     "prepare": "husky install",
     "test": "pnpm -r test",
-    "test:fast": "pnpm -r test:fast",
+    "test:fast": "pnpm -r --filter='!./packages/kgc-probe' test:fast",
     "test:watch": "pnpm -r test:watch",
     "test:watch:pkg": "bash -c './scripts/dev-workflow.sh test:watch \"$@\"' _",
     "test:coverage": "pnpm -r test -- --coverage",
