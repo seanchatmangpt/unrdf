@@ -186,6 +186,10 @@ export async function loadShaclFile(uri, expectedHash, basePath = process.cwd())
  * @param {string} [options.basePath] - Base path for file resolution
  * @param {boolean} [options.enableCache] - Enable file content caching
  * @param {number} [options.cacheMaxAge] - Cache max age in milliseconds
+ * @param {number} [options.cacheSize] - Maximum cache size
+ * @param {boolean} [options.allowAbsolutePaths] - Allow absolute paths (default: true)
+ * @param {boolean} [options.enablePathValidation] - Enforce strict path validation
+ * @param {Array<string>} [options.allowedExtensions] - Whitelist of allowed extensions
  * @returns {Object} File resolver instance
  */
 export function createFileResolver(options = {}) {
@@ -193,11 +197,144 @@ export function createFileResolver(options = {}) {
     basePath = process.cwd(),
     enableCache = true,
     cacheMaxAge = 300000, // 5 minutes
+    cacheSize = 1000,
+    allowAbsolutePaths = true,
+    enablePathValidation = false,
+    allowedExtensions = null,
   } = options;
 
   const cache = new Map();
+  const pathResolveCache = new Map(); // Cache for resolve() results
+  let cacheHits = 0;
+  let cacheMisses = 0;
+
+  /**
+   * Ensure cache doesn't exceed size limit by removing oldest entries
+   */
+  function enforceMaxCacheSize() {
+    if (cache.size > cacheSize) {
+      const keysToDelete = Array.from(cache.keys()).slice(0, cache.size - cacheSize);
+      keysToDelete.forEach(key => cache.delete(key));
+    }
+    if (pathResolveCache.size > cacheSize) {
+      const keysToDelete = Array.from(pathResolveCache.keys()).slice(0, pathResolveCache.size - cacheSize);
+      keysToDelete.forEach(key => pathResolveCache.delete(key));
+    }
+  }
 
   return {
+    /**
+     * Sanitize a file path to remove dangerous patterns.
+     * @param {string} filePath - The file path to sanitize
+     * @returns {string} Sanitized file path
+     */
+    sanitizePath(filePath) {
+      if (!filePath || typeof filePath !== 'string') {
+        return '';
+      }
+      // Remove parent directory traversal attempts
+      return filePath.split(/[/\\]+/).filter(part => part && part !== '..').join('/');
+    },
+
+    /**
+     * Validate hash format.
+     * @param {string} hash - The hash string to validate
+     * @param {string} algorithm - Hash algorithm ('sha256', 'sha512', etc.)
+     * @returns {boolean} True if hash is valid
+     */
+    isValidHash(hash, algorithm = 'sha256') {
+      if (!hash || typeof hash !== 'string') {
+        return false;
+      }
+
+      const expectedLength = algorithm === 'sha512' ? 128 : algorithm === 'sha256' ? 64 : 0;
+      if (expectedLength === 0 || hash.length !== expectedLength) {
+        return false;
+      }
+
+      // Check if all characters are valid hex (0-9, a-f, A-F)
+      return /^[0-9a-fA-F]+$/.test(hash);
+    },
+
+    /**
+     * Resolve a file path relative to basePath.
+     * @param {string} filePath - The file path to resolve
+     * @returns {string} Absolute file path
+     * @throws {Error} If path is invalid or not allowed
+     */
+    resolve(filePath) {
+      if (!filePath || typeof filePath !== 'string') {
+        throw new TypeError('resolve: path must be a non-empty string');
+      }
+
+      // Check cache first
+      if (enableCache && pathResolveCache.has(filePath)) {
+        cacheHits++;
+        return pathResolveCache.get(filePath);
+      }
+      cacheMisses++;
+
+      // Pass through HTTP/HTTPS URIs unchanged
+      if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+        if (enableCache) {
+          pathResolveCache.set(filePath, filePath);
+          enforceMaxCacheSize();
+        }
+        return filePath;
+      }
+
+      // Pass through file:// URIs with special handling
+      if (filePath.startsWith('file://')) {
+        if (enableCache) {
+          pathResolveCache.set(filePath, filePath);
+          enforceMaxCacheSize();
+        }
+        return filePath;
+      }
+
+      // Reject unknown URI schemes
+      if (filePath.includes('://')) {
+        throw new Error(`resolve: unsupported URI scheme in ${filePath}`);
+      }
+
+      // Path traversal validation if enabled
+      if (enablePathValidation && filePath.includes('..')) {
+        throw new Error(`resolve: path traversal detected: ${filePath}`);
+      }
+
+      // Check for absolute paths - only reject if explicitly disabled
+      const isAbsolute = filePath.startsWith('/') || /^[a-zA-Z]:/.test(filePath);
+      if (!allowAbsolutePaths && isAbsolute) {
+        throw new Error(`resolve: absolute paths are not allowed: ${filePath}`);
+      }
+
+      // If absolute path and allowed, return as-is
+      if (isAbsolute) {
+        const resolved = _resolve(filePath);
+        if (enableCache) {
+          pathResolveCache.set(filePath, resolved);
+          enforceMaxCacheSize();
+        }
+        return resolved;
+      }
+
+      // Check file extensions if whitelist provided
+      if (allowedExtensions && Array.isArray(allowedExtensions)) {
+        const ext = filePath.slice(filePath.lastIndexOf('.'));
+        if (ext && !allowedExtensions.includes(ext)) {
+          throw new Error(`resolve: file extension '${ext}' is not allowed. Allowed: ${allowedExtensions.join(', ')}`);
+        }
+      }
+
+      // Resolve relative paths against basePath
+      const resolved = _resolve(_join(basePath, filePath));
+      if (enableCache) {
+        pathResolveCache.set(filePath, resolved);
+        enforceMaxCacheSize();
+      }
+      return resolved;
+    },
+
     /**
      * Load a file with hash verification.
      * @param {string} uri - The file URI
@@ -222,6 +359,7 @@ export function createFileResolver(options = {}) {
           data,
           timestamp: Date.now(),
         });
+        enforceMaxCacheSize();
       }
 
       return data;
@@ -251,6 +389,7 @@ export function createFileResolver(options = {}) {
           data,
           timestamp: Date.now(),
         });
+        enforceMaxCacheSize();
       }
 
       return data;
@@ -280,6 +419,7 @@ export function createFileResolver(options = {}) {
           data,
           timestamp: Date.now(),
         });
+        enforceMaxCacheSize();
       }
 
       return data;
@@ -290,6 +430,7 @@ export function createFileResolver(options = {}) {
      */
     clearCache() {
       cache.clear();
+      pathResolveCache.clear();
     },
 
     /**
@@ -377,10 +518,15 @@ export function createFileResolver(options = {}) {
       }
 
       return {
-        totalEntries: cache.size,
+        size: pathResolveCache.size,
+        hits: cacheHits,
+        misses: cacheMisses,
+        totalEntries: cache.size + pathResolveCache.size,
         validEntries,
         expiredEntries,
         cacheMaxAge,
+        cacheSize,
+        pathCacheSize: pathResolveCache.size,
       };
     },
   };
