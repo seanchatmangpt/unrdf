@@ -106,17 +106,11 @@ No flags. Supported kinds: `sparql-ask`, `sparql-select`, `shacl`, `delta`, `thr
 
 ### hooks receipts
 
-Display the receipt chain from an execution results file.
-
 ```
-unrdf hooks receipts --file <file> [--format <format>] [--verify]
+unrdf hooks receipts --file <file> [--format table|json] [--verify]
 ```
 
-| Flag       | Type    | Required | Default | Description                                            |
-| ---------- | ------- | -------- | ------- | ------------------------------------------------------ |
-| `--file`   | string  | yes      | —       | JSON results file produced by `hooks execute --output` |
-| `--format` | string  | no       | `table` | Output format: `table` or `json`                       |
-| `--verify` | boolean | no       | `false` | Verify receipt chain hash integrity                    |
+`--file` (required): JSON results file from `hooks execute --output`. `--verify` checks hash-chain integrity.
 
 ---
 
