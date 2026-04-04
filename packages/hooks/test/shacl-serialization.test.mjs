@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createStore, dataFactory } from '../../oxigraph/src/index.mjs';
 import { serializeShaclReport } from '../src/index.mjs';
 
-const { namedNode, literal, quad } = dataFactory;
+const { namedNode, literal: _literal, quad: _quad } = dataFactory;
 
 describe('SHACL Report Serialization - RDF Term Validation', () => {
   let store;
@@ -291,12 +291,8 @@ describe('SHACL Report Serialization - RDF Term Validation', () => {
 
       // Should have 2 quads (type and severity, no message)
       expect(quads).toHaveLength(2);
-      expect(quads[0].predicate.value).toBe(
-        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-      );
-      expect(quads[1].predicate.value).toBe(
-        'http://www.w3.org/ns/shacl#resultSeverity'
-      );
+      expect(quads[0].predicate.value).toBe('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+      expect(quads[1].predicate.value).toBe('http://www.w3.org/ns/shacl#resultSeverity');
     });
 
     it('should handle violation without severity', () => {
@@ -312,9 +308,7 @@ describe('SHACL Report Serialization - RDF Term Validation', () => {
 
       // Should still generate quads with default severity
       expect(quads).toHaveLength(3);
-      expect(quads[2].object.value).toBe(
-        'http://www.w3.org/ns/shacl#Violation'
-      );
+      expect(quads[2].object.value).toBe('http://www.w3.org/ns/shacl#Violation');
     });
   });
 
@@ -412,7 +406,11 @@ describe('SHACL Report Serialization - RDF Term Validation', () => {
       expect(matches.length).toBe(quads.length);
 
       // Verify we can retrieve by pattern
-      const typeMatches = store.getQuads(null, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null);
+      const typeMatches = store.getQuads(
+        null,
+        namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        null
+      );
       expect(typeMatches.length).toBeGreaterThan(0);
     });
   });
@@ -433,7 +431,7 @@ describe('SHACL Report Serialization - RDF Term Validation', () => {
 
       // Find the message quad
       const messageQuad = quads.find(
-        (q) => q.predicate.value === 'http://www.w3.org/ns/shacl#resultMessage'
+        q => q.predicate.value === 'http://www.w3.org/ns/shacl#resultMessage'
       );
 
       expect(messageQuad).toBeDefined();
@@ -470,7 +468,7 @@ describe('SHACL Report Serialization - RDF Term Validation', () => {
       expect(violations_quads.length).toBe(3);
 
       // Check severity values
-      const severityValues = violations_quads.map((q) => q.object.value);
+      const severityValues = violations_quads.map(q => q.object.value);
       expect(severityValues).toContain('http://www.w3.org/ns/shacl#Violation');
       expect(severityValues).toContain('http://www.w3.org/ns/shacl#Warning');
       expect(severityValues).toContain('http://www.w3.org/ns/shacl#Info');

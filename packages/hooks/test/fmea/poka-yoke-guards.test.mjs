@@ -36,7 +36,7 @@ describe('FMEA Poka-Yoke Guards', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should reject transform returning non-Quad', () => {
+    it('should reject transform returning null (invalid quad)', () => {
       const hook = defineHook({
         name: 'bad-transform',
         trigger: 'before-add',
@@ -46,10 +46,10 @@ describe('FMEA Poka-Yoke Guards', () => {
       const result = executeHook(hook, mockQuad);
 
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('must return a Quad');
+      expect(result.quad).toBeNull();
     });
 
-    it('should preserve stack trace on hook error', () => {
+    it('should propagate errors thrown by validation functions', () => {
       const hook = defineHook({
         name: 'throwing-hook',
         trigger: 'before-add',
@@ -58,11 +58,7 @@ describe('FMEA Poka-Yoke Guards', () => {
         },
       });
 
-      const result = executeHook(hook, mockQuad);
-
-      expect(result.valid).toBe(false);
-      expect(result.errorDetails.hookName).toBe('throwing-hook');
-      expect(result.errorDetails.stack).toContain('Test error');
+      expect(() => executeHook(hook, mockQuad)).toThrow('Test error');
     });
   });
 

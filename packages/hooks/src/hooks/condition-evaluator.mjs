@@ -13,41 +13,273 @@ import { validateShacl } from './validate.mjs';
 import { createQueryOptimizer } from './query-optimizer.mjs';
 import { createStore, dataFactory } from '../../../oxigraph/src/index.mjs';
 import reasoner from 'eyereasoner';
+import { Parser as SparqlParser, Generator as SparqlGenerator } from 'sparqljs';
+import { z } from 'zod';
+
+// ─── SPARQL Injection Prevention ────────────────────────────────────────────
+const sparqlParser = new SparqlParser();
+const sparqlGenerator = new SparqlGenerator();
+
+/** Safe SPARQL variable name: letters, digits, underscore; must start with letter/underscore */
+const SAFE_SPARQL_VAR_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+/**
+ * Zod schema for SPARQL parameter values.
+ * Allows: string, number, boolean, RDF NamedNode/BlankNode/Literal terms.
+ * Rejects: plain objects, arrays, functions, null, undefined.
+ */
+export const SparqlParamSchema = z.union([
+  z.string(),
+  z.number().finite(),
+  z.boolean(),
+  z.object({
+    termType: z.enum(['NamedNode', 'BlankNode', 'Literal']),
+    value: z.string(),
+  }),
+]);
+
+/**
+ * Validate that a string is a safe SPARQL variable name.
+ * @param {string} name - Variable name to validate
+ * @returns {string} The validated name
+ * @throws {Error} If name contains injection characters
+ */
+export function validateSparqlVariableName(name) {
+  if (typeof name !== 'string' || !SAFE_SPARQL_VAR_RE.test(name)) {
+    throw new Error(
+      `Invalid SPARQL variable name: "${String(name)}". ` +
+        'Must match /^[a-zA-Z_][a-zA-Z0-9_]*$/.'
+    );
+  }
+  return name;
+}
+
+/**
+ * Validate and parse a SPARQL query string to prevent injection.
+ * Only allows read-only query types (SELECT, ASK, CONSTRUCT, DESCRIBE).
+ * Rejects UPDATE, SERVICE, and LOAD operations.
+ * @param {string} queryString - SPARQL query to validate
+ * @returns {object} Parsed query AST
+ * @throws {Error} If query is invalid or disallowed
+ */
+export function validateSparqlQuery(queryString) {
+  if (typeof queryString !== 'string' || queryString.trim().length === 0) {
+    throw new Error('SPARQL query must be a non-empty string');
+  }
+
+  let parsed;
+  try {
+    parsed = sparqlParser.parse(queryString);
+  } catch (error) {
+    throw new Error(`Invalid SPARQL syntax: ${error.message}`);
+  }
+
+  // Reject UPDATE operations (INSERT DATA, DELETE, DROP, CLEAR, CREATE, LOAD)
+  if (parsed.type === 'update') {
+    throw new Error('SPARQL UPDATE operations are not allowed in condition queries');
+  }
+
+  // Walk AST JSON to reject SERVICE clauses (federated query escape)
+  const astJson = JSON.stringify(parsed);
+  if (astJson.includes('"type":"service"')) {
+    throw new Error('SERVICE clauses are not allowed in condition queries');
+  }
+
+  return parsed;
+}
+
+/**
+ * Safely bind parameter values into a SPARQL query via AST manipulation.
+ * @param {string} queryTemplate - SPARQL query with ?variable placeholders
+ * @param {Object<string, *>} params - Variable-name → value map
+ * @returns {string} Generated SPARQL with values bound
+ */
+export function bindSparqlParams(queryTemplate, params = {}) {
+  if (!params || Object.keys(params).length === 0) {
+    return queryTemplate;
+  }
+
+  // Validate every parameter key and value
+  const replacements = new Map();
+  for (const [key, value] of Object.entries(params)) {
+    const varName = key.startsWith('?') ? key.slice(1) : key;
+    validateSparqlVariableName(varName);
+
+    const result = SparqlParamSchema.safeParse(value);
+    if (!result.success) {
+      throw new Error(
+        `Invalid SPARQL parameter value for ?${varName}: ${result.error.message}`
+      );
+    }
+    replacements.set(varName, toRdfTerm(value));
+  }
+
+  // Parse template → AST, replace variables, regenerate
+  const parsed = sparqlParser.parse(queryTemplate);
+  replaceVariablesInAst(parsed, replacements);
+  return sparqlGenerator.stringify(parsed);
+}
+
+/** Convert a JS value to a sparqljs-compatible RDF term node. */
+function toRdfTerm(value) {
+  if (typeof value === 'string') {
+    return { termType: 'Literal', value };
+  }
+  if (typeof value === 'number') {
+    return {
+      termType: 'Literal',
+      value: String(value),
+      datatype: {
+        termType: 'NamedNode',
+        value: 'http://www.w3.org/2001/XMLSchema#decimal',
+      },
+    };
+  }
+  if (typeof value === 'boolean') {
+    return {
+      termType: 'Literal',
+      value: String(value),
+      datatype: {
+        termType: 'NamedNode',
+        value: 'http://www.w3.org/2001/XMLSchema#boolean',
+      },
+    };
+  }
+  if (value && value.termType) {
+    return value;
+  }
+  throw new Error(`Cannot convert value to RDF term: ${typeof value}`);
+}
+
+/** Recursively replace Variable nodes in a sparqljs AST. */
+function replaceVariablesInAst(node, replacements) {
+  if (!node || typeof node !== 'object') return;
+  if (Array.isArray(node)) {
+    for (let i = 0; i < node.length; i++) {
+      if (node[i]?.termType === 'Variable' && replacements.has(node[i].value)) {
+        node[i] = replacements.get(node[i].value);
+      } else {
+        replaceVariablesInAst(node[i], replacements);
+      }
+    }
+    return;
+  }
+  for (const key of Object.keys(node)) {
+    const val = node[key];
+    if (val && typeof val === 'object') {
+      if (val.termType === 'Variable' && replacements.has(val.value)) {
+        node[key] = replacements.get(val.value);
+      } else {
+        replaceVariablesInAst(val, replacements);
+      }
+    }
+  }
+}
 
 /**
  * SlidingWindow class for temporal event tracking
  * Maintains a window of events and supports both time-based and event-based windowing
  */
 class SlidingWindow {
+  /** @type {number} Memory warning threshold in bytes (100MB) */
+  static MEMORY_WARN_BYTES = 100 * 1024 * 1024;
+  /** @type {number} Memory hard limit in bytes (500MB) */
+  static MEMORY_LIMIT_BYTES = 500 * 1024 * 1024;
+
   /**
    * @param {number} size - Window size (milliseconds for time-based, count for event-based)
    * @param {number} [slide] - Slide amount (defaults to size for tumbling window)
    * @param {boolean} [timeWindow=true] - If true, size is in milliseconds; if false, size is event count
+   * @param {number} [maxHistorySize=10000] - Maximum number of events to retain (LRU eviction)
    */
-  constructor(size, slideAmount = size, timeWindow = true) {
+  constructor(size, slideAmount = size, timeWindow = true, maxHistorySize = 10000) {
     this.size = size;
     this.slideAmount = slideAmount;
     this.timeWindow = timeWindow;
+    this.maxHistorySize = maxHistorySize;
     this.events = []; // Array of { timestamp, value, data }
     this.lastSlideTime = Date.now();
+
+    // Metrics tracking
+    this._metrics = {
+      totalEvictions: 0,
+      totalEventsAdded: 0,
+      peakEventCount: 0,
+      lastMemoryEstimate: 0,
+      memoryWarnings: 0,
+    };
+  }
+
+  /**
+   * Estimate approximate memory usage of the event queue in bytes.
+   * Each event object has: timestamp (8), value (variable), data (variable), index (8).
+   * We estimate ~200 bytes per event as a conservative baseline for object overhead + pointers.
+   * @returns {number} Estimated memory usage in bytes
+   */
+  estimateMemoryUsage() {
+    const perEventOverhead = 200;
+    const estimate = this.events.length * perEventOverhead;
+    this._metrics.lastMemoryEstimate = estimate;
+    return estimate;
   }
 
   /**
    * Add an event to the window
    * @param {*} value - The value to add
    * @param {*} data - Additional data to track
+   * @throws {Error} If estimated memory exceeds 500MB hard limit
    */
   add(value, data = null) {
+    // Enforce maxHistorySize via LRU eviction (remove oldest first)
+    while (this.events.length >= this.maxHistorySize) {
+      this.events.shift();
+      this._metrics.totalEvictions++;
+    }
+
     const now = Date.now();
     this.events.push({
       timestamp: now,
       value,
       data,
-      index: this.events.length,
+      index: this._metrics.totalEventsAdded,
     });
+    this._metrics.totalEventsAdded++;
+
+    // Track peak
+    if (this.events.length > this._metrics.peakEventCount) {
+      this._metrics.peakEventCount = this.events.length;
+    }
+
+    // Memory monitoring (check every 1000 events to avoid overhead)
+    if (this._metrics.totalEventsAdded % 1000 === 0) {
+      this._checkMemoryLimits();
+    }
 
     // Clean up expired events
     this.prune();
+  }
+
+  /**
+   * Check memory limits and warn/throw as appropriate
+   * @private
+   */
+  _checkMemoryLimits() {
+    const memEstimate = this.estimateMemoryUsage();
+
+    if (memEstimate > SlidingWindow.MEMORY_LIMIT_BYTES) {
+      throw new Error(
+        `SlidingWindow memory limit exceeded: ${(memEstimate / 1024 / 1024).toFixed(1)}MB > 500MB limit. ` +
+          `Events: ${this.events.length}, consider reducing maxHistorySize (current: ${this.maxHistorySize})`
+      );
+    }
+
+    if (memEstimate > SlidingWindow.MEMORY_WARN_BYTES) {
+      this._metrics.memoryWarnings++;
+      console.warn(
+        `[SlidingWindow] Memory warning: ~${(memEstimate / 1024 / 1024).toFixed(1)}MB used ` +
+          `(${this.events.length} events, limit: ${this.maxHistorySize})`
+      );
+    }
   }
 
   /**
@@ -109,6 +341,22 @@ class SlidingWindow {
    */
   length() {
     return this.getWindow().length;
+  }
+
+  /**
+   * Get telemetry metrics for this window
+   * @returns {Object} Metrics snapshot
+   */
+  getMetrics() {
+    return {
+      totalEvictions: this._metrics.totalEvictions,
+      totalEventsAdded: this._metrics.totalEventsAdded,
+      currentEventCount: this.events.length,
+      peakEventCount: this._metrics.peakEventCount,
+      estimatedMemoryBytes: this.estimateMemoryUsage(),
+      maxHistorySize: this.maxHistorySize,
+      memoryWarnings: this._metrics.memoryWarnings,
+    };
   }
 }
 
@@ -261,7 +509,7 @@ async function evaluateShacl(condition, graph, resolver, env) {
   const { turtle } = await resolver.loadShacl(ref.uri, ref.sha256);
 
   // Execute SHACL validation
-  const report = validateShacl(graph, turtle, {
+  const report = await validateShacl(graph, turtle, {
     strict: env.strictMode || false,
     includeDetails: true,
   });
@@ -321,7 +569,7 @@ async function evaluateShacl(condition, graph, resolver, env) {
           }
 
           // Re-validate after repair with updated graph
-          const revalidateReport = validateShacl(graph, turtle, {
+          const revalidateReport = await validateShacl(graph, turtle, {
             strict: env.strictMode || false,
             includeDetails: true,
           });
@@ -810,7 +1058,10 @@ async function evaluateThreshold(condition, graph, _resolver, _env, _options) {
   const { spec } = condition;
   const { var: variable, op, value, aggregate = 'avg' } = spec;
 
-  // Execute query to get values
+  // Validate variable name to prevent SPARQL injection
+  validateSparqlVariableName(variable);
+
+  // Execute query to get values (variable is now guaranteed safe)
   const query = `
     SELECT ?${variable} WHERE {
       ?s ?p ?${variable}
@@ -891,7 +1142,8 @@ async function evaluateCount(condition, graph, _resolver, _env, _options) {
   let count;
 
   if (countQuery) {
-    // Use custom query for counting
+    // Validate query to prevent SPARQL injection
+    validateSparqlQuery(countQuery);
     const results = await select(graph, countQuery);
     count = results.length;
   } else {
@@ -964,17 +1216,22 @@ async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) 
     throw new Error('Window condition requires a query property');
   }
 
+  // Validate query to prevent SPARQL injection
+  validateSparqlQuery(windowQuery);
+
   const results = await select(graph, windowQuery);
 
   // Extract numeric values from results
-  const values = results.map(r => {
-    // Get first binding value
-    const firstValue = Object.values(r)[0];
-    if (!firstValue) return null;
+  const values = results
+    .map(r => {
+      // Get first binding value
+      const firstValue = Object.values(r)[0];
+      if (!firstValue) return null;
 
-    const val = parseFloat(firstValue.value);
-    return isNaN(val) ? null : val;
-  }).filter(v => v !== null);
+      const val = parseFloat(firstValue.value);
+      return isNaN(val) ? null : val;
+    })
+    .filter(v => v !== null);
 
   // Add values to window
   for (const val of values) {
@@ -1002,14 +1259,12 @@ async function evaluateWindow(condition, graph, _resolver, _env, _options = {}) 
       }
       break;
     case 'min':
-      aggregateValue = windowContents.length > 0
-        ? Math.min(...windowContents.map(e => e.value))
-        : Infinity;
+      aggregateValue =
+        windowContents.length > 0 ? Math.min(...windowContents.map(e => e.value)) : Infinity;
       break;
     case 'max':
-      aggregateValue = windowContents.length > 0
-        ? Math.max(...windowContents.map(e => e.value))
-        : -Infinity;
+      aggregateValue =
+        windowContents.length > 0 ? Math.max(...windowContents.map(e => e.value)) : -Infinity;
       break;
     case 'count':
       aggregateValue = windowContents.length;

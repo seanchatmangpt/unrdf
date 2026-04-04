@@ -49,7 +49,7 @@ describe('SHACL Repair Mode', () => {
     };
 
     // Mock the file resolver to return valid SHACL shapes
-    const mockResolver = {
+    const _mockResolver = {
       loadShacl: async () => ({
         turtle: `
           PREFIX sh: <http://www.w3.org/ns/shacl#>

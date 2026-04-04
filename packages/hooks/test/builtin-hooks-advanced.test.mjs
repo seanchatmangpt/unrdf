@@ -160,17 +160,26 @@ describe('Built-in Hooks - Literal Validation', () => {
     const enQuad = await executeHook(validateLanguageTag, fixtures.literalWithLanguageQuad('en'));
     expect(enQuad.valid).toBe(true);
 
-    const enUSQuad = await executeHook(validateLanguageTag, fixtures.literalWithLanguageQuad('en-US'));
+    const enUSQuad = await executeHook(
+      validateLanguageTag,
+      fixtures.literalWithLanguageQuad('en-US')
+    );
     expect(enUSQuad.valid).toBe(true);
   });
 
   it('validateLanguageTag: rejects invalid language tags', async () => {
-    const result = await executeHook(validateLanguageTag, fixtures.literalWithLanguageQuad('INVALID_TAG'));
+    const result = await executeHook(
+      validateLanguageTag,
+      fixtures.literalWithLanguageQuad('INVALID_TAG')
+    );
     expect(result.valid).toBe(false);
   });
 
   it('validateLanguageTag: rejects overly long language tags', async () => {
-    const result = await executeHook(validateLanguageTag, fixtures.literalWithLanguageQuad('a'.repeat(100)));
+    const result = await executeHook(
+      validateLanguageTag,
+      fixtures.literalWithLanguageQuad('a'.repeat(100))
+    );
     expect(result.valid).toBe(false);
   });
 });
@@ -292,7 +301,7 @@ describe('Advanced Features - JIT Compilation', () => {
       defineHook({
         name: 'check-http',
         trigger: 'before-add',
-        validate: (quad) => quad.subject.value.startsWith('http://'),
+        validate: quad => quad.subject.value.startsWith('http://'),
       }),
     ];
 
@@ -306,7 +315,7 @@ describe('Advanced Features - JIT Compilation', () => {
       defineHook({
         name: 'check-exists',
         trigger: 'before-add',
-        validate: (quad) => quad !== null,
+        validate: quad => quad !== null,
       }),
     ];
 
@@ -381,7 +390,7 @@ describe('Advanced Features - Object Pooling', () => {
   });
 
   it('createPooledTransform: returns transformed quad', () => {
-    const transform = createPooledTransform((quad) => ({
+    const transform = createPooledTransform(quad => ({
       ...quad,
       object: { ...quad.object, value: quad.object.value.toUpperCase() },
     }));
@@ -416,14 +425,10 @@ describe('Advanced Features - Batch Operations', () => {
     const hook = defineHook({
       name: 'batch-validate',
       trigger: 'before-add',
-      validate: (quad) => quad.subject.value.startsWith('http://'),
+      validate: quad => quad.subject.value.startsWith('http://'),
     });
 
-    const quads = [
-      fixtures.validIRIQuad,
-      fixtures.validIRIQuad,
-      fixtures.invalidIRIQuad,
-    ];
+    const quads = [fixtures.validIRIQuad, fixtures.validIRIQuad, fixtures.invalidIRIQuad];
 
     const results = await executeBatch([hook], quads);
     expect(results).toHaveLength(3);
@@ -436,7 +441,7 @@ describe('Advanced Features - Batch Operations', () => {
     const hook = defineHook({
       name: 'stop-on-error',
       trigger: 'before-add',
-      validate: (quad) => quad.subject.value.startsWith('http://'),
+      validate: quad => quad.subject.value.startsWith('http://'),
     });
 
     const quads = [fixtures.validIRIQuad, fixtures.invalidIRIQuad, fixtures.validIRIQuad];
@@ -449,7 +454,7 @@ describe('Advanced Features - Batch Operations', () => {
     const hook = defineHook({
       name: 'batch-val',
       trigger: 'before-add',
-      validate: (quad) => quad.object.value.length > 0,
+      validate: quad => quad.object.value.length > 0,
     });
 
     const quads = [fixtures.validIRIQuad, fixtures.emptyLiteral];
@@ -464,7 +469,7 @@ describe('Advanced Features - Batch Operations', () => {
     const hook = defineHook({
       name: 'batch-transform',
       trigger: 'before-add',
-      transform: (quad) => ({
+      transform: quad => ({
         ...quad,
         object: { value: quad.object.value.toUpperCase() },
       }),
@@ -484,7 +489,7 @@ describe('Advanced Features - Batch Operations', () => {
       defineHook({
         name: 'uppercase',
         trigger: 'before-add',
-        transform: (quad) => ({
+        transform: quad => ({
           ...quad,
           object: { value: quad.object.value.toUpperCase() },
         }),
@@ -492,7 +497,7 @@ describe('Advanced Features - Batch Operations', () => {
       defineHook({
         name: 'prefix',
         trigger: 'before-add',
-        transform: (quad) => ({
+        transform: quad => ({
           ...quad,
           object: { value: `PREFIX_${quad.object.value}` },
         }),
@@ -516,12 +521,12 @@ describe('Advanced Features - Hook Composition', () => {
       defineHook({
         name: 'check-iri',
         trigger: 'before-add',
-        validate: (quad) => quad.subject.value.startsWith('http://'),
+        validate: quad => quad.subject.value.startsWith('http://'),
       }),
       defineHook({
         name: 'check-predicate',
         trigger: 'before-add',
-        validate: (quad) => quad.predicate.value.includes('example.org'),
+        validate: quad => quad.predicate.value.includes('example.org'),
       }),
     ];
 
@@ -534,12 +539,12 @@ describe('Advanced Features - Hook Composition', () => {
       defineHook({
         name: 'pass',
         trigger: 'before-add',
-        validate: (quad) => quad.subject.value.startsWith('http://'),
+        validate: quad => quad.subject.value.startsWith('http://'),
       }),
       defineHook({
         name: 'fail',
         trigger: 'before-add',
-        validate: (quad) => quad.object.value.includes('xyz'),
+        validate: quad => quad.object.value.includes('xyz'),
       }),
     ];
 
@@ -552,12 +557,12 @@ describe('Advanced Features - Hook Composition', () => {
       defineHook({
         name: 'validate-exists',
         trigger: 'before-add',
-        validate: (quad) => quad !== null,
+        validate: quad => quad !== null,
       }),
       defineHook({
         name: 'uppercase',
         trigger: 'before-add',
-        transform: (quad) => ({
+        transform: quad => ({
           ...quad,
           object: { value: quad.object.value.toUpperCase() },
         }),
@@ -565,7 +570,7 @@ describe('Advanced Features - Hook Composition', () => {
       defineHook({
         name: 'trim',
         trigger: 'before-add',
-        transform: (quad) => ({
+        transform: quad => ({
           ...quad,
           object: { value: quad.object.value.trim() },
         }),
@@ -590,7 +595,7 @@ describe('Performance - Hook Chains', () => {
       defineHook({
         name: `perf-hook-${i}`,
         trigger: 'before-add',
-        validate: (quad) => quad.subject.value.startsWith('http://'),
+        validate: quad => quad.subject.value.startsWith('http://'),
       })
     );
 
@@ -612,7 +617,7 @@ describe('Performance - Batch Operations', () => {
     const hook = defineHook({
       name: 'simple-validate',
       trigger: 'before-add',
-      validate: (quad) => quad !== null,
+      validate: quad => quad !== null,
     });
 
     const timings = [];

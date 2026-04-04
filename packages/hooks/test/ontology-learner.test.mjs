@@ -50,10 +50,7 @@ describe('OntologyLearner', () => {
     store.addQuad(quad(alice, rdfType, personClass));
     store.addQuad(quad(bob, rdfType, personClass));
 
-    const instances = learner.getInstancesOfClass(
-      store,
-      'http://example.org/Person'
-    );
+    const instances = learner.getInstancesOfClass(store, 'http://example.org/Person');
     expect(instances).toHaveLength(2);
     expect(instances).toContain('http://example.org/alice');
   });
@@ -152,12 +149,8 @@ describe('OntologyLearner', () => {
     const personClass = namedNode('http://example.org/Person');
     const placeClass = namedNode('http://example.org/Place');
 
-    store.addQuad(
-      quad(namedNode('http://example.org/alice'), rdfType, personClass)
-    );
-    store.addQuad(
-      quad(namedNode('http://example.org/paris'), rdfType, placeClass)
-    );
+    store.addQuad(quad(namedNode('http://example.org/alice'), rdfType, personClass));
+    store.addQuad(quad(namedNode('http://example.org/paris'), rdfType, placeClass));
 
     const shapes = await learner.inferShapes(store);
 

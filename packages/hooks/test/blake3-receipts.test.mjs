@@ -20,7 +20,7 @@ async function blake3Hash(data) {
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
     const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
 
@@ -249,15 +249,19 @@ describe('BLAKE3 Receipt Hashing', () => {
   it('should generate unique hashes for orders with same content different time', async () => {
     const baseData = { value: 'test' };
 
-    const hash1 = await blake3Hash(JSON.stringify({
-      ...baseData,
-      timestamp: '2026-04-04T12:00:00Z',
-    }));
+    const hash1 = await blake3Hash(
+      JSON.stringify({
+        ...baseData,
+        timestamp: '2026-04-04T12:00:00Z',
+      })
+    );
 
-    const hash2 = await blake3Hash(JSON.stringify({
-      ...baseData,
-      timestamp: '2026-04-04T12:00:01Z',
-    }));
+    const hash2 = await blake3Hash(
+      JSON.stringify({
+        ...baseData,
+        timestamp: '2026-04-04T12:00:01Z',
+      })
+    );
 
     expect(hash1).not.toBe(hash2);
   });
@@ -265,9 +269,7 @@ describe('BLAKE3 Receipt Hashing', () => {
   it('should support merkle tree construction with BLAKE3', async () => {
     const leaves = ['data1', 'data2', 'data3', 'data4'];
 
-    const hashes = await Promise.all(
-      leaves.map(leaf => blake3Hash(leaf))
-    );
+    const hashes = await Promise.all(leaves.map(leaf => blake3Hash(leaf)));
 
     // Build merkle tree
     let currentLevel = hashes;

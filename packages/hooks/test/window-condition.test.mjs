@@ -14,7 +14,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 // Mock window evaluation
 async function evaluateWindow(condition, graph, queryResults = []) {
   const { spec } = condition;
-  const { size, aggregate } = spec;
+  const { size: _size, aggregate } = spec;
 
   // Calculate aggregate over results
   let aggregateValue;
@@ -255,7 +255,9 @@ describe('Window Condition - Time-based and Event-based Aggregation', () => {
     };
 
     expect(condition.spec.size).toBe(100);
-    expect(condition.spec.slide === undefined || condition.spec.slide === condition.spec.size).toBe(true);
+    expect(condition.spec.slide === undefined || condition.spec.slide === condition.spec.size).toBe(
+      true
+    );
   });
 
   it('should handle time-based window specification', () => {

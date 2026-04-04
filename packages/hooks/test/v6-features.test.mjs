@@ -119,7 +119,9 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     // Execute with different delta sizes
     const delta1 = { adds: [], deletes: [] };
     const delta2 = {
-      adds: [quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o'))],
+      adds: [
+        quad(namedNode('http://example.org/s'), namedNode('http://example.org/p'), literal('o')),
+      ],
       deletes: [],
     };
 
@@ -230,17 +232,9 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
       t_ns: BigInt(1704067200000) * 1000000n, // Fixed timestamp
     };
 
-    const result1 = await engine.execute(
-      createStore(),
-      { adds: [], deletes: [] },
-      context
-    );
+    const result1 = await engine.execute(createStore(), { adds: [], deletes: [] }, context);
 
-    const result2 = await engine.execute(
-      createStore(),
-      { adds: [], deletes: [] },
-      context
-    );
+    const result2 = await engine.execute(createStore(), { adds: [], deletes: [] }, context);
 
     // Same input should produce same BLAKE3 hash
     expect(result1.receipt.receiptHash).toBe(result2.receipt.receiptHash);
@@ -327,16 +321,8 @@ describe('V6: SPARQL CONSTRUCT Effect Execution', () => {
   it('should track delta changes in CONSTRUCT result', () => {
     const delta = {
       adds: [
-        quad(
-          namedNode('http://example.org/s1'),
-          namedNode('http://example.org/p1'),
-          literal('o1')
-        ),
-        quad(
-          namedNode('http://example.org/s2'),
-          namedNode('http://example.org/p2'),
-          literal('o2')
-        ),
+        quad(namedNode('http://example.org/s1'), namedNode('http://example.org/p1'), literal('o1')),
+        quad(namedNode('http://example.org/s2'), namedNode('http://example.org/p2'), literal('o2')),
       ],
       deletes: [],
     };
@@ -541,7 +527,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
   it('should verify feature interoperability in receipt context', async () => {
     const engine = new KnowledgeHookEngine({
       createStore: () => createStore(),
-      isSatisfied: async (condition) => {
+      isSatisfied: async condition => {
         // Support N3 conditions
         if (condition.kind === 'n3') {
           return condition.askQuery !== undefined;
@@ -623,7 +609,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
   it('should test comprehensive hook with all three v6 features', async () => {
     const engine = new KnowledgeHookEngine({
       createStore: () => createStore(),
-      isSatisfied: async (condition) => {
+      isSatisfied: async condition => {
         // Handle N3 conditions
         if (condition.kind === 'n3') {
           return condition.rules && condition.askQuery ? true : false;
@@ -657,7 +643,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
           }
         `,
       },
-      run: async (_event) => {
+      run: async _event => {
         return {
           success: true,
           phase: 'complete',
@@ -960,7 +946,13 @@ describe('V6: SHACL Enforcement Modes', () => {
 
       // Add initial data
       const personUri = namedNode('http://example.org/person1');
-      store.add(quad(personUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://example.org/Person')));
+      store.add(
+        quad(
+          personUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/Person')
+        )
+      );
       store.add(quad(personUri, namedNode('http://example.org/name'), literal('John Doe')));
 
       const initialSize = store.size;
@@ -1000,9 +992,15 @@ describe('V6: SHACL Enforcement Modes', () => {
 
       // Add valid data (meets implicit shapes)
       const resourceUri = namedNode('http://example.org/resource1');
-      store.add(quad(resourceUri, namedNode('http://www.w3.org/2000/01/rdf-schema#label'), literal('Valid Resource')));
+      store.add(
+        quad(
+          resourceUri,
+          namedNode('http://www.w3.org/2000/01/rdf-schema#label'),
+          literal('Valid Resource')
+        )
+      );
 
-      const sizeBefore = store.size;
+      const _sizeBefore = store.size;
 
       const result = await engine.execute(
         store,
@@ -1038,7 +1036,13 @@ describe('V6: SHACL Enforcement Modes', () => {
       engine.register(hook);
 
       const entityUri = namedNode('http://example.org/entity1');
-      store.add(quad(entityUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://example.org/Entity')));
+      store.add(
+        quad(
+          entityUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/Entity')
+        )
+      );
 
       const sizeBefore = store.size;
 
@@ -1079,7 +1083,13 @@ describe('V6: SHACL Enforcement Modes', () => {
       engine.register(hook);
 
       const needsRepairUri = namedNode('http://example.org/broken1');
-      store.add(quad(needsRepairUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://example.org/NeedsRepair')));
+      store.add(
+        quad(
+          needsRepairUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/NeedsRepair')
+        )
+      );
 
       const sizeBefore = store.size;
 
@@ -1127,7 +1137,13 @@ describe('V6: SHACL Enforcement Modes', () => {
 
       // Add person with name but missing age
       const personUri = namedNode('http://example.org/alice');
-      store.add(quad(personUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://xmlns.com/foaf/0.1/Person')));
+      store.add(
+        quad(
+          personUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://xmlns.com/foaf/0.1/Person')
+        )
+      );
       store.add(quad(personUri, namedNode('http://xmlns.com/foaf/0.1/name'), literal('Alice')));
 
       const result = await engine.execute(
@@ -1165,7 +1181,13 @@ describe('V6: SHACL Enforcement Modes', () => {
       engine.register(hook);
 
       const testUri = namedNode('http://example.org/logtest1');
-      store.add(quad(testUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://example.org/LogTest')));
+      store.add(
+        quad(
+          testUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/LogTest')
+        )
+      );
 
       try {
         // This would enable logging if the evaluator respects env.logRepair
@@ -1231,7 +1253,13 @@ describe('V6: SHACL Enforcement Modes', () => {
 
       // Add data that violates shape and cannot be auto-repaired
       const brokenUri = namedNode('http://example.org/broken2');
-      store.add(quad(brokenUri, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://example.org/UnfixableType')));
+      store.add(
+        quad(
+          brokenUri,
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://example.org/UnfixableType')
+        )
+      );
 
       const result = await engine.execute(
         store,
@@ -1348,12 +1376,7 @@ describe('V6: Datalog Conditions', () => {
   it('should handle Datalog rules with multiple conditions', async () => {
     const multiConditionRule = {
       kind: 'datalog',
-      facts: [
-        'user(alice)',
-        'hasPermission(alice, read)',
-        'resource(doc1)',
-        'isPublic(doc1)',
-      ],
+      facts: ['user(alice)', 'hasPermission(alice, read)', 'resource(doc1)', 'isPublic(doc1)'],
       rules: [
         'canRead(X, R) :- hasPermission(X, read), resource(R)',
         'canReadPublic(X, R) :- user(X), isPublic(R)',
@@ -1415,10 +1438,7 @@ describe('V6: Datalog Conditions', () => {
     const recursiveDatalog = {
       kind: 'datalog',
       facts: ['edge(a, b)', 'edge(b, c)', 'edge(c, d)'],
-      rules: [
-        'path(X, Y) :- edge(X, Y)',
-        'path(X, Y) :- edge(X, Z), path(Z, Y)',
-      ],
+      rules: ['path(X, Y) :- edge(X, Y)', 'path(X, Y) :- edge(X, Z), path(Z, Y)'],
       goals: ['path(a, b)', 'path(a, c)', 'path(a, d)'],
     };
 
@@ -1430,11 +1450,7 @@ describe('V6: Datalog Conditions', () => {
   it('should support Datalog aggregation predicates in rules', async () => {
     const aggregationDatalog = {
       kind: 'datalog',
-      facts: [
-        'score(alice, test1, 90)',
-        'score(alice, test2, 85)',
-        'score(alice, test3, 95)',
-      ],
+      facts: ['score(alice, test1, 90)', 'score(alice, test2, 85)', 'score(alice, test3, 95)'],
       rules: [
         'avgScore(X, Avg) :- findall(S, score(X, _, S), Scores), avg(Scores, Avg)',
         'passed(X) :- avgScore(X, Avg), Avg >= 80',

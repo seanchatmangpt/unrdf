@@ -217,7 +217,10 @@ export function createFileResolver(options = {}) {
       keysToDelete.forEach(key => cache.delete(key));
     }
     if (pathResolveCache.size > cacheSize) {
-      const keysToDelete = Array.from(pathResolveCache.keys()).slice(0, pathResolveCache.size - cacheSize);
+      const keysToDelete = Array.from(pathResolveCache.keys()).slice(
+        0,
+        pathResolveCache.size - cacheSize
+      );
       keysToDelete.forEach(key => pathResolveCache.delete(key));
     }
   }
@@ -233,7 +236,10 @@ export function createFileResolver(options = {}) {
         return '';
       }
       // Remove parent directory traversal attempts
-      return filePath.split(/[/\\]+/).filter(part => part && part !== '..').join('/');
+      return filePath
+        .split(/[/\\]+/)
+        .filter(part => part && part !== '..')
+        .join('/');
     },
 
     /**
@@ -322,7 +328,9 @@ export function createFileResolver(options = {}) {
       if (allowedExtensions && Array.isArray(allowedExtensions)) {
         const ext = filePath.slice(filePath.lastIndexOf('.'));
         if (ext && !allowedExtensions.includes(ext)) {
-          throw new Error(`resolve: file extension '${ext}' is not allowed. Allowed: ${allowedExtensions.join(', ')}`);
+          throw new Error(
+            `resolve: file extension '${ext}' is not allowed. Allowed: ${allowedExtensions.join(', ')}`
+          );
         }
       }
 

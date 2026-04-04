@@ -12,10 +12,10 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { createStore } from '@unrdf/oxigraph';
 
 describe('N3 Reasoning Integration', () => {
-  let graph;
+  let _graph;
 
   beforeEach(() => {
-    graph = createStore();
+    _graph = createStore();
   });
 
   it('should support N3 condition kind definition', () => {

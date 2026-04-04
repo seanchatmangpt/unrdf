@@ -69,8 +69,11 @@ export class OntologyLearner {
         }
       }
       // Also RDFS classes
-      if (quad.subject.value && quad.subject.value.startsWith('http') &&
-          quad.object.value === 'http://www.w3.org/2000/01/rdf-schema#Class') {
+      if (
+        quad.subject.value &&
+        quad.subject.value.startsWith('http') &&
+        quad.object.value === 'http://www.w3.org/2000/01/rdf-schema#Class'
+      ) {
         classes.add(quad.subject.value);
       }
     }
@@ -86,8 +89,7 @@ export class OntologyLearner {
     const typeIri = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 
     for (const quad of store) {
-      if (quad.predicate.value === typeIri &&
-          quad.object.value === className) {
+      if (quad.predicate.value === typeIri && quad.object.value === className) {
         instances.add(quad.subject.value);
       }
     }

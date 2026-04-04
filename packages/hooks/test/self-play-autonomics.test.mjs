@@ -335,7 +335,7 @@ describe('runHooksAutonomics', () => {
     const _result = await runHooksAutonomics(store, hooks, {
       episodeCount: 2,
       maxStepsPerEpisode: 5,
-      onEpisodeEnd: (ep) => {
+      onEpisodeEnd: ep => {
         episodeEnds.push(ep.episodeId);
       },
     });

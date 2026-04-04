@@ -151,14 +151,17 @@ export const normalizeLanguageTag = defineHook({
       return quad;
     }
 
-    // Create new quad with lowercase language tag
+    // Explicitly copy quad properties (spread doesn't copy prototype getters)
     return {
-      ...quad,
+      subject: quad.subject,
+      predicate: quad.predicate,
       object: {
-        ...quad.object,
+        termType: quad.object.termType,
         value: quad.object.value,
+        datatype: quad.object.datatype,
         language: quad.object.language.toLowerCase(),
       },
+      graph: quad.graph,
     };
   },
   metadata: {
@@ -177,13 +180,17 @@ export const trimLiterals = defineHook({
       return quad;
     }
 
-    // Create new quad with trimmed literal
+    // Explicitly copy quad properties (spread doesn't copy prototype getters)
     return {
-      ...quad,
+      subject: quad.subject,
+      predicate: quad.predicate,
       object: {
-        ...quad.object,
+        termType: quad.object.termType,
         value: quad.object.value.trim(),
+        datatype: quad.object.datatype,
+        language: quad.object.language,
       },
+      graph: quad.graph,
     };
   },
   metadata: {

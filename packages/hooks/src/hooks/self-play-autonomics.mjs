@@ -23,7 +23,7 @@ import { ask, select, construct } from './query.mjs';
  * @param {Array} hooks - Array of KnowledgeHook definitions
  * @returns {Object} toolRegistry { toolName: { handler, schema } }
  */
-export function buildHooksToolRegistry(store, hooks = []) {
+export function buildHooksToolRegistry(store, _hooks = []) {
   const engine = new KnowledgeHookEngine(store);
 
   return {
@@ -66,7 +66,7 @@ export function buildHooksToolRegistry(store, hooks = []) {
     },
 
     hooks_execute_effects: {
-      handler: async ({ store: execStore, hooks: execHooks, delta: _delta }) => {
+      handler: async ({ store: _execStore, hooks: execHooks, delta: _delta }) => {
         // Execute hooks with receipt chaining
         const context = {
           nodeId: 'self-play-autonomics',
@@ -77,7 +77,7 @@ export function buildHooksToolRegistry(store, hooks = []) {
           const result = await engine.execute(context, execHooks);
 
           return {
-            executionResults: execHooks.map((h) => ({
+            executionResults: execHooks.map(h => ({
               hookName: h.name,
               status: 'executed',
             })),
@@ -95,7 +95,7 @@ export function buildHooksToolRegistry(store, hooks = []) {
           };
         } catch (err) {
           return {
-            executionResults: execHooks.map((h) => ({
+            executionResults: execHooks.map(h => ({
               hookName: h.name,
               status: 'failed',
               error: err.message,
@@ -302,7 +302,11 @@ export async function runHooksAutonomics(store, hookDefinitions = [], options = 
 
       // Decide next tool
       const decision = await decisionFn(
-        { steps: episode.stepResults, context, recordFeedback: (s, r) => episode.feedback.push({ signal: s, reason: r }) },
+        {
+          steps: episode.stepResults,
+          context,
+          recordFeedback: (s, r) => episode.feedback.push({ signal: s, reason: r }),
+        },
         previousResult
       );
 

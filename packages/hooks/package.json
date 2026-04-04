@@ -48,10 +48,11 @@
   ],
   "dependencies": {
     "@noble/hashes": "^1.4.0",
-    "@unrdf/core": "26.4.3",
-    "@unrdf/oxigraph": "26.4.3",
+    "@unrdf/core": "26.4.4",
+    "@unrdf/oxigraph": "26.4.4",
     "citty": "^0.1.6",
     "eyereasoner": "^10",
+    "sparqljs": "^3.7.3",
     "zod": "^4.1.13"
   },
   "devDependencies": {

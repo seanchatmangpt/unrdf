@@ -50,10 +50,10 @@ describe('Delta Conditions - Increase Detection', () => {
       get size() {
         return quads.length;
       },
-      add: (quad) => {
+      add: quad => {
         quads.push(quad);
       },
-      insert: (quad) => {
+      insert: quad => {
         quads.push(quad);
       },
     };
@@ -78,8 +78,12 @@ describe('Delta Conditions - Increase Detection', () => {
     };
 
     const deltaInfo = {
-      additions: Array(5).fill(null).map((_, i) => ({ id: `add-${i}` })),
-      removals: Array(1).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      additions: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
+      removals: Array(1)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Net change: (5 - 1) / 10 = 0.4 > 0.1 threshold
@@ -106,7 +110,9 @@ describe('Delta Conditions - Increase Detection', () => {
     };
 
     const deltaInfo = {
-      additions: Array(3).fill(null).map((_, i) => ({ id: `add-${i}` })),
+      additions: Array(3)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
       removals: [],
     };
 
@@ -125,10 +131,10 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
       get size() {
         return quads.length;
       },
-      add: (quad) => {
+      add: quad => {
         quads.push(quad);
       },
-      insert: (quad) => {
+      insert: quad => {
         quads.push(quad);
       },
     };
@@ -154,7 +160,9 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
 
     const deltaInfo = {
       additions: [],
-      removals: Array(3).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      removals: Array(3)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Net change: (0 - 3) / 10 = -0.3 < -0.1 threshold
@@ -182,7 +190,9 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
 
     const deltaInfo = {
       additions: [],
-      removals: Array(3).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      removals: Array(3)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Change: (0 - 3) / 100 = -0.03 > -0.5 (not meeting threshold)
@@ -209,8 +219,12 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
     };
 
     const deltaInfo = {
-      additions: Array(5).fill(null).map((_, i) => ({ id: `add-${i}` })),
-      removals: Array(10).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      additions: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
+      removals: Array(10)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Net change: (5 - 10) / 20 = -0.25 < -0.05
@@ -238,7 +252,9 @@ describe('Delta Conditions - Decrease Detection (THE FIX)', () => {
 
     const deltaInfo = {
       additions: [],
-      removals: Array(20).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      removals: Array(20)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Net change: (0 - 20) / 50 = -0.4 < -0.2 (deletion detected)
@@ -256,10 +272,10 @@ describe('Delta Conditions - Neutral Change', () => {
       get size() {
         return quads.length;
       },
-      add: (quad) => {
+      add: quad => {
         quads.push(quad);
       },
-      insert: (quad) => {
+      insert: quad => {
         quads.push(quad);
       },
     };
@@ -284,8 +300,12 @@ describe('Delta Conditions - Neutral Change', () => {
     };
 
     const deltaInfo = {
-      additions: Array(5).fill(null).map((_, i) => ({ id: `add-${i}` })),
-      removals: Array(5).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      additions: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
+      removals: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Net change: (5 - 5) / 10 = 0 (not > 0.05)
@@ -321,8 +341,12 @@ describe('Delta Conditions - Neutral Change', () => {
 
     // Equal additions and removals
     const deltaInfo = {
-      additions: Array(5).fill(null).map((_, i) => ({ id: `add-${i}` })),
-      removals: Array(5).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      additions: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
+      removals: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     const increaseResult = await evaluateDelta(increaseCondition, graph, deltaInfo);
@@ -342,10 +366,10 @@ describe('Delta Conditions - Modify Type', () => {
       get size() {
         return quads.length;
       },
-      add: (quad) => {
+      add: quad => {
         quads.push(quad);
       },
-      insert: (quad) => {
+      insert: quad => {
         quads.push(quad);
       },
     };
@@ -371,7 +395,9 @@ describe('Delta Conditions - Modify Type', () => {
 
     const deltaInfo = {
       additions: [],
-      removals: Array(5).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      removals: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     // Absolute change: |(0 - 5) / 20| = 0.25 > 0.1
@@ -399,7 +425,9 @@ describe('Delta Conditions - Modify Type', () => {
 
     // Test large increase
     const increaseInfo = {
-      additions: Array(8).fill(null).map((_, i) => ({ id: `add-${i}` })),
+      additions: Array(8)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
       removals: [],
     };
 
@@ -409,7 +437,9 @@ describe('Delta Conditions - Modify Type', () => {
     // Test large decrease
     const decreaseInfo = {
       additions: [],
-      removals: Array(8).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      removals: Array(8)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     const decreaseResult = await evaluateDelta(condition, graph, decreaseInfo);
@@ -426,10 +456,10 @@ describe('Delta Conditions - Any Change Type', () => {
       get size() {
         return quads.length;
       },
-      add: (quad) => {
+      add: quad => {
         quads.push(quad);
       },
-      insert: (quad) => {
+      insert: quad => {
         quads.push(quad);
       },
     };
@@ -506,8 +536,12 @@ describe('Delta Conditions - Any Change Type', () => {
 
     // 5 additions, 5 removals → changeMagnitude = 0 (no net change)
     const deltaInfo = {
-      additions: Array(5).fill(null).map((_, i) => ({ id: `add-${i}` })),
-      removals: Array(5).fill(null).map((_, i) => ({ id: `rem-${i}` })),
+      additions: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `add-${i}` })),
+      removals: Array(5)
+        .fill(null)
+        .map((_, i) => ({ id: `rem-${i}` })),
     };
 
     const result = await evaluateDelta(condition, graph, deltaInfo);

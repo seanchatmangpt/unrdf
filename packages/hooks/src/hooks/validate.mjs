@@ -3,56 +3,104 @@
  * @module hooks/validate
  *
  * @description
- * Provides SHACL validation against RDF stores.
- * This is a simplified implementation - full SHACL validation would require a dedicated library.
+ * Full SHACL validation using rdf-validate-shacl against Oxigraph-backed RDF stores.
+ * Supports minCount, maxCount, datatype, and other SHACL Core constraints.
+ * Caches parsed shape validators for performance.
  */
 
+import SHACLValidator from 'rdf-validate-shacl';
+import oxigraph from 'oxigraph';
+
+const SHACL_NS = 'http://www.w3.org/ns/shacl#';
+
+// Severity URI to short string mapping
+const SEVERITY_MAP = {
+  [`${SHACL_NS}Violation`]: 'violation',
+  [`${SHACL_NS}Warning`]: 'warning',
+  [`${SHACL_NS}Info`]: 'info',
+};
+
+// Cache parsed SHACLValidator instances keyed by shapes string
+const validatorCache = new Map();
+const CACHE_MAX_SIZE = 50;
+
 /**
- * Validate RDF data against SHACL shapes
+ * Get or create a cached SHACLValidator for the given shapes Turtle string.
  *
- * @param {object} dataStore - RDF store containing data to validate
+ * @param {string} shapesString - SHACL shapes as Turtle
+ * @returns {SHACLValidator} Cached validator instance
+ */
+function getValidator(shapesString) {
+  let validator = validatorCache.get(shapesString);
+  if (validator) {
+    return validator;
+  }
+
+  const shapesStore = new oxigraph.Store();
+  shapesStore.load(shapesString, { format: 'text/turtle' });
+  const shapesQuads = shapesStore.match(null, null, null, null);
+
+  validator = new SHACLValidator(shapesQuads);
+
+  // Evict oldest entry if cache is full
+  if (validatorCache.size >= CACHE_MAX_SIZE) {
+    const firstKey = validatorCache.keys().next().value;
+    validatorCache.delete(firstKey);
+  }
+  validatorCache.set(shapesString, validator);
+
+  return validator;
+}
+
+/**
+ * Validate RDF data against SHACL shapes.
+ *
+ * @param {object} dataStore - RDF store containing data to validate (OxigraphStore or raw oxigraph.Store)
  * @param {string} shapesString - SHACL shapes as Turtle string
  * @param {object} options - Validation options
  * @param {boolean} options.strict - Enable strict validation mode
  * @param {boolean} options.includeDetails - Include validation details in report
- * @returns {object} SHACL validation report
+ * @returns {Promise<object>} SHACL validation report
  */
-export function validateShacl(dataStore, shapesString, options = {}) {
+export async function validateShacl(dataStore, shapesString, options = {}) {
   const { includeDetails = true } = options;
 
-  // Simplified SHACL validation
-  // In production, use a full SHACL validator like rdf-validate-shacl
-
-  const report = {
-    conforms: true,
-    results: [],
-    timestamp: new Date().toISOString(),
-  };
-
   try {
-    // Basic validation: check if data store is valid
     if (!dataStore || typeof dataStore.size !== 'number') {
       throw new Error('Invalid data store');
     }
-
-    // Check if shapes string is valid
     if (!shapesString || typeof shapesString !== 'string') {
       throw new Error('Invalid shapes string');
     }
 
-    // In a full implementation, this would:
-    // 1. Parse SHACL shapes from shapesString
-    // 2. Iterate through each shape
-    // 3. Apply constraints to data
-    // 4. Collect validation results
+    const validator = getValidator(shapesString);
 
-    // For now, return conforming result
-    // This should be replaced with actual SHACL validation logic
+    // Use the raw oxigraph.Store for validation (unwrap OxigraphStore wrapper if needed)
+    const rawStore = dataStore.store || dataStore;
+
+    const shaclReport = await validator.validate(rawStore);
+
+    const results = (shaclReport.results || []).map(result => ({
+      severity: SEVERITY_MAP[result.severity?.value] || 'violation',
+      message: result.message?.map(m => m.value).join('; ') || null,
+      focusNode: result.focusNode?.value || null,
+      resultPath: result.path?.value || null,
+      resultMessage: result.message?.map(m => m.value).join('; ') || null,
+      value: result.value?.value || null,
+      sourceConstraintComponent: result.sourceConstraintComponent?.value || null,
+      sourceShape: result.sourceShape?.value || null,
+    }));
+
+    const report = {
+      conforms: shaclReport.conforms,
+      results,
+      timestamp: new Date().toISOString(),
+    };
 
     if (includeDetails) {
       report.details = {
-        shapesCount: 0,
-        constraintsChecked: 0,
+        shapesCount: countShapes(shapesString),
+        constraintsChecked: results.length,
         validationTime: 0,
       };
     }
@@ -65,7 +113,9 @@ export function validateShacl(dataStore, shapesString, options = {}) {
         {
           severity: 'violation',
           message: `SHACL validation error: ${error.message}`,
-          path: null,
+          focusNode: null,
+          resultPath: null,
+          resultMessage: `SHACL validation error: ${error.message}`,
           value: null,
         },
       ],
@@ -76,17 +126,27 @@ export function validateShacl(dataStore, shapesString, options = {}) {
 }
 
 /**
+ * Count the number of sh:NodeShape declarations in a shapes string.
+ *
+ * @param {string} shapesString - Turtle shapes string
+ * @returns {number} Approximate number of shapes
+ */
+function countShapes(shapesString) {
+  const matches = shapesString.match(/sh:NodeShape/g);
+  return matches ? matches.length : 0;
+}
+
+/**
  * Validate a single node against SHACL shapes
  *
  * @param {object} store - RDF store
  * @param {object} node - Node to validate
  * @param {string} shapesString - SHACL shapes
  * @param {object} options - Validation options
- * @returns {object} Validation report for the node
+ * @returns {Promise<object>} Validation report for the node
  */
-export function validateNode(store, node, shapesString, options = {}) {
-  // Simplified node validation
-  const report = validateShacl(store, shapesString, options);
+export async function validateNode(store, node, shapesString, options = {}) {
+  const report = await validateShacl(store, shapesString, options);
 
   return {
     ...report,
@@ -130,4 +190,11 @@ export function getWarnings(report) {
   }
 
   return report.results.filter(result => result.severity === 'warning');
+}
+
+/**
+ * Clear the validator cache. Useful in tests or when shapes change frequently.
+ */
+export function clearValidatorCache() {
+  validatorCache.clear();
 }

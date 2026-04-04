@@ -79,11 +79,11 @@ function mapSeverity(severity) {
 }
 
 describe('SHACL Annotate RDF Serialization', () => {
-  let graph;
+  let _graph;
 
   beforeEach(() => {
     // Mock store object
-    graph = {
+    _graph = {
       add: () => {},
       size: 0,
     };
