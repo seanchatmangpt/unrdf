@@ -389,9 +389,10 @@ describe('DaemonReceiptGenerator - Merkle Integration', () => {
       }
 
       const proof = await generator.getReceiptProof(receipts[0].id, receipts);
+      const lastChar = proof.leafHash[63];
       const tamperedProof = {
         ...proof,
-        leafHash: proof.leafHash.substring(0, 63) + 'f',
+        leafHash: proof.leafHash.substring(0, 63) + (lastChar === 'f' ? '0' : 'f'),
       };
 
       // Act
@@ -492,8 +493,9 @@ describe('DaemonReceiptGenerator - Merkle Integration', () => {
         receipts.push(await generator.generateReceipt(op));
       }
 
-      // Tamper with hash
-      receipts[2].receiptHash = receipts[2].receiptHash.substring(0, 63) + 'f';
+      // Tamper with hash (flip last char to a definitely-different value)
+      const tamperChar2 = receipts[2].receiptHash[63] === 'f' ? '0' : 'f';
+      receipts[2].receiptHash = receipts[2].receiptHash.substring(0, 63) + tamperChar2;
 
       // Act
       const result = await generator.verifyChain(receipts);
