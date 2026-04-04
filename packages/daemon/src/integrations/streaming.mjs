@@ -46,15 +46,15 @@ const SubscriptionIdSchema = z.string().min(1);
  * Feed validation schema
  */
 const FeedSchema = z.object({
-  subscribe: z.function().args(z.any()).returns(z.any()),
-  unsubscribe: z.function().args(z.any()).returns(z.any()).optional(),
+  subscribe: z.function(),
+  unsubscribe: z.function().optional(),
 }).passthrough();
 
 /**
  * Daemon validation schema
  */
 const DaemonSchema = z.object({
-  execute: z.function().args(z.string()).returns(z.promise(z.any())).optional(),
+  execute: z.function().optional(),
 }).passthrough();
 
 /**
@@ -448,10 +448,10 @@ export class ReactiveSubscriptionManager {
  * const manager = subscribeToChangeFeeds(daemon, feed);
  */
 export function subscribeToChangeFeeds(daemon, feeds, config = {}) {
-  const validatedDaemon = DaemonSchema.parse(daemon);
+  DaemonSchema.parse(daemon); // validate only
   const validatedConfig = StreamingConfigSchema.parse(config);
   const feedArray = Array.isArray(feeds) ? feeds : [feeds];
-  const manager = new ReactiveSubscriptionManager(validatedDaemon, validatedConfig);
+  const manager = new ReactiveSubscriptionManager(daemon, validatedConfig);
 
   for (const feed of feedArray) {
     FeedSchema.parse(feed);
@@ -504,9 +504,9 @@ export function registerReactiveTrigger(daemon, pattern, operationId, metadata =
  * manager.registerTrigger('add', 'sync');
  */
 export function createDaemonFromChangeFeeds(daemon, feeds, config = {}) {
-  const validatedDaemon = DaemonSchema.parse(daemon);
+  DaemonSchema.parse(daemon); // validate only
   const validatedConfig = StreamingConfigSchema.parse(config);
-  const manager = subscribeToChangeFeeds(validatedDaemon, feeds, validatedConfig);
-  validatedDaemon._reactiveManager = manager;
+  const manager = subscribeToChangeFeeds(daemon, feeds, validatedConfig);
+  daemon._reactiveManager = manager;
   return manager;
 }

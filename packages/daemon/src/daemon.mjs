@@ -106,8 +106,11 @@ export class Daemon extends EventEmitter {
       return;
     }
 
+    this.isRunning = true;
+    this.startTime = Date.now();
+
     try {
-      // Initialize OTEL SDK first
+      // Initialize OTEL SDK
       await initializeOTelSDK({
         serviceName: 'unrdf-daemon',
         version: '26.4.3',
@@ -115,11 +118,10 @@ export class Daemon extends EventEmitter {
         otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
       });
     } catch (error) {
-      this.logger.warn('[Daemon] OTEL SDK initialization failed, continuing without tracing:', error.message);
+      if (this.logger.warn) {
+        this.logger.warn('[Daemon] OTEL SDK initialization failed, continuing without tracing:', error.message);
+      }
     }
-
-    this.isRunning = true;
-    this.startTime = Date.now();
     this.logger.info(`[Daemon ${this.nodeId}] Started`);
     this._safeEmit('daemon:started', { nodeId: this.nodeId, timestamp: new Date() });
   }

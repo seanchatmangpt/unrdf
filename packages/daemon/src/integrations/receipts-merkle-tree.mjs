@@ -41,8 +41,13 @@ export async function buildMerkleTree(receipts) {
     levels.push(nextLevel);
     currentLevel = nextLevel;
   }
+  // CVE-2012-2459 mitigation: include leaf count in root hash so a tree with N
+  // leaves always has a different root than a tree with N+1 leaves, even when
+  // the extra leaf duplicates the last one (odd-leaf duplication attack).
+  const rawRoot = currentLevel[0];
+  const root = await blake3(`${leaves.length}:${rawRoot}`);
   return {
-    root: currentLevel[0],
+    root,
     depth: levels.length - 1,
     leafCount: leaves.length,
     leaves,
@@ -61,6 +66,13 @@ export async function generateInclusionProof(tree, index) {
         hash: level[siblingIndex],
         position: currentIndex % 2 === 0 ? 'right' : 'left',
       });
+    } else {
+      // Odd leaf: sibling is itself (mirrors buildMerkleTree odd-leaf handling).
+      // Include as 'right' so verifier computes blake3(currentHash:currentHash).
+      proof.push({
+        hash: level[currentIndex],
+        position: 'right',
+      });
     }
     currentIndex = Math.floor(currentIndex / 2);
   }
@@ -78,6 +90,10 @@ export async function verifyInclusionProof(proof) {
         ? currentHash + ':' + step.hash
         : step.hash + ':' + currentHash;
       currentHash = await blake3(combined);
+    }
+    // Apply CVE-2012-2459 leaf-count wrapping for multi-leaf trees
+    if (proof.batchSize && proof.batchSize > 1) {
+      currentHash = await blake3(`${proof.batchSize}:${currentHash}`);
     }
     return currentHash === proof.merkleRoot;
   } catch {

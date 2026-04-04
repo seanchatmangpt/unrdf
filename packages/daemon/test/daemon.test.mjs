@@ -187,7 +187,7 @@ describe('Daemon', () => {
 
     it('should log start message', async () => {
       // Arrange
-      const mockLogger = { info: vi.fn(), debug: vi.fn() };
+      const mockLogger = { info: vi.fn(), debug: vi.fn(), warn: vi.fn() };
       daemon.logger = mockLogger;
 
       // Act
@@ -258,7 +258,7 @@ describe('Daemon', () => {
 
     it('should log stop message', async () => {
       // Arrange
-      const mockLogger = { info: vi.fn(), debug: vi.fn() };
+      const mockLogger = { info: vi.fn(), debug: vi.fn(), warn: vi.fn() };
       daemon.logger = mockLogger;
 
       // Act
