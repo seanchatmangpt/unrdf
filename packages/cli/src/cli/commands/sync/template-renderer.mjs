@@ -203,6 +203,11 @@ export function createNunjucksEnvironment(templatesDir) {
     'quote',
     (s, c = '"') => `${c}${String(s ?? '').replace(new RegExp(c, 'g'), '\\' + c)}${c}`
   );
+  env.addFilter('zodDefault', (val, type) => {
+    if (type === 'boolean') return val === 'true' || val === true ? 'true' : 'false';
+    if (type === 'number') return isNaN(Number(val)) ? '0' : String(Number(val));
+    return `'${String(val ?? '').replace(/'/g, "\\'")}'`;
+  });
   env.addFilter('date', (d, f = 'YYYY-MM-DD') => {
     const dt = d instanceof Date ? d : new Date();
     const p = n => String(n).padStart(2, '0');

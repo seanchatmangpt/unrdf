@@ -2,7 +2,7 @@
  * @file MCP Tool Definitions
  * @module @unrdf/daemon/mcp/tools-generated
  * @description Auto-generated tool JSON schema definitions
- * @generated 2026-04-03 18:28:56 from cli-commands.ttl
+ * @generated 2026-04-03 21:03:03 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-tool-defs
  */

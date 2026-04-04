@@ -2,13 +2,14 @@
  * @file MCP Server Implementation
  * @module @unrdf/daemon/mcp
  * @description Model Context Protocol server for UNRDF Daemon
- * @generated 2026-04-03 18:28:56 from cli-commands.ttl
+ * @generated 2026-04-03 21:03:03 from cli-commands.ttl
  *
  * DO NOT EDIT — regenerate with: unrdf sync --rule mcp-index
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 import { registerResources } from './resources.mjs';
 import { registerPrompts } from './prompts.mjs';
 import * as handlers from './handlers.mjs';
@@ -33,22 +34,9 @@ export function createMCPServer() {
     {
       description: 'Add prefix to context',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Context file',
-          },
-          "namespace": {
-            type: 'string',
-            description: 'Namespace IRI',
-          },
-          "prefix": {
-            type: 'string',
-            description: 'Prefix name',
-          },
-        },
-        required: ["file", "namespace", "prefix"],
+        "file": z.string().describe('Context file'),
+        "namespace": z.string().describe('Namespace IRI'),
+        "prefix": z.string().describe('Prefix name'),
       },
     },
     async (args) => {
@@ -63,18 +51,8 @@ export function createMCPServer() {
     {
       description: 'Create a new JSON-LD context',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "name": {
-            type: 'string',
-            description: 'Context name',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output file path',
-          },
-        },
-        required: ["name"],
+        "name": z.string().describe('Context name'),
+        "output": z.string().describe('Output file path').optional(),
       },
     },
     async (args) => {
@@ -89,19 +67,8 @@ export function createMCPServer() {
     {
       description: 'List context prefixes',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Context file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (table, json)',
-            default: 'table',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('Context file'),
+        "format": z.string().describe('Output format (table, json)').default('table').optional(),
       },
     },
     async (args) => {
@@ -116,18 +83,8 @@ export function createMCPServer() {
     {
       description: 'Remove prefix from context',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Context file',
-          },
-          "prefix": {
-            type: 'string',
-            description: 'Prefix name to remove',
-          },
-        },
-        required: ["file", "prefix"],
+        "file": z.string().describe('Context file'),
+        "prefix": z.string().describe('Prefix name to remove'),
       },
     },
     async (args) => {
@@ -142,26 +99,10 @@ export function createMCPServer() {
     {
       description: 'Convert RDF between formats',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "from": {
-            type: 'string',
-            description: 'Input format (turtle, ntriples, nquads) - auto-detected if not specified',
-          },
-          "input": {
-            type: 'string',
-            description: 'Input RDF file',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output file',
-          },
-          "to": {
-            type: 'string',
-            description: 'Output format (turtle, ntriples, nquads) - auto-detected if not specified',
-          },
-        },
-        required: ["input", "output"],
+        "from": z.string().describe('Input format (turtle, ntriples, nquads) - auto-detected if not specified').optional(),
+        "input": z.string().describe('Input RDF file'),
+        "output": z.string().describe('Output file'),
+        "to": z.string().describe('Output format (turtle, ntriples, nquads) - auto-detected if not specified').optional(),
       },
     },
     async (args) => {
@@ -176,18 +117,8 @@ export function createMCPServer() {
     {
       description: 'Show Raft cluster status and members',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "include-metrics": {
-            type: 'boolean',
-            description: 'Include detailed member metrics',
-          },
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "include-metrics": z.boolean().describe('Include detailed member metrics').optional(),
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -202,14 +133,7 @@ export function createMCPServer() {
     {
       description: 'Display current daemon configuration',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -224,18 +148,8 @@ export function createMCPServer() {
     {
       description: 'List all configured operations',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "include-metadata": {
-            type: 'boolean',
-            description: 'Include metadata in output',
-          },
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "include-metadata": z.boolean().describe('Include metadata in output').optional(),
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -250,26 +164,10 @@ export function createMCPServer() {
     {
       description: 'View operation logs with filtering',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "filter": {
-            type: 'string',
-            description: 'Filter logs by pattern',
-          },
-          "follow": {
-            type: 'boolean',
-            description: 'Follow log output (stream mode)',
-          },
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-          "max-lines": {
-            type: 'number',
-            description: 'Maximum lines to display',
-          },
-        },
-        required: [],
+        "filter": z.string().describe('Filter logs by pattern').optional(),
+        "follow": z.boolean().describe('Follow log output (stream mode)').optional(),
+        "json": z.boolean().describe('Output as JSON').optional(),
+        "max-lines": z.number().describe('Maximum lines to display').optional(),
       },
     },
     async (args) => {
@@ -284,26 +182,10 @@ export function createMCPServer() {
     {
       description: 'Execute operation immediately',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-          "operation": {
-            type: 'string',
-            description: 'Operation ID to execute',
-          },
-          "payload": {
-            type: 'string',
-            description: 'Operation payload (JSON string)',
-          },
-          "timeout": {
-            type: 'number',
-            description: 'Execution timeout in milliseconds',
-          },
-        },
-        required: ["operation"],
+        "json": z.boolean().describe('Output as JSON').optional(),
+        "operation": z.string().describe('Operation ID to execute'),
+        "payload": z.string().describe('Operation payload (JSON string)').optional(),
+        "timeout": z.number().describe('Execution timeout in milliseconds').optional(),
       },
     },
     async (args) => {
@@ -318,26 +200,10 @@ export function createMCPServer() {
     {
       description: 'Add scheduled trigger to operation',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-          "operation": {
-            type: 'string',
-            description: 'Operation ID to schedule',
-          },
-          "payload": {
-            type: 'string',
-            description: 'Trigger payload (JSON string)',
-          },
-          "trigger": {
-            type: 'string',
-            description: 'Trigger type (cron, interval, reactive, event)',
-          },
-        },
-        required: ["operation", "trigger"],
+        "json": z.boolean().describe('Output as JSON').optional(),
+        "operation": z.string().describe('Operation ID to schedule'),
+        "payload": z.string().describe('Trigger payload (JSON string)').optional(),
+        "trigger": z.string().describe('Trigger type (cron, interval, reactive, event)'),
       },
     },
     async (args) => {
@@ -352,18 +218,8 @@ export function createMCPServer() {
     {
       description: 'Show daemon health and metrics',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "include-metrics": {
-            type: 'boolean',
-            description: 'Include detailed metrics',
-          },
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "include-metrics": z.boolean().describe('Include detailed metrics').optional(),
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -378,18 +234,8 @@ export function createMCPServer() {
     {
       description: 'Create a new RDF graph',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Output file path (default: <name>.nq)',
-          },
-          "name": {
-            type: 'string',
-            description: 'Graph name',
-          },
-        },
-        required: ["name"],
+        "file": z.string().describe('Output file path (default: <name>.nq)').optional(),
+        "name": z.string().describe('Graph name'),
       },
     },
     async (args) => {
@@ -404,23 +250,9 @@ export function createMCPServer() {
     {
       description: 'Export graph data to file',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Source graph file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (turtle, ntriples, nquads)',
-            default: 'turtle',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output file',
-          },
-        },
-        required: ["file", "output"],
+        "file": z.string().describe('Source graph file'),
+        "format": z.string().describe('Output format (turtle, ntriples, nquads)').default('turtle').optional(),
+        "output": z.string().describe('Output file'),
       },
     },
     async (args) => {
@@ -435,22 +267,9 @@ export function createMCPServer() {
     {
       description: 'Load RDF data into a graph',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'RDF file to load (Turtle, N-Triples, N-Quads)',
-          },
-          "format": {
-            type: 'string',
-            description: 'RDF format (turtle, ntriples, nquads) - auto-detected if not specified',
-          },
-          "graph": {
-            type: 'string',
-            description: 'Target graph name',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('RDF file to load (Turtle, N-Triples, N-Quads)'),
+        "format": z.string().describe('RDF format (turtle, ntriples, nquads) - auto-detected if not specified').optional(),
+        "graph": z.string().describe('Target graph name').optional(),
       },
     },
     async (args) => {
@@ -465,23 +284,9 @@ export function createMCPServer() {
     {
       description: 'Execute SPARQL query on graph',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Graph file to query',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (table, json, turtle)',
-            default: 'table',
-          },
-          "query": {
-            type: 'string',
-            description: 'SPARQL query string',
-          },
-        },
-        required: ["file", "query"],
+        "file": z.string().describe('Graph file to query'),
+        "format": z.string().describe('Output format (table, json, turtle)').default('table').optional(),
+        "query": z.string().describe('SPARQL query string'),
       },
     },
     async (args) => {
@@ -496,14 +301,7 @@ export function createMCPServer() {
     {
       description: 'Show graph statistics',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Graph file to analyze',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('Graph file to analyze'),
       },
     },
     async (args) => {
@@ -518,23 +316,9 @@ export function createMCPServer() {
     {
       description: 'Define hooks from config file',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "config": {
-            type: 'string',
-            description: 'Hooks config file (JSON)',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output file for hook metadata (JSON)',
-          },
-          "validate": {
-            type: 'boolean',
-            description: 'Validate without executing',
-            default: 'false',
-          },
-        },
-        required: ["config"],
+        "config": z.string().describe('Hooks config file (JSON)'),
+        "output": z.string().describe('Output file for hook metadata (JSON)').optional(),
+        "validate": z.boolean().describe('Validate without executing').default(false).optional(),
       },
     },
     async (args) => {
@@ -549,22 +333,9 @@ export function createMCPServer() {
     {
       description: 'Evaluate a single condition against a store',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "condition": {
-            type: 'string',
-            description: 'Condition type (sparql-ask, sparql-select, shacl, delta, threshold, count, window, n3, datalog)',
-          },
-          "config": {
-            type: 'string',
-            description: 'Condition config as JSON',
-          },
-          "store": {
-            type: 'string',
-            description: 'Store file (NQ/Turtle/N-Triples)',
-          },
-        },
-        required: ["condition", "config", "store"],
+        "condition": z.string().describe('Condition type (sparql-ask, sparql-select, shacl, delta, threshold, count, window, n3, datalog)'),
+        "config": z.string().describe('Condition config as JSON'),
+        "store": z.string().describe('Store file (NQ/Turtle/N-Triples)'),
       },
     },
     async (args) => {
@@ -579,27 +350,10 @@ export function createMCPServer() {
     {
       description: 'Execute hooks against an RDF store',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "config": {
-            type: 'string',
-            description: 'Hooks config file (JSON)',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output file for results (JSON)',
-          },
-          "show-receipts": {
-            type: 'boolean',
-            description: 'Show receipt chain with hashes',
-            default: 'false',
-          },
-          "store": {
-            type: 'string',
-            description: 'Store file (NQ/Turtle/N-Triples)',
-          },
-        },
-        required: ["config", "store"],
+        "config": z.string().describe('Hooks config file (JSON)'),
+        "output": z.string().describe('Output file for results (JSON)').optional(),
+        "show-receipts": z.boolean().describe('Show receipt chain with hashes').default(false).optional(),
+        "store": z.string().describe('Store file (NQ/Turtle/N-Triples)'),
       },
     },
     async (args) => {
@@ -614,10 +368,6 @@ export function createMCPServer() {
     {
       description: 'List available condition kinds',
       inputSchema: {
-        type: 'object',
-        properties: {
-        },
-        required: [],
       },
     },
     async (args) => {
@@ -632,24 +382,9 @@ export function createMCPServer() {
     {
       description: 'Display receipt chain from hook execution results',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'Execution result file (JSON)',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (json, table)',
-            default: 'table',
-          },
-          "verify": {
-            type: 'boolean',
-            description: 'Verify receipt chain integrity',
-            default: 'false',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('Execution result file (JSON)'),
+        "format": z.string().describe('Output format (json, table)').default('table').optional(),
+        "verify": z.boolean().describe('Verify receipt chain integrity').default(false).optional(),
       },
     },
     async (args) => {
@@ -664,14 +399,7 @@ export function createMCPServer() {
     {
       description: 'List all exposed tools, resources, and prompts',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -686,20 +414,8 @@ export function createMCPServer() {
     {
       description: 'Start the MCP server',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "port": {
-            type: 'number',
-            description: 'Port for SSE transport (when transport=sse)',
-            default: '3001',
-          },
-          "transport": {
-            type: 'string',
-            description: 'Transport type: stdio or sse',
-            default: 'stdio',
-          },
-        },
-        required: [],
+        "port": z.number().describe('Port for SSE transport (when transport=sse)').default(3001).optional(),
+        "transport": z.string().describe('Transport type: stdio or sse').default('stdio').optional(),
       },
     },
     async (args) => {
@@ -714,14 +430,7 @@ export function createMCPServer() {
     {
       description: 'Show if MCP server is running',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -736,14 +445,7 @@ export function createMCPServer() {
     {
       description: 'Stop the running MCP server',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "json": {
-            type: 'boolean',
-            description: 'Output as JSON',
-          },
-        },
-        required: [],
+        "json": z.boolean().describe('Output as JSON').optional(),
       },
     },
     async (args) => {
@@ -758,23 +460,9 @@ export function createMCPServer() {
     {
       description: 'Execute SPARQL query',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'RDF data file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (table, json, csv)',
-            default: 'table',
-          },
-          "query": {
-            type: 'string',
-            description: 'SPARQL query string',
-          },
-        },
-        required: ["file", "query"],
+        "file": z.string().describe('RDF data file'),
+        "format": z.string().describe('Output format (table, json, csv)').default('table').optional(),
+        "query": z.string().describe('SPARQL query string'),
       },
     },
     async (args) => {
@@ -789,23 +477,9 @@ export function createMCPServer() {
     {
       description: 'Execute SPARQL query from file',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "data": {
-            type: 'string',
-            description: 'RDF data file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (table, json, csv)',
-            default: 'table',
-          },
-          "query": {
-            type: 'string',
-            description: 'SPARQL query file (.sparql)',
-          },
-        },
-        required: ["data", "query"],
+        "data": z.string().describe('RDF data file'),
+        "format": z.string().describe('Output format (table, json, csv)').default('table').optional(),
+        "query": z.string().describe('SPARQL query file (.sparql)'),
       },
     },
     async (args) => {
@@ -820,44 +494,13 @@ export function createMCPServer() {
     {
       description: 'Generate synchronized code artifacts from RDF ontology',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "config": {
-            type: 'string',
-            description: 'Path to `.unrdf.toml` configuration file',
-            default: '.unrdf.toml',
-          },
-          "dry-run": {
-            type: 'boolean',
-            description: 'Preview changes without writing files',
-            default: 'false',
-          },
-          "force": {
-            type: 'boolean',
-            description: 'Overwrite existing files without prompting',
-            default: 'false',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output format: text or json',
-            default: 'text',
-          },
-          "rule": {
-            type: 'string',
-            description: 'Run only the specified rule by name',
-          },
-          "verbose": {
-            type: 'boolean',
-            description: 'Enable verbose output',
-            default: 'false',
-          },
-          "watch": {
-            type: 'boolean',
-            description: 'Watch ontology and template files for changes',
-            default: 'false',
-          },
-        },
-        required: [],
+        "config": z.string().describe('Path to `.unrdf.toml` configuration file').default('.unrdf.toml').optional(),
+        "dry-run": z.boolean().describe('Preview changes without writing files').default(false).optional(),
+        "force": z.boolean().describe('Overwrite existing files without prompting').default(false).optional(),
+        "output": z.string().describe('Output format: text or json').default('text').optional(),
+        "rule": z.string().describe('Run only the specified rule by name').optional(),
+        "verbose": z.boolean().describe('Enable verbose output').default(false).optional(),
+        "watch": z.boolean().describe('Watch ontology and template files for changes').default(false).optional(),
       },
     },
     async (args) => {
@@ -872,23 +515,9 @@ export function createMCPServer() {
     {
       description: 'Extract properties for a subject as JSON (template debugging)',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'RDF data file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (json|yaml|table)',
-            default: 'json',
-          },
-          "subject": {
-            type: 'string',
-            description: 'Subject URI',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('RDF data file'),
+        "format": z.string().describe('Output format (json|yaml|table)').default('json').optional(),
+        "subject": z.string().describe('Subject URI').optional(),
       },
     },
     async (args) => {
@@ -903,50 +532,15 @@ export function createMCPServer() {
     {
       description: 'Generate files from RDF + Nunjucks template (`--template`). RDF path can be positional or `rdf:` in template frontmatter.',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "batch": {
-            type: 'boolean',
-            description: 'One output per instance of `--class-uri`; SPARQL must use ?subject',
-            default: 'false',
-          },
-          "classUri": {
-            type: 'string',
-            description: 'RDFS/OWL class IRI for batch mode (with `--batch`)',
-          },
-          "dryRun": {
-            type: 'boolean',
-            description: 'Print paths without writing',
-            default: 'false',
-          },
-          "file": {
-            type: 'string',
-            description: 'RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter.',
-          },
-          "force": {
-            type: 'boolean',
-            description: 'Overwrite existing files',
-            default: 'false',
-          },
-          "outputDir": {
-            type: 'string',
-            description: 'Output directory for generated files',
-            default: './generated',
-          },
-          "sparql": {
-            type: 'string',
-            description: 'SPARQL SELECT (overrides frontmatter `sparql:`)',
-          },
-          "subject": {
-            type: 'string',
-            description: 'Focus subject URI; replaces ?subject in SPARQL when present',
-          },
-          "template": {
-            type: 'string',
-            description: 'Template .njk path',
-          },
-        },
-        required: ["template"],
+        "batch": z.boolean().describe('One output per instance of `--class-uri`; SPARQL must use ?subject').default(false).optional(),
+        "classUri": z.string().describe('RDFS/OWL class IRI for batch mode (with `--batch`)').optional(),
+        "dryRun": z.boolean().describe('Print paths without writing').default(false).optional(),
+        "file": z.string().describe('RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter.').optional(),
+        "force": z.boolean().describe('Overwrite existing files').default(false).optional(),
+        "outputDir": z.string().describe('Output directory for generated files').default('./generated').optional(),
+        "sparql": z.string().describe('SPARQL SELECT (overrides frontmatter `sparql:`)').optional(),
+        "subject": z.string().describe('Focus subject URI; replaces ?subject in SPARQL when present').optional(),
+        "template": z.string().describe('Template .njk path'),
       },
     },
     async (args) => {
@@ -961,10 +555,6 @@ export function createMCPServer() {
     {
       description: 'List discovered .njk templates (default: bundled sync templates)',
       inputSchema: {
-        type: 'object',
-        properties: {
-        },
-        required: [],
       },
     },
     async (args) => {
@@ -979,31 +569,11 @@ export function createMCPServer() {
     {
       description: 'Run SPARQL SELECT on an RDF file and print template-style context. For CONSTRUCT/ASK/DESCRIBE use `unrdf query`.',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "file": {
-            type: 'string',
-            description: 'RDF data file',
-          },
-          "format": {
-            type: 'string',
-            description: 'Output format (table|json)',
-            default: 'table',
-          },
-          "predicate": {
-            type: 'string',
-            description: 'Find all values of predicate',
-          },
-          "sparql": {
-            type: 'string',
-            description: 'SPARQL SELECT query',
-          },
-          "subject": {
-            type: 'string',
-            description: 'Find all predicates for subject',
-          },
-        },
-        required: ["file"],
+        "file": z.string().describe('RDF data file'),
+        "format": z.string().describe('Output format (table|json)').default('table').optional(),
+        "predicate": z.string().describe('Find all values of predicate').optional(),
+        "sparql": z.string().describe('SPARQL SELECT query').optional(),
+        "subject": z.string().describe('Find all predicates for subject').optional(),
       },
     },
     async (args) => {
@@ -1018,18 +588,8 @@ export function createMCPServer() {
     {
       description: 'Convert RDF to JSON representation',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "input": {
-            type: 'string',
-            description: 'Input RDF file',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output JSON file',
-          },
-        },
-        required: ["input"],
+        "input": z.string().describe('Input RDF file'),
+        "output": z.string().describe('Output JSON file').optional(),
       },
     },
     async (args) => {
@@ -1044,18 +604,8 @@ export function createMCPServer() {
     {
       description: 'Convert RDF to N-Triples format',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "input": {
-            type: 'string',
-            description: 'Input RDF file',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output N-Triples file',
-          },
-        },
-        required: ["input"],
+        "input": z.string().describe('Input RDF file'),
+        "output": z.string().describe('Output N-Triples file').optional(),
       },
     },
     async (args) => {
@@ -1070,18 +620,8 @@ export function createMCPServer() {
     {
       description: 'Convert RDF to Turtle format',
       inputSchema: {
-        type: 'object',
-        properties: {
-          "input": {
-            type: 'string',
-            description: 'Input RDF file',
-          },
-          "output": {
-            type: 'string',
-            description: 'Output Turtle file',
-          },
-        },
-        required: ["input"],
+        "input": z.string().describe('Input RDF file'),
+        "output": z.string().describe('Output Turtle file').optional(),
       },
     },
     async (args) => {
@@ -1092,6 +632,70 @@ export function createMCPServer() {
   );
 
   return server;
+}
+
+/**
+ * Get MCP server running status
+ * @returns {Promise<{running: boolean, transport: string, pid: number, uptime: string}>}
+ */
+export async function getMCPServerStatus() {
+  return {
+    running: true,
+    transport: 'stdio',
+    pid: process.pid,
+    uptime: `${Math.floor(process.uptime())}s`,
+  };
+}
+
+/**
+ * Inspect MCP server capabilities without starting it
+ * @returns {Promise<{tools: Array, resources: Array, prompts: Array}>}
+ */
+export async function inspectMCPServer() {
+  const { mcpResources } = await import('./resources.mjs');
+  const { mcpPrompts } = await import('./prompts.mjs');
+  return {
+    tools: [
+      { name: 'context_add', description: 'Add prefix to context' },
+      { name: 'context_create', description: 'Create a new JSON-LD context' },
+      { name: 'context_list', description: 'List context prefixes' },
+      { name: 'context_remove', description: 'Remove prefix from context' },
+      { name: 'convert', description: 'Convert RDF between formats' },
+      { name: 'daemon_cluster', description: 'Show Raft cluster status and members' },
+      { name: 'daemon_config', description: 'Display current daemon configuration' },
+      { name: 'daemon_list', description: 'List all configured operations' },
+      { name: 'daemon_logs', description: 'View operation logs with filtering' },
+      { name: 'daemon_run', description: 'Execute operation immediately' },
+      { name: 'daemon_schedule', description: 'Add scheduled trigger to operation' },
+      { name: 'daemon_status', description: 'Show daemon health and metrics' },
+      { name: 'graph_create', description: 'Create a new RDF graph' },
+      { name: 'graph_dump', description: 'Export graph data to file' },
+      { name: 'graph_load', description: 'Load RDF data into a graph' },
+      { name: 'graph_query', description: 'Execute SPARQL query on graph' },
+      { name: 'graph_stats', description: 'Show graph statistics' },
+      { name: 'hooks_define', description: 'Define hooks from config file' },
+      { name: 'hooks_evaluate_condition', description: 'Evaluate a single condition against a store' },
+      { name: 'hooks_execute', description: 'Execute hooks against an RDF store' },
+      { name: 'hooks_list_conditions', description: 'List available condition kinds' },
+      { name: 'hooks_receipts', description: 'Display receipt chain from hook execution results' },
+      { name: 'mcp_inspect', description: 'List all exposed tools, resources, and prompts' },
+      { name: 'mcp_start', description: 'Start the MCP server' },
+      { name: 'mcp_status', description: 'Show if MCP server is running' },
+      { name: 'mcp_stop', description: 'Stop the running MCP server' },
+      { name: 'query', description: 'Execute SPARQL query' },
+      { name: 'query_file', description: 'Execute SPARQL query from file' },
+      { name: 'sync', description: 'Generate synchronized code artifacts from RDF ontology' },
+      { name: 'template_extract', description: 'Extract properties for a subject as JSON (template debugging)' },
+      { name: 'template_generate', description: 'Generate files from RDF + Nunjucks template (`--template`). RDF path can be positional or `rdf:` in template frontmatter.' },
+      { name: 'template_list', description: 'List discovered .njk templates (default: bundled sync templates)' },
+      { name: 'template_query', description: 'Run SPARQL SELECT on an RDF file and print template-style context. For CONSTRUCT/ASK/DESCRIBE use `unrdf query`.' },
+      { name: 'to_json', description: 'Convert RDF to JSON representation' },
+      { name: 'to_ntriples', description: 'Convert RDF to N-Triples format' },
+      { name: 'to_turtle', description: 'Convert RDF to Turtle format' },
+    ],
+    resources: mcpResources,
+    prompts: mcpPrompts,
+  };
 }
 
 /**

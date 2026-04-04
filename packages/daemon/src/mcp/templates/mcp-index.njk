@@ -12,6 +12,7 @@ description: Complete MCP server index.mjs with all tool registrations using reg
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 import { registerResources } from './resources.mjs';
 import { registerPrompts } from './prompts.mjs';
 import * as handlers from './handlers.mjs';
@@ -40,28 +41,13 @@ export function createMCPServer() {
     {
       description: '{{ firstRow.description }}',
       inputSchema: {
-        type: 'object',
-        properties: {
 {% for argName, argRows in argGroups | items %}
 {% if argName and argName != 'undefined' and argName != '?undefined' %}
 {% set arg = argRows[0] %}
-{% set enumVals = argRows | distinctValues('enumVal') %}
-          {{ argName | quote }}: {
-            type: '{{ arg.argType | default("string") }}',
-{% if arg.argDescription %}
-            description: '{{ arg.argDescription }}',
-{% endif %}
-{% if enumVals | length > 0 %}
-            enum: [{% for val in enumVals %}{{ val | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
-{% endif %}
-{% if arg.defaultValue %}
-            default: '{{ arg.defaultValue }}',
-{% endif %}
-          },
+{% set required = arg.required == 'true' or arg.required == true %}
+        {{ argName | quote }}: z.{{ arg.argType | default("string") }}(){% if arg.argDescription %}.describe('{{ arg.argDescription }}'){% endif %}{% if arg.defaultValue %}.default({{ arg.defaultValue | zodDefault(arg.argType) }}){% endif %}{% if not required %}.optional(){% endif %},
 {% endif %}
 {% endfor %}
-        },
-        required: [{% for name in rows | requiredArgs %}{{ name | quote }}{% if not loop.last %}, {% endif %}{% endfor %}],
       },
     },
     async (args) => {
@@ -73,6 +59,38 @@ export function createMCPServer() {
 
 {% endfor %}
   return server;
+}
+
+/**
+ * Get MCP server running status
+ * @returns {Promise<{running: boolean, transport: string, pid: number, uptime: string}>}
+ */
+export async function getMCPServerStatus() {
+  return {
+    running: true,
+    transport: 'stdio',
+    pid: process.pid,
+    uptime: `${Math.floor(process.uptime())}s`,
+  };
+}
+
+/**
+ * Inspect MCP server capabilities without starting it
+ * @returns {Promise<{tools: Array, resources: Array, prompts: Array}>}
+ */
+export async function inspectMCPServer() {
+  const { mcpResources } = await import('./resources.mjs');
+  const { mcpPrompts } = await import('./prompts.mjs');
+  return {
+    tools: [
+{% for toolName, rows in tools | items | sortBy(0) %}
+{% set firstRow = rows[0] %}
+      { name: '{{ toolName }}', description: '{{ firstRow.description }}' },
+{% endfor %}
+    ],
+    resources: mcpResources,
+    prompts: mcpPrompts,
+  };
 }
 
 /**

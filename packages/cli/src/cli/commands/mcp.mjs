@@ -15,7 +15,6 @@ import { startCommand } from './mcp/start.mjs';
 import { statusCommand } from './mcp/status.mjs';
 import { inspectCommand } from './mcp/inspect.mjs';
 import { stopCommand } from './mcp/stop.mjs';
-import { selfPlayCommand } from './mcp/self-play.mjs';
 
 /**
  * Main MCP command
@@ -30,6 +29,5 @@ export const mcpCommand = defineCommand({
     status: statusCommand,
     inspect: inspectCommand,
     stop: stopCommand,
-    'self-play': selfPlayCommand,
   },
 });

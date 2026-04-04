@@ -7,7 +7,7 @@
   "exports": {
     ".": "./src/index.mjs",
     "./daemon": "./src/daemon.mjs",
-    "./mcp": "./src/mcp.mjs",
+    "./mcp": "./src/mcp/index.mjs",
     "./schemas": "./src/schemas.mjs",
     "./trigger-evaluator": "./src/trigger-evaluator.mjs",
     "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
