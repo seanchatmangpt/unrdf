@@ -755,7 +755,7 @@ describe('Integration Tests', () => {
     const startTime = Date.now();
     // Simulate work
     const duration = 50;
-    const endTime = startTime + duration;
+    const _endTime = startTime + duration;
     monitor.recordSuccess(duration);
 
     exporter.recordHistogram('operation.duration', duration);

@@ -132,7 +132,7 @@ class CompositeWorkflowEngine extends EventEmitter {
     this.workflowId = `workflow-${Date.now()}`;
     this.executionLog = [];
 
-    const startTime = Date.now();
+    const _startTime = Date.now();
     this.metrics.startMeasure('workflow:total');
 
     try {
@@ -518,7 +518,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
     });
 
     it('should handle event backpressure when modules are busy', async () => {
-      const eventQueue = [];
+      const _eventQueue = [];
       let processingDelay = 0;
 
       registry.registerModule('daemon', {
@@ -799,7 +799,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
     });
 
     it('should validate memory efficiency of module composition', async () => {
-      const memorySnapshots = [];
+      const _memorySnapshots = [];
 
       validator.registerPerformanceTarget({
         operation: 'heavyProcessing',

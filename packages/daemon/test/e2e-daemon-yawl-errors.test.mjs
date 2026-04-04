@@ -660,7 +660,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
      */
     it('should detect circular task dependencies', async () => {
       // Arrange
-      const { caseId } = await yawlEngine.createCase('cyclic-workflow', {});
+      const { caseId: _caseId } = await yawlEngine.createCase('cyclic-workflow', {});
 
       // Simulate circular dependency detection
       const dependencies = {
@@ -714,7 +714,7 @@ describe('Error Path Validation - Daemon+YAWL Integration', () => {
      */
     it('should detect unsatisfiable XOR-split condition', async () => {
       // Arrange
-      const { caseId } = await yawlEngine.createCase('xor-workflow', {});
+      const { caseId: _caseId } = await yawlEngine.createCase('xor-workflow', {});
 
       const xorCondition = {
         branches: [

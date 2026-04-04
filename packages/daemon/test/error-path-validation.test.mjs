@@ -21,19 +21,6 @@ function generateUUID() {
   });
 }
 
-// Helper: Simulate timeout
-function withTimeout(promise, timeoutMs) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(
-        () => reject(new Error(`Operation timeout after ${timeoutMs}ms`)),
-        timeoutMs
-      )
-    ),
-  ]);
-}
-
 describe('Error Path Validation - JTBD Failure Modes', () => {
   describe('JTBD #1.2: Concurrent Job Timeout (100 Concurrent)', () => {
     /**

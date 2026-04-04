@@ -154,7 +154,7 @@ class MockYawlEngine {
     return { task_id: config.taskId };
   }
 
-  async cancelTask(config) {
+  async cancelTask(_config) {
     return { cancelled: true };
   }
 }

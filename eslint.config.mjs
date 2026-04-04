@@ -197,9 +197,9 @@ export default [
       'no-undef': 'off' // Disable for re-export barrel files
     }
   },
-  // Daemon integrations - infrastructure utilities with file-level JSDoc
+  // Daemon - infrastructure utilities with file-level JSDoc
   {
-    files: ['packages/daemon/src/integrations/**/*.mjs'],
+    files: ['packages/daemon/src/**/*.mjs'],
     rules: {
       'jsdoc/require-jsdoc': 'off' // Covered by file-level @file JSDoc
     }

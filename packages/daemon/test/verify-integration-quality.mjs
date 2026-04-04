@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.join(__dirname, '../../..');
+const _projectRoot = path.join(__dirname, '../../..');
 const daemonRoot = path.join(__dirname, '..');
 
 /**
