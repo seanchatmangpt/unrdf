@@ -49,6 +49,14 @@ ${kgContext || '(empty)'}
 
 What should you do? Be specific and actionable.`,
         maxTokens: 200,
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: 'autonomous-agent.reason',
+          metadata: {
+            agent: this.name,
+            graphId: this.kg.graphId,
+          },
+        },
       });
 
       // 3. Execute decision (parse and act)

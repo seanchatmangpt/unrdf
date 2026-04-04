@@ -8,7 +8,7 @@
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import Resource from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION, ATTR_DEPLOYMENT_ENVIRONMENT } from '@opentelemetry/semantic-conventions';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 
@@ -33,9 +33,9 @@ export async function initializeOTelSDK(config = {}) {
   // Create resource with service attributes
   const resource = Resource.default().merge(
     new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: config.serviceName || 'unrdf-daemon',
-      [SemanticResourceAttributes.SERVICE_VERSION]: config.version || '26.4.3',
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
+      [ATTR_SERVICE_NAME]: config.serviceName || 'unrdf-daemon',
+      [ATTR_SERVICE_VERSION]: config.version || '26.4.3',
+      [ATTR_DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
     })
   );
 
@@ -54,7 +54,6 @@ export async function initializeOTelSDK(config = {}) {
   // Initialize NodeSDK
   sdk = new NodeSDK({
     resource,
-    traceExporter,
     spanProcessor,
     autoDetectResources: false,
   });

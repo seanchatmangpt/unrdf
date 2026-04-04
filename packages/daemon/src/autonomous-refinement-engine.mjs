@@ -425,6 +425,15 @@ export class AutonomousRefinementEngine extends EventEmitter {
           tools,
           toolChoice: 'auto',
           maxTokens: 300,
+          experimental_telemetry: {
+            isEnabled: true,
+            functionId: 'refinement-engine.decide',
+            metadata: {
+              graphId: this.config.graphId,
+              episode: episodeCount,
+              graphSize: store.size,
+            },
+          },
         });
 
         span?.addEvent('llm-decision', { decision: decision.text.substring(0, 100) });

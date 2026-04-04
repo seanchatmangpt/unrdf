@@ -27,16 +27,24 @@ export function withMcpSpan(toolName, handler) {
         'mcp.server.name': 'unrdf-daemon-mcp',
       });
 
-      // Execute handler
-      const result = await handler(args);
+      try {
+        // Execute handler
+        const result = await handler(args);
 
-      // Record result
-      span.setAttributes({
-        'mcp.tool.success': true,
-        'mcp.tool.result_size': JSON.stringify(result).length,
-      });
+        // Record success
+        span.setAttributes({
+          'mcp.tool.success': true,
+          'mcp.tool.result_size': JSON.stringify(result).length,
+        });
 
-      return result;
+        return result;
+      } catch (error) {
+        // Record failure
+        span.setAttributes({
+          'mcp.tool.success': false,
+        });
+        throw error;
+      }
     });
   };
 }
