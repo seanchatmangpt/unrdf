@@ -41,8 +41,12 @@ export async function buildMerkleTree(receipts) {
     levels.push(nextLevel);
     currentLevel = nextLevel;
   }
+  // CVE-2012-2459 fix: Include leaf count in root to prevent odd-leaf duplication attacks
+  // where an attacker could append a duplicate leaf and maintain the same root
+  const rootWithLeafCount = await blake3(`${currentLevel[0]}:${leaves.length}`);
+
   return {
-    root: currentLevel[0],
+    root: rootWithLeafCount,
     depth: levels.length - 1,
     leafCount: leaves.length,
     leaves,
@@ -79,7 +83,10 @@ export async function verifyInclusionProof(proof) {
         : step.hash + ':' + currentHash;
       currentHash = await blake3(combined);
     }
-    return currentHash === proof.merkleRoot;
+    // CVE-2012-2459 fix: Include batchSize in final root hash to prevent odd-leaf duplication attacks
+    const batchSize = proof.batchSize || 1;
+    const rootWithBatchSize = await blake3(`${currentHash}:${batchSize}`);
+    return rootWithBatchSize === proof.merkleRoot;
   } catch {
     return false;
   }
