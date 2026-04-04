@@ -209,12 +209,6 @@ export const extensions = [
     enabled: true,
   },
   {
-    id: '@unrdf/domain',
-    path: '../extensions/domain.mjs',
-    loadOrder: 76,
-    enabled: true,
-  },
-  {
     id: '@unrdf/fusion',
     path: '../extensions/fusion.mjs',
     loadOrder: 77,
