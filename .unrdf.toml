@@ -1,0 +1,99 @@
+# UNRDF Configuration
+# Root-level configuration for the UNRDF daemon and Groq LLM provider
+
+[project]
+name = "unrdf-daemon"
+version = "26.4.3"
+description = "UNRDF Knowledge Graph Substrate with Groq LLM Integration"
+
+# =============================================================================
+# Groq LLM Provider Configuration
+# =============================================================================
+[groq]
+# API Key: defaults to GROQ_API_KEY environment variable
+# apiKey = ""
+
+# Groq API base URL
+# baseURL = "https://api.groq.com/openai/v1"
+
+# Default language model
+model = "openai/gpt-oss-20b"
+
+# Reasoning format for reasoning models (parsed, raw, hidden)
+# reasoningFormat = "parsed"
+
+# Reasoning effort level (low, medium, high, none, default)
+# reasoningEffort = "default"
+
+# Enable structured outputs with JSON schema
+structuredOutputs = true
+
+# Use strict JSON schema validation
+strictJsonSchema = true
+
+# Enable parallel function calling / tool use
+parallelToolCalls = true
+
+# Service tier for requests (on_demand, performance, flex, auto)
+serviceTier = "on_demand"
+
+# Request timeout in milliseconds
+timeout = 30000
+
+# =============================================================================
+# Daemon Configuration
+# =============================================================================
+[daemon]
+# Port for daemon HTTP server
+port = 3000
+
+# Enable daemon security middleware
+securityMiddleware = true
+
+# Enable rate limiting
+rateLimiting = true
+
+# Request timeout in milliseconds
+requestTimeout = 30000
+
+# =============================================================================
+# MCP Configuration
+# =============================================================================
+[mcp]
+# MCP server transport: stdio or sse
+transport = "stdio"
+
+# SSE port (only used if transport = "sse")
+ssePort = 3001
+
+# Enable MCP server on startup
+autoStart = true
+
+# =============================================================================
+# Knowledge Hooks Configuration
+# =============================================================================
+[hooks]
+# Enable hooks execution
+enabled = true
+
+# Default hooks configuration file
+# config = "hooks.json"
+
+# Enable receipt chaining
+receiptChaining = true
+
+# =============================================================================
+# Monitoring and Observability
+# =============================================================================
+[observability]
+# Enable OTEL instrumentation
+enabled = true
+
+# OTEL collector endpoint
+# otelEndpoint = "http://localhost:4317"
+
+# Enable console logging
+consoleLogging = true
+
+# Log level: debug, info, warn, error
+logLevel = "info"
