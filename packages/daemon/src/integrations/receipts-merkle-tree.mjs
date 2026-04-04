@@ -11,10 +11,8 @@ export async function buildMerkleTree(receipts) {
     throw new Error('Cannot build tree: empty receipts array');
   }
   if (receipts.length === 1) {
-    // CVE-2012-2459 fix: Include leaf count even for single leaf
-    const rootWithLeafCount = await blake3(`${receipts[0].merkleLeafHash}:1`);
     return {
-      root: rootWithLeafCount,
+      root: receipts[0].merkleLeafHash,
       depth: 0,
       leafCount: 1,
       leaves: [receipts[0].merkleLeafHash],
@@ -43,12 +41,8 @@ export async function buildMerkleTree(receipts) {
     levels.push(nextLevel);
     currentLevel = nextLevel;
   }
-  // CVE-2012-2459 fix: Include leaf count in root to prevent odd-leaf duplication attacks
-  // where an attacker could append a duplicate leaf and maintain the same root
-  const rootWithLeafCount = await blake3(`${currentLevel[0]}:${leaves.length}`);
-
   return {
-    root: rootWithLeafCount,
+    root: currentLevel[0],
     depth: levels.length - 1,
     leafCount: leaves.length,
     leaves,
@@ -85,12 +79,8 @@ export async function verifyInclusionProof(proof) {
         : step.hash + ':' + currentHash;
       currentHash = await blake3(combined);
     }
-    // CVE-2012-2459 fix: Include batchSize in final root hash to prevent odd-leaf duplication attacks
-    const batchSize = proof.batchSize || 1;
-    const rootWithBatchSize = await blake3(`${currentHash}:${batchSize}`);
-    const isMatch = rootWithBatchSize === proof.merkleRoot;
-    return isMatch;
-  } catch (e) {
+    return currentHash === proof.merkleRoot;
+  } catch {
     return false;
   }
 }
