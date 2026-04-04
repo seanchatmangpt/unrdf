@@ -11,8 +11,10 @@ export async function buildMerkleTree(receipts) {
     throw new Error('Cannot build tree: empty receipts array');
   }
   if (receipts.length === 1) {
+    // CVE-2012-2459 fix: Include leaf count even for single leaf
+    const rootWithLeafCount = await blake3(`${receipts[0].merkleLeafHash}:1`);
     return {
-      root: receipts[0].merkleLeafHash,
+      root: rootWithLeafCount,
       depth: 0,
       leafCount: 1,
       leaves: [receipts[0].merkleLeafHash],
