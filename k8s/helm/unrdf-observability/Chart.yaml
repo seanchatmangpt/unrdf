@@ -1,0 +1,16 @@
+apiVersion: v2
+name: unrdf-observability
+description: UNRDF Observability Stack - Full OTel, metrics, logging, tracing, and profiling
+type: application
+version: 0.1.0
+appVersion: '6.0.0-rc.1'
+maintainers:
+  - name: UNRDF Team
+keywords:
+  - observability
+  - opentelemetry
+  - prometheus
+  - grafana
+  - tempo
+  - loki
+  - pyroscope

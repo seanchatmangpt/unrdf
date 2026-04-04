@@ -7,6 +7,7 @@
 ## Quick Navigation by User Type
 
 ### New User? Start with Tutorials
+
 **Goal:** Learn by doing, hands-on practice
 
 Start here if you're new to UNRDF and want to build working examples step-by-step.
@@ -16,6 +17,7 @@ Start here if you're new to UNRDF and want to build working examples step-by-ste
 ---
 
 ### Solving a Problem? Go to How-To Guides
+
 **Goal:** Solve specific problems you're facing
 
 Use these task-oriented guides when you know what you want to accomplish but need to know how.
@@ -25,15 +27,25 @@ Use these task-oriented guides when you know what you want to accomplish but nee
 ---
 
 ### Looking Up API? See Reference
+
 **Goal:** Find exact syntax, parameters, and schemas
 
 Reference documentation for APIs, schemas, configuration, and technical specifications.
 
-→ **[Go to Reference](./reference/)** | **Most viewed:** [Receipt Schema](./reference/receipt-schema.md), [Hook API](./reference/hook-api.md)
+→ **[Go to Reference](./reference/)** | **Most viewed:** [Receipt Schema](./reference/receipt-schema.md), [Hook API](./reference/hook-api.md), [Package Exports](./reference/package-exports.md)
+
+### Package-Specific Docs
+
+Deep-dive diataxis docs scoped to individual packages:
+
+- **[Daemon](./daemon/)** — MCP server, scheduling, OTel tracing, security
+- **[CLI](./cli/)** — `unrdf` command reference, hooks workflow, code generation
+- **[Hooks](./hooks/)** — KnowledgeHook system, defineHook, built-in validators, SHACL/N3 conditions
 
 ---
 
 ### Understanding Design? Read Explanation
+
 **Goal:** Deep dive into architecture and design rationale
 
 Conceptual articles explaining the "why" behind UNRDF's architecture and design decisions.
@@ -57,7 +69,8 @@ Start Here
     │   ├─ How do I validate policy packs? → How-To 01
     │   ├─ How do I audit decisions? → How-To 02
     │   ├─ How do I measure performance? → How-To 03
-    │   └─ How do I integrate with existing graphs? → How-To 04
+    │   ├─ How do I integrate with existing graphs? → How-To 04
+    │   └─ How do I validate telemetry against the registry? → validate-telemetry-with-weaver
     │
     ├─ I need to look up exact syntax → REFERENCE
     │   ├─ What are the receipt schema fields? → Reference: Receipt Schema
@@ -77,6 +90,7 @@ Start Here
 ## Learning Path Recommendations
 
 ### Path 1: Quick Start (30 minutes)
+
 **For developers who want to get up and running fast**
 
 1. [Tutorial 01: Create and Freeze Universe](./tutorials/01-create-and-freeze-universe.md) - 10 min
@@ -87,6 +101,7 @@ Start Here
 ---
 
 ### Path 2: Production Ready (2 hours)
+
 **For teams deploying UNRDF in production**
 
 1. [Tutorial 03: Generate and Verify Receipts](./tutorials/03-generate-and-verify-receipts.md) - 20 min
@@ -99,6 +114,7 @@ Start Here
 ---
 
 ### Path 3: Advanced Integration (3 hours)
+
 **For architects integrating UNRDF into existing systems**
 
 1. [Tutorial 02: Parse RDF in Browser](./tutorials/02-parse-rdf-in-browser.md) - 20 min
@@ -114,6 +130,7 @@ Start Here
 ## Documentation by Audience
 
 ### Beginners (New to UNRDF or RDF)
+
 **Recommended:** Tutorials → How-To → Reference (in that order)
 
 - Start with hands-on tutorials to build confidence
@@ -123,6 +140,7 @@ Start Here
 ---
 
 ### Intermediate (Familiar with RDF, new to UNRDF)
+
 **Recommended:** How-To → Reference → Explanation
 
 - Jump straight to how-to guides for your use case
@@ -132,6 +150,7 @@ Start Here
 ---
 
 ### Architects (Designing systems with UNRDF)
+
 **Recommended:** Explanation → Reference → How-To → Tutorials
 
 - Start with conceptual explanations to understand design rationale
@@ -145,18 +164,19 @@ Start Here
 
 All Diataxis documentation follows these principles:
 
-| Category | Focus | Tone | Success Metric |
-|----------|-------|------|----------------|
-| **Tutorials** | Learning-oriented | Encouraging, supportive | Reader completes successfully |
-| **How-To** | Problem-oriented | Direct, practical | Reader solves their problem |
-| **Reference** | Information-oriented | Neutral, precise | Reader finds exact answer |
-| **Explanation** | Understanding-oriented | Discursive, analytical | Reader gains deep insight |
+| Category        | Focus                  | Tone                    | Success Metric                |
+| --------------- | ---------------------- | ----------------------- | ----------------------------- |
+| **Tutorials**   | Learning-oriented      | Encouraging, supportive | Reader completes successfully |
+| **How-To**      | Problem-oriented       | Direct, practical       | Reader solves their problem   |
+| **Reference**   | Information-oriented   | Neutral, precise        | Reader finds exact answer     |
+| **Explanation** | Understanding-oriented | Discursive, analytical  | Reader gains deep insight     |
 
 ---
 
 ## Cross-Links and Prerequisites
 
 Each document includes:
+
 - **Prerequisites:** Capability atoms needed (from /home/user/unrdf/docs/capabilities/)
 - **Evidence:** Source code pointers (file:line)
 - **Examples:** Links to proof artifacts
@@ -180,14 +200,14 @@ See [/home/user/unrdf/docs/CONTRIBUTING.md](/home/user/unrdf/docs/CONTRIBUTING.m
 
 ## Status and Roadmap
 
-| Category | Files Created | Status |
-|----------|---------------|--------|
-| Tutorials | 4 skeleton files | 🟡 Structure complete, content in progress |
-| How-To | 4 skeleton files | 🟡 Structure complete, content in progress |
-| Reference | 6 skeleton files | 🟡 Structure complete, content in progress |
-| Explanation | 4 skeleton files | 🟡 Structure complete, content in progress |
+| Category    | Files Created    | Status                                                         |
+| ----------- | ---------------- | -------------------------------------------------------------- |
+| Tutorials   | 4 skeleton files | 🟡 Structure complete, content in progress                     |
+| How-To      | 5 files          | 🟡 Structure complete; validate-telemetry-with-weaver complete |
+| Reference   | 6 skeleton files | 🟡 Structure complete, content in progress                     |
+| Explanation | 4 skeleton files | 🟡 Structure complete, content in progress                     |
 
-**Last Updated:** 2025-12-26
+**Last Updated:** 2026-04-04
 
 ---
 

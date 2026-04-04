@@ -55,7 +55,7 @@ RESULT=$(docker run --rm \
     -e LOKI_URL=http://loki:3100 \
     -e MIN_FITNESS="${MIN_FITNESS}" \
     -e MIN_PRECISION="${MIN_PRECISION}" \
-    ostar-pm4py \
+    unrdf-pm4py \
     python3 -c "
 import json, sys, os
 sys.path.insert(0, '/app')

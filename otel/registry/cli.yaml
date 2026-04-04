@@ -7,13 +7,13 @@ groups:
     attributes:
       - id: unrdf.cli.command
         type: string
-        stability: experimental
+        stability: stable
         brief: The top-level CLI command being executed.
         examples: ['hooks', 'graph', 'sparql', 'shacl', 'daemon']
 
       - id: unrdf.cli.subcommand
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           The subcommand being executed within the top-level CLI command.
           Empty string if no subcommand was provided.
@@ -27,19 +27,19 @@ groups:
 
       - id: unrdf.cli.exit_code
         type: int
-        stability: experimental
+        stability: stable
         brief: The process exit code produced by the CLI command.
         examples: [0, 1, 2]
 
       - id: unrdf.cli.args_count
         type: int
-        stability: experimental
+        stability: stable
         brief: Number of positional and option arguments passed to the command.
         examples: [0, 2, 5]
 
       - id: unrdf.cli.store_file
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           Path to the RDF store file passed via `--store`. Recorded as-is;
           not normalized or resolved to an absolute path.
@@ -47,7 +47,7 @@ groups:
 
       - id: unrdf.cli.config_file
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           Path to the JSON configuration file passed via `--config`.
         examples: ['/tmp/hooks.json', 'config/hooks.json']
@@ -57,19 +57,19 @@ groups:
           members:
             - id: json
               value: 'json'
-              stability: experimental
+              stability: stable
               brief: Output formatted as JSON.
             - id: text
               value: 'text'
-              stability: experimental
+              stability: stable
               brief: Human-readable text output.
             - id: ttl
               value: 'ttl'
-              stability: experimental
+              stability: stable
               brief: Turtle RDF serialization.
             - id: nquads
               value: 'nquads'
-              stability: experimental
+              stability: stable
               brief: N-Quads RDF serialization.
-        stability: experimental
+        stability: stable
         brief: The output format requested via `--format` or `--output`.

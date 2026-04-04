@@ -1,0 +1,163 @@
+namespace: unrdf-observability
+
+# UNRDF application (disabled by default — load image into kind first)
+unrdf:
+  enabled: false
+  imageRepo: unrdf
+  imageTag: 6.0.0-rc.1
+  replicas: 1
+  resources:
+    requests:
+      cpu: '1'
+      memory: 2Gi
+    limits:
+      cpu: '2'
+      memory: 4Gi
+  env: []
+  #  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+  #    value: "http://unrdf-otel-collector:4318"
+
+prometheus:
+  imageRepo: prom/prometheus
+  imageTag: v2.48.0
+  replicas: 1
+  retention: 30d
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+
+grafana:
+  imageRepo: grafana/grafana
+  imageTag: 10.2.2
+  replicas: 1
+  adminPassword: admin
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+otelCollector:
+  imageRepo: otel/opentelemetry-collector-contrib
+  imageTag: 0.91.0
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+
+alertmanager:
+  imageRepo: prom/alertmanager
+  imageTag: v0.26.0
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+nodeExporter:
+  imageRepo: prom/node-exporter
+  imageTag: v1.7.0
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+tempo:
+  imageRepo: grafana/tempo
+  imageTag: 2.7.1
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 2Gi
+
+minio:
+  imageRepo: minio/minio
+  imageTag: RELEASE.2024-11-07T00-52-20Z
+  replicas: 1
+  rootUser: minioadmin
+  rootPassword: minioadmin
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+
+exampleApp:
+  imageRepo: jaegertracing/example-hotrod
+  imageTag: 1.62.0
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+pyroscope:
+  imageRepo: grafana/pyroscope
+  imageTag: 1.10.1
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+
+loki:
+  imageRepo: grafana/loki
+  imageTag: 2.9.3
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: '1'
+      memory: 1Gi
+
+promtail:
+  imageRepo: grafana/promtail
+  imageTag: 2.9.3
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# Storage sizes for PVCs
+storage:
+  prometheus: 10Gi
+  grafana: 5Gi
+  tempo: 10Gi
+  minio: 10Gi
+  loki: 10Gi
+  pyroscope: 5Gi
+  alertmanager: 1Gi

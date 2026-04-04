@@ -11,21 +11,21 @@ groups:
           members:
             - id: sign
               value: 'sign'
-              stability: experimental
+              stability: stable
               brief: Signing a receipt or quad with a private key.
             - id: verify
               value: 'verify'
-              stability: experimental
+              stability: stable
               brief: Verifying a signature on a receipt or quad.
             - id: hash
               value: 'hash'
-              stability: experimental
+              stability: stable
               brief: Computing a cryptographic hash of RDF data.
             - id: chain_verify
               value: 'chain-verify'
-              stability: experimental
+              stability: stable
               brief: Verifying the integrity of a receipt chain.
-        stability: experimental
+        stability: stable
         brief: The cryptographic operation being performed.
 
       - id: unrdf.crypto.algorithm
@@ -33,33 +33,33 @@ groups:
           members:
             - id: sha256
               value: 'sha256'
-              stability: experimental
+              stability: stable
               brief: SHA-256 hash algorithm.
             - id: sha512
               value: 'sha512'
-              stability: experimental
+              stability: stable
               brief: SHA-512 hash algorithm.
             - id: ed25519
               value: 'ed25519'
-              stability: experimental
+              stability: stable
               brief: Ed25519 digital signature algorithm.
             - id: ecdsa_p256
               value: 'ecdsa-p256'
-              stability: experimental
+              stability: stable
               brief: ECDSA with P-256 curve.
-        stability: experimental
+        stability: stable
         brief: The cryptographic algorithm used for the operation.
 
       - id: unrdf.crypto.receipt_id
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           The UUID identifier of the cryptographic receipt produced or verified.
         examples: ['a3bb189e-8bf9-3888-9912-ace4e6543002']
 
       - id: unrdf.crypto.chain_length
         type: int
-        stability: experimental
+        stability: stable
         brief: Number of receipts in the verified chain.
         examples: [1, 5, 100]
 
@@ -68,19 +68,19 @@ groups:
           members:
             - id: valid
               value: 'valid'
-              stability: experimental
+              stability: stable
               brief: Signature or chain verified successfully.
             - id: invalid_signature
               value: 'invalid-signature'
-              stability: experimental
+              stability: stable
               brief: Signature verification failed.
             - id: chain_broken
               value: 'chain-broken'
-              stability: experimental
+              stability: stable
               brief: Receipt chain integrity check failed.
             - id: missing_receipt
               value: 'missing-receipt'
-              stability: experimental
+              stability: stable
               brief: Expected receipt not found in chain.
-        stability: experimental
+        stability: stable
         brief: The result of a cryptographic verification operation.

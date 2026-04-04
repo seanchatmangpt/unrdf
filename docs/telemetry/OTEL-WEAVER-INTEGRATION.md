@@ -12,12 +12,13 @@ The UNRDF project uses OpenTelemetry (OTEL) for observability with Weaver for se
 
 ### Implementation Status
 
-| Component      | Status        | Coverage                                               |
-| -------------- | ------------- | ------------------------------------------------------ |
-| **Sidecar**    | ✅ Complete   | 7 semantic conventions, full trace context propagation |
-| **Daemon**     | ✅ Complete   | 3 semantic conventions, 36 MCP tools instrumented      |
-| **Validation** | ✅ Complete   | Synthetic spans, validation package                    |
-| **Grafana**    | ✅ Configured | Dashboard templates configured                         |
+| Component         | Status        | Coverage                                                 |
+| ----------------- | ------------- | -------------------------------------------------------- |
+| **Registry**      | ✅ Complete   | 43 attrs, 13 metrics, 8 YAML files, `weaver check` clean |
+| **`@unrdf/otel`** | ✅ Complete   | Generated constants, 100% live-check coverage            |
+| **Daemon**        | ✅ Complete   | 36+ MCP tools instrumented, attrs match registry         |
+| **CLI**           | ⬜ Partial    | Attrs defined in registry, runtime spans not yet emitted |
+| **Grafana**       | ✅ Configured | Dashboard templates configured                           |
 
 ---
 
@@ -152,120 +153,130 @@ if (metricsCallbacks.length > 0) {
 
 ## Weaver Integration
 
-### Custom Conventions
-
-Weaver enforces custom semantic conventions defined in `custom-conventions.yaml`:
-
-- `knowledge_hook`: Knowledge base hook invocations
-- `policy_pack`: Policy pack executions
-- `rdf_graph`: RDF graph operations
-- `effect_sandbox`: Sandbox execution boundaries
-- `crypto_provenance`: Cryptographic operation tracking
-- `kgc_transaction`: Knowledge graph consistency transactions
-- `grpc_sidecar`: gRPC sidecar communications
-
 ### Semantic Convention Registry
 
-The project validates against the OpenTelemetry semantic convention registry:
+UNRDF uses a local OTel Weaver registry at `otel/registry/` — 8 YAML files covering every domain:
 
-- **Default Registry**: `https://github.com/open-telemetry/semantic-conventions.git[model]`
-- **Validation Mode**: Live-check on ingestion
-- **Enforcement**: Policy-based validation
+| File                  | Domain                      | Attributes |
+| --------------------- | --------------------------- | ---------- |
+| `mcp.yaml`            | MCP server/tool invocations | 6          |
+| `cli.yaml`            | CLI command instrumentation | 7          |
+| `knowledge_hook.yaml` | Hook evaluation and effects | 10         |
+| `rdf.yaml`            | RDF store operations        | 6          |
+| `policy.yaml`         | Policy pack enforcement     | 5          |
+| `crypto.yaml`         | Cryptographic provenance    | 5          |
+| `transaction.yaml`    | Transaction lifecycle       | 4          |
+| `metrics.yaml`        | All metric definitions      | 13 metrics |
+
+The registry manifest at `otel/registry/manifest.yaml` pins the schema version:
+
+```yaml
+schema_url: https://opentelemetry.io/schemas/1.28.0
+```
+
+### Generated Package: `@unrdf/otel`
+
+ESM constants are generated from the registry by Weaver and committed to `packages/otel/src/generated/`:
+
+```javascript
+import { ATTR_MCP_TOOL_NAME, ATTR_MCP_SERVER_NAME } from '@unrdf/otel/attributes';
+import { METRIC_MCP_TOOL_DURATION, METRIC_UNRDF_RDF_QUAD_COUNT } from '@unrdf/otel/metrics';
+```
+
+Use these constants everywhere instead of raw strings — typos become compile-time errors.
+
+Re-generate after editing the registry:
+
+```bash
+cd otel && weaver registry generate --registry registry/ js ../packages/otel/src/generated/
+```
 
 ## Configuration
 
-### Weaver Configuration (`weaver.yaml`)
+### Weaver Registry Manifest (`otel/registry/manifest.yaml`)
 
 ```yaml
-version: 1.0.0
-project_name: 'unrdf'
-registry: 'https://github.com/open-telemetry/semantic-conventions.git[model]'
-
-generation:
-  project_root: './src'
-  instrumented_packages:
-    - 'kgc-scope'
-    - 'sidecar'
-
-enforcement:
-  active: true
-  custom_conventions: 'custom-conventions.yaml'
-
-export:
-  grpc:
-    address: '0.0.0.0'
-    port: 4317
-    protocol: 'otlp'
-
-context:
-  propagation:
-    format: 'w3c'
-
-slo:
-  api_latency:
-    threshold: 100 # ms
-    error_if_exceeded: true
-
-grafana:
-  dashboards:
-    path: './grafana/dashboards'
-  templates:
-    name: 'unrdf-dashboards'
-    description: 'UNRDF monitoring dashboards'
+schema_url: https://opentelemetry.io/schemas/1.28.0
 ```
+
+### MiniJinja Templates (`otel/templates/registry/js/weaver.yaml`)
+
+```yaml
+templates:
+  - pattern: '*.j2'
+    filter: '.'
+    application_mode: single
+```
+
+Templates at `otel/templates/registry/js/` produce `attributes.mjs` and `metrics.mjs` via Weaver's MiniJinja engine.
 
 ## Live Check Workflow
 
-### Command
+### Validate the Registry
 
 ```bash
-weaver registry live-check \
-  --registry 'https://github.com/open-telemetry/semantic-conventions.git[model]' \
-  --input-source stdin \
-  --input-format json \
-  --output none
+cd otel && weaver registry check --registry registry/
 ```
 
-### Sample OTLP Telemetry
+Expected output:
+
+```
+ℹ Found registry manifest: registry/manifest.yaml
+✔ No `after_resolution` policy violation
+```
+
+### Run a Live Check Against Sample Telemetry
+
+```bash
+cd otel && weaver registry live-check \
+  --registry registry/ \
+  --input-source live-check-samples.json \
+  --input-format json \
+  --no-stream
+```
+
+Expected output (clean):
+
+```
+Advisories:    0
+Coverage:      100.0%
+✔ Performed live check for registry `registry/`
+```
+
+### Sample Telemetry Format
+
+Weaver's JSON ingester expects an array of tagged entities — **not** the OTLP protobuf JSON format:
 
 ```json
-{
-  "resourceSpans": [
-    {
-      "resource": {
-        "attributes": {
-          "service.name": "unrdf-knowledge-graph"
-        }
-      },
-      "scopeSpans": [
-        {
-          "scope": {
-            "name": "kgc-sidecar"
-          },
-          "spans": [
-            {
-              "name": "kgc.query.execute",
-              "kind": "SPAN_KIND_INTERNAL",
-              "attributes": {
-                "kgc.query.type": "SELECT",
-                "kgc.query.returned_triples": 100,
-                "kgc.query.duration_ms": 15
-              }
-            }
-          ]
-        }
+[
+  {
+    "span": {
+      "name": "mcp.tool.call",
+      "kind": "server",
+      "attributes": [
+        { "name": "mcp.tool.name", "value": "hooks_execute" },
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.success", "value": true }
       ]
     }
-  ]
-}
+  },
+  {
+    "metric": {
+      "name": "mcp.tool.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.042,
+      "attributes": [
+        { "name": "mcp.tool.name", "value": "hooks_execute" },
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.success", "value": true }
+      ]
+    }
+  }
+]
 ```
 
-### Expected Validation
-
-- ✅ All span attributes match semantic conventions
-- ✅ Required attributes present for each operation
-- ✅ Values within acceptable ranges
-- ✅ No unknown or deprecated attributes
+The full sample set covering all 56 registry entities lives at `otel/live-check-samples.json`.
 
 ## Testing
 
@@ -341,46 +352,40 @@ import { trace, metrics } from '@opentelemetry/api';
 
 ## References
 
+- [OTel Weaver](https://github.com/open-telemetry/weaver) — semantic convention registry toolchain
 - [OpenTelemetry Semantic Conventions](https://github.com/open-telemetry/semantic-conventions)
-- [Weaver Documentation](https://github.com/weaver-ops/weaver)
 - [OTLP Protocol](https://opentelemetry.io/docs/reference/specification/protocol/otlp/)
 - [Grafana Dashboards](https://grafana.com/docs/grafana/latest/visualizations/dashboards/)
 
 ## Status
 
-### Sidecar Integration
+### Semantic Convention Registry (`otel/registry/`)
 
-- ✅ All required files implemented
-- ✅ OTEL tracing working
-- ✅ Custom conventions enforced (7 conventions)
-- ✅ Live-check validation functional
-- ✅ Full trace context propagation
-- ✅ Grafana dashboards configured
+- ✅ 8 registry YAML files (7 attribute groups + 1 metrics file)
+- ✅ 43 attributes across 7 domains
+- ✅ 13 metrics (histogram/counter/updowncounter)
+- ✅ `manifest.yaml` with schema_url (no deprecation warnings)
+- ✅ `weaver registry check` — 0 violations
+- ✅ `weaver registry live-check` — 0 advisories, 100% coverage
+
+### Generated Package (`@unrdf/otel`)
+
+- ✅ `packages/otel/src/generated/attributes.mjs` — 44 `ATTR_*` constants
+- ✅ `packages/otel/src/generated/metrics.mjs` — 13 `METRIC_*` constants
+- ✅ MiniJinja templates at `otel/templates/registry/js/`
+- ✅ Re-generated with a single `weaver registry generate` command
 
 ### Daemon Integration
 
-- ✅ All required files implemented (7 files)
-- ✅ OTEL SDK initialized on daemon start/stop
-- ✅ 36 MCP tools instrumented (100% coverage)
-- ✅ Semantic conventions defined (3 convention groups)
+- ✅ 36+ MCP tools instrumented via `withMcpSpan()` in `otel-instrumentation.mjs`
+- ✅ Attributes emitted match `otel/registry/mcp.yaml` definitions
 - ✅ W3C trace context propagation
 - ✅ Feature flag support (`OTEL_ENABLED`)
-- ✅ Complete documentation (26 KB)
 
-### Validation Package
+### CLI Integration
 
-- ✅ All required files implemented
-- ✅ OTEL tracing working with synthetic spans
-- ✅ Validation package tests passing
-- ✅ Feature validation suite functional
-
-### Documentation
-
-- ✅ Main integration guide (321 lines)
-- ✅ Daemon environment configuration (7.5 KB)
-- ✅ Implementation details (16 KB)
-- ✅ Verification report (16 KB)
-- ✅ Custom conventions YAML (2.4 KB)
+- ✅ Attribute names defined in `otel/registry/cli.yaml`
+- ⬜ Runtime instrumentation (CLI spans not yet emitted)
 
 ## Related Documentation
 

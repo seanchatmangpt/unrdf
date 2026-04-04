@@ -7,7 +7,7 @@ groups:
     attributes:
       - id: unrdf.hook.id
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           The UUID identifier of the knowledge hook being evaluated.
         examples:
@@ -16,7 +16,7 @@ groups:
 
       - id: unrdf.hook.name
         type: string
-        stability: experimental
+        stability: stable
         brief: The human-readable name of the knowledge hook.
         examples: ['validate-trade-riskScore', 'provenance-check', 'acl-policy']
 
@@ -25,29 +25,29 @@ groups:
           members:
             - id: sparql_ask
               value: 'sparql-ask'
-              stability: experimental
+              stability: stable
               brief: SPARQL ASK query condition.
             - id: sparql_construct
               value: 'sparql-construct'
-              stability: experimental
+              stability: stable
               brief: SPARQL CONSTRUCT query condition.
             - id: shacl
               value: 'shacl'
-              stability: experimental
+              stability: stable
               brief: SHACL shape validation condition.
             - id: delta
               value: 'delta'
-              stability: experimental
+              stability: stable
               brief: Change-detection (delta) condition.
             - id: window
               value: 'window'
-              stability: experimental
+              stability: stable
               brief: Time-windowed aggregation condition.
             - id: n3
               value: 'n3'
-              stability: experimental
+              stability: stable
               brief: N3/EYE forward-chaining reasoning condition.
-        stability: experimental
+        stability: stable
         brief: The kind of condition evaluated by this hook.
 
       - id: unrdf.hook.effect_kind
@@ -55,32 +55,32 @@ groups:
           members:
             - id: sparql_construct
               value: 'sparql-construct'
-              stability: experimental
+              stability: stable
               brief: SPARQL CONSTRUCT query effect that adds inferred triples.
             - id: sparql_update
               value: 'sparql-update'
-              stability: experimental
+              stability: stable
               brief: SPARQL UPDATE effect that modifies the store.
             - id: notification
               value: 'notification'
-              stability: experimental
+              stability: stable
               brief: Notification effect (webhook, event, log).
-        stability: experimental
+        stability: stable
         brief: The kind of effect executed when the hook condition is satisfied.
 
       - id: unrdf.hook.satisfied
         type: boolean
-        stability: experimental
+        stability: stable
         brief: Whether the hook condition evaluated to satisfied (true).
 
       - id: unrdf.hook.enabled
         type: boolean
-        stability: experimental
+        stability: stable
         brief: Whether the hook was enabled at evaluation time.
 
       - id: unrdf.hook.priority
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           The execution priority of the hook. Lower values execute first.
           Range: 0–100; default is 50.
@@ -88,7 +88,7 @@ groups:
 
       - id: unrdf.hook.quads_added
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           Number of RDF quads added to the store as a result of executing
           a `sparql-construct` effect.
@@ -96,12 +96,12 @@ groups:
 
       - id: unrdf.hook.hooks_total
         type: int
-        stability: experimental
+        stability: stable
         brief: Total number of hooks evaluated in a batch execution.
         examples: [1, 5, 20]
 
       - id: unrdf.hook.hooks_satisfied
         type: int
-        stability: experimental
+        stability: stable
         brief: Number of hooks whose conditions evaluated to satisfied in a batch.
         examples: [0, 3, 20]

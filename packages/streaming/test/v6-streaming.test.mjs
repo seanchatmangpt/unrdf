@@ -144,7 +144,7 @@ describe('V6 Streaming Features', () => {
       monitor.stop();
     });
 
-    it('should calculate throughput correctly', (done) => {
+    it('should calculate throughput correctly', () => new Promise((resolve) => {
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         enableThroughputTracking: true,
@@ -167,10 +167,10 @@ describe('V6 Streaming Features', () => {
           const report = monitor.getReport();
           expect(report.throughput.mean).toBeGreaterThan(0);
           expect(report.summary.quadsProcessed).toBe(500);
-          done();
+          resolve();
         }
       }, 10);
-    });
+    }));
 
     it('should track latency statistics', () => {
       const monitor = createPerformanceMonitor({
@@ -190,7 +190,7 @@ describe('V6 Streaming Features', () => {
       expect(report.latency.p95).toBeGreaterThan(report.latency.p50);
     });
 
-    it('should track memory usage', (done) => {
+    it('should track memory usage', () => new Promise((resolve) => {
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         enableMemoryTracking: true,
@@ -204,9 +204,9 @@ describe('V6 Streaming Features', () => {
 
         expect(report.memory.heapUsed).toBeDefined();
         expect(report.memory.heapUsed.mean).toBeGreaterThan(0);
-        done();
+        resolve();
       }, 150);
-    });
+    }));
 
     it('should record backpressure events', () => {
       const monitor = createPerformanceMonitor();
@@ -221,7 +221,7 @@ describe('V6 Streaming Features', () => {
       expect(report.backpressure.events).toBe(3);
     });
 
-    it('should emit threshold violations', (done) => {
+    it('should emit threshold violations', () => new Promise((resolve) => {
       const monitor = createPerformanceMonitor({
         sampleInterval: 50,
         thresholds: {
@@ -233,7 +233,7 @@ describe('V6 Streaming Features', () => {
         expect(violation.metric).toBe('throughput');
         expect(violation.value).toBeLessThan(violation.threshold);
         monitor.stop();
-        done();
+        resolve();
       });
 
       monitor.start();
@@ -242,7 +242,7 @@ describe('V6 Streaming Features', () => {
       setTimeout(() => {
         monitor.recordQuad();
       }, 60);
-    });
+    }));
 
     it('should reset metrics', () => {
       const monitor = createPerformanceMonitor();

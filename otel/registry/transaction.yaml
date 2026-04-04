@@ -7,13 +7,13 @@ groups:
     attributes:
       - id: unrdf.transaction.id
         type: string
-        stability: experimental
+        stability: stable
         brief: The UUID identifier of the transaction.
         examples: ['7c9e6679-7425-40de-944b-e07fc1f90ae7']
 
       - id: unrdf.transaction.operation_count
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           Number of RDF operations (add, delete, update) performed within
           the transaction before commit or rollback.
@@ -24,17 +24,17 @@ groups:
           members:
             - id: committed
               value: 'committed'
-              stability: experimental
+              stability: stable
               brief: Transaction committed successfully.
             - id: rolled_back
               value: 'rolled-back'
-              stability: experimental
+              stability: stable
               brief: Transaction rolled back due to error or explicit abort.
             - id: aborted
               value: 'aborted'
-              stability: experimental
+              stability: stable
               brief: Transaction aborted due to conflict.
-        stability: experimental
+        stability: stable
         brief: The outcome of the transaction.
 
       - id: unrdf.transaction.isolation_level
@@ -42,15 +42,15 @@ groups:
           members:
             - id: read_committed
               value: 'read-committed'
-              stability: experimental
+              stability: stable
               brief: Reads see data committed before the query began.
             - id: snapshot
               value: 'snapshot'
-              stability: experimental
+              stability: stable
               brief: Reads see a consistent snapshot at transaction start.
             - id: serializable
               value: 'serializable'
-              stability: experimental
+              stability: stable
               brief: Full serializable isolation (highest consistency).
-        stability: experimental
+        stability: stable
         brief: The isolation level of the transaction.

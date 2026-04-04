@@ -6,7 +6,7 @@ groups:
     metric_name: mcp.tool.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of MCP tool invocations, from request receipt to response sent.
     attributes:
@@ -25,7 +25,7 @@ groups:
     metric_name: mcp.tool.invocations
     instrument: counter
     unit: '{invocation}'
-    stability: experimental
+    stability: stable
     brief: >
       Total number of MCP tool invocations.
     attributes:
@@ -41,7 +41,7 @@ groups:
     metric_name: mcp.tool.result_size
     instrument: histogram
     unit: 'By'
-    stability: experimental
+    stability: stable
     brief: >
       Distribution of MCP tool result payload sizes in bytes.
     attributes:
@@ -57,7 +57,7 @@ groups:
     metric_name: unrdf.cli.command.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of UNRDF CLI command executions from invocation to exit.
     attributes:
@@ -73,7 +73,7 @@ groups:
     metric_name: unrdf.cli.command.invocations
     instrument: counter
     unit: '{invocation}'
-    stability: experimental
+    stability: stable
     brief: >
       Total number of UNRDF CLI command invocations.
     attributes:
@@ -91,7 +91,7 @@ groups:
     metric_name: unrdf.hook.evaluation.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of knowledge hook condition evaluation.
     attributes:
@@ -107,7 +107,7 @@ groups:
     metric_name: unrdf.hook.evaluations
     instrument: counter
     unit: '{evaluation}'
-    stability: experimental
+    stability: stable
     brief: >
       Total number of knowledge hook condition evaluations.
     attributes:
@@ -121,7 +121,7 @@ groups:
     metric_name: unrdf.hook.quads_added
     instrument: counter
     unit: '{quad}'
-    stability: experimental
+    stability: stable
     brief: >
       Total number of RDF quads added to the store by hook effects.
     attributes:
@@ -137,7 +137,7 @@ groups:
     metric_name: unrdf.rdf.operation.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of RDF store operations.
     attributes:
@@ -153,7 +153,7 @@ groups:
     metric_name: unrdf.rdf.quad_count
     instrument: updowncounter
     unit: '{quad}'
-    stability: experimental
+    stability: stable
     brief: >
       Current number of RDF quads in the store. Updated after add/delete operations.
     attributes:
@@ -167,7 +167,7 @@ groups:
     metric_name: unrdf.rdf.query.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of SPARQL query execution.
     attributes:
@@ -185,7 +185,7 @@ groups:
     metric_name: unrdf.transaction.duration
     instrument: histogram
     unit: 's'
-    stability: experimental
+    stability: stable
     brief: >
       Duration of RDF store transactions from begin to commit or rollback.
     attributes:
@@ -199,7 +199,7 @@ groups:
     metric_name: unrdf.transaction.operations
     instrument: histogram
     unit: '{operation}'
-    stability: experimental
+    stability: stable
     brief: >
       Number of RDF operations performed per transaction.
     attributes:

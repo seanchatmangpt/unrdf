@@ -1,0 +1,5 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: { { .Values.namespace } }
+  labels: { { - include "unrdf-observability.labels" . | nindent 4 } }

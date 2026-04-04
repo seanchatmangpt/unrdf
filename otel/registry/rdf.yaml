@@ -11,45 +11,45 @@ groups:
           members:
             - id: add
               value: 'add'
-              stability: experimental
+              stability: stable
               brief: Adding one or more quads to the store.
             - id: delete
               value: 'delete'
-              stability: experimental
+              stability: stable
               brief: Deleting one or more quads from the store.
             - id: query_ask
               value: 'query-ask'
-              stability: experimental
+              stability: stable
               brief: Executing a SPARQL ASK query.
             - id: query_select
               value: 'query-select'
-              stability: experimental
+              stability: stable
               brief: Executing a SPARQL SELECT query.
             - id: query_construct
               value: 'query-construct'
-              stability: experimental
+              stability: stable
               brief: Executing a SPARQL CONSTRUCT query.
             - id: query_describe
               value: 'query-describe'
-              stability: experimental
+              stability: stable
               brief: Executing a SPARQL DESCRIBE query.
             - id: update
               value: 'update'
-              stability: experimental
+              stability: stable
               brief: Executing a SPARQL UPDATE operation.
             - id: load
               value: 'load'
-              stability: experimental
+              stability: stable
               brief: Loading RDF data from a file or stream.
             - id: dump
               value: 'dump'
-              stability: experimental
+              stability: stable
               brief: Serializing the store to a file or stream.
             - id: validate
               value: 'validate'
-              stability: experimental
+              stability: stable
               brief: Running SHACL validation against the store.
-        stability: experimental
+        stability: stable
         brief: The type of RDF store operation being performed.
 
       - id: unrdf.rdf.store_backend
@@ -57,22 +57,22 @@ groups:
           members:
             - id: memory
               value: 'memory'
-              stability: experimental
+              stability: stable
               brief: In-memory RDF store (no persistence).
             - id: oxigraph
               value: 'oxigraph'
-              stability: experimental
+              stability: stable
               brief: Oxigraph persistent backend (Rust/LMDB).
             - id: remote
               value: 'remote'
-              stability: experimental
+              stability: stable
               brief: Remote SPARQL endpoint.
-        stability: experimental
+        stability: stable
         brief: The storage backend used by the RDF store.
 
       - id: unrdf.rdf.graph_name
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           The IRI of the named graph being operated on. Empty string or absent
           for the default graph.
@@ -82,7 +82,7 @@ groups:
 
       - id: unrdf.rdf.quad_count
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           Number of RDF quads involved in the operation (added, deleted,
           or returned by a query).
@@ -93,30 +93,30 @@ groups:
           members:
             - id: turtle
               value: 'text/turtle'
-              stability: experimental
+              stability: stable
               brief: Turtle RDF serialization.
             - id: nquads
               value: 'application/n-quads'
-              stability: experimental
+              stability: stable
               brief: N-Quads RDF serialization.
             - id: ntriples
               value: 'application/n-triples'
-              stability: experimental
+              stability: stable
               brief: N-Triples RDF serialization.
             - id: trig
               value: 'application/trig'
-              stability: experimental
+              stability: stable
               brief: TriG RDF serialization.
             - id: jsonld
               value: 'application/ld+json'
-              stability: experimental
+              stability: stable
               brief: JSON-LD RDF serialization.
-        stability: experimental
+        stability: stable
         brief: MIME type of the RDF serialization format used for load or dump.
 
       - id: unrdf.rdf.sparql_query_length
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           Length in characters of the SPARQL query string. Useful for
           distinguishing simple vs. complex queries in latency analysis.

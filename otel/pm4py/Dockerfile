@@ -18,7 +18,9 @@ RUN pip install --no-cache-dir \
     jupyter \
     requests \
     pandas \
-    matplotlib
+    matplotlib \
+    scikit-learn \
+    tpot2
 
 # Patch pm4py constants.py to handle PID 0 in Docker containers
 RUN sed -i 's/parent_name = str(psutil.Process(parent_pid).name())/parent_name = "docker-container"/' \

@@ -49,14 +49,13 @@ export async function withLLMSpan({ provider, model, operation, handler, attribu
   const tracer = getLLMTracer();
 
   return tracer.startActiveSpan(
-    `llm.${operation}`,
+    `gen_ai.${operation}`,
     {
       kind: SpanKind.CLIENT,
       attributes: {
         'gen_ai.system': provider,
         'gen_ai.request.model': model,
-        'operation.name': `llm.${operation}`,
-        'ai.operationId': `llm.${operation}`,
+        'gen_ai.operation.name': operation,
         ...attributes,
       },
     },
@@ -76,9 +75,12 @@ export async function withLLMSpan({ provider, model, operation, handler, attribu
 
           // Record token usage if available
           if (result.usage) {
+            const inputTokens = result.usage.prompt_tokens || 0
+            const outputTokens = result.usage.completion_tokens || 0
             span.setAttributes({
-              'gen_ai.usage.input_tokens': result.usage.prompt_tokens || 0,
-              'gen_ai.usage.output_tokens': result.usage.completion_tokens || 0,
+              'gen_ai.usage.input_tokens': inputTokens,
+              'gen_ai.usage.output_tokens': outputTokens,
+              'gen_ai.usage.total_tokens': inputTokens + outputTokens,
             });
           }
         }

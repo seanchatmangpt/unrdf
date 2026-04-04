@@ -810,10 +810,17 @@ def declare_discovery(df):
         # Summarize discovered constraints
         constraints = []
         for template_name, instances in declare_model.items():
-            for (act1, act2), metrics in instances.items():
+            for key, metrics in instances.items():
+                # Key can be a string (single activity) or tuple (activity pair)
+                if isinstance(key, str):
+                    activities = key
+                elif isinstance(key, tuple):
+                    activities = f"{key[0]}, {key[1]}"
+                else:
+                    activities = str(key)
                 constraints.append({
                     'template': template_name,
-                    'activities': f"{act1}, {act2}",
+                    'activities': activities,
                     'support': round(float(metrics.get('support', 0)), 3),
                     'confidence': round(float(metrics.get('confidence', 0)), 3),
                 })
@@ -987,25 +994,24 @@ def streaming_analysis(df):
 
         disc = StreamingDfgDiscovery()
         for event in stream:
-            disc.receive_event(event)
-        dfg_result = disc.check()
+            disc.receive(event)
+        dfg_result = disc.get()
 
-        # Parse DFG result
+        # Parse DFG result — get() returns a tuple: (dfg_dict, activities_count, start_activities, end_activities)
         dfg_edges = []
-        if isinstance(dfg_result, dict) and 'dfg' in dfg_result:
-            for (src, tgt), count in dfg_result['dfg'].items():
-                dfg_edges.append({
-                    'source': str(src),
-                    'target': str(tgt),
-                    'count': int(count),
-                })
+        if isinstance(dfg_result, tuple) and len(dfg_result) >= 1:
+            dfg_data = dfg_result[0]  # First element is the DFG
         elif isinstance(dfg_result, dict):
-            for (src, tgt), count in dfg_result.items():
-                dfg_edges.append({
-                    'source': str(src),
-                    'target': str(tgt),
-                    'count': int(count),
-                })
+            dfg_data = dfg_result.get('dfg', dfg_result)
+
+        if dfg_data and isinstance(dfg_data, dict):
+            for key, count in dfg_data.items():
+                if isinstance(key, tuple) and len(key) == 2:
+                    dfg_edges.append({
+                        'source': str(key[0]),
+                        'target': str(key[1]),
+                        'count': int(count),
+                    })
 
         # Sort by count descending
         dfg_edges.sort(key=lambda x: x['count'], reverse=True)
@@ -1197,6 +1203,430 @@ def act_remediation(df):
         return None
 
 
+def goal_oriented_analysis(df):
+    """Compare planned vs executed traces. Most common variant = plan; others = deviations.
+    Also checks MCP tool sequence compliance against the expected ordering."""
+    if len(df) == 0:
+        return None
+
+    try:
+        variants = pm4py.get_variants(df)
+        sorted_variants = sorted(variants.items(), key=lambda x: x[1], reverse=True)
+
+        if not sorted_variants:
+            return None
+
+        plan_variant = sorted_variants[0][0]
+        total_traces = sum(v[1] for v in sorted_variants)
+        plan_coverage = sorted_variants[0][1] / total_traces if total_traces > 0 else 0
+
+        # Identify deviation traces (all non-plan variants)
+        deviation_traces = []
+        for variant, count in sorted_variants[1:]:
+            deviation_traces.append({
+                'pattern': ' -> '.join(variant) if isinstance(variant, tuple) else str(variant),
+                'count': count,
+                'percentage': round(100 * count / total_traces, 1),
+            })
+
+        # MCP tool sequence compliance
+        tool_compliance = {'has_mcp_tools': False}
+        if 'mcp.tool.name' in df.columns:
+            mcp_tools = df[df['mcp.tool.name'].str.strip() != '']
+            if len(mcp_tools) > 0:
+                tool_compliance['has_mcp_tools'] = True
+                tool_variants = mcp_tools.groupby('case:concept:name')['mcp.tool.name'].apply(
+                    lambda x: tuple(x.values)
+                ).value_counts()
+                unique_tool_sequences = len(tool_variants)
+                most_common_tool_seq = tool_variants.index[0] if len(tool_variants) > 0 else ()
+                tool_seq_coverage = tool_variants.iloc[0] / tool_variants.sum() if tool_variants.sum() > 0 else 0
+                tool_compliance.update({
+                    'unique_tool_sequences': int(unique_tool_sequences),
+                    'top_tool_sequence': list(most_common_tool_seq) if most_common_tool_seq else [],
+                    'tool_sequence_compliance': round(float(tool_seq_coverage), 4),
+                    'total_traces_with_tools': int(len(mcp_tools['case:concept:name'].unique())),
+                })
+
+        return {
+            'plan_variant': ' -> '.join(plan_variant) if isinstance(plan_variant, tuple) else str(plan_variant),
+            'plan_trace_count': int(sorted_variants[0][1]),
+            'plan_coverage': round(float(plan_coverage), 4),
+            'total_variants': len(sorted_variants),
+            'total_traces': int(total_traces),
+            'deviation_traces': deviation_traces[:10],
+            'deviation_rate': round(100 * (1 - plan_coverage), 1),
+            'tool_sequence_compliance': tool_compliance,
+        }
+    except Exception as e:
+        print(f"  Goal-oriented analysis failed: {e}")
+        return None
+
+
+def hierarchical_process_mining(df):
+    """Mine the service hierarchy (org:resource) as process levels. Group activities by
+    service, compute per-service Declare constraints, identify cross-service handoff patterns."""
+    if len(df) == 0:
+        return None
+
+    if 'org:resource' not in df.columns:
+        print("  Hierarchical mining skipped: no org:resource column")
+        return None
+
+    try:
+        # Group by org:resource to get per-service activity sets
+        service_groups = df.groupby('org:resource')
+        hierarchy_levels = []
+        per_service_constraints = {}
+
+        for service, group in service_groups:
+            activities = sorted(group['concept:name'].unique().tolist())
+            trace_count = group['case:concept:name'].nunique()
+            event_count = len(group)
+            hierarchy_levels.append({
+                'service': service,
+                'activities': activities,
+                'trace_count': int(trace_count),
+                'event_count': int(event_count),
+            })
+
+            # Discover per-service Declare constraints if enough traces
+            if trace_count >= 3 and len(activities) >= 2:
+                try:
+                    dm = pm4py.discover_declare(group, min_support_ratio=0.5)
+                    if dm:
+                        constraints = []
+                        for tmpl, instances in dm.items():
+                            for key, metrics in instances.items():
+                                act_str = key if isinstance(key, str) else (f"{key[0]}, {key[1]}" if isinstance(key, tuple) else str(key))
+                                constraints.append({
+                                    'template': tmpl,
+                                    'activities': act_str,
+                                    'confidence': round(float(metrics.get('confidence', 0)), 3),
+                                })
+                        if constraints:
+                            per_service_constraints[service] = sorted(
+                                constraints, key=lambda x: x['confidence'], reverse=True
+                            )[:5]
+                except Exception:
+                    pass
+
+        # Identify cross-service handover patterns (resource transitions within traces)
+        cross_service_handoffs = []
+        df_sorted = df.sort_values(['case:concept:name', 'time:timestamp'])
+        for case_id, group in df_sorted.groupby('case:concept:name'):
+            resources = group['org:resource'].values
+            for i in range(len(resources) - 1):
+                if resources[i] != resources[i + 1]:
+                    cross_service_handoffs.append((resources[i], resources[i + 1]))
+
+        from collections import Counter
+        handoff_counts = Counter(cross_service_handoffs)
+        top_handoffs = [
+            {'source': s, 'target': t, 'count': c}
+            for (s, t), c in handoff_counts.most_common(10)
+        ]
+
+        # Sort hierarchy levels by event count (descending)
+        hierarchy_levels.sort(key=lambda x: x['event_count'], reverse=True)
+
+        return {
+            'hierarchy_levels': hierarchy_levels[:20],
+            'services_with_constraints': len(per_service_constraints),
+            'per_service_constraints': {k: v for k, v in list(per_service_constraints.items())[:5]},
+            'cross_service_handoffs': len(cross_service_handoffs),
+            'top_handoffs': top_handoffs,
+        }
+    except Exception as e:
+        print(f"  Hierarchical process mining failed: {e}")
+        return None
+
+
+def counterfactual_analysis(df):
+    """Simulate alternative execution paths via Petri net play-out, then measure variant
+    overlap between simulated and observed traces."""
+    if len(df) == 0:
+        return None
+
+    try:
+        net, im, fm = pm4py.discover_petri_net_inductive(df)
+
+        if net is None:
+            return None
+
+        # Simulate traces from the discovered model
+        num_sim = min(100, max(20, df['case:concept:name'].nunique()))
+        sim_log = pm4py.play_out(net, im, fm, num_traces=num_sim)
+
+        if not sim_log:
+            return None
+
+        # Get variant sets
+        sim_variants = pm4py.get_variants(sim_log)
+        obs_variants = pm4py.get_variants(df)
+
+        obs_keys = set(obs_variants.keys())
+        sim_keys = set(sim_variants.keys())
+
+        overlap = obs_keys & sim_keys
+        unreachable = obs_keys - sim_keys
+        novel = sim_keys - obs_keys
+
+        coverage = len(overlap) / len(obs_keys) if obs_keys else 0
+
+        # Top unreachable variants (observed but not producible by model)
+        unreachable_details = [
+            {
+                'pattern': ' -> '.join(v) if isinstance(v, tuple) else str(v),
+                'count': obs_variants[v],
+            }
+            for v in sorted(unreachable, key=lambda x: obs_variants[x], reverse=True)[:5]
+        ]
+
+        return {
+            'simulated_traces': int(num_sim),
+            'observed_variants': len(obs_keys),
+            'simulated_variants': len(sim_keys),
+            'variant_overlap': len(overlap),
+            'variant_coverage': round(float(coverage), 4),
+            'unreachable_observed_variants': len(unreachable),
+            'novel_simulated_variants': len(novel),
+            'top_unreachable': unreachable_details,
+        }
+    except Exception as e:
+        print(f"  Counterfactual analysis failed: {e}")
+        return None
+
+
+def normative_process_mining(df):
+    """Discover Declare constraints but filter to only normative ones (high confidence,
+    representing enforced policies). Also identify potential norm violations."""
+    if len(df) == 0:
+        return None
+
+    try:
+        dm = pm4py.discover_declare(df, min_support_ratio=0.5)
+
+        if not dm:
+            return None
+
+        # Filter: keep only templates where at least one pair has confidence > 0
+        normative_constraints = {}
+        potential_violations = []
+        all_constraints = []
+
+        for template, instances in dm.items():
+            norm_instances = {}
+            for key, metrics in instances.items():
+                confidence = metrics.get('confidence', 0)
+                support = metrics.get('support', 0)
+                act_str = key if isinstance(key, str) else (f"{key[0]}, {key[1]}" if isinstance(key, tuple) else str(key))
+                all_constraints.append({
+                    'template': template,
+                    'activities': act_str,
+                    'confidence': float(confidence),
+                    'support': float(support),
+                })
+                if confidence > 0:
+                    norm_instances[key] = {
+                        'activities': act_str,
+                        'confidence': round(float(confidence), 3),
+                        'support': round(float(support), 3),
+                    }
+                else:
+                    # Constraints with zero confidence = should happen but doesn't
+                    potential_violations.append({
+                        'template': template,
+                        'activities': act_str,
+                        'support': round(float(support), 3),
+                        'note': 'zero confidence — expected behavior not observed',
+                    })
+
+            if norm_instances:
+                normative_constraints[template] = norm_instances
+
+        # Compute violation rate
+        total_checks = len(all_constraints)
+        violation_count = len(potential_violations)
+        violation_rate = round(100 * violation_count / max(total_checks, 1), 1)
+
+        # Summarize normative constraints
+        norm_summary = []
+        for tmpl, instances in normative_constraints.items():
+            for key, metrics in instances.items():
+                norm_summary.append({
+                    'template': tmpl,
+                    'activities': metrics['activities'],
+                    'confidence': metrics['confidence'],
+                    'support': metrics['support'],
+                })
+        norm_summary.sort(key=lambda x: x['confidence'], reverse=True)
+
+        return {
+            'total_constraints_discovered': total_checks,
+            'normative_constraints': len(norm_summary),
+            'normative_templates': list(normative_constraints.keys()),
+            'top_normative': norm_summary[:10],
+            'potential_violations': violation_count,
+            'violation_rate': violation_rate,
+            'top_violations': potential_violations[:10],
+        }
+    except Exception as e:
+        print(f"  Normative process mining failed: {e}")
+        return None
+
+
+def multi_agent_orchestration(df):
+    """Mine delegation patterns between services (org:resource). Extract service
+    sequences per trace, identify common orchestration patterns, compute service-level DFG."""
+    if len(df) == 0:
+        return None
+
+    if 'org:resource' not in df.columns:
+        print("  Multi-agent orchestration skipped: no org:resource column")
+        return None
+
+    try:
+        # Get resource (service) sequence per trace
+        df_sorted = df.sort_values(['case:concept:name', 'time:timestamp'])
+        resource_seq = df_sorted.groupby('case:concept:name')['org:resource'].apply(
+            lambda x: ' -> '.join(x.unique())
+        )
+
+        # Count delegation patterns
+        patterns = resource_seq.value_counts()
+        unique_patterns = len(patterns)
+        top_pattern = patterns.index[0] if len(patterns) > 0 else ''
+        top_pattern_count = int(patterns.iloc[0]) if len(patterns) > 0 else 0
+        top_pattern_pct = round(100 * top_pattern_count / len(patterns), 1) if len(patterns) > 0 else 0
+
+        # Build service-level DFG (service-to-service edges)
+        service_edges = []
+        for case_id, group in df_sorted.groupby('case:concept:name'):
+            resources = group['org:resource'].values
+            for i in range(len(resources) - 1):
+                if resources[i] != resources[i + 1]:
+                    service_edges.append((resources[i], resources[i + 1]))
+
+        from collections import Counter
+        edge_counts = Counter(service_edges)
+        service_dfg = [
+            {'source': s, 'target': t, 'count': c}
+            for (s, t), c in edge_counts.most_common(10)
+        ]
+
+        # Unique services involved
+        unique_services = df['org:resource'].nunique()
+
+        return {
+            'unique_services': int(unique_services),
+            'delegation_patterns': int(unique_patterns),
+            'top_pattern': str(top_pattern),
+            'top_pattern_count': top_pattern_count,
+            'top_pattern_percentage': top_pattern_pct,
+            'service_dfg_edges': len(service_edges),
+            'service_dfg': service_dfg,
+            'pattern_distribution': [
+                {'pattern': str(p), 'count': int(c), 'percentage': round(100 * c / len(patterns), 1)}
+                for p, c in patterns.head(5).items()
+            ],
+        }
+    except Exception as e:
+        print(f"  Multi-agent orchestration failed: {e}")
+        return None
+
+
+def self_reflective_analysis(df):
+    """Combine Declare conformance with policy recommendation generation. Identify
+    low-fitness traces, extract most violated constraint templates, and generate
+    actionable policy recommendations."""
+    if len(df) == 0:
+        return None
+
+    try:
+        dm = pm4py.discover_declare(df, min_support_ratio=0.5)
+
+        if not dm:
+            return None
+
+        conf = pm4py.conformance_declare(df, dm)
+
+        if not conf:
+            return None
+
+        # Identify traces needing update (low fitness)
+        traces_needing_update = []
+        violation_template_counts = {}
+        policy_recommendations = []
+
+        for i, c in enumerate(conf):
+            fitness = c.get('dev_fitness', 1.0)
+            if fitness < 0.8:
+                deviations = c.get('deviations', [])
+                dev_templates = []
+                for dev in deviations:
+                    if isinstance(dev, (list, tuple)) and len(dev) >= 1:
+                        template = str(dev[0])
+                        act_info = str(dev[1]) if len(dev) >= 2 else 'N/A'
+                        dev_templates.append(f"{template}({act_info})")
+                        violation_template_counts[template] = violation_template_counts.get(template, 0) + 1
+
+                traces_needing_update.append({
+                    'trace_index': i,
+                    'dev_fitness': round(float(fitness), 4),
+                    'deviation_count': len(dev_templates),
+                    'violated_templates': dev_templates,
+                })
+
+        # Sort violation templates by count
+        sorted_violations = sorted(violation_template_counts.items(), key=lambda x: x[1], reverse=True)
+
+        # Generate policy recommendations
+        for template, count in sorted_violations[:10]:
+            tmpl_lower = template.lower()
+            if 'absence' in tmpl_lower:
+                rec = f"Strengthen enforcement of {template} constraint — add guard conditions or deduplication to prevent excess occurrences"
+            elif 'existence' in tmpl_lower:
+                rec = f"Ensure mandatory execution of {template} — add pipeline gate that blocks progress without this activity"
+            elif 'response' in tmpl_lower:
+                rec = f"Automate follow-up for {template} — add callback or event trigger to guarantee the response activity fires"
+            elif 'precedence' in tmpl_lower:
+                rec = f"Enforce ordering dependency for {template} — add workflow gate that requires prerequisite completion"
+            elif 'succession' in tmpl_lower:
+                rec = f"Enforce succession for {template} — add both ordering and presence checks in the pipeline"
+            elif 'not_response' in tmpl_lower:
+                rec = f"Add negative constraint enforcement for {template} — implement blocking logic to prevent forbidden response"
+            elif 'not_succession' in tmpl_lower:
+                rec = f"Block disallowed transition for {template} — add guard to prevent the forbidden succession"
+            elif 'init' in tmpl_lower or 'end' in tmpl_lower:
+                rec = f"Review lifecycle constraint {template} — ensure proper initialization or termination"
+            else:
+                rec = f"Investigate {template} constraint ({count} violations) — review process definition for missing enforcement"
+
+            policy_recommendations.append({
+                'template': template,
+                'violation_count': count,
+                'recommendation': rec,
+            })
+
+        total_traces = len(conf)
+        traces_with_issues = len(traces_needing_update)
+
+        return {
+            'total_traces': total_traces,
+            'traces_needing_update': traces_with_issues,
+            'issue_rate': round(100 * traces_with_issues / max(total_traces, 1), 1),
+            'violation_counts': [
+                {'template': t, 'count': c} for t, c in sorted_violations[:10]
+            ],
+            'policy_recommendations': policy_recommendations,
+            'top_issues': traces_needing_update[:10],
+        }
+    except Exception as e:
+        print(f"  Self-reflective analysis failed: {e}")
+        return None
+
+
 def stochastic_process_mining(df):
     """Discover stochastic language from event log."""
     if len(df) == 0:
@@ -1304,12 +1734,17 @@ def main():
     parser.add_argument('--mode', type=str, default='full',
                         choices=['full', 'core', 'predict', 'ocel', 'drift', 'anomaly',
                                  'spectrum', 'rework', 'batch', 'sna', 'decision',
-                                 'declare', 'cube', 'simulate', 'stream', 'quality', 'act'],
+                                 'declare', 'cube', 'simulate', 'stream', 'quality', 'act',
+                                 'goal', 'hierarchy', 'counterfactual', 'normative',
+                                 'orchestration', 'reflect'],
                         help='Analysis mode: full (all), core (original), predict, ocel, drift, anomaly, '
                              'spectrum (performance spectrum), rework (rework detection), batch (batch detection), '
                              'sna (social network analysis), decision (decision mining), '
                              'declare (Declare constraints), cube (process cube OLAP), simulate (process simulation), '
-                             'stream (streaming DFG), quality (event data quality), act (Declare remediation actions)')
+                             'stream (streaming DFG), quality (event data quality), act (Declare remediation actions), '
+                             'goal (goal-oriented analysis), hierarchy (hierarchical process mining), '
+                             'counterfactual (counterfactual analysis), normative (normative process mining), '
+                             'orchestration (multi-agent orchestration), reflect (self-reflective analysis)')
     args = parser.parse_args()
 
     print("=" * 60)
@@ -1603,6 +2038,74 @@ def main():
                 top = act['remediations'][0]
                 print(f"    Top unfit trace: index={top['trace_index']}, fitness={top['dev_fitness']}, actions={len(top['remediation_actions'])}")
         results['act_remediation'] = act
+        step += 1
+
+    # Goal-oriented analysis
+    if args.mode in ('full', 'goal'):
+        print(f"[{step}] Running goal-oriented analysis...")
+        goal = goal_oriented_analysis(df)
+        if goal:
+            print(f"    Plan coverage: {goal['plan_coverage']:.1%}")
+            print(f"    Total variants: {goal['total_variants']}, Deviation rate: {goal['deviation_rate']}%")
+            ts = goal['tool_sequence_compliance']
+            if ts.get('has_mcp_tools'):
+                print(f"    MCP tool sequence compliance: {ts.get('tool_sequence_compliance', 'N/A')}")
+        results['goal_oriented'] = goal
+        step += 1
+
+    # Hierarchical process mining
+    if args.mode in ('full', 'hierarchy'):
+        print(f"[{step}] Running hierarchical process mining...")
+        hierarchy = hierarchical_process_mining(df)
+        if hierarchy:
+            print(f"    Hierarchy levels (services): {len(hierarchy['hierarchy_levels'])}")
+            print(f"    Services with constraints: {hierarchy['services_with_constraints']}")
+            print(f"    Cross-service handoffs: {hierarchy['cross_service_handoffs']}")
+        results['hierarchical_mining'] = hierarchy
+        step += 1
+
+    # Counterfactual analysis
+    if args.mode in ('full', 'counterfactual'):
+        print(f"[{step}] Running counterfactual analysis...")
+        cf = counterfactual_analysis(df)
+        if cf:
+            print(f"    Simulated traces: {cf['simulated_traces']}")
+            print(f"    Variant coverage: {cf['variant_coverage']:.1%}")
+            print(f"    Unreachable observed variants: {cf['unreachable_observed_variants']}")
+        results['counterfactual'] = cf
+        step += 1
+
+    # Normative process mining
+    if args.mode in ('full', 'normative'):
+        print(f"[{step}] Running normative process mining...")
+        norm = normative_process_mining(df)
+        if norm:
+            print(f"    Normative constraints: {norm['normative_constraints']}/{norm['total_constraints_discovered']}")
+            print(f"    Potential violations: {norm['potential_violations']} ({norm['violation_rate']}%)")
+        results['normative_mining'] = norm
+        step += 1
+
+    # Multi-agent orchestration
+    if args.mode in ('full', 'orchestration'):
+        print(f"[{step}] Running multi-agent orchestration analysis...")
+        orch = multi_agent_orchestration(df)
+        if orch:
+            print(f"    Unique services: {orch['unique_services']}")
+            print(f"    Delegation patterns: {orch['delegation_patterns']}")
+            print(f"    Top pattern: {orch['top_pattern']} ({orch['top_pattern_percentage']}%)")
+        results['multi_agent_orchestration'] = orch
+        step += 1
+
+    # Self-reflective analysis
+    if args.mode in ('full', 'reflect'):
+        print(f"[{step}] Running self-reflective analysis...")
+        reflect = self_reflective_analysis(df)
+        if reflect:
+            print(f"    Traces needing update: {reflect['traces_needing_update']}/{reflect['total_traces']} ({reflect['issue_rate']}%)")
+            if reflect['policy_recommendations']:
+                top_rec = reflect['policy_recommendations'][0]
+                print(f"    Top recommendation: {top_rec['recommendation'][:100]}...")
+        results['self_reflective'] = reflect
         step += 1
 
     # Output results

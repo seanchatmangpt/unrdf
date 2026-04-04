@@ -1,0 +1,317 @@
+[
+  {
+    "span": {
+      "name": "mcp.tool.call",
+      "kind": "server",
+      "attributes": [
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.name", "value": "hooks_execute" },
+        { "name": "mcp.tool.args", "value": "{\"trigger\":\"before-add\"}" },
+        { "name": "mcp.tool.success", "value": true },
+        { "name": "mcp.tool.result_size", "value": 2048 }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "mcp.tool.call",
+      "kind": "server",
+      "attributes": [
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.name", "value": "sparql_query" },
+        { "name": "mcp.tool.args", "value": "{\"query\":\"SELECT * WHERE {?s ?p ?o}\"}" },
+        { "name": "mcp.tool.success", "value": false },
+        { "name": "mcp.tool.error_type", "value": "SparqlError" }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.cli.command",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.cli.command", "value": "hooks" },
+        { "name": "unrdf.cli.subcommand", "value": "execute" },
+        { "name": "unrdf.cli.exit_code", "value": 0 },
+        { "name": "unrdf.cli.args_count", "value": 4 },
+        { "name": "unrdf.cli.store_file", "value": "/tmp/test.ttl" },
+        { "name": "unrdf.cli.config_file", "value": "/tmp/hooks.json" },
+        { "name": "unrdf.cli.output_format", "value": "json" }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.hook.evaluate",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.hook.id", "value": "550e8400-e29b-41d4-a716-446655440000" },
+        { "name": "unrdf.hook.name", "value": "validate-trade-riskScore" },
+        { "name": "unrdf.hook.condition_kind", "value": "sparql-ask" },
+        { "name": "unrdf.hook.effect_kind", "value": "sparql-construct" },
+        { "name": "unrdf.hook.satisfied", "value": true },
+        { "name": "unrdf.hook.enabled", "value": true },
+        { "name": "unrdf.hook.priority", "value": 50 },
+        { "name": "unrdf.hook.quads_added", "value": 3 },
+        { "name": "unrdf.hook.hooks_total", "value": 5 },
+        { "name": "unrdf.hook.hooks_satisfied", "value": 3 }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.rdf.operation",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.rdf.operation", "value": "query-select" },
+        { "name": "unrdf.rdf.store_backend", "value": "oxigraph" },
+        { "name": "unrdf.rdf.graph_name", "value": "http://example.org/graph/trades" },
+        { "name": "unrdf.rdf.quad_count", "value": 1500 },
+        { "name": "unrdf.rdf.sparql_query_length", "value": 128 }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.rdf.load",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.rdf.operation", "value": "load" },
+        { "name": "unrdf.rdf.store_backend", "value": "memory" },
+        { "name": "unrdf.rdf.format", "value": "text/turtle" },
+        { "name": "unrdf.rdf.quad_count", "value": 42 }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.policy.enforce",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.policy.id", "value": "acl-policy" },
+        { "name": "unrdf.policy.name", "value": "ACL Policy" },
+        { "name": "unrdf.policy.trigger", "value": "before-add" },
+        { "name": "unrdf.policy.result", "value": "valid" },
+        { "name": "unrdf.policy.hooks_registered", "value": 4 }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.crypto.sign",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.crypto.operation", "value": "sign" },
+        { "name": "unrdf.crypto.algorithm", "value": "ed25519" },
+        { "name": "unrdf.crypto.receipt_id", "value": "a3bb189e-8bf9-3888-9912-ace4e6543002" },
+        { "name": "unrdf.crypto.chain_length", "value": 7 },
+        { "name": "unrdf.crypto.verification_result", "value": "valid" }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.transaction",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.transaction.id", "value": "7c9e6679-7425-40de-944b-e07fc1f90ae7" },
+        { "name": "unrdf.transaction.operation_count", "value": 15 },
+        { "name": "unrdf.transaction.result", "value": "committed" },
+        { "name": "unrdf.transaction.isolation_level", "value": "snapshot" }
+      ]
+    }
+  },
+
+  {
+    "span": {
+      "name": "unrdf.rdf.validate",
+      "kind": "internal",
+      "attributes": [
+        { "name": "unrdf.rdf.operation", "value": "validate" },
+        { "name": "unrdf.rdf.store_backend", "value": "oxigraph" },
+        { "name": "unrdf.rdf.quad_count", "value": 200 }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "mcp.tool.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.042,
+      "attributes": [
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.name", "value": "hooks_execute" },
+        { "name": "mcp.tool.success", "value": true }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "mcp.tool.invocations",
+      "instrument": "counter",
+      "unit": "{invocation}",
+      "value": 1,
+      "attributes": [
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.name", "value": "sparql_query" },
+        { "name": "mcp.tool.success", "value": true }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "mcp.tool.result_size",
+      "instrument": "histogram",
+      "unit": "By",
+      "value": 2048,
+      "attributes": [
+        { "name": "mcp.server.name", "value": "unrdf-daemon" },
+        { "name": "mcp.tool.name", "value": "graph_query" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.cli.command.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 1.2,
+      "attributes": [
+        { "name": "unrdf.cli.command", "value": "hooks" },
+        { "name": "unrdf.cli.subcommand", "value": "execute" },
+        { "name": "unrdf.cli.exit_code", "value": 0 }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.cli.command.invocations",
+      "instrument": "counter",
+      "unit": "{invocation}",
+      "value": 5,
+      "attributes": [
+        { "name": "unrdf.cli.command", "value": "sparql" },
+        { "name": "unrdf.cli.subcommand", "value": "query" },
+        { "name": "unrdf.cli.exit_code", "value": 0 }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.hook.evaluation.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.003,
+      "attributes": [
+        { "name": "unrdf.hook.condition_kind", "value": "sparql-ask" },
+        { "name": "unrdf.hook.satisfied", "value": true },
+        { "name": "unrdf.hook.name", "value": "validate-trade-riskScore" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.hook.evaluations",
+      "instrument": "counter",
+      "unit": "{evaluation}",
+      "value": 12,
+      "attributes": [
+        { "name": "unrdf.hook.condition_kind", "value": "shacl" },
+        { "name": "unrdf.hook.satisfied", "value": false }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.hook.quads_added",
+      "instrument": "counter",
+      "unit": "{quad}",
+      "value": 42,
+      "attributes": [
+        { "name": "unrdf.hook.effect_kind", "value": "sparql-construct" },
+        { "name": "unrdf.hook.name", "value": "enrich-provenance" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.rdf.operation.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.008,
+      "attributes": [
+        { "name": "unrdf.rdf.operation", "value": "add" },
+        { "name": "unrdf.rdf.store_backend", "value": "oxigraph" },
+        { "name": "unrdf.rdf.graph_name", "value": "http://example.org/graph/trades" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.rdf.quad_count",
+      "instrument": "updowncounter",
+      "unit": "{quad}",
+      "value": 15000,
+      "attributes": [
+        { "name": "unrdf.rdf.store_backend", "value": "oxigraph" },
+        { "name": "unrdf.rdf.graph_name", "value": "http://example.org/graph/trades" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.rdf.query.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.021,
+      "attributes": [
+        { "name": "unrdf.rdf.operation", "value": "query-select" },
+        { "name": "unrdf.rdf.store_backend", "value": "memory" },
+        { "name": "unrdf.rdf.sparql_query_length", "value": 256 }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.transaction.duration",
+      "instrument": "histogram",
+      "unit": "s",
+      "value": 0.015,
+      "attributes": [
+        { "name": "unrdf.transaction.result", "value": "committed" },
+        { "name": "unrdf.transaction.isolation_level", "value": "snapshot" }
+      ]
+    }
+  },
+
+  {
+    "metric": {
+      "name": "unrdf.transaction.operations",
+      "instrument": "histogram",
+      "unit": "{operation}",
+      "value": 8,
+      "attributes": [{ "name": "unrdf.transaction.result", "value": "rolled-back" }]
+    }
+  }
+]

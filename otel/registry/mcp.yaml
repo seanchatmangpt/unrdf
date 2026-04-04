@@ -7,19 +7,19 @@ groups:
     attributes:
       - id: mcp.server.name
         type: string
-        stability: experimental
+        stability: stable
         brief: The name of the MCP server handling the request.
         examples: ['unrdf-daemon']
 
       - id: mcp.tool.name
         type: string
-        stability: experimental
+        stability: stable
         brief: The name of the MCP tool being invoked.
         examples: ['context_add', 'hooks_execute', 'graph_query', 'sparql_query']
 
       - id: mcp.tool.args
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           JSON-serialized arguments passed to the MCP tool. May be truncated
           for large payloads.
@@ -27,19 +27,19 @@ groups:
 
       - id: mcp.tool.success
         type: boolean
-        stability: experimental
+        stability: stable
         brief: Whether the MCP tool invocation completed without error.
 
       - id: mcp.tool.result_size
         type: int
-        stability: experimental
+        stability: stable
         brief: >
           Size in bytes of the JSON-serialized result returned by the MCP tool.
         examples: [128, 4096, 65536]
 
       - id: mcp.tool.error_type
         type: string
-        stability: experimental
+        stability: stable
         brief: >
           The class or type of error that caused the tool invocation to fail.
           Follows the same conventions as `error.type`.
