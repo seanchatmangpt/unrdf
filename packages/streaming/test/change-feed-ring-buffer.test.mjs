@@ -11,7 +11,7 @@
  * No ring buffer implementation - memory grows linearly with changes.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createChangeFeed } from '../src/index.mjs';
 import { namedNode, literal } from '@rdfjs/data-model';
 

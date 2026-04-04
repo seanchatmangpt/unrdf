@@ -67,6 +67,8 @@ describe('V6 Streaming Features', () => {
       const parser = createRDFStreamParser({ format: 'n-triples' });
 
       await new Promise((resolve, reject) => {
+        // Resume parser to flowing mode so Transform doesn't stall on buffered progress objects
+        parser.resume();
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
@@ -88,6 +90,7 @@ describe('V6 Streaming Features', () => {
       });
 
       await new Promise((resolve, reject) => {
+        parser.resume();
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
@@ -109,6 +112,7 @@ describe('V6 Streaming Features', () => {
       });
 
       await new Promise((resolve, reject) => {
+        parser.resume();
         stream.pipe(parser);
         parser.on('end', resolve);
         parser.on('error', reject);
