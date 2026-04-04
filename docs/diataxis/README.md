@@ -36,11 +36,24 @@ Reference documentation for APIs, schemas, configuration, and technical specific
 
 ### Package-Specific Docs
 
-Deep-dive diataxis docs scoped to individual packages:
+Deep-dive diataxis docs scoped to individual packages (complete 4-quadrant structure):
 
-- **[Daemon](./daemon/)** — MCP server, scheduling, OTel tracing, security
-- **[CLI](./cli/)** — `unrdf` command reference, hooks workflow, code generation
+**Core & Storage**
+
+- **[Core](./core/)** — RDF operations, parsing, SPARQL queries, SHACL validation, reasoning
+- **[Oxigraph](./oxigraph/)** — Rust backend, persistent storage, query optimization
+- **[Federation](./federation/)** — Distributed query execution, remote stores, federation patterns
+
+**Execution & Orchestration**
+
+- **[Daemon](./daemon/)** — MCP server, scheduling, OTel tracing, security, clustering
 - **[Hooks](./hooks/)** — KnowledgeHook system, defineHook, built-in validators, SHACL/N3 conditions
+- **[Streaming](./streaming/)** — Large graph streaming, incremental sync, change propagation
+
+**Interfaces & Extensions**
+
+- **[CLI](./cli/)** — `unrdf` command reference, hooks workflow, graph management
+- **[YAWL](./yawl/)** — Workflow language, composition, declarative execution models
 
 ---
 
@@ -200,12 +213,23 @@ See [/home/user/unrdf/docs/CONTRIBUTING.md](/home/user/unrdf/docs/CONTRIBUTING.m
 
 ## Status and Roadmap
 
-| Category    | Files Created    | Status                                                         |
-| ----------- | ---------------- | -------------------------------------------------------------- |
-| Tutorials   | 4 skeleton files | 🟡 Structure complete, content in progress                     |
-| How-To      | 5 files          | 🟡 Structure complete; validate-telemetry-with-weaver complete |
-| Reference   | 6 skeleton files | 🟡 Structure complete, content in progress                     |
-| Explanation | 4 skeleton files | 🟡 Structure complete, content in progress                     |
+| Item                                           | Status                                                        |
+| ---------------------------------------------- | ------------------------------------------------------------- |
+| **Core quadrants** (all 4 diataxis categories) | ✅ Complete — tutorials, how-to, reference, explanation       |
+| **Package-specific diataxis**                  | ✅ Complete — 8 packages with full 4-quadrant docs (71 files) |
+| **OTel Weaver integration docs**               | ✅ Complete — registry, live-check, package exports updated   |
+| **Telemetry how-to guide**                     | ✅ Complete — validate-telemetry-with-weaver.md               |
+
+**Package Diataxis Summary** (8 packages, ~71 files):
+
+- ✅ Core: tutorials, how-to (4), reference, explanation
+- ✅ Oxigraph: tutorials, how-to (3), reference, explanation
+- ✅ Federation: tutorials, how-to (3), reference, explanation
+- ✅ Streaming: tutorials, how-to (3), reference, explanation
+- ✅ YAWL: tutorials, how-to (4), reference, explanation
+- ✅ Daemon: tutorials, how-to (3), reference, explanation
+- ✅ CLI: tutorials, how-to (2), reference, explanation
+- ✅ Hooks: tutorials (2), how-to (3), reference, explanation
 
 **Last Updated:** 2026-04-04
 

@@ -192,6 +192,21 @@ See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed design.
 
 ---
 
+## OTel Weaver Gotchas
+
+- **Weaver binary**: `~/.cargo/bin/weaver` v0.22.1+ — commands: `registry check`, `registry generate`, `registry live-check`
+- **Template path**: `templates/{registry_basename}/{target}/` — basename comes from `--registry` arg (e.g. `--registry registry/` → `templates/registry/js/`)
+- **`application_mode: single`**: required in `otel/templates/registry/js/weaver.yaml` — missing it causes a parse error
+- **Template context**: iterate `ctx.groups`, NOT `ctx` — `ctx` is a dict; iterating it yields string keys ("groups", "registry_url")
+- **Attribute field**: resolved attributes expose `name`, not `id` — use `attr.name` in Jinja2 templates
+- **Manifest format**: use `schema_url: https://opentelemetry.io/schemas/1.28.0` — `schema_base_url`+`semconv_version` is deprecated and warns
+- **Live-check JSON**: tagged entity format `[{"span":{...}},{"metric":{...}}]` — NOT OTLP protobuf format
+- **`stability: experimental`** triggers one advisory per attribute — use `stability: stable` for all production registry attrs
+- **Generate command**: `cd otel && weaver registry generate --registry registry/ js ../packages/otel/src/generated/`
+- **`@unrdf/otel` is generated**: do not edit `packages/otel/src/generated/` directly — re-run generate after any registry change
+
+---
+
 ## Personal Notes
 
 - **Mark** (~6yr Dachshund) - Noise-sensitive, guards workspace

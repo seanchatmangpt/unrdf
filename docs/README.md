@@ -6,12 +6,27 @@
 
 ## 🚀 Getting Started (Start Here!)
 
-| Document | Purpose | Time |
-|----------|---------|------|
-| **[QUICK-START.md](QUICK-START.md)** | 5-minute guide with working examples | 5 min |
-| **[API-REFERENCE.md](API-REFERENCE.md)** | Top 20% of APIs (80% usage) | 15 min |
-| **[MIGRATION.md](MIGRATION.md)** | Migrate from N3, RDFLib, Jena | 10 min |
-| **[ARCHITECTURE.md](ARCHITECTURE.md)** | System design and structure | 20 min |
+| Document                                 | Purpose                              | Time   |
+| ---------------------------------------- | ------------------------------------ | ------ |
+| **[QUICK-START.md](QUICK-START.md)**     | 5-minute guide with working examples | 5 min  |
+| **[API-REFERENCE.md](API-REFERENCE.md)** | Top 20% of APIs (80% usage)          | 15 min |
+| **[MIGRATION.md](MIGRATION.md)**         | Migrate from N3, RDFLib, Jena        | 10 min |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)**   | System design and structure          | 20 min |
+
+---
+
+## 🗂️ Structured Learning Paths (Diataxis)
+
+**New to UNRDF?** Start with our comprehensive learning framework organized by goal, not by package.
+
+→ **[Go to Learning Paths](diataxis/)** — Choose your path:
+
+- **Tutorials** — Learn by doing (start here if you're new)
+- **How-To Guides** — Solve specific problems you're facing
+- **Reference** — Look up exact syntax and APIs
+- **Explanation** — Understand architecture and design
+
+Each of the 8 core packages (Core, Oxigraph, Daemon, CLI, Hooks, Federation, Streaming, YAWL) has complete diataxis documentation.
 
 ---
 
@@ -19,21 +34,21 @@
 
 ### Essential Packages (Most Users Need These)
 
-| Package | Description | Docs |
-|---------|-------------|------|
-| **@unrdf/core** | RDF storage, SPARQL, validation | [packages/core/README.md](../packages/core/README.md) |
+| Package             | Description                        | Docs                                                          |
+| ------------------- | ---------------------------------- | ------------------------------------------------------------- |
+| **@unrdf/core**     | RDF storage, SPARQL, validation    | [packages/core/README.md](../packages/core/README.md)         |
 | **@unrdf/oxigraph** | High-performance Rust triple store | [packages/oxigraph/README.md](../packages/oxigraph/README.md) |
-| **@unrdf/hooks** | Reactive knowledge behaviors | [packages/hooks/README.md](../packages/hooks/README.md) |
-| **@unrdf/kgc-4d** | Event sourcing with time-travel | [packages/kgc-4d/README.md](../packages/kgc-4d/README.md) |
-| **@unrdf/yawl** | Workflow engine (Van der Aalst) | [packages/yawl/README.md](../packages/yawl/README.md) |
+| **@unrdf/hooks**    | Reactive knowledge behaviors       | [packages/hooks/README.md](../packages/hooks/README.md)       |
+| **@unrdf/kgc-4d**   | Event sourcing with time-travel    | [packages/kgc-4d/README.md](../packages/kgc-4d/README.md)     |
+| **@unrdf/yawl**     | Workflow engine (Van der Aalst)    | [packages/yawl/README.md](../packages/yawl/README.md)         |
 
 ### Extended Packages (Optional)
 
-| Package | Description | Docs |
-|---------|-------------|------|
-| **@unrdf/streaming** | Large graph streaming | [packages/streaming/README.md](../packages/streaming/README.md) |
+| Package               | Description                 | Docs                                                              |
+| --------------------- | --------------------------- | ----------------------------------------------------------------- |
+| **@unrdf/streaming**  | Large graph streaming       | [packages/streaming/README.md](../packages/streaming/README.md)   |
 | **@unrdf/federation** | Distributed query execution | [packages/federation/README.md](../packages/federation/README.md) |
-| **@unrdf/cli** | Command-line tools | [packages/cli/README.md](../packages/cli/README.md) |
+| **@unrdf/cli**        | Command-line tools          | [packages/cli/README.md](../packages/cli/README.md)               |
 
 **See all packages:** [PACKAGES.md](PACKAGES.md)
 
@@ -43,25 +58,25 @@
 
 **Understand WHY UNRDF was built this way.**
 
-| ADR | Decision | Status |
-|-----|----------|--------|
-| **[ADR-001](adr/001-oxigraph-over-n3.md)** | Oxigraph over N3 for RDF storage | ✅ Accepted |
-| **[ADR-002](adr/002-yawl-workflow-patterns.md)** | YAWL over BPMN for workflows | ✅ Accepted |
-| **[ADR-003](adr/003-otel-observability.md)** | OpenTelemetry for observability | ✅ Accepted |
+| ADR                                                 | Decision                               | Status      |
+| --------------------------------------------------- | -------------------------------------- | ----------- |
+| **[ADR-001](adr/001-oxigraph-over-n3.md)**          | Oxigraph over N3 for RDF storage       | ✅ Accepted |
+| **[ADR-002](adr/002-yawl-workflow-patterns.md)**    | YAWL over BPMN for workflows           | ✅ Accepted |
+| **[ADR-003](adr/003-otel-observability.md)**        | OpenTelemetry for observability        | ✅ Accepted |
 | **[ADR-004](adr/004-bigbang-80-20-methodology.md)** | Big Bang 80/20 development methodology | ✅ Accepted |
-| **[ADR-005](adr/005-hook-native-reactive.md)** | Hook-native reactive architecture | ✅ Accepted |
+| **[ADR-005](adr/005-hook-native-reactive.md)**      | Hook-native reactive architecture      | ✅ Accepted |
 
 ---
 
 ## 📖 Tutorials
 
-| Tutorial | Level | Time |
-|----------|-------|------|
-| **[Build a Knowledge Graph](tutorials/build-knowledge-graph.md)** | Beginner | 30 min |
-| **[SPARQL Queries 101](tutorials/sparql-queries.md)** | Beginner | 20 min |
-| **[Hook-Based Validation](tutorials/hook-validation.md)** | Intermediate | 25 min |
+| Tutorial                                                          | Level        | Time   |
+| ----------------------------------------------------------------- | ------------ | ------ |
+| **[Build a Knowledge Graph](tutorials/build-knowledge-graph.md)** | Beginner     | 30 min |
+| **[SPARQL Queries 101](tutorials/sparql-queries.md)**             | Beginner     | 20 min |
+| **[Hook-Based Validation](tutorials/hook-validation.md)**         | Intermediate | 25 min |
 | **[Workflow Orchestration](tutorials/workflow-orchestration.md)** | Intermediate | 40 min |
-| **[Event Sourcing with KGC-4D](tutorials/event-sourcing.md)** | Advanced | 45 min |
+| **[Event Sourcing with KGC-4D](tutorials/event-sourcing.md)**     | Advanced     | 45 min |
 
 **See all tutorials:** [tutorials/](tutorials/)
 
@@ -71,13 +86,13 @@
 
 **Task-oriented guides for specific problems.**
 
-| Guide | Purpose |
-|-------|---------|
-| **[Query RDF Data](how-to/query-rdf-data.md)** | SPARQL queries, filtering, joins |
+| Guide                                                         | Purpose                          |
+| ------------------------------------------------------------- | -------------------------------- |
+| **[Query RDF Data](how-to/query-rdf-data.md)**                | SPARQL queries, filtering, joins |
 | **[Validate Data with Hooks](how-to/validate-with-hooks.md)** | Policy enforcement, data quality |
-| **[Build Workflows](how-to/build-workflows.md)** | Multi-step business processes |
-| **[Time-Travel Debugging](how-to/time-travel-debugging.md)** | Reconstruct past states |
-| **[Deploy to Production](how-to/deploy-production.md)** | Docker, Kubernetes, monitoring |
+| **[Build Workflows](how-to/build-workflows.md)**              | Multi-step business processes    |
+| **[Time-Travel Debugging](how-to/time-travel-debugging.md)**  | Reconstruct past states          |
+| **[Deploy to Production](how-to/deploy-production.md)**       | Docker, Kubernetes, monitoring   |
 
 **See all guides:** [how-to/](how-to/)
 
@@ -85,13 +100,13 @@
 
 ## 📚 Reference Documentation
 
-| Reference | Purpose |
-|-----------|---------|
-| **[API Reference](API-REFERENCE.md)** | Top 20% of APIs |
-| **[SPARQL Reference](reference/sparql-reference.md)** | SPARQL 1.1 syntax |
-| **[Hook Schema Reference](reference/hook-schema.md)** | Hook definition schemas |
+| Reference                                                 | Purpose                         |
+| --------------------------------------------------------- | ------------------------------- |
+| **[API Reference](API-REFERENCE.md)**                     | Top 20% of APIs                 |
+| **[SPARQL Reference](reference/sparql-reference.md)**     | SPARQL 1.1 syntax               |
+| **[Hook Schema Reference](reference/hook-schema.md)**     | Hook definition schemas         |
 | **[YAWL Patterns Reference](reference/yawl-patterns.md)** | Van der Aalst workflow patterns |
-| **[RDF Vocabularies](reference/rdf-vocabularies.md)** | FOAF, DCTERMS, SKOS, etc. |
+| **[RDF Vocabularies](reference/rdf-vocabularies.md)**     | FOAF, DCTERMS, SKOS, etc.       |
 
 ---
 
@@ -99,13 +114,13 @@
 
 **Copy-paste ready code examples.**
 
-| Example | Description |
-|---------|-------------|
-| **[Basic SPARQL](../examples/basic-sparql.mjs)** | Load + query RDF data |
+| Example                                                            | Description           |
+| ------------------------------------------------------------------ | --------------------- |
+| **[Basic SPARQL](../examples/basic-sparql.mjs)**                   | Load + query RDF data |
 | **[Email Validation Hook](../examples/email-validation-hook.mjs)** | Validate email format |
-| **[Order Fulfillment Workflow](../examples/order-workflow.mjs)** | Multi-step workflow |
-| **[Event Audit Trail](../examples/event-audit.mjs)** | KGC-4D event sourcing |
-| **[Federated Query](../examples/federated-query.mjs)** | Query multiple stores |
+| **[Order Fulfillment Workflow](../examples/order-workflow.mjs)**   | Multi-step workflow   |
+| **[Event Audit Trail](../examples/event-audit.mjs)**               | KGC-4D event sourcing |
+| **[Federated Query](../examples/federated-query.mjs)**             | Query multiple stores |
 
 **See all examples:** [examples/](../examples/)
 
@@ -113,12 +128,12 @@
 
 ## 🏗️ Architecture
 
-| Document | Purpose |
-|----------|---------|
-| **[Architecture Overview](ARCHITECTURE.md)** | System design principles |
-| **[Monorepo Structure](WORKSPACE-STRUCTURE.md)** | File layout, naming conventions |
-| **[Package Development](PACKAGE-DEVELOPMENT.md)** | Create new packages |
-| **[Testing Strategy](TESTING-STRATEGY.md)** | Test approach, coverage |
+| Document                                          | Purpose                         |
+| ------------------------------------------------- | ------------------------------- |
+| **[Architecture Overview](ARCHITECTURE.md)**      | System design principles        |
+| **[Monorepo Structure](WORKSPACE-STRUCTURE.md)**  | File layout, naming conventions |
+| **[Package Development](PACKAGE-DEVELOPMENT.md)** | Create new packages             |
+| **[Testing Strategy](TESTING-STRATEGY.md)**       | Test approach, coverage         |
 
 ---
 
@@ -126,53 +141,53 @@
 
 **For contributors and advanced users.**
 
-| Document | Purpose |
-|----------|---------|
-| **[Local Development](LOCAL-DEVELOPMENT.md)** | Setup dev environment |
-| **[Contributing Guide](CONTRIBUTING.md)** | How to contribute |
-| **[Testing Guide](TESTING.md)** | Run and write tests |
+| Document                                                 | Purpose                |
+| -------------------------------------------------------- | ---------------------- |
+| **[Local Development](LOCAL-DEVELOPMENT.md)**            | Setup dev environment  |
+| **[Contributing Guide](CONTRIBUTING.md)**                | How to contribute      |
+| **[Testing Guide](TESTING.md)**                          | Run and write tests    |
 | **[Big Bang 80/20 Methodology](bb80-20-methodology.md)** | Development philosophy |
 
 ---
 
 ## 📊 Performance & Benchmarks
 
-| Document | Purpose |
-|----------|---------|
-| **[Performance Analysis](../PERFORMANCE-ANALYSIS.md)** | Benchmark results |
-| **[Optimization Guide](guides/optimization.md)** | Performance tuning |
-| **[Benchmarking Suite](../benchmarks/)** | Run benchmarks yourself |
+| Document                                               | Purpose                 |
+| ------------------------------------------------------ | ----------------------- |
+| **[Performance Analysis](../PERFORMANCE-ANALYSIS.md)** | Benchmark results       |
+| **[Optimization Guide](guides/optimization.md)**       | Performance tuning      |
+| **[Benchmarking Suite](../benchmarks/)**               | Run benchmarks yourself |
 
 ---
 
 ## 🔐 Production & Operations
 
-| Document | Purpose |
-|----------|---------|
-| **[Production Readiness](../PRODUCTION-READINESS-FINAL.md)** | Production checklist |
-| **[Deployment Guide](how-to/deploy-production.md)** | Deploy UNRDF apps |
-| **[Monitoring with OTEL](guides/otel-monitoring.md)** | Observability setup |
-| **[Security Best Practices](guides/security.md)** | Secure your deployment |
+| Document                                                            | Purpose                              |
+| ------------------------------------------------------------------- | ------------------------------------ |
+| **[Production Readiness](../PRODUCTION-READINESS-FINAL.md)**        | Production checklist                 |
+| **[Deployment Guide](how-to/deploy-production.md)**                 | Deploy UNRDF apps                    |
+| **[OTel Weaver Integration](telemetry/OTEL-WEAVER-INTEGRATION.md)** | Observability & semantic conventions |
+| **[Security Best Practices](guides/security.md)**                   | Secure your deployment               |
 
 ---
 
 ## ❓ Troubleshooting
 
-| Document | Purpose |
-|----------|---------|
-| **[Common Issues](TROUBLESHOOTING.md)** | FAQ and solutions |
-| **[Debug Guide](guides/debugging.md)** | Debug UNRDF apps |
-| **[OTEL Validation](guides/otel-validation.md)** | Verify with OTEL |
+| Document                                                                                | Purpose                   |
+| --------------------------------------------------------------------------------------- | ------------------------- |
+| **[Common Issues](TROUBLESHOOTING.md)**                                                 | FAQ and solutions         |
+| **[Debug Guide](guides/debugging.md)**                                                  | Debug UNRDF apps          |
+| **[Validate Telemetry with Weaver](diataxis/how-to/validate-telemetry-with-weaver.md)** | Verify observability data |
 
 ---
 
 ## 📜 Thesis & Research
 
-| Document | Purpose |
-|----------|---------|
-| **[PhD Thesis (Final)](thesis-publication/PHD-THESIS-UNRDF-2028-REVOLUTION-FINAL.md)** | Complete research thesis |
-| **[Big Bang 80/20 Methodology](bb80-20-methodology.md)** | Development methodology |
-| **[Hyper-Frameworks](HYPER-FRAMEWORKS.md)** | Framework design patterns |
+| Document                                                                               | Purpose                   |
+| -------------------------------------------------------------------------------------- | ------------------------- |
+| **[PhD Thesis (Final)](thesis-publication/PHD-THESIS-UNRDF-2028-REVOLUTION-FINAL.md)** | Complete research thesis  |
+| **[Big Bang 80/20 Methodology](bb80-20-methodology.md)**                               | Development methodology   |
+| **[Hyper-Frameworks](HYPER-FRAMEWORKS.md)**                                            | Framework design patterns |
 
 ---
 
@@ -181,22 +196,26 @@
 ### By User Type
 
 **🟢 New Users** (never used UNRDF):
+
 1. [QUICK-START.md](QUICK-START.md) - 5 minutes
 2. [API-REFERENCE.md](API-REFERENCE.md) - 15 minutes
 3. [examples/](../examples/) - Copy-paste code
 
 **🟡 Migrating Users** (from N3, RDFLib, etc.):
+
 1. [MIGRATION.md](MIGRATION.md) - 10 minutes
 2. [ADR-001: Oxigraph vs N3](adr/001-oxigraph-over-n3.md) - Why different
 3. [API-REFERENCE.md](API-REFERENCE.md) - New APIs
 
 **🔵 Advanced Users** (building production apps):
+
 1. [ARCHITECTURE.md](ARCHITECTURE.md) - System design
 2. [ADRs](adr/) - Understand decisions
 3. [Production Guide](../PRODUCTION-READINESS-FINAL.md) - Deploy
 4. [OTEL Monitoring](guides/otel-monitoring.md) - Observability
 
 **🟣 Contributors** (want to help develop UNRDF):
+
 1. [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guide
 2. [LOCAL-DEVELOPMENT.md](LOCAL-DEVELOPMENT.md) - Setup
 3. [Big Bang 80/20](bb80-20-methodology.md) - Methodology
@@ -240,15 +259,15 @@
 
 ## 📝 Documentation Status
 
-| Document Type | Count | Status |
-|---------------|-------|--------|
-| **Quick Start** | 1 | ✅ Complete |
-| **API Reference** | 1 | ✅ Complete |
-| **Migration Guides** | 1 | ✅ Complete |
-| **ADRs** | 5 | ✅ Complete |
-| **Tutorials** | 5+ | ⏳ In Progress |
-| **How-To Guides** | 5+ | ⏳ In Progress |
-| **Examples** | 10+ | ✅ Complete |
+| Document Type        | Count | Status         |
+| -------------------- | ----- | -------------- |
+| **Quick Start**      | 1     | ✅ Complete    |
+| **API Reference**    | 1     | ✅ Complete    |
+| **Migration Guides** | 1     | ✅ Complete    |
+| **ADRs**             | 5     | ✅ Complete    |
+| **Tutorials**        | 5+    | ⏳ In Progress |
+| **How-To Guides**    | 5+    | ⏳ In Progress |
+| **Examples**         | 10+   | ✅ Complete    |
 
 **Last Updated:** 2024-12-25
 
