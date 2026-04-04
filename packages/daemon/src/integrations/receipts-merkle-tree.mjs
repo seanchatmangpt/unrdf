@@ -88,8 +88,9 @@ export async function verifyInclusionProof(proof) {
     // CVE-2012-2459 fix: Include batchSize in final root hash to prevent odd-leaf duplication attacks
     const batchSize = proof.batchSize || 1;
     const rootWithBatchSize = await blake3(`${currentHash}:${batchSize}`);
-    return rootWithBatchSize === proof.merkleRoot;
-  } catch {
+    const isMatch = rootWithBatchSize === proof.merkleRoot;
+    return isMatch;
+  } catch (e) {
     return false;
   }
 }
