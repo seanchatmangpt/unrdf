@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - '/etc/prometheus/alert-rules.yml'
+
+scrape_configs:
+  # OTEL Collector's own Prometheus metrics
+  - job_name: otel-collector
+    static_configs:
+      - targets: ['otel-collector:8889']
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'otelcollector_.*'
+        action: keep
+
+  # UNRDF Daemon metrics (when running)
+  - job_name: unrdf-daemon
+    static_configs:
+      - targets: ['host.docker.internal:9464']
+    scrape_interval: 10s
+
+  # Tempo metrics
+  - job_name: tempo
+    static_configs:
+      - targets: ['tempo:3200']
+
+  # Loki metrics
+  - job_name: loki
+    static_configs:
+      - targets: ['loki:3100']
+
+  # Alertmanager metrics
+  - job_name: alertmanager
+    static_configs:
+      - targets: ['alertmanager:9093']
+
+  # Pyroscope metrics
+  - job_name: pyroscope
+    static_configs:
+      - targets: ['pyroscope:4040']

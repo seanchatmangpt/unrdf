@@ -8,8 +8,8 @@ UNRDF implements enterprise-grade distributed tracing using OpenTelemetry with W
 
 ```
 ┌─────────────┐     traceparent     ┌─────────────┐     gRPC metadata     ┌─────────────┐
-│   CLI Tool  │ ──────────────────> │   Sidecar   │ ──────────────────> │    Hooks    │
-│  (Context)  │                     │ (Middleware) │                     │ (Effects)   │
+│   Daemon    │ ──────────────────> │   Sidecar   │ ──────────────────> │    Hooks    │
+│ (MCP Tools) │                     │ (Middleware) │                     │ (Effects)   │
 └─────────────┘                     └─────────────┘                     └─────────────┘
       │                                    │                                    │
       │                                    │                                    │
@@ -18,6 +18,8 @@ UNRDF implements enterprise-grade distributed tracing using OpenTelemetry with W
   Span ID:  00f067...              Span ID:  a1b2c3...              Span ID:  d4e5f6...
   Parent:   (none)                 Parent:   00f067...              Parent:   a1b2c3...
 ```
+
+All three layers share the same trace ID, enabling end-to-end distributed tracing from daemon → sidecar → knowledge graph.
 
 ## Components
 
@@ -42,6 +44,7 @@ generation:
 ```
 
 **Key Features**:
+
 - Import standard OTEL conventions
 - Define custom UNRDF conventions
 - Auto-generate type-safe instrumentation
@@ -50,6 +53,7 @@ generation:
 ### 2. Custom Semantic Conventions (`/Users/sac/unrdf/custom-conventions.yaml`)
 
 UNRDF-specific attributes for:
+
 - **Knowledge Hooks**: `knowledge_hook.*` attributes
 - **Policy Packs**: `policy_pack.*` attributes
 - **RDF Graphs**: `rdf.*` attributes
@@ -58,7 +62,16 @@ UNRDF-specific attributes for:
 - **Transactions**: `transaction.*` attributes
 - **gRPC Sidecar**: `sidecar.*` attributes
 
+### 2b. Daemon Semantic Conventions (`/Users/sac/unrdf/packages/daemon/custom-conventions.yaml`)
+
+Daemon-specific attributes for:
+
+- **MCP Tools**: `mcp.tool.*` attributes (tool name, args, success, result size)
+- **Scheduling**: `daemon.*` attributes (trigger type, operation ID, duration)
+- **Cluster**: `daemon.cluster.*` attributes (member ID, leader status, Raft state)
+
 Example:
+
 ```yaml
 - id: knowledge_hook
   prefix: knowledge_hook
@@ -83,7 +96,7 @@ import {
   extractTraceContextFromHeaders,
   injectTraceContextIntoMetadata,
   getCurrentTraceContext,
-  enrichLogWithTraceContext
+  enrichLogWithTraceContext,
 } from './otel-context-propagation.mjs';
 
 // Extract from HTTP headers
@@ -93,13 +106,17 @@ const ctx = extractTraceContextFromHeaders(req.headers);
 injectTraceContextIntoMetadata(metadata, ctx);
 
 // Add to logs
-console.info('Request processed', enrichLogWithTraceContext({
-  status: 'success',
-  duration_ms: 42
-}));
+console.info(
+  'Request processed',
+  enrichLogWithTraceContext({
+    status: 'success',
+    duration_ms: 42,
+  })
+);
 ```
 
 **Key Functions**:
+
 - `parseTraceparent()` - Parse W3C traceparent header
 - `formatTraceparent()` - Format trace context as header
 - `extractTraceContextFromHeaders()` - Extract from HTTP
@@ -110,12 +127,16 @@ console.info('Request processed', enrichLogWithTraceContext({
 - `enrichLogWithTraceContext()` - Add trace to logs
 - `addMetricExemplar()` - Link metrics to traces
 
+### 3b. Daemon Context Propagation (`/Users/sac/unrdf/packages/daemon/src/integrations/otel-context.mjs`)
+
+Mirrors the sidecar context propagation utilities for daemon use, enabling the same W3C trace context to flow from daemon → sidecar.
+
 ### 4. Telemetry Middleware (`/Users/sac/unrdf/sidecar/server/middleware/01.telemetry.mjs`)
 
 HTTP request instrumentation:
 
 ```javascript
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async event => {
   // Extract incoming trace context
   const incomingTraceContext = extractTraceContextFromHeaders(event.node.req.headers);
 
@@ -124,7 +145,7 @@ export default defineEventHandler(async (event) => {
     attributes: {
       'http.method': method,
       'service.name': 'unrdf-sidecar',
-    }
+    },
   });
 
   // Add trace context to logs
@@ -181,9 +202,9 @@ const tracker = createDefaultSLOTracker();
 
 // Record measurements
 tracker.recordMeasurement('api_latency', {
-  value: 45,  // ms
+  value: 45, // ms
   success: true,
-  timestamp: Date.now()
+  timestamp: Date.now(),
 });
 
 // Get SLO status
@@ -195,15 +216,56 @@ const status = tracker.getSLOStatus('api_latency');
 // }
 
 // Listen for alerts
-tracker.on('alert', (alert) => {
+tracker.on('alert', alert => {
   console.error('SLO violation:', alert);
 });
 ```
 
 **Default SLOs**:
+
 - **API Latency**: P95 < 100ms, 99% compliance
 - **Availability**: 99.9% uptime
 - **Error Rate**: < 1% errors
+
+### 7. Daemon OTEL SDK (`/Users/sac/unrdf/packages/daemon/src/integrations/otel-sdk.mjs`)
+
+SDK initialization integrated into daemon lifecycle:
+
+```javascript
+import { initializeOTelSDK, shutdownOTelSDK } from './integrations/otel-sdk.mjs';
+
+// Called in daemon.start()
+await initializeOTelSDK({
+  serviceName: 'unrdf-daemon',
+  version: '26.4.3',
+  environment: process.env.NODE_ENV || 'development',
+  otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
+});
+
+// Called in daemon.stop()
+await shutdownOTelSDK();
+```
+
+### 8. Daemon MCP Tool Instrumentation (`/Users/sac/unrdf/packages/daemon/src/mcp/otel-instrumentation.mjs`)
+
+All 36 MCP tools are automatically wrapped with OTEL spans:
+
+```javascript
+import { withMcpSpan } from './otel-instrumentation.mjs';
+
+// Each tool handler is wrapped:
+server.registerTool(
+  'query',
+  {
+    /* schema */
+  },
+  withMcpSpan('query', async args => {
+    return handlers['query'](args);
+  })
+);
+```
+
+Span attributes: `mcp.tool.name`, `mcp.tool.args`, `mcp.tool.success`, `mcp.tool.result_size`, `mcp.server.name`
 
 ## Metrics with Exemplars
 
@@ -220,8 +282,8 @@ const metric = {
   exemplar: {
     traceId: '4bf92f3577b34da6a3ce929d0e0e4736',
     spanId: '00f067aa0ba902b7',
-    timestamp: 1633024800000
-  }
+    timestamp: 1633024800000,
+  },
 };
 ```
 
@@ -250,7 +312,7 @@ const span = tracer.startSpan('deploy-policy-pack', {
   attributes: {
     'policy_pack.name': 'production-rules',
     'deployment.environment': 'staging',
-  }
+  },
 });
 
 try {
@@ -272,18 +334,24 @@ try {
 import { enrichLogWithTraceContext } from './otel-context-propagation.mjs';
 
 export async function executeHook(hookId, event) {
-  console.info('[Hook] Starting execution', enrichLogWithTraceContext({
-    'knowledge_hook.hook_id': hookId,
-    'knowledge_hook.hook_type': 'validation',
-  }));
+  console.info(
+    '[Hook] Starting execution',
+    enrichLogWithTraceContext({
+      'knowledge_hook.hook_id': hookId,
+      'knowledge_hook.hook_type': 'validation',
+    })
+  );
 
   // Hook logic with automatic trace context
   const result = await validateEntity(event);
 
-  console.info('[Hook] Execution complete', enrichLogWithTraceContext({
-    'knowledge_hook.hook_result': result.success ? 'success' : 'failure',
-    'knowledge_hook.duration_ms': result.duration,
-  }));
+  console.info(
+    '[Hook] Execution complete',
+    enrichLogWithTraceContext({
+      'knowledge_hook.hook_result': result.success ? 'success' : 'failure',
+      'knowledge_hook.duration_ms': result.duration,
+    })
+  );
 
   return result;
 }
@@ -297,7 +365,7 @@ const span = tracer.startSpan('validate-graph', {
     'policy_pack.pack_name': 'core-validation',
     'policy_pack.strict_mode': true,
     'rdf.quad_count': quads.length,
-  }
+  },
 });
 
 const validationResult = await validateGraph(quads, policyPack);
@@ -341,6 +409,7 @@ Auto-generated dashboards in `/Users/sac/unrdf/grafana/dashboards/`:
 **Problem**: Traces not appearing in Grafana Tempo
 
 **Solution**:
+
 ```javascript
 // Check if trace context is being extracted
 const ctx = extractTraceContextFromHeaders(headers);
@@ -353,6 +422,7 @@ console.log('Trace context:', ctx);
 **Problem**: Spans not connected in trace view
 
 **Solution**:
+
 ```javascript
 // Ensure parent span ID is set correctly
 span.setAttributes({
@@ -365,6 +435,7 @@ span.setAttributes({
 **Problem**: Constant SLO violation alerts
 
 **Solution**:
+
 ```javascript
 // Check current SLO status
 const status = tracker.getSLOStatus('api_latency');
@@ -373,13 +444,16 @@ console.log('Budget remaining:', status.budgetRemaining);
 // Adjust SLO targets if needed
 tracker.addSLO({
   name: 'api_latency',
-  target: 0.90,  // Lower from 0.95
-  threshold: 150,  // Increase from 100ms
+  target: 0.9, // Lower from 0.95
+  threshold: 150, // Increase from 100ms
 });
 ```
 
 ## Future Enhancements
 
+- [x] Daemon OTEL SDK integration with lifecycle hooks
+- [x] MCP tool instrumentation (36 tools, 100% coverage)
+- [x] Daemon-specific semantic conventions (3 convention groups)
 - [ ] OTEL Weaver CLI integration (when available)
 - [ ] Auto-generated instrumentation code
 - [ ] OpenTelemetry Collector integration
