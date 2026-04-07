@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/yawl-queue",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "Distributed YAWL workflow execution using BullMQ and Redis",
   "type": "module",
   "main": "src/adapter.mjs",

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/temporal-discovery",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "Temporal knowledge discovery for RDF graphs - pattern mining, anomaly detection, trend analysis",
   "type": "module",
   "main": "src/index.mjs",

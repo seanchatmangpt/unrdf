@@ -18,6 +18,7 @@ import {
   clearHooks,
   createHookRegistry,
 } from '../src/index.mjs';
+import { cloneQuad } from '@unrdf/core';
 
 describe('Comprehensive Hook Types - Core CRUD (6 types)', () => {
   let registry;
@@ -88,10 +89,9 @@ describe('Comprehensive Hook Types - Core CRUD (6 types)', () => {
       transform: quad => {
         // Expand wildcard predicates
         if (quad.predicate.value === '*') {
-          return {
-            ...quad,
+          return cloneQuad(quad, {
             predicate: { value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' },
-          };
+          });
         }
         return quad;
       },
@@ -359,10 +359,9 @@ describe('Comprehensive Hook Types - Error/Event (5 types)', () => {
           original: quad.object.value,
           transformed: quad.object.value.toUpperCase(),
         });
-        return {
-          ...quad,
+        return cloneQuad(quad, {
           object: { value: quad.object.value.toUpperCase() },
-        };
+        });
       },
     });
 
@@ -445,13 +444,12 @@ describe('Comprehensive Hook Types - Async/IO (6 types)', () => {
       name: 'add-auth-header',
       trigger: 'before-fetch',
       transform: quad => {
-        return {
-          ...quad,
+        return cloneQuad(quad, {
           object: {
             ...quad.object,
             auth: 'Bearer token123',
           },
-        };
+        });
       },
     });
 
@@ -506,13 +504,12 @@ describe('Comprehensive Hook Types - Async/IO (6 types)', () => {
           prepared: true,
           timestamp: Date.now(),
         });
-        return {
-          ...quad,
+        return cloneQuad(quad, {
           object: {
             ...quad.object,
             syncTimestamp: Date.now(),
           },
-        };
+        });
       },
     });
 
@@ -968,13 +965,12 @@ describe('Hook Chains - Complex Workflows', () => {
       trigger: 'before-add',
       transform: quad => {
         log.push('transform');
-        return {
-          ...quad,
+        return cloneQuad(quad, {
           object: {
             ...quad.object,
             language: quad.object.language?.toLowerCase(),
           },
-        };
+        });
       },
     });
 

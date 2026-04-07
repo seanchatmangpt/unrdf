@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/observability",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows",
   "type": "module",
   "main": "./src/index.mjs",

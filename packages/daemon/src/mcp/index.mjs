@@ -14,6 +14,7 @@ import { registerResources } from './resources.mjs';
 import { registerPrompts } from './prompts.mjs';
 import * as handlers from './handlers.mjs';
 import { withMcpSpan } from './otel-instrumentation.mjs';
+import * as ontoHandlers from './open-ontologies-handlers.mjs';
 
 
 /**
@@ -632,6 +633,202 @@ export function createMCPServer() {
     }
   );
 
+  // ============================================================================
+  // Open-Ontologies Tools (Phase 1: Core)
+  // ============================================================================
+
+  server.registerTool(
+    'onto_validate',
+    {
+      description: 'Validate RDF/OWL syntax and semantics. Checks Turtle, N-Triples, JSON-LD, RDF/XML for correctness.',
+      inputSchema: {
+        "file": z.string().describe('Path to RDF file'),
+        "format": z.enum(['ttl', 'nt', 'jsonld', 'rdfxml', 'nq']).optional().describe('RDF format'),
+      },
+    },
+    async (args) => withMcpSpan('onto_validate', ontoHandlers.onto_validate)(args)
+  );
+
+  server.registerTool(
+    'onto_stats',
+    {
+      description: 'Show statistics about loaded ontology: triple count, classes, properties, named individuals.',
+      inputSchema: {
+        "verbose": z.boolean().optional().describe('Show verbose statistics'),
+      },
+    },
+    async (args) => withMcpSpan('onto_stats', ontoHandlers.onto_stats)(args)
+  );
+
+  server.registerTool(
+    'onto_query',
+    {
+      description: 'Execute SPARQL SELECT/CONSTRUCT/DESCRIBE queries on in-memory ontology store.',
+      inputSchema: {
+        "query": z.string().describe('SPARQL query string'),
+        "format": z.enum(['json', 'ttl', 'nt', 'csv']).optional().describe('Output format'),
+      },
+    },
+    async (args) => withMcpSpan('onto_query', ontoHandlers.onto_query)(args)
+  );
+
+  server.registerTool(
+    'onto_load',
+    {
+      description: 'Load RDF ontology file into in-memory store. Supports Turtle, N-Triples, JSON-LD, RDF/XML.',
+      inputSchema: {
+        "file": z.string().describe('Path to ontology file to load'),
+        "format": z.enum(['ttl', 'nt', 'jsonld', 'rdfxml']).optional().describe('Input format'),
+      },
+    },
+    async (args) => withMcpSpan('onto_load', ontoHandlers.onto_load)(args)
+  );
+
+  server.registerTool(
+    'onto_marketplace',
+    {
+      description: 'Browse and install 32 standard ontologies (FOAF, DC, SKOS, Schema.org, etc.) from marketplace.',
+      inputSchema: {
+        "search": z.string().optional().describe('Search term for marketplace'),
+        "install": z.string().optional().describe('Ontology name to install'),
+        "list": z.boolean().optional().describe('List all available ontologies'),
+      },
+    },
+    async (args) => withMcpSpan('onto_marketplace', ontoHandlers.onto_marketplace)(args)
+  );
+
+  // ============================================================================
+  // Open-Ontologies Tools (Phase 2: Advanced)
+  // ============================================================================
+
+  server.registerTool(
+    'onto_reason',
+    {
+      description: 'Perform RDFS/OWL-RL/OWL-DL reasoning to infer new triples from existing ontology.',
+      inputSchema: {
+        "engine": z.enum(['rdfs', 'owl-rl', 'owl-dl']).optional().describe('Reasoning engine'),
+        "limit": z.number().optional().describe('Max inferred triples'),
+      },
+    },
+    async (args) => withMcpSpan('onto_reason', ontoHandlers.onto_reason)(args)
+  );
+
+  server.registerTool(
+    'onto_shacl',
+    {
+      description: 'Validate RDF data against SHACL shapes. Returns constraint violations with details.',
+      inputSchema: {
+        "data": z.string().describe('Data file to validate'),
+        "shapes": z.string().describe('SHACL shapes file'),
+      },
+    },
+    async (args) => withMcpSpan('onto_shacl', ontoHandlers.onto_shacl)(args)
+  );
+
+  server.registerTool(
+    'onto_save',
+    {
+      description: 'Save in-memory ontology store to file. Supports Turtle, N-Triples, JSON-LD, RDF/XML.',
+      inputSchema: {
+        "file": z.string().describe('Output file path'),
+        "format": z.enum(['ttl', 'nt', 'jsonld', 'rdfxml', 'nq']).optional().describe('Output format'),
+      },
+    },
+    async (args) => withMcpSpan('onto_save', ontoHandlers.onto_save)(args)
+  );
+
+  server.registerTool(
+    'onto_clear',
+    {
+      description: 'Clear all triples from in-memory ontology store. Useful for resetting state.',
+      inputSchema: {
+        "confirm": z.boolean().optional().describe('Confirm clear operation'),
+      },
+    },
+    async (args) => withMcpSpan('onto_clear', ontoHandlers.onto_clear)(args)
+  );
+
+  server.registerTool(
+    'onto_convert',
+    {
+      description: 'Convert RDF file between formats. Supports Turtle, N-Triples, JSON-LD, RDF/XML, N-Quads.',
+      inputSchema: {
+        "input": z.string().describe('Input file path'),
+        "output": z.string().describe('Output file path'),
+        "outputFormat": z.enum(['ttl', 'nt', 'jsonld', 'rdfxml', 'nq']).describe('Output format'),
+        "inputFormat": z.enum(['ttl', 'nt', 'jsonld', 'rdfxml', 'nq']).optional().describe('Input format (auto-detect if omitted)'),
+      },
+    },
+    async (args) => withMcpSpan('onto_convert', ontoHandlers.onto_convert)(args)
+  );
+
+  // ============================================================================
+  // Open-Ontologies Tools (Phase 3: Expert)
+  // ============================================================================
+
+  server.registerTool(
+    'onto_align',
+    {
+      description: 'Detect ontology alignment candidates between two ontologies using string similarity and structure.',
+      inputSchema: {
+        "source": z.string().describe('Source ontology file'),
+        "target": z.string().describe('Target ontology file'),
+        "threshold": z.number().min(0).max(1).optional().describe('Similarity threshold (0-1)'),
+      },
+    },
+    async (args) => withMcpSpan('onto_align', ontoHandlers.onto_align)(args)
+  );
+
+  server.registerTool(
+    'onto_drift',
+    {
+      description: 'Detect version drift between two ontology versions. Shows added/removed/modified classes and properties.',
+      inputSchema: {
+        "old": z.string().describe('Old version ontology file'),
+        "new": z.string().describe('New version ontology file'),
+        "detailed": z.boolean().optional().describe('Show detailed diff'),
+      },
+    },
+    async (args) => withMcpSpan('onto_drift', ontoHandlers.onto_drift)(args)
+  );
+
+  server.registerTool(
+    'onto_plan',
+    {
+      description: 'Plan ontology changes with impact analysis. Shows what will change before applying.',
+      inputSchema: {
+        "changes": z.string().describe('Changes file (Turtle with diff triples)'),
+        "dryRun": z.boolean().optional().describe('Dry run without applying'),
+      },
+    },
+    async (args) => withMcpSpan('onto_plan', ontoHandlers.onto_plan)(args)
+  );
+
+  server.registerTool(
+    'onto_apply',
+    {
+      description: 'Apply planned ontology changes. Creates new version with rollback support.',
+      inputSchema: {
+        "plan": z.string().describe('Plan JSON file'),
+        "backup": z.boolean().optional().describe('Create backup before applying'),
+      },
+    },
+    async (args) => withMcpSpan('onto_apply', ontoHandlers.onto_apply)(args)
+  );
+
+  server.registerTool(
+    'onto_version',
+    {
+      description: 'Save ontology snapshots with version tags. Restore previous versions for rollback.',
+      inputSchema: {
+        "tag": z.string().optional().describe('Version tag to save'),
+        "restore": z.string().optional().describe('Version tag to restore'),
+        "list": z.boolean().optional().describe('List all versions'),
+      },
+    },
+    async (args) => withMcpSpan('onto_version', ontoHandlers.onto_version)(args)
+  );
+
   return server;
 }
 
@@ -693,6 +890,21 @@ export async function inspectMCPServer() {
       { name: 'to_json', description: 'Convert RDF to JSON representation' },
       { name: 'to_ntriples', description: 'Convert RDF to N-Triples format' },
       { name: 'to_turtle', description: 'Convert RDF to Turtle format' },
+      { name: 'onto_validate', description: 'Validate RDF/OWL syntax and semantics' },
+      { name: 'onto_stats', description: 'Show ontology statistics' },
+      { name: 'onto_query', description: 'Execute SPARQL on ontology store' },
+      { name: 'onto_load', description: 'Load ontology into store' },
+      { name: 'onto_marketplace', description: 'Browse/install marketplace ontologies' },
+      { name: 'onto_reason', description: 'Perform RDFS/OWL reasoning' },
+      { name: 'onto_shacl', description: 'Validate with SHACL shapes' },
+      { name: 'onto_save', description: 'Save ontology store to file' },
+      { name: 'onto_clear', description: 'Clear ontology store' },
+      { name: 'onto_convert', description: 'Convert RDF between formats' },
+      { name: 'onto_align', description: 'Detect ontology alignment' },
+      { name: 'onto_drift', description: 'Detect version drift' },
+      { name: 'onto_plan', description: 'Plan ontology changes' },
+      { name: 'onto_apply', description: 'Apply planned changes' },
+      { name: 'onto_version', description: 'Manage ontology versions' },
     ],
     resources: mcpResources,
     prompts: mcpPrompts,

@@ -42,6 +42,7 @@ import {
   executeHook,
   executeHookChain,
 } from '../src/index.mjs';
+import { cloneQuad } from '@unrdf/core';
 
 // ============================================================================
 // Test Fixtures
@@ -390,8 +391,7 @@ describe('Advanced Features - Object Pooling', () => {
   });
 
   it('createPooledTransform: returns transformed quad', () => {
-    const transform = createPooledTransform(quad => ({
-      ...quad,
+    const transform = createPooledTransform(quad => cloneQuad(quad, {
       object: { ...quad.object, value: quad.object.value.toUpperCase() },
     }));
 
@@ -469,8 +469,7 @@ describe('Advanced Features - Batch Operations', () => {
     const hook = defineHook({
       name: 'batch-transform',
       trigger: 'before-add',
-      transform: quad => ({
-        ...quad,
+      transform: quad => cloneQuad(quad, {
         object: { value: quad.object.value.toUpperCase() },
       }),
     });
@@ -489,16 +488,14 @@ describe('Advanced Features - Batch Operations', () => {
       defineHook({
         name: 'uppercase',
         trigger: 'before-add',
-        transform: quad => ({
-          ...quad,
+        transform: quad => cloneQuad(quad, {
           object: { value: quad.object.value.toUpperCase() },
         }),
       }),
       defineHook({
         name: 'prefix',
         trigger: 'before-add',
-        transform: quad => ({
-          ...quad,
+        transform: quad => cloneQuad(quad, {
           object: { value: `PREFIX_${quad.object.value}` },
         }),
       }),
@@ -562,16 +559,14 @@ describe('Advanced Features - Hook Composition', () => {
       defineHook({
         name: 'uppercase',
         trigger: 'before-add',
-        transform: quad => ({
-          ...quad,
+        transform: quad => cloneQuad(quad, {
           object: { value: quad.object.value.toUpperCase() },
         }),
       }),
       defineHook({
         name: 'trim',
         trigger: 'before-add',
-        transform: quad => ({
-          ...quad,
+        transform: quad => cloneQuad(quad, {
           object: { value: quad.object.value.trim() },
         }),
       }),

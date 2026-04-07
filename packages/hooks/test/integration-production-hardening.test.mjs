@@ -40,14 +40,14 @@ import {
   getHooksByTrigger,
   clearHooks,
   HookTriggerSchema,
-  HookConfigSchema,
+  _HookConfigSchema,
   HookResultSchema,
   ChainResultSchema,
   builtinHooks,
-  validateSubjectIRI,
-  validatePredicateIRI,
-  validateIRIFormat,
-  trimLiterals,
+  _validateSubjectIRI,
+  _validatePredicateIRI,
+  _validateIRIFormat,
+  _trimLiterals,
 } from '../src/index.mjs';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -533,7 +533,7 @@ describe('Integration: Registry management', () => {
 
 describe('Integration: Built-in hooks', () => {
   const iriQuad = makeIriQuad('http://ex.org/s', 'http://ex.org/p', 'http://ex.org/o');
-  const litQuad = makeQuad('http://ex.org/s', 'http://ex.org/p', 'test');
+  const _litQuad = makeQuad('http://ex.org/s', 'http://ex.org/p', 'test');
 
   it('should validate IRI subjects with built-in hook', () => {
     const result = executeHook(builtinHooks.validateSubjectIRI, iriQuad);

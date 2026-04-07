@@ -24,7 +24,7 @@ import {
 
 const SH = 'http://www.w3.org/ns/shacl#';
 const XSD = 'http://www.w3.org/2001/XMLSchema#';
-const RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+const _RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 const EX = 'http://example.org/';
 
 // Reusable shapes Turtle strings

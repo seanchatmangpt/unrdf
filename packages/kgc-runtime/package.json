@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-runtime",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "KGC governance runtime with comprehensive Zod schemas and work item system",
   "type": "module",
   "main": "./src/index.mjs",

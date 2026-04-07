@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/integration-tests",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)",
   "type": "module",
   "private": true,

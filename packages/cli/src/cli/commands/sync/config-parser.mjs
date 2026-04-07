@@ -282,9 +282,10 @@ export function resolveConfigPaths(config, baseDir) {
 
   if (resolved.templates) {
     resolved.templates = resolved.templates.map(t => ({
-      ...t,
-      source: resolve(baseDir, t.source),
-      output: t.output ? resolve(baseDir, t.output) : t.output,
+      source: t.source,
+      output: t.output,
+      resolvedSource: resolve(baseDir, t.source),
+      resolvedOutput: t.output ? resolve(baseDir, t.output) : t.output,
     }));
   }
 

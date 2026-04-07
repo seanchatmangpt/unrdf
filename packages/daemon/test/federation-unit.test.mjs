@@ -16,8 +16,8 @@ import {
   FederationExecutorConfigSchema,
   ExecuteQueryOptionsSchema,
   SparqlQuerySchema,
-  QueryIdSchema,
-  NodeIdSchema,
+  _QueryIdSchema,
+  _NodeIdSchema,
   DaemonSchema,
   FederationCoordinatorSchema,
 } from '../src/integrations/federation-query-schemas.mjs';
@@ -726,7 +726,7 @@ describe('Result Aggregation and Deduplication', () => {
 
   it('deduplicates results when enabled', async () => {
     coordinator = makeCoordinator([healthyPeer('a'), healthyPeer('b')]);
-    coordinator.queryPeer.mockImplementation(async (nodeId) => {
+    coordinator.queryPeer.mockImplementation(async (_nodeId) => {
       return [{ id: 'x1', value: 'same' }, { id: 'x2', value: 'same' }];
     });
 
@@ -738,7 +738,7 @@ describe('Result Aggregation and Deduplication', () => {
     const result = await dedupExecutor.executeQuery('SELECT ?x WHERE { ?x a :T }');
 
     // With deduplication, identical result values should appear once
-    const values = result.aggregatedResults.map((r) => r.value);
+    const _values = result.aggregatedResults.map((r) => r.value);
     // x1 and x2 have the same value but different ids, so both survive
     // But the _aggregation_ step already merges identical JSON, so dedup removes
     // only duplicates that survived aggregation

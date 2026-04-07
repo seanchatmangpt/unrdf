@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-docs",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "KGC Markdown parser and dynamic documentation generator with proof anchoring",
   "type": "module",
   "exports": {

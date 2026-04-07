@@ -17,6 +17,7 @@ import {
   getCompilerStats,
   resetCompilerStats,
 } from '../src/policy-compiler.mjs';
+import { cloneQuad } from '@unrdf/core';
 
 describe('Policy Compilation', () => {
   beforeEach(() => {
@@ -261,7 +262,7 @@ describe('Hook Compilation', () => {
     it('should compile hook with transform', () => {
       const hook = {
         name: 'test-hook',
-        transform: quad => ({ ...quad, transformed: true }),
+        transform: quad => cloneQuad(quad, { transformed: true }),
       };
 
       const compiled = compileHook(hook);
@@ -354,7 +355,7 @@ describe('Compiled Execution', () => {
     it('should execute hook with transformation', () => {
       const hook = {
         name: 'test-hook',
-        transform: quad => ({ ...quad, transformed: true }),
+        transform: quad => cloneQuad(quad, { transformed: true }),
       };
 
       const quad = { subject: { value: 'test' } };
@@ -401,7 +402,7 @@ describe('Compiled Execution', () => {
         },
         {
           name: 'hook2',
-          transform: quad => ({ ...quad, processed: true }),
+          transform: quad => cloneQuad(quad, { processed: true }),
         },
         {
           name: 'hook3',

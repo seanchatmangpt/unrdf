@@ -6,6 +6,43 @@
 // Import these instead of using raw strings to catch typos at lint time.
 
 
+// ── Groq LLM Attributes ──
+
+/** The API endpoint URL being called. */
+export const ATTR_GROQ_API_ENDPOINT = 'groq.api.endpoint';
+
+/** The Groq model identifier being used for generation. */
+export const ATTR_GROQ_API_MODEL = 'groq.api.model';
+
+/** The API provider hosting the model. */
+export const ATTR_GROQ_API_PROVIDER = 'groq.api.provider';
+
+/** Maximum tokens requested in the generation. */
+export const ATTR_GROQ_GENERATION_MAX_TOKENS = 'groq.generation.max_tokens';
+
+/** Length in characters of the prompt sent to the LLM. */
+export const ATTR_GROQ_GENERATION_PROMPT_LENGTH = 'groq.generation.prompt_length';
+
+/** Length in characters of the LLM response content. */
+export const ATTR_GROQ_GENERATION_RESPONSE_LENGTH = 'groq.generation.response_length';
+
+/** Temperature parameter used for generation (controls randomness). */
+export const ATTR_GROQ_GENERATION_TEMPERATURE = 'groq.generation.temperature';
+
+/** Number of RDF triples successfully generated and parsed. */
+export const ATTR_GROQ_RDF_TRIPLES_GENERATED = 'groq.rdf.triples_generated';
+
+/** Whether the LLM response could be parsed as valid RDF triples. */
+export const ATTR_GROQ_RDF_TRIPLES_PARSE_ERROR = 'groq.rdf.triples_parse_error';
+
+/** Duration in milliseconds of the HTTP request to Groq API. */
+export const ATTR_GROQ_RESPONSE_DURATION_MS = 'groq.response.duration_ms';
+
+/** HTTP status code returned by the Groq API. */
+export const ATTR_GROQ_RESPONSE_STATUS_CODE = 'groq.response.status_code';
+
+
+
 // ── MCP (Model Context Protocol) Attributes ──
 
 /** The name of the MCP server handling the request. */
@@ -25,6 +62,80 @@ export const ATTR_MCP_TOOL_RESULT_SIZE = 'mcp.tool.result_size';
 
 /** Whether the MCP tool invocation completed without error. */
 export const ATTR_MCP_TOOL_SUCCESS = 'mcp.tool.success';
+
+
+
+// ── POWL Process Mining ──
+
+/** PM4Py POWL discovery algorithm variant used. */
+export const ATTR_POWL_DISCOVERY_VARIANT = 'powl.discovery.variant';
+
+/** Category of error detected during POWL generation: schema validation failure, semantic constraint violation, or conformance threshold breach. */
+export const ATTR_POWL_ERROR_CATEGORY = 'powl.error_category';
+
+/** Number of LLM generation and repair iterations performed to reach the final POWL model. */
+export const ATTR_POWL_ITERATION_COUNT = 'powl.iteration.count';
+
+/** Conformance fitness score (0.0–1.0) of the POWL model against the event log. */
+export const ATTR_POWL_MODEL_FITNESS = 'powl.model.fitness';
+
+/** POWL operator types present in the discovered model (xor, loop, partial_order). */
+export const ATTR_POWL_MODEL_OPERATOR_TYPES = 'powl.model.operator_types';
+
+/** URL-safe slug identifying the POWL process model. */
+export const ATTR_POWL_MODEL_SLUG = 'powl.model.slug';
+
+/** Current repair iteration number (1-based). Present only during error repair sub-loops. */
+export const ATTR_POWL_REPAIR_ITERATION = 'powl.repair_iteration';
+
+/** Whether the generated POWL model met the configured minimum fitness threshold. */
+export const ATTR_POWL_THRESHOLD_MET = 'powl.threshold_met';
+
+
+
+// ── POWL Swarm Coordination ──
+
+/** IRI of the ExecutionClaim lease record. */
+export const ATTR_SWARM_CLAIM_IRI = 'swarm.claim.iri';
+
+/** Lease duration in milliseconds. */
+export const ATTR_SWARM_CLAIM_LEASE_MS = 'swarm.claim.lease_ms';
+
+/** Fraction of workflow tasks completed (0.0–1.0). */
+export const ATTR_SWARM_COMPLETION_PCT = 'swarm.completion.pct';
+
+/** Failure handling policy for a stalled or failed task. */
+export const ATTR_SWARM_FAILURE_POLICY = 'swarm.failure.policy';
+
+/** IRI of the POWL WorkflowSpecification being executed. */
+export const ATTR_SWARM_SPEC_IRI = 'swarm.spec.iri';
+
+/** Human-readable activity label from powl:activityLabel. */
+export const ATTR_SWARM_TASK_LABEL = 'swarm.task.label';
+
+/** IRI of the POWL activity node being executed by this worker. */
+export const ATTR_SWARM_TASK_NODE_IRI = 'swarm.task.node_iri';
+
+/** POWL node type of the task. */
+export const ATTR_SWARM_TASK_NODE_TYPE = 'swarm.task.node_type';
+
+/** Number of tasks with status=completed. */
+export const ATTR_SWARM_TASKS_COMPLETED = 'swarm.tasks.completed';
+
+/** Number of tasks with status=failed. */
+export const ATTR_SWARM_TASKS_FAILED = 'swarm.tasks.failed';
+
+/** Number of tasks with expired leases (claimed or executing but claimedUntil < now). */
+export const ATTR_SWARM_TASKS_STALLED = 'swarm.tasks.stalled';
+
+/** Total number of tasks in the workflow spec. */
+export const ATTR_SWARM_TASKS_TOTAL = 'swarm.tasks.total';
+
+/** Number of currently active workers in the swarm. */
+export const ATTR_SWARM_WORKER_COUNT = 'swarm.worker.count';
+
+/** Unique worker identifier within the swarm. */
+export const ATTR_SWARM_WORKER_ID = 'swarm.worker.id';
 
 
 

@@ -90,6 +90,6 @@
   "homepage": "https://github.com/unrdf/unrdf#readme",
   "license": "MIT",
   "packageManager": "pnpm@10.23.0",
-  "version": "26.4.4",
+  "version": "26.4.7",
   "description": "UNRDF Interactive Documentation with AI-powered search and LLM integration"
 }
