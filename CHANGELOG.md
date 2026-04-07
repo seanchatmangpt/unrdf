@@ -1,5 +1,80 @@
 # CHANGELOG
 
+## [26.4.7] - 2026-04-07
+
+### Major Features
+
+**Open-Ontologies Integration** (NEW):
+
+- 15 new MCP tools for ontology governance and management
+- Core tools: `onto_validate`, `onto_stats`, `onto_query`, `onto_load`, `onto_marketplace`
+- Advanced tools: `onto_reason`, `onto_shacl`, `onto_save`, `onto_clear`, `onto_convert`
+- Expert tools: `onto_align`, `onto_drift`, `onto_plan`, `onto_apply`, `onto_version`
+- SPARQL query support on in-memory RDF store
+- Browse and install 32 standard ontologies from built-in marketplace
+- RDFS/OWL-RL/OWL-DL reasoning capabilities
+- SHACL validation with detailed constraint reporting
+- Ontology format conversion (Turtle, N-Triples, JSON-LD, RDF/XML)
+- Ontology alignment detection for version drift analysis
+- See [packages/daemon/OPEN-ONTOLOGIES-INTEGRATION.md](packages/daemon/OPEN-ONTOLOGIES-INTEGRATION.md)
+
+**Groq LLM Integration** (NEW):
+
+- AI-powered RDF reasoning with Groq's fast inference API
+- Ensemble provider for multi-model reasoning
+- MCP tool integration for AI-assisted ontology operations
+- Support for real-time LLM generation with OTEL tracing
+- See [packages/daemon/GROQ-INTEGRATION.md](packages/daemon/GROQ-INTEGRATION.md)
+
+**OpenTelemetry & Kubernetes Deployment** (NEW):
+
+- Full OTEL integration with automatic span instrumentation for all MCP tools
+- Weaver semantic convention validation for trace attributes
+- OTLP exporter to OTEL collector (gRPC)
+- Helm chart for Kubernetes deployment: `k8s/helm/unrdf-observability/`
+- Kind cluster configuration for local development
+- Complete observability stack: Prometheus, Grafana, Tempo, Loki, Pyroscope
+- Port mappings for all services (API: 3000, Grafana: 3001, Prometheus: 9091, Tempo: 13200)
+- See [playground/OTEL-K8S-DEPLOYMENT-GUIDE.md](playground/OTEL-K8S-DEPLOYMENT-GUIDE.md)
+
+### Bug Fixes
+
+- fix(hooks): 21 quad spreading fixes — use `cloneQuad()` instead of spread operator to preserve N3 prototype getters
+  - 5 fixes in `builtin-hooks-advanced.test.mjs`
+  - 5 fixes in `comprehensive-hook-types.test.mjs`
+  - 3 fixes in `policy-compiler.test.mjs`
+  - 8 fixes in other test files
+- fix(daemon): 4 unused variable warnings in `federation-unit.test.mjs` — prefix with underscore
+- fix(cli): 1 spreading warning in `config-parser.mjs` — use explicit object notation
+- fix(integration): Update open-ontologies integration test to use `disney-governed-universe.ttl`
+
+### Test Quality
+
+- 466 fast tests passing (pre-push suite)
+- 23 Groq integration tests passing (12 MCP + 11 ensemble)
+- 6 open-ontologies integration tests passing
+- 0 ESLint violations across all packages
+- All MCP tools registered and callable via daemon
+
+### Documentation
+
+- New: [playground/OTEL-K8S-DEPLOYMENT-GUIDE.md](playground/OTEL-K8S-DEPLOYMENT-GUIDE.md) -- Complete OTEL and K8s deployment guide
+- New: [playground/V26.4.7-VERIFICATION-STATUS.md](playground/V26.4.7-VERIFICATION-STATUS.md) -- Release verification report
+- Updated: [playground/INTEGRATION-VALIDATION-SUMMARY.md](playground/INTEGRATION-VALIDATION-SUMMARY.md) -- Integration status
+- Updated: [playground/BLUE-OCEAN-THESIS.md](playground/BLUE-OCEAN-THESIS.md) -- Blue ocean strategy
+
+### Chores
+
+- Linting fixes: 26 warnings resolved across hooks, daemon, and cli packages
+- MCP sync: All 15 open-ontologies tools registered and validated
+- Version preparation: Bumped all packages from 26.4.5 to 26.4.7
+
+### Breaking Changes
+
+**None** -- v26.4.7 is fully backward compatible with v26.4.4.
+
+---
+
 ## [26.4.4] - 2026-04-03
 
 ### Major Features
