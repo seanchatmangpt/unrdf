@@ -30,7 +30,7 @@ export function buildHooksToolRegistry(store, _hooks = []) {
   return {
     hooks_evaluate_conditions: {
       handler: async ({ store: evalStore, hooks: evalHooks }) => {
-        return withLLMSpan('hooks-evaluate-conditions', async (span) => {
+        return withLLMSpan('hooks-evaluate-conditions', async span => {
           span.setAttributes({
             'llm.provider': 'unrdf-hooks',
             'llm.model': 'condition-evaluator',
@@ -82,7 +82,7 @@ export function buildHooksToolRegistry(store, _hooks = []) {
 
     hooks_execute_effects: {
       handler: async ({ store: _execStore, hooks: execHooks, delta: _delta }) => {
-        return withLLMSpan('hooks-execute-effects', async (span) => {
+        return withLLMSpan('hooks-execute-effects', async span => {
           span.setAttributes({
             'llm.provider': 'unrdf-hooks',
             'llm.model': 'knowledge-hook-engine',
@@ -294,7 +294,7 @@ class ReceiptChainNode {
  * @returns {Promise<Object>} { episodes, finalStore, receiptChain, stats }
  */
 export async function runHooksAutonomics(store, hookDefinitions = [], options = {}) {
-  return withPipelineSpan('observe', async (span) => {
+  return withPipelineSpan('observe', async span => {
     const {
       goalCondition = async () => false,
       episodeCount = 3,

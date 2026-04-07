@@ -477,14 +477,10 @@ export function createHardenedContext() {
 export function createSafeFunctionProxy() {
   const handler = {
     construct() {
-      throw new Error(
-        'SecurityError: Function constructor is disabled in sandbox'
-      );
+      throw new Error('SecurityError: Function constructor is disabled in sandbox');
     },
     apply() {
-      throw new Error(
-        'SecurityError: Function execution is disabled in sandbox'
-      );
+      throw new Error('SecurityError: Function execution is disabled in sandbox');
     },
     get(target, prop) {
       if (prop === 'constructor' || prop === 'prototype' || prop === '__proto__') {
@@ -496,27 +492,19 @@ export function createSafeFunctionProxy() {
       return undefined;
     },
     set() {
-      throw new Error(
-        'SecurityError: Cannot modify SafeFunction proxy'
-      );
+      throw new Error('SecurityError: Cannot modify SafeFunction proxy');
     },
     defineProperty() {
-      throw new Error(
-        'SecurityError: Cannot define properties on SafeFunction proxy'
-      );
+      throw new Error('SecurityError: Cannot define properties on SafeFunction proxy');
     },
     deleteProperty() {
-      throw new Error(
-        'SecurityError: Cannot delete properties on SafeFunction proxy'
-      );
+      throw new Error('SecurityError: Cannot delete properties on SafeFunction proxy');
     },
     getPrototypeOf() {
       return null;
     },
     setPrototypeOf() {
-      throw new Error(
-        'SecurityError: Cannot set prototype on SafeFunction proxy'
-      );
+      throw new Error('SecurityError: Cannot set prototype on SafeFunction proxy');
     },
   };
 
@@ -555,9 +543,9 @@ export function logInjectionAttempt(code, violations, log = []) {
 
   console.warn(
     `[EffectExecutor] INJECTION ATTEMPT BLOCKED:\n` +
-    `  Violations: ${violations.join(', ')}\n` +
-    `  Code hash: ${attempt.codeHash}\n` +
-    `  Timestamp: ${attempt.timestamp.toISOString()}`
+      `  Violations: ${violations.join(', ')}\n` +
+      `  Code hash: ${attempt.codeHash}\n` +
+      `  Timestamp: ${attempt.timestamp.toISOString()}`
   );
 
   return attempt;

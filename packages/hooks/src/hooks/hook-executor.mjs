@@ -219,7 +219,11 @@ export function executeHooksByTrigger(hooksOrRegistry, trigger, quad) {
   let hooks;
 
   // Handle registry object
-  if (hooksOrRegistry && typeof hooksOrRegistry === 'object' && hooksOrRegistry.hooks instanceof Map) {
+  if (
+    hooksOrRegistry &&
+    typeof hooksOrRegistry === 'object' &&
+    hooksOrRegistry.hooks instanceof Map
+  ) {
     // Extract hooks for the specific trigger from registry
     const triggerSet = hooksOrRegistry.triggerIndex.get(trigger);
     if (!triggerSet) {

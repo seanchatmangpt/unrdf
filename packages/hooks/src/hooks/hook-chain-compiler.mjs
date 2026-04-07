@@ -110,7 +110,6 @@ export function compileHookChain(hooks) {
     .filter(Boolean)
     .join('\n    ');
 
-
   // Compile the chain function
   const fnBody = `
     ${validationSteps}

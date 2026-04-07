@@ -47,8 +47,7 @@ export const SparqlParamSchema = z.union([
 export function validateSparqlVariableName(name) {
   if (typeof name !== 'string' || !SAFE_SPARQL_VAR_RE.test(name)) {
     throw new Error(
-      `Invalid SPARQL variable name: "${String(name)}". ` +
-        'Must match /^[a-zA-Z_][a-zA-Z0-9_]*$/.'
+      `Invalid SPARQL variable name: "${String(name)}". ` + 'Must match /^[a-zA-Z_][a-zA-Z0-9_]*$/.'
     );
   }
   return name;
@@ -107,9 +106,7 @@ export function bindSparqlParams(queryTemplate, params = {}) {
 
     const result = SparqlParamSchema.safeParse(value);
     if (!result.success) {
-      throw new Error(
-        `Invalid SPARQL parameter value for ?${varName}: ${result.error.message}`
-      );
+      throw new Error(`Invalid SPARQL parameter value for ?${varName}: ${result.error.message}`);
     }
     replacements.set(varName, toRdfTerm(value));
   }
