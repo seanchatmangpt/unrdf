@@ -14,7 +14,20 @@
     "strict": false,
     "noImplicitAny": false,
     "isolatedModules": false,
-    "maxNodeModuleJsDepth": 0
+    "maxNodeModuleJsDepth": 0,
+    "paths": {
+      "@unrdf/core": ["./packages/core/src/index.mjs"],
+      "@unrdf/hooks": ["./packages/hooks/src/index.mjs"],
+      "@unrdf/oxigraph": ["./packages/oxigraph/src/index.mjs"],
+      "@unrdf/streaming": ["./packages/streaming/src/index.mjs"],
+      "@unrdf/federation": ["./packages/federation/src/index.mjs"],
+      "@unrdf/cli": ["./packages/cli/src/index.mjs"],
+      "@unrdf/daemon": ["./packages/daemon/src/index.mjs"],
+      "@unrdf/yawl": ["./packages/yawl/src/index.mjs"],
+      "@unrdf/receipts": ["./packages/receipts/src/index.mjs"],
+      "@unrdf/zkp": ["./packages/zkp/src/index.mjs"],
+      "@unrdf/test-utils": ["./packages/test-utils/src/index.mjs"]
+    }
   },
   "include": ["packages/*/src/**/*.mjs", "packages/*/src/**/*.js"],
   "exclude": ["node_modules", "dist", "test", "**/*.test.mjs", "**/*.test.js"]

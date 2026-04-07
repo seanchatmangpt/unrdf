@@ -1,0 +1,62 @@
+{{- if .Values.unrdf.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "unrdf" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "unrdf" }}
+spec:
+  replicas: {{ .Values.unrdf.replicas }}
+  selector:
+    matchLabels:
+      {{- include "unrdf-observability.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        {{- include "unrdf-observability.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+        {{- include "unrdf-observability.podSecurityLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) $component }}
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $component }}
+          image: "{{ .Values.unrdf.imageRepo }}:{{ .Values.unrdf.imageTag }}"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            {{- toYaml (index .Values "unrdf" "securityContext" | default .Values.security.containerSecurityContext) | nindent 12 }}
+          ports:
+            - name: api
+              containerPort: 3000
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- range .Values.unrdf.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            {{- toYaml .Values.unrdf.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory
+{{- end }}

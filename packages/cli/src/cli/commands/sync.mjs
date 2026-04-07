@@ -184,8 +184,8 @@ export const syncCommand = defineCommand({
   args: {
     config: {
       type: 'string',
-      description: 'Path to `.unrdf.toml` configuration file',
-      default: '.unrdf.toml',
+      description: 'Path to `unrdf.toml` configuration file',
+      default: 'unrdf.toml',
     },
     'dry-run': {
       type: 'boolean',
@@ -224,7 +224,7 @@ export const syncCommand = defineCommand({
     // Check config file exists
     if (!existsSync(args.config)) {
       console.error(`Error: Configuration file not found: ${args.config}`);
-      console.error('\nCreate a `.unrdf.toml` file with:');
+      console.error('\nCreate a `unrdf.toml` file with:');
       console.error(`
 [project]
 name = "my-project"

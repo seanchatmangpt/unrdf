@@ -150,9 +150,9 @@ const TOOLS = [
   },
   {
     name: 'unrdf_sync',
-    description: 'Generate synchronized code artifacts (Zod schemas, JSDoc types, OpenAPI specs) from an RDF ontology using .unrdf.toml config.',
+    description: 'Generate synchronized code artifacts (Zod schemas, JSDoc types, OpenAPI specs) from an RDF ontology using unrdf.toml config.',
     schema: z.object({
-      config: z.string().optional().describe('Path to .unrdf.toml config file (default: .unrdf.toml)'),
+      config: z.string().optional().describe('Path to unrdf.toml config file (default: unrdf.toml)'),
       dryRun: z.boolean().optional().describe('Preview changes without writing files'),
       rule: z.string().optional().describe('Run only the specified rule by name'),
       output: z.enum(['text', 'json']).optional().describe('Output format'),

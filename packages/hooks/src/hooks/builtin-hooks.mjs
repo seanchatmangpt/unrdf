@@ -256,7 +256,8 @@ export const normalizeLanguageTagPooled = defineHook({
       quad.subject,
       quad.predicate,
       {
-        ...quad.object,
+        value: quad.object.value,
+        datatype: quad.object.datatype,
         language: quad.object.language.toLowerCase(),
       },
       quad.graph
@@ -287,8 +288,9 @@ export const trimLiteralsPooled = defineHook({
       quad.subject,
       quad.predicate,
       {
-        ...quad.object,
         value: trimmed,
+        datatype: quad.object.datatype,
+        language: quad.object.language,
       },
       quad.graph
     );

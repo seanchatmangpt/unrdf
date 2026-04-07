@@ -48,6 +48,9 @@ export {
 
 export { canonicalize, toNTriples, sortQuads, isIsomorphic } from './rdf/canonicalize.mjs';
 
+// Safe quad cloning (avoids N3 prototype-getter spread bug)
+export { cloneQuad } from './utils/quad-utils.mjs';
+
 // Graph diffing and change tracking
 export { diffGraphFromStores, diffGraphFromDelta, diffOntologyFromGraphDiff } from './diff.mjs';
 

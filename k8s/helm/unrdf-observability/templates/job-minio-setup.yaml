@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-minio-setup" (include "unrdf-observability.fullname" .) }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    metadata:
+      name: {{ printf "%s-minio-setup" (include "unrdf-observability.fullname" .) }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: minio-setup
+          image: minio/mc:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mc alias set local {{ printf "http://%s-minio.%s.svc.cluster.local:9000" (include "unrdf-observability.fullname" .) .Values.namespace }} $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD
+              mc mb --ignore-existing local/tempo-traces
+              mc anonymous set download local/tempo-traces
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-minio" (include "unrdf-observability.fullname" .) }}
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-minio" (include "unrdf-observability.fullname" .) }}
+                  key: MINIO_ROOT_PASSWORD

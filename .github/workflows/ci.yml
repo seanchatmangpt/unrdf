@@ -2,14 +2,14 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'packages/**'
       - '.github/workflows/ci.yml'
       - 'pnpm-lock.yaml'
       - 'package.json'
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'packages/**'
       - '.github/workflows/ci.yml'
@@ -212,17 +212,17 @@ jobs:
             echo "❌ dist directory not found"
             exit 1
           fi
-          
+
           if [ ! -f "dist/index.mjs" ]; then
             echo "❌ dist/index.mjs not found"
             exit 1
           fi
-          
+
           if [ ! -f "dist/knowledge-engine.mjs" ]; then
             echo "❌ dist/knowledge-engine.mjs not found"
             exit 1
           fi
-          
+
           echo "✅ Build artifacts verified"
 
       - name: Test built package
@@ -274,12 +274,12 @@ jobs:
             echo "❌ docs/api directory not found"
             exit 1
           fi
-          
+
           if [ ! -f "docs/api/index.html" ]; then
             echo "❌ docs/api/index.html not found"
             exit 1
           fi
-          
+
           echo "✅ Documentation verified"
 
   # Release Preparation
@@ -319,19 +319,19 @@ jobs:
           echo "Verifying version consistency..."
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           CHANGELOG_VERSION=$(grep -o '^## \[[0-9]\+\.[0-9]\+\.[0-9]\+' CHANGELOG.md | head -1 | sed 's/## \[//')
-          
+
           if [ "$PACKAGE_VERSION" != "$CHANGELOG_VERSION" ]; then
             echo "❌ Version mismatch: package.json=$PACKAGE_VERSION, CHANGELOG.md=$CHANGELOG_VERSION"
             exit 1
           fi
-          
+
           echo "✅ Version consistency verified: $PACKAGE_VERSION"
 
       - name: Create release artifacts
         run: |
           echo "Creating release artifacts..."
           mkdir -p release-artifacts
-          
+
           # Create source tarball
           tar -czf release-artifacts/unrdf-$(node -p "require('./package.json').version").tar.gz \
             --exclude=node_modules \
@@ -340,10 +340,10 @@ jobs:
             --exclude=coverage \
             --exclude=release-artifacts \
             .
-          
+
           # Create dist tarball
           tar -czf release-artifacts/unrdf-$(node -p "require('./package.json').version)-dist.tar.gz dist/
-          
+
           echo "✅ Release artifacts created"
 
       - name: Upload release artifacts
@@ -513,7 +513,7 @@ jobs:
           EOF
 
           # Create config
-          cat > .unrdf.toml << EOF
+          cat > unrdf.toml << EOF
           [project]
           name = "test-project"
           version = "1.0.0"
@@ -533,7 +533,7 @@ jobs:
           EOF
 
           # Run sync command
-          timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config .unrdf.toml --verbose
+          timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config unrdf.toml --verbose
 
           # Verify output exists
           if [ ! -f "generated/entities.mjs" ]; then
@@ -635,7 +635,7 @@ jobs:
       - name: Final validation
         run: |
           echo "Running final validation..."
-          
+
           # Check package.json
           echo "Validating package.json..."
           node -e "
@@ -650,7 +650,7 @@ jobs:
             }
             console.log('✅ package.json validated');
           "
-          
+
           # Check for ESM imports
           echo "Validating ESM imports..."
           if grep -r "require(" src/ --include="*.mjs" | grep -v "node_modules"; then
@@ -658,7 +658,7 @@ jobs:
             exit 1
           fi
           echo "✅ ESM imports validated"
-          
+
           # Check for TypeScript
           echo "Validating no TypeScript..."
           if find . -name "*.ts" -o -name "*.tsx" -o -name "*.d.ts" | grep -v node_modules | grep -v .git; then
@@ -666,9 +666,5 @@ jobs:
             exit 1
           fi
           echo "✅ No TypeScript files found"
-          
+
           echo "✅ Final validation completed"
-
-
-
-

@@ -14,9 +14,9 @@ export LOG_LEVEL="info"                 # debug, info, warn, error
 export DAEMON_PORT="3000"               # Daemon HTTP port
 ```
 
-### 2. Configuration File (.unrdf.toml)
+### 2. Configuration File (unrdf.toml)
 
-The project includes a root-level `.unrdf.toml` file with default settings:
+The project includes a root-level `unrdf.toml` file with default settings:
 
 ```toml
 [groq]
@@ -63,7 +63,7 @@ console.log(result.text);
 import { loadConfig, initializeGroqProvider, getGroqProvider } from '@unrdf/daemon';
 import { generateText } from 'ai';
 
-// Load config from .unrdf.toml and environment
+// Load config from unrdf.toml and environment
 const config = loadConfig();
 
 // Initialize Groq with loaded config

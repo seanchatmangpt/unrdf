@@ -32,7 +32,7 @@ processors:
 
   transform/logs:
     error_mode: ignore
-    traceStatements:
+    log_statements:
       - context: log
         statements:
           - set(attributes["loki.trace_id"], attributes["trace_id"]) where attributes["trace_id"] != nil

@@ -229,8 +229,8 @@ template (Nunjucks content)
 
 ```yaml
 ---
-to: src/schemas.mjs                    # Output file path (can use {{ }} vars)
-sparql: |                              # SPARQL query (multiline)
+to: src/schemas.mjs # Output file path (can use {{ }} vars)
+sparql: | # SPARQL query (multiline)
   SELECT ?className ?propertyName
   WHERE { ... }
 ---
@@ -329,6 +329,7 @@ pnpm unrdf template generate ontology.ttl \
 ```
 
 Shows:
+
 - Output path
 - First 50 lines of rendered content
 - File size
@@ -465,19 +466,19 @@ to: src/output.mjs
 
 ## Available Filters Quick Reference
 
-| Filter | Example | Result |
-|--------|---------|--------|
-| `camelCase` | `"user-name" \| camelCase` | `"userName"` |
-| `pascalCase` | `"user-name" \| pascalCase` | `"UserName"` |
-| `snakeCase` | `"userName" \| snakeCase` | `"user_name"` |
-| `kebabCase` | `"userName" \| kebabCase` | `"user-name"` |
-| `zodType` | `"xsd:string" \| zodType` | `"z.string()"` |
-| `jsdocType` | `"xsd:string" \| jsdocType` | `"string"` |
-| `localName` | `"http://schema.org/Person" \| localName` | `"Person"` |
-| `groupBy` | `results \| groupBy("?class")` | Grouped object |
-| `sortBy` | `results \| sortBy("?name", "asc")` | Sorted array |
-| `indent(4)` | `code \| indent(4)` | Indented text |
-| `date` | `now \| date("YYYY-MM-DD")` | `"2026-04-03"` |
+| Filter       | Example                                   | Result         |
+| ------------ | ----------------------------------------- | -------------- |
+| `camelCase`  | `"user-name" \| camelCase`                | `"userName"`   |
+| `pascalCase` | `"user-name" \| pascalCase`               | `"UserName"`   |
+| `snakeCase`  | `"userName" \| snakeCase`                 | `"user_name"`  |
+| `kebabCase`  | `"userName" \| kebabCase`                 | `"user-name"`  |
+| `zodType`    | `"xsd:string" \| zodType`                 | `"z.string()"` |
+| `jsdocType`  | `"xsd:string" \| jsdocType`               | `"string"`     |
+| `localName`  | `"http://schema.org/Person" \| localName` | `"Person"`     |
+| `groupBy`    | `results \| groupBy("?class")`            | Grouped object |
+| `sortBy`     | `results \| sortBy("?name", "asc")`       | Sorted array   |
+| `indent(4)`  | `code \| indent(4)`                       | Indented text  |
+| `date`       | `now \| date("YYYY-MM-DD")`               | `"2026-04-03"` |
 
 For complete reference, see [template-command.md](./template-command.md).
 
@@ -494,11 +495,12 @@ For complete reference, see [template-command.md](./template-command.md).
 For **large projects** with **multiple generation rules**, use `unrdf sync`:
 
 ```bash
-pnpm unrdf sync --config .unrdf.toml
+pnpm unrdf sync --config unrdf.toml
 ```
 
 See [sync-command.md](./sync-command.md) for:
-- Configuration files (`.unrdf.toml`)
+
+- Configuration files (`unrdf.toml`)
 - Multiple rules (batch operation)
 - Dependency management between rules
 - Watch mode (auto-regenerate on change)
@@ -559,25 +561,25 @@ Reuse filters and avoid duplicating logic:
 
 ## Key Concepts
 
-| Concept | What It Does | Example |
-|---------|--------------|---------|
-| **RDF** | Describes data as subject-predicate-object triples | User → hasEmail → john@example.com |
-| **SPARQL** | Query language for RDF data | `SELECT ?name WHERE { ?x rdf:label ?name }` |
-| **Nunjucks** | Template language with filters | `{{ name \| camelCase }}` |
-| **Frontmatter** | Metadata at top of template file | `to: src/output.mjs` |
-| **Filter** | Transforms template variables | `{{ text \| camelCase }}` |
-| **Batch mode** | Generate multiple files from one template | One file per RDF instance |
+| Concept         | What It Does                                       | Example                                     |
+| --------------- | -------------------------------------------------- | ------------------------------------------- |
+| **RDF**         | Describes data as subject-predicate-object triples | User → hasEmail → john@example.com          |
+| **SPARQL**      | Query language for RDF data                        | `SELECT ?name WHERE { ?x rdf:label ?name }` |
+| **Nunjucks**    | Template language with filters                     | `{{ name \| camelCase }}`                   |
+| **Frontmatter** | Metadata at top of template file                   | `to: src/output.mjs`                        |
+| **Filter**      | Transforms template variables                      | `{{ text \| camelCase }}`                   |
+| **Batch mode**  | Generate multiple files from one template          | One file per RDF instance                   |
 
 ## Limitations & Scope
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Multiple output files per template | ✅ Supported | Use frontmatter `to:` with template vars |
-| Batch mode (per-instance files) | ✅ Supported | Requires `--batch` flag |
-| Type coercion (Zod/JSDoc) | ✅ Supported | 20+ XSD types, custom filters |
-| File injection (Hygen-style) | ✅ Supported | `inject:`, `before:`, `after:` directives |
-| Watch mode | ⚠️ Planned | Currently use `--dry-run` for preview |
-| Custom SPARQL functions | ❌ Not supported | Use standard SPARQL 1.1 only |
+| Feature                            | Status           | Notes                                     |
+| ---------------------------------- | ---------------- | ----------------------------------------- |
+| Multiple output files per template | ✅ Supported     | Use frontmatter `to:` with template vars  |
+| Batch mode (per-instance files)    | ✅ Supported     | Requires `--batch` flag                   |
+| Type coercion (Zod/JSDoc)          | ✅ Supported     | 20+ XSD types, custom filters             |
+| File injection (Hygen-style)       | ✅ Supported     | `inject:`, `before:`, `after:` directives |
+| Watch mode                         | ⚠️ Planned       | Currently use `--dry-run` for preview     |
+| Custom SPARQL functions            | ❌ Not supported | Use standard SPARQL 1.1 only              |
 
 ## Getting Help
 

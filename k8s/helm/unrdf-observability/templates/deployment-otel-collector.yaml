@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "otel-collector" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "otel-collector" }}
+spec:
+  replicas: {{ .Values.otelCollector.replicas }}
+  selector:
+    matchLabels:
+      {{- include "unrdf-observability.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        {{- include "unrdf-observability.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+        {{- include "unrdf-observability.podSecurityLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) $component }}
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $component }}
+          image: "{{ .Values.otelCollector.imageRepo }}:{{ .Values.otelCollector.imageTag }}"
+          securityContext:
+            {{- toYaml (index .Values "otelCollector" "securityContext" | default .Values.security.containerSecurityContext) | nindent 12 }}
+          command:
+            - "/otelcol-contrib"
+          args:
+            - --config=/etc/otel-collector-config.yaml
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+            - name: prometheus
+              containerPort: 8888
+              protocol: TCP
+            - name: health
+              containerPort: 13133
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel-collector-config.yaml
+              subPath: otel-collector-config.yaml
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            {{- toYaml .Values.otelCollector.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health/status
+              port: 13133
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+      volumes:
+        - name: config
+          configMap:
+            name: {{ printf "%s-otel-collector" (include "unrdf-observability.fullname" .) }}
+        - name: tmp
+          emptyDir:
+            medium: Memory

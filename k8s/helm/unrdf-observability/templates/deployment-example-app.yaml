@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "example-app" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "example-app" }}
+spec:
+  replicas: {{ .Values.exampleApp.replicas }}
+  selector:
+    matchLabels:
+      {{- include "unrdf-observability.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        {{- include "unrdf-observability.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+        {{- include "unrdf-observability.podSecurityLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) $component }}
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $component }}
+          image: "{{ .Values.exampleApp.imageRepo }}:{{ .Values.exampleApp.imageTag }}"
+          securityContext:
+            {{- toYaml (index .Values "exampleApp" "securityContext" | default .Values.security.containerSecurityContext) | nindent 12 }}
+          env:
+            - name: JAEGER_AGENT_HOST
+              value: {{ printf "%s-otel-collector" (include "unrdf-observability.fullname" .) }}
+            - name: JAEGER_AGENT_PORT
+              value: "14268"
+          ports:
+            - name: frontend
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            {{- toYaml .Values.exampleApp.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory

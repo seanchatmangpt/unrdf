@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "node-exporter" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "node-exporter" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "unrdf-observability.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        {{- include "unrdf-observability.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+        {{- include "unrdf-observability.podSecurityLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) $component }}
+      securityContext:
+        {{- toYaml .Values.nodeExporter.securityContext | nindent 8 }}
+      hostNetwork: true
+      hostPID: true
+      containers:
+        - name: {{ $component }}
+          image: "{{ .Values.nodeExporter.imageRepo }}:{{ .Values.nodeExporter.imageTag }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          args:
+            - --path.procfs=/host/proc
+            - --path.sysfs=/host/sys
+          ports:
+            - name: http
+              containerPort: 9100
+              protocol: TCP
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+          resources:
+            {{- toYaml .Values.nodeExporter.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9100
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            failureThreshold: 3
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys

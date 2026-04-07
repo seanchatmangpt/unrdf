@@ -1,0 +1,109 @@
+{{- $tempo := printf "%s-tempo" (include "unrdf-observability.fullname" .) }}
+{{- $loki := printf "%s-loki" (include "unrdf-observability.fullname" .) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-otel-collector" (include "unrdf-observability.fullname" .) }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:14250
+          thrift_http:
+            endpoint: 0.0.0.0:14268
+
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: otel-collector-self
+              static_configs:
+                - targets: ['0.0.0.0:8889']
+            - job_name: tempo
+              static_configs:
+                - targets: ['{{ $tempo }}:3200']
+
+    processors:
+      batch:
+        timeout: 5s
+        send_batch_size: 1024
+        send_batch_max_size: 2048
+
+      transform/logs:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              - set(attributes["loki.trace_id"], attributes["trace_id"]) where attributes["trace_id"] != nil
+              - set(attributes["loki.span_id"], attributes["span_id"]) where attributes["span_id"] != nil
+
+      resource:
+        attributes:
+          - key: service.name
+            value: unrdf-daemon
+            action: upsert
+          - key: service.version
+            value: '26.4.3'
+            action: upsert
+          - key: deployment.environment
+            value: development
+            action: upsert
+
+    exporters:
+      otlp/tempo:
+        endpoint: {{ $tempo }}:4319
+        tls:
+          insecure: true
+        sending_queue:
+          enabled: true
+          num_consumers: 10
+          queue_size: 5000
+
+      prometheus:
+        endpoint: 0.0.0.0:8889
+        resource_to_telemetry_conversion:
+          enabled: true
+
+      loki:
+        endpoint: http://{{ $loki }}:3100/loki/api/v1/push
+        default_labels_enabled:
+          exporter: false
+          job: true
+          instance: true
+          service: true
+
+      debug:
+        verbosity: basic
+
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+
+    service:
+      extensions: [health_check]
+      pipelines:
+        traces:
+          receivers: [otlp, jaeger]
+          processors: [batch, resource]
+          exporters: [otlp/tempo, debug]
+
+        metrics:
+          receivers: [otlp, prometheus]
+          processors: [batch]
+          exporters: [prometheus]
+
+        logs:
+          receivers: [otlp]
+          processors: [batch, transform/logs]
+          exporters: [loki, debug]

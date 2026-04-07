@@ -1,0 +1,66 @@
+{{- $prom := printf "%s-prometheus" (include "unrdf-observability.fullname" .) }}
+{{- $tempo := printf "%s-tempo" (include "unrdf-observability.fullname" .) }}
+{{- $loki := printf "%s-loki" (include "unrdf-observability.fullname" .) }}
+{{- $pyro := printf "%s-pyroscope" (include "unrdf-observability.fullname" .) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-grafana-datasources" (include "unrdf-observability.fullname" .) }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+data:
+  datasources.yml: |
+    apiVersion: 1
+
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus
+        access: proxy
+        url: http://{{ $prom }}:9090
+        isDefault: true
+        editable: true
+
+      - name: Tempo
+        type: tempo
+        uid: tempo
+        access: proxy
+        url: http://{{ $tempo }}:3200
+        editable: true
+        jsonData:
+          httpMethod: GET
+          tracesToLogs:
+            datasourceId: loki
+            tags: ['job', 'instance', 'pod', 'container']
+            labelValues: ['job', 'instance']
+            filterByTraceID: true
+            filterBySpanID: false
+          tracesToMetrics:
+            datasourceId: prometheus
+            tags: [{ key: 'service.name', value: 'name' }]
+            queries:
+              - name: 'Rate (%s)'
+                query: 'sum(rate({{ "{{" }} .Labels {{ "}}" }}[$__rate_interval])) by ({{ "{{" }} .GroupBy {{ "}}" }})'
+          serviceMap:
+            datasourceId: prometheus
+
+      - name: Loki
+        type: loki
+        uid: loki
+        access: proxy
+        url: http://{{ $loki }}:3100
+        editable: true
+        jsonData:
+          derivedFields:
+            - datasourceUid: tempo
+              matcherRegex: '"traceID":"([a-f0-9]+)"'
+              name: TraceID
+              url: '$${__value.raw}'
+
+      - name: Pyroscope
+        type: grafana-pyroscope-datasource
+        uid: pyroscope
+        access: proxy
+        url: http://{{ $pyro }}:4040
+        editable: true

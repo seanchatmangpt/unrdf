@@ -3,5 +3,7 @@
 # Runs fast test suite before pushing
 
 echo "Running pre-push tests..."
+START=$(date +%s)
 pnpm test:fast || exit 1
-echo "Pre-push tests passed"
+END=$(date +%s)
+echo "Pre-push tests passed ($(($END - $START))s)"

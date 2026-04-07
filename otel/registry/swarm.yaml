@@ -1,0 +1,77 @@
+groups:
+  - id: registry.swarm
+    type: attribute_group
+    display_name: 'POWL Swarm Coordination'
+    brief: 'Attributes for distributed POWL worker swarm observability.'
+    stability: stable
+    attributes:
+      - id: swarm.worker.id
+        type: string
+        brief: 'Unique worker identifier within the swarm.'
+        stability: stable
+        examples: ['worker_1712345678_abc', 'worker_2_hotel']
+      - id: swarm.worker.count
+        type: int
+        brief: 'Number of currently active workers in the swarm.'
+        stability: stable
+        examples: [4, 8]
+      - id: swarm.spec.iri
+        type: string
+        brief: 'IRI of the POWL WorkflowSpecification being executed.'
+        stability: stable
+        examples: ['urn:powl:spec:linkedin-profile-update']
+      - id: swarm.task.node_iri
+        type: string
+        brief: 'IRI of the POWL activity node being executed by this worker.'
+        stability: stable
+        examples: ['urn:powl:node:linkedin:task_observe_current']
+      - id: swarm.task.node_type
+        type: string
+        brief: 'POWL node type of the task.'
+        stability: stable
+        examples: ['agent_task', 'human_task', 'tool_task', 'activity']
+      - id: swarm.task.label
+        type: string
+        brief: 'Human-readable activity label from powl:activityLabel.'
+        stability: stable
+        examples: ['Observe Current Profile', 'Build Ontology Map']
+      - id: swarm.claim.iri
+        type: string
+        brief: 'IRI of the ExecutionClaim lease record.'
+        stability: stable
+        examples: ['urn:powl:claim:linkedin-profile-update:task_observe_current:1712345678000']
+      - id: swarm.claim.lease_ms
+        type: int
+        brief: 'Lease duration in milliseconds.'
+        stability: stable
+        examples: [30000, 60000]
+      - id: swarm.completion.pct
+        type: double
+        brief: 'Fraction of workflow tasks completed (0.0–1.0).'
+        stability: stable
+        examples: [0.0, 0.45, 1.0]
+      - id: swarm.tasks.total
+        type: int
+        brief: 'Total number of tasks in the workflow spec.'
+        stability: stable
+        examples: [11, 7]
+      - id: swarm.tasks.completed
+        type: int
+        brief: 'Number of tasks with status=completed.'
+        stability: stable
+        examples: [0, 5, 11]
+      - id: swarm.tasks.failed
+        type: int
+        brief: 'Number of tasks with status=failed.'
+        stability: stable
+        examples: [0, 1]
+      - id: swarm.tasks.stalled
+        type: int
+        brief: 'Number of tasks with expired leases (claimed or executing but claimedUntil < now).'
+        stability: stable
+        examples: [0, 2]
+      - id: swarm.failure.policy
+        type: string
+        brief: 'Failure handling policy for a stalled or failed task.'
+        stability: stable
+        examples: ['retry', 'escalate', 'skip', 'abort']

@@ -3,16 +3,14 @@
  * @description Tests for proper RDF term creation in SHACL violation reports
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore, dataFactory } from '../../oxigraph/src/index.mjs';
+import { namedNode, createTestStore } from '../../test-utils/src/index.mjs';
 import { serializeShaclReport } from '../src/index.mjs';
-
-const { namedNode, literal: _literal, quad: _quad } = dataFactory;
 
 describe('SHACL Report Serialization - RDF Term Validation', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
   });
 
   describe('serializeShaclReport - Term Creation', () => {

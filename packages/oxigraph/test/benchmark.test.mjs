@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore, dataFactory } from '../src/index.mjs';
+import { createTestStore } from '../../test-utils/src/index.mjs';
+import { dataFactory } from '../src/index.mjs';
 
 /**
  * Benchmark suite to measure Oxigraph performance against the current engine
@@ -8,7 +9,7 @@ describe('Oxigraph Benchmarks', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
   });
 
   /**
@@ -227,7 +228,7 @@ describe('Oxigraph Benchmarks', () => {
     const startTime = performance.now();
 
     for (let i = 0; i < iterations; i++) {
-      const freshStore = createStore();
+      const freshStore = createTestStore();
       freshStore.load(turtle, {
         format: 'text/turtle',
         base_iri: 'http://example.com/',

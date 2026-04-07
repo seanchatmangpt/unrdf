@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
+    "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

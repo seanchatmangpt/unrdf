@@ -3,10 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { namedNode, literal, quad } from '../../test-utils/src/index.mjs';
 import { KnowledgeHookManager } from '../src/index.mjs';
-
-const { namedNode, literal, quad } = DataFactory;
 
 describe('KnowledgeHookManager', () => {
   it('should create instance', () => {

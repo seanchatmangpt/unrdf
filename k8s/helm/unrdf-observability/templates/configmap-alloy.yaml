@@ -1,0 +1,89 @@
+{{- if .Values.alloy.enabled }}
+{{- $lokiSvc := printf "%s-loki" (include "unrdf-observability.fullname" .) }}
+{{- $tempoSvc := printf "%s-tempo" (include "unrdf-observability.fullname" .) }}
+{{- $ns := .Values.namespace }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-alloy" (include "unrdf-observability.fullname" .) }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+data:
+  config.alloy: |
+    // Grafana Alloy configuration — drop-in replacement for Promtail
+    // Adds trace OTLP forwarding capability (logs + metrics + traces in one agent)
+
+    // --- Prometheus self-scrape ---
+    prometheus.scrape "default" {
+      targets = [
+        {__address__ = "localhost:12345"},
+      ]
+      forward_to = [prometheus.remote_write.default.receiver]
+      scrape_interval = "15s"
+    }
+
+    prometheus.remote_write "default" {
+      endpoint {
+        url = "http://{{ printf "%s-prometheus" (include "unrdf-observability.fullname" .) }}:9090/api/v1/write"
+      }
+    }
+
+    // --- Loki log source (Kubernetes pods) ---
+    discovery.kubernetes "pods" {
+      role = "pod"
+      namespaces {
+        names = ["{{ $ns }}"]
+      }
+    }
+
+    loki.source.kubernetes "pods" {
+      targets    = discovery.kubernetes.pods.targets
+      forward_to = [loki.process.extract_labels.receiver]
+    }
+
+    // --- Loki processing: extract trace_id and level from JSON logs ---
+    loki.process "extract_labels" {
+      forward_to = [loki.write.default.receiver]
+
+      stage.json {
+        expressions = {
+          trace_id = "traceID",
+          level    = "level",
+          msg      = "msg",
+        }
+      }
+
+      stage.labels {
+        values = {
+          trace_id = "",
+          level    = "",
+        }
+      }
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "http://{{ $lokiSvc }}:3100/loki/api/v1/push"
+      }
+    }
+
+    // --- OTLP traces: receive and forward to Tempo ---
+    otelcol.receiver.otlp "default" {
+      grpc {
+        endpoint = "0.0.0.0:4317"
+      }
+      http {
+        endpoint = "0.0.0.0:4318"
+      }
+      output {
+        traces = [otelcol.exporter.otlphttp.default.input]
+      }
+    }
+
+    otelcol.exporter.otlphttp "default" {
+      client {
+        endpoint = "http://{{ $tempoSvc }}:4319"
+      }
+    }
+{{- end }}

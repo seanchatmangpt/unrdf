@@ -15,7 +15,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { performance } from 'node:perf_hooks';
+import { createTestStore } from '../../test-utils/src/index.mjs';
 import { randomUUID } from 'node:crypto';
 import {
   createWorkflow,
@@ -32,7 +32,6 @@ import {
   RECEIPT_EVENT_TYPES,
   createYawlStore,
 } from '../src/index.mjs';
-import { createStore } from '@unrdf/oxigraph';
 
 // =============================================================================
 // Test Data Generators
@@ -357,7 +356,7 @@ describe('YAWL Performance Regression Tests', () => {
   describe('RDF Serialization Performance', () => {
     it('should serialize workflow to RDF in <200ms', () => {
       const workflow = createWorkflow(generateSequentialWorkflow(50));
-      const store = createStore();
+      const store = createTestStore();
 
       const start = performance.now();
 
@@ -377,7 +376,7 @@ describe('YAWL Performance Regression Tests', () => {
 
     it('should deserialize workflow from RDF in <200ms', () => {
       const workflow = createWorkflow(generateSequentialWorkflow(50));
-      const store = createStore();
+      const store = createTestStore();
       workflowToRDF(workflow, store);
 
       const start = performance.now();
@@ -395,7 +394,7 @@ describe('YAWL Performance Regression Tests', () => {
 
     it('should handle round-trip RDF conversion in <400ms', () => {
       const workflow = createWorkflow(generateParallelWorkflow(20));
-      const store = createStore();
+      const store = createTestStore();
 
       const start = performance.now();
 

@@ -6,9 +6,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { sparql } from '../src/sparql/index.mjs';
 import { UnrdfStore } from '../src/rdf/unrdf-store.mjs';
-import { dataFactory } from '@unrdf/oxigraph';
-
-const { quad, namedNode, literal, blankNode } = dataFactory;
+import { quad, namedNode, literal, blankNode } from '../../test-utils/src/index.mjs';
 
 describe('Query Builder Integration with KGN Templates', () => {
   it('should build SELECT query matching template output', () => {

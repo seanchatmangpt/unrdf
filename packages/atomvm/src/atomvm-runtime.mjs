@@ -13,7 +13,7 @@
 import { trace } from '@opentelemetry/api';
 import { startRoundtrip, endRoundtrip, getSLAStats, OPERATION_TYPES } from './roundtrip-sla.mjs';
 
-/* eslint-env browser */
+/* global window, document */
 // Get tracer lazily to ensure provider is registered first
 function getTracer() {
   return trace.getTracer('atomvm-runtime');

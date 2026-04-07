@@ -138,7 +138,7 @@ async function runSync() {
     const cliPath = fileURLToPath(new URL('../../packages/cli/src/cli/main.mjs', import.meta.url));
     const proc = spawn(
       'node',
-      [cliPath, 'sync', '--config', '.unrdf.toml', '--force'],
+      [cliPath, 'sync', '--config', 'unrdf.toml', '--force'],
       {
         cwd: __dirname,
         stdio: 'inherit',

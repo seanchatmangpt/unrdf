@@ -4,8 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
-const { namedNode, literal } = dataFactory;
+import { namedNode, literal, createTestStore } from '../../test-utils/src/index.mjs';
 import { StreamingAdmission, createStreamingAdmission } from '../src/stream-admit.mjs';
 
 /**
@@ -23,7 +22,7 @@ describe('Streaming Admission Tests', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
   });
 
   it('[TEST] Basic delta admission without condition', async () => {
@@ -85,8 +84,8 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Determinism - same delta produces same hashes', async () => {
-    const admin1 = new StreamingAdmission(createStore());
-    const admin2 = new StreamingAdmission(createStore());
+    const admin1 = new StreamingAdmission(createTestStore());
+    const admin2 = new StreamingAdmission(createTestStore());
 
     const delta = {
       additions: [
@@ -122,7 +121,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Quad count tracking before and after', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const delta1 = {
       additions: [
@@ -151,7 +150,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Delta condition - reject when output hash mismatch', async () => {
-    const admin = new StreamingAdmission(createStore(), {
+    const admin = new StreamingAdmission(createTestStore(), {
       condition: {
         kind: 'delta',
         hash: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
@@ -173,7 +172,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Rollback on failure - store unchanged when delta rejected', async () => {
-    const store = createStore();
+    const store = createTestStore();
     const admin = new StreamingAdmission(store, {
       condition: {
         kind: 'delta',
@@ -198,7 +197,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Admissions and rejections count', async () => {
-    const admin = new StreamingAdmission(createStore(), {
+    const admin = new StreamingAdmission(createTestStore(), {
       rollbackOnFailure: true,
     });
 
@@ -211,7 +210,7 @@ describe('Streaming Admission Tests', () => {
     });
 
     // Reject one delta with bad hash
-    const admin2 = new StreamingAdmission(createStore(), {
+    const admin2 = new StreamingAdmission(createTestStore(), {
       condition: {
         kind: 'delta',
         hash: 'badbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadb',
@@ -232,7 +231,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Verify chain integrity - valid chain', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const delta1 = {
       additions: [
@@ -258,7 +257,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Stream admit multiple deltas', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const deltas = [
       {
@@ -283,7 +282,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Receipt ID is valid UUID', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const delta = {
       additions: [
@@ -299,7 +298,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] createStreamingAdmission factory function', () => {
-    const store = createStore();
+    const store = createTestStore();
     const admin = createStreamingAdmission(store, { nodeId: 'test-node' });
 
     expect(admin).toBeInstanceOf(StreamingAdmission);
@@ -307,7 +306,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Removal and addition in same delta', async () => {
-    const store = createStore();
+    const store = createTestStore();
 
     // Add initial quad
     store.add(quad('https://example.org/s1', 'http://example.org/p', 'old_value'));
@@ -330,7 +329,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Empty additions/removals defaults', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const delta = {
       // No additions or removals
@@ -343,8 +342,8 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Different deltas produce different deltaHash', async () => {
-    const admin1 = new StreamingAdmission(createStore());
-    const admin2 = new StreamingAdmission(createStore());
+    const admin1 = new StreamingAdmission(createTestStore());
+    const admin2 = new StreamingAdmission(createTestStore());
 
     const delta1 = {
       additions: [
@@ -367,8 +366,8 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Identical output hashes for identical quads', async () => {
-    const admin1 = new StreamingAdmission(createStore());
-    const admin2 = new StreamingAdmission(createStore());
+    const admin1 = new StreamingAdmission(createTestStore());
+    const admin2 = new StreamingAdmission(createTestStore());
 
     const singleQuad = quad('https://example.org/s', 'http://example.org/p', 'o');
 
@@ -384,7 +383,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Chain stats endpoint', async () => {
-    const admin = new StreamingAdmission(createStore());
+    const admin = new StreamingAdmission(createTestStore());
 
     const delta = {
       additions: [
@@ -405,7 +404,7 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Rejection reason preserved in receipt', async () => {
-    const admin = new StreamingAdmission(createStore(), {
+    const admin = new StreamingAdmission(createTestStore(), {
       condition: {
         kind: 'delta',
         hash: 'badbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadbadb',
@@ -427,8 +426,8 @@ describe('Streaming Admission Tests', () => {
   });
 
   it('[TEST] Timestamp is valid bigint', async () => {
-    const admin1 = new StreamingAdmission(createStore(), { deterministic: true });
-    const admin2 = new StreamingAdmission(createStore(), { deterministic: true });
+    const admin1 = new StreamingAdmission(createTestStore(), { deterministic: true });
+    const admin2 = new StreamingAdmission(createTestStore(), { deterministic: true });
 
     const delta = {
       additions: [

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createTestStore } from '../../test-utils/src/index.mjs';
 import {
   RDFStarFactory,
   rdfStarFactory,
@@ -437,7 +437,7 @@ describe('RDF-star with Oxigraph Integration', () => {
   let factory;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
     factory = new RDFStarFactory();
   });
 
@@ -508,7 +508,7 @@ describe('Performance Tests', () => {
 
   beforeEach(() => {
     factory = new RDFStarFactory();
-    store = createStore();
+    store = createTestStore();
   });
 
   it('should create quoted triple in <1ms', () => {
@@ -574,7 +574,7 @@ describe('Backward Compatibility', () => {
   let factory;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
     factory = new RDFStarFactory();
   });
 

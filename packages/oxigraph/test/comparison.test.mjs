@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore as createOxigraphStore, dataFactory } from '../src/index.mjs';
+import { createTestStore as createOxigraphStore } from '../../test-utils/src/index.mjs';
+import { dataFactory } from '../src/index.mjs';
 
 /**
  * Comprehensive comparison suite between Oxigraph and Current Engine

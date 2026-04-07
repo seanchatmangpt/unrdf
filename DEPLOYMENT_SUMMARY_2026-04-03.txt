@@ -53,7 +53,7 @@ DEPLOYMENT BLOCKERS (Cannot Ship Today)
 3. MISSING DOCUMENTATION (HIGH) - Cannot respond to incidents
 
    a) ROLLBACK_PLAN.md not found
-      Need: v5 revert procedures, .unrdf.toml downgrade path
+      Need: v5 revert procedures, unrdf.toml downgrade path
       ETA: 1-2 hours
 
 ================================================================================
@@ -79,7 +79,7 @@ BREAKING CHANGES (All Documented)
 ✅ RDF Store: N3 → Oxigraph (migration path available)
 ✅ Direct N3 imports: Forbidden (ESLint enforcement ready)
 ✅ Data factory: N3 → Oxigraph (documented)
-⚠️ v5→v6 compatibility: Partial (.unrdf.toml needs validation)
+⚠️ v5→v6 compatibility: Partial (unrdf.toml needs validation)
 
 All breaking changes properly documented in BREAKING_CHANGES.md
 
@@ -135,7 +135,7 @@ IMMEDIATE ACTIONS (Do Today):
   6. Verify CI/CD passes
 
 BEFORE v6.0.0 STABLE:
-  7. Validate .unrdf.toml backward compatibility
+  7. Validate unrdf.toml backward compatibility
   8. Update all 53 examples for v6
   9. Run OTEL validation (12/12 checks)
   10. Create SECURITY.md documentation

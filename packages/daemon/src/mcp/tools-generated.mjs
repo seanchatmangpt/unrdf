@@ -584,8 +584,8 @@ export const mcpGeneratedTools = [
       properties: {
         "config": {
           type: 'string',
-          description: 'Path to `.unrdf.toml` configuration file',
-          default: '.unrdf.toml',
+          description: 'Path to `unrdf.toml` configuration file',
+          default: 'unrdf.toml',
         },
         "dry-run": {
           type: 'boolean',

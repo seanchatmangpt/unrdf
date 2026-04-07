@@ -39,15 +39,15 @@ Service DNS name for inter-service communication
 {{- end }}
 
 {{/*
-K8s-internal hostname (service.namespace.svc.cluster.local)
-*/}}
-{{- define "unrdf-observability.hostname" -}}
-{{- printf "%s-%s.%s.svc.cluster.local" (include "unrdf-observability.fullname" .) .component .Release.Namespace }}
-{{- end }}
-
-{{/*
 Container image helper
 */}}
 {{- define "unrdf-observability.image" -}}
 {{- printf "%s:%s" .imageRepo .imageTag | quote }}
+{{- end }}
+
+{{/*
+Pod Security Standards labels
+*/}}
+{{- define "unrdf-observability.podSecurityLabels" -}}
+seccomp-profile.runtime/default: "true"
 {{- end }}

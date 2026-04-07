@@ -7,14 +7,14 @@ on:
       - 'schema/**'
       - 'templates/**'
       - 'scripts/unrdf-*.mjs'
-      - '.unrdf.toml'
+      - 'unrdf.toml'
   pull_request:
     paths:
       - 'packages/*/package.json'
       - 'schema/**'
       - 'templates/**'
       - 'scripts/unrdf-*.mjs'
-      - '.unrdf.toml'
+      - 'unrdf.toml'
 
 jobs:
   discover-and-generate:

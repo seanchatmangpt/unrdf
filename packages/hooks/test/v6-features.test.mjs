@@ -11,11 +11,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { namedNode, literal, quad, createTestStore } from '../../test-utils/src/index.mjs';
 import { KnowledgeHookEngine } from '../src/hooks/knowledge-hook-engine.mjs';
-
-const { namedNode, literal, quad } = DataFactory;
 
 // ============================================================================
 // Receipt Integration Tests (Deterministic Hashing & Chaining)
@@ -26,7 +23,7 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
 
   beforeEach(() => {
     engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async () => true,
       enableCaching: true,
     });
@@ -42,7 +39,7 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     engine.register(hook);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       {
         nodeId: 'test-node',
@@ -69,7 +66,7 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
 
     const timestamp = BigInt(1704067200000) * 1000000n; // 2024-01-01
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       {
         nodeId: 'test-node',
@@ -98,8 +95,8 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     const options = { nodeId: 'test-node', t_ns: fixedTimestamp };
 
     // Execute twice with same parameters
-    const result1 = await engine.execute(createStore(), delta, options);
-    const result2 = await engine.execute(createStore(), delta, options);
+    const result1 = await engine.execute(createTestStore(), delta, options);
+    const result2 = await engine.execute(createTestStore(), delta, options);
 
     // Receipts should be deterministic (same input = same hash)
     expect(result1.receipt.receiptHash).toBe(result2.receipt.receiptHash);
@@ -125,12 +122,12 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
       deletes: [],
     };
 
-    const result1 = await engine.execute(createStore(), delta1, {
+    const result1 = await engine.execute(createTestStore(), delta1, {
       nodeId: 'test-node',
       t_ns: fixedTimestamp,
     });
 
-    const result2 = await engine.execute(createStore(), delta2, {
+    const result2 = await engine.execute(createTestStore(), delta2, {
       nodeId: 'test-node',
       t_ns: fixedTimestamp,
     });
@@ -149,7 +146,7 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     engine.register(hook);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'test-node', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -177,7 +174,7 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     engine.register(hook2);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'test-node', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -199,13 +196,13 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
     const timestamp2 = BigInt(1704067201000) * 1000000n; // Fixed timestamp 2 (1 second later)
 
     const result1 = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'test-node', t_ns: timestamp1 }
     );
 
     const result2 = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'test-node', t_ns: timestamp2 }
     );
@@ -232,9 +229,9 @@ describe('V6: Receipt Integration - Deterministic Hashing and Chaining', () => {
       t_ns: BigInt(1704067200000) * 1000000n, // Fixed timestamp
     };
 
-    const result1 = await engine.execute(createStore(), { adds: [], deletes: [] }, context);
+    const result1 = await engine.execute(createTestStore(), { adds: [], deletes: [] }, context);
 
-    const result2 = await engine.execute(createStore(), { adds: [], deletes: [] }, context);
+    const result2 = await engine.execute(createTestStore(), { adds: [], deletes: [] }, context);
 
     // Same input should produce same BLAKE3 hash
     expect(result1.receipt.receiptHash).toBe(result2.receipt.receiptHash);
@@ -249,7 +246,7 @@ describe('V6: SPARQL CONSTRUCT Effect Execution', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
   });
 
   it('should define hook with sparql-construct effect', () => {
@@ -291,7 +288,7 @@ describe('V6: SPARQL CONSTRUCT Effect Execution', () => {
 
   it('should preserve effect metadata in hook result', async () => {
     const engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async () => true,
       enableCaching: false,
     });
@@ -365,7 +362,7 @@ describe('V6: N3 Condition Kind - Forward-Chaining Inference', () => {
   let _store;
 
   beforeEach(() => {
-    _store = createStore();
+    _store = createTestStore();
   });
 
   it('should define N3 condition with rules and askQuery', () => {
@@ -499,7 +496,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
 
   it('should maintain feature isolation in composition', () => {
     const engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async () => true,
       enableCaching: true,
     });
@@ -526,7 +523,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
 
   it('should verify feature interoperability in receipt context', async () => {
     const engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async condition => {
         // Support N3 conditions
         if (condition.kind === 'n3') {
@@ -554,7 +551,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
     engine.register(hook);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'interop-test', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -566,7 +563,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
 
   it('should handle feature errors with graceful degradation', async () => {
     const engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async () => true,
       enableCaching: false,
     });
@@ -582,7 +579,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
     engine.register(problematicHook);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'error-test', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -608,7 +605,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
 
   it('should test comprehensive hook with all three v6 features', async () => {
     const engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async condition => {
         // Handle N3 conditions
         if (condition.kind === 'n3') {
@@ -655,7 +652,7 @@ describe('V6: Integration - Multi-Feature Scenarios', () => {
     engine.register(comprehensiveHook);
 
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'comprehensive-node', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -677,9 +674,9 @@ describe('V6: SHACL Enforcement Modes', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
     engine = new KnowledgeHookEngine({
-      createStore: () => createStore(),
+      createStore: () => createTestStore(),
       isSatisfied: async () => true,
       enableCaching: true,
     });
@@ -703,7 +700,7 @@ describe('V6: SHACL Enforcement Modes', () => {
 
     // Execute with empty graph (SHACL fails)
     const result = await engine.execute(
-      createStore(),
+      createTestStore(),
       { adds: [], deletes: [] },
       { nodeId: 'test-node', t_ns: BigInt(Date.now()) * 1000000n }
     );
@@ -914,7 +911,7 @@ describe('V6: SHACL Enforcement Modes', () => {
     let store;
 
     beforeEach(() => {
-      store = createStore();
+      store = createTestStore();
       engine = new KnowledgeHookEngine({
         createStore: () => store,
         isSatisfied: async () => true,
@@ -1280,7 +1277,7 @@ describe('V6: Datalog Conditions', () => {
   let _store;
 
   beforeEach(() => {
-    _store = createStore();
+    _store = createTestStore();
   });
 
   it('should evaluate simple Datalog facts as true', async () => {

@@ -1,0 +1,100 @@
+{{- $fullname := include "unrdf-observability.fullname" . }}
+{{- $ns := .Values.namespace }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-prometheus-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.prometheus }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-grafana-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.grafana }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-tempo-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.tempo }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-minio-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.minio }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-loki-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.loki }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-pyroscope-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.pyroscope }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullname }}-alertmanager-data
+  namespace: {{ $ns }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests:
+      storage: {{ .Values.storage.alertmanager }}

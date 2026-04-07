@@ -13,6 +13,7 @@ pnpm add -D @unrdf/cli
 ```
 
 Verify installation:
+
 ```bash
 npx unrdf --version
 ```
@@ -21,7 +22,7 @@ npx unrdf --version
 
 Follow these steps to generate your first code from an RDF ontology.
 
-### Step 1: Create `.unrdf.toml` (30 seconds)
+### Step 1: Create `unrdf.toml` (30 seconds)
 
 Create a configuration file in your project root:
 
@@ -134,8 +135,9 @@ npx unrdf sync
 ```
 
 **Expected output:**
+
 ```
-[unrdf sync] Loading configuration from .unrdf.toml
+[unrdf sync] Loading configuration from unrdf.toml
 [unrdf sync] Parsing ontology: ontology/schema.ttl (turtle)
 [unrdf sync] Found 1 generation rules
 
@@ -158,6 +160,7 @@ cat lib/schemas/entities.mjs
 ```
 
 **Expected output:**
+
 ```javascript
 /**
  * @file Entity Validation Schemas
@@ -198,6 +201,7 @@ node test.mjs
 ```
 
 **Output:**
+
 ```
 Valid: true
 Invalid: false
@@ -211,7 +215,7 @@ Invalid: false
 
 - **[Complete Sync Command Guide](./docs/sync-command.md)** - All features and options
 - **[Tutorial: Your First API from RDF](../../docs/diataxis/tutorials/sync-first-api.md)** - 20-minute comprehensive tutorial
-- **[Reference: .unrdf.toml Configuration](../../docs/diataxis/reference/sync-config.md)** - All configuration options
+- **[Reference: unrdf.toml Configuration](../../docs/diataxis/reference/sync-config.md)** - All configuration options
 - **[Reference: Template Filters](../../docs/diataxis/reference/sync-filters.md)** - Available Nunjucks filters
 
 ### How-To Guides
@@ -232,7 +236,7 @@ Invalid: false
 Generate Zod schemas, JSDoc types, and OpenAPI specs from one ontology:
 
 ```toml
-# .unrdf.toml
+# unrdf.toml
 [project]
 name = "my-api"
 
@@ -286,6 +290,7 @@ WHERE {
 ```
 
 Run all rules:
+
 ```bash
 npx unrdf sync
 ```
@@ -311,6 +316,7 @@ npx unrdf sync --dry-run --verbose
 ```
 
 **Output:**
+
 ```
 [DRY RUN] Would execute rule: zod-schemas
   Query returned 5 results
@@ -334,20 +340,24 @@ Useful when debugging a single template.
 Use these in your templates to transform data:
 
 ### Case Conversion
+
 - `camelCase` - `"user-name"` → `"userName"`
 - `pascalCase` - `"user-name"` → `"UserName"`
 - `snakeCase` - `"userName"` → `"user_name"`
 - `kebabCase` - `"userName"` → `"user-name"`
 
 ### RDF Utilities
+
 - `localName` - `"http://schema.org/Person"` → `"Person"`
 - `namespace` - `"http://schema.org/Person"` → `"http://schema.org/"`
 
 ### Type Conversion
+
 - `zodType` - `"xsd:string"` → `z.string()`
 - `jsdocType` - `"xsd:string"` → `string`
 
 ### Data Manipulation
+
 - `groupBy("?key")` - Group results by SPARQL variable
 - `distinctValues("?key")` - Get unique values
 - `sortBy("?key", "asc")` - Sort results
@@ -356,11 +366,13 @@ Use these in your templates to transform data:
 - `items` - Object as key-value pairs
 
 ### Formatting
+
 - `indent(4)` - Indent lines by 4 spaces
 - `quote` - Wrap in quotes
 - `date("YYYY-MM-DD")` - Format timestamp
 
 **Example:**
+
 ```njk
 {% for className, props in sparql_results | groupBy("?className") | items %}
 export const {{ className | pascalCase }}Schema = z.object({
@@ -377,52 +389,64 @@ export const {{ className | pascalCase }}Schema = z.object({
 unrdf sync [options]
 ```
 
-| Option | Alias | Default | Description |
-|--------|-------|---------|-------------|
-| `--config <path>` | - | `.unrdf.toml` | Path to configuration file |
-| `--dry-run` | - | `false` | Preview without writing files |
-| `--verbose` | `-v` | `false` | Enable detailed output |
-| `--force` | `-f` | `false` | Overwrite without prompting |
-| `--watch` | `-w` | `false` | Watch for file changes |
-| `--rule <name>` | - | - | Run only specified rule |
-| `--output <format>` | - | `text` | Output format: `text` or `json` |
+| Option              | Alias | Default      | Description                     |
+| ------------------- | ----- | ------------ | ------------------------------- |
+| `--config <path>`   | -     | `unrdf.toml` | Path to configuration file      |
+| `--dry-run`         | -     | `false`      | Preview without writing files   |
+| `--verbose`         | `-v`  | `false`      | Enable detailed output          |
+| `--force`           | `-f`  | `false`      | Overwrite without prompting     |
+| `--watch`           | `-w`  | `false`      | Watch for file changes          |
+| `--rule <name>`     | -     | -            | Run only specified rule         |
+| `--output <format>` | -     | `text`       | Output format: `text` or `json` |
 
 ## Troubleshooting
 
 ### Config file not found
+
 ```
-Error: Configuration file not found: .unrdf.toml
+Error: Configuration file not found: unrdf.toml
 ```
-**Solution:** Create `.unrdf.toml` in your project root or use `--config` to specify path.
+
+**Solution:** Create `unrdf.toml` in your project root or use `--config` to specify path.
 
 ### Ontology file not found
+
 ```
 Error: Ontology file not found: ontology/schema.ttl
 ```
-**Solution:** Check that `ontology.source` path in `.unrdf.toml` is correct.
+
+**Solution:** Check that `ontology.source` path in `unrdf.toml` is correct.
 
 ### SPARQL query returns no results
+
 ```
 [unrdf sync] Query returned 0 results
 ```
+
 **Solution:** Use `--verbose` to see query details. Check that:
+
 - Property URIs match your ontology
 - PREFIX declarations are correct
 - Filter conditions aren't too restrictive
 
 ### Template rendering error
+
 ```
 Error: Template rendering failed: undefined is not iterable
 ```
+
 **Solution:**
+
 - Ensure you handle empty results with `| default("")`
 - Check that `groupBy` receives correct variable name (with `?` prefix)
 - Verify all variables in template exist in SPARQL results
 
 ### No files written
+
 ```
 [unrdf sync] Skipping: lib/schemas/entities.mjs (already exists)
 ```
+
 **Solution:** Use `--force` to overwrite existing files.
 
 ## Examples

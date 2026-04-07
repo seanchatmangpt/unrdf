@@ -51,7 +51,7 @@ Your project should look like:
 ```
 blog-codegen/
 ├── package.json
-├── .unrdf.toml          # Configuration (we'll create this)
+├── unrdf.toml          # Configuration (we'll create this)
 ├── ontology/
 │   └── blog.ttl       # RDF ontology (we'll create this)
 ├── templates/
@@ -227,6 +227,7 @@ blog:commentCreatedAt a owl:DatatypeProperty ;
 ```
 
 **Key concepts**:
+
 - **Classes** (`owl:Class`): Entity types (User, Post, Comment)
 - **Properties** (`owl:DatatypeProperty`, `owl:ObjectProperty`): Fields on entities
 - **Constraints** (`sh:minCount`, `sh:pattern`): Validation rules
@@ -236,7 +237,7 @@ blog:commentCreatedAt a owl:DatatypeProperty ;
 
 ## Step 3: Create Configuration File
 
-Create `.unrdf.toml` at the project root:
+Create `unrdf.toml` at the project root:
 
 ```toml
 [project]
@@ -316,6 +317,7 @@ ORDER BY ?entityName ?propertyName
 ```
 
 **Configuration sections**:
+
 - `[project]`: Project metadata
 - `[ontology]`: Where to find RDF data
 - `[generation]`: Output settings and rules
@@ -389,6 +391,7 @@ export const schemas = {
 ```
 
 **Template features**:
+
 - **Frontmatter**: Defines output path and metadata
 - **Filters**: `camelCase`, `zodType`, `groupBy` for data transformation
 - **Conditionals**: `{% if %}` for optional logic
@@ -469,7 +472,7 @@ npx unrdf sync --watch --verbose
 UNRDF Sync
 
 Phase 1: Loading configuration...
-   Config: .unrdf.toml
+   Config: unrdf.toml
    Project: blog-api
 
 Phase 2: Loading ontology...
@@ -513,7 +516,10 @@ export const userSchema = z.object({
   id: z.string().describe('Unique identifier for the user'),
 
   /** User's display name */
-  username: z.string().regex(/^[a-zA-Z0-9_-]{3,20}$/).describe("User's display name"),
+  username: z
+    .string()
+    .regex(/^[a-zA-Z0-9_-]{3,20}$/)
+    .describe("User's display name"),
 
   /** User's email address */
   email: z.string().describe("User's email address"),
@@ -561,7 +567,7 @@ console.log('Valid user:', result.success); // true
 // Invalid user (username too short)
 const invalidUser = {
   id: 'user-456',
-  username: 'ab',  // Too short! Pattern requires 3-20 chars
+  username: 'ab', // Too short! Pattern requires 3-20 chars
   email: 'bob@example.com',
   createdAt: '2024-01-19T11:00:00Z',
 };
@@ -687,10 +693,10 @@ In template, treat as string ID:
 ### Issue: "Configuration file not found"
 
 ```
-Error: Configuration file not found: .unrdf.toml
+Error: Configuration file not found: unrdf.toml
 ```
 
-**Solution**: Create `.unrdf.toml` in your project root, or specify path:
+**Solution**: Create `unrdf.toml` in your project root, or specify path:
 
 ```bash
 npx unrdf sync --config path/to/config.toml
@@ -706,7 +712,7 @@ Error: Ontology file not found: /path/to/blog.ttl
 
 ```toml
 [ontology]
-source = "ontology/blog.ttl"  # Relative to .unrdf.toml location
+source = "ontology/blog.ttl"  # Relative to unrdf.toml location
 ```
 
 ### Issue: "Template rendering failed"
@@ -716,6 +722,7 @@ Error: Template rendering failed: expected variable end
 ```
 
 **Solution**: Check Nunjucks syntax. Common issues:
+
 - Missing `{% endif %}` or `{% endfor %}`
 - Unmatched `{{ }}` or `{% %}`
 - Using `|` filter on undefined variables
@@ -731,11 +738,13 @@ Error: Template rendering failed: expected variable end
 **Debug steps**:
 
 1. Run with `--verbose` to see query output:
+
 ```bash
 npx unrdf sync --verbose
 ```
 
 2. Check your SPARQL query matches ontology structure:
+
 ```sparql
 # Wrong - property doesn't exist
 ?entity blog:missingProperty ?value
@@ -745,6 +754,7 @@ npx unrdf sync --verbose
 ```
 
 3. Verify prefix declarations:
+
 ```toml
 [ontology.prefixes]
 blog = "http://example.org/blog#"  # Must match ontology
@@ -757,11 +767,13 @@ blog = "http://example.org/blog#"  # Must match ontology
 **Debug**:
 
 1. Run dry-run to see output without writing:
+
 ```bash
 npx unrdf sync --dry-run --verbose > output.txt
 ```
 
 2. Check template escaping:
+
 ```nunjucks
 {# Wrong - can break on quotes #}
 .describe('{{ description }}')

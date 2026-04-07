@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { namedNode, literal, quad, createTestStore } from '../../test-utils/src/index.mjs';
 import {
   validateShacl,
   validateNode,
@@ -21,8 +21,6 @@ import {
   getWarnings,
   clearValidatorCache,
 } from '../src/hooks/validate.mjs';
-
-const { namedNode, literal, quad } = dataFactory;
 
 const SH = 'http://www.w3.org/ns/shacl#';
 const XSD = 'http://www.w3.org/2001/XMLSchema#';
@@ -64,7 +62,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Cardinality Constraints', () => {
     it('should detect minCount violation when required property is missing', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -78,7 +76,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should detect maxCount violation when too many values exist', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `
@@ -97,7 +95,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should pass when cardinality constraints are satisfied', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `<${EX}p1> a <${EX}Person> ; <${EX}name> "Alice" .`
@@ -110,7 +108,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should allow optional properties (no minCount) to be absent', async () => {
-      const store = createStore();
+      const store = createTestStore();
       // age has no minCount, so it's optional
       loadTurtle(
         store,
@@ -131,7 +129,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:targetClass ex:Item ;
           sh:property [ sh:path ex:tag ; sh:minCount 0 ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}i1> a <${EX}Item> .`);
 
       const report = await validateShacl(store, shapes);
@@ -147,7 +145,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:targetClass ex:Team ;
           sh:property [ sh:path ex:member ; sh:minCount 2 ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `<${EX}t1> a <${EX}Team> ; <${EX}member> <${EX}alice> .`
@@ -164,7 +162,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Datatype Validation', () => {
     it('should detect datatype violation for wrong type', async () => {
-      const store = createStore();
+      const store = createTestStore();
       // name should be xsd:string but we give it an integer
       loadTurtle(
         store,
@@ -181,7 +179,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should accept correct xsd:integer values', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `
@@ -197,7 +195,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should detect xsd:integer datatype violation on string value', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `
@@ -224,7 +222,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:targetClass ex:Event ;
           sh:property [ sh:path ex:startDate ; sh:datatype xsd:dateTime ; sh:minCount 1 ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `<${EX}e1> a <${EX}Event> ; <${EX}startDate> "2026-01-01T00:00:00"^^<${XSD}dateTime> .`
@@ -244,7 +242,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:targetClass ex:Event ;
           sh:property [ sh:path ex:startDate ; sh:datatype xsd:dateTime ; sh:minCount 1 ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `<${EX}e1> a <${EX}Event> ; <${EX}startDate> "not-a-date" .`
@@ -260,7 +258,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Node Shape Targeting', () => {
     it('should only validate instances of the target class', async () => {
-      const store = createStore();
+      const store = createTestStore();
       // p1 is a Person (requires name), p2 is an Animal (no shape constraints)
       loadTurtle(
         store,
@@ -276,7 +274,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should validate all instances of target class', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `
@@ -293,7 +291,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should handle empty store (no target instances)', async () => {
-      const store = createStore();
+      const store = createTestStore();
 
       const report = await validateShacl(store, personShapes);
 
@@ -313,7 +311,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:targetClass ex:Product ;
           sh:property [ sh:path ex:price ; sh:minCount 1 ; sh:datatype xsd:decimal ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(
         store,
         `
@@ -335,7 +333,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Violation Reporting', () => {
     it('should include focusNode in violation', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -344,7 +342,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should include resultPath in violation', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -353,7 +351,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should include resultMessage in violation', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -375,7 +373,7 @@ describe('SHACL Validation - Complete Suite', () => {
             sh:severity sh:Warning ;
           ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, shapes);
@@ -385,7 +383,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should include timestamp in report', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> ; <${EX}name> "Alice" .`);
 
       const report = await validateShacl(store, personShapes);
@@ -395,7 +393,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should include details when includeDetails is true', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> ; <${EX}name> "Alice" .`);
 
       const report = await validateShacl(store, personShapes, { includeDetails: true });
@@ -414,7 +412,7 @@ describe('SHACL Validation - Complete Suite', () => {
           sh:property [ sh:path ex:name ; sh:minCount 1 ; sh:datatype xsd:string ] ;
           sh:property [ sh:path ex:email ; sh:minCount 1 ; sh:datatype xsd:string ] .
       `;
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, shapes);
@@ -461,7 +459,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('validateNode includes node in report', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> ; <${EX}name> "Alice" .`);
 
       const report = await validateNode(
@@ -487,7 +485,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should return error report for invalid shapes string', async () => {
-      const store = createStore();
+      const store = createTestStore();
       const report = await validateShacl(store, null);
 
       expect(report.conforms).toBe(false);
@@ -496,7 +494,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('should return error report for malformed Turtle', async () => {
-      const store = createStore();
+      const store = createTestStore();
       const report = await validateShacl(store, 'this is not valid turtle @@@');
 
       expect(report.conforms).toBe(false);
@@ -508,7 +506,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Shape Caching', () => {
     it('should produce same results on repeated calls with same shapes', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report1 = await validateShacl(store, personShapes);
@@ -519,7 +517,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('clearValidatorCache should clear without breaking subsequent calls', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> ; <${EX}name> "Alice" .`);
 
       await validateShacl(store, personShapes);
@@ -534,7 +532,7 @@ describe('SHACL Validation - Complete Suite', () => {
 
   describe('Integration with Enforcement Modes', () => {
     it('block mode: report contains enough info for enforcement', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -552,7 +550,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('annotate mode: results can be serialized to RDF triples', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       const report = await validateShacl(store, personShapes);
@@ -566,7 +564,7 @@ describe('SHACL Validation - Complete Suite', () => {
     });
 
     it('repair mode: can re-validate after store modification', async () => {
-      const store = createStore();
+      const store = createTestStore();
       loadTurtle(store, `<${EX}p1> a <${EX}Person> .`);
 
       // First validation: missing name

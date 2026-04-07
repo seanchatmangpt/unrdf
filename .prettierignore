@@ -33,6 +33,9 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
+# Helm templates (Go templating confuses Prettier YAML parser)
+k8s/helm/
+
 
 
 

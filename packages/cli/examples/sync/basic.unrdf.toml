@@ -1,4 +1,4 @@
-# Basic `.unrdf.toml` example (copy to project root as `.unrdf.toml` or pass `--config`)
+# Basic `unrdf.toml` example (copy to project root as `unrdf.toml` or pass `--config`)
 # Minimal configuration demonstrating the sync command
 #
 # Usage:

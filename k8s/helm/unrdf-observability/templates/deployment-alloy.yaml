@@ -1,0 +1,63 @@
+{{- if .Values.alloy.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "alloy" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "alloy" }}
+spec:
+  replicas: {{ .Values.alloy.replicas }}
+  selector:
+    matchLabels:
+      {{- include "unrdf-observability.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: {{ $component }}
+  template:
+    metadata:
+      labels:
+        {{- include "unrdf-observability.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: {{ $component }}
+        {{- include "unrdf-observability.podSecurityLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) $component }}
+      securityContext:
+        {{- toYaml .Values.security.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ $component }}
+          image: "{{ .Values.alloy.imageRepo }}:{{ .Values.alloy.imageTag }}"
+          args:
+            - run
+            - /etc/alloy/config.alloy
+          ports:
+            - name: http
+              containerPort: 12345
+              protocol: TCP
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            {{- toYaml .Values.alloy.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 12345
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ printf "%s-alloy" (include "unrdf-observability.fullname" .) }}
+        - name: tmp
+          emptyDir:
+            medium: Memory
+{{- end }}

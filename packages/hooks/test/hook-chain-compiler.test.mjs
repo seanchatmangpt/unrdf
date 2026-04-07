@@ -5,9 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { compileHookChain, getChainKey } from '../src/hooks/hook-chain-compiler.mjs';
 import { defineHook } from '../src/index.mjs';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
-
-const { namedNode, literal, quad } = DataFactory;
+import { namedNode, literal, quad } from '../../test-utils/src/index.mjs';
 
 describe('Hook Chain Compiler - getChainKey', () => {
   it('should generate unique keys for different hook chains', () => {

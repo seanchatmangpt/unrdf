@@ -32,8 +32,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "tempo",
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -48,8 +48,7 @@
               { "color": "yellow", "value": 0.01 },
               { "color": "red", "value": 0.05 }
             ]
-          },
-          "unit": "reqps"
+          }
         },
         "overrides": []
       },
@@ -67,8 +66,8 @@
             ]
           },
           "metric": {
-            "label": "Request Rate",
-            "unit": "reqps"
+            "label": "Avg Duration",
+            "unit": "ms"
           }
         },
         "nodes": {
@@ -82,32 +81,24 @@
             ]
           },
           "metric": {
-            "label": "Request Rate",
-            "unit": "reqps"
+            "label": "Avg Duration",
+            "unit": "ms"
           }
         }
       },
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "tempo",
+            "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(traces_service_graph_request_total{client=~\"$service\", server=~\"$service\"}[$__rate_interval])) by (client, server)",
-          "legendFormat": "{{client}} -> {{server}}"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(rate(traces_service_graph_request_failed_total{client=~\"$service\", server=~\"$service\"}[$__rate_interval])) by (client, server)",
-          "legendFormat": "failed {{client}} -> {{server}}"
+          "expr": "{} | avg(duration_ms)",
+          "queryType": "traceql",
+          "legendFormat": "Service Graph"
         }
       ],
-      "title": "Service Graph (from Tempo metrics_generator)",
+      "title": "Service Graph (Tempo TraceQL)",
       "type": "nodeGraph"
     },
     {
@@ -115,13 +106,13 @@
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
       "id": 3,
       "panels": [],
-      "title": "Service Details",
+      "title": "Service Metrics",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -133,15 +124,15 @@
             "mode": "absolute",
             "steps": [
               { "color": "green", "value": null },
-              { "color": "yellow", "value": 100 },
-              { "color": "red", "value": 500 }
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 1000 }
             ]
           },
-          "unit": "reqps"
+          "unit": "ops"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 16 },
       "id": 4,
       "options": {
         "colorMode": "background",
@@ -160,53 +151,33 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "topk(10, sum(rate(traces_service_graph_request_total[$__rate_interval])) by (client))",
-          "legendFormat": "{{client}}",
+          "expr": "sum(rate(traces_spanmetrics_calls_total[$__rate_interval]))",
+          "legendFormat": "Total Spans/s",
           "range": true
         }
       ],
-      "title": "Top 10 Services by Request Rate",
+      "title": "Total Spans/s",
       "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "scheme",
-            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": { "type": "linear" },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": { "group": "A", "mode": "none" },
-            "thresholdsStyle": { "mode": "off" }
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.01 },
               { "color": "red", "value": 0.05 }
             ]
           },
@@ -214,35 +185,315 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 16 },
       "id": 5,
       "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "calcs": ["mean", "max", "lastNotNull"]
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "textMode": "auto",
+        "wideLayout": true
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(rate(traces_service_graph_request_failed_total{client=~\"$service\"}[$__rate_interval])) by (client) / sum(rate(traces_service_graph_request_total{client=~\"$service\"}[$__rate_interval])) by (client)",
-          "legendFormat": "{{client}}",
+          "expr": "sum(rate(traces_spanmetrics_calls_total{status_code=\"ERROR\"}[$__rate_interval])) / sum(rate(traces_spanmetrics_calls_total[$__rate_interval]))",
+          "legendFormat": "Error Rate",
           "range": true
         }
       ],
-      "title": "Error Rate by Service",
-      "type": "timeseries"
+      "title": "Error Rate",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 200 },
+              { "color": "red", "value": 500 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 16 },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum(rate(traces_spanmetrics_latency_bucket[$__rate_interval])) by (le))",
+          "legendFormat": "P50",
+          "range": true
+        }
+      ],
+      "title": "P50 Latency",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 2000 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 16 },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket[$__rate_interval])) by (le))",
+          "legendFormat": "P99",
+          "range": true
+        }
+      ],
+      "title": "P99 Latency",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 20 },
+      "id": 8,
+      "panels": [],
+      "title": "Top Operations",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "inspect": false
+            },
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 2000 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "service_name" },
+            "properties": [{ "id": "custom.width", "value": 200 }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "operation" },
+            "properties": [{ "id": "custom.width", "value": 300 }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Value" },
+            "properties": [{ "id": "custom.width", "value": 120 }]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 21 },
+      "id": 9,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["mean", "max"],
+          "show": true
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(10, histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket[5m])) by (le, span_name, service_name)))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{service_name}} - {{span_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 10 Slowest Operations by P99",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "le": true
+            },
+            "indexByName": {
+              "service_name": 0,
+              "span_name": 1,
+              "Value": 2
+            },
+            "renameByName": {
+              "Value": "P99 (ms)",
+              "service_name": "Service",
+              "span_name": "Operation"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 29 },
+      "id": 10,
+      "panels": [],
+      "title": "Error Breakdown",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${datasource_logs}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+      "id": 11,
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": ["value", "percent"]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": ["count"],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${datasource_logs}"
+          },
+          "editorMode": "code",
+          "expr": "level=error | json | status != \"200\"",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Breakdown by Status Code",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -279,8 +530,8 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
-      "id": 6,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+      "id": 12,
       "options": {
         "legend": {
           "displayMode": "table",
@@ -293,7 +544,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.50, sum(rate(traces_service_graph_request_total_bucket[$__rate_interval])) by (le, client))",
@@ -303,17 +554,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(traces_service_graph_request_total_bucket[$__rate_interval])) by (le, client))",
-          "legendFormat": "P95 {{client}}",
-          "range": true
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheus"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(0.99, sum(rate(traces_service_graph_request_total_bucket[$__rate_interval])) by (le, client))",
@@ -321,7 +562,7 @@
           "range": true
         }
       ],
-      "title": "P50 / P95 / P99 Latency by Service",
+      "title": "P50 / P99 Latency by Service",
       "type": "timeseries"
     }
   ],
@@ -331,25 +572,25 @@
   "templating": {
     "list": [
       {
-        "name": "DS_PROMETHEUS",
-        "label": "Prometheus",
-        "query": "prometheus",
+        "name": "datasource",
+        "label": "Tempo",
+        "query": "tempo",
         "refresh": 1,
         "includeAll": false,
         "sort": 1
       },
       {
-        "name": "service",
-        "label": "Service",
-        "query": "label_values(traces_service_graph_request_total, client)",
-        "refresh": 2,
-        "includeAll": true,
-        "allValue": ".*",
+        "name": "datasource_logs",
+        "label": "Loki",
+        "query": "loki",
+        "refresh": 1,
+        "includeAll": false,
         "sort": 1
       }
     ]
   },
   "time": { "from": "now-1h", "to": "now" },
   "timezone": "browser",
-  "title": "Service Graph"
+  "uid": "svc-graph",
+  "title": "Service Graph \u2014 UNRDF"
 }

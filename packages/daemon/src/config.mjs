@@ -1,7 +1,7 @@
 /**
  * @file UNRDF Daemon Configuration Loader
  * @module @unrdf/daemon/config
- * @description Loads and validates configuration from .unrdf.toml and environment variables
+ * @description Loads and validates configuration from unrdf.toml and environment variables
  */
 
 import { readFileSync } from 'fs';
@@ -129,12 +129,12 @@ function parseToml(content) {
 }
 
 /**
- * Load configuration from .unrdf.toml in project root
- * @param {string} [configPath] - Custom path to .unrdf.toml
+ * Load configuration from unrdf.toml in project root
+ * @param {string} [configPath] - Custom path to unrdf.toml
  * @returns {Partial<DaemonFullConfig>} Partial configuration object
  */
 export function loadConfigFromToml(configPath) {
-  const path = configPath || resolve(process.cwd(), '.unrdf.toml');
+  const path = configPath || resolve(process.cwd(), 'unrdf.toml');
 
   try {
     const content = readFileSync(path, 'utf-8');
@@ -193,7 +193,7 @@ export function mergeConfigs(...configs) {
 
 /**
  * Load and merge all configuration sources
- * @param {string} [configPath] - Custom path to .unrdf.toml
+ * @param {string} [configPath] - Custom path to unrdf.toml
  * @returns {DaemonFullConfig} Merged configuration from all sources
  */
 export function loadConfig(configPath) {

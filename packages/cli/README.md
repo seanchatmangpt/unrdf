@@ -67,6 +67,7 @@ unrdf graph export --graph people --format jsonld > people.jsonld
 The `sync` command transforms RDF ontologies into typed code artifacts using SPARQL queries and Nunjucks templates. This enables ontology-driven development where your RDF schema becomes the single source of truth for generated code.
 
 **Common use cases:**
+
 - Generate Zod validation schemas from RDF class definitions
 - Create OpenAPI specifications from API ontologies
 - Produce JSDoc type definitions from RDFS/OWL vocabularies
@@ -74,7 +75,7 @@ The `sync` command transforms RDF ontologies into typed code artifacts using SPA
 
 ### Quick Example
 
-**1. Create `.unrdf.toml` configuration:**
+**1. Create `unrdf.toml` configuration:**
 
 ```toml
 [project]
@@ -196,7 +197,7 @@ on:
   push:
     paths:
       - 'ontology/**'
-      - '.unrdf.toml'
+      - 'unrdf.toml'
 
 jobs:
   sync:
@@ -218,7 +219,7 @@ Set default options via environment variables:
 ```bash
 export UNRDF_DEFAULT_GRAPH=main
 export UNRDF_DEFAULT_FORMAT=turtle
-export UNRDF_CONFIG_PATH=./config/.unrdf.toml
+export UNRDF_CONFIG_PATH=./config/unrdf.toml
 
 unrdf graph query --query "SELECT * WHERE { ?s ?p ?o }"
 # Uses UNRDF_DEFAULT_GRAPH automatically

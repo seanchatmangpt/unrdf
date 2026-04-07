@@ -1,7 +1,7 @@
 /**
  * @file Config Parser
  * @module cli/commands/sync/config-parser
- * @description TOML configuration file parser for `.unrdf.toml`
+ * @description TOML configuration file parser for `unrdf.toml`
  */
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
@@ -75,7 +75,7 @@ export class ConfigValidationError extends Error {
 }
 
 /**
- * Parse `.unrdf.toml` configuration file
+ * Parse `unrdf.toml` configuration file
  * @param {string} configPath - Path to config file
  * @param {Object} [options] - Parse options
  * @param {boolean} [options.resolvePaths=true] - Whether to resolve relative paths
@@ -441,7 +441,7 @@ function toTomlValue(value) {
  * @returns {Promise<string|null>} Path to config file or null
  */
 export async function findConfigFile(dir) {
-  const candidates = ['.unrdf.toml'];
+  const candidates = ['unrdf.toml'];
   for (const name of candidates) {
     const path = resolve(dir, name);
     if (existsSync(path)) return path;

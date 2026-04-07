@@ -495,7 +495,7 @@ export function createMCPServer() {
     {
       description: 'Generate synchronized code artifacts from RDF ontology',
       inputSchema: {
-        "config": z.string().describe('Path to `.unrdf.toml` configuration file').default('.unrdf.toml').optional(),
+        "config": z.string().describe('Path to `unrdf.toml` configuration file').default('unrdf.toml').optional(),
         "dry-run": z.boolean().describe('Preview changes without writing files').default(false).optional(),
         "force": z.boolean().describe('Overwrite existing files without prompting').default(false).optional(),
         "output": z.string().describe('Output format: text or json').default('text').optional(),

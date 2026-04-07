@@ -1,0 +1,25 @@
+{{- if .Values.unrdf.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s" (include "unrdf-observability.fullname" .) "unrdf" }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+  {{- $component := "unrdf" }}
+spec:
+  type: NodePort
+  ports:
+    - name: api
+      port: 3000
+      targetPort: 3000
+      nodePort: 30000
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    {{- include "unrdf-observability.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ $component }}
+{{- end }}

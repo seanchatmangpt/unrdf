@@ -1,65 +1,54 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: unrdf
-
 nodes:
   - role: control-plane
     kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
+      - "kind: InitConfiguration\nnodeRegistration:\n  kubeletExtraArgs:\n    node-labels:\
+        \ \"ingress-ready=true\"\n"
     extraPortMappings:
-      # UNRDF API
       - containerPort: 30000
-        hostPort: 3000
+        hostPort: 7001
         protocol: TCP
-      # Grafana
       - containerPort: 30001
-        hostPort: 3001
+        hostPort: 7002
         protocol: TCP
-      # Prometheus
       - containerPort: 30002
-        hostPort: 9091
+        hostPort: 7003
         protocol: TCP
-      # OTLP gRPC
       - containerPort: 30437
-        hostPort: 4317
+        hostPort: 7004
         protocol: TCP
-      # OTLP HTTP
       - containerPort: 30438
-        hostPort: 4318
+        hostPort: 7005
         protocol: TCP
-      # Tempo API
       - containerPort: 30200
-        hostPort: 3200
+        hostPort: 7006
         protocol: TCP
-      # Pyroscope
       - containerPort: 30040
-        hostPort: 4040
+        hostPort: 7007
         protocol: TCP
-      # HotROD frontend
       - containerPort: 30082
-        hostPort: 8082
+        hostPort: 7008
         protocol: TCP
-      # Node Exporter
       - containerPort: 30100
-        hostPort: 9100
+        hostPort: 7009
         protocol: TCP
-      # Alertmanager
       - containerPort: 30093
-        hostPort: 9093
+        hostPort: 7010
         protocol: TCP
-      # Loki
       - containerPort: 30100
-        hostPort: 3100
+        hostPort: 7011
         protocol: TCP
-      # MinIO S3 API
       - containerPort: 30090
-        hostPort: 9000
+        hostPort: 7012
         protocol: TCP
-      # MinIO Console
       - containerPort: 30091
-        hostPort: 9001
+        hostPort: 7013
+        protocol: TCP
+      - containerPort: 30050
+        hostPort: 7014
+        protocol: TCP
+      - containerPort: 30051
+        hostPort: 7015
         protocol: TCP

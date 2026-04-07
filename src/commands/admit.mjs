@@ -10,6 +10,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
+import { withPipelineSpan } from '../lib/telemetry.mjs';
 
 /**
  * Admit options
@@ -243,76 +244,84 @@ function computeHash(content) {
  * @returns {Promise<AdmitResult>} Admit result
  */
 export async function admitCommand(options) {
-  // Validate required options
-  if (!options.delta) {
-    throw new Error('Missing required option: --delta <path>');
-  }
+  return withPipelineSpan('admit', async (span) => {
+    // Validate required options
+    if (!options.delta) {
+      throw new Error('Missing required option: --delta <path>');
+    }
 
-  if (!options.out) {
-    throw new Error('Missing required option: --out <path>');
-  }
+    if (!options.out) {
+      throw new Error('Missing required option: --out <path>');
+    }
 
-  // Resolve paths
-  const deltaPath = resolve(options.delta);
-  const outDir = resolve(options.out);
+    // Resolve paths
+    const deltaPath = resolve(options.delta);
+    const outDir = resolve(options.out);
 
-  // Read delta file
-  let deltaContent;
-  try {
-    deltaContent = await readFile(deltaPath, 'utf-8');
-  } catch (error) {
-    throw new Error(`Failed to read delta file: ${error.message}`);
-  }
+    // Read delta file
+    let deltaContent;
+    try {
+      deltaContent = await readFile(deltaPath, 'utf-8');
+    } catch (error) {
+      throw new Error(`Failed to read delta file: ${error.message}`);
+    }
 
-  // Compute delta hash
-  const deltaHash = computeHash(deltaContent);
+    // Compute delta hash
+    const deltaHash = computeHash(deltaContent);
 
-  // Run invariant checks
-  const invariants = runInvariantChecks(deltaContent);
+    // Run invariant checks
+    const invariants = runInvariantChecks(deltaContent);
 
-  // Make decision
-  const decision = makeDecision(invariants);
+    // Make decision
+    const decision = makeDecision(invariants);
 
-  // Generate receipt
-  const receipt = generateReceipt(decision, deltaPath, deltaHash, invariants);
+    span.setAttributes({
+      'pipeline.stage': 'admit',
+      'pipeline.admitted': decision === 'allow' ? 1 : 0,
+      'pipeline.rejected': decision === 'allow' ? 0 : 1,
+    });
 
-  // Compute receipt hash
-  const receiptContent = JSON.stringify(receipt, null, 2);
-  const receiptHash = computeHash(receiptContent);
+    // Generate receipt
+    const receipt = generateReceipt(decision, deltaPath, deltaHash, invariants);
 
-  // Ensure output directory exists
-  try {
-    await mkdir(outDir, { recursive: true });
-  } catch (error) {
-    throw new Error(`Failed to create output directory: ${error.message}`);
-  }
+    // Compute receipt hash
+    const receiptContent = JSON.stringify(receipt, null, 2);
+    const receiptHash = computeHash(receiptContent);
 
-  // Write receipt to file
-  const receiptFilename = `admission-${receipt.id}.json`;
-  const receiptPath = join(outDir, receiptFilename);
+    // Ensure output directory exists
+    try {
+      await mkdir(outDir, { recursive: true });
+    } catch (error) {
+      throw new Error(`Failed to create output directory: ${error.message}`);
+    }
 
-  try {
-    await writeFile(receiptPath, receiptContent, 'utf-8');
-  } catch (error) {
-    throw new Error(`Failed to write receipt file: ${error.message}`);
-  }
+    // Write receipt to file
+    const receiptFilename = `admission-${receipt.id}.json`;
+    const receiptPath = join(outDir, receiptFilename);
 
-  return {
-    decision,
-    receipt: {
-      path: receiptPath,
-      hash: receiptHash,
-      id: receipt.id,
-    },
-    reasoning: {
-      invariants: invariants.map(inv => ({
-        name: inv.name,
-        satisfied: inv.satisfied,
-        reason: inv.reason,
-      })),
-      summary: decision === 'allow'
-        ? 'All invariants satisfied'
-        : `Failed: ${invariants.filter(i => !i.satisfied).map(i => i.name).join(', ')}`,
-    },
-  };
+    try {
+      await writeFile(receiptPath, receiptContent, 'utf-8');
+    } catch (error) {
+      throw new Error(`Failed to write receipt file: ${error.message}`);
+    }
+
+    return {
+      decision,
+      receipt: {
+        path: receiptPath,
+        hash: receiptHash,
+        id: receipt.id,
+      },
+      reasoning: {
+        invariants: invariants.map(inv => ({
+          name: inv.name,
+          satisfied: inv.satisfied,
+          reason: inv.reason,
+        })),
+        summary: decision === 'allow'
+          ? 'All invariants satisfied'
+          : `Failed: ${invariants.filter(i => !i.satisfied).map(i => i.name).join(', ')}`,
+      },
+    };
+  });
 }

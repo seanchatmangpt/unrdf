@@ -23,16 +23,161 @@
  */
 
 import { trace, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { Resource as _Resource } from '@opentelemetry/resources';
-import { ATTR_SERVICE_NAME as _ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION as _ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import _resources from '@opentelemetry/resources';
+const _Resource = _resources.Resource;
+import _semconv from '@opentelemetry/semantic-conventions';
+const _ATTR_SERVICE_NAME = _semconv.ATTR_SERVICE_NAME;
+const _ATTR_SERVICE_VERSION = _semconv.ATTR_SERVICE_VERSION;
 
 let _instrumented = false;
+
+/**
+ * Provider-specific attribute maps.
+ * Each entry maps response fields to gen_ai semantic convention attributes.
+ */
+const PROVIDER_RESPONSE_KEYS = {
+  openai: {
+    model: 'model',
+    finishReason: 'finish_reason' in {} ? 'finish_reason' : 'finish_reason',
+    promptTokens: 'usage.prompt_tokens',
+    completionTokens: 'usage.completion_tokens',
+  },
+  groq: {
+    model: 'model',
+    finishReason: 'finish_reason',
+    promptTokens: 'usage.prompt_tokens',
+    completionTokens: 'usage.completion_tokens',
+  },
+  anthropic: {
+    model: 'model',
+    finishReason: 'stop_reason',
+    promptTokens: 'usage.input_tokens',
+    completionTokens: 'usage.output_tokens',
+  },
+};
 
 /**
  * Create a tracer for LLM operations.
  */
 export function getLLMTracer(name = 'unrdf-llm') {
   return trace.getTracer(name, '1.0.0');
+}
+
+/**
+ * Start an LLM span with gen_ai semantic conventions.
+ *
+ * Creates a CLIENT span and sets initial request attributes.
+ * The caller is responsible for ending the span via `endLLMSpan`.
+ *
+ * @param {string} name - Span name (e.g. 'gen_ai.chat')
+ * @param {object} attributes - Initial attributes including at minimum:
+ *   - `gen_ai.system` — provider name
+ *   - `gen_ai.request.model` — model name
+ *   - `gen_ai.operation.name` — operation description
+ * @returns {import('@opentelemetry/api').Span} The started span
+ */
+export function startLLMSpan(name, attributes = {}) {
+  const tracer = getLLMTracer();
+  return tracer.startSpan(name, {
+    kind: SpanKind.CLIENT,
+    attributes: {
+      'gen_ai.system': 'unknown',
+      'gen_ai.request.model': 'unknown',
+      'gen_ai.operation.name': name,
+      ...attributes,
+    },
+  });
+}
+
+/**
+ * End an LLM span, recording response attributes.
+ *
+ * Sets response model, finish reason, and token usage following
+ * gen_ai.* conventions. Handles provider-specific response shapes
+ * (openai, groq, anthropic).
+ *
+ * @param {import('@opentelemetry/api').Span} span - Span to end
+ * @param {object} response - LLM API response object
+ * @param {string} [provider='openai'] - Provider name for key mapping
+ */
+export function endLLMSpan(span, response, provider = 'openai') {
+  if (!span) return;
+
+  try {
+    const keys = PROVIDER_RESPONSE_KEYS[provider] ?? PROVIDER_RESPONSE_KEYS.openai;
+
+    const attrs = {};
+
+    // Response model
+    if (response?.model) {
+      attrs['gen_ai.response.model'] = response.model;
+    }
+
+    // Finish reasons
+    if (response?.finish_reason !== undefined) {
+      attrs['gen_ai.response.finish_reasons'] = Array.isArray(response.finish_reason)
+        ? response.finish_reason
+        : [String(response.finish_reason)];
+    } else if (response?.stop_reason !== undefined) {
+      attrs['gen_ai.response.finish_reasons'] = Array.isArray(response.stop_reason)
+        ? response.stop_reason
+        : [String(response.stop_reason)];
+    }
+
+    // Token usage
+    if (response?.usage) {
+      const inputTokens = response.usage.prompt_tokens ?? response.usage.input_tokens ?? 0;
+      const outputTokens = response.usage.completion_tokens ?? response.usage.output_tokens ?? 0;
+      attrs['gen_ai.usage.input_tokens'] = inputTokens;
+      attrs['gen_ai.usage.output_tokens'] = outputTokens;
+      attrs['gen_ai.usage.total_tokens'] = inputTokens + outputTokens;
+    }
+
+    if (Object.keys(attrs).length > 0) {
+      span.setAttributes(attrs);
+    }
+  } catch {
+    // Never throw from telemetry
+  } finally {
+    span.end();
+  }
+}
+
+/**
+ * Wrap an LLM call with auto-created/ended span.
+ *
+ * Convenience wrapper that combines startLLMSpan + endLLMSpan.
+ * Supports openai, groq, and anthropic providers with automatic
+ * response attribute extraction.
+ *
+ * @param {string} provider - LLM provider ('groq', 'openai', 'anthropic')
+ * @param {string} model - Model identifier (e.g. 'gpt-4o', 'llama-3.3-70b')
+ * @param {Function} fn - async () => response — the actual LLM call
+ * @returns {Promise<*>} The LLM response
+ *
+ * @example
+ *   const response = await withLLMTrace('groq', 'llama-3.3-70b', async () => {
+ *     return await groq.chat.completions.create({ ... });
+ *   });
+ */
+export async function withLLMTrace(provider, model, fn) {
+  const span = startLLMSpan(`gen_ai.${provider}.chat`, {
+    'gen_ai.system': provider,
+    'gen_ai.request.model': model,
+    'gen_ai.operation.name': 'chat',
+  });
+
+  try {
+    const result = await fn();
+    span.setStatus({ code: SpanStatusCode.OK });
+    endLLMSpan(span, result, provider);
+    return result;
+  } catch (error) {
+    span.recordException(error);
+    span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+    endLLMSpan(span, null, provider);
+    throw error;
+  }
 }
 
 /**

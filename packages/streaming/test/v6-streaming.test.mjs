@@ -3,8 +3,7 @@
  * @file V6 Streaming Features Test Suite
  */
 import { describe, it, expect, vi } from 'vitest';
-import { dataFactory } from '@unrdf/oxigraph';
-const { namedNode, literal } = dataFactory;
+import { namedNode, literal } from '../../test-utils/src/index.mjs';
 import {
   createRDFStreamParser,
   parseRDFStream,

@@ -1,5 +1,26 @@
 namespace: unrdf-observability
 
+# --- Security hardening ---
+security:
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkPolicy:
+    enabled: false  # default off for dev compatibility
+  serviceAccount:
+    create: true
+    annotations: {}
+
 # UNRDF application (disabled by default — load image into kind first)
 unrdf:
   enabled: false
@@ -19,9 +40,12 @@ unrdf:
 
 prometheus:
   imageRepo: prom/prometheus
-  imageTag: v2.48.0
+  imageTag: v2.55.1
   replicas: 1
+  unrdfDaemonTarget: host.docker.internal:9464
   retention: 30d
+  securityContext:
+    readOnlyRootFilesystem: false  # TSDB writes to disk
   resources:
     requests:
       cpu: 250m
@@ -32,7 +56,7 @@ prometheus:
 
 grafana:
   imageRepo: grafana/grafana
-  imageTag: 10.2.2
+  imageTag: 11.4.0
   replicas: 1
   adminPassword: admin
   resources:
@@ -45,7 +69,7 @@ grafana:
 
 otelCollector:
   imageRepo: otel/opentelemetry-collector-contrib
-  imageTag: 0.91.0
+  imageTag: 0.119.0
   replicas: 1
   resources:
     requests:
@@ -70,6 +94,9 @@ alertmanager:
 nodeExporter:
   imageRepo: prom/node-exporter
   imageTag: v1.7.0
+  securityContext:
+    runAsNonRoot: false   # must access /proc, /sys
+    runAsUser: 0
   resources:
     requests:
       cpu: 50m
@@ -82,6 +109,8 @@ tempo:
   imageRepo: grafana/tempo
   imageTag: 2.7.1
   replicas: 1
+  securityContext:
+    readOnlyRootFilesystem: false  # writes trace data
   resources:
     requests:
       cpu: 100m
@@ -96,6 +125,8 @@ minio:
   replicas: 1
   rootUser: minioadmin
   rootPassword: minioadmin
+  securityContext:
+    readOnlyRootFilesystem: false  # writes objects
   resources:
     requests:
       cpu: 100m
@@ -120,6 +151,8 @@ pyroscope:
   imageRepo: grafana/pyroscope
   imageTag: 1.10.1
   replicas: 1
+  securityContext:
+    readOnlyRootFilesystem: false  # writes profiles
   resources:
     requests:
       cpu: 100m
@@ -130,8 +163,10 @@ pyroscope:
 
 loki:
   imageRepo: grafana/loki
-  imageTag: 2.9.3
+  imageTag: 3.3.2
   replicas: 1
+  securityContext:
+    readOnlyRootFilesystem: false  # writes log chunks
   resources:
     requests:
       cpu: 100m
@@ -142,7 +177,7 @@ loki:
 
 promtail:
   imageRepo: grafana/promtail
-  imageTag: 2.9.3
+  imageTag: 3.3.2
   replicas: 1
   resources:
     requests:
@@ -161,3 +196,17 @@ storage:
   loki: 10Gi
   pyroscope: 5Gi
   alertmanager: 1Gi
+
+# Grafana Alloy (replaces Promtail when enabled)
+alloy:
+  enabled: false
+  imageRepo: grafana/alloy
+  imageTag: v1.3.0
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

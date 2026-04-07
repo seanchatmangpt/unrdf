@@ -5,6 +5,7 @@
 **Audience:** Intermediate - familiar with REST APIs and basic RDF concepts
 
 **Prerequisites:**
+
 - Node.js >= 18.0.0 installed
 - pnpm installed (`npm install -g pnpm`)
 - Basic understanding of RDF triples and Turtle syntax
@@ -20,7 +21,7 @@
 By the end of this tutorial, you will:
 
 1. Create an RDF ontology defining User and Post entities
-2. Configure code generation rules with `.unrdf.toml`
+2. Configure code generation rules with `unrdf.toml`
 3. Write Nunjucks templates for Zod schemas and OpenAPI
 4. Generate production-ready code with `unrdf sync`
 5. Verify the generated artifacts work correctly
@@ -228,7 +229,7 @@ This ontology is the single source of truth for your entire API contract.
 
 Create a configuration file that tells `unrdf sync` how to generate code from your ontology.
 
-**Create `.unrdf.toml`:**
+**Create `unrdf.toml`:**
 
 ```toml
 [project]
@@ -569,7 +570,7 @@ npx unrdf sync --dry-run --verbose
 **Expected output:**
 
 ```
-[unrdf sync] Loading configuration from .unrdf.toml
+[unrdf sync] Loading configuration from unrdf.toml
 [unrdf sync] Parsing ontology: ontology/blog-api.ttl (turtle)
 [unrdf sync] Found 3 generation rules
 
@@ -597,7 +598,7 @@ npx unrdf sync --verbose
 **Expected output:**
 
 ```
-[unrdf sync] Loading configuration from .unrdf.toml
+[unrdf sync] Loading configuration from unrdf.toml
 [unrdf sync] Parsing ontology: ontology/blog-api.ttl (turtle)
 [unrdf sync] Found 3 generation rules
 
@@ -771,13 +772,13 @@ You have successfully completed this tutorial. Here is what you accomplished:
 
 **Key concepts:**
 
-| Concept | What It Does |
-|---------|--------------|
-| **RDF Ontology** | Defines entities, properties, and operations semantically |
-| **SPARQL Queries** | Extracts structured data from the ontology |
-| **Nunjucks Templates** | Transforms query results into code |
-| **.unrdf.toml** | Configures the generation pipeline |
-| **unrdf sync** | Executes the generation process |
+| Concept                | What It Does                                              |
+| ---------------------- | --------------------------------------------------------- |
+| **RDF Ontology**       | Defines entities, properties, and operations semantically |
+| **SPARQL Queries**     | Extracts structured data from the ontology                |
+| **Nunjucks Templates** | Transforms query results into code                        |
+| **unrdf.toml**         | Configures the generation pipeline                        |
+| **unrdf sync**         | Executes the generation process                           |
 
 **The power of this approach:**
 
@@ -791,19 +792,23 @@ You have successfully completed this tutorial. Here is what you accomplished:
 ## Next Steps
 
 **Continue Learning:**
+
 - **[Tutorial: Building Ontologies with Templates](./building-ontologies-with-templates.md)** - Advanced ontology design
 - **[Tutorial: SPARQL Query Generation](./sparql-query-generation.md)** - Complex SPARQL patterns
 
 **Solve Specific Problems:**
+
 - **[How-To: Add Custom Filters to Templates](../how-to/custom-template-filters.md)** - Extend Nunjucks
 - **[How-To: Watch Mode for Development](../how-to/sync-watch-mode.md)** - Auto-regenerate on changes
 
 **Understand the Design:**
+
 - **[Explanation: Why Ontology-Driven Code Generation](../explanation/ontology-driven-codegen.md)** - Design rationale
 - **[Explanation: SPARQL as a Query Language](../explanation/sparql-for-code-generation.md)** - Why SPARQL
 
 **API Reference:**
-- **[Reference: .unrdf.toml Configuration](../reference/sync-config.md)** - Complete configuration options
+
+- **[Reference: unrdf.toml Configuration](../reference/sync-config.md)** - Complete configuration options
 - **[Reference: Template Filters](../reference/template-filters.md)** - All available Nunjucks filters
 - **[CLI Reference: unrdf sync](../reference/cli-sync.md)** - Full command options
 
@@ -817,7 +822,7 @@ You have successfully completed this tutorial. Here is what you accomplished:
 Error: Ontology file not found: ontology/blog-api.ttl
 ```
 
-**Solution:** Verify the path in `.unrdf.toml` is correct and the file exists.
+**Solution:** Verify the path in `unrdf.toml` is correct and the file exists.
 
 ### SPARQL query returns no results
 

@@ -12,7 +12,7 @@ Generate synchronized code artifacts from a single RDF ontology source:
 - Create templates for OpenAPI specifications
 - Generate Zod validation schemas from ontology
 - Produce JSDoc type definitions with descriptions
-- Configure multiple generation rules in .unrdf.toml
+- Configure multiple generation rules in unrdf.toml
 - Verify consistency across all generated outputs
 
 ## Why Synchronized Outputs Matter
@@ -38,6 +38,7 @@ Contract-first development ensures all components share the same truth:
 ```
 
 **Benefits:**
+
 - **Single source of truth:** Change the ontology, regenerate everything
 - **No drift:** API docs, validation, and types always match
 - **Traceability:** Every field traces back to its RDF definition
@@ -372,6 +373,7 @@ api:UpdateUserRequestShape
 ```
 
 This ontology defines:
+
 - **Domain classes:** User, request/response types
 - **Properties:** With types, formats, constraints, and examples
 - **API endpoints:** With HTTP methods, paths, and schemas
@@ -750,10 +752,10 @@ export default createApiClient;
 
 ## Step 5: Configure Generation Rules (3 min)
 
-Create `/tmp/sync-demo/.unrdf.toml`:
+Create `/tmp/sync-demo/unrdf.toml`:
 
 ```toml
-# .unrdf.toml - Multi-Format Code Generation Configuration
+# unrdf.toml - Multi-Format Code Generation Configuration
 # Generates OpenAPI, Zod schemas, JSDoc types, and API client from RDF ontology
 
 [project]
@@ -1021,15 +1023,16 @@ Run the sync command to generate all outputs:
 
 ```bash
 cd /tmp/sync-demo
-npx unrdf sync --config .unrdf.toml --verbose
+npx unrdf sync --config unrdf.toml --verbose
 ```
 
 **Expected Output:**
+
 ```
 UNRDF Sync
 
 Phase 1: Loading configuration...
-   Config: .unrdf.toml
+   Config: unrdf.toml
    Project: User Management API
 
 Phase 2: Loading ontology...
@@ -1080,6 +1083,7 @@ cat /tmp/sync-demo/lib/generated/openapi-schemas.yaml | head -50
 ```
 
 **Expected snippet:**
+
 ```yaml
 components:
   schemas:
@@ -1105,6 +1109,7 @@ cat /tmp/sync-demo/lib/generated/schemas.mjs | head -30
 ```
 
 **Expected snippet:**
+
 ```javascript
 export const CreateUserRequestSchema = z.object({
   /**
@@ -1128,6 +1133,7 @@ cat /tmp/sync-demo/lib/generated/types.mjs | head -25
 ```
 
 **Expected snippet:**
+
 ```javascript
 /**
  * Request payload for creating a new user
@@ -1139,6 +1145,7 @@ cat /tmp/sync-demo/lib/generated/types.mjs | head -25
 ```
 
 **Key consistency checks:**
+
 - All three outputs list the same properties for `CreateUserRequest`
 - Required fields (`email`, `name`, `password`) are consistent
 - Descriptions come from the same `rdfs:comment` source
@@ -1152,26 +1159,26 @@ You've learned how to:
 
 - Define a comprehensive API ontology with classes, properties, and endpoints
 - Create templates for OpenAPI, Zod, and JSDoc outputs
-- Configure multiple generation rules in `.unrdf.toml`
+- Configure multiple generation rules in `unrdf.toml`
 - Generate all artifacts with a single `unrdf sync` command
 - Verify consistency across generated outputs
 
 ## Generated File Reference
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `openapi.yaml` | API endpoint definitions | ~120 |
-| `openapi-schemas.yaml` | Request/response schemas | ~150 |
-| `schemas.mjs` | Zod runtime validation | ~180 |
-| `types.mjs` | JSDoc type definitions | ~220 |
-| `api-client.mjs` | Generated HTTP client | ~140 |
-| `index.mjs` | Barrel exports | ~15 |
+| File                   | Purpose                  | Lines |
+| ---------------------- | ------------------------ | ----- |
+| `openapi.yaml`         | API endpoint definitions | ~120  |
+| `openapi-schemas.yaml` | Request/response schemas | ~150  |
+| `schemas.mjs`          | Zod runtime validation   | ~180  |
+| `types.mjs`            | JSDoc type definitions   | ~220  |
+| `api-client.mjs`       | Generated HTTP client    | ~140  |
+| `index.mjs`            | Barrel exports           | ~15   |
 
 ## Next Steps
 
 - **Tutorial:** [Building Ontologies with Templates](./building-ontologies-with-templates.md) - 20 min
 - **How-to:** [Custom Template Filters](../how-to/sync-custom-filters.md)
-- **Reference:** [.unrdf.toml Configuration](../reference/sync-config.md)
+- **Reference:** [unrdf.toml Configuration](../reference/sync-config.md)
 
 ## Key Takeaways
 
@@ -1184,16 +1191,19 @@ You've learned how to:
 ## Troubleshooting
 
 **No results from SPARQL query:**
-- Check prefix definitions in `.unrdf.toml` match ontology prefixes
+
+- Check prefix definitions in `unrdf.toml` match ontology prefixes
 - Verify class URIs in FILTER clauses match ontology exactly
 - Use `--verbose` flag to see query execution details
 
 **Template rendering errors:**
+
 - Ensure all referenced filters (`groupBy`, `localName`) are available
 - Check frontmatter `to:` path is relative to output_dir
 - Verify Nunjucks syntax (use `{% %}` for control, `{{ }}` for output)
 
 **Inconsistent outputs:**
+
 - Run `unrdf sync --force` to regenerate all files
 - Check that all templates query the same properties
 - Verify SPARQL ORDER BY ensures deterministic results

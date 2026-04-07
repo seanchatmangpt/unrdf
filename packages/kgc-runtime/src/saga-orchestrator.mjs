@@ -12,8 +12,8 @@ import { generateReceipt } from './receipt.mjs';
 export const SagaStepSchema = z.object({
   id: z.string(),
   name: z.string(),
-  execute: z.function().args(z.any()).returns(z.promise(z.any())),
-  compensate: z.function().args(z.any()).returns(z.promise(z.any())),
+  execute: z.function(),
+  compensate: z.function(),
   retryable: z.boolean().default(true),
   maxRetries: z.number().nonnegative().default(3),
 });

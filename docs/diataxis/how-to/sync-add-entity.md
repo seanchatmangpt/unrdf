@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-- Existing project with `.unrdf.toml` configuration
+- Existing project with `unrdf.toml` configuration
 - Blog API ontology with User and Post entities
 - `@unrdf/cli` installed
 
@@ -91,10 +91,11 @@ ex:Comment
 Generate all outputs from your updated ontology:
 
 ```bash
-timeout 10s unrdf sync --config .unrdf.toml
+timeout 10s unrdf sync --config unrdf.toml
 ```
 
 **Expected result:**
+
 ```
 Sync completed successfully
   Rules processed: 2
@@ -113,6 +114,7 @@ grep "COMMENT" lib/entities.mjs
 ```
 
 **Expected result:**
+
 ```javascript
 export const COMMENT = 'http://example.org/schema#Comment';
 ```
@@ -129,12 +131,12 @@ grep "body\|commentedAt\|commentAuthor" lib/properties.mjs
 
 ## Troubleshooting
 
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| Sync reports 0 entities | Missing `owl:Class` type | Add `a owl:Class` to entity |
-| Properties not in output | Wrong `rdfs:domain` | Verify domain points to your entity |
-| Parse error on sync | Turtle syntax error | Check semicolons and periods |
-| Relationships missing | Wrong property type | Use `owl:ObjectProperty` for relations |
+| Problem                  | Cause                    | Fix                                    |
+| ------------------------ | ------------------------ | -------------------------------------- |
+| Sync reports 0 entities  | Missing `owl:Class` type | Add `a owl:Class` to entity            |
+| Properties not in output | Wrong `rdfs:domain`      | Verify domain points to your entity    |
+| Parse error on sync      | Turtle syntax error      | Check semicolons and periods           |
+| Relationships missing    | Wrong property type      | Use `owl:ObjectProperty` for relations |
 
 ### Quick Syntax Check
 

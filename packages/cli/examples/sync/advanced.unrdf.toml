@@ -1,4 +1,4 @@
-# Advanced `.unrdf.toml` example (copy to project root as `.unrdf.toml` or pass `--config`)
+# Advanced `unrdf.toml` example (copy to project root as `unrdf.toml` or pass `--config`)
 # Demonstrates multiple generation rules with different queries and templates
 #
 # Usage:

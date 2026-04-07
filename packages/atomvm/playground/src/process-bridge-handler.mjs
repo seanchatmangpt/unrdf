@@ -9,7 +9,7 @@
  * @module process-bridge-handler
  */
 
-/* eslint-env browser, node */
+/* global window, document */
 
 /**
  * Validate non-empty string (poka-yoke)
@@ -27,9 +27,9 @@ function validateNonEmptyString(value, name) {
  */
 function sendBridgeCommand(command) {
   // Bridge commands are sent via Module.print (intercepted by bridge-interceptor)
-  // eslint-disable-next-line no-undef
+   
   if (typeof window !== 'undefined' && window.Module && window.Module.print) {
-    // eslint-disable-next-line no-undef
+     
     window.Module.print(`PROCESS_FRAMEWORK:${command}\n`);
   } else if (typeof process !== 'undefined' && process.stdout) {
     process.stdout.write(`PROCESS_FRAMEWORK:${command}\n`);

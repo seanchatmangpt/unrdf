@@ -28,7 +28,7 @@ import { randomUUID } from 'crypto';
  */
 export const HandlerConditionSchema = z.union([
   z.string().min(1),
-  z.function().args(z.record(z.string(), z.any())).returns(z.boolean()),
+  z.function(),
   z.boolean(),
 ]);
 

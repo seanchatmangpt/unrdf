@@ -9,6 +9,7 @@ Enhanced error handling in the sync command modules to provide actionable, detai
 ### 1. `src/cli/commands/sync/orchestrator.mjs`
 
 **Enhancements:**
+
 - ✅ Added validation that template file exists and is readable before executing rule
 - ✅ Wrapped SPARQL query execution in dedicated try-catch with specific error context
 - ✅ Wrapped template rendering in dedicated try-catch with specific error context
@@ -22,17 +23,19 @@ Enhanced error handling in the sync command modules to provide actionable, detai
 - ✅ Shows stack trace in verbose mode
 
 **Example Error Message:**
+
 ```
 ERR my-rule:
 Template file not found or not readable: /path/to/template.njk
   Rule: my-rule
-  Config: /path/to/.unrdf.toml
+  Config: /path/to/unrdf.toml
   Fix: Check that the template path is correct and the file exists
 ```
 
 ### 2. `src/cli/commands/sync/ontology-loader.mjs`
 
 **Enhancements:**
+
 - ✅ Validates that source field is present in config
 - ✅ Checks file exists before attempting to read
 - ✅ Checks file is readable with proper permissions check
@@ -43,6 +46,7 @@ Template file not found or not readable: /path/to/template.njk
 - ✅ Suggests explicit format specification if auto-detection might be wrong
 
 **Example Error Message:**
+
 ```
 Failed to parse ontology file: /path/to/ontology.ttl
   Format: turtle
@@ -61,6 +65,7 @@ Possible fixes:
 ### 3. `src/cli/commands/sync/sparql-executor.mjs`
 
 **Enhancements:**
+
 - ✅ Enhanced timeout error messages with timeout value and query preview
 - ✅ Added `extractLineInfo()` helper to extract line/column from SPARQL errors
 - ✅ Adjusts line numbers to account for auto-added PREFIX declarations
@@ -75,6 +80,7 @@ Possible fixes:
   - Keyword typos
 
 **Example Error Message:**
+
 ```
 SPARQL query failed: unexpected token at line 15
   Line 12 (15 in full query): FILTER (?age > 18
@@ -85,12 +91,14 @@ Possible fixes:
 ```
 
 **Helper Functions Added:**
+
 - `extractLineInfo(errorMsg, prefixLineCount)` - Extracts line/column from error messages
 - `getSyntaxSuggestions(errorMsg)` - Returns contextual fix suggestions
 
 ### 4. `src/cli/commands/sync/template-renderer.mjs`
 
 **Enhancements:**
+
 - ✅ Wraps template rendering in try-catch with detailed error handling
 - ✅ Added `extractNunjucksLineInfo()` helper to extract line/column from Nunjucks errors
 - ✅ Added `getTemplateSuggestions()` helper for template-specific fix suggestions
@@ -103,6 +111,7 @@ Possible fixes:
 - ✅ Enhanced batch render error messages with line/column info
 
 **Example Error Message:**
+
 ```
 Template rendering failed: undefined variable 'className'
   Line 23, Column 15
@@ -113,6 +122,7 @@ Possible fixes:
 ```
 
 **Helper Functions Added:**
+
 - `extractNunjucksLineInfo(err)` - Extracts line/column from Nunjucks errors
 - `getTemplateSuggestions(errorMsg, context)` - Returns contextual template fix suggestions
 
@@ -145,6 +155,7 @@ Possible fixes:
 ## Testing
 
 All files passed syntax validation:
+
 ```bash
 node --check src/cli/commands/sync/orchestrator.mjs      # ✅ PASS
 node --check src/cli/commands/sync/ontology-loader.mjs   # ✅ PASS
@@ -162,6 +173,7 @@ node --check src/cli/commands/sync/template-renderer.mjs # ✅ PASS
 ## Future Enhancements
 
 Potential areas for further improvement:
+
 - Add colorized diff output for parse errors
 - Include file content snippets around error locations
 - Add "Did you mean?" suggestions for common typos

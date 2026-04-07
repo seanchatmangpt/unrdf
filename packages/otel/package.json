@@ -13,7 +13,8 @@
     "src/"
   ],
   "scripts": {
-    "generate": "cd ../../otel && weaver registry generate --registry registry/ js ../packages/otel/src/generated/",
+    "generate:powl": "node ../../otel/scripts/powl-to-weaver.mjs --powl-ast-dir ../../ostar/artifacts/powl --skip-check true 2>/dev/null || true",
+    "generate": "pnpm run generate:powl && cd ../../otel && weaver registry generate --registry registry/ js ../packages/otel/src/generated/",
     "check": "cd ../../otel && weaver registry check --registry registry/"
   },
   "keywords": [

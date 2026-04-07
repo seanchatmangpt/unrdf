@@ -3,8 +3,7 @@
  * @file Integration Tests - End-to-end hook system integration
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { namedNode, literal, quad, createTestStore } from '../../test-utils/src/index.mjs';
 import {
   defineHook,
   createHookRegistry,
@@ -13,14 +12,12 @@ import {
   executeHookChain,
 } from '../src/index.mjs';
 
-const { namedNode, literal, quad } = DataFactory;
-
 describe('Integration - Hook Lifecycle', () => {
   let _store;
   let registry;
 
   beforeEach(() => {
-    _store = createStore();
+    _store = createTestStore();
     registry = createHookRegistry();
   });
 
@@ -87,7 +84,7 @@ describe('Integration - RDF Store with Hooks', () => {
   let registry;
 
   beforeEach(() => {
-    _store = createStore();
+    _store = createTestStore();
     registry = createHookRegistry();
   });
 

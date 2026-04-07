@@ -116,13 +116,13 @@ unrdf hooks receipts --file <file> [--format table|json] [--verify]
 
 ## sync
 
-Generate typed code artifacts from an RDF ontology using `.unrdf.toml`.
+Generate typed code artifacts from an RDF ontology using `unrdf.toml`.
 
 ```
 unrdf sync [--config <path>] [--rule <name>] [--dry-run] [--verbose] [--watch]
 ```
 
-All flags optional. `--config` defaults to `.unrdf.toml`. `--rule` runs a single named generation rule. `--dry-run` previews without writing. `--watch` re-generates on file change.
+All flags optional. `--config` defaults to `unrdf.toml`. `--rule` runs a single named generation rule. `--dry-run` previews without writing. `--watch` re-generates on file change.
 
 ---
 
@@ -144,4 +144,4 @@ Ad-hoc code generation from a single RDF file and a Nunjucks template.
 | ---------------------- | ------------------------------------------------- |
 | `UNRDF_DEFAULT_GRAPH`  | Default graph name used when `--graph` is omitted |
 | `UNRDF_DEFAULT_FORMAT` | Default export format                             |
-| `UNRDF_CONFIG_PATH`    | Default path to `.unrdf.toml`                     |
+| `UNRDF_CONFIG_PATH`    | Default path to `unrdf.toml`                      |

@@ -19,6 +19,7 @@
  */
 
 import { z } from 'zod';
+import { withPipelineSpan } from '../lib/telemetry.mjs';
 
 /**
  * Stage type enum
@@ -399,62 +400,80 @@ export class StageExecutor {
       throw new Error(`Stage not found: ${stageName}`);
     }
 
-    const startTime = new Date();
-    const result = {
-      stage: stageName,
-      status: StageStatus.RUNNING,
-      packageName: context.packageName || 'workflow',
-      startTime: startTime.toISOString(),
-      success: false
-    };
+    return withPipelineSpan(stageName, async (span) => {
+      span.setAttributes({
+        'pipeline.stage': stageName,
+        'pipeline.package': context.packageName || 'workflow',
+      });
 
-    try {
-      // Get executor
-      const executor = stage.executor || this._getExecutor(stage.type);
-      if (!executor) {
-        throw new Error(`No executor for stage type: ${stage.type}`);
+      const startTime = new Date();
+      const result = {
+        stage: stageName,
+        status: StageStatus.RUNNING,
+        packageName: context.packageName || 'workflow',
+        startTime: startTime.toISOString(),
+        success: false
+      };
+
+      try {
+        // Get executor
+        const executor = stage.executor || this._getExecutor(stage.type);
+        if (!executor) {
+          throw new Error(`No executor for stage type: ${stage.type}`);
+        }
+
+        // Execute with timeout
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error(`Stage ${stageName} timed out after ${stage.timeout}ms`)), stage.timeout);
+        });
+
+        const output = await Promise.race([
+          executor(context),
+          timeoutPromise
+        ]);
+
+        // Success
+        const endTime = new Date();
+        result.status = StageStatus.COMPLETED;
+        result.success = true;
+        result.output = output;
+        result.endTime = endTime.toISOString();
+        result.duration = endTime - startTime;
+
+        span.setAttributes({
+          'pipeline.stage.result': 'completed',
+          'pipeline.stage.duration_ms': endTime - startTime,
+        });
+
+        // Record for potential rollback
+        this.history.push({
+          stage: stageName,
+          context,
+          output,
+          rollback: stage.rollback
+        });
+
+      } catch (error) {
+        // Failure
+        const endTime = new Date();
+        result.status = StageStatus.FAILED;
+        result.success = false;
+        result.error = error.message;
+        result.endTime = endTime.toISOString();
+        result.duration = endTime - startTime;
+
+        span.setAttributes({
+          'pipeline.stage.result': 'failed',
+          'pipeline.stage.error': error.message,
+          'pipeline.stage.duration_ms': endTime - startTime,
+        });
       }
 
-      // Execute with timeout
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(`Stage ${stageName} timed out after ${stage.timeout}ms`)), stage.timeout);
-      });
+      // Store result
+      this.results.set(stageName, result);
 
-      const output = await Promise.race([
-        executor(context),
-        timeoutPromise
-      ]);
-
-      // Success
-      const endTime = new Date();
-      result.status = StageStatus.COMPLETED;
-      result.success = true;
-      result.output = output;
-      result.endTime = endTime.toISOString();
-      result.duration = endTime - startTime;
-
-      // Record for potential rollback
-      this.history.push({
-        stage: stageName,
-        context,
-        output,
-        rollback: stage.rollback
-      });
-
-    } catch (error) {
-      // Failure
-      const endTime = new Date();
-      result.status = StageStatus.FAILED;
-      result.success = false;
-      result.error = error.message;
-      result.endTime = endTime.toISOString();
-      result.duration = endTime - startTime;
-    }
-
-    // Store result
-    this.results.set(stageName, result);
-
-    return result;
+      return result;
+    });
   }
 
   /**

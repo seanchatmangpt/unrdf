@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { createMockFetch } from '../../test-utils/src/index.mjs';
 import { createCoordinator } from '../src/federation/coordinator.mjs';
 import { createHealthEndpoint } from '../src/federation/health.mjs';
 
@@ -11,20 +12,7 @@ import { createHealthEndpoint } from '../src/federation/health.mjs';
 /* ========================================================================= */
 
 const originalFetch = global.fetch;
-
-function createMockFetch(shouldSucceed = true) {
-  return vi.fn(async () => {
-    if (!shouldSucceed) {
-      throw new Error('Network error');
-    }
-    return {
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      json: async () => ({ results: { bindings: [] } }),
-    };
-  });
-}
+const mockFetchFail = () => vi.fn().mockRejectedValue(new Error('Network error'));
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -67,7 +55,7 @@ describe('Health Endpoint', () => {
   });
 
   it('should return healthy status with healthy peers', async () => {
-    global.fetch = createMockFetch(true);
+    global.fetch = createMockFetch({});
 
     const coordinator = createCoordinator({
       peers: [
@@ -85,7 +73,7 @@ describe('Health Endpoint', () => {
   });
 
   it('should return unhealthy status with all unreachable peers', async () => {
-    global.fetch = createMockFetch(false);
+    global.fetch = mockFetchFail();
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
@@ -103,7 +91,7 @@ describe('Health Endpoint', () => {
   });
 
   it('should return degraded status with high error rate', async () => {
-    global.fetch = createMockFetch(false);
+    global.fetch = mockFetchFail();
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
@@ -149,7 +137,7 @@ describe('Readiness Probe', () => {
   });
 
   it('should return ready with healthy peers', async () => {
-    global.fetch = createMockFetch(true);
+    global.fetch = createMockFetch({});
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
@@ -164,7 +152,7 @@ describe('Readiness Probe', () => {
   });
 
   it('should return not ready with only unhealthy peers', async () => {
-    global.fetch = createMockFetch(false);
+    global.fetch = mockFetchFail();
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
@@ -247,7 +235,7 @@ describe('Startup Probe', () => {
 
 describe('Health Integration', () => {
   it('should reflect query activity in health status', async () => {
-    global.fetch = createMockFetch(true);
+    global.fetch = createMockFetch({});
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],
@@ -268,7 +256,7 @@ describe('Health Integration', () => {
   });
 
   it('should reflect peer changes in readiness', async () => {
-    global.fetch = createMockFetch(true);
+    global.fetch = createMockFetch({});
 
     const coordinator = createCoordinator();
     const health = createHealthEndpoint(coordinator);
@@ -287,7 +275,7 @@ describe('Health Integration', () => {
   });
 
   it('should provide consistent health data across checks', async () => {
-    global.fetch = createMockFetch(true);
+    global.fetch = createMockFetch({});
 
     const coordinator = createCoordinator({
       peers: [{ id: 'peer1', endpoint: 'http://peer1.com/sparql' }],

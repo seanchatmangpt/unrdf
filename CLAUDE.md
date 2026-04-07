@@ -205,6 +205,16 @@ See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed design.
 - **Generate command**: `cd otel && weaver registry generate --registry registry/ js ../packages/otel/src/generated/`
 - **`@unrdf/otel` is generated**: do not edit `packages/otel/src/generated/` directly — re-run generate after any registry change
 
+## Test Utils (`@unrdf/test-utils`)
+
+- **Location**: `packages/test-utils/src/index.mjs` — private workspace package
+- **Import pattern**: Use relative imports `../../test-utils/src/index.mjs` (pnpm workspace linking is unreliable when `pnpm install` fails on unrelated packages)
+- **Exports**: `namedNode, literal, quad, blankNode, defaultGraph, df` (dataFactory alias), `createTestStore, createStoreWith`, `VOCAB, terms, entities`, `SPARQL`, `createMockFetch, createMockSpan, createMockTracer`, `benchmarkSync, assertPerf`
+- **pnpm install blocker**: Full `pnpm install` may fail on unrelated packages (daemon's otel-grpc, temporal-discovery); use `pnpm install --filter @unrdf/X` for targeted installs
+- **Telemetry mock caution**: `createMockSpan()` / `createMockTracer()` have fixed interfaces — don't use for tests that need custom span shapes (e.g. `recordEvent`) or reference equality (`expect(span).toBe(mockSpan)`)
+- **Per-package vitest**: Federation package lacked `vitest.config.mjs` — now added. Run package tests via `pnpm --filter @unrdf/X exec vitest run`
+- **Pre-existing failures**: `federation/test/metrics.test.mjs` (21 failures) and 1 in `federation.test.mjs` are pre-existing — do not attempt to fix unless asked
+
 ---
 
 ## Personal Notes

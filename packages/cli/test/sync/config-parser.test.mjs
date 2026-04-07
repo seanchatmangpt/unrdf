@@ -1,7 +1,7 @@
 /**
  * @file Config Parser Tests
  * @module cli/test/sync/config-parser
- * @description Tests for `.unrdf.toml` configuration parser
+ * @description Tests for `unrdf.toml` configuration parser
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -33,7 +33,7 @@ describe('Config Parser', () => {
   });
 
   describe('parseConfig()', () => {
-    it('should parse a valid .unrdf.toml file', async () => {
+    it('should parse a valid unrdf.toml file', async () => {
       // Arrange
       const configContent = `
 [project]
@@ -48,7 +48,7 @@ format = "turtle"
 [generation]
 output_dir = "src/generated/"
 `;
-      const configPath = join(testDir, '.unrdf.toml');
+      const configPath = join(testDir, 'unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -100,7 +100,7 @@ source = "schema/domain.ttl"
 [generation]
 output_dir = "src/generated/"
 `;
-      const configPath = join(testDir, '.unrdf.toml');
+      const configPath = join(testDir, 'unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -117,7 +117,7 @@ output_dir = "src/generated/"
 [ontology]
 source = "schema/domain.ttl"
 `;
-      const configPath = join(testDir, '.unrdf.toml');
+      const configPath = join(testDir, 'unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -719,7 +719,7 @@ version = "1.0.0"
 [ontology]
 source = "schema/domain.ttl"
 `;
-      const configPath = join(testDir, '.unrdf.toml');
+      const configPath = join(testDir, 'unrdf.toml');
       await writeFile(configPath, configContent);
 
       // Act
@@ -890,8 +890,8 @@ source = "schema/domain.ttl"
   });
 
   describe('findConfigFile()', () => {
-    it('should find .unrdf.toml in directory', async () => {
-      const configPath = join(testDir, '.unrdf.toml');
+    it('should find unrdf.toml in directory', async () => {
+      const configPath = join(testDir, 'unrdf.toml');
       await writeFile(configPath, '[project]\nname = "test"');
 
       const found = await findConfigFile(testDir);
@@ -906,7 +906,7 @@ source = "schema/domain.ttl"
     });
   });
 
-  describe('.unrdf.toml schema surface', () => {
+  describe('unrdf.toml schema surface', () => {
     it('should parse a config with all major sections and path fields', async () => {
       const configContent = `
 [project]

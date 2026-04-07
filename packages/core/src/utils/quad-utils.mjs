@@ -129,6 +129,32 @@ export const groupBySubject = quads => {
 };
 
 /**
+ * Safely clone an RDF quad by explicitly copying its four components.
+ *
+ * Use this instead of `{...quad}` — N3 DataFactory quads expose subject/predicate/object/graph
+ * as prototype getters (not own enumerable properties), so spread silently produces undefined.
+ *
+ * @param {object} quad - RDF quad to clone
+ * @param {object} [overrides={}] - Optional property overrides for the clone
+ * @returns {object} Plain object with subject, predicate, object, graph
+ * @example
+ * // WRONG — silent bug with N3 quads:
+ * const copy = { ...quad };  // copy.subject === undefined
+ *
+ * // CORRECT:
+ * const copy = cloneQuad(quad);
+ * const modified = cloneQuad(quad, { object: newLiteral });
+ */
+export function cloneQuad(quad, overrides = {}) {
+  return {
+    subject: overrides.subject ?? quad.subject,
+    predicate: overrides.predicate ?? quad.predicate,
+    object: overrides.object ?? quad.object,
+    graph: overrides.graph ?? quad.graph,
+  };
+}
+
+/**
  * Group quads by predicate
  * @param {import('n3').Quad[]} quads - Array of RDF quads
  * @returns {Map<string, import('n3').Quad[]>} Map of predicate IRIs to their quads

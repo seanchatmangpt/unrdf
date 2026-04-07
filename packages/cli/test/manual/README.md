@@ -11,6 +11,7 @@ Manual testing scripts for verifying CLI functionality without running the full 
 ### Prerequisites
 
 1. Install dependencies:
+
    ```bash
    cd /home/user/unrdf
    pnpm install
@@ -32,7 +33,7 @@ The script performs a complete sync workflow:
    - Creates a temporary directory
    - Writes a minimal Turtle ontology (User and Post entities)
    - Writes a Nunjucks template for code generation
-   - Writes a .unrdf.toml configuration file
+   - Writes a unrdf.toml configuration file
 
 2. **Execution Phase**
    - Imports and calls `runSync()` from orchestrator.mjs
@@ -63,7 +64,7 @@ The script performs a complete sync workflow:
 ℹ Setting up test files...
 ✓ Created ontology: schema.ttl
 ✓ Created template: templates/entities.njk
-✓ Created config: .unrdf.toml
+✓ Created config: unrdf.toml
 
 ============================================================
   Running Sync Command
@@ -123,16 +124,19 @@ The script performs a complete sync workflow:
 ### Troubleshooting
 
 **Error: Dependencies not installed**
+
 ```
 cd /home/user/unrdf
 pnpm install
 ```
 
 **Error: Cannot find module**
+
 - Ensure you're running from the project root
 - Check that `packages/cli/src/cli/commands/sync/orchestrator.mjs` exists
 
 **Error: ENOENT: no such file or directory**
+
 - Ensure temp directory is writable
 - Check disk space
 
@@ -159,7 +163,7 @@ To test additional scenarios, duplicate and modify:
 ```javascript
 const TEST_ONTOLOGY = `...`; // Your ontology
 const TEST_TEMPLATE = `...`; // Your template
-const SPARQL_QUERY = `...`;  // Your query
+const SPARQL_QUERY = `...`; // Your query
 ```
 
 Then adjust the verification checks in the `Verifying Output` section.

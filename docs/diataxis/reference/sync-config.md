@@ -1,4 +1,4 @@
-# .unrdf.toml Configuration Reference
+# unrdf.toml Configuration Reference
 
 > **Document Type**: Reference
 > **Audience**: Developers configuring RDF API code generation
@@ -8,11 +8,11 @@
 
 ## File Location
 
-The `.unrdf.toml` configuration file must be placed in your project root directory. The `unrdf sync` command searches for this file in the current working directory.
+The `unrdf.toml` configuration file must be placed in your project root directory. The `unrdf sync` command searches for this file in the current working directory.
 
 ```
 project-root/
-├── .unrdf.toml          # Configuration file (required)
+├── unrdf.toml          # Configuration file (required)
 ├── ontology/
 │   └── schema.ttl     # RDF ontology source
 ├── templates/
@@ -62,49 +62,49 @@ enabled = true            # Optional - Default: true
 
 ### [project] Section
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `name` | string | Yes | - | Project identifier used in generated file headers and logging output |
-| `version` | string | No | `"1.0.0"` | Semantic version string for generated artifacts |
-| `description` | string | No | `""` | Human-readable project description |
+| Field         | Type   | Required | Default   | Description                                                          |
+| ------------- | ------ | -------- | --------- | -------------------------------------------------------------------- |
+| `name`        | string | Yes      | -         | Project identifier used in generated file headers and logging output |
+| `version`     | string | No       | `"1.0.0"` | Semantic version string for generated artifacts                      |
+| `description` | string | No       | `""`      | Human-readable project description                                   |
 
 ### [ontology] Section
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `source` | path | Yes | - | Path to the RDF ontology file (relative to .unrdf.toml) |
-| `format` | enum | No | auto | RDF serialization format: `turtle`, `ntriples`, `rdfxml` |
-| `base_iri` | URI | No | `""` | Base IRI for resolving relative IRIs in the ontology |
-| `prefixes` | table | No | `{}` | Prefix-to-namespace mappings for SPARQL queries |
+| Field      | Type  | Required | Default | Description                                              |
+| ---------- | ----- | -------- | ------- | -------------------------------------------------------- |
+| `source`   | path  | Yes      | -       | Path to the RDF ontology file (relative to unrdf.toml)   |
+| `format`   | enum  | No       | auto    | RDF serialization format: `turtle`, `ntriples`, `rdfxml` |
+| `base_iri` | URI   | No       | `""`    | Base IRI for resolving relative IRIs in the ontology     |
+| `prefixes` | table | No       | `{}`    | Prefix-to-namespace mappings for SPARQL queries          |
 
 **Supported Formats**:
 
-| Format | Extension | MIME Type |
-|--------|-----------|-----------|
-| `turtle` | `.ttl` | `text/turtle` |
-| `ntriples` | `.nt` | `application/n-triples` |
-| `rdfxml` | `.rdf`, `.xml` | `application/rdf+xml` |
+| Format     | Extension      | MIME Type               |
+| ---------- | -------------- | ----------------------- |
+| `turtle`   | `.ttl`         | `text/turtle`           |
+| `ntriples` | `.nt`          | `application/n-triples` |
+| `rdfxml`   | `.rdf`, `.xml` | `application/rdf+xml`   |
 
 ### [generation] Section
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `output_dir` | path | No | `"lib"` | Base directory for generated files |
-| `templates_dir` | path | No | built-in | Directory containing Handlebars templates |
-| `incremental` | boolean | No | `true` | Skip unchanged files during regeneration |
+| Field           | Type    | Required | Default  | Description                               |
+| --------------- | ------- | -------- | -------- | ----------------------------------------- |
+| `output_dir`    | path    | No       | `"lib"`  | Base directory for generated files        |
+| `templates_dir` | path    | No       | built-in | Directory containing Handlebars templates |
+| `incremental`   | boolean | No       | `true`   | Skip unchanged files during regeneration  |
 
 ### [[generation.rules]] Array
 
 Each rule defines a code generation target. Multiple rules can be defined.
 
-| Field | Type | Required | Default | Description |
-|-------|------|----------|---------|-------------|
-| `name` | string | Yes | - | Unique identifier for this generation rule |
-| `description` | string | No | `""` | Human-readable description of what this rule generates |
-| `template` | path | Yes | - | Path to Handlebars template file |
-| `output_file` | path | Yes | - | Output file path (relative to `output_dir`) |
-| `query` | string | Yes | - | SPARQL SELECT query to extract data for template |
-| `enabled` | boolean | No | `true` | Set to `false` to skip this rule |
+| Field         | Type    | Required | Default | Description                                            |
+| ------------- | ------- | -------- | ------- | ------------------------------------------------------ |
+| `name`        | string  | Yes      | -       | Unique identifier for this generation rule             |
+| `description` | string  | No       | `""`    | Human-readable description of what this rule generates |
+| `template`    | path    | Yes      | -       | Path to Handlebars template file                       |
+| `output_file` | path    | Yes      | -       | Output file path (relative to `output_dir`)            |
+| `query`       | string  | Yes      | -       | SPARQL SELECT query to extract data for template       |
+| `enabled`     | boolean | No       | `true`  | Set to `false` to skip this rule                       |
 
 ---
 
@@ -135,12 +135,12 @@ output_dir = "${OUTPUT_DIR:-lib}"
 
 Environment variables can be used in:
 
-| Section | Fields |
-|---------|--------|
-| `[project]` | `name`, `version`, `description` |
-| `[ontology]` | `source`, `base_iri`, prefix values |
-| `[generation]` | `output_dir`, `templates_dir` |
-| `[[generation.rules]]` | `template`, `output_file`, `query` |
+| Section                | Fields                              |
+| ---------------------- | ----------------------------------- |
+| `[project]`            | `name`, `version`, `description`    |
+| `[ontology]`           | `source`, `base_iri`, prefix values |
+| `[generation]`         | `output_dir`, `templates_dir`       |
+| `[[generation.rules]]` | `template`, `output_file`, `query`  |
 
 ### Examples
 
@@ -160,30 +160,31 @@ output_dir = "${GEN_OUTPUT:-lib/generated}"
 
 ## Path Resolution
 
-All relative paths are resolved from the directory containing `.unrdf.toml`.
+All relative paths are resolved from the directory containing `unrdf.toml`.
 
 ### Resolution Rules
 
 1. **Absolute paths**: Used as-is
-2. **Relative paths**: Resolved from .unrdf.toml directory
+2. **Relative paths**: Resolved from unrdf.toml directory
 3. **Tilde expansion**: `~` expands to user home directory
 
 ### Path Fields
 
-| Field | Resolution Base |
-|-------|-----------------|
-| `ontology.source` | .unrdf.toml directory |
-| `generation.output_dir` | .unrdf.toml directory |
-| `generation.templates_dir` | .unrdf.toml directory |
-| `generation.rules[].template` | `templates_dir` if set, else .unrdf.toml directory |
-| `generation.rules[].output_file` | `output_dir` |
+| Field                            | Resolution Base                                   |
+| -------------------------------- | ------------------------------------------------- |
+| `ontology.source`                | unrdf.toml directory                              |
+| `generation.output_dir`          | unrdf.toml directory                              |
+| `generation.templates_dir`       | unrdf.toml directory                              |
+| `generation.rules[].template`    | `templates_dir` if set, else unrdf.toml directory |
+| `generation.rules[].output_file` | `output_dir`                                      |
 
 ### Example Resolution
 
 Given this structure:
+
 ```
 /home/user/project/
-├── .unrdf.toml
+├── unrdf.toml
 ├── ontology/
 │   └── schema.ttl
 ├── templates/
@@ -192,6 +193,7 @@ Given this structure:
 ```
 
 And this configuration:
+
 ```toml
 [ontology]
 source = "ontology/schema.ttl"  # Resolves to /home/user/project/ontology/schema.ttl
@@ -210,7 +212,7 @@ output_file = "models/User.mjs" # Resolves to /home/user/project/lib/models/User
 ## Complete Example
 
 ```toml
-# .unrdf.toml - RDF API Code Generation Configuration
+# unrdf.toml - RDF API Code Generation Configuration
 # Full example demonstrating all features
 
 [project]
@@ -325,16 +327,16 @@ WHERE {
 
 ## Validation
 
-The CLI validates `.unrdf.toml` on load and reports specific errors:
+The CLI validates `unrdf.toml` on load and reports specific errors:
 
-| Error | Cause | Resolution |
-|-------|-------|------------|
-| `Missing required field: project.name` | No project name specified | Add `name` under `[project]` |
-| `Missing required field: ontology.source` | No ontology path | Add `source` under `[ontology]` |
-| `Ontology file not found` | Invalid source path | Check path exists |
-| `Invalid format` | Unsupported RDF format | Use `turtle`, `ntriples`, or `rdfxml` |
-| `SPARQL parse error` | Invalid query syntax | Check query in rule |
-| `Template not found` | Missing template file | Check template path |
+| Error                                     | Cause                     | Resolution                            |
+| ----------------------------------------- | ------------------------- | ------------------------------------- |
+| `Missing required field: project.name`    | No project name specified | Add `name` under `[project]`          |
+| `Missing required field: ontology.source` | No ontology path          | Add `source` under `[ontology]`       |
+| `Ontology file not found`                 | Invalid source path       | Check path exists                     |
+| `Invalid format`                          | Unsupported RDF format    | Use `turtle`, `ntriples`, or `rdfxml` |
+| `SPARQL parse error`                      | Invalid query syntax      | Check query in rule                   |
+| `Template not found`                      | Missing template file     | Check template path                   |
 
 ---
 

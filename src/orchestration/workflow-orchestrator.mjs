@@ -24,6 +24,7 @@ import { DependencyResolver } from './dependency-resolver.mjs';
 import { StageExecutor, StageType, StageStatus } from './stage-executor.mjs';
 import { RollbackManager, withRollback } from './rollback-manager.mjs';
 import { ReceiptAggregator } from './receipt-aggregator.mjs';
+import { withPipelineSpan } from '../lib/telemetry.mjs';
 
 /**
  * Workflow status enum
@@ -161,12 +162,19 @@ export class WorkflowOrchestrator {
    * @returns {Promise<Object>} Workflow result
    */
   async execute(config) {
+    return withPipelineSpan('workflow', async (span) => {
     const startTime = new Date();
     const workflowId = crypto.randomUUID();
 
     // Validate configuration
     const validated = WorkflowConfigSchema.parse(config);
     const options = validated.options || {};
+
+    span.setAttributes({
+      'pipeline.stage': 'workflow',
+      'pipeline.workflow.changed_packages': validated.changedPackages.length,
+      'pipeline.workflow.parallel': options.parallel ?? false,
+    });
 
     // Initialize components
     const resolver = new DependencyResolver();
@@ -410,6 +418,7 @@ export class WorkflowOrchestrator {
 
       return result;
     }
+    }); // end withPipelineSpan
   }
 
   /**

@@ -13,21 +13,21 @@
 unrdf sync [options]
 ```
 
-Generates synchronized code artifacts from RDF ontology based on rules defined in a `.unrdf.toml` configuration file.
+Generates synchronized code artifacts from RDF ontology based on rules defined in a `unrdf.toml` configuration file.
 
 ---
 
 ## Options
 
-| Option | Alias | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--config` | - | string | `.unrdf.toml` | Path to .unrdf.toml configuration file |
-| `--dry-run` | - | boolean | `false` | Preview changes without writing files |
-| `--verbose` | `-v` | boolean | `false` | Enable verbose output |
-| `--watch` | `-w` | boolean | `false` | Watch ontology and template files for changes |
-| `--force` | `-f` | boolean | `false` | Overwrite existing files without prompting |
-| `--rule` | - | string | - | Run only the specified rule by name |
-| `--output` | - | string | `text` | Output format: `text` or `json` |
+| Option      | Alias | Type    | Default      | Description                                   |
+| ----------- | ----- | ------- | ------------ | --------------------------------------------- |
+| `--config`  | -     | string  | `unrdf.toml` | Path to unrdf.toml configuration file         |
+| `--dry-run` | -     | boolean | `false`      | Preview changes without writing files         |
+| `--verbose` | `-v`  | boolean | `false`      | Enable verbose output                         |
+| `--watch`   | `-w`  | boolean | `false`      | Watch ontology and template files for changes |
+| `--force`   | `-f`  | boolean | `false`      | Overwrite existing files without prompting    |
+| `--rule`    | -     | string  | -            | Run only the specified rule by name           |
+| `--output`  | -     | string  | `text`       | Output format: `text` or `json`               |
 
 ### Option Details
 
@@ -36,8 +36,8 @@ Generates synchronized code artifacts from RDF ontology based on rules defined i
 Specifies the path to the configuration file. Relative paths are resolved from the current working directory.
 
 ```bash
-unrdf sync --config ./config/.unrdf.toml
-unrdf sync --config /absolute/path/.unrdf.toml
+unrdf sync --config ./config/unrdf.toml
+unrdf sync --config /absolute/path/unrdf.toml
 ```
 
 #### `--dry-run`
@@ -51,6 +51,7 @@ unrdf sync --dry-run
 #### `--verbose`
 
 Enables detailed output including:
+
 - Configuration path and project name
 - SPARQL query result counts
 - Watch paths (when combined with `--watch`)
@@ -96,10 +97,10 @@ unrdf sync --rule zod-schemas
 
 Controls the output format.
 
-| Value | Description |
-|-------|-------------|
+| Value  | Description                             |
+| ------ | --------------------------------------- |
 | `text` | Human-readable colored output (default) |
-| `json` | Machine-readable JSON output |
+| `json` | Machine-readable JSON output            |
 
 ```bash
 unrdf sync --output json
@@ -136,24 +137,25 @@ JSON output structure:
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| 0 | Success - all rules executed without errors |
-| 1 | Error - configuration not found, parse error, SPARQL error, template error, or rule execution failure |
+| Code | Meaning                                                                                               |
+| ---- | ----------------------------------------------------------------------------------------------------- |
+| 0    | Success - all rules executed without errors                                                           |
+| 1    | Error - configuration not found, parse error, SPARQL error, template error, or rule execution failure |
 
 ---
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NO_COLOR` | Disables colored output when set to any value | - |
-| `ONTOLOGY_PATH` | Override ontology source path (via config substitution) | - |
-| `OUTPUT_DIR` | Override output directory (via config substitution) | - |
+| Variable        | Description                                             | Default |
+| --------------- | ------------------------------------------------------- | ------- |
+| `NO_COLOR`      | Disables colored output when set to any value           | -       |
+| `ONTOLOGY_PATH` | Override ontology source path (via config substitution) | -       |
+| `OUTPUT_DIR`    | Override output directory (via config substitution)     | -       |
 
 ### Color Behavior
 
 Colors are automatically disabled when:
+
 - `NO_COLOR` environment variable is set
 - Standard output is not a TTY (e.g., piped to file)
 
@@ -165,7 +167,8 @@ The sync command executes in three phases:
 
 ### Phase 1: Loading Configuration
 
-Parses and validates `.unrdf.toml`. Exits with code 1 if:
+Parses and validates `unrdf.toml`. Exits with code 1 if:
+
 - Configuration file not found
 - TOML parse error
 - Schema validation failure
@@ -175,6 +178,7 @@ Parses and validates `.unrdf.toml`. Exits with code 1 if:
 Loads RDF ontology into an in-memory Oxigraph store. Reports triple count on success.
 
 Supported formats:
+
 - `turtle` (`.ttl`)
 - `ntriples` (`.nt`)
 - `nquads` (`.nq`)
@@ -185,6 +189,7 @@ Supported formats:
 ### Phase 3: Processing Rules
 
 For each enabled rule:
+
 1. Execute SPARQL query against loaded ontology
 2. Render Handlebars template with query results
 3. Write output file (unless `--dry-run`)
@@ -196,7 +201,7 @@ For each enabled rule:
 ### Basic Usage
 
 ```bash
-# Run with default configuration (.unrdf.toml in current directory)
+# Run with default configuration (unrdf.toml in current directory)
 unrdf sync
 
 # Specify custom configuration file
@@ -259,12 +264,12 @@ unrdf sync -f -v --rule ts-types
 
 On completion, the command reports:
 
-| Metric | Description |
-|--------|-------------|
-| Rules processed | Number of rules executed |
+| Metric          | Description                     |
+| --------------- | ------------------------------- |
+| Rules processed | Number of rules executed        |
 | Files generated | Number of files written to disk |
-| Errors | Number of rules that failed |
-| Duration | Total execution time |
+| Errors          | Number of rules that failed     |
+| Duration        | Total execution time            |
 
 Example output:
 
@@ -279,17 +284,17 @@ Sync complete!
 
 ## Error Messages
 
-| Error | Cause | Resolution |
-|-------|-------|------------|
-| `Configuration file not found: <path>` | .unrdf.toml does not exist at specified path | Create configuration file or specify correct path |
-| `TOML parse error` | Invalid TOML syntax | Check .unrdf.toml syntax |
-| `Ontology file not found` | Source file in `[ontology]` section missing | Verify ontology path |
-| `SPARQL parse error` | Invalid SPARQL query in rule | Check query syntax |
-| `Template not found` | Template file missing | Verify template path |
+| Error                                  | Cause                                       | Resolution                                        |
+| -------------------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| `Configuration file not found: <path>` | unrdf.toml does not exist at specified path | Create configuration file or specify correct path |
+| `TOML parse error`                     | Invalid TOML syntax                         | Check unrdf.toml syntax                           |
+| `Ontology file not found`              | Source file in `[ontology]` section missing | Verify ontology path                              |
+| `SPARQL parse error`                   | Invalid SPARQL query in rule                | Check query syntax                                |
+| `Template not found`                   | Template file missing                       | Verify template path                              |
 
 ---
 
 ## See Also
 
-- [.unrdf.toml Configuration Reference](/home/user/unrdf/docs/diataxis/reference/sync-config.md)
+- [unrdf.toml Configuration Reference](/home/user/unrdf/docs/diataxis/reference/sync-config.md)
 - [CLI Commands Reference](/home/user/unrdf/docs/diataxis/reference/cli-commands.md)

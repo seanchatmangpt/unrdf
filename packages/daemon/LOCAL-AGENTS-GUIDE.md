@@ -49,7 +49,7 @@ GROQ_API_KEY="your-groq-api-key-here"
 GROQ_MODEL="openai/gpt-oss-20b"  # Default open-source model
 ```
 
-Or configure via `.unrdf.toml`:
+Or configure via `unrdf.toml`:
 
 ```toml
 [groq]
@@ -69,7 +69,7 @@ The simplest agent is a single LLM call that generates text based on a prompt.
 import { generateText } from 'ai';
 import { getGroqProvider } from '@unrdf/daemon';
 
-// Get the Groq provider (uses config from .unrdf.toml + env)
+// Get the Groq provider (uses config from unrdf.toml + env)
 const provider = getGroqProvider();
 const model = provider.getDefaultModel();
 

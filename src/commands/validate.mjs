@@ -10,6 +10,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { withPipelineSpan } from '../lib/telemetry.mjs';
 
 /**
  * Validation schema (using simple object validation)
@@ -195,8 +196,9 @@ function crossValidate(universeContent, policyContent) {
  * @returns {Promise<ValidationResult>} Validation result
  */
 export async function validateCommand(options) {
-  const errors = [];
-  const warnings = [];
+  return withPipelineSpan('validate', async (span) => {
+    const errors = [];
+    const warnings = [];
 
   // Validate required options
   if (!options.universe) {
@@ -249,6 +251,13 @@ export async function validateCommand(options) {
   // Determine final status
   const status = errors.length === 0 ? 'valid' : 'invalid';
 
+  span.setAttributes({
+    'pipeline.stage': 'validate',
+    'pipeline.validation.errors': errors.length,
+    'pipeline.validation.warnings': warnings.length,
+    'pipeline.validation.status': status,
+  });
+
   return {
     status,
     errors,
@@ -264,4 +273,5 @@ export async function validateCommand(options) {
       },
     },
   };
+  });
 }

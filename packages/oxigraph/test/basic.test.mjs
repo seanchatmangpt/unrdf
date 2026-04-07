@@ -1,11 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore, dataFactory } from '../src/index.mjs';
+import { createTestStore } from '../../test-utils/src/index.mjs';
+import { dataFactory } from '../src/index.mjs';
 
 describe('OxigraphStore - Basic Operations', () => {
   let store;
 
   beforeEach(() => {
-    store = createStore();
+    store = createTestStore();
   });
 
   describe('Triple Operations', () => {

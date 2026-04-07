@@ -14,7 +14,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createChangeFeed, createStreamProcessor } from '../src/index.mjs';
-import { namedNode, literal } from '@rdfjs/data-model';
+import { namedNode, literal } from '../../test-utils/src/index.mjs';
 
 /**
  * Helper to measure memory usage

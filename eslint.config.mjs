@@ -82,7 +82,13 @@ export default [
       }],
       'no-console': 'off',
       'no-debugger': 'warn',
-      'no-undef': 'error'
+      'no-undef': 'error',
+      // Catch N3 quad spread bug: {...quad} silently loses prototype getter properties.
+      // Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, ... } instead.
+      'no-restricted-syntax': ['warn', {
+        selector: 'SpreadElement[argument.name=/^(quad|q|triple|t)$/]',
+        message: 'Spreading RDF quad variables loses N3 prototype getters. Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, predicate: q.predicate, object: q.object, graph: q.graph }.'
+      }]
     }
   },
   // Browser-specific files

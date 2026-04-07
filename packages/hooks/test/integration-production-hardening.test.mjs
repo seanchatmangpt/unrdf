@@ -14,7 +14,7 @@
  * - Zod schema validation at API boundaries
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { namedNode, literal, quad } from '../../test-utils/src/index.mjs';
 
 import {
   defineHook,
@@ -49,8 +49,6 @@ import {
   validateIRIFormat,
   trimLiterals,
 } from '../src/index.mjs';
-
-const { namedNode, literal, quad } = DataFactory;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

@@ -3,11 +3,13 @@
 ## Files Created
 
 ### 1. test-sync.mjs (340 lines, 9.1KB)
+
 **Path:** `/home/user/unrdf/packages/cli/test/manual/test-sync.mjs`
 
 End-to-end manual test script for the sync command.
 
 #### Features
+
 - **Self-contained test data**: Inline Turtle ontology, Nunjucks template, and SPARQL query
 - **Automatic setup/teardown**: Creates temp directory, runs test, cleans up
 - **Comprehensive verification**: 8 content pattern checks
@@ -16,29 +18,31 @@ End-to-end manual test script for the sync command.
 - **Dependency check**: Verifies dependencies installed before running
 
 #### Test Data Included
+
 ```javascript
 // Ontology: User and Post entities with properties
 TEST_ONTOLOGY = `
   ex:User a owl:Class
   ex:Post a owl:Class
   ex:username, ex:email, ex:title, ex:content properties
-`
+`;
 
 // Template: Generates entity constants
 TEST_TEMPLATE = `
   export const USER = '...'
   export const POST = '...'
   export const ALL_ENTITIES = [...]
-`
+`;
 
 // SPARQL: Extract classes from ontology
 SPARQL_QUERY = `
   SELECT ?entity ?label ?comment
   WHERE { ?entity a owl:Class }
-`
+`;
 ```
 
 #### Workflow
+
 1. **Setup**: Create temp dir + write ontology + template + config
 2. **Execute**: Call runSync() with verbose output
 3. **Verify**: Check output file exists and contains expected patterns
@@ -46,9 +50,11 @@ SPARQL_QUERY = `
 5. **Cleanup**: Remove temp directory
 
 ### 2. README.md (4.2KB)
+
 **Path:** `/home/user/unrdf/packages/cli/test/manual/README.md`
 
 Complete documentation including:
+
 - Prerequisites
 - Usage instructions
 - Expected output
@@ -59,17 +65,20 @@ Complete documentation including:
 ## Usage
 
 ### Prerequisites
+
 ```bash
 cd /home/user/unrdf
 pnpm install
 ```
 
 ### Run Test
+
 ```bash
 node packages/cli/test/manual/test-sync.mjs
 ```
 
 ### Expected Runtime
+
 - **Duration**: < 5 seconds
 - **Exit code 0**: All tests passed
 - **Exit code 1**: Tests failed
@@ -77,13 +86,15 @@ node packages/cli/test/manual/test-sync.mjs
 ## What Gets Tested
 
 ### Pipeline Stages
-1. Config parsing (.unrdf.toml → parsed config)
+
+1. Config parsing (unrdf.toml → parsed config)
 2. Ontology loading (schema.ttl → RDF store)
 3. SPARQL execution (query → result bindings)
 4. Template rendering (Nunjucks + data → JavaScript)
 5. File writing (generated code → output file)
 
 ### Verification Checks
+
 - [x] Output file exists
 - [x] JSDoc header present
 - [x] Generated timestamp included
@@ -95,6 +106,7 @@ node packages/cli/test/manual/test-sync.mjs
 - [x] Post URI included
 
 ### Metrics Reported
+
 - `rulesProcessed`: Number of generation rules executed
 - `filesGenerated`: Number of output files created
 - `totalBytes`: Total size of generated files
@@ -187,12 +199,14 @@ export const ALL_ENTITIES = [
 ## Integration with Workflow
 
 ### Pre-commit Hook
+
 ```bash
 # .git/hooks/pre-commit
 node packages/cli/test/manual/test-sync.mjs || exit 1
 ```
 
 ### CI/CD
+
 ```yaml
 # .github/workflows/test.yml
 - name: Manual Sync Test
@@ -200,6 +214,7 @@ node packages/cli/test/manual/test-sync.mjs || exit 1
 ```
 
 ### Development Loop
+
 ```bash
 # Make changes to sync code
 vim packages/cli/src/cli/commands/sync/orchestrator.mjs
@@ -233,15 +248,15 @@ packages/cli/test/manual/
 
 ## Comparison to E2E Tests
 
-| Feature | Manual Test | E2E Test Suite |
-|---------|-------------|----------------|
-| Lines | 340 | 903 |
-| Test cases | 1 focused | 20+ comprehensive |
-| Runtime | < 5s | 10-30s |
-| Setup | None | Vitest framework |
-| Output | Verbose | TAP/JSON |
-| Use case | Quick verify | Full coverage |
-| Debugging | Easy | Framework overhead |
+| Feature    | Manual Test  | E2E Test Suite     |
+| ---------- | ------------ | ------------------ |
+| Lines      | 340          | 903                |
+| Test cases | 1 focused    | 20+ comprehensive  |
+| Runtime    | < 5s         | 10-30s             |
+| Setup      | None         | Vitest framework   |
+| Output     | Verbose      | TAP/JSON           |
+| Use case   | Quick verify | Full coverage      |
+| Debugging  | Easy         | Framework overhead |
 
 ## Next Steps
 

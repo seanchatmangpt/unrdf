@@ -3,7 +3,7 @@
  * @file Error Handling Tests - Comprehensive error path coverage
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
+import { namedNode, literal, quad } from '../../test-utils/src/index.mjs';
 import {
   defineHook,
   executeHook,
@@ -12,8 +12,6 @@ import {
   registerHook,
   getHook,
 } from '../src/index.mjs';
-
-const { namedNode, literal, quad } = DataFactory;
 
 describe('Error Handling - Invalid Hook Definitions', () => {
   it('should throw on hook without name', () => {

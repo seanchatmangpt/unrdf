@@ -21,7 +21,7 @@ Tests the complete sync pipeline: **Config → Ontology → SPARQL → Template 
 
 - **Ontology**: User + Post entities (Turtle format)
 - **Template**: Entity constants generator (Nunjucks)
-- **Config**: .unrdf.toml with one generation rule
+- **Config**: unrdf.toml with one generation rule
 - **Query**: Extract owl:Class instances
 
 ## Verification (8 Checks)
@@ -51,21 +51,23 @@ Tests the complete sync pipeline: **Config → Ontology → SPARQL → Template 
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File            | Purpose                     |
+| --------------- | --------------------------- |
 | `test-sync.mjs` | Main test script (run this) |
-| `README.md` | Full documentation |
-| `SUMMARY.md` | Detailed creation summary |
-| `QUICKSTART.md` | This file |
+| `README.md`     | Full documentation          |
+| `SUMMARY.md`    | Detailed creation summary   |
+| `QUICKSTART.md` | This file                   |
 
 ## Troubleshooting
 
 **"Error: Dependencies not installed"**
+
 ```bash
 cd /home/user/unrdf && pnpm install
 ```
 
 **Test fails**
+
 - Check `packages/cli/src/cli/commands/sync/orchestrator.mjs` exists
 - Verify `@unrdf/core` is installed
 - Ensure temp directory is writable
@@ -73,12 +75,14 @@ cd /home/user/unrdf && pnpm install
 ## Advanced
 
 **Run with trace**
+
 ```bash
 NODE_OPTIONS='--trace-warnings' node packages/cli/test/manual/test-sync.mjs
 ```
 
 **Keep temp files (for debugging)**
 Edit test-sync.mjs, comment out cleanup section:
+
 ```javascript
 // await rm(testDir, { recursive: true, force: true });
 console.log(`Temp dir preserved: ${testDir}`);
@@ -86,6 +90,7 @@ console.log(`Temp dir preserved: ${testDir}`);
 
 **Custom test data**
 Edit these constants in test-sync.mjs:
+
 - `TEST_ONTOLOGY` - Your Turtle ontology
 - `TEST_TEMPLATE` - Your Nunjucks template
 - `SPARQL_QUERY` - Your SPARQL query

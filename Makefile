@@ -1,7 +1,9 @@
 .PHONY: help publish publish-check version-bump pre-publish test lint clean \
 	publish-all publish-packages publish-single tag changelog \
 	validate-npm-auth setup-npm \
-	mcp-sync mcp-sync-dry
+	mcp-sync mcp-sync-dry \
+	k8s-create k8s-up k8s-down k8s-destroy k8s-status k8s-logs k8s-ports \
+	otel-baseline otel-dashboards otel-synth
 
 # ============================================================================
 # VARIABLES
@@ -267,3 +269,66 @@ clean:
 	@rm -rf node_modules packages/*/node_modules
 	@rm -f CHANGELOG_v*.md
 	@echo "$(GREEN)✓ Cleanup complete$(NC)"
+
+# ============================================================================
+# KUBERNETES (kind + Helm)
+# ============================================================================
+
+.PHONY: k8s-create k8s-up k8s-down k8s-destroy k8s-status k8s-logs k8s-ports
+
+k8s-create:	## Create kind cluster
+	kind create cluster --config k8s/kind-config.yaml --name unrdf
+
+k8s-up:		## Deploy stack via Helm
+	helm upgrade --install unrdf-observability k8s/helm/unrdf-observability \
+		--namespace unrdf-observability --create-namespace \
+		-f k8s/helm/unrdf-observability/values.yaml
+
+k8s-down:	## Tear down Helm release
+	helm uninstall unrdf-observability --namespace unrdf-observability
+
+k8s-destroy:	## Delete kind cluster
+	kind delete cluster --name unrdf
+
+k8s-status:	## Show pod status
+	kubectl -n unrdf-observability get pods
+
+k8s-logs:	## Tail all logs
+	kubectl -n unrdf-observability logs -f --all-containers --max-log-requests=20
+
+k8s-ports:	## Show all NodePorts
+	@echo "UNRDF API:     http://localhost:13000"
+	@echo "Grafana:       http://localhost:3001"
+	@echo "Prometheus:    http://localhost:9091"
+	@echo "Tempo API:     http://localhost:13200"
+	@echo "Loki:          http://localhost:13100"
+	@echo "Pyroscope:     http://localhost:14040"
+	@echo "HotROD:        http://localhost:8082"
+	@echo "Node Exporter: http://localhost:9100"
+	@echo "Alertmanager:  http://localhost:19093"
+	@echo "MinIO API:     http://localhost:19000"
+	@echo "MinIO Console: http://localhost:19001"
+	@echo "OTLP gRPC:     localhost:14317"
+	@echo "OTLP HTTP:     localhost:14318"
+
+# ============================================================================
+# OTEL TOOLING
+# ============================================================================
+
+.PHONY: otel-baseline otel-dashboards otel-synth
+
+otel-baseline:	## Compare trace baseline: make otel-baseline BASELINE=<file> CURRENT=<file>
+	@if [ -z "$(BASELINE)" ] || [ -z "$(CURRENT)" ]; then \
+		echo "$(RED)ERROR: BASELINE and CURRENT required$(NC)"; \
+		echo "Usage: make otel-baseline BASELINE=baseline.json CURRENT=current.json"; \
+		exit 1; \
+	fi
+	node otel/scripts/trace-baseline.mjs $(BASELINE) $(CURRENT)
+
+otel-dashboards:	## Auto-generate Grafana dashboards from Weaver registry
+	@mkdir -p otel/grafana-provisioning/dashboards
+	node otel/scripts/auto-dashboard.mjs --output otel/grafana-provisioning/dashboards/auto-generated.json
+	@echo "$(GREEN)✓ Dashboard generated$(NC)"
+
+otel-synth:		## Generate synthetic traces: make otel-synth [COUNT=50] [ERROR_RATE=0.1]
+	python3 otel/synthetic-traces/synthetic-trace-gen.py --count $${COUNT:-50}

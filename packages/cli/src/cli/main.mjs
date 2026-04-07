@@ -32,7 +32,7 @@ import { mcpCommand } from './commands/mcp.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '5.0.0-alpha.0',
+    version: '26.4.4',
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {

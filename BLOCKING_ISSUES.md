@@ -9,16 +9,18 @@
 **Test**: "preserves result format between N3 Store and UnrdfStore"
 
 **Error**:
+
 ```
 AssertionError: expected Literal{ __wbg_ptr: 1650712 } to have property "type"
 ```
 
-**Root Cause**: 
+**Root Cause**:
 Oxigraph WASM returns Literal objects without `.type` property, but test expects it.
 This is incompatibility between N3 library expectations and Oxigraph WASM format.
 
 **Fix**:
 Update test to handle WASM Literal format:
+
 - Check for `__wbg_ptr` (WASM object indicator)
 - Extract value differently for WASM objects
 - OR skip this specific assertion for WASM backend
@@ -33,20 +35,25 @@ Update test to handle WASM Literal format:
 **Severity**: CRITICAL
 **File**: `packages/daemon/test/e2e-receipts-merkle.test.mjs`
 **Tests**: 2 failures
+
 1. "should prevent odd-leaf duplication attack (CVE-2012-2459)"
 2. "should verify proofs correctly for odd-leaf trees"
 
 **Error 1**:
+
 ```
-expected 'e6bd183377f0fe3a64650a35ba31ccebd90d8...' 
+expected 'e6bd183377f0fe3a64650a35ba31ccebd90d8...'
   not to be 'e6bd183377f0fe3a64650a35ba31ccebd90d8...'
 ```
+
 Hash is identical when it should be different (duplication vulnerability).
 
 **Error 2**:
+
 ```
 expected false to be true
 ```
+
 Proof verification fails for odd-leaf trees.
 
 **Root Cause**:
@@ -54,6 +61,7 @@ Merkle tree algorithm doesn't properly differentiate odd-leaf nodes.
 This leaves the system vulnerable to CVE-2012-2459 odd-leaf duplication attacks.
 
 **Fix**:
+
 1. Review merkle tree construction algorithm
 2. Ensure odd leaves are marked/tagged differently
 3. Verify Merkle inclusion proofs handle odd leaves correctly
@@ -72,11 +80,13 @@ This leaves the system vulnerable to CVE-2012-2459 odd-leaf duplication attacks.
 **Max Allowed**: 0
 
 #### Package: `packages/chatman-equation`
+
 - **Warnings**: 19
 - **Errors**: 0
 - **Fixable**: All
 
 **Issues**:
+
 ```
 Unused variables (15):
   - z (DP mechanism)
@@ -96,11 +106,13 @@ Unused imports:
 ```
 
 #### Package: `packages/ai-ml-innovations`
+
 - **Warnings**: 15
 - **Errors**: 0
 - **Fixable**: All
 
 **Issues**:
+
 ```
 Unused variables in:
   - src/dp-mechanism.mjs: z, randomBytes
@@ -113,11 +125,13 @@ Unused variables in:
 ```
 
 **Fix**:
+
 ```bash
 pnpm lint:fix
 ```
 
 This will:
+
 - Prefix unused vars with `_` (e.g., `_z`)
 - Add auto-generated JSDoc stubs
 
@@ -135,14 +149,16 @@ Then manually review and complete JSDoc.
 **Impact**: Cannot execute incident response if v6 deployment fails
 
 **Required Content**:
+
 1. How to revert from v6.0.0-rc.1 to v5.x
 2. Database migration rollback procedures
-3. .unrdf.toml configuration downgrade path
+3. unrdf.toml configuration downgrade path
 4. Data format compatibility issues
 5. CLI command differences
 6. Breaking changes reversion guide
 
 **Why Critical**:
+
 - If v6 breaks in production, need documented rollback
 - Customers need safety net
 - SLA compliance requires incident procedures
@@ -155,12 +171,12 @@ Then manually review and complete JSDoc.
 
 ## Summary
 
-| Issue | Type | Time | Impact | Action |
-|-------|------|------|--------|--------|
-| N3 Compat Test | Code | 1h | Test suite | Fix test expectations |
-| Merkle CVE | Code | 2-3h | Security | Review algorithm |
-| Lint | Code | 30m | CI/CD gate | Run pnpm lint:fix |
-| Rollback Doc | Doc | 1-2h | Incident Response | Create ROLLBACK_PLAN.md |
+| Issue          | Type | Time | Impact            | Action                  |
+| -------------- | ---- | ---- | ----------------- | ----------------------- |
+| N3 Compat Test | Code | 1h   | Test suite        | Fix test expectations   |
+| Merkle CVE     | Code | 2-3h | Security          | Review algorithm        |
+| Lint           | Code | 30m  | CI/CD gate        | Run pnpm lint:fix       |
+| Rollback Doc   | Doc  | 1-2h | Incident Response | Create ROLLBACK_PLAN.md |
 
 **Total Time**: ~5 hours
 **Deadline**: Before v6.0.0 stable release

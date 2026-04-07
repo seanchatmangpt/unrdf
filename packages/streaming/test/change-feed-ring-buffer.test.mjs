@@ -13,7 +13,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createChangeFeed } from '../src/index.mjs';
-import { namedNode, literal } from '@rdfjs/data-model';
+import { namedNode, literal } from '../../test-utils/src/index.mjs';
 
 describe('Change Feed Ring Buffer', () => {
   let feed;

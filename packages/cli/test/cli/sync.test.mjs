@@ -100,9 +100,9 @@ describe('Sync Command', () => {
   });
 
   describe('--config flag', () => {
-    it('should have default value of .unrdf.toml', () => {
+    it('should have default value of unrdf.toml', () => {
       const configArg = syncCommand.args.config;
-      expect(configArg.default).toBe('.unrdf.toml');
+      expect(configArg.default).toBe('unrdf.toml');
     });
 
     it('should accept string type for path', () => {
@@ -172,7 +172,7 @@ describe('Sync Command', () => {
     });
   });
 
-  describe('Default config file detection (.unrdf.toml)', () => {
+  describe('Default config file detection (unrdf.toml)', () => {
     let testDir;
     let originalCwd;
     let consoleErrorSpy;
@@ -200,12 +200,12 @@ describe('Sync Command', () => {
       processExitSpy.mockRestore();
     });
 
-    it('should error when .unrdf.toml does not exist', async () => {
+    it('should error when unrdf.toml does not exist', async () => {
       // No config file created
       await expect(
         syncCommand.run({
           args: {
-            config: '.unrdf.toml',
+            config: 'unrdf.toml',
             'dry-run': false,
             verbose: false,
             force: false,
@@ -224,7 +224,7 @@ describe('Sync Command', () => {
       await expect(
         syncCommand.run({
           args: {
-            config: '.unrdf.toml',
+            config: 'unrdf.toml',
             'dry-run': false,
             verbose: false,
             force: false,
@@ -242,7 +242,7 @@ describe('Sync Command', () => {
 
     it('should use default config path when not specified', () => {
       const configArg = syncCommand.args.config;
-      expect(configArg.default).toBe('.unrdf.toml');
+      expect(configArg.default).toBe('unrdf.toml');
     });
 
     it('should accept custom config path', async () => {

@@ -35,7 +35,7 @@ export const InvariantSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
-  predicate: z.function().args(z.any()).returns(z.boolean()),
+  predicate: z.function(),
 });
 
 /**

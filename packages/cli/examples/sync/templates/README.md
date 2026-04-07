@@ -11,6 +11,7 @@ Generates JSDoc type definitions from RDF ontology classes and properties.
 **Output**: `types/entities.mjs`
 
 **Features**:
+
 - JSDoc `@typedef` definitions for each entity
 - TypeScript-compatible type annotations
 - Entity type constants (enum-like object)
@@ -19,6 +20,7 @@ Generates JSDoc type definitions from RDF ontology classes and properties.
 - Generation metadata
 
 **Example Output**:
+
 ```javascript
 /**
  * @typedef {Object} User
@@ -34,6 +36,7 @@ Generates Zod validation schemas from RDF ontology.
 **Output**: `schemas/entities.mjs`
 
 **Features**:
+
 - Zod schema definitions for runtime validation
 - Type inference support (`z.infer<typeof schema>`)
 - Validation functions (safe parse)
@@ -43,6 +46,7 @@ Generates Zod validation schemas from RDF ontology.
 - Generation metadata
 
 **Example Output**:
+
 ```javascript
 export const userSchema = z.object({
   email: z.string().describe('User email address'),
@@ -61,6 +65,7 @@ Generates constant definitions for RDF URIs, classes, and properties.
 **Output**: `constants/ontology.mjs`
 
 **Features**:
+
 - Entity type URI constants
 - Property URI constants (grouped and flattened)
 - Namespace prefix definitions
@@ -70,6 +75,7 @@ Generates constant definitions for RDF URIs, classes, and properties.
 - Generation metadata
 
 **Example Output**:
+
 ```javascript
 export const ENTITY_TYPES = {
   USER: 'http://example.org/schema#User',
@@ -112,7 +118,7 @@ WHERE {
 ORDER BY ?entityName ?propertyName
 ```
 
-### 2. Configure `.unrdf.toml`
+### 2. Configure `unrdf.toml`
 
 Create a configuration file referencing the templates:
 
@@ -181,6 +187,7 @@ All templates have access to:
 ### Filters
 
 #### Case Conversion
+
 - `camelCase` - `hello-world` → `helloWorld`
 - `pascalCase` - `hello-world` → `HelloWorld`
 - `snakeCase` - `helloWorld` → `hello_world`
@@ -189,16 +196,19 @@ All templates have access to:
 - `lower` - Convert to lowercase
 
 #### RDF Filters
+
 - `localName` - Extract local name from IRI
 - `namespace` - Extract namespace from IRI
 - `expand` - Expand prefixed name to full IRI
 - `toTurtle` - Convert triples to Turtle format
 
 #### Type Filters
+
 - `zodType` - Convert XSD type to Zod schema (e.g., `xsd:string` → `z.string()`)
 - `jsdocType` - Convert XSD type to JSDoc type (e.g., `xsd:string` → `string`)
 
 #### Data Filters
+
 - `groupBy` - Group array by key
 - `distinctValues` - Get unique values for key
 - `sortBy` - Sort array by key
@@ -207,6 +217,7 @@ All templates have access to:
 - `items` - Get object entries (key-value pairs)
 
 #### String Filters
+
 - `indent` - Indent text by N spaces
 - `quote` - Quote string with character
 - `date` - Format date (e.g., `YYYY-MM-DD`, `HH:mm:ss`)
@@ -256,7 +267,7 @@ To create custom templates:
    - `description:` - Template description
 3. Customize the Nunjucks template body
 4. Use available filters and context variables
-5. Add template to `.unrdf.toml` configuration
+5. Add template to `unrdf.toml` configuration
 
 ## Testing Templates
 

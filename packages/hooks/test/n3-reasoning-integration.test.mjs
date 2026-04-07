@@ -9,13 +9,13 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createStore } from '@unrdf/oxigraph';
+import { createTestStore } from '../../test-utils/src/index.mjs';
 
 describe('N3 Reasoning Integration', () => {
   let _graph;
 
   beforeEach(() => {
-    _graph = createStore();
+    _graph = createTestStore();
   });
 
   it('should support N3 condition kind definition', () => {

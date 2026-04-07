@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-loki-rules" (include "unrdf-observability.fullname" .) }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+data:
+  rate-limit-errors.yaml: |
+    groups:
+      - name: unrdf_log_alerts
+        rules:
+          - alert: HighErrorRate
+            expr: |
+              sum(rate({container=~".*unrdf.*"} |= "error" [5m])) by (container)
+              /
+              sum(rate({container=~".*unrdf.*"} [5m])) by (container) > 0.1
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'High error rate in {{ "{{" }} $labels.container {{ "}}" }}'
+              description: 'Error rate is {{ "{{" }} $value | humanizePercentage {{ "}}" }} (>10%)'
+
+          - alert: ServiceDown
+            expr: |
+              absent_over_time({container=~".*unrdf.*"}[10m])
+            for: 10m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Service {{ "{{" }} $labels.container {{ "}}" }} appears down'
+              description: 'No logs received from {{ "{{" }} $labels.container {{ "}}" }} in 10 minutes'
+
+          - alert: HighApplicationErrorRate
+            expr: |
+              sum(rate({level="error"}[5m])) > 10
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'High application error rate'
+              description: '{{ "{{" }} $value {{ "}}" }} error log lines per second (>10/min threshold) sustained for 5 minutes.'
+
+          - alert: ServiceUnavailableLogs
+            expr: |
+              sum(rate({namespace="unrdf-observability"} |= "~status.*503"[5m])) > 5
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Service unavailable (503) errors detected'
+              description: '{{ "{{" }} $value {{ "}}" }} 503 log lines per second (>5/min threshold). Service may be overloaded.'
+
+          - alert: OTelPipelineError
+            expr: |
+              sum(rate({namespace="unrdf-observability"} |= "error"[5m])) > 3
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'OTel pipeline errors in unrdf-observability namespace'
+              description: '{{ "{{" }} $value {{ "}}" }} error log lines per second from the unrdf-observability namespace (>3/min threshold).'

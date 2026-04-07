@@ -2,7 +2,7 @@
 
 **Objective:** Set up continuous code regeneration during development.
 
-**Prerequisites:** Working `.unrdf.toml`, ontology file, and at least one template.
+**Prerequisites:** Working `unrdf.toml`, ontology file, and at least one template.
 
 **Estimated Time:** 5 minutes
 
@@ -42,7 +42,7 @@ Sync complete!
    Duration: 23.4ms
 
 Watching:
-  /project/.unrdf.toml
+  /project/unrdf.toml
   /project/ontology/schema.ttl
   /project/templates/entities.njk
 
@@ -108,16 +108,19 @@ unrdf sync --watch --dry-run --verbose
 ## Integration with Dev Tools
 
 **npm scripts** - Add to `package.json`:
+
 ```json
 { "scripts": { "codegen:watch": "unrdf sync --watch --verbose" } }
 ```
 
 **Concurrent servers** - Run alongside vite/webpack:
+
 ```json
 { "scripts": { "dev": "concurrently \"unrdf sync --watch\" \"vite\"" } }
 ```
 
 **nodemon** - For custom file patterns:
+
 ```bash
 nodemon --watch ontology --watch templates -e ttl,njk --exec "unrdf sync"
 ```
@@ -126,21 +129,21 @@ nodemon --watch ontology --watch templates -e ttl,njk --exec "unrdf sync"
 
 ## Watched Files
 
-| File Type | Source |
-|-----------|--------|
-| Config | `--config` argument or `.unrdf.toml` |
-| Ontology | `[ontology].source` |
-| Templates | `[[generation.rules]].template` |
+| File Type | Source                              |
+| --------- | ----------------------------------- |
+| Config    | `--config` argument or `unrdf.toml` |
+| Ontology  | `[ontology].source`                 |
+| Templates | `[[generation.rules]].template`     |
 
 ---
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Changes not detected | Use `--verbose` to verify watched paths |
-| Too many regenerations | 300ms debounce handles most cases |
-| Watcher stops | Check for config syntax errors |
+| Issue                  | Solution                                |
+| ---------------------- | --------------------------------------- |
+| Changes not detected   | Use `--verbose` to verify watched paths |
+| Too many regenerations | 300ms debounce handles most cases       |
+| Watcher stops          | Check for config syntax errors          |
 
 ---
 

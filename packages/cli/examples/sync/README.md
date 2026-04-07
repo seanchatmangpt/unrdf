@@ -22,11 +22,13 @@ Real-world examples and patterns for the `unrdf sync` command. Each example is c
 Generate a simple constant from an RDF class.
 
 **Files needed:**
+
 - `ontology/hello.ttl`
-- `.unrdf.toml`
+- `unrdf.toml`
 - `templates/hello.njk`
 
 **ontology/hello.ttl**:
+
 ```turtle
 @prefix ex: <http://example.org/#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -36,7 +38,8 @@ ex:Greeting a rdfs:Class ;
     rdfs:comment "A friendly greeting" .
 ```
 
-**.unrdf.toml**:
+**unrdf.toml**:
+
 ```toml
 [project]
 name = "hello-example"
@@ -55,6 +58,7 @@ query = "SELECT ?label ?comment WHERE { ?class rdfs:label ?label ; rdfs:comment 
 ```
 
 **templates/hello.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/greeting.mjs
@@ -71,12 +75,13 @@ export const MESSAGE = "{{ row['?comment'] }}";
 **Run**: `npx unrdf sync`
 
 **Output** (`lib/greeting.mjs`):
+
 ```javascript
 /**
  * Generated greeting
  */
-export const GREETING = "Hello";
-export const MESSAGE = "A friendly greeting";
+export const GREETING = 'Hello';
+export const MESSAGE = 'A friendly greeting';
 ```
 
 ---
@@ -86,6 +91,7 @@ export const MESSAGE = "A friendly greeting";
 Generate Zod validation schemas with full constraint support.
 
 **ontology/product.ttl**:
+
 ```turtle
 @prefix api: <http://example.org/api#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -125,7 +131,8 @@ api:description a owl:DatatypeProperty ;
     rdfs:label "description" .
 ```
 
-**.unrdf.toml**:
+**unrdf.toml**:
+
 ```toml
 [project]
 name = "product-api"
@@ -159,6 +166,7 @@ ORDER BY ?entityName ?propertyName
 ```
 
 **templates/zod-schema.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/schemas/product.mjs
@@ -191,6 +199,7 @@ export function validate{{ entityName }}(data) {
 ```
 
 **Output**:
+
 ```javascript
 import { z } from 'zod';
 
@@ -217,6 +226,7 @@ export function validateProduct(data) {
 Generate JSDoc type definitions for IDE autocomplete.
 
 **templates/types.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/types/entities.d.mjs
@@ -248,6 +258,7 @@ to: {{ output_dir }}/types/entities.d.mjs
 ```
 
 **Usage**:
+
 ```javascript
 /**
  * @param {import('./types/entities.d.mjs').Product} product
@@ -264,6 +275,7 @@ function displayProduct(product) {
 Generate OpenAPI 3.0 specs from RDF API definitions.
 
 **ontology/api-operations.ttl**:
+
 ```turtle
 @prefix api: <http://example.org/api#> .
 
@@ -292,6 +304,7 @@ api:CreateProduct a api:Operation ;
 ```
 
 **SPARQL Query**:
+
 ```sparql
 SELECT ?path ?method ?operationId ?summary ?tag
 WHERE {
@@ -306,6 +319,7 @@ ORDER BY ?path ?method
 ```
 
 **templates/openapi.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/openapi.yaml
@@ -339,6 +353,7 @@ paths:
 Generate GraphQL type definitions.
 
 **templates/graphql.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/schema.graphql
@@ -361,6 +376,7 @@ type {{ entityName }} {
 ```
 
 **Output**:
+
 ```graphql
 type Product {
   sku: String!
@@ -377,6 +393,7 @@ type Product {
 Generate SQL CREATE TABLE statements.
 
 **templates/migration.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/migrations/{{ now | date("YYYYMMDD") }}_create_tables.sql
@@ -407,6 +424,7 @@ CREATE TABLE {{ entityName | snakeCase }}s (
 ```
 
 **Output**:
+
 ```sql
 CREATE TABLE products (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -425,6 +443,7 @@ CREATE TABLE products (
 Generate Markdown docs.
 
 **templates/api-docs.njk**:
+
 ```nunjucks
 ---
 to: {{ output_dir }}/API.md
@@ -481,6 +500,7 @@ api:bio a owl:DatatypeProperty .
 ```
 
 Template:
+
 ```nunjucks
 {% if prop["?required"] == "true" %}
   {{ propName }}: {{ propType }},
@@ -499,11 +519,13 @@ api:status a owl:DatatypeProperty ;
 ```
 
 SPARQL:
+
 ```sparql
 OPTIONAL { ?property api:defaultValue ?default }
 ```
 
 Template:
+
 ```nunjucks
 {% if prop["?default"] %}
   {{ propName }}: {{ propType }}.default("{{ prop["?default"] }}"),
@@ -524,6 +546,7 @@ api:Archived rdfs:label "archived" .
 ```
 
 SPARQL:
+
 ```sparql
 SELECT ?enumName ?value
 WHERE {
@@ -534,6 +557,7 @@ WHERE {
 ```
 
 Template:
+
 ```nunjucks
 export const StatusEnum = z.enum([
 {% for row in sparql_results %}
@@ -554,6 +578,7 @@ api:author a owl:ObjectProperty ;
 ```
 
 Template handles as string ID:
+
 ```nunjucks
 {% if prop["?propertyType"] | localName == "User" %}
   authorId: z.string(),  // Reference to User
@@ -565,28 +590,35 @@ Template handles as string ID:
 ## Tips & Best Practices
 
 ### 1. Use Watch Mode During Development
+
 ```bash
 npx unrdf sync --watch --verbose
 ```
 
 ### 2. Test SPARQL Queries First
+
 Use [YASGUI](https://yasgui.triply.cc/) to test queries before adding to config.
 
 ### 3. Start Simple
+
 Begin with minimal templates, then add complexity incrementally.
 
 ### 4. Handle Optional Values
+
 Always provide defaults:
+
 ```nunjucks
 {{ prop["?description"] | default("No description") }}
 ```
 
 ### 5. Escape User Content
+
 ```nunjucks
 {{ description | replace("'", "\\'") }}
 ```
 
 ### 6. Use Frontmatter Variables
+
 ```nunjucks
 ---
 to: {{ output_dir }}/{{ entityName }}.mjs
@@ -603,20 +635,24 @@ variables:
 ## Filter Reference Quick Guide
 
 ### Case Conversion
+
 - `camelCase`: `user-name` → `userName`
 - `pascalCase`: `user-name` → `UserName`
 - `snakeCase`: `userName` → `user_name`
 - `kebabCase`: `userName` → `user-name`
 
 ### RDF Utilities
+
 - `localName`: `http://ex.org/api#Product` → `Product`
 - `namespace`: `http://ex.org/api#Product` → `http://ex.org/api#`
 
 ### Type Conversion
+
 - `zodType`: `xsd:string` → `z.string()`
 - `jsdocType`: `xsd:integer` → `number`
 
 ### Data Manipulation
+
 - `groupBy("key")`: Group results by property
 - `distinctValues("key")`: Get unique values
 - `sortBy("key", "asc")`: Sort results
@@ -625,6 +661,7 @@ variables:
 - `items`: Get key-value pairs
 
 ### String Utilities
+
 - `indent(n)`: Indent lines by n spaces
 - `quote`: Quote string
 - `date("YYYY-MM-DD")`: Format date
@@ -634,18 +671,23 @@ variables:
 ## Troubleshooting
 
 ### Empty Output
+
 ```bash
 npx unrdf sync --verbose
 ```
+
 Check: `Query returned 0 results` - SPARQL query doesn't match ontology.
 
 ### Template Error
+
 ```
 Error: expected variable end
 ```
+
 Check for unmatched `{{ }}`, `{% %}`, missing `{% endif %}` or `{% endfor %}`.
 
 ### Wrong Output Path
+
 Use `{{ output_dir }}` variable in frontmatter `to:` field.
 
 ---

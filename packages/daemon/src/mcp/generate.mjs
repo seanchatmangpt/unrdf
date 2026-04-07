@@ -131,7 +131,7 @@ async function generate() {
     // Run sync to regenerate all MCP files
     console.log('🔄 Running sync to regenerate MCP files...');
     const { runSync } = await import('../../../cli/src/cli/commands/sync/orchestrator.mjs');
-    const configPath = resolve(__dirname, '.unrdf.toml');
+    const configPath = resolve(__dirname, 'unrdf.toml');
 
     try {
       await runSync({

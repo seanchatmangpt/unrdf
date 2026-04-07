@@ -27,7 +27,7 @@ describe('Chicago TDD: Groq + MCP Integration', { timeout: 60000 }, () => {
   let config;
 
   beforeAll(() => {
-    // Load configuration from .unrdf.toml and environment
+    // Load configuration from unrdf.toml and environment
     config = loadConfig();
 
     // Initialize Groq provider with loaded config
@@ -44,7 +44,7 @@ describe('Chicago TDD: Groq + MCP Integration', { timeout: 60000 }, () => {
 
   // Test 1: Configuration and provider initialization
   describe('Configuration and Setup', () => {
-    it('should load config from .unrdf.toml', () => {
+    it('should load config from unrdf.toml', () => {
       expect(config).toBeDefined();
       expect(config.groq).toBeDefined();
       expect(config.daemon).toBeDefined();

@@ -1,0 +1,291 @@
+{{- $prom := printf "%s-prometheus" (include "unrdf-observability.fullname" .) }}
+{{- $am := printf "%s-alertmanager" (include "unrdf-observability.fullname" .) }}
+{{- $otel := printf "%s-otel-collector" (include "unrdf-observability.fullname" .) }}
+{{- $tempo := printf "%s-tempo" (include "unrdf-observability.fullname" .) }}
+{{- $loki := printf "%s-loki" (include "unrdf-observability.fullname" .) }}
+{{- $pyro := printf "%s-pyroscope" (include "unrdf-observability.fullname" .) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $prom }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "unrdf-observability.componentLabels" . | nindent 4 }}
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ['{{ $am }}:9093']
+
+    rule_files:
+      - '/etc/prometheus/alert-rules.yml'
+
+    scrape_configs:
+      - job_name: otel-collector
+        static_configs:
+          - targets: ['{{ $otel }}:8889']
+        metric_relabel_configs:
+          - source_labels: [__name__]
+            regex: 'otelcollector_.*'
+            action: keep
+
+      - job_name: unrdf-daemon
+        static_configs:
+          - targets: ['{{ .Values.prometheus.unrdfDaemonTarget | default "host.docker.internal:9464" }}']
+        scrape_interval: 10s
+
+      - job_name: tempo
+        static_configs:
+          - targets: ['{{ $tempo }}:3200']
+
+      - job_name: loki
+        static_configs:
+          - targets: ['{{ $loki }}:3100']
+
+      - job_name: alertmanager
+        static_configs:
+          - targets: ['{{ $am }}:9093']
+
+      - job_name: pyroscope
+        static_configs:
+          - targets: ['{{ $pyro }}:4040']
+
+  alert-rules.yml: |
+    groups:
+      - name: unrdf-otel
+        interval: 15s
+        rules:
+          - alert: OtelCollectorNoSpans
+            expr: sum(rate(otelcol_exporter_sent_spans{service_name="unrdf-daemon"}[5m])) == 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'OTEL Collector not sending spans'
+              description: 'No spans have been exported by the OTEL collector in the last 5 minutes.'
+
+          - alert: OtelCollectorExportErrors
+            expr: sum(rate(otelcol_exporter_send_failed_spans{service_name="unrdf-daemon"}[5m])) > 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'OTEL Collector export failures'
+              description: 'The OTEL collector is failing to export {{ "{{" }} $value {{ "}}" }} spans/s.'
+
+          - alert: OtelCollectorQueueBackup
+            expr: otelcol_exporter_queue_size{service_name="unrdf-daemon"} > 4000
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'OTEL Collector export queue backing up'
+              description: 'Export queue size is {{ "{{" }} $value {{ "}}" }}, threshold is 4000.'
+
+          - alert: PrometheusTargetDown
+            expr: up == 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Prometheus target down: {{ "{{" }} $labels.job {{ "}}" }}'
+              description: 'Target {{ "{{" }} $labels.instance {{ "}}" }} for job {{ "{{" }} $labels.job {{ "}}" }} has been down for more than 2 minutes.'
+
+          - alert: LokiNoLogs
+            expr: sum(rate(loki_ingester_lines_received_total[5m])) == 0
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'Loki not receiving logs'
+              description: 'No log lines have been received by Loki in the last 10 minutes.'
+
+      - name: tempo
+        interval: 15s
+        rules:
+          - alert: TempoIngestionErrors
+            expr: sum(rate(tempo_distributor_ingestion_errors_total[5m])) > 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Tempo ingestion errors'
+              description: 'Tempo is experiencing {{ "{{" }} $value {{ "}}" }} ingestion errors/s.'
+
+          - alert: TempoHighLatency
+            expr: histogram_quantile(0.95, sum(rate(tempo_request_duration_seconds_bucket[5m])) by (le)) > 2
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'Tempo P95 latency above 2s'
+              description: 'Tempo P95 query latency is {{ "{{" }} $value {{ "}}" }}s.'
+
+      - name: slo_burn_rate
+        interval: 15s
+        rules:
+          - alert: SLOBurnRate5xx
+            expr: |
+              (
+                sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[1h])) by (service)
+                /
+                sum(rate(http_server_request_duration_seconds_count[1h])) by (service)
+              ) > (14.4 * (1 - 0.999))
+              and
+              sum(rate(http_server_request_duration_seconds_count[1h])) by (service) > 0
+            for: 2m
+            labels:
+              severity: critical
+              slo_target: '99.9'
+            annotations:
+              summary: '99.9% error SLO burn rate exceeded for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: '5xx error rate is burning the 30-day error budget at 14.4x. Immediate action required.'
+
+          - alert: SLOBurnRate5xxSlow
+            expr: |
+              (
+                sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[5m])) by (service)
+                /
+                sum(rate(http_server_request_duration_seconds_count[5m])) by (service)
+              ) > (6 * (1 - 0.99))
+              and
+              sum(rate(http_server_request_duration_seconds_count[5m])) by (service) > 0
+            for: 1m
+            labels:
+              severity: warning
+              slo_target: '99'
+            annotations:
+              summary: '99% error SLO at risk for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: '5xx error rate is burning the 30-day error budget at 6x. Investigate within the hour.'
+
+          - alert: SLOBurnRateLatency
+            expr: |
+              (
+                histogram_quantile(0.99,
+                  sum(rate(http_server_request_duration_seconds_bucket[1h])) by (le, service)
+                )
+              ) > 0.5
+              and
+              sum(rate(http_server_request_duration_seconds_count[1h])) by (service) > 0
+            for: 5m
+            labels:
+              severity: warning
+              slo_target: '99'
+            annotations:
+              summary: 'P99 latency SLO burn rate for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: 'P99 latency is {{ "{{" }} $value {{ "}}" }}s (>500ms threshold). Latency error budget is burning at 6x.'
+
+      - name: slo-burn-rates
+        interval: 15s
+        rules:
+          - alert: HighErrorBudgetBurn
+            expr: |
+              (
+                sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[1h])) by (service)
+                /
+                sum(rate(http_server_request_duration_seconds_count[1h])) by (service)
+              ) > (2 * 0.01)
+              and
+              sum(rate(http_server_request_duration_seconds_count[1h])) by (service) > 0
+            for: 1h
+            labels:
+              severity: warning
+              slo_target: '99'
+            annotations:
+              summary: 'High error budget burn for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: '5xx error rate is {{ "{{" }} $value | humanizePercentage {{ "}}" }}, exceeding 2x the 1% SLO target over a 1h window.'
+
+          - alert: HighLatencyP99
+            expr: |
+              histogram_quantile(0.99,
+                sum(rate(http_server_request_duration_seconds_bucket[5m])) by (le, service)
+              ) > 2
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'High P99 latency for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: 'P99 latency is {{ "{{" }} $value {{ "}}" }}s (>2s threshold) sustained over 5m.'
+
+          - alert: SLOBreachImminent
+            expr: |
+              (
+                sum(rate(http_server_request_duration_seconds_count{code=~"5.."}[24h])) by (service)
+                /
+                sum(rate(http_server_request_duration_seconds_count[24h])) by (service)
+              ) > 0.008
+              and
+              sum(rate(http_server_request_duration_seconds_count[24h])) by (service) > 0
+            for: 5m
+            labels:
+              severity: critical
+              slo_target: '99'
+            annotations:
+              summary: 'SLO breach imminent for {{ "{{" }} $labels.service {{ "}}" }}'
+              description: 'Error budget remaining is below 20% with less than 24h left in the SLO window. 5xx rate is {{ "{{" }} $value | humanizePercentage {{ "}}" }}.'
+
+      - name: service-health
+        interval: 15s
+        rules:
+          - alert: HighMemoryUsage
+            expr: |
+              (container_memory_working_set_bytes / container_spec_memory_limit_bytes) > 0.9
+              and
+              container_spec_memory_limit_bytes > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'High memory usage in {{ "{{" }} $labels.container {{ "}}" }}'
+              description: 'Container {{ "{{" }} $labels.container {{ "}}" }} is using {{ "{{" }} $value | humanizePercentage {{ "}}" }} of its memory limit.'
+
+          - alert: HighCpuUsage
+            expr: |
+              (rate(container_cpu_usage_seconds_total[5m]) / rate(container_cpu_usage_seconds_total[5m] offset 5m) > 0)
+              and
+              sum(rate(container_cpu_usage_seconds_total[5m])) by (container, pod) / sum(container_spec_cpu_quota / container_spec_cpu_period) by (container, pod) > 0.8
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'High CPU usage in {{ "{{" }} $labels.container {{ "}}" }}'
+              description: 'Container {{ "{{" }} $labels.container {{ "}}" }} CPU usage above 80% sustained for 5 minutes.'
+
+          - alert: PodCrashLooping
+            expr: increase(kube_pod_container_status_restarts_total[10m]) > 5
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Pod {{ "{{" }} $labels.pod {{ "}}" }} is crash looping'
+              description: 'Pod {{ "{{" }} $labels.pod {{ "}}" }} has restarted {{ "{{" }} $value {{ "}}" }} times in the last 10 minutes.'
+
+          - alert: OTelCollectorHighErrorRate
+            expr: |
+              (
+                sum(rate(otelcol_exporter_send_failed_spans_total[5m])) by (exporter)
+                /
+                sum(rate(otelcol_exporter_send_total[5m])) by (exporter)
+              ) > 0.1
+              and
+              sum(rate(otelcol_exporter_send_total[5m])) by (exporter) > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'OTEL Collector high error rate on {{ "{{" }} $labels.exporter {{ "}}" }}'
+              description: 'Exporter {{ "{{" }} $labels.exporter {{ "}}" }} is failing to send {{ "{{" }} $value | humanizePercentage {{ "}}" }} of requests.'
+
+          - alert: TempoReceiverFailedSpans
+            expr: sum(rate(tempo_distributor_receiver_failed_spans[5m])) > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: 'Tempo receiving failed spans'
+              description: 'Tempo is receiving {{ "{{" }} $value {{ "}}" }} failed spans/s at the distributor.'

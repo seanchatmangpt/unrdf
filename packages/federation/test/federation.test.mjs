@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { createMockFetch } from '../../test-utils/src/index.mjs';
 import {
   createCoordinator,
   createPeerManager,
@@ -16,40 +17,7 @@ import {
 /* Mock Server Setup                                                        */
 /* ========================================================================= */
 
-// Mock fetch for testing
 const originalFetch = global.fetch;
-
-function createMockFetch(responses = {}) {
-  return vi.fn(async (url, _options) => {
-    const endpoint = url.toString();
-
-    // Mock SPARQL endpoint
-    if (endpoint.includes('/sparql')) {
-      const peerId = Object.keys(responses).find(id => endpoint.includes(id));
-      const response = responses[peerId];
-
-      // If no match found, check if there's only one response and use that
-      const finalResponse = response ||
-        (Object.keys(responses).length === 1 ? Object.values(responses)[0] : null) ||
-        { ok: true, data: [] };
-
-      return {
-        ok: finalResponse.ok !== false,
-        status: finalResponse.status || 200,
-        statusText: finalResponse.statusText || 'OK',
-        json: async () => finalResponse.data,
-        text: async () => JSON.stringify(finalResponse.data),
-      };
-    }
-
-    // Mock health check endpoint
-    return {
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-    };
-  });
-}
 
 beforeEach(() => {
   vi.useFakeTimers();

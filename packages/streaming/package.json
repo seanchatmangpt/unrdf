@@ -51,6 +51,7 @@
   "devDependencies": {
     "@rdfjs/data-model": "^2.0.2",
     "@types/node": "^24.10.1",
+    "@unrdf/test-utils": "workspace:*",
     "vitest": "^4.0.15"
   },
   "engines": {

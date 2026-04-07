@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
+import { createTestStore, namedNode, literal, quad, defaultGraph } from '../../test-utils/src/index.mjs';
 import {
   serializeNTriples,
   serializeTurtle,
@@ -14,8 +14,6 @@ import {
   createSerializerStream,
 } from '../src/rdf/serializers.mjs';
 import { unlinkSync, existsSync } from 'node:fs';
-
-const { namedNode, literal, quad, defaultGraph } = dataFactory;
 
 describe('RDF Serializers', () => {
   describe('serializeNTriples', () => {
@@ -244,7 +242,7 @@ describe('RDF Serializers', () => {
     const testFile = '/tmp/test-serialize.nt';
 
     it('should serialize store to file', async () => {
-      const store = createStore();
+      const store = createTestStore();
       store.add(
         quad(
           namedNode('http://example.org/alice'),
@@ -266,7 +264,7 @@ describe('RDF Serializers', () => {
     });
 
     it('should serialize with compression', async () => {
-      const store = createStore();
+      const store = createTestStore();
       store.add(
         quad(
           namedNode('http://example.org/alice'),
@@ -292,14 +290,14 @@ describe('RDF Serializers', () => {
     });
 
     it('should throw error for invalid outputPath', async () => {
-      const store = createStore();
+      const store = createTestStore();
       await expect(serializeToFile(store, '')).rejects.toThrow('outputPath is required');
     });
   });
 
   describe('batchSerialize', () => {
     it('should serialize multiple stores in batch', async () => {
-      const store1 = createStore();
+      const store1 = createTestStore();
       store1.add(
         quad(
           namedNode('http://example.org/alice'),
@@ -309,7 +307,7 @@ describe('RDF Serializers', () => {
         )
       );
 
-      const store2 = createStore();
+      const store2 = createTestStore();
       store2.add(
         quad(
           namedNode('http://example.org/bob'),

@@ -12,6 +12,7 @@
 This document defines the complete incident response and rollback procedure for UNRDF v6.0.0 production deployments. It addresses decision criteria, technical procedures, data compatibility, and communication protocols for rapid recovery to v5.x if critical issues occur.
 
 **Key Contacts:**
+
 - Incident Commander: On-call engineering lead
 - Data Integrity Owner: Database/RDF team lead
 - Communication Lead: Product/support manager
@@ -48,14 +49,15 @@ MEDIUM (Monitor, Consider Rollback):
 
 **Incident Commander Decision Matrix:**
 
-| Severity | Authority | Decision Time | Action |
-|----------|-----------|---------------|--------|
-| P0 | Incident Commander | ≤5 minutes | AUTO-TRIGGER rollback |
-| P1 | Incident Commander + Data Owner | ≤10 minutes | EXEC rollback if confirmed |
-| P2 | Engineering Lead + Data Owner | ≤30 minutes | EVALUATE rollback vs. hotfix |
-| P3 | Product Manager | As needed | Consider for next release |
+| Severity | Authority                       | Decision Time | Action                       |
+| -------- | ------------------------------- | ------------- | ---------------------------- |
+| P0       | Incident Commander              | ≤5 minutes    | AUTO-TRIGGER rollback        |
+| P1       | Incident Commander + Data Owner | ≤10 minutes   | EXEC rollback if confirmed   |
+| P2       | Engineering Lead + Data Owner   | ≤30 minutes   | EVALUATE rollback vs. hotfix |
+| P3       | Product Manager                 | As needed     | Consider for next release    |
 
 **Decision Framework:**
+
 ```
 if (criticalityScore >= 8/10 AND timeToMitigation > 30min) {
   ROLLBACK = true;
@@ -70,14 +72,14 @@ if (criticalityScore >= 8/10 AND timeToMitigation > 30min) {
 
 ### 1.3 Time Estimates (SLA)
 
-| Phase | Duration | Target | Notes |
-|-------|----------|--------|-------|
-| Detection → Alert | 2 min | Auto-triggered | OTEL threshold breach |
-| Alert → Decision | 5 min | IC decision | P0: auto, P1-P2: manual |
-| Decision → Execution Start | 2 min | Begin rollback commands | Comms + validation |
-| Rollback Execution | 20-30 min | Single datacenter | Includes config revert |
-| Post-Rollback Validation | 10 min | Health checks pass | Services stable |
-| **Total Recovery SLA** | **45 min** | **Restore service** | From P0 detection |
+| Phase                      | Duration   | Target                  | Notes                   |
+| -------------------------- | ---------- | ----------------------- | ----------------------- |
+| Detection → Alert          | 2 min      | Auto-triggered          | OTEL threshold breach   |
+| Alert → Decision           | 5 min      | IC decision             | P0: auto, P1-P2: manual |
+| Decision → Execution Start | 2 min      | Begin rollback commands | Comms + validation      |
+| Rollback Execution         | 20-30 min  | Single datacenter       | Includes config revert  |
+| Post-Rollback Validation   | 10 min     | Health checks pass      | Services stable         |
+| **Total Recovery SLA**     | **45 min** | **Restore service**     | From P0 detection       |
 
 ### 1.4 Data Loss Assessment
 
@@ -277,11 +279,11 @@ curl -s http://localhost:3000/health
 
 ---
 
-## 3. .unrdf.toml Downgrade Path
+## 3. unrdf.toml Downgrade Path
 
 ### 3.1 Configuration Schema Changes (v6 → v5)
 
-**Breaking changes in .unrdf.toml:**
+**Breaking changes in unrdf.toml:**
 
 ```toml
 # v6.0.0 Configuration (REMOVE/MODIFY for v5)
@@ -308,7 +310,7 @@ cluster_mode = "distributed"  # v6 (v5: "standalone")
 # File: scripts/downgrade-config.sh
 # Usage: ./scripts/downgrade-config.sh /etc/unrdf/config.toml
 
-CONFIG_FILE="${1:-.unrdf.toml}"
+CONFIG_FILE=unrdf.toml}"
 BACKUP_FILE="${CONFIG_FILE}.v6.backup"
 
 echo "🔄 Converting config from v6 to v5..."
@@ -347,21 +349,22 @@ echo "  - Federation: disabled"
 
 ### 3.3 Field-by-Field Downgrade Mapping
 
-| v6 Field | v5 Equivalent | Action | Notes |
-|----------|---------------|--------|-------|
-| `rdf.engine` | "oxigraph" | Change to "n3" | Core engine change |
-| `rdf.store_format` | "binary" | Change to "ntriples" | Format compatibility |
-| `v6.deltagate_enabled` | (remove) | Delete entire section | v6-only feature |
-| `v6.receipts_enabled` | (remove) | Delete entire section | v6-only feature |
-| `federation.enabled` | "false" | Comment out or set false | Disable distributed mode |
-| `federation.cluster_mode` | (remove) | Delete if federation off | v6-only |
-| `consensus.mode` | (default) | Remove, use v5 simple | Revert to simple consensus |
-| `query.timeout_ms` | (unchanged) | Keep as-is | Backward compatible |
-| `security.tls_enabled` | (unchanged) | Keep as-is | Backward compatible |
+| v6 Field                  | v5 Equivalent | Action                   | Notes                      |
+| ------------------------- | ------------- | ------------------------ | -------------------------- |
+| `rdf.engine`              | "oxigraph"    | Change to "n3"           | Core engine change         |
+| `rdf.store_format`        | "binary"      | Change to "ntriples"     | Format compatibility       |
+| `v6.deltagate_enabled`    | (remove)      | Delete entire section    | v6-only feature            |
+| `v6.receipts_enabled`     | (remove)      | Delete entire section    | v6-only feature            |
+| `federation.enabled`      | "false"       | Comment out or set false | Disable distributed mode   |
+| `federation.cluster_mode` | (remove)      | Delete if federation off | v6-only                    |
+| `consensus.mode`          | (default)     | Remove, use v5 simple    | Revert to simple consensus |
+| `query.timeout_ms`        | (unchanged)   | Keep as-is               | Backward compatible        |
+| `security.tls_enabled`    | (unchanged)   | Keep as-is               | Backward compatible        |
 
 ### 3.4 Example: v6 Config → v5 Config
 
 **Before (v6.0.0):**
+
 ```toml
 [app]
 version = "6.0.0"
@@ -394,6 +397,7 @@ tls_cert_path = "/etc/unrdf/cert.pem"
 ```
 
 **After (v5.5.0):**
+
 ```toml
 [app]
 version = "5.5.0"
@@ -423,14 +427,14 @@ tls_cert_path = "/etc/unrdf/cert.pem"
 
 ### 4.1 RDF Store Format Compatibility Matrix
 
-| Aspect | v6 (Oxigraph) | v5 (N3) | Compatibility | Action |
-|--------|---------------|---------|---------------|--------|
-| **Store Format** | Binary (SPARQL-optimized) | N-Triples (text) | Convert needed | Restore from v5 backup |
-| **Triple Encoding** | Binary (compressed) | UTF-8 text | One-way conversion | Rebuild from text |
-| **Namespace Handling** | Prefixed (compact) | Explicit URIs | Lossless (prefixes preserved) | Auto-convert |
-| **Blank Node IDs** | Internal (anonymized) | Text identifiers | May differ | Rebuild blank nodes |
-| **Query Indices** | SPARQL indices (optimized) | Sequential scan | No indices in v5 | Query slower, but correct |
-| **Streaming Support** | Native changesets | N-Triples append | Streaming format differs | Convert to N-Triples |
+| Aspect                 | v6 (Oxigraph)              | v5 (N3)          | Compatibility                 | Action                    |
+| ---------------------- | -------------------------- | ---------------- | ----------------------------- | ------------------------- |
+| **Store Format**       | Binary (SPARQL-optimized)  | N-Triples (text) | Convert needed                | Restore from v5 backup    |
+| **Triple Encoding**    | Binary (compressed)        | UTF-8 text       | One-way conversion            | Rebuild from text         |
+| **Namespace Handling** | Prefixed (compact)         | Explicit URIs    | Lossless (prefixes preserved) | Auto-convert              |
+| **Blank Node IDs**     | Internal (anonymized)      | Text identifiers | May differ                    | Rebuild blank nodes       |
+| **Query Indices**      | SPARQL indices (optimized) | Sequential scan  | No indices in v5              | Query slower, but correct |
+| **Streaming Support**  | Native changesets          | N-Triples append | Streaming format differs      | Convert to N-Triples      |
 
 ### 4.2 Triple Format Compatibility
 
@@ -468,12 +472,13 @@ unrdf-cli load --format ntriples --file /tmp/triples.ntriples
 ### 4.3 Query Result Format Changes
 
 **v6 query results:**
+
 ```json
 {
   "results": {
     "bindings": [
-      {"s": {"type": "uri", "value": "http://example.org/s1"}},
-      {"p": {"type": "uri", "value": "http://example.org/name"}}
+      { "s": { "type": "uri", "value": "http://example.org/s1" } },
+      { "p": { "type": "uri", "value": "http://example.org/name" } }
     ]
   },
   "_metadata": {
@@ -485,12 +490,13 @@ unrdf-cli load --format ntriples --file /tmp/triples.ntriples
 ```
 
 **v5 query results:**
+
 ```json
 {
   "results": {
     "bindings": [
-      {"s": {"type": "uri", "value": "http://example.org/s1"}},
-      {"p": {"type": "uri", "value": "http://example.org/name"}}
+      { "s": { "type": "uri", "value": "http://example.org/s1" } },
+      { "p": { "type": "uri", "value": "http://example.org/name" } }
     ]
   }
 }
@@ -621,15 +627,15 @@ echo "✅ Restore complete"
 
 ### 5.1 Command Changes Summary
 
-| Command | v5 Syntax | v6 Syntax | Status | Migration |
-|---------|-----------|-----------|--------|-----------|
-| Load store | `unrdf load FILE` | `unrdf store load FILE` | BREAKING | Add `store` subcommand |
-| Query | `unrdf query SPARQL` | `unrdf query --sparql SPARQL` | BREAKING | Add `--sparql` flag |
-| Export | `unrdf export` | `unrdf store export` | BREAKING | Add `store` subcommand |
-| Validate | `unrdf validate` | `unrdf validate --store` | COMPATIBLE | Optional `--store` flag |
-| Federation | (N/A) | `unrdf federation status` | NEW | v6-only |
-| Receipts | (N/A) | `unrdf receipts list` | NEW | v6-only |
-| Health | `unrdf health` | `unrdf health` | COMPATIBLE | Same in both |
+| Command    | v5 Syntax            | v6 Syntax                     | Status     | Migration               |
+| ---------- | -------------------- | ----------------------------- | ---------- | ----------------------- |
+| Load store | `unrdf load FILE`    | `unrdf store load FILE`       | BREAKING   | Add `store` subcommand  |
+| Query      | `unrdf query SPARQL` | `unrdf query --sparql SPARQL` | BREAKING   | Add `--sparql` flag     |
+| Export     | `unrdf export`       | `unrdf store export`          | BREAKING   | Add `store` subcommand  |
+| Validate   | `unrdf validate`     | `unrdf validate --store`      | COMPATIBLE | Optional `--store` flag |
+| Federation | (N/A)                | `unrdf federation status`     | NEW        | v6-only                 |
+| Receipts   | (N/A)                | `unrdf receipts list`         | NEW        | v6-only                 |
+| Health     | `unrdf health`       | `unrdf health`                | COMPATIBLE | Same in both            |
 
 ### 5.2 Before/After Command Examples
 
@@ -803,14 +809,14 @@ Subject: RESOLVED: UNRDF Service Incident - April 3, 2026 15:30 UTC
 
 Dear UNRDF Customers,
 
-We experienced an incident affecting the UNRDF service on April 3, 2026, 
+We experienced an incident affecting the UNRDF service on April 3, 2026,
 starting at approximately 15:30 UTC.
 
 INCIDENT SUMMARY:
   Duration: 45 minutes (15:30 - 16:15 UTC)
   Status: ✅ RESOLVED
   Root Cause: [BRIEF DESCRIPTION - under 2 sentences]
-  
+
 WHAT HAPPENED:
   [Technical summary for non-technical audience, 1-2 paragraphs]
 
@@ -848,34 +854,41 @@ status.unrdf.io | support@unrdf.io
 **Status:** Resolved
 
 ## Executive Summary
+
 [1-2 paragraph summary]
 
 ## Timeline
-| Time UTC | Event | Owner |
-|----------|-------|-------|
-| 15:30 | Issue detected (alert) | Monitoring |
-| 15:35 | Incident commander engaged | On-call |
-| 15:40 | Rollback decision made | IC |
-| 15:42 | Rollback started | SRE |
-| 16:15 | Service restored | SRE |
+
+| Time UTC | Event                      | Owner      |
+| -------- | -------------------------- | ---------- |
+| 15:30    | Issue detected (alert)     | Monitoring |
+| 15:35    | Incident commander engaged | On-call    |
+| 15:40    | Rollback decision made     | IC         |
+| 15:42    | Rollback started           | SRE        |
+| 16:15    | Service restored           | SRE        |
 
 ## Root Cause
+
 [Detailed root cause analysis]
 
 ## Impact Assessment
+
 - Queries failed: [COUNT]
 - Data loss: None
 - Users affected: [COUNT]
 
 ## Resolution
+
 Rolled back from v6.0.0 → v5.5.0 successfully.
 
 ## Preventive Actions
+
 1. [Action 1]
 2. [Action 2]
 3. [Action 3]
 
 ## Owner: [NAME]
+
 ## Reviewers: [NAMES]
 ```
 
@@ -1094,16 +1107,19 @@ kubectl logs -n production deployment/unrdf-core --tail=100 | grep -i error
 ## Appendix: Emergency Contact & Escalation
 
 ### Incident Commander Escalation
+
 1. **Primary:** [ON-CALL ENGINEER]
 2. **Secondary:** [BACKUP ENGINEER]
 3. **VP Engineering:** [NAME]
 
 ### Slack Channels
+
 - `#incident-response` - Incident coordination
 - `#unrdf-alerts` - Automated alerts
 - `#operations` - Operations team
 
 ### Post-Rollback Review Schedule
+
 - **+1 hour:** Incident report filed
 - **+24 hours:** Root cause analysis completed
 - **+1 week:** Preventive actions implemented

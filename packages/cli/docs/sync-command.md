@@ -13,7 +13,7 @@ The `sync` command reads an RDF ontology (Turtle, N-Triples, JSON-LD, etc.), exe
 
 ## Quick Start
 
-**1. Create configuration file `.unrdf.toml`:**
+**1. Create configuration file `unrdf.toml`:**
 
 ```toml
 [project]
@@ -64,19 +64,19 @@ export const {{ entityName | camelCase }}Schema = z.object({
 unrdf sync
 ```
 
-## Configuration (.unrdf.toml)
+## Configuration (unrdf.toml)
 
 ### [project] Section
 
 Project metadata (optional).
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `name` | string | Project name |
-| `version` | string | Project version |
+| Key           | Type   | Description         |
+| ------------- | ------ | ------------------- |
+| `name`        | string | Project name        |
+| `version`     | string | Project version     |
 | `description` | string | Project description |
-| `author` | string | Project author |
-| `license` | string | License identifier |
+| `author`      | string | Project author      |
+| `license`     | string | License identifier  |
 
 ```toml
 [project]
@@ -89,13 +89,13 @@ description = "Blog API example"
 
 RDF source configuration (required).
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `source` | string | **required** | Path to RDF file |
-| `format` | string | auto-detect | RDF format: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig` |
-| `base_iri` | string | - | Base IRI for relative URIs |
-| `prefixes` | object | - | Custom prefix mappings |
-| `follow_imports` | boolean | `false` | Follow `owl:imports` declarations |
+| Key              | Type    | Default      | Description                                                            |
+| ---------------- | ------- | ------------ | ---------------------------------------------------------------------- |
+| `source`         | string  | **required** | Path to RDF file                                                       |
+| `format`         | string  | auto-detect  | RDF format: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig` |
+| `base_iri`       | string  | -            | Base IRI for relative URIs                                             |
+| `prefixes`       | object  | -            | Custom prefix mappings                                                 |
+| `follow_imports` | boolean | `false`      | Follow `owl:imports` declarations                                      |
 
 ```toml
 [ontology]
@@ -112,26 +112,26 @@ schema = "http://schema.org/"
 
 Output configuration.
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `output_dir` | string | `"lib"` | Base output directory |
+| Key                   | Type    | Default | Description                 |
+| --------------------- | ------- | ------- | --------------------------- |
+| `output_dir`          | string  | `"lib"` | Base output directory       |
 | `require_audit_trail` | boolean | `false` | Require generation receipts |
-| `parallel` | boolean | `false` | Run rules in parallel |
+| `parallel`            | boolean | `false` | Run rules in parallel       |
 
 ### [[generation.rules]] Section
 
 Array of generation rules. Each rule defines a SPARQL query and template pair.
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `name` | string | **required** | Rule identifier |
-| `description` | string | - | Rule description |
-| `query` | string | **required** | SPARQL SELECT query |
-| `template` | string | **required** | Path to Nunjucks template |
-| `output_file` | string | **required** | Output file path (relative to `output_dir`) |
-| `enabled` | boolean | `true` | Enable/disable rule |
-| `mode` | string | `"overwrite"` | Write mode: `overwrite`, `append`, `skip_existing` |
-| `depends_on` | array | - | Rule dependencies (names) |
+| Key           | Type    | Default       | Description                                        |
+| ------------- | ------- | ------------- | -------------------------------------------------- |
+| `name`        | string  | **required**  | Rule identifier                                    |
+| `description` | string  | -             | Rule description                                   |
+| `query`       | string  | **required**  | SPARQL SELECT query                                |
+| `template`    | string  | **required**  | Path to Nunjucks template                          |
+| `output_file` | string  | **required**  | Output file path (relative to `output_dir`)        |
+| `enabled`     | boolean | `true`        | Enable/disable rule                                |
+| `mode`        | string  | `"overwrite"` | Write mode: `overwrite`, `append`, `skip_existing` |
+| `depends_on`  | array   | -             | Rule dependencies (names)                          |
 
 ```toml
 [[generation.rules]]
@@ -183,6 +183,7 @@ output_dir = "$OUTPUT_DIR"
 ```
 
 Supported patterns:
+
 - `${VAR}` - substitute variable (empty if unset)
 - `${VAR:-default}` - substitute with default value
 - `$VAR` - simple substitution
@@ -205,23 +206,23 @@ variables:
 ---
 ```
 
-| Key | Description |
-|-----|-------------|
-| `to` | Output file path (supports template variables) |
-| `description` | Rule description |
-| `mode` | Write mode: `overwrite`, `append`, `skip_existing` |
-| `variables` | Custom variables available in template |
+| Key           | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `to`          | Output file path (supports template variables)     |
+| `description` | Rule description                                   |
+| `mode`        | Write mode: `overwrite`, `append`, `skip_existing` |
+| `variables`   | Custom variables available in template             |
 
 ### Available Context Variables
 
-| Variable | Type | Description |
-|----------|------|-------------|
-| `sparql_results` | array | SPARQL query results |
-| `results` | array | Alias for `sparql_results` |
-| `prefixes` | object | RDF prefix mappings |
-| `project` | object | Project config from `[project]` |
-| `output_dir` | string | Output directory path |
-| `now` | Date | Current timestamp |
+| Variable         | Type   | Description                     |
+| ---------------- | ------ | ------------------------------- |
+| `sparql_results` | array  | SPARQL query results            |
+| `results`        | array  | Alias for `sparql_results`      |
+| `prefixes`       | object | RDF prefix mappings             |
+| `project`        | object | Project config from `[project]` |
+| `output_dir`     | string | Output directory path           |
+| `now`            | Date   | Current timestamp               |
 
 ### SPARQL Results Structure
 
@@ -242,51 +243,51 @@ Access values using bracket notation: `row["?entityName"]` or without prefix aft
 
 ### Case Conversion
 
-| Filter | Input | Output |
-|--------|-------|--------|
-| `camelCase` | `"user-name"` | `"userName"` |
-| `pascalCase` | `"user-name"` | `"UserName"` |
-| `snakeCase` | `"userName"` | `"user_name"` |
-| `kebabCase` | `"userName"` | `"user-name"` |
+| Filter       | Input         | Output        |
+| ------------ | ------------- | ------------- |
+| `camelCase`  | `"user-name"` | `"userName"`  |
+| `pascalCase` | `"user-name"` | `"UserName"`  |
+| `snakeCase`  | `"userName"`  | `"user_name"` |
+| `kebabCase`  | `"userName"`  | `"user-name"` |
 
 ### RDF Utilities
 
-| Filter | Input | Output |
-|--------|-------|--------|
-| `localName` | `"http://schema.org/Person"` | `"Person"` |
+| Filter      | Input                        | Output                 |
+| ----------- | ---------------------------- | ---------------------- |
+| `localName` | `"http://schema.org/Person"` | `"Person"`             |
 | `namespace` | `"http://schema.org/Person"` | `"http://schema.org/"` |
 
 ### Type Conversion
 
-| Filter | Input | Output |
-|--------|-------|--------|
-| `zodType` | `"xsd:string"` | `z.string()` |
-| `zodType` | `"xsd:integer"` | `z.number().int()` |
-| `zodType` | `"xsd:boolean"` | `z.boolean()` |
-| `zodType` | `"xsd:date"` | `z.string().date()` |
-| `zodType` | `"xsd:anyURI"` | `z.string().url()` |
-| `jsdocType` | `"xsd:string"` | `string` |
-| `jsdocType` | `"xsd:integer"` | `number` |
-| `jsdocType` | `"xsd:boolean"` | `boolean` |
+| Filter      | Input           | Output              |
+| ----------- | --------------- | ------------------- |
+| `zodType`   | `"xsd:string"`  | `z.string()`        |
+| `zodType`   | `"xsd:integer"` | `z.number().int()`  |
+| `zodType`   | `"xsd:boolean"` | `z.boolean()`       |
+| `zodType`   | `"xsd:date"`    | `z.string().date()` |
+| `zodType`   | `"xsd:anyURI"`  | `z.string().url()`  |
+| `jsdocType` | `"xsd:string"`  | `string`            |
+| `jsdocType` | `"xsd:integer"` | `number`            |
+| `jsdocType` | `"xsd:boolean"` | `boolean`           |
 
 ### Data Manipulation
 
-| Filter | Description | Example |
-|--------|-------------|---------|
-| `groupBy(key)` | Group array by property | `results \| groupBy("?entityName")` |
-| `distinctValues(key)` | Unique values for key | `results \| distinctValues("?type")` |
-| `sortBy(key, dir)` | Sort by property | `results \| sortBy("?name", "asc")` |
-| `keys` | Object keys | `obj \| keys` |
-| `values` | Object values | `obj \| values` |
-| `items` | Key-value pairs | `obj \| items` |
+| Filter                | Description             | Example                              |
+| --------------------- | ----------------------- | ------------------------------------ |
+| `groupBy(key)`        | Group array by property | `results \| groupBy("?entityName")`  |
+| `distinctValues(key)` | Unique values for key   | `results \| distinctValues("?type")` |
+| `sortBy(key, dir)`    | Sort by property        | `results \| sortBy("?name", "asc")`  |
+| `keys`                | Object keys             | `obj \| keys`                        |
+| `values`              | Object values           | `obj \| values`                      |
+| `items`               | Key-value pairs         | `obj \| items`                       |
 
 ### String Utilities
 
-| Filter | Description | Example |
-|--------|-------------|---------|
-| `indent(n)` | Indent lines by n spaces | `code \| indent(4)` |
-| `quote(char)` | Quote string | `name \| quote` |
-| `date(format)` | Format date | `now \| date("YYYY-MM-DD")` |
+| Filter         | Description              | Example                     |
+| -------------- | ------------------------ | --------------------------- |
+| `indent(n)`    | Indent lines by n spaces | `code \| indent(4)`         |
+| `quote(char)`  | Quote string             | `name \| quote`             |
+| `date(format)` | Format date              | `now \| date("YYYY-MM-DD")` |
 
 Date format tokens: `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss`
 
@@ -296,7 +297,7 @@ Date format tokens: `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss`
 Usage: unrdf sync [options]
 
 Options:
-  --config <path>    Path to .unrdf.toml (default: ".unrdf.toml")
+  --config <path>    Path to unrdf.toml (default: "unrdf.toml")
   --dry-run          Preview changes without writing files
   -v, --verbose      Enable verbose output
   -f, --force        Overwrite existing files without prompting
@@ -353,7 +354,7 @@ api:Post_title api:name "title" ; api:type xsd:string ; api:required true .
 api:Post_authorId api:name "authorId" ; api:type xsd:string ; api:required true .
 ```
 
-### Configuration (`.unrdf.toml`)
+### Configuration (`unrdf.toml`)
 
 ```toml
 [project]
@@ -509,10 +510,10 @@ paths:
 ### Config file not found
 
 ```
-Error: Configuration file not found: .unrdf.toml
+Error: Configuration file not found: unrdf.toml
 ```
 
-Create `.unrdf.toml` in your project root or specify path with `--config`.
+Create `unrdf.toml` in your project root or specify path with `--config`.
 
 ### Ontology file not found
 
@@ -525,6 +526,7 @@ Check `[ontology].source` path is correct relative to config file location.
 ### SPARQL query errors
 
 Use `--verbose` to see detailed query execution info. Verify:
+
 - Prefix declarations match your ontology
 - Property names exist in RDF data
 - SPARQL syntax is valid
@@ -536,6 +538,7 @@ Error: Template rendering failed: ...
 ```
 
 Check template syntax. Common issues:
+
 - Missing `{% endif %}` or `{% endfor %}`
 - Invalid filter usage
 - Undefined variables (use `| default("")` for optional values)
@@ -546,13 +549,13 @@ Check template syntax. Common issues:
 
 The `[ontology]` section configures RDF data source and parsing behavior.
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `source` | string | **required** | Path to RDF file (Turtle, N-Triples, JSON-LD, RDF/XML, etc.) |
-| `format` | string | auto-detect | RDF format: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig` |
-| `base_iri` | string | - | Base IRI for relative URI resolution |
-| `prefixes` | object | - | Custom namespace prefix mappings |
-| `follow_imports` | boolean | `false` | Follow `owl:imports` declarations |
+| Field            | Type    | Default      | Description                                                            |
+| ---------------- | ------- | ------------ | ---------------------------------------------------------------------- |
+| `source`         | string  | **required** | Path to RDF file (Turtle, N-Triples, JSON-LD, RDF/XML, etc.)           |
+| `format`         | string  | auto-detect  | RDF format: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig` |
+| `base_iri`       | string  | -            | Base IRI for relative URI resolution                                   |
+| `prefixes`       | object  | -            | Custom namespace prefix mappings                                       |
+| `follow_imports` | boolean | `false`      | Follow `owl:imports` declarations                                      |
 
 **Example:**
 
@@ -572,11 +575,11 @@ rdfs = "http://www.w3.org/2000/01/rdf-schema#"
 
 The `[generation]` section controls output behavior and rule execution.
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `output_dir` | string | `"lib"` | Base output directory for all generated files |
-| `require_audit_trail` | boolean | `false` | Require generation receipts (KGC-4D) |
-| `parallel` | boolean | `false` | Execute rules in parallel (vs sequential) |
+| Field                 | Type    | Default | Description                                   |
+| --------------------- | ------- | ------- | --------------------------------------------- |
+| `output_dir`          | string  | `"lib"` | Base output directory for all generated files |
+| `require_audit_trail` | boolean | `false` | Require generation receipts (KGC-4D)          |
+| `parallel`            | boolean | `false` | Execute rules in parallel (vs sequential)     |
 
 **Example:**
 
@@ -591,16 +594,16 @@ parallel = false
 
 Each `[[generation.rules]]` section defines one code generation rule.
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | string | **required** | Rule identifier (alphanumeric, no spaces) |
-| `description` | string | - | Human-readable description |
-| `query` | string | **required** | SPARQL SELECT query |
-| `template` | string | **required** | Path to Nunjucks template file |
-| `output_file` | string | **required** | Output file path (relative to `output_dir`, supports `{{ }}` templating) |
-| `enabled` | boolean | `true` | Enable/disable rule without removing config |
-| `mode` | string | `"overwrite"` | File write behavior: `overwrite`, `append`, `skip_existing` |
-| `depends_on` | array | - | Array of rule names this rule depends on (executed first) |
+| Field         | Type    | Default       | Description                                                              |
+| ------------- | ------- | ------------- | ------------------------------------------------------------------------ |
+| `name`        | string  | **required**  | Rule identifier (alphanumeric, no spaces)                                |
+| `description` | string  | -             | Human-readable description                                               |
+| `query`       | string  | **required**  | SPARQL SELECT query                                                      |
+| `template`    | string  | **required**  | Path to Nunjucks template file                                           |
+| `output_file` | string  | **required**  | Output file path (relative to `output_dir`, supports `{{ }}` templating) |
+| `enabled`     | boolean | `true`        | Enable/disable rule without removing config                              |
+| `mode`        | string  | `"overwrite"` | File write behavior: `overwrite`, `append`, `skip_existing`              |
+| `depends_on`  | array   | -             | Array of rule names this rule depends on (executed first)                |
 
 **Example:**
 
@@ -643,7 +646,7 @@ output_dir = "${OUTPUT_DIR:-lib}"
 
 ## Backwards Compatibility: ggen.toml Format Stability
 
-The `.unrdf.toml` configuration format (formerly `ggen.toml`) maintains backwards compatibility.
+The `unrdf.toml` configuration format (formerly `ggen.toml`) maintains backwards compatibility.
 
 ### Versioning
 
@@ -685,7 +688,7 @@ output_file = "schemas.mjs"
 query = "SELECT ..."
 ```
 
-New `.unrdf.toml` (compatible):
+New `unrdf.toml` (compatible):
 
 ```toml
 # Same structure, just rename file
@@ -713,15 +716,15 @@ The `unrdf sync` command integrates with **Hygen** (scaffolding generator) for l
 
 Add these to template frontmatter for advanced file manipulation:
 
-| Directive | Type | Description |
-|-----------|------|-------------|
-| `inject` | boolean | Enable Hygen injection mode (line-based modification) |
-| `before` | string (regex) | Insert content before matching line |
-| `after` | string (regex) | Insert content after matching line |
-| `append` | string (regex) | Append content to file ending with pattern |
-| `prepend` | string (regex) | Prepend content to file starting with pattern |
-| `lineAt` | number | Insert at specific line number |
-| `skipIf` | string (regex) | Skip generation if file contains pattern |
+| Directive | Type           | Description                                           |
+| --------- | -------------- | ----------------------------------------------------- |
+| `inject`  | boolean        | Enable Hygen injection mode (line-based modification) |
+| `before`  | string (regex) | Insert content before matching line                   |
+| `after`   | string (regex) | Insert content after matching line                    |
+| `append`  | string (regex) | Append content to file ending with pattern            |
+| `prepend` | string (regex) | Prepend content to file starting with pattern         |
+| `lineAt`  | number         | Insert at specific line number                        |
+| `skipIf`  | string (regex) | Skip generation if file contains pattern              |
 
 ### Hygen Example 1: Inject After Marker
 
@@ -766,8 +769,8 @@ Skip generation if marker already exists:
 ---
 to: src/types/index.ts
 inject: true
-skipIf: "Generated at.*2026"
-after: "^// Type definitions$"
+skipIf: 'Generated at.*2026'
+after: '^// Type definitions$'
 ---
 // Generated at {{ now | date("YYYY-MM-DD") }}
 ```
@@ -790,7 +793,7 @@ lineAt: 5
 **Prepend (before):**
 
 ```yaml
-before: "^export const schemas"
+before: '^export const schemas'
 ```
 
 Matches line starting with `export const schemas`.
@@ -798,7 +801,7 @@ Matches line starting with `export const schemas`.
 **After (insert following):**
 
 ```yaml
-after: "^import.*from.*zod"
+after: '^import.*from.*zod'
 ```
 
 Matches lines starting with `import ... from ... zod`.
@@ -806,7 +809,7 @@ Matches lines starting with `import ... from ... zod`.
 **Append (end of section):**
 
 ```yaml
-append: "^};$"
+append: '^};$'
 ```
 
 Matches closing brace at line end.

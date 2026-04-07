@@ -18,9 +18,7 @@ import {
   CommonShapes,
   ShapeBuilder,
 } from '../src/validation/rdf-schema-builder.mjs';
-import { createStore, dataFactory } from '@unrdf/oxigraph';
-
-const { namedNode, literal, quad, blankNode } = dataFactory;
+import { createTestStore, namedNode, literal, quad, blankNode } from '../../test-utils/src/index.mjs';
 
 describe('SHACL Validator', () => {
   describe('createValidator', () => {
@@ -61,7 +59,7 @@ describe('SHACL Validator', () => {
 
     it('should create validator from Oxigraph store', async () => {
       // Arrange
-      const store = createStore();
+      const store = createTestStore();
       store.add(quad(
         namedNode('http://example.org/PersonShape'),
         namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
@@ -276,7 +274,7 @@ describe('SHACL Validator', () => {
   describe('fastValidate', () => {
     it('should perform fast validation', () => {
       // Arrange
-      const store = createStore();
+      const store = createTestStore();
       const constraints = {
         targetClass: 'ex:Person',
         properties: {

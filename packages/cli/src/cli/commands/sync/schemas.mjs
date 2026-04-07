@@ -1,7 +1,7 @@
 /**
  * @file Sync Command Schemas
  * @module cli/commands/sync/schemas
- * @description Zod validation schemas for `.unrdf.toml` sync configuration
+ * @description Zod validation schemas for `unrdf.toml` sync configuration
  */
 import { z } from 'zod';
 
@@ -87,7 +87,7 @@ export const TemplateConfigSchema = z.object({
 });
 
 /**
- * Main configuration schema for `.unrdf.toml`
+ * Main configuration schema for `unrdf.toml`
  */
 export const SyncConfigSchema = z.object({
   project: ProjectConfigSchema.optional(),
@@ -102,7 +102,7 @@ export const SyncConfigSchema = z.object({
  * CLI arguments schema
  */
 export const SyncArgsSchema = z.object({
-  config: z.string().default('.unrdf.toml'),
+  config: z.string().default('unrdf.toml'),
   dryRun: z.boolean().default(false),
   verbose: z.boolean().default(false),
   force: z.boolean().default(false),

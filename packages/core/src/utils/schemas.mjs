@@ -29,10 +29,10 @@ export const DeltaSchema = z.object({
 export const TransactionHookSchema = z.object({
   id: z.string(),
   mode: z.enum(['pre', 'post']),
-  condition: z.function().args(z.any(), z.any()).returns(z.promise(z.boolean())),
+  condition: z.function(),
   effect: z.union([
     z.literal('veto'),
-    z.function().args(z.any(), z.any()).returns(z.promise(z.void())),
+    z.function(),
   ]),
 });
 

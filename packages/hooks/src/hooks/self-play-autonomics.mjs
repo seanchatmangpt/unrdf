@@ -14,6 +14,7 @@ import { randomUUID } from 'crypto';
 import { evaluateCondition } from './condition-evaluator.mjs';
 import { KnowledgeHookEngine } from './knowledge-hook-engine.mjs';
 import { ask, select, construct } from './query.mjs';
+import { withPipelineSpan, withLLMSpan } from '../../../../src/lib/telemetry.mjs';
 
 /**
  * Build a self-play toolRegistry from knowledge hooks
@@ -29,81 +30,114 @@ export function buildHooksToolRegistry(store, _hooks = []) {
   return {
     hooks_evaluate_conditions: {
       handler: async ({ store: evalStore, hooks: evalHooks }) => {
-        // Evaluate all conditions and collect results
-        const conditionResults = [];
-        const satisfied = [];
+        return withLLMSpan('hooks-evaluate-conditions', async (span) => {
+          span.setAttributes({
+            'llm.provider': 'unrdf-hooks',
+            'llm.model': 'condition-evaluator',
+            'gen_ai.operation.name': 'hooks-evaluate-conditions',
+            'unrdf.hook.hooks_total': evalHooks.length,
+          });
 
-        for (const hook of evalHooks) {
-          try {
-            const result = await evaluateCondition(hook.condition, evalStore);
-            conditionResults.push({
-              hookName: hook.name,
-              condition: hook.condition,
-              satisfied: result,
-            });
+          // Evaluate all conditions and collect results
+          const conditionResults = [];
+          const satisfied = [];
 
-            if (result) {
-              satisfied.push(hook);
+          for (const hook of evalHooks) {
+            try {
+              const result = await evaluateCondition(hook.condition, evalStore);
+              conditionResults.push({
+                hookName: hook.name,
+                condition: hook.condition,
+                satisfied: result,
+              });
+
+              if (result) {
+                satisfied.push(hook);
+              }
+            } catch (err) {
+              conditionResults.push({
+                hookName: hook.name,
+                condition: hook.condition,
+                satisfied: false,
+                error: err.message,
+              });
             }
-          } catch (err) {
-            conditionResults.push({
-              hookName: hook.name,
-              condition: hook.condition,
-              satisfied: false,
-              error: err.message,
-            });
           }
-        }
 
-        const successRate = evalHooks.length > 0 ? satisfied.length / evalHooks.length : 0;
+          const successRate = evalHooks.length > 0 ? satisfied.length / evalHooks.length : 0;
 
-        return {
-          conditionResults,
-          satisfied,
-          successRate,
-        };
+          span.setAttributes({
+            'unrdf.hook.hooks_satisfied': satisfied.length,
+            'unrdf.hook.satisfied': satisfied.length > 0,
+          });
+
+          return {
+            conditionResults,
+            satisfied,
+            successRate,
+          };
+        });
       },
     },
 
     hooks_execute_effects: {
       handler: async ({ store: _execStore, hooks: execHooks, delta: _delta }) => {
-        // Execute hooks with receipt chaining
-        const context = {
-          nodeId: 'self-play-autonomics',
-          t_ns: BigInt(Date.now() * 1000000),
-        };
+        return withLLMSpan('hooks-execute-effects', async (span) => {
+          span.setAttributes({
+            'llm.provider': 'unrdf-hooks',
+            'llm.model': 'knowledge-hook-engine',
+            'gen_ai.operation.name': 'hooks-execute-effects',
+            'unrdf.hook.hooks_total': execHooks.length,
+          });
 
-        try {
-          const result = await engine.execute(context, execHooks);
-
-          return {
-            executionResults: execHooks.map(h => ({
-              hookName: h.name,
-              status: 'executed',
-            })),
-            receipt: {
-              receiptHash: result.receipt.receiptHash,
-              input_hash: result.receipt.input_hash,
-              output_hash: result.receipt.output_hash,
-              previousReceiptHash: result.receipt.previousReceiptHash || null,
-              hooksExecuted: result.successful + result.failed,
-              successful: result.successful,
-              failed: result.failed,
-              delta: result.receipt.delta,
-              timestamp: result.receipt.timestamp,
-            },
+          // Execute hooks with receipt chaining
+          const context = {
+            nodeId: 'self-play-autonomics',
+            t_ns: BigInt(Date.now() * 1000000),
           };
-        } catch (err) {
-          return {
-            executionResults: execHooks.map(h => ({
-              hookName: h.name,
-              status: 'failed',
+
+          try {
+            const result = await engine.execute(context, execHooks);
+
+            span.setAttributes({
+              'pipeline.repairs.applied': result.successful,
+              'pipeline.repairs.failed': result.failed,
+            });
+
+            return {
+              executionResults: execHooks.map(h => ({
+                hookName: h.name,
+                status: 'executed',
+              })),
+              receipt: {
+                receiptHash: result.receipt.receiptHash,
+                input_hash: result.receipt.input_hash,
+                output_hash: result.receipt.output_hash,
+                previousReceiptHash: result.receipt.previousReceiptHash || null,
+                hooksExecuted: result.successful + result.failed,
+                successful: result.successful,
+                failed: result.failed,
+                delta: result.receipt.delta,
+                timestamp: result.receipt.timestamp,
+              },
+            };
+          } catch (err) {
+            span.setAttributes({
+              'pipeline.repairs.applied': 0,
+              'pipeline.repairs.failed': execHooks.length,
+            });
+
+            return {
+              executionResults: execHooks.map(h => ({
+                hookName: h.name,
+                status: 'failed',
+                error: err.message,
+              })),
+              receipt: null,
               error: err.message,
-            })),
-            receipt: null,
-            error: err.message,
-          };
-        }
+            };
+          }
+        });
       },
     },
 
@@ -260,164 +294,171 @@ class ReceiptChainNode {
  * @returns {Promise<Object>} { episodes, finalStore, receiptChain, stats }
  */
 export async function runHooksAutonomics(store, hookDefinitions = [], options = {}) {
-  const {
-    goalCondition = async () => false,
-    episodeCount = 3,
-    maxStepsPerEpisode = 10,
-    onEpisodeEnd = () => {},
-  } = options;
+  return withPipelineSpan('observe', async (span) => {
+    const {
+      goalCondition = async () => false,
+      episodeCount = 3,
+      maxStepsPerEpisode = 10,
+      onEpisodeEnd = () => {},
+    } = options;
 
-  // Build tool registry
-  const toolRegistry = buildHooksToolRegistry(store, hookDefinitions);
+    // Build tool registry
+    const toolRegistry = buildHooksToolRegistry(store, hookDefinitions);
 
-  // Create decision policy
-  const decisionFn = createHooksAwarePolicy(goalCondition);
+    // Create decision policy
+    const decisionFn = createHooksAwarePolicy(goalCondition);
 
-  // Track receipt chain
-  const receiptChain = [];
-  let previousReceiptNode = null;
+    // Track receipt chain
+    const receiptChain = [];
+    let previousReceiptNode = null;
 
-  const episodes = [];
+    const episodes = [];
 
-  for (let e = 0; e < episodeCount; e++) {
-    const episode = {
-      episodeId: randomUUID(),
-      stepCount: 0,
-      stepResults: [],
-      feedback: [],
-      terminated: false,
-      terminationReason: null,
-      timestamp: new Date().toISOString(),
-    };
+    for (let e = 0; e < episodeCount; e++) {
+      const episode = {
+        episodeId: randomUUID(),
+        stepCount: 0,
+        stepResults: [],
+        feedback: [],
+        terminated: false,
+        terminationReason: null,
+        timestamp: new Date().toISOString(),
+      };
 
-    const context = {
-      store,
-      hooks: hookDefinitions,
-    };
+      const context = {
+        store,
+        hooks: hookDefinitions,
+      };
 
-    let previousResult = null;
+      let previousResult = null;
 
-    for (let step = 0; step < maxStepsPerEpisode; step++) {
-      if (episode.terminated) break;
+      for (let step = 0; step < maxStepsPerEpisode; step++) {
+        if (episode.terminated) break;
 
-      // Decide next tool
-      const decision = await decisionFn(
-        {
-          steps: episode.stepResults,
-          context,
-          recordFeedback: (s, r) => episode.feedback.push({ signal: s, reason: r }),
-        },
-        previousResult
-      );
+        // Decide next tool
+        const decision = await decisionFn(
+          {
+            steps: episode.stepResults,
+            context,
+            recordFeedback: (s, r) => episode.feedback.push({ signal: s, reason: r }),
+          },
+          previousResult
+        );
 
-      if (!decision) {
-        episode.terminated = true;
-        episode.terminationReason = 'no more decisions';
-        episode.feedback.push({ signal: 0, reason: 'terminated: no more decisions' });
-        break;
-      }
-
-      const { toolName, input } = decision;
-
-      // Execute tool
-      const stepStartTime = Date.now();
-      try {
-        const tool = toolRegistry[toolName];
-        if (!tool) {
+        if (!decision) {
           episode.terminated = true;
-          episode.terminationReason = `unknown tool: ${toolName}`;
-          episode.feedback.push({ signal: -1, reason: `unknown tool: ${toolName}` });
+          episode.terminationReason = 'no more decisions';
+          episode.feedback.push({ signal: 0, reason: 'terminated: no more decisions' });
           break;
         }
 
-        const result = await tool.handler(input);
-        const duration = Date.now() - stepStartTime;
+        const { toolName, input } = decision;
 
-        episode.stepResults.push({
-          stepId: randomUUID(),
-          toolName,
-          input,
-          output: result,
-          duration,
-          timestamp: new Date().toISOString(),
-          success: true,
-        });
+        // Execute tool
+        const stepStartTime = Date.now();
+        try {
+          const tool = toolRegistry[toolName];
+          if (!tool) {
+            episode.terminated = true;
+            episode.terminationReason = `unknown tool: ${toolName}`;
+            episode.feedback.push({ signal: -1, reason: `unknown tool: ${toolName}` });
+            break;
+          }
 
-        previousResult = result;
+          const result = await tool.handler(input);
+          const duration = Date.now() - stepStartTime;
 
-        // Record receipt if present
-        if (result?.receipt) {
-          const receiptNode = new ReceiptChainNode(result.receipt, previousReceiptNode);
-          receiptChain.push(receiptNode.toJSON());
-          previousReceiptNode = receiptNode;
+          episode.stepResults.push({
+            stepId: randomUUID(),
+            toolName,
+            input,
+            output: result,
+            duration,
+            timestamp: new Date().toISOString(),
+            success: true,
+          });
+
+          previousResult = result;
+
+          // Record receipt if present
+          if (result?.receipt) {
+            const receiptNode = new ReceiptChainNode(result.receipt, previousReceiptNode);
+            receiptChain.push(receiptNode.toJSON());
+            previousReceiptNode = receiptNode;
+          }
+
+          // Compute feedback
+          const feedback = computeHooksFeedback(result, previousResult);
+          episode.feedback.push({
+            signal: feedback,
+            reason: `${toolName} succeeded`,
+          });
+        } catch (err) {
+          const duration = Date.now() - stepStartTime;
+
+          episode.stepResults.push({
+            stepId: randomUUID(),
+            toolName,
+            input,
+            output: null,
+            duration,
+            timestamp: new Date().toISOString(),
+            success: false,
+            error: err.message,
+          });
+
+          episode.terminated = true;
+          episode.terminationReason = `tool failed: ${toolName}`;
+          episode.feedback.push({ signal: -0.5, reason: `${toolName} failed: ${err.message}` });
         }
 
-        // Compute feedback
-        const feedback = computeHooksFeedback(result, previousResult);
-        episode.feedback.push({
-          signal: feedback,
-          reason: `${toolName} succeeded`,
-        });
-      } catch (err) {
-        const duration = Date.now() - stepStartTime;
-
-        episode.stepResults.push({
-          stepId: randomUUID(),
-          toolName,
-          input,
-          output: null,
-          duration,
-          timestamp: new Date().toISOString(),
-          success: false,
-          error: err.message,
-        });
-
-        episode.terminated = true;
-        episode.terminationReason = `tool failed: ${toolName}`;
-        episode.feedback.push({ signal: -0.5, reason: `${toolName} failed: ${err.message}` });
+        episode.stepCount++;
       }
 
-      episode.stepCount++;
+      if (!episode.terminated && episode.stepCount >= maxStepsPerEpisode) {
+        episode.terminated = true;
+        episode.terminationReason = 'max steps reached';
+        episode.feedback.push({ signal: 0, reason: 'max steps reached' });
+      }
+
+      // Calculate metrics
+      const totalFeedback = episode.feedback.reduce((sum, f) => sum + f.signal, 0);
+      const avgFeedback = episode.feedback.length > 0 ? totalFeedback / episode.feedback.length : 0;
+
+      episode.metrics = {
+        stepCount: episode.stepCount,
+        feedbackCount: episode.feedback.length,
+        totalFeedback,
+        avgFeedback,
+      };
+
+      episodes.push(episode);
+      await onEpisodeEnd(episode);
     }
 
-    if (!episode.terminated && episode.stepCount >= maxStepsPerEpisode) {
-      episode.terminated = true;
-      episode.terminationReason = 'max steps reached';
-      episode.feedback.push({ signal: 0, reason: 'max steps reached' });
-    }
+    // Calculate stats
+    const totalFeedback = episodes.reduce((sum, ep) => sum + ep.metrics.totalFeedback, 0);
+    const successCount = episodes.filter(ep => ep.metrics.totalFeedback > 0).length;
 
-    // Calculate metrics
-    const totalFeedback = episode.feedback.reduce((sum, f) => sum + f.signal, 0);
-    const avgFeedback = episode.feedback.length > 0 ? totalFeedback / episode.feedback.length : 0;
-
-    episode.metrics = {
-      stepCount: episode.stepCount,
-      feedbackCount: episode.feedback.length,
+    const stats = {
+      totalEpisodes: episodes.length,
+      successCount,
+      successRate: episodes.length > 0 ? successCount / episodes.length : 0,
       totalFeedback,
-      avgFeedback,
+      avgFeedback: episodes.length > 0 ? totalFeedback / episodes.length : 0,
+      receiptChainLength: receiptChain.length,
     };
 
-    episodes.push(episode);
-    await onEpisodeEnd(episode);
-  }
+    span.setAttributes({
+      'pipeline.stage': 'observe',
+      'pipeline.input.count': hookDefinitions.length,
+    });
 
-  // Calculate stats
-  const totalFeedback = episodes.reduce((sum, ep) => sum + ep.metrics.totalFeedback, 0);
-  const successCount = episodes.filter(ep => ep.metrics.totalFeedback > 0).length;
-
-  const stats = {
-    totalEpisodes: episodes.length,
-    successCount,
-    successRate: episodes.length > 0 ? successCount / episodes.length : 0,
-    totalFeedback,
-    avgFeedback: episodes.length > 0 ? totalFeedback / episodes.length : 0,
-    receiptChainLength: receiptChain.length,
-  };
-
-  return {
-    episodes,
-    finalStore: store,
-    receiptChain,
-    stats,
-  };
+    return {
+      episodes,
+      finalStore: store,
+      receiptChain,
+      stats,
+    };
+  });
 }

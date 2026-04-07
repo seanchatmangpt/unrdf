@@ -14,8 +14,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { createRealTimeValidator } from '../src/streaming/real-time-validator.mjs';
-import { createStore } from '@unrdf/oxigraph';
-import { namedNode, literal } from '@rdfjs/data-model';
+import { createTestStore, namedNode, literal } from '../../test-utils/src/index.mjs';
 
 describe('Real-Time Validator Cache', () => {
   let validator;
@@ -73,7 +72,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 200 validations (exceed cache size of 100)
       for (let i = 0; i < 200; i++) {
@@ -108,7 +107,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       // First validation - cache miss
@@ -137,7 +136,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 5, // Small cache for testing
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 5 deltas (fill cache)
       for (let i = 0; i < 5; i++) {
@@ -178,7 +177,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 3,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 3 deltas (fill cache): [0, 1, 2]
       await validator.validateDelta(createTestDelta(0), store);
@@ -226,7 +225,7 @@ describe('Real-Time Validator Cache', () => {
         // PROPOSED: cacheTTL: 60000, // 60 seconds
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       // First validation
@@ -260,7 +259,7 @@ describe('Real-Time Validator Cache', () => {
         cacheTTL: 60000, // 60 seconds
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       // First validation (cache miss)
@@ -302,7 +301,7 @@ describe('Real-Time Validator Cache', () => {
         cacheTTL: 10000, // 10 seconds
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       await validator.validateDelta(delta, store);
@@ -327,7 +326,7 @@ describe('Real-Time Validator Cache', () => {
         cacheCleanupInterval: 30000, // Cleanup every 30 seconds
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 50 validations
       for (let i = 0; i < 50; i++) {
@@ -369,7 +368,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 1000 validations
       for (let i = 0; i < 1000; i++) {
@@ -387,7 +386,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const beforeMemory = getHeapUsed();
 
       // Add 10,000 validations
@@ -418,7 +417,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 1000,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       const before1 = getHeapUsed();
 
@@ -456,7 +455,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 1000,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Fill cache
       for (let i = 0; i < 1000; i++) {
@@ -491,7 +490,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 100 unique deltas
       for (let i = 0; i < 100; i++) {
@@ -523,7 +522,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 10,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add 10 deltas (fill cache)
       for (let i = 0; i < 10; i++) {
@@ -555,7 +554,7 @@ describe('Real-Time Validator Cache', () => {
         enableCaching: false,
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       // First validation
@@ -576,7 +575,7 @@ describe('Real-Time Validator Cache', () => {
         enableCaching: false,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Add many validations
       for (let i = 0; i < 1000; i++) {
@@ -596,7 +595,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 0,
       });
 
-      const store = createStore();
+      const store = createTestStore();
       const delta = createTestDelta(1);
 
       await validator.validateDelta(delta, store);
@@ -616,7 +615,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 1,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       await validator.validateDelta(createTestDelta(1), store);
       await validator.validateDelta(createTestDelta(2), store);
@@ -639,7 +638,7 @@ describe('Real-Time Validator Cache', () => {
         cacheSize: 100,
       });
 
-      const store = createStore();
+      const store = createTestStore();
 
       // Fill cache
       for (let i = 0; i < 100; i++) {

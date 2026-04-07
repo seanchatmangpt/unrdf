@@ -36,7 +36,7 @@ pnpm run unrdf:discover
 pnpm run unrdf:generate
 ```
 
-Optional monorepo ontology metadata: see `codegen.toml` at the repository root. Sync CLI configuration for templates: `.unrdf.toml`.
+Optional monorepo ontology metadata: see `codegen.toml` at the repository root. Sync CLI configuration for templates: `unrdf.toml`.
 
 ## Manual edits
 

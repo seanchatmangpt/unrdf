@@ -1,0 +1,53 @@
+groups:
+  - id: registry.powl
+    type: attribute_group
+    display_name: 'POWL Process Mining'
+    brief: 'Attributes for POWL (Partially Ordered Workflow Language) autonomic process mining.'
+    attributes:
+      - id: powl.model.slug
+        type: string
+        stability: stable
+        brief: 'URL-safe slug identifying the POWL process model.'
+        examples: ['bicycle-manufacturing', 'hotel-room-service', 'online-shop-checkout']
+
+      - id: powl.model.fitness
+        type: double
+        stability: stable
+        brief: 'Conformance fitness score (0.0–1.0) of the POWL model against the event log.'
+        examples: [0.95, 0.82, 1.0]
+
+      - id: powl.iteration.count
+        type: int
+        stability: stable
+        brief: 'Number of LLM generation and repair iterations performed to reach the final POWL model.'
+        examples: [1, 3, 5]
+
+      - id: powl.model.operator_types
+        type: string[]
+        stability: stable
+        brief: 'POWL operator types present in the discovered model (xor, loop, partial_order).'
+        examples: [['xor', 'partial_order'], ['loop', 'xor'], ['partial_order']]
+
+      - id: powl.discovery.variant
+        type: string
+        stability: stable
+        brief: 'PM4Py POWL discovery algorithm variant used.'
+        examples: ['inductive', 'maximal']
+
+      - id: powl.repair_iteration
+        type: int
+        stability: stable
+        brief: 'Current repair iteration number (1-based). Present only during error repair sub-loops.'
+        examples: [1, 2, 3]
+
+      - id: powl.error_category
+        type: string
+        stability: stable
+        brief: 'Category of error detected during POWL generation: schema validation failure, semantic constraint violation, or conformance threshold breach.'
+        examples: ['schema', 'semantic', 'conformance']
+
+      - id: powl.threshold_met
+        type: boolean
+        stability: stable
+        brief: 'Whether the generated POWL model met the configured minimum fitness threshold.'
+        examples: [true, false]
