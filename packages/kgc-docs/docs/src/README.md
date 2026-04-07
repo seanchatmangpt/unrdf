@@ -1,1 +1,0 @@
-# KGC Docs

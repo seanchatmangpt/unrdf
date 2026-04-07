@@ -13,7 +13,6 @@
     "./v6-deltagate": "./src/integrations/v6-deltagate.mjs",
     "./middleware/rate-limiter": "./src/middleware/rate-limiter.mjs",
     "./middleware/rate-limiter-schema": "./src/middleware/rate-limiter.schema.mjs",
-    "./integrations/yawl": "./src/integrations/yawl.mjs",
     "./integrations/nitro-tasks": "./src/integrations/nitro-tasks.mjs"
   },
   "scripts": {
@@ -35,9 +34,9 @@
     "@ai-sdk/groq": "^3.0.33",
     "@modelcontextprotocol/sdk": "^1.11.0",
     "@opentelemetry/api": "^1.7.0",
-    "@opentelemetry/exporter-trace-otlp-grpc": "^0.26.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
     "@opentelemetry/resources": "^1.17.0",
-    "@opentelemetry/sdk-node": "^0.26.0",
+    "@opentelemetry/sdk-node": "^0.208.0",
     "@opentelemetry/sdk-trace-node": "^1.17.0",
     "@opentelemetry/semantic-conventions": "^1.17.0",
     "@unrdf/hooks": "26.4.4",
@@ -45,7 +44,7 @@
     "ai": "^6.0.146",
     "cron-parser": "^5.4.0",
     "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "vitest": "^4.0.16"

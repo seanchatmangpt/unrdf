@@ -1,0 +1,16 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "**80/20 automation: 20% of scripts that deliver 80% of developer productivity.**",
+  "main": "generate-phase2-docs.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "duckduckgo-search": "^1.0.7"
+  }
+}

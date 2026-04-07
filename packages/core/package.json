@@ -63,7 +63,7 @@
     "rdf-canonize": "^5.0.0",
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
-    "zod": "^4.1.13"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

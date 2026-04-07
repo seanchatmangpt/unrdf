@@ -1,0 +1,95 @@
+groups:
+  - id: registry.groq
+    type: attribute_group
+    display_name: Groq LLM Attributes
+    brief: >
+      Attributes for Groq LLM API calls used for RDF generation and knowledge
+      engineering tasks.
+    attributes:
+      - id: groq.api.model
+        type: string
+        stability: stable
+        brief: The Groq model identifier being used for generation.
+        examples: ['llama-3.3-70b-versatile', 'llama-3.1-8b-instruct', 'mixtral-8x7b-32768']
+
+      - id: groq.api.provider
+        type: string
+        stability: stable
+        brief: The API provider hosting the model.
+        examples: ['groq', 'anthropic', 'openai']
+
+      - id: groq.api.endpoint
+        type: string
+        stability: stable
+        brief: The API endpoint URL being called.
+        examples: ['https://api.groq.com/openai/v1/chat/completions']
+
+      - id: groq.generation.prompt_length
+        type: int
+        stability: stable
+        brief: Length in characters of the prompt sent to the LLM.
+        examples: [100, 500, 4000]
+
+      - id: groq.generation.response_length
+        type: int
+        stability: stable
+        brief: Length in characters of the LLM response content.
+        examples: [50, 1000, 8000]
+
+      - id: groq.generation.temperature
+        type: double
+        stability: stable
+        brief: Temperature parameter used for generation (controls randomness).
+        examples: [0.0, 0.5, 0.7, 1.0]
+
+      - id: groq.generation.max_tokens
+        type: int
+        stability: stable
+        brief: Maximum tokens requested in the generation.
+        examples: [128, 500, 4096]
+
+      - id: groq.rdf.triples_generated
+        type: int
+        stability: stable
+        brief: Number of RDF triples successfully generated and parsed.
+        examples: [0, 1, 3, 10]
+
+      - id: groq.rdf.triples_parse_error
+        type: boolean
+        stability: stable
+        brief: Whether the LLM response could be parsed as valid RDF triples.
+
+      - id: groq.response.duration_ms
+        type: int
+        stability: stable
+        brief: Duration in milliseconds of the HTTP request to Groq API.
+        examples: [100, 500, 2000]
+
+      - id: groq.response.status_code
+        type: int
+        stability: stable
+        brief: HTTP status code returned by the Groq API.
+        examples: [200, 400, 401, 429, 500]
+
+# Span documentation (for reference - not used by Weaver code generation)
+#
+# groq.rdf.generation (parent span)
+#   - groq.api.model
+#   - groq.api.provider
+#   - groq.rdf.triples_generated
+#   - groq.response.duration_ms
+#   Events: groq.rdf.generation.error
+#
+# groq.http.request (child of groq.rdf.generation)
+#   - groq.api.endpoint
+#   - groq.response.status_code
+#   - groq.response.duration_ms
+#
+# groq.json.parse (child of groq.rdf.generation)
+#   - groq.rdf.triples_generated
+#   - groq.rdf.triples_parse_error
+#
+# rdf.store.add (child of groq.rdf.generation)
+#   - unrdf.rdf.operation
+#   - unrdf.rdf.quad_count
+#   - unrdf.rdf.store_backend

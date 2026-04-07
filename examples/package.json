@@ -6,7 +6,6 @@
   "description": "UNRDF usage examples",
   "dependencies": {
     "@unrdf/core": "workspace:*",
-    "@unrdf/knowledge-engine": "workspace:*",
     "@unrdf/hooks": "workspace:*"
   },
   "scripts": {

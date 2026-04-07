@@ -42,18 +42,16 @@
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@unrdf/core": "26.4.4",
-    "@unrdf/daemon": "26.4.4",
-    "@unrdf/federation": "26.4.4",
-    "@unrdf/hooks": "26.4.4",
-    "@unrdf/kgn": "26.4.4",
-    "@unrdf/streaming": "26.4.4",
+    "@unrdf/core": "workspace:*",
+    "@unrdf/federation": "workspace:*",
+    "@unrdf/hooks": "workspace:*",
+    "@unrdf/streaming": "workspace:*",
     "citty": "^0.1.6",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",
     "table": "^6.9.0",
     "yaml": "^2.8.2",
-    "zod": "^3.25.76"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",

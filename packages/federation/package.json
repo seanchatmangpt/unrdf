@@ -41,7 +41,7 @@
     "@unrdf/core": "26.4.4",
     "@unrdf/hooks": "26.4.4",
     "prom-client": "^15.0.0",
-    "zod": "^4.1.13"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
