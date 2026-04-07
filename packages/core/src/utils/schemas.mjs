@@ -30,10 +30,7 @@ export const TransactionHookSchema = z.object({
   id: z.string(),
   mode: z.enum(['pre', 'post']),
   condition: z.function(),
-  effect: z.union([
-    z.literal('veto'),
-    z.function(),
-  ]),
+  effect: z.union([z.literal('veto'), z.function()]),
 });
 
 /**
