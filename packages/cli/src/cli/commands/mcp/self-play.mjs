@@ -10,10 +10,7 @@
 
 import { defineCommand } from 'citty';
 import { writeFileSync } from 'fs';
-import {
-  runSelfPlayLoop,
-  SelfPlayPolicies,
-} from '../../../mcp-self-play.mjs';
+import { runSelfPlayLoop, SelfPlayPolicies } from '../../../mcp-self-play.mjs';
 import { startMCPServer } from '../../../mcp.mjs';
 
 /**
@@ -85,7 +82,7 @@ export const selfPlayCommand = defineCommand({
 
       // Mock tool handlers for testing (in production, these call actual MCP tools)
       toolRegistry.unrdf_graph_query = {
-        handler: async (_input) => {
+        handler: async _input => {
           // Simulate SPARQL query result
           return {
             success: true,
@@ -96,7 +93,7 @@ export const selfPlayCommand = defineCommand({
       };
 
       toolRegistry.unrdf_hooks_execute = {
-        handler: async (_input) => {
+        handler: async _input => {
           // Simulate hook execution
           return {
             success: true,
@@ -108,7 +105,7 @@ export const selfPlayCommand = defineCommand({
       };
 
       toolRegistry.unrdf_graph_stats = {
-        handler: async (_input) => {
+        handler: async _input => {
           // Simulate graph stats
           return {
             quads: Math.floor(Math.random() * 10000) + 100,

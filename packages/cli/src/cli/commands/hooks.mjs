@@ -183,7 +183,9 @@ const executeCommand = defineCommand({
         if (withEffects.length > 0) {
           console.log('\n🔧 Effect Details');
           withEffects.forEach(r => {
-            console.log(`  ${r.name}: ${r.effectResult.kind} → +${r.effectResult.quadsAdded} quads`);
+            console.log(
+              `  ${r.name}: ${r.effectResult.kind} → +${r.effectResult.quadsAdded} quads`
+            );
           });
         }
       }
@@ -719,7 +721,12 @@ function generateFIBOTemplate() {
   return [
     {
       id: randomUUID(),
-      meta: { name: 'verify-regulatory-compliance', version: '1.0.0', description: 'Verify regulatory compliance status for FIBO trades', tags: ['fibo', 'compliance'] },
+      meta: {
+        name: 'verify-regulatory-compliance',
+        version: '1.0.0',
+        description: 'Verify regulatory compliance status for FIBO trades',
+        tags: ['fibo', 'compliance'],
+      },
       condition: {
         kind: 'sparql-ask',
         query: `
@@ -749,7 +756,12 @@ function generateFIBOTemplate() {
     },
     {
       id: randomUUID(),
-      meta: { name: 'assess-counterparty-risk', version: '1.0.0', description: 'Flag high-risk counterparties for manual approval', tags: ['fibo', 'risk'] },
+      meta: {
+        name: 'assess-counterparty-risk',
+        version: '1.0.0',
+        description: 'Flag high-risk counterparties for manual approval',
+        tags: ['fibo', 'risk'],
+      },
       condition: {
         kind: 'datalog',
         facts: [],
@@ -774,7 +786,12 @@ function generateFIBOTemplate() {
     },
     {
       id: randomUUID(),
-      meta: { name: 'maintain-audit-trail', version: '1.0.0', description: 'Mark completed transactions as audited', tags: ['fibo', 'audit'] },
+      meta: {
+        name: 'maintain-audit-trail',
+        version: '1.0.0',
+        description: 'Mark completed transactions as audited',
+        tags: ['fibo', 'audit'],
+      },
       condition: {
         kind: 'sparql-select',
         query: `
@@ -812,7 +829,12 @@ function generateSecurityTemplate() {
   return [
     {
       id: randomUUID(),
-      meta: { name: 'validate-access-control', version: '1.0.0', description: 'Grant access to authorized users', tags: ['security', 'access-control'] },
+      meta: {
+        name: 'validate-access-control',
+        version: '1.0.0',
+        description: 'Grant access to authorized users',
+        tags: ['security', 'access-control'],
+      },
       condition: {
         kind: 'datalog',
         facts: ['admin(alice)', 'user(bob)', 'role(admin)', 'role(user)'],
@@ -846,7 +868,12 @@ function generateComplianceTemplate() {
   return [
     {
       id: randomUUID(),
-      meta: { name: 'check-data-quality', version: '1.0.0', description: 'Annotate records with data quality scores', tags: ['compliance', 'data-quality'] },
+      meta: {
+        name: 'check-data-quality',
+        version: '1.0.0',
+        description: 'Annotate records with data quality scores',
+        tags: ['compliance', 'data-quality'],
+      },
       condition: {
         kind: 'threshold',
         query: 'SELECT (COUNT(?record) as ?count) WHERE { ?record a :Record }',
@@ -881,7 +908,11 @@ function generateGenericTemplate() {
   return [
     {
       id: randomUUID(),
-      meta: { name: 'example-sparql-ask', version: '1.0.0', description: 'Basic template demonstrating SPARQL ASK condition with CONSTRUCT effect' },
+      meta: {
+        name: 'example-sparql-ask',
+        version: '1.0.0',
+        description: 'Basic template demonstrating SPARQL ASK condition with CONSTRUCT effect',
+      },
       condition: {
         kind: 'sparql-ask',
         query: 'ASK { ?s ?p ?o }',

@@ -17,10 +17,30 @@ export const eventLog = [];
 const DEFAULT_OPERATIONS = [
   { id: 'test-op', name: 'Test Operation', category: 'testing', priority: 'low' },
   { id: 'backup-graphs', name: 'Backup RDF Graphs', category: 'maintenance', priority: 'high' },
-  { id: 'cleanup-temp', name: 'Cleanup Temporary Files', category: 'maintenance', priority: 'medium' },
-  { id: 'sync-federation', name: 'Synchronize Federation Nodes', category: 'distribution', priority: 'high' },
-  { id: 'compact-storage', name: 'Compact Storage Engine', category: 'optimization', priority: 'low' },
-  { id: 'validate-integrity', name: 'Validate Data Integrity', category: 'validation', priority: 'high' },
+  {
+    id: 'cleanup-temp',
+    name: 'Cleanup Temporary Files',
+    category: 'maintenance',
+    priority: 'medium',
+  },
+  {
+    id: 'sync-federation',
+    name: 'Synchronize Federation Nodes',
+    category: 'distribution',
+    priority: 'high',
+  },
+  {
+    id: 'compact-storage',
+    name: 'Compact Storage Engine',
+    category: 'optimization',
+    priority: 'low',
+  },
+  {
+    id: 'validate-integrity',
+    name: 'Validate Data Integrity',
+    category: 'validation',
+    priority: 'high',
+  },
 ];
 
 /**
