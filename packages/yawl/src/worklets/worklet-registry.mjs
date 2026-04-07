@@ -26,11 +26,7 @@ import { randomUUID } from 'crypto';
  * - Function: (context) => context.amount > 10000
  * - Boolean: true (always match)
  */
-export const HandlerConditionSchema = z.union([
-  z.string().min(1),
-  z.function(),
-  z.boolean(),
-]);
+export const HandlerConditionSchema = z.union([z.string().min(1), z.function(), z.boolean()]);
 
 /**
  * Worklet handler specification
