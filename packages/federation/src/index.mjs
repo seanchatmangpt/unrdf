@@ -36,6 +36,8 @@ export {
   updatePeerMetrics,
   trackConcurrentQuery,
   getMetricsState,
+  getMetrics,
+  getMetricsJSON,
   resetMetrics,
 } from './federation/metrics.mjs';
 

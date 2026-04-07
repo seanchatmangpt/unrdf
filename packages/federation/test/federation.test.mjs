@@ -510,8 +510,8 @@ describe('Health Check Error Handling', () => {
     await coordinator.queryPeer('peer1', 'SELECT * WHERE { ?s ?p ?o }');
 
     const peer = coordinator.getPeer('peer1');
-    // When fetch fails, executeFederatedQuery returns {success: false}, which sets status to 'degraded'
-    expect(peer.status).toBe('degraded');
+    // Connection refused is a network-level failure → unreachable (not degraded)
+    expect(peer.status).toBe('unreachable');
   });
 });
 
