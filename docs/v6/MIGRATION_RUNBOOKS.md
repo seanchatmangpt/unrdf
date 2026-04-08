@@ -1,4 +1,4 @@
-# v6 Migration Runbooks (P1 Packages)
+# Migration Runbooks (P1 Packages)
 
 **Version**: 6.0.0-alpha.1
 **Status**: Implementation Ready
@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document provides step-by-step migration runbooks for the **10 P1 (Priority 1) packages** in the UNRDF v6 migration. Each runbook follows the same structure:
+This document provides step-by-step migration runbooks for the **10 P1 (Priority 1) packages** in the UNRDF migration. Each runbook follows the same structure:
 
 1. **Current State Assessment**
 2. **Pattern Application Plan**
@@ -20,18 +20,18 @@ This document provides step-by-step migration runbooks for the **10 P1 (Priority
 
 ## Package Index
 
-| Package | Current Level | Target Level | Effort (hours) | Status |
-|---------|---------------|--------------|----------------|--------|
-| [@unrdf/oxigraph](#1-unrdfoxigraph) | L1 | L5 | 20h | Planned |
-| [@unrdf/core](#2-unrdfcore) | L2 | L5 | 24h | Planned |
-| [@unrdf/kgc-4d](#3-unrdfkgc-4d) | L3 | L5 | 16h | Planned |
-| [@unrdf/hooks](#4-unrdfhooks) | L2 | L4 | 18h | Planned |
-| [@unrdf/streaming](#5-unrdfstreaming) | L1 | L3 | 20h | Planned |
-| [@unrdf/federation](#6-unrdffederation) | L2 | L4 | 22h | Planned |
-| [@unrdf/cli](#7-unrdfcli) | L2 | L3 | 16h | Planned |
-| [@unrdf/yawl](#8-unrdfyawl) | L3 | L5 | 24h | Planned |
-| [@unrdf/knowledge-engine](#9-unrdfknowledge-engine) | L1 | L3 | 18h | Planned |
-| [@unrdf/graph-analytics](#10-unrdfgraph-analytics) | L1 | L3 | 18h | Planned |
+| Package                                             | Current Level | Target Level | Effort (hours) | Status  |
+| --------------------------------------------------- | ------------- | ------------ | -------------- | ------- |
+| [@unrdf/oxigraph](#1-unrdfoxigraph)                 | L1            | L5           | 20h            | Planned |
+| [@unrdf/core](#2-unrdfcore)                         | L2            | L5           | 24h            | Planned |
+| [@unrdf/kgc-4d](#3-unrdfkgc-4d)                     | L3            | L5           | 16h            | Planned |
+| [@unrdf/hooks](#4-unrdfhooks)                       | L2            | L4           | 18h            | Planned |
+| [@unrdf/streaming](#5-unrdfstreaming)               | L1            | L3           | 20h            | Planned |
+| [@unrdf/federation](#6-unrdffederation)             | L2            | L4           | 22h            | Planned |
+| [@unrdf/cli](#7-unrdfcli)                           | L2            | L3           | 16h            | Planned |
+| [@unrdf/yawl](#8-unrdfyawl)                         | L3            | L5           | 24h            | Planned |
+| [@unrdf/knowledge-engine](#9-unrdfknowledge-engine) | L1            | L3           | 18h            | Planned |
+| [@unrdf/graph-analytics](#10-unrdfgraph-analytics)  | L1            | L3           | 18h            | Planned |
 
 **Total**: 196 hours (parallelizable across 5 developers = ~5 weeks)
 
@@ -47,6 +47,7 @@ This document provides step-by-step migration runbooks for the **10 P1 (Priority
 ### Current State Assessment
 
 **What Exists**:
+
 - Pure Oxigraph WASM adapter
 - `createStore()` async factory
 - Basic SPARQL execution
@@ -54,6 +55,7 @@ This document provides step-by-step migration runbooks for the **10 P1 (Priority
 - No Zod validation
 
 **What's Missing**:
+
 - Receipt generation for store operations
 - Zod schemas for store API
 - Deterministic snapshot hashing
@@ -88,32 +90,34 @@ import { z } from 'zod';
 export const QuadSchema = z.object({
   subject: z.object({
     termType: z.literal('NamedNode'),
-    value: z.string()
+    value: z.string(),
   }),
   predicate: z.object({
     termType: z.literal('NamedNode'),
-    value: z.string()
+    value: z.string(),
   }),
   object: z.union([
     z.object({
       termType: z.literal('NamedNode'),
-      value: z.string()
+      value: z.string(),
     }),
     z.object({
       termType: z.literal('Literal'),
       value: z.string(),
-      datatype: z.object({ value: z.string() }).optional()
-    })
+      datatype: z.object({ value: z.string() }).optional(),
+    }),
   ]),
-  graph: z.object({
-    termType: z.literal('DefaultGraph')
-  }).optional()
+  graph: z
+    .object({
+      termType: z.literal('DefaultGraph'),
+    })
+    .optional(),
 });
 
 export const StoreSnapshotSchema = z.object({
   quads: z.array(QuadSchema),
   quadCount: z.number().int().nonnegative(),
-  hash: z.string().length(64) // BLAKE3
+  hash: z.string().length(64), // BLAKE3
 });
 ```
 
@@ -167,7 +171,7 @@ export async function snapshotStore(store) {
     quads.push({
       subject: { termType: quad.subject.termType, value: quad.subject.value },
       predicate: { termType: quad.predicate.termType, value: quad.predicate.value },
-      object: { termType: quad.object.termType, value: quad.object.value }
+      object: { termType: quad.object.termType, value: quad.object.value },
     });
   }
 
@@ -181,7 +185,7 @@ export async function snapshotStore(store) {
   const snapshot = {
     quads,
     quadCount: quads.length,
-    hash: await computeBlake3(deterministicSerialize(quads))
+    hash: await computeBlake3(deterministicSerialize(quads)),
   };
 
   return StoreSnapshotSchema.parse(snapshot);
@@ -278,12 +282,14 @@ timeout 10s pnpm test
 ### Current State Assessment
 
 **What Exists**:
+
 - RDF operations (add, delete, query)
 - SPARQL utilities
 - Basic Zod schemas (partial)
 - No receipts
 
 **What's Missing**:
+
 - Receipt HOF for all operations
 - Complete Zod coverage
 - Deterministic SPARQL results
@@ -308,7 +314,7 @@ import { createDelta } from '@unrdf/v6-core/delta';
 export function createRDFDelta(op, subject, predicate, object, options = {}) {
   return createDelta(op, subject, predicate, object, {
     ...options,
-    package: '@unrdf/core'
+    package: '@unrdf/core',
   });
 }
 
@@ -366,12 +372,7 @@ import { createStore } from '@unrdf/oxigraph';
 
 describe('Core Delta Integration', () => {
   it('should create and apply delta', async () => {
-    const delta = createRDFDelta(
-      'add',
-      'http://ex.org/s',
-      'http://ex.org/p',
-      'value'
-    );
+    const delta = createRDFDelta('add', 'http://ex.org/s', 'http://ex.org/p', 'value');
 
     const store = await createStore();
     await applyDelta(delta, store);
@@ -422,12 +423,14 @@ timeout 10s pnpm test
 ### Current State Assessment
 
 **What Exists**:
+
 - Receipt generation (BLAKE3)
 - `freezeUniverse()` snapshot function
 - Deterministic hashing (already implemented!)
 - Git integration
 
 **What's Missing**:
+
 - Cross-package composition support
 - Zod schemas for receipts
 - Delta Contract integration
@@ -454,8 +457,8 @@ export const KGCFreezeReceiptSchema = BaseReceiptSchema.extend({
     storeHash: z.string().length(64),
     quadCount: z.number().int().nonnegative(),
     gitRef: z.string().optional(),
-    timestamp: z.string()
-  })
+    timestamp: z.string(),
+  }),
 });
 ```
 
@@ -482,8 +485,8 @@ export async function freezeUniverse(store) {
     payload: {
       storeHash,
       quadCount,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   };
 
   return KGCFreezeReceiptSchema.parse(receipt);
@@ -501,9 +504,9 @@ export const KGCOutputSchema = z.object({
   snapshot: z.object({
     hash: z.string().length(64),
     quadCount: z.number(),
-    timestamp: z.string()
+    timestamp: z.string(),
   }),
-  receipt: z.any()
+  receipt: z.any(),
 });
 
 export function getOutputSchema() {
@@ -557,13 +560,13 @@ import { z } from 'zod';
 export const HookContextSchema = z.object({
   delta: z.any().optional(),
   store: z.any(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 export const HookResultSchema = z.object({
   allowed: z.boolean(),
   reason: z.string().optional(),
-  modifications: z.any().optional()
+  modifications: z.any().optional(),
 });
 ```
 
@@ -600,7 +603,7 @@ import { DeltaSchema } from '@unrdf/v6-core/delta';
 export function createDeltaValidationHook(policyFn) {
   return {
     name: 'delta-validator',
-    handler: async (context) => {
+    handler: async context => {
       // Validate delta structure
       const delta = DeltaSchema.parse(context.delta);
 
@@ -609,9 +612,9 @@ export function createDeltaValidationHook(policyFn) {
 
       return {
         allowed,
-        reason: allowed ? undefined : 'Policy check failed'
+        reason: allowed ? undefined : 'Policy check failed',
       };
-    }
+    },
   };
 }
 ```
@@ -623,11 +626,13 @@ export function createDeltaValidationHook(policyFn) {
 ### 5. @unrdf/streaming
 
 **Key Changes**:
+
 - Convert EventEmitter → AsyncIterator
 - Add receipts to stream completion
 - Deterministic chunk ordering
 
 **Commands**:
+
 ```bash
 # Add stream adapter
 pnpm add @unrdf/v6-compat
@@ -642,11 +647,13 @@ for await (const quad of streamToAsync(legacyStream)) {
 ### 6. @unrdf/federation
 
 **Key Changes**:
+
 - SPARQL string → template literal
 - Add timeout enforcement
 - Receipt for query execution
 
 **Commands**:
+
 ```bash
 # Update queries
 const results = await federation.query(
@@ -659,11 +666,13 @@ const results = await federation.query(
 ### 7. @unrdf/cli
 
 **Key Changes**:
+
 - Add `kgc delta` commands
 - Add `kgc receipt` commands
 - JSON output mode
 
 **Commands**:
+
 ```bash
 # Register commands
 kgc delta create --file delta.json
@@ -673,11 +682,13 @@ kgc receipt verify --chain --from genesis
 ### 8. @unrdf/yawl
 
 **Key Changes**:
+
 - Workflow transitions → Deltas
 - Task state changes generate receipts
 - Deterministic workflow execution
 
 **Commands**:
+
 ```bash
 # Wrap workflow execution
 const { result, receipt } = await workflow.execute(task);
@@ -687,10 +698,12 @@ await kgc.freeze(receipt);
 ### 9. @unrdf/knowledge-engine
 
 **Key Changes**:
+
 - Reasoning operations → Receipts
 - Inference rules validation
 
 **Commands**:
+
 ```bash
 # Add receipts to inference
 const { inferences, receipt } = await engine.infer(rules, store);
@@ -699,10 +712,12 @@ const { inferences, receipt } = await engine.infer(rules, store);
 ### 10. @unrdf/graph-analytics
 
 **Key Changes**:
+
 - Algorithm execution → Receipts
 - Deterministic graph traversal
 
 **Commands**:
+
 ```bash
 # Wrap analytics
 const { result, receipt } = await analytics.pageRank(graph);
