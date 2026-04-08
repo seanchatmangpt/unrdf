@@ -1,4 +1,4 @@
-# V6 Deployment Rollback & Contingency Plan
+# Deployment Rollback & Contingency Plan
 
 **Version:** 1.0.0
 **Last Updated:** 2025-12-27
@@ -8,16 +8,16 @@
 
 ## Executive Summary
 
-This document provides **production-validated rollback procedures** and contingency plans for UNRDF v6 deployment. All procedures are **executable and tested** - not theoretical documentation.
+This document provides **production-validated rollback procedures** and contingency plans for UNRDF deployment. All procedures are **executable and tested** - not theoretical documentation.
 
 ### Quick Reference
 
-| Scenario | Command | Duration | Risk |
-|----------|---------|----------|------|
-| **Full Rollback** | `node scripts/v6-rollback.mjs` | ~5min | LOW |
-| **Dry Run** | `node scripts/v6-rollback.mjs --dry-run` | ~30s | NONE |
-| **Dependency Only** | See [Dependency Rollback](#dependency-rollback) | ~2min | LOW |
-| **Emergency Stop** | `git checkout [tag]` + `pnpm install` | ~3min | MEDIUM |
+| Scenario            | Command                                         | Duration | Risk   |
+| ------------------- | ----------------------------------------------- | -------- | ------ |
+| **Full Rollback**   | `node scripts/rollback.mjs`                     | ~5min    | LOW    |
+| **Dry Run**         | `node scripts/rollback.mjs --dry-run`           | ~30s     | NONE   |
+| **Dependency Only** | See [Dependency Rollback](#dependency-rollback) | ~2min    | LOW    |
+| **Emergency Stop**  | `git checkout [tag]` + `pnpm install`           | ~3min    | MEDIUM |
 
 ---
 
@@ -37,27 +37,28 @@ This document provides **production-validated rollback procedures** and continge
 
 ### CRITICAL: Create Snapshot BEFORE Deployment
 
-**NEVER deploy v6 without a snapshot.** This is your safety net.
+**NEVER deploy without a snapshot.** This is your safety net.
 
 ```bash
 # Create snapshot with auto-generated name
-node scripts/v6-snapshot.mjs
+node scripts/snapshot.mjs
 
 # OR create snapshot with custom name
-node scripts/v6-snapshot.mjs pre-v6-production-2025-12-27
+node scripts/snapshot.mjs pre-production-2025-12-27
 
 # Verify snapshot created
 ls -la .rollback-snapshots/
 ```
 
 **Expected Output:**
+
 ```
 ✓ Snapshot created successfully
   Location: .rollback-snapshots/v5-main-2025-12-27
   Commit: a1b2c3d (main)
 
 To restore this snapshot:
-  node scripts/v6-rollback.mjs --snapshot v5-main-2025-12-27
+  node scripts/rollback.mjs --snapshot v5-main-2025-12-27
 ```
 
 ### What Gets Snapshotted?
@@ -87,19 +88,20 @@ To restore this snapshot:
 
 ```bash
 # Step 1: Dry run (ALWAYS DO THIS FIRST)
-node scripts/v6-rollback.mjs --dry-run
+node scripts/rollback.mjs --dry-run
 
 # Step 2: Review dry run output
 # Verify it would restore correct snapshot
 
 # Step 3: Execute rollback
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 
 # Step 4: Verify rollback
 cat rollback-report.json
 ```
 
 **What It Does:**
+
 1. Creates pre-rollback snapshot (safety)
 2. Finds latest v5 snapshot
 3. Restores all `package.json` files
@@ -121,10 +123,10 @@ cat rollback-report.json
 ls -lt .rollback-snapshots/
 
 # Rollback to specific snapshot
-node scripts/v6-rollback.mjs --snapshot v5-main-2025-12-27
+node scripts/rollback.mjs --snapshot v5-main-2025-12-27
 
 # Skip post-rollback tests (faster, but risky)
-node scripts/v6-rollback.mjs --snapshot v5-main-2025-12-27 --skip-tests
+node scripts/rollback.mjs --snapshot v5-main-2025-12-27 --skip-tests
 ```
 
 ### 3. Force Rollback (Uncommitted Changes)
@@ -133,11 +135,11 @@ node scripts/v6-rollback.mjs --snapshot v5-main-2025-12-27 --skip-tests
 
 ```bash
 # WARNING: This will discard uncommitted changes
-node scripts/v6-rollback.mjs --force
+node scripts/rollback.mjs --force
 
 # Better: Stash changes first
 git stash
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 git stash pop  # Restore changes after rollback
 ```
 
@@ -188,7 +190,8 @@ timeout 15s pnpm lint
 ### Scenario 1: Migration Fails
 
 **Symptoms:**
-- Import errors after v6 upgrade
+
+- Import errors after upgrade
 - `Cannot find module '@unrdf/core'`
 - Type errors in production
 
@@ -198,7 +201,7 @@ timeout 15s pnpm lint
 
 ```bash
 # Immediate: Full rollback
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 
 # Investigation: Check what broke
 git diff [rollback-commit]..HEAD -- packages/core/src/
@@ -208,13 +211,15 @@ git diff [rollback-commit]..HEAD -- packages/core/src/
 ```
 
 **Prevention:**
-- Run migration validator: `node scripts/v6-validate.mjs`
+
+- Run migration validator: `node scripts/validate.mjs`
 - Check all imports: `grep -r "from '@unrdf" packages/`
 - Verify exports: Check `package.json` exports field
 
 ### Scenario 2: Tests Fail in Production
 
 **Symptoms:**
+
 - Tests pass locally, fail in CI/production
 - Environment-specific failures
 - Flaky tests
@@ -233,7 +238,7 @@ node scripts/validate-env.sh
 
 # Step 3: Rollback if critical
 if [[ $(grep -c "FAIL" test-failures.log) -gt 5 ]]; then
-  node scripts/v6-rollback.mjs
+  node scripts/rollback.mjs
 fi
 
 # Step 4: Fix and redeploy
@@ -243,6 +248,7 @@ fi
 ```
 
 **Prevention:**
+
 - Run full test suite: `timeout 120s pnpm test`
 - Check coverage: `pnpm test:coverage`
 - Validate CI environment matches production
@@ -250,6 +256,7 @@ fi
 ### Scenario 3: Performance Degrades
 
 **Symptoms:**
+
 - Tests timing out
 - Slower execution (>20% regression)
 - Memory leaks
@@ -267,7 +274,7 @@ node benchmarks/run-all.mjs regression
 
 # Step 3: If regression >20%, rollback
 if [[ $REGRESSION_PCT -gt 20 ]]; then
-  node scripts/v6-rollback.mjs
+  node scripts/rollback.mjs
 fi
 
 # Step 4: Profile and optimize
@@ -284,6 +291,7 @@ node scripts/profile.mjs cpu
 | **Build Time** | 8s | <15s | >30s |
 
 **Prevention:**
+
 - Baseline before deploy: `pnpm benchmark:baseline`
 - Compare after deploy: `pnpm benchmark:compare`
 - Monitor memory: `pnpm benchmark:memory`
@@ -291,6 +299,7 @@ node scripts/profile.mjs cpu
 ### Scenario 4: Breaking Changes Cause Issues
 
 **Symptoms:**
+
 - Zod v4 schema validation errors
 - `rdf-canonize` API changes
 - Type mismatches
@@ -300,6 +309,7 @@ node scripts/profile.mjs cpu
 **Response:**
 
 **For Zod 3.x → 4.x:**
+
 ```bash
 # Check for breaking changes
 grep -r "z\\.object\|z\\.string" packages/core/src/
@@ -310,10 +320,11 @@ grep -r "z\\.object\|z\\.string" packages/core/src/
 # - .superRefine() signature changed
 
 # If too many breaks, rollback
-node scripts/v6-rollback.mjs --snapshot pre-v6-zod3
+node scripts/rollback.mjs --snapshot pre-zod3
 ```
 
 **For rdf-canonize 2.x → 5.x:**
+
 ```bash
 # Check API usage
 grep -r "canonize\|normalize" packages/core/src/
@@ -324,11 +335,13 @@ grep -r "canonize\|normalize" packages/core/src/
 # - Options structure changed
 
 # Rollback if needed
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 ```
 
 **Mitigation:**
+
 1. Pin dependencies temporarily:
+
    ```json
    "dependencies": {
      "zod": "3.25.76",
@@ -337,6 +350,7 @@ node scripts/v6-rollback.mjs
    ```
 
 2. Create compatibility layer:
+
    ```javascript
    // packages/core/src/compat/zod-compat.mjs
    export { z } from 'zod';
@@ -351,6 +365,7 @@ node scripts/v6-rollback.mjs
 ### Scenario 5: Dependency Resolution Fails
 
 **Symptoms:**
+
 - `pnpm install` fails
 - Peer dependency conflicts
 - `ENOENT` errors
@@ -370,7 +385,7 @@ cp .rollback-snapshots/[snapshot]/pnpm-lock.yaml ./
 pnpm install --frozen-lockfile
 
 # Step 3: If still fails, full rollback
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 
 # Step 4: Verify registry access
 pnpm ping
@@ -378,6 +393,7 @@ curl -I https://registry.npmjs.org/@unrdf/core
 ```
 
 **Prevention:**
+
 - Commit `pnpm-lock.yaml` always
 - Use `--frozen-lockfile` in CI
 - Mirror critical packages if needed
@@ -388,41 +404,43 @@ curl -I https://registry.npmjs.org/@unrdf/core
 
 ### Risk Matrix
 
-| Risk | Probability | Impact | Mitigation | Detection |
-|------|-------------|--------|------------|-----------|
-| **Dependency conflicts** | HIGH (80%) | HIGH | Pin versions, test matrix | `pnpm install` failure |
-| **Breaking API changes** | MEDIUM (40%) | HIGH | Migration validator, comprehensive tests | Import errors, type errors |
-| **Performance regression** | MEDIUM (30%) | MEDIUM | Benchmark suite, profiling | Timeout failures, slow tests |
-| **Test failures** | MEDIUM (35%) | HIGH | Full test suite, CI validation | CI failures, flaky tests |
-| **Rollback script fails** | LOW (5%) | CRITICAL | Manual procedures, multiple backups | Script error, validation fail |
-| **Data loss** | VERY LOW (1%) | CRITICAL | Snapshots, git history | Missing files, corrupt data |
-| **Production outage** | LOW (10%) | CRITICAL | Staged rollout, canary deployment | Monitoring alerts, user reports |
+| Risk                       | Probability   | Impact   | Mitigation                               | Detection                       |
+| -------------------------- | ------------- | -------- | ---------------------------------------- | ------------------------------- |
+| **Dependency conflicts**   | HIGH (80%)    | HIGH     | Pin versions, test matrix                | `pnpm install` failure          |
+| **Breaking API changes**   | MEDIUM (40%)  | HIGH     | Migration validator, comprehensive tests | Import errors, type errors      |
+| **Performance regression** | MEDIUM (30%)  | MEDIUM   | Benchmark suite, profiling               | Timeout failures, slow tests    |
+| **Test failures**          | MEDIUM (35%)  | HIGH     | Full test suite, CI validation           | CI failures, flaky tests        |
+| **Rollback script fails**  | LOW (5%)      | CRITICAL | Manual procedures, multiple backups      | Script error, validation fail   |
+| **Data loss**              | VERY LOW (1%) | CRITICAL | Snapshots, git history                   | Missing files, corrupt data     |
+| **Production outage**      | LOW (10%)     | CRITICAL | Staged rollout, canary deployment        | Monitoring alerts, user reports |
 
 ### Risk Scoring
 
 **Formula:** `Risk Score = Probability × Impact × (1 - Mitigation Effectiveness)`
 
-| Risk | Score | Priority |
-|------|-------|----------|
-| Dependency conflicts | 24/100 | P1 - Address before deploy |
-| Breaking API changes | 16/100 | P1 - Address before deploy |
-| Test failures | 14/100 | P2 - Monitor closely |
-| Performance regression | 12/100 | P2 - Monitor closely |
-| Production outage | 10/100 | P1 - Have rollback ready |
-| Rollback script fails | 5/100 | P2 - Test procedures |
-| Data loss | 1/100 | P3 - Monitor |
+| Risk                   | Score  | Priority                   |
+| ---------------------- | ------ | -------------------------- |
+| Dependency conflicts   | 24/100 | P1 - Address before deploy |
+| Breaking API changes   | 16/100 | P1 - Address before deploy |
+| Test failures          | 14/100 | P2 - Monitor closely       |
+| Performance regression | 12/100 | P2 - Monitor closely       |
+| Production outage      | 10/100 | P1 - Have rollback ready   |
+| Rollback script fails  | 5/100  | P2 - Test procedures       |
+| Data loss              | 1/100  | P3 - Monitor               |
 
 ### Critical Risks (P1)
 
 **1. Dependency Conflicts (Score: 24)**
 
-*Mitigation:*
+_Mitigation:_
+
 - Pin exact versions in `package.json`
 - Use `pnpm-lock.yaml` with `--frozen-lockfile`
 - Test with multiple Node versions
 - Create dependency compatibility matrix
 
-*Detection:*
+_Detection:_
+
 ```bash
 # Before deploy
 pnpm install --frozen-lockfile
@@ -433,16 +451,18 @@ timeout 30s pnpm test:fast
 
 **2. Breaking API Changes (Score: 16)**
 
-*Mitigation:*
+_Mitigation:_
+
 - Run migration validator before deploy
 - Comprehensive integration tests
 - Type checking with JSDoc
 - API compatibility layer
 
-*Detection:*
+_Detection:_
+
 ```bash
 # Validate migrations
-node scripts/v6-validate.mjs
+node scripts/validate.mjs
 
 # Check for breaking changes
 git diff v5..v6 -- packages/core/src/index.mjs
@@ -450,13 +470,15 @@ git diff v5..v6 -- packages/core/src/index.mjs
 
 **3. Production Outage (Score: 10)**
 
-*Mitigation:*
+_Mitigation:_
+
 - Blue-green deployment
 - Canary release (10% → 50% → 100%)
 - Health checks every 30s
 - Automatic rollback on failure
 
-*Detection:*
+_Detection:_
+
 - Health endpoint: `/health`
 - Error rate >5%: Alert
 - Error rate >20%: Auto-rollback
@@ -470,6 +492,7 @@ git diff v5..v6 -- packages/core/src/index.mjs
 **Endpoint:** `/health`
 
 **Expected Response:**
+
 ```json
 {
   "status": "healthy",
@@ -483,6 +506,7 @@ git diff v5..v6 -- packages/core/src/index.mjs
 ```
 
 **Alert Triggers:**
+
 - Status ≠ "healthy" → P1 alert
 - Response time >500ms → P2 alert
 - 3 consecutive failures → Auto-rollback
@@ -495,13 +519,14 @@ git diff v5..v6 -- packages/core/src/index.mjs
 // packages/core/src/metrics.mjs
 export const metrics = {
   testDuration: { baseline: 2500, threshold: 5000 }, // ms
-  sparqlQuery: { baseline: 15, threshold: 50 },       // ms
-  memoryUsage: { baseline: 50, threshold: 200 },      // MB
-  buildTime: { baseline: 8000, threshold: 30000 }     // ms
+  sparqlQuery: { baseline: 15, threshold: 50 }, // ms
+  memoryUsage: { baseline: 50, threshold: 200 }, // MB
+  buildTime: { baseline: 8000, threshold: 30000 }, // ms
 };
 ```
 
 **Monitoring:**
+
 ```bash
 # Continuous monitoring
 while true; do
@@ -519,11 +544,13 @@ fi
 ### Error Tracking
 
 **Log Levels:**
+
 - **ERROR** → Immediate investigation
 - **WARN** → Monitor, may need action
 - **INFO** → Normal operation
 
 **Critical Errors:**
+
 ```bash
 # Monitor error logs
 tail -f /var/log/unrdf/error.log
@@ -548,17 +575,17 @@ grep -E "CRITICAL|FATAL|Error: " error.log | \
 
 **Manual Rollback Decision Matrix:**
 
-| Metric | Threshold | Action |
-|--------|-----------|--------|
-| Error rate | 5-10% | Investigate |
-| Error rate | 10-20% | Prepare rollback |
-| Error rate | >20% | Execute rollback |
-| Test failures | <25% | Fix forward |
-| Test failures | 25-50% | Consider rollback |
-| Test failures | >50% | Execute rollback |
-| Perf degradation | <20% | Monitor |
-| Perf degradation | 20-50% | Investigate |
-| Perf degradation | >50% | Execute rollback |
+| Metric           | Threshold | Action            |
+| ---------------- | --------- | ----------------- |
+| Error rate       | 5-10%     | Investigate       |
+| Error rate       | 10-20%    | Prepare rollback  |
+| Error rate       | >20%      | Execute rollback  |
+| Test failures    | <25%      | Fix forward       |
+| Test failures    | 25-50%    | Consider rollback |
+| Test failures    | >50%      | Execute rollback  |
+| Perf degradation | <20%      | Monitor           |
+| Perf degradation | 20-50%    | Investigate       |
+| Perf degradation | >50%      | Execute rollback  |
 
 ---
 
@@ -600,24 +627,28 @@ grep -E "CRITICAL|FATAL|Error: " error.log | \
 ### Severity Levels
 
 **SEV1 - Critical (Production Down)**
+
 - **Response Time:** Immediate (<5min)
 - **Action:** Execute rollback immediately
-- **Command:** `node scripts/v6-rollback.mjs --force`
+- **Command:** `node scripts/rollback.mjs --force`
 - **Communication:** Alert all stakeholders
 
 **SEV2 - High (Major Functionality Broken)**
+
 - **Response Time:** <15min
 - **Action:** Assess rollback vs fix-forward
-- **Command:** `node scripts/v6-rollback.mjs --dry-run` (prepare)
+- **Command:** `node scripts/rollback.mjs --dry-run` (prepare)
 - **Communication:** Update incident channel
 
 **SEV3 - Medium (Minor Functionality Broken)**
+
 - **Response Time:** <1hr
 - **Action:** Fix forward, prepare rollback
 - **Command:** Create fix, test, deploy
 - **Communication:** Log incident, plan fix
 
 **SEV4/5 - Low (Minor Issues)**
+
 - **Response Time:** <4hr
 - **Action:** Fix in next deployment
 - **Command:** Track in issue tracker
@@ -630,7 +661,7 @@ grep -E "CRITICAL|FATAL|Error: " error.log | \
 - [ ] **T+0min:** Incident detected, severity assessed
 - [ ] **T+2min:** Incident channel created (#incident-YYYY-MM-DD)
 - [ ] **T+5min:** Rollback decision made
-  - If YES → Execute: `node scripts/v6-rollback.mjs`
+  - If YES → Execute: `node scripts/rollback.mjs`
   - If NO → Begin investigation
 - [ ] **T+10min:** Status update posted
 - [ ] **T+15min:** Rollback complete OR root cause identified
@@ -649,10 +680,10 @@ echo "System healthy"
 timeout 30s pnpm benchmark:core
 
 # Full rollback
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 
 # Create incident snapshot
-node scripts/v6-snapshot.mjs incident-$(date +%Y%m%d-%H%M%S)
+node scripts/snapshot.mjs incident-$(date +%Y%m%d-%H%M%S)
 ```
 
 ---
@@ -710,26 +741,26 @@ const checks = [
   {
     name: 'Version check',
     command: 'cat package.json',
-    validate: (output) => {
+    validate: output => {
       const pkg = JSON.parse(output);
       return pkg.version.startsWith('5.');
-    }
+    },
   },
   {
     name: 'Tests passing',
     command: 'timeout 30s pnpm test:fast',
-    validate: (output) => !output.includes('FAIL')
+    validate: output => !output.includes('FAIL'),
   },
   {
     name: 'Linting clean',
     command: 'timeout 15s pnpm lint',
-    validate: (output) => !output.includes('error')
+    validate: output => !output.includes('error'),
   },
   {
     name: 'Build successful',
     command: 'timeout 30s pnpm build',
-    validate: (output) => !output.includes('Error')
-  }
+    validate: output => !output.includes('Error'),
+  },
 ];
 
 let passed = 0;
@@ -756,6 +787,7 @@ process.exit(failed === 0 ? 0 : 1);
 ```
 
 **Run validation:**
+
 ```bash
 node scripts/validate-rollback.mjs
 ```
@@ -782,6 +814,7 @@ Results: 4 passed, 0 failed
    cat rollback-report.json
    ```
 3. **Identify what failed:**
+
    ```bash
    # Check versions
    cat package.json | grep version
@@ -791,7 +824,9 @@ Results: 4 passed, 0 failed
    git status
    git log -1
    ```
+
 4. **Manual recovery:**
+
    ```bash
    # Nuclear option: Hard reset
    git reset --hard [known-good-commit]
@@ -827,24 +862,26 @@ Results: 4 passed, 0 failed
 
 ### B. Command Reference
 
-| Command | Purpose | Duration |
-|---------|---------|----------|
-| `node scripts/v6-snapshot.mjs` | Create snapshot | ~10s |
-| `node scripts/v6-rollback.mjs --dry-run` | Test rollback | ~30s |
-| `node scripts/v6-rollback.mjs` | Execute rollback | ~5min |
-| `node scripts/validate-rollback.mjs` | Validate rollback | ~2min |
-| `timeout 30s pnpm test:fast` | Quick validation | ~3s |
-| `timeout 15s pnpm lint` | Lint check | ~2s |
-| `timeout 30s pnpm build` | Build validation | ~10s |
+| Command                               | Purpose           | Duration |
+| ------------------------------------- | ----------------- | -------- |
+| `node scripts/snapshot.mjs`           | Create snapshot   | ~10s     |
+| `node scripts/rollback.mjs --dry-run` | Test rollback     | ~30s     |
+| `node scripts/rollback.mjs`           | Execute rollback  | ~5min    |
+| `node scripts/validate-rollback.mjs`  | Validate rollback | ~2min    |
+| `timeout 30s pnpm test:fast`          | Quick validation  | ~3s      |
+| `timeout 15s pnpm lint`               | Lint check        | ~2s      |
+| `timeout 30s pnpm build`              | Build validation  | ~10s     |
 
 ### C. Emergency Contacts
 
 **Incident Response:**
+
 - **Primary:** [Your oncall rotation]
 - **Secondary:** [Backup contact]
 - **Escalation:** [Manager/Director]
 
 **External Dependencies:**
+
 - **NPM Registry:** https://status.npmjs.org/
 - **GitHub:** https://www.githubstatus.com/
 
@@ -853,29 +890,35 @@ Results: 4 passed, 0 failed
 After any rollback, conduct a post-mortem:
 
 ```markdown
-# Post-Mortem: V6 Rollback - YYYY-MM-DD
+# Post-Mortem: Rollback - YYYY-MM-DD
 
 ## Timeline
+
 - **T+0:** Issue detected
 - **T+X:** Rollback initiated
 - **T+Y:** Rollback completed
 
 ## Root Cause
+
 [What caused the issue?]
 
 ## Impact
+
 [What was affected?]
 
 ## Resolution
+
 [How was it resolved?]
 
 ## Action Items
+
 - [ ] Fix root cause
 - [ ] Add tests to prevent recurrence
 - [ ] Update documentation
 - [ ] Improve monitoring
 
 ## Lessons Learned
+
 [What did we learn?]
 ```
 
@@ -893,12 +936,14 @@ After any rollback, conduct a post-mortem:
 ✅ **Monitoring & alerting** guidelines
 
 **Before every deployment:**
-1. Create snapshot: `node scripts/v6-snapshot.mjs`
+
+1. Create snapshot: `node scripts/snapshot.mjs`
 2. Validate snapshot: `ls .rollback-snapshots/`
-3. Test rollback: `node scripts/v6-rollback.mjs --dry-run`
+3. Test rollback: `node scripts/rollback.mjs --dry-run`
 
 **If deployment fails:**
-1. Execute rollback: `node scripts/v6-rollback.mjs`
+
+1. Execute rollback: `node scripts/rollback.mjs`
 2. Validate rollback: `node scripts/validate-rollback.mjs`
 3. Investigate root cause
 4. Fix and redeploy
@@ -909,4 +954,4 @@ After any rollback, conduct a post-mortem:
 
 **Document Version:** 1.0.0
 **Last Reviewed:** 2025-12-27
-**Next Review:** Before v6 production deployment
+**Next Review:** Before production deployment
