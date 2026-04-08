@@ -387,7 +387,7 @@ unrdf docs generate --input src/
 **Backward Compatibility**: Old commands still work with deprecation warning
 
 ```bash
-# Both work in v6.0 - v6.0
+# Both work in 5.x - 6.0
 unrdf kgc store freeze  # DEPRECATED: Use 'unrdf freeze' instead
 unrdf freeze            # Recommended
 ```
