@@ -30,7 +30,7 @@ pnpm init
 echo '{"type": "module"}' > package.json
 ```
 
-### Install UNRDF v6
+### Install UNRDF
 
 ```bash
 # Core packages
@@ -210,7 +210,7 @@ node app.mjs
 
 ### Add Receipt Generation
 
-UNRDF v6's killer feature: every operation produces a cryptographic receipt.
+UNRDF's killer feature: every operation produces a cryptographic receipt.
 
 Update `app.mjs`:
 
@@ -290,7 +290,7 @@ node app.mjs
 
 ### Add Runtime Type Safety
 
-UNRDF v6 enforces Zod validation for all inputs.
+UNRDF enforces Zod validation for all inputs.
 
 Update `app.mjs`:
 
@@ -380,7 +380,7 @@ Here's the final `app.mjs` with all features:
 
 ```javascript
 /**
- * UNRDF v6 Quick Start Example
+ * UNRDF Quick Start Example
  * Demonstrates: Store creation, SPARQL queries, receipts, and validation
  */
 
@@ -403,7 +403,7 @@ const TripleSchema = z.object({
 const store = await createStore();
 const { namedNode, literal, quad } = dataFactory;
 
-console.log('🚀 UNRDF v6 Quick Start\n');
+console.log('🚀 UNRDF Quick Start\n');
 
 // --- Add Data with Receipts ---
 
@@ -478,7 +478,7 @@ for (const receipt of receipts) {
   console.log(`  - ${receipt.id}: ${receipt.operation}`);
 }
 
-console.log("\n✨ Done! You've built your first UNRDF v6 application.\n");
+console.log("\n✨ Done! You've built your first UNRDF application.\n");
 ```
 
 ### Run Complete Example
@@ -490,7 +490,7 @@ node app.mjs
 **Expected Output**:
 
 ```
-🚀 UNRDF v6 Quick Start
+🚀 UNRDF Quick Start
 
 ✅ Added 3 triples with receipts
 
@@ -503,14 +503,14 @@ node app.mjs
   - receipt-def456: add-triple
   - receipt-ghi789: add-triple
 
-✨ Done! You've built your first UNRDF v6 application.
+✨ Done! You've built your first UNRDF application.
 ```
 
 ---
 
 ## Next Steps
 
-🎉 **Congratulations!** You've completed the UNRDF v6 quick start.
+🎉 **Congratulations!** You've completed the UNRDF quick start.
 
 ### Learn More
 
@@ -579,7 +579,7 @@ const store = await createStore(); // ✅
 Before moving on, verify:
 
 - [ ] Node.js 18+ installed
-- [ ] UNRDF v6 packages installed
+- [ ] UNRDF packages installed
 - [ ] Example runs without errors
 - [ ] SPARQL query returns results
 - [ ] Receipts are generated
