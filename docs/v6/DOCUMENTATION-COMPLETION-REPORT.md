@@ -30,14 +30,14 @@ The UNRDF documentation has been implemented following the **Diataxis framework*
 
 **Location**: `/docs/v6/diataxis/`
 
-- **Tutorial**: [Getting Started with v6](../diataxis/tutorials/01-getting-started-v6.md)
+- **Tutorial**: [Getting Started with UNRDF](../diataxis/tutorials/01-getting-started.md)
   - 📄 **Word Count**: ~3,500 words
   - ⏱️ **Estimated Time**: 15 minutes
   - 🎯 **Covers**: Installation, first receipt, first delta, CLI basics
   - 💻 **Examples**: 10 working code snippets with expected output
 
 - **How-To Guides** (5 total):
-  1. [Migrate v5→v6](../diataxis/how-to/01-migrate-v5-to-v6.md)
+  1. [Migrate v5→current](../diataxis/how-to/01-migrate-from-legacy.md)
      - 📄 ~4,500 words
      - ⏱️ 2-4 hours
      - 🎯 All 7 breaking changes addressed
@@ -105,11 +105,11 @@ The UNRDF documentation has been implemented following the **Diataxis framework*
 
 ---
 
-#### 3. v5→v6 Migration Guide ✅
+#### 3. v5→current Migration Guide ✅
 
 **Location**: Multiple documents
 
-**Master Guide**: [How-To: Migrate v5→v6](../diataxis/how-to/01-migrate-v5-to-v6.md)
+**Master Guide**: [How-To: Migrate v5→current](../diataxis/how-to/01-migrate-from-legacy.md)
 
 **Supporting Documents**:
 
@@ -275,7 +275,7 @@ All blocking documentation for 6.0 launch is complete:
 | Document                  | Code Snippets | Working Examples | Expected Output Shown? |
 | ------------------------- | ------------- | ---------------- | ---------------------- |
 | Getting Started Tutorial  | 10            | 10               | ✅ All                 |
-| Migrate v5→v6             | 30            | 30               | ✅ All                 |
+| Migrate v5→current        | 30            | 30               | ✅ All                 |
 | Compose Deltas            | 15            | 15               | ✅ All                 |
 | Verify Receipt Chain      | 20            | 20               | ✅ All                 |
 | Implement L5 Maturity     | 40            | 40               | ✅ All                 |
@@ -329,7 +329,7 @@ From task specification:
 | --------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1. Diataxis Structure**   | ✅ Complete | - [Diataxis README](../diataxis/README.md)<br>- 1 tutorial<br>- 5 how-to guides<br>- 4 reference docs<br>- Explanation (planned for beta)            |
 | **2. CLI Matrix**           | ✅ Complete | - [CLI Command Matrix](../diataxis/reference/01-cli-command-matrix.md)<br>- 10 nouns × 25 verbs<br>- 45 valid combinations<br>- 50+ examples         |
-| **3. Migration Guide**      | ✅ Complete | - [Migration How-To](../diataxis/how-to/01-migrate-v5-to-v6.md)<br>- All 7 breaking changes<br>- 11-step process<br>- 30+ code examples              |
+| **3. Migration Guide**      | ✅ Complete | - [Migration How-To](../diataxis/how-to/01-migrate-from-legacy.md)<br>- All 7 breaking changes<br>- 11-step process<br>- 30+ code examples           |
 | **4. Integration Examples** | ✅ Complete | - [YAWL + Hooks](../diataxis/examples/01-yawl-hooks-integration.md)<br>- 300 LoC working code<br>- Expected output shown<br>- Receipt chain verified |
 | **5. Search & Index**       | ✅ Complete | - [Master Index](../DOCUMENTATION-INDEX.md)<br>- Role-based navigation<br>- 50+ search tags<br>- 88 cross-references                                 |
 
@@ -344,9 +344,9 @@ From task specification:
 ├── diataxis/
 │   ├── README.md                                    # Diataxis overview
 │   ├── tutorials/
-│   │   └── 01-getting-started-v6.md                 # Tutorial ✅
+│   │   └── 01-getting-started.md                 # Tutorial ✅
 │   ├── how-to/
-│   │   ├── 01-migrate-v5-to-v6.md                   # Migration ✅
+│   │   ├── 01-migrate-from-legacy.md                   # Migration ✅
 │   │   ├── 02-compose-deltas.md                     # Deltas ✅
 │   │   ├── 03-verify-receipt-chain.md               # Receipts ✅
 │   │   ├── 04-implement-l5-maturity.md              # Maturity ✅
@@ -396,8 +396,8 @@ grep -r "kgc " /home/user/unrdf/docs/v6/diataxis/reference/01-cli-command-matrix
 
 ```
 # 1. Files exist
-tutorials/01-getting-started-v6.md
-how-to/01-migrate-v5-to-v6.md
+tutorials/01-getting-started.md
+how-to/01-migrate-from-legacy.md
 how-to/02-compose-deltas.md
 how-to/03-verify-receipt-chain.md
 how-to/04-implement-l5-maturity.md
