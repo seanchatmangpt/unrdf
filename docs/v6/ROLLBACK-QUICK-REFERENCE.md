@@ -1,4 +1,4 @@
-# V6 Rollback - Quick Reference Card
+# Rollback - Quick Reference Card
 
 **Print this and keep it accessible during deployment**
 
@@ -8,13 +8,13 @@
 
 ```bash
 # 1. Create snapshot (MUST DO THIS FIRST)
-node scripts/v6-snapshot.mjs pre-v6-deploy-$(date +%Y%m%d)
+node scripts/snapshot.mjs pre-deploy-$(date +%Y%m%d)
 
 # 2. Verify snapshot
 ls -la .rollback-snapshots/ | tail -1
 
 # 3. Test rollback (dry-run)
-node scripts/v6-rollback.mjs --dry-run
+node scripts/rollback.mjs --dry-run
 ```
 
 **DO NOT DEPLOY WITHOUT A SNAPSHOT**
@@ -25,7 +25,7 @@ node scripts/v6-rollback.mjs --dry-run
 
 ```bash
 # One command - full rollback
-node scripts/v6-rollback.mjs --force
+node scripts/rollback.mjs --force
 
 # Duration: ~5 minutes
 # Success rate: 99.8%
@@ -35,14 +35,14 @@ node scripts/v6-rollback.mjs --force
 
 ## Rollback Decision Matrix
 
-| Symptom | Severity | Action | Command |
-|---------|----------|--------|---------|
-| **Tests fail >50%** | SEV1 | ROLLBACK NOW | `node scripts/v6-rollback.mjs --force` |
-| **Import errors** | SEV1 | ROLLBACK NOW | `node scripts/v6-rollback.mjs --force` |
-| **Tests fail 25-50%** | SEV2 | Rollback likely | `node scripts/v6-rollback.mjs --dry-run` |
-| **Performance >50% slower** | SEV2 | Rollback likely | `node scripts/v6-rollback.mjs` |
-| **Tests fail <25%** | SEV3 | Fix forward | Debug and fix |
-| **Performance 20-50% slower** | SEV3 | Investigate | Run benchmarks |
+| Symptom                       | Severity | Action          | Command                               |
+| ----------------------------- | -------- | --------------- | ------------------------------------- |
+| **Tests fail >50%**           | SEV1     | ROLLBACK NOW    | `node scripts/rollback.mjs --force`   |
+| **Import errors**             | SEV1     | ROLLBACK NOW    | `node scripts/rollback.mjs --force`   |
+| **Tests fail 25-50%**         | SEV2     | Rollback likely | `node scripts/rollback.mjs --dry-run` |
+| **Performance >50% slower**   | SEV2     | Rollback likely | `node scripts/rollback.mjs`           |
+| **Tests fail <25%**           | SEV3     | Fix forward     | Debug and fix                         |
+| **Performance 20-50% slower** | SEV3     | Investigate     | Run benchmarks                        |
 
 ---
 
@@ -73,7 +73,7 @@ timeout 60s pnpm test 2>&1 | tee test-output.log
 grep -c "FAIL" test-output.log
 
 # 2. If >50% failing, rollback immediately
-node scripts/v6-rollback.mjs --force
+node scripts/rollback.mjs --force
 
 # 3. If <50%, investigate first
 grep "FAIL" test-output.log
@@ -83,7 +83,7 @@ grep "FAIL" test-output.log
 
 ```bash
 # IMMEDIATE ROLLBACK - This is critical
-node scripts/v6-rollback.mjs --force
+node scripts/rollback.mjs --force
 
 # Post-rollback: Fix migration
 # Then redeploy
@@ -96,7 +96,7 @@ node scripts/v6-rollback.mjs --force
 timeout 60s pnpm benchmark:compare
 
 # 2. If >50% slower, rollback
-node scripts/v6-rollback.mjs
+node scripts/rollback.mjs
 
 # 3. If 20-50% slower, investigate
 node scripts/profile.mjs cpu
@@ -143,32 +143,32 @@ timeout 15s pnpm lint
 
 ## Command Reference
 
-| Command | Duration | Risk |
-|---------|----------|------|
-| `node scripts/v6-snapshot.mjs` | ~10s | NONE |
-| `node scripts/v6-rollback.mjs --dry-run` | ~30s | NONE |
-| `node scripts/v6-rollback.mjs` | ~5min | LOW |
-| `node scripts/v6-rollback.mjs --force` | ~5min | LOW |
-| `timeout 30s pnpm test:fast` | ~3s | NONE |
+| Command                               | Duration | Risk |
+| ------------------------------------- | -------- | ---- |
+| `node scripts/snapshot.mjs`           | ~10s     | NONE |
+| `node scripts/rollback.mjs --dry-run` | ~30s     | NONE |
+| `node scripts/rollback.mjs`           | ~5min    | LOW  |
+| `node scripts/rollback.mjs --force`   | ~5min    | LOW  |
+| `timeout 30s pnpm test:fast`          | ~3s      | NONE |
 
 ---
 
 ## Thresholds
 
-| Metric | Baseline (v5) | Warning | ROLLBACK |
-|--------|---------------|---------|----------|
-| **Test failures** | 0% | 10% | 50% |
-| **Test duration** | 2.5s | 5s | 10s |
-| **Error rate** | <1% | 5% | 20% |
-| **Performance** | 100% | 120% | 150% |
+| Metric            | Baseline (v5) | Warning | ROLLBACK |
+| ----------------- | ------------- | ------- | -------- |
+| **Test failures** | 0%            | 10%     | 50%      |
+| **Test duration** | 2.5s          | 5s      | 10s      |
+| **Error rate**    | <1%           | 5%      | 20%      |
+| **Performance**   | 100%          | 120%    | 150%     |
 
 ---
 
 ## Contacts (Fill in your team info)
 
-- **Oncall:** __________________
-- **Backup:** __________________
-- **Escalation:** __________________
+- **Oncall:** ********\_\_********
+- **Backup:** ********\_\_********
+- **Escalation:** ********\_\_********
 
 ---
 
