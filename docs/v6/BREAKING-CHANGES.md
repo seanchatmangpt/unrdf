@@ -1,4 +1,4 @@
-# UNRDF v6 Breaking Changes Catalog
+# UNRDF Breaking Changes Catalog
 
 **Version**: 6.0.0
 **Date**: 2025-12-27
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document catalogs all **12 breaking changes** in UNRDF v6, with migration paths, impact analysis, and evidence.
+This document catalogs all **12 breaking changes** in UNRDF, with migration paths, impact analysis, and evidence.
 
 **Total Impact**: ~90% of users affected by at least one breaking change
 **Migration Cost**: 2-6 weeks depending on codebase size
@@ -18,20 +18,20 @@ This document catalogs all **12 breaking changes** in UNRDF v6, with migration p
 
 ## Breaking Changes Summary
 
-| ID | Change | Impact | Auto-Migration | Manual Effort |
-|----|--------|--------|----------------|---------------|
-| BC-1 | Package Consolidation | High | ✅ Yes | Low |
-| BC-2 | Store API Unification | High | ⚠️ Partial | Medium |
-| BC-3 | SPARQL Execution Signature | Medium | ✅ Yes | Low |
-| BC-4 | Hook Registration API | Medium | ❌ No | Medium |
-| BC-5 | Capsule Format v2 | Medium | ✅ Yes | Low |
-| BC-6 | Federation Protocol v2 | Low | ⚠️ Partial | High |
-| BC-7 | CLI Command Restructure | Low | ✅ Yes | Low |
-| BC-8 | Observability Defaults | Low | ✅ Yes | Low |
-| BC-9 | TypeScript Definitions | Low | ✅ Yes | None |
-| BC-10 | Node.js Version Requirement | Low | ❌ No | High |
-| BC-11 | Zod Schema Validation | Medium | ❌ No | Low |
-| BC-12 | ESM-Only | High | ⚠️ Partial | Medium |
+| ID    | Change                      | Impact | Auto-Migration | Manual Effort |
+| ----- | --------------------------- | ------ | -------------- | ------------- |
+| BC-1  | Package Consolidation       | High   | ✅ Yes         | Low           |
+| BC-2  | Store API Unification       | High   | ⚠️ Partial     | Medium        |
+| BC-3  | SPARQL Execution Signature  | Medium | ✅ Yes         | Low           |
+| BC-4  | Hook Registration API       | Medium | ❌ No          | Medium        |
+| BC-5  | Capsule Format v2           | Medium | ✅ Yes         | Low           |
+| BC-6  | Federation Protocol v2      | Low    | ⚠️ Partial     | High          |
+| BC-7  | CLI Command Restructure     | Low    | ✅ Yes         | Low           |
+| BC-8  | Observability Defaults      | Low    | ✅ Yes         | Low           |
+| BC-9  | TypeScript Definitions      | Low    | ✅ Yes         | None          |
+| BC-10 | Node.js Version Requirement | Low    | ❌ No          | High          |
+| BC-11 | Zod Schema Validation       | Medium | ❌ No          | Low           |
+| BC-12 | ESM-Only                    | High   | ⚠️ Partial     | Medium        |
 
 ---
 
@@ -40,6 +40,7 @@ This document catalogs all **12 breaking changes** in UNRDF v6, with migration p
 ### Change
 
 Merge 12 overlapping packages into core/kgc layers:
+
 - `@unrdf/streaming` → `@unrdf/core`
 - `@unrdf/knowledge-engine` → `@unrdf/core`
 - `@unrdf/engine-gateway` → `@unrdf/core`
@@ -55,15 +56,17 @@ Merge 12 overlapping packages into core/kgc layers:
 **Affected Users**: 100% (all package imports must update)
 
 **Before**:
+
 ```javascript
-import { streamQuads } from '@unrdf/streaming'
-import { infer } from '@unrdf/knowledge-engine'
-import { optimizeQuery } from '@unrdf/dark-matter'
+import { streamQuads } from '@unrdf/streaming';
+import { infer } from '@unrdf/knowledge-engine';
+import { optimizeQuery } from '@unrdf/dark-matter';
 ```
 
 **After**:
+
 ```javascript
-import { streamQuads, infer, optimizeQuery } from '@unrdf/core'
+import { streamQuads, infer, optimizeQuery } from '@unrdf/core';
 ```
 
 ### Migration
@@ -71,7 +74,7 @@ import { streamQuads, infer, optimizeQuery } from '@unrdf/core'
 **Automated**: ✅ Yes (migration tool handles 95%)
 
 ```bash
-npx @unrdf/migrate-v6 migrate . --fix-imports
+npx @unrdf/migrate migrate . --fix-imports
 ```
 
 **Manual Steps**: None (unless custom build configs reference old packages)
@@ -103,25 +106,27 @@ Single `createStore()` API for all backends (memory, Oxigraph, remote).
 **Affected Users**: 100%
 
 **Before**:
+
 ```javascript
 // Multiple backend-specific APIs
-import { createStore as createOxigraphStore } from '@unrdf/oxigraph'
-import { createMemoryStore } from '@unrdf/core'
-import { createRemoteStore } from '@unrdf/federation'
+import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
+import { createMemoryStore } from '@unrdf/core';
+import { createRemoteStore } from '@unrdf/federation';
 
-const store1 = createOxigraphStore()
-const store2 = createMemoryStore()
-const store3 = createRemoteStore('http://example.org/sparql')
+const store1 = createOxigraphStore();
+const store2 = createMemoryStore();
+const store3 = createRemoteStore('http://example.org/sparql');
 ```
 
 **After**:
+
 ```javascript
 // Unified API with backend option
-import { createStore } from '@unrdf/core'
+import { createStore } from '@unrdf/core';
 
-const store1 = createStore({ backend: 'oxigraph' })
-const store2 = createStore({ backend: 'memory' })
-const store3 = createStore({ backend: 'remote', endpoint: 'http://example.org/sparql' })
+const store1 = createStore({ backend: 'oxigraph' });
+const store2 = createStore({ backend: 'memory' });
+const store3 = createStore({ backend: 'remote', endpoint: 'http://example.org/sparql' });
 ```
 
 ### Migration
@@ -129,10 +134,11 @@ const store3 = createStore({ backend: 'remote', endpoint: 'http://example.org/sp
 **Automated**: ⚠️ Partial (detects patterns, requires manual review)
 
 ```bash
-npx @unrdf/migrate-v6 migrate . --unify-store-api
+npx @unrdf/migrate migrate . --unify-store-api
 ```
 
 **Manual Steps**:
+
 1. Review auto-generated changes
 2. Verify backend configuration is correct
 3. Test store operations work as expected
@@ -157,15 +163,17 @@ Require explicit `store` parameter in all SPARQL functions.
 **Affected Users**: 90%
 
 **Before**:
+
 ```javascript
 // Implicit global store
-const results = await query('SELECT * WHERE { ?s ?p ?o }')
+const results = await query('SELECT * WHERE { ?s ?p ?o }');
 ```
 
 **After**:
+
 ```javascript
 // Explicit store parameter
-const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
+const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
 
 ### Migration
@@ -173,7 +181,7 @@ const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
 **Automated**: ✅ Yes (AST analysis finds missing parameter)
 
 ```bash
-npx @unrdf/migrate-v6 migrate . --add-store-param
+npx @unrdf/migrate migrate . --add-store-param
 ```
 
 **Manual Steps**: None (tool handles all cases)
@@ -197,27 +205,33 @@ Hooks registered per-store, not globally.
 **Affected Users**: 40% (hook users only)
 
 **Before**:
+
 ```javascript
-import { registerHook } from '@unrdf/hooks'
+import { registerHook } from '@unrdf/hooks';
 
 // Global registration
 registerHook({
   name: 'validate-person',
   trigger: 'INSERT',
   pattern: '?s a foaf:Person .',
-  run: (event) => { /* ... */ }
-})
+  run: event => {
+    /* ... */
+  },
+});
 ```
 
 **After**:
+
 ```javascript
 // Per-store registration
 store.registerHook({
   name: 'validate-person',
   trigger: 'INSERT',
   pattern: '?s a foaf:Person .',
-  run: (event) => { /* ... */ }
-})
+  run: event => {
+    /* ... */
+  },
+});
 ```
 
 ### Migration
@@ -225,6 +239,7 @@ store.registerHook({
 **Automated**: ❌ No (requires understanding of hook scope)
 
 **Manual Steps**:
+
 1. Identify all `registerHook()` calls
 2. Determine correct store for each hook
 3. Move registration to store instance
@@ -249,23 +264,25 @@ New capsule format with mandatory cryptographic signatures.
 **Affected Users**: 30% (KGC-4D users only)
 
 **Before**:
+
 ```javascript
 // Optional signatures
 const capsule = createCapsule({
   data: eventData,
-  timestamp: Date.now()
-})
+  timestamp: Date.now(),
+});
 ```
 
 **After**:
+
 ```javascript
 // Mandatory signatures
 const capsule = createCapsule({
   data: eventData,
   timestamp: Date.now(),
   sign: true,
-  keyId: 'default' // or specific key
-})
+  keyId: 'default', // or specific key
+});
 ```
 
 ### Migration
@@ -273,6 +290,7 @@ const capsule = createCapsule({
 **Automated**: ✅ Yes (auto-upgrade old capsules on read)
 
 **Manual Steps**:
+
 1. Generate signing keys: `unrdf keygen --output keys/`
 2. Configure key ID in environment: `UNRDF_SIGNING_KEY=default`
 3. Old capsules auto-upgraded on first read
@@ -296,21 +314,23 @@ New federation protocol using Raft consensus.
 **Affected Users**: 10% (distributed deployments only)
 
 **Before**:
+
 ```javascript
 // Eventual consistency
 const federation = createFederation({
   nodes: ['node1', 'node2', 'node3'],
-  consistency: 'eventual'
-})
+  consistency: 'eventual',
+});
 ```
 
 **After**:
+
 ```javascript
 // Strong consistency via Raft
 const federation = createFederation({
   nodes: ['node1', 'node2', 'node3'],
-  consensus: 'raft'
-})
+  consensus: 'raft',
+});
 ```
 
 ### Migration
@@ -318,6 +338,7 @@ const federation = createFederation({
 **Automated**: ⚠️ Partial (rolling upgrade supported)
 
 **Manual Steps**:
+
 1. Upgrade nodes one at a time
 2. Monitor leader election
 3. Verify replication working
@@ -344,6 +365,7 @@ Flatten command hierarchy for simpler UX.
 **Affected Users**: 50% (CLI users)
 
 **Before**:
+
 ```bash
 unrdf kgc store freeze --output snapshot.json
 unrdf kgc capsule verify capsule.json
@@ -351,6 +373,7 @@ unrdf kgc docs generate --input src/
 ```
 
 **After**:
+
 ```bash
 unrdf freeze --output snapshot.json
 unrdf verify capsule.json
@@ -388,15 +411,17 @@ OTEL telemetry enabled by default (opt-out vs opt-in).
 **Affected Users**: 100%
 
 **Before**:
+
 ```javascript
 // Opt-in (disabled by default)
-process.env.UNRDF_OTEL_ENABLED = 'true'
+process.env.UNRDF_OTEL_ENABLED = 'true';
 ```
 
 **After**:
+
 ```javascript
 // Opt-out (enabled by default)
-process.env.UNRDF_OTEL_ENABLED = 'false' // to disable
+process.env.UNRDF_OTEL_ENABLED = 'false'; // to disable
 ```
 
 ### Migration
@@ -404,6 +429,7 @@ process.env.UNRDF_OTEL_ENABLED = 'false' // to disable
 **Automated**: ✅ Yes (environment variable)
 
 **Manual Steps**:
+
 1. If OTEL unwanted, set `UNRDF_OTEL_ENABLED=false`
 2. Configure OTEL endpoint: `UNRDF_OTEL_ENDPOINT=http://jaeger:4318`
 
@@ -426,10 +452,12 @@ Generate `.d.ts` from JSDoc (no hand-written types).
 **Affected Users**: 60% (TypeScript users)
 
 **Before**:
+
 - Hand-written `.d.ts` files
 - JSDoc and `.d.ts` could drift
 
 **After**:
+
 - Auto-generated `.d.ts` from JSDoc
 - Single source of truth
 
@@ -458,6 +486,7 @@ Require Node.js ≥20.0.0 (from ≥18.0.0).
 **Affected Users**: 20% (legacy Node.js deployments)
 
 **Migration**:
+
 ```bash
 # Upgrade Node.js
 nvm install 20
@@ -487,16 +516,18 @@ All public APIs validate inputs with Zod schemas.
 **Affected Users**: 100%
 
 **Before**:
+
 ```javascript
 // Silent failure on invalid input
-const store = createStore({ invalid: 'option' })
+const store = createStore({ invalid: 'option' });
 // No error, unexpected behavior
 ```
 
 **After**:
+
 ```javascript
 // Throws descriptive error
-const store = createStore({ invalid: 'option' })
+const store = createStore({ invalid: 'option' });
 // ZodError: Unrecognized key 'invalid' in object
 ```
 
@@ -505,6 +536,7 @@ const store = createStore({ invalid: 'option' })
 **Automated**: ❌ No (requires fixing invalid inputs)
 
 **Manual Steps**:
+
 1. Run tests to find validation errors
 2. Fix invalid inputs (errors are descriptive)
 3. Update code to match Zod schemas
@@ -528,17 +560,19 @@ Drop CommonJS support, ESM only.
 **Affected Users**: 30% (CommonJS users)
 
 **Before**:
+
 ```javascript
-const { createStore } = require('@unrdf/core')
+const { createStore } = require('@unrdf/core');
 ```
 
 **After**:
+
 ```javascript
 // Option 1: Convert to ESM
-import { createStore } from '@unrdf/core'
+import { createStore } from '@unrdf/core';
 
 // Option 2: Dynamic import
-const { createStore } = await import('@unrdf/core')
+const { createStore } = await import('@unrdf/core');
 ```
 
 ### Migration
@@ -546,10 +580,11 @@ const { createStore } = await import('@unrdf/core')
 **Automated**: ⚠️ Partial (detects `require()` calls)
 
 ```bash
-npx @unrdf/migrate-v6 migrate . --convert-to-esm
+npx @unrdf/migrate migrate . --convert-to-esm
 ```
 
 **Manual Steps**:
+
 1. Add `"type": "module"` to package.json
 2. Rename `.js` → `.mjs` (if needed)
 3. Replace `require()` → `import`
@@ -611,16 +646,18 @@ Week 9-10: Production Rollout
 ## Appendix: Evidence
 
 **Package Count**:
+
 ```bash
 # v5
 find packages -maxdepth 2 -name package.json | wc -l
 # Output: 54
 
-# v6 (planned)
+# 6.0.0 (planned)
 # Output: 25
 ```
 
 **Auto-Migration Coverage**:
+
 - BC-1: 95% automated
 - BC-2: 70% automated
 - BC-3: 100% automated
