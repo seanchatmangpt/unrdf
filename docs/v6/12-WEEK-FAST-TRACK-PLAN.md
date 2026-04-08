@@ -746,12 +746,12 @@ grep "Score:" final-validation.log
 
 ### Qualitative Metrics
 
-| Metric                 | Baseline (v5) | Target (v6.0.0-core) | Measurement Method                         |
-| ---------------------- | ------------- | -------------------- | ------------------------------------------ |
-| Onboarding time        | 1 day         | <1 hour              | Time 3 external developers                 |
-| Bug investigation time | 2 hours       | 1 hour               | Receipt chain reduces debugging by 50%     |
-| Migration complexity   | High          | Low                  | 3 users complete migration in <4 hours     |
-| Developer confidence   | Medium        | High                 | Survey: "Would you recommend v6?" >80% yes |
+| Metric                 | Baseline (v5) | Target (v6.0.0-core) | Measurement Method                                      |
+| ---------------------- | ------------- | -------------------- | ------------------------------------------------------- |
+| Onboarding time        | 1 day         | <1 hour              | Time 3 external developers                              |
+| Bug investigation time | 2 hours       | 1 hour               | Receipt chain reduces debugging by 50%                  |
+| Migration complexity   | High          | Low                  | 3 users complete migration in <4 hours                  |
+| Developer confidence   | Medium        | High                 | Survey: "Would you recommend current version?" >80% yes |
 
 ---
 
