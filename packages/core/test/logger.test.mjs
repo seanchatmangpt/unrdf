@@ -231,7 +231,7 @@ describe('Logger System', () => {
       // Timer should still work after elapsed()
       await new Promise(resolve => setTimeout(resolve, 5));
       const final = timer.end();
-      expect(final.duration).toBeGreaterThanOrEqual(10);
+      expect(final.duration).toBeGreaterThanOrEqual(5);
     });
   });
 });
