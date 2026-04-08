@@ -539,12 +539,12 @@ node validation/run-all.mjs --package knowledge-engine
 
 3. **Workflow 3: CLI-Driven Migration**
    - CLI commands trigger v6-compat adapters
-   - Migration from v5 to v6 APIs
+   - Migration from v5 to current APIs
    - Validation ensures correctness
    - Observability tracks progress
    - Receipt chain proves migration
    - Test: `integration-tests/cli-migration-workflow.test.mjs`
-   - Success: v5 code runs on v6 with receipts
+   - Success: v5 code runs on current version with receipts
 
 **Tasks**:
 
@@ -746,12 +746,12 @@ grep "Score:" final-validation.log
 
 ### Qualitative Metrics
 
-| Metric                 | Baseline (v5) | Target (v6.0.0-core) | Measurement Method                                      |
-| ---------------------- | ------------- | -------------------- | ------------------------------------------------------- |
-| Onboarding time        | 1 day         | <1 hour              | Time 3 external developers                              |
-| Bug investigation time | 2 hours       | 1 hour               | Receipt chain reduces debugging by 50%                  |
-| Migration complexity   | High          | Low                  | 3 users complete migration in <4 hours                  |
-| Developer confidence   | Medium        | High                 | Survey: "Would you recommend current version?" >80% yes |
+| Metric                 | Baseline (v5) | Target (6.0.0-core) | Measurement Method                                      |
+| ---------------------- | ------------- | ------------------- | ------------------------------------------------------- |
+| Onboarding time        | 1 day         | <1 hour             | Time 3 external developers                              |
+| Bug investigation time | 2 hours       | 1 hour              | Receipt chain reduces debugging by 50%                  |
+| Migration complexity   | High          | Low                 | 3 users complete migration in <4 hours                  |
+| Developer confidence   | Medium        | High                | Survey: "Would you recommend current version?" >80% yes |
 
 ---
 
