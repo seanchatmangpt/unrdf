@@ -1,8 +1,8 @@
-# UNRDF v6 Quick Start Guide
+# UNRDF Quick Start Guide
 
-**🎯 Goal**: Get productive with UNRDF v6 in 15 minutes
+**🎯 Goal**: Get productive with UNRDF in 15 minutes
 
-This hands-on tutorial walks you through building your first knowledge graph application with UNRDF v6, featuring receipt-driven operations and modern JavaScript patterns.
+This hands-on tutorial walks you through building your first knowledge graph application with UNRDF, featuring receipt-driven operations and modern JavaScript patterns.
 
 ---
 
@@ -117,6 +117,7 @@ node app.mjs
 ```
 
 **Expected Output**:
+
 ```
 ✅ Knowledge graph created with 3 triples
 📊 Total triples: 3
@@ -194,6 +195,7 @@ node app.mjs
 ```
 
 **Expected Output**:
+
 ```
 🔍 Query Results:
   Alice Smith (http://example.org/Alice)
@@ -234,7 +236,7 @@ async function addTripleWithReceipt(subject, predicate, object) {
   const receipt = createReceipt('add-triple', {
     subject,
     predicate,
-    object
+    object,
   });
 
   return receipt;
@@ -269,6 +271,7 @@ node app.mjs
 ```
 
 **Expected Output**:
+
 ```
 📝 Receipt generated:
   ID: receipt-abc123...
@@ -304,7 +307,7 @@ const { namedNode, literal, quad } = dataFactory;
 const TripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.union([z.string().url(), z.string().min(1)])
+  object: z.union([z.string().url(), z.string().min(1)]),
 });
 
 // Validated function
@@ -331,7 +334,7 @@ try {
   const receipt = await addTripleWithReceipt({
     subject: 'http://example.org/Alice',
     predicate: 'http://xmlns.com/foaf/0.1/name',
-    object: 'Alice Smith'
+    object: 'Alice Smith',
   });
   console.log('✅ Valid input accepted');
 } catch (error) {
@@ -343,7 +346,7 @@ try {
   await addTripleWithReceipt({
     subject: 'invalid-url', // Not a valid URL
     predicate: 'http://xmlns.com/foaf/0.1/name',
-    object: 'Bob'
+    object: 'Bob',
   });
 } catch (error) {
   console.error('❌ Validation caught:', error.errors[0].message);
@@ -359,6 +362,7 @@ node app.mjs
 ```
 
 **Expected Output**:
+
 ```
 ✅ Valid input accepted
 ❌ Validation caught: Invalid url
@@ -391,7 +395,7 @@ import { createReceipt } from '@unrdf/v6-core/receipts';
 const TripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.string().min(1)
+  object: z.string().min(1),
 });
 
 // --- Initialize Store ---
@@ -422,23 +426,29 @@ async function addTriple(data) {
 // Add sample data
 const receipts = [];
 
-receipts.push(await addTriple({
-  subject: 'http://example.org/Alice',
-  predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice Smith'
-}));
+receipts.push(
+  await addTriple({
+    subject: 'http://example.org/Alice',
+    predicate: 'http://xmlns.com/foaf/0.1/name',
+    object: 'Alice Smith',
+  })
+);
 
-receipts.push(await addTriple({
-  subject: 'http://example.org/Alice',
-  predicate: 'http://xmlns.com/foaf/0.1/knows',
-  object: 'http://example.org/Bob'
-}));
+receipts.push(
+  await addTriple({
+    subject: 'http://example.org/Alice',
+    predicate: 'http://xmlns.com/foaf/0.1/knows',
+    object: 'http://example.org/Bob',
+  })
+);
 
-receipts.push(await addTriple({
-  subject: 'http://example.org/Bob',
-  predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Bob Johnson'
-}));
+receipts.push(
+  await addTriple({
+    subject: 'http://example.org/Bob',
+    predicate: 'http://xmlns.com/foaf/0.1/name',
+    object: 'Bob Johnson',
+  })
+);
 
 console.log(`✅ Added ${receipts.length} triples with receipts\n`);
 
@@ -468,7 +478,7 @@ for (const receipt of receipts) {
   console.log(`  - ${receipt.id}: ${receipt.operation}`);
 }
 
-console.log('\n✨ Done! You\'ve built your first UNRDF v6 application.\n');
+console.log("\n✨ Done! You've built your first UNRDF v6 application.\n");
 ```
 
 ### Run Complete Example
@@ -478,6 +488,7 @@ node app.mjs
 ```
 
 **Expected Output**:
+
 ```
 🚀 UNRDF v6 Quick Start
 
@@ -549,7 +560,7 @@ const data = {
   subject: 'http://example.org/Alice', // ✅ Valid
   // subject: 'invalid-url', // ❌ Invalid
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice'
+  object: 'Alice',
 };
 ```
 
