@@ -1,4 +1,4 @@
-# UNRDF v6 Program Charter: Unification Release
+# UNRDF Program Charter: Unification Release
 
 **Version**: 6.0.0-alpha
 **Status**: Charter
@@ -8,7 +8,7 @@
 
 ## Mission
 
-**v6 "Unification Release"** establishes one substrate, one control plane, one UX surface across the UNRDF monorepo (47 packages). The release unifies fragmented abstractions into a coherent, deterministic, receipt-driven architecture.
+**"Unification Release"** establishes one substrate, one control plane, one UX surface across the UNRDF monorepo (47 packages). The release unifies fragmented abstractions into a coherent, deterministic, receipt-driven architecture.
 
 **Core Principle**: Eliminate duplication. Establish contracts. Enforce guarantees.
 
@@ -23,15 +23,15 @@
 3. **Receipt generation**: Cryptographic proof of change using BLAKE3 hash chains
 4. **Atomic application**: All-or-none Δ application with rollback on failure
 
-**ΔGate Guarantees** (v6 Core Invariants):
+**ΔGate Guarantees**(Core Invariants):
 
-| Invariant | Definition | Enforcement |
-|-----------|------------|-------------|
-| **Determinism** | Same O → Same A | Hash-stable canonicalization (lexicographic ordering) |
-| **Idempotence** | μ∘μ = μ | Receipt chain prevents duplicate application via hash checking |
-| **Provenance** | hash(A) = hash(μ(O)) | Every change carries cryptographic receipt |
-| **No Partials** | All-or-none Δ | Transaction boundaries with rollback on any failure |
-| **Closed World** | No external hidden state | All inputs declared, all outputs receipted |
+| Invariant        | Definition               | Enforcement                                                    |
+| ---------------- | ------------------------ | -------------------------------------------------------------- |
+| **Determinism**  | Same O → Same A          | Hash-stable canonicalization (lexicographic ordering)          |
+| **Idempotence**  | μ∘μ = μ                  | Receipt chain prevents duplicate application via hash checking |
+| **Provenance**   | hash(A) = hash(μ(O))     | Every change carries cryptographic receipt                     |
+| **No Partials**  | All-or-none Δ            | Transaction boundaries with rollback on any failure            |
+| **Closed World** | No external hidden state | All inputs declared, all outputs receipted                     |
 
 **Architecture**:
 
@@ -136,35 +136,45 @@ const DeltaSchema = z.object({
   }),
 
   // Change specification
-  changes: z.array(z.object({
-    operation: z.enum(['add_triple', 'remove_triple', 'replace_value', 'execute_sparql']),
-    subject: z.any().optional(),
-    predicate: z.any().optional(),
-    object: z.any().optional(),
-    sparql: z.string().optional(),
-  })),
+  changes: z.array(
+    z.object({
+      operation: z.enum(['add_triple', 'remove_triple', 'replace_value', 'execute_sparql']),
+      subject: z.any().optional(),
+      predicate: z.any().optional(),
+      object: z.any().optional(),
+      sparql: z.string().optional(),
+    })
+  ),
 
   // Justification
-  justification: z.object({
-    reasoning: z.string(),
-    actor: z.string(),
-    hookValidated: z.string().optional(),
-    policyChecked: z.string().optional(),
-  }).optional(),
+  justification: z
+    .object({
+      reasoning: z.string(),
+      actor: z.string(),
+      hookValidated: z.string().optional(),
+      policyChecked: z.string().optional(),
+    })
+    .optional(),
 
   // Preconditions (must hold for Δ to be admissible)
-  preconditions: z.array(z.object({
-    type: z.enum(['sparql_ask', 'state_hash', 'receipt_exists']),
-    query: z.string().optional(),
-    expectedHash: z.string().optional(),
-    receiptId: z.string().optional(),
-  })).optional(),
+  preconditions: z
+    .array(
+      z.object({
+        type: z.enum(['sparql_ask', 'state_hash', 'receipt_exists']),
+        query: z.string().optional(),
+        expectedHash: z.string().optional(),
+        receiptId: z.string().optional(),
+      })
+    )
+    .optional(),
 
   // Expected effects (postconditions for verification)
-  expectedEffects: z.object({
-    quadCountDelta: z.number().optional(),
-    affectedEntities: z.array(z.string()).optional(),
-  }).optional(),
+  expectedEffects: z
+    .object({
+      quadCountDelta: z.number().optional(),
+      affectedEntities: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 ```
 
@@ -195,28 +205,28 @@ const DeltaSchema = z.object({
 
 **Solution**: Extend existing `kgc-cli` Registry with standardized noun-verb ontology.
 
-**Canonical Nouns** (v6 core):
+**Canonical Nouns** (core):
 
-| Noun | Description | Source Package |
-|------|-------------|----------------|
-| `delta` | Propose, apply, verify state changes | @unrdf/v6-core |
-| `receipt` | Inspect, verify, chain receipts | @unrdf/kgc-substrate |
+| Noun       | Description                             | Source Package       |
+| ---------- | --------------------------------------- | -------------------- |
+| `delta`    | Propose, apply, verify state changes    | @unrdf/v6-core       |
+| `receipt`  | Inspect, verify, chain receipts         | @unrdf/kgc-substrate |
 | `snapshot` | Create, restore deterministic snapshots | @unrdf/kgc-substrate |
-| `hook` | Register, execute, validate hooks | @unrdf/hooks |
-| `workflow` | Start, monitor YAWL cases | @unrdf/yawl |
-| `query` | Execute SPARQL queries | @unrdf/core |
-| `store` | Initialize, status of KnowledgeStore | @unrdf/kgc-substrate |
+| `hook`     | Register, execute, validate hooks       | @unrdf/hooks         |
+| `workflow` | Start, monitor YAWL cases               | @unrdf/yawl          |
+| `query`    | Execute SPARQL queries                  | @unrdf/core          |
+| `store`    | Initialize, status of KnowledgeStore    | @unrdf/kgc-substrate |
 
 **Canonical Verbs** (uniform across nouns):
 
-| Verb | Semantics | Receipt Profile |
-|------|-----------|-----------------|
-| `create` | Create new entity | execution |
-| `apply` | Apply delta/change | delta |
-| `verify` | Cryptographic verification | verification |
-| `inspect` | Read-only query | N/A (no receipt) |
-| `list` | Enumerate entities | N/A (no receipt) |
-| `restore` | Restore from snapshot | execution |
+| Verb      | Semantics                  | Receipt Profile  |
+| --------- | -------------------------- | ---------------- |
+| `create`  | Create new entity          | execution        |
+| `apply`   | Apply delta/change         | delta            |
+| `verify`  | Cryptographic verification | verification     |
+| `inspect` | Read-only query            | N/A (no receipt) |
+| `list`    | Enumerate entities         | N/A (no receipt) |
+| `restore` | Restore from snapshot      | execution        |
 
 **Example Commands**:
 
@@ -259,7 +269,7 @@ kgc hook validate --id pre-delta-hook --delta delta-123
 
 ```
 docs/
-├── v6/                          # v6-specific architecture
+├── v6/                          # architecture
 │   ├── PROGRAM_CHARTER.md       # This document
 │   ├── CONTROL_PLANE.md         # ΔGate design
 │   └── ADRs/                    # Architecture Decision Records
@@ -320,7 +330,7 @@ kgc docs verify --hash abc123def456 --rebuild
 
 ## Maturity Ladder
 
-Each package in v6 must progress through these levels:
+Each package must progress through these levels:
 
 ### L1: Compiles, Runs, Minimal Examples
 
@@ -391,7 +401,7 @@ Each package in v6 must progress through these levels:
 
 ---
 
-## v6 Delivery Phases
+## Delivery Phases
 
 ### Phase 1: Foundation (Weeks 1-2)
 
@@ -445,7 +455,7 @@ Each package in v6 must progress through these levels:
 - [ ] Migration guide published
 - [ ] Breaking changes documented
 
-**Success Criteria**: Core packages emit v6-compatible receipts and deltas
+**Success Criteria**: Core packages emit receipts and deltas
 
 ---
 
@@ -467,13 +477,13 @@ Each package in v6 must progress through these levels:
 
 ### Decision Authority
 
-| Decision Type | Authority | Review Required |
-|---------------|-----------|-----------------|
-| Core invariants | Program Charter (this doc) | Architecture review |
-| Schema changes | Package maintainer | Schema board review |
-| CLI commands | CLI working group | Registry collision check |
-| Maturity level | Package maintainer + CI | Automated checks |
-| Breaking changes | Requires RFC | Community feedback (7 days) |
+| Decision Type    | Authority                  | Review Required             |
+| ---------------- | -------------------------- | --------------------------- |
+| Core invariants  | Program Charter (this doc) | Architecture review         |
+| Schema changes   | Package maintainer         | Schema board review         |
+| CLI commands     | CLI working group          | Registry collision check    |
+| Maturity level   | Package maintainer + CI    | Automated checks            |
+| Breaking changes | Requires RFC               | Community feedback (7 days) |
 
 ### RFC Process (for breaking changes)
 
@@ -489,13 +499,13 @@ Each package in v6 must progress through these levels:
 
 ### Quantitative
 
-| Metric | Baseline (v5) | Target (v6.0) | Measurement |
-|--------|---------------|---------------|-------------|
-| Receipt coverage | 0% | 100% | % of mutating ops receipted |
-| Deterministic builds | 60% | 100% | % of packages with hash-stable outputs |
-| CLI consistency | 40% | 100% | % of commands following noun-verb |
-| Cross-package Δ | 0 | 10 | Count of cross-package deltas |
-| Docs coverage | 60% | 95% | % of public APIs documented |
+| Metric               | Baseline (v5) | Target (v6.0) | Measurement                            |
+| -------------------- | ------------- | ------------- | -------------------------------------- |
+| Receipt coverage     | 0%            | 100%          | % of mutating ops receipted            |
+| Deterministic builds | 60%           | 100%          | % of packages with hash-stable outputs |
+| CLI consistency      | 40%           | 100%          | % of commands following noun-verb      |
+| Cross-package Δ      | 0             | 10            | Count of cross-package deltas          |
+| Docs coverage        | 60%           | 95%           | % of public APIs documented            |
 
 ### Qualitative
 
@@ -508,19 +518,19 @@ Each package in v6 must progress through these levels:
 
 ## Risks and Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Breaking changes block adoption | High | Medium | Deprecation path, migration tools |
-| Performance regression | Medium | Medium | Benchmark suite, optimization budget |
-| Schema drift across packages | High | Low | Automated schema validation in CI |
-| Receipt chain breaks | High | Low | Tamper detection, recovery procedures |
-| Docs out of sync | Medium | High | Docs as code, generated from source |
+| Risk                            | Impact | Probability | Mitigation                            |
+| ------------------------------- | ------ | ----------- | ------------------------------------- |
+| Breaking changes block adoption | High   | Medium      | Deprecation path, migration tools     |
+| Performance regression          | Medium | Medium      | Benchmark suite, optimization budget  |
+| Schema drift across packages    | High   | Low         | Automated schema validation in CI     |
+| Receipt chain breaks            | High   | Low         | Tamper detection, recovery procedures |
+| Docs out of sync                | Medium | High        | Docs as code, generated from source   |
 
 ---
 
 ## Appendix A: Prior Art
 
-v6 builds on proven patterns:
+builds on proven patterns:
 
 - **Git**: Merkle tree chaining, content-addressable storage
 - **Blockchain**: Hash chains, immutability, consensus
