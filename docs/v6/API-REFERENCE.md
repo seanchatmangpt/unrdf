@@ -1,9 +1,9 @@
-# UNRDF v6 API Reference
+# UNRDF API Reference
 
 **Version**: 6.0.0-alpha.1
 **Last Updated**: January 2025
 
-Complete API reference for all UNRDF v6 packages.
+Complete API reference for all UNRDF packages.
 
 ---
 
@@ -28,6 +28,7 @@ Rust-based triple store backend with WASM support.
 Creates a new Oxigraph store instance.
 
 **Parameters**:
+
 - `options` (Object, optional):
   - `backend` (String): `'memory'` | `'sqlite'` (default: `'memory'`)
   - `path` (String): Path to SQLite database (required if `backend: 'sqlite'`)
@@ -37,6 +38,7 @@ Creates a new Oxigraph store instance.
 **Returns**: `Promise<Store>`
 
 **Example**:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 
@@ -47,7 +49,7 @@ const store = await createStore();
 const persistentStore = await createStore({
   backend: 'sqlite',
   path: '/path/to/data.db',
-  options: { cacheSize: 20000 }
+  options: { cacheSize: 20000 },
 });
 ```
 
@@ -62,11 +64,13 @@ Triple store interface.
 Adds a quad to the store.
 
 **Parameters**:
+
 - `quad` (Quad): RDF quad to add
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 import { dataFactory } from '@unrdf/core/rdf';
 
@@ -88,15 +92,17 @@ await store.add(
 Adds multiple quads in batch (10-100x faster than individual `add()`).
 
 **Parameters**:
+
 - `quads` (Array<Quad>): Array of quads to add
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 const quads = [
   quad(namedNode('...'), namedNode('...'), literal('...')),
-  quad(namedNode('...'), namedNode('...'), literal('...'))
+  quad(namedNode('...'), namedNode('...'), literal('...')),
 ];
 
 await store.addAll(quads); // Batch insert
@@ -109,6 +115,7 @@ await store.addAll(quads); // Batch insert
 Queries the store for matching quads.
 
 **Parameters**:
+
 - `subject` (NamedNode | null): Subject to match (null = wildcard)
 - `predicate` (NamedNode | null): Predicate to match (null = wildcard)
 - `object` (NamedNode | Literal | null): Object to match (null = wildcard)
@@ -117,20 +124,13 @@ Queries the store for matching quads.
 **Returns**: `Promise<Array<Quad>>`
 
 **Example**:
+
 ```javascript
 // Find all triples with specific subject
-const quads = await store.match(
-  namedNode('http://example.org/Alice'),
-  null,
-  null
-);
+const quads = await store.match(namedNode('http://example.org/Alice'), null, null);
 
 // Find all foaf:name properties
-const names = await store.match(
-  null,
-  namedNode('http://xmlns.com/foaf/0.1/name'),
-  null
-);
+const names = await store.match(null, namedNode('http://xmlns.com/foaf/0.1/name'), null);
 ```
 
 ---
@@ -140,11 +140,13 @@ const names = await store.match(
 Removes a quad from the store.
 
 **Parameters**:
+
 - `quad` (Quad): Quad to remove
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 await store.delete(
   quad(
@@ -164,6 +166,7 @@ Removes all quads from the store.
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 await store.clear(); // Empties store
 ```
@@ -177,6 +180,7 @@ Number of quads in the store.
 **Type**: `Number` (read-only)
 
 **Example**:
+
 ```javascript
 console.log(`Store contains ${store.size} triples`);
 ```
@@ -192,6 +196,7 @@ RDF operations, SPARQL execution, and validation.
 RDF term factory (re-export from `@rdfjs/data-model`).
 
 **Methods**:
+
 - `namedNode(uri)` - Creates a named node
 - `literal(value, languageOrDatatype?)` - Creates a literal
 - `blankNode(id?)` - Creates a blank node
@@ -199,6 +204,7 @@ RDF term factory (re-export from `@rdfjs/data-model`).
 - `defaultGraph()` - Default graph reference
 
 **Example**:
+
 ```javascript
 import { dataFactory } from '@unrdf/core/rdf';
 
@@ -218,6 +224,7 @@ const triple = quad(
 Executes a SPARQL query against a store.
 
 **Parameters**:
+
 - `store` (Store): Store to query
 - `query` (String): SPARQL query string
 - `options` (Object, optional):
@@ -227,6 +234,7 @@ Executes a SPARQL query against a store.
 **Returns**: `Promise<Array<Bindings>>`
 
 **Example**:
+
 ```javascript
 import { executeSparql } from '@unrdf/core/sparql';
 
@@ -255,6 +263,7 @@ for (const binding of results) {
 Parses RDF data from string.
 
 **Parameters**:
+
 - `data` (String): RDF data to parse
 - `format` (String, optional): Format (`'turtle'`, `'ntriples'`, `'json-ld'`, etc.)
 - `baseIRI` (String, optional): Base IRI for relative URIs
@@ -262,6 +271,7 @@ Parses RDF data from string.
 **Returns**: `Promise<Array<Quad>>`
 
 **Example**:
+
 ```javascript
 import { parseRdf } from '@unrdf/core/rdf';
 
@@ -283,12 +293,14 @@ console.log(`Parsed ${quads.length} triples`);
 Serializes quads to RDF string.
 
 **Parameters**:
+
 - `quads` (Array<Quad>): Quads to serialize
 - `format` (String, optional): Format (default: `'turtle'`)
 
 **Returns**: `Promise<String>`
 
 **Example**:
+
 ```javascript
 import { serializeRdf } from '@unrdf/core/rdf';
 
@@ -303,12 +315,14 @@ console.log(turtle);
 Validates a store against SHACL shapes.
 
 **Parameters**:
+
 - `store` (Store): Store to validate
 - `shapesGraph` (Store): Store containing SHACL shapes
 
 **Returns**: `Promise<ValidationReport>`
 
 **Example**:
+
 ```javascript
 import { validateShacl } from '@unrdf/core/validation';
 
@@ -335,12 +349,14 @@ Receipt-driven operations, deltas, and CLI spine.
 Creates a cryptographic receipt for an operation.
 
 **Parameters**:
+
 - `operation` (String): Operation name
 - `metadata` (Object, optional): Operation metadata
 
 **Returns**: `Receipt`
 
 **Receipt Shape**:
+
 ```typescript
 {
   id: string;              // Unique receipt ID
@@ -353,13 +369,14 @@ Creates a cryptographic receipt for an operation.
 ```
 
 **Example**:
+
 ```javascript
 import { createReceipt } from '@unrdf/v6-core/receipts';
 
 const receipt = createReceipt('add-triple', {
   subject: 'http://example.org/Alice',
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice'
+  object: 'Alice',
 });
 
 console.log('Receipt:', receipt.id);
@@ -373,11 +390,13 @@ console.log('Merkle root:', receipt.merkleRoot);
 Verifies the integrity of a receipt.
 
 **Parameters**:
+
 - `receipt` (Receipt): Receipt to verify
 
 **Returns**: `Boolean`
 
 **Example**:
+
 ```javascript
 import { verifyReceipt } from '@unrdf/v6-core/receipts';
 
@@ -392,11 +411,13 @@ console.log('Receipt valid:', isValid);
 Creates a delta proposal for version transition.
 
 **Parameters**:
+
 - `fromVersion` (String): Source version
 - `toVersion` (String): Target version
 - `operations` (Array<Operation>): Delta operations
 
 **Operation Shape**:
+
 ```typescript
 {
   type: 'add' | 'remove';
@@ -412,6 +433,7 @@ Creates a delta proposal for version transition.
 **Returns**: `DeltaProposal`
 
 **Example**:
+
 ```javascript
 import { createDeltaProposal } from '@unrdf/v6-core/delta';
 
@@ -421,9 +443,9 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@example.org'
-    }
-  }
+      object: 'alice@example.org',
+    },
+  },
 ]);
 ```
 
@@ -434,12 +456,14 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
 Applies a delta proposal to a store.
 
 **Parameters**:
+
 - `store` (Store): Store to modify
 - `proposal` (DeltaProposal): Delta to apply
 
 **Returns**: `Promise<Receipt>`
 
 **Example**:
+
 ```javascript
 import { applyDelta } from '@unrdf/v6-core/delta';
 
@@ -456,9 +480,11 @@ Merkle tree for cryptographic proofs.
 #### `constructor(leaves)`
 
 **Parameters**:
+
 - `leaves` (Array<String>): Leaf values
 
 **Example**:
+
 ```javascript
 import { MerkleTree } from '@unrdf/v6-core/receipts';
 
@@ -473,11 +499,13 @@ console.log('Root:', tree.root);
 Generates Merkle proof for a leaf.
 
 **Parameters**:
+
 - `index` (Number): Leaf index
 
 **Returns**: `Array<String>`
 
 **Example**:
+
 ```javascript
 const proof = tree.getProof(1); // Proof for 'op2'
 console.log('Proof:', proof);
@@ -490,6 +518,7 @@ console.log('Proof:', proof);
 Verifies a Merkle proof.
 
 **Parameters**:
+
 - `leaf` (String): Leaf value
 - `proof` (Array<String>): Merkle proof
 - `root` (String): Expected root hash
@@ -497,6 +526,7 @@ Verifies a Merkle proof.
 **Returns**: `Boolean`
 
 **Example**:
+
 ```javascript
 const isValid = MerkleTree.verify('op2', proof, tree.root);
 console.log('Proof valid:', isValid);
@@ -513,6 +543,7 @@ Knowledge hooks and policy execution.
 Defines a knowledge hook.
 
 **Parameters**:
+
 - `config` (Object):
   - `name` (String): Hook name
   - `schema` (ZodSchema): Input validation schema
@@ -522,6 +553,7 @@ Defines a knowledge hook.
 **Returns**: `Hook`
 
 **Example**:
+
 ```javascript
 import { z } from 'zod';
 import { defineHook } from '@unrdf/hooks';
@@ -530,13 +562,13 @@ const myHook = defineHook({
   name: 'validate-person',
   schema: z.object({
     person: z.string().url(),
-    name: z.string().min(1)
+    name: z.string().min(1),
   }),
-  handler: async (ctx) => {
+  handler: async ctx => {
     console.log('Validating:', ctx.person);
     // Custom logic
   },
-  receipt: true
+  receipt: true,
 });
 ```
 
@@ -547,18 +579,20 @@ const myHook = defineHook({
 Activates a hook with context.
 
 **Parameters**:
+
 - `hook` (Hook): Hook to activate
 - `context` (Object): Hook context
 
 **Returns**: `Promise<Receipt | void>`
 
 **Example**:
+
 ```javascript
 import { activateHook } from '@unrdf/hooks';
 
 const receipt = await activateHook(myHook, {
   person: 'http://example.org/Alice',
-  name: 'Alice Smith'
+  name: 'Alice Smith',
 });
 
 console.log('Hook receipt:', receipt?.id);
@@ -575,6 +609,7 @@ AsyncIterator-based streaming.
 Creates a read stream from file.
 
 **Parameters**:
+
 - `path` (String): File path
 - `options` (Object, optional):
   - `format` (String): RDF format (default: auto-detect)
@@ -583,12 +618,13 @@ Creates a read stream from file.
 **Returns**: `AsyncIterableIterator<Quad>`
 
 **Example**:
+
 ```javascript
 import { createReadStream } from '@unrdf/streaming';
 
 const stream = createReadStream('/path/to/data.ttl', {
   format: 'turtle',
-  bufferSize: 5000
+  bufferSize: 5000,
 });
 
 for await (const quad of stream) {
@@ -605,6 +641,7 @@ const receipt = await stream.receipt();
 Creates a write stream to file.
 
 **Parameters**:
+
 - `path` (String): File path
 - `options` (Object, optional):
   - `format` (String): RDF format (default: `'ntriples'`)
@@ -612,11 +649,12 @@ Creates a write stream to file.
 **Returns**: `WritableStream<Quad>`
 
 **Example**:
+
 ```javascript
 import { createWriteStream } from '@unrdf/streaming';
 
 const writeStream = createWriteStream('/path/to/output.nt', {
-  format: 'ntriples'
+  format: 'ntriples',
 });
 
 for (const quad of quads) {
@@ -639,17 +677,19 @@ Federated query executor.
 #### `constructor(stores, options?)`
 
 **Parameters**:
+
 - `stores` (Array<Store | RemoteEndpoint>): Stores to federate
 - `options` (Object, optional):
   - `optimizeJoins` (Boolean): Enable join optimization (default: true)
   - `parallel` (Boolean): Parallel query execution (default: true)
 
 **Example**:
+
 ```javascript
 import { Federation } from '@unrdf/federation';
 
 const federation = new Federation([store1, store2], {
-  optimizeJoins: true
+  optimizeJoins: true,
 });
 ```
 
@@ -660,18 +700,18 @@ const federation = new Federation([store1, store2], {
 Executes a federated SPARQL query.
 
 **Parameters**:
+
 - `sparqlQuery` (SparqlQuery): Tagged template query
 
 **Returns**: `Promise<Array<Bindings>>`
 
 **Example**:
+
 ```javascript
 import { sparql } from '@unrdf/federation';
 
 const results = await federation.query(
-  sparql`SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10`
-    .timeout(5000)
-    .receipt(true)
+  sparql`SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10`.timeout(5000).receipt(true)
 );
 
 const receipt = results.receipt();
@@ -684,10 +724,12 @@ const receipt = results.receipt();
 Creates a typed SPARQL query.
 
 **Methods**:
+
 - `.timeout(ms)` - Set timeout
 - `.receipt(boolean)` - Enable/disable receipt
 
 **Example**:
+
 ```javascript
 import { sparql } from '@unrdf/federation';
 
@@ -712,18 +754,20 @@ Remote SPARQL endpoint.
 #### `constructor(url, options?)`
 
 **Parameters**:
+
 - `url` (String): SPARQL endpoint URL
 - `options` (Object, optional):
   - `headers` (Object): HTTP headers
   - `timeout` (Number): Request timeout (ms)
 
 **Example**:
+
 ```javascript
 import { RemoteEndpoint } from '@unrdf/federation';
 
 const endpoint = new RemoteEndpoint('https://dbpedia.org/sparql', {
   headers: { 'User-Agent': 'UNRDF/6.0' },
-  timeout: 30000
+  timeout: 30000,
 });
 ```
 
@@ -740,6 +784,7 @@ v5-compatible store creation.
 **Returns**: `Promise<Store>`
 
 **Example**:
+
 ```javascript
 import { createStore } from '@unrdf/v6-compat/adapters';
 
@@ -754,11 +799,13 @@ const store = await createStore();
 Wraps v5 workflow to generate receipts.
 
 **Parameters**:
+
 - `workflow` (Object): v5 workflow object
 
 **Returns**: `WrappedWorkflow`
 
 **Example**:
+
 ```javascript
 import { wrapWorkflow } from '@unrdf/v6-compat/adapters';
 
@@ -773,6 +820,7 @@ const receipt = await wrapped.execute(task); // Now generates receipt
 v5-compatible SPARQL query.
 
 **Parameters**:
+
 - `federation` (Federation): Federation instance
 - `query` (String): SPARQL query string
 - `options` (Object, optional):
@@ -781,14 +829,11 @@ v5-compatible SPARQL query.
 **Returns**: `Promise<Array<Bindings>>`
 
 **Example**:
+
 ```javascript
 import { querySparql } from '@unrdf/v6-compat/adapters';
 
-const results = await querySparql(
-  federation,
-  'SELECT * WHERE { ?s ?p ?o }',
-  { timeout: 5000 }
-);
+const results = await querySparql(federation, 'SELECT * WHERE { ?s ?p ?o }', { timeout: 5000 });
 ```
 
 ---
@@ -802,6 +847,7 @@ Tracks migration progress.
 Prints migration summary.
 
 **Example**:
+
 ```javascript
 import { migrationTracker } from '@unrdf/v6-compat';
 
@@ -809,7 +855,7 @@ import { migrationTracker } from '@unrdf/v6-compat';
 migrationTracker.summary();
 // Prints:
 // Migration Summary:
-// - createStore: 15 calls (v6-compatible)
+// - createStore: 15 calls (current version-compatible)
 // - wrapWorkflow: 3 calls (needs migration)
 ```
 
@@ -820,6 +866,7 @@ migrationTracker.summary();
 All packages export TypeScript type definitions via JSDoc.
 
 **Import types**:
+
 ```typescript
 import type { Store, Quad } from '@unrdf/oxigraph';
 import type { Receipt, DeltaProposal } from '@unrdf/v6-core';
@@ -838,6 +885,7 @@ All APIs throw typed errors:
 - `SparqlError` - SPARQL execution failure
 
 **Example**:
+
 ```javascript
 import { ZodError } from 'zod';
 
