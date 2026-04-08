@@ -1,4 +1,4 @@
-# UNRDF v6 Migration Guide
+# UNRDF Migration Guide
 
 **Version**: 6.0.0
 **Date**: 2025-12-27
@@ -8,14 +8,16 @@
 
 ## Overview
 
-This guide helps you migrate from **UNRDF v5** to **UNRDF v6**.
+This guide helps you migrate from **UNRDF v5** to \*\*UNRDF current.
 
 **Key Changes**:
+
 - 12 breaking changes (see `/docs/v6/BREAKING-CHANGES.md`)
 - 53% package reduction (54 → 25 packages)
 - 70% auto-migration coverage
 
 **Migration Path**:
+
 1. **Preparation** (Week 1-2): Review changes, update dependencies
 2. **Automated Migration** (Week 3-4): Run migration tool
 3. **Manual Migration** (Week 5-6): Fix remaining issues
@@ -27,11 +29,13 @@ This guide helps you migrate from **UNRDF v5** to **UNRDF v6**.
 ## Prerequisites
 
 **Required**:
+
 - Node.js ≥20.0.0 (upgrade if on 18.x)
 - pnpm ≥7.0.0 (or npm ≥8.0.0)
 - UNRDF v5.0.0 or later
 
 **Recommended**:
+
 - Git (for rollback if needed)
 - CI/CD pipeline (for automated testing)
 - Staging environment (for validation)
@@ -72,6 +76,7 @@ npx @unrdf/migrate-v6 analyze .
 ```
 
 **Example Report**:
+
 ```
 UNRDF v6 Migration Report
 =========================
@@ -93,7 +98,7 @@ Auto-Migration Coverage: 68%
 ```bash
 # Commit current state
 git add .
-git commit -m "Pre-v6 migration checkpoint"
+git commit -m "Pre-migration checkpoint"
 
 # Create migration branch
 git checkout -b migration/v6
@@ -114,6 +119,7 @@ npx @unrdf/migrate-v6 migrate . --auto
 ```
 
 **What Gets Migrated Automatically**:
+
 - ✅ Package imports (BC-1)
 - ✅ Store creation (BC-2, partial)
 - ✅ SPARQL signatures (BC-3)
@@ -145,7 +151,7 @@ npm run lint:fix
 
 ```bash
 git add .
-git commit -m "chore: apply automated v6 migrations"
+git commit -m "chore: apply automated migrations"
 ```
 
 ---
@@ -155,29 +161,36 @@ git commit -m "chore: apply automated v6 migrations"
 ### 3.1 Migrate Hook Registrations (BC-4)
 
 **Before**:
+
 ```javascript
-import { registerHook } from '@unrdf/hooks'
+import { registerHook } from '@unrdf/hooks';
 
 registerHook({
   name: 'validate-person',
   trigger: 'INSERT',
   pattern: '?s a foaf:Person .',
-  run: (event) => { /* ... */ }
-})
+  run: event => {
+    /* ... */
+  },
+});
 ```
 
 **After**:
+
 ```javascript
 // Register per-store
 store.registerHook({
   name: 'validate-person',
   trigger: 'INSERT',
   pattern: '?s a foaf:Person .',
-  run: (event) => { /* ... */ }
-})
+  run: event => {
+    /* ... */
+  },
+});
 ```
 
 **Steps**:
+
 1. Find all `registerHook()` calls: `grep -r "registerHook" src/`
 2. Determine correct store for each hook
 3. Move registration to store instance
@@ -186,22 +199,25 @@ store.registerHook({
 ### 3.2 Update Federation Configs (BC-6)
 
 **Before**:
+
 ```javascript
 const federation = createFederation({
   nodes: ['node1', 'node2', 'node3'],
-  consistency: 'eventual'
-})
+  consistency: 'eventual',
+});
 ```
 
 **After**:
+
 ```javascript
 const federation = createFederation({
   nodes: ['node1', 'node2', 'node3'],
-  consensus: 'raft'
-})
+  consensus: 'raft',
+});
 ```
 
 **Steps**:
+
 1. Update federation configs
 2. Deploy nodes incrementally
 3. Verify leader election
@@ -210,26 +226,29 @@ const federation = createFederation({
 ### 3.3 Convert CommonJS to ESM (BC-12)
 
 **Before (`index.js`)**:
+
 ```javascript
-const { createStore } = require('@unrdf/core')
+const { createStore } = require('@unrdf/core');
 
 module.exports = {
   initStore() {
-    return createStore()
-  }
-}
+    return createStore();
+  },
+};
 ```
 
 **After (`index.mjs`)**:
+
 ```javascript
-import { createStore } from '@unrdf/core'
+import { createStore } from '@unrdf/core';
 
 export function initStore() {
-  return createStore()
+  return createStore();
 }
 ```
 
 **Steps**:
+
 1. Add `"type": "module"` to package.json
 2. Rename `.js` → `.mjs` (if not using `"type": "module"`)
 3. Replace `require()` → `import`
@@ -238,18 +257,21 @@ export function initStore() {
 ### 3.4 Fix Zod Validation Errors (BC-11)
 
 **Before**:
+
 ```javascript
-const store = createStore({ invalid: 'option' })
+const store = createStore({ invalid: 'option' });
 // Silent failure
 ```
 
 **After**:
+
 ```javascript
-const store = createStore({ backend: 'oxigraph' })
+const store = createStore({ backend: 'oxigraph' });
 // Throws ZodError if invalid
 ```
 
 **Steps**:
+
 1. Run tests to find validation errors
 2. Fix invalid inputs (errors are descriptive)
 3. Update code to match Zod schemas
@@ -258,7 +280,7 @@ const store = createStore({ backend: 'oxigraph' })
 
 ```bash
 git add .
-git commit -m "chore: apply manual v6 migrations"
+git commit -m "chore: apply manual migrations"
 ```
 
 ---
@@ -275,6 +297,7 @@ npm test
 ```
 
 **Common Test Failures**:
+
 - Store parameter missing in SPARQL calls
 - Hook registration scope issues
 - Invalid Zod inputs
@@ -300,6 +323,7 @@ npm run benchmark:compare
 ```
 
 **Expected Results**:
+
 - SPARQL queries: 40-60% faster
 - Memory usage: 40-60% lower
 - No regressions
@@ -341,6 +365,7 @@ npm run monitor:canary
 ```
 
 **Metrics to Watch**:
+
 - Error rate (should not increase)
 - Response time (should decrease 40-60%)
 - Memory usage (should decrease 40-60%)
@@ -374,6 +399,7 @@ npm prune
 **Symptoms**: Test suite fails with SPARQL errors
 
 **Solution**:
+
 ```bash
 # Check for missing store parameters
 grep -r "query(" src/ | grep -v "query(store"
@@ -388,10 +414,11 @@ grep -r "query(" src/ | grep -v "query(store"
 **Symptoms**: Hook registered but not executing
 
 **Solution**:
+
 ```javascript
 // Check hook scope - must be registered per-store
-store.registerHook(myHook) // ✅ Correct
-registerHook(myHook)       // ❌ Wrong (v5 API)
+store.registerHook(myHook); // ✅ Correct
+registerHook(myHook); // ❌ Wrong (v5 API)
 ```
 
 ### Issue: Zod Validation Errors
@@ -399,16 +426,17 @@ registerHook(myHook)       // ❌ Wrong (v5 API)
 **Symptoms**: `ZodError: Unrecognized key 'X'`
 
 **Solution**:
+
 ```javascript
 // Read error message carefully
 // Example: "Unrecognized key 'backend' in object"
 // Solution: Use correct option name
 
 // Before
-createStore({ backend: 'oxigraph' })
+createStore({ backend: 'oxigraph' });
 
 // After (if schema changed)
-createStore({ store: { type: 'oxigraph' } })
+createStore({ store: { type: 'oxigraph' } });
 ```
 
 ### Issue: ESM Import Errors
@@ -416,6 +444,7 @@ createStore({ store: { type: 'oxigraph' } })
 **Symptoms**: `Cannot use import statement outside a module`
 
 **Solution**:
+
 ```json
 // Add to package.json
 {
@@ -428,6 +457,7 @@ createStore({ store: { type: 'oxigraph' } })
 **Symptoms**: Queries slower than v5
 
 **Solution**:
+
 ```bash
 # Profile application
 npm run profile:perf
@@ -469,29 +499,31 @@ npm run deploy:production
 
 ```javascript
 // Enable v5 compatibility (temporary fix)
-import { enableV5Compat } from '@unrdf/core/compat'
+import { enableV5Compat } from '@unrdf/core/compat';
 
 enableV5Compat({
   allowLegacyStoreAPI: true,
   allowGlobalHooks: true,
-  warnOnDeprecated: true
-})
+  warnOnDeprecated: true,
+});
 ```
 
-**Note**: Compatibility layer removed in v6.1.0 (12 months after v6.0.0 GA).
+**Note**: Compatibility layer removed in 6.1.0 (12 months after v6.0.0 GA).
 
 ---
 
 ## Migration Checklist
 
 ### Preparation
+
 - [ ] Review breaking changes catalog
 - [ ] Analyze codebase with migration tool
-- [ ] Update dependencies to v6
+- [ ] Update dependencies to current version
 - [ ] Create backup (git commit)
 - [ ] Upgrade Node.js to ≥20.0.0
 
 ### Automated Migration
+
 - [ ] Run migration tool (dry run)
 - [ ] Review proposed changes
 - [ ] Apply automated migrations
@@ -499,6 +531,7 @@ enableV5Compat({
 - [ ] Commit changes
 
 ### Manual Migration
+
 - [ ] Migrate hook registrations (BC-4)
 - [ ] Update federation configs (BC-6)
 - [ ] Convert CommonJS to ESM (BC-12)
@@ -506,6 +539,7 @@ enableV5Compat({
 - [ ] Commit changes
 
 ### Validation
+
 - [ ] 100% test pass rate
 - [ ] OTEL validation ≥80/100
 - [ ] Performance benchmarks (no regressions)
@@ -513,6 +547,7 @@ enableV5Compat({
 - [ ] Verify migration completeness
 
 ### Production Rollout
+
 - [ ] Canary deployment (10% traffic)
 - [ ] Monitor for 24-48 hours
 - [ ] Full rollout (100% traffic)
@@ -524,12 +559,14 @@ enableV5Compat({
 ## Support
 
 **Need Help?**
+
 - GitHub Discussions: https://github.com/unrdf/unrdf/discussions
 - Migration FAQ: `/docs/v6/FAQ.md`
 - Breaking Changes: `/docs/v6/BREAKING-CHANGES.md`
 - Architecture: `/docs/v6/ARCHITECTURE.md`
 
 **Found a Bug?**
+
 - Report issues: https://github.com/unrdf/unrdf/issues
 - Security issues: security@unrdf.dev
 
@@ -538,9 +575,10 @@ enableV5Compat({
 ## Next Steps
 
 After successful migration:
+
 1. Explore new features (see `/docs/v6/NEW-FEATURES.md`)
 2. Optimize performance (see `/docs/v6/PERFORMANCE-GUIDE.md`)
 3. Enable advanced observability (see `/docs/v6/OBSERVABILITY.md`)
 4. Join the community (see `/CONTRIBUTING.md`)
 
-**Welcome to UNRDF v6!** 🎉
+**Welcome to UNRDF!** 🎉
