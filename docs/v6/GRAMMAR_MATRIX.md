@@ -23,15 +23,16 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 
 ### Current State (v5 Baseline)
 
-| Grammar | Parse Coverage | Compile Coverage | Runtime Subset | Denial Receipts | Implementation Status |
-|---------|---------------|------------------|----------------|-----------------|----------------------|
-| **SPARQL** | 80% | 75% | Yes (Basic SELECT/CONSTRUCT/ASK) | No | Partial - executor-sync.mjs |
-| **SHACL** | 60% | 50% | Partial (via knowledge-engine) | No | Limited - validation example only |
-| **N3** | 50% | 40% | Partial (streaming only) | No | Limited - n3-justified-only.mjs |
-| **OWL** | 30% | 20% | Minimal (basic inference) | No | Very Limited - no dedicated module |
-| **ShEx** | 10% | 0% | No | No | Not Implemented |
+| Grammar    | Parse Coverage | Compile Coverage | Runtime Subset                   | Denial Receipts | Implementation Status              |
+| ---------- | -------------- | ---------------- | -------------------------------- | --------------- | ---------------------------------- |
+| **SPARQL** | 80%            | 75%              | Yes (Basic SELECT/CONSTRUCT/ASK) | No              | Partial - executor-sync.mjs        |
+| **SHACL**  | 60%            | 50%              | Partial (via knowledge-engine)   | No              | Limited - validation example only  |
+| **N3**     | 50%            | 40%              | Partial (streaming only)         | No              | Limited - n3-justified-only.mjs    |
+| **OWL**    | 30%            | 20%              | Minimal (basic inference)        | No              | Very Limited - no dedicated module |
+| **ShEx**   | 10%            | 0%               | No                               | No              | Not Implemented                    |
 
 **Evidence**:
+
 - SPARQL: 3 import references in core, executor-sync.mjs with SELECT/CONSTRUCT/ASK support
 - SHACL: 1 test example (example-shacl-validation.mjs), no core implementation
 - N3: 3 files (n3-justified-only.mjs, n3-migration.mjs, minimal-n3-integration.mjs)
@@ -42,15 +43,16 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 
 ### V6 Target State (Alpha)
 
-| Grammar | Parse Coverage | Compile Coverage | Runtime Subset | Denial Receipts | Target Timeline |
-|---------|---------------|------------------|----------------|-----------------|-----------------|
-| **SPARQL** | 100% | 90% | Yes (all query forms) | Yes | Alpha |
-| **SHACL** | 100% | 80% | Yes (all shapes) | Yes | Alpha |
-| **N3** | 100% | 70% | Yes (logic/rules) | Yes | Beta |
-| **OWL** | 100% | 60% | Partial (DL subset) | Yes | Beta |
-| **ShEx** | 100% | 50% | Partial (basic shapes) | Yes | v6.1 |
+| Grammar    | Parse Coverage | Compile Coverage | Runtime Subset         | Denial Receipts | Target Timeline |
+| ---------- | -------------- | ---------------- | ---------------------- | --------------- | --------------- |
+| **SPARQL** | 100%           | 90%              | Yes (all query forms)  | Yes             | Alpha           |
+| **SHACL**  | 100%           | 80%              | Yes (all shapes)       | Yes             | Alpha           |
+| **N3**     | 100%           | 70%              | Yes (logic/rules)      | Yes             | Beta            |
+| **OWL**    | 100%           | 60%              | Partial (DL subset)    | Yes             | Beta            |
+| **ShEx**   | 100%           | 50%              | Partial (basic shapes) | Yes             | 6.1             |
 
 **Rationale**:
+
 - 100% parse coverage = accept full grammar spec, no syntax crashes
 - Variable compile coverage = AOT complexity filters differ per grammar
 - Receipt-only denials = structured rejection metadata, never silent fails
@@ -62,6 +64,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ### SPARQL Complexity Constraints
 
 **Compile-Time Bounds**:
+
 ```javascript
 {
   maxTriplePatterns: 1000,      // Max patterns in WHERE clause
@@ -74,6 +77,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ```
 
 **Runtime Bounds**:
+
 ```javascript
 {
   maxResults: 10000,            // Hard result limit
@@ -83,6 +87,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ```
 
 **Denial Receipt Format**:
+
 ```json
 {
   "type": "grammar/sparql/denial",
@@ -106,6 +111,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ### SHACL Complexity Constraints
 
 **Compile-Time Bounds**:
+
 ```javascript
 {
   maxShapesDepth: 20,           // Max nested shape depth
@@ -116,13 +122,14 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 }
 ```
 
-**Rationale**: SHACL validation is O(n*m) where n=nodes, m=shapes. Deep nesting → exponential blowup.
+**Rationale**: SHACL validation is O(n\*m) where n=nodes, m=shapes. Deep nesting → exponential blowup.
 
 ---
 
 ### N3 Complexity Constraints
 
 **Compile-Time Bounds**:
+
 ```javascript
 {
   maxRuleDepth: 15,             // Max inference rule depth
@@ -140,6 +147,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ### OWL Complexity Constraints
 
 **Compile-Time Bounds** (DL Subset Only):
+
 ```javascript
 {
   maxOWLAxioms: 10000,          // Max ontology axioms
@@ -157,6 +165,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ### ShEx Complexity Constraints
 
 **Compile-Time Bounds**:
+
 ```javascript
 {
   maxShapeDepth: 30,            // Max nested shape depth
@@ -182,6 +191,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ```
 
 **Adversarial Test**: Can you provide valid SPARQL 1.1 that crashes the parser?
+
 - **Expected**: No crashes, all valid syntax accepted
 
 ---
@@ -197,6 +207,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ```
 
 **Adversarial Test**: Submit 10,000 triple pattern SPARQL query
+
 - **Expected**: Denial receipt with merkleProof, not crash
 
 ---
@@ -212,11 +223,12 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 ```
 
 **Adversarial Test**: Infinite loop in N3 rule
+
 - **Expected**: Timeout after 15s, emit receipt, cleanup
 
 ---
 
-## Implementation Gaps (v5 → v6 Alpha)
+## Implementation Gaps (v5 → Alpha)
 
 ### Critical Gaps
 
@@ -292,13 +304,13 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 
 ### Quantitative Targets
 
-| Metric | Current (v5) | Target (v6 Alpha) | Measured By |
-|--------|-------------|-------------------|-------------|
-| Parse crash rate | ~5% (est.) | 0% | Test suite |
-| Compile coverage (SPARQL) | 75% | 90% | Feature tests |
-| Denial receipt generation | 0% | 100% | Receipt validation |
-| Runtime timeout enforcement | 0% | 100% | Timeout tests |
-| Complexity false rejections | N/A | &lt;1% | Performance tests |
+| Metric                      | Current (v5) | Target (Alpha) | Measured By        |
+| --------------------------- | ------------ | -------------- | ------------------ |
+| Parse crash rate            | ~5% (est.)   | 0%             | Test suite         |
+| Compile coverage (SPARQL)   | 75%          | 90%            | Feature tests      |
+| Denial receipt generation   | 0%           | 100%           | Receipt validation |
+| Runtime timeout enforcement | 0%           | 100%           | Timeout tests      |
+| Complexity false rejections | N/A          | &lt;1%         | Performance tests  |
 
 ---
 
@@ -332,7 +344,7 @@ The V6 Grammar Closure strategy implements **full grammar acceptance with AOT (A
 
 ## Validation Checklist
 
-Before declaring v6 grammar closure complete:
+Before declaring grammar closure complete:
 
 - [ ] Run: `timeout 5s npm test` in v6-core (0 failures)
 - [ ] Verify: `ls -1 /home/user/unrdf/packages/v6-core/src/grammar/*.mjs | wc -l` = 4 (index, parser, compiler, runtime-gate)
@@ -341,6 +353,7 @@ Before declaring v6 grammar closure complete:
 - [ ] Prove: Submit 10K triple SPARQL → denial receipt JSON (not crash)
 
 **Adversarial PM Question**: Can you crash the parser with valid grammar?
+
 - **Answer (Target)**: No, 100% parse acceptance proven by test suite
 
 ---

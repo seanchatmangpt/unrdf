@@ -240,7 +240,7 @@ kgc receipt inspect --id receipt-456
 kgc receipt verify --chain --from genesis --to receipt-789
 
 # Snapshot operations
-kgc snapshot create --tag v6-alpha-1
+kgc snapshot create --tag alpha-1
 kgc snapshot restore --hash abc123def456
 
 # Hook management
@@ -499,13 +499,13 @@ Each package must progress through these levels:
 
 ### Quantitative
 
-| Metric               | Baseline (v5) | Target (v6.0) | Measurement                            |
-| -------------------- | ------------- | ------------- | -------------------------------------- |
-| Receipt coverage     | 0%            | 100%          | % of mutating ops receipted            |
-| Deterministic builds | 60%           | 100%          | % of packages with hash-stable outputs |
-| CLI consistency      | 40%           | 100%          | % of commands following noun-verb      |
-| Cross-package Δ      | 0             | 10            | Count of cross-package deltas          |
-| Docs coverage        | 60%           | 95%           | % of public APIs documented            |
+| Metric               | Baseline (v5) | Target (6.0) | Measurement                            |
+| -------------------- | ------------- | ------------ | -------------------------------------- |
+| Receipt coverage     | 0%            | 100%         | % of mutating ops receipted            |
+| Deterministic builds | 60%           | 100%         | % of packages with hash-stable outputs |
+| CLI consistency      | 40%           | 100%         | % of commands following noun-verb      |
+| Cross-package Δ      | 0             | 10           | Count of cross-package deltas          |
+| Docs coverage        | 60%           | 95%          | % of public APIs documented            |
 
 ### Qualitative
 

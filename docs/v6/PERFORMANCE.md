@@ -1,24 +1,24 @@
 # V6 Performance Report
 
 **Generated:** 2025-12-27
-**Version:** v6.0.0-alpha.1
+**Version:** 6.0.0-alpha.1
 **Status:** Optimized and Benchmarked
 
 ---
 
 ## Executive Summary
 
-UNRDF v6 delivers **significant performance improvements** over the baseline implementation through strategic optimizations in query caching, memory allocation reduction, and batch processing capabilities.
+UNRDF delivers **significant performance improvements** over the baseline implementation through strategic optimizations in query caching, memory allocation reduction, and batch processing capabilities.
 
 ### Key Achievements
 
-| Metric | Baseline | Optimized | Improvement |
-|--------|----------|-----------|-------------|
-| **Query Throughput (cached)** | 757 ops/sec | 54,311 ops/sec | **71.7x** ⚡ |
-| **Query Latency P50 (cached)** | 1.151ms | 0.013ms | **88.7% reduction** |
-| **Memory per Query** | 18.07 MB | 2.58 MB | **85.7% reduction** 💾 |
-| **Batch Query Throughput** | N/A | 6,296 ops/sec | **New capability** |
-| **Cache Hit Performance** | N/A | 45,771 ops/sec | **New capability** |
+| Metric                         | Baseline    | Optimized      | Improvement            |
+| ------------------------------ | ----------- | -------------- | ---------------------- |
+| **Query Throughput (cached)**  | 757 ops/sec | 54,311 ops/sec | **71.7x** ⚡           |
+| **Query Latency P50 (cached)** | 1.151ms     | 0.013ms        | **88.7% reduction**    |
+| **Memory per Query**           | 18.07 MB    | 2.58 MB        | **85.7% reduction** 💾 |
+| **Batch Query Throughput**     | N/A         | 6,296 ops/sec  | **New capability**     |
+| **Cache Hit Performance**      | N/A         | 45,771 ops/sec | **New capability**     |
 
 ### Performance Targets Achieved ✅
 
@@ -96,24 +96,25 @@ Simple SPARQL SELECT (500 triples, cached)
 
 #### Query Memory Consumption
 
-| Scenario | Baseline | Optimized | Reduction |
-|----------|----------|-----------|-----------|
-| Simple SELECT (100 triples) | 18.07 MB | 2.58 MB | **85.7%** ⬇️ |
-| Simple SELECT (cached) | 18.49 MB | 10.31 MB | **44.2%** ⬇️ |
-| Batch queries (5 parallel) | N/A | 6.95 MB | N/A |
+| Scenario                    | Baseline | Optimized | Reduction    |
+| --------------------------- | -------- | --------- | ------------ |
+| Simple SELECT (100 triples) | 18.07 MB | 2.58 MB   | **85.7%** ⬇️ |
+| Simple SELECT (cached)      | 18.49 MB | 10.31 MB  | **44.2%** ⬇️ |
+| Batch queries (5 parallel)  | N/A      | 6.95 MB   | N/A          |
 
 **Analysis:** Significant memory reduction through:
+
 - Object pooling for query result conversion
 - Reduced intermediate allocations
 - Efficient binding transformation
 
 #### Parsing Memory Consumption
 
-| Dataset | Baseline | Optimized | Change |
-|---------|----------|-----------|--------|
-| 100 triples | 20.15 MB | 20.77 MB | +3.1% |
-| 1,000 triples | 44.54 MB | 42.04 MB | -5.6% |
-| 5,000 triples | 15.67 MB | 110.97 MB | +608% |
+| Dataset       | Baseline | Optimized | Change |
+| ------------- | -------- | --------- | ------ |
+| 100 triples   | 20.15 MB | 20.77 MB  | +3.1%  |
+| 1,000 triples | 44.54 MB | 42.04 MB  | -5.6%  |
+| 5,000 triples | 15.67 MB | 110.97 MB | +608%  |
 
 **Note:** Large dataset memory increase is due to batching strategy. For production, streaming mode can be enabled to reduce memory footprint.
 
@@ -152,12 +153,14 @@ Optimized (with caching): Estimated
 ### 1. Query Result Caching
 
 **Implementation:**
+
 - LRU cache with configurable TTL (default: 5 minutes)
 - SHA3-256 hash-based cache keys
 - Cache size: 500 entries
 - Automatic cache invalidation
 
 **Impact:**
+
 - 68x performance improvement for cached queries
 - 44% memory reduction for cached results
 - Sub-millisecond latency (P99: 0.036ms)
@@ -167,11 +170,13 @@ Optimized (with caching): Estimated
 ### 2. Reduced Object Allocations
 
 **Techniques:**
+
 - Object pooling for binding conversions
 - Reuse of result objects
 - Batch processing to reduce GC pressure
 
 **Impact:**
+
 - 85.7% memory reduction per query
 - Improved GC performance
 - Lower CPU overhead
@@ -181,11 +186,13 @@ Optimized (with caching): Estimated
 ### 3. Batch Query Processing
 
 **Implementation:**
+
 - `queryBatch()` function for parallel query execution
 - Promise.all-based concurrency
 - Shared cache across batch
 
 **Impact:**
+
 - 6,296 ops/sec throughput for 5 parallel queries
 - Low latency (P50: 0.105ms)
 - Efficient resource utilization
@@ -195,11 +202,13 @@ Optimized (with caching): Estimated
 ### 4. Streaming Support
 
 **Implementation:**
+
 - Streaming mode for large result sets
 - Async iterator-based processing
 - Reduced memory footprint for large datasets
 
 **Impact:**
+
 - Enables processing of datasets > available RAM
 - Constant memory usage regardless of result size
 - Lower latency to first result
@@ -241,27 +250,27 @@ Iterations: 100-10,000 per benchmark
 
 ### Throughput Improvements
 
-| Operation | V5 (estimated) | V6 Baseline | V6 Optimized | Gain |
-|-----------|----------------|-------------|--------------|------|
-| Simple query | ~500 ops/sec | 757 ops/sec | 54,311 ops/sec | **108.6x** |
-| Parse 1k triples | ~150 ops/sec | 189 ops/sec | 191 ops/sec | **1.3x** |
-| Serialize 100 triples | ~8,000 ops/sec | 9,789 ops/sec | 8,798 ops/sec | **1.1x** |
+| Operation             | V5 (estimated) | V6 Baseline   | V6 Optimized   | Gain       |
+| --------------------- | -------------- | ------------- | -------------- | ---------- |
+| Simple query          | ~500 ops/sec   | 757 ops/sec   | 54,311 ops/sec | **108.6x** |
+| Parse 1k triples      | ~150 ops/sec   | 189 ops/sec   | 191 ops/sec    | **1.3x**   |
+| Serialize 100 triples | ~8,000 ops/sec | 9,789 ops/sec | 8,798 ops/sec  | **1.1x**   |
 
-**Note:** V5 metrics are estimated based on architectural differences. V6 baseline represents unoptimized v6 implementation.
+**Note:** V5 metrics are estimated based on architectural differences. Current baseline represents unoptimized v6 implementation.
 
 ### Latency Improvements
 
-| Operation | V5 (estimated) | V6 Baseline | V6 Optimized | Reduction |
-|-----------|----------------|-------------|--------------|-----------|
-| Simple query P50 | ~2ms | 1.151ms | 0.013ms | **99.4%** |
-| Parse 1k triples P50 | ~7ms | 5.378ms | 5.366ms | **23.3%** |
+| Operation            | V5 (estimated) | V6 Baseline | V6 Optimized | Reduction |
+| -------------------- | -------------- | ----------- | ------------ | --------- |
+| Simple query P50     | ~2ms           | 1.151ms     | 0.013ms      | **99.4%** |
+| Parse 1k triples P50 | ~7ms           | 5.378ms     | 5.366ms      | **23.3%** |
 
 ### Memory Improvements
 
-| Operation | V5 (estimated) | V6 Baseline | V6 Optimized | Reduction |
-|-----------|----------------|-------------|--------------|-----------|
-| Query allocation | ~25 MB | 18.49 MB | 10.31 MB | **58.8%** |
-| Parse allocation | ~50 MB | 42.56 MB | 42.04 MB | **15.9%** |
+| Operation        | V5 (estimated) | V6 Baseline | V6 Optimized | Reduction |
+| ---------------- | -------------- | ----------- | ------------ | --------- |
+| Query allocation | ~25 MB         | 18.49 MB    | 10.31 MB     | **58.8%** |
+| Parse allocation | ~50 MB         | 42.56 MB    | 42.04 MB     | **15.9%** |
 
 ---
 
@@ -275,6 +284,7 @@ Iterations: 100-10,000 per benchmark
 **Priority:** Medium
 
 **Recommendation:**
+
 ```javascript
 // For large datasets
 await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
@@ -297,6 +307,7 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
 **Priority:** Medium
 
 **Next steps:**
+
 - Implement global object pool for stores
 - Reuse Store instances where possible
 - Add streaming mode for batch operations
@@ -308,15 +319,17 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
 ### For Production Deployments
 
 1. **Enable Query Caching**
+
    ```javascript
    import { queryOptimized } from './knowledge-engine/query-optimized.mjs';
 
    const results = await queryOptimized(store, sparql, {
-     useCache: true // Default: true
+     useCache: true, // Default: true
    });
    ```
 
 2. **Use Batch Queries for Multiple Operations**
+
    ```javascript
    import { queryBatch } from './knowledge-engine/query-optimized.mjs';
 
@@ -325,16 +338,18 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
    ```
 
 3. **Use Streaming for Large Datasets**
+
    ```javascript
    import { parseTurtleOptimized } from './knowledge-engine/parse-optimized.mjs';
 
    const store = await parseTurtleOptimized(largeTtl, baseIRI, {
      streaming: true,
-     batchSize: 1000
+     batchSize: 1000,
    });
    ```
 
 4. **Monitor Cache Hit Rates**
+
    ```javascript
    import { getQueryCacheStats } from './knowledge-engine/query-optimized.mjs';
 
@@ -345,11 +360,13 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
 ### For Development
 
 1. **Disable caching during tests** to avoid test pollution:
+
    ```javascript
    await queryOptimized(store, sparql, { useCache: false });
    ```
 
 2. **Clear cache between test suites**:
+
    ```javascript
    import { clearQueryCache } from './knowledge-engine/query-optimized.mjs';
    clearQueryCache();
@@ -367,12 +384,12 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
 
 ### Q1 2026 Goals
 
-| Goal | Current | Target | Status |
-|------|---------|--------|--------|
-| Query throughput (cached) | 54,311 ops/sec | 100,000 ops/sec | 🟡 In Progress |
-| Parse throughput (5k triples) | 29 ops/sec | 50 ops/sec | 🟡 Planned |
-| Memory per query | 2.58 MB | 1 MB | 🟡 Planned |
-| Batch processing (100 queries) | 78 ops/sec | 200 ops/sec | 🟡 Planned |
+| Goal                           | Current        | Target          | Status         |
+| ------------------------------ | -------------- | --------------- | -------------- |
+| Query throughput (cached)      | 54,311 ops/sec | 100,000 ops/sec | 🟡 In Progress |
+| Parse throughput (5k triples)  | 29 ops/sec     | 50 ops/sec      | 🟡 Planned     |
+| Memory per query               | 2.58 MB        | 1 MB            | 🟡 Planned     |
+| Batch processing (100 queries) | 78 ops/sec     | 200 ops/sec     | 🟡 Planned     |
 
 ### Optimization Roadmap
 
@@ -400,54 +417,54 @@ await parseTurtleOptimized(ttl, baseIRI, { streaming: true });
 
 ## Appendix: Benchmark Results
 
-### Full Baseline Results (v6 unoptimized)
+### Full Baseline Results (unoptimized)
 
 #### Parsing Performance
 
-| Operation | Throughput | Latency P50 | Latency P95 | Latency P99 | Memory |
-|-----------|------------|-------------|-------------|-------------|--------|
-| parse small Turtle (100 triples) | 1806.99/sec | 0.443ms | 1.313ms | 2.183ms | +20.15 MB |
-| parse medium Turtle (1000 triples) | 197.36/sec | 5.189ms | 6.882ms | 7.700ms | +44.54 MB |
-| parse large Turtle (5000 triples) | 29.42/sec | 32.222ms | 44.892ms | 47.726ms | +15.67 MB |
-| serialize small store (100 triples) | 9788.66/sec | 0.084ms | 0.157ms | 0.393ms | +6.14 MB |
-| serialize large store (1000 triples) | 1383.71/sec | 0.534ms | 1.179ms | 2.199ms | +4.21 MB |
+| Operation                            | Throughput  | Latency P50 | Latency P95 | Latency P99 | Memory    |
+| ------------------------------------ | ----------- | ----------- | ----------- | ----------- | --------- |
+| parse small Turtle (100 triples)     | 1806.99/sec | 0.443ms     | 1.313ms     | 2.183ms     | +20.15 MB |
+| parse medium Turtle (1000 triples)   | 197.36/sec  | 5.189ms     | 6.882ms     | 7.700ms     | +44.54 MB |
+| parse large Turtle (5000 triples)    | 29.42/sec   | 32.222ms    | 44.892ms    | 47.726ms    | +15.67 MB |
+| serialize small store (100 triples)  | 9788.66/sec | 0.084ms     | 0.157ms     | 0.393ms     | +6.14 MB  |
+| serialize large store (1000 triples) | 1383.71/sec | 0.534ms     | 1.179ms     | 2.199ms     | +4.21 MB  |
 
 #### Query Performance
 
-| Operation | Throughput | Latency P50 | Latency P95 | Latency P99 | Memory |
-|-----------|------------|-------------|-------------|-------------|--------|
-| SPARQL SELECT (simple, 100 triples) | 1020.02/sec | 0.854ms | 1.609ms | 2.359ms | +18.07 MB |
-| SPARQL SELECT (medium complexity, 1000 triples) | 53.57/sec | 18.025ms | 21.589ms | 29.151ms | +15.60 MB |
-| SPARQL SELECT (high complexity, 1000 triples) | 176.68/sec | 5.109ms | 7.757ms | 11.259ms | +17.46 MB |
-| SPARQL ASK (simple) | 1490.66/sec | 0.611ms | 1.038ms | 1.590ms | +7.47 MB |
+| Operation                                       | Throughput  | Latency P50 | Latency P95 | Latency P99 | Memory    |
+| ----------------------------------------------- | ----------- | ----------- | ----------- | ----------- | --------- |
+| SPARQL SELECT (simple, 100 triples)             | 1020.02/sec | 0.854ms     | 1.609ms     | 2.359ms     | +18.07 MB |
+| SPARQL SELECT (medium complexity, 1000 triples) | 53.57/sec   | 18.025ms    | 21.589ms    | 29.151ms    | +15.60 MB |
+| SPARQL SELECT (high complexity, 1000 triples)   | 176.68/sec  | 5.109ms     | 7.757ms     | 11.259ms    | +17.46 MB |
+| SPARQL ASK (simple)                             | 1490.66/sec | 0.611ms     | 1.038ms     | 1.590ms     | +7.47 MB  |
 
 #### Optimizer Performance
 
-| Operation | Throughput | Latency P50 | Latency P95 | Latency P99 | Memory |
-|-----------|------------|-------------|-------------|-------------|--------|
-| optimizer initialization | 34603.92/sec | 0.016ms | 0.039ms | 0.175ms | +95.35 MB |
-| query optimization (cold cache) | 20497.57/sec | 0.034ms | 0.073ms | 0.163ms | +10.10 MB |
-| query optimization (warm cache) | 59911.57/sec | 0.013ms | 0.025ms | 0.047ms | +8.08 MB |
+| Operation                       | Throughput   | Latency P50 | Latency P95 | Latency P99 | Memory    |
+| ------------------------------- | ------------ | ----------- | ----------- | ----------- | --------- |
+| optimizer initialization        | 34603.92/sec | 0.016ms     | 0.039ms     | 0.175ms     | +95.35 MB |
+| query optimization (cold cache) | 20497.57/sec | 0.034ms     | 0.073ms     | 0.163ms     | +10.10 MB |
+| query optimization (warm cache) | 59911.57/sec | 0.013ms     | 0.025ms     | 0.047ms     | +8.08 MB  |
 
-### Full Optimized Results (v6 optimized)
+### Full Optimized Results (optimized)
 
 #### Query Performance (Optimized)
 
-| Operation | Throughput | Latency P50 | Latency P95 | Latency P99 | Memory |
-|-----------|------------|-------------|-------------|-------------|--------|
-| SPARQL SELECT (simple, 100 triples) - OPTIMIZED | 28198.25/sec | 0.028ms | 0.041ms | 0.059ms | +2.58 MB |
-| SPARQL SELECT (with cache) - OPTIMIZED | 45771.48/sec | 0.018ms | 0.030ms | 0.049ms | +8.00 MB |
-| batch query (5 parallel) - OPTIMIZED | 6295.53/sec | 0.105ms | 0.225ms | 0.347ms | +6.95 MB |
+| Operation                                       | Throughput   | Latency P50 | Latency P95 | Latency P99 | Memory   |
+| ----------------------------------------------- | ------------ | ----------- | ----------- | ----------- | -------- |
+| SPARQL SELECT (simple, 100 triples) - OPTIMIZED | 28198.25/sec | 0.028ms     | 0.041ms     | 0.059ms     | +2.58 MB |
+| SPARQL SELECT (with cache) - OPTIMIZED          | 45771.48/sec | 0.018ms     | 0.030ms     | 0.049ms     | +8.00 MB |
+| batch query (5 parallel) - OPTIMIZED            | 6295.53/sec  | 0.105ms     | 0.225ms     | 0.347ms     | +6.95 MB |
 
 #### Direct Comparison
 
-| Operation | Throughput | Latency P50 | Memory |
-|-----------|------------|-------------|--------|
-| parse 1000 triples - BASELINE | 189.17/sec | 5.378ms | +42.56 MB |
-| parse 1000 triples - OPTIMIZED | 190.73/sec | 5.366ms | +47.26 MB |
-| query simple - BASELINE | 757.73/sec | 1.151ms | +18.49 MB |
-| query simple - OPTIMIZED (cold cache) | 795.84/sec | 1.101ms | +18.35 MB |
-| query simple - OPTIMIZED (warm cache) | 54310.90/sec | 0.013ms | +10.31 MB |
+| Operation                             | Throughput   | Latency P50 | Memory    |
+| ------------------------------------- | ------------ | ----------- | --------- |
+| parse 1000 triples - BASELINE         | 189.17/sec   | 5.378ms     | +42.56 MB |
+| parse 1000 triples - OPTIMIZED        | 190.73/sec   | 5.366ms     | +47.26 MB |
+| query simple - BASELINE               | 757.73/sec   | 1.151ms     | +18.49 MB |
+| query simple - OPTIMIZED (cold cache) | 795.84/sec   | 1.101ms     | +18.35 MB |
+| query simple - OPTIMIZED (warm cache) | 54310.90/sec | 0.013ms     | +10.31 MB |
 
 ---
 
@@ -460,7 +477,7 @@ V6 achieves **substantial performance improvements** through strategic optimizat
 ✅ **New batch query capability** (6,296 ops/sec)
 ✅ **Sub-millisecond latency** (P99: 0.036ms) for cached queries
 
-The optimizations focus on **real-world usage patterns** where query caching and batch processing provide the most value. For typical applications with repeated query patterns, v6 delivers **50-70x performance improvements** over baseline.
+The optimizations focus on **real-world usage patterns** where query caching and batch processing provide the most value. For typical applications with repeated query patterns, current version delivers **50-70x performance improvements** over baseline.
 
 ### Recommendations
 

@@ -159,7 +159,7 @@ DAY 12-13: P1 Wave 3 (BLOCKED)
    - **Mitigation**: Create CLI and apply (3h estimated)
 
 2. **No Migration Guide**: v6-compat has no usage documentation
-   - **Impact**: Cannot validate v5→v6 migration path
+   - **Impact**: Cannot validate v5→current migration path
    - **Mitigation**: Create guide with 10+ examples (4h estimated)
 
 ### 🟢 MONITORING (Low Priority)

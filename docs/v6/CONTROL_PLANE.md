@@ -1,4 +1,4 @@
-# v6 Control Plane: ΔGate Architecture
+# Control Plane: ΔGate Architecture
 
 **Status**: Design
 **Last Updated**: 2025-12-27
@@ -8,7 +8,7 @@
 
 ## Overview
 
-**ΔGate** is the primary control plane for v6, implementing admissibility checking and receipt enforcement for all state changes. It serves as the single point of entry for mutations, ensuring determinism, provenance, and atomicity.
+**ΔGate** is the primary control plane for UNRDF, implementing admissibility checking and receipt enforcement for all state changes. It serves as the single point of entry for mutations, ensuring determinism, provenance, and atomicity.
 
 **Key Insight**: Hooks, receipts, AOT compilation, resource allocation, and workflows are **projections** of ΔGate - different views of the same underlying control flow.
 
@@ -56,31 +56,31 @@
 
 ```javascript
 const delta = {
-  id: "delta-abc123",
-  type: "update",
+  id: 'delta-abc123',
+  type: 'update',
   target: {
-    entity: "http://example.org/user/42",
-    scope: "http://kgc.io/graph/universe"
+    entity: 'http://example.org/user/42',
+    scope: 'http://kgc.io/graph/universe',
   },
   changes: [
     {
-      operation: "replace_value",
-      subject: { type: "NamedNode", value: "http://example.org/user/42" },
-      predicate: { type: "NamedNode", value: "http://schema.org/email" },
-      object: { type: "Literal", value: "new@example.com" }
-    }
+      operation: 'replace_value',
+      subject: { type: 'NamedNode', value: 'http://example.org/user/42' },
+      predicate: { type: 'NamedNode', value: 'http://schema.org/email' },
+      object: { type: 'Literal', value: 'new@example.com' },
+    },
   ],
   justification: {
-    reasoning: "User requested email update",
-    actor: "user:42",
-    policyChecked: "email-update-policy"
+    reasoning: 'User requested email update',
+    actor: 'user:42',
+    policyChecked: 'email-update-policy',
   },
   preconditions: [
     {
-      type: "sparql_ask",
-      query: "ASK { <http://example.org/user/42> a <http://schema.org/Person> }"
-    }
-  ]
+      type: 'sparql_ask',
+      query: 'ASK { <http://example.org/user/42> a <http://schema.org/Person> }',
+    },
+  ],
 };
 ```
 
@@ -101,6 +101,7 @@ const delta = {
 **Processing**:
 
 1. **Check Preconditions**: Evaluate all precondition queries
+
    ```javascript
    for (const precond of delta.preconditions) {
      if (precond.type === 'sparql_ask') {
@@ -111,10 +112,11 @@ const delta = {
    ```
 
 2. **Execute Hooks** (Pre-Δ):
+
    ```javascript
    const hookResults = await hookRegistry.execute('pre-delta', {
      delta,
-     store: storeSnapshot
+     store: storeSnapshot,
    });
    if (hookResults.some(r => !r.approved)) {
      throw new PolicyViolation('Hook rejected delta', hookResults);
@@ -122,11 +124,12 @@ const delta = {
    ```
 
 3. **Compute Merge**: Calculate atomic change set A
+
    ```javascript
    const changeSet = {
      additions: [],
      deletions: [],
-     replacements: []
+     replacements: [],
    };
 
    for (const change of delta.changes) {
@@ -150,9 +153,8 @@ const delta = {
      const predicate = addition.predicate.value;
      const schema = schemaRegistry.get(predicate);
      if (schema?.maxCardinality === 1) {
-       const existing = changeSet.additions.filter(q =>
-         q.subject.equals(addition.subject) &&
-         q.predicate.equals(addition.predicate)
+       const existing = changeSet.additions.filter(
+         q => q.subject.equals(addition.subject) && q.predicate.equals(addition.predicate)
        );
        if (existing.length > 1) {
          throw new InvariantViolation(`Predicate ${predicate} has maxCardinality=1`);
@@ -172,17 +174,19 @@ const delta = {
 **Processing**:
 
 1. **Construct Payload**:
+
    ```javascript
    const payload = {
      deltaId: delta.id,
      deltaType: delta.type,
      changeSetHash: await computeBlake3(changeSet),
      affectedEntities: [...new Set(changeSet.additions.map(q => q.subject.value))],
-     timestamp_ns: now()
+     timestamp_ns: now(),
    };
    ```
 
 2. **Compute Hashes**:
+
    ```javascript
    const payloadHash = await computeBlake3(payload);
    const previousHash = previousReceipt?.receiptHash || null;
@@ -190,6 +194,7 @@ const delta = {
    ```
 
 3. **Build Receipt**:
+
    ```javascript
    const receipt = {
      id: generateUUID(),
@@ -201,9 +206,9 @@ const delta = {
      timestamp_iso: toISO(now()),
      context: {
        deltaId: delta.id,
-       nodeId: store.getNodeId()
+       nodeId: store.getNodeId(),
      },
-     payload
+     payload,
    };
    ```
 
@@ -222,11 +227,13 @@ const delta = {
 **Processing**:
 
 1. **Begin Transaction**: Create snapshot for rollback
+
    ```javascript
    const snapshot = await store.generateSnapshot();
    ```
 
 2. **Apply Changes**: Execute all additions/deletions
+
    ```javascript
    try {
      for (const quad of changeSet.deletions) {
@@ -243,16 +250,18 @@ const delta = {
    ```
 
 3. **Execute Hooks** (Post-Δ):
+
    ```javascript
    const postHookResults = await hookRegistry.execute('post-delta', {
      delta,
      receipt,
      changeSet,
-     store
+     store,
    });
    ```
 
 4. **Verify Effects**: Check postconditions
+
    ```javascript
    if (delta.expectedEffects) {
      const actualQuadCount = await store.getQuadCount();
@@ -279,6 +288,7 @@ const delta = {
 **Processing**:
 
 1. **Log to KGC-4D**:
+
    ```javascript
    await store.store.appendEvent({
      type: 'DELTA_APPLIED',
@@ -287,8 +297,8 @@ const delta = {
        receiptId: receipt.id,
        receiptHash: receipt.receiptHash,
        stateHash: commitment.state_hash,
-       actor: delta.justification?.actor
-     }
+       actor: delta.justification?.actor,
+     },
    });
    ```
 
@@ -297,7 +307,7 @@ const delta = {
    await eventBus.publish('delta.applied', {
      deltaId: delta.id,
      receiptHash: receipt.receiptHash,
-     timestamp: receipt.timestamp_iso
+     timestamp: receipt.timestamp_iso,
    });
    ```
 
@@ -350,26 +360,26 @@ tasks:
     type: automated
     delta:
       type: create
-      target: { entity: "http://example.org/user/{{userId}}" }
+      target: { entity: 'http://example.org/user/{{userId}}' }
       changes:
         - operation: add_triple
-          subject: { value: "http://example.org/user/{{userId}}" }
-          predicate: { value: "rdf:type" }
-          object: { value: "schema:Person" }
+          subject: { value: 'http://example.org/user/{{userId}}' }
+          predicate: { value: 'rdf:type' }
+          object: { value: 'schema:Person' }
     on_complete: assign-role
 
   - id: assign-role
     type: automated
     delta:
       type: update
-      target: { entity: "http://example.org/user/{{userId}}" }
+      target: { entity: 'http://example.org/user/{{userId}}' }
       changes:
         - operation: add_triple
-          predicate: { value: "schema:role" }
-          object: { value: "user" }
+          predicate: { value: 'schema:role' }
+          object: { value: 'user' }
     preconditions:
       - type: receipt_exists
-        receiptId: "{{tasks.create-user.receiptId}}"
+        receiptId: '{{tasks.create-user.receiptId}}'
 ```
 
 **Receipt Chaining**:
@@ -388,11 +398,11 @@ R_create_user → R_assign_role → R_workflow_complete
 
 **Hook Points**:
 
-| Hook | Timing | Purpose | Can Block? |
-|------|--------|---------|------------|
-| `pre-delta` | Before reconcile | Check admissibility | Yes |
-| `post-delta` | After apply | Verify effects | Yes (triggers rollback) |
-| `on-failure` | On error | Cleanup, notification | No |
+| Hook         | Timing           | Purpose               | Can Block?              |
+| ------------ | ---------------- | --------------------- | ----------------------- |
+| `pre-delta`  | Before reconcile | Check admissibility   | Yes                     |
+| `post-delta` | After apply      | Verify effects        | Yes (triggers rollback) |
+| `on-failure` | On error         | Cleanup, notification | No                      |
 
 **Hook Contract**:
 
@@ -401,19 +411,24 @@ const hookSchema = z.object({
   id: z.string(),
   priority: z.number(), // Lower = earlier execution
   phase: z.enum(['pre-delta', 'post-delta', 'on-failure']),
-  handler: z.function().args(
-    z.object({
-      delta: DeltaSchema,
-      store: z.any(), // KnowledgeStore snapshot
-      receipt: ReceiptProfileSchema.optional()
-    })
-  ).returns(
-    z.promise(z.object({
-      approved: z.boolean(),
-      reason: z.string().optional(),
-      metadata: z.record(z.any()).optional()
-    }))
-  )
+  handler: z
+    .function()
+    .args(
+      z.object({
+        delta: DeltaSchema,
+        store: z.any(), // KnowledgeStore snapshot
+        receipt: ReceiptProfileSchema.optional(),
+      })
+    )
+    .returns(
+      z.promise(
+        z.object({
+          approved: z.boolean(),
+          reason: z.string().optional(),
+          metadata: z.record(z.any()).optional(),
+        })
+      )
+    ),
 });
 ```
 
@@ -550,7 +565,7 @@ const ResourceRequirementsSchema = z.object({
   estimatedQuads: z.number(),
   estimatedTimeMs: z.number(),
   memoryMB: z.number(),
-  requiresLock: z.boolean()
+  requiresLock: z.boolean(),
 });
 ```
 
@@ -577,14 +592,14 @@ YAWL Case Receipt → Aggregate Δ Receipts
 
 ### Error Taxonomy
 
-| Error Type | Phase | Recovery |
-|------------|-------|----------|
-| `SchemaValidationError` | Propose | Reject, return error to client |
-| `PreconditionFailed` | Reconcile | Reject, suggest retry condition |
-| `PolicyViolation` | Reconcile (hooks) | Reject, log violation |
-| `InvariantViolation` | Reconcile | Reject, alert admin |
-| `TransactionFailed` | Apply | Rollback, retry once |
-| `PostconditionFailed` | Apply | Rollback, alert admin |
+| Error Type              | Phase             | Recovery                        |
+| ----------------------- | ----------------- | ------------------------------- |
+| `SchemaValidationError` | Propose           | Reject, return error to client  |
+| `PreconditionFailed`    | Reconcile         | Reject, suggest retry condition |
+| `PolicyViolation`       | Reconcile (hooks) | Reject, log violation           |
+| `InvariantViolation`    | Reconcile         | Reject, alert admin             |
+| `TransactionFailed`     | Apply             | Rollback, retry once            |
+| `PostconditionFailed`   | Apply             | Rollback, alert admin           |
 
 ### Error Receipt
 
@@ -613,13 +628,13 @@ Failed Δ still get receipts (for audit trail):
 
 ### Latency Budget
 
-| Phase | Target | p99 |
-|-------|--------|-----|
-| Propose | 5ms | 20ms |
-| Reconcile | 50ms | 200ms |
-| Receipt | 10ms | 30ms |
-| Apply | 100ms | 500ms |
-| Total | 165ms | 750ms |
+| Phase     | Target | p99   |
+| --------- | ------ | ----- |
+| Propose   | 5ms    | 20ms  |
+| Reconcile | 50ms   | 200ms |
+| Receipt   | 10ms   | 30ms  |
+| Apply     | 100ms  | 500ms |
+| Total     | 165ms  | 750ms |
 
 ### Throughput
 
@@ -640,13 +655,13 @@ Failed Δ still get receipts (for audit trail):
 
 ### Threat Model
 
-| Threat | Mitigation |
-|--------|------------|
-| Malicious Δ (invalid data) | Schema validation, hooks |
-| Replay attack (resubmit Δ) | Receipt chain prevents duplicates |
-| Tampering (modify receipt) | BLAKE3 hash, tamper detection |
-| Unauthorized Δ (privilege escalation) | Actor validation in hooks |
-| DoS (flood Δ queue) | Rate limiting, priority queue |
+| Threat                                | Mitigation                        |
+| ------------------------------------- | --------------------------------- |
+| Malicious Δ (invalid data)            | Schema validation, hooks          |
+| Replay attack (resubmit Δ)            | Receipt chain prevents duplicates |
+| Tampering (modify receipt)            | BLAKE3 hash, tamper detection     |
+| Unauthorized Δ (privilege escalation) | Actor validation in hooks         |
+| DoS (flood Δ queue)                   | Rate limiting, priority queue     |
 
 ### Access Control
 
@@ -712,19 +727,19 @@ Span: delta.apply
 
 ## Future Directions
 
-### v6.1: Distributed ΔGate
+### 6.1: Distributed ΔGate
 
 - **Multi-node coordination**: CRDTs for concurrent Δ
 - **Consensus**: Raft/Paxos for Δ ordering
 - **Sharding**: Partition Δ by entity namespace
 
-### v6.2: Optimistic Δ
+### 6.2: Optimistic Δ
 
 - **Apply immediately**: Don't wait for full reconcile
 - **Compensate on conflict**: Generate inverse Δ if precondition fails later
 - **Use case**: High-throughput scenarios where conflicts are rare
 
-### v6.3: Smart Contracts
+### 6.3: Smart Contracts
 
 - **Programmable policies**: Deploy hooks as WASM modules
 - **Gas metering**: Resource limits for hook execution
@@ -734,7 +749,7 @@ Span: delta.apply
 
 ## References
 
-- [PROGRAM_CHARTER.md](PROGRAM_CHARTER.md) - v6 overall architecture
+- [PROGRAM_CHARTER.md](PROGRAM_CHARTER.md) - overall architecture
 - [KnowledgeStore.mjs](../../packages/kgc-substrate/src/KnowledgeStore.mjs) - Substrate implementation
 - [receipt-core.mjs](../../packages/yawl/src/receipt-core.mjs) - Receipt generation
 - [registry.mjs](../../packages/kgc-cli/src/lib/registry.mjs) - CLI integration

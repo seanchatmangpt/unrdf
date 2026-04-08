@@ -115,7 +115,7 @@ git push origin --tags
 
 ```bash
 # Final release with guarantees
-git tag v6.0.0
+git tag 6.0.0
 git push origin --tags
 ```
 

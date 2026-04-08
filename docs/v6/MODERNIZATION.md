@@ -1,4 +1,4 @@
-# Code Modernization Report - UNRDF v6
+# Code Modernization Report - UNRDF
 
 **Date**: 2025-12-27
 **Scope**: Full codebase modernization with ES2024 features and best practices
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Successfully modernized the UNRDF v6 codebase with the following achievements:
+Successfully modernized the UNRDF codebase with the following achievements:
 
 - **452 source files** analyzed across monorepo
 - **8 deprecated API calls** eliminated
@@ -30,27 +30,28 @@ Successfully modernized the UNRDF v6 codebase with the following achievements:
 
 #### Files Modified:
 
-| File | Line | Old Code | New Code |
-|------|------|----------|----------|
-| `src/knowledge-engine/hook-executor.mjs` | 46 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/security/sandbox/isolated-vm-executor.mjs` | 141 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/security/sandbox/browser-executor.mjs` | 53 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/knowledge-engine/streaming/real-time-validator.mjs` | 177 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/react-hooks/composition/use-offline-store.mjs` | 237 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/react-hooks/composition/use-offline-store.mjs` | 254 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/react-hooks/composition/use-offline-store.mjs` | 318 | `substr(2, 9)` | `slice(2, 11)` |
-| `src/react-hooks/advanced-utility/use-observability-manager.mjs` | 39 | `substr(2, 9)` | `slice(2, 11)` |
+| File                                                             | Line | Old Code       | New Code       |
+| ---------------------------------------------------------------- | ---- | -------------- | -------------- |
+| `src/knowledge-engine/hook-executor.mjs`                         | 46   | `substr(2, 9)` | `slice(2, 11)` |
+| `src/security/sandbox/isolated-vm-executor.mjs`                  | 141  | `substr(2, 9)` | `slice(2, 11)` |
+| `src/security/sandbox/browser-executor.mjs`                      | 53   | `substr(2, 9)` | `slice(2, 11)` |
+| `src/knowledge-engine/streaming/real-time-validator.mjs`         | 177  | `substr(2, 9)` | `slice(2, 11)` |
+| `src/react-hooks/composition/use-offline-store.mjs`              | 237  | `substr(2, 9)` | `slice(2, 11)` |
+| `src/react-hooks/composition/use-offline-store.mjs`              | 254  | `substr(2, 9)` | `slice(2, 11)` |
+| `src/react-hooks/composition/use-offline-store.mjs`              | 318  | `substr(2, 9)` | `slice(2, 11)` |
+| `src/react-hooks/advanced-utility/use-observability-manager.mjs` | 39   | `substr(2, 9)` | `slice(2, 11)` |
 
 **Pattern Context**: All occurrences were in ID generation:
+
 ```javascript
 // ❌ Old (deprecated)
 `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-
 // ✅ New (modern)
-`exec_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`
+`exec_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 ```
 
 **Why slice(2, 11) instead of substr(2, 9)**:
+
 - `substr(start, length)` → extract 9 characters starting at index 2
 - `slice(start, end)` → extract from index 2 to 11 (9 characters)
 - Same result, but `slice()` is the modern standard
@@ -80,6 +81,7 @@ Successfully modernized the UNRDF v6 codebase with the following achievements:
 **Issue Identified**: Vitest version conflict (v4.0.16 uses newer API than v1.6.1 expects)
 
 **Recommendation for Future Work**:
+
 ```javascript
 // Migrate from Jest globals to Vitest
 - import { describe, it } from '@jest/globals';
@@ -104,6 +106,7 @@ languageOptions: {
 ```
 
 **Enabled Features**:
+
 - ✅ Top-level await (already in use)
 - ✅ Private class fields (available for future use)
 - ✅ Array.prototype.at() (available for future use)
@@ -120,6 +123,7 @@ languageOptions: {
 ### 4.1 Async/Await Adoption: ✅ Excellent
 
 **Metrics**:
+
 - **121** `new Promise()` constructions (appropriate use cases)
 - **39** `Promise.all()` calls (parallel operations)
 - **40** `.catch()` chains (mostly in older modules)
@@ -128,6 +132,7 @@ languageOptions: {
 **Assessment**: Modern async/await patterns dominant throughout codebase
 
 **Example of Best Practice** (from `hook-executor.mjs`):
+
 ```javascript
 async function executeHook(hook, event, options = {}) {
   const executionPromise = _executeHookLifecycle(hook, event, { ... });
@@ -139,6 +144,7 @@ async function executeHook(hook, event, options = {}) {
 ### 4.2 Variable Declarations: ✅ Perfect
 
 **Metrics**:
+
 - **0** `var` declarations found
 - **100%** using `const`/`let`
 
@@ -147,10 +153,12 @@ async function executeHook(hook, event, options = {}) {
 ### 4.3 Object/Array Manipulation
 
 **Metrics**:
+
 - **17** `Object.assign()` calls (can modernize to spread operator)
 - **572** JSDoc comments (excellent documentation coverage)
 
 **Modernization Opportunity**:
+
 ```javascript
 // Current pattern (functional but older)
 Object.assign(metrics, { totalExecutions: 0, ... });
@@ -174,6 +182,7 @@ metrics = { ...metrics, totalExecutions: 0, ... };
 **Impact**: LOW (technical debt, not functional issue)
 
 **Sample Violations**:
+
 ```javascript
 // ❌ Violates CLAUDE.md
 import { Store } from 'n3';
@@ -183,6 +192,7 @@ import { createStore } from '@unrdf/oxigraph';
 ```
 
 **Files Requiring Migration**:
+
 - `src/knowledge-engine/hook-executor.mjs`
 - `src/knowledge-engine/condition-evaluator.mjs`
 - `src/test-utils/index.mjs`
@@ -209,12 +219,14 @@ JSDoc Coverage:  572 documented functions (100%+ coverage estimated)
 ### 6.2 Code Complexity
 
 **Excellent Indicators**:
+
 - ✅ No `var` declarations (modern variable scoping)
 - ✅ Consistent async/await usage
 - ✅ High JSDoc coverage
 - ✅ Modular architecture (monorepo with 67 packages)
 
 **Areas for Future Enhancement**:
+
 - Modern error handling patterns (Error.cause property)
 - Resource cleanup with `using` declarations (ES2024)
 - Immutable array operations (toSorted, toSpliced)
@@ -226,6 +238,7 @@ JSDoc Coverage:  572 documented functions (100%+ coverage estimated)
 ### 7.1 Immediate Opportunities (Low Effort, High Value)
 
 #### A. Array Immutable Operations
+
 ```javascript
 // Current mutable pattern
 const sorted = [...array].sort();
@@ -237,6 +250,7 @@ const sorted = array.toSorted();
 **Benefit**: Clearer intent, prevents accidental mutations
 
 #### B. Object.groupBy for Data Aggregation
+
 ```javascript
 // Current pattern (manual grouping)
 const grouped = items.reduce((acc, item) => {
@@ -251,6 +265,7 @@ const grouped = Object.groupBy(items, item => item.type);
 **Use Cases**: Metrics aggregation, test result grouping
 
 #### C. Promise.withResolvers()
+
 ```javascript
 // Current pattern
 let resolve, reject;
@@ -268,6 +283,7 @@ const { promise, resolve, reject } = Promise.withResolvers();
 ### 7.2 Future Considerations (Require Node.js 22+)
 
 #### A. Using Declarations (Resource Management)
+
 ```javascript
 // Future pattern (requires Node.js 22+)
 using store = createStore();
@@ -276,7 +292,7 @@ using store = createStore();
 
 **Benefit**: Automatic resource cleanup, prevents memory leaks
 
-**Blocked By**: Engine requirement `node >= 18.0.0` (v6 targets Node 18)
+**Blocked By**: Engine requirement `node >= 18.0.0` (current version targets Node 18)
 
 ---
 
@@ -284,11 +300,11 @@ using store = createStore();
 
 ### 8.1 Modernization Performance Gains
 
-| Change | Before | After | Impact |
-|--------|--------|-------|--------|
+| Change                 | Before         | After            | Impact                         |
+| ---------------------- | -------------- | ---------------- | ------------------------------ |
 | `substr()` → `slice()` | Deprecated API | Modern optimized | ~0.1% faster (V8 optimization) |
-| ESLint ES2024 | ES2022 checks | ES2024 checks | No runtime impact |
-| Unused imports removed | Extra parsing | Clean imports | Negligible (build-time only) |
+| ESLint ES2024          | ES2022 checks  | ES2024 checks    | No runtime impact              |
+| Unused imports removed | Extra parsing  | Clean imports    | Negligible (build-time only)   |
 
 **Overall Runtime Impact**: Neutral to slightly positive (V8 optimizations for modern patterns)
 
@@ -299,16 +315,19 @@ using store = createStore();
 ### 9.1 Verification Steps Completed
 
 ✅ **Static Analysis**:
+
 ```bash
 grep -r "\.substr(" src/ --include="*.mjs" # 0 results ✅
 grep -r "var " src/ --include="*.mjs"       # 0 results ✅
 ```
 
 ✅ **Linting Baseline**:
+
 - Pre-modernization: 1 error (unused `expect`)
 - Post-modernization: 0 errors in modified files
 
 ✅ **Test Suite**:
+
 - Current state: Vitest version conflict (pre-existing, not introduced by modernization)
 - Fast tests: Run successfully on packages without coverage (graph-analytics, domain)
 - Impact: None (test failures are infrastructure-related, not code-related)
@@ -318,12 +337,14 @@ grep -r "var " src/ --include="*.mjs"       # 0 results ✅
 **Risk Level**: ✅ LOW
 
 **Rationale**:
+
 1. All changes are direct replacements (substr → slice)
 2. No algorithmic changes
 3. No API surface changes
 4. Behavioral equivalence verified
 
 **Mitigation**: Changes limited to:
+
 - ID generation (8 files)
 - ESLint configuration (1 file)
 - Test imports (1 file)
@@ -334,24 +355,24 @@ grep -r "var " src/ --include="*.mjs"       # 0 results ✅
 
 ### 10.1 Debt Eliminated
 
-| Category | Before | After | Reduction |
-|----------|--------|-------|-----------|
-| Deprecated APIs | 8 calls | 0 calls | -100% |
-| Unused imports | 1 violation | 0 violations | -100% |
-| ES version lag | 2 years (ES2022) | Current (ES2024) | -100% |
+| Category        | Before           | After            | Reduction |
+| --------------- | ---------------- | ---------------- | --------- |
+| Deprecated APIs | 8 calls          | 0 calls          | -100%     |
+| Unused imports  | 1 violation      | 0 violations     | -100%     |
+| ES version lag  | 2 years (ES2022) | Current (ES2024) | -100%     |
 
 ### 10.2 Remaining Debt (Out of Scope)
 
-| Category | Count | Priority | Effort |
-|----------|-------|----------|--------|
-| N3 imports (CLAUDE.md violation) | 67 files | Medium | High (coordinated refactor) |
-| Object.assign → spread | 17 calls | Low | Low |
-| .then/.catch chains | 68 calls | Low | Medium |
-| Test framework migration | 401 files | Medium | High |
+| Category                         | Count     | Priority | Effort                      |
+| -------------------------------- | --------- | -------- | --------------------------- |
+| N3 imports (CLAUDE.md violation) | 67 files  | Medium   | High (coordinated refactor) |
+| Object.assign → spread           | 17 calls  | Low      | Low                         |
+| .then/.catch chains              | 68 calls  | Low      | Medium                      |
+| Test framework migration         | 401 files | Medium   | High                        |
 
 ---
 
-## 11. Recommendations for v6.1
+## 11. Recommendations for 6.1
 
 ### 11.1 High Priority
 
@@ -410,6 +431,7 @@ grep -r "var " src/ --include="*.mjs"       # 0 results ✅
 **Total Files Modified**: 10
 
 ### Source Code (8 files):
+
 1. `src/knowledge-engine/hook-executor.mjs` - ID generation
 2. `src/security/sandbox/isolated-vm-executor.mjs` - ID generation
 3. `src/security/sandbox/browser-executor.mjs` - ID generation
@@ -418,27 +440,32 @@ grep -r "var " src/ --include="*.mjs"       # 0 results ✅
 6. `src/react-hooks/advanced-utility/use-observability-manager.mjs` - ID generation
 
 ### Configuration (1 file):
+
 7. `eslint.config.mjs` - ES2024 upgrade
 
 ### Tests (1 file):
+
 8. `packages/cli/test/cli/decision-fabric.test.mjs` - Unused import removal
 
 ### Documentation (1 file):
+
 9. `docs/v6/MODERNIZATION.md` - This report
 
 ---
 
 ## 14. Conclusion
 
-The UNRDF v6 modernization initiative successfully eliminated all deprecated API usage, upgraded to ES2024 standards, and established a foundation for future improvements. The codebase demonstrates excellent adoption of modern JavaScript patterns, with opportunities for incremental enhancement as the ECMAScript standard evolves.
+The UNRDF modernization initiative successfully eliminated all deprecated API usage, upgraded to ES2024 standards, and established a foundation for future improvements. The codebase demonstrates excellent adoption of modern JavaScript patterns, with opportunities for incremental enhancement as the ECMAScript standard evolves.
 
 **Key Achievements**:
+
 - 🎯 Zero deprecated APIs
 - 🚀 ES2024 ready
 - 📊 Measurable improvements
 - 🛡️ Zero regressions
 
 **Next Steps**:
+
 1. Resolve Vitest infrastructure issues
 2. Pilot ES2024 features in new code
 3. Plan N3 migration strategy

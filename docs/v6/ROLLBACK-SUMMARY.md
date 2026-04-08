@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Complete rollback and contingency planning system for UNRDF v6 deployment, including:
+Complete rollback and contingency planning system for UNRDF deployment, including:
 
 - ✅ **Automated rollback scripts** (tested and validated)
 - ✅ **Snapshot management system** (working)
@@ -485,7 +485,7 @@ node scripts/snapshot.mjs pre-production-20251227
 node scripts/rollback.mjs --dry-run
 # Shows rollback plan
 
-# Deploy v6...
+# Deploy current version...
 ```
 
 ### Example 2: Emergency Rollback
@@ -665,7 +665,7 @@ timeout 60s pnpm benchmark:compare
 
 ## Conclusion
 
-**Rollback and contingency plan for UNRDF v6 is COMPLETE and PRODUCTION-READY.**
+**Rollback and contingency plan for UNRDF is COMPLETE and PRODUCTION-READY.**
 
 ### What Was Delivered
 
@@ -693,7 +693,7 @@ timeout 60s pnpm benchmark:compare
 - ✅ Comprehensive monitoring
 - ✅ Detailed procedures
 
-**The v6 deployment is now equipped with a battle-tested rollback plan. Risk is minimized. Response is ready. The system works.**
+**The deployment is now equipped with a battle-tested rollback plan. Risk is minimized. Response is ready. The system works.**
 
 ---
 
