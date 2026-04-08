@@ -1,4 +1,4 @@
-# UNRDF V6 Test Report
+# UNRDF Test Report
 
 **Version**: 6.0.0-alpha.1
 **Date**: 2025-12-27
@@ -8,10 +8,10 @@
 
 ## Executive Summary
 
-Comprehensive test suite created and executed for UNRDF v6 migration, featuring **187 test cases** across 3 major categories:
+Comprehensive test suite created and executed for UNRDF migration, featuring **187 test cases** across 3 major categories:
 
-1. **Migration Tests** (59 tests) - v5 → v6 migration paths
-2. **Feature Tests** (78 tests) - All new v6 features
+1. **Migration Tests** (59 tests) - v5 → current migration paths
+2. **Feature Tests** (78 tests) - All new features
 3. **Regression Tests** (50 tests) - Stability and edge cases
 
 **Overall Result**: 🎯 **100% Pass Rate** (All tests passing)
@@ -22,25 +22,26 @@ Comprehensive test suite created and executed for UNRDF v6 migration, featuring 
 
 ### 1. Migration Tests (`test/v6/migration.test.mjs`)
 
-**Purpose**: Validate v5 → v6 migration paths, backward compatibility, and breaking change detection.
+**Purpose**: Validate v5 → current migration paths, backward compatibility, and breaking change detection.
 
 #### Coverage Areas
 
-| Category | Tests | Status | Notes |
-|----------|-------|--------|-------|
-| Store Migration | 3 | ✅ Pass | v5 Store → v6 Oxigraph |
-| Workflow Migration | 4 | ✅ Pass | .run() → .execute() + receipts |
-| Federation Migration | 5 | ✅ Pass | String queries → typed queries |
-| Stream Migration | 3 | ✅ Pass | EventEmitter → AsyncIterator |
-| Receipt Wrapper | 4 | ✅ Pass | withReceipt() HOF |
-| Zod Validation | 4 | ✅ Pass | Schema validation adapter |
-| Migration Tracker | 4 | ✅ Pass | Deprecation tracking |
-| Breaking Changes | 5 | ✅ Pass | All 7 breaking changes |
-| Backward Compat | 3 | ✅ Pass | v5 APIs preserved |
-| Upgrade Paths | 3 | ✅ Pass | Clear migration paths |
+| Category             | Tests | Status  | Notes                           |
+| -------------------- | ----- | ------- | ------------------------------- |
+| Store Migration      | 3     | ✅ Pass | Legacy Store → current Oxigraph |
+| Workflow Migration   | 4     | ✅ Pass | .run() → .execute() + receipts  |
+| Federation Migration | 5     | ✅ Pass | String queries → typed queries  |
+| Stream Migration     | 3     | ✅ Pass | EventEmitter → AsyncIterator    |
+| Receipt Wrapper      | 4     | ✅ Pass | withReceipt() HOF               |
+| Zod Validation       | 4     | ✅ Pass | Schema validation adapter       |
+| Migration Tracker    | 4     | ✅ Pass | Deprecation tracking            |
+| Breaking Changes     | 5     | ✅ Pass | All 7 breaking changes          |
+| Backward Compat      | 3     | ✅ Pass | v5 APIs preserved               |
+| Upgrade Paths        | 3     | ✅ Pass | Clear migration paths           |
 
 **Key Validations**:
-- ✅ All v5 APIs mapped to v6 equivalents
+
+- ✅ All legacy APIs mapped to current equivalents
 - ✅ Deprecation warnings emitted correctly
 - ✅ Migration tracker counts warnings accurately
 - ✅ Backward compatibility maintained (v5 APIs still work)
@@ -49,7 +50,7 @@ Comprehensive test suite created and executed for UNRDF v6 migration, featuring 
 #### Sample Test Output
 
 ```bash
-✓ should create store using v6 API (45ms)
+✓ should create store using current API (45ms)
 ✓ should wrap v5 workflow with receipt generation (12ms)
 ✓ should execute queries with default 5s timeout (8ms)
 ✓ should convert EventEmitter stream to AsyncIterator (23ms)
@@ -64,26 +65,27 @@ Comprehensive test suite created and executed for UNRDF v6 migration, featuring 
 
 ### 2. Feature Tests (`test/v6/features.test.mjs`)
 
-**Purpose**: Test all new v6 features - receipts, delta proposals, CLI spine, grammar, docs.
+**Purpose**: Test all new features - receipts, delta proposals, CLI spine, grammar, docs.
 
 #### Coverage Areas
 
-| Feature | Tests | Status | Notes |
-|---------|-------|--------|-------|
-| Execution Receipts | 3 | ✅ Pass | 4 event types |
-| Allocation Receipts | 2 | ✅ Pass | Resource allocation |
-| Compile Receipts | 2 | ✅ Pass | Grammar compilation |
-| Verification Receipts | 2 | ✅ Pass | Merkle proofs |
-| Receipt Chaining | 3 | ✅ Pass | Chain verification |
-| Receipt Types | 2 | ✅ Pass | All 4 types |
-| Delta Proposals | 3 | ✅ Pass | Versioning system |
-| CLI Spine | 4 | ✅ Pass | Command execution |
-| Grammar System | 3 | ✅ Pass | Validation |
-| Documentation | 3 | ✅ Pass | Topic listing |
-| Performance | 2 | ✅ Pass | <100ms receipts |
-| Integration | 1 | ✅ Pass | End-to-end |
+| Feature               | Tests | Status  | Notes               |
+| --------------------- | ----- | ------- | ------------------- |
+| Execution Receipts    | 3     | ✅ Pass | 4 event types       |
+| Allocation Receipts   | 2     | ✅ Pass | Resource allocation |
+| Compile Receipts      | 2     | ✅ Pass | Grammar compilation |
+| Verification Receipts | 2     | ✅ Pass | Merkle proofs       |
+| Receipt Chaining      | 3     | ✅ Pass | Chain verification  |
+| Receipt Types         | 2     | ✅ Pass | All 4 types         |
+| Delta Proposals       | 3     | ✅ Pass | Versioning system   |
+| CLI Spine             | 4     | ✅ Pass | Command execution   |
+| Grammar System        | 3     | ✅ Pass | Validation          |
+| Documentation         | 3     | ✅ Pass | Topic listing       |
+| Performance           | 2     | ✅ Pass | <100ms receipts     |
+| Integration           | 1     | ✅ Pass | End-to-end          |
 
 **Key Validations**:
+
 - ✅ All 4 receipt types (execution, allocation, compile, verification)
 - ✅ Receipt chaining with cryptographic verification
 - ✅ Delta proposals for versioned changes
@@ -113,23 +115,24 @@ Comprehensive test suite created and executed for UNRDF v6 migration, featuring 
 
 ### 3. Regression Tests (`test/v6/regression.test.mjs`)
 
-**Purpose**: Ensure v6 doesn't break existing functionality, handles edge cases, and performs under load.
+**Purpose**: Ensure current version doesn't break existing functionality, handles edge cases, and performs under load.
 
 #### Coverage Areas
 
-| Category | Tests | Status | Notes |
-|----------|-------|--------|-------|
-| Core Functionality | 3 | ✅ Pass | Receipt/CLI/Delta |
-| Receipt Edge Cases | 5 | ✅ Pass | Empty, large, special chars |
-| Delta Edge Cases | 3 | ✅ Pass | Empty ops, complex quads |
-| Adapter Edge Cases | 4 | ✅ Pass | Undefined, missing methods |
-| Error Handling | 4 | ✅ Pass | Invalid data, concurrent |
-| Performance | 4 | ✅ Pass | 100 receipts <5s |
-| Memory Safety | 2 | ✅ Pass | No leaks |
-| Compatibility | 2 | ✅ Pass | All receipt types |
-| Backward Compat | 2 | ✅ Pass | v5 APIs work |
+| Category           | Tests | Status  | Notes                       |
+| ------------------ | ----- | ------- | --------------------------- |
+| Core Functionality | 3     | ✅ Pass | Receipt/CLI/Delta           |
+| Receipt Edge Cases | 5     | ✅ Pass | Empty, large, special chars |
+| Delta Edge Cases   | 3     | ✅ Pass | Empty ops, complex quads    |
+| Adapter Edge Cases | 4     | ✅ Pass | Undefined, missing methods  |
+| Error Handling     | 4     | ✅ Pass | Invalid data, concurrent    |
+| Performance        | 4     | ✅ Pass | 100 receipts <5s            |
+| Memory Safety      | 2     | ✅ Pass | No leaks                    |
+| Compatibility      | 2     | ✅ Pass | All receipt types           |
+| Backward Compat    | 2     | ✅ Pass | v5 APIs work                |
 
 **Key Validations**:
+
 - ✅ Core functionality preserved (no regressions)
 - ✅ Edge cases handled (empty payloads, special chars, large data)
 - ✅ Error handling robust (invalid data, concurrent operations)
@@ -157,29 +160,29 @@ Comprehensive test suite created and executed for UNRDF v6 migration, featuring 
 
 ### Receipt Operations
 
-| Operation | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| Single receipt creation | <10ms | ~8ms | ✅ Pass |
-| Single receipt verification | <5ms | ~3ms | ✅ Pass |
-| 10 receipts creation | <100ms | ~67ms | ✅ Pass |
-| 100 receipts creation | <5s | ~423ms | ✅ Pass |
-| 100 verifications | <2s | ~87ms | ✅ Pass |
-| 50-receipt chain | <1s | ~312ms | ✅ Pass |
+| Operation                   | Target | Actual | Status  |
+| --------------------------- | ------ | ------ | ------- |
+| Single receipt creation     | <10ms  | ~8ms   | ✅ Pass |
+| Single receipt verification | <5ms   | ~3ms   | ✅ Pass |
+| 10 receipts creation        | <100ms | ~67ms  | ✅ Pass |
+| 100 receipts creation       | <5s    | ~423ms | ✅ Pass |
+| 100 verifications           | <2s    | ~87ms  | ✅ Pass |
+| 50-receipt chain            | <1s    | ~312ms | ✅ Pass |
 
 ### Migration Operations
 
-| Operation | Target | Actual | Status |
-|-----------|--------|--------|--------|
-| Store creation | <50ms | ~45ms | ✅ Pass |
-| Workflow wrapping | <5ms | ~2ms | ✅ Pass |
-| Federation wrapping | <5ms | ~3ms | ✅ Pass |
-| Stream conversion | <25ms | ~23ms | ✅ Pass |
+| Operation           | Target | Actual | Status  |
+| ------------------- | ------ | ------ | ------- |
+| Store creation      | <50ms  | ~45ms  | ✅ Pass |
+| Workflow wrapping   | <5ms   | ~2ms   | ✅ Pass |
+| Federation wrapping | <5ms   | ~3ms   | ✅ Pass |
+| Stream conversion   | <25ms  | ~23ms  | ✅ Pass |
 
 ---
 
 ## Breaking Changes Validation
 
-All 7 breaking changes from v5 → v6 validated:
+All 7 breaking changes from v5 → current validated:
 
 1. ✅ **Store Initialization**: `new Store()` → `createStore()` from oxigraph
 2. ✅ **Receipt-Driven Operations**: All operations return receipts
@@ -220,34 +223,35 @@ Duration: 2.67s
 
 ### Code Coverage
 
-| Package | Statements | Branches | Functions | Lines |
-|---------|-----------|----------|-----------|-------|
-| v6-core/receipts | 94% | 87% | 96% | 94% |
-| v6-core/delta | 89% | 82% | 91% | 89% |
-| v6-core/cli | 76% | 68% | 78% | 76% |
-| v6-core/grammar | 71% | 65% | 73% | 71% |
-| v6-core/docs | 68% | 60% | 70% | 68% |
-| v6-compat/adapters | 97% | 92% | 98% | 97% |
-| **Overall** | **85%** | **78%** | **87%** | **85%** |
+| Package            | Statements | Branches | Functions | Lines   |
+| ------------------ | ---------- | -------- | --------- | ------- |
+| v6-core/receipts   | 94%        | 87%      | 96%       | 94%     |
+| v6-core/delta      | 89%        | 82%      | 91%       | 89%     |
+| v6-core/cli        | 76%        | 68%      | 78%       | 76%     |
+| v6-core/grammar    | 71%        | 65%      | 73%       | 71%     |
+| v6-core/docs       | 68%        | 60%      | 70%       | 68%     |
+| v6-compat/adapters | 97%        | 92%      | 98%       | 97%     |
+| **Overall**        | **85%**    | **78%**  | **87%**   | **85%** |
 
 **Target**: ≥80% coverage ✅ **ACHIEVED**
 
 ### Feature Coverage
 
-| Feature | Tested | Coverage |
-|---------|--------|----------|
-| Receipt System | ✅ | 100% (all 4 types) |
-| Delta Proposals | ✅ | 100% |
-| CLI Spine | ✅ | 100% |
-| Grammar System | ✅ | 85% |
-| Documentation | ✅ | 75% |
-| Migration Adapters | ✅ | 100% (all 6 adapters) |
+| Feature            | Tested | Coverage              |
+| ------------------ | ------ | --------------------- |
+| Receipt System     | ✅     | 100% (all 4 types)    |
+| Delta Proposals    | ✅     | 100%                  |
+| CLI Spine          | ✅     | 100%                  |
+| Grammar System     | ✅     | 85%                   |
+| Documentation      | ✅     | 75%                   |
+| Migration Adapters | ✅     | 100% (all 6 adapters) |
 
 ---
 
 ## Edge Cases Validated
 
 ### Receipt Edge Cases
+
 - ✅ Empty payloads
 - ✅ Large payloads (10KB+)
 - ✅ Special characters (emoji, unicode)
@@ -256,12 +260,14 @@ Duration: 2.67s
 - ✅ Malformed data
 
 ### Delta Edge Cases
+
 - ✅ Empty operations
 - ✅ Same from/to version
 - ✅ Complex quad objects
 - ✅ Large operation lists
 
 ### Migration Edge Cases
+
 - ✅ Undefined options
 - ✅ Missing methods
 - ✅ Throwing functions
@@ -281,21 +287,25 @@ const startReceipt = await createReceipt('execution', {
   eventType: 'TASK_STARTED',
   caseId: 'integration-case',
   taskId: 'integration-task',
-  payload: { input: 'data' }
+  payload: { input: 'data' },
 });
 
 // 2. Create delta proposal (change)
 const deltaProposal = await createDeltaProposal('v1', 'v2', [
-  { type: 'add', quad: { subject: 's', predicate: 'p', object: 'o' } }
+  { type: 'add', quad: { subject: 's', predicate: 'p', object: 'o' } },
 ]);
 
 // 3. Create execution receipt (complete)
-const completeReceipt = await createReceipt('execution', {
-  eventType: 'TASK_COMPLETED',
-  caseId: 'integration-case',
-  taskId: 'integration-task',
-  payload: { output: 'result' }
-}, startReceipt);
+const completeReceipt = await createReceipt(
+  'execution',
+  {
+    eventType: 'TASK_COMPLETED',
+    caseId: 'integration-case',
+    taskId: 'integration-task',
+    payload: { output: 'result' },
+  },
+  startReceipt
+);
 
 // 4. Verify entire chain
 const startVerify = await verifyReceipt(startReceipt);
@@ -328,18 +338,18 @@ const chainVerify = await verifyChainLink(completeReceipt, startReceipt);
 
 ## Migration Validation
 
-### v5 → v6 Migration Paths
+### v5 → current Migration Paths
 
 All migration paths validated:
 
-| v5 API | v6 API | Adapter | Status |
-|--------|--------|---------|--------|
-| `new Store()` | `createStore()` | `v6Compat.createStore()` | ✅ |
-| `workflow.run()` | `workflow.execute()` | `wrapWorkflow()` | ✅ |
-| `federation.query(string)` | `federation.query(sparql\`\`)` | `wrapFederation()` | ✅ |
-| `stream.on('data')` | `for await (const x of stream)` | `streamToAsync()` | ✅ |
-| No receipts | KGC-4D receipts | `withReceipt()` | ✅ |
-| No validation | Zod schemas | `validateSchema()` | ✅ |
+| v5 API                     | v6 API                          | Adapter                  | Status |
+| -------------------------- | ------------------------------- | ------------------------ | ------ |
+| `new Store()`              | `createStore()`                 | `v6Compat.createStore()` | ✅     |
+| `workflow.run()`           | `workflow.execute()`            | `wrapWorkflow()`         | ✅     |
+| `federation.query(string)` | `federation.query(sparql\`\`)`  | `wrapFederation()`       | ✅     |
+| `stream.on('data')`        | `for await (const x of stream)` | `streamToAsync()`        | ✅     |
+| No receipts                | KGC-4D receipts                 | `withReceipt()`          | ✅     |
+| No validation              | Zod schemas                     | `validateSchema()`       | ✅     |
 
 ### Deprecation Tracking
 
@@ -365,7 +375,7 @@ Top deprecated APIs:
 
 ### Pre-Release Checklist (from MIGRATION_PLAN.md)
 
-- [x] All 47 packages at v6.0.0-alpha.1
+- [x] All 47 packages at 6.0.0-alpha.1
 - [x] 100% test pass rate (187/187 tests passing)
 - [ ] OTEL validation ≥80/100 (scheduled for beta)
 - [x] Zero direct N3 imports (verified via tests)
@@ -398,7 +408,7 @@ From CLAUDE.md:
 2. ✅ Migration paths validated
 3. ✅ Breaking changes documented
 4. → Run OTEL validation (next step)
-5. → Publish v6.0.0-alpha.1
+5. → Publish 6.0.0.0.0-alpha.1
 
 ### Next Phase (Beta)
 
@@ -419,7 +429,7 @@ From CLAUDE.md:
 
 ## Conclusion
 
-**v6 Test Suite Status**: ✅ **COMPLETE**
+**Test Suite Status**: ✅ **COMPLETE**
 
 - **187 tests** created across 3 categories
 - **100% pass rate** achieved
@@ -430,28 +440,31 @@ From CLAUDE.md:
 
 **Recommendation**: ✅ **READY FOR ALPHA RELEASE**
 
-Next step: Run OTEL validation to achieve ≥80/100 score, then publish v6.0.0-alpha.1.
+Next step: Run OTEL validation to achieve ≥80/100 score, then publish 6.0.0.0.0-alpha.1.
 
 ---
 
 **Test Suite Files**:
+
 - `/home/user/unrdf/test/v6/migration.test.mjs` (59 tests)
 - `/home/user/unrdf/test/v6/features.test.mjs` (78 tests)
 - `/home/user/unrdf/test/v6/regression.test.mjs` (50 tests)
 
 **Documentation**:
+
 - `/home/user/unrdf/docs/v6/TEST_REPORT.md` (this file)
 - `/home/user/unrdf/docs/v6/MIGRATION_PLAN.md`
 - `/home/user/unrdf/docs/v6/README.md`
 
 **Execution Command**:
+
 ```bash
 timeout 10s node --test test/v6/*.test.mjs
 ```
 
 ---
 
-*Report generated: 2025-12-27*
-*Test suite version: v6.0.0-alpha.1*
-*Total tests: 187*
-*Pass rate: 100%*
+_Report generated: 2025-12-27_
+_Test suite version: 6.0.0-alpha.1_
+_Total tests: 187_
+_Pass rate: 100%_
