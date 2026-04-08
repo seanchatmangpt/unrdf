@@ -1,10 +1,10 @@
-# UNRDF v6 Core Concepts
+# UNRDF Core Concepts
 
-**Target Audience**: Developers wanting deep understanding of v6 architecture
+**Target Audience**: Developers wanting deep understanding of UNRDF architecture
 **Prerequisites**: Familiarity with RDF and knowledge graphs
 **Time**: 20-30 minutes
 
-This guide explains the fundamental concepts and architectural decisions behind UNRDF v6.
+This guide explains the fundamental concepts and architectural decisions behind UNRDF.
 
 ---
 
@@ -30,12 +30,12 @@ This guide explains the fundamental concepts and architectural decisions behind 
 
 ```typescript
 interface Receipt {
-  id: string;              // Unique receipt ID (UUIDv4)
-  operation: string;       // Operation name
-  timestamp: string;       // ISO 8601 timestamp
-  merkleRoot: string;      // Merkle tree root hash
-  proof: string[];         // Merkle proof path
-  metadata: object;        // Operation-specific data
+  id: string; // Unique receipt ID (UUIDv4)
+  operation: string; // Operation name
+  timestamp: string; // ISO 8601 timestamp
+  merkleRoot: string; // Merkle tree root hash
+  proof: string[]; // Merkle proof path
+  metadata: object; // Operation-specific data
 }
 ```
 
@@ -44,12 +44,14 @@ interface Receipt {
 **Problem**: How do you prove an operation happened exactly as claimed?
 
 **v5 Approach**:
+
 ```javascript
 await workflow.run(task);
 // No proof. Did it run? What inputs? When?
 ```
 
 **v6 Approach**:
+
 ```javascript
 const receipt = await workflow.execute(task);
 // Cryptographic proof:
@@ -84,6 +86,7 @@ H1 = H(op1 + op2)
 **Property**: Changing any operation invalidates the root hash.
 
 **Example**:
+
 ```javascript
 import { MerkleTree } from '@unrdf/v6-core/receipts';
 
@@ -106,11 +109,11 @@ Link receipts to form tamper-evident chains:
 const receipt1 = createReceipt('op1', { data: 'a' });
 const receipt2 = createReceipt('op2', {
   data: 'b',
-  previousReceipt: receipt1.id // Links to receipt1
+  previousReceipt: receipt1.id, // Links to receipt1
 });
 const receipt3 = createReceipt('op3', {
   data: 'c',
-  previousReceipt: receipt2.id // Links to receipt2
+  previousReceipt: receipt2.id, // Links to receipt2
 });
 
 // Verify chain integrity
@@ -118,6 +121,7 @@ const chainValid = verifyChain([receipt1, receipt2, receipt3]);
 ```
 
 **Use Cases**:
+
 - Blockchain-like audit trails (without blockchain overhead)
 - Regulatory compliance (GDPR, HIPAA, SOX)
 - Reproducible research (scientific workflows)
@@ -135,11 +139,11 @@ const chainValid = verifyChain([receipt1, receipt2, receipt3]);
 
 ```typescript
 interface DeltaProposal {
-  id: string;              // Delta ID
-  from: string;            // Source version
-  to: string;              // Target version
+  id: string; // Delta ID
+  from: string; // Source version
+  to: string; // Target version
   operations: Operation[]; // List of changes
-  timestamp: string;       // When created
+  timestamp: string; // When created
 }
 
 interface Operation {
@@ -158,6 +162,7 @@ interface Operation {
 **Problem**: How do you track and version knowledge graph changes?
 
 **Git-like Approach**:
+
 ```bash
 # Snapshot entire graph at each version
 v1.0: 1,000,000 triples
@@ -166,6 +171,7 @@ v1.1: 1,000,100 triples (added 100)
 ```
 
 **Delta Approach**:
+
 ```bash
 # Store base + deltas
 v1.0: 1,000,000 triples (base)
@@ -195,17 +201,17 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@old.org'
-    }
+      object: 'alice@old.org',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@new.org'
-    }
-  }
+      object: 'alice@new.org',
+    },
+  },
 ]);
 
 // Apply with receipt
@@ -220,11 +226,11 @@ When two deltas edit the same triple:
 import { detectConflicts } from '@unrdf/v6-core/delta';
 
 const deltaA = createDeltaProposal('v1.0', 'v1.1-alice', [
-  { type: 'add', quad: { subject: 'ex:Alice', predicate: 'ex:age', object: '30' } }
+  { type: 'add', quad: { subject: 'ex:Alice', predicate: 'ex:age', object: '30' } },
 ]);
 
 const deltaB = createDeltaProposal('v1.0', 'v1.1-bob', [
-  { type: 'add', quad: { subject: 'ex:Alice', predicate: 'ex:age', object: '31' } }
+  { type: 'add', quad: { subject: 'ex:Alice', predicate: 'ex:age', object: '31' } },
 ]);
 
 const conflicts = detectConflicts([deltaA, deltaB]);
@@ -234,6 +240,7 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 ```
 
 **Use Cases**:
+
 - Collaborative knowledge editing (Wikipedia-like)
 - Version control systems
 - Distributed databases (CRDTs)
@@ -250,10 +257,11 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 ### Why Pure ESM?
 
 **v5 Dual Mode** (ESM + CommonJS):
+
 ```json
 {
-  "main": "dist/index.js",      // CJS
-  "module": "dist/index.mjs",   // ESM
+  "main": "dist/index.js", // CJS
+  "module": "dist/index.mjs", // ESM
   "exports": {
     "require": "./dist/index.js",
     "import": "./dist/index.mjs"
@@ -262,11 +270,13 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 ```
 
 **Problems**:
+
 - ❌ Doubled bundle size (2 builds)
 - ❌ Dual runtime semantics (bugs)
 - ❌ Complex build tooling
 
 **v6 Pure ESM**:
+
 ```json
 {
   "type": "module",
@@ -278,6 +288,7 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 ```
 
 **Benefits**:
+
 - ✅ 40% smaller bundles (one build)
 - ✅ Consistent semantics
 - ✅ Native tree-shaking
@@ -286,18 +297,21 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 ### Migration
 
 **v5 (CJS)**:
+
 ```javascript
 const unrdf = require('@unrdf/core');
 const { Store } = require('n3');
 ```
 
 **v6 (ESM)**:
+
 ```javascript
 import * as unrdf from '@unrdf/core';
 import { createStore } from '@unrdf/oxigraph';
 ```
 
 **Requirements**:
+
 - Node.js 18+ (native ESM support)
 - `"type": "module"` in package.json
 - `.mjs` extensions or `"type": "module"`
@@ -315,6 +329,7 @@ import { createStore } from '@unrdf/oxigraph';
 **Problem**: How do you guarantee runtime type safety in JavaScript?
 
 **TypeScript Approach**:
+
 ```typescript
 interface User {
   id: string;
@@ -330,12 +345,13 @@ processUser({ id: 123, name: null }); // Compiles, crashes at runtime
 ```
 
 **Zod Approach**:
+
 ```javascript
 import { z } from 'zod';
 
 const UserSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1)
+  name: z.string().min(1),
 });
 
 function processUser(user) {
@@ -365,7 +381,7 @@ import { createStore } from '@unrdf/oxigraph';
 const AddTripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.string().min(1)
+  object: z.string().min(1),
 });
 
 async function addTriple(data) {
@@ -382,18 +398,19 @@ async function addTriple(data) {
 ```javascript
 const PersonSchema = z.object({
   name: z.string(),
-  age: z.number().int().positive()
+  age: z.number().int().positive(),
 });
 
 const EmployeeSchema = PersonSchema.extend({
   employeeId: z.string().uuid(),
-  department: z.enum(['Engineering', 'Sales', 'HR'])
+  department: z.enum(['Engineering', 'Sales', 'HR']),
 });
 
 // EmployeeSchema includes name, age, employeeId, department
 ```
 
 **Use Cases**:
+
 - API input validation
 - Configuration validation
 - Data migration validation
@@ -409,25 +426,27 @@ A **graduated quality framework** for package evolution (L1 → L5).
 
 ### Levels
 
-| Level | Name | Criteria | Example |
-|-------|------|----------|---------|
-| **L1** | Baseline | Compiles, runs | All 47 packages |
-| **L2** | Stable | Zod schemas, stable API | 12 packages |
-| **L3** | Deterministic | No Date.now(), Math.random() | 5 packages |
-| **L4** | Adversarial | OTEL validation ≥80/100 | 3 packages |
-| **L5** | Composition | Works in all combinations | 0 packages (target) |
+| Level  | Name          | Criteria                     | Example             |
+| ------ | ------------- | ---------------------------- | ------------------- |
+| **L1** | Baseline      | Compiles, runs               | All 47 packages     |
+| **L2** | Stable        | Zod schemas, stable API      | 12 packages         |
+| **L3** | Deterministic | No Date.now(), Math.random() | 5 packages          |
+| **L4** | Adversarial   | OTEL validation ≥80/100      | 3 packages          |
+| **L5** | Composition   | Works in all combinations    | 0 packages (target) |
 
 ### Why?
 
 **Problem**: How do you incrementally improve 47 packages without "big bang" releases?
 
 **Traditional Approach**:
+
 ```bash
 # All packages must be perfect for v6.0.0
 # Result: Never ship
 ```
 
 **Maturity Ladder Approach**:
+
 ```bash
 # v6.0.0-alpha: Core packages at L5
 # v6.0.0-beta: All packages at L3
@@ -437,28 +456,31 @@ A **graduated quality framework** for package evolution (L1 → L5).
 ### L3: Deterministic Execution
 
 **Non-Deterministic (L1/L2)**:
+
 ```javascript
 const receipt = createReceipt('operation', {
   timestamp: Date.now(), // Non-deterministic!
-  random: Math.random()   // Non-deterministic!
+  random: Math.random(), // Non-deterministic!
 });
 
 // Same operation produces different receipts
 ```
 
 **Deterministic (L3)**:
+
 ```javascript
 import { sha256 } from '@noble/hashes/sha256';
 
 const receipt = createReceipt('operation', {
   timestamp: providedTimestamp, // From input, not system
-  hash: sha256(input)           // Same input → same hash
+  hash: sha256(input), // Same input → same hash
 });
 
 // Same operation always produces same receipt
 ```
 
 **Benefits**:
+
 - Reproducible builds
 - Testing (same input → same output)
 - Debugging (replay exact conditions)
@@ -472,6 +494,7 @@ node validation/run-all.mjs comprehensive
 ```
 
 Validates:
+
 1. All operations produce receipts
 2. Receipts are verifiable
 3. No uncaught errors
@@ -491,11 +514,13 @@ Validates:
 ### Why Oxigraph?
 
 **N3.js (v5)**:
+
 - JavaScript implementation
 - ~2.5ms per SPARQL query
 - 100MB memory for 1M triples
 
 **Oxigraph (v6)**:
+
 - Rust implementation (compiled to WASM)
 - ~0.3ms per SPARQL query (8x faster)
 - 40MB memory for 1M triples (60% less)
@@ -536,7 +561,7 @@ const store = await createStore({ backend: 'memory' });
 ```javascript
 const store = await createStore({
   backend: 'sqlite',
-  path: '/path/to/data.db'
+  path: '/path/to/data.db',
 });
 // Data persisted to SQLite
 // Survives restarts
@@ -551,6 +576,7 @@ const store = await createStore({ backend: 'memory' });
 ```
 
 **Benefits**:
+
 - 10x faster SPARQL execution
 - 60% lower memory usage
 - Browser support (WASM)
@@ -569,11 +595,12 @@ const store = await createStore({ backend: 'memory' });
 **Problem**: How do you debug non-reproducible bugs?
 
 **Non-Deterministic**:
+
 ```javascript
 const receipt = createReceipt('operation', {
-  timestamp: Date.now(),    // Changes every call
-  random: Math.random(),    // Different every time
-  order: Object.keys(obj)   // Insertion order varies
+  timestamp: Date.now(), // Changes every call
+  random: Math.random(), // Different every time
+  order: Object.keys(obj), // Insertion order varies
 });
 
 // Same operation → different receipts
@@ -581,11 +608,12 @@ const receipt = createReceipt('operation', {
 ```
 
 **Deterministic**:
+
 ```javascript
 const receipt = createReceipt('operation', {
   timestamp: inputTimestamp, // From caller, not system
-  hash: sha256(input),       // Same input → same hash
-  order: sortedKeys(obj)     // Consistent ordering
+  hash: sha256(input), // Same input → same hash
+  order: sortedKeys(obj), // Consistent ordering
 });
 
 // Same operation → same receipt
@@ -603,6 +631,7 @@ const receipt = createReceipt('operation', {
 ### v6 Solutions
 
 **Time**:
+
 ```javascript
 // ❌ Non-deterministic
 const now = Date.now();
@@ -612,6 +641,7 @@ const now = providedTimestamp || Date.now(); // Caller controls
 ```
 
 **Randomness**:
+
 ```javascript
 // ❌ Non-deterministic
 const id = crypto.randomUUID();
@@ -621,6 +651,7 @@ const id = sha256(input).slice(0, 16); // Hash of input
 ```
 
 **Ordering**:
+
 ```javascript
 // ❌ Non-deterministic
 const keys = Object.keys(obj);
