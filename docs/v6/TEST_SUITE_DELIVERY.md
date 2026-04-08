@@ -37,9 +37,9 @@
 
 ### Migration Tests (38 tests)
 
-**Purpose**: Validate v5 → v6 migration paths
+**Purpose**: Validate v5 → current migration paths
 
-- ✅ Store Migration (v5 Store → v6 Oxigraph)
+- ✅ Store Migration (v5 Store → Oxigraph)
 - ✅ Workflow Migration (run() → execute() + receipts)
 - ✅ Federation Migration (string queries → typed queries)
 - ✅ Stream Migration (EventEmitter → AsyncIterator)
@@ -117,7 +117,7 @@ timeout 20s node --test test/v6/*.test.mjs
 
 ### 1. Migration Tests ✅
 
-| Adapter        | v5 API                | v6 API                         | Status    |
+| Adapter        | v5 API                | current API                    | Status    |
 | -------------- | --------------------- | ------------------------------ | --------- |
 | createStore    | `new Store()` from n3 | `createStore()` from oxigraph  | ✅ Tested |
 | wrapWorkflow   | `workflow.run()`      | `workflow.execute()` + receipt | ✅ Tested |
@@ -255,7 +255,7 @@ Estimated: **~80-85%** pass rate (some tests have schema validation issues)
 | ------------------ | -------------- | --------- | ------ |
 | Test files created | 3 files        | 3 files   | ✅     |
 | Test count         | Comprehensive  | 92 tests  | ✅     |
-| Migration tests    | v5 → v6        | 38 tests  | ✅     |
+| Migration tests    | v5 → current   | 38 tests  | ✅     |
 | Feature tests      | All features   | 26 tests  | ✅     |
 | Regression tests   | Edge cases     | 28 tests  | ✅     |
 | Documentation      | Test report    | 457 lines | ✅     |
@@ -283,7 +283,7 @@ The test suite has been successfully created with:
 
 - **92 comprehensive test cases**
 - **1,464 lines of test code**
-- **Complete migration coverage** (v5 → v6)
+- \*\*Complete migration coverage (v5 → current)
 - **Complete feature coverage** (all 4 receipt types, delta, grammar, docs)
 - **Complete regression coverage** (edge cases, performance, memory)
 - **Full documentation** (TEST_REPORT.md)
