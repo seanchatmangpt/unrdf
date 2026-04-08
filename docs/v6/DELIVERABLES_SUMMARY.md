@@ -161,7 +161,7 @@ Complete usage guide with examples:
 ### 5. Workspace Update
 
 - **Root package.json** updated to `6.0.0-alpha.1`
-- **Workspace includes** v6-compat package
+- **Workspace includes** @unrdf/v6-compat package
 - **pnpm workspace** recognizes new package
 
 ---
@@ -419,7 +419,7 @@ timeout 10s pnpm -r run typecheck
 ```bash
 # No v5 patterns detected
 timeout 10s pnpm lint
-# Expected: 0 v6-compat warnings
+# Expected: 0 compat warnings
 ```
 
 ---
@@ -447,7 +447,7 @@ timeout 10s pnpm lint
 ### Configuration
 
 - ✅ Root `package.json` updated to `6.0.0-alpha.1`
-- ✅ Workspace includes v6-compat
+- ✅ Workspace includes @unrdf/v6-compat
 - ✅ pnpm workspace configured
 
 ---
