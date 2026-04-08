@@ -1,4 +1,4 @@
-# UNRDF v6 CI/CD Pipeline Documentation
+# UNRDF CI/CD Pipeline Documentation
 
 **Version:** 6.0.0-alpha.1
 **Last Updated:** 2025-12-27
@@ -8,11 +8,11 @@
 
 ## Overview
 
-The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determinism, receipts, and L5 maturity requirements. It consists of three primary workflows:
+The UNRDF CI/CD pipeline enforces sophisticated invariants including determinism, receipts, and L5 maturity requirements. It consists of three primary workflows:
 
-1. **v6-validate.yml** - Runs on every PR to validate v6 release criteria
-2. **v6-release.yml** - Automates releases when tags are pushed
-3. **v6-regression.yml** - Continuous integration with regression detection
+1. **validate.yml** - Runs on every PR to validate release criteria
+2. **release.yml** - Automates releases when tags are pushed
+3. **regression.yml** - Continuous integration with regression detection
 
 ---
 
@@ -20,9 +20,9 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
 
 - [Pipeline Architecture](#pipeline-architecture)
 - [Workflows](#workflows)
-  - [1. v6-validate.yml](#1-v6-validateyml)
-  - [2. v6-release.yml](#2-v6-releaseyml)
-  - [3. v6-regression.yml](#3-v6-regressionyml)
+  - [1. validate.yml](#1-validateyml)
+  - [2. release.yml](#2-releaseyml)
+  - [3. regression.yml](#3-regressionyml)
 - [Supporting Scripts](#supporting-scripts)
 - [Release Promotion Path](#release-promotion-path)
 - [Troubleshooting](#troubleshooting)
@@ -39,7 +39,7 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
                     │
                     ▼
         ┌───────────────────────┐
-        │  v6-validate.yml      │
+        │  validate.yml      │
         │  ─────────────────    │
         │  ✓ 14 criteria        │
         │  ✓ OTEL ≥80/100      │
@@ -55,12 +55,12 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
             └───────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│                  Tag Push (v6.*)                            │
+│                  Tag Push (6.*)                            │
 └───────────────────┬─────────────────────────────────────────┘
                     │
                     ▼
         ┌───────────────────────┐
-        │  v6-release.yml       │
+        │  release.yml       │
         │  ─────────────────    │
         │  ✓ Pre-checks         │
         │  ✓ Build packages     │
@@ -81,7 +81,7 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
                     │
                     ▼
         ┌───────────────────────┐
-        │  v6-regression.yml    │
+        │  regression.yml    │
         │  ─────────────────    │
         │  ✓ Lint (5s)          │
         │  ✓ Tests (30s)        │
@@ -101,16 +101,16 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
 
 ## Workflows
 
-### 1. v6-validate.yml
+### 1. validate.yml
 
-**Trigger:** Pull requests to any branch affecting v6 packages
-**Purpose:** Validate all 14 v6 release criteria before merge
+**Trigger:** Pull requests to any branch affecting packages
+**Purpose:** Validate all 14 release criteria before merge
 **Duration:** ~5-10 minutes
 
 #### Jobs
 
 1. **validation-criteria**
-   - Runs `scripts/v6-validate.mjs --comprehensive`
+   - Runs `scripts/validate.mjs --comprehensive`
    - Validates directory structure, files, module imports, smoke tests
    - Outputs: passed/failed/warnings counts
 
@@ -152,7 +152,7 @@ The UNRDF v6 CI/CD pipeline enforces sophisticated invariants including determin
 
 9. **validation-complete**
    - Final status check
-   - Displays badge (✅ v6-ready / ❌ needs work)
+   - Displays badge (✅ ready / ❌ needs work)
 
 #### Configuration
 
@@ -167,17 +167,17 @@ env:
 
 #### Artifacts
 
-- `v6-validation-report` (30 days)
-- `v6-baseline-metrics` (90 days)
-- `v6-test-results` (30 days)
-- `v6-coverage-report` (30 days)
-- `v6-otel-report` (30 days)
+- `validation-report` (30 days)
+- `baseline-metrics` (90 days)
+- `test-results` (30 days)
+- `coverage-report` (30 days)
+- `otel-report` (30 days)
 
 ---
 
-### 2. v6-release.yml
+### 2. release.yml
 
-**Trigger:** Tag push matching `v6.*.*` pattern or manual dispatch
+**Trigger:** Tag push matching `6.*.*` pattern or manual dispatch
 **Purpose:** Automated release with validation and npm publishing
 **Duration:** ~10-15 minutes
 
@@ -231,12 +231,12 @@ env:
 
 #### Release Types
 
-| Type | Tag Pattern | npm Tag | Requirements |
-|------|-------------|---------|--------------|
-| alpha | `v6.0.0-alpha.1` | `alpha` | Rolling, any PR merged |
-| beta | `v6.0.0-beta.1` | `beta` | Consensus + 7-day soak |
-| rc | `v6.0.0-rc.1` | `rc` | 3x external user testing |
-| stable | `v6.0.0` | `latest` | Final with guarantees |
+| Type   | Tag Pattern     | npm Tag  | Requirements             |
+| ------ | --------------- | -------- | ------------------------ |
+| alpha  | `6.0.0-alpha.1` | `alpha`  | Rolling, any PR merged   |
+| beta   | `6.0.0-beta.1`  | `beta`   | Consensus + 7-day soak   |
+| rc     | `6.0.0-rc.1`    | `rc`     | 3x external user testing |
+| stable | `6.0.0`         | `latest` | Final with guarantees    |
 
 #### Required Secrets
 
@@ -247,15 +247,15 @@ env:
 
 ```bash
 # Create and push tag
-git tag v6.0.0-alpha.2
-git push origin v6.0.0-alpha.2
+git tag 6.0.0-alpha.2
+git push origin 6.0.0-alpha.2
 
 # Or use workflow dispatch in GitHub UI
 ```
 
 ---
 
-### 3. v6-regression.yml
+### 3. regression.yml
 
 **Trigger:** Push to main/develop, PRs, daily at 2 AM UTC
 **Purpose:** Continuous integration with regression detection
@@ -281,7 +281,7 @@ git push origin v6.0.0-alpha.2
    - Measures duration
 
 4. **build-check** (10s timeout)
-   - Builds v6-core
+   - Builds core
    - Verifies dist/ artifact
    - Measures build time
 
@@ -337,6 +337,7 @@ If any timeout fires → STOP and fix root cause. Don't just increase timeout.
 Generates formatted PR comments with validation results.
 
 **Usage:**
+
 ```bash
 node .github/scripts/pr-comment.mjs \
   --validation-report validation.json \
@@ -345,22 +346,25 @@ node .github/scripts/pr-comment.mjs \
 ```
 
 **Output Example:**
+
 ```markdown
-## v6 Validation Report
+## Validation Report
 
 ### ✅ Overall Status: **PASS**
 
 ### 📋 Validation Summary
-| Metric | Count |
-|--------|-------|
-| ✅ Passed | 28 |
-| ❌ Failed | 0 |
-| ⚠️ Warnings | 2 |
+
+| Metric      | Count |
+| ----------- | ----- |
+| ✅ Passed   | 28    |
+| ❌ Failed   | 0     |
+| ⚠️ Warnings | 2     |
 
 ### 📊 Test Coverage
-| Metric | Coverage |
-|--------|----------|
-| ✅ Lines | 85.2% |
+
+| Metric   | Coverage |
+| -------- | -------- |
+| ✅ Lines | 85.2%    |
 ```
 
 ---
@@ -370,6 +374,7 @@ node .github/scripts/pr-comment.mjs \
 Compares performance metrics and detects regressions.
 
 **Usage:**
+
 ```bash
 node .github/scripts/baseline-metrics.mjs compare \
   .baseline/baseline.json \
@@ -378,6 +383,7 @@ node .github/scripts/baseline-metrics.mjs compare \
 ```
 
 **Output:**
+
 ```
 ═══════════════════════════════════════
 Performance Regression Analysis
@@ -403,6 +409,7 @@ Summary:
 Generates comprehensive release notes with receipt.
 
 **Usage:**
+
 ```bash
 node .github/scripts/release-notes.mjs \
   --version 6.0.0-alpha.2 \
@@ -411,6 +418,7 @@ node .github/scripts/release-notes.mjs \
 ```
 
 **Output:** Full markdown with:
+
 - Release type badge
 - Categorized commits
 - Installation instructions
@@ -426,7 +434,7 @@ node .github/scripts/release-notes.mjs \
 ```
 ┌─────────┐     Consensus     ┌──────┐     3x External    ┌────┐     Final
 │  Alpha  │  ──────────────>  │ Beta │  ───────────────>  │ RC │  ──────────>  │ Stable │
-│ Rolling │   + 7-day soak    │      │      Testing       │    │   Review      │  v6.0  │
+│ Rolling │   + 7-day soak    │      │      Testing       │    │   Review      │  6.0  │
 └─────────┘                   └──────┘                    └────┘               └────────┘
    |                             |                          |                       |
    v                             v                          v                       v
@@ -436,25 +444,25 @@ Merged                      Period                    Validation              Gu
 
 ### Stage Requirements
 
-1. **Alpha (v6.0.0-alpha.N)**
+1. **Alpha (6.0.0-alpha.N)**
    - Requirements: PR merged to main
    - Frequency: Rolling releases
    - Stability: Expect breaking changes
    - Audience: Early adopters, testing
 
-2. **Beta (v6.0.0-beta.N)**
+2. **Beta (6.0.0-beta.N)**
    - Requirements: Team consensus + 7-day soak time
    - Frequency: Milestone-based
    - Stability: API stabilizing, fewer breaks
    - Audience: Integration testing
 
-3. **RC (v6.0.0-rc.N)**
+3. **RC (6.0.0-rc.N)**
    - Requirements: 3+ external user tests
    - Frequency: Pre-release only
    - Stability: Production-candidate
    - Audience: Pre-production validation
 
-4. **Stable (v6.0.0)**
+4. **Stable (6.0.0)**
    - Requirements: RC validation + final review
    - Frequency: Major/minor releases
    - Stability: Full guarantees
@@ -466,17 +474,19 @@ Merged                      Period                    Validation              Gu
 
 ### Workflow Failures
 
-#### v6-validate.yml fails
+#### validate.yml fails
 
 **Problem:** Validation criteria not met
 
 **Solutions:**
+
 1. Check validation report artifact
-2. Run `node scripts/v6-validate.mjs --comprehensive` locally
+2. Run `node scripts/validate.mjs --comprehensive` locally
 3. Review failed checks in PR comment
 4. Fix issues and push update
 
 **Common Issues:**
+
 - Missing directory structure → Create expected dirs
 - Module import failures → Check exports in index.mjs
 - OTEL score <80 → Review validation/run-all.mjs output
@@ -484,17 +494,19 @@ Merged                      Period                    Validation              Gu
 
 ---
 
-#### v6-release.yml fails
+#### release.yml fails
 
 **Problem:** Pre-release checks fail
 
 **Solutions:**
-1. Verify tag format: `v6.X.Y` or `v6.X.Y-{alpha|beta|rc}.N`
+
+1. Verify tag format: `6.X.Y` or `6.X.Y-{alpha|beta|rc}.N`
 2. Ensure package.json version matches tag
 3. Check all validation criteria pass
 4. Review pre-release-checks job logs
 
 **Common Issues:**
+
 - Version mismatch → Update package.json
 - NPM_TOKEN expired → Regenerate in npm settings
 - OTEL validation fails → Run locally first
@@ -502,21 +514,23 @@ Merged                      Period                    Validation              Gu
 
 ---
 
-#### v6-regression.yml fails
+#### regression.yml fails
 
 **Problem:** Performance regression detected
 
 **Solutions:**
+
 1. Download regression-report.json artifact
 2. Review which metrics regressed
 3. Investigate performance changes
 4. Optimize or update baseline if intentional
 
 **Common Issues:**
+
 - Lint timeout → Investigate slow linter rules
 - Test timeout → Parallelize or optimize tests
 - Build timeout → Check for new dependencies
-- >10% slowdown → Profile and optimize
+- > 10% slowdown → Profile and optimize
 
 ---
 
@@ -525,6 +539,7 @@ Merged                      Period                    Validation              Gu
 **Problem:** Baseline metrics not found
 
 **Solution:**
+
 ```bash
 # Manually create baseline on main branch
 git checkout main
@@ -535,7 +550,8 @@ pnpm benchmark:core > baseline.json
 **Problem:** Artifacts expired
 
 **Solution:**
-- v6-baseline-metrics: 90-day retention (extend if needed)
+
+- baseline-metrics: 90-day retention (extend if needed)
 - Others: 30 days is intentional for cleanup
 
 ---
@@ -601,13 +617,13 @@ pnpm benchmark:core > baseline.json
 
 ```bash
 # Check recent workflow runs
-gh run list --workflow=v6-validate.yml --limit 10
+gh run list --workflow=validate.yml --limit 10
 
 # View workflow status
 gh run view <run-id>
 
 # Download artifacts
-gh run download <run-id> --name v6-validation-report
+gh run download <run-id> --name validation-report
 
 # Check npm package
 npm view @unrdf/v6-core versions
@@ -618,7 +634,7 @@ npm view @unrdf/v6-core versions
 ## References
 
 - [GitHub Actions Documentation](https://docs.github.com/actions)
-- [v6 Validation Script](../../scripts/v6-validate.mjs)
+- [Validation Script](../../scripts/validate.mjs)
 - [Migration Plan](./MIGRATION_PLAN.md)
 - [Program Charter](./PROGRAM_CHARTER.md)
 - [Maturity Ladder](./MATURITY_LADDER.md)
@@ -638,7 +654,8 @@ For issues with CI/CD pipeline:
 ---
 
 **Document Maintenance:**
+
 - Review quarterly
 - Update on workflow changes
 - Keep examples current
-- Version with v6 releases
+- Version with releases
