@@ -521,7 +521,7 @@ UNRDF documentation follows the **Diátaxis** framework, which organizes content
 
 **Examples:**
 
-- Getting Started with v6
+- Getting Started
 - Build Your First Knowledge Graph
 - Create a Custom Hook
 
@@ -546,7 +546,7 @@ UNRDF documentation follows the **Diátaxis** framework, which organizes content
 
 **Examples:**
 
-- Migrate v5 to v6
+- Migrate from Legacy
 - Verify Receipt Chain
 - Implement L5 Maturity
 
@@ -711,7 +711,7 @@ Use this checklist to track your progress:
 
 - [ ] Install UNRDF CLI
 - [ ] Run `unrdf doctor` successfully
-- [ ] Complete "Getting Started with v6" tutorial
+- [ ] Complete "Getting Started" tutorial
 - [ ] Read "O\* Innovations Architecture" explanation
 - [ ] Understand Diátaxis documentation types
 
