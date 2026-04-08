@@ -25,6 +25,7 @@ import { syncCommand } from './commands/sync.mjs';
 import { templateCommand } from './commands/template.mjs';
 import { hooksCommand } from './commands/hooks.mjs';
 import { mcpCommand } from './commands/mcp.mjs';
+import { doctor } from './commands/doctor/index.mjs';
 
 /**
  * Main CLI application
@@ -56,6 +57,9 @@ export const main = defineCommand({
     // Code Generation
     sync: syncCommand,
     template: templateCommand,
+
+    // Diagnostics
+    doctor,
   },
 });
 

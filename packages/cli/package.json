@@ -43,6 +43,7 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@unrdf/core": "workspace:*",
+    "@unrdf/daemon": "workspace:*",
     "@unrdf/federation": "workspace:*",
     "@unrdf/hooks": "workspace:*",
     "@unrdf/streaming": "workspace:*",
