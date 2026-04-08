@@ -1,4 +1,4 @@
-# UNRDF v6 Phases 4-5: 12-Week Fast-Track Strategic Plan
+# UNRDF Phases 4-5: 12-Week Fast-Track Strategic Plan
 
 **Version**: 6.0.0-alpha.1
 **Target**: 10+ packages to L5 maturity
@@ -13,7 +13,7 @@
 
 This plan escalates **13 packages** from current maturity (L1-L4) to **L5 (Cross-Package Compositional Closure)** in 12 weeks using the Big Bang 80/20 methodology. Success is measured by **provable deliverables**, not assertions.
 
-**Core Principle**: *Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?*
+**Core Principle**: _Can I re-implement RIGHT NOW in ONE pass with ZERO rework using ONLY patterns + static analysis?_
 
 ---
 
@@ -21,13 +21,13 @@ This plan escalates **13 packages** from current maturity (L1-L4) to **L5 (Cross
 
 Before declaring ANY work complete, these questions MUST be answered with evidence:
 
-| Claim | Adversarial Question | Proof Required |
-|-------|----------------------|----------------|
-| "Package at L5" | Did you RUN integration tests? | Show test output with ✅ |
-| "100% tests pass" | Did you RUN `timeout 5s npm test`? | Show full output |
-| "Receipts working" | Did you VERIFY receipt chain? | Show OTEL validation ≥80/100 |
-| "Migration complete" | COUNT files migrated? | `ls -1 src/*.mjs \| wc -l` output |
-| "No regressions" | Did you RUN benchmarks? | Show before/after metrics |
+| Claim                | Adversarial Question               | Proof Required                    |
+| -------------------- | ---------------------------------- | --------------------------------- |
+| "Package at L5"      | Did you RUN integration tests?     | Show test output with ✅          |
+| "100% tests pass"    | Did you RUN `timeout 5s npm test`? | Show full output                  |
+| "Receipts working"   | Did you VERIFY receipt chain?      | Show OTEL validation ≥80/100      |
+| "Migration complete" | COUNT files migrated?              | `ls -1 src/*.mjs \| wc -l` output |
+| "No regressions"     | Did you RUN benchmarks?            | Show before/after metrics         |
 
 **Self-deception is the enemy. OTEL spans + test output = ONLY validation.**
 
@@ -39,23 +39,24 @@ Before declaring ANY work complete, these questions MUST be answered with eviden
 
 Based on usage data, dependency analysis, and value delivery:
 
-| Package | Current | Target | Users | Dependencies | Value Score |
-|---------|---------|--------|-------|--------------|-------------|
-| 1. @unrdf/oxigraph | L3 | L5 | 90% | 0 | 100 |
-| 2. @unrdf/core | L2 | L5 | 85% | 1 (oxigraph) | 95 |
-| 3. @unrdf/kgc-4d | L4 | L5 | 60% | 1 (core) | 90 |
-| 4. @unrdf/v6-compat | L0 | L3 | 100% | 3 | 85 |
-| 5. @unrdf/hooks | L2 | L5 | 70% | 2 | 80 |
-| 6. @unrdf/streaming | L2 | L5 | 65% | 2 | 75 |
-| 7. @unrdf/federation | L2 | L5 | 55% | 3 | 70 |
-| 8. @unrdf/cli | L2 | L5 | 50% | 4 | 65 |
-| 9. @unrdf/yawl | L3 | L5 | 45% | 3 | 60 |
-| 10. @unrdf/knowledge-engine | L2 | L5 | 40% | 5 | 55 |
-| 11. @unrdf/validation | L2 | L5 | 35% | 2 | 50 |
-| 12. @unrdf/observability | L2 | L5 | 30% | 2 | 45 |
-| 13. @unrdf/test-utils | L1 | L4 | 25% | 1 | 40 |
+| Package                     | Current | Target | Users | Dependencies | Value Score |
+| --------------------------- | ------- | ------ | ----- | ------------ | ----------- |
+| 1. @unrdf/oxigraph          | L3      | L5     | 90%   | 0            | 100         |
+| 2. @unrdf/core              | L2      | L5     | 85%   | 1 (oxigraph) | 95          |
+| 3. @unrdf/kgc-4d            | L4      | L5     | 60%   | 1 (core)     | 90          |
+| 4. @unrdf/v6-compat         | L0      | L3     | 100%  | 3            | 85          |
+| 5. @unrdf/hooks             | L2      | L5     | 70%   | 2            | 80          |
+| 6. @unrdf/streaming         | L2      | L5     | 65%   | 2            | 75          |
+| 7. @unrdf/federation        | L2      | L5     | 55%   | 3            | 70          |
+| 8. @unrdf/cli               | L2      | L5     | 50%   | 4            | 65          |
+| 9. @unrdf/yawl              | L3      | L5     | 45%   | 3            | 60          |
+| 10. @unrdf/knowledge-engine | L2      | L5     | 40%   | 5            | 55          |
+| 11. @unrdf/validation       | L2      | L5     | 35%   | 2            | 50          |
+| 12. @unrdf/observability    | L2      | L5     | 30%   | 2            | 45          |
+| 13. @unrdf/test-utils       | L1      | L4     | 25%   | 1            | 40          |
 
 **Selection Rationale**: These 13 packages represent:
+
 - **80%+ of actual usage** (telemetry data)
 - **Foundation layer** (oxigraph, core, kgc-4d)
 - **Essential infrastructure** (hooks, streaming, federation, cli)
@@ -129,14 +130,14 @@ federation (L3) → knowledge-engine (L4)
 
 ### Parallel Opportunities
 
-| Week | Parallel Work Packages | Count | Team Allocation |
-|------|------------------------|-------|-----------------|
-| 1-2  | oxigraph, test-utils   | 2     | 2 devs + 1 lead |
-| 3-4  | core, kgc-4d, v6-compat| 3     | All 3 devs      |
-| 5-6  | hooks, streaming, validation, observability | 4 | All 3 devs |
-| 7-8  | federation, yawl, cli  | 3     | All 3 devs      |
-| 9-10 | knowledge-engine       | 1     | 1 dev + integration testing |
-| 11-12| Integration + release  | 13    | All 3 devs      |
+| Week  | Parallel Work Packages                      | Count | Team Allocation             |
+| ----- | ------------------------------------------- | ----- | --------------------------- |
+| 1-2   | oxigraph, test-utils                        | 2     | 2 devs + 1 lead             |
+| 3-4   | core, kgc-4d, v6-compat                     | 3     | All 3 devs                  |
+| 5-6   | hooks, streaming, validation, observability | 4     | All 3 devs                  |
+| 7-8   | federation, yawl, cli                       | 3     | All 3 devs                  |
+| 9-10  | knowledge-engine                            | 1     | 1 dev + integration testing |
+| 11-12 | Integration + release                       | 13    | All 3 devs                  |
 
 ---
 
@@ -144,36 +145,36 @@ federation (L3) → knowledge-engine (L4)
 
 ### Fixed Overhead (All Packages)
 
-| Task | Hours | Justification |
-|------|-------|---------------|
-| L5 Audit | 2h | Review current state, identify gaps |
-| Breaking Changes (7×) | 14h | Address store init, receipts, Zod, ESM, hooks, federation, streaming |
-| Zod Schema Migration | 4h | Generate + validate schemas for all public APIs |
-| Receipt Integration | 6h | Wrap operations with KGC-4D receipts |
-| Determinism Fixes | 3h | Remove Date.now(), Math.random() |
-| Timeout Guards | 3h | Add 5s timeouts to all I/O |
-| Integration Tests | 6h | Write tests with other L5 packages |
-| OTEL Validation | 2h | Run validation, fix issues until ≥80/100 |
-| **Total Fixed** | **40h** | **Per package** |
+| Task                  | Hours   | Justification                                                        |
+| --------------------- | ------- | -------------------------------------------------------------------- |
+| L5 Audit              | 2h      | Review current state, identify gaps                                  |
+| Breaking Changes (7×) | 14h     | Address store init, receipts, Zod, ESM, hooks, federation, streaming |
+| Zod Schema Migration  | 4h      | Generate + validate schemas for all public APIs                      |
+| Receipt Integration   | 6h      | Wrap operations with KGC-4D receipts                                 |
+| Determinism Fixes     | 3h      | Remove Date.now(), Math.random()                                     |
+| Timeout Guards        | 3h      | Add 5s timeouts to all I/O                                           |
+| Integration Tests     | 6h      | Write tests with other L5 packages                                   |
+| OTEL Validation       | 2h      | Run validation, fix issues until ≥80/100                             |
+| **Total Fixed**       | **40h** | **Per package**                                                      |
 
 ### Variable Effort (Package-Specific)
 
-| Package | Current LoC | Complexity | Test Gap | Docs Gap | Variable Hours | Total Hours |
-|---------|-------------|------------|----------|----------|----------------|-------------|
-| oxigraph | 800 | Low | 10% | 20% | +8h | 48h |
-| core | 2,400 | High | 30% | 40% | +24h | 64h |
-| kgc-4d | 6,300 | Very High | 5% | 10% | +12h | 52h |
-| v6-compat | 0 (new) | Medium | 100% | 100% | +40h | 80h |
-| hooks | 1,200 | Medium | 20% | 30% | +16h | 56h |
-| streaming | 900 | Medium | 25% | 35% | +18h | 58h |
-| federation | 1,100 | High | 30% | 40% | +22h | 62h |
-| cli | 1,500 | Medium | 15% | 25% | +14h | 54h |
-| yawl | 2,000 | High | 20% | 30% | +20h | 60h |
-| knowledge-engine | 1,800 | Very High | 35% | 45% | +28h | 68h |
-| validation | 600 | Low | 20% | 30% | +10h | 50h |
-| observability | 700 | Medium | 15% | 25% | +12h | 52h |
-| test-utils | 500 | Low | 10% | 20% | +8h | 48h |
-| **TOTAL** | **19,800 LoC** | - | - | - | **232h** | **752h** |
+| Package          | Current LoC    | Complexity | Test Gap | Docs Gap | Variable Hours | Total Hours |
+| ---------------- | -------------- | ---------- | -------- | -------- | -------------- | ----------- |
+| oxigraph         | 800            | Low        | 10%      | 20%      | +8h            | 48h         |
+| core             | 2,400          | High       | 30%      | 40%      | +24h           | 64h         |
+| kgc-4d           | 6,300          | Very High  | 5%       | 10%      | +12h           | 52h         |
+| v6-compat        | 0 (new)        | Medium     | 100%     | 100%     | +40h           | 80h         |
+| hooks            | 1,200          | Medium     | 20%      | 30%      | +16h           | 56h         |
+| streaming        | 900            | Medium     | 25%      | 35%      | +18h           | 58h         |
+| federation       | 1,100          | High       | 30%      | 40%      | +22h           | 62h         |
+| cli              | 1,500          | Medium     | 15%      | 25%      | +14h           | 54h         |
+| yawl             | 2,000          | High       | 20%      | 30%      | +20h           | 60h         |
+| knowledge-engine | 1,800          | Very High  | 35%      | 45%      | +28h           | 68h         |
+| validation       | 600            | Low        | 20%      | 30%      | +10h           | 50h         |
+| observability    | 700            | Medium     | 15%      | 25%      | +12h           | 52h         |
+| test-utils       | 500            | Low        | 10%      | 20%      | +8h            | 48h         |
+| **TOTAL**        | **19,800 LoC** | -          | -        | -        | **232h**       | **752h**    |
 
 ### Team Calculation
 
@@ -184,6 +185,7 @@ federation (L3) → knowledge-engine (L4)
 **Average**: 752 / 13 packages = 57.8 hours/package
 
 **Reality Check**: With 52% utilization, we have 48% slack for:
+
 - Unknowns and rework (20%)
 - Integration debugging (15%)
 - Documentation and reviews (13%)
@@ -197,6 +199,7 @@ federation (L3) → knowledge-engine (L4)
 **Goal**: 2 packages at L5 (oxigraph, test-utils)
 
 **Packages**:
+
 1. **@unrdf/oxigraph** (L3 → L5)
    - Current: L3 (deterministic SPARQL)
    - Gaps: L4 (timeout guards), L5 (integration tests)
@@ -217,16 +220,19 @@ federation (L3) → knowledge-engine (L4)
    - Success Metric: 100% test pass, 0 lint errors
 
 **Week 1 Tasks**:
+
 - Day 1-2: Audit current state, identify all gaps
 - Day 3-4: Implement timeout guards + Zod schemas
 - Day 5: Write adversarial tests
 
 **Week 2 Tasks**:
+
 - Day 1-3: Integration tests with placeholder stubs
 - Day 4: Performance benchmarks
 - Day 5: OTEL validation + fixes
 
 **Proof Required** (End of Week 2):
+
 ```bash
 # Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,test-utils}/package.json | wc -l
@@ -253,16 +259,16 @@ timeout 10s pnpm --filter '@unrdf/oxigraph' bench
 
 **Goal**: 3 more packages at L5 (core, kgc-4d, v6-compat) - cumulative 5 packages
 
-**Packages**:
-3. **@unrdf/core** (L2 → L5)
-   - Current: L2 (stable contracts, partial L3)
-   - Gaps: L3 (deterministic utils), L4 (timeout guards), L5 (integration)
-   - Deliverables:
-     - Remove Date.now() from utils (replace with injected time function)
-     - Receipt integration for all mutating operations
-     - Timeout guards on all I/O (file, network, SPARQL)
-     - Integration tests with oxigraph, hooks, streaming
-   - Success Metric: 100% deterministic test, OTEL ≥80/100
+**Packages**: 3. **@unrdf/core** (L2 → L5)
+
+- Current: L2 (stable contracts, partial L3)
+- Gaps: L3 (deterministic utils), L4 (timeout guards), L5 (integration)
+- Deliverables:
+  - Remove Date.now() from utils (replace with injected time function)
+  - Receipt integration for all mutating operations
+  - Timeout guards on all I/O (file, network, SPARQL)
+  - Integration tests with oxigraph, hooks, streaming
+- Success Metric: 100% deterministic test, OTEL ≥80/100
 
 4. **@unrdf/kgc-4d** (L4 → L5)
    - Current: L4 (adversarial safety)
@@ -285,16 +291,19 @@ timeout 10s pnpm --filter '@unrdf/oxigraph' bench
    - Success Metric: v5 code runs with zero changes using v6-compat
 
 **Week 3 Tasks**:
+
 - Day 1-2: Core - remove Date.now(), add receipt integration
 - Day 3-4: KGC-4D - receipt composition implementation
 - Day 5: v6-compat - adapters implementation (50% complete)
 
 **Week 4 Tasks**:
+
 - Day 1-2: v6-compat - ESLint plugin + schema generator
 - Day 3: Integration tests (core + kgc-4d + v6-compat)
 - Day 4-5: OTEL validation + fixes
 
 **Proof Required** (End of Week 4):
+
 ```bash
 # Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,test-utils,core,kgc-4d}/package.json | wc -l
@@ -325,15 +334,15 @@ timeout 10s pnpm test --filter '@unrdf/{core,kgc-4d,v6-compat}'
 
 **Goal**: 4 more packages at L5 (hooks, streaming, validation, observability) - cumulative 9 packages
 
-**Packages**:
-6. **@unrdf/hooks** (L2 → L5)
-   - Current: L2 (stable contracts, partial L3)
-   - Gaps: L3 (receipt enforcement), L4 (safety), L5 (integration)
-   - Deliverables:
-     - Mandatory Zod schemas for all hooks
-     - Receipt generation for all hook executions
-     - Timeout guards on hook evaluations (5s default)
-     - Integration tests with core, yawl, federation
+**Packages**: 6. **@unrdf/hooks** (L2 → L5)
+
+- Current: L2 (stable contracts, partial L3)
+- Gaps: L3 (receipt enforcement), L4 (safety), L5 (integration)
+- Deliverables:
+  - Mandatory Zod schemas for all hooks
+  - Receipt generation for all hook executions
+  - Timeout guards on hook evaluations (5s default)
+  - Integration tests with core, yawl, federation
 
 7. **@unrdf/streaming** (L2 → L5)
    - Current: L2 (partial L4)
@@ -360,17 +369,20 @@ timeout 10s pnpm test --filter '@unrdf/{core,kgc-4d,v6-compat}'
      - Integration tests with all L5 packages
 
 **Week 5 Tasks**:
+
 - Day 1-2: Hooks - Zod schemas + receipt enforcement
 - Day 2-3: Streaming - AsyncIterator migration
 - Day 4: Validation - schema validation
 - Day 5: Observability - OTEL integration
 
 **Week 6 Tasks**:
+
 - Day 1-2: Integration tests (hooks + streaming + validation + observability)
 - Day 3: Cross-package delta tests (4 packages together)
 - Day 4-5: OTEL validation + performance benchmarks
 
 **Proof Required** (End of Week 6):
+
 ```bash
 # Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability}/package.json | wc -l
@@ -399,15 +411,7 @@ node validation/run-all.mjs --packages hooks,streaming,validation,observability
 
 **Goal**: 3 more packages at L5 (federation, yawl, cli) - cumulative 12 packages
 
-**Packages**:
-10. **@unrdf/federation** (L2 → L5)
-    - Current: L2 (partial L4)
-    - Gaps: L3 (determinism), L4 (complete), L5 (integration)
-    - Deliverables:
-      - Typed query builders (breaking change #6)
-      - 5s default timeout on all queries
-      - Receipt generation for federated queries
-      - Integration tests with streaming, hooks, core
+**Packages**: 10. **@unrdf/federation** (L2 → L5) - Current: L2 (partial L4) - Gaps: L3 (determinism), L4 (complete), L5 (integration) - Deliverables: - Typed query builders (breaking change #6) - 5s default timeout on all queries - Receipt generation for federated queries - Integration tests with streaming, hooks, core
 
 11. **@unrdf/yawl** (L3 → L5)
     - Current: L3 (deterministic workflows)
@@ -427,16 +431,19 @@ node validation/run-all.mjs --packages hooks,streaming,validation,observability
       - Integration with all L5 packages (CLI commands)
 
 **Week 7 Tasks**:
+
 - Day 1-2: Federation - typed query builders + timeouts
 - Day 3-4: YAWL - timeout guards + receipt composition
 - Day 5: CLI - Zod validation for inputs
 
 **Week 8 Tasks**:
+
 - Day 1-2: CLI - receipt emission for commands
 - Day 3: Integration tests (federation + yawl + cli)
 - Day 4-5: OTEL validation + performance benchmarks
 
 **Proof Required** (End of Week 8):
+
 ```bash
 # Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability,federation,yawl,cli}/package.json | wc -l
@@ -465,27 +472,22 @@ timeout 20s pnpm test --filter '@unrdf/{federation,yawl,cli}'
 
 **Goal**: 1 more package at L5 (knowledge-engine) - cumulative 13 packages
 
-**Package**:
-13. **@unrdf/knowledge-engine** (L2 → L5)
-    - Current: L2 (partial)
-    - Gaps: L3-L5 (all)
-    - Deliverables:
-      - Zod schemas for all reasoning operations
-      - Receipt generation for inference steps
-      - Timeout guards on reasoning operations (10s default, configurable)
-      - Integration tests with federation, yawl, hooks, streaming, core
+**Package**: 13. **@unrdf/knowledge-engine** (L2 → L5) - Current: L2 (partial) - Gaps: L3-L5 (all) - Deliverables: - Zod schemas for all reasoning operations - Receipt generation for inference steps - Timeout guards on reasoning operations (10s default, configurable) - Integration tests with federation, yawl, hooks, streaming, core
 
 **Week 9 Tasks**:
+
 - Day 1-2: Knowledge-engine - Zod schemas + receipt integration
 - Day 3-4: Timeout guards + deterministic fixtures
 - Day 5: Integration tests (phase 1)
 
 **Week 10 Tasks**:
+
 - Day 1-3: Integration tests with 5+ packages
 - Day 4: OTEL validation + fixes
 - Day 5: Performance benchmarks
 
 **Proof Required** (End of Week 10):
+
 ```bash
 # Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability,federation,yawl,cli,knowledge-engine}/package.json | wc -l
@@ -508,7 +510,7 @@ node validation/run-all.mjs --package knowledge-engine
 
 ### Week 11-12: Integration & Release Preparation
 
-**Goal**: All 13 packages validated, cross-package workflows proven, v6.0.0-core release ready
+**Goal**: All 13 packages validated, cross-package workflows proven, 6.0.0-core release ready
 
 **Deliverables**:
 
@@ -545,6 +547,7 @@ node validation/run-all.mjs --package knowledge-engine
    - Success: v5 code runs on v6 with receipts
 
 **Tasks**:
+
 - Day 1-2: Implement Workflow 1
 - Day 3: Implement Workflow 2
 - Day 4-5: Implement Workflow 3
@@ -554,18 +557,21 @@ node validation/run-all.mjs --package knowledge-engine
 **14-Point Release Checklist**:
 
 1. **All packages at L5**
+
    ```bash
    timeout 5s ./scripts/check-maturity-levels.sh
    # Expected: 13/13 packages at L5
    ```
 
 2. **100% test pass rate**
+
    ```bash
    timeout 60s pnpm test
    # Expected: X/X tests passing (show count)
    ```
 
 3. **OTEL validation ≥80/100**
+
    ```bash
    node validation/run-all.mjs comprehensive
    grep "Score:" validation-output.log
@@ -573,60 +579,70 @@ node validation/run-all.mjs --package knowledge-engine
    ```
 
 4. **Zero direct N3 imports**
+
    ```bash
    timeout 5s grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v n3-justified | wc -l
    # Expected: 0
    ```
 
 5. **All operations produce receipts**
+
    ```bash
    timeout 10s ./scripts/check-receipt-coverage.sh
    # Expected: 100% receipt coverage for mutating ops
    ```
 
 6. **Zod schemas 100% coverage**
+
    ```bash
    timeout 5s ./scripts/check-zod-coverage.sh
    # Expected: 100% public APIs have Zod schemas
    ```
 
 7. **Timeout guards enforced**
+
    ```bash
    timeout 5s grep -r "timeout.*[0-9]" packages/*/src --include="*.mjs" | wc -l
    # Expected: >100 timeout guards
    ```
 
 8. **No Date.now() in business logic**
+
    ```bash
    timeout 5s grep -r "Date\.now\|Math\.random" packages/*/src --include="*.mjs" | wc -l
    # Expected: 0
    ```
 
 9. **Integration tests pass**
+
    ```bash
    timeout 60s pnpm test:integration
    # Expected: All integration tests passing
    ```
 
 10. **Performance benchmarks pass**
+
     ```bash
     timeout 30s pnpm benchmark:compare
     # Expected: No regressions >10%
     ```
 
 11. **Documentation updated**
+
     ```bash
     timeout 5s ls -1 docs/v6/*.md | wc -l
-    # Expected: ≥8 v6 docs
+    # Expected: ≥8 docs
     ```
 
 12. **Migration guide tested**
+
     ```bash
     timeout 10s ./scripts/test-migration-guide.sh
     # Expected: External user can follow guide (manual verification)
     ```
 
 13. **ESLint rules enforced**
+
     ```bash
     timeout 10s pnpm lint
     # Expected: 0 warnings
@@ -639,20 +655,22 @@ node validation/run-all.mjs --package knowledge-engine
     ```
 
 **Week 12 Tasks**:
+
 - Day 1-2: Run full 14-point checklist, fix all failures
 - Day 3: Changelog generation, release notes
 - Day 4: External testing (3 users test migration guide)
-- Day 5: Final validation, tag v6.0.0-core release
+- Day 5: Final validation, tag 6.0.0-core release
 
 **Proof Required** (End of Week 12):
+
 ```bash
 # All 14 checkpoints passing
 timeout 60s ./scripts/run-release-checklist.sh
 # Expected: 14/14 ✅
 
 # Release tag
-git tag -l v6.0.0-core
-# Expected: v6.0.0-core
+git tag -l 6.0.0-core
+# Expected: 6.0.0-core
 
 # Package versions
 grep '"version"' packages/{oxigraph,core,kgc-4d,v6-compat,hooks,streaming,validation,observability,federation,yawl,cli,knowledge-engine}/package.json
@@ -670,29 +688,31 @@ grep "Score:" final-validation.log
 
 ### High-Impact Risks
 
-| Risk ID | Risk | Impact | Probability | Mitigation | Fallback |
-|---------|------|--------|-------------|------------|----------|
-| R1 | Critical package fails L5 verification | High | Medium | Weekly OTEL validation, early detection | v6-compat bridge for that package |
-| R2 | Performance regresses >10% | Medium | Medium | Continuous benchmarking, optimization budget | Accept regression if <15%, optimize in v6.1 |
-| R3 | Tests fail mid-migration | High | Medium | Triage + fix process, freeze other work | Rollback to last L4 state, investigate |
-| R4 | Breaking changes break existing users | High | Low | v6-compat layer, extensive testing | Extend v5 support, delay v6 release |
-| R5 | Cross-package integration failures | High | Medium | Daily integration test runs | Isolate failing package, fix dependencies |
-| R6 | OTEL validation fails | Medium | Low | Weekly validation, fix incrementally | Lower threshold to 70/100 for v6.0.0-core |
-| R7 | Dependency circular deadlock | High | Low | Madge checks daily, refactor if detected | Break circular dep with interface package |
-| R8 | Team velocity slower than planned | Medium | High | 48% buffer built into plan | Reduce scope to 10 packages, defer 3 to v6.1 |
-| R9 | External testing reveals blockers | High | Medium | Week 12 buffer for fixes | Delay release 1 week, fix issues |
-| R10 | Documentation gaps | Low | High | Automated doc generation, review weekly | Ship with known gaps, fix in v6.0.1 |
+| Risk ID | Risk                                   | Impact | Probability | Mitigation                                   | Fallback                                    |
+| ------- | -------------------------------------- | ------ | ----------- | -------------------------------------------- | ------------------------------------------- |
+| R1      | Critical package fails L5 verification | High   | Medium      | Weekly OTEL validation, early detection      | v6-compat bridge for that package           |
+| R2      | Performance regresses >10%             | Medium | Medium      | Continuous benchmarking, optimization budget | Accept regression if <15%, optimize in 6.1  |
+| R3      | Tests fail mid-migration               | High   | Medium      | Triage + fix process, freeze other work      | Rollback to last L4 state, investigate      |
+| R4      | Breaking changes break existing users  | High   | Low         | v6-compat layer, extensive testing           | Extend v5 support, delay v6 release         |
+| R5      | Cross-package integration failures     | High   | Medium      | Daily integration test runs                  | Isolate failing package, fix dependencies   |
+| R6      | OTEL validation fails                  | Medium | Low         | Weekly validation, fix incrementally         | Lower threshold to 70/100 for 6.0.0-core    |
+| R7      | Dependency circular deadlock           | High   | Low         | Madge checks daily, refactor if detected     | Break circular dep with interface package   |
+| R8      | Team velocity slower than planned      | Medium | High        | 48% buffer built into plan                   | Reduce scope to 10 packages, defer 3 to 6.1 |
+| R9      | External testing reveals blockers      | High   | Medium      | Week 12 buffer for fixes                     | Delay release 1 week, fix issues            |
+| R10     | Documentation gaps                     | Low    | High        | Automated doc generation, review weekly      | Ship with known gaps, fix in 6.0.1          |
 
 ### Risk Response Protocols
 
 **When R1 (Critical package fails L5)**:
+
 1. STOP work on dependent packages
 2. Triage: Is it L4→L5 or earlier level?
 3. If L4 issue: Fix with highest priority
-4. If L5 issue: Deploy v6-compat bridge, mark as L4 for v6.0.0-core
+4. If L5 issue: Deploy v6-compat bridge, mark as L4 for 6.0.0-core
 5. Document known limitation in release notes
 
 **When R3 (Tests fail mid-migration)**:
+
 1. STOP all commits to that package
 2. Run `git bisect` to find breaking commit
 3. Rollback to last green state
@@ -700,6 +720,7 @@ grep "Score:" final-validation.log
 5. Re-run full test suite before merging
 
 **When R5 (Cross-package integration failures)**:
+
 1. Isolate failing combination (e.g., federation + yawl)
 2. Run integration test in isolation
 3. Add debug logging to identify exact failure point
@@ -713,7 +734,7 @@ grep "Score:" final-validation.log
 ### Quantitative Metrics (Week-by-Week)
 
 | Week | Packages at L5 | Test Pass % | OTEL Avg Score | Cumulative Hours | Variance |
-|------|----------------|-------------|----------------|------------------|----------|
+| ---- | -------------- | ----------- | -------------- | ---------------- | -------- |
 | 2    | 2 / 13         | 100%        | ≥80/100        | 96h              | 0%       |
 | 4    | 5 / 13         | 100%        | ≥80/100        | 240h             | <5%      |
 | 6    | 9 / 13         | 100%        | ≥80/100        | 456h             | <10%     |
@@ -725,12 +746,12 @@ grep "Score:" final-validation.log
 
 ### Qualitative Metrics
 
-| Metric | Baseline (v5) | Target (v6.0.0-core) | Measurement Method |
-|--------|---------------|----------------------|--------------------|
-| Onboarding time | 1 day | <1 hour | Time 3 external developers |
-| Bug investigation time | 2 hours | 1 hour | Receipt chain reduces debugging by 50% |
-| Migration complexity | High | Low | 3 users complete migration in <4 hours |
-| Developer confidence | Medium | High | Survey: "Would you recommend v6?" >80% yes |
+| Metric                 | Baseline (v5) | Target (v6.0.0-core) | Measurement Method                         |
+| ---------------------- | ------------- | -------------------- | ------------------------------------------ |
+| Onboarding time        | 1 day         | <1 hour              | Time 3 external developers                 |
+| Bug investigation time | 2 hours       | 1 hour               | Receipt chain reduces debugging by 50%     |
+| Migration complexity   | High          | Low                  | 3 users complete migration in <4 hours     |
+| Developer confidence   | Medium        | High                 | Survey: "Would you recommend v6?" >80% yes |
 
 ---
 
@@ -741,6 +762,7 @@ grep "Score:" final-validation.log
 **Deliverable**: 2 packages at L5
 
 **Proof**:
+
 ```bash
 # 1. Package count
 ls -1 /home/user/unrdf/packages/{oxigraph,test-utils}/package.json | wc -l
@@ -770,6 +792,7 @@ timeout 10s pnpm benchmark:compare --package oxigraph
 **Deliverable**: 5 packages at L5 (cumulative)
 
 **Proof**:
+
 ```bash
 # 1. Package count
 ls -1 /home/user/unrdf/packages/{oxigraph,test-utils,core,kgc-4d}/package.json | wc -l
@@ -800,6 +823,7 @@ timeout 5s node packages/v6-compat/test/v5-code-compatibility.test.mjs
 **Deliverable**: 9 packages at L5 (cumulative)
 
 **Proof**:
+
 ```bash
 # 1. Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability}/package.json | wc -l
@@ -829,6 +853,7 @@ grep "Score:" validation-output.log | awk '{sum+=$2; count++} END {print sum/cou
 **Deliverable**: 12 packages at L5 (cumulative)
 
 **Proof**:
+
 ```bash
 # 1. Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability,federation,yawl,cli}/package.json | wc -l
@@ -857,6 +882,7 @@ timeout 10s ./integration-tests/cli-all-commands.sh
 **Deliverable**: 13 packages at L5 (cumulative)
 
 **Proof**:
+
 ```bash
 # 1. Package count at L5
 ls -1 /home/user/unrdf/packages/{oxigraph,core,kgc-4d,hooks,streaming,validation,observability,federation,yawl,cli,knowledge-engine}/package.json | wc -l
@@ -896,11 +922,13 @@ node validation/run-all.mjs comprehensive
 ### Daily Standups (15 min)
 
 **Format**:
+
 - What did you COMPLETE yesterday? (show proof)
 - What will you COMPLETE today? (specific deliverable)
 - Blockers? (with mitigation plan)
 
 **Red Flags**:
+
 - "Almost done" → Not acceptable (define "done" with proof)
 - "Tests mostly pass" → Not acceptable (must be 100%)
 - "I think it works" → Not acceptable (show OTEL validation)
@@ -908,23 +936,29 @@ node validation/run-all.mjs comprehensive
 ### Weekly Reports (Friday EOD)
 
 **Template**:
+
 ```markdown
 ## Week X Report
 
 ### Packages at L5 This Week
+
 - [Package name]: [Current maturity] → L5
 - Proof: [Link to test output, OTEL validation]
 
 ### Blockers Resolved
+
 - [Blocker]: [Resolution + prevention]
 
 ### Next Week Plan
+
 - [Package]: [Specific deliverables]
 
 ### Risks Identified
+
 - [Risk]: [Mitigation plan]
 
 ### Metrics
+
 - Tests: X/Y passing (100% required)
 - OTEL: X.X/100 average (≥80 required)
 - Hours: X/Y used (variance %)
@@ -933,6 +967,7 @@ node validation/run-all.mjs comprehensive
 ### Bi-Weekly Reviews (End of Week 2, 4, 6, 8, 10, 12)
 
 **Agenda**:
+
 1. Milestone verification (run proof scripts)
 2. Risk register update
 3. Velocity check (hours vs. plan)
@@ -1105,17 +1140,18 @@ GRAND TOTAL            636h (vs. 752h planned, 116h buffer)
 
 ### Test Categories
 
-| Category | Count/Package | Total (13 packages) | Purpose |
-|----------|---------------|---------------------|---------|
-| Contract | 50-100 | 650-1,300 | Zod schema validation |
-| Unit | 100-200 | 1,300-2,600 | Pure function correctness |
-| Integration | 20-30 | 260-390 | Module interaction |
-| E2E | 5-10 | 65-130 | Cross-package workflows |
-| **TOTAL** | **175-340** | **2,275-4,420** | Full coverage |
+| Category    | Count/Package | Total (13 packages) | Purpose                   |
+| ----------- | ------------- | ------------------- | ------------------------- |
+| Contract    | 50-100        | 650-1,300           | Zod schema validation     |
+| Unit        | 100-200       | 1,300-2,600         | Pure function correctness |
+| Integration | 20-30         | 260-390             | Module interaction        |
+| E2E         | 5-10          | 65-130              | Cross-package workflows   |
+| **TOTAL**   | **175-340**   | **2,275-4,420**     | Full coverage             |
 
 ### Critical Test Scenarios
 
 **Every package must have**:
+
 1. Determinism test (run twice, compare outputs)
 2. Receipt generation test
 3. Timeout enforcement test (verify 5s timeout fires)
@@ -1128,15 +1164,15 @@ GRAND TOTAL            636h (vs. 752h planned, 116h buffer)
 
 ### Validation Scoring (80/100 minimum)
 
-| Criterion | Weight | Pass Criteria |
-|-----------|--------|---------------|
-| Span completeness | 20 | All operations create spans |
-| Span attributes | 15 | Required attributes present |
-| Error handling | 15 | Errors captured in spans |
-| Receipt correlation | 15 | Receipts linked to spans |
-| Trace continuity | 15 | Parent-child relationships correct |
-| Performance | 10 | Span overhead <5% |
-| Documentation | 10 | Span semantics documented |
+| Criterion           | Weight | Pass Criteria                      |
+| ------------------- | ------ | ---------------------------------- |
+| Span completeness   | 20     | All operations create spans        |
+| Span attributes     | 15     | Required attributes present        |
+| Error handling      | 15     | Errors captured in spans           |
+| Receipt correlation | 15     | Receipts linked to spans           |
+| Trace continuity    | 15     | Parent-child relationships correct |
+| Performance         | 10     | Span overhead <5%                  |
+| Documentation       | 10     | Span semantics documented          |
 
 ### Example Validation Output
 
@@ -1169,7 +1205,7 @@ Score: 96/100 ✅ PASS
 
 **END OF 12-WEEK FAST-TRACK PLAN**
 
-**Final Adversarial Question**: *If an external auditor reviewed this plan, could every claim be verified with concrete evidence?*
+**Final Adversarial Question**: _If an external auditor reviewed this plan, could every claim be verified with concrete evidence?_
 
 **Answer**: YES. Every milestone has proof requirements. Every claim has a verification command. Every success criterion is measurable.
 
