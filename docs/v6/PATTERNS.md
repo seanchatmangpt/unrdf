@@ -1,4 +1,4 @@
-# v6 Patterns Library
+# Patterns Library
 
 **Version**: 6.0.0-alpha.1
 **Status**: Research Complete
@@ -6,19 +6,19 @@
 
 ## Executive Summary
 
-This document catalogues **5 core patterns** extracted from P0+P1 implementation that enable v6's deterministic, receipt-driven architecture. These patterns are reusable across all 47 packages in the UNRDF monorepo.
+This document catalogues **5 core patterns** extracted from P0+P1 implementation that enable current' deterministic, receipt-driven architecture. These patterns are reusable across all 47 packages in the UNRDF monorepo.
 
 **Key Insight**: Every pattern composes with others. Receipt HOF wraps functions. Delta Contract describes changes. Zod validates both. Determinism proves correctness. Composition ensures systems integrate.
 
 ## Pattern Index
 
-| Pattern | Purpose | Maturity Level | Complexity |
-|---------|---------|----------------|------------|
-| [Receipt HOF](#receipt-hof-pattern) | Generate verifiable receipts for any operation | L3+ | Low |
-| [Delta Contract](#delta-contract-pattern) | Explicit, auditable state transitions | L3+ | Medium |
-| [Zod Validation Envelope](#zod-validation-envelope-pattern) | Runtime type safety at boundaries | L2+ | Low |
-| [Determinism Proof](#determinism-proof-pattern) | Guarantee reproducible outputs | L3+ | Medium |
-| [Composition Layer](#composition-layer-pattern-l5) | Cross-package integration | L5 | High |
+| Pattern                                                     | Purpose                                        | Maturity Level | Complexity |
+| ----------------------------------------------------------- | ---------------------------------------------- | -------------- | ---------- |
+| [Receipt HOF](#receipt-hof-pattern)                         | Generate verifiable receipts for any operation | L3+            | Low        |
+| [Delta Contract](#delta-contract-pattern)                   | Explicit, auditable state transitions          | L3+            | Medium     |
+| [Zod Validation Envelope](#zod-validation-envelope-pattern) | Runtime type safety at boundaries              | L2+            | Low        |
+| [Determinism Proof](#determinism-proof-pattern)             | Guarantee reproducible outputs                 | L3+            | Medium     |
+| [Composition Layer](#composition-layer-pattern-l5)          | Cross-package integration                      | L5             | High       |
 
 ---
 
@@ -30,12 +30,14 @@ This document catalogues **5 core patterns** extracted from P0+P1 implementation
 **Solution**: Wrap functions in Higher-Order Function (HOF) that generates cryptographic receipts.
 
 **Use When**:
+
 - State-changing operations (L3+ requirement)
 - Workflow execution
 - Resource allocation
 - Any operation requiring replay/verification
 
 **Don't Use When**:
+
 - Pure read operations (unnecessary overhead)
 - Performance-critical inner loops (profile first)
 - Operations that already generate receipts
@@ -58,7 +60,7 @@ function withReceipt(fn, options = {}) {
       args: JSON.stringify(args),
       result: typeof result === 'object' ? JSON.stringify(result) : String(result),
       // Optional: Add hash for integrity
-      hash: await computeBlake3({ args, result })
+      hash: await computeBlake3({ args, result }),
     };
 
     return { result, receipt };
@@ -81,7 +83,7 @@ async function executeWorkflow(taskId, action) {
 
 // Wrapped with receipt
 const executeWithReceipt = withReceipt(executeWorkflow, {
-  operation: 'workflow.execute'
+  operation: 'workflow.execute',
 });
 
 const { result, receipt } = await executeWithReceipt('task-123', 'approve');
@@ -126,21 +128,21 @@ await receiptStore.append(receipt);
 ### Composition Rules
 
 **Composes With**:
+
 - ✅ **Delta Contract**: Wrap delta application with receipts
 - ✅ **Zod Validation**: Validate inputs before wrapping
 - ✅ **Determinism Proof**: Use deterministic timestamps in receipt
 - ✅ **Composition Layer**: Receipt chains span package boundaries
 
 **Pattern**:
+
 ```javascript
 // Full composition
 const operation = withReceipt(
-  validateSchema(InputSchema)(
-    async (data) => {
-      const delta = createDelta('add', ...data);
-      return await gate.proposeDelta(delta, store);
-    }
-  ),
+  validateSchema(InputSchema)(async data => {
+    const delta = createDelta('add', ...data);
+    return await gate.proposeDelta(delta, store);
+  }),
   { operation: 'user.createResource' }
 );
 ```
@@ -153,7 +155,7 @@ import { describe, it, expect } from 'vitest';
 
 describe('Receipt HOF Pattern', () => {
   it('should generate receipt with all required fields', async () => {
-    const fn = async (x) => x * 2;
+    const fn = async x => x * 2;
     const wrapped = withReceipt(fn, { operation: 'double' });
 
     const { result, receipt } = await wrapped(21);
@@ -166,7 +168,7 @@ describe('Receipt HOF Pattern', () => {
   });
 
   it('should handle async functions', async () => {
-    const asyncFn = async (delay) => {
+    const asyncFn = async delay => {
       await new Promise(r => setTimeout(r, delay));
       return 'done';
     };
@@ -192,12 +194,14 @@ describe('Receipt HOF Pattern', () => {
 **Solution**: All state changes must be packaged as explicit Delta proposals.
 
 **Use When**:
-- Any RDF store mutation (mandatory in v6)
+
+- Any RDF store mutation (mandatory in current version)
 - Workflow state transitions
 - Resource updates
 - Policy-controlled operations
 
 **Don't Use When**:
+
 - Read-only queries
 - Ephemeral state (not persisted)
 
@@ -216,21 +220,23 @@ const delta = {
       subject: 'http://example.org/subject',
       predicate: 'http://example.org/predicate',
       object: 'value',
-      graph: 'http://example.org/graph' // optional
-    }
+      graph: 'http://example.org/graph', // optional
+    },
   ],
 
   source: {
     package: '@unrdf/your-package',
     actor: 'user-id',
-    context: { /* additional metadata */ }
+    context: {
+      /* additional metadata */
+    },
   },
 
   admissibility: {
     policyId: 'policy-123',
     preConditions: ['state-hash-match'],
-    constraints: ['quota-check']
-  }
+    constraints: ['quota-check'],
+  },
 };
 
 // Workflow: Propose → Reconcile → Receipt → Apply
@@ -261,7 +267,7 @@ const delta = createDelta(
     oldObject: 'http://workflow.org/states/enabled',
     package: '@unrdf/yawl',
     actor: 'workflow-engine',
-    context: { caseId: 'case-456' }
+    context: { caseId: 'case-456' },
   }
 );
 
@@ -276,8 +282,8 @@ const gate = new DeltaGate({
         }
       `);
       return allowed;
-    }
-  }
+    },
+  },
 });
 
 const receipt = await gate.proposeDelta(delta, store);
@@ -306,27 +312,27 @@ const compositeDelta = {
       op: 'add',
       subject: 'http://users.org/alice',
       predicate: 'http://schema.org/name',
-      object: '"Alice Smith"'
+      object: '"Alice Smith"',
     },
     {
       op: 'add',
       subject: 'http://users.org/alice',
       predicate: 'http://roles.org/hasRole',
-      object: 'http://roles.org/admin'
-    }
+      object: 'http://roles.org/admin',
+    },
   ],
 
   source: {
     package: '@unrdf/user-management',
     actor: 'admin-user',
-    context: { operation: 'createUser' }
+    context: { operation: 'createUser' },
   },
 
   admissibility: {
     policyId: 'user-creation-policy',
     preConditions: ['admin-permission-check'],
-    constraints: ['unique-username']
-  }
+    constraints: ['unique-username'],
+  },
 };
 
 const receipt = await gate.proposeDelta(compositeDelta, store);
@@ -351,6 +357,7 @@ SELECT ?state WHERE {
 ### Composition Rules
 
 **Composes With**:
+
 - ✅ **Receipt HOF**: `withReceipt(gate.proposeDelta)`
 - ✅ **Zod Validation**: Validate delta before proposal
 - ✅ **Determinism Proof**: Deterministic delta hashing
@@ -367,7 +374,7 @@ const chainProof = {
   before: before.hash,
   delta: delta.id,
   after: after.hash,
-  proof: receipt.stateHash === after.hash
+  proof: receipt.stateHash === after.hash,
 };
 ```
 
@@ -390,8 +397,8 @@ describe('Delta Contract Pattern', () => {
     const delta = {
       ...createDelta('delete', 'http://ex.org/s', 'http://ex.org/p', 'value'),
       admissibility: {
-        preConditions: ['triple-must-exist']
-      }
+        preConditions: ['triple-must-exist'],
+      },
     };
 
     const gate = new DeltaGate({
@@ -399,8 +406,8 @@ describe('Delta Contract Pattern', () => {
         'triple-must-exist': async (delta, store) => {
           const exists = await store.has(/* ... */);
           return exists;
-        }
-      }
+        },
+      },
     });
 
     const receipt = await gate.proposeDelta(delta, emptyStore);
@@ -412,6 +419,7 @@ describe('Delta Contract Pattern', () => {
 ```
 
 **File Locations**:
+
 - Schema: `/home/user/unrdf/packages/v6-core/src/delta/schema.mjs`
 - Gate: `/home/user/unrdf/packages/v6-core/src/delta/gate.mjs`
 - API: `/home/user/unrdf/packages/v6-core/src/delta/index.mjs`
@@ -426,12 +434,14 @@ describe('Delta Contract Pattern', () => {
 **Solution**: Validate all inputs at module boundaries using Zod schemas.
 
 **Use When**:
+
 - Public API functions
 - Data ingestion points
 - Inter-package communication
 - User input handling
 
 **Don't Use When**:
+
 - Private internal functions (trusted inputs)
 - Performance-critical inner loops (validate once at boundary)
 
@@ -444,12 +454,12 @@ import { z } from 'zod';
 const InputSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
-  age: z.number().int().positive()
+  age: z.number().int().positive(),
 });
 
 const OutputSchema = z.object({
   success: z.boolean(),
-  data: z.any()
+  data: z.any(),
 });
 
 // 2. Create validated function
@@ -460,7 +470,7 @@ function processData(input) {
   // Business logic
   const result = {
     success: true,
-    data: { processed: validInput.name }
+    data: { processed: validInput.name },
   };
 
   // Validate output (optional but recommended)
@@ -515,13 +525,14 @@ import { withReceipt } from '@unrdf/v6-compat/adapters';
 
 const UserSchema = z.object({
   username: z.string().min(3),
-  email: z.string().email()
+  email: z.string().email(),
 });
 
 // Compose validators
 const createUser = withReceipt(
-  validateSchema(UserSchema)( // Input validation
-    async (userData) => {
+  validateSchema(UserSchema)(
+    // Input validation
+    async userData => {
       // Business logic
       return await userStore.create(userData);
     }
@@ -532,7 +543,7 @@ const createUser = withReceipt(
 // Valid input
 const { result, receipt } = await createUser({
   username: 'alice',
-  email: 'alice@example.com'
+  email: 'alice@example.com',
 });
 
 // Invalid input - throws before execution
@@ -563,30 +574,32 @@ const TaskSchema = generateZodFromJSDoc(`
 const TaskSchemaManual = z.object({
   id: z.string(),
   name: z.string(),
-  state: z.enum(['enabled', 'executing', 'completed'])
+  state: z.enum(['enabled', 'executing', 'completed']),
 });
 ```
 
 ### Composition Rules
 
 **Composes With**:
+
 - ✅ **Receipt HOF**: Validate before generating receipt
 - ✅ **Delta Contract**: Validate delta structure
 - ✅ **Determinism Proof**: Schema ensures consistent structure
 - ✅ **Composition Layer**: Schema compatibility checking
 
 **Output → Input Matching**:
+
 ```javascript
 // Module A output schema
 const AOutputSchema = z.object({
   result: z.string(),
-  metadata: z.any()
+  metadata: z.any(),
 });
 
 // Module B input schema
 const BInputSchema = z.object({
   result: z.string(),
-  metadata: z.any()
+  metadata: z.any(),
 });
 
 // Check compatibility (composition layer L5)
@@ -625,11 +638,7 @@ describe('Zod Validation Envelope Pattern', () => {
     const InputSchema = z.object({ x: z.number() });
     const OutputSchema = z.object({ result: z.number() });
 
-    const fn = withReceipt(
-      validateSchema(InputSchema)(
-        (data) => ({ result: data.x * 2 })
-      )
-    );
+    const fn = withReceipt(validateSchema(InputSchema)(data => ({ result: data.x * 2 })));
 
     const { result, receipt } = await fn({ x: 21 });
 
@@ -651,12 +660,14 @@ describe('Zod Validation Envelope Pattern', () => {
 **Solution**: Guarantee identical outputs for identical inputs via deterministic hashing and timestamps.
 
 **Use When**:
+
 - L3+ maturity packages (required)
 - Receipt generation
 - Snapshot creation
 - Test verification
 
 **Don't Use When**:
+
 - Operations requiring real-time data
 - User-facing timestamps (use separate display timestamp)
 
@@ -705,7 +716,7 @@ async function generateReceipt(eventType, payload) {
     eventType,
     timestamp: t_ns,
     payloadHash,
-    payload
+    payload,
   };
 }
 ```
@@ -784,12 +795,14 @@ console.log(snapshot1.hash);
 ### Composition Rules
 
 **Composes With**:
+
 - ✅ **Receipt HOF**: Use deterministic timestamps in receipts
 - ✅ **Delta Contract**: Hash deltas deterministically
 - ✅ **Zod Validation**: Schema ensures structure consistency
 - ✅ **Composition Layer**: Verify cross-package determinism
 
 **Determinism Chain**:
+
 ```javascript
 // Full deterministic workflow
 process.env.DETERMINISTIC = '1';
@@ -823,9 +836,7 @@ describe('Determinism Proof Pattern', () => {
     const payload = { x: 1, y: 2 };
 
     const hashes = await Promise.all(
-      Array.from({ length: 100 }, () =>
-        computeBlake3(deterministicSerialize(payload))
-      )
+      Array.from({ length: 100 }, () => computeBlake3(deterministicSerialize(payload)))
     );
 
     const unique = new Set(hashes);
@@ -842,7 +853,7 @@ describe('Determinism Proof Pattern', () => {
 
     // Check monotonic increase
     for (let i = 1; i < timestamps.length; i++) {
-      expect(timestamps[i] >= timestamps[i-1]).toBe(true);
+      expect(timestamps[i] >= timestamps[i - 1]).toBe(true);
     }
   });
 
@@ -879,6 +890,7 @@ describe('Determinism Proof Pattern', () => {
 ```
 
 **Determinism Checker Tool**:
+
 ```bash
 #!/bin/bash
 # determinism-checker.sh
@@ -910,6 +922,7 @@ fi
 ```
 
 **File Locations**:
+
 - Serialization: `/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs` (lines 172-199)
 - Timestamp: `/home/user/unrdf/packages/fusion/src/receipts-kernel.mjs` (lines 96-100)
 
@@ -923,12 +936,14 @@ fi
 **Solution**: Define composition rules based on schema compatibility and receipt chaining.
 
 **Use When**:
+
 - Multi-package workflows
 - Cross-package data flow
 - Federated systems
 - L5 maturity certification
 
 **Don't Use When**:
+
 - Single-package operations
 - Internal module composition (use regular imports)
 
@@ -1013,7 +1028,7 @@ const workflowOp = withReceipt(
   async ({ snapshot }) => {
     const result = await execute({
       task: 'verify-snapshot',
-      input: snapshot
+      input: snapshot,
     });
     return { verified: result.status === 'ok' };
   },
@@ -1042,26 +1057,26 @@ const modules = {
   '@unrdf/oxigraph': {
     outputSchema: z.object({
       store: z.any(),
-      quadCount: z.number()
-    })
+      quadCount: z.number(),
+    }),
   },
   '@unrdf/kgc-4d': {
     inputSchema: z.object({
-      store: z.any()
+      store: z.any(),
     }),
     outputSchema: z.object({
       snapshot: z.any(),
-      hash: z.string()
-    })
+      hash: z.string(),
+    }),
   },
   '@unrdf/yawl': {
     inputSchema: z.object({
-      snapshot: z.any()
+      snapshot: z.any(),
     }),
     outputSchema: z.object({
-      verified: z.boolean()
-    })
-  }
+      verified: z.boolean(),
+    }),
+  },
 };
 
 // Generate compatibility matrix
@@ -1071,7 +1086,7 @@ const matrix = Object.keys(modules).map(modA =>
   Object.keys(modules).map(modB => ({
     from: modA,
     to: modB,
-    compatible: checker.canCompose(modules[modA], modules[modB])
+    compatible: checker.canCompose(modules[modA], modules[modB]),
   }))
 );
 
@@ -1092,21 +1107,26 @@ console.table(matrix);
 const createResourceDelta = {
   id: 'delta-1',
   operations: [
-    { op: 'add', subject: 'http://ex.org/res-1', predicate: 'rdf:type', object: 'Resource' }
+    { op: 'add', subject: 'http://ex.org/res-1', predicate: 'rdf:type', object: 'Resource' },
   ],
-  source: { package: '@unrdf/resources' }
+  source: { package: '@unrdf/resources' },
 };
 
 // Package B: Workflow task linking (depends on A)
 const linkWorkflowDelta = {
   id: 'delta-2',
   operations: [
-    { op: 'add', subject: 'http://ex.org/task-1', predicate: 'uses', object: 'http://ex.org/res-1' }
+    {
+      op: 'add',
+      subject: 'http://ex.org/task-1',
+      predicate: 'uses',
+      object: 'http://ex.org/res-1',
+    },
   ],
   source: { package: '@unrdf/yawl' },
   admissibility: {
-    preConditions: ['resource-exists'] // Depends on delta-1
-  }
+    preConditions: ['resource-exists'], // Depends on delta-1
+  },
 };
 
 // Apply deltas in order
@@ -1133,6 +1153,7 @@ expect(receipt2.previousDelta).toBe('delta-1');
 | @unrdf/federation | @unrdf/oxigraph | ❌ No | Query result ≠ Store creation |
 
 **Composition Recipes**:
+
 ```javascript
 // Recipe 1: Data Pipeline
 oxigraph.create()
@@ -1159,12 +1180,12 @@ describe('Composition Layer Pattern', () => {
   it('should compose modules with compatible schemas', async () => {
     const modA = {
       execute: async () => ({ value: 42 }),
-      outputSchema: z.object({ value: z.number() })
+      outputSchema: z.object({ value: z.number() }),
     };
 
     const modB = {
       execute: async ({ value }) => ({ doubled: value * 2 }),
-      inputSchema: z.object({ value: z.number() })
+      inputSchema: z.object({ value: z.number() }),
     };
 
     const checker = new CompositionChecker();
@@ -1173,11 +1194,11 @@ describe('Composition Layer Pattern', () => {
 
   it('should reject incompatible modules', () => {
     const modA = {
-      outputSchema: z.object({ name: z.string() })
+      outputSchema: z.object({ name: z.string() }),
     };
 
     const modB = {
-      inputSchema: z.object({ value: z.number() })
+      inputSchema: z.object({ value: z.number() }),
     };
 
     const checker = new CompositionChecker();
@@ -1200,6 +1221,7 @@ describe('Composition Layer Pattern', () => {
 ```
 
 **File Locations**:
+
 - Pattern inferred from: `/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md` (lines 380-391)
 - Composition examples: Various cross-package workflows
 
@@ -1209,13 +1231,13 @@ describe('Composition Layer Pattern', () => {
 
 This matrix shows which patterns compose with each other:
 
-|  | Receipt HOF | Delta Contract | Zod Validation | Determinism Proof | Composition Layer |
-|--|-------------|----------------|----------------|-------------------|-------------------|
-| **Receipt HOF** | N/A | ✅ Wrap delta ops | ✅ Validate before wrap | ✅ Deterministic receipts | ✅ Receipt chains |
-| **Delta Contract** | ✅ Receipt delta | N/A | ✅ Validate delta | ✅ Hash delta | ✅ Cross-package deltas |
-| **Zod Validation** | ✅ Input validation | ✅ Delta validation | N/A | ✅ Schema consistency | ✅ Schema compat check |
-| **Determinism Proof** | ✅ Hash receipts | ✅ Hash deltas | ✅ Validate structure | N/A | ✅ Verify determinism |
-| **Composition Layer** | ✅ Chain receipts | ✅ Compose deltas | ✅ Check schemas | ✅ Cross-package determinism | N/A |
+|                       | Receipt HOF         | Delta Contract      | Zod Validation          | Determinism Proof            | Composition Layer       |
+| --------------------- | ------------------- | ------------------- | ----------------------- | ---------------------------- | ----------------------- |
+| **Receipt HOF**       | N/A                 | ✅ Wrap delta ops   | ✅ Validate before wrap | ✅ Deterministic receipts    | ✅ Receipt chains       |
+| **Delta Contract**    | ✅ Receipt delta    | N/A                 | ✅ Validate delta       | ✅ Hash delta                | ✅ Cross-package deltas |
+| **Zod Validation**    | ✅ Input validation | ✅ Delta validation | N/A                     | ✅ Schema consistency        | ✅ Schema compat check  |
+| **Determinism Proof** | ✅ Hash receipts    | ✅ Hash deltas      | ✅ Validate structure   | N/A                          | ✅ Verify determinism   |
+| **Composition Layer** | ✅ Chain receipts   | ✅ Compose deltas   | ✅ Check schemas        | ✅ Cross-package determinism | N/A                     |
 
 **Legend**: ✅ Composes well | ⚠️ Composes with caveats | ❌ Don't compose | N/A = Self-composition
 
