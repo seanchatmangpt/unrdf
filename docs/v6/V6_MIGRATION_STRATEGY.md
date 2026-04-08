@@ -1,7 +1,8 @@
-# UNRDF V6 Migration Strategy
+# UNRDF Migration Strategy
+
 ## Comprehensive Strategic Plan: Alpha → Beta → RC → Stable
 
-**Version**: v6.0.0
+**Version**: 6.0.0
 **Status**: In Progress (Alpha Phase)
 **Last Updated**: 2025-12-27
 **Estimated Completion**: Q2 2025
@@ -10,15 +11,15 @@
 
 ## Executive Summary
 
-UNRDF v6 represents a fundamental architectural shift focused on:
+UNRDF represents a fundamental architectural shift focused on:
 
 1. **Deterministic Execution**: All operations produce verifiable receipts (KGC-4D)
 2. **Performance**: 10x faster SPARQL via Oxigraph
 3. **Type Safety**: Runtime validation with Zod schemas
 4. **Developer Experience**: Pure ESM, modern async patterns
 
-**Current State**: v6.0.0-alpha.1 (64 packages)
-**Target**: v6.0.0 stable with L5 maturity for 10 core packages
+**Current State**: 6.0.0-alpha.1 (64 packages)
+**Target**: 6.0.0 stable with L5 maturity for 10 core packages
 
 **Migration Timeline**: 4 phases over 16 weeks
 
@@ -27,35 +28,39 @@ UNRDF v6 represents a fundamental architectural shift focused on:
 ## Phase Breakdown
 
 ### Phase 1: Preparation (Weeks 1-4) - CURRENT
+
 **Goal**: Establish migration infrastructure and validate core packages
 
-**Status**: v6.0.0-alpha.1 → v6.0.0-alpha.2
+**Status**: 6.0.0-alpha.1 → 6.0.0-alpha.2
 
 #### Deliverables
 
 ✅ **Completed**:
+
 - [x] Migration planning documents
 - [x] Maturity ladder definitions (L1-L5)
 - [x] v6-compat package foundation
 - [x] Core packages at L1-L2
 
 🚧 **In Progress**:
-- [ ] Migration automation script (`scripts/migrate-to-v6.mjs`)
+
+- [ ] Migration automation script (`scripts/migrate.mjs`)
 - [ ] Comprehensive migration guide (`docs/v6/MIGRATION_GUIDE.md`)
-- [ ] Validation tooling (`scripts/validate-v6-migration.mjs`)
+- [ ] Validation tooling (`scripts/validate-migration.mjs`)
 - [ ] Enhanced v6-compat adapters
 
 📋 **Upcoming**:
+
 - [ ] Automated schema generation from TypeScript types
 - [ ] Receipt wrapper HOF (Higher Order Function)
-- [ ] ESLint rules for v6 patterns
+- [ ] ESLint rules for current patterns
 - [ ] Migration CLI tool
 
 #### Success Criteria
 
 ```bash
 # ✅ All checks must pass
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # Expected:
 # - No direct N3 imports (0 found)
@@ -67,41 +72,46 @@ node scripts/validate-v6-migration.mjs
 
 #### Timeline
 
-| Week | Focus | Deliverables |
-|------|-------|--------------|
-| 1 | Infrastructure | Migration scripts, validation tools |
-| 2 | Core Packages | Migrate 10 core packages to L3 |
-| 3 | Documentation | Complete migration guide, examples |
-| 4 | Testing | Alpha testing with early adopters |
+| Week | Focus          | Deliverables                        |
+| ---- | -------------- | ----------------------------------- |
+| 1    | Infrastructure | Migration scripts, validation tools |
+| 2    | Core Packages  | Migrate 10 core packages to L3      |
+| 3    | Documentation  | Complete migration guide, examples  |
+| 4    | Testing        | Alpha testing with early adopters   |
 
 ---
 
 ### Phase 2: Migration (Weeks 5-10)
-**Goal**: Migrate all packages to v6 APIs, reach beta stability
 
-**Status**: v6.0.0-alpha.2 → v6.0.0-beta.1
+**Goal**: Migrate all packages to current APIs, reach beta stability
+
+**Status**: 6.0.0-alpha.2 → 6.0.0-beta.1
 
 #### Migration Waves
 
 **Wave 1: Core Foundation (Week 5-6)**
+
 - `@unrdf/oxigraph` → L4
 - `@unrdf/core` → L4
 - `@unrdf/kgc-4d` → L5
 - `@unrdf/v6-compat` → L3
 
 **Wave 2: Essential Infrastructure (Week 7-8)**
+
 - `@unrdf/hooks` → L3
 - `@unrdf/streaming` → L3
 - `@unrdf/federation` → L3
 - `@unrdf/cli` → L3
 
 **Wave 3: Workflows & Orchestration (Week 9)**
+
 - `@unrdf/yawl` → L3
 - `@unrdf/yawl-api` → L3
 - `@unrdf/yawl-observability` → L3
 - `@unrdf/yawl-durable` → L3
 
 **Wave 4: Advanced Features (Week 10)**
+
 - `@unrdf/knowledge-engine` → L2
 - `@unrdf/graph-analytics` → L2
 - `@unrdf/ml-inference` → L2
@@ -113,19 +123,19 @@ node scripts/validate-v6-migration.mjs
 # Week 5: Migrate Wave 1
 for pkg in oxigraph core kgc-4d v6-compat; do
   echo "Migrating $pkg..."
-  node scripts/migrate-to-v6.mjs --package packages/$pkg
+  node scripts/migrate.mjs --package packages/$pkg
   cd packages/$pkg && pnpm test && cd ../..
 done
 
 # Week 6: Validate Wave 1
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # Week 7-10: Repeat for Waves 2-4
 ```
 
 #### Success Criteria
 
-- [ ] All 64 packages migrated to v6 APIs
+- [ ] All 64 packages migrated to current APIs
 - [ ] 10 core packages at L3+
 - [ ] 100% test pass rate (no regressions)
 - [ ] OTEL validation ≥80/100
@@ -136,12 +146,14 @@ node scripts/validate-v6-migration.mjs
 
 **Risk**: Breaking changes impact external users
 **Mitigation**:
+
 - Compatibility layer maintains v5 API (with warnings)
 - Gradual deprecation over 6 months
 - Clear migration guide with examples
 
 **Risk**: Performance regressions
 **Mitigation**:
+
 - Benchmark every merge
 - Automated regression detection
 - Rollback on >10% performance loss
@@ -149,13 +161,15 @@ node scripts/validate-v6-migration.mjs
 ---
 
 ### Phase 3: Validation (Weeks 11-14)
+
 **Goal**: Achieve production readiness, release candidate
 
-**Status**: v6.0.0-beta.1 → v6.0.0-rc.1
+**Status**: 6.0.0-beta.1 → 6.0.0-rc.1
 
 #### Focus Areas
 
 **Week 11: Integration Testing**
+
 ```bash
 # Goal: All L3+ packages work together
 pnpm test:integration
@@ -168,6 +182,7 @@ pnpm test:integration
 ```
 
 **Week 12: Performance Optimization**
+
 ```bash
 # Benchmark all packages
 pnpm benchmark:all
@@ -180,6 +195,7 @@ pnpm profile:mem
 ```
 
 **Week 13: Security Audit**
+
 ```bash
 # Run security scanners
 pnpm audit
@@ -193,7 +209,8 @@ pnpm -r exec npm audit
 ```
 
 **Week 14: Documentation Polish**
-- [ ] All examples use v6 API
+
+- [ ] All examples use current API
 - [ ] API reference complete
 - [ ] Migration guide tested by 3+ external users
 - [ ] Video tutorials (5-10 min each)
@@ -238,23 +255,26 @@ pnpm benchmark:memory
 ---
 
 ### Phase 4: Release (Weeks 15-16)
-**Goal**: Launch v6.0.0 stable, deprecate v5
 
-**Status**: v6.0.0-rc.1 → v6.0.0
+**Goal**: Launch 6.0.0 stable, deprecate v5
+
+**Status**: 6.0.0-rc.1 → 6.0.0
 
 #### Release Checklist
 
 **Week 15: Pre-Release**
+
 - [ ] Freeze features (bug fixes only)
 - [ ] Final documentation review
 - [ ] Prepare release notes
 - [ ] Update CHANGELOG.md for all packages
-- [ ] Tag release candidates: `v6.0.0-rc.1`, `v6.0.0-rc.2`, etc.
+- [ ] Tag release candidates: `6.0.0-rc.1`, `6.0.0-rc.2`, etc.
 - [ ] Smoke tests on real production data
 
 **Week 16: Launch**
-- [ ] Publish v6.0.0 to npm
-- [ ] Update default branch to v6
+
+- [ ] Publish 6.0.0 to npm
+- [ ] Update default branch to main
 - [ ] Deprecate v5 on npm (with migration instructions)
 - [ ] Announce on GitHub, Discord, Twitter
 - [ ] Monitor for issues (24/7 for 1 week)
@@ -264,33 +284,36 @@ pnpm benchmark:memory
 
 ```bash
 # Final validation
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 # Must: PASSED verdict
 
 # Tag release
-git tag -a v6.0.0 -m "UNRDF v6.0.0 - Deterministic RDF Platform"
-git push origin v6.0.0
+git tag -a 6.0.0 -m "UNRDF 6.0.0 - Deterministic RDF Platform"
+git push origin 6.0.0
 
 # Publish to npm (requires 2FA)
 pnpm -r publish --access public
 
 # Deprecate v5 (after 30 days)
-npm deprecate @unrdf/core@5.x "Deprecated. Migrate to v6: https://github.com/unrdf/unrdf/blob/main/docs/v6/MIGRATION_GUIDE.md"
+npm deprecate @unrdf/core@5.x "Deprecated. Migrate to current version: https://github.com/unrdf/unrdf/blob/main/docs/v6/MIGRATION_GUIDE.md"
 ```
 
 #### Success Metrics
 
 **Adoption**:
+
 - Week 1: ≥10 projects migrated
 - Week 4: ≥50 projects migrated
 - Week 12: ≥80% of active projects migrated
 
 **Quality**:
+
 - 0 critical bugs in first week
 - <5 bug reports per 1000 downloads
 - OTEL validation ≥90/100 in production
 
 **Performance**:
+
 - SPARQL: ≥8x faster than v5
 - Store ops: ≥4x faster than v5
 - Bundle size: ≤v5 size
@@ -303,12 +326,14 @@ npm deprecate @unrdf/core@5.x "Deprecated. Migrate to v6: https://github.com/unr
 ### Dual-Version Support (6 Months)
 
 **v5.x (Maintenance Mode)**:
+
 - Security fixes only
 - Critical bug fixes
 - No new features
 - EOL: October 2025
 
-**v6.x (Active Development)**:
+**6.0.x (Active Development)**:
+
 - All new features
 - Active support
 - Breaking changes allowed (with deprecation)
@@ -317,7 +342,7 @@ npm deprecate @unrdf/core@5.x "Deprecated. Migrate to v6: https://github.com/unr
 
 **@unrdf/v6-compat** provides:
 
-1. **API Adapters**: v5 APIs → v6 implementations
+1. **API Adapters**: Legacy APIs → Current implementations
 2. **Deprecation Warnings**: Clear migration hints
 3. **Receipt Wrappers**: Auto-generate receipts for v5 code
 4. **ESLint Rules**: Detect v5 patterns
@@ -334,7 +359,7 @@ const store = await createStore();
 // 💡 Hint: Oxigraph provides 10x faster SPARQL execution
 ```
 
-**Remove After**: 30 days of stable v6 usage
+**Remove After**: 30 days of stable current version usage
 
 ---
 
@@ -363,29 +388,29 @@ const store = await createStore();
 
 ```bash
 # 1. Dry run to preview changes
-node scripts/migrate-to-v6.mjs --all --dry-run --report preview.json
+node scripts/migrate.mjs --all --dry-run --report preview.json
 
 # 2. Review preview
 cat preview.json | jq '.packages[] | select(.jsFiles.errors > 0)'
 
 # 3. Apply migrations
-node scripts/migrate-to-v6.mjs --all --report migration.json
+node scripts/migrate.mjs --all --report migration.json
 
 # 4. Generate Zod schemas
 node scripts/schema-generator.mjs --all
 
 # 5. Validate
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # 6. Fix issues manually
 # ... edit files ...
 
 # 7. Re-validate
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # 8. Commit
 git add .
-git commit -m "chore: Migrate to UNRDF v6"
+git commit -m "chore: Migrate to UNRDF current version"
 ```
 
 ---
@@ -436,6 +461,7 @@ pnpm -r publish
 ## Success Criteria Matrix
 
 ### Phase 1 (Alpha) - Complete When:
+
 - [ ] Migration scripts working (dry-run tested on 10+ packages)
 - [ ] Validation tooling complete (all checks implemented)
 - [ ] Migration guide reviewed by 3+ developers
@@ -443,13 +469,15 @@ pnpm -r publish
 - [ ] OTEL validation ≥75/100
 
 ### Phase 2 (Beta) - Complete When:
-- [ ] All 64 packages migrated to v6 APIs
+
+- [ ] All 64 packages migrated to current APIs
 - [ ] Core 10 packages at L3+
 - [ ] 100% test pass rate
 - [ ] OTEL validation ≥80/100
 - [ ] External beta testers report success
 
 ### Phase 3 (RC) - Complete When:
+
 - [ ] Integration tests pass (all L3+ combinations)
 - [ ] Performance benchmarks pass (<5% regression)
 - [ ] Security audit complete (0 critical vulnerabilities)
@@ -457,6 +485,7 @@ pnpm -r publish
 - [ ] Production validation by ≥2 external teams
 
 ### Phase 4 (Stable) - Complete When:
+
 - [ ] RC tested in production for ≥2 weeks
 - [ ] 0 critical bugs reported
 - [ ] Migration guide tested by ≥5 external users
@@ -470,24 +499,26 @@ pnpm -r publish
 ### Required Team
 
 **Roles**:
+
 - 2x Core Developers (full-time) - Weeks 1-16
 - 1x DevOps Engineer (part-time) - Weeks 1-16
 - 1x Technical Writer (part-time) - Weeks 3-14
 - 2x QA Engineers (part-time) - Weeks 11-16
 
 **External**:
+
 - 3+ Beta Testers - Weeks 8-14
 - 5+ Migration Guide Reviewers - Weeks 12-16
 
 ### Budget Estimate
 
-| Item | Cost | Notes |
-|------|------|-------|
-| Core Development | $80,000 | 2 devs × $5k/week × 8 weeks |
-| DevOps & Tooling | $20,000 | CI/CD, automation |
-| Documentation | $15,000 | Migration guide, examples, videos |
-| QA & Testing | $10,000 | Integration tests, security audit |
-| **Total** | **$125,000** | |
+| Item             | Cost         | Notes                             |
+| ---------------- | ------------ | --------------------------------- |
+| Core Development | $80,000      | 2 devs × $5k/week × 8 weeks       |
+| DevOps & Tooling | $20,000      | CI/CD, automation                 |
+| Documentation    | $15,000      | Migration guide, examples, videos |
+| QA & Testing     | $10,000      | Integration tests, security audit |
+| **Total**        | **$125,000** |                                   |
 
 ### Infrastructure Costs
 
@@ -503,16 +534,19 @@ pnpm -r publish
 ### Stakeholder Updates
 
 **Weekly** (Weeks 1-16):
+
 - Progress report to core team
 - Blockers and risks identified
 - Updated timeline if needed
 
 **Bi-Weekly** (Weeks 1-16):
+
 - Community update (GitHub Discussions)
 - Showcase new features
 - Call for beta testers
 
 **Monthly** (Ongoing):
+
 - Blog post on progress
 - Video demo of migration process
 - Office hours Q&A session
@@ -520,18 +554,21 @@ pnpm -r publish
 ### Launch Communications
 
 **Pre-Launch (Week 15)**:
+
 - Announce RC availability
 - Migration guide published
 - Video tutorials released
 - Beta tester testimonials
 
 **Launch Day (Week 16)**:
-- v6.0.0 release announcement (GitHub, Twitter, Discord)
-- Blog post: "What's New in UNRDF v6"
+
+- 6.0.0 release announcement (GitHub, Twitter, Discord)
+- Blog post: "What's New in UNRDF"
 - Live stream: Migration walkthrough
 - Press release (if applicable)
 
 **Post-Launch (Weeks 17-20)**:
+
 - Daily monitoring for issues
 - Weekly "State of Migration" updates
 - Success stories from early adopters
@@ -544,6 +581,7 @@ pnpm -r publish
 ### Real-Time Dashboards
 
 **Migration Progress**:
+
 ```javascript
 {
   totalPackages: 64,
@@ -555,6 +593,7 @@ pnpm -r publish
 ```
 
 **Quality Metrics**:
+
 ```javascript
 {
   testPassRate: 98.5,        // Target: 100%
@@ -566,6 +605,7 @@ pnpm -r publish
 ```
 
 **Adoption Metrics** (Post-Launch):
+
 ```javascript
 {
   npmDownloads: {
@@ -624,16 +664,16 @@ pnpm benchmark:all
 
 ```bash
 # Full automated migration
-node scripts/migrate-to-v6.mjs --all && pnpm install && pnpm test
+node scripts/migrate.mjs --all && pnpm install && pnpm test
 
 # Validate migration
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # Generate migration report
-node scripts/migrate-to-v6.mjs --all --report report.json
+node scripts/migrate.mjs --all --report report.json
 
 # Dry run (safe to run multiple times)
-node scripts/migrate-to-v6.mjs --all --dry-run
+node scripts/migrate.mjs --all --dry-run
 ```
 
 ### Emergency Contacts
