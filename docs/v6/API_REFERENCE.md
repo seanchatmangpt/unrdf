@@ -1,10 +1,10 @@
-# UNRDF v6.0 API Reference
+# UNRDF API Reference
 
 **Version**: 6.0.0
 **Last Updated**: 2025-12-27
 **Status**: Production Ready
 
-Complete API reference for all UNRDF v6 packages with type signatures, examples, and migration guidance.
+Complete API reference for all UNRDF packages with type signatures, examples, and migration guidance.
 
 ---
 
@@ -37,20 +37,22 @@ pnpm add @unrdf/oxigraph@latest
 Creates a new Oxigraph store instance with configurable backends.
 
 **Signature**:
+
 ```typescript
-function createStore(options?: StoreOptions): Promise<Store>
+function createStore(options?: StoreOptions): Promise<Store>;
 
 interface StoreOptions {
   backend?: 'memory' | 'sqlite';
-  path?: string;                    // Required if backend: 'sqlite'
+  path?: string; // Required if backend: 'sqlite'
   options?: {
-    cacheSize?: number;             // Cache size in KB (default: 10000)
-    readOnly?: boolean;             // Read-only mode (default: false)
+    cacheSize?: number; // Cache size in KB (default: 10000)
+    readOnly?: boolean; // Read-only mode (default: false)
   };
 }
 ```
 
 **Parameters**:
+
 - `options` (Object, optional): Store configuration
   - `backend` (String): `'memory'` (default) | `'sqlite'`
   - `path` (String): Database path for SQLite backend
@@ -72,26 +74,27 @@ console.log('Store created with memory backend');
 const persistentStore = await createStore({
   backend: 'sqlite',
   path: './data/knowledge.db',
-  options: { cacheSize: 20000 }
+  options: { cacheSize: 20000 },
 });
 
 // Read-only mode
 const readOnlyStore = await createStore({
   backend: 'sqlite',
   path: './data/archive.db',
-  options: { readOnly: true }
+  options: { readOnly: true },
 });
 ```
 
 **Performance**: Store creation is <1ms for memory, <10ms for SQLite.
 
-**Migration from v5**:
+**Migration from Legacy**:
+
 ```javascript
-// v5 (N3.js)
+// Legacy (N3.js)
 import { Store } from 'n3';
 const store = new Store(); // Synchronous
 
-// v6 (Oxigraph)
+// Current (Oxigraph)
 import { createStore } from '@unrdf/oxigraph';
 const store = await createStore(); // Async, 10x faster queries
 ```
@@ -107,16 +110,19 @@ The main store interface providing CRUD operations on RDF quads.
 Adds a single quad to the store.
 
 **Signature**:
+
 ```typescript
 add(quad: Quad): Promise<void>
 ```
 
 **Parameters**:
+
 - `quad` (Quad): RDF quad to add
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 import { dataFactory } from '@unrdf/core/rdf';
 
@@ -140,21 +146,24 @@ await store.add(
 Batch adds multiple quads (10-100x faster than individual adds).
 
 **Signature**:
+
 ```typescript
 addAll(quads: Quad[]): Promise<void>
 ```
 
 **Parameters**:
+
 - `quads` (Array<Quad>): Array of quads to add
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 const quads = [
   quad(namedNode('ex:Alice'), namedNode('foaf:name'), literal('Alice')),
   quad(namedNode('ex:Bob'), namedNode('foaf:name'), literal('Bob')),
-  quad(namedNode('ex:Alice'), namedNode('foaf:knows'), namedNode('ex:Bob'))
+  quad(namedNode('ex:Alice'), namedNode('foaf:knows'), namedNode('ex:Bob')),
 ];
 
 await store.addAll(quads); // Batch insert (100x faster)
@@ -170,6 +179,7 @@ console.log(`Added ${quads.length} quads in one transaction`);
 Queries the store for matching quads using quad pattern matching.
 
 **Signature**:
+
 ```typescript
 match(
   subject?: NamedNode | null,
@@ -180,6 +190,7 @@ match(
 ```
 
 **Parameters**:
+
 - `subject` (NamedNode | null): Subject to match (null = wildcard)
 - `predicate` (NamedNode | null): Predicate to match (null = wildcard)
 - `object` (NamedNode | Literal | null): Object to match (null = wildcard)
@@ -188,20 +199,13 @@ match(
 **Returns**: `Promise<Quad[]>`
 
 **Examples**:
+
 ```javascript
 // Find all triples with specific subject
-const aliceTriples = await store.match(
-  namedNode('http://example.org/Alice'),
-  null,
-  null
-);
+const aliceTriples = await store.match(namedNode('http://example.org/Alice'), null, null);
 
 // Find all foaf:name properties
-const names = await store.match(
-  null,
-  namedNode('http://xmlns.com/foaf/0.1/name'),
-  null
-);
+const names = await store.match(null, namedNode('http://xmlns.com/foaf/0.1/name'), null);
 
 // Find who Alice knows
 const friends = await store.match(
@@ -227,16 +231,19 @@ const alices = await store.match(
 Removes a quad from the store.
 
 **Signature**:
+
 ```typescript
 delete(quad: Quad): Promise<void>
 ```
 
 **Parameters**:
+
 - `quad` (Quad): Quad to remove
 
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 // Remove a specific triple
 await store.delete(
@@ -255,6 +262,7 @@ await store.delete(
 Removes all quads matching the pattern.
 
 **Signature**:
+
 ```typescript
 deleteMatches(
   subject?: NamedNode | null,
@@ -269,13 +277,10 @@ deleteMatches(
 **Returns**: `Promise<number>` - Count of deleted quads
 
 **Example**:
+
 ```javascript
 // Delete all triples about Alice
-const deleted = await store.deleteMatches(
-  namedNode('http://example.org/Alice'),
-  null,
-  null
-);
+const deleted = await store.deleteMatches(namedNode('http://example.org/Alice'), null, null);
 console.log(`Deleted ${deleted} triples`);
 ```
 
@@ -286,6 +291,7 @@ console.log(`Deleted ${deleted} triples`);
 Removes all quads from the store.
 
 **Signature**:
+
 ```typescript
 clear(): Promise<void>
 ```
@@ -293,6 +299,7 @@ clear(): Promise<void>
 **Returns**: `Promise<void>`
 
 **Example**:
+
 ```javascript
 await store.clear();
 console.log('Store is now empty');
@@ -305,6 +312,7 @@ console.log('Store is now empty');
 Number of quads in the store.
 
 **Signature**:
+
 ```typescript
 get size(): Promise<number>
 ```
@@ -312,12 +320,13 @@ get size(): Promise<number>
 **Type**: `Promise<number>` (read-only)
 
 **Example**:
+
 ```javascript
 const count = await store.size;
 console.log(`Store contains ${count} triples`);
 ```
 
-**Note**: In v6, `size` is a getter returning a Promise (async). In v5, it was a synchronous property.
+**Note**: In the current version, `size` is a getter returning a Promise (async). In the legacy version, it was a synchronous property.
 
 ---
 
@@ -326,6 +335,7 @@ console.log(`Store contains ${count} triples`);
 Executes a SPARQL query against the store.
 
 **Signature**:
+
 ```typescript
 query(
   sparql: string,
@@ -339,12 +349,14 @@ interface QueryOptions {
 ```
 
 **Parameters**:
+
 - `sparql` (String): SPARQL query string
 - `options` (Object, optional): Query configuration
 
 **Returns**: `Promise<QueryResults>`
 
 **Example**:
+
 ```javascript
 const results = await store.query(
   `
@@ -372,8 +384,9 @@ for (const row of results) {
 RDF term factory (re-export from `@rdfjs/data-model`).
 
 **Signature**:
+
 ```typescript
-const dataFactory: DataFactory
+const dataFactory: DataFactory;
 
 interface DataFactory {
   namedNode(value: string): NamedNode;
@@ -387,6 +400,7 @@ interface DataFactory {
 **Methods**:
 
 #### namedNode(uri)
+
 Creates a named node (IRI).
 
 ```javascript
@@ -397,6 +411,7 @@ const foafName = dataFactory.namedNode('http://xmlns.com/foaf/0.1/name');
 ```
 
 #### literal(value, languageOrDatatype?)
+
 Creates a literal value.
 
 ```javascript
@@ -408,10 +423,14 @@ const nameEn = dataFactory.literal('Alice', 'en');
 const nameFr = dataFactory.literal('Alice', 'fr');
 
 // Typed literal
-const age = dataFactory.literal('30', dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'));
+const age = dataFactory.literal(
+  '30',
+  dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer')
+);
 ```
 
 #### blankNode(id?)
+
 Creates a blank node.
 
 ```javascript
@@ -423,6 +442,7 @@ const blank2 = dataFactory.blankNode('b1');
 ```
 
 #### quad(subject, predicate, object, graph?)
+
 Creates a quad.
 
 ```javascript
@@ -460,25 +480,27 @@ pnpm add @unrdf/core@latest
 Executes a SPARQL query with receipt generation.
 
 **Signature**:
+
 ```typescript
 function executeSparql(
   store: Store,
   query: string,
   options?: SparqlOptions
-): Promise<SparqlResults>
+): Promise<SparqlResults>;
 
 interface SparqlOptions {
-  timeout?: number;          // Timeout in milliseconds (default: 5000)
-  maxResults?: number;       // Maximum results (default: 1000)
-  receipt?: boolean;         // Generate receipt (default: false)
+  timeout?: number; // Timeout in milliseconds (default: 5000)
+  maxResults?: number; // Maximum results (default: 1000)
+  receipt?: boolean; // Generate receipt (default: false)
 }
 
 interface SparqlResults extends Array<Bindings> {
-  receipt?: Receipt;         // Receipt if options.receipt = true
+  receipt?: Receipt; // Receipt if options.receipt = true
 }
 ```
 
 **Parameters**:
+
 - `store` (Store): Store to query
 - `query` (String): SPARQL query string
 - `options` (Object, optional): Query options
@@ -512,11 +534,9 @@ for (const binding of results) {
 }
 
 // Query with receipt
-const resultsWithReceipt = await executeSparql(
-  store,
-  `SELECT * WHERE { ?s ?p ?o } LIMIT 10`,
-  { receipt: true }
-);
+const resultsWithReceipt = await executeSparql(store, `SELECT * WHERE { ?s ?p ?o } LIMIT 10`, {
+  receipt: true,
+});
 
 console.log('Receipt:', resultsWithReceipt.receipt?.id);
 
@@ -559,17 +579,15 @@ console.log('Alice exists:', askResults.boolean);
 Parses RDF data from string into quads.
 
 **Signature**:
+
 ```typescript
-function parseRdf(
-  data: string,
-  format?: RdfFormat,
-  baseIRI?: string
-): Promise<Quad[]>
+function parseRdf(data: string, format?: RdfFormat, baseIRI?: string): Promise<Quad[]>;
 
 type RdfFormat = 'turtle' | 'ntriples' | 'nquads' | 'trig' | 'json-ld' | 'rdf-xml';
 ```
 
 **Parameters**:
+
 - `data` (String): RDF data to parse
 - `format` (String, optional): Format (auto-detected if omitted)
 - `baseIRI` (String, optional): Base IRI for relative URIs
@@ -620,11 +638,7 @@ const relativeData = `
 <Alice> <knows> <Bob> .
 `;
 
-const quadsWithBase = await parseRdf(
-  relativeData,
-  'ntriples',
-  'http://example.org/'
-);
+const quadsWithBase = await parseRdf(relativeData, 'ntriples', 'http://example.org/');
 ```
 
 ---
@@ -634,14 +648,13 @@ const quadsWithBase = await parseRdf(
 Serializes quads to RDF string.
 
 **Signature**:
+
 ```typescript
-function serializeRdf(
-  quads: Quad[],
-  format?: RdfFormat
-): Promise<string>
+function serializeRdf(quads: Quad[], format?: RdfFormat): Promise<string>;
 ```
 
 **Parameters**:
+
 - `quads` (Array<Quad>): Quads to serialize
 - `format` (String, optional): Output format (default: `'turtle'`)
 
@@ -660,7 +673,7 @@ const quads = [
     namedNode('http://example.org/Alice'),
     namedNode('http://xmlns.com/foaf/0.1/name'),
     literal('Alice')
-  )
+  ),
 ];
 
 // Serialize to Turtle (default)
@@ -683,11 +696,9 @@ const jsonld = await serializeRdf(quads, 'json-ld');
 Validates a store against SHACL shapes.
 
 **Signature**:
+
 ```typescript
-function validateShacl(
-  store: Store,
-  shapesGraph: Store
-): Promise<ValidationReport>
+function validateShacl(store: Store, shapesGraph: Store): Promise<ValidationReport>;
 
 interface ValidationReport {
   conforms: boolean;
@@ -703,6 +714,7 @@ interface ValidationResult {
 ```
 
 **Parameters**:
+
 - `store` (Store): Data store to validate
 - `shapesGraph` (Store): Store containing SHACL shapes
 
@@ -717,7 +729,8 @@ import { parseRdf } from '@unrdf/core/rdf';
 
 // Load data
 const dataStore = await createStore();
-const dataQuads = await parseRdf(`
+const dataQuads = await parseRdf(
+  `
   @prefix ex: <http://example.org/> .
   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
@@ -725,12 +738,15 @@ const dataQuads = await parseRdf(`
            foaf:name "Alice" .
 
   ex:InvalidPerson a foaf:Person .
-`, 'turtle');
+`,
+  'turtle'
+);
 await dataStore.addAll(dataQuads);
 
 // Load SHACL shapes
 const shapesStore = await createStore();
-const shapesQuads = await parseRdf(`
+const shapesQuads = await parseRdf(
+  `
   @prefix sh: <http://www.w3.org/ns/shacl#> .
   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
@@ -741,7 +757,9 @@ const shapesQuads = await parseRdf(`
       sh:minCount 1 ;
       sh:message "Person must have a name" ;
     ] .
-`, 'turtle');
+`,
+  'turtle'
+);
 await shapesStore.addAll(shapesQuads);
 
 // Validate
@@ -762,6 +780,7 @@ if (report.conforms) {
 ### Namespace Management
 
 **Signature**:
+
 ```typescript
 import { namespace } from '@unrdf/core/rdf';
 
@@ -779,9 +798,9 @@ const foaf = namespace('http://xmlns.com/foaf/0.1/');
 const schema = namespace('http://schema.org/');
 
 // Use namespaces
-const alice = ex('Alice');        // http://example.org/Alice
-const name = foaf('name');        // http://xmlns.com/foaf/0.1/name
-const person = schema('Person');  // http://schema.org/Person
+const alice = ex('Alice'); // http://example.org/Alice
+const name = foaf('name'); // http://xmlns.com/foaf/0.1/name
+const person = schema('Person'); // http://schema.org/Person
 ```
 
 ---
@@ -803,23 +822,22 @@ pnpm add @unrdf/v6-core@latest
 Creates a cryptographic receipt for an operation.
 
 **Signature**:
+
 ```typescript
-function createReceipt(
-  operation: string,
-  metadata?: Record<string, any>
-): Receipt
+function createReceipt(operation: string, metadata?: Record<string, any>): Receipt;
 
 interface Receipt {
-  id: string;              // Unique receipt ID (UUIDv4)
-  operation: string;       // Operation name
-  timestamp: string;       // ISO 8601 timestamp
-  merkleRoot: string;      // Merkle tree root hash
-  proof: string[];         // Merkle proof path
-  metadata: object;        // Operation metadata
+  id: string; // Unique receipt ID (UUIDv4)
+  operation: string; // Operation name
+  timestamp: string; // ISO 8601 timestamp
+  merkleRoot: string; // Merkle tree root hash
+  proof: string[]; // Merkle proof path
+  metadata: object; // Operation metadata
 }
 ```
 
 **Parameters**:
+
 - `operation` (String): Operation name
 - `metadata` (Object, optional): Operation-specific data
 
@@ -834,7 +852,7 @@ import { createReceipt } from '@unrdf/v6-core/receipts';
 const receipt1 = createReceipt('add-triple', {
   subject: 'http://example.org/Alice',
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice Smith'
+  object: 'Alice Smith',
 });
 
 console.log('Receipt ID:', receipt1.id);
@@ -846,17 +864,18 @@ const receipt2 = createReceipt('query-execution', {
   query: 'SELECT * WHERE { ?s ?p ?o }',
   resultCount: 42,
   executionTime: 0.015,
-  cacheHit: true
+  cacheHit: true,
 });
 
 // Chain receipts
 const receipt3 = createReceipt('workflow-step', {
   step: 'data-validation',
-  previousReceipt: receipt2.id  // Links to previous receipt
+  previousReceipt: receipt2.id, // Links to previous receipt
 });
 ```
 
 **Use Cases**:
+
 - Audit trails for compliance
 - Deterministic replay
 - Cryptographic proof of execution
@@ -869,11 +888,13 @@ const receipt3 = createReceipt('workflow-step', {
 Verifies the integrity of a receipt.
 
 **Signature**:
+
 ```typescript
-function verifyReceipt(receipt: Receipt): boolean
+function verifyReceipt(receipt: Receipt): boolean;
 ```
 
 **Parameters**:
+
 - `receipt` (Receipt): Receipt to verify
 
 **Returns**: `boolean` - `true` if valid, `false` if tampered
@@ -902,12 +923,13 @@ console.log('Valid:', verifyReceipt(receipt)); // false
 Merkle tree implementation for cryptographic proofs.
 
 **Signature**:
+
 ```typescript
 class MerkleTree {
-  constructor(leaves: string[])
-  get root(): string
-  getProof(index: number): string[]
-  static verify(leaf: string, proof: string[], root: string): boolean
+  constructor(leaves: string[]);
+  get root(): string;
+  getProof(index: number): string[];
+  static verify(leaf: string, proof: string[], root: string): boolean;
 }
 ```
 
@@ -951,12 +973,13 @@ console.log('Proof valid:', isInvalid); // false
 Creates a delta proposal for version transitions.
 
 **Signature**:
+
 ```typescript
 function createDeltaProposal(
   fromVersion: string,
   toVersion: string,
   operations: DeltaOperation[]
-): DeltaProposal
+): DeltaProposal;
 
 interface DeltaOperation {
   type: 'add' | 'remove';
@@ -979,6 +1002,7 @@ interface DeltaProposal {
 ```
 
 **Parameters**:
+
 - `fromVersion` (String): Source version
 - `toVersion` (String): Target version
 - `operations` (Array<DeltaOperation>): Delta operations
@@ -997,17 +1021,17 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@old.org'
-    }
+      object: 'alice@old.org',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@new.org'
-    }
-  }
+      object: 'alice@new.org',
+    },
+  },
 ]);
 
 console.log('Delta ID:', delta.id);
@@ -1021,14 +1045,13 @@ console.log('Operations:', delta.operations.length);
 Applies a delta proposal to a store.
 
 **Signature**:
+
 ```typescript
-function applyDelta(
-  store: Store,
-  proposal: DeltaProposal
-): Promise<Receipt>
+function applyDelta(store: Store, proposal: DeltaProposal): Promise<Receipt>;
 ```
 
 **Parameters**:
+
 - `store` (Store): Store to modify
 - `proposal` (DeltaProposal): Delta to apply
 
@@ -1060,17 +1083,17 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@old.org'
-    }
+      object: 'alice@old.org',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@new.org'
-    }
-  }
+      object: 'alice@new.org',
+    },
+  },
 ]);
 
 const receipt = await applyDelta(store, delta);
@@ -1104,8 +1127,9 @@ pnpm add @unrdf/hooks@latest
 Defines a knowledge hook with Zod validation.
 
 **Signature**:
+
 ```typescript
-function defineHook<T>(config: HookConfig<T>): Hook<T>
+function defineHook<T>(config: HookConfig<T>): Hook<T>;
 
 interface HookConfig<T> {
   name: string;
@@ -1121,6 +1145,7 @@ interface Hook<T> {
 ```
 
 **Parameters**:
+
 - `config` (Object): Hook configuration
   - `name` (String): Hook name
   - `schema` (ZodSchema): Input validation schema
@@ -1139,14 +1164,14 @@ import { defineHook } from '@unrdf/hooks';
 const PersonValidationSchema = z.object({
   person: z.string().url(),
   name: z.string().min(1).max(100),
-  email: z.string().email().optional()
+  email: z.string().email().optional(),
 });
 
 // Define hook
 const validatePerson = defineHook({
   name: 'validate-person',
   schema: PersonValidationSchema,
-  handler: async (ctx) => {
+  handler: async ctx => {
     console.log(`Validating person: ${ctx.name}`);
 
     // Validation logic
@@ -1156,7 +1181,7 @@ const validatePerson = defineHook({
 
     console.log('✅ Person validated');
   },
-  receipt: true  // Generate receipt for audit
+  receipt: true, // Generate receipt for audit
 });
 
 // Use hook
@@ -1164,7 +1189,7 @@ try {
   const receipt = await validatePerson.activate({
     person: 'http://example.org/Alice',
     name: 'Alice Smith',
-    email: 'alice@example.org'
+    email: 'alice@example.org',
   });
 
   console.log('Receipt:', receipt?.id);
@@ -1180,14 +1205,13 @@ try {
 Activates a hook with provided context.
 
 **Signature**:
+
 ```typescript
-function activateHook<T>(
-  hook: Hook<T>,
-  context: T
-): Promise<Receipt | void>
+function activateHook<T>(hook: Hook<T>, context: T): Promise<Receipt | void>;
 ```
 
 **Parameters**:
+
 - `hook` (Hook): Hook to activate
 - `context` (T): Hook context (validated against schema)
 
@@ -1201,7 +1225,7 @@ import { activateHook } from '@unrdf/hooks';
 const receipt = await activateHook(validatePerson, {
   person: 'http://example.org/Bob',
   name: 'Bob Johnson',
-  email: 'bob@example.org'
+  email: 'bob@example.org',
 });
 
 console.log('Hook activated:', receipt?.operation);
@@ -1226,20 +1250,22 @@ pnpm add @unrdf/streaming@latest
 Creates a read stream from RDF file.
 
 **Signature**:
+
 ```typescript
 function createReadStream(
   path: string,
   options?: ReadStreamOptions
-): AsyncIterableIterator<Quad> & { receipt(): Receipt }
+): AsyncIterableIterator<Quad> & { receipt(): Receipt };
 
 interface ReadStreamOptions {
   format?: RdfFormat;
-  bufferSize?: number;     // Buffer size (default: 1000)
+  bufferSize?: number; // Buffer size (default: 1000)
   baseIRI?: string;
 }
 ```
 
 **Parameters**:
+
 - `path` (String): File path
 - `options` (Object, optional):
   - `format` (String): RDF format (auto-detected if omitted)
@@ -1256,7 +1282,7 @@ import { createStore } from '@unrdf/oxigraph';
 
 const stream = createReadStream('/data/large-dataset.ttl', {
   format: 'turtle',
-  bufferSize: 5000
+  bufferSize: 5000,
 });
 
 const store = await createStore();
@@ -1286,11 +1312,12 @@ console.log('Stream receipt:', receipt.id);
 Creates a write stream to RDF file.
 
 **Signature**:
+
 ```typescript
 function createWriteStream(
   path: string,
   options?: WriteStreamOptions
-): WritableStream<Quad> & { receipt(): Receipt }
+): WritableStream<Quad> & { receipt(): Receipt };
 
 interface WriteStreamOptions {
   format?: RdfFormat;
@@ -1298,6 +1325,7 @@ interface WriteStreamOptions {
 ```
 
 **Parameters**:
+
 - `path` (String): Output file path
 - `options` (Object, optional):
   - `format` (String): Output format (default: `'ntriples'`)
@@ -1316,12 +1344,12 @@ const { namedNode, literal, quad } = dataFactory;
 // Create quads
 const quads = [
   quad(namedNode('ex:Alice'), namedNode('foaf:name'), literal('Alice')),
-  quad(namedNode('ex:Bob'), namedNode('foaf:name'), literal('Bob'))
+  quad(namedNode('ex:Bob'), namedNode('foaf:name'), literal('Bob')),
 ];
 
 // Write to file
 const writeStream = createWriteStream('/data/output.nt', {
-  format: 'ntriples'
+  format: 'ntriples',
 });
 
 for (const q of quads) {
@@ -1353,16 +1381,17 @@ pnpm add @unrdf/federation@latest
 Federated query executor.
 
 **Signature**:
+
 ```typescript
 class Federation {
-  constructor(stores: (Store | RemoteEndpoint)[], options?: FederationOptions)
-  query(sparqlQuery: SparqlQuery): Promise<SparqlResults>
+  constructor(stores: (Store | RemoteEndpoint)[], options?: FederationOptions);
+  query(sparqlQuery: SparqlQuery): Promise<SparqlResults>;
 }
 
 interface FederationOptions {
-  optimizeJoins?: boolean;    // Join optimization (default: true)
-  parallel?: boolean;         // Parallel execution (default: true)
-  timeout?: number;           // Default timeout (default: 5000)
+  optimizeJoins?: boolean; // Join optimization (default: true)
+  parallel?: boolean; // Parallel execution (default: true)
+  timeout?: number; // Default timeout (default: 5000)
 }
 ```
 
@@ -1377,7 +1406,7 @@ const store2 = await createStore();
 
 const federation = new Federation([store1, store2], {
   optimizeJoins: true,
-  parallel: true
+  parallel: true,
 });
 ```
 
@@ -1419,11 +1448,9 @@ console.log('Query receipt:', receipt?.id);
 Creates a typed SPARQL query.
 
 **Signature**:
+
 ```typescript
-function sparql(
-  strings: TemplateStringsArray,
-  ...values: any[]
-): SparqlQuery
+function sparql(strings: TemplateStringsArray, ...values: any[]): SparqlQuery;
 
 interface SparqlQuery {
   timeout(ms: number): SparqlQuery;
@@ -1459,9 +1486,10 @@ const results = await federation.query(query);
 Remote SPARQL endpoint connection.
 
 **Signature**:
+
 ```typescript
 class RemoteEndpoint {
-  constructor(url: string, options?: EndpointOptions)
+  constructor(url: string, options?: EndpointOptions);
 }
 
 interface EndpointOptions {
@@ -1481,19 +1509,17 @@ import { RemoteEndpoint, Federation } from '@unrdf/federation';
 
 const dbpedia = new RemoteEndpoint('https://dbpedia.org/sparql', {
   headers: { 'User-Agent': 'UNRDF/6.0' },
-  timeout: 30000
+  timeout: 30000,
 });
 
 const wikidata = new RemoteEndpoint('https://query.wikidata.org/sparql', {
-  timeout: 30000
+  timeout: 30000,
 });
 
 // Federate across remote endpoints
 const federation = new Federation([dbpedia, wikidata]);
 
-const results = await federation.query(
-  sparql`SELECT * WHERE { ?s ?p ?o } LIMIT 10`
-);
+const results = await federation.query(sparql`SELECT * WHERE { ?s ?p ?o } LIMIT 10`);
 ```
 
 ---
@@ -1515,8 +1541,9 @@ pnpm add @unrdf/v6-compat@latest
 v5-compatible store creation (migrates automatically).
 
 **Signature**:
+
 ```typescript
-function createStore(): Promise<Store>
+function createStore(): Promise<Store>;
 ```
 
 **Example**:
@@ -1538,10 +1565,9 @@ const store = await createStore();
 Wraps v5 workflow to generate receipts.
 
 **Signature**:
+
 ```typescript
-function wrapWorkflow<T>(
-  workflow: V5Workflow<T>
-): V6Workflow<T>
+function wrapWorkflow<T>(workflow: V5Workflow<T>): V6Workflow<T>;
 
 interface V5Workflow<T> {
   run(task: T): Promise<any>;
@@ -1559,10 +1585,10 @@ import { wrapWorkflow } from '@unrdf/v6-compat/adapters';
 
 // v5 workflow (no receipts)
 const myV5Workflow = {
-  run: async (task) => {
+  run: async task => {
     // Process task...
     return { success: true };
-  }
+  },
 };
 
 // Wrap to add receipt support
@@ -1581,12 +1607,13 @@ console.log('Receipt:', receipt.id);
 v5-compatible SPARQL query (string-based).
 
 **Signature**:
+
 ```typescript
 function querySparql(
   federation: Federation,
   query: string,
   options?: { timeout?: number }
-): Promise<SparqlResults>
+): Promise<SparqlResults>;
 ```
 
 **Example**:
@@ -1600,11 +1627,7 @@ const store = await createStore();
 const federation = new Federation([store]);
 
 // v5 style (string query)
-const results = await querySparql(
-  federation,
-  'SELECT * WHERE { ?s ?p ?o }',
-  { timeout: 5000 }
-);
+const results = await querySparql(federation, 'SELECT * WHERE { ?s ?p ?o }', { timeout: 5000 });
 
 // Works but logs deprecation warning
 ```
@@ -1616,11 +1639,12 @@ const results = await querySparql(
 Tracks migration progress and usage.
 
 **Signature**:
+
 ```typescript
 const migrationTracker: {
   summary(): void;
   reset(): void;
-}
+};
 ```
 
 **Example**:
@@ -1794,7 +1818,7 @@ async function addPersonWithReceipt(name, email) {
       namedNode(`http://example.org/${name}`),
       namedNode('http://xmlns.com/foaf/0.1/mbox'),
       literal(email)
-    )
+    ),
   ];
 
   await store.addAll(quads);
@@ -1857,10 +1881,7 @@ async function loadLargeDataset(path) {
 const store = await loadLargeDataset('/data/dbpedia-subset.nt');
 
 // Query loaded data
-const results = await executeSparql(
-  store,
-  'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }'
-);
+const results = await executeSparql(store, 'SELECT (COUNT(*) as ?count) WHERE { ?s ?p ?o }');
 
 console.log('Total triples:', results[0].get('count').value);
 ```
@@ -1892,17 +1913,17 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/age',
-      object: '30'
-    }
+      object: '30',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/age',
-      object: '31'
-    }
-  }
+      object: '31',
+    },
+  },
 ]);
 
 // Apply delta
@@ -1928,11 +1949,11 @@ console.log('v1.1 state: Alice is', ages[0].object.value, 'years old');
 ```javascript
 // ❌ Slow (individual adds)
 for (const quad of quads) {
-  await store.add(quad);  // 1000 ops/sec
+  await store.add(quad); // 1000 ops/sec
 }
 
 // ✅ Fast (batch add)
-await store.addAll(quads);  // 100,000 ops/sec (100x faster)
+await store.addAll(quads); // 100,000 ops/sec (100x faster)
 ```
 
 ### 2. Enable Query Caching
@@ -1951,13 +1972,13 @@ const results2 = await executeSparql(store, query); // 54,311 ops/sec (warm, 71.
 
 ```javascript
 // ❌ Slow (load entire file into memory)
-const quads = await parseRdf(largeFile);  // 110 MB memory
+const quads = await parseRdf(largeFile); // 110 MB memory
 await store.addAll(quads);
 
 // ✅ Fast (stream, constant memory)
 const stream = createReadStream(largeFile);
 for await (const quad of stream) {
-  await store.add(quad);  // Constant ~10 MB memory
+  await store.add(quad); // Constant ~10 MB memory
 }
 ```
 
@@ -1967,14 +1988,11 @@ for await (const quad of stream) {
 // ❌ Slow (large result set)
 const results = await executeSparql(
   store,
-  'SELECT * WHERE { ?s ?p ?o }'  // Returns everything
+  'SELECT * WHERE { ?s ?p ?o }' // Returns everything
 );
 
 // ✅ Fast (limit results)
-const results = await executeSparql(
-  store,
-  'SELECT * WHERE { ?s ?p ?o } LIMIT 1000'
-);
+const results = await executeSparql(store, 'SELECT * WHERE { ?s ?p ?o } LIMIT 1000');
 ```
 
 ---
@@ -1982,12 +2000,12 @@ const results = await executeSparql(
 ## See Also
 
 - **[Quick Start Guide](/home/user/unrdf/docs/v6/QUICK-START.md)** - Get started in 15 minutes
-- **[Core Concepts](/home/user/unrdf/docs/v6/CORE-CONCEPTS.md)** - Understand v6 architecture
+- **[Core Concepts](/home/user/unrdf/docs/v6/CORE-CONCEPTS.md)** - Understand the architecture
 - **[Advanced Patterns](/home/user/unrdf/docs/v6/ADVANCED-PATTERNS.md)** - Deep dive examples
-- **[Migration Guide](/home/user/unrdf/docs/v6/MIGRATION_GUIDE.md)** - Upgrade from v5
+- **[Migration Guide](/home/user/unrdf/docs/v6/MIGRATION_GUIDE.md)** - Upgrade from legacy version
 - **[Breaking Changes](/home/user/unrdf/docs/v6/BREAKING-CHANGES.md)** - All breaking changes
-- **[Performance](/home/user/unrdf/docs/v6/PERFORMANCE.md)** - Benchmarks and optimization
-- **[Release Notes](/home/user/unrdf/docs/v6/RELEASE_NOTES.md)** - What's new in v6
+- **[Performance](/home/user/user/unrdf/docs/v6/PERFORMANCE.md)** - Benchmarks and optimization
+- **[Release Notes](/home/user/unrdf/docs/v6/RELEASE_NOTES.md)** - What's new
 
 ---
 

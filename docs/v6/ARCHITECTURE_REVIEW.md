@@ -15,20 +15,21 @@
 
 ### Score Breakdown
 
-| Dimension | Score | Weight | Weighted Score |
-|-----------|-------|--------|----------------|
-| **Package Structure** | 85/100 | 20% | 17.0 |
-| **Dependency Architecture** | 75/100 | 20% | 15.0 |
-| **Layered Architecture** | 80/100 | 15% | 12.0 |
-| **Breaking Changes Justification** | 90/100 | 15% | 13.5 |
-| **Migration Path Clarity** | 85/100 | 10% | 8.5 |
-| **Quality Attributes** | 40/100 | 10% | 4.0 |
-| **Security & Observability** | 65/100 | 10% | 6.5 |
-| **TOTAL** | - | 100% | **68.0/100** |
+| Dimension                          | Score  | Weight | Weighted Score |
+| ---------------------------------- | ------ | ------ | -------------- |
+| **Package Structure**              | 85/100 | 20%    | 17.0           |
+| **Dependency Architecture**        | 75/100 | 20%    | 15.0           |
+| **Layered Architecture**           | 80/100 | 15%    | 12.0           |
+| **Breaking Changes Justification** | 90/100 | 15%    | 13.5           |
+| **Migration Path Clarity**         | 85/100 | 10%    | 8.5            |
+| **Quality Attributes**             | 40/100 | 10%    | 4.0            |
+| **Security & Observability**       | 65/100 | 10%    | 6.5            |
+| **TOTAL**                          | -      | 100%   | **68.0/100**   |
 
 ### Key Findings
 
 **✅ Architectural Strengths**:
+
 1. **Excellent consolidation strategy** - 54 → 25 packages (53.7% reduction) with clear 80/20 prioritization
 2. **Well-defined layered architecture** - Clean separation of concerns across 5 layers
 3. **Strong technology choices** - Oxigraph, Raft consensus, OTEL observability are well-justified
@@ -36,12 +37,14 @@
 5. **Receipt-driven architecture** - Cryptographic verification as first-class pattern is innovative and sound
 
 **❌ Critical Architectural Violations**:
+
 1. **N3 migration incomplete** - 71 files still import from 'n3' violating v6 architecture mandate (BLOCKER)
 2. **OTEL infrastructure broken** - Validation package missing, cannot verify observability claims (BLOCKER)
 3. **Test failures exist** - 98.2% pass rate vs 100% requirement indicates implementation gaps
 4. **Version still alpha** - 6.0.0-alpha.1 not production-ready
 
 **⚠️ Architectural Concerns**:
+
 1. **Large bundle size target** - 500KB for Oxigraph Wasm may impact browser use cases
 2. **Performance overhead** - 5% capsule overhead + 2% OTEL overhead = 7% total (acceptable but monitor)
 3. **Migration tool not verified** - `@unrdf/migrate-v6` existence not confirmed
@@ -56,6 +59,7 @@
 **Claim**: Reduce from 54 to 25 packages (53% reduction)
 
 **Evidence**:
+
 ```bash
 # Current state (verified)
 find /home/user/unrdf/packages -maxdepth 1 -type d | tail -n +2 | wc -l
@@ -77,17 +81,18 @@ find /home/user/unrdf/packages -maxdepth 1 -type d | tail -n +2 | wc -l
 
 **Tier 1: Essential (7 packages) - Score: 90/100**
 
-| Package | Purpose | Justification | Dependencies | Assessment |
-|---------|---------|---------------|--------------|------------|
-| @unrdf/domain | Types, schemas, Zod validators | ✅ Foundation layer | None | Well-scoped |
-| @unrdf/oxigraph | Rust triple store (WebAssembly) | ✅ 40% faster, 60% less memory | None | Performance-critical |
-| @unrdf/core | RDF operations, SPARQL, SHACL | ✅ Consolidates 4 packages | oxigraph | Good consolidation |
-| @unrdf/kgc-4d | Temporal event sourcing | ✅ Unique capability | core, oxigraph | Well-defined scope |
-| @unrdf/kgc-substrate | Hash-stable knowledge store | ✅ Immutable log pattern | kgc-4d, oxigraph, core | Clean dependency chain |
-| @unrdf/cli | Command-line interface | ✅ User-facing tool | core, hooks, federation | User experience layer |
-| @unrdf/observability | OTEL monitoring & tracing | ✅ Production requirement | None | Critical for ops |
+| Package              | Purpose                         | Justification                  | Dependencies            | Assessment             |
+| -------------------- | ------------------------------- | ------------------------------ | ----------------------- | ---------------------- |
+| @unrdf/domain        | Types, schemas, Zod validators  | ✅ Foundation layer            | None                    | Well-scoped            |
+| @unrdf/oxigraph      | Rust triple store (WebAssembly) | ✅ 40% faster, 60% less memory | None                    | Performance-critical   |
+| @unrdf/core          | RDF operations, SPARQL, SHACL   | ✅ Consolidates 4 packages     | oxigraph                | Good consolidation     |
+| @unrdf/kgc-4d        | Temporal event sourcing         | ✅ Unique capability           | core, oxigraph          | Well-defined scope     |
+| @unrdf/kgc-substrate | Hash-stable knowledge store     | ✅ Immutable log pattern       | kgc-4d, oxigraph, core  | Clean dependency chain |
+| @unrdf/cli           | Command-line interface          | ✅ User-facing tool            | core, hooks, federation | User experience layer  |
+| @unrdf/observability | OTEL monitoring & tracing       | ✅ Production requirement      | None                    | Critical for ops       |
 
 **Issues**:
+
 - ⚠️ @unrdf/observability infrastructure incomplete (validation package missing)
 - ⚠️ No @unrdf/benchmarks in Tier 4 (needed for regression testing)
 
@@ -107,19 +112,20 @@ Missing @unrdf/benchmarks (should be tier 4). Migration tool package not verifie
 
 **Removed Packages (29 total)**:
 
-| Package | Removal Reason | Justification Quality | Assessment |
-|---------|----------------|----------------------|------------|
-| @unrdf/streaming | Merged into @unrdf/core | ✅ Excellent - eliminates duplication | Sound |
-| @unrdf/knowledge-engine | Merged into @unrdf/core | ✅ Excellent - consolidates inference | Sound |
-| @unrdf/engine-gateway | Merged into @unrdf/core | ✅ Good - reduces API surface | Sound |
-| @unrdf/dark-matter | Query optimization → @unrdf/core | ✅ Good - natural fit | Sound |
-| @unrdf/decision-fabric | Alpha, not production-ready | ✅ Excellent - avoid shipping experimental code | Sound |
-| @unrdf/fusion | Redundant with kgc-substrate | ✅ Good - eliminate overlap | Sound |
-| @unrdf/kgc-claude | Merged into @unrdf/kgc-swarm | ✅ Good - agent-specific → generic orchestration | Sound |
-| @unrdf/browser | Broken, zero users | ✅ Excellent - eliminate dead code | Sound |
-| @unrdf/react | Broken imports | ✅ Excellent - eliminate broken code | Sound |
+| Package                 | Removal Reason                   | Justification Quality                            | Assessment |
+| ----------------------- | -------------------------------- | ------------------------------------------------ | ---------- |
+| @unrdf/streaming        | Merged into @unrdf/core          | ✅ Excellent - eliminates duplication            | Sound      |
+| @unrdf/knowledge-engine | Merged into @unrdf/core          | ✅ Excellent - consolidates inference            | Sound      |
+| @unrdf/engine-gateway   | Merged into @unrdf/core          | ✅ Good - reduces API surface                    | Sound      |
+| @unrdf/dark-matter      | Query optimization → @unrdf/core | ✅ Good - natural fit                            | Sound      |
+| @unrdf/decision-fabric  | Alpha, not production-ready      | ✅ Excellent - avoid shipping experimental code  | Sound      |
+| @unrdf/fusion           | Redundant with kgc-substrate     | ✅ Good - eliminate overlap                      | Sound      |
+| @unrdf/kgc-claude       | Merged into @unrdf/kgc-swarm     | ✅ Good - agent-specific → generic orchestration | Sound      |
+| @unrdf/browser          | Broken, zero users               | ✅ Excellent - eliminate dead code               | Sound      |
+| @unrdf/react            | Broken imports                   | ✅ Excellent - eliminate broken code             | Sound      |
 
 **Issues**:
+
 - ⚠️ decision-fabric still exists in packages/ (not removed yet)
 - ⚠️ fusion still exists in packages/ (not removed yet)
 - ⚠️ Many removed packages still present in codebase
@@ -149,6 +155,7 @@ kgc-swarm → [core, oxigraph, kgc-substrate]
 ```
 
 **Parallel Dependencies**:
+
 ```
 hooks → [core, oxigraph]
 federation → [core, hooks]
@@ -158,12 +165,14 @@ consensus → [federation]
 **Assessment**:
 
 ✅ **Strengths**:
+
 1. No circular dependencies detected in core packages
 2. Clean layering: Infrastructure → RDF Core → KGC → Substrate → Application
 3. Domain and Oxigraph have zero dependencies (good foundation)
 4. Dependency depth reasonable (max 4 levels: domain → oxigraph → core → kgc-4d → substrate)
 
 ❌ **Weaknesses**:
+
 1. Multiple packages depend directly on both `core` and `oxigraph` (should only depend on core)
    - kgc-4d, kgc-substrate, hooks, dark-matter, engine-gateway all import from both
    - This creates tight coupling to implementation details
@@ -172,19 +181,21 @@ consensus → [federation]
 3. decision-fabric has 7 dependencies (too many for single package)
 
 **Recommended Fixes**:
+
 ```javascript
 // Current (problematic)
-import { createStore } from '@unrdf/oxigraph'
-import { query } from '@unrdf/core'
+import { createStore } from '@unrdf/oxigraph';
+import { query } from '@unrdf/core';
 
 // Better (loose coupling)
-import { createStore, query } from '@unrdf/core'
+import { createStore, query } from '@unrdf/core';
 // core re-exports oxigraph primitives
 ```
 
 ### 2.2 Circular Dependency Check - Score: 100/100
 
 **Analysis**:
+
 ```bash
 # Verified: No circular dependencies in core packages
 # Dependency graph is a DAG (Directed Acyclic Graph)
@@ -195,9 +206,11 @@ import { createStore, query } from '@unrdf/core'
 ### 2.3 Layer Isolation Violations - Score: 60/100
 
 **Architecture Document States**:
+
 > Dependencies flow DOWNWARD only. No circular dependencies.
 
 **Layer Definition**:
+
 1. Infrastructure (Oxigraph, Consensus, Cache, Observability)
 2. RDF Core (Store, SPARQL, SHACL, Parser, Serializer)
 3. KGC Layer (4D Temporal, Substrate, Swarm, Receipts)
@@ -206,14 +219,15 @@ import { createStore, query } from '@unrdf/core'
 
 **Violations Found**:
 
-| Package | Layer | Imports From | Expected Layer | Violation |
-|---------|-------|--------------|----------------|-----------|
-| kgc-4d | Layer 3 | oxigraph | Layer 1 | ⚠️ Should import via core |
-| kgc-substrate | Layer 3 | oxigraph | Layer 1 | ⚠️ Should import via core |
-| hooks | Layer 4 | oxigraph | Layer 1 | ⚠️ Should import via core |
-| cli | Layer 5 | decision-fabric | N/A | ❌ Alpha package shouldn't be imported |
+| Package       | Layer   | Imports From    | Expected Layer | Violation                              |
+| ------------- | ------- | --------------- | -------------- | -------------------------------------- |
+| kgc-4d        | Layer 3 | oxigraph        | Layer 1        | ⚠️ Should import via core              |
+| kgc-substrate | Layer 3 | oxigraph        | Layer 1        | ⚠️ Should import via core              |
+| hooks         | Layer 4 | oxigraph        | Layer 1        | ⚠️ Should import via core              |
+| cli           | Layer 5 | decision-fabric | N/A            | ❌ Alpha package shouldn't be imported |
 
 **Recommendation**: Enforce layer isolation via ESLint rules:
+
 ```javascript
 // .eslintrc.js
 rules: {
@@ -237,6 +251,7 @@ rules: {
 **Assessment**:
 
 ✅ **Strengths**:
+
 1. Novel approach - cryptographic audit trail for all operations
 2. Well-documented in ADR-003
 3. Clear performance trade-off acknowledged (5% overhead)
@@ -244,6 +259,7 @@ rules: {
 5. Reproducible execution guarantee
 
 ⚠️ **Concerns**:
+
 1. Storage overhead (~1KB per capsule) could be significant at scale
    - 1M operations = 1GB of receipts
    - Need archival/compaction strategy
@@ -251,6 +267,7 @@ rules: {
 3. Receipt verification not validated (OTEL infrastructure broken)
 
 **Evidence Required**:
+
 - [ ] Benchmark receipt generation performance (claimed 5% overhead)
 - [ ] Test receipt verification at scale (1M+ receipts)
 - [ ] Document archival strategy for old receipts
@@ -260,6 +277,7 @@ rules: {
 **Pattern**: Pure functions with NO OTEL in implementation
 
 **Verification**:
+
 ```bash
 # Check core package for OTEL in implementation
 grep -r "@opentelemetry" packages/core/src --include="*.mjs" | grep -v test
@@ -269,6 +287,7 @@ grep -r "@opentelemetry" packages/core/src --include="*.mjs" | grep -v test
 ✅ **Well-implemented** - OTEL is in wrapper layer, not business logic
 
 **Examples** (from core):
+
 ```javascript
 // ✅ Good: Pure function
 export function canonicalize(dataset) {
@@ -284,6 +303,7 @@ export const canonicalizeWithTracing = withTracing('canonicalize', canonicalize)
 **Pattern**: 100% Zod schemas for input validation
 
 **Verification**:
+
 ```bash
 # Check for Zod usage in core package
 grep -r "z\." packages/core/src --include="*.mjs" | head -20
@@ -293,13 +313,14 @@ grep -r "z\." packages/core/src --include="*.mjs" | head -20
 ✅ **Excellent implementation** - Consistent validation across API surface
 
 **Example** (from core/src/validation):
+
 ```javascript
 import { z } from 'zod';
 
 export const StoreConfigSchema = z.object({
   backend: z.enum(['oxigraph', 'memory', 'remote']),
   endpoint: z.string().url().optional(),
-  persistent: z.boolean().default(false)
+  persistent: z.boolean().default(false),
 });
 ```
 
@@ -311,20 +332,20 @@ export const StoreConfigSchema = z.object({
 
 **12 Breaking Changes Documented** - All with clear rationale
 
-| BC ID | Impact | Justification Quality | Migration Support | Score |
-|-------|--------|----------------------|-------------------|-------|
-| BC-1: Package Consolidation | High | ✅ Excellent - 53% reduction, clear value | 95% automated | 95/100 |
-| BC-2: Store API Unification | High | ✅ Excellent - portability, consistency | Partial automation | 90/100 |
-| BC-3: SPARQL Signature | Medium | ✅ Good - explicit dependencies | 100% automated | 95/100 |
-| BC-4: Hook Registration | Medium | ✅ Good - prevent cross-store pollution | Manual | 85/100 |
-| BC-5: Capsule Format v2 | Medium | ✅ Excellent - security enhancement | Auto-upgrade | 95/100 |
-| BC-6: Federation Protocol v2 | Low | ✅ Good - stronger consistency | Rolling upgrade | 85/100 |
-| BC-7: CLI Restructure | Low | ✅ Good - simpler UX | Aliases | 90/100 |
-| BC-8: OTEL Defaults | Low | ✅ Good - observability-first | Env var | 90/100 |
-| BC-9: TypeScript Definitions | Low | ✅ Excellent - eliminate drift | Transparent | 100/100 |
-| BC-10: Node.js 20 | Low | ⚠️ Fair - Node 18 EOL soon but tight | Version upgrade | 70/100 |
-| BC-11: Zod Validation | Medium | ✅ Excellent - fail-fast | Descriptive errors | 95/100 |
-| BC-12: ESM-Only | High | ✅ Good - ecosystem alignment | 80% automated | 85/100 |
+| BC ID                        | Impact | Justification Quality                     | Migration Support  | Score   |
+| ---------------------------- | ------ | ----------------------------------------- | ------------------ | ------- |
+| BC-1: Package Consolidation  | High   | ✅ Excellent - 53% reduction, clear value | 95% automated      | 95/100  |
+| BC-2: Store API Unification  | High   | ✅ Excellent - portability, consistency   | Partial automation | 90/100  |
+| BC-3: SPARQL Signature       | Medium | ✅ Good - explicit dependencies           | 100% automated     | 95/100  |
+| BC-4: Hook Registration      | Medium | ✅ Good - prevent cross-store pollution   | Manual             | 85/100  |
+| BC-5: Capsule Format v2      | Medium | ✅ Excellent - security enhancement       | Auto-upgrade       | 95/100  |
+| BC-6: Federation Protocol v2 | Low    | ✅ Good - stronger consistency            | Rolling upgrade    | 85/100  |
+| BC-7: CLI Restructure        | Low    | ✅ Good - simpler UX                      | Aliases            | 90/100  |
+| BC-8: OTEL Defaults          | Low    | ✅ Good - observability-first             | Env var            | 90/100  |
+| BC-9: TypeScript Definitions | Low    | ✅ Excellent - eliminate drift            | Transparent        | 100/100 |
+| BC-10: Node.js 20            | Low    | ⚠️ Fair - Node 18 EOL soon but tight      | Version upgrade    | 70/100  |
+| BC-11: Zod Validation        | Medium | ✅ Excellent - fail-fast                  | Descriptive errors | 95/100  |
+| BC-12: ESM-Only              | High   | ✅ Good - ecosystem alignment             | 80% automated      | 85/100  |
 
 **Average Score**: 89.6/100
 
@@ -346,13 +367,14 @@ export const StoreConfigSchema = z.object({
 
 **Impact Assessment**:
 
-| Impact Level | Count | Auto-Migration | Manual Effort |
-|--------------|-------|----------------|---------------|
-| High | 3 | 2 full, 1 partial | Low-Medium |
-| Medium | 4 | 2 full, 1 none, 1 none | Low-Medium |
-| Low | 5 | 5 full | Low-None |
+| Impact Level | Count | Auto-Migration         | Manual Effort |
+| ------------ | ----- | ---------------------- | ------------- |
+| High         | 3     | 2 full, 1 partial      | Low-Medium    |
+| Medium       | 4     | 2 full, 1 none, 1 none | Low-Medium    |
+| Low          | 5     | 5 full                 | Low-None      |
 
 **Coverage**:
+
 - ✅ 70% automated migration (documented)
 - ✅ 6-12 week migration timeline (realistic)
 - ✅ Compatibility layer for gradual migration
@@ -369,6 +391,7 @@ export const StoreConfigSchema = z.object({
 **Documentation Quality**:
 
 ✅ **Strengths**:
+
 1. Clear 5-phase migration checklist (preparation → automated → manual → validation → production)
 2. Specific timeline estimates (6-12 weeks)
 3. Migration tool commands documented
@@ -376,6 +399,7 @@ export const StoreConfigSchema = z.object({
 5. Rollback plan provided
 
 ⚠️ **Gaps**:
+
 1. Migration tool not verified to exist (`npx @unrdf/migrate-v6` - does it exist?)
 2. No worked examples for complex migrations (hooks, federation)
 3. Testing strategy during migration not detailed
@@ -386,6 +410,7 @@ export const StoreConfigSchema = z.object({
 **Status**: ❌ **NOT VERIFIED**
 
 **Claimed Commands**:
+
 ```bash
 npx @unrdf/migrate-v6 analyze .
 npx @unrdf/migrate-v6 migrate . --auto
@@ -393,6 +418,7 @@ npx @unrdf/migrate-v6 verify .
 ```
 
 **Evidence Required**:
+
 ```bash
 # Does package exist?
 find packages -name "migrate-v6" -o -name "v6-migrate"
@@ -404,22 +430,25 @@ npm view @unrdf/migrate-v6
 ```
 
 **Recommendation**: Either:
+
 1. Implement migration tool before v6 release, OR
 2. Remove automation claims and provide manual migration scripts
 
 ### 5.3 Deprecation Timeline - Score: 90/100
 
 **Timeline**:
+
 ```
-v6.0.0-alpha.1 (Current) → Warnings + compatibility layer
-v6.0.0-beta.1 (+3 months) → Remove compatibility layer
-v6.0.0 GA (+6 months) → Stable release, v5 maintenance mode
+6.0.0-alpha.1 (Current) → Warnings + compatibility layer
+6.0.0-beta.1 (+3 months) → Remove compatibility layer
+6.0.0 GA (+6 months) → Stable release, v5 maintenance mode
 v6.1.0 (+12 months) → v5 support ends
 ```
 
 ✅ **Well-structured** - 12 month transition is reasonable for major version
 
 ⚠️ **Concern**: Currently at alpha, need to reach GA in 6 months
+
 - Remaining work: Fix N3 violations (71 files), OTEL infrastructure, test failures
 - 6 months may be tight given current state
 
@@ -431,15 +460,16 @@ v6.1.0 (+12 months) → v5 support ends
 
 **Documented Targets vs Evidence**:
 
-| Metric | v5 Baseline | v6 Target | Evidence | Status |
-|--------|-------------|-----------|----------|--------|
-| SPARQL query (simple) | 2ms | <1ms | ❌ Not benchmarked | Unverified |
-| SPARQL query (complex) | 50ms | <25ms | ❌ Not benchmarked | Unverified |
-| Triple insertion | 10μs | <5μs | ❌ Not benchmarked | Unverified |
-| Memory per 1M triples | 500MB | <250MB | ✅ Oxigraph benchmarks exist | Verified |
-| Bundle size (core) | 150KB | <100KB | ❌ Not measured | Unverified |
+| Metric                 | v5 Baseline | v6 Target | Evidence                     | Status     |
+| ---------------------- | ----------- | --------- | ---------------------------- | ---------- |
+| SPARQL query (simple)  | 2ms         | <1ms      | ❌ Not benchmarked           | Unverified |
+| SPARQL query (complex) | 50ms        | <25ms     | ❌ Not benchmarked           | Unverified |
+| Triple insertion       | 10μs        | <5μs      | ❌ Not benchmarked           | Unverified |
+| Memory per 1M triples  | 500MB       | <250MB    | ✅ Oxigraph benchmarks exist | Verified   |
+| Bundle size (core)     | 150KB       | <100KB    | ❌ Not measured              | Unverified |
 
 **Appendix B Claims**:
+
 ```
 Simple SELECT (10 results): v5 2.1ms → v6 0.8ms (62% faster)
 Complex JOIN (1000 results): v5 52ms → v6 23ms (56% faster)
@@ -448,6 +478,7 @@ Complex JOIN (1000 results): v5 52ms → v6 23ms (56% faster)
 **Adversarial PM Question**: Did you RUN the benchmarks?
 
 **Evidence Required**:
+
 ```bash
 # Run benchmarks
 npm run benchmark:regression
@@ -464,16 +495,17 @@ ls benchmarks/results/
 
 **Claims**:
 
-| Dimension | v5 | v6 Target | Justification | Evidence |
-|-----------|----|----|---------------|----------|
-| Max triples per store | 10M | 1B | ❌ No justification | None |
-| Max concurrent queries | 100 | 10,000 | ❌ No justification | None |
-| Max federation nodes | 5 | 100 | ⚠️ Raft consensus | Theoretical |
-| Max agents per swarm | 10 | 1,000 | ❌ No justification | None |
+| Dimension              | v5  | v6 Target | Justification       | Evidence    |
+| ---------------------- | --- | --------- | ------------------- | ----------- |
+| Max triples per store  | 10M | 1B        | ❌ No justification | None        |
+| Max concurrent queries | 100 | 10,000    | ❌ No justification | None        |
+| Max federation nodes   | 5   | 100       | ⚠️ Raft consensus   | Theoretical |
+| Max agents per swarm   | 10  | 1,000     | ❌ No justification | None        |
 
 **Concern**: **Massive scalability increases (100x+) without evidence**
 
 **Required**:
+
 1. Load testing showing 1B triple support
 2. Concurrency benchmarks showing 10K queries/sec
 3. Federation testing with 100 nodes
@@ -485,14 +517,14 @@ ls benchmarks/results/
 
 **Targets**:
 
-| Metric | v6 Target | Current Status | Gap |
-|--------|-----------|----------------|-----|
-| Test coverage | ≥90% | Unknown | ❌ Not measured |
-| Test pass rate | 100% | 98.2% | ❌ 1.8% gap |
-| OTEL validation | ≥90/100 | 0/100 | ❌ Infrastructure broken |
-| MTBF | >720 hours | Unknown | ❌ Not measured |
-| RTO | <5 minutes | Unknown | ❌ Not tested |
-| RPO | 0 (no data loss) | Unknown | ❌ Not tested |
+| Metric          | v6 Target        | Current Status | Gap                      |
+| --------------- | ---------------- | -------------- | ------------------------ |
+| Test coverage   | ≥90%             | Unknown        | ❌ Not measured          |
+| Test pass rate  | 100%             | 98.2%          | ❌ 1.8% gap              |
+| OTEL validation | ≥90/100          | 0/100          | ❌ Infrastructure broken |
+| MTBF            | >720 hours       | Unknown        | ❌ Not measured          |
+| RTO             | <5 minutes       | Unknown        | ❌ Not tested            |
+| RPO             | 0 (no data loss) | Unknown        | ❌ Not tested            |
 
 **Verdict**: ❌ **Reliability targets not met** - Infrastructure incomplete
 
@@ -504,24 +536,26 @@ ls benchmarks/results/
 
 **6 ADRs Documented**:
 
-| ADR | Topic | Quality | Evidence | Score |
-|-----|-------|---------|----------|-------|
-| ADR-001 | Package Consolidation | ✅ Excellent | Package count verified | 100/100 |
-| ADR-002 | Oxigraph as Primary Backend | ✅ Excellent | Benchmarks referenced | 100/100 |
-| ADR-003 | Capsule-First Architecture | ✅ Good | Performance overhead noted | 90/100 |
-| ADR-004 | OTEL Enabled by Default | ✅ Good | Trade-offs clear | 90/100 |
-| ADR-005 | ESM-Only | ✅ Good | Ecosystem alignment | 90/100 |
-| ADR-006 | Raft Consensus | ✅ Good | Trade-offs documented | 90/100 |
+| ADR     | Topic                       | Quality      | Evidence                   | Score   |
+| ------- | --------------------------- | ------------ | -------------------------- | ------- |
+| ADR-001 | Package Consolidation       | ✅ Excellent | Package count verified     | 100/100 |
+| ADR-002 | Oxigraph as Primary Backend | ✅ Excellent | Benchmarks referenced      | 100/100 |
+| ADR-003 | Capsule-First Architecture  | ✅ Good      | Performance overhead noted | 90/100  |
+| ADR-004 | OTEL Enabled by Default     | ✅ Good      | Trade-offs clear           | 90/100  |
+| ADR-005 | ESM-Only                    | ✅ Good      | Ecosystem alignment        | 90/100  |
+| ADR-006 | Raft Consensus              | ✅ Good      | Trade-offs documented      | 90/100  |
 
 **Average**: 93.3/100
 
 ✅ **Strengths**:
+
 1. All ADRs follow standard format (Status, Date, Context, Decision, Consequences, Alternatives)
 2. Consequences include both positive and negative impacts
 3. Alternatives considered for each decision
 4. Evidence referenced where available (e.g., benchmarks for ADR-002)
 
 ⚠️ **Minor Gaps**:
+
 1. ADR-003: 5% performance overhead claimed but not benchmarked
 2. ADR-004: 2% OTEL overhead claimed but not benchmarked
 3. No ADR for Node.js 20 requirement (should have one)
@@ -534,21 +568,23 @@ ls benchmarks/results/
 
 **Security Targets**:
 
-| Control | Implementation | Status | Assessment |
-|---------|----------------|--------|------------|
-| Input validation | 100% Zod schemas | ✅ Implemented | Excellent |
-| Output sanitization | XSS prevention on all outputs | ⚠️ Not verified | Unknown |
-| Cryptographic signatures | All capsules signed (Ed25519) | ✅ Designed | Good |
-| Access control | RBAC on all operations | ❌ Not implemented | Missing |
-| Audit logging | 100% operation coverage | ✅ Via receipts | Good |
-| Vulnerability scanning | Zero high/critical CVEs | ✅ Verified | Excellent |
+| Control                  | Implementation                | Status             | Assessment |
+| ------------------------ | ----------------------------- | ------------------ | ---------- |
+| Input validation         | 100% Zod schemas              | ✅ Implemented     | Excellent  |
+| Output sanitization      | XSS prevention on all outputs | ⚠️ Not verified    | Unknown    |
+| Cryptographic signatures | All capsules signed (Ed25519) | ✅ Designed        | Good       |
+| Access control           | RBAC on all operations        | ❌ Not implemented | Missing    |
+| Audit logging            | 100% operation coverage       | ✅ Via receipts    | Good       |
+| Vulnerability scanning   | Zero high/critical CVEs       | ✅ Verified        | Excellent  |
 
 **Strengths**:
+
 1. ✅ Zero security vulnerabilities (verified via dependency report)
 2. ✅ Ed25519 signatures for receipts (strong cryptography)
 3. ✅ Zod validation prevents injection attacks
 
 **Gaps**:
+
 1. ❌ RBAC not implemented (documented but no code)
 2. ⚠️ XSS prevention not verified in outputs
 3. ⚠️ No security testing documented (OWASP, penetration testing)
@@ -558,6 +594,7 @@ ls benchmarks/results/
 **Current State**: ❌ **BROKEN**
 
 **Evidence**:
+
 ```
 OTEL validation score: 0/100
 Target: ≥80/100
@@ -565,12 +602,14 @@ Error: Cannot find module '/home/user/unrdf/packages/validation/src/index.mjs'
 ```
 
 **Impact**:
+
 1. Cannot validate agent claims
 2. No production debugging capability
 3. Performance metrics unavailable
 4. Violates core architecture principle (OTEL-first)
 
 **Required Actions**:
+
 1. Implement `/packages/validation/src/index.mjs`
 2. Build OTEL validation infrastructure
 3. Achieve ≥80/100 OTEL validation score
@@ -589,12 +628,14 @@ Error: Cannot find module '/home/user/unrdf/packages/validation/src/index.mjs'
 **Pattern**: Architecture mandates Oxigraph-only, implementation uses N3
 
 **Evidence**:
+
 ```
 71 files still import from 'n3'
 Migration compliance: 0%
 ```
 
 **Impact**:
+
 - Runtime performance degradation (N3 vs Oxigraph)
 - API inconsistency
 - User confusion
@@ -609,22 +650,25 @@ Migration compliance: 0%
 **Pattern**: Multiple packages import both `@unrdf/core` and `@unrdf/oxigraph`
 
 **Evidence**:
+
 ```javascript
 // kgc-4d, kgc-substrate, hooks all do this:
-import { createStore } from '@unrdf/oxigraph'
-import { query } from '@unrdf/core'
+import { createStore } from '@unrdf/oxigraph';
+import { query } from '@unrdf/core';
 ```
 
 **Impact**:
+
 - Cannot swap Oxigraph backend without changing all packages
 - Violates dependency inversion principle
 - Harder to test (mock both core and oxigraph)
 
 **Fix**: Re-export all Oxigraph primitives from @unrdf/core:
+
 ```javascript
 // @unrdf/core/index.mjs
-export { createStore, dataFactory } from '@unrdf/oxigraph'
-export { query, update, validate } from './sparql'
+export { createStore, dataFactory } from '@unrdf/oxigraph';
+export { query, update, validate } from './sparql';
 ```
 
 ---
@@ -634,11 +678,13 @@ export { query, update, validate } from './sparql'
 **Pattern**: Documentation claims OTEL validation ≥80/100, infrastructure doesn't exist
 
 **Evidence**:
+
 ```
 packages/validation/src/index.mjs: No such file or directory
 ```
 
 **Impact**:
+
 - Cannot verify system behavior
 - Production debugging impossible
 - Quality claims unverifiable
@@ -671,12 +717,12 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 
 **Must Fix Before v6 Release**:
 
-| Issue | Severity | Effort | Timeline |
-|-------|----------|--------|----------|
-| ❌ N3 migration (71 files) | CRITICAL | High | 2-4 weeks |
+| Issue                             | Severity | Effort | Timeline  |
+| --------------------------------- | -------- | ------ | --------- |
+| ❌ N3 migration (71 files)        | CRITICAL | High   | 2-4 weeks |
 | ❌ OTEL validation infrastructure | CRITICAL | Medium | 1-2 weeks |
-| ❌ Test failures (1.8%) | CRITICAL | Low | 3-5 days |
-| ❌ Version bump (alpha → beta/rc) | CRITICAL | Low | 1 day |
+| ❌ Test failures (1.8%)           | CRITICAL | Low    | 3-5 days  |
+| ❌ Version bump (alpha → beta/rc) | CRITICAL | Low    | 1 day     |
 
 **Total Estimated Effort**: 4-7 weeks
 
@@ -684,12 +730,12 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 
 **Should Fix Before GA (can be in beta)**:
 
-| Issue | Severity | Effort | Timeline |
-|-------|----------|--------|----------|
-| ⚠️ Verify migration tool exists | HIGH | Medium | 1-2 weeks |
-| ⚠️ Run performance benchmarks | HIGH | Medium | 1 week |
-| ⚠️ Implement RBAC | MEDIUM | High | 2-3 weeks |
-| ⚠️ Fix layer isolation violations | MEDIUM | Medium | 1-2 weeks |
+| Issue                             | Severity | Effort | Timeline  |
+| --------------------------------- | -------- | ------ | --------- |
+| ⚠️ Verify migration tool exists   | HIGH     | Medium | 1-2 weeks |
+| ⚠️ Run performance benchmarks     | HIGH     | Medium | 1 week    |
+| ⚠️ Implement RBAC                 | MEDIUM   | High   | 2-3 weeks |
+| ⚠️ Fix layer isolation violations | MEDIUM   | Medium | 1-2 weeks |
 
 ### 10.3 Recommendations for v6.1+
 
@@ -713,6 +759,7 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 ### Conditions for GO
 
 **Phase 1: Critical Blockers (Required for Beta)**
+
 1. ✅ Complete N3 → Oxigraph migration (71 files)
 2. ✅ Implement OTEL validation infrastructure
 3. ✅ Fix all test failures (achieve 100% pass rate)
@@ -721,6 +768,7 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 **Estimated Timeline**: 4-7 weeks
 
 **Phase 2: Non-Blockers (Required for GA)**
+
 1. ✅ Verify/implement migration tool
 2. ✅ Run and publish performance benchmarks
 3. ✅ Fix layer isolation violations
@@ -731,12 +779,14 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 ### Why Conditional GO?
 
 **Architecture Design**: ✅ **Excellent (90/100)**
+
 - Well-thought-out consolidation strategy
 - Clean layered architecture
 - Strong technology choices
 - Comprehensive ADRs
 
 **Architecture Implementation**: ❌ **Poor (40/100)**
+
 - Critical violations of design principles
 - Missing infrastructure
 - Unverified performance claims
@@ -747,6 +797,7 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 ### Risk Assessment
 
 **If shipped today**:
+
 - ❌ Users would encounter N3 import errors
 - ❌ No production observability
 - ❌ Performance claims unverifiable
@@ -755,6 +806,7 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 **Risk Level**: **HIGH** - Do not ship in current state
 
 **After fixing blockers**:
+
 - ✅ Architecture violations resolved
 - ✅ Observability working
 - ✅ Tests passing
@@ -842,18 +894,21 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 ## 14. Action Items for Architecture Team
 
 **Immediate (This Sprint)**:
+
 1. [ ] Fix N3 imports in all 71 files
 2. [ ] Implement OTEL validation package
 3. [ ] Fix failing test
 4. [ ] Align Node.js version requirements
 
 **Short-term (Next Sprint)**:
+
 1. [ ] Verify migration tool exists or build it
 2. [ ] Run performance regression benchmarks
 3. [ ] Add ESLint rules for layer isolation
 4. [ ] Document RBAC implementation plan
 
 **Medium-term (Before GA)**:
+
 1. [ ] Complete performance validation
 2. [ ] Load testing for scalability claims
 3. [ ] Implement receipt archival strategy
@@ -864,23 +919,27 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 ## Appendix A: Evidence Trail
 
 ### Package Count Verification
+
 ```bash
 find /home/user/unrdf/packages -maxdepth 1 -type d | tail -n +2 | wc -l
 # Output: 54 packages (verified)
 ```
 
 ### Dependency Graph Verification
+
 ```bash
 # No circular dependencies detected (verified)
 ```
 
 ### N3 Import Violations
+
 ```bash
 grep -r "from 'n3'" packages --include="*.mjs" | wc -l
 # Output: 71 files (critical violation)
 ```
 
 ### Test Pass Rate
+
 ```
 Pass Rate: 98.21% (55/56 tests)
 Failures: 1
@@ -888,12 +947,14 @@ Failures: 1
 ```
 
 ### OTEL Validation
+
 ```
 Error: Cannot find module '/home/user/unrdf/packages/validation/src/index.mjs'
 # Infrastructure missing (critical blocker)
 ```
 
 ### Security Vulnerabilities
+
 ```
 "moderate": 0, "high": 0, "critical": 0
 # Zero vulnerabilities (verified)
@@ -918,6 +979,7 @@ TOTAL:                                 68.0/100
 ```
 
 **Grade Scale**:
+
 - 90-100: A (Excellent)
 - 80-89: B (Good)
 - 70-79: C (Acceptable)
@@ -929,22 +991,27 @@ TOTAL:                                 68.0/100
 ## Appendix C: Comparison to Industry Standards
 
 **Package Count**:
+
 - Industry: Large frameworks have 20-50 packages (React: 30, Angular: 40)
 - UNRDF v6: 25 packages ✅ Well-aligned
 
 **Breaking Changes**:
+
 - Industry: Major versions have 5-15 breaking changes
 - UNRDF v6: 12 breaking changes ✅ Reasonable
 
 **Migration Timeline**:
+
 - Industry: 6-18 months for major version migrations
 - UNRDF v6: 6-12 months ✅ Aligned
 
 **Test Coverage**:
+
 - Industry: 80-95% coverage target
 - UNRDF v6: 90% target ✅ Industry-leading
 
 **Architecture Documentation**:
+
 - Industry: Often lacking
 - UNRDF v6: Comprehensive ADRs, C4 diagrams ✅ **Excellent**
 
@@ -955,6 +1022,7 @@ TOTAL:                                 68.0/100
 **All claims verified against codebase and documentation**
 
 **Adversarial PM Questions Answered**:
+
 - ❓ Did you RUN the benchmarks? → ❌ No evidence found
 - ❓ Can you PROVE package reduction? → ✅ Yes (54 → 25 verified)
 - ❓ What BREAKS if shipped today? → Users encounter N3 import errors, no observability
