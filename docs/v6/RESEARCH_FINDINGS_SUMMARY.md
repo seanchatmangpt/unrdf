@@ -1,4 +1,4 @@
-# v6 P0+P1 Research Findings Summary
+# P0+P1 Research Findings Summary
 
 **Research Period**: 2025-12-27
 **Researcher**: Claude Code (Researcher Agent)
@@ -8,9 +8,10 @@
 
 ## Executive Summary
 
-**Objective**: Discover reusable patterns from v6 P0+P1 implementation and document migration knowledge for future developers.
+**Objective**: Discover reusable patterns from P0+P1 implementation and document migration knowledge for future developers.
 
 **Results**:
+
 - **5 core patterns** extracted and documented
 - **10 P1 package migration runbooks** created
 - **Complete DIATAXIS documentation** structure implemented
@@ -28,6 +29,7 @@
 **Source**: `/home/user/unrdf/packages/v6-compat/src/adapters.mjs` (lines 246-267)
 
 **Core Template**:
+
 ```javascript
 function withReceipt(fn, options = {}) {
   return async function wrappedWithReceipt(...args) {
@@ -41,7 +43,7 @@ function withReceipt(fn, options = {}) {
       timestamp: Date.now(),
       duration: endTime - startTime,
       args: JSON.stringify(args),
-      result: typeof result === 'object' ? JSON.stringify(result) : String(result)
+      result: typeof result === 'object' ? JSON.stringify(result) : String(result),
     };
 
     return { result, receipt };
@@ -50,6 +52,7 @@ function withReceipt(fn, options = {}) {
 ```
 
 **When to Use**:
+
 - State-changing operations (L3+ requirement)
 - Workflow execution
 - Resource allocation
@@ -58,6 +61,7 @@ function withReceipt(fn, options = {}) {
 **Composition**: Works with all other patterns
 
 **Implementation Count**: 2 files analyzed
+
 - `/home/user/unrdf/packages/v6-compat/src/adapters.mjs`
 - `/home/user/unrdf/ENTERPRISE_MIGRATION/agent-5/proof-kernel.test.mjs`
 
@@ -68,34 +72,36 @@ function withReceipt(fn, options = {}) {
 **Source**: `/home/user/unrdf/packages/v6-core/src/delta/` (3 files)
 
 **Core Template**:
+
 ```javascript
 const delta = {
   id: crypto.randomUUID(),
   timestamp_iso: new Date().toISOString(),
   t_ns: BigInt(Date.now()) * 1_000_000n,
 
-  operations: [
-    { op: 'add'|'delete'|'update', subject, predicate, object, graph }
-  ],
+  operations: [{ op: 'add' | 'delete' | 'update', subject, predicate, object, graph }],
 
   source: {
     package: '@unrdf/package-name',
     actor: 'user-id',
-    context: { /* metadata */ }
+    context: {
+      /* metadata */
+    },
   },
 
   admissibility: {
     policyId: 'policy-123',
     preConditions: ['check-1'],
-    constraints: ['constraint-1']
-  }
+    constraints: ['constraint-1'],
+  },
 };
 ```
 
 **Workflow**: Propose → Reconcile → Receipt → Apply
 
 **When to Use**:
-- Any RDF store mutation (mandatory in v6)
+
+- Any RDF store mutation (mandatory in current version)
 - Workflow state transitions
 - Resource updates
 - Policy-controlled operations
@@ -108,15 +114,16 @@ const delta = {
 
 ### Pattern 3: Zod Validation Envelope
 
-**Source**: Multiple packages (v6-compat, v6-core, knowledge-engine)
+**Source**: Multiple packages (@unrdf/v6-compat, @unrdf/v6-core, knowledge-engine)
 
 **Core Template**:
+
 ```javascript
 import { z } from 'zod';
 
 const InputSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1)
+  name: z.string().min(1),
 });
 
 function processData(input) {
@@ -127,6 +134,7 @@ function processData(input) {
 ```
 
 **When to Use**:
+
 - Public API functions
 - Data ingestion points
 - Inter-package communication
@@ -143,6 +151,7 @@ function processData(input) {
 **Source**: `/home/user/unrdf/packages/fusion/src/receipts-kernel.mjs`, `/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs`
 
 **Core Template**:
+
 ```javascript
 // 1. Deterministic serialization (sorted keys)
 function deterministicSerialize(obj) {
@@ -172,6 +181,7 @@ function getDeterministicTimestamp(payload) {
 **Testing**: Run 100x, verify identical outputs
 
 **When to Use**:
+
 - L3+ maturity packages (required)
 - Receipt generation
 - Snapshot creation
@@ -186,6 +196,7 @@ function getDeterministicTimestamp(payload) {
 **Source**: Inferred from `/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md`
 
 **Core Template**:
+
 ```javascript
 class CompositionChecker {
   canCompose(moduleA, moduleB) {
@@ -218,11 +229,13 @@ async function composeOperations(opA, opB) {
 ```
 
 **Composition Recipes**:
+
 - Data Pipeline: `oxigraph → kgc-4d → yawl → federation`
 - Verification: `yawl → kgc-4d → blockchain`
 - Update: `federation → delta → gate → kgc-4d`
 
 **When to Use**:
+
 - Multi-package workflows
 - Cross-package data flow
 - Federated systems
@@ -236,18 +249,18 @@ async function composeOperations(opA, opB) {
 
 **Total P1 Packages**: 10
 
-| Package | Current Level | Target Level | Effort (hours) | Key Patterns |
-|---------|---------------|--------------|----------------|--------------|
-| @unrdf/oxigraph | L1 | L5 | 20 | Receipt HOF, Determinism |
-| @unrdf/core | L2 | L5 | 24 | Delta Contract, Zod |
-| @unrdf/kgc-4d | L3 | L5 | 16 | Composition Layer |
-| @unrdf/hooks | L2 | L4 | 18 | Receipt HOF, Zod |
-| @unrdf/streaming | L1 | L3 | 20 | Receipt HOF |
-| @unrdf/federation | L2 | L4 | 22 | Zod, Receipt HOF |
-| @unrdf/cli | L2 | L3 | 16 | Delta Contract |
-| @unrdf/yawl | L3 | L5 | 24 | All patterns |
-| @unrdf/knowledge-engine | L1 | L3 | 18 | Receipt HOF, Zod |
-| @unrdf/graph-analytics | L1 | L3 | 18 | Determinism |
+| Package                 | Current Level | Target Level | Effort (hours) | Key Patterns             |
+| ----------------------- | ------------- | ------------ | -------------- | ------------------------ |
+| @unrdf/oxigraph         | L1            | L5           | 20             | Receipt HOF, Determinism |
+| @unrdf/core             | L2            | L5           | 24             | Delta Contract, Zod      |
+| @unrdf/kgc-4d           | L3            | L5           | 16             | Composition Layer        |
+| @unrdf/hooks            | L2            | L4           | 18             | Receipt HOF, Zod         |
+| @unrdf/streaming        | L1            | L3           | 20             | Receipt HOF              |
+| @unrdf/federation       | L2            | L4           | 22             | Zod, Receipt HOF         |
+| @unrdf/cli              | L2            | L3           | 16             | Delta Contract           |
+| @unrdf/yawl             | L3            | L5           | 24             | All patterns             |
+| @unrdf/knowledge-engine | L1            | L3           | 18             | Receipt HOF, Zod         |
+| @unrdf/graph-analytics  | L1            | L3           | 18             | Determinism              |
 
 **Total Effort**: 196 hours (parallelizable: ~5 weeks for 5 developers)
 
@@ -256,6 +269,7 @@ async function composeOperations(opA, opB) {
 **Every P1 Package Follows**:
 
 1. **Add Dependencies** (5 min)
+
    ```bash
    pnpm add zod hash-wasm @unrdf/v6-core
    ```
@@ -293,12 +307,14 @@ async function composeOperations(opA, opB) {
 
 **Size**: 25KB
 **Structure**:
+
 - Executive Summary
 - 5 pattern specifications (purpose, template, examples, composition, testing)
 - Pattern compatibility matrix
 - References
 
 **Coverage**:
+
 - ✅ Receipt HOF Pattern (complete)
 - ✅ Delta Contract Pattern (complete with SPARQL examples)
 - ✅ Zod Validation Envelope Pattern (complete)
@@ -311,6 +327,7 @@ async function composeOperations(opA, opB) {
 **Structure**: 5 tutorials (learning-oriented)
 
 **Tutorials**:
+
 1. **Tutorial 1**: Add Receipt to Your First Operation (15 min)
 2. **Tutorial 2**: Create and Apply a Delta (20 min)
 3. **Tutorial 3**: Validate Inputs with Zod (15 min)
@@ -318,6 +335,7 @@ async function composeOperations(opA, opB) {
 5. **Tutorial 5**: Compose Cross-Package Workflows (30 min)
 
 **Format**: Step-by-step walkthroughs with:
+
 - Prerequisites
 - Step 1-5 commands
 - Expected outputs
@@ -330,6 +348,7 @@ async function composeOperations(opA, opB) {
 **Structure**: 10 runbooks (1 per P1 package)
 
 **Runbook Template**:
+
 1. Current State Assessment
 2. Pattern Application Plan
 3. Step-by-Step Commands (with copy-paste bash)
@@ -337,6 +356,7 @@ async function composeOperations(opA, opB) {
 5. Common Issues & Fixes
 
 **Runbooks Created**:
+
 - ✅ @unrdf/oxigraph (detailed)
 - ✅ @unrdf/core (detailed)
 - ✅ @unrdf/kgc-4d (detailed)
@@ -352,13 +372,13 @@ async function composeOperations(opA, opB) {
 
 **Format**: Table showing which patterns compose
 
-|  | Receipt HOF | Delta Contract | Zod Validation | Determinism Proof | Composition Layer |
-|--|-------------|----------------|----------------|-------------------|-------------------|
-| **Receipt HOF** | N/A | ✅ Wrap delta ops | ✅ Validate before wrap | ✅ Deterministic receipts | ✅ Receipt chains |
-| **Delta Contract** | ✅ Receipt delta | N/A | ✅ Validate delta | ✅ Hash delta | ✅ Cross-package deltas |
-| **Zod Validation** | ✅ Input validation | ✅ Delta validation | N/A | ✅ Schema consistency | ✅ Schema compat check |
-| **Determinism Proof** | ✅ Hash receipts | ✅ Hash deltas | ✅ Validate structure | N/A | ✅ Verify determinism |
-| **Composition Layer** | ✅ Chain receipts | ✅ Compose deltas | ✅ Check schemas | ✅ Cross-package determinism | N/A |
+|                       | Receipt HOF         | Delta Contract      | Zod Validation          | Determinism Proof            | Composition Layer       |
+| --------------------- | ------------------- | ------------------- | ----------------------- | ---------------------------- | ----------------------- |
+| **Receipt HOF**       | N/A                 | ✅ Wrap delta ops   | ✅ Validate before wrap | ✅ Deterministic receipts    | ✅ Receipt chains       |
+| **Delta Contract**    | ✅ Receipt delta    | N/A                 | ✅ Validate delta       | ✅ Hash delta                | ✅ Cross-package deltas |
+| **Zod Validation**    | ✅ Input validation | ✅ Delta validation | N/A                     | ✅ Schema consistency        | ✅ Schema compat check  |
+| **Determinism Proof** | ✅ Hash receipts    | ✅ Hash deltas      | ✅ Validate structure   | N/A                          | ✅ Verify determinism   |
+| **Composition Layer** | ✅ Chain receipts   | ✅ Compose deltas   | ✅ Check schemas        | ✅ Cross-package determinism | N/A                     |
 
 **Result**: All patterns compose with each other (100% compatibility)
 
@@ -371,6 +391,7 @@ async function composeOperations(opA, opB) {
 **Total Files Scanned**: 63 packages, ~150 files
 
 **Key Files Read**:
+
 1. `/home/user/unrdf/packages/v6-compat/src/adapters.mjs` (371 lines)
 2. `/home/user/unrdf/packages/v6-core/src/delta/schema.mjs` (210 lines)
 3. `/home/user/unrdf/packages/v6-core/src/delta/index.mjs` (209 lines)
@@ -381,6 +402,7 @@ async function composeOperations(opA, opB) {
 8. `/home/user/unrdf/docs/v6/RECEIPT_IMPLEMENTATION_SUMMARY.md` (430 lines)
 
 **Pattern Occurrences**:
+
 - `withReceipt`: 2 implementations found
 - `DeltaSchema`: 10 files using delta patterns
 - `blake3`: 15+ files using BLAKE3 hashing
@@ -388,7 +410,7 @@ async function composeOperations(opA, opB) {
 
 ### Architecture Insights
 
-**v6 Architecture Principles** (extracted from charter):
+**Architecture Principles** (extracted from charter):
 
 1. **ΔGate**: All state changes flow through central gate
    - Propose → Reconcile → Receipt → Apply
@@ -422,21 +444,25 @@ async function composeOperations(opA, opB) {
 ### Pattern Adoption Strategy
 
 **Phase 1: P0 Packages** (Already Implemented)
-- v6-compat: Receipt HOF pattern ✅
-- v6-core: Delta Contract + Zod ✅
+
+- @unrdf/v6-compat: Receipt HOF pattern ✅
+- @unrdf/v6-core: Delta Contract + Zod ✅
 - kgc-4d: Determinism + Receipts ✅
 
 **Phase 2: P1 Packages** (Runbooks Created)
+
 - 10 packages → L3+ maturity
 - 196 hours total effort
 - All patterns applied
 
 **Phase 3: P2 Packages** (5 packages, 200 hours)
+
 - Apply same runbook template
 - Reuse P1 patterns exactly
 - Estimated 40 hours per package
 
 **Phase 4: P3 Packages** (37 packages, 814 hours)
+
 - Batch migration using patterns
 - Automated schema generation
 - ~22 hours per package average
@@ -509,12 +535,12 @@ async function composeOperations(opA, opB) {
 
 ### Documentation Produced
 
-| Document | Size | Lines | Status |
-|----------|------|-------|--------|
-| PATTERNS.md | 25KB | 900+ | ✅ Complete |
-| PATTERN_TUTORIALS.md | 18KB | 700+ | ✅ Complete |
-| MIGRATION_RUNBOOKS.md | 15KB | 600+ | ✅ Complete |
-| RESEARCH_FINDINGS_SUMMARY.md | 8KB | 400+ | ✅ Complete |
+| Document                     | Size | Lines | Status      |
+| ---------------------------- | ---- | ----- | ----------- |
+| PATTERNS.md                  | 25KB | 900+  | ✅ Complete |
+| PATTERN_TUTORIALS.md         | 18KB | 700+  | ✅ Complete |
+| MIGRATION_RUNBOOKS.md        | 15KB | 600+  | ✅ Complete |
+| RESEARCH_FINDINGS_SUMMARY.md | 8KB  | 400+  | ✅ Complete |
 
 **Total Documentation**: 66KB, ~2,600 lines
 
@@ -552,12 +578,14 @@ async function composeOperations(opA, opB) {
 5. **48% Time Savings** - Estimated 1,128 hours saved through pattern reuse
 
 **Knowledge Transfer**:
+
 - Pattern library serves as reference for all future package migrations
 - Tutorials enable developers to learn patterns hands-on
 - Runbooks provide step-by-step migration procedures
 - Compatibility matrix guides cross-package integration
 
 **Production Ready**:
+
 - All documentation validated against actual codebase
 - Examples tested and verified
 - Runbooks include testing checklists
@@ -571,18 +599,19 @@ async function composeOperations(opA, opB) {
 
 ### Created Files
 
-| File Path | Purpose | Size |
-|-----------|---------|------|
-| `/home/user/unrdf/docs/v6/PATTERNS.md` | Pattern library master document | 25KB |
-| `/home/user/unrdf/docs/v6/PATTERN_TUTORIALS.md` | DIATAXIS tutorials | 18KB |
-| `/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md` | P1 package runbooks | 15KB |
-| `/home/user/unrdf/docs/v6/RESEARCH_FINDINGS_SUMMARY.md` | This document | 8KB |
+| File Path                                               | Purpose                         | Size |
+| ------------------------------------------------------- | ------------------------------- | ---- |
+| `/home/user/unrdf/docs/v6/PATTERNS.md`                  | Pattern library master document | 25KB |
+| `/home/user/unrdf/docs/v6/PATTERN_TUTORIALS.md`         | DIATAXIS tutorials              | 18KB |
+| `/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md`        | P1 package runbooks             | 15KB |
+| `/home/user/unrdf/docs/v6/RESEARCH_FINDINGS_SUMMARY.md` | This document                   | 8KB  |
 
 **Total**: 4 files, 66KB of migration knowledge
 
 ### Referenced Files
 
 **Pattern Sources**:
+
 - `/home/user/unrdf/packages/v6-compat/src/adapters.mjs`
 - `/home/user/unrdf/packages/v6-core/src/delta/schema.mjs`
 - `/home/user/unrdf/packages/v6-core/src/delta/index.mjs`
@@ -590,6 +619,7 @@ async function composeOperations(opA, opB) {
 - `/home/user/unrdf/packages/fusion/src/receipts-kernel.mjs`
 
 **Documentation Sources**:
+
 - `/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md`
 - `/home/user/unrdf/docs/v6/MIGRATION_PLAN.md`
 - `/home/user/unrdf/docs/v6/RECEIPT_IMPLEMENTATION_SUMMARY.md`
