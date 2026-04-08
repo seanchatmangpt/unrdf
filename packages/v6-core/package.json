@@ -54,9 +54,9 @@
     "@unrdf/kgc-substrate": "26.4.4",
     "@unrdf/yawl": "26.4.4",
     "@unrdf/kgc-cli": "26.4.4",
-    "@unrdf/kgc-4d": "26.4.4",
-    "@unrdf/hooks": "26.4.4",
-    "@unrdf/oxigraph": "26.4.4",
+    "@unrdf/kgc-4d": "26.4.7",
+    "@unrdf/hooks": "26.4.7",
+    "@unrdf/oxigraph": "26.4.7",
     "@unrdf/blockchain": "26.4.4",
     "citty": "^0.1.5",
     "zod": "^4.3.6",
@@ -69,7 +69,7 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "@unrdf/core": "26.4.4"
+    "@unrdf/core": "26.4.7"
   },
   "repository": {
     "type": "git",
