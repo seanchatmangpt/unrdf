@@ -50,7 +50,7 @@ await workflow.run(task);
 // No proof. Did it run? What inputs? When?
 ```
 
-**v6 Approach**:
+_Current Approach_:
 
 ```javascript
 const receipt = await workflow.execute(task);
@@ -275,7 +275,7 @@ const conflicts = detectConflicts([deltaA, deltaB]);
 - ❌ Dual runtime semantics (bugs)
 - ❌ Complex build tooling
 
-**v6 Pure ESM**:
+_Pure ESM_:
 
 ```json
 {
@@ -303,7 +303,7 @@ const unrdf = require('@unrdf/core');
 const { Store } = require('n3');
 ```
 
-**v6 (ESM)**:
+_ESM_:
 
 ```javascript
 import * as unrdf from '@unrdf/core';
@@ -370,7 +370,7 @@ processUser({ id: 123, name: null });
 3. **TypeScript Integration**: Infer types from schemas
 4. **Deterministic**: Same input always validates the same way
 
-### v6 Enforcement
+### Enforcement
 
 All public APIs require Zod schemas:
 
@@ -441,16 +441,16 @@ A **graduated quality framework** for package evolution (L1 → L5).
 **Traditional Approach**:
 
 ```bash
-# All packages must be perfect for v6.0.0
+# All packages must be perfect for 6.0.0
 # Result: Never ship
 ```
 
 **Maturity Ladder Approach**:
 
 ```bash
-# v6.0.0-alpha: Core packages at L5
-# v6.0.0-beta: All packages at L3
-# v6.0.0: All packages at L5
+# 6.0.0-alpha: Core packages at L5
+# 6.0.0-beta: All packages at L3
+# 6.0.0: All packages at L5
 ```
 
 ### L3: Deterministic Execution
@@ -519,7 +519,7 @@ Validates:
 - ~2.5ms per SPARQL query
 - 100MB memory for 1M triples
 
-**Oxigraph (v6)**:
+**Oxigraph (current version)**:
 
 - Rust implementation (compiled to WASM)
 - ~0.3ms per SPARQL query (8x faster)
@@ -628,7 +628,7 @@ const receipt = createReceipt('operation', {
 4. **Floating Point**: `0.1 + 0.2 === 0.30000000000000004`
 5. **Async Timing**: Race conditions, network delays
 
-### v6 Solutions
+### Solutions
 
 **Time**:
 
@@ -671,7 +671,7 @@ const keys = Object.keys(obj).sort();
 
 ## Summary
 
-UNRDF v6 introduces:
+UNRDF introduces:
 
 1. **Receipts**: Cryptographic proofs for all operations
 2. **Deltas**: Explicit, auditable version transitions
