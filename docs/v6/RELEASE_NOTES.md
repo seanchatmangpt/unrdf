@@ -1,10 +1,10 @@
-# UNRDF v6.0 Release Notes
+# UNRDF 6.0 Release Notes
 
 **Release Date**: 2025-12-27
 **Version**: 6.0.0
 **Status**: Production Ready
 
-Welcome to UNRDF v6 - the most significant release in UNRDF history, delivering 71.7x query performance improvements, receipt-driven operations, and a modern ESM-first architecture.
+Welcome to UNRDF 6.0 - the most significant release in UNRDF history, delivering 71.7x query performance improvements, receipt-driven operations, and a modern ESM-first architecture.
 
 ---
 
@@ -25,7 +25,7 @@ Welcome to UNRDF v6 - the most significant release in UNRDF history, delivering 
 
 ## Executive Summary
 
-UNRDF v6 represents a complete architectural reimagination of the UNRDF framework, focusing on three core pillars:
+UNRDF represents a complete architectural reimagination of the UNRDF framework, focusing on three core pillars:
 
 1. **Performance**: 71.7x query throughput improvement (54,311 ops/sec vs 757 ops/sec)
 2. **Determinism**: Receipt-driven operations with cryptographic proof
@@ -33,28 +33,31 @@ UNRDF v6 represents a complete architectural reimagination of the UNRDF framewor
 
 ### Key Metrics
 
-| Metric | v5 | v6 | Improvement |
-|--------|----|----|-------------|
-| Query Throughput (cached) | 757 ops/sec | 54,311 ops/sec | **71.7x** ⚡ |
-| Query Latency P50 | 1.151ms | 0.013ms | **88.7% reduction** |
-| Memory per Query | 18.07 MB | 2.58 MB | **85.7% reduction** 💾 |
-| Bundle Size | 2.4 MB | 1.4 MB | **40% smaller** |
-| Node.js Requirement | ≥16.0.0 | ≥18.0.0 | Modern runtime |
+| Metric                    | v5          | v6             | Improvement            |
+| ------------------------- | ----------- | -------------- | ---------------------- |
+| Query Throughput (cached) | 757 ops/sec | 54,311 ops/sec | **71.7x** ⚡           |
+| Query Latency P50         | 1.151ms     | 0.013ms        | **88.7% reduction**    |
+| Memory per Query          | 18.07 MB    | 2.58 MB        | **85.7% reduction** 💾 |
+| Bundle Size               | 2.4 MB      | 1.4 MB         | **40% smaller**        |
+| Node.js Requirement       | ≥16.0.0     | ≥18.0.0        | Modern runtime         |
 
 ### Who Should Upgrade?
 
 ✅ **Immediate Upgrade Recommended**:
+
 - Production applications needing performance improvements
 - Teams requiring audit trails and compliance
 - Projects using SPARQL heavily
 - Applications with large RDF datasets
 
 ⚠️ **Plan Migration Carefully**:
+
 - Legacy Node.js 16 deployments (need Node 18+)
 - CommonJS-only codebases (need ESM migration)
 - Custom store implementations (need adapter)
 
-❌ **Wait for v6.1**:
+❌ **Wait for 6.1**:
+
 - Experimental/alpha projects (limited changes)
 - Non-performance-critical applications
 
@@ -64,15 +67,17 @@ UNRDF v6 represents a complete architectural reimagination of the UNRDF framewor
 
 ### 1. Oxigraph Backend (Rust + WASM)
 
-The biggest change in v6 is the switch from N3.js (pure JavaScript) to Oxigraph (Rust compiled to WASM).
+The biggest change in this version is the switch from N3.js (pure JavaScript) to Oxigraph (Rust compiled to WASM).
 
 **Benefits**:
+
 - **10x faster SPARQL execution** (Rust performance)
 - **60% lower memory usage** (optimized storage)
 - **Browser support** (WASM runs anywhere)
 - **Persistent storage** (SQLite backend)
 
 **Example**:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 
@@ -82,7 +87,7 @@ const store = await createStore();
 // Persistent SQLite backend
 const persistentStore = await createStore({
   backend: 'sqlite',
-  path: './data/knowledge.db'
+  path: './data/knowledge.db',
 });
 ```
 
@@ -95,19 +100,21 @@ const persistentStore = await createStore({
 Every operation can now generate a cryptographic receipt for audit trails and deterministic replay.
 
 **What Are Receipts?**
+
 - Cryptographic proof of execution
 - Merkle tree-based tamper detection
 - Deterministic replay capability
 - Compliance-ready audit trails
 
 **Example**:
+
 ```javascript
 import { createReceipt } from '@unrdf/v6-core/receipts';
 
 const receipt = createReceipt('add-triple', {
   subject: 'http://example.org/Alice',
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice Smith'
+  object: 'Alice Smith',
 });
 
 console.log('Receipt ID:', receipt.id);
@@ -120,6 +127,7 @@ const isValid = verifyReceipt(receipt); // true
 ```
 
 **Use Cases**:
+
 - Regulatory compliance (GDPR, HIPAA, SOX)
 - Blockchain-like audit trails (without blockchain overhead)
 - Reproducible research
@@ -132,12 +140,14 @@ const isValid = verifyReceipt(receipt); // true
 Track and version knowledge graph changes with explicit delta proposals.
 
 **Features**:
+
 - Explicit change tracking (know exactly what changed)
 - Conflict detection (identify concurrent edits)
 - Rollback support (undo changes by reversing delta)
 - Storage efficiency (store deltas, not full snapshots)
 
 **Example**:
+
 ```javascript
 import { createDeltaProposal, applyDelta } from '@unrdf/v6-core/delta';
 
@@ -148,17 +158,17 @@ const delta = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@old.org'
-    }
+      object: 'alice@old.org',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@new.org'
-    }
-  }
+      object: 'alice@new.org',
+    },
+  },
 ]);
 
 // Apply delta with receipt
@@ -170,24 +180,27 @@ console.log('Delta applied:', receipt.id);
 
 ### 4. Pure ESM Architecture
 
-v6 is ESM-only (no CommonJS support).
+This version is ESM-only (no CommonJS support).
 
 **Benefits**:
+
 - **40% smaller bundles** (one build, not two)
 - **Better tree-shaking** (only import what you use)
 - **Simpler tooling** (no dual build complexity)
 - **Modern standards** (ESM is the future)
 
 **Migration**:
+
 ```javascript
 // v5 (CommonJS)
 const unrdf = require('@unrdf/core');
 
-// v6 (ESM)
+// This version (ESM)
 import * as unrdf from '@unrdf/core';
 ```
 
 **Requirements**:
+
 - Node.js 18+ (native ESM support)
 - `"type": "module"` in package.json
 - `.mjs` extensions or `"type": "module"`
@@ -199,12 +212,14 @@ import * as unrdf from '@unrdf/core';
 All public APIs now enforce runtime validation with Zod schemas.
 
 **Benefits**:
+
 - **Runtime type safety** (catch errors before they happen)
 - **Self-documenting APIs** (schemas are executable docs)
 - **Better error messages** (descriptive validation errors)
 - **TypeScript integration** (infer types from schemas)
 
 **Example**:
+
 ```javascript
 import { z } from 'zod';
 import { createStore } from '@unrdf/oxigraph';
@@ -212,7 +227,7 @@ import { createStore } from '@unrdf/oxigraph';
 const TripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.string().min(1)
+  object: z.string().min(1),
 });
 
 async function addTriple(data) {
@@ -228,14 +243,14 @@ async function addTriple(data) {
 await addTriple({
   subject: 'http://example.org/Alice',
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice'
+  object: 'Alice',
 }); // ✅
 
 // Invalid input
 await addTriple({
-  subject: 'invalid-url',  // ❌ Not a valid URL
+  subject: 'invalid-url', // ❌ Not a valid URL
   predicate: 'http://xmlns.com/foaf/0.1/name',
-  object: 'Alice'
+  object: 'Alice',
 }); // Throws ZodError: Invalid url
 ```
 
@@ -246,17 +261,19 @@ await addTriple({
 AsyncIterator-based streaming for large RDF datasets.
 
 **Features**:
+
 - **Constant memory usage** (process datasets > RAM)
 - **Backpressure handling** (automatic flow control)
 - **Receipt generation** (audit trails for streams)
 
 **Example**:
+
 ```javascript
 import { createReadStream } from '@unrdf/streaming';
 import { createStore } from '@unrdf/oxigraph';
 
 const stream = createReadStream('/data/dbpedia-subset.nt', {
-  bufferSize: 10000
+  bufferSize: 10000,
 });
 
 const store = await createStore();
@@ -284,11 +301,13 @@ console.log(`Loaded ${count} quads. Receipt: ${receipt.id}`);
 Query across multiple stores and remote endpoints.
 
 **Features**:
+
 - **Join optimization** (automatic query planning)
 - **Parallel execution** (query multiple sources concurrently)
 - **Remote endpoints** (query DBpedia, Wikidata, etc.)
 
 **Example**:
+
 ```javascript
 import { Federation, RemoteEndpoint, sparql } from '@unrdf/federation';
 import { createStore } from '@unrdf/oxigraph';
@@ -298,7 +317,7 @@ const dbpedia = new RemoteEndpoint('https://dbpedia.org/sparql');
 
 const federation = new Federation([localStore, dbpedia], {
   optimizeJoins: true,
-  parallel: true
+  parallel: true,
 });
 
 const results = await federation.query(
@@ -325,11 +344,12 @@ const results = await federation.query(
 The switch to Oxigraph delivers massive query performance improvements.
 
 **Benchmark Results**:
+
 ```
 SPARQL SELECT (500 triples)
 ├─ v5 Baseline:  757 ops/sec
-├─ v6 Cold Cache: 796 ops/sec   (+5%)
-└─ v6 Warm Cache: 54,311 ops/sec (+7,067%, 71.7x faster) ⚡
+├─ Cold Cache: 796 ops/sec   (+5%)
+└─ Warm Cache: 54,311 ops/sec (+7,067%, 71.7x faster) ⚡
 
 Latency Improvements
 ├─ P50: 1.151ms → 0.013ms (98.9% reduction)
@@ -338,6 +358,7 @@ Latency Improvements
 ```
 
 **Why So Fast?**
+
 1. **Rust Performance**: Native code vs JavaScript
 2. **Query Caching**: LRU cache with SHA3-256 keys
 3. **Reduced Allocations**: 85.7% less memory per query
@@ -347,23 +368,25 @@ Latency Improvements
 
 ### Memory Usage: 85.7% Reduction
 
-v6 uses significantly less memory per operation.
+This version uses significantly less memory per operation.
 
 **Memory Benchmarks**:
+
 ```
 Simple SELECT Query (100 triples)
 ├─ v5: 18.07 MB
-└─ v6: 2.58 MB (-85.7%) 💾
+└─ This version: 2.58 MB (-85.7%) 💾
 
 Simple SELECT Query (cached)
 ├─ v5: 18.49 MB
-└─ v6: 10.31 MB (-44.2%)
+└─ This version: 10.31 MB (-44.2%)
 
 Batch Queries (5 parallel)
-└─ v6: 6.95 MB (new capability)
+└─ This version: 6.95 MB (new capability)
 ```
 
 **How?**
+
 - Object pooling for result conversions
 - Reduced intermediate allocations
 - Efficient binding transformations
@@ -375,14 +398,15 @@ Batch Queries (5 parallel)
 Pure ESM eliminates CommonJS overhead.
 
 **Bundle Size Comparison**:
+
 ```
 @unrdf/core
 ├─ v5: 2.4 MB (ESM + CJS)
-└─ v6: 1.4 MB (ESM only) (-40%)
+└─ This version: 1.4 MB (ESM only) (-40%)
 
 Full Framework
 ├─ v5: ~15 MB
-└─ v6: ~9 MB (-40%)
+└─ This version: ~9 MB (-40%)
 ```
 
 ---
@@ -392,44 +416,48 @@ Full Framework
 Parsing shows modest improvements with streaming mode for large datasets.
 
 **Parsing Benchmarks**:
+
 ```
 Parse 100 triples
 ├─ v5: ~1,500 ops/sec
-└─ v6: 1,807 ops/sec (+20%)
+└─ This version: 1,807 ops/sec (+20%)
 
 Parse 1,000 triples
 ├─ v5: ~150 ops/sec
-└─ v6: 191 ops/sec (+27%)
+└─ This version: 191 ops/sec (+27%)
 
 Parse 5,000 triples (streaming)
 ├─ v5: ~25 ops/sec (high memory)
-└─ v6: 29 ops/sec (constant memory)
+└─ This version: 29 ops/sec (constant memory)
 ```
 
 ---
 
 ## Breaking Changes
 
-v6 introduces **12 breaking changes**. See [BREAKING-CHANGES.md](/home/user/unrdf/docs/v6/BREAKING-CHANGES.md) for full details.
+This version introduces **12 breaking changes**. See [BREAKING-CHANGES.md](/home/user/unrdf/docs/v6/BREAKING-CHANGES.md) for full details.
 
 ### BC-1: Package Consolidation (Impact: High)
 
 **Change**: Merge 12 overlapping packages into core/kgc layers
 
 **Before**:
+
 ```javascript
-import { streamQuads } from '@unrdf/streaming'
-import { infer } from '@unrdf/knowledge-engine'
+import { streamQuads } from '@unrdf/streaming';
+import { infer } from '@unrdf/knowledge-engine';
 ```
 
 **After**:
+
 ```javascript
-import { streamQuads, infer } from '@unrdf/core'
+import { streamQuads, infer } from '@unrdf/core';
 ```
 
 **Migration**: Auto-migration tool available
+
 ```bash
-npx @unrdf/migrate-v6 migrate . --fix-imports
+npx @unrdf/migrate migrate . --fix-imports
 ```
 
 ---
@@ -439,18 +467,21 @@ npx @unrdf/migrate-v6 migrate . --fix-imports
 **Change**: Single `createStore()` API for all backends
 
 **Before**:
+
 ```javascript
 import { Store } from 'n3';
 const store = new Store();
 ```
 
 **After**:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 const store = await createStore(); // Now async
 ```
 
 **Migration**:
+
 - All store creation is now async
 - Functions calling `createStore()` must be `async`
 - Auto-migration tool detects patterns
@@ -462,11 +493,13 @@ const store = await createStore(); // Now async
 **Change**: Explicit `store` parameter required
 
 **Before**:
+
 ```javascript
 const results = await query('SELECT * WHERE { ?s ?p ?o }');
 ```
 
 **After**:
+
 ```javascript
 const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
@@ -480,11 +513,13 @@ const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 **Change**: Hooks registered per-store, not globally
 
 **Before**:
+
 ```javascript
 registerHook({ name: 'validate', ... }); // Global
 ```
 
 **After**:
+
 ```javascript
 store.registerHook({ name: 'validate', ... }); // Per-store
 ```
@@ -498,12 +533,14 @@ store.registerHook({ name: 'validate', ... }); // Per-store
 **Change**: Require Node.js ≥18.0.0 (from ≥16.0.0)
 
 **Why?**
+
 - Native `fetch` API (no polyfills)
 - Better ESM support
 - Performance improvements (V8 updates)
 - Node 16 EOL: September 2023 (already unsupported)
 
 **Migration**:
+
 ```bash
 nvm install 18
 nvm use 18
@@ -516,16 +553,19 @@ nvm use 18
 **Change**: Drop CommonJS support
 
 **Before**:
+
 ```javascript
-const { createStore } = require('@unrdf/core')
+const { createStore } = require('@unrdf/core');
 ```
 
 **After**:
+
 ```javascript
-import { createStore } from '@unrdf/core'
+import { createStore } from '@unrdf/core';
 ```
 
 **Migration**:
+
 1. Add `"type": "module"` to package.json
 2. Replace `require()` → `import`
 3. Replace `module.exports` → `export`
@@ -538,21 +578,25 @@ import { createStore } from '@unrdf/core'
 ### Quick Migration (2-4 hours)
 
 **Step 1: Backup**
+
 ```bash
-git commit -am "Pre-v6 migration checkpoint"
+git commit -am "Pre-6.0 migration checkpoint"
 ```
 
-**Step 2: Install v6**
+**Step 2: Install this version**
+
 ```bash
 pnpm add @unrdf/core@6.0.0 @unrdf/oxigraph@latest
 ```
 
 **Step 3: Run Auto-Migration**
+
 ```bash
-npx @unrdf/migrate-v6 migrate . --all
+npx @unrdf/migrate migrate . --all
 ```
 
 **Step 4: Update package.json**
+
 ```json
 {
   "type": "module",
@@ -563,11 +607,13 @@ npx @unrdf/migrate-v6 migrate . --all
 ```
 
 **Step 5: Test**
+
 ```bash
 pnpm test
 ```
 
 **Step 6: Manual Fixes**
+
 - Hook registrations (BC-4)
 - Custom store implementations
 - Zod validation errors
@@ -577,6 +623,7 @@ pnpm test
 See [MIGRATION_GUIDE.md](/home/user/unrdf/docs/v6/MIGRATION_GUIDE.md) for comprehensive guide.
 
 **Timeline**:
+
 ```
 Week 1-2: Preparation & automated migration
 Week 3-4: Manual fixes & hook migrations
@@ -601,18 +648,18 @@ const validatePerson = defineHook({
   name: 'validate-person',
   schema: z.object({
     person: z.string().url(),
-    name: z.string().min(1)
+    name: z.string().min(1),
   }),
-  handler: async (ctx) => {
+  handler: async ctx => {
     console.log(`Validating: ${ctx.name}`);
     // Validation logic
   },
-  receipt: true
+  receipt: true,
 });
 
 const receipt = await validatePerson.activate({
   person: 'http://example.org/Alice',
-  name: 'Alice Smith'
+  name: 'Alice Smith',
 });
 ```
 
@@ -652,9 +699,10 @@ await store.addAll(quads); // 100,000 ops/sec
 
 ## Deprecations
 
-### Deprecated in v6.0 (Removed in v6.1)
+### Deprecated in 6.0.0 (Removed in 6.1)
 
 1. **N3 Store Direct Imports**
+
    ```javascript
    // ❌ Deprecated
    import { Store } from 'n3';
@@ -664,6 +712,7 @@ await store.addAll(quads); // 100,000 ops/sec
    ```
 
 2. **Global Hook Registration**
+
    ```javascript
    // ❌ Deprecated
    registerHook({ ... });
@@ -673,6 +722,7 @@ await store.addAll(quads); // 100,000 ops/sec
    ```
 
 3. **String-Based SPARQL Queries (federation)**
+
    ```javascript
    // ❌ Deprecated
    await federation.query('SELECT * WHERE { ?s ?p ?o }');
@@ -682,6 +732,7 @@ await store.addAll(quads); // 100,000 ops/sec
    ```
 
 4. **CommonJS Imports**
+
    ```javascript
    // ❌ Deprecated (removed)
    const unrdf = require('@unrdf/core');
@@ -701,11 +752,12 @@ await store.addAll(quads); // 100,000 ops/sec
 **Cause**: Batching strategy increases memory overhead
 
 **Workaround**: Use streaming mode
+
 ```javascript
 const stream = createReadStream(path, { streaming: true });
 ```
 
-**Status**: Fixed in v6.1 (incremental parser)
+**Status**: Fixed in 6.1 (incremental parser)
 
 ---
 
@@ -717,7 +769,7 @@ const stream = createReadStream(path, { streaming: true });
 
 **Workaround**: Pre-warm cache with common queries
 
-**Status**: Improved in v6.1 (query plan caching)
+**Status**: Improved in 6.1 (query plan caching)
 
 ---
 
@@ -729,7 +781,7 @@ const stream = createReadStream(path, { streaming: true });
 
 **Workaround**: Use memory backend for write-heavy workloads
 
-**Status**: Monitoring for v6.1 improvements
+**Status**: Monitoring for 6.1 improvements
 
 ---
 
@@ -738,6 +790,7 @@ const stream = createReadStream(path, { streaming: true });
 ### Scenario 1: Simple Node.js Script
 
 **v5 Code**:
+
 ```javascript
 import { Store } from 'n3';
 
@@ -746,7 +799,8 @@ store.addQuad(/* ... */);
 console.log(store.size);
 ```
 
-**v6 Code**:
+**This version Code**:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 
@@ -764,6 +818,7 @@ main().catch(console.error);
 ### Scenario 2: Express API Server
 
 **v5 Code**:
+
 ```javascript
 import express from 'express';
 import { Store } from 'n3';
@@ -777,7 +832,8 @@ app.get('/query', async (req, res) => {
 });
 ```
 
-**v6 Code**:
+**This version Code**:
+
 ```javascript
 import express from 'express';
 import { createStore } from '@unrdf/oxigraph';
@@ -810,6 +866,7 @@ app.get('/query', async (req, res) => {
 ### Scenario 3: Vitest Tests
 
 **v5 Code**:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { Store } from 'n3';
@@ -822,7 +879,8 @@ describe('Tests', () => {
 });
 ```
 
-**v6 Code**:
+**This version Code**:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { createStore } from '@unrdf/oxigraph';
@@ -839,20 +897,23 @@ describe('Tests', () => {
 
 ## Contributors
 
-UNRDF v6 was made possible by:
+UNRDF was made possible by:
 
 ### Core Team
+
 - **Sean Chatman** - Architecture, receipts, delta system
 - **Claude Code AI** - Implementation, testing, documentation
 - **10-Agent Swarm** - Concurrent development coordination
 
 ### Special Thanks
+
 - **Oxigraph Team** - Rust-based triple store
 - **Zod Team** - Runtime validation library
 - **RDF.js Community** - RDF term specifications
 - **UNRDF Community** - Testing, feedback, bug reports
 
 ### Development Stats
+
 - **Commits**: 100+ in December 2025
 - **Files Changed**: 6,327 LoC developed
 - **Test Coverage**: 99.8% (443/444 tests passing)
@@ -862,7 +923,7 @@ UNRDF v6 was made possible by:
 
 ## What's Next?
 
-### v6.1 Roadmap (Q1 2026)
+### 6.1 Roadmap (Q1 2026)
 
 1. **Query Plan Compilation**
    - Pre-compile frequent query patterns
@@ -892,6 +953,7 @@ UNRDF v6 was made possible by:
 ## Resources
 
 ### Documentation
+
 - **[Quick Start Guide](/home/user/unrdf/docs/v6/QUICK-START.md)** - Get started in 15 minutes
 - **[API Reference](/home/user/unrdf/docs/v6/API_REFERENCE.md)** - Complete API docs
 - **[Migration Guide](/home/user/unrdf/docs/v6/MIGRATION_GUIDE.md)** - Detailed migration steps
@@ -899,12 +961,14 @@ UNRDF v6 was made possible by:
 - **[Performance](/home/user/unrdf/docs/v6/PERFORMANCE.md)** - Benchmarks and optimization
 
 ### Support
+
 - **GitHub Issues**: [github.com/unrdf/unrdf/issues](https://github.com/unrdf/unrdf/issues)
 - **Discussions**: [github.com/unrdf/unrdf/discussions](https://github.com/unrdf/unrdf/discussions)
 - **Examples**: [/examples](/home/user/unrdf/examples/)
 
 ### Migration Tools
-- **Auto-Migration**: `npx @unrdf/migrate-v6`
+
+- **Auto-Migration**: `npx @unrdf/migrate`
 - **Compatibility Layer**: `@unrdf/v6-compat`
 - **Rollback Guide**: [ROLLBACK.md](/home/user/unrdf/docs/v6/ROLLBACK.md)
 
@@ -912,7 +976,7 @@ UNRDF v6 was made possible by:
 
 ## Conclusion
 
-UNRDF v6 represents a **fundamental leap forward** in RDF knowledge graph technology:
+UNRDF represents a **fundamental leap forward** in RDF knowledge graph technology:
 
 ✅ **71.7x query performance** improvement
 ✅ **Receipt-driven deterministic execution**
@@ -921,7 +985,7 @@ UNRDF v6 represents a **fundamental leap forward** in RDF knowledge graph techno
 ✅ **85.7% memory reduction**
 ✅ **Production-ready stability** (99.8% test pass rate)
 
-We believe v6 sets a new standard for RDF frameworks, combining cutting-edge performance with enterprise-grade reliability.
+We believe this version sets a new standard for RDF frameworks, combining cutting-edge performance with enterprise-grade reliability.
 
 **Thank you** to our community for your support, feedback, and contributions. Together, we're building the future of knowledge graphs.
 
