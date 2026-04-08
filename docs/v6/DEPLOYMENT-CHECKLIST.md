@@ -1,9 +1,9 @@
-# V6 Deployment Checklist
+# Deployment Checklist
 
 **Version:** 1.0.0
 **Last Updated:** 2025-12-27
 
-Use this checklist for every v6 deployment to ensure safety and rollback readiness.
+Use this checklist for every deployment to ensure safety and rollback readiness.
 
 ---
 
@@ -12,9 +12,11 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 1. Test Rollback System
 
 - [ ] **Test rollback system:**
+
   ```bash
   node scripts/test-rollback-system.mjs
   ```
+
   - **Expected:** All tests pass (6/6)
   - **If fails:** Fix issues before proceeding
 
@@ -27,23 +29,29 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 2. Run Pre-Deployment Validation
 
 - [ ] **All tests pass:**
+
   ```bash
   timeout 120s pnpm test
   ```
+
   - **Expected:** 100% pass rate
   - **If fails:** Fix before deploying
 
 - [ ] **Linting clean:**
+
   ```bash
   timeout 15s pnpm lint
   ```
+
   - **Expected:** 0 errors, 0 warnings
   - **If fails:** Fix all errors
 
 - [ ] **Build successful:**
+
   ```bash
   timeout 30s pnpm build
   ```
+
   - **Expected:** All packages build
   - **If fails:** Fix build errors
 
@@ -51,6 +59,7 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   timeout 60s pnpm benchmark:baseline
   ```
+
   - **Expected:** Baseline saved
   - **Use for:** Post-deploy comparison
 
@@ -68,6 +77,7 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   pnpm ls --depth=0 | grep -E "zod|rdf-canonize|n3"
   ```
+
   - **Expected:** zod 4.x, rdf-canonize 5.x, n3 1.26.x
 
 ---
@@ -77,9 +87,11 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 1. Create Snapshot (CRITICAL)
 
 - [ ] **Create pre-deployment snapshot:**
+
   ```bash
-  node scripts/v6-snapshot.mjs pre-v6-production-$(date +%Y%m%d-%H%M)
+  node scripts/snapshot.mjs pre-production-$(date +%Y%m%d-%H%M)
   ```
+
   - **Expected:** Snapshot created successfully
   - **Duration:** ~10 seconds
   - **NEVER deploy without this**
@@ -89,14 +101,16 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ls -lah .rollback-snapshots/ | tail -1
   cat .rollback-snapshots/*/manifest.json | jq '.name, .timestamp'
   ```
+
   - **Expected:** Latest snapshot visible with correct timestamp
 
 ### 2. Test Rollback (Dry-Run)
 
 - [ ] **Test rollback procedure:**
   ```bash
-  node scripts/v6-rollback.mjs --dry-run
+  node scripts/rollback.mjs --dry-run
   ```
+
   - **Expected:** Shows what would be rolled back
   - **Duration:** ~30 seconds
   - **If fails:** Investigate before deploying
@@ -104,12 +118,12 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 3. Communication
 
 - [ ] **Notify team:**
-  - Deployment window: _____________
+  - Deployment window: ******\_******
   - Expected duration: ~30 minutes
   - Rollback plan: Automated, <5 min
 
 - [ ] **Incident channel ready:**
-  - Create: `#incident-v6-deploy-YYYY-MM-DD`
+  - Create: `#incident-deploy-YYYY-MM-DD`
   - Invite: Oncall, backup, manager
 
 ---
@@ -119,22 +133,27 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 1. Deploy V6
 
 - [ ] **Pull latest code:**
+
   ```bash
   git pull origin main
-  git checkout v6.0.0  # Or appropriate tag
+  git checkout 6.0.0  # Or appropriate tag
   ```
 
 - [ ] **Install dependencies:**
+
   ```bash
   pnpm install --frozen-lockfile
   ```
+
   - **Expected:** Clean install, no errors
   - **Duration:** ~30-60 seconds
 
 - [ ] **Run migration (if needed):**
+
   ```bash
-  node scripts/migrate-to-v6.mjs
+  node scripts/migrate.mjs
   ```
+
   - **Expected:** Migration successful
   - **If fails:** ROLLBACK IMMEDIATELY
 
@@ -142,15 +161,18 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   timeout 30s pnpm build
   ```
+
   - **Expected:** All packages build
   - **If fails:** ROLLBACK IMMEDIATELY
 
 ### 2. Initial Validation
 
 - [ ] **Quick test:**
+
   ```bash
   timeout 30s pnpm test:fast
   ```
+
   - **Expected:** All tests pass
   - **If >50% fail:** ROLLBACK IMMEDIATELY
   - **If 25-50% fail:** Assess, likely rollback
@@ -160,6 +182,7 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   node -e "import('@unrdf/core').then(() => console.log('✓ Imports work'))"
   ```
+
   - **Expected:** "✓ Imports work"
   - **If fails:** ROLLBACK IMMEDIATELY
 
@@ -170,16 +193,20 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### 1. Comprehensive Testing
 
 - [ ] **Full test suite:**
+
   ```bash
   timeout 120s pnpm test
   ```
+
   - **Expected:** 100% pass rate
   - **Threshold:** >95% pass = proceed, <95% = rollback
 
 - [ ] **Linting:**
+
   ```bash
   timeout 15s pnpm lint
   ```
+
   - **Expected:** 0 errors
   - **Threshold:** <10 errors = proceed, >10 = rollback
 
@@ -187,15 +214,18 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   timeout 30s pnpm lint  # Includes type checking
   ```
+
   - **Expected:** 0 type errors
   - **Threshold:** 0 errors required
 
 ### 2. Performance Validation
 
 - [ ] **Run benchmarks:**
+
   ```bash
   timeout 60s pnpm benchmark:compare
   ```
+
   - **Expected:** Performance within 20% of baseline
   - **Threshold:** <20% regression = proceed, >50% = rollback
 
@@ -203,12 +233,14 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```bash
   timeout 30s pnpm benchmark:memory
   ```
+
   - **Expected:** No memory leaks detected
   - **Threshold:** Any leak = investigate immediately
 
 ### 3. Integration Testing
 
 - [ ] **SPARQL queries work:**
+
   ```bash
   node -e "
     import('@unrdf/core').then(async ({ createStore }) => {
@@ -219,9 +251,11 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
   ```
 
 - [ ] **RDF parsing works:**
+
   ```bash
   node packages/core/examples/rdf-parsing/index.mjs
   ```
+
   - **Expected:** No errors, RDF parsed correctly
 
 - [ ] **Oxigraph integration works:**
@@ -241,11 +275,13 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### Hour 1: Intensive Monitoring
 
 - [ ] **T+15min: Quick check:**
+
   ```bash
   timeout 30s pnpm test:fast
   ```
 
 - [ ] **T+30min: Full check:**
+
   ```bash
   timeout 120s pnpm test
   timeout 60s pnpm benchmark:core
@@ -305,15 +341,17 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### If Rollback Needed
 
 1. **Execute rollback:**
+
    ```bash
    # If uncommitted changes exist
-   node scripts/v6-rollback.mjs --force
+   node scripts/rollback.mjs --force
 
    # If no uncommitted changes
-   node scripts/v6-rollback.mjs
+   node scripts/rollback.mjs
    ```
 
 2. **Validate rollback:**
+
    ```bash
    # Check version
    cat package.json | grep version
@@ -346,7 +384,7 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### Immediate (Day 1)
 
 - [ ] **Update documentation:**
-  - Mark v6 as deployed
+  - Mark as deployed
   - Document any issues encountered
   - Update troubleshooting guide
 
@@ -363,14 +401,16 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### Week 1
 
 - [ ] **Performance analysis:**
+
   ```bash
   pnpm benchmark:report
   ```
+
   - Compare to pre-deployment baseline
   - Document improvements/regressions
 
 - [ ] **Gather feedback:**
-  - Team members using v6?
+  - Team members using the current version?
   - Any issues reported?
   - Documentation clear?
 
@@ -382,6 +422,7 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ### Week 2
 
 - [ ] **Cleanup old snapshots:**
+
   ```bash
   # Keep last 10 snapshots
   cd .rollback-snapshots/
@@ -398,23 +439,27 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 ## Checklist Summary
 
 **Pre-Deployment:**
+
 - ✅ Rollback system tested
 - ✅ All tests passing
 - ✅ Snapshot created
 - ✅ Team notified
 
 **Deployment:**
+
 - ✅ Code deployed
 - ✅ Dependencies installed
 - ✅ Initial validation passed
 
 **Post-Deployment:**
+
 - ✅ Full tests passing
 - ✅ Performance acceptable
 - ✅ Integration tests passed
 - ✅ Monitoring active
 
 **If Rollback:**
+
 - ✅ Rollback executed
 - ✅ Rollback validated
 - ✅ Team notified
@@ -424,18 +469,21 @@ Use this checklist for every v6 deployment to ensure safety and rollback readine
 
 ## Sign-Off
 
-**Deployed by:** _____________
-**Date:** _____________
-**Time:** _____________
-**Snapshot:** _____________
+**Deployed by:** ******\_******
+**Date:** ******\_******
+**Time:** ******\_******
+**Snapshot:** ******\_******
 **Rollback tested:** YES / NO
 **All tests passed:** YES / NO
 **Performance validated:** YES / NO
 
 **Notes:**
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+
+---
+
+---
+
+---
 
 ---
 
