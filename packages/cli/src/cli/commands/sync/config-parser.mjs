@@ -117,7 +117,8 @@ export async function parseConfig(configPath, options = {}) {
 
   const result = SyncConfigSchema.safeParse(resolved);
   if (!result.success) {
-    const errors = result.error.errors.map(e => ({
+    const zodErrors = result.error?.issues ?? result.error?.errors ?? [];
+    const errors = zodErrors.map(e => ({
       path: e.path,
       message: e.message,
       code: e.code,
@@ -282,8 +283,9 @@ export function resolveConfigPaths(config, baseDir) {
 
   if (resolved.templates) {
     resolved.templates = resolved.templates.map(t => ({
-      source: t.source,
-      output: t.output,
+      ...t,  // Preserve all original properties including name
+      source: resolve(baseDir, t.source),  // Resolve source path
+      output: t.output ? resolve(baseDir, t.output) : t.output,  // Resolve output path
       resolvedSource: resolve(baseDir, t.source),
       resolvedOutput: t.output ? resolve(baseDir, t.output) : t.output,
     }));
