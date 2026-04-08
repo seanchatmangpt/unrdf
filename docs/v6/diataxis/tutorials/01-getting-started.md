@@ -1,14 +1,14 @@
-# Getting Started with UNRDF v6
+# Getting Started with UNRDF
 
 **Time to Complete**: ~15 minutes
 **Prerequisites**: Node.js ≥18, basic knowledge of RDF
-**What You'll Learn**: Install v6, create your first receipt, run your first delta command
+**What You'll Learn**: Install UNRDF, create your first receipt, run your first delta command
 
 ---
 
-## What is UNRDF v6?
+## What is UNRDF?
 
-UNRDF v6 introduces a revolutionary **receipt-driven** architecture where every operation produces cryptographic proof of execution. This enables:
+UNRDF introduces a revolutionary **receipt-driven** architecture where every operation produces cryptographic proof of execution. This enables:
 
 - **Deterministic execution**: Same input → same output, always
 - **Auditable operations**: Full provenance chain for compliance
@@ -19,7 +19,7 @@ UNRDF v6 introduces a revolutionary **receipt-driven** architecture where every 
 
 ## Installation
 
-### Step 1: Install v6-core
+### Step 1: Install Core Packages
 
 ```bash
 # Using pnpm (recommended)
@@ -30,6 +30,7 @@ npm install @unrdf/v6-core @unrdf/oxigraph @unrdf/kgc-4d
 ```
 
 **Why these packages?**
+
 - `@unrdf/v6-core`: ΔGate control plane and CLI
 - `@unrdf/oxigraph`: High-performance SPARQL engine (replaces N3)
 - `@unrdf/kgc-4d`: Receipt engine (KGC = Knowledge Git Commits)
@@ -39,9 +40,12 @@ npm install @unrdf/v6-core @unrdf/oxigraph @unrdf/kgc-4d
 ### Step 2: Verify Installation
 
 ```bash
-# Check v6-core CLI is available
-npx kgc --version
-# Expected output: @unrdf/v6-core v6.0.0-alpha.1
+# Check CLI is available
+unrdf --version
+# Expected output: @unrdf/cli 26.4.8
+
+# Run health check
+unrdf doctor
 
 # Check available commands
 npx kgc --help
@@ -53,6 +57,7 @@ npx kgc --help
 ## Your First Receipt
 
 Receipts are the heart of v6. Every operation you perform generates a cryptographic receipt proving:
+
 - **What** happened (operation type)
 - **When** it happened (timestamp)
 - **Who** initiated it (agent)
@@ -74,14 +79,14 @@ const addWithReceipt = withReceipt(async (a, b) => {
 // Execute and get receipt
 const result = await addWithReceipt(5, 3);
 
-console.log('Result:', result.value);        // 8
-console.log('Receipt:', result.receipt);     // { hash: "sha256:...", timestamp: ..., inputs: [5, 3], output: 8 }
-console.log('Hash:', result.receipt.hash);   // Deterministic hash of this operation
+console.log('Result:', result.value); // 8
+console.log('Receipt:', result.receipt); // { hash: "sha256:...", timestamp: ..., inputs: [5, 3], output: 8 }
+console.log('Hash:', result.receipt.hash); // Deterministic hash of this operation
 
 // Verify the receipt
 import { verifyReceipt } from '@unrdf/v6-core/receipts';
 const isValid = await verifyReceipt(result.receipt);
-console.log('Receipt valid?', isValid);      // true
+console.log('Receipt valid?', isValid); // true
 ```
 
 Run it:
@@ -91,6 +96,7 @@ node first-receipt.mjs
 ```
 
 **Expected Output:**
+
 ```
 Result: 8
 Receipt: {
@@ -150,6 +156,7 @@ npx kgc delta verify --file my-first-delta.json
 ```
 
 **Expected Output:**
+
 ```
 ✅ Delta delta-001 is well-formed
 ✅ Preconditions satisfied
@@ -170,6 +177,7 @@ npx kgc delta apply --file my-first-delta.json --universe universe-abc123
 ```
 
 **Expected Output:**
+
 ```
 ✅ Delta delta-001 applied successfully
 Universe state hash (before): sha256:empty
@@ -188,6 +196,7 @@ npx kgc receipt verify --hash sha256:a1b2c3d4...
 ```
 
 **Output:**
+
 ```json
 {
   "hash": "sha256:a1b2c3d4...",
@@ -212,6 +221,7 @@ npx kgc receipt verify --hash sha256:a1b2c3d4...
 ```
 
 **Key Fields:**
+
 - `hash`: Unique identifier (deterministic)
 - `proof.merkleRoot`: Anchors this receipt to a blockchain-style merkle tree
 - `proof.chainOfCustody`: Links to parent receipts (creates a chain)
@@ -238,16 +248,16 @@ npx kgc universe restore --snapshot universe-abc123-<timestamp>
 
 ---
 
-## What's Different from v5?
+## What's Different from Legacy Versions?
 
-| Feature | v5 | v6 |
-|---------|----|----|
-| **Store** | `new Store()` from N3 | `createStore()` from Oxigraph |
-| **Receipts** | Optional, manual | Automatic, mandatory |
-| **Validation** | Runtime errors | Zod schemas (compile-time + runtime) |
-| **CLI** | Package-specific | Unified `kgc <noun> <verb>` |
-| **Determinism** | Best-effort | Guaranteed (L3+) |
-| **Maturity** | None | L1-L5 ladder enforced |
+| Feature         | Legacy                | Current                              |
+| --------------- | --------------------- | ------------------------------------ |
+| **Store**       | `new Store()` from N3 | `createStore()` from Oxigraph        |
+| **Receipts**    | Optional, manual      | Automatic, mandatory                 |
+| **Validation**  | Runtime errors        | Zod schemas (compile-time + runtime) |
+| **CLI**         | Package-specific      | Unified `unrdf <noun> <verb>`        |
+| **Determinism** | Best-effort           | Guaranteed (L3+)                     |
+| **Maturity**    | None                  | L1-L5 ladder enforced                |
 
 ---
 
@@ -255,28 +265,29 @@ npx kgc universe restore --snapshot universe-abc123-<timestamp>
 
 Now that you've completed the basics, try:
 
-1. **[How-To: Migrate a v5 Package to v6](../how-to/01-migrate-v5-to-v6.md)**
+1. **[How-To: Migrate a Legacy Package](../how-to/01-migrate-from-legacy.md)**
    Step-by-step guide to migrating existing code
 
 2. **[How-To: Compose Cross-Package Deltas](../how-to/02-compose-deltas.md)**
    Build complex changes from simple deltas
 
-3. **[Explanation: Why ΔGate Architecture?](../explanation/01-deltagate-architecture.md)**
+3. **[Explanation: Why Receipt Architecture?](../explanation/01-receipt-architecture.md)**
    Deep dive into the theoretical foundations
 
 4. **[Reference: CLI Command Matrix](../reference/01-cli-command-matrix.md)**
-   Complete reference for all 10 nouns × 25 verbs
+   Complete reference for all commands
 
 ---
 
 ## Troubleshooting
 
-### "Cannot find module '@unrdf/v6-core'"
+### "Cannot find package"
 
-**Solution**: Ensure you're using Node.js ≥18 and have installed v6-core:
+**Solution**: Ensure you're using Node.js ≥18 and have installed the packages:
+
 ```bash
 node --version  # Should be ≥18.0.0
-pnpm install @unrdf/v6-core
+pnpm install
 ```
 
 ### "Receipt verification failed"
@@ -287,11 +298,12 @@ pnpm install @unrdf/v6-core
 
 ### "Delta preconditions not satisfied"
 
-**Cause**: Universe state doesn't match expected preconditions
+**Cause**: Store state doesn't match expected preconditions
 
-**Solution**: Verify universe state before applying delta:
+**Solution**: Verify store state before applying delta:
+
 ```bash
-npx kgc universe verify --id <universe-id>
+unrdf store verify
 ```
 
 ---
@@ -300,10 +312,10 @@ npx kgc universe verify --id <universe-id>
 
 You've learned:
 
-✅ How to install UNRDF v6
+✅ How to install UNRDF
 ✅ How to create and verify receipts
-✅ How to use the unified `kgc` CLI
+✅ How to use the CLI
 ✅ How to create, verify, and apply deltas
-✅ How to freeze/restore universes with KGC-4D
+✅ How to freeze/restore stores
 
-**Next**: [How-To: Migrate Your First Package →](../how-to/01-migrate-v5-to-v6.md)
+**Next**: [How-To: Migrate Your First Package →](../how-to/01-migrate-from-legacy.md)

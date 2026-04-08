@@ -44,8 +44,8 @@ unrdf doctor
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  Phase 1: Foundations      (30-60 min)  ← START HERE          │
-│  ├─ Tutorial: Getting Started with v6                          │
-│  ├─ How-to: Migrate v5 to v6                                    │
+│  ├─ Tutorial: Getting Started                                    │
+│  ├─ How-to: Migrate from Legacy Versions                        │
 │  └─ Explanation: O* Innovations Architecture                    │
 │                                                                 │
 │  Phase 2: Core Skills      (2-4 hours)                           │
@@ -74,16 +74,16 @@ unrdf doctor
 
 ### Goal: Set up your environment and understand core concepts
 
-### 1.1 Tutorial: Getting Started with v6
+### 1.1 Tutorial: Getting Started
 
-**File:** [`docs/v6/diataxis/tutorials/01-getting-started-v6.md`](tutorials/01-getting-started-v6.md)
+**File:** [`docs/v6/diataxis/tutorials/01-getting-started.md`](tutorials/01-getting-started.md)
 
 **What You'll Learn:**
 
 - Install UNRDF CLI and verify setup
 - Create your first RDF store
 - Run basic SPARQL queries
-- Understand the v6 architecture
+- Understand the architecture
 
 **Commands:**
 
@@ -114,24 +114,24 @@ unrdf daemon start
 
 ---
 
-### 1.2 How-to: Migrate from v5 to v6
+### 1.2 How-to: Migrate from Legacy Versions
 
-**File:** [`docs/v6/diataxis/how-to/01-migrate-v5-to-v6.md`](how-to/01-migrate-v5-to-v6.md)
+**File:** [`docs/v6/diataxis/how-to/01-migrate-from-legacy.md`](how-to/01-migrate-from-legacy.md)
 
 **What You'll Learn:**
 
-- Key differences between v5 and v6
+- Key differences between legacy and current versions
 - Breaking changes and migration steps
-- Update your code for v6 APIs
+- Update your code for current APIs
 - Migrate receipts and chains
 
 **Key Changes:**
 
 ```javascript
-// v5 approach (deprecated)
+// Legacy approach (deprecated)
 const store = new Store();
 
-// v6 approach (current)
+// Current approach
 import { createStore } from '@unrdf/core';
 const store = await createStore();
 ```
@@ -674,11 +674,11 @@ export FEDERATION_QUORUM_THRESHOLD=0.6     # Consensus threshold
 
 ### Tutorials
 
-- **Getting Started:** [`docs/v6/diataxis/tutorials/01-getting-started-v6.md`](tutorials/01-getting-started-v6.md)
+- **Getting Started:** [`docs/v6/diataxis/tutorials/01-getting-started.md`](tutorials/01-getting-started.md)
 
 ### How-to Guides
 
-- **Migrate v5 to v6:** [`docs/v6/diataxis/how-to/01-migrate-v5-to-v6.md`](how-to/01-migrate-v5-to-v6.md)
+- **Migrate from Legacy:** [`docs/v6/diataxis/how-to/01-migrate-from-legacy.md`](how-to/01-migrate-from-legacy.md)
 - **Compose Deltas:** [`docs/v6/diataxis/how-to/02-compose-deltas.md`](how-to/02-compose-deltas.md)
 - **Verify Receipt Chain:** [`docs/v6/diataxis/how-to/03-verify-receipt-chain.md`](how-to/03-verify-receipt-chain.md)
 - **Implement L5 Maturity:** [`docs/v6/diataxis/how-to/04-implement-l5-maturity.md`](how-to/04-implement-l5-maturity.md)

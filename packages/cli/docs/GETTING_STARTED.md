@@ -586,7 +586,39 @@ Reuse filters and avoid duplicating logic:
 - **Command help:** `pnpm unrdf template generate --help`
 - **Full reference:** [template-command.md](./template-command.md)
 - **Sync command:** [sync-command.md](./sync-command.md)
+- **Doctor diagnostics:** [doctor-command.md](./doctor-command.md)
 - **Report issues:** GitHub Issues on [@unrdf/cli](https://github.com/unrdf/cli)
+
+## Environment Validation
+
+Before starting development, verify your environment is properly configured:
+
+```bash
+# Quick health check (30 seconds)
+unrdf doctor
+
+# Full diagnostics with quality checks
+unrdf doctor --mode standard
+
+# Auto-fix safe issues
+unrdf doctor --fix
+
+# Continuous monitoring
+unrdf doctor --watch
+```
+
+**What doctor checks:**
+
+- ✅ Node.js version (>= 18.0.0)
+- ✅ pnpm version (>= 7.0.0)
+- ✅ Build artifacts status
+- ✅ MCP server status
+- ✅ RDF store accessibility
+- ✅ Port availability
+- ✅ Code quality (coverage, lint, file size)
+- ✅ External integrations (federation, OTEL, Docker)
+
+See [doctor-command.md](./doctor-command.md) for complete documentation on diagnostics and troubleshooting.
 
 ---
 

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: unrdf-doctor-check
+  namespace: unrdf-observability
+spec:
+  template:
+    spec:
+      containers:
+        - name: doctor
+          image: node:25-slim
+          command: ['/bin/sh', '-c']
+          args:
+            - |
+              echo "Installing UNRDF CLI..."
+              npm install -g @unrdf/cli || true
+
+              echo "Running UNRDF Doctor..."
+              unrdf doctor --mode quick --format json
+
+              echo "Doctor check complete"
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: NPM_CONFIG_REGISTRY
+              value: https://registry.npmjs.org/
+      restartPolicy: Never
+      backoffLimit: 0
+  activeDeadlineSeconds: 300

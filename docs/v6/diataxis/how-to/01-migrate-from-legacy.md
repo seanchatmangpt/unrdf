@@ -36,6 +36,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ## Step 2: Update package.json
 
 ### Before (v5):
+
 ```json
 {
   "name": "@unrdf/example-package",
@@ -57,6 +58,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ```
 
 ### After (v6):
+
 ```json
 {
   "name": "@unrdf/example-package",
@@ -85,6 +87,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ```
 
 **Key Changes:**
+
 - ✅ `"type": "module"` (Pure ESM)
 - ✅ Direct source exports (no build step)
 - ✅ Oxigraph + KGC-4D dependencies
@@ -96,6 +99,7 @@ pnpm add @unrdf/v6-compat @unrdf/oxigraph @unrdf/kgc-4d
 ## Step 3: Migrate Store Initialization
 
 ### Before (v5):
+
 ```javascript
 import { Store } from 'n3';
 
@@ -106,6 +110,7 @@ function createGraph() {
 ```
 
 ### After (v6):
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 import { withReceipt } from '@unrdf/v6-core/receipts';
@@ -121,6 +126,7 @@ console.log('Store created, receipt:', receipt.hash);
 ```
 
 **Why the change?**
+
 - Oxigraph is 10x faster than N3 for SPARQL
 - `withReceipt()` wraps function to generate execution proof
 - Async initialization allows for WASM loading
@@ -132,6 +138,7 @@ console.log('Store created, receipt:', receipt.hash);
 All public functions must have Zod schemas in v6.
 
 ### Before (v5):
+
 ```javascript
 export function processData(data) {
   // No validation
@@ -140,15 +147,18 @@ export function processData(data) {
 ```
 
 ### After (v6):
+
 ```javascript
 import { z } from 'zod';
 
 const ProcessDataSchema = z.object({
   value: z.number().positive(),
-  metadata: z.object({
-    source: z.string(),
-    timestamp: z.number().int()
-  }).optional()
+  metadata: z
+    .object({
+      source: z.string(),
+      timestamp: z.number().int(),
+    })
+    .optional(),
 });
 
 export const processData = withReceipt(function processData(data) {
@@ -158,7 +168,10 @@ export const processData = withReceipt(function processData(data) {
 
 // Usage with validation
 try {
-  const { value, receipt } = await processData({ value: 42, metadata: { source: 'api', timestamp: Date.now() } });
+  const { value, receipt } = await processData({
+    value: 42,
+    metadata: { source: 'api', timestamp: Date.now() },
+  });
   console.log('Result:', value); // 84
 } catch (error) {
   console.error('Validation failed:', error.errors);
@@ -166,6 +179,7 @@ try {
 ```
 
 **Auto-generate schemas** from TypeScript types:
+
 ```bash
 npx @unrdf/v6-compat schema-generator --input src/types.ts --output src/schemas.mjs
 ```
@@ -175,19 +189,21 @@ npx @unrdf/v6-compat schema-generator --input src/types.ts --output src/schemas.
 ## Step 5: Migrate Hooks (If Applicable)
 
 ### Before (v5):
+
 ```javascript
 import { defineHook } from '@unrdf/hooks';
 
 const validateHook = defineHook({
   name: 'validate-commit',
-  handler: async (context) => {
+  handler: async context => {
     // Validation logic
     return context.valid;
-  }
+  },
 });
 ```
 
 ### After (v6):
+
 ```javascript
 import { defineHook } from '@unrdf/hooks';
 import { z } from 'zod';
@@ -195,18 +211,18 @@ import { z } from 'zod';
 const HookContextSchema = z.object({
   commit: z.string(),
   files: z.array(z.string()),
-  valid: z.boolean()
+  valid: z.boolean(),
 });
 
 const validateHook = defineHook({
   name: 'validate-commit',
-  schema: HookContextSchema,          // Required in v6
-  receipt: true,                      // Generate receipt
-  handler: async (context) => {
+  schema: HookContextSchema, // Required in v6
+  receipt: true, // Generate receipt
+  handler: async context => {
     const validated = HookContextSchema.parse(context);
     // Validation logic
     return validated.valid;
-  }
+  },
 });
 
 // Activate hook explicitly
@@ -214,7 +230,7 @@ import { activateHook } from '@unrdf/hooks';
 const { value, receipt } = await activateHook(validateHook, {
   commit: 'abc123',
   files: ['src/index.mjs'],
-  valid: true
+  valid: true,
 });
 ```
 
@@ -223,18 +239,20 @@ const { value, receipt } = await activateHook(validateHook, {
 ## Step 6: Migrate Federation Queries (If Applicable)
 
 ### Before (v5):
+
 ```javascript
 const results = await federation.query('SELECT * WHERE { ?s ?p ?o }');
 ```
 
 ### After (v6):
+
 ```javascript
 import { sparql } from '@unrdf/federation';
 
 const results = await federation.query(
   sparql`SELECT * WHERE { ?s ?p ?o }`
-    .timeout(5000)      // Required timeout guard
-    .receipt(true)      // Generate receipt
+    .timeout(5000) // Required timeout guard
+    .receipt(true) // Generate receipt
 );
 
 // Receipt available after query
@@ -242,6 +260,7 @@ console.log('Query receipt:', results.receipt.hash);
 ```
 
 **Or use compatibility adapter:**
+
 ```javascript
 import { querySparql } from '@unrdf/v6-compat/adapters';
 
@@ -254,11 +273,12 @@ const results = await querySparql(federation, 'SELECT * WHERE { ?s ?p ?o }');
 ## Step 7: Migrate Streaming (If Applicable)
 
 ### Before (v5 - EventEmitter):
+
 ```javascript
-stream.on('data', (quad) => {
+stream.on('data', quad => {
   console.log('Quad:', quad);
 });
-stream.on('error', (err) => {
+stream.on('error', err => {
   console.error('Error:', err);
 });
 stream.on('end', () => {
@@ -267,6 +287,7 @@ stream.on('end', () => {
 ```
 
 ### After (v6 - AsyncIterator):
+
 ```javascript
 try {
   for await (const quad of stream) {
@@ -283,6 +304,7 @@ try {
 ```
 
 **Or use compatibility adapter:**
+
 ```javascript
 import { streamToAsync } from '@unrdf/v6-compat/adapters';
 
@@ -299,6 +321,7 @@ for await (const quad of asyncStream) {
 Add v6-specific ESLint rules to catch migration issues:
 
 Create `.eslintrc.json`:
+
 ```json
 {
   "extends": ["@unrdf/eslint-config"],
@@ -314,11 +337,13 @@ Create `.eslintrc.json`:
 ```
 
 Run linter:
+
 ```bash
 npx eslint src/**/*.mjs
 ```
 
 **Fix common issues:**
+
 - ❌ `import { Store } from 'n3'` → ✅ `import { createStore } from '@unrdf/oxigraph'`
 - ❌ `Date.now()` in business logic → ✅ Pass timestamp as parameter
 - ❌ `workflow.run()` → ✅ `workflow.execute()`
@@ -328,6 +353,7 @@ npx eslint src/**/*.mjs
 ## Step 9: Update Tests
 
 ### Before (v5 - Jest):
+
 ```javascript
 describe('processData', () => {
   it('should double the value', () => {
@@ -337,12 +363,16 @@ describe('processData', () => {
 ```
 
 ### After (v6 - Node Test Runner):
+
 ```javascript
 import { test } from 'node:test';
 import assert from 'node:assert';
 
 test('processData should double the value and generate receipt', async () => {
-  const { value, receipt } = await processData({ value: 5, metadata: { source: 'test', timestamp: 1704067200000 } });
+  const { value, receipt } = await processData({
+    value: 5,
+    metadata: { source: 'test', timestamp: 1704067200000 },
+  });
 
   assert.strictEqual(value, 10);
   assert.ok(receipt.hash.startsWith('sha256:'));
@@ -351,6 +381,7 @@ test('processData should double the value and generate receipt', async () => {
 ```
 
 Run tests:
+
 ```bash
 npm test
 ```
@@ -382,6 +413,7 @@ timeout 5s grep -r "withReceipt\|receipt:" src/ --include="*.mjs" | wc -l
 ```
 
 **Expected Results:**
+
 ```
 0  # No N3 imports
 0  # No v5 Store usage
@@ -402,6 +434,7 @@ npx @unrdf/v6-compat migration-report --package @unrdf/example-package
 ```
 
 **Output:**
+
 ```json
 {
   "package": "@unrdf/example-package",
@@ -441,6 +474,7 @@ Save this receipt to prove migration completion!
 ### "Module not found: @unrdf/oxigraph"
 
 **Solution**: Ensure workspace dependencies are linked:
+
 ```bash
 pnpm install --force
 ```
@@ -450,6 +484,7 @@ pnpm install --force
 **Cause**: Input doesn't match schema
 
 **Solution**: Check schema definition and input structure:
+
 ```javascript
 console.log('Schema:', ProcessDataSchema.shape);
 console.log('Input:', data);
@@ -460,6 +495,7 @@ console.log('Input:', data);
 **Cause**: Non-deterministic input (e.g., `Date.now()`)
 
 **Solution**: Pass timestamp as parameter:
+
 ```javascript
 // ❌ Non-deterministic
 const timestamp = Date.now();

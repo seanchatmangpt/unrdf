@@ -153,6 +153,35 @@ The command reads your RDF ontology, executes the SPARQL query against it, and r
 - `unrdf hook eval --policy <path>` - Evaluate hook policy
 - `unrdf hook validate --policy <path>` - Validate hook configuration
 
+### Diagnostics & Health Checks
+
+- `unrdf doctor` - Comprehensive health check for development environment and system state
+  - `--mode quick` - Fast checks (30s): environment + system
+  - `--mode standard` - Standard checks (2min): adds code quality
+  - `--mode full` - Full diagnostics (5min): includes integrations
+  - `--category <name>` - Run specific category: env, system, quality, integration
+  - `--format json` - Output as JSON for CI/CD integration
+  - `--fix` - Attempt automatic fixes for safe issues
+  - `--watch` - Continuous monitoring mode (5s refresh)
+
+**Example:**
+
+```bash
+# Quick health check
+unrdf doctor
+
+# Auto-fix safe issues
+unrdf doctor --fix
+
+# Check code quality only
+unrdf doctor --category quality
+
+# Continuous monitoring
+unrdf doctor --watch
+```
+
+See [docs/doctor-command.md](./docs/doctor-command.md) for complete diagnostics documentation.
+
 ### Code Generation
 
 - `unrdf sync [--config <path>]` - Generate code from RDF ontology (see above)

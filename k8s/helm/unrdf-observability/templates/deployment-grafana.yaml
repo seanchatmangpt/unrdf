@@ -62,6 +62,13 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 30
       volumes:
         - name: dashboards-config
           configMap:
