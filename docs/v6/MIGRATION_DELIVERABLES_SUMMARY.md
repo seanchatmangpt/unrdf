@@ -1,14 +1,14 @@
-# UNRDF V6 Migration Deliverables Summary
+# UNRDF Migration Deliverables Summary
 
 **Created**: 2025-12-27
 **Status**: ✅ COMPLETE
-**Version**: v6.0.0-alpha.1 → v6.0.0
+**Version**: 6.0.0-alpha.1 → 6.0.0
 
 ---
 
 ## Overview
 
-This document summarizes all deliverables for the UNRDF v6 migration strategy, providing a comprehensive roadmap from current version (v6.0.0-alpha.1) to stable release (v6.0.0).
+This document summarizes all deliverables for the UNRDF migration strategy, providing a comprehensive roadmap from current version (6.0.0-alpha.1) to stable release (6.0.0).
 
 **Mission**: Create comprehensive migration strategy with automation scripts, guides, and validation tools.
 
@@ -21,6 +21,7 @@ This document summarizes all deliverables for the UNRDF v6 migration strategy, p
 **File**: `/home/user/unrdf/docs/v6/MIGRATION_PLAN.md`
 **Status**: Already existed, referenced and enhanced
 **Content**:
+
 - Phase 1-5 deprecation timeline
 - Breaking changes summary (7 major areas)
 - Package-by-package migration checklist (Tier 1-6)
@@ -30,8 +31,9 @@ This document summarizes all deliverables for the UNRDF v6 migration strategy, p
 - Success criteria
 
 **Key Features**:
+
 - 4-phase rollout: Alpha → Beta → RC → Stable
-- 6-month v5/v6 dual support period
+- 6-month v5 → current dual support period
 - Maturity ladder enforcement (L1-L5)
 - Receipt-driven operations
 - Pure ESM migration
@@ -42,9 +44,10 @@ This document summarizes all deliverables for the UNRDF v6 migration strategy, p
 
 #### 2.1 Automated Code Transformation
 
-**File**: `/home/user/unrdf/scripts/migrate-to-v6.mjs`
+**File**: `/home/user/unrdf/scripts/migrate.mjs`
 **Size**: 16KB, 560 lines
 **Features**:
+
 - ✅ Automated Store initialization migration (N3 → Oxigraph)
 - ✅ Import path updates (centralized N3 imports)
 - ✅ Async/await wrapper injection
@@ -57,21 +60,23 @@ This document summarizes all deliverables for the UNRDF v6 migration strategy, p
 - ✅ Batch processing (all packages or single package)
 
 **Usage Examples**:
+
 ```bash
 # Dry run (safe preview)
-node scripts/migrate-to-v6.mjs --all --dry-run --report preview.json
+node scripts/migrate.mjs --all --dry-run --report preview.json
 
 # Migrate all packages
-node scripts/migrate-to-v6.mjs --all --report migration-report.json
+node scripts/migrate.mjs --all --report migration-report.json
 
 # Migrate single package
-node scripts/migrate-to-v6.mjs --package packages/my-app
+node scripts/migrate.mjs --package packages/my-app
 
 # Verbose logging
-node scripts/migrate-to-v6.mjs --all --verbose
+node scripts/migrate.mjs --all --verbose
 ```
 
 **Transformation Patterns**:
+
 1. Store Init: `new Store()` → `await createStore()`
 2. Imports: `from 'n3'` → `from '@unrdf/oxigraph'` or `'@unrdf/core/rdf/n3-justified-only'`
 3. DataFactory: `DataFactory` → `dataFactory` (lowercase)
@@ -79,6 +84,7 @@ node scripts/migrate-to-v6.mjs --all --verbose
 5. Config: Add `type: "module"`, update engines
 
 **Output Example**:
+
 ```
 MIGRATION SUMMARY
 ============================================================
@@ -94,9 +100,10 @@ Errors: 0
 
 #### 2.2 Migration Validation
 
-**File**: `/home/user/unrdf/scripts/validate-v6-migration.mjs`
+**File**: `/home/user/unrdf/scripts/validate-migration.mjs`
 **Size**: 14KB, 470 lines
 **Features**:
+
 - ✅ Critical checks (must pass for migration success)
   - No direct N3 imports
   - No v5 Store constructors
@@ -112,21 +119,23 @@ Errors: 0
 - ✅ Exit codes (0 = pass, 1 = critical failure)
 
 **Usage Examples**:
+
 ```bash
 # Full validation
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # Quick validation (skip benchmarks)
-node scripts/validate-v6-migration.mjs --quick
+node scripts/validate-migration.mjs --quick
 
 # Skip specific checks
-node scripts/validate-v6-migration.mjs --skip-tests --skip-otel
+node scripts/validate-migration.mjs --skip-tests --skip-otel
 
 # Custom output file
-node scripts/validate-v6-migration.mjs --output validation.json
+node scripts/validate-migration.mjs --output validation.json
 ```
 
 **Validation Report**:
+
 ```json
 {
   "timestamp": "2025-12-27T...",
@@ -150,8 +159,9 @@ node scripts/validate-v6-migration.mjs --output validation.json
 **Status**: Enhanced with additional adapters
 
 **Files**:
+
 1. **`adapters.mjs`** (9.8KB) - Already existed, reviewed and validated
-   - `createStore()` - v5 Store → v6 Oxigraph
+   - `createStore()` - Legacy Store → Oxigraph
    - `wrapWorkflow()` - Add receipt generation
    - `wrapFederation()` - String queries → template literals
    - `streamToAsync()` - EventEmitter → AsyncIterator
@@ -159,11 +169,12 @@ node scripts/validate-v6-migration.mjs --output validation.json
    - `validateSchema()` - Zod validation helper
    - `MigrationTracker` - Track deprecation warnings
 
-2. **`lint-rules.mjs`** (6.9KB) - ESLint rules for v6 patterns
+2. **`lint-rules.mjs`** (6.9KB) - ESLint rules for current version patterns
 3. **`schema-generator.mjs`** (5.2KB) - Auto-generate Zod schemas
 4. **`index.mjs`** (873B) - Package exports
 
 **Key Features**:
+
 - Deprecation warnings with migration hints
 - Automatic receipt generation for v5 code
 - Performance tracking (timing, duration)
@@ -171,6 +182,7 @@ node scripts/validate-v6-migration.mjs --output validation.json
 - Zero breaking changes (compatibility maintained)
 
 **Example Usage**:
+
 ```javascript
 import { createStore } from '@unrdf/v6-compat/adapters';
 
@@ -189,6 +201,7 @@ const store = await createStore();
 **Status**: ✅ COMPLETE - Comprehensive step-by-step guide
 
 **Table of Contents**:
+
 1. Pre-Migration Checklist
 2. Quick Start (Automated)
 3. Manual Migration Steps (7 steps)
@@ -200,12 +213,14 @@ const store = await createStore();
 9. Appendix (API mapping reference)
 
 **Scenarios Covered**:
+
 - ✅ Simple Node.js script
 - ✅ Express API server
 - ✅ React application
 - ✅ Vitest tests
 
 **Troubleshooting Guide**:
+
 - ✅ "Cannot use import statement" → Add type=module
 - ✅ "createStore is not a function" → Fix import path
 - ✅ "Top-level await not supported" → Use async IIFE
@@ -213,6 +228,7 @@ const store = await createStore();
 - ✅ OTEL validation failing → Receipt wrappers
 
 **Validation Commands**:
+
 ```bash
 # 1. All tests pass
 timeout 20s pnpm test
@@ -231,14 +247,15 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
 
 ### 5. Comprehensive Strategic Plan ✅
 
-**File**: `/home/user/unrdf/docs/v6/V6_MIGRATION_STRATEGY.md`
+**File**: `/home/user/unrdf/docs/v6/MIGRATION_STRATEGY.md`
 **Size**: 15KB, 750+ lines
 **Status**: ✅ COMPLETE - Executive-level strategic plan
 
 **Contents**:
+
 1. **Executive Summary**
-   - v6 vision and goals
-   - Current state (v6.0.0-alpha.1)
+   - Architecture vision and goals
+   - Current state (6.0.0-alpha.1)
    - 4-phase timeline (16 weeks)
 
 2. **Phase Breakdown**
@@ -282,10 +299,11 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
    - Launch communications
 
 **Key Timelines**:
-- Alpha (v6.0.0-alpha.1): Current state
-- Beta (v6.0.0-beta.1): Week 10
-- RC (v6.0.0-rc.1): Week 14
-- Stable (v6.0.0): Week 16
+
+- Alpha (6.0.0-alpha.1): Current state
+- Beta (6.0.0-beta.1): Week 10
+- RC (6.0.0-rc.1): Week 14
+- Stable (6.0.0): Week 16
 - v5 EOL: October 2025 (6 months post-launch)
 
 ---
@@ -295,6 +313,7 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
 ### Current State Analysis
 
 **Ran Commands** (Following CLAUDE.md):
+
 ```bash
 # 1. Check current version
 cat package.json | grep version
@@ -313,18 +332,19 @@ grep -r "new Store()" packages/*/src --include="*.mjs" | wc -l
 # Result: 6 occurrences (need migration)
 
 # 5. Run validation script
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 # Result: PASSED_WITH_WARNINGS (some packages need migration)
 ```
 
 **Test Execution** (MEASURED):
+
 ```bash
 # Migration script works
-node scripts/migrate-to-v6.mjs
+node scripts/migrate.mjs
 # ✅ Shows usage, no syntax errors
 
 # Validation script works
-node scripts/validate-v6-migration.mjs --quick
+node scripts/validate-migration.mjs --quick
 # ✅ Runs checks, generates report
 ```
 
@@ -334,12 +354,12 @@ node scripts/validate-v6-migration.mjs --quick
 
 ### Created Files
 
-1. **`/home/user/unrdf/scripts/migrate-to-v6.mjs`** (16KB)
+1. **`/home/user/unrdf/scripts/migrate.mjs`** (16KB)
    - Automated migration script
    - 560 lines, fully executable
    - Tested: ✅ Works (shows usage)
 
-2. **`/home/user/unrdf/scripts/validate-v6-migration.mjs`** (14KB)
+2. **`/home/user/unrdf/scripts/validate-migration.mjs`** (14KB)
    - Validation and reporting
    - 470 lines, fully executable
    - Tested: ✅ Works (runs checks)
@@ -349,7 +369,7 @@ node scripts/validate-v6-migration.mjs --quick
    - 750+ lines, comprehensive
    - Covers: Pre-checks, automation, manual steps, troubleshooting, rollback
 
-4. **`/home/user/unrdf/docs/v6/V6_MIGRATION_STRATEGY.md`** (15KB)
+4. **`/home/user/unrdf/docs/v6/MIGRATION_STRATEGY.md`** (15KB)
    - Strategic planning document
    - 750+ lines, executive-level
    - Covers: Phases, timelines, resources, metrics, communication
@@ -380,6 +400,7 @@ node scripts/validate-v6-migration.mjs --quick
 ### Deliverable Quality
 
 **Following CLAUDE.md Principles**:
+
 - ✅ **Evidence-Based**: All scripts tested with timeout commands
 - ✅ **Batched Operations**: Created all files in coordinated passes
 - ✅ **Measured**: Validated file sizes, line counts, functionality
@@ -401,6 +422,7 @@ node scripts/validate-v6-migration.mjs --quick
 ### Automation Coverage
 
 **What's Automated**:
+
 - ✅ Code transformations (Store, imports, async, queries)
 - ✅ Package.json updates (type, engines, dependencies)
 - ✅ Validation checks (12 different checks)
@@ -408,6 +430,7 @@ node scripts/validate-v6-migration.mjs --quick
 - ✅ Backup creation (safety)
 
 **What Requires Manual Work**:
+
 - Zod schema creation (80% automated via schema-generator.mjs)
 - Complex business logic migrations (case-by-case)
 - Documentation updates (examples, guides)
@@ -423,29 +446,29 @@ node scripts/validate-v6-migration.mjs --quick
 
 ```bash
 # 1. Preview changes
-node scripts/migrate-to-v6.mjs --all --dry-run --report preview.json
+node scripts/migrate.mjs --all --dry-run --report preview.json
 
 # 2. Review preview
 cat preview.json | jq '.summary'
 
 # 3. Apply migration
-node scripts/migrate-to-v6.mjs --all --report migration.json
+node scripts/migrate.mjs --all --report migration.json
 
 # 4. Install dependencies
 pnpm install
 
 # 5. Validate migration
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # 6. Fix issues (if any)
 # ... manual edits ...
 
 # 7. Re-validate
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # 8. Commit
 git add .
-git commit -m "chore: Migrate to UNRDF v6"
+git commit -m "chore: Migrate to UNRDF current version"
 ```
 
 **Expected Time**: 30 minutes - 2 hours (depending on package complexity)
@@ -460,20 +483,20 @@ for pkg in packages/*; do
   echo "Migrating $pkg..."
 
   # 1. Dry run
-  node scripts/migrate-to-v6.mjs --package $pkg --dry-run
+  node scripts/migrate.mjs --package $pkg --dry-run
 
   # 2. Review and apply
-  node scripts/migrate-to-v6.mjs --package $pkg
+  node scripts/migrate.mjs --package $pkg
 
   # 3. Test immediately
   cd $pkg && pnpm test && cd ../..
 
   # 4. Validate
-  node scripts/validate-v6-migration.mjs --package $pkg
+  node scripts/validate-migration.mjs --package $pkg
 
   # 5. Commit
   git add $pkg
-  git commit -m "chore: Migrate $pkg to v6"
+  git commit -m "chore: Migrate $pkg to current version"
 done
 ```
 
@@ -491,7 +514,7 @@ cat docs/v6/MIGRATION_GUIDE.md
 # ... make changes ...
 
 # 3. Validate
-node scripts/validate-v6-migration.mjs
+node scripts/validate-migration.mjs
 
 # 4. Troubleshoot if needed
 # Reference: MIGRATION_GUIDE.md > Troubleshooting section
@@ -506,9 +529,10 @@ node scripts/validate-v6-migration.mjs
 ### Immediate (Week 1)
 
 1. **Test migration scripts on pilot packages**
+
    ```bash
-   node scripts/migrate-to-v6.mjs --package packages/oxigraph --dry-run
-   node scripts/migrate-to-v6.mjs --package packages/core --dry-run
+   node scripts/migrate.mjs --package packages/oxigraph --dry-run
+   node scripts/migrate.mjs --package packages/core --dry-run
    ```
 
 2. **Gather feedback from early adopters**
@@ -518,7 +542,7 @@ node scripts/validate-v6-migration.mjs
 
 3. **Run full validation suite**
    ```bash
-   node scripts/validate-v6-migration.mjs --output week1-validation.json
+   node scripts/validate-migration.mjs --output week1-validation.json
    ```
 
 ### Short-term (Weeks 2-4)
@@ -533,14 +557,14 @@ node scripts/validate-v6-migration.mjs
    - Improve error messages
    - Add progress indicators
 
-3. **Release v6.0.0-alpha.2**
+3. **Release 6.0.0-alpha.2**
    - Include all migration tooling
    - Update documentation
    - Announce to community
 
 ### Medium-term (Weeks 5-16)
 
-1. **Execute Phases 2-4** (per V6_MIGRATION_STRATEGY.md)
+1. **Execute Phases 2-4** (per MIGRATION_STRATEGY.md)
    - Beta (Weeks 5-10)
    - RC (Weeks 11-14)
    - Stable (Weeks 15-16)
@@ -561,21 +585,21 @@ node scripts/validate-v6-migration.mjs
 
 ### Technical Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|------------|--------|------------|
-| Breaking changes break production | Medium | High | Compat layer + 6-month dual support |
-| Performance regressions | Low | Medium | Automated benchmarking + rollback |
-| Migration scripts corrupt data | Low | Critical | Backup files + dry-run mode |
-| OTEL validation fails | Medium | Medium | Manual receipt wrappers |
+| Risk                              | Probability | Impact   | Mitigation                          |
+| --------------------------------- | ----------- | -------- | ----------------------------------- |
+| Breaking changes break production | Medium      | High     | Compat layer + 6-month dual support |
+| Performance regressions           | Low         | Medium   | Automated benchmarking + rollback   |
+| Migration scripts corrupt data    | Low         | Critical | Backup files + dry-run mode         |
+| OTEL validation fails             | Medium      | Medium   | Manual receipt wrappers             |
 
 ### Project Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|------------|--------|------------|
-| Timeline slips | Medium | Medium | Phase-by-phase go/no-go |
-| Resource constraints | Low | Medium | Automation reduces manual work |
-| Community resistance | Low | High | Clear communication + migration help |
-| Competing priorities | Medium | Low | Fixed scope, no scope creep |
+| Risk                 | Probability | Impact | Mitigation                           |
+| -------------------- | ----------- | ------ | ------------------------------------ |
+| Timeline slips       | Medium      | Medium | Phase-by-phase go/no-go              |
+| Resource constraints | Low         | Medium | Automation reduces manual work       |
+| Community resistance | Low         | High   | Clear communication + migration help |
+| Competing priorities | Medium      | Low    | Fixed scope, no scope creep          |
 
 ---
 
@@ -614,7 +638,7 @@ The migration strategy is **production-ready** and can be executed immediately:
 
 ```bash
 # Start migration now
-node scripts/migrate-to-v6.mjs --all --dry-run
+node scripts/migrate.mjs --all --dry-run
 ```
 
 ---
@@ -631,11 +655,11 @@ node scripts/migrate-to-v6.mjs --all --dry-run
 ```
 /home/user/unrdf/
 ├── scripts/
-│   ├── migrate-to-v6.mjs              (NEW, 16KB, 560 lines)
-│   └── validate-v6-migration.mjs      (NEW, 14KB, 470 lines)
+│   ├── migrate.mjs              (NEW, 16KB, 560 lines)
+│   └── validate-migration.mjs      (NEW, 14KB, 470 lines)
 ├── docs/v6/
 │   ├── MIGRATION_GUIDE.md             (NEW, 17KB, 750+ lines)
-│   ├── V6_MIGRATION_STRATEGY.md       (NEW, 15KB, 750+ lines)
+│   ├── MIGRATION_STRATEGY.md       (NEW, 15KB, 750+ lines)
 │   ├── MIGRATION_DELIVERABLES_SUMMARY.md (NEW, this file)
 │   ├── MIGRATION_PLAN.md              (EXISTING, referenced)
 │   └── MATURITY_LADDER.md             (EXISTING, referenced)

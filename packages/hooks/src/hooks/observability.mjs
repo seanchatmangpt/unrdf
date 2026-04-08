@@ -4,14 +4,42 @@
  *
  * @description
  * Implements comprehensive observability with OpenTelemetry traces, metrics,
- * and logging for the UNRDF Knowledge Engine. Provides backpressure monitoring,
- * error isolation, and performance tracking.
+ * and logging for the UNRDF Knowledge Engine. Uses daemon SDK as single source of truth.
  */
 
 import { _randomUUID } from 'crypto';
 import { _z } from 'zod';
 import { ObservabilityConfigSchema, PerformanceMetricsSchema } from './schemas.mjs';
 import { getRuntimeConfig } from '../context/config.mjs';
+
+// Import daemon SDK functions (single source of truth)
+let getTracer, getMeter;
+try {
+  const daemonSdk = await import('@unrdf/daemon/integrations/otel-sdk.mjs');
+  getTracer = daemonSdk.getTracer;
+  getMeter = daemonSdk.getMeter;
+} catch {
+  // Daemon SDK not available (e.g., in standalone hooks usage)
+  console.warn('[Observability] Daemon SDK not available - will use fallback mode');
+}
+
+// Import generated semantic convention constants
+import {
+  ATTR_UNRDF_HOOK_ID,
+  ATTR_UNRDF_HOOK_NAME,
+  ATTR_UNRDF_HOOK_CONDITION_KIND,
+  ATTR_UNRDF_HOOK_EFFECT_KIND,
+  ATTR_UNRDF_HOOK_ENABLED,
+  ATTR_UNRDF_HOOK_SATISFIED,
+  ATTR_UNRDF_HOOK_PRIORITY,
+  ATTR_UNRDF_HOOK_QUADS_ADDED,
+  ATTR_UNRDF_HOOK_HOOKS_SATISFIED,
+  ATTR_UNRDF_HOOK_HOOKS_TOTAL,
+  ATTR_UNRDF_TRANSACTION_ID,
+  ATTR_UNRDF_TRANSACTION_ISOLATION_LEVEL,
+  ATTR_UNRDF_TRANSACTION_OPERATION_COUNT,
+  ATTR_UNRDF_TRANSACTION_RESULT,
+} from '@unrdf/otel/generated';
 
 /**
  * OpenTelemetry observability manager
@@ -48,63 +76,29 @@ export class ObservabilityManager {
     if (this.initialized) return;
 
     try {
-      // Dynamic import of OpenTelemetry packages
-      const { NodeSDK } = await import('@opentelemetry/sdk-node');
-      const { getNodeAutoInstrumentations } =
-        await import('@opentelemetry/auto-instrumentations-node');
-      const { Resource } = await import('@opentelemetry/resources');
-      const { SemanticResourceAttributes } = await import('@opentelemetry/semantic-conventions');
-      const { OTLPTraceExporter } = await import('@opentelemetry/exporter-otlp-http');
-      const { OTLPMetricExporter } = await import('@opentelemetry/exporter-otlp-http');
-      const { PeriodicExportingMetricReader } = await import('@opentelemetry/sdk-metrics');
-      const { trace, metrics } = await import('@opentelemetry/api');
+      // Use daemon SDK as single source of truth
+      if (typeof getTracer === 'function' && typeof getMeter === 'function') {
+        this.tracer = getTracer();
+        this.meter = getMeter();
 
-      // Create resource
-      const resource = new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
-        [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
-        ...this.config.resourceAttributes,
-      });
+        if (!this.tracer || !this.meter) {
+          console.warn('[Observability] Daemon SDK not initialized - using fallback');
+          this._initializeFallback();
+          return;
+        }
 
-      // Create exporters
-      const traceExporter = new OTLPTraceExporter({
-        url: this.config.endpoint ? `${this.config.endpoint}/v1/traces` : undefined,
-        headers: this.config.headers,
-      });
+        // Create custom metrics using daemon's meter
+        this._createCustomMetrics();
 
-      const metricExporter = new OTLPMetricExporter({
-        url: this.config.endpoint ? `${this.config.endpoint}/v1/metrics` : undefined,
-        headers: this.config.headers,
-      });
-
-      // Create metric reader
-      const metricReader = new PeriodicExportingMetricReader({
-        exporter: metricExporter,
-        exportIntervalMillis: this.config.scheduledDelayMillis,
-        exportTimeoutMillis: this.config.exportTimeoutMillis,
-      });
-
-      // Initialize SDK
-      const sdk = new NodeSDK({
-        resource,
-        traceExporter: this.config.enableTracing ? traceExporter : undefined,
-        metricReader: this.config.enableMetrics ? metricReader : undefined,
-        instrumentations: this.config.enableTracing ? [getNodeAutoInstrumentations()] : [],
-      });
-
-      await sdk.start();
-
-      // Get tracer and meter
-      this.tracer = trace.getTracer(this.config.serviceName, this.config.serviceVersion);
-      this.meter = metrics.getMeter(this.config.serviceName, this.config.serviceVersion);
-
-      // Create custom metrics
-      this._createCustomMetrics();
-
-      this.initialized = true;
-      console.log(`[Observability] Initialized with service: ${this.config.serviceName}`);
+        this.initialized = true;
+        console.log(`[Observability] Initialized with daemon SDK for service: ${this.config.serviceName}`);
+      } else {
+        // Daemon SDK not available - use fallback
+        console.warn('[Observability] Daemon SDK not available - using fallback mode');
+        this._initializeFallback();
+      }
     } catch (error) {
-      console.warn(`[Observability] Failed to initialize OpenTelemetry: ${error.message}`);
+      console.warn(`[Observability] Failed to initialize with daemon SDK: ${error.message}`);
       // Fallback to console logging
       this._initializeFallback();
     }
@@ -117,42 +111,42 @@ export class ObservabilityManager {
   _createCustomMetrics() {
     if (!this.meter) return;
 
-    // Transaction metrics
-    this.transactionCounter = this.meter.createCounter('kgc_transactions_total', {
+    // Transaction metrics (using unrdf.* prefix from registry)
+    this.transactionCounter = this.meter.createCounter('unrdf_transactions_total', {
       description: 'Total number of transactions processed',
     });
 
-    this.transactionDuration = this.meter.createHistogram('kgc_transaction_duration_ms', {
+    this.transactionDuration = this.meter.createHistogram('unrdf_transaction_duration_ms', {
       description: 'Transaction processing duration in milliseconds',
       unit: 'ms',
     });
 
-    this.hookExecutionCounter = this.meter.createCounter('kgc_hooks_executed_total', {
+    this.hookExecutionCounter = this.meter.createCounter('unrdf_hooks_executed_total', {
       description: 'Total number of hooks executed',
     });
 
-    this.hookDuration = this.meter.createHistogram('kgc_hook_duration_ms', {
+    this.hookDuration = this.meter.createHistogram('unrdf_hook_duration_ms', {
       description: 'Hook execution duration in milliseconds',
       unit: 'ms',
     });
 
-    this.errorCounter = this.meter.createCounter('kgc_errors_total', {
+    this.errorCounter = this.meter.createCounter('unrdf_errors_total', {
       description: 'Total number of errors',
     });
 
-    this.memoryGauge = this.meter.createUpDownCounter('kgc_memory_usage_bytes', {
+    this.memoryGauge = this.meter.createUpDownCounter('unrdf_memory_usage_bytes', {
       description: 'Memory usage in bytes',
     });
 
-    this.cacheHitCounter = this.meter.createCounter('kgc_cache_hits_total', {
+    this.cacheHitCounter = this.meter.createCounter('unrdf_cache_hits_total', {
       description: 'Total cache hits',
     });
 
-    this.cacheMissCounter = this.meter.createCounter('kgc_cache_misses_total', {
+    this.cacheMissCounter = this.meter.createCounter('unrdf_cache_misses_total', {
       description: 'Total cache misses',
     });
 
-    this.queueDepthGauge = this.meter.createUpDownCounter('kgc_queue_depth', {
+    this.queueDepthGauge = this.meter.createUpDownCounter('unrdf_queue_depth', {
       description: 'Current queue depth',
     });
   }
@@ -177,10 +171,9 @@ export class ObservabilityManager {
       return { transactionId, startTime: Date.now() };
     }
 
-    const span = this.tracer.startSpan('kgc.transaction', {
+    const span = this.tracer.startSpan('unrdf.transaction', {
       attributes: {
-        'kgc.transaction.id': transactionId,
-        'kgc.service.name': this.config.serviceName,
+        [ATTR_UNRDF_TRANSACTION_ID]: transactionId,
         ...attributes,
       },
     });
@@ -239,11 +232,11 @@ export class ObservabilityManager {
     }
 
     const parentSpan = this.activeSpans.get(transactionId)?.span;
-    const span = this.tracer.startSpan('kgc.hook', {
+    const span = this.tracer.startSpan('unrdf.hook', {
       parent: parentSpan,
       attributes: {
-        'kgc.hook.id': hookId,
-        'kgc.transaction.id': transactionId,
+        [ATTR_UNRDF_HOOK_ID]: hookId,
+        [ATTR_UNRDF_TRANSACTION_ID]: transactionId,
         ...attributes,
       },
     });

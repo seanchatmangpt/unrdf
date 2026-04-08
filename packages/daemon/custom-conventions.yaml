@@ -1,92 +1,46 @@
-attribute_groups:
-  - id: daemon_mcp
-    name: Daemon MCP Tools
+# UNRDF Daemon-specific Semantic Conventions
+# Extends registry/mcp.yaml for MCP tool attributes
+
+groups:
+  - id: registry.daemon
     type: attribute_group
-    description: Semantic conventions for UNRDF daemon MCP tool execution
-    attributes:
-      - id: mcp.tool.name
-        name: MCP Tool Name
-        type: string
-        brief: Name of the MCP tool being executed
-        examples: ['query', 'graph_load', 'hooks_execute']
-        level: required
-
-      - id: mcp.tool.args
-        name: MCP Tool Arguments
-        type: string
-        brief: Serialized arguments passed to the tool
-        level: optional
-
-      - id: mcp.tool.success
-        name: MCP Tool Success
-        type: boolean
-        brief: Whether the tool executed successfully
-        level: required
-
-      - id: mcp.server.name
-        name: MCP Server Name
-        type: string
-        brief: Name of the MCP server
-        examples: ['unrdf-daemon-mcp']
-        level: required
-
-      - id: mcp.tool.result_size
-        name: MCP Tool Result Size
-        type: int
-        brief: Size of the result in bytes
-        level: optional
-
-  - id: daemon_scheduling
-    name: Daemon Scheduling
-    type: attribute_group
-    description: Semantic conventions for daemon scheduling operations
+    display_name: UNRDF Daemon Attributes
+    brief: Daemon-specific scheduling and cluster operations
     attributes:
       - id: daemon.trigger.type
-        name: Trigger Type
         type: string
+        stability: stable
         brief: Type of trigger that initiated the operation
         examples: ['cron', 'interval', 'reactive', 'event']
-        level: required
 
       - id: daemon.operation.id
-        name: Daemon Operation ID
         type: string
+        stability: stable
         brief: Unique identifier for the daemon operation
-        level: required
 
       - id: daemon.operation.type
-        name: Daemon Operation Type
         type: string
+        stability: stable
         brief: Type of daemon operation
         examples: ['scheduled', 'reactive', 'event']
-        level: required
 
       - id: daemon.operation.duration_ms
-        name: Operation Duration
         type: int
+        stability: stable
         brief: Duration of the operation in milliseconds
-        level: optional
 
-  - id: daemon_cluster
-    name: Daemon Cluster
-    type: attribute_group
-    description: Semantic conventions for Raft cluster operations
-    attributes:
       - id: daemon.cluster.member_id
-        name: Cluster Member ID
         type: string
+        stability: stable
         brief: Unique identifier for cluster member
-        level: optional
 
       - id: daemon.cluster.is_leader
-        name: Is Leader
         type: boolean
+        stability: stable
         brief: Whether this node is the cluster leader
-        level: optional
 
       - id: daemon.cluster.raft_state
-        name: Raft State
         type: string
+        stability: stable
         brief: Current Raft state of the cluster
         examples: ['leader', 'follower', 'candidate']
-        level: optional
