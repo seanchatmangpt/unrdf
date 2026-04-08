@@ -1,10 +1,10 @@
-# UNRDF v6 Advanced Usage Patterns
+# UNRDF Advanced Usage Patterns
 
 **Target Audience**: Developers familiar with UNRDF basics
 **Prerequisites**: Complete [Quick Start Guide](/home/user/unrdf/docs/v6/QUICK-START.md)
 **Time**: 30-45 minutes
 
-This guide demonstrates advanced UNRDF v6 patterns including delta proposals, streaming, federation, and production-ready architectures.
+This guide demonstrates advanced UNRDF patterns including delta proposals, streaming, federation, and production-ready architectures.
 
 ---
 
@@ -23,7 +23,7 @@ This guide demonstrates advanced UNRDF v6 patterns including delta proposals, st
 
 ### Overview
 
-UNRDF v6 introduces delta proposals for explicit, auditable version transitions.
+UNRDF introduces delta proposals for explicit, auditable version transitions.
 
 ### Basic Delta Creation
 
@@ -52,16 +52,16 @@ const proposal = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/name',
-      object: 'Alice'
-    }
+      object: 'Alice',
+    },
   },
   {
     type: 'add',
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/name',
-      object: 'Alice Smith'
-    }
+      object: 'Alice Smith',
+    },
   },
   // Add email
   {
@@ -69,9 +69,9 @@ const proposal = createDeltaProposal('v1.0', 'v1.1', [
     quad: {
       subject: 'http://example.org/Alice',
       predicate: 'http://xmlns.com/foaf/0.1/mbox',
-      object: 'alice@example.org'
-    }
-  }
+      object: 'alice@example.org',
+    },
+  },
 ]);
 
 // Apply delta with receipt
@@ -88,11 +88,21 @@ import { createDeltaProposal, applyDelta, detectConflicts } from '@unrdf/v6-core
 
 // Concurrent deltas
 const deltaA = createDeltaProposal('v1.0', 'v1.1-branch-a', [
-  { type: 'add', quad: { /* ... */ } }
+  {
+    type: 'add',
+    quad: {
+      /* ... */
+    },
+  },
 ]);
 
 const deltaB = createDeltaProposal('v1.0', 'v1.1-branch-b', [
-  { type: 'add', quad: { /* ... */ } }
+  {
+    type: 'add',
+    quad: {
+      /* ... */
+    },
+  },
 ]);
 
 // Detect conflicts
@@ -129,6 +139,7 @@ console.log('Total deltas:', allDeltas.length);
 ```
 
 **Use Cases**:
+
 - Version control for knowledge graphs
 - Rollback capabilities
 - Audit trails
@@ -140,7 +151,7 @@ console.log('Total deltas:', allDeltas.length);
 
 ### AsyncIterator-Based Streaming
 
-UNRDF v6 uses modern AsyncIterator API for streaming:
+UNRDF uses modern AsyncIterator API for streaming:
 
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
@@ -151,7 +162,7 @@ const store = await createStore();
 // Stream triples from file
 const stream = createReadStream('/path/to/large-graph.ttl', {
   format: 'turtle',
-  bufferSize: 1000 // Process in batches
+  bufferSize: 1000, // Process in batches
 });
 
 let count = 0;
@@ -185,8 +196,7 @@ const stream = createReadStream('/path/to/data.ttl')
   .pipe(
     transform(quad => {
       // Filter: only keep foaf:Person triples
-      if (quad.predicate.value.includes('type') &&
-          quad.object.value.includes('Person')) {
+      if (quad.predicate.value.includes('type') && quad.object.value.includes('Person')) {
         return quad;
       }
       return null; // Skip
@@ -197,7 +207,7 @@ const stream = createReadStream('/path/to/data.ttl')
       // Transform: rename namespace
       return {
         ...quad,
-        subject: namedNode(quad.subject.value.replace('old.org', 'new.org'))
+        subject: namedNode(quad.subject.value.replace('old.org', 'new.org')),
       };
     })
   );
@@ -214,7 +224,7 @@ import { createReadStream, createWriteStream } from '@unrdf/streaming';
 
 const readStream = createReadStream('/path/to/input.ttl');
 const writeStream = createWriteStream('/path/to/output.nt', {
-  format: 'ntriples'
+  format: 'ntriples',
 });
 
 // Automatic backpressure handling
@@ -224,6 +234,7 @@ console.log('✅ Stream completed with backpressure control');
 ```
 
 **Use Cases**:
+
 - Loading massive datasets (>1M triples)
 - ETL pipelines
 - Real-time data processing
@@ -304,7 +315,7 @@ const userStore = await createStore(); // User data
 const productStore = await createStore(); // Product data
 
 const federation = new Federation([userStore, productStore], {
-  optimizeJoins: true // Enable join optimization
+  optimizeJoins: true, // Enable join optimization
 });
 
 // Cross-store join
@@ -326,6 +337,7 @@ const results = await federation.query(
 ```
 
 **Use Cases**:
+
 - Distributed knowledge graphs
 - Multi-tenant applications
 - Hybrid local/remote queries
@@ -349,18 +361,21 @@ receipts.push(receipt1);
 // Operation 2 (links to receipt1)
 const receipt2 = createReceipt('operation-2', {
   data: 'value2',
-  previousReceipt: receipt1.id
+  previousReceipt: receipt1.id,
 });
 receipts.push(receipt2);
 
 // Operation 3 (links to receipt2)
 const receipt3 = createReceipt('operation-3', {
   data: 'value3',
-  previousReceipt: receipt2.id
+  previousReceipt: receipt2.id,
 });
 receipts.push(receipt3);
 
-console.log('Receipt chain:', receipts.map(r => r.id));
+console.log(
+  'Receipt chain:',
+  receipts.map(r => r.id)
+);
 ```
 
 ### Verifying Receipt Chains
@@ -404,11 +419,12 @@ console.log('Proof verified:', verified);
 const compactReceipt = {
   merkleRoot: tree.root,
   operation: 'op3',
-  proof
+  proof,
 };
 ```
 
 **Use Cases**:
+
 - Audit trails
 - Compliance reporting
 - Tamper detection
@@ -428,7 +444,7 @@ import { ZodError } from 'zod';
 const TripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.string().min(1)
+  object: z.string().min(1),
 });
 
 async function addTripleSafely(data) {
@@ -487,29 +503,29 @@ import { z } from 'zod';
 const ConfigSchema = z.object({
   store: z.object({
     backend: z.enum(['memory', 'sqlite']),
-    path: z.string().optional()
+    path: z.string().optional(),
   }),
   query: z.object({
     defaultTimeout: z.number().int().positive().default(5000),
-    maxResults: z.number().int().positive().default(1000)
+    maxResults: z.number().int().positive().default(1000),
   }),
   receipts: z.object({
     enabled: z.boolean().default(true),
-    storage: z.enum(['memory', 'filesystem', 'network'])
-  })
+    storage: z.enum(['memory', 'filesystem', 'network']),
+  }),
 });
 
 // Load and validate config
 const config = ConfigSchema.parse({
   store: { backend: 'memory' },
   query: { defaultTimeout: 10000 },
-  receipts: { enabled: true, storage: 'filesystem' }
+  receipts: { enabled: true, storage: 'filesystem' },
 });
 
 // Use throughout application
 const store = await createStore({
   backend: config.store.backend,
-  path: config.store.path
+  path: config.store.path,
 });
 ```
 
@@ -524,7 +540,7 @@ class MonitoredStore {
     this.metrics = {
       operations: 0,
       errors: 0,
-      avgLatency: 0
+      avgLatency: 0,
     };
   }
 
@@ -561,6 +577,7 @@ console.log('Metrics:', store.getMetrics());
 ```
 
 **Use Cases**:
+
 - Production deployments
 - Error tracking
 - Performance monitoring
@@ -621,8 +638,8 @@ const store = await createStore({
   backend: 'sqlite',
   path: '/path/to/data.db',
   options: {
-    cacheSize: 10000 // Tune cache size
-  }
+    cacheSize: 10000, // Tune cache size
+  },
 });
 
 // Stream instead of loading all at once
@@ -675,6 +692,7 @@ try {
 ```
 
 **Performance Targets**:
+
 - SPARQL queries: <1ms for simple, <10ms for complex
 - Triple insertion: <0.3μs per triple (batched)
 - Memory usage: <100MB for 1M triples (persistent backend)
@@ -685,7 +703,7 @@ try {
 
 ```javascript
 /**
- * UNRDF v6 Advanced Example
+ * UNRDF Advanced Example
  * Demonstrates: Deltas, streaming, federation, receipts, and production patterns
  */
 
@@ -701,12 +719,12 @@ import { createReadStream } from '@unrdf/streaming';
 
 const ConfigSchema = z.object({
   timeout: z.number().default(5000),
-  batchSize: z.number().default(1000)
+  batchSize: z.number().default(1000),
 });
 
 const config = ConfigSchema.parse({
   timeout: 10000,
-  batchSize: 5000
+  batchSize: 5000,
 });
 
 // --- Initialize Stores ---
@@ -714,12 +732,12 @@ const config = ConfigSchema.parse({
 const store1 = await createStore({ backend: 'memory' });
 const store2 = await createStore({ backend: 'memory' });
 
-console.log('🚀 UNRDF v6 Advanced Example\n');
+console.log('🚀 UNRDF Advanced Example\n');
 
 // --- Stream Large Dataset ---
 
 const stream = createReadStream('/path/to/data.ttl', {
-  bufferSize: config.batchSize
+  bufferSize: config.batchSize,
 });
 
 let count = 0;
@@ -733,7 +751,12 @@ console.log(`✅ Loaded ${count} triples via streaming\n`);
 // --- Delta Versioning ---
 
 const delta = createDeltaProposal('v1.0', 'v1.1', [
-  { type: 'add', quad: { /* ... */ } }
+  {
+    type: 'add',
+    quad: {
+      /* ... */
+    },
+  },
 ]);
 
 const deltaReceipt = await applyDelta(store1, delta);
@@ -744,9 +767,7 @@ console.log(`✅ Applied delta: ${delta.from} → ${delta.to}\n`);
 const federation = new Federation([store1, store2]);
 
 const results = await federation.query(
-  sparql`SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10`
-    .timeout(config.timeout)
-    .receipt(true)
+  sparql`SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10`.timeout(config.timeout).receipt(true)
 );
 
 console.log(`🔍 Federated query returned ${results.length} results\n`);
@@ -766,7 +787,7 @@ console.log('✨ Advanced example complete!\n');
 
 - **[API Reference](/home/user/unrdf/docs/v6/API-REFERENCE.md)** - Complete API documentation
 - **[Migration Guide](/home/user/unrdf/docs/v6/MIGRATION_PLAN.md)** - Upgrade from v5
-- **[Core Concepts](/home/user/unrdf/docs/v6/CORE-CONCEPTS.md)** - Deep dive into v6 architecture
+- **[Core Concepts](/home/user/unrdf/docs/v6/CORE-CONCEPTS.md)** - Deep dive into current architecture
 - **[Examples](/home/user/unrdf/examples/)** - More code examples
 
 ---
