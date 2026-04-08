@@ -151,6 +151,7 @@ export function cloneQuad(quad, overrides = {}) {
     predicate: overrides.predicate ?? quad.predicate,
     object: overrides.object ?? quad.object,
     graph: overrides.graph ?? quad.graph,
+    ...overrides,
   };
 }
 
