@@ -1,10 +1,10 @@
-# UNRDF v6 Troubleshooting Guide
+# UNRDF Troubleshooting Guide
 
-**Target Audience**: Developers encountering issues with UNRDF v6
+**Target Audience**: Developers encountering issues with UNRDF
 **Prerequisites**: Basic familiarity with UNRDF
 **Last Updated**: January 2025
 
-This guide helps you diagnose and resolve common issues with UNRDF v6.
+This guide helps you diagnose and resolve common issues with UNRDF.
 
 ---
 
@@ -26,6 +26,7 @@ This guide helps you diagnose and resolve common issues with UNRDF v6.
 ### Error: `Cannot find module '@unrdf/oxigraph'`
 
 **Symptom**:
+
 ```bash
 Error: Cannot find module '@unrdf/oxigraph'
 ```
@@ -33,6 +34,7 @@ Error: Cannot find module '@unrdf/oxigraph'
 **Cause**: Package not installed or incorrect version.
 
 **Solution**:
+
 ```bash
 # Verify installation
 pnpm list @unrdf/oxigraph
@@ -50,6 +52,7 @@ pnpm install
 ### Error: `npm ERR! peer dep missing`
 
 **Symptom**:
+
 ```bash
 npm ERR! peer dep missing: zod@^3.0.0, required by @unrdf/core@6.0.0
 ```
@@ -57,6 +60,7 @@ npm ERR! peer dep missing: zod@^3.0.0, required by @unrdf/core@6.0.0
 **Cause**: Missing peer dependency.
 
 **Solution**:
+
 ```bash
 # Install peer dependencies
 pnpm add zod@latest
@@ -70,6 +74,7 @@ pnpm install --shamefully-hoist
 ### Error: `ERESOLVE unable to resolve dependency tree`
 
 **Symptom**:
+
 ```bash
 npm ERR! code ERESOLVE
 npm ERR! ERESOLVE unable to resolve dependency tree
@@ -78,6 +83,7 @@ npm ERR! ERESOLVE unable to resolve dependency tree
 **Cause**: Conflicting dependency versions.
 
 **Solution**:
+
 ```bash
 # Use pnpm instead of npm
 pnpm install
@@ -96,6 +102,7 @@ npm install --force
 ### Error: `SyntaxError: Cannot use import statement outside a module`
 
 **Symptom**:
+
 ```bash
 import { createStore } from '@unrdf/oxigraph';
 ^^^^^^
@@ -105,6 +112,7 @@ SyntaxError: Cannot use import statement outside a module
 **Cause**: Missing `"type": "module"` in package.json.
 
 **Solution**:
+
 ```json
 // package.json
 {
@@ -113,6 +121,7 @@ SyntaxError: Cannot use import statement outside a module
 ```
 
 **OR** use `.mjs` extension:
+
 ```bash
 mv app.js app.mjs
 node app.mjs
@@ -123,6 +132,7 @@ node app.mjs
 ### Error: `require() of ES Module not supported`
 
 **Symptom**:
+
 ```bash
 Error [ERR_REQUIRE_ESM]: require() of ES Module @unrdf/core not supported
 ```
@@ -130,8 +140,9 @@ Error [ERR_REQUIRE_ESM]: require() of ES Module @unrdf/core not supported
 **Cause**: Using CommonJS `require()` with ESM module.
 
 **Solution**:
+
 ```javascript
-// ❌ Don't use require() in v6
+// ❌ Don't use require() in current version
 const unrdf = require('@unrdf/core');
 
 // ✅ Use import instead
@@ -139,6 +150,7 @@ import * as unrdf from '@unrdf/core';
 ```
 
 **If you must use CommonJS**:
+
 ```javascript
 // Use dynamic import() in async context
 (async () => {
@@ -152,6 +164,7 @@ import * as unrdf from '@unrdf/core';
 ### Error: `ERR_MODULE_NOT_FOUND`
 
 **Symptom**:
+
 ```bash
 Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/path/to/app'
 ```
@@ -159,6 +172,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/path/to/app'
 **Cause**: Missing file extension in import.
 
 **Solution**:
+
 ```javascript
 // ❌ Wrong
 import { helper } from './helper';
@@ -172,6 +186,7 @@ import { helper } from './helper.mjs';
 ### Error: `Directory import is not supported`
 
 **Symptom**:
+
 ```bash
 Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '/path/to/dir' is not supported
 ```
@@ -179,6 +194,7 @@ Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '/path/to/dir' is not suppo
 **Cause**: Importing directory instead of specific file.
 
 **Solution**:
+
 ```javascript
 // ❌ Wrong
 import * as utils from './utils';
@@ -194,6 +210,7 @@ import * as utils from './utils/index.mjs';
 ### Error: `Store creation fails silently`
 
 **Symptom**:
+
 ```javascript
 const store = createStore(); // No error, but store is undefined
 ```
@@ -201,6 +218,7 @@ const store = createStore(); // No error, but store is undefined
 **Cause**: Missing `await` on async function.
 
 **Solution**:
+
 ```javascript
 // ❌ Wrong
 const store = createStore();
@@ -214,6 +232,7 @@ const store = await createStore();
 ### Error: `Cannot read properties of undefined (reading 'add')`
 
 **Symptom**:
+
 ```bash
 TypeError: Cannot read properties of undefined (reading 'add')
 ```
@@ -221,6 +240,7 @@ TypeError: Cannot read properties of undefined (reading 'add')
 **Cause**: Store not properly initialized.
 
 **Solution**:
+
 ```javascript
 // Ensure store is awaited
 const store = await createStore();
@@ -238,6 +258,7 @@ await store.add(quad);
 ### Error: `SQLite: database is locked`
 
 **Symptom**:
+
 ```bash
 Error: SQLite: database is locked
 ```
@@ -245,11 +266,12 @@ Error: SQLite: database is locked
 **Cause**: Multiple processes accessing same SQLite file.
 
 **Solution**:
+
 ```javascript
 // Option 1: Use separate databases per process
 const store = await createStore({
   backend: 'sqlite',
-  path: `/tmp/store-${process.pid}.db`
+  path: `/tmp/store-${process.pid}.db`,
 });
 
 // Option 2: Use memory backend for tests
@@ -264,6 +286,7 @@ await store.close();
 ### Error: `WASM instantiation failed`
 
 **Symptom**:
+
 ```bash
 RuntimeError: WASM instantiation failed
 ```
@@ -271,6 +294,7 @@ RuntimeError: WASM instantiation failed
 **Cause**: WASM binary corrupt or incompatible.
 
 **Solution**:
+
 ```bash
 # Reinstall Oxigraph
 pnpm remove @unrdf/oxigraph
@@ -290,12 +314,14 @@ node --version
 ### Error: `Query returns no results`
 
 **Symptom**:
+
 ```javascript
 const results = await executeSparql(store, query);
 console.log(results.length); // 0 (but expected results)
 ```
 
 **Diagnose**:
+
 ```javascript
 // 1. Check store has data
 console.log('Store size:', store.size);
@@ -315,6 +341,7 @@ console.log('Actual subject:', all[0].get('s')?.value);
 ```
 
 **Common Causes**:
+
 ```javascript
 // ❌ Wrong prefix
 PREFIX ex: <http://example.com/>  // Wrong domain
@@ -334,15 +361,17 @@ PREFIX ex: <http://example.org/>
 ### Error: `SPARQL query timeout`
 
 **Symptom**:
+
 ```bash
 TimeoutError: Query exceeded timeout (5000ms)
 ```
 
 **Solution**:
+
 ```javascript
 // Increase timeout
 const results = await executeSparql(store, query, {
-  timeout: 30000 // 30 seconds
+  timeout: 30000, // 30 seconds
 });
 
 // Optimize query (use LIMIT)
@@ -369,11 +398,13 @@ const query = `
 ### Error: `SyntaxError in SPARQL query`
 
 **Symptom**:
+
 ```bash
 SyntaxError: Unexpected token in SPARQL query
 ```
 
 **Solution**:
+
 ```javascript
 // Use multiline template literals
 const query = `
@@ -400,6 +431,7 @@ WHERE { ?s ?p ?o . }
 ### Error: `ZodError: Invalid input`
 
 **Symptom**:
+
 ```bash
 ZodError: [
   {
@@ -412,27 +444,28 @@ ZodError: [
 ```
 
 **Solution**:
+
 ```javascript
 import { z } from 'zod';
 
 const TripleSchema = z.object({
   subject: z.string().url(),
   predicate: z.string().url(),
-  object: z.string()
+  object: z.string(),
 });
 
 // ❌ Wrong type
 const data = {
-  subject: 123,  // Number, not string
+  subject: 123, // Number, not string
   predicate: 'http://example.org/p',
-  object: 'value'
+  object: 'value',
 };
 
 // ✅ Correct type
 const data = {
-  subject: 'http://example.org/s',  // String
+  subject: 'http://example.org/s', // String
   predicate: 'http://example.org/p',
-  object: 'value'
+  object: 'value',
 };
 
 // Validate
@@ -450,12 +483,14 @@ try {
 ### Error: `Receipt verification failed`
 
 **Symptom**:
+
 ```javascript
 const isValid = verifyReceipt(receipt);
 console.log(isValid); // false (expected true)
 ```
 
 **Diagnose**:
+
 ```javascript
 import { verifyReceipt } from '@unrdf/v6-core/receipts';
 
@@ -484,12 +519,14 @@ if (JSON.stringify(metadata) !== JSON.stringify(originalMetadata)) {
 ### Error: `Chain verification failed`
 
 **Symptom**:
+
 ```javascript
 const chainValid = verifyChain(receipts);
 console.log(chainValid); // false
 ```
 
 **Solution**:
+
 ```javascript
 import { verifyChain } from '@unrdf/v6-core/receipts';
 
@@ -522,6 +559,7 @@ const chainValid = verifyChain(receipts);
 ### Issue: Slow SPARQL queries
 
 **Symptom**:
+
 ```javascript
 // Takes >10 seconds for simple query
 const results = await executeSparql(store, query);
@@ -530,14 +568,16 @@ const results = await executeSparql(store, query);
 **Solutions**:
 
 1. **Use persistent backend** (not memory):
+
 ```javascript
 const store = await createStore({
-  backend: 'sqlite',  // Faster for large datasets
-  path: '/path/to/data.db'
+  backend: 'sqlite', // Faster for large datasets
+  path: '/path/to/data.db',
 });
 ```
 
 2. **Add indexes** (use specific predicates):
+
 ```javascript
 // ❌ Slow (full scan)
 SELECT ?s ?p ?o WHERE { ?s ?p ?o }
@@ -547,6 +587,7 @@ SELECT ?s ?name WHERE { ?s foaf:name ?name }
 ```
 
 3. **Batch inserts**:
+
 ```javascript
 // ❌ Slow (1000 individual inserts)
 for (const quad of quads) {
@@ -558,6 +599,7 @@ await store.addAll(quads);
 ```
 
 4. **Limit results**:
+
 ```javascript
 SELECT ?s ?p ?o
 WHERE { ?s ?p ?o }
@@ -569,6 +611,7 @@ LIMIT 1000  -- Add LIMIT
 ### Issue: High memory usage
 
 **Symptom**:
+
 ```bash
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 ```
@@ -576,6 +619,7 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 **Solutions**:
 
 1. **Use streaming** (not load all at once):
+
 ```javascript
 import { createReadStream } from '@unrdf/streaming';
 
@@ -591,6 +635,7 @@ for await (const quad of stream) {
 ```
 
 2. **Use persistent backend**:
+
 ```javascript
 // ❌ All in memory
 const store = await createStore({ backend: 'memory' });
@@ -598,11 +643,12 @@ const store = await createStore({ backend: 'memory' });
 // ✅ Data on disk
 const store = await createStore({
   backend: 'sqlite',
-  path: '/path/to/data.db'
+  path: '/path/to/data.db',
 });
 ```
 
 3. **Process in batches**:
+
 ```javascript
 const BATCH_SIZE = 1000;
 
@@ -619,17 +665,19 @@ for (let i = 0; i < quads.length; i += BATCH_SIZE) {
 ### Issue: `new Store()` not found
 
 **Symptom**:
+
 ```bash
 TypeError: Store is not a constructor
 ```
 
 **Solution**:
+
 ```javascript
 // v5 (deprecated)
 import { Store } from 'n3';
 const store = new Store();
 
-// v6 (required)
+// current (required)
 import { createStore } from '@unrdf/oxigraph';
 const store = await createStore();
 ```
@@ -639,16 +687,18 @@ const store = await createStore();
 ### Issue: `workflow.run()` deprecated
 
 **Symptom**:
+
 ```bash
 DeprecationWarning: workflow.run() is deprecated. Use workflow.execute()
 ```
 
 **Solution**:
+
 ```javascript
 // v5 (deprecated)
 await workflow.run(task);
 
-// v6 (required)
+// current (required)
 const receipt = await workflow.execute(task);
 ```
 
@@ -657,16 +707,18 @@ const receipt = await workflow.execute(task);
 ### Issue: Direct N3 imports break
 
 **Symptom**:
+
 ```bash
-Error: Direct N3 imports are not allowed in v6
+Error: Direct N3 imports are not allowed in current version
 ```
 
 **Solution**:
+
 ```javascript
 // v5 (deprecated)
 import { Parser, Writer } from 'n3';
 
-// v6 (required)
+// current (required)
 import { parseRdf, serializeRdf } from '@unrdf/core/rdf';
 import { dataFactory } from '@unrdf/core/rdf/n3-justified-only';
 ```
@@ -683,6 +735,7 @@ import { dataFactory } from '@unrdf/core/rdf/n3-justified-only';
    - [API Reference](/home/user/unrdf/docs/v6/API-REFERENCE.md)
    - [Migration Guide](/home/user/unrdf/docs/v6/MIGRATION_PLAN.md)
 3. **Run diagnostics**:
+
    ```bash
    # Node.js version
    node --version  # Should be >=18.0.0
@@ -701,6 +754,7 @@ import { dataFactory } from '@unrdf/core/rdf/n3-justified-only';
 Include:
 
 1. **Environment**:
+
    ```bash
    Node version: v18.19.0
    OS: macOS 14.1
@@ -709,6 +763,7 @@ Include:
    ```
 
 2. **Minimal reproduction**:
+
    ```javascript
    import { createStore } from '@unrdf/oxigraph';
 
@@ -717,6 +772,7 @@ Include:
    ```
 
 3. **Expected vs actual behavior**:
+
    ```
    Expected: Query returns 2 results
    Actual: Query returns 0 results
