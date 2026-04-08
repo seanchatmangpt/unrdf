@@ -112,7 +112,7 @@ This index provides complete navigation across ALL UNRDF documentation, organize
 - Why ΔGate Architecture?
 - Receipt Security Model
 - L1-L5 Philosophy
-- V6 Architecture Overview
+- Architecture Overview
 
 ---
 
