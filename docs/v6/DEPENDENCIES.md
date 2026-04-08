@@ -1,4 +1,4 @@
-# UNRDF v6 Dependency Updates Report
+# UNRDF Dependency Updates Report
 
 **Date**: 2025-12-27
 **Version**: 6.0.0-alpha.1
@@ -21,28 +21,28 @@ All workspace dependencies have been successfully updated to their latest stable
 
 ### Root Package Updates
 
-| Package | Previous | Current | Type | Status |
-|---------|----------|---------|------|--------|
-| **vitest** | 1.6.1 | 4.0.16 | Major | ✅ Updated |
-| **@types/node** | 24.10.4 | 25.0.3 | Major | ✅ Updated |
-| **globals** | 15.15.0 | 16.5.0 | Major | ✅ Updated |
-| **rdf-canonize** | 2.0.1 | 5.0.0 | Major | ✅ Updated |
-| **@vitest/browser** | 4.0.15 | 4.0.16 | Patch | ✅ Updated |
-| **@vitest/coverage-v8** | 4.0.15 | 4.0.16 | Patch | ✅ Updated |
-| **@vitest/ui** | 4.0.15 | 4.0.16 | Patch | ✅ Updated |
+| Package                 | Previous | Current | Type  | Status     |
+| ----------------------- | -------- | ------- | ----- | ---------- |
+| **vitest**              | 1.6.1    | 4.0.16  | Major | ✅ Updated |
+| **@types/node**         | 24.10.4  | 25.0.3  | Major | ✅ Updated |
+| **globals**             | 15.15.0  | 16.5.0  | Major | ✅ Updated |
+| **rdf-canonize**        | 2.0.1    | 5.0.0   | Major | ✅ Updated |
+| **@vitest/browser**     | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
+| **@vitest/coverage-v8** | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
+| **@vitest/ui**          | 4.0.15   | 4.0.16  | Patch | ✅ Updated |
 
 ### Workspace Package Updates
 
-| Package Location | Dependency | Previous | Current | Status |
-|------------------|------------|----------|---------|--------|
-| packages/cli | vitest | ^1.0.0 | ^4.0.16 | ✅ Updated |
-| packages/cli | @types/node | ^20.0.0 | ^25.0.3 | ✅ Updated |
-| packages/fusion | vitest | ^1.6.0 | ^4.0.16 | ✅ Updated |
-| packages/kgn | vitest | ^4.0.15 | ^4.0.16 | ✅ Updated |
-| packages/kgn | @amiceli/vitest-cucumber | ^4.1.1 | ^6.2.0 | ✅ Updated |
-| packages/docs | vitest | ^4.0.15 | ^4.0.16 | ✅ Updated |
-| packages/docs | @vitest/ui | ^2.1.8 | ^4.0.16 | ✅ Updated |
-| packages/docs | @types/node | ^24.10.1 | ^25.0.3 | ✅ Updated |
+| Package Location | Dependency               | Previous | Current | Status     |
+| ---------------- | ------------------------ | -------- | ------- | ---------- |
+| packages/cli     | vitest                   | ^1.0.0   | ^4.0.16 | ✅ Updated |
+| packages/cli     | @types/node              | ^20.0.0  | ^25.0.3 | ✅ Updated |
+| packages/fusion  | vitest                   | ^1.6.0   | ^4.0.16 | ✅ Updated |
+| packages/kgn     | vitest                   | ^4.0.15  | ^4.0.16 | ✅ Updated |
+| packages/kgn     | @amiceli/vitest-cucumber | ^4.1.1   | ^6.2.0  | ✅ Updated |
+| packages/docs    | vitest                   | ^4.0.15  | ^4.0.16 | ✅ Updated |
+| packages/docs    | @vitest/ui               | ^2.1.8   | ^4.0.16 | ✅ Updated |
+| packages/docs    | @types/node              | ^24.10.1 | ^25.0.3 | ✅ Updated |
 
 ---
 
@@ -56,6 +56,7 @@ All workspace dependencies have been successfully updated to their latest stable
 **Impact**: esbuild's development server allowed any website to send requests and read responses due to default CORS settings
 
 **Resolution**:
+
 - **Override Added**: `"esbuild@<=0.24.2": ">=0.25.0"`
 - **Affected Paths**:
   - `packages/cli > vitest > vite > esbuild@0.21.5` → `0.27.2`
@@ -64,6 +65,7 @@ All workspace dependencies have been successfully updated to their latest stable
 - **Status**: ✅ **Resolved** - All esbuild instances now at 0.27.2
 
 **Verification**:
+
 ```bash
 pnpm audit --json | grep vulnerabilities
 # Output: "moderate": 0, "high": 0, "critical": 0
@@ -112,6 +114,7 @@ pnpm audit --json | grep vulnerabilities
 #### Migration Guide
 
 **Test Configuration** (`vitest.config.js`):
+
 ```javascript
 // Before (v1.x)
 export default {
@@ -134,26 +137,37 @@ export default {
 ```
 
 **Custom Reporters**:
+
 ```javascript
 // Before (v1.x)
 class MyReporter {
-  onTaskUpdate(tasks) { /* ... */ }
-  onFinished(files, errors) { /* ... */ }
+  onTaskUpdate(tasks) {
+    /* ... */
+  }
+  onFinished(files, errors) {
+    /* ... */
+  }
 }
 
 // After (v4.x)
 class MyReporter {
-  onTaskFinished(task) { /* ... */ }
-  onFinished() { /* ... */ }
+  onTaskFinished(task) {
+    /* ... */
+  }
+  onFinished() {
+    /* ... */
+  }
 }
 ```
 
 **Known Issues**:
+
 - ⚠️ 4 cache invalidation tests failing in `packages/oxigraph/test/query-cache.test.mjs`
 - Tests: `should invalidate cache on add`, `should invalidate cache on delete`, `should clear cache on update`, `should clear cache on load`
 - **Status**: Under investigation - may be timing-related with new test runner
 
 #### Resources
+
 - [Vitest 4.0 Release Notes](https://vitest.dev/blog/vitest-4)
 - [Migration Guide](https://vitest.dev/guide/migration.html)
 - [GitHub Release](https://github.com/vitest-dev/vitest/releases/tag/v4.0.0)
@@ -168,6 +182,7 @@ class MyReporter {
 #### Breaking Changes (v4.0 → v5.0)
 
 **Removed Native Support**:
+
 - **Change**: Dropped `rdf-canonize-native` support; JavaScript-only implementation
 - **Impact**: ✅ **None** - We don't use `rdf-canonize-native` (verified via grep)
 
@@ -201,6 +216,7 @@ These were automatically handled during the v4.0 upgrade:
 **None required** - All breaking changes are backward compatible or handled automatically.
 
 **Code Using rdf-canonize**:
+
 - ✅ `/home/user/unrdf/src/composables/use-canon.mjs`
 - ✅ `/home/user/unrdf/src/context/index.mjs`
 - ✅ `/home/user/unrdf/src/engines/rdf-engine.mjs`
@@ -209,6 +225,7 @@ These were automatically handled during the v4.0 upgrade:
 - ✅ `/home/user/unrdf/packages/core/src/rdf/canonicalize.mjs`
 
 **Verification**:
+
 ```bash
 # Confirm no rdf-canonize-native usage
 pnpm ls rdf-canonize-native
@@ -216,6 +233,7 @@ pnpm ls rdf-canonize-native
 ```
 
 #### Resources
+
 - [CHANGELOG](https://raw.githubusercontent.com/digitalbazaar/rdf-canonize/master/CHANGELOG.md)
 - [GitHub Repository](https://github.com/digitalbazaar/rdf-canonize)
 - [RDF Dataset Canonicalization Spec](https://w3c.github.io/rdf-canon/spec/)
@@ -230,6 +248,7 @@ pnpm ls rdf-canonize-native
 #### Breaking Changes
 
 **ServiceWorker Globals Update**:
+
 - **Change**: ServiceWorker globals now generated from browser data
 - **Removed**: A few globals removed from serviceworker environment
 - **Impact**: Minimal - only affects ServiceWorker-specific ESLint configs
@@ -237,14 +256,17 @@ pnpm ls rdf-canonize-native
 #### Migration Actions
 
 **For ESLint 9+ Users**:
+
 - `globals` is now a direct dependency (not via ESLint)
 - No configuration changes needed for standard environments
 
 **Affected Environments**:
+
 - `serviceworker` environment only
 - All other environments (browser, node, es2021, etc.) unchanged
 
 #### Resources
+
 - [Release v16.0.0](https://github.com/sindresorhus/globals/releases/tag/v16.0.0)
 - [GitHub Repository](https://github.com/sindresorhus/globals)
 
@@ -258,6 +280,7 @@ pnpm ls rdf-canonize-native
 #### Changes
 
 **TypeScript Type Definitions**:
+
 - Updated type definitions for Node.js APIs
 - Reflects Node.js 18+ API changes
 - No runtime impact (development dependency only)
@@ -267,6 +290,7 @@ pnpm ls rdf-canonize-native
 **None required** - Type definitions are backward compatible for Node.js 18+
 
 **Affected Files**:
+
 - All files using JSDoc type annotations with Node.js APIs
 - TypeScript declaration files in workspace packages
 
@@ -280,10 +304,12 @@ pnpm ls rdf-canonize-native
 #### Changes
 
 **Vitest 4.0 Compatibility**:
+
 - Updated to support Vitest 4.x peer dependencies
 - Enhanced Gherkin feature file support
 
 #### Location
+
 - **Package**: `packages/kgn`
 - **Usage**: Cucumber-style BDD tests
 
@@ -308,12 +334,12 @@ The following overrides were added to ensure consistent dependency resolution:
 
 ### Override Rationale
 
-| Override | Reason | Impact |
-|----------|--------|--------|
+| Override             | Reason                                    | Impact                     |
+| -------------------- | ----------------------------------------- | -------------------------- |
 | `@opentelemetry/api` | Ensure compatibility across OTEL packages | Prevents version conflicts |
-| `zod` | Align with workspace zod v4 usage | Consistent validation |
-| `esbuild@<=0.24.2` | **Security fix** for GHSA-67mh-4wv8-2f99 | Forces secure version |
-| `@rdfjs/types` | eyereasoner peer dependency compatibility | Resolves type conflicts |
+| `zod`                | Align with workspace zod v4 usage         | Consistent validation      |
+| `esbuild@<=0.24.2`   | **Security fix** for GHSA-67mh-4wv8-2f99  | Forces secure version      |
+| `@rdfjs/types`       | eyereasoner peer dependency compatibility | Resolves type conflicts    |
 
 ---
 
@@ -360,19 +386,20 @@ The following peer dependency warnings are **expected and acceptable**:
 
 ### Package Test Results
 
-| Package | Status | Tests Passed | Tests Failed | Notes |
-|---------|--------|--------------|--------------|-------|
-| @unrdf/core | ✅ Pass | All | 0 | Full compatibility |
-| @unrdf/hooks | ✅ Pass | All | 0 | Full compatibility |
-| @unrdf/federation | ✅ Pass | All | 0 | Full compatibility |
-| @unrdf/streaming | ✅ Pass | All | 0 | Full compatibility |
-| @unrdf/oxigraph | ⚠️ Partial | 74 | 4 | Cache invalidation failures |
+| Package           | Status     | Tests Passed | Tests Failed | Notes                       |
+| ----------------- | ---------- | ------------ | ------------ | --------------------------- |
+| @unrdf/core       | ✅ Pass    | All          | 0            | Full compatibility          |
+| @unrdf/hooks      | ✅ Pass    | All          | 0            | Full compatibility          |
+| @unrdf/federation | ✅ Pass    | All          | 0            | Full compatibility          |
+| @unrdf/streaming  | ✅ Pass    | All          | 0            | Full compatibility          |
+| @unrdf/oxigraph   | ⚠️ Partial | 74           | 4            | Cache invalidation failures |
 
 ### Known Test Issues
 
 **packages/oxigraph - Cache Invalidation Tests**:
 
 Failed tests in `test/query-cache.test.mjs`:
+
 1. `should invalidate cache on add`
 2. `should invalidate cache on delete`
 3. `should clear cache on update`
@@ -390,21 +417,23 @@ Failed tests in `test/query-cache.test.mjs`:
 
 ### Installation Performance
 
-| Metric | Value |
-|--------|-------|
-| Total Dependencies | 4,275 |
-| Install Time | 1m 17s |
-| Dependency Resolution | ~40s |
-| Build Scripts | 23 (ignored) |
+| Metric                | Value        |
+| --------------------- | ------------ |
+| Total Dependencies    | 4,275        |
+| Install Time          | 1m 17s       |
+| Dependency Resolution | ~40s         |
+| Build Scripts         | 23 (ignored) |
 
 ### Bundle Size Impact
 
 **No significant changes** - All updates are devDependencies except:
+
 - `rdf-canonize`: Pure algorithm update, minimal size delta
 
 ### Runtime Performance
 
 **Expected Improvements**:
+
 - **Vitest 4.0**: Faster test execution, improved browser mode
 - **rdf-canonize 5.0**: JavaScript-only (may be slightly slower than native, but more portable)
 
@@ -458,7 +487,7 @@ pnpm ls vitest rdf-canonize globals @types/node
 2. **Monitor Performance**: Track test execution times in CI
 3. **Update CI**: Ensure CI environments support new dependency versions
 4. **Documentation**: Update developer guides with new vitest patterns
-5. **Release Notes**: Include dependency updates in v6.0.0 release notes
+5. **Release Notes**: Include dependency updates in 6.0.0 release notes
 
 ---
 
@@ -501,7 +530,7 @@ pnpm ls esbuild --depth=Infinity | grep esbuild
 **Dependencies Updated**: 2025-12-27
 **Security Audit**: ✅ 0 vulnerabilities
 **Test Coverage**: ✅ 95% passing
-**Ready for v6 Release**: ✅ Yes
+**Ready for Release**: ✅ Yes
 
 ---
 
