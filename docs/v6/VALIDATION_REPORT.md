@@ -115,9 +115,9 @@ Migration compliance: 0%
 **Why This Blocks Release**:
 
 1. Violates mandatory migration requirement
-2. Breaks v6 architecture (Oxigraph-first)
+2. Breaks architecture (Oxigraph-first)
 3. Runtime performance issues (N3 vs Oxigraph)
-4. Incompatible with v6 API guarantees
+4. Incompatible with API guarantees
 
 **Remediation Required**: Complete N3 → Oxigraph migration for ALL files
 
@@ -144,7 +144,7 @@ Error: Cannot find module '/home/user/unrdf/packages/validation/src/index.mjs'
 **Impact**:
 
 1. Cannot validate agent claims
-2. No observability for v6 features
+2. No observability for current features
 3. Production debugging impossible
 4. Violates core architecture principle
 
@@ -231,23 +231,23 @@ Timeout: Exceeded 2 minutes, killed at 120s
 **Evidence**:
 
 ```
-Required v6 documentation: 4 files
+Required documentation: 4 files
 Found: 1 file (MIGRATION_GUIDE.md)
 Missing: 3 files
 ```
 
 **Missing Critical Documentation**:
 
-| Document              | Purpose                       | Impact if Missing              |
-| --------------------- | ----------------------------- | ------------------------------ |
-| `API_REFERENCE.md`    | Complete v6 API documentation | Users cannot discover features |
-| `BREAKING_CHANGES.md` | v5 → v6 migration guide       | Upgrade failures               |
-| `RELEASE_NOTES.md`    | What's new in v6              | Poor adoption                  |
+| Document              | Purpose                      | Impact if Missing              |
+| --------------------- | ---------------------------- | ------------------------------ |
+| `API_REFERENCE.md`    | Complete API documentation   | Users cannot discover features |
+| `BREAKING_CHANGES.md` | v5 → current migration guide | Upgrade failures               |
+| `RELEASE_NOTES.md`    | What's new in this release   | Poor adoption                  |
 
 **Existing Documentation**:
 
 - `docs/MIGRATION_GUIDE.md` found (incomplete path - should be in `docs/v6/`)
-- No v6-specific documentation directory structure
+- No version-specific documentation directory structure
 
 **Why This Blocks Release**:
 
@@ -273,11 +273,11 @@ Exit code: ERR_MODULE_NOT_FOUND
 
 1. Cannot validate performance targets met
 2. No regression detection
-3. Unknown performance characteristics for v6
+3. Unknown performance characteristics for this release
 
 **Why This Blocks Release**:
 
-- Performance is a key v6 feature (Oxigraph migration)
+- Performance is a key feature (Oxigraph migration)
 - Cannot claim "faster" without benchmark proof
 - Risk of shipping performance regressions
 
@@ -479,7 +479,7 @@ Overage: +0.235s (+4.7%)
 
 | Claim                     | Reality   | Evidence                     |
 | ------------------------- | --------- | ---------------------------- |
-| "v6 ready for release"    | **FALSE** | 9/12 checks failed           |
+| "ready for release"       | **FALSE** | 9/12 checks failed           |
 | "All tests pass"          | **FALSE** | 1 test failure (98.21% pass) |
 | "N3 migration complete"   | **FALSE** | 71 files with N3 imports     |
 | "OTEL validation working" | **FALSE** | 0/100 score, module missing  |
@@ -488,7 +488,7 @@ Overage: +0.235s (+4.7%)
 
 ### What BREAKS If Released
 
-1. **N3 Import Violations**: Runtime errors in production, incompatible with v6 Oxigraph architecture
+1. **N3 Import Violations**: Runtime errors in production, incompatible with Oxigraph architecture
 2. **Test Failures**: Broken profile compilation feature ships to users
 3. **Missing OTEL**: No production observability, blind to failures
 4. **Missing Docs**: Users cannot upgrade, support burden increases
@@ -498,7 +498,7 @@ Overage: +0.235s (+4.7%)
 
 | Source            | Claim         | Trust    | Verification          |
 | ----------------- | ------------- | -------- | --------------------- |
-| Agent claims      | "v6 ready"    | **0%**   | OTEL failed (0/100)   |
+| Agent claims      | "ready        | **0%**   | OTEL failed (0/100)   |
 | Test output       | "98.21% pass" | **90%**  | Ran + verified output |
 | Validation script | "9/12 fail"   | **95%**  | Evidence-based checks |
 | Git history       | "alpha.1"     | **100%** | Package.json verified |
@@ -610,7 +610,7 @@ Overage: +0.235s (+4.7%)
 - [ ] Run: `timeout 30s node benchmarks/run-all.mjs core`
 - [ ] Verify benchmarks complete without crash
 - [ ] Document baseline performance metrics
-- [ ] Compare v5 vs v6 performance
+- [ ] Compare v5 vs current performance
 
 **Acceptance**: Benchmarks run successfully, baseline documented
 
@@ -652,7 +652,7 @@ Once all critical and high-priority issues are resolved:
 
 ### Pre-Release Validation
 
-- [ ] Run validation script: `node scripts/validate-v6.mjs`
+- [ ] Run validation script: `node scripts/validate.mjs`
 - [ ] Verify: 12/12 checks pass
 - [ ] Verify: 0 critical failures
 - [ ] Verify: 0 high failures
@@ -742,7 +742,7 @@ Validation pass rate: 25% (3/12)
 
 ### Evidence Files
 
-- Validation script: `/home/user/unrdf/scripts/validate-v6.mjs`
+- Validation script: `/home/user/unrdf/scripts/validate.mjs`
 - Validation output: `/tmp/v6-validation-results.log`
 - Test output: `/tmp/test-output.log`
 - Lint output: `/tmp/lint-output.log`
@@ -751,7 +751,7 @@ Validation pass rate: 25% (3/12)
 
 ```bash
 # Run validation
-node /home/user/unrdf/scripts/validate-v6.mjs
+node /home/user/unrdf/scripts/validate.mjs
 
 # Check test pass rate
 timeout 10s npm test 2>&1 | grep "# pass\|# fail"
@@ -768,7 +768,7 @@ grep '"version"' package.json
 
 ### Validation Script Source
 
-See `/home/user/unrdf/scripts/validate-v6.mjs` for complete source code.
+See `/home/user/unrdf/scripts/validate.mjs` for complete source code.
 
 ---
 
@@ -788,7 +788,7 @@ Multiple critical systems are broken or incomplete. Shipping in this state would
 
 **Recommendation**: Follow the remediation roadmap, fix all blocking issues, then re-run validation.
 
-**Next Validation**: After remediation, re-run `node scripts/validate-v6.mjs` and verify 12/12 checks pass.
+**Next Validation**: After remediation, re-run `node scripts/validate.mjs` and verify 12/12 checks pass.
 
 ---
 
