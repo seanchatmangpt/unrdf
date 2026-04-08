@@ -1,6 +1,7 @@
 # UNRDF V6 Capsule Backlog
 
 **Definition**: A "capsule" is a scoped, constraint-bound work unit with:
+
 - **Δ Scope**: Exact inputs/outputs, no scope creep
 - **Constraints**: Time, resources, dependencies
 - **Expected Receipts**: Proof of completion (KGC-4D)
@@ -13,15 +14,19 @@
 ## Priority Tiers
 
 ### P0: Critical Path (Blocks all other work)
+
 Must complete before any other capsules can start.
 
 ### P1: High Value (80/20 focus)
+
 20% of work that delivers 80% of value.
 
-### P2: Standard (Required for v6.0.0)
+### P2: Standard (Required for 6.0.0)
+
 Essential for release, but not blocking.
 
-### P3: Nice-to-Have (Post-v6.0.0)
+### P3: Nice-to-Have (Post-6.0.0)
+
 Improves DX but not required for stable release.
 
 ---
@@ -82,6 +87,7 @@ success_criteria:
 ## P0: Critical Path (4 capsules)
 
 ### V6-001: KGC-4D Receipt Wrapper HOF
+
 **Status**: Pending
 **Dependencies**: None
 **Effort**: 8 hours
@@ -90,6 +96,7 @@ success_criteria:
 Create `wrapWithReceipt()` higher-order function to add receipts to existing functions.
 
 **Deliverables**:
+
 - `/packages/kgc-4d/src/wrapper.mjs`
 - `/packages/kgc-4d/test/wrapper.test.mjs`
 - 5 passing tests
@@ -99,6 +106,7 @@ Create `wrapWithReceipt()` higher-order function to add receipts to existing fun
 ---
 
 ### V6-002: Zod Schema Generator
+
 **Status**: Pending
 **Dependencies**: None
 **Effort**: 10 hours
@@ -107,6 +115,7 @@ Create `wrapWithReceipt()` higher-order function to add receipts to existing fun
 Generate Zod schemas from TypeScript types and JSDoc comments.
 
 **Deliverables**:
+
 - `/packages/v6-compat/src/schema-generator.mjs`
 - CLI: `unrdf schema-gen src/**/*.mjs`
 - 10 example conversions
@@ -116,6 +125,7 @@ Generate Zod schemas from TypeScript types and JSDoc comments.
 ---
 
 ### V6-003: @unrdf/v6-compat Package
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-002
 **Effort**: 16 hours
@@ -124,6 +134,7 @@ Generate Zod schemas from TypeScript types and JSDoc comments.
 Implement full compatibility layer for v5 → v6 migration.
 
 **Deliverables**:
+
 - Package structure (see Migration Plan)
 - Adapters for all breaking changes
 - ESLint rules for deprecations
@@ -134,6 +145,7 @@ Implement full compatibility layer for v5 → v6 migration.
 ---
 
 ### V6-004: Update Root Workspace to 6.0.0-alpha.1
+
 **Status**: Pending
 **Dependencies**: V6-003
 **Effort**: 2 hours
@@ -142,6 +154,7 @@ Implement full compatibility layer for v5 → v6 migration.
 Update root package.json and workspace config.
 
 **Deliverables**:
+
 - Version bump to 6.0.0-alpha.1
 - Add v6-compat to workspace
 - Update pnpm-lock.yaml
@@ -153,12 +166,14 @@ Update root package.json and workspace config.
 ## P1: High Value - Core Packages (10 capsules)
 
 ### V6-010: @unrdf/oxigraph L3 → L4
+
 **Status**: Pending
 **Dependencies**: V6-001
 **Effort**: 10 hours
 **Parallel**: Yes (after V6-001)
 
 **Tasks**:
+
 - Add timeout guards to all SPARQL queries (default 5s)
 - Add Zod validation to query inputs
 - Add adversarial tests (100+ invalid inputs)
@@ -168,12 +183,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-011: @unrdf/oxigraph L4 → L5
+
 **Status**: Pending
 **Dependencies**: V6-010, [all other L5 packages]
 **Effort**: 7 hours
 **Parallel**: No (sequential after all L4)
 
 **Tasks**:
+
 - Integration tests with @unrdf/core, @unrdf/hooks, @unrdf/streaming
 - Performance benchmarks (no regression)
 - OTEL validation ≥80/100
@@ -183,12 +200,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-012: @unrdf/core L2 → L3
+
 **Status**: Pending
 **Dependencies**: V6-001
 **Effort**: 14 hours
 **Parallel**: Yes (after V6-001)
 
 **Tasks**:
+
 - Remove Date.now() / Math.random() from utils
 - Integrate receipts for all operations
 - Create reproducible fixtures (50+ tests)
@@ -198,12 +217,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-013: @unrdf/core L3 → L4
+
 **Status**: Pending
 **Dependencies**: V6-012
 **Effort**: 12 hours
 **Parallel**: Yes (after V6-012)
 
 **Tasks**:
+
 - Add timeout guards to I/O operations
 - Zod validation on all external inputs
 - Adversarial tests
@@ -213,12 +234,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-014: @unrdf/core L4 → L5
+
 **Status**: Pending
 **Dependencies**: V6-013, [all other L5]
 **Effort**: 10 hours
 **Parallel**: No
 
 **Tasks**:
+
 - Integration tests
 - Performance benchmarks
 - OTEL validation
@@ -228,12 +251,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-015: @unrdf/kgc-4d L4 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001
 **Effort**: 7 hours
 **Parallel**: Yes (after V6-001)
 
 **Tasks**:
+
 - Integration tests with all L5 packages
 - Receipt composition tests
 - Performance benchmarks
@@ -243,12 +268,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-016: @unrdf/hooks L2 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-012
 **Effort**: 25 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Enforce receipts on all hooks
 - Deterministic fixtures
 - Timeout guards
@@ -260,12 +287,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-017: @unrdf/streaming L2 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-012
 **Effort**: 27 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - AsyncIterator migration
 - Receipt integration
 - Deterministic replay tests
@@ -277,12 +306,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-018: @unrdf/federation L2 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-012
 **Effort**: 28 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - SPARQL template literals
 - Receipt composition
 - Timeout enforcement
@@ -294,12 +325,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-019: @unrdf/cli L2 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-012
 **Effort**: 22 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Zod validation on all args
 - Receipt generation for commands
 - Timeout guards
@@ -312,12 +345,14 @@ Update root package.json and workspace config.
 ## P2: Standard - Remaining Core (5 capsules)
 
 ### V6-020: @unrdf/yawl L2 → L5
+
 **Status**: Pending
 **Dependencies**: V6-015, V6-016
 **Effort**: 30 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Workflow receipt composition
 - Deterministic execution
 - Timeout guards
@@ -328,12 +363,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-021: @unrdf/knowledge-engine L1 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-014
 **Effort**: 50 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Full maturity ladder (L1 → L5)
 - Reasoning receipts
 - Deterministic inference
@@ -344,12 +381,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-022: @unrdf/project-engine L1 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-014
 **Effort**: 45 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Full maturity ladder
 - Project receipts
 - Deterministic builds
@@ -360,12 +399,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-023: @unrdf/observability L1 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001
 **Effort**: 40 hours
 **Parallel**: Yes (after V6-001)
 
 **Tasks**:
+
 - Full maturity ladder
 - OTEL receipt integration
 - Deterministic metrics
@@ -376,12 +417,14 @@ Update root package.json and workspace config.
 ---
 
 ### V6-024: @unrdf/validation L1 → L5
+
 **Status**: Pending
 **Dependencies**: V6-001, V6-014
 **Effort**: 35 hours
 **Parallel**: Yes (after deps)
 
 **Tasks**:
+
 - Full maturity ladder
 - Validation receipts
 - Deterministic SHACL
@@ -394,6 +437,7 @@ Update root package.json and workspace config.
 ## P3: Remaining 37 Packages (Batched)
 
 ### V6-030 to V6-066: Batch Migration
+
 **Status**: Pending
 **Dependencies**: V6-001 to V6-024
 **Effort**: 15-30 hours each (avg 22 hours)
@@ -401,6 +445,7 @@ Update root package.json and workspace config.
 **Parallel**: Yes (highly parallelizable)
 
 **Packages** (alphabetical):
+
 1. @unrdf/atomvm
 2. @unrdf/blockchain
 3. @unrdf/caching
@@ -438,6 +483,7 @@ Update root package.json and workspace config.
 35. @unrdf/yawl-viz
 
 **Tasks per package**:
+
 - JSDoc + Zod schemas (L1 → L2)
 - Receipt integration (L2 → L3)
 - Timeout guards + validation (L3 → L4)
@@ -450,12 +496,14 @@ Update root package.json and workspace config.
 ## Execution Timeline
 
 ### Week 1-2: Foundation (P0)
+
 - [x] V6-001: Receipt wrapper (Week 1)
 - [x] V6-002: Schema generator (Week 1)
 - [x] V6-003: v6-compat package (Week 2)
 - [x] V6-004: Workspace update (Week 2)
 
 ### Week 3-8: Core 10 (P1)
+
 Parallel execution of V6-010 to V6-019 (6 weeks).
 
 **Week 3-4**: L2 → L3 (deterministic)
@@ -463,9 +511,11 @@ Parallel execution of V6-010 to V6-019 (6 weeks).
 **Week 7-8**: L4 → L5 (integration)
 
 ### Week 9-14: Extended Core (P2)
+
 Parallel execution of V6-020 to V6-024 (6 weeks).
 
 ### Week 15-35: Batch Migration (P3)
+
 5 developers × 4 packages/week = 20 packages/week.
 37 packages ÷ 20/week ≈ 2 weeks (staggered start).
 
@@ -476,6 +526,7 @@ Parallel execution of V6-020 to V6-024 (6 weeks).
 ## Parallel vs Sequential Capsules
 
 ### Parallel-Safe (Independent)
+
 - All L1 → L2 migrations (schema generation)
 - All L2 → L3 migrations (receipt integration)
 - All L3 → L4 migrations (adversarial safety)
@@ -483,6 +534,7 @@ Parallel execution of V6-020 to V6-024 (6 weeks).
 **Concurrency**: Up to 47 capsules in parallel (limited by dev count).
 
 ### Sequential (Dependency Chains)
+
 - L4 → L5 requires ALL other L4 → L5 complete (integration tests)
 - v6-compat depends on receipt wrapper + schema generator
 - Workspace update depends on v6-compat
@@ -494,6 +546,7 @@ Parallel execution of V6-020 to V6-024 (6 weeks).
 ## Tracking Capsule Progress
 
 ### Status Values
+
 - `pending`: Not started
 - `in_progress`: Actively worked on
 - `blocked`: Waiting on dependency
@@ -501,13 +554,16 @@ Parallel execution of V6-020 to V6-024 (6 weeks).
 - `done`: Merged + receipts verified
 
 ### Receipt Verification
+
 Each capsule generates receipts:
+
 1. **Git commit**: Proof of code change
 2. **Test results**: Proof tests pass
 3. **Lint check**: Proof ESLint passes
 4. **OTEL trace**: Proof execution succeeded
 
 **Validation**:
+
 ```bash
 # Check capsule completion
 node scripts/validate-capsule.mjs V6-001
@@ -519,15 +575,19 @@ node scripts/validate-capsule.mjs V6-001
 ## Risk Mitigation
 
 ### Risk 1: Scope Creep
+
 **Mitigation**: Strict Δ scope in capsule definition. Reject PRs outside scope.
 
 ### Risk 2: Dependency Hell
+
 **Mitigation**: Explicit dependency graph. Block capsules until deps complete.
 
 ### Risk 3: Developer Availability
+
 **Mitigation**: Highly parallelizable design. Any dev can pick any capsule.
 
 ### Risk 4: Regression Bugs
+
 **Mitigation**: Mandatory tests + OTEL validation ≥80/100 per capsule.
 
 ---
@@ -538,7 +598,7 @@ node scripts/validate-capsule.mjs V6-001
 
 **Capsules**: V6-001 to V6-019 (19 capsules)
 **Effort**: 196 hours (≈5 weeks for 5 devs)
-**Release**: `v6.0.0-core` (subset release)
+**Release**: `6.0.0-core` (subset release)
 
 **Remaining 37**: Backfill over 3-6 months post-core release.
 
@@ -549,7 +609,7 @@ node scripts/validate-capsule.mjs V6-001
 - [ ] All P0 capsules complete (Week 2)
 - [ ] All P1 capsules complete (Week 8)
 - [ ] Core 10 packages at L5 (Week 8)
-- [ ] `v6.0.0-core` released (Week 9)
+- [ ] `6.0.0-core` released (Week 9)
 - [ ] All P2 capsules complete (Week 14)
 - [ ] All P3 capsules complete (Week 35)
 - [ ] `v6.0.0` stable released (Week 36)
