@@ -1,4 +1,4 @@
-# V6 Documentation Pipeline Summary
+# Documentation Pipeline Summary
 
 **Created:** 2025-12-27  
 **Status:** Complete  
@@ -17,6 +17,7 @@ Unified documentation pipeline using Diataxis framework with deterministic LaTeX
 **File:** `/home/user/unrdf/docs/v6/DIATAXIS_SPEC.md`
 
 Comprehensive specification covering:
+
 - Diataxis framework (4 categories)
 - Directory structure per package
 - Required sections for each category
@@ -27,6 +28,7 @@ Comprehensive specification covering:
 - CLI integration
 
 **Key Features:**
+
 - Proof system with confidence scores (0.0-1.0)
 - Merkle root for deterministic verification
 - Receipt emission at each pipeline stage
@@ -41,11 +43,13 @@ Comprehensive specification covering:
 #### a. `pipeline.mjs` (270 lines)
 
 **Exports:**
+
 - `collectPackageDocs(packageDirs, options)` - Gather docs from packages
 - `generateDiataxisOutput(packageDocs)` - Generate Diataxis structure
 - `emitReceipt(stage, input, output, outputPath)` - Receipt generation
 
 **Features:**
+
 - Collects docs from 4 categories: tutorials, how-to, reference, explanation
 - Parses frontmatter (YAML)
 - Calculates SHA256 hashes for all files
@@ -53,6 +57,7 @@ Comprehensive specification covering:
 - Deterministic output (sorted keys, stable JSON)
 
 **Receipt Format:**
+
 ```javascript
 {
   stage: "collect|diataxis|latex|pdf",
@@ -66,10 +71,12 @@ Comprehensive specification covering:
 #### b. `latex-generator.mjs` (341 lines)
 
 **Exports:**
+
 - `generateLatex(diataxisDocs, outputDir)` - Convert to LaTeX
 - `compileToPDF(texFile, options)` - Compile to PDF (stubbed)
 
 **Features:**
+
 - Generates LaTeX preamble with packages (hyperref, listings, geometry, etc.)
 - Creates one chapter per package
 - Converts markdown → LaTeX (simplified):
@@ -81,6 +88,7 @@ Comprehensive specification covering:
 - Deterministic lockfile with file hashes
 
 **Lockfile Format:**
+
 ```json
 {
   "version": "6.0.0-alpha.1",
@@ -93,6 +101,7 @@ Comprehensive specification covering:
 ```
 
 **PDF Compilation:**
+
 - Currently stubbed (WASM engine pending)
 - Returns expected PDF path
 - TODO: Integrate WASM LaTeX compiler
@@ -100,11 +109,13 @@ Comprehensive specification covering:
 #### c. `thesis-builder.mjs` (196 lines)
 
 **Exports:**
+
 - `buildThesis(config)` - Full pipeline build
 - `renderFromOntology(ontologyPath, outputDir)` - CONSTRUCT rendering (stubbed)
 - `exportThesis(thesisDir, format, outputPath)` - Export to pdf|latex|html
 
 **Build Pipeline Stages:**
+
 1. **Collect** - Package docs → PackageDocs[]
 2. **Diataxis** - Structure generation → DiataxisOutput
 3. **LaTeX** - Conversion → .tex files
@@ -113,6 +124,7 @@ Comprehensive specification covering:
 Each stage emits a receipt to `{outputDir}/receipts/NN-stage.json`
 
 **Build Output:**
+
 ```javascript
 {
   latexDir: "/path/to/latex",
@@ -143,16 +155,19 @@ Each stage emits a receipt to `{outputDir}/receipts/NN-stage.json`
 Build thesis from package documentation.
 
 **Options:**
+
 - `--output` (default: `./thesis`) - Output directory
 - `--packages` (default: `packages/*`) - Package glob pattern
 - `--pdf` (default: `false`) - Generate PDF
 
 **Example:**
+
 ```bash
 kgc thesis build --output=./output --packages="packages/@unrdf/*" --pdf
 ```
 
 **Output:**
+
 - LaTeX files in `{output}/latex/`
 - Receipts in `{output}/receipts/`
 - Build summary with statistics
@@ -162,10 +177,12 @@ kgc thesis build --output=./output --packages="packages/@unrdf/*" --pdf
 CONSTRUCT documentation from ontology (SPARQL).
 
 **Options:**
+
 - `--ontology` (required) - Path to .ttl ontology
 - `--output` (default: `./rendered-docs`) - Output directory
 
 **Example:**
+
 ```bash
 kgc thesis render --ontology=docs.ttl --output=./rendered
 ```
@@ -177,11 +194,13 @@ kgc thesis render --ontology=docs.ttl --output=./rendered
 Export thesis to specified format.
 
 **Options:**
+
 - `--format` (default: `pdf`) - Export format (pdf|latex|html)
 - `--input` (default: `./thesis`) - Thesis directory
 - `--output` - Output file path
 
 **Example:**
+
 ```bash
 kgc thesis export --format=pdf --input=./thesis --output=./thesis.pdf
 ```
@@ -195,6 +214,7 @@ kgc thesis export --format=pdf --input=./thesis --output=./thesis.pdf
 All templates updated with proof system:
 
 #### `tutorial.md`
+
 - Action-oriented title
 - Learning objectives
 - Prerequisites checklist
@@ -206,6 +226,7 @@ All templates updated with proof system:
 - **Proof section** (sources, hash, confidence)
 
 #### `howto.md`
+
 - Problem statement
 - Use cases
 - Solution steps
@@ -216,6 +237,7 @@ All templates updated with proof system:
 - **Proof section**
 
 #### `reference.md`
+
 - API overview
 - Import paths
 - Function signatures (JSDoc)
@@ -227,6 +249,7 @@ All templates updated with proof system:
 - **Proof section** (confidence: 1.00 for code-generated)
 
 #### `explanation.md`
+
 - Concept overview
 - Background (problem context)
 - UNRDF approach
@@ -269,6 +292,7 @@ All templates updated with proof system:
 ```
 
 Each receipt includes:
+
 - Stage name
 - Input hash
 - Output hash
@@ -284,6 +308,7 @@ Each receipt includes:
 **Goal:** Learning-oriented, hands-on
 
 **Structure:**
+
 1. What you'll build (concrete outcome)
 2. What you'll learn (learning objectives)
 3. Prerequisites (checklist)
@@ -303,6 +328,7 @@ Each receipt includes:
 **Goal:** Task-oriented, problem-solving
 
 **Structure:**
+
 1. Problem statement
 2. Use cases ("Use this when...")
 3. Prerequisites
@@ -322,6 +348,7 @@ Each receipt includes:
 **Goal:** Information-oriented, technical specs
 
 **Structure:**
+
 1. Overview
 2. Import paths
 3. API (functions, signatures, params, returns)
@@ -341,6 +368,7 @@ Each receipt includes:
 **Goal:** Understanding-oriented, conceptual
 
 **Structure:**
+
 1. Overview (what + why it matters)
 2. Background (problem context)
 3. UNRDF approach
@@ -373,12 +401,14 @@ Tutorials ──────────→ How-to Guides
 ```
 
 **Patterns:**
+
 - **Tutorial → How-to:** "Now solve specific problem X"
 - **How-to → Reference:** "See API docs for full details"
 - **Reference → Explanation:** "Understand why this design"
 - **Explanation → Tutorial:** "Try it hands-on"
 
 **Link Format:**
+
 - Internal: Relative paths (`../tutorials/01-start.md`)
 - Cross-package: Absolute paths (`/packages/pkg/docs/...`)
 
@@ -431,18 +461,21 @@ Tutorials ──────────→ How-to Guides
 ## Next Steps (Implementation)
 
 ### Immediate
+
 1. Test pipeline with sample package
 2. Validate frontmatter parsing
 3. Verify Merkle root calculation
 4. Test LaTeX generation
 
 ### Short-term
+
 1. Implement WASM LaTeX compiler integration
 2. Add HTML export
 3. Implement SPARQL CONSTRUCT rendering
 4. Add validation gates (structure, links, proof)
 
 ### Long-term
+
 1. Auto-generate reference docs from JSDoc
 2. Extract tutorials from examples/
 3. Generate explanations from ADRs
@@ -453,6 +486,7 @@ Tutorials ──────────→ How-to Guides
 ## Evidence
 
 **Files Created:**
+
 - /home/user/unrdf/docs/v6/DIATAXIS_SPEC.md
 - /home/user/unrdf/packages/v6-core/src/docs/pipeline.mjs
 - /home/user/unrdf/packages/v6-core/src/docs/latex-generator.mjs
@@ -468,10 +502,10 @@ Tutorials ──────────→ How-to Guides
 **Total LOC:** 819 lines (docs module) + 143 lines (CLI) = 962 lines
 
 **Verification:**
+
 ```bash
 ls -la /home/user/unrdf/docs/v6/DIATAXIS_SPEC.md
 ls -la /home/user/unrdf/packages/v6-core/src/docs/*.mjs
 ls -la /home/user/unrdf/packages/v6-core/src/cli/commands/thesis.mjs
 ls -la /home/user/unrdf/docs/templates/*.md
 ```
-
