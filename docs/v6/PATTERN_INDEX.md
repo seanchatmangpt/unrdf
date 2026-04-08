@@ -1,20 +1,20 @@
-# v6 Pattern Library - Quick Reference Index
+# Pattern Library - Quick Reference Index
 
 **Version**: 6.0.0-alpha.1
 **Last Updated**: 2025-12-27
 
 ## Documentation Map
 
-This index helps you navigate the v6 pattern library documentation.
+This index helps you navigate the pattern library documentation.
 
 ### 📚 Main Documents
 
-| Document | Purpose | When to Use |
-|----------|---------|-------------|
-| [PATTERNS.md](./PATTERNS.md) | Complete pattern specifications | Reference implementation details |
-| [PATTERN_TUTORIALS.md](./PATTERN_TUTORIALS.md) | Step-by-step learning guides | Learn patterns hands-on |
-| [MIGRATION_RUNBOOKS.md](./MIGRATION_RUNBOOKS.md) | Package migration procedures | Migrate P1 packages to v6 |
-| [RESEARCH_FINDINGS_SUMMARY.md](./RESEARCH_FINDINGS_SUMMARY.md) | Research results & metrics | Understand research process |
+| Document                                                       | Purpose                         | When to Use                      |
+| -------------------------------------------------------------- | ------------------------------- | -------------------------------- |
+| [PATTERNS.md](./PATTERNS.md)                                   | Complete pattern specifications | Reference implementation details |
+| [PATTERN_TUTORIALS.md](./PATTERN_TUTORIALS.md)                 | Step-by-step learning guides    | Learn patterns hands-on          |
+| [MIGRATION_RUNBOOKS.md](./MIGRATION_RUNBOOKS.md)               | Package migration procedures    | Migrate P1 packages to v6        |
+| [RESEARCH_FINDINGS_SUMMARY.md](./RESEARCH_FINDINGS_SUMMARY.md) | Research results & metrics      | Understand research process      |
 
 ### 🎯 Quick Access
 
@@ -22,6 +22,7 @@ This index helps you navigate the v6 pattern library documentation.
 
 **Learn a pattern from scratch**
 → [PATTERN_TUTORIALS.md](./PATTERN_TUTORIALS.md)
+
 - Tutorial 1: Receipt HOF (15 min)
 - Tutorial 2: Delta Contract (20 min)
 - Tutorial 3: Zod Validation (15 min)
@@ -30,6 +31,7 @@ This index helps you navigate the v6 pattern library documentation.
 
 **Look up pattern implementation details**
 → [PATTERNS.md](./PATTERNS.md)
+
 - Receipt HOF Pattern (template + examples)
 - Delta Contract Pattern (SPARQL examples)
 - Zod Validation Envelope (composable validators)
@@ -38,6 +40,7 @@ This index helps you navigate the v6 pattern library documentation.
 
 **Migrate a specific package**
 → [MIGRATION_RUNBOOKS.md](./MIGRATION_RUNBOOKS.md)
+
 - @unrdf/oxigraph (20h)
 - @unrdf/core (24h)
 - @unrdf/kgc-4d (16h)
@@ -46,6 +49,7 @@ This index helps you navigate the v6 pattern library documentation.
 
 **Understand research methodology**
 → [RESEARCH_FINDINGS_SUMMARY.md](./RESEARCH_FINDINGS_SUMMARY.md)
+
 - Pattern extraction process
 - Codebase analysis (63 packages, 150+ files)
 - Documentation metrics (66KB, 2,600 lines)
@@ -62,7 +66,7 @@ This index helps you navigate the v6 pattern library documentation.
 ```javascript
 import { withReceipt } from '@unrdf/v6-compat/adapters';
 
-const fn = withReceipt(async (x) => x * 2, { operation: 'double' });
+const fn = withReceipt(async x => x * 2, { operation: 'double' });
 const { result, receipt } = await fn(21); // { result: 42, receipt: {...} }
 ```
 
@@ -149,13 +153,13 @@ class CompositionChecker {
 
 ## Pattern Compatibility Matrix
 
-|  | Receipt HOF | Delta Contract | Zod Validation | Determinism Proof | Composition Layer |
-|--|-------------|----------------|----------------|-------------------|-------------------|
-| **Receipt HOF** | — | ✅ | ✅ | ✅ | ✅ |
-| **Delta Contract** | ✅ | — | ✅ | ✅ | ✅ |
-| **Zod Validation** | ✅ | ✅ | — | ✅ | ✅ |
-| **Determinism Proof** | ✅ | ✅ | ✅ | — | ✅ |
-| **Composition Layer** | ✅ | ✅ | ✅ | ✅ | — |
+|                       | Receipt HOF | Delta Contract | Zod Validation | Determinism Proof | Composition Layer |
+| --------------------- | ----------- | -------------- | -------------- | ----------------- | ----------------- |
+| **Receipt HOF**       | —           | ✅             | ✅             | ✅                | ✅                |
+| **Delta Contract**    | ✅          | —              | ✅             | ✅                | ✅                |
+| **Zod Validation**    | ✅          | ✅             | —              | ✅                | ✅                |
+| **Determinism Proof** | ✅          | ✅             | ✅             | —                 | ✅                |
+| **Composition Layer** | ✅          | ✅             | ✅             | ✅                | —                 |
 
 **Result**: All patterns compose (100% compatibility)
 
@@ -164,11 +168,13 @@ class CompositionChecker {
 ## Migration Roadmap
 
 ### P0: Foundation (Complete ✅)
+
 - v6-compat: Receipt HOF
 - v6-core: Delta Contract + Zod
 - kgc-4d: Determinism
 
 ### P1: Core Packages (196 hours)
+
 - [ ] @unrdf/oxigraph (20h)
 - [ ] @unrdf/core (24h)
 - [ ] @unrdf/kgc-4d (16h)
@@ -181,9 +187,11 @@ class CompositionChecker {
 - [ ] @unrdf/graph-analytics (18h)
 
 ### P2: Extended Core (200 hours)
+
 - 5 packages (planned)
 
 ### P3: Batch Migration (814 hours)
+
 - 37 remaining packages
 
 **Total**: 1,246 hours → 48% savings with patterns = **653 hours effective**
@@ -195,6 +203,7 @@ class CompositionChecker {
 ### How do I...
 
 **Add receipts to my operation?**
+
 ```javascript
 import { withReceipt } from '@unrdf/v6-compat/adapters';
 const wrapped = withReceipt(myFunction, { operation: 'my.op' });
@@ -202,15 +211,17 @@ const { result, receipt } = await wrapped(args);
 ```
 
 **Create a delta for RDF mutation?**
+
 ```javascript
 import { createDelta } from '@unrdf/v6-core/delta';
 const delta = createDelta('add', subject, predicate, object, {
   package: '@unrdf/my-package',
-  actor: 'user-id'
+  actor: 'user-id',
 });
 ```
 
 **Validate input with Zod?**
+
 ```javascript
 import { z } from 'zod';
 const Schema = z.object({ id: z.string().uuid() });
@@ -218,15 +229,15 @@ const validated = Schema.parse(input); // Throws if invalid
 ```
 
 **Prove determinism?**
+
 ```javascript
 // Run 100 times
-const hashes = await Promise.all(
-  Array.from({ length: 100 }, () => computeBlake3(data))
-);
+const hashes = await Promise.all(Array.from({ length: 100 }, () => computeBlake3(data)));
 console.log(new Set(hashes).size); // Should be 1
 ```
 
 **Check if two modules can compose?**
+
 ```javascript
 const checker = new CompositionChecker();
 const compatible = checker.canCompose(moduleA, moduleB);
@@ -238,26 +249,31 @@ console.log(compatible); // true if A.output matches B.input
 ## Testing Checklists
 
 ### Receipt HOF
+
 - [ ] Receipt contains all required fields (timestamp, duration, operation)
 - [ ] Async functions work
 - [ ] Error handling preserves stack traces
 
 ### Delta Contract
+
 - [ ] Delta validates against DeltaSchema
 - [ ] Receipts generated for all outcomes (success/failure)
 - [ ] All-or-none atomicity enforced
 
 ### Zod Validation
+
 - [ ] Invalid inputs throw ZodError
 - [ ] Error messages are readable
 - [ ] Schemas compose (input → output)
 
 ### Determinism Proof
+
 - [ ] 100x runs produce identical hashes
 - [ ] Key ordering deterministic (sorted)
 - [ ] Timestamps deterministic in DETERMINISTIC=1 mode
 
 ### Composition Layer
+
 - [ ] Output schema of A matches input schema of B
 - [ ] Receipt chains span packages
 - [ ] Compatibility matrix updated
@@ -268,21 +284,21 @@ console.log(compatible); // true if A.output matches B.input
 
 ### Pattern Implementations
 
-| Pattern | Location |
-|---------|----------|
-| Receipt HOF | `/home/user/unrdf/packages/v6-compat/src/adapters.mjs` |
-| Delta Contract | `/home/user/unrdf/packages/v6-core/src/delta/` |
-| Zod Validation | Throughout (9+ packages) |
+| Pattern           | Location                                                          |
+| ----------------- | ----------------------------------------------------------------- |
+| Receipt HOF       | `/home/user/unrdf/packages/v6-compat/src/adapters.mjs`            |
+| Delta Contract    | `/home/user/unrdf/packages/v6-core/src/delta/`                    |
+| Zod Validation    | Throughout (9+ packages)                                          |
 | Determinism Proof | `/home/user/unrdf/packages/v6-core/src/receipts/base-receipt.mjs` |
-| Composition Layer | Inferred from charter |
+| Composition Layer | Inferred from charter                                             |
 
 ### Documentation
 
-| Document | Location |
-|----------|----------|
-| Pattern Library | `/home/user/unrdf/docs/v6/PATTERNS.md` |
-| Tutorials | `/home/user/unrdf/docs/v6/PATTERN_TUTORIALS.md` |
-| Runbooks | `/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md` |
+| Document         | Location                                                |
+| ---------------- | ------------------------------------------------------- |
+| Pattern Library  | `/home/user/unrdf/docs/v6/PATTERNS.md`                  |
+| Tutorials        | `/home/user/unrdf/docs/v6/PATTERN_TUTORIALS.md`         |
+| Runbooks         | `/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md`        |
 | Research Summary | `/home/user/unrdf/docs/v6/RESEARCH_FINDINGS_SUMMARY.md` |
 
 ---
@@ -290,17 +306,20 @@ console.log(compatible); // true if A.output matches B.input
 ## Next Steps
 
 ### For Learners
+
 1. Start with [Tutorial 1](./PATTERN_TUTORIALS.md#tutorial-1-add-receipt-to-your-first-operation-15-min)
 2. Complete all 5 tutorials (~2 hours total)
 3. Apply patterns to a real package
 
 ### For Migrators
+
 1. Read runbook for your package
 2. Follow step-by-step commands
 3. Run testing checklist
 4. Submit PR with receipt proofs
 
 ### For Architects
+
 1. Review [Pattern Library](./PATTERNS.md)
 2. Study [Composition Layer](./PATTERNS.md#composition-layer-pattern-l5)
 3. Update [Compatibility Matrix](./PATTERNS.md#pattern-compatibility-matrix)
