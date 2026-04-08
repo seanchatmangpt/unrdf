@@ -1,4 +1,5 @@
-# UNRDF v6 Phase 4-5 Migration Architecture
+# UNRDF Phase 4-5 Migration Architecture
+
 **System Architecture Design Document**
 
 **Version**: 1.0.0
@@ -11,7 +12,7 @@
 
 ## Executive Summary
 
-This document defines the migration strategy for **Phase 4-5** of UNRDF v6, escalating 10 core packages from L1→L5 maturity over a 12-week timeline. The design prioritizes **compositional closure** (L5) through receipt chaining, deterministic execution, and Poka-Yoke guards.
+This document defines the migration strategy for **Phase 4-5** of UNRDF, escalating 10 core packages from L1→L5 maturity over a 12-week timeline. The design prioritizes **compositional closure** (L5) through receipt chaining, deterministic execution, and Poka-Yoke guards.
 
 **Current State**: 53 packages, L1=53 (100%), L2=12 (23%), L3=5 (9%), L4=3 (6%), L5=0 (0%)
 **Target State (12 weeks)**: 10 core packages at L5, remaining 43 packages at L2-L3
@@ -19,6 +20,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF v6, esca
 **Mitigation**: Phased rollout, automated verification, rollback procedures
 
 **Key Deliverables**:
+
 1. Phase 4 Migration Pattern (L1→L5 escalation path)
 2. L5 Maturity Architecture (compositional closure invariants)
 3. Dependency Graph Analysis (47 packages + dependency ranking)
@@ -83,6 +85,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF v6, esca
 ### 1.2 10 Core Packages Priority Ranking
 
 **Selection Criteria**:
+
 1. **Dependency criticality**: Foundation packages before application layer
 2. **Receipt maturity**: Packages with existing receipt integration
 3. **User impact**: High-usage packages (CLI, core, yawl)
@@ -90,23 +93,24 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF v6, esca
 
 **Ranked List**:
 
-| Rank | Package | Current Level | Deps | Rationale |
-|------|---------|---------------|------|-----------|
-| 1 | `@unrdf/oxigraph` | L3 | 0 | **Foundation**. Pure store, no deps, already L3. Fast path to L5. |
-| 2 | `@unrdf/core` | L2 | 1 | **Critical path**. All packages depend on core RDF ops. Must reach L5 first. |
-| 3 | `@unrdf/kgc-4d` | L4 | 3 | **Receipt engine**. Already L4, only integration tests needed for L5. |
-| 4 | `@unrdf/v6-core` | L1 | 5 | **ΔGate**. New package, needs full L1→L5 escalation. Highest complexity. |
-| 5 | `@unrdf/hooks` | L2 | 4 | **Policy framework**. Required for L4 (adversarial safety) across all packages. |
-| 6 | `@unrdf/yawl` | L3 | 3 | **Workflow engine**. High usage, already L3 with receipts. |
-| 7 | `@unrdf/kgc-substrate` | L2 | 4 | **Storage substrate**. KnowledgeStore integration with ΔGate. |
-| 8 | `@unrdf/streaming` | L2 | 5 | **Change feeds**. Real-time sync, critical for distributed systems. |
-| 9 | `@unrdf/federation` | L2 | 4 | **Distributed queries**. Cross-package integration test target. |
-| 10 | `@unrdf/cli` | L2 | 6 | **User interface**. High visibility, must be stable and fast. |
+| Rank | Package                | Current Level | Deps | Rationale                                                                                    |
+| ---- | ---------------------- | ------------- | ---- | -------------------------------------------------------------------------------------------- |
+| 1    | `@unrdf/oxigraph`      | L3            | 0    | **Foundation**. Pure store, no deps, already L3. Fast path to L5.                            |
+| 2    | `@unrdf/core`          | L2            | 1    | **Critical path**. All packages depend on core RDF ops. Must reach L5 first.                 |
+| 3    | `@unrdf/kgc-4d`        | L4            | 3    | **Receipt engine**. Already L4, only integration tests needed for L5.                        |
+| 4    | `@unrdf/v6-core`       | L1            | 5    | **ΔGate**. New package, needs full L1→L5 escalation. Highest complexity. KEEP (package name) |
+| 5    | `@unrdf/hooks`         | L2            | 4    | **Policy framework**. Required for L4 (adversarial safety) across all packages.              |
+| 6    | `@unrdf/yawl`          | L3            | 3    | **Workflow engine**. High usage, already L3 with receipts.                                   |
+| 7    | `@unrdf/kgc-substrate` | L2            | 4    | **Storage substrate**. KnowledgeStore integration with ΔGate.                                |
+| 8    | `@unrdf/streaming`     | L2            | 5    | **Change feeds**. Real-time sync, critical for distributed systems.                          |
+| 9    | `@unrdf/federation`    | L2            | 4    | **Distributed queries**. Cross-package integration test target.                              |
+| 10   | `@unrdf/cli`           | L2            | 6    | **User interface**. High visibility, must be stable and fast.                                |
 
 **Justification for Exclusions**:
+
 - `@unrdf/knowledge-engine`: Complex reasoning, defer to Phase 6
 - `@unrdf/blockchain`: Specialty feature, low usage
-- `@unrdf/ml-*`: ML packages less critical for core v6
+- `@unrdf/ml-*`: ML packages less critical for core
 - `@unrdf/yawl-*`: Extensions can follow main yawl package
 
 ### 1.3 Essential Checkpoints Before L5 Promotion
@@ -116,6 +120,7 @@ This document defines the migration strategy for **Phase 4-5** of UNRDF v6, esca
 #### Checkpoint 1: L1→L2 Gate (Stable Contracts)
 
 **Automated Checks** (CI must pass):
+
 ```bash
 # 1. JSDoc coverage ≥95%
 timeout 5s pnpm run jsdoc-coverage | grep "Coverage: [9][5-9]%\|Coverage: 100%"
@@ -134,6 +139,7 @@ timeout 5s pnpm kgc:validate-registry  # No collision warnings
 ```
 
 **Manual Review**:
+
 - [ ] Breaking changes documented in MIGRATION.md
 - [ ] At least 2 external reviews of API surface
 - [ ] No API changes for ≥2 weeks (stability period)
@@ -145,6 +151,7 @@ timeout 5s pnpm kgc:validate-registry  # No collision warnings
 #### Checkpoint 2: L2→L3 Gate (Deterministic Outputs)
 
 **Automated Checks**:
+
 ```bash
 # 1. Determinism test (10 runs)
 for i in {1..10}; do
@@ -168,6 +175,7 @@ timeout 10s pnpm test:kgc-integration
 ```
 
 **Manual Review**:
+
 - [ ] Receipt schemas match actual emitted receipts (compare fixtures vs runtime)
 - [ ] Replay test: Given receipt, reproduce output (manual verification)
 - [ ] No hidden state: All inputs declared in function signatures
@@ -179,6 +187,7 @@ timeout 10s pnpm test:kgc-integration
 #### Checkpoint 3: L3→L4 Gate (Adversarial Safety)
 
 **Automated Checks**:
+
 ```bash
 # 1. Timeout guards on all I/O
 timeout 5s grep -r "timeout\|AbortSignal" src/ --include="*.mjs" | wc -l  # Must match I/O call count
@@ -197,6 +206,7 @@ timeout 5s pnpm test:poka-yoke  # Test impossible states are prevented
 ```
 
 **Manual Review**:
+
 - [ ] Error messages suggest correct usage (not just "invalid input")
 - [ ] Fuzzing test (10K random inputs) produces no crashes
 - [ ] Security audit: No injection vectors (SQL, SPARQL, shell)
@@ -208,6 +218,7 @@ timeout 5s pnpm test:poka-yoke  # Test impossible states are prevented
 #### Checkpoint 4: L4→L5 Gate (Compositional Closure)
 
 **Automated Checks**:
+
 ```bash
 # 1. Integration tests with ALL other L5 packages
 timeout 30s pnpm test:integration  # Must cover all L5×L5 pairs
@@ -226,6 +237,7 @@ timeout 15s node validation/run-all.mjs comprehensive | grep "Score: [8-9][0-9]\
 ```
 
 **Manual Review**:
+
 - [ ] At least 3 cross-package workflows in production (real-world validation)
 - [ ] Stress test: 1000 concurrent requests, no failures
 - [ ] Documentation: All cross-package patterns documented in examples/
@@ -359,6 +371,7 @@ if (regression > 10) {
 ```
 
 **Test Example** (core × kgc-4d):
+
 ```javascript
 // test/integration/core-kgc4d.test.mjs
 import { describe, test, expect } from 'vitest';
@@ -411,6 +424,7 @@ Week 4 (L4→L5): Days 11-12
 **Parallelization**: Multiple packages can be in different stages simultaneously.
 
 **Optimizations**:
+
 - **JSDoc generation**: GPT-4 can generate 90% coverage in 2 hours
 - **Zod schemas**: Automated tool from JSDoc annotations
 - **Fixtures**: Generator from existing test cases
@@ -467,17 +481,18 @@ Composition op₂ ∘ op₁ is L5-compliant iff:
 **Statement**: Same input → Same output (bit-for-bit identical receipts)
 
 **Enforcement**:
+
 ```javascript
 // All packages must inject time, randomness as explicit dependencies
 export async function createReceipt({ deltaId, payload, clock = Date.now }) {
-  const timestamp = clock();  // Injected dependency
-  const receiptId = deterministicUUID(deltaId, timestamp);  // No crypto.randomUUID()
+  const timestamp = clock(); // Injected dependency
+  const receiptId = deterministicUUID(deltaId, timestamp); // No crypto.randomUUID()
 
   const receipt = {
     id: receiptId,
     t_ns: BigInt(timestamp) * 1_000_000n,
     payload,
-    payloadHash: await computeBlake3(canonicalize(payload))  // Stable canonicalization
+    payloadHash: await computeBlake3(canonicalize(payload)), // Stable canonicalization
   };
 
   return receipt;
@@ -485,29 +500,31 @@ export async function createReceipt({ deltaId, payload, clock = Date.now }) {
 ```
 
 **Test**:
+
 ```javascript
 test('determinism: 10 runs produce identical hashes', async () => {
-  const fixedClock = () => 1704067200000;  // 2025-01-01 00:00:00 UTC
+  const fixedClock = () => 1704067200000; // 2025-01-01 00:00:00 UTC
 
   const hashes = [];
   for (let i = 0; i < 10; i++) {
     const receipt = await createReceipt({
       deltaId: 'delta-123',
       payload: { action: 'test' },
-      clock: fixedClock
+      clock: fixedClock,
     });
     hashes.push(receipt.receiptHash);
   }
 
-  expect(new Set(hashes).size).toBe(1);  // All identical
+  expect(new Set(hashes).size).toBe(1); // All identical
 });
 ```
 
 **Violation Example**:
+
 ```javascript
 // ❌ BAD: Non-deterministic
 export async function createReceipt({ deltaId, payload }) {
-  const receiptId = crypto.randomUUID();  // Different every time!
+  const receiptId = crypto.randomUUID(); // Different every time!
   return { id: receiptId, payload };
 }
 ```
@@ -519,6 +536,7 @@ export async function createReceipt({ deltaId, payload }) {
 **Statement**: μ ∘ μ = μ (applying same delta twice has no effect)
 
 **Enforcement**:
+
 ```javascript
 // ΔGate checks receipt chain for duplicate deltaId
 export async function proposeDelta(delta, store) {
@@ -534,7 +552,7 @@ export async function proposeDelta(delta, store) {
     return {
       applied: false,
       reason: 'Delta already applied',
-      existingReceiptId: existingReceipt[0].receipt.value
+      existingReceiptId: existingReceipt[0].receipt.value,
     };
   }
 
@@ -543,6 +561,7 @@ export async function proposeDelta(delta, store) {
 ```
 
 **Test**:
+
 ```javascript
 test('idempotence: applying delta twice has no effect', async () => {
   const delta = createDelta('add', 'ex:s', 'ex:p', 'ex:o');
@@ -563,12 +582,13 @@ test('idempotence: applying delta twice has no effect', async () => {
 **Statement**: hash(Aₙ) = hash(μ(Oₙ₋₁)) where Aₙ is atomic change
 
 **Enforcement**:
+
 ```javascript
 export async function generateReceipt(delta, previousReceipt, changeSet) {
   const payloadHash = await computeBlake3({
     deltaId: delta.id,
     changeSet: canonicalize(changeSet),
-    timestamp: delta.t_ns
+    timestamp: delta.t_ns,
   });
 
   const previousHash = previousReceipt?.receiptHash || null;
@@ -578,8 +598,8 @@ export async function generateReceipt(delta, previousReceipt, changeSet) {
     id: generateUUID(),
     previousReceiptHash: previousHash,
     payloadHash,
-    receiptHash,  // Cryptographically chained
-    t_ns: delta.t_ns
+    receiptHash, // Cryptographically chained
+    t_ns: delta.t_ns,
   };
 }
 
@@ -591,6 +611,7 @@ async function computeChainHash(previousHash, payloadHash) {
 ```
 
 **Tamper Detection**:
+
 ```javascript
 export async function verifyReceiptChain(receipts) {
   for (let i = 1; i < receipts.length; i++) {
@@ -603,17 +624,14 @@ export async function verifyReceiptChain(receipts) {
     }
 
     // Verify hash computation
-    const recomputedHash = await computeChainHash(
-      current.previousReceiptHash,
-      current.payloadHash
-    );
+    const recomputedHash = await computeChainHash(current.previousReceiptHash, current.payloadHash);
 
     if (recomputedHash !== current.receiptHash) {
       throw new TamperDetected(`Receipt ${current.id} hash mismatch`);
     }
   }
 
-  return true;  // Chain is valid
+  return true; // Chain is valid
 }
 ```
 
@@ -624,6 +642,7 @@ export async function verifyReceiptChain(receipts) {
 **Statement**: All changes in Δ are applied, or none (transaction semantics)
 
 **Enforcement**:
+
 ```javascript
 export async function applyDelta(delta, store) {
   // Create snapshot for rollback
@@ -650,7 +669,6 @@ export async function applyDelta(delta, store) {
     }
 
     return { applied: true };
-
   } catch (error) {
     // Rollback on ANY error
     await store.restoreSnapshot(snapshot.snapshot_id);
@@ -660,21 +678,22 @@ export async function applyDelta(delta, store) {
 ```
 
 **Test**:
+
 ```javascript
 test('atomicity: partial failure rolls back all changes', async () => {
   const delta = {
     id: 'delta-123',
     changes: [
       { operation: 'add_triple', subject: 'ex:s1', predicate: 'ex:p', object: 'ex:o1' },
-      { operation: 'add_triple', subject: 'ex:invalid', predicate: null, object: 'ex:o2' }  // Invalid!
-    ]
+      { operation: 'add_triple', subject: 'ex:invalid', predicate: null, object: 'ex:o2' }, // Invalid!
+    ],
   };
 
   const initialQuadCount = await store.getQuadCount();
   const result = await applyDelta(delta, store);
 
   expect(result.applied).toBe(false);
-  expect(await store.getQuadCount()).toBe(initialQuadCount);  // No partial application
+  expect(await store.getQuadCount()).toBe(initialQuadCount); // No partial application
 });
 ```
 
@@ -685,6 +704,7 @@ test('atomicity: partial failure rolls back all changes', async () => {
 **Statement**: All inputs declared, all outputs receipted (no side effects)
 
 **Enforcement**:
+
 ```javascript
 // ✅ GOOD: All dependencies explicit
 export async function processWorkflow({ workflowId, store, clock, logger }) {
@@ -711,6 +731,7 @@ export async function processWorkflow({ workflowId }) {
 ```
 
 **Poka-Yoke Guard**:
+
 ```javascript
 // ESLint rule to detect hidden dependencies
 module.exports = {
@@ -718,26 +739,26 @@ module.exports = {
     'no-implicit-dependencies': {
       meta: {
         type: 'problem',
-        docs: { description: 'Disallow hidden dependencies (Date.now, console, globals)' }
+        docs: { description: 'Disallow hidden dependencies (Date.now, console, globals)' },
       },
       create(context) {
         return {
           CallExpression(node) {
             if (
               (node.callee.object?.name === 'Date' && node.callee.property?.name === 'now') ||
-              (node.callee.object?.name === 'console') ||
+              node.callee.object?.name === 'console' ||
               (node.callee.object?.name === 'Math' && node.callee.property?.name === 'random')
             ) {
               context.report({
                 node,
-                message: 'Implicit dependency detected. Inject as explicit parameter.'
+                message: 'Implicit dependency detected. Inject as explicit parameter.',
               });
             }
-          }
+          },
         };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 ```
 
@@ -791,11 +812,11 @@ export async function createStore(options = {}) {
 
   const receipt = await generateReceipt({
     profile: 'execution',
-    previousReceiptHash: null,  // Genesis receipt
+    previousReceiptHash: null, // Genesis receipt
     payload: {
       operation: 'createStore',
-      options: canonicalize(options)
-    }
+      options: canonicalize(options),
+    },
   });
 
   store.metadata.creationReceipt = receipt;
@@ -810,13 +831,13 @@ export async function freezeUniverse(store, universeId) {
 
   const receipt = await generateReceipt({
     profile: 'snapshot',
-    previousReceiptHash: previousReceipt.receiptHash,  // Chain from store creation
+    previousReceiptHash: previousReceipt.receiptHash, // Chain from store creation
     payload: {
       operation: 'freezeUniverse',
       universeId,
       snapshotId: snapshot.snapshot_id,
-      quadCount: snapshot.quad_count
-    }
+      quadCount: snapshot.quad_count,
+    },
   });
 
   await store.appendReceipt(receipt);
@@ -825,18 +846,18 @@ export async function freezeUniverse(store, universeId) {
 
 // Package C: @unrdf/yawl
 export async function executeWorkflow(caseId, store) {
-  const previousReceipt = await store.getLatestReceipt();  // Get last receipt from store
+  const previousReceipt = await store.getLatestReceipt(); // Get last receipt from store
 
   const workItem = await createWorkItem(caseId);
 
   const receipt = await generateReceipt({
     profile: 'workflow',
-    previousReceiptHash: previousReceipt.receiptHash,  // Chain from freeze
+    previousReceiptHash: previousReceipt.receiptHash, // Chain from freeze
     payload: {
       operation: 'executeWorkflow',
       caseId,
-      workItemId: workItem.id
-    }
+      workItemId: workItem.id,
+    },
   });
 
   await store.appendReceipt(receipt);
@@ -873,7 +894,7 @@ export async function verifyWorkflowProvenance(store, workflowReceiptId) {
   return {
     valid: true,
     chainLength: chain.length,
-    packages: chain.map(r => r.payload.package)  // ['@unrdf/core', '@unrdf/kgc-4d', '@unrdf/yawl']
+    packages: chain.map(r => r.payload.package), // ['@unrdf/core', '@unrdf/kgc-4d', '@unrdf/yawl']
   };
 }
 ```
@@ -904,7 +925,9 @@ class WorkflowBuilder {
 }
 
 class WorkflowCreated {
-  constructor(workflow) { this.#workflow = workflow; }
+  constructor(workflow) {
+    this.#workflow = workflow;
+  }
 
   startCase(caseId) {
     return new WorkflowRunning(this.#workflow, caseId);
@@ -927,7 +950,7 @@ class WorkflowRunning {
 const builder = new WorkflowBuilder();
 const created = builder.createWorkflow(def);
 const running = created.startCase('case-1');
-const result = running.executeTask('task-1');  // Type-safe!
+const result = running.executeTask('task-1'); // Type-safe!
 
 // ❌ This won't compile:
 // builder.executeTask('task-1');  // Error: WorkflowBuilder has no method executeTask
@@ -944,54 +967,64 @@ const result = running.executeTask('task-1');  // Type-safe!
 ```javascript
 import { z } from 'zod';
 
-const DeltaSchema = z.object({
-  id: z.string().uuid(),
-  type: z.enum(['create', 'update', 'delete']),
-  target: z.object({
-    entity: z.string().url(),  // Must be valid URI
-    scope: z.string().optional()
-  }),
-  changes: z.array(z.discriminatedUnion('operation', [
-    z.object({
-      operation: z.literal('add_triple'),
-      subject: RDFTermSchema,
-      predicate: RDFTermSchema,
-      object: RDFTermSchema
+const DeltaSchema = z
+  .object({
+    id: z.string().uuid(),
+    type: z.enum(['create', 'update', 'delete']),
+    target: z.object({
+      entity: z.string().url(), // Must be valid URI
+      scope: z.string().optional(),
     }),
-    z.object({
-      operation: z.literal('delete_triple'),
-      subject: RDFTermSchema,
-      predicate: RDFTermSchema,
-      object: RDFTermSchema
-    })
-  ])).min(1),  // At least 1 change required
+    changes: z
+      .array(
+        z.discriminatedUnion('operation', [
+          z.object({
+            operation: z.literal('add_triple'),
+            subject: RDFTermSchema,
+            predicate: RDFTermSchema,
+            object: RDFTermSchema,
+          }),
+          z.object({
+            operation: z.literal('delete_triple'),
+            subject: RDFTermSchema,
+            predicate: RDFTermSchema,
+            object: RDFTermSchema,
+          }),
+        ])
+      )
+      .min(1), // At least 1 change required
 
-  // Preconditions must be valid SPARQL or hash check
-  preconditions: z.array(z.discriminatedUnion('type', [
-    z.object({
-      type: z.literal('sparql_ask'),
-      query: z.string().refine(q => q.trim().startsWith('ASK'), {
-        message: 'SPARQL precondition must be ASK query'
-      })
+    // Preconditions must be valid SPARQL or hash check
+    preconditions: z
+      .array(
+        z.discriminatedUnion('type', [
+          z.object({
+            type: z.literal('sparql_ask'),
+            query: z.string().refine(q => q.trim().startsWith('ASK'), {
+              message: 'SPARQL precondition must be ASK query',
+            }),
+          }),
+          z.object({
+            type: z.literal('state_hash'),
+            expectedHash: z.string().regex(/^[a-f0-9]{64}$/),
+          }),
+        ])
+      )
+      .optional(),
+
+    justification: z.object({
+      reasoning: z.string().min(10), // Must explain reason
+      actor: z.string().min(1), // Must have actor
+      policyChecked: z.string().optional(),
     }),
-    z.object({
-      type: z.literal('state_hash'),
-      expectedHash: z.string().regex(/^[a-f0-9]{64}$/)
-    })
-  ])).optional(),
-
-  justification: z.object({
-    reasoning: z.string().min(10),  // Must explain reason
-    actor: z.string().min(1),  // Must have actor
-    policyChecked: z.string().optional()
   })
-}).strict();  // No additional properties allowed
+  .strict(); // No additional properties allowed
 
 // Impossible to create invalid delta:
 DeltaSchema.parse({
-  id: 'not-a-uuid',  // ❌ Throws: Expected UUID
-  type: 'invalid',    // ❌ Throws: Must be create/update/delete
-  changes: []         // ❌ Throws: At least 1 change required
+  id: 'not-a-uuid', // ❌ Throws: Expected UUID
+  type: 'invalid', // ❌ Throws: Must be create/update/delete
+  changes: [], // ❌ Throws: At least 1 change required
 });
 ```
 
@@ -1013,9 +1046,7 @@ export class ReceiptChain {
       const lastReceipt = this.#receipts[this.#receipts.length - 1];
 
       if (receipt.previousReceiptHash !== lastReceipt.receiptHash) {
-        throw new ChainBrokenError(
-          `Receipt ${receipt.id} does not chain to ${lastReceipt.id}`
-        );
+        throw new ChainBrokenError(`Receipt ${receipt.id} does not chain to ${lastReceipt.id}`);
       }
 
       // Guard: Verify hash computation
@@ -1070,13 +1101,13 @@ export async function executeSparqlQuery(query, { timeout = 5000, maxResults = 1
     }
 
     return results;
-
   } catch (error) {
     if (error.name === 'AbortError') {
-      throw new TimeoutError(`Query timeout after ${timeout}ms. Optimize query or increase timeout.`);
+      throw new TimeoutError(
+        `Query timeout after ${timeout}ms. Optimize query or increase timeout.`
+      );
     }
     throw error;
-
   } finally {
     clearTimeout(timeoutId);
   }
@@ -1155,6 +1186,7 @@ echo "✅ No circular dependencies found"
 **Total Packages**: 53 (confirmed via `ls packages | wc -l`)
 
 **Foundation Layer** (0-2 internal deps): 20 packages
+
 ```
 atomvm, caching, collab, consensus, diataxis-kit, docs,
 graph-analytics, kgc-cli, kgc-docs, kgc-runtime, nextra,
@@ -1163,6 +1195,7 @@ yawl-kafka, yawl-observability, yawl-realtime, yawl-viz
 ```
 
 **Core Infrastructure** (3-6 deps): 29 packages
+
 ```
 blockchain, cli, composables, core, dark-matter, domain,
 engine-gateway, federation, hooks, kgc-4d, kgc-claude,
@@ -1173,6 +1206,7 @@ yawl-langchain, yawl-queue
 ```
 
 **Application Layer** (7+ deps): 4 packages
+
 ```
 fusion, integration-tests, composables, cli
 ```
@@ -1182,25 +1216,27 @@ fusion, integration-tests, composables, cli
 ### 3.2 Criticality Ranking (Top 10 Foundation Packages)
 
 **Ranking Methodology**:
+
 1. **Dependency Count**: Packages with most dependents (reverse dependency count)
 2. **Receipt Maturity**: Packages with existing receipt integration
 3. **Current Maturity**: Packages already at L3-L4
 4. **Technical Risk**: Complexity vs. stability
 
-| Rank | Package | Internal Deps | Dependents | Current Level | Criticality Score |
-|------|---------|---------------|------------|---------------|-------------------|
-| 1 | `@unrdf/oxigraph` | 0 | 17 | L3 | 95 |
-| 2 | `@unrdf/core` | 1 | 16 | L2 | 93 |
-| 3 | `@unrdf/kgc-4d` | 3 | 10 | L4 | 88 |
-| 4 | `@unrdf/hooks` | 4 | 9 | L2 | 82 |
-| 5 | `@unrdf/yawl` | 3 | 9 | L3 | 80 |
-| 6 | `@unrdf/v6-core` | 5 | 0 (new) | L1 | 78 |
-| 7 | `@unrdf/kgc-substrate` | 4 | 6 | L2 | 75 |
-| 8 | `@unrdf/streaming` | 5 | 4 | L2 | 70 |
-| 9 | `@unrdf/federation` | 4 | 3 | L2 | 68 |
-| 10 | `@unrdf/cli` | 6 | 0 (leaf) | L2 | 65 |
+| Rank | Package                | Internal Deps | Dependents | Current Level | Criticality Score |
+| ---- | ---------------------- | ------------- | ---------- | ------------- | ----------------- |
+| 1    | `@unrdf/oxigraph`      | 0             | 17         | L3            | 95                |
+| 2    | `@unrdf/core`          | 1             | 16         | L2            | 93                |
+| 3    | `@unrdf/kgc-4d`        | 3             | 10         | L4            | 88                |
+| 4    | `@unrdf/hooks`         | 4             | 9          | L2            | 82                |
+| 5    | `@unrdf/yawl`          | 3             | 9          | L3            | 80                |
+| 6    | `@unrdf/v6-core`       | 5             | 0 (new)    | L1            | 78                |
+| 7    | `@unrdf/kgc-substrate` | 4             | 6          | L2            | 75                |
+| 8    | `@unrdf/streaming`     | 5             | 4          | L2            | 70                |
+| 9    | `@unrdf/federation`    | 4             | 3          | L2            | 68                |
+| 10   | `@unrdf/cli`           | 6             | 0 (leaf)   | L2            | 65                |
 
 **Criticality Score Formula**:
+
 ```
 Score = (Dependents × 5) + (5 - InternalDeps) × 3 + CurrentLevel × 10 + ReceiptIntegration × 15
 ```
@@ -1228,6 +1264,7 @@ Score = (Dependents × 5) + (5 - InternalDeps) × 3 + CurrentLevel × 10 + Recei
 │  Cluster 2: Workflow Stack                                     │
 │  ┌────────────────────────────────────────────────┐            │
 │  │ yawl ←→ kgc-substrate ←→ v6-core               │            │
+│  │ (package name kept)                            │            │
 │  │   ↓                                             │            │
 │  │ yawl-api, yawl-durable, yawl-queue             │            │
 │  └────────────────────────────────────────────────┘            │
@@ -1249,6 +1286,7 @@ Score = (Dependents × 5) + (5 - InternalDeps) × 3 + CurrentLevel × 10 + Recei
 **Circular Dependencies**: **NONE DETECTED** (as of 2025-12-27)
 
 **Verification**:
+
 ```bash
 $ timeout 10s pnpm -r exec madge --circular src/
 ✓ No circular dependency found! (53 packages checked)
@@ -1261,6 +1299,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 **Principle**: Migrate dependencies before dependents (bottom-up)
 
 **Wave 1: Foundation** (Weeks 1-2)
+
 ```
 1. oxigraph     (0 deps) → L5
 2. test-utils   (1 dep: oxigraph) → L3
@@ -1268,6 +1307,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 ```
 
 **Wave 2: Core** (Weeks 3-4)
+
 ```
 4. core         (1 dep: oxigraph) → L5
 5. kgc-4d       (3 deps: core, oxigraph, hooks) → L5
@@ -1275,29 +1315,34 @@ $ timeout 10s pnpm -r exec madge --circular src/
 ```
 
 **Wave 3: Substrate** (Weeks 5-6)
+
 ```
 7. kgc-substrate (4 deps: kgc-4d, oxigraph, core) → L5
 8. v6-core      (5 deps: kgc-substrate, yawl, kgc-4d, oxigraph, kgc-cli) → L5
 ```
 
 **Wave 4: Workflow** (Weeks 7-9)
+
 ```
 9. yawl         (3 deps: hooks, kgc-4d, oxigraph) → L5
 10. streaming   (5 deps: core, hooks, oxigraph, etc.) → L5
 ```
 
 **Wave 5: Distributed** (Weeks 10-11)
+
 ```
 11. federation  (4 deps: core, hooks, etc.) → L5
 ```
 
 **Wave 6: CLI & Verification** (Week 12)
+
 ```
 12. cli         (6 deps: core, federation, hooks, knowledge-engine, oxigraph, project-engine, streaming) → L5
 13. Integration tests, OTEL validation, production sign-off
 ```
 
 **Parallelization Opportunities**:
+
 - Waves 1-2 can run in parallel (independent foundation packages)
 - Wave 3 requires Wave 2 complete
 - Wave 4-5 can partially overlap (yawl vs streaming)
@@ -1309,12 +1354,14 @@ $ timeout 10s pnpm -r exec madge --circular src/
 ### 4.1 12-Week Detailed Schedule
 
 **Constraints**:
+
 - 5 developers (avg)
 - 8 hours/day, 5 days/week = 40 hours/week
 - 12 weeks × 40 hours = 480 developer-hours total
 - 10 packages × ~48 hours/package = 480 hours (tight!)
 
 **Resource Allocation**:
+
 - **Dev 1-2**: Core stack (oxigraph, core, kgc-4d)
 - **Dev 3-4**: Workflow stack (yawl, kgc-substrate, v6-core)
 - **Dev 5**: Cross-cutting (CLI, integration tests, tooling)
@@ -1324,19 +1371,20 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 1: Foundation Setup
 
 **Deliverables**:
+
 - [ ] L5 verification tooling (automated checkpoints)
 - [ ] Receipt fixture generator
 - [ ] Integration test matrix scaffold
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | oxigraph | L3→L4: Add timeout guards, adversarial tests | 16 |
-| 1 | oxigraph | L4→L5: Integration tests with core | 24 |
-| 2 | test-utils | Add receipt fixtures, determinism helpers | 32 |
-| 2 | observability | OTEL validation suite | 8 |
-| 3-5 | ALL | Tooling: JSDoc generator, Zod schema generator | 40 |
+| Dev | Package       | Task                                           | Hours |
+| --- | ------------- | ---------------------------------------------- | ----- |
+| 1   | oxigraph      | L3→L4: Add timeout guards, adversarial tests   | 16    |
+| 1   | oxigraph      | L4→L5: Integration tests with core             | 24    |
+| 2   | test-utils    | Add receipt fixtures, determinism helpers      | 32    |
+| 2   | observability | OTEL validation suite                          | 8     |
+| 3-5 | ALL           | Tooling: JSDoc generator, Zod schema generator | 40    |
 
 **Checkpoint**: oxigraph at L5, tooling ready
 
@@ -1345,19 +1393,20 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 2: Core RDF
 
 **Deliverables**:
+
 - [ ] @unrdf/core at L5
 - [ ] Receipt integration for all RDF operations
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | core | L2→L3: KGC-4D receipt integration (20 functions) | 24 |
-| 1 | core | Remove Date.now(), inject clock dependency | 8 |
-| 1 | core | Reproducible fixtures (15 scenarios) | 8 |
-| 2 | core | L3→L4: Zod validation on all public APIs | 16 |
-| 2 | core | Adversarial test suite (100+ invalid inputs) | 16 |
-| 3 | core | L4→L5: Integration tests with oxigraph, kgc-4d | 8 |
+| Dev | Package | Task                                             | Hours |
+| --- | ------- | ------------------------------------------------ | ----- |
+| 1   | core    | L2→L3: KGC-4D receipt integration (20 functions) | 24    |
+| 1   | core    | Remove Date.now(), inject clock dependency       | 8     |
+| 1   | core    | Reproducible fixtures (15 scenarios)             | 8     |
+| 2   | core    | L3→L4: Zod validation on all public APIs         | 16    |
+| 2   | core    | Adversarial test suite (100+ invalid inputs)     | 16    |
+| 3   | core    | L4→L5: Integration tests with oxigraph, kgc-4d   | 8     |
 
 **Checkpoint**: core at L5
 
@@ -1366,18 +1415,19 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 3: Receipt Engine
 
 **Deliverables**:
+
 - [ ] @unrdf/kgc-4d at L5
 - [ ] Receipt chain verification tests
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | kgc-4d | L4→L5: Integration tests with core, yawl | 16 |
-| 1 | kgc-4d | Performance benchmarks (freeze, verify) | 8 |
-| 2 | kgc-4d | Receipt chain tamper detection tests | 16 |
-| 3 | hooks | L2→L3: Receipt integration for hook execution | 24 |
-| 4 | hooks | L3→L4: Policy validation, timeout guards | 16 |
+| Dev | Package | Task                                          | Hours |
+| --- | ------- | --------------------------------------------- | ----- |
+| 1   | kgc-4d  | L4→L5: Integration tests with core, yawl      | 16    |
+| 1   | kgc-4d  | Performance benchmarks (freeze, verify)       | 8     |
+| 2   | kgc-4d  | Receipt chain tamper detection tests          | 16    |
+| 3   | hooks   | L2→L3: Receipt integration for hook execution | 24    |
+| 4   | hooks   | L3→L4: Policy validation, timeout guards      | 16    |
 
 **Checkpoint**: kgc-4d at L5, hooks at L4
 
@@ -1386,18 +1436,19 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 4: Hooks & Substrate Foundation
 
 **Deliverables**:
+
 - [ ] @unrdf/hooks at L5
 - [ ] @unrdf/kgc-substrate at L3
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | hooks | L4→L5: Integration tests with all L5 packages | 16 |
-| 1 | hooks | Cross-package hook execution tests | 8 |
-| 2-3 | kgc-substrate | L2→L3: Receipt integration for snapshots | 32 |
-| 4 | kgc-substrate | Deterministic snapshot generation | 16 |
-| 5 | ALL | Week 1-4 consolidation, fix regressions | 24 |
+| Dev | Package       | Task                                          | Hours |
+| --- | ------------- | --------------------------------------------- | ----- |
+| 1   | hooks         | L4→L5: Integration tests with all L5 packages | 16    |
+| 1   | hooks         | Cross-package hook execution tests            | 8     |
+| 2-3 | kgc-substrate | L2→L3: Receipt integration for snapshots      | 32    |
+| 4   | kgc-substrate | Deterministic snapshot generation             | 16    |
+| 5   | ALL           | Week 1-4 consolidation, fix regressions       | 24    |
 
 **Checkpoint**: Cluster 1 complete (oxigraph, core, kgc-4d, hooks at L5)
 
@@ -1406,17 +1457,18 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 5: ΔGate Implementation
 
 **Deliverables**:
+
 - [ ] @unrdf/v6-core at L3
 - [ ] ΔGate fully operational
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1-2 | v6-core | L1→L2: Complete JSDoc, Zod schemas for ΔGate | 32 |
-| 3 | v6-core | L2→L3: Receipt integration for delta operations | 24 |
-| 4 | v6-core | Reconciliation engine deterministic tests | 16 |
-| 5 | v6-core | CLI integration: `kgc delta` commands | 24 |
+| Dev | Package | Task                                            | Hours |
+| --- | ------- | ----------------------------------------------- | ----- |
+| 1-2 | v6-core | L1→L2: Complete JSDoc, Zod schemas for ΔGate    | 32    |
+| 3   | v6-core | L2→L3: Receipt integration for delta operations | 24    |
+| 4   | v6-core | Reconciliation engine deterministic tests       | 16    |
+| 5   | v6-core | CLI integration: `kgc delta` commands           | 24    |
 
 **Checkpoint**: v6-core at L3, delta workflow functional
 
@@ -1425,18 +1477,19 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 6: Substrate Maturity
 
 **Deliverables**:
+
 - [ ] @unrdf/kgc-substrate at L5
 - [ ] @unrdf/v6-core at L4
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | kgc-substrate | L3→L4: Adversarial tests (corrupt snapshots) | 16 |
-| 1 | kgc-substrate | L4→L5: Integration with v6-core, yawl | 16 |
-| 2-3 | v6-core | L3→L4: Timeout guards, Poka-Yoke for invalid deltas | 32 |
-| 4 | v6-core | Conflict resolution strategies, tests | 16 |
-| 5 | ALL | Integration matrix: Cluster 1 × Cluster 2 | 16 |
+| Dev | Package       | Task                                                | Hours |
+| --- | ------------- | --------------------------------------------------- | ----- |
+| 1   | kgc-substrate | L3→L4: Adversarial tests (corrupt snapshots)        | 16    |
+| 1   | kgc-substrate | L4→L5: Integration with v6-core, yawl               | 16    |
+| 2-3 | v6-core       | L3→L4: Timeout guards, Poka-Yoke for invalid deltas | 32    |
+| 4   | v6-core       | Conflict resolution strategies, tests               | 16    |
+| 5   | ALL           | Integration matrix: Cluster 1 × Cluster 2           | 16    |
 
 **Checkpoint**: kgc-substrate at L5, v6-core at L4
 
@@ -1445,17 +1498,18 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 7: Workflow Engine
 
 **Deliverables**:
+
 - [ ] @unrdf/yawl at L5
 - [ ] YAWL workflow → ΔGate integration
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1-2 | yawl | L3→L4: Adversarial tests (infinite loops, deadlocks) | 24 |
-| 3 | yawl | L4→L5: Integration with v6-core (workflow adapter) | 16 |
-| 4 | yawl | Receipt chain tests: task→task→case | 16 |
-| 5 | yawl | Performance benchmarks (1000-task workflow) | 8 |
+| Dev | Package | Task                                                 | Hours |
+| --- | ------- | ---------------------------------------------------- | ----- |
+| 1-2 | yawl    | L3→L4: Adversarial tests (infinite loops, deadlocks) | 24    |
+| 3   | yawl    | L4→L5: Integration with v6-core (workflow adapter)   | 16    |
+| 4   | yawl    | Receipt chain tests: task→task→case                  | 16    |
+| 5   | yawl    | Performance benchmarks (1000-task workflow)          | 8     |
 
 **Checkpoint**: yawl at L5
 
@@ -1464,17 +1518,18 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 8: Streaming & V6-Core Finalization
 
 **Deliverables**:
+
 - [ ] @unrdf/streaming at L4
 - [ ] @unrdf/v6-core at L5
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1 | streaming | L2→L3: Receipt integration for change feeds | 24 |
-| 2 | streaming | L3→L4: Backpressure handling, timeout guards | 16 |
-| 3-4 | v6-core | L4→L5: Final integration tests, OTEL validation | 32 |
-| 5 | v6-core | Production readiness review, docs | 16 |
+| Dev | Package   | Task                                            | Hours |
+| --- | --------- | ----------------------------------------------- | ----- |
+| 1   | streaming | L2→L3: Receipt integration for change feeds     | 24    |
+| 2   | streaming | L3→L4: Backpressure handling, timeout guards    | 16    |
+| 3-4 | v6-core   | L4→L5: Final integration tests, OTEL validation | 32    |
+| 5   | v6-core   | Production readiness review, docs               | 16    |
 
 **Checkpoint**: v6-core at L5, Cluster 2 complete
 
@@ -1483,17 +1538,18 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 9: Distributed Systems
 
 **Deliverables**:
+
 - [ ] @unrdf/federation at L4
 - [ ] @unrdf/streaming at L5
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1-2 | federation | L2→L3: Receipt integration for distributed queries | 32 |
-| 3 | federation | L3→L4: Query timeout enforcement, adversarial tests | 16 |
-| 4 | streaming | L4→L5: Integration with federation, yawl | 16 |
-| 5 | ALL | Cluster 3 integration matrix | 16 |
+| Dev | Package    | Task                                                | Hours |
+| --- | ---------- | --------------------------------------------------- | ----- |
+| 1-2 | federation | L2→L3: Receipt integration for distributed queries  | 32    |
+| 3   | federation | L3→L4: Query timeout enforcement, adversarial tests | 16    |
+| 4   | streaming  | L4→L5: Integration with federation, yawl            | 16    |
+| 5   | ALL        | Cluster 3 integration matrix                        | 16    |
 
 **Checkpoint**: streaming at L5
 
@@ -1502,15 +1558,16 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 10: Federation Maturity
 
 **Deliverables**:
+
 - [ ] @unrdf/federation at L5
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1-2 | federation | L4→L5: Cross-package query receipts | 32 |
-| 3 | federation | Performance benchmarks (multi-node queries) | 16 |
-| 4-5 | ALL | Integration tests: federation × streaming × yawl | 24 |
+| Dev | Package    | Task                                             | Hours |
+| --- | ---------- | ------------------------------------------------ | ----- |
+| 1-2 | federation | L4→L5: Cross-package query receipts              | 32    |
+| 3   | federation | Performance benchmarks (multi-node queries)      | 16    |
+| 4-5 | ALL        | Integration tests: federation × streaming × yawl | 24    |
 
 **Checkpoint**: federation at L5
 
@@ -1519,17 +1576,18 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 11: CLI & User Interface
 
 **Deliverables**:
+
 - [ ] @unrdf/cli at L5
 - [ ] All CLI commands receipted
 
 **Tasks**:
 
-| Dev | Package | Task | Hours |
-|-----|---------|------|-------|
-| 1-2 | cli | L2→L3: Receipt integration for all commands | 32 |
-| 3 | cli | L3→L4: Input validation, timeout guards | 16 |
-| 4 | cli | L4→L5: Integration tests with all L5 packages | 16 |
-| 5 | cli | CLI UX improvements, help text, error messages | 8 |
+| Dev | Package | Task                                           | Hours |
+| --- | ------- | ---------------------------------------------- | ----- |
+| 1-2 | cli     | L2→L3: Receipt integration for all commands    | 32    |
+| 3   | cli     | L3→L4: Input validation, timeout guards        | 16    |
+| 4   | cli     | L4→L5: Integration tests with all L5 packages  | 16    |
+| 5   | cli     | CLI UX improvements, help text, error messages | 8     |
 
 **Checkpoint**: cli at L5
 
@@ -1538,22 +1596,23 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Week 12: Production Validation & Sign-Off
 
 **Deliverables**:
+
 - [ ] All 10 packages at L5
 - [ ] Production readiness report
 - [ ] Migration guide published
 
 **Tasks**:
 
-| Dev | Task | Hours |
-|-----|------|-------|
-| 1 | Run full integration test matrix (10×10 = 100 tests) | 16 |
-| 2 | OTEL validation for all packages | 16 |
-| 3 | Performance regression testing | 16 |
-| 4 | Security audit, penetration testing | 16 |
-| 5 | Documentation: Migration guide, API reference | 24 |
-| ALL | Production deployment dry-run | 8 |
+| Dev | Task                                                 | Hours |
+| --- | ---------------------------------------------------- | ----- |
+| 1   | Run full integration test matrix (10×10 = 100 tests) | 16    |
+| 2   | OTEL validation for all packages                     | 16    |
+| 3   | Performance regression testing                       | 16    |
+| 4   | Security audit, penetration testing                  | 16    |
+| 5   | Documentation: Migration guide, API reference        | 24    |
+| ALL | Production deployment dry-run                        | 8     |
 
-**Final Checkpoint**: Production sign-off, v6.0.0-rc.1 tagged
+**Final Checkpoint**: Production sign-off, 6.0.0-rc.1 tagged
 
 ---
 
@@ -1638,6 +1697,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Rollback Trigger Conditions
 
 **Automated Rollback** (CI triggers):
+
 - [ ] Test pass rate <95% after merge
 - [ ] Performance regression >20%
 - [ ] OTEL validation score <70/100
@@ -1645,6 +1705,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 - [ ] Circular dependency detected
 
 **Manual Rollback** (team decision):
+
 - [ ] Production incident attributed to migration
 - [ ] Security vulnerability introduced
 - [ ] Breaking change not documented
@@ -1654,6 +1715,7 @@ $ timeout 10s pnpm -r exec madge --circular src/
 #### Rollback Procedure (Per Package)
 
 **Step 1: Identify Rollback Point**
+
 ```bash
 # Find last known good version
 git log --oneline --grep="@unrdf/core" | grep "L5 checkpoint"
@@ -1663,12 +1725,14 @@ git log --oneline --grep="@unrdf/core" | grep "L5 checkpoint"
 ```
 
 **Step 2: Create Rollback Branch**
+
 ```bash
 git checkout -b rollback/core-l5-failure a1b2c3d4
 git cherry-pick <urgent-fixes>  # If needed
 ```
 
 **Step 3: Revert Package Version**
+
 ```bash
 cd packages/core
 # Revert package.json version
@@ -1679,6 +1743,7 @@ git checkout a1b2c3d4 -- src/
 ```
 
 **Step 4: Test Rollback**
+
 ```bash
 pnpm install  # Update lockfile
 pnpm test     # Verify tests pass
@@ -1686,9 +1751,10 @@ pnpm build    # Verify build succeeds
 ```
 
 **Step 5: Deploy Rollback**
+
 ```bash
 git add .
-git commit -m "rollback(@unrdf/core): Revert to v5.0.1 due to <reason>"
+git commit -m "rollback(@unrdf/core): Revert to legacy version due to <reason>"
 git push origin rollback/core-l5-failure
 
 # Create PR, auto-merge with override
@@ -1696,6 +1762,7 @@ gh pr create --title "ROLLBACK: @unrdf/core to v5.0.1" --body "Reason: <explain>
 ```
 
 **Step 6: Notify Dependents**
+
 ```bash
 # Find packages that depend on @unrdf/core
 pnpm list --depth=1 --filter='@unrdf/*' --json | jq -r '.[] | select(.dependencies["@unrdf/core"]) | .name'
@@ -1714,6 +1781,7 @@ pnpm list --depth=1 --filter='@unrdf/*' --json | jq -r '.[] | select(.dependenci
 **Scenario**: Package reaches L5 but has issues; rollback to L4 instead of L1
 
 **Procedure**:
+
 ```bash
 # Example: v6-core L5→L4 rollback (remove integration tests only)
 git revert <commit-hash-of-L4-to-L5-promotion>
@@ -1733,16 +1801,16 @@ sed -i 's/L5_CHECKPOINT/L4_CHECKPOINT/' .github/workflows/maturity-gate.yml
 
 ### 5.1 Risk Register
 
-| ID | Risk | Impact | Probability | Mitigation | Owner |
-|----|------|--------|-------------|------------|-------|
-| R1 | Breaking API changes block adoption | HIGH | MEDIUM | Deprecation warnings, migration tools, 6-month overlap | Arch Lead |
-| R2 | Performance regression >20% | HIGH | LOW | Benchmark suite, pre-merge gates | Perf Team |
-| R3 | Receipt chain breaks in production | CRITICAL | LOW | Tamper detection, automated recovery | Security |
-| R4 | Circular dependencies introduced | MEDIUM | LOW | CI madge checks, pre-merge validation | DevOps |
-| R5 | L5 integration test matrix incomplete | MEDIUM | MEDIUM | Test matrix generator, coverage tracking | QA Lead |
-| R6 | Developer burnout (12-week sprint) | MEDIUM | MEDIUM | Sprint breaks, pair programming rotation | PM |
-| R7 | Documentation lags behind code | LOW | HIGH | Docs-as-code, auto-generation from JSDoc | Tech Writer |
-| R8 | OTEL validation score <80 | MEDIUM | MEDIUM | Pre-merge OTEL gate, score trending dashboard | Observability |
+| ID  | Risk                                  | Impact   | Probability | Mitigation                                             | Owner         |
+| --- | ------------------------------------- | -------- | ----------- | ------------------------------------------------------ | ------------- |
+| R1  | Breaking API changes block adoption   | HIGH     | MEDIUM      | Deprecation warnings, migration tools, 6-month overlap | Arch Lead     |
+| R2  | Performance regression >20%           | HIGH     | LOW         | Benchmark suite, pre-merge gates                       | Perf Team     |
+| R3  | Receipt chain breaks in production    | CRITICAL | LOW         | Tamper detection, automated recovery                   | Security      |
+| R4  | Circular dependencies introduced      | MEDIUM   | LOW         | CI madge checks, pre-merge validation                  | DevOps        |
+| R5  | L5 integration test matrix incomplete | MEDIUM   | MEDIUM      | Test matrix generator, coverage tracking               | QA Lead       |
+| R6  | Developer burnout (12-week sprint)    | MEDIUM   | MEDIUM      | Sprint breaks, pair programming rotation               | PM            |
+| R7  | Documentation lags behind code        | LOW      | HIGH        | Docs-as-code, auto-generation from JSDoc               | Tech Writer   |
+| R8  | OTEL validation score <80             | MEDIUM   | MEDIUM      | Pre-merge OTEL gate, score trending dashboard          | Observability |
 
 ---
 
@@ -1757,11 +1825,13 @@ sed -i 's/L5_CHECKPOINT/L4_CHECKPOINT/' .github/workflows/maturity-gate.yml
 **Symptom**: Integration test with @unrdf/kgc-4d fails (receipt hashes don't match)
 
 **Blast Radius**:
+
 - **Immediate**: Core package rollback to L4
 - **Downstream**: 16 dependent packages blocked from L5
 - **Timeline**: +2 weeks delay to debug and fix
 
 **Mitigation**:
+
 ```bash
 # 1. Isolate issue
 pnpm test:integration --filter='@unrdf/core' --grep='kgc-4d'
@@ -1786,11 +1856,13 @@ pnpm test:determinism --runs=100  # Verify fix
 **Symptom**: ΔGate performance regression 50% (too slow)
 
 **Blast Radius**:
+
 - **Immediate**: v6-core rollback to L4, ΔGate adoption blocked
 - **Downstream**: Workflow migrations delayed, CLI commands slow
 - **Timeline**: +3 weeks delay (performance optimization is complex)
 
 **Mitigation**:
+
 ```bash
 # 1. Profile hot paths
 pnpm benchmark:profile --package=v6-core --operation=reconcile
@@ -1810,7 +1882,7 @@ const compiledPlan = queryCache.get('entity-type-check');
 await compiledPlan.execute(entity, type);  # 50ms (20x faster)
 
 # 4. Re-benchmark
-pnpm benchmark:compare --baseline v5.0.1  # Verify <10% regression
+pnpm benchmark:compare --baseline=legacy  # Verify <10% regression
 
 # 5. Re-promote to L5 (2 weeks delay)
 ```
@@ -1822,11 +1894,13 @@ pnpm benchmark:compare --baseline v5.0.1  # Verify <10% regression
 **Symptom**: Workflow spanning yawl → v6-core → kgc-4d produces invalid receipt chain
 
 **Blast Radius**:
+
 - **Immediate**: Receipt chain verification fails, audit trail broken
 - **Downstream**: Cannot prove workflow execution, compliance violation
 - **Timeline**: CRITICAL (must fix immediately, cannot deploy to production)
 
 **Mitigation**:
+
 ```bash
 # 1. Isolate break point
 pnpm test:receipt-chain --packages='yawl,v6-core,kgc-4d' --verbose
@@ -1897,15 +1971,15 @@ pnpm test:receipt-chain --packages='yawl,v6-core,kgc-4d'
 # 1. Freeze all work (send alert to team)
 echo "🚨 ROLLBACK IN PROGRESS - HOLD ALL MERGES" | slack-send #unrdf-dev
 
-# 2. Revert monorepo to v5 baseline
-git checkout v5.0.1
-git checkout -b rollback/v6-abort
+# 2. Revert monorepo to legacy baseline
+git checkout legacy
+git checkout -b rollback/abort
 
-# 3. Preserve any critical fixes from v6 work
+# 3. Preserve any critical fixes from current work
 git cherry-pick <critical-security-fix>
 git cherry-pick <critical-bug-fix>
 
-# 4. Update all package versions to v5
+# 4. Update all package versions to legacy
 for pkg in packages/*; do
   cd $pkg
   jq '.version = "5.0.1"' package.json > package.json.tmp && mv package.json.tmp package.json
@@ -1919,21 +1993,21 @@ pnpm -r build
 
 # 6. Deploy rollback
 git add .
-git commit -m "EMERGENCY ROLLBACK: Abort v6 migration, return to v5.0.1"
-git push origin rollback/v6-abort --force-with-lease
+git commit -m "EMERGENCY ROLLBACK: Abort migration, return to legacy baseline"
+git push origin rollback/abort --force-with-lease
 
 # 7. Tag rollback point
-git tag -a v5.0.2-rollback -m "Emergency rollback from v6 attempt"
+git tag -a v5.0.2-rollback -m "Emergency rollback from migration attempt"
 git push origin v5.0.2-rollback
 
 # 8. Publish to npm
 pnpm -r publish --tag=latest --access=public
 
 # 9. Post-mortem
-# Write incident report, identify root cause, plan v6.1 approach
+# Write incident report, identify root cause, plan 6.1 approach
 ```
 
-**Cost**: 6 weeks of work lost, team morale impact, delayed v6 by 3+ months
+**Cost**: 6 weeks of work lost, team morale impact, delayed migration by 3+ months
 
 **Prevention**: Weekly architecture review, early prototyping, kill criteria defined upfront
 
@@ -1941,7 +2015,7 @@ pnpm -r publish --tag=latest --access=public
 
 ### 5.4 Line-in-the-Sand Decisions (Cannot Change)
 
-**Immutable Constraints** (locked in for v6):
+**Immutable Constraints** (locked for this migration):
 
 #### 1. Receipt Schema Structure
 
@@ -1952,11 +2026,13 @@ pnpm -r publish --tag=latest --access=public
 **Lock Date**: 2025-12-01 (already in production for kgc-4d)
 
 **Cannot Change**:
+
 - Hash algorithm (BLAKE3) → Changing would invalidate all chains
 - Field names (`receiptHash` not `hash`) → Breaking change for all consumers
 - Chain linking (`previousReceiptHash`) → Core to provenance
 
 **Can Change** (backwards-compatible):
+
 - Add optional fields (e.g., `vectorClock`)
 - Add new `profile` types (e.g., `profile: 'ml-inference'`)
 - Extend `payload` schema per profile
@@ -1972,11 +2048,13 @@ pnpm -r publish --tag=latest --access=public
 **Lock Date**: 2025-12-27 (this document approval)
 
 **Cannot Change**:
+
 - `changes` array structure (discriminated union by `operation`)
 - `type` enum values (`create`, `update`, `delete`)
 - `preconditions` array schema
 
 **Can Change**:
+
 - Add new `operation` types (e.g., `execute_sparql`)
 - Add optional metadata fields
 
@@ -1991,11 +2069,13 @@ pnpm -r publish --tag=latest --access=public
 **Lock Date**: 2025-12-27 (this document approval)
 
 **Cannot Change**:
+
 - Determinism requirement (same input → same output)
 - Receipt chaining requirement (all operations receipted)
 - No circular dependencies requirement
 
 **Can Change**:
+
 - Performance thresholds (10% → 15% regression tolerance if justified)
 - OTEL score threshold (80/100 → 75/100 if metrics improve)
 
@@ -2010,11 +2090,13 @@ pnpm -r publish --tag=latest --access=public
 **Lock Date**: 2025-12-15 (documented in MATURITY_LADDER.md)
 
 **Cannot Change**:
+
 - Level count (5 levels)
 - Level names (L1-L5)
 - Core criteria per level (JSDoc for L2, determinism for L3, etc.)
 
 **Can Change**:
+
 - Threshold percentages (95% JSDoc → 90% if justified)
 - Add sub-levels (L3.5) for packages in transition
 
@@ -2029,10 +2111,12 @@ pnpm -r publish --tag=latest --access=public
 **Lock Date**: 2025-12-01 (enforced in CI since v5)
 
 **Cannot Change**:
+
 - No circular dependencies rule
 - Foundation packages (oxigraph, core) cannot depend on application packages
 
 **Can Change**:
+
 - Package count (53 → consolidated to 40)
 - Package names (rename for clarity)
 
@@ -2059,8 +2143,8 @@ pnpm -r publish --tag=latest --access=public
 ### Appendix B: References
 
 1. [MATURITY_LADDER.md](/home/user/unrdf/docs/v6/MATURITY_LADDER.md) - L1-L5 definitions
-2. [MIGRATION_PLAN.md](/home/user/unrdf/docs/v6/MIGRATION_PLAN.md) - v5→v6 breaking changes
-3. [PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md) - v6 mission and governance
+2. [MIGRATION_PLAN.md](/home/user/unrdf/docs/v6/MIGRATION_PLAN.md) - Legacy → current breaking changes
+3. [PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md) - Mission and governance
 4. [CONTROL_PLANE.md](/home/user/unrdf/docs/v6/CONTROL_PLANE.md) - ΔGate architecture
 5. [CONTRACT_INVENTORY.md](/home/user/unrdf/docs/v6/CONTRACT_INVENTORY.md) - Package analysis
 6. [DELTA_CONTRACT.md](/home/user/unrdf/packages/v6-core/DELTA_CONTRACT.md) - Delta schema
@@ -2068,6 +2152,7 @@ pnpm -r publish --tag=latest --access=public
 ### Appendix C: Verification Commands
 
 **Quick Validation** (run before every commit):
+
 ```bash
 # L2 Gate
 pnpm run jsdoc-coverage | grep "Coverage: [9][5-9]%\|100%"
@@ -2089,6 +2174,7 @@ timeout 15s node validation/run-all.mjs comprehensive | grep "Score: [8-9][0-9]\
 ```
 
 **Full Matrix** (nightly CI):
+
 ```bash
 # Run all integration tests
 pnpm test:matrix --packages='oxigraph,core,kgc-4d,v6-core,hooks,yawl,kgc-substrate,streaming,federation,cli'
@@ -2103,12 +2189,14 @@ pnpm benchmark:regression --baseline=v5.0.1 --threshold=10
 ### Appendix D: Contact Information
 
 **Architecture Review Board**:
+
 - Lead Architect: TBD
 - Security Lead: TBD
 - Performance Lead: TBD
 - QA Lead: TBD
 
 **Escalation Path**:
+
 1. Package maintainer (first contact)
 2. Architecture Review Board (design issues)
 3. Program Manager (timeline/resource issues)
@@ -2127,13 +2215,14 @@ pnpm benchmark:regression --baseline=v5.0.1 --threshold=10
 
 **Approved By**:
 
-- [ ] Lead Architect: _____________________ Date: _______
-- [ ] Security Lead: _____________________ Date: _______
-- [ ] Performance Lead: _____________________ Date: _______
-- [ ] QA Lead: _____________________ Date: _______
-- [ ] Program Manager: _____________________ Date: _______
+- [ ] Lead Architect: **********\_********** Date: **\_\_\_**
+- [ ] Security Lead: **********\_********** Date: **\_\_\_**
+- [ ] Performance Lead: **********\_********** Date: **\_\_\_**
+- [ ] QA Lead: **********\_********** Date: **\_\_\_**
+- [ ] Program Manager: **********\_********** Date: **\_\_\_**
 
 **Approval Criteria**:
+
 1. All 5 deliverables present and complete
 2. Risks identified with mitigation strategies
 3. Fast-track timeline realistic (12 weeks validated)
@@ -2141,6 +2230,7 @@ pnpm benchmark:regression --baseline=v5.0.1 --threshold=10
 5. Line-in-the-sand decisions agreed upon
 
 **Conditional Approval**:
+
 - [ ] Pending: Prototype ΔGate in Week 1 to validate design
 - [ ] Pending: Security audit of receipt chain implementation
 - [ ] Pending: Load testing of integration test matrix
