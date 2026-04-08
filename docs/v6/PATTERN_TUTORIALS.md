@@ -1,7 +1,7 @@
-# v6 Pattern Tutorials (DIATAXIS: Tutorial)
+# Pattern Tutorials (DIATAXIS: Tutorial)
 
 **Format**: Learning-Oriented (Step-by-step walkthroughs)
-**Audience**: Developers new to v6 patterns
+**Audience**: Developers new to UNRDF patterns
 **Goal**: Build confidence through hands-on practice
 
 ---
@@ -11,9 +11,10 @@
 **What You'll Learn**: Generate cryptographic receipts for any operation using the Receipt HOF Pattern.
 
 **Prerequisites**:
+
 - Node.js 18+
 - Basic JavaScript knowledge
-- UNRDF v6 installed
+- UNRDF installed
 
 ### Step 1: Install Dependencies
 
@@ -39,7 +40,7 @@ async function processData(userId, action) {
     userId,
     action,
     status: 'completed',
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 }
 
@@ -50,6 +51,7 @@ console.log(result);
 ```
 
 **Run it**:
+
 ```bash
 node /tmp/my-operation.mjs
 ```
@@ -69,13 +71,13 @@ async function processData(userId, action) {
     userId,
     action,
     status: 'completed',
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 }
 
 // Wrap with receipt generation
 const processDataWithReceipt = withReceipt(processData, {
-  operation: 'user.processData'
+  operation: 'user.processData',
 });
 
 // Use it
@@ -96,11 +98,13 @@ console.log('Receipt:', receipt);
 ```
 
 **Run it**:
+
 ```bash
 node /tmp/my-operation.mjs
 ```
 
 **Expected Output**:
+
 ```
 Result: { userId: 'user-123', action: 'approve', status: 'completed', timestamp: 1704067200000 }
 Receipt: { version: '6.0.0-alpha.1', operation: 'user.processData', timestamp: 1704067200000, duration: 102.5, ... }
@@ -162,7 +166,10 @@ r2.receiptHash = await computeChainHash(r2.previousHash, r2.payloadHash);
 receipts.push(r2);
 previousHash = r2.receiptHash;
 
-console.log('Receipt Chain:', receipts.map(r => r.receiptHash));
+console.log(
+  'Receipt Chain:',
+  receipts.map(r => r.receiptHash)
+);
 // ['abc123...', 'def456...']
 
 // Verify chain integrity
@@ -190,6 +197,7 @@ console.log('Chain link valid:', receipts[1].previousHash === receipts[0].receip
 **What You'll Learn**: Propose state changes using the Delta Contract Pattern.
 
 **Prerequisites**:
+
 - Completed Tutorial 1
 - Understanding of RDF triples
 
@@ -215,13 +223,13 @@ Add to `/tmp/delta-tutorial.mjs`:
 ```javascript
 // Create delta to add a triple
 const delta = createDelta(
-  'add',                              // operation
-  'http://example.org/user-123',      // subject
-  'http://example.org/name',          // predicate
-  '"Alice Smith"',                    // object
+  'add', // operation
+  'http://example.org/user-123', // subject
+  'http://example.org/name', // predicate
+  '"Alice Smith"', // object
   {
     package: '@unrdf/tutorial',
-    actor: 'tutorial-user'
+    actor: 'tutorial-user',
   }
 );
 
@@ -269,14 +277,14 @@ const gateWithPolicy = new DeltaGate({
         return false;
       }
       return true;
-    }
-  }
+    },
+  },
 });
 
 // This delta will be accepted (has actor)
 const validDelta = createDelta('add', 'http://ex.org/s', 'http://ex.org/p', 'value', {
   package: '@unrdf/tutorial',
-  actor: 'alice'
+  actor: 'alice',
 });
 
 const validReceipt = await gateWithPolicy.proposeDelta(validDelta, store);
@@ -285,7 +293,7 @@ console.log('Valid delta accepted:', validReceipt.applied);
 
 // This delta will be rejected (no actor)
 const invalidDelta = createDelta('add', 'http://ex.org/s2', 'http://ex.org/p', 'value', {
-  package: '@unrdf/tutorial'
+  package: '@unrdf/tutorial',
   // No actor!
 });
 
@@ -310,20 +318,20 @@ const compositeDelta = {
       op: 'add',
       subject: 'http://example.org/bob',
       predicate: 'http://schema.org/name',
-      object: '"Bob Johnson"'
+      object: '"Bob Johnson"',
     },
     {
       op: 'add',
       subject: 'http://example.org/bob',
       predicate: 'http://example.org/role',
-      object: 'http://example.org/roles/admin'
-    }
+      object: 'http://example.org/roles/admin',
+    },
   ],
 
   source: {
     package: '@unrdf/tutorial',
-    actor: 'admin-user'
-  }
+    actor: 'admin-user',
+  },
 };
 
 const compositeReceipt = await gate.proposeDelta(compositeDelta, store);
@@ -358,6 +366,7 @@ console.log('Store size:', await store.size());
 **What You'll Learn**: Add runtime type safety using the Zod Validation Envelope Pattern.
 
 **Prerequisites**:
+
 - Basic TypeScript/JSDoc knowledge
 - Understanding of schemas
 
@@ -373,7 +382,7 @@ const UserSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(100),
   email: z.string().email(),
-  age: z.number().int().positive().max(150)
+  age: z.number().int().positive().max(150),
 });
 
 console.log('Schema defined');
@@ -386,7 +395,7 @@ const validUser = {
   id: crypto.randomUUID(),
   name: 'Alice Smith',
   email: 'alice@example.com',
-  age: 30
+  age: 30,
 };
 
 try {
@@ -403,10 +412,10 @@ try {
 
 ```javascript
 const invalidUser = {
-  id: 'not-a-uuid',           // ❌ Invalid UUID
-  name: '',                   // ❌ Too short
-  email: 'invalid-email',     // ❌ Not an email
-  age: -5                     // ❌ Negative age
+  id: 'not-a-uuid', // ❌ Invalid UUID
+  name: '', // ❌ Too short
+  email: 'invalid-email', // ❌ Not an email
+  age: -5, // ❌ Negative age
 };
 
 try {
@@ -440,13 +449,13 @@ function createUser(userData) {
   return {
     success: true,
     userId: user.id,
-    message: `User ${user.name} created`
+    message: `User ${user.name} created`,
   };
 }
 
 // Wrap with receipt
 const createUserWithReceipt = withReceipt(createUser, {
-  operation: 'user.create'
+  operation: 'user.create',
 });
 
 // Valid input
@@ -455,7 +464,7 @@ try {
     id: crypto.randomUUID(),
     name: 'Bob',
     email: 'bob@example.com',
-    age: 25
+    age: 25,
   });
 
   console.log('✅ Success:', result);
@@ -479,7 +488,7 @@ try {
 const OutputSchema = z.object({
   success: z.boolean(),
   userId: z.string().uuid(),
-  message: z.string()
+  message: z.string(),
 });
 
 function createUserValidated(userData) {
@@ -490,7 +499,7 @@ function createUserValidated(userData) {
   const result = {
     success: true,
     userId: user.id,
-    message: `User ${user.name} created`
+    message: `User ${user.name} created`,
   };
 
   // Output validation
@@ -502,7 +511,7 @@ const output = createUserValidated({
   id: crypto.randomUUID(),
   name: 'Charlie',
   email: 'charlie@example.com',
-  age: 35
+  age: 35,
 });
 
 console.log('✅ Validated output:', output);
@@ -529,6 +538,7 @@ console.log('✅ Validated output:', output);
 **What You'll Learn**: Guarantee reproducible outputs using the Determinism Proof Pattern.
 
 **Prerequisites**:
+
 - Understanding of hashing
 - Completed Tutorial 1
 
@@ -562,9 +572,7 @@ console.log('Match:', hash1 === hash2);
 ```javascript
 // Run 100 times
 const hashes = await Promise.all(
-  Array.from({ length: 100 }, () =>
-    hashData({ action: 'test', value: 42 })
-  )
+  Array.from({ length: 100 }, () => hashData({ action: 'test', value: 42 }))
 );
 
 const uniqueHashes = new Set(hashes);
@@ -621,15 +629,13 @@ async function generateDeterministicReceipt(payload) {
     id: generateUUID(), // Still unique per call
     payloadHash,
     timestamp,
-    payload
+    payload,
   };
 }
 
 // Generate receipt 100 times for same payload
 const receipts = await Promise.all(
-  Array.from({ length: 100 }, () =>
-    generateDeterministicReceipt({ action: 'test' })
-  )
+  Array.from({ length: 100 }, () => generateDeterministicReceipt({ action: 'test' }))
 );
 
 // All payload hashes should match
@@ -652,16 +658,14 @@ async function buildDeterministicChain(events) {
 
   for (const event of events) {
     const payloadHash = await computeBlake3(deterministicSerialize(event));
-    const receiptHash = await computeBlake3(
-      deterministicSerialize({ previousHash, payloadHash })
-    );
+    const receiptHash = await computeBlake3(deterministicSerialize({ previousHash, payloadHash }));
 
     receipts.push({
       id: generateUUID(),
       previousHash,
       payloadHash,
       receiptHash,
-      event
+      event,
     });
 
     previousHash = receiptHash;
@@ -674,7 +678,7 @@ async function buildDeterministicChain(events) {
 const events = [
   { action: 'create', id: 1 },
   { action: 'update', id: 1 },
-  { action: 'delete', id: 1 }
+  { action: 'delete', id: 1 },
 ];
 
 const chains = await Promise.all(
@@ -682,9 +686,7 @@ const chains = await Promise.all(
 );
 
 // All chains should have identical hashes
-const chainHashes = chains.map(chain =>
-  chain.map(r => r.receiptHash).join(':')
-);
+const chainHashes = chains.map(chain => chain.map(r => r.receiptHash).join(':'));
 
 const uniqueChainHashes = new Set(chainHashes);
 
@@ -714,6 +716,7 @@ console.log('✅ DETERMINISTIC CHAIN: All 100 runs produced identical hashes');
 **What You'll Learn**: Integrate multiple packages using the Composition Layer Pattern (L5).
 
 **Prerequisites**:
+
 - Completed Tutorials 1-4
 - Understanding of all patterns
 
@@ -728,13 +731,13 @@ import { withReceipt } from '@unrdf/v6-compat/adapters';
 // Module A: Data Creator
 const ModuleAOutputSchema = z.object({
   data: z.string(),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 const moduleA = withReceipt(
   async () => ({
     data: 'created',
-    timestamp: Date.now()
+    timestamp: Date.now(),
   }),
   { operation: 'moduleA.create' }
 );
@@ -744,22 +747,22 @@ moduleA.outputSchema = ModuleAOutputSchema;
 // Module B: Data Processor
 const ModuleBInputSchema = z.object({
   data: z.string(),
-  timestamp: z.number()
+  timestamp: z.number(),
 });
 
 const ModuleBOutputSchema = z.object({
   processed: z.string(),
-  originalTimestamp: z.number()
+  originalTimestamp: z.number(),
 });
 
 const moduleB = withReceipt(
-  async (input) => {
+  async input => {
     // Validate input
     const validated = ModuleBInputSchema.parse(input);
 
     return {
       processed: validated.data.toUpperCase(),
-      originalTimestamp: validated.timestamp
+      originalTimestamp: validated.timestamp,
     };
   },
   { operation: 'moduleB.process' }
@@ -778,7 +781,7 @@ class CompositionChecker {
       // Generate test data from A's output schema
       const testData = {
         data: 'test',
-        timestamp: 1704067200000
+        timestamp: 1704067200000,
       };
 
       // Validate with A's output schema
@@ -829,7 +832,7 @@ async function composeOperations(opA, opB) {
 
   return {
     result: resultB,
-    receipts: [receiptA, receiptB]
+    receipts: [receiptA, receiptB],
   };
 }
 
@@ -839,7 +842,10 @@ const { result, receipts } = await composeOperations(moduleA, moduleB);
 console.log('Final result:', result);
 // { processed: 'CREATED', originalTimestamp: 1704... }
 
-console.log('Receipt chain:', receipts.map(r => r.operation));
+console.log(
+  'Receipt chain:',
+  receipts.map(r => r.operation)
+);
 // ['moduleA.create', 'moduleB.process']
 ```
 
@@ -849,21 +855,21 @@ console.log('Receipt chain:', receipts.map(r => r.operation));
 // Module C: Data Validator
 const ModuleCInputSchema = z.object({
   processed: z.string(),
-  originalTimestamp: z.number()
+  originalTimestamp: z.number(),
 });
 
 const ModuleCOutputSchema = z.object({
   valid: z.boolean(),
-  message: z.string()
+  message: z.string(),
 });
 
 const moduleC = withReceipt(
-  async (input) => {
+  async input => {
     const validated = ModuleCInputSchema.parse(input);
 
     return {
       valid: validated.processed.length > 0,
-      message: `Validated ${validated.processed}`
+      message: `Validated ${validated.processed}`,
     };
   },
   { operation: 'moduleC.validate' }
@@ -883,7 +889,7 @@ async function composeThree(opA, opB, opC) {
 
   return {
     result: r3,
-    receipts: [rec1, rec2, rec3]
+    receipts: [rec1, rec2, rec3],
   };
 }
 
@@ -896,7 +902,10 @@ const { result: finalResult, receipts: allReceipts } = await composeThree(
 console.log('Final result:', finalResult);
 // { valid: true, message: 'Validated CREATED' }
 
-console.log('Receipt chain:', allReceipts.map(r => r.operation));
+console.log(
+  'Receipt chain:',
+  allReceipts.map(r => r.operation)
+);
 // ['moduleA.create', 'moduleB.process', 'moduleC.validate']
 ```
 
@@ -906,7 +915,7 @@ console.log('Receipt chain:', allReceipts.map(r => r.operation));
 const modules = {
   A: { outputSchema: ModuleAOutputSchema },
   B: { inputSchema: ModuleBInputSchema, outputSchema: ModuleBOutputSchema },
-  C: { inputSchema: ModuleCInputSchema, outputSchema: ModuleCOutputSchema }
+  C: { inputSchema: ModuleCInputSchema, outputSchema: ModuleCOutputSchema },
 };
 
 function buildCompatibilityMatrix(modules) {
@@ -922,7 +931,7 @@ function buildCompatibilityMatrix(modules) {
       matrix.push({
         from: nameA,
         to: nameB,
-        compatible
+        compatible,
       });
     }
   }
@@ -965,7 +974,7 @@ console.log('Valid compositions: A→B→C');
 
 ## Summary
 
-You've completed all 5 core v6 pattern tutorials:
+You've completed all 5 core pattern tutorials:
 
 1. ✅ **Receipt HOF**: Generate receipts for any operation
 2. ✅ **Delta Contract**: Explicit state transitions
@@ -973,7 +982,7 @@ You've completed all 5 core v6 pattern tutorials:
 4. ✅ **Determinism Proof**: Reproducible outputs
 5. ✅ **Composition Layer**: Cross-package integration
 
-**Next**: Apply these patterns to migrate your packages to v6!
+**Next**: Apply these patterns to migrate your packages!
 
 ---
 
@@ -982,4 +991,4 @@ You've completed all 5 core v6 pattern tutorials:
 - **How-To Guides**: [/docs/v6/PATTERN_HOWTO.md](/home/user/unrdf/docs/v6/PATTERN_HOWTO.md)
 - **Reference**: [/docs/v6/PATTERNS.md](/home/user/unrdf/docs/v6/PATTERNS.md)
 - **Migration Runbooks**: [/docs/v6/MIGRATION_RUNBOOKS.md](/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md)
-- **v6 Program Charter**: [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md)
+- **Program Charter**: [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md)
