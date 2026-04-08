@@ -351,7 +351,7 @@ export async function verifyAgentActions(agentId, timeRange)
 
 ### 4.4 Breaking Changes in Public APIs
 
-| API              | v5                                 | v6                                              | Migration                |
+| API              | v5 current                         | Migration                                       |
 | ---------------- | ---------------------------------- | ----------------------------------------------- | ------------------------ |
 | Store creation   | `new Store()` (N3)                 | `createStore()` (Oxigraph)                      | Auto-migration tool      |
 | DataFactory      | `import { DataFactory } from 'n3'` | `import { dataFactory } from '@unrdf/oxigraph'` | ESLint rule + auto-fix   |
@@ -377,7 +377,7 @@ export async function verifyAgentActions(agentId, timeRange)
 import { streamQuads } from '@unrdf/streaming';
 import { infer } from '@unrdf/knowledge-engine';
 
-// v6
+// current
 import { streamQuads, infer } from '@unrdf/core';
 ```
 
@@ -393,7 +393,7 @@ import { streamQuads, infer } from '@unrdf/core';
 import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
 import { createMemoryStore } from '@unrdf/core';
 
-// v6 - Unified API
+// current - Unified API
 import { createStore } from '@unrdf/core';
 const store = createStore({ backend: 'oxigraph' }); // or 'memory', 'remote'
 ```
@@ -409,7 +409,7 @@ const store = createStore({ backend: 'oxigraph' }); // or 'memory', 'remote'
 // v5
 const results = await query('SELECT * WHERE { ?s ?p ?o }');
 
-// v6
+// current
 const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
 
@@ -424,7 +424,7 @@ const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 // v5 - Global registration
 registerHook(myHook);
 
-// v6 - Per-store registration
+// current - Per-store registration
 store.registerHook(myHook);
 ```
 
@@ -439,7 +439,7 @@ store.registerHook(myHook);
 // v5 - Optional signatures
 const capsule = createCapsule(data);
 
-// v6 - Mandatory signatures
+// current - Mandatory signatures
 const capsule = createCapsule(data, { sign: true, keyId: 'default' });
 ```
 
@@ -504,7 +504,7 @@ unrdf freeze --output snapshot.json
 // v5 - CommonJS supported
 const { createStore } = require('@unrdf/core');
 
-// v6 - ESM only
+// current - ESM only
 import { createStore } from '@unrdf/core';
 // OR
 const { createStore } = await import('@unrdf/core');
@@ -808,7 +808,7 @@ const store = new Store(); // DEPRECATED: Use createStore() instead
 import { Store } from 'n3';
 const store = new Store();
 
-// v6
+// current
 import { createStore } from '@unrdf/core';
 const store = createStore();
 ```
@@ -819,7 +819,7 @@ const store = createStore();
 // v5
 const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }');
 
-// v6
+// current
 const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
 
@@ -829,7 +829,7 @@ const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 // v5
 import { streamQuads } from '@unrdf/streaming';
 
-// v6
+// current
 import { streamQuads } from '@unrdf/core';
 ```
 
@@ -932,29 +932,29 @@ import { streamQuads } from '@unrdf/core';
 
 ### 9.1 Performance Targets
 
-| Metric                 | v5 Baseline | v6 Target | Measurement     |
-| ---------------------- | ----------- | --------- | --------------- |
-| SPARQL query (simple)  | 2ms         | <1ms      | 50% improvement |
-| SPARQL query (complex) | 50ms        | <25ms     | 50% improvement |
-| Triple insertion       | 10μs        | <5μs      | 50% improvement |
-| Memory per 1M triples  | 500MB       | <250MB    | 50% improvement |
-| Startup time           | 200ms       | <100ms    | 50% improvement |
-| Bundle size (core)     | 150KB       | <100KB    | 33% reduction   |
+| Metric                 | v5 Baseline | current Target | Measurement     |
+| ---------------------- | ----------- | -------------- | --------------- |
+| SPARQL query (simple)  | 2ms         | <1ms           | 50% improvement |
+| SPARQL query (complex) | 50ms        | <25ms          | 50% improvement |
+| Triple insertion       | 10μs        | <5μs           | 50% improvement |
+| Memory per 1M triples  | 500MB       | <250MB         | 50% improvement |
+| Startup time           | 200ms       | <100ms         | 50% improvement |
+| Bundle size (core)     | 150KB       | <100KB         | 33% reduction   |
 
 **Enforcement**: Performance regression tests fail CI if targets not met.
 
 ### 9.2 Scalability Targets
 
-| Dimension              | v5  | v6 Target |
-| ---------------------- | --- | --------- |
-| Max triples per store  | 10M | 1B        |
-| Max concurrent queries | 100 | 10,000    |
-| Max federation nodes   | 5   | 100       |
-| Max agents per swarm   | 10  | 1,000     |
+| Dimension              | v5  | current Target |
+| ---------------------- | --- | -------------- |
+| Max triples per store  | 10M | 1B             |
+| Max concurrent queries | 100 | 10,000         |
+| Max federation nodes   | 5   | 100            |
+| Max agents per swarm   | 10  | 1,000          |
 
 ### 9.3 Reliability Targets
 
-| Metric                            | v6 Target            |
+| Metric                            | current Target       |
 | --------------------------------- | -------------------- |
 | Test coverage                     | ≥90%                 |
 | Test pass rate                    | 100%                 |
@@ -1100,17 +1100,17 @@ spec:
 
 ## Appendix A: Technology Evaluation Matrix
 
-| Technology | Purpose       | v5  | v6  | Justification                     |
-| ---------- | ------------- | --- | --- | --------------------------------- |
-| Oxigraph   | Triple store  | ✅  | ✅  | 40% faster, 60% less memory       |
-| N3.js      | RDF parsing   | ✅  | ⚠️  | Limited to justified modules only |
-| Raft       | Consensus     | ❌  | ✅  | Strong consistency for federation |
-| OTEL       | Observability | ⚠️  | ✅  | Production debugging essential    |
-| Zod        | Validation    | ✅  | ✅  | Runtime type safety               |
-| BLAKE3     | Hashing       | ✅  | ✅  | Faster than SHA-256               |
-| Ed25519    | Signatures    | ❌  | ✅  | Cryptographic receipts            |
-| Yjs        | CRDTs         | ❌  | ✅  | Real-time collaboration           |
-| GraphQL    | Query API     | ❌  | ✅  | Developer experience              |
+| Technology | Purpose       | v5  | current | Justification                     |
+| ---------- | ------------- | --- | ------- | --------------------------------- |
+| Oxigraph   | Triple store  | ✅  | ✅      | 40% faster, 60% less memory       |
+| N3.js      | RDF parsing   | ✅  | ⚠️      | Limited to justified modules only |
+| Raft       | Consensus     | ❌  | ✅      | Strong consistency for federation |
+| OTEL       | Observability | ⚠️  | ✅      | Production debugging essential    |
+| Zod        | Validation    | ✅  | ✅      | Runtime type safety               |
+| BLAKE3     | Hashing       | ✅  | ✅      | Faster than SHA-256               |
+| Ed25519    | Signatures    | ❌  | ✅      | Cryptographic receipts            |
+| Yjs        | CRDTs         | ❌  | ✅      | Real-time collaboration           |
+| GraphQL    | Query API     | ❌  | ✅      | Developer experience              |
 
 ---
 
