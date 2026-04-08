@@ -367,13 +367,13 @@ const store = await createStore();
 
 ### Scripts Provided
 
-1. **`scripts/migrate-to-v6.mjs`**: Automated code transformation
+1. **`scripts/migrate.mjs`**: Automated code transformation
    - Store init: `new Store()` → `await createStore()`
    - Imports: N3 → Oxigraph/Core
    - Async wrappers: Add async/await where needed
    - Config: Update package.json
 
-2. **`scripts/validate-v6-migration.mjs`**: Migration validation
+2. **`scripts/validate-migration.mjs`**: Migration validation
    - Check for v5 patterns
    - Run tests
    - OTEL validation
@@ -434,7 +434,7 @@ git cherry-pick <fix-commits>
 **Scenario 2: Breaking Changes Impact Production**
 
 ```bash
-# Keep v6, add compat layer
+# Keep compat layer
 npm install @unrdf/v6-compat
 
 # Update imports
