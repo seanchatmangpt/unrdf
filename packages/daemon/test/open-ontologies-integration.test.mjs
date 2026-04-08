@@ -61,9 +61,17 @@ async function main() {
 
   // Check if binary exists
   const fs = await import('node:fs');
+  const testDataFile = new URL('../ontologies/disney-governed-universe.ttl', import.meta.url).pathname;
+
   if (!fs.existsSync(ONTO_BINARY)) {
     console.log('⚠️  open-ontologies binary not found, skipping integration tests');
     console.log(`   Install with: cargo install --path ~/.local/bin open-ontologies`);
+    process.exit(0);
+  }
+
+  if (!fs.existsSync(testDataFile)) {
+    console.log('⚠️  Test data file not found, skipping integration tests');
+    console.log(`   Expected: ${testDataFile}`);
     process.exit(0);
   }
 
