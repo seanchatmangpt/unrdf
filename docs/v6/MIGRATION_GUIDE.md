@@ -346,7 +346,7 @@ const receipt = stream.receipt();
 
 ```bash
 # Automated
-node scripts/migrate-to-v6.mjs --all
+node scripts/migrate.mjs --all
 
 # Manual
 # 1. Replace imports
@@ -779,7 +779,7 @@ const store = await createStore(); // Warns but works
 - [ ] **Type checking**: `pnpm -r run typecheck` (0 errors)
 - [ ] **OTEL validation**: Score ≥80/100
 - [ ] **Benchmarks**: No regressions >10%
-- [ ] **Documentation updated**: All examples use v6 API
+- [ ] **Documentation updated**: All examples use current API
 
 ### Validation Commands
 
@@ -837,7 +837,7 @@ After successful migration:
 2. **Train team**: Share migration guide
 3. **Monitor production**: Watch for deprecation warnings
 4. **Remove compat layer**: After 30 days, remove `@unrdf/v6-compat`
-5. **Optimize further**: Explore v6-specific features
+5. **Optimize further**: Explore new features
 
 ---
 
@@ -859,7 +859,7 @@ After successful migration:
 
 ```bash
 # Create issue with migration report
-node scripts/migrate-to-v6.mjs --all --report issue-report.json
+node scripts/migrate.mjs --all --report issue-report.json
 
 # Attach to GitHub issue with:
 # - Node version: node --version
