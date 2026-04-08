@@ -132,7 +132,7 @@ kgc receipt prove --receipt=r5 --file=receipts.json --output=proof.json
 kgc receipt export --file=receipts.json --format=json --output=trail.json
 ```
 
-**Integration**: Commands use v6-core merkle modules for all operations
+**Integration**: Commands use @unrdf/v6-core merkle modules for all operations
 
 ---
 
