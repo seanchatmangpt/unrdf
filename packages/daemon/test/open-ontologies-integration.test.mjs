@@ -59,6 +59,14 @@ async function main() {
   console.log(`Data: ${ONTO_DATA_DIR}`);
   console.log('');
 
+  // Check if binary exists
+  const fs = await import('node:fs');
+  if (!fs.existsSync(ONTO_BINARY)) {
+    console.log('⚠️  open-ontologies binary not found, skipping integration tests');
+    console.log(`   Install with: cargo install --path ~/.local/bin open-ontologies`);
+    process.exit(0);
+  }
+
   try {
     // Test 1: Check status
     console.log('📊 Test 1: Check open-ontologies status');
