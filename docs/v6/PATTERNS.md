@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-This document catalogues **5 core patterns** extracted from P0+P1 implementation that enable current' deterministic, receipt-driven architecture. These patterns are reusable across all 47 packages in the UNRDF monorepo.
+This document catalogues **5 core patterns** extracted from P0+P1 implementation that enable current deterministic, receipt-driven architecture. These patterns are reusable across all 47 packages in the UNRDF monorepo.
 
 **Key Insight**: Every pattern composes with others. Receipt HOF wraps functions. Delta Contract describes changes. Zod validates both. Determinism proves correctness. Composition ensures systems integrate.
 
@@ -1247,7 +1247,7 @@ This matrix shows which patterns compose with each other:
 
 1. **For Pattern Users**: See [/docs/v6/tutorials/](/home/user/unrdf/docs/v6/tutorials/) for step-by-step guides
 2. **For Package Maintainers**: See [/docs/v6/MIGRATION_RUNBOOKS.md](/home/user/unrdf/docs/v6/MIGRATION_RUNBOOKS.md) for migration guides
-3. **For Architecture Review**: See [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md) for v6 design rationale
+3. **For Architecture Review**: See [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md) for design rationale
 
 ---
 
