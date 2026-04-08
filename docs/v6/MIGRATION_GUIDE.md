@@ -1,9 +1,9 @@
-# UNRDF V6 Migration Guide
+# UNRDF Migration Guide
 
 **Complete step-by-step guide for migrating from v5 to v6**
 
 **Last Updated**: 2025-12-27
-**Target Version**: v6.0.0
+**Target Version**: 6.0.0
 **Estimated Migration Time**: 2-4 hours for typical project
 
 ---
@@ -25,7 +25,7 @@
 
 ### Before You Begin
 
-- [ ] **Backup your codebase**: `git commit -am "Pre-v6 migration checkpoint"`
+- [ ] **Backup your codebase**: `git commit -am "Pre-migration checkpoint"`
 - [ ] **Review breaking changes**: Read [`MIGRATION_PLAN.md`](./MIGRATION_PLAN.md)
 - [ ] **Check dependencies**: Ensure Node.js ≥18.0.0, pnpm ≥7.0.0
 - [ ] **Run existing tests**: `pnpm test` (100% pass required)
@@ -46,12 +46,12 @@ pnpm list @unrdf/core  # Should show v5.x
 
 ### Compatibility Matrix
 
-| Your Setup | Migration Path | Complexity |
-|------------|----------------|------------|
-| v5.x + N3 Store | Automated + Manual | Medium |
-| v5.x + Custom Store | Manual Only | High |
-| v4.x or earlier | Migrate to v5 first | N/A |
-| v6.0.0-alpha.x | Review delta only | Low |
+| Your Setup          | Migration Path      | Complexity |
+| ------------------- | ------------------- | ---------- |
+| v5.x + N3 Store     | Automated + Manual  | Medium     |
+| v5.x + Custom Store | Manual Only         | High       |
+| v4.x or earlier     | Migrate to v5 first | N/A        |
+| 6.0.0-alpha.x       | Review delta only   | Low        |
 
 ---
 
@@ -61,13 +61,13 @@ pnpm list @unrdf/core  # Should show v5.x
 
 ```bash
 # 1. Run migration script (dry-run first)
-node scripts/migrate-to-v6.mjs --all --dry-run --report dry-run-report.json
+node scripts/migrate.mjs --all --dry-run --report dry-run-report.json
 
 # 2. Review the report
 cat dry-run-report.json | jq '.summary'
 
 # 3. Apply migrations
-node scripts/migrate-to-v6.mjs --all --report migration-report.json
+node scripts/migrate.mjs --all --report migration-report.json
 
 # 4. Install v6 dependencies
 pnpm install
@@ -80,6 +80,7 @@ node validation/run-all.mjs comprehensive
 ```
 
 **Expected Output**:
+
 ```
 ✅ Migration complete!
 Migrated: 47/47 packages
@@ -91,10 +92,10 @@ Errors: 0
 
 ```bash
 # Migrate one package at a time
-node scripts/migrate-to-v6.mjs --package packages/my-app --dry-run
+node scripts/migrate.mjs --package packages/my-app --dry-run
 
 # Apply if looks good
-node scripts/migrate-to-v6.mjs --package packages/my-app
+node scripts/migrate.mjs --package packages/my-app
 
 # Test immediately
 cd packages/my-app && pnpm test
@@ -127,6 +128,7 @@ cd packages/my-app && pnpm test
 ```
 
 **Install**:
+
 ```bash
 pnpm install
 ```
@@ -158,6 +160,7 @@ async function createMyStore() {
 ```
 
 **Key Changes**:
+
 - Store creation is now **async**
 - Use factory function instead of constructor
 - Functions calling `createStore()` must be `async`
@@ -181,6 +184,7 @@ import { Parser, Writer } from '@unrdf/core/rdf/n3-justified-only';
 ```
 
 **Migration Rule**: Direct N3 imports **only** in designated modules:
+
 - `packages/*/src/rdf/n3-justified-only.mjs`
 - All other code imports from `@unrdf/oxigraph` or `@unrdf/core`
 
@@ -203,7 +207,7 @@ async function processWorkflow(task) {
 import { withReceipt } from '@unrdf/v6-compat/adapters';
 
 const processWorkflow = withReceipt(
-  async (task) => {
+  async task => {
     const result = await workflow.execute(task);
     return result;
   },
@@ -216,6 +220,7 @@ console.log('Receipt:', receipt.hash);
 ```
 
 **Why Receipts?**
+
 - Deterministic execution proof
 - Replay capability
 - Adversarial validation
@@ -244,7 +249,7 @@ import { z } from 'zod';
 const UserSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(100),
-  email: z.string().email().optional()
+  email: z.string().email().optional(),
 });
 
 function createUser(data) {
@@ -254,6 +259,7 @@ function createUser(data) {
 ```
 
 **Benefits**:
+
 - Runtime type safety
 - Self-documenting
 - Better error messages
@@ -274,13 +280,12 @@ const results = await federation.query('SELECT * WHERE { ?s ?p ?o }');
 import { sparql } from '@unrdf/federation';
 
 const results = await federation.query(
-  sparql`SELECT * WHERE { ?s ?p ?o }`
-    .timeout(5000)
-    .receipt(true)
+  sparql`SELECT * WHERE { ?s ?p ?o }`.timeout(5000).receipt(true)
 );
 ```
 
 **Key Changes**:
+
 - Template literals prevent injection
 - Explicit timeouts (default 5s)
 - Receipt generation option
@@ -292,11 +297,11 @@ const results = await federation.query(
 #### Before (v5)
 
 ```javascript
-stream.on('data', (quad) => {
+stream.on('data', quad => {
   console.log(quad);
 });
 
-stream.on('error', (err) => {
+stream.on('error', err => {
   console.error(err);
 });
 
@@ -322,6 +327,7 @@ const receipt = stream.receipt();
 ```
 
 **Why AsyncIterators?**
+
 - Better backpressure handling
 - Simpler error handling
 - Receipt support
@@ -337,6 +343,7 @@ const receipt = stream.receipt();
 **Rationale**: Oxigraph provides 10x faster SPARQL + WASM support
 
 **Migration**:
+
 ```bash
 # Automated
 node scripts/migrate-to-v6.mjs --all
@@ -358,6 +365,7 @@ node scripts/migrate-to-v6.mjs --all
 **Rationale**: Simplify build, reduce bundle size
 
 **Migration**:
+
 ```json
 {
   "type": "module",
@@ -378,13 +386,11 @@ node scripts/migrate-to-v6.mjs --all
 **Rationale**: Deterministic execution + replay guarantees
 
 **Migration**:
+
 ```javascript
 import { withReceipt } from '@unrdf/v6-compat/adapters';
 
-const myFunction = withReceipt(
-  originalFunction,
-  { operation: 'myFunction' }
-);
+const myFunction = withReceipt(originalFunction, { operation: 'myFunction' });
 ```
 
 **Gotcha**: Return value changes from `result` to `{ result, receipt }`.
@@ -398,6 +404,7 @@ const myFunction = withReceipt(
 **Rationale**: Runtime safety + self-documenting
 
 **Migration**:
+
 ```javascript
 // Generate from TypeScript types (if available)
 node scripts/schema-generator.mjs --input src/types.ts --output src/schemas.mjs
@@ -415,6 +422,7 @@ const MySchema = z.object({ ... });
 ### Scenario 1: Simple Node.js Script
 
 **Before**:
+
 ```javascript
 import { Store } from 'n3';
 
@@ -424,6 +432,7 @@ console.log(store.size);
 ```
 
 **After**:
+
 ```javascript
 import { createStore } from '@unrdf/oxigraph';
 
@@ -437,6 +446,7 @@ main().catch(console.error);
 ```
 
 **Changes**:
+
 1. Wrap in async function
 2. Use `createStore()`
 3. Await store operations
@@ -446,6 +456,7 @@ main().catch(console.error);
 ### Scenario 2: Express API Server
 
 **Before**:
+
 ```javascript
 import express from 'express';
 import { Store } from 'n3';
@@ -460,6 +471,7 @@ app.get('/query', async (req, res) => {
 ```
 
 **After**:
+
 ```javascript
 import express from 'express';
 import { createStore } from '@unrdf/oxigraph';
@@ -476,7 +488,7 @@ app.listen(3000, async () => {
 });
 
 const QuerySchema = z.object({
-  sparql: z.string().min(1)
+  sparql: z.string().min(1),
 });
 
 app.get('/query', async (req, res) => {
@@ -491,6 +503,7 @@ app.get('/query', async (req, res) => {
 ```
 
 **Changes**:
+
 1. Initialize store in server startup
 2. Add Zod validation
 3. Return receipts with results
@@ -501,6 +514,7 @@ app.get('/query', async (req, res) => {
 ### Scenario 3: React Application
 
 **Before**:
+
 ```javascript
 import { useEffect, useState } from 'react';
 import { Store } from 'n3';
@@ -518,6 +532,7 @@ function MyComponent() {
 ```
 
 **After**:
+
 ```javascript
 import { useEffect, useState } from 'react';
 import { createStore } from '@unrdf/oxigraph';
@@ -541,7 +556,9 @@ function MyComponent() {
 
     load().catch(console.error);
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -554,6 +571,7 @@ function MyComponent() {
 ```
 
 **Changes**:
+
 1. Use async function in useEffect
 2. Handle cleanup properly
 3. Display receipts
@@ -564,6 +582,7 @@ function MyComponent() {
 ### Scenario 4: Vitest Tests
 
 **Before**:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { Store } from 'n3';
@@ -577,6 +596,7 @@ describe('My Tests', () => {
 ```
 
 **After**:
+
 ```javascript
 import { describe, it, expect } from 'vitest';
 import { createStore } from '@unrdf/oxigraph';
@@ -590,6 +610,7 @@ describe('My Tests', () => {
 ```
 
 **Changes**:
+
 1. Make test function async
 2. Await store creation
 3. Await store operations
@@ -603,6 +624,7 @@ describe('My Tests', () => {
 **Cause**: package.json missing `"type": "module"`
 
 **Fix**:
+
 ```json
 {
   "type": "module"
@@ -616,6 +638,7 @@ describe('My Tests', () => {
 **Cause**: Wrong import path
 
 **Fix**:
+
 ```javascript
 // ❌ Wrong
 import { createStore } from '@unrdf/core';
@@ -631,6 +654,7 @@ import { createStore } from '@unrdf/oxigraph';
 **Cause**: Using await outside async function in old Node version
 
 **Fix**:
+
 ```javascript
 // Wrap in async IIFE
 (async () => {
@@ -646,12 +670,14 @@ import { createStore } from '@unrdf/oxigraph';
 ### Problem: Tests failing after migration
 
 **Checklist**:
+
 1. All test functions are `async`?
 2. All store operations are `await`ed?
 3. Dependencies updated in package.json?
 4. Using correct import paths?
 
 **Debug**:
+
 ```bash
 # Check imports
 grep -r "from 'n3'" src/ test/
@@ -670,6 +696,7 @@ pnpm test -- --run test/my-test.test.mjs
 **Cause**: Missing receipts or non-deterministic operations
 
 **Fix**:
+
 ```javascript
 // Add receipt wrappers
 import { withReceipt } from '@unrdf/v6-compat/adapters';
@@ -684,11 +711,12 @@ const random = Math.random();
 // ✅ Use in receipt generation only
 const receipt = {
   timestamp: Date.now(), // OK here
-  operation: 'myOp'
+  operation: 'myOp',
 };
 ```
 
 **Validate**:
+
 ```bash
 node validation/run-all.mjs comprehensive
 grep "Score:" validation-output.log  # Should be ≥80/100
@@ -816,16 +844,19 @@ After successful migration:
 ## Support & Resources
 
 ### Documentation
+
 - [Migration Plan](./MIGRATION_PLAN.md) - Strategic overview
 - [Maturity Ladder](./MATURITY_LADDER.md) - Package readiness
 - [BB80/20 Methodology](../bb80-20-methodology.md) - Development approach
 
 ### Getting Help
+
 - **GitHub Issues**: https://github.com/unrdf/unrdf/issues
 - **Discussions**: https://github.com/unrdf/unrdf/discussions
 - **Community**: Join Discord (link in README)
 
 ### Reporting Issues
+
 ```bash
 # Create issue with migration report
 node scripts/migrate-to-v6.mjs --all --report issue-report.json
@@ -843,34 +874,34 @@ node scripts/migrate-to-v6.mjs --all --report issue-report.json
 
 ### Store Operations
 
-| v5 API | v6 API | Notes |
-|--------|--------|-------|
-| `new Store()` | `createStore()` | Now async |
-| `store.size` | `await store.size()` | Now async |
-| `store.addQuad(q)` | `await store.addQuad(q)` | Now async |
-| `store.match(s,p,o,g)` | `store.match(s,p,o,g)` | Same (sync iterator) |
+| v5 API                 | v6 API                   | Notes                |
+| ---------------------- | ------------------------ | -------------------- |
+| `new Store()`          | `createStore()`          | Now async            |
+| `store.size`           | `await store.size()`     | Now async            |
+| `store.addQuad(q)`     | `await store.addQuad(q)` | Now async            |
+| `store.match(s,p,o,g)` | `store.match(s,p,o,g)`   | Same (sync iterator) |
 
 ### DataFactory
 
-| v5 API | v6 API | Notes |
-|--------|--------|-------|
+| v5 API                    | v6 API                    | Notes     |
+| ------------------------- | ------------------------- | --------- |
 | `DataFactory.namedNode()` | `dataFactory.namedNode()` | Lowercase |
-| `DataFactory.literal()` | `dataFactory.literal()` | Lowercase |
+| `DataFactory.literal()`   | `dataFactory.literal()`   | Lowercase |
 
 ### Workflows
 
-| v5 API | v6 API | Notes |
-|--------|--------|-------|
+| v5 API               | v6 API                   | Notes                         |
+| -------------------- | ------------------------ | ----------------------------- |
 | `workflow.run(task)` | `workflow.execute(task)` | Returns `{ result, receipt }` |
 
 ### Federation
 
-| v5 API | v6 API | Notes |
-|--------|--------|-------|
+| v5 API                     | v6 API                            | Notes            |
+| -------------------------- | --------------------------------- | ---------------- |
 | `federation.query(string)` | `federation.query(sparql\`...\`)` | Template literal |
 
 ---
 
-**Version**: v6.0.0
+**Version**: 6.0.0
 **Last Updated**: 2025-12-27
 **Maintained By**: UNRDF Core Team

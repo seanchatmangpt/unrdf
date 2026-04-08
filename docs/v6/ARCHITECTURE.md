@@ -1,4 +1,4 @@
-# UNRDF v6 Architecture Specification
+# UNRDF Architecture Specification
 
 **Version**: 6.0.0
 **Status**: Architecture Design Phase
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-UNRDF v6 represents a **major architectural evolution** focused on:
+UNRDF represents a **major architectural evolution** focused on:
 
 1. **Consolidation**: Reduce 54 packages to 25 core packages (53% reduction)
 2. **Performance**: Sub-millisecond SPARQL queries, distributed consensus
@@ -94,26 +94,31 @@ UNRDF v6 represents a **major architectural evolution** focused on:
 ### 1.2 Layered Architecture Principles
 
 **Layer 1: Infrastructure** (Foundation)
+
 - No business logic, pure technical services
 - Rust-based Oxigraph store, Raft consensus, OTEL observability
 - Stable, rarely changing
 
 **Layer 2: RDF Core** (RDF Operations)
+
 - RDF graph operations, SPARQL execution, SHACL validation
 - Depends ONLY on Infrastructure layer
 - Pure functions, NO side effects in business logic
 
 **Layer 3: KGC Layer** (Temporal Event Sourcing)
+
 - Nanosecond-precision timestamps, cryptographic receipts
 - Append-only immutable log, Git-backed snapshots
 - Depends on Infrastructure + RDF Core
 
 **Layer 4: Knowledge Substrate** (Higher-Order Operations)
+
 - Hooks, federation, streaming, validation
 - Depends on Infrastructure + RDF Core + KGC
 - Composable capabilities
 
 **Layer 5: Application** (User-Facing)
+
 - CLI, APIs, integrations
 - Depends on all lower layers
 - Thin orchestration layer
@@ -171,9 +176,10 @@ graph TD
 
 ## 3. Package Structure
 
-### 3.1 v6 Package Taxonomy (25 packages)
+### 3.1 Package Taxonomy (25 packages)
 
 #### Tier 1: Essential (7 packages) - 80% of value
+
 ```
 @unrdf/domain          - Types, schemas, Zod validators
 @unrdf/oxigraph        - Rust triple store (WebAssembly)
@@ -185,6 +191,7 @@ graph TD
 ```
 
 #### Tier 2: Extended (8 packages) - 15% of value
+
 ```
 @unrdf/hooks           - Autonomous behaviors
 @unrdf/federation      - Distributed queries
@@ -197,6 +204,7 @@ graph TD
 ```
 
 #### Tier 3: Optional (7 packages) - 5% of value
+
 ```
 @unrdf/composables     - Vue 3 integration
 @unrdf/graph-analytics - Advanced analytics
@@ -208,6 +216,7 @@ graph TD
 ```
 
 #### Tier 4: Internal (3 packages) - Development only
+
 ```
 @unrdf/test-utils      - Testing infrastructure
 @unrdf/integration-tests - Cross-package tests
@@ -216,7 +225,8 @@ graph TD
 
 ### 3.2 Package Removal Plan (29 packages removed)
 
-**Removed in v6 (Technical Debt)**:
+**Removed (Technical Debt)**:
+
 ```
 @unrdf/browser         - Broken, zero users (removed in v5)
 @unrdf/react           - Broken imports (removed in v5)
@@ -237,19 +247,20 @@ graph TD
 ```
 
 **Rationale**:
+
 - Eliminate overlapping functionality
 - Reduce maintenance burden
 - Focus on core value proposition (20% of packages = 80% of value)
 
 ### 3.3 Package Size Targets (Performance Budgets)
 
-| Package | Max Size (Gzipped) | Max Dependencies | Max LoC |
-|---------|-------------------|------------------|---------|
-| @unrdf/core | 100 KB | 5 | 5,000 |
-| @unrdf/oxigraph | 500 KB (Wasm) | 0 | N/A (Rust) |
-| @unrdf/kgc-4d | 50 KB | 3 | 2,000 |
-| @unrdf/cli | 150 KB | 10 | 3,000 |
-| All others | 50 KB | 5 | 1,500 |
+| Package         | Max Size (Gzipped) | Max Dependencies | Max LoC    |
+| --------------- | ------------------ | ---------------- | ---------- |
+| @unrdf/core     | 100 KB             | 5                | 5,000      |
+| @unrdf/oxigraph | 500 KB (Wasm)      | 0                | N/A (Rust) |
+| @unrdf/kgc-4d   | 50 KB              | 3                | 2,000      |
+| @unrdf/cli      | 150 KB             | 10               | 3,000      |
+| All others      | 50 KB              | 5                | 1,500      |
 
 **Enforcement**: Pre-commit hooks reject bundles exceeding limits.
 
@@ -257,7 +268,7 @@ graph TD
 
 ## 4. API Surface Definition
 
-### 4.1 @unrdf/core Public API (v6)
+### 4.1 @unrdf/core Public API
 
 ```javascript
 // Store Operations
@@ -289,7 +300,7 @@ export async function infer(store, rules, options)
 export async function reasonForward(store, ruleset)
 ```
 
-### 4.2 @unrdf/kgc-4d Public API (v6)
+### 4.2 @unrdf/kgc-4d Public API
 
 ```javascript
 // Temporal Store Creation
@@ -315,7 +326,7 @@ export async function verifyReceipt(receipt)
 export function chainReceipts(receipts)
 ```
 
-### 4.3 @unrdf/kgc-swarm Public API (v6)
+### 4.3 @unrdf/kgc-swarm Public API
 
 ```javascript
 // Multi-Agent Orchestration
@@ -340,13 +351,13 @@ export async function verifyAgentActions(agentId, timeRange)
 
 ### 4.4 Breaking Changes in Public APIs
 
-| API | v5 | v6 | Migration |
-|-----|----|----|-----------|
-| Store creation | `new Store()` (N3) | `createStore()` (Oxigraph) | Auto-migration tool |
-| DataFactory | `import { DataFactory } from 'n3'` | `import { dataFactory } from '@unrdf/oxigraph'` | ESLint rule + auto-fix |
-| SPARQL execution | `executeQuery(sparql)` | `query(store, sparql)` | Store parameter required |
-| Streaming | `@unrdf/streaming` | `import { streamQuads } from '@unrdf/core'` | Package merged |
-| Knowledge Engine | `@unrdf/knowledge-engine` | `import { infer } from '@unrdf/core'` | Package merged |
+| API              | v5                                 | v6                                              | Migration                |
+| ---------------- | ---------------------------------- | ----------------------------------------------- | ------------------------ |
+| Store creation   | `new Store()` (N3)                 | `createStore()` (Oxigraph)                      | Auto-migration tool      |
+| DataFactory      | `import { DataFactory } from 'n3'` | `import { dataFactory } from '@unrdf/oxigraph'` | ESLint rule + auto-fix   |
+| SPARQL execution | `executeQuery(sparql)`             | `query(store, sparql)`                          | Store parameter required |
+| Streaming        | `@unrdf/streaming`                 | `import { streamQuads } from '@unrdf/core'`     | Package merged           |
+| Knowledge Engine | `@unrdf/knowledge-engine`          | `import { infer } from '@unrdf/core'`           | Package merged           |
 
 ---
 
@@ -363,11 +374,11 @@ export async function verifyAgentActions(agentId, timeRange)
 
 ```javascript
 // v5
-import { streamQuads } from '@unrdf/streaming'
-import { infer } from '@unrdf/knowledge-engine'
+import { streamQuads } from '@unrdf/streaming';
+import { infer } from '@unrdf/knowledge-engine';
 
 // v6
-import { streamQuads, infer } from '@unrdf/core'
+import { streamQuads, infer } from '@unrdf/core';
 ```
 
 #### BC-2: Store API Unification (High Impact)
@@ -379,12 +390,12 @@ import { streamQuads, infer } from '@unrdf/core'
 
 ```javascript
 // v5 - Multiple APIs
-import { createStore as createOxigraphStore } from '@unrdf/oxigraph'
-import { createMemoryStore } from '@unrdf/core'
+import { createStore as createOxigraphStore } from '@unrdf/oxigraph';
+import { createMemoryStore } from '@unrdf/core';
 
 // v6 - Unified API
-import { createStore } from '@unrdf/core'
-const store = createStore({ backend: 'oxigraph' }) // or 'memory', 'remote'
+import { createStore } from '@unrdf/core';
+const store = createStore({ backend: 'oxigraph' }); // or 'memory', 'remote'
 ```
 
 #### BC-3: SPARQL Execution Signature (Medium Impact)
@@ -396,10 +407,10 @@ const store = createStore({ backend: 'oxigraph' }) // or 'memory', 'remote'
 
 ```javascript
 // v5
-const results = await query('SELECT * WHERE { ?s ?p ?o }')
+const results = await query('SELECT * WHERE { ?s ?p ?o }');
 
 // v6
-const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
+const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
 
 #### BC-4: Hook Registration API (Medium Impact)
@@ -411,10 +422,10 @@ const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
 
 ```javascript
 // v5 - Global registration
-registerHook(myHook)
+registerHook(myHook);
 
 // v6 - Per-store registration
-store.registerHook(myHook)
+store.registerHook(myHook);
 ```
 
 #### BC-5: Capsule Format v2 (Medium Impact)
@@ -426,10 +437,10 @@ store.registerHook(myHook)
 
 ```javascript
 // v5 - Optional signatures
-const capsule = createCapsule(data)
+const capsule = createCapsule(data);
 
 // v6 - Mandatory signatures
-const capsule = createCapsule(data, { sign: true, keyId: 'default' })
+const capsule = createCapsule(data, { sign: true, keyId: 'default' });
 ```
 
 #### BC-6: Federation Protocol v2 (Low Impact)
@@ -491,50 +502,50 @@ unrdf freeze --output snapshot.json
 
 ```javascript
 // v5 - CommonJS supported
-const { createStore } = require('@unrdf/core')
+const { createStore } = require('@unrdf/core');
 
 // v6 - ESM only
-import { createStore } from '@unrdf/core'
+import { createStore } from '@unrdf/core';
 // OR
-const { createStore } = await import('@unrdf/core')
+const { createStore } = await import('@unrdf/core');
 ```
 
 ### 5.2 Breaking Changes Impact Matrix
 
 | BC ID | Impact | Affected Users | Migration Cost | Auto-Migration |
-|-------|--------|----------------|----------------|----------------|
-| BC-1 | High | 100% | Low | ✅ Yes |
-| BC-2 | High | 100% | Medium | ⚠️ Partial |
-| BC-3 | Medium | 90% | Low | ✅ Yes |
-| BC-4 | Medium | 40% | Medium | ❌ No |
-| BC-5 | Medium | 30% | Low | ✅ Yes |
-| BC-6 | Low | 10% | High | ⚠️ Partial |
-| BC-7 | Low | 50% | Low | ✅ Yes |
-| BC-8 | Low | 100% | Low | ✅ Yes |
-| BC-9 | Low | 60% | None | ✅ Yes |
-| BC-10 | Low | 20% | High | ❌ No |
-| BC-11 | Medium | 100% | Low | ❌ No |
-| BC-12 | High | 30% | Medium | ⚠️ Partial |
+| ----- | ------ | -------------- | -------------- | -------------- |
+| BC-1  | High   | 100%           | Low            | ✅ Yes         |
+| BC-2  | High   | 100%           | Medium         | ⚠️ Partial     |
+| BC-3  | Medium | 90%            | Low            | ✅ Yes         |
+| BC-4  | Medium | 40%            | Medium         | ❌ No          |
+| BC-5  | Medium | 30%            | Low            | ✅ Yes         |
+| BC-6  | Low    | 10%            | High           | ⚠️ Partial     |
+| BC-7  | Low    | 50%            | Low            | ✅ Yes         |
+| BC-8  | Low    | 100%           | Low            | ✅ Yes         |
+| BC-9  | Low    | 60%            | None           | ✅ Yes         |
+| BC-10 | Low    | 20%            | High           | ❌ No          |
+| BC-11 | Medium | 100%           | Low            | ❌ No          |
+| BC-12 | High   | 30%            | Medium         | ⚠️ Partial     |
 
 ### 5.3 Deprecation Timeline
 
 ```
-v6.0.0-alpha.1 (Current)
+6.0.0-alpha.1 (Current)
 ├─ Warning logs for deprecated APIs
 ├─ Compatibility layer for v5 APIs
 └─ Migration guide published
 
-v6.0.0-beta.1 (+3 months)
+6.0.0-beta.1 (+3 months)
 ├─ Remove compatibility layer
 ├─ Breaking changes enforced
 └─ Migration tool released
 
-v6.0.0 GA (+6 months)
+6.0.0 GA (+6 months)
 ├─ Stable release
 ├─ LTS support begins
 └─ v5 enters maintenance mode (security only)
 
-v6.1.0 (+12 months)
+6.1.0 (+12 months)
 └─ v5 support ends
 ```
 
@@ -549,31 +560,33 @@ v6.1.0 (+12 months)
 **Use Case**: Coordinate 10+ agents with distributed decision-making
 
 **Capabilities**:
+
 - Raft consensus for agent coordination
 - Cryptographic receipts for every agent action
 - Real-time agent health monitoring
 - Automatic failover and recovery
 
 **API**:
+
 ```javascript
-import { createSwarm, deployAgent, orchestrate } from '@unrdf/kgc-swarm'
+import { createSwarm, deployAgent, orchestrate } from '@unrdf/kgc-swarm';
 
 const swarm = await createSwarm({
   consensus: 'raft',
   agents: 10,
-  healthCheckInterval: 5000
-})
+  healthCheckInterval: 5000,
+});
 
 await deployAgent(swarm, {
   name: 'data-validator',
   runtime: 'nodejs',
-  capabilities: ['sparql', 'shacl']
-})
+  capabilities: ['sparql', 'shacl'],
+});
 
 const result = await orchestrate(swarm, {
   workflow: 'validate-then-ingest',
-  parallelism: 5
-})
+  parallelism: 5,
+});
 ```
 
 ### 6.2 Improved Consensus Protocols
@@ -583,12 +596,14 @@ const result = await orchestrate(swarm, {
 **Use Case**: Distributed RDF stores with strong consistency
 
 **Capabilities**:
+
 - Leader election
 - Log replication
 - Snapshotting
 - Membership changes
 
 **API**:
+
 ```javascript
 import { createConsensus } from '@unrdf/consensus'
 
@@ -612,19 +627,21 @@ await consensus.propose({
 **Use Case**: Production debugging, performance analysis
 
 **Capabilities**:
+
 - Automatic span generation for all operations
 - Custom metrics (SPARQL query latency, store size, etc.)
 - Distributed tracing across federation
 - Integration with Jaeger, Zipkin, Grafana
 
 **API**:
-```javascript
-import { withTracing } from '@unrdf/observability'
 
-const results = await withTracing('sparql-query', async (span) => {
-  span.setAttribute('query.complexity', analyzeQuery(sparql))
-  return await query(store, sparql)
-})
+```javascript
+import { withTracing } from '@unrdf/observability';
+
+const results = await withTracing('sparql-query', async span => {
+  span.setAttribute('query.complexity', analyzeQuery(sparql));
+  return await query(store, sparql);
+});
 ```
 
 ### 6.4 Better Performance Primitives
@@ -634,24 +651,26 @@ const results = await withTracing('sparql-query', async (span) => {
 **Use Case**: High-throughput SPARQL applications
 
 **Capabilities**:
+
 - Query plan optimization (reorder joins, push filters)
 - Multi-layer caching (LRU, Redis, CDN)
 - Connection pooling for remote stores
 - Streaming results (avoid loading full result set)
 
 **API**:
+
 ```javascript
-import { query, enableCache } from '@unrdf/core'
+import { query, enableCache } from '@unrdf/core';
 
 // Enable query result caching
 enableCache({
   type: 'lru',
   maxSize: 1000,
-  ttl: 60000 // 1 minute
-})
+  ttl: 60000, // 1 minute
+});
 
 // Queries are automatically cached
-const results = await query(store, sparql)
+const results = await query(store, sparql);
 ```
 
 ### 6.5 GraphQL Support (NEW)
@@ -661,17 +680,18 @@ const results = await query(store, sparql)
 **Use Case**: Expose RDF data to GraphQL clients
 
 **API**:
+
 ```javascript
-import { createGraphQLSchema } from '@unrdf/rdf-graphql'
+import { createGraphQLSchema } from '@unrdf/rdf-graphql';
 
 const schema = createGraphQLSchema({
   store,
   resolvers: {
     Query: {
-      person: (_, { id }) => query(store, `SELECT * WHERE { <${id}> ?p ?o }`)
-    }
-  }
-})
+      person: (_, { id }) => query(store, `SELECT * WHERE { <${id}> ?p ?o }`),
+    },
+  },
+});
 ```
 
 ### 6.6 Real-Time Collaboration (ALPHA)
@@ -681,18 +701,19 @@ const schema = createGraphQLSchema({
 **Use Case**: Multiple users editing same knowledge graph
 
 **API**:
+
 ```javascript
-import { createCollabStore } from '@unrdf/collab'
+import { createCollabStore } from '@unrdf/collab';
 
 const collabStore = createCollabStore({
   backend: store,
   crdt: 'yjs',
-  websocket: 'ws://collab-server:3000'
-})
+  websocket: 'ws://collab-server:3000',
+});
 
-collabStore.on('remote-update', (update) => {
-  console.log('Remote user updated quad:', update.quad)
-})
+collabStore.on('remote-update', update => {
+  console.log('Remote user updated quad:', update.quad);
+});
 ```
 
 ---
@@ -702,30 +723,35 @@ collabStore.on('remote-update', (update) => {
 ### 7.1 Migration Checklist
 
 **Phase 1: Preparation (Week 1)**
+
 - [ ] Review breaking changes catalog
 - [ ] Identify affected code paths
 - [ ] Update package.json dependencies
 - [ ] Install migration tool: `npm install -g @unrdf/migrate-v6`
 
 **Phase 2: Automated Migration (Week 2)**
+
 - [ ] Run migration tool: `npx @unrdf/migrate-v6 .`
 - [ ] Review automated changes
 - [ ] Fix linting errors
 - [ ] Run test suite
 
 **Phase 3: Manual Migration (Week 3-4)**
+
 - [ ] Migrate hook registrations (BC-4)
 - [ ] Update federation configs (BC-6)
 - [ ] Convert CommonJS to ESM (BC-12)
 - [ ] Add Zod validation fixes (BC-11)
 
 **Phase 4: Validation (Week 5)**
+
 - [ ] 100% test pass rate
 - [ ] OTEL validation ≥80/100
 - [ ] Performance benchmarks (no regressions)
 - [ ] Deploy to staging environment
 
 **Phase 5: Production Deployment (Week 6)**
+
 - [ ] Canary deployment (10% traffic)
 - [ ] Monitor error rates
 - [ ] Full rollout
@@ -759,16 +785,16 @@ v6 includes a compatibility layer for gradual migration:
 
 ```javascript
 // Enable v5 compatibility (deprecated)
-import { enableV5Compat } from '@unrdf/core/compat'
+import { enableV5Compat } from '@unrdf/core/compat';
 
 enableV5Compat({
-  allowLegacyStoreAPI: true,    // Support old Store() constructor
-  allowGlobalHooks: true,        // Support global hook registration
-  warnOnDeprecated: true         // Log warnings for deprecated usage
-})
+  allowLegacyStoreAPI: true, // Support old Store() constructor
+  allowGlobalHooks: true, // Support global hook registration
+  warnOnDeprecated: true, // Log warnings for deprecated usage
+});
 
 // Now v5 code works (with warnings)
-const store = new Store()  // DEPRECATED: Use createStore() instead
+const store = new Store(); // DEPRECATED: Use createStore() instead
 ```
 
 **Note**: Compatibility mode removed in v6.1.0 (12 months after v6.0.0 GA).
@@ -776,32 +802,35 @@ const store = new Store()  // DEPRECATED: Use createStore() instead
 ### 7.4 Common Migration Patterns
 
 **Pattern 1: Store Creation**
+
 ```javascript
 // v5
-import { Store } from 'n3'
-const store = new Store()
+import { Store } from 'n3';
+const store = new Store();
 
 // v6
-import { createStore } from '@unrdf/core'
-const store = createStore()
+import { createStore } from '@unrdf/core';
+const store = createStore();
 ```
 
 **Pattern 2: SPARQL Queries**
+
 ```javascript
 // v5
-const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }')
+const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }');
 
 // v6
-const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
+const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
 ```
 
 **Pattern 3: Streaming**
+
 ```javascript
 // v5
-import { streamQuads } from '@unrdf/streaming'
+import { streamQuads } from '@unrdf/streaming';
 
 // v6
-import { streamQuads } from '@unrdf/core'
+import { streamQuads } from '@unrdf/core';
 ```
 
 ---
@@ -815,12 +844,14 @@ import { streamQuads } from '@unrdf/core'
 **Context**: 54 packages create maintenance burden, user confusion
 **Decision**: Reduce to 25 core packages by merging overlapping functionality
 **Consequences**:
+
 - ✅ Simpler mental model for users
 - ✅ Reduced bundle size (fewer dependencies)
 - ❌ Breaking changes for existing users
 - ❌ Migration effort required
 
 **Alternatives Considered**:
+
 1. Keep all packages (rejected - unsustainable)
 2. Reduce to 10 "mega-packages" (rejected - violates SRP)
 
@@ -831,6 +862,7 @@ import { streamQuads } from '@unrdf/core'
 **Context**: N3.js performance bottlenecks at scale
 **Decision**: Oxigraph (Rust + WebAssembly) as default backend
 **Consequences**:
+
 - ✅ 40% faster queries (measured)
 - ✅ 60% lower memory (measured)
 - ✅ Native SPARQL 1.1 compliance
@@ -846,6 +878,7 @@ import { streamQuads } from '@unrdf/core'
 **Context**: Need verifiable, auditable operations
 **Decision**: Every operation produces cryptographic capsule/receipt
 **Consequences**:
+
 - ✅ Full audit trail
 - ✅ Reproducible execution
 - ✅ Byzantine fault tolerance
@@ -859,6 +892,7 @@ import { streamQuads } from '@unrdf/core'
 **Context**: Production debugging requires observability
 **Decision**: OTEL telemetry enabled by default (opt-out)
 **Consequences**:
+
 - ✅ Better production debugging
 - ✅ Performance insights out-of-box
 - ❌ ~2% performance overhead
@@ -871,6 +905,7 @@ import { streamQuads } from '@unrdf/core'
 **Context**: Ecosystem moving to ESM, dual builds complex
 **Decision**: Drop CommonJS support, ESM only
 **Consequences**:
+
 - ✅ Simpler builds
 - ✅ Better tree-shaking
 - ✅ Align with ecosystem
@@ -884,6 +919,7 @@ import { streamQuads } from '@unrdf/core'
 **Context**: Need strong consistency for distributed stores
 **Decision**: Raft consensus protocol for federated deployments
 **Consequences**:
+
 - ✅ Strong consistency guarantees
 - ✅ Automatic leader election
 - ✅ Partition tolerance
@@ -896,47 +932,47 @@ import { streamQuads } from '@unrdf/core'
 
 ### 9.1 Performance Targets
 
-| Metric | v5 Baseline | v6 Target | Measurement |
-|--------|-------------|-----------|-------------|
-| SPARQL query (simple) | 2ms | <1ms | 50% improvement |
-| SPARQL query (complex) | 50ms | <25ms | 50% improvement |
-| Triple insertion | 10μs | <5μs | 50% improvement |
-| Memory per 1M triples | 500MB | <250MB | 50% improvement |
-| Startup time | 200ms | <100ms | 50% improvement |
-| Bundle size (core) | 150KB | <100KB | 33% reduction |
+| Metric                 | v5 Baseline | v6 Target | Measurement     |
+| ---------------------- | ----------- | --------- | --------------- |
+| SPARQL query (simple)  | 2ms         | <1ms      | 50% improvement |
+| SPARQL query (complex) | 50ms        | <25ms     | 50% improvement |
+| Triple insertion       | 10μs        | <5μs      | 50% improvement |
+| Memory per 1M triples  | 500MB       | <250MB    | 50% improvement |
+| Startup time           | 200ms       | <100ms    | 50% improvement |
+| Bundle size (core)     | 150KB       | <100KB    | 33% reduction   |
 
 **Enforcement**: Performance regression tests fail CI if targets not met.
 
 ### 9.2 Scalability Targets
 
-| Dimension | v5 | v6 Target |
-|-----------|----|----|
-| Max triples per store | 10M | 1B |
-| Max concurrent queries | 100 | 10,000 |
-| Max federation nodes | 5 | 100 |
-| Max agents per swarm | 10 | 1,000 |
+| Dimension              | v5  | v6 Target |
+| ---------------------- | --- | --------- |
+| Max triples per store  | 10M | 1B        |
+| Max concurrent queries | 100 | 10,000    |
+| Max federation nodes   | 5   | 100       |
+| Max agents per swarm   | 10  | 1,000     |
 
 ### 9.3 Reliability Targets
 
-| Metric | v6 Target |
-|--------|-----------|
-| Test coverage | ≥90% |
-| Test pass rate | 100% |
-| OTEL validation | ≥90/100 |
+| Metric                            | v6 Target            |
+| --------------------------------- | -------------------- |
+| Test coverage                     | ≥90%                 |
+| Test pass rate                    | 100%                 |
+| OTEL validation                   | ≥90/100              |
 | MTBF (Mean Time Between Failures) | >720 hours (30 days) |
-| RTO (Recovery Time Objective) | <5 minutes |
-| RPO (Recovery Point Objective) | 0 (no data loss) |
+| RTO (Recovery Time Objective)     | <5 minutes           |
+| RPO (Recovery Point Objective)    | 0 (no data loss)     |
 
 ### 9.4 Security Targets
 
-| Control | Implementation |
-|---------|----------------|
-| Input validation | 100% Zod schemas |
-| Output sanitization | XSS prevention on all outputs |
+| Control                  | Implementation                |
+| ------------------------ | ----------------------------- |
+| Input validation         | 100% Zod schemas              |
+| Output sanitization      | XSS prevention on all outputs |
 | Cryptographic signatures | All capsules signed (Ed25519) |
-| Access control | RBAC on all operations |
-| Audit logging | 100% operation coverage |
-| Vulnerability scanning | Zero high/critical CVEs |
+| Access control           | RBAC on all operations        |
+| Audit logging            | 100% operation coverage       |
+| Vulnerability scanning   | Zero high/critical CVEs       |
 
 ---
 
@@ -1038,43 +1074,43 @@ spec:
         app: unrdf
     spec:
       containers:
-      - name: unrdf
-        image: unrdf/v6:latest
-        env:
-        - name: UNRDF_CONSENSUS
-          value: "raft"
-        - name: UNRDF_OTEL_ENABLED
-          value: "true"
-        - name: UNRDF_OTEL_ENDPOINT
-          value: "http://jaeger:4318"
-        volumeMounts:
-        - name: data
-          mountPath: /data
+        - name: unrdf
+          image: unrdf/v6:latest
+          env:
+            - name: UNRDF_CONSENSUS
+              value: 'raft'
+            - name: UNRDF_OTEL_ENABLED
+              value: 'true'
+            - name: UNRDF_OTEL_ENDPOINT
+              value: 'http://jaeger:4318'
+          volumeMounts:
+            - name: data
+              mountPath: /data
   volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 100Gi
+    - metadata:
+        name: data
+      spec:
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 100Gi
 ```
 
 ---
 
 ## Appendix A: Technology Evaluation Matrix
 
-| Technology | Purpose | v5 | v6 | Justification |
-|------------|---------|----|----|---------------|
-| Oxigraph | Triple store | ✅ | ✅ | 40% faster, 60% less memory |
-| N3.js | RDF parsing | ✅ | ⚠️ | Limited to justified modules only |
-| Raft | Consensus | ❌ | ✅ | Strong consistency for federation |
-| OTEL | Observability | ⚠️ | ✅ | Production debugging essential |
-| Zod | Validation | ✅ | ✅ | Runtime type safety |
-| BLAKE3 | Hashing | ✅ | ✅ | Faster than SHA-256 |
-| Ed25519 | Signatures | ❌ | ✅ | Cryptographic receipts |
-| Yjs | CRDTs | ❌ | ✅ | Real-time collaboration |
-| GraphQL | Query API | ❌ | ✅ | Developer experience |
+| Technology | Purpose       | v5  | v6  | Justification                     |
+| ---------- | ------------- | --- | --- | --------------------------------- |
+| Oxigraph   | Triple store  | ✅  | ✅  | 40% faster, 60% less memory       |
+| N3.js      | RDF parsing   | ✅  | ⚠️  | Limited to justified modules only |
+| Raft       | Consensus     | ❌  | ✅  | Strong consistency for federation |
+| OTEL       | Observability | ⚠️  | ✅  | Production debugging essential    |
+| Zod        | Validation    | ✅  | ✅  | Runtime type safety               |
+| BLAKE3     | Hashing       | ✅  | ✅  | Faster than SHA-256               |
+| Ed25519    | Signatures    | ❌  | ✅  | Cryptographic receipts            |
+| Yjs        | CRDTs         | ❌  | ✅  | Real-time collaboration           |
+| GraphQL    | Query API     | ❌  | ✅  | Developer experience              |
 
 ---
 
@@ -1086,29 +1122,29 @@ spec:
 
 ### SPARQL Query Performance
 
-| Query Type | v5 | v6 | Improvement |
-|------------|----|----|-------------|
-| Simple SELECT (10 results) | 2.1ms | 0.8ms | 62% faster |
-| Complex JOIN (1000 results) | 52ms | 23ms | 56% faster |
-| Aggregation (COUNT) | 15ms | 7ms | 53% faster |
-| Full-text search | 180ms | 85ms | 53% faster |
+| Query Type                  | v5    | v6    | Improvement |
+| --------------------------- | ----- | ----- | ----------- |
+| Simple SELECT (10 results)  | 2.1ms | 0.8ms | 62% faster  |
+| Complex JOIN (1000 results) | 52ms  | 23ms  | 56% faster  |
+| Aggregation (COUNT)         | 15ms  | 7ms   | 53% faster  |
+| Full-text search            | 180ms | 85ms  | 53% faster  |
 
 ### Triple Store Operations
 
-| Operation | v5 | v6 | Improvement |
-|-----------|----|----|-------------|
-| Insert single triple | 12μs | 5μs | 58% faster |
-| Bulk insert (10K triples) | 250ms | 110ms | 56% faster |
-| Delete single triple | 15μs | 6μs | 60% faster |
-| Match pattern (1K matches) | 8ms | 3ms | 62% faster |
+| Operation                  | v5    | v6    | Improvement |
+| -------------------------- | ----- | ----- | ----------- |
+| Insert single triple       | 12μs  | 5μs   | 58% faster  |
+| Bulk insert (10K triples)  | 250ms | 110ms | 56% faster  |
+| Delete single triple       | 15μs  | 6μs   | 60% faster  |
+| Match pattern (1K matches) | 8ms   | 3ms   | 62% faster  |
 
 ### Memory Usage
 
-| Dataset Size | v5 | v6 | Improvement |
-|--------------|----|----|-------------|
-| 100K triples | 50MB | 20MB | 60% less |
-| 1M triples | 500MB | 200MB | 60% less |
-| 10M triples | 5GB | 2GB | 60% less |
+| Dataset Size | v5    | v6    | Improvement |
+| ------------ | ----- | ----- | ----------- |
+| 100K triples | 50MB  | 20MB  | 60% less    |
+| 1M triples   | 500MB | 200MB | 60% less    |
+| 10M triples  | 5GB   | 2GB   | 60% less    |
 
 **Evidence**: Run `npm run benchmark:regression` to reproduce.
 
@@ -1119,30 +1155,33 @@ spec:
 ### Example 1: Simple Application
 
 **v5 Code**:
+
 ```javascript
-import { Store } from 'n3'
-import { executeQuery } from '@unrdf/core'
-import { streamQuads } from '@unrdf/streaming'
+import { Store } from 'n3';
+import { executeQuery } from '@unrdf/core';
+import { streamQuads } from '@unrdf/streaming';
 
-const store = new Store()
-store.addQuad(/* ... */)
+const store = new Store();
+store.addQuad(/* ... */);
 
-const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }')
-const stream = streamQuads(rdfData)
+const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }');
+const stream = streamQuads(rdfData);
 ```
 
 **v6 Code**:
+
 ```javascript
-import { createStore, query, streamQuads } from '@unrdf/core'
+import { createStore, query, streamQuads } from '@unrdf/core';
 
-const store = createStore()
-store.addQuad(/* ... */)
+const store = createStore();
+store.addQuad(/* ... */);
 
-const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }')
-const stream = streamQuads(rdfData)
+const results = await query(store, 'SELECT * WHERE { ?s ?p ?o }');
+const stream = streamQuads(rdfData);
 ```
 
 **Migration Steps**:
+
 1. Replace `import { Store } from 'n3'` → `import { createStore } from '@unrdf/core'`
 2. Replace `new Store()` → `createStore()`
 3. Add `store` parameter to `query()` calls
@@ -1154,7 +1193,7 @@ const stream = streamQuads(rdfData)
 
 ## Conclusion
 
-UNRDF v6 represents a **major architectural evolution** focused on:
+UNRDF represents a **major architectural evolution** focused on:
 
 1. **Simplification**: 54 → 25 packages (53% reduction)
 2. **Performance**: 40-60% improvements across the board
@@ -1163,22 +1202,26 @@ UNRDF v6 represents a **major architectural evolution** focused on:
 5. **Developer Experience**: Simplified APIs, better error messages
 
 **Migration Path**:
+
 - Automated tools cover 80% of changes
 - 6-12 month timeline with compatibility layer
 - LTS support for v5 during transition
 
 **Quality Attributes**:
+
 - 100% test pass rate
 - ≥90% coverage
 - ≥90/100 OTEL validation
 - Zero high/critical CVEs
 
 **Decision Framework**:
+
 - Evidence-based (benchmarks, measurements)
 - User-centric (migration ease, DX)
 - Future-proof (scalability, extensibility)
 
 **Next Steps**:
+
 1. Review and approve this architecture
 2. Implement breaking changes incrementally
 3. Release v6.0.0-beta.1 in Q1 2026
