@@ -46,7 +46,7 @@ UNRDF represents a **major architectural evolution** focused on:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     UNRDF v6 Platform                           │
+│                     UNRDF Platform                           │
 │                                                                 │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
 │  │   Users      │  │  Developers  │  │  AI Agents   │         │
@@ -287,15 +287,15 @@ export async function validateQuad(quad, shapesGraph, options)
 export function parseRdf(input, format, options)
 export function serializeRdf(store, format, options)
 
-// Transactions (NEW in v6)
+// Transactions (NEW in this version)
 export async function transaction(store, callback)
 export async function rollback(transactionId)
 
-// Streaming (NEW in v6 - merged from @unrdf/streaming)
+// Streaming (NEW in this version - merged from @unrdf/streaming)
 export function streamQuads(source, options)
 export function streamBindings(sparqlResults, options)
 
-// Inference (NEW in v6 - merged from @unrdf/knowledge-engine)
+// Inference (NEW in this version - merged from @unrdf/knowledge-engine)
 export async function infer(store, rules, options)
 export async function reasonForward(store, ruleset)
 ```
@@ -310,7 +310,7 @@ export function createTemporalStore(options)
 export async function logEvent(store, event, timestamp)
 export async function queryAtTime(store, sparql, timestamp)
 
-// Time Travel (NEW in v6)
+// Time Travel (NEW in this version)
 export async function rewindTo(store, timestamp)
 export async function fastForwardTo(store, timestamp)
 export async function diffBetween(store, t1, t2)
@@ -339,7 +339,7 @@ export async function sendMessage(agentId, message)
 export async function broadcast(swarm, message)
 export async function subscribe(agentId, topic)
 
-// Consensus & Coordination (NEW in v6)
+// Consensus & Coordination (NEW in this version)
 export async function proposeDecision(swarm, proposal)
 export async function voteOnProposal(proposalId, vote)
 export async function executeConsensus(proposalId)
@@ -370,7 +370,7 @@ export async function verifyAgentActions(agentId, timeRange)
 **Change**: Merge 12 packages into core/kgc layers
 **Affected**: All users of `@unrdf/streaming`, `@unrdf/knowledge-engine`, `@unrdf/engine-gateway`
 **Rationale**: Eliminate duplicate functionality, reduce bundle size
-**Migration**: Automated via `npx @unrdf/migrate-v6`
+**Migration**: Automated via `npx @unrdf/migrate`
 
 ```javascript
 // v5
@@ -727,11 +727,11 @@ collabStore.on('remote-update', update => {
 - [ ] Review breaking changes catalog
 - [ ] Identify affected code paths
 - [ ] Update package.json dependencies
-- [ ] Install migration tool: `npm install -g @unrdf/migrate-v6`
+- [ ] Install migration tool: `npm install -g @unrdf/migrate`
 
 **Phase 2: Automated Migration (Week 2)**
 
-- [ ] Run migration tool: `npx @unrdf/migrate-v6 .`
+- [ ] Run migration tool: `npx @unrdf/migrate .`
 - [ ] Review automated changes
 - [ ] Fix linting errors
 - [ ] Run test suite
@@ -761,27 +761,27 @@ collabStore.on('remote-update', update => {
 
 ```bash
 # Install migration tool
-npm install -g @unrdf/migrate-v6
+npm install -g @unrdf/migrate
 
 # Analyze codebase
-npx @unrdf/migrate-v6 analyze .
+npx @unrdf/migrate analyze .
 
 # Generate migration report
-npx @unrdf/migrate-v6 report --output migration-report.md
+npx @unrdf/migrate report --output migration-report.md
 
 # Apply automated migrations
-npx @unrdf/migrate-v6 migrate . --auto
+npx @unrdf/migrate migrate . --auto
 
 # Apply manual migrations (interactive)
-npx @unrdf/migrate-v6 migrate . --manual
+npx @unrdf/migrate migrate . --manual
 
 # Verify migration completeness
-npx @unrdf/migrate-v6 verify .
+npx @unrdf/migrate verify .
 ```
 
 ### 7.3 Compatibility Mode
 
-v6 includes a compatibility layer for gradual migration:
+This version includes a compatibility layer for gradual migration:
 
 ```javascript
 // Enable v5 compatibility (deprecated)
@@ -797,7 +797,7 @@ enableV5Compat({
 const store = new Store(); // DEPRECATED: Use createStore() instead
 ```
 
-**Note**: Compatibility mode removed in v6.1.0 (12 months after v6.0.0 GA).
+**Note**: Compatibility mode removed in 6.1.0 (12 months after 6.0.0 GA).
 
 ### 7.4 Common Migration Patterns
 
@@ -985,7 +985,7 @@ import { streamQuads } from '@unrdf/core';
 │   Application Server        │
 │                             │
 │  ┌─────────────────────┐   │
-│  │  UNRDF v6 Runtime   │   │
+│  │  UNRDF Runtime   │   │
 │  │  - Core             │   │
 │  │  - KGC-4D           │   │
 │  │  - Observability    │   │
@@ -1010,7 +1010,7 @@ import { streamQuads } from '@unrdf/core';
 │   (Leader)      │◄──►│   (Follower)    │◄──►│   (Follower)    │
 │                 │    │                 │    │                 │
 │  ┌───────────┐  │    │  ┌───────────┐  │    │  ┌───────────┐  │
-│  │ UNRDF v6  │  │    │  │ UNRDF v6  │  │    │  │ UNRDF v6  │  │
+│  │ UNRDF  │  │    │  │ UNRDF  │  │    │  │ UNRDF  │  │
 │  │ + Raft    │  │    │  │ + Raft    │  │    │  │ + Raft    │  │
 │  └─────┬─────┘  │    │  └─────┬─────┘  │    │  └─────┬─────┘  │
 │        │        │    │        │        │    │        │        │
@@ -1061,7 +1061,7 @@ import { streamQuads } from '@unrdf/core';
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: unrdf-v6
+  name: unrdf
 spec:
   serviceName: unrdf
   replicas: 3
@@ -1075,7 +1075,7 @@ spec:
     spec:
       containers:
         - name: unrdf
-          image: unrdf/v6:latest
+          image: unrdf:latest
           env:
             - name: UNRDF_CONSENSUS
               value: 'raft'
@@ -1117,7 +1117,7 @@ spec:
 ## Appendix B: Performance Benchmarks
 
 **Baseline**: v5.0.0-beta.1
-**Target**: v6.0.0-alpha.1
+**Target**: 6.0.0-alpha.1
 **Hardware**: 8-core CPU, 16GB RAM, SSD
 
 ### SPARQL Query Performance
@@ -1168,7 +1168,7 @@ const results = await executeQuery('SELECT * WHERE { ?s ?p ?o }');
 const stream = streamQuads(rdfData);
 ```
 
-**v6 Code**:
+**Code**:
 
 ```javascript
 import { createStore, query, streamQuads } from '@unrdf/core';
@@ -1224,7 +1224,7 @@ UNRDF represents a **major architectural evolution** focused on:
 
 1. Review and approve this architecture
 2. Implement breaking changes incrementally
-3. Release v6.0.0-beta.1 in Q1 2026
+3. Release 6.0.0-beta.1 in Q1 2026
 4. GA release in Q2 2026
 
 ---
