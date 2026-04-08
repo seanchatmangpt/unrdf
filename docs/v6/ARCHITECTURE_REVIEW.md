@@ -1,4 +1,4 @@
-# UNRDF v6 Architecture Review
+# UNRDF Architecture Review
 
 **Review Date**: 2025-12-27
 **Reviewer**: System Architecture Designer Agent
@@ -38,7 +38,7 @@
 
 **❌ Critical Architectural Violations**:
 
-1. **N3 migration incomplete** - 71 files still import from 'n3' violating v6 architecture mandate (BLOCKER)
+1. **N3 migration incomplete** - 71 files still import from 'n3' violating architecture mandate (BLOCKER)
 2. **OTEL infrastructure broken** - Validation package missing, cannot verify observability claims (BLOCKER)
 3. **Test failures exist** - 98.2% pass rate vs 100% requirement indicates implementation gaps
 4. **Version still alpha** - 6.0.0-alpha.1 not production-ready
@@ -403,7 +403,7 @@ export const StoreConfigSchema = z.object({
 1. Migration tool not verified to exist (`npx @unrdf/migrate-v6` - does it exist?)
 2. No worked examples for complex migrations (hooks, federation)
 3. Testing strategy during migration not detailed
-4. Performance comparison (v5 vs v6) not provided for migration validation
+4. Performance comparison (v5 vs current) not provided for migration validation
 
 ### 5.2 Migration Tool Verification - Score: 40/100
 
@@ -442,7 +442,7 @@ npm view @unrdf/migrate-v6
 6.0.0-alpha.1 (Current) → Warnings + compatibility layer
 6.0.0-beta.1 (+3 months) → Remove compatibility layer
 6.0.0 GA (+6 months) → Stable release, v5 maintenance mode
-v6.1.0 (+12 months) → v5 support ends
+6.1.0 (+12 months) → legacy support ends
 ```
 
 ✅ **Well-structured** - 12 month transition is reasonable for major version
@@ -460,18 +460,18 @@ v6.1.0 (+12 months) → v5 support ends
 
 **Documented Targets vs Evidence**:
 
-| Metric                 | v5 Baseline | v6 Target | Evidence                     | Status     |
-| ---------------------- | ----------- | --------- | ---------------------------- | ---------- |
-| SPARQL query (simple)  | 2ms         | <1ms      | ❌ Not benchmarked           | Unverified |
-| SPARQL query (complex) | 50ms        | <25ms     | ❌ Not benchmarked           | Unverified |
-| Triple insertion       | 10μs        | <5μs      | ❌ Not benchmarked           | Unverified |
-| Memory per 1M triples  | 500MB       | <250MB    | ✅ Oxigraph benchmarks exist | Verified   |
-| Bundle size (core)     | 150KB       | <100KB    | ❌ Not measured              | Unverified |
+| Metric                 | v5 Baseline | current Target | Evidence                     | Status     |
+| ---------------------- | ----------- | -------------- | ---------------------------- | ---------- |
+| SPARQL query (simple)  | 2ms         | <1ms           | ❌ Not benchmarked           | Unverified |
+| SPARQL query (complex) | 50ms        | <25ms          | ❌ Not benchmarked           | Unverified |
+| Triple insertion       | 10μs        | <5μs           | ❌ Not benchmarked           | Unverified |
+| Memory per 1M triples  | 500MB       | <250MB         | ✅ Oxigraph benchmarks exist | Verified   |
+| Bundle size (core)     | 150KB       | <100KB         | ❌ Not measured              | Unverified |
 
 **Appendix B Claims**:
 
 ```
-Simple SELECT (10 results): v5 2.1ms → v6 0.8ms (62% faster)
+Simple SELECT (10 results): v5 2.1ms → current 0.8ms (62% faster)
 Complex JOIN (1000 results): v5 52ms → v6 23ms (56% faster)
 ```
 
@@ -482,7 +482,7 @@ Complex JOIN (1000 results): v5 52ms → v6 23ms (56% faster)
 ```bash
 # Run benchmarks
 npm run benchmark:regression
-# Expected: Comparison report showing v5 vs v6 performance
+# Expected: Comparison report showing v5 vs current performance
 
 # Check benchmark results
 ls benchmarks/results/
@@ -495,12 +495,12 @@ ls benchmarks/results/
 
 **Claims**:
 
-| Dimension              | v5  | v6 Target | Justification       | Evidence    |
-| ---------------------- | --- | --------- | ------------------- | ----------- |
-| Max triples per store  | 10M | 1B        | ❌ No justification | None        |
-| Max concurrent queries | 100 | 10,000    | ❌ No justification | None        |
-| Max federation nodes   | 5   | 100       | ⚠️ Raft consensus   | Theoretical |
-| Max agents per swarm   | 10  | 1,000     | ❌ No justification | None        |
+| Dimension              | v5  | current Target | Justification       | Evidence    |
+| ---------------------- | --- | -------------- | ------------------- | ----------- |
+| Max triples per store  | 10M | 1B             | ❌ No justification | None        |
+| Max concurrent queries | 100 | 10,000         | ❌ No justification | None        |
+| Max federation nodes   | 5   | 100            | ⚠️ Raft consensus   | Theoretical |
+| Max agents per swarm   | 10  | 1,000          | ❌ No justification | None        |
 
 **Concern**: **Massive scalability increases (100x+) without evidence**
 
@@ -517,7 +517,7 @@ ls benchmarks/results/
 
 **Targets**:
 
-| Metric          | v6 Target        | Current Status | Gap                      |
+| Metric          | current Target   | Current Status | Gap                      |
 | --------------- | ---------------- | -------------- | ------------------------ |
 | Test coverage   | ≥90%             | Unknown        | ❌ Not measured          |
 | Test pass rate  | 100%             | 98.2%          | ❌ 1.8% gap              |
