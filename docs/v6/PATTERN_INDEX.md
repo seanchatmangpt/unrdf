@@ -9,12 +9,12 @@ This index helps you navigate the pattern library documentation.
 
 ### 📚 Main Documents
 
-| Document                                                       | Purpose                         | When to Use                      |
-| -------------------------------------------------------------- | ------------------------------- | -------------------------------- |
-| [PATTERNS.md](./PATTERNS.md)                                   | Complete pattern specifications | Reference implementation details |
-| [PATTERN_TUTORIALS.md](./PATTERN_TUTORIALS.md)                 | Step-by-step learning guides    | Learn patterns hands-on          |
-| [MIGRATION_RUNBOOKS.md](./MIGRATION_RUNBOOKS.md)               | Package migration procedures    | Migrate P1 packages to v6        |
-| [RESEARCH_FINDINGS_SUMMARY.md](./RESEARCH_FINDINGS_SUMMARY.md) | Research results & metrics      | Understand research process      |
+| Document                                                       | Purpose                         | When to Use                            |
+| -------------------------------------------------------------- | ------------------------------- | -------------------------------------- |
+| [PATTERNS.md](./PATTERNS.md)                                   | Complete pattern specifications | Reference implementation details       |
+| [PATTERN_TUTORIALS.md](./PATTERN_TUTORIALS.md)                 | Step-by-step learning guides    | Learn patterns hands-on                |
+| [MIGRATION_RUNBOOKS.md](./MIGRATION_RUNBOOKS.md)               | Package migration procedures    | Migrate P1 packages to current version |
+| [RESEARCH_FINDINGS_SUMMARY.md](./RESEARCH_FINDINGS_SUMMARY.md) | Research results & metrics      | Understand research process            |
 
 ### 🎯 Quick Access
 
@@ -169,8 +169,8 @@ class CompositionChecker {
 
 ### P0: Foundation (Complete ✅)
 
-- v6-compat: Receipt HOF
-- v6-core: Delta Contract + Zod
+- @unrdf/v6-compat: Receipt HOF
+- @unrdf/v6-core: Delta Contract + Zod
 - kgc-4d: Determinism
 
 ### P1: Core Packages (196 hours)
@@ -328,7 +328,7 @@ console.log(compatible); // true if A.output matches B.input
 
 ## References
 
-- **v6 Program Charter**: [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md)
+- **Program Charter**: [/docs/v6/PROGRAM_CHARTER.md](/home/user/unrdf/docs/v6/PROGRAM_CHARTER.md)
 - **Migration Plan**: [/docs/v6/MIGRATION_PLAN.md](/home/user/unrdf/docs/v6/MIGRATION_PLAN.md)
 - **Maturity Ladder**: [/docs/v6/MATURITY_LADDER.md](/home/user/unrdf/docs/v6/MATURITY_LADDER.md)
 - **BB80/20 Methodology**: [/docs/bb80-20-methodology.md](/home/user/unrdf/docs/bb80-20-methodology.md)
