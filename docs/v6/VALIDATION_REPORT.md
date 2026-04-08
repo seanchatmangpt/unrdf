@@ -1,4 +1,4 @@
-# v6 Release Validation Report
+# Release Validation Report
 
 **Generated**: 2025-12-27
 **Validator**: Code Review Agent (Adversarial PM Mode)
@@ -10,7 +10,7 @@
 
 **RECOMMENDATION: NO-GO FOR RELEASE**
 
-The v6 codebase has **FAILED** pre-flight validation with critical blockers across multiple dimensions.
+The codebase has **FAILED** pre-flight validation with critical blockers across multiple dimensions.
 
 **Validation Score**: 3/12 checks passed (25% pass rate)
 
@@ -92,22 +92,23 @@ Migration compliance: 0%
 **CLAUDE.md Rule Violated**:
 
 > **RDF/Triple Store (MANDATORY)**
+>
 > - `createStore()` from `@unrdf/oxigraph` - NEVER `new Store()` from N3
 > - NEVER import `from 'n3'` in app code
 
 **Critical Files with Violations**:
 
-| File | Violation |
-|------|-----------|
-| `src/cli/commands/hook/eval.mjs` | `import { Store, Parser } from 'n3'` |
-| `src/cli/store-import.mjs` | `import { Store, Parser as N3Parser, Writer as N3Writer } from 'n3'` |
-| `src/composables/use-canon.mjs` | `import { Store } from 'n3'` |
-| `src/composables/use-delta.mjs` | `import { Store } from 'n3'` |
-| `src/composables/use-graph.mjs` | `import { Store } from 'n3'` |
-| `src/composables/use-reasoner.mjs` | `import { _Store } from 'n3'` |
-| `src/composables/use-terms.mjs` | `import { DataFactory } from 'n3'` |
-| `src/composables/use-validator.mjs` | `import { Parser, Store } from 'n3'` |
-| `src/context/index.mjs` | `import { Store, DataFactory } from 'n3'` |
+| File                                | Violation                                                            |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `src/cli/commands/hook/eval.mjs`    | `import { Store, Parser } from 'n3'`                                 |
+| `src/cli/store-import.mjs`          | `import { Store, Parser as N3Parser, Writer as N3Writer } from 'n3'` |
+| `src/composables/use-canon.mjs`     | `import { Store } from 'n3'`                                         |
+| `src/composables/use-delta.mjs`     | `import { Store } from 'n3'`                                         |
+| `src/composables/use-graph.mjs`     | `import { Store } from 'n3'`                                         |
+| `src/composables/use-reasoner.mjs`  | `import { _Store } from 'n3'`                                        |
+| `src/composables/use-terms.mjs`     | `import { DataFactory } from 'n3'`                                   |
+| `src/composables/use-validator.mjs` | `import { Parser, Store } from 'n3'`                                 |
+| `src/context/index.mjs`             | `import { Store, DataFactory } from 'n3'`                            |
 
 **Additional Violations**: 62 more files in `packages/`, `benchmarks/`, `examples/`, `playground/`, `scripts/`
 
@@ -155,6 +156,7 @@ Error: Cannot find module '/home/user/unrdf/packages/validation/src/index.mjs'
 **Why This Blocks Release**:
 
 Without OTEL validation:
+
 - No way to verify system behavior
 - Cannot detect production issues
 - Blind deployment = unacceptable risk
@@ -177,7 +179,7 @@ Status: ALPHA (pre-release)
 
 1. Alpha versions are experimental, not production-ready
 2. Semantic versioning signals unstable API
-3. Users expect stable release for v6.0.0
+3. Users expect stable release for 6.0.0
 
 **Required Action**: Bump to `6.0.0-rc.1` or `6.0.0` ONLY after all critical issues resolved
 
@@ -236,11 +238,11 @@ Missing: 3 files
 
 **Missing Critical Documentation**:
 
-| Document | Purpose | Impact if Missing |
-|----------|---------|-------------------|
-| `API_REFERENCE.md` | Complete v6 API documentation | Users cannot discover features |
-| `BREAKING_CHANGES.md` | v5 → v6 migration guide | Upgrade failures |
-| `RELEASE_NOTES.md` | What's new in v6 | Poor adoption |
+| Document              | Purpose                       | Impact if Missing              |
+| --------------------- | ----------------------------- | ------------------------------ |
+| `API_REFERENCE.md`    | Complete v6 API documentation | Users cannot discover features |
+| `BREAKING_CHANGES.md` | v5 → v6 migration guide       | Upgrade failures               |
+| `RELEASE_NOTES.md`    | What's new in v6              | Poor adoption                  |
 
 **Existing Documentation**:
 
@@ -298,13 +300,13 @@ Compliance rate: 75.9% (343/452 files compliant)
 
 **Largest Violators**:
 
-| File | Lines | Overage |
-|------|-------|---------|
-| `src/receipts/receipt-standard.mjs` | 1148 | +648 lines |
-| `src/knowledge-engine/schemas.mjs` | 1063 | +563 lines |
-| `src/knowledge-engine/query-optimizer.mjs` | 1052 | +552 lines |
-| `src/universe/monorepo-universe.mjs` | 1019 | +519 lines |
-| `src/measurement/capacity-computer.mjs` | 988 | +488 lines |
+| File                                       | Lines | Overage    |
+| ------------------------------------------ | ----- | ---------- |
+| `src/receipts/receipt-standard.mjs`        | 1148  | +648 lines |
+| `src/knowledge-engine/schemas.mjs`         | 1063  | +563 lines |
+| `src/knowledge-engine/query-optimizer.mjs` | 1052  | +552 lines |
+| `src/universe/monorepo-universe.mjs`       | 1019  | +519 lines |
+| `src/measurement/capacity-computer.mjs`    | 988   | +488 lines |
 
 **CLAUDE.md Standard**:
 
@@ -316,7 +318,7 @@ Compliance rate: 75.9% (343/452 files compliant)
 2. Indicates lack of modularization
 3. Code smell for complexity
 
-**Recommendation**: Refactor large files post-v6 release
+**Recommendation**: Refactor large files post-6.0.0 release
 
 ---
 
@@ -475,14 +477,14 @@ Overage: +0.235s (+4.7%)
 
 ### Claims vs Reality
 
-| Claim | Reality | Evidence |
-|-------|---------|----------|
-| "v6 ready for release" | **FALSE** | 9/12 checks failed |
-| "All tests pass" | **FALSE** | 1 test failure (98.21% pass) |
-| "N3 migration complete" | **FALSE** | 71 files with N3 imports |
-| "OTEL validation working" | **FALSE** | 0/100 score, module missing |
-| "Documentation complete" | **FALSE** | 3/4 required docs missing |
-| "Performance validated" | **FALSE** | Benchmarks crashed |
+| Claim                     | Reality   | Evidence                     |
+| ------------------------- | --------- | ---------------------------- |
+| "v6 ready for release"    | **FALSE** | 9/12 checks failed           |
+| "All tests pass"          | **FALSE** | 1 test failure (98.21% pass) |
+| "N3 migration complete"   | **FALSE** | 71 files with N3 imports     |
+| "OTEL validation working" | **FALSE** | 0/100 score, module missing  |
+| "Documentation complete"  | **FALSE** | 3/4 required docs missing    |
+| "Performance validated"   | **FALSE** | Benchmarks crashed           |
 
 ### What BREAKS If Released
 
@@ -494,12 +496,12 @@ Overage: +0.235s (+4.7%)
 
 ### Trust Analysis
 
-| Source | Claim | Trust | Verification |
-|--------|-------|-------|--------------|
-| Agent claims | "v6 ready" | **0%** | OTEL failed (0/100) |
-| Test output | "98.21% pass" | **90%** | Ran + verified output |
-| Validation script | "9/12 fail" | **95%** | Evidence-based checks |
-| Git history | "alpha.1" | **100%** | Package.json verified |
+| Source            | Claim         | Trust    | Verification          |
+| ----------------- | ------------- | -------- | --------------------- |
+| Agent claims      | "v6 ready"    | **0%**   | OTEL failed (0/100)   |
+| Test output       | "98.21% pass" | **90%**  | Ran + verified output |
+| Validation script | "9/12 fail"   | **95%**  | Evidence-based checks |
+| Git history       | "alpha.1"     | **100%** | Package.json verified |
 
 **Conclusion**: Agent optimism detected. Reality: NOT ready.
 
@@ -619,7 +621,7 @@ Overage: +0.235s (+4.7%)
 #### 3.1 File Size Refactoring
 
 **Owner**: Architecture Team
-**Timeline**: 2 weeks (post-v6)
+**Timeline**: 2 weeks (post-6.0.0)
 **Tasks**:
 
 - [ ] Refactor files >500 lines (109 files)
@@ -665,7 +667,7 @@ Once all critical and high-priority issues are resolved:
 - [ ] Announce code freeze
 - [ ] Merge all approved PRs
 - [ ] Lock main branch (no new commits)
-- [ ] Tag release candidate: `git tag v6.0.0-rc.1`
+- [ ] Tag release candidate: `git tag 6.0.0-rc.1`
 
 ### Final Testing
 
@@ -686,7 +688,7 @@ Once all critical and high-priority issues are resolved:
 
 - [ ] Finalize release notes
 - [ ] Update changelog
-- [ ] Tag final release: `git tag v6.0.0`
+- [ ] Tag final release: `git tag 6.0.0`
 - [ ] Push to registry: `pnpm publish -r`
 - [ ] Create GitHub release
 - [ ] Announce release
@@ -774,7 +776,7 @@ See `/home/user/unrdf/scripts/validate-v6.mjs` for complete source code.
 
 This validation has applied rigorous **Adversarial PM** principles to separate claims from reality. The evidence is conclusive:
 
-**v6 is NOT ready for release.**
+**is NOT ready for release.**
 
 Multiple critical systems are broken or incomplete. Shipping in this state would result in:
 
