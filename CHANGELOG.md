@@ -1,5 +1,53 @@
 # CHANGELOG
 
+## [26.4.8] - 2026-04-07
+
+### Major Features
+
+**Doctor Command** (NEW):
+
+- Comprehensive health check command for UNRDF development environment (`unrdf doctor`)
+- 22 health checks across 4 categories: Environment, System, Code Quality, Integrations
+- 3 check modes: quick (30s), standard (2min), full (5min) with automatic timeout enforcement
+- Cross-platform support: Windows (check-disk-space), macOS, Linux (df command)
+- Multiple output formats: human-readable, JSON, YAML
+- Auto-fix capability with `--fix` flag for automatic remediation
+- Watch mode for continuous monitoring with `--watch` flag
+- Comprehensive test suite: 26 tests, 100% pass rate
+- Documentation: [packages/cli/docs/doctor-command.md](packages/cli/docs/doctor-command.md)
+
+**Health Check Categories**:
+
+- `env`: Node.js version, pnpm, environment variables validation
+- `system`: Build artifacts, daemon status, MCP server, RDF store, port availability, disk space
+- `quality`: Code coverage (>=80%), linting, file size limits, circular dependency detection
+- `integration`: Federation peer connectivity, GraphQL endpoint, sidecar status
+
+**Technical Implementation**:
+
+- Timeout enforcement per category using `Promise.race()` with mode-specific timeouts
+- Cross-platform disk space checking with automatic platform detection
+- Mock-based testing with `vi.mock()` and `vi.fn()` for external dependencies
+- Async/await patterns throughout for proper error handling
+
+### Bug Fixes
+
+- fix(cli): Add missing startup probes to Kubernetes deployments (Prometheus, Grafana, Tempo)
+- fix(cli): Cross-platform disk space checking (Windows support via check-disk-space package)
+- fix(cli): Timeout enforcement for doctor command categories (prevents hanging checks)
+
+### Test Coverage
+
+- Added `packages/cli/test/commands/doctor.test.mjs` with 26 tests covering:
+  - Command structure validation
+  - Mode configuration (quick, standard, full)
+  - Category check unit tests (env, system, quality, integration, otel, kubernetes)
+  - External dependency mocking (kubectl, curl, execSync)
+  - Error handling (missing tools, timeouts)
+  - Performance SLA tests (mode completion within timeouts)
+
+---
+
 ## [26.4.7] - 2026-04-07
 
 ### Major Features
