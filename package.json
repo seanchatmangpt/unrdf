@@ -1,6 +1,6 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.4.9",
+  "version": "26.4.10",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
   "private": true,
   "type": "module",
@@ -138,8 +138,12 @@
       "pm4py": "npm:noop-package@1.0.0"
     },
     "peerDependencyRules": {
-      "allowedDepependencies": ["pm4py"],
-      "ignoreMissing": ["pm4py"]
+      "allowedDepependencies": [
+        "pm4py"
+      ],
+      "ignoreMissing": [
+        "pm4py"
+      ]
     }
   },
   "volta": {
