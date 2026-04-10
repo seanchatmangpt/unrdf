@@ -112,72 +112,78 @@ export async function runSync(options) {
           );
         }
 
-        // Render template
+        // Render template — per-row if output_file uses template variables, single otherwise
         const outputDir = config.generation?.output_dir || resolve(baseDir, 'lib');
-        let content, outputPath;
-        try {
-          const result = await renderTemplate(templatePath, sparqlResults, {
-            project: config.project,
-            prefixes,
-            output_dir: outputDir,
-            outputPath: rule.output_file,
-          });
-          content = result.content;
-          outputPath = result.outputPath;
-        } catch (renderErr) {
-          throw new Error(
-            `Template rendering failed for rule "${rule.name}"\n` +
-              `  Template: ${templatePath}\n` +
-              `  Error: ${renderErr.message}\n` +
-              `  Fix: Check template syntax and ensure all variables are defined`
-          );
-        }
+        const perRow = (rule.output_file || '').includes('{{');
+        const rowsToRender = perRow && sparqlResults.length > 0 ? sparqlResults : [sparqlResults[0] || {}];
 
-        const finalPath = resolve(outputDir, outputPath || rule.output_file);
-        const bytes = Buffer.byteLength(content, 'utf-8');
-        totalBytes += bytes;
-        const duration = performance.now() - ruleStart;
+        for (const row of rowsToRender) {
+          let content, outputPath;
+          try {
+            const result = await renderTemplate(templatePath, sparqlResults, {
+              project: config.project,
+              prefixes,
+              output_dir: outputDir,
+              outputPath: rule.output_file,
+              ...row,
+            });
+            content = result.content;
+            outputPath = result.outputPath;
+          } catch (renderErr) {
+            throw new Error(
+              `Template rendering failed for rule "${rule.name}"\n` +
+                `  Template: ${templatePath}\n` +
+                `  Error: ${renderErr.message}\n` +
+                `  Fix: Check template syntax and ensure all variables are defined`
+            );
+          }
 
-        // Check skip_existing mode
-        if (rule.mode === 'skip_existing' && existsSync(finalPath)) {
-          console.log(
-            '   ' +
-              c.yellow +
-              'SKIP' +
-              c.reset +
-              ' ' +
-              relative(process.cwd(), finalPath) +
-              ' (already exists)'
-          );
-          results.push({ rule: rule.name, path: finalPath, status: 'skipped', duration, bytes });
-          metrics.filesSkipped++;
-        } else if (dryRun) {
-          console.log(
-            '   ' +
-              c.yellow +
-              '[DRY RUN]' +
-              c.reset +
-              ' Would write: ' +
-              relative(process.cwd(), finalPath)
-          );
-          results.push({ rule: rule.name, path: finalPath, status: 'dry-run', duration, bytes });
-          metrics.filesSkipped++;
-        } else {
-          await mkdir(dirname(finalPath), { recursive: true });
-          await writeFile(finalPath, content, 'utf-8');
-          console.log(
-            '   ' +
-              c.green +
-              'OK' +
-              c.reset +
-              ' ' +
-              relative(process.cwd(), finalPath) +
-              ' (' +
-              bytes +
-              ' bytes)'
-          );
-          results.push({ rule: rule.name, path: finalPath, status: 'success', duration, bytes });
-          metrics.filesGenerated++;
+          const finalPath = resolve(outputDir, outputPath || rule.output_file);
+          const bytes = Buffer.byteLength(content, 'utf-8');
+          totalBytes += bytes;
+          const duration = performance.now() - ruleStart;
+
+          // Check skip_existing mode
+          if (rule.mode === 'skip_existing' && existsSync(finalPath)) {
+            console.log(
+              '   ' +
+                c.yellow +
+                'SKIP' +
+                c.reset +
+                ' ' +
+                relative(process.cwd(), finalPath) +
+                ' (already exists)'
+            );
+            results.push({ rule: rule.name, path: finalPath, status: 'skipped', duration, bytes });
+            metrics.filesSkipped++;
+          } else if (dryRun) {
+            console.log(
+              '   ' +
+                c.yellow +
+                '[DRY RUN]' +
+                c.reset +
+                ' Would write: ' +
+                relative(process.cwd(), finalPath)
+            );
+            results.push({ rule: rule.name, path: finalPath, status: 'dry-run', duration, bytes });
+            metrics.filesSkipped++;
+          } else {
+            await mkdir(dirname(finalPath), { recursive: true });
+            await writeFile(finalPath, content, 'utf-8');
+            console.log(
+              '   ' +
+                c.green +
+                'OK' +
+                c.reset +
+                ' ' +
+                relative(process.cwd(), finalPath) +
+                ' (' +
+                bytes +
+                ' bytes)'
+            );
+            results.push({ rule: rule.name, path: finalPath, status: 'success', duration, bytes });
+            metrics.filesGenerated++;
+          }
         }
       } catch (err) {
         const errorMsg = err.message.includes('\n') ? '\n' + err.message : err.message;
@@ -212,15 +218,15 @@ export async function runSync(options) {
     return { success: metrics.errors === 0, results, totalDuration, metrics };
   } catch (err) {
     console.error('\n' + c.red + 'Sync failed:' + c.reset + ' ' + err.message);
-    if (verbose && err.stack) console.error(err.stack);
-    return {
-      success: false,
-      results,
-      totalDuration: performance.now() - startTime,
-      metrics,
-      error: err.message,
-    };
+      if (verbose && err.stack) console.error(err.stack);
+      return {
+        success: false,
+        results,
+        totalDuration: performance.now() - startTime,
+        metrics,
+        error: err.message,
+      };
+    }
   }
-}
 
 export default { runSync };

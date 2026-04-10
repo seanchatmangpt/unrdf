@@ -1,11 +1,9 @@
 
-# ============================================================================
-# FIBO DEAL: 
-# ============================================================================
+# FIBO DEAL: CodeManufactory schema Purchase
 # Auto-generated from CodeManufactory ontology
-# Created: 
-# Deal ID: 
-# Artifact Type: 
+# Created: 2026-04-10T09:36:38.232000221480484864Z
+# Deal ID: d-cmf-schema-2026
+# Artifact Type: schema
 #
 # WvdA Soundness Compliance:
 # - Deadlock Freedom: All deal operations have explicit timeout_ms
@@ -29,26 +27,23 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 
-<https://businessos.dev/id/deals/> a :Deal ;
+<https://businessos.dev/id/deals/d-cmf-schema-2026> a :Deal ;
   a fibo-fnd:Agreement ;
   a fibo-fbc:FinancialInstrument ;
-  :dealIdentifier ""^^xsd:string ;
-  :dealName ""@en ;
-  :dealDescription ""@en ;
+  :dealIdentifier "d-cmf-schema-2026"^^xsd:string ;
+  :dealName "CodeManufactory schema Purchase"@en ;
+  :dealDescription "Purchase of schema artifact from CodeManufactory pipeline"@en ;
   :dealStatus <#ApprovalStage> ;
   :hasPrimaryBuyer <https://businessos.dev/id/parties/businessos-internal> ;
   :hasPrimarySeller <https://businessos.dev/id/parties/codemanufactory> ;
   :hasCounterparty <https://businessos.dev/id/parties/codemanufactory> ;
-  :dealAmount <https://businessos.dev/id/amounts/-principal> ;
+  :dealAmount <https://businessos.dev/id/amounts/d-cmf-schema-2026-principal> ;
   :dealCurrency "USD"^^xsd:string ;
-  :expectedCloseDate ""^^xsd:dateTime ;
-  :dealProbability ""^^xsd:integer ;
-  :currentStage <#ApprovalStage> ;
-  :artifactType :Artifact ;
+  :artifactType :schemaArtifact ;
   :pricingModel :StandardPricing ;
   :codeManufacturingStage <#SeededStage> ;
   :qualityGates :SchemaValid ;
-  schema:dateCreated ""^^xsd:dateTime ;
+  schema:dateCreated "2026-04-10T09:36:38.232000221480484864Z"^^xsd:dateTime ;
   schema:creator "sean.chatman@businessos.dev" ;
   :complianceFramework <https://businessos.dev/id/requirements/soc2-procurement> .
 
@@ -57,11 +52,11 @@
 # MONETARY AMOUNT
 # ============================================================================
 
-<https://businessos.dev/id/amounts/-principal> a :MonetaryAmount ;
+<https://businessos.dev/id/amounts/d-cmf-schema-2026-principal> a :MonetaryAmount ;
   a fibo-fnd:MonetaryAmount ;
-  :amount ""^^xsd:decimal ;
+  :amount "5000 + LOC pricing"^^xsd:decimal ;
   :currency "USD"^^xsd:string ;
-  rdfs:comment "Estimated cost for  artifact"@en .
+  rdfs:comment "Estimated cost for schema artifact"@en .
 
 
 # ============================================================================

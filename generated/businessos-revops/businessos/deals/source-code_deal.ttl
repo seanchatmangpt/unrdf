@@ -1,0 +1,136 @@
+
+# FIBO DEAL: CodeManufactory source code Purchase
+# Auto-generated from CodeManufactory ontology
+# Created: 2026-04-10T09:36:38.232000221480484864Z
+# Deal ID: d-cmf-source-code-2026
+# Artifact Type: source-code
+#
+# WvdA Soundness Compliance:
+# - Deadlock Freedom: All deal operations have explicit timeout_ms
+# - Liveness: Bounded deal state transitions (max 10 stages)
+# - Boundedness: MAX_DEAL_ATTEMPTS constant enforced
+# - OTel Observability: Spans emitted for all deal operations
+# - OCEL Events: Lifecycle and state transition events emitted
+# ============================================================================
+
+@prefix : <https://businessos.dev/revops/code-purchase/> .
+@prefix bos: <https://businessos.dev/> .
+@prefix fibo-fnd: <https://spec.edmcouncil.org/fibo/ontology/FND/> .
+@prefix fibo-fbc: <https://spec.edmcouncil.org/fibo/ontology/FBC/> .
+@prefix fibo-be: <https://spec.edmcouncil.org/fibo/ontology/BE/> .
+@prefix schema: <http://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+
+<https://businessos.dev/id/deals/d-cmf-source-code-2026> a :Deal ;
+  a fibo-fnd:Agreement ;
+  a fibo-fbc:FinancialInstrument ;
+  :dealIdentifier "d-cmf-source-code-2026"^^xsd:string ;
+  :dealName "CodeManufactory source code Purchase"@en ;
+  :dealDescription "Purchase of source code artifact from CodeManufactory pipeline"@en ;
+  :dealStatus <#ApprovalStage> ;
+  :hasPrimaryBuyer <https://businessos.dev/id/parties/businessos-internal> ;
+  :hasPrimarySeller <https://businessos.dev/id/parties/codemanufactory> ;
+  :hasCounterparty <https://businessos.dev/id/parties/codemanufactory> ;
+  :dealAmount <https://businessos.dev/id/amounts/d-cmf-source-code-2026-principal> ;
+  :dealCurrency "USD"^^xsd:string ;
+  :artifactType :sourceCodeArtifact ;
+  :pricingModel :StandardPricing ;
+  :codeManufacturingStage <#SeededStage> ;
+  :qualityGates :SchemaValid ;
+  schema:dateCreated "2026-04-10T09:36:38.232000221480484864Z"^^xsd:dateTime ;
+  schema:creator "sean.chatman@businessos.dev" ;
+  :complianceFramework <https://businessos.dev/id/requirements/soc2-procurement> .
+
+
+# ============================================================================
+# MONETARY AMOUNT
+# ============================================================================
+
+<https://businessos.dev/id/amounts/d-cmf-source-code-2026-principal> a :MonetaryAmount ;
+  a fibo-fnd:MonetaryAmount ;
+  :amount "5000 + LOC pricing"^^xsd:decimal ;
+  :currency "USD"^^xsd:string ;
+  rdfs:comment "Estimated cost for source-code artifact"@en .
+
+
+# ============================================================================
+# PARTIES
+# ============================================================================
+
+<https://businessos.dev/id/parties/businessos-internal> a :BusinessOSParty ;
+  a :InternalParty ;
+  a fibo-be:LegalPerson ;
+  :partyIdentifier "businessos-internal"^^xsd:string ;
+  :legalName "BusinessOS, Inc."@en ;
+  :partyRole :Buyer ;
+  :department :Engineering ;
+  :costCenter "engineering-rd"^^xsd:string ;
+  :budgetCode "2026-q2-eng-001"^^xsd:string ;
+  :approvingManager "sean.chatman@businessos.dev" ;
+  schema:name "BusinessOS Internal" .
+
+
+<https://businessos.dev/id/parties/codemanufactory> a :BusinessOSParty ;
+  a :Counterparty ;
+  a fibo-be:LegalPerson ;
+  :partyIdentifier "codemanufactory"^^xsd:string ;
+  :legalName "CodeManufactory LLC"@en ;
+  :partyRole :Seller ;
+  :businessRegistrationNumber "12-3456789"^^xsd:string ;
+  :operatingJurisdiction "US"^^xsd:string ;
+  :hasKYCStatus :KYCVerified ;
+  :kycVerificationDate "2026-01-01T00:00:00Z"^^xsd:dateTime ;
+  :amlScreeningResult "NO_MATCH"^^xsd:string ;
+  schema:name "CodeManufactory" ;
+  schema:url "https://codemanufactory.dev"^^xsd:anyURI .
+
+
+# ============================================================================
+# STAGE DEFINITIONS
+# ============================================================================
+
+<#ApprovalStage> a skos:Concept ;
+  skos:prefLabel "Approval Stage"@en ;
+  skos:notation "approval" ;
+  skos:definition "Purchase workflow: Manager and finance approval required"@en ;
+  dcterms:type :PurchaseStage ;
+  bos:stageOrder "2"^^xsd:integer .
+
+
+<#SeededStage> a skos:Concept ;
+  skos:prefLabel "Seeded Stage"@en ;
+  skos:notation "seeded" ;
+  skos:definition "CodeManufactory stage: Ontology seeded with initial concepts"@en ;
+  dcterms:type :ManufacturingStage ;
+  bos:stageOrder "1"^^xsd:integer .
+
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+
+:SchemaValid a skos:Concept ;
+  skos:prefLabel "Schema Valid"@en ;
+  skos:notation "schema-valid" ;
+  skos:definition "Quality gate: Artifact validates against schema"@en ;
+  dcterms:type :ProofGate ;
+  bos:proofGate "true"^^xsd:boolean .
+
+
+# ============================================================================
+# COMPLIANCE REQUIREMENTS
+# ============================================================================
+
+<https://businessos.dev/id/requirements/soc2-procurement> a :ComplianceRequirement ;
+  :framework "SOC2"^^xsd:string ;
+  :requirementId "CC6.1"^^xsd:string ;
+  :title "Logical Access Control"@en ;
+  :description "Procurement system must enforce role-based access controls"@en ;
+  :severity "critical"^^xsd:string ;
+  :status "pending"^^xsd:string .

@@ -1,21 +1,21 @@
 
 #
-#  GenServer
+# CodeManufactory Purchase Workflow GenServer
 #
 # Generated from CodeManufactory ontology
-# Workflow: 
+# Workflow: wf-cmf-purchase
 #
 # WvdA Soundness Compliance:
 # - Deadlock Freedom: All GenServer.call have explicit timeout_ms
-# - Liveness: Bounded state transitions (max  retries)
+# - Liveness: Bounded state transitions (max 3 retries)
 # - Boundedness: MAX_STATE_TRANSITIONS constant enforced
 # - OTel Observability: Spans emitted for all operations
 # - OCEL Events: Lifecycle and state transition events emitted
 #
 
-defmodule Workflow do
+defmodule wfCmfPurchaseWorkflow do
   @moduledoc """
-  GenServer for .
+  GenServer for CodeManufactory Purchase Workflow.
 
   Manages the RevOps purchasing workflow for CodeManufactory artifacts:
   - Request → Approval → Procurement → Delivery → Acceptance → Payment
@@ -23,13 +23,13 @@ defmodule Workflow do
   ## WvdA Soundness Guarantees
 
   * **Deadlock Freedom**: All operations have explicit `timeout_ms` with fallback
-  * **Liveness**: Bounded state machine with max  retries
-  * **Boundedness**: MAX_STATE_TRANSITIONS =  enforced
+  * **Liveness**: Bounded state machine with max 3 retries
+  * **Boundedness**: MAX_STATE_TRANSITIONS = 3 enforced
 
   ## Example
 
-      iex> .start_link(deal_id: "d-cmf-ontology-2026")
-      iex> .advance_stage(pid)
+      iex> wfCmfPurchase.start_link(deal_id: "d-cmf-ontology-2026")
+      iex> wfCmfPurchase.advance_stage(pid)
       {:ok, :approval}
   """
 
@@ -39,8 +39,8 @@ defmodule Workflow do
 
   # WvdA Soundness: Timeout and boundedness constants
   @default_timeout_ms 5000
-  @max_state_transitions 
-  @state_transition_timeout_ms 000  # Convert seconds to ms
+  @max_state_transitions 3
+  @state_transition_timeout_ms 2592000000  # Convert seconds to ms
 
   # WvdA Soundness: OCEL Event Emission
   @ocel_events [
@@ -101,7 +101,7 @@ defmodule Workflow do
     emit_ocel_event(:workflow_started, %{
       deal_id: deal_id,
       artifact_type: artifact_type,
-      workflow_id: 
+      workflow_id: "wf-cmf-purchase"
     })
 
     state = %{
@@ -234,7 +234,7 @@ defmodule Workflow do
   defp get_next_stage(_), do: nil
 
   defp via_tuple(deal_id) do
-    {:via, Registry, Registry, deal_id}}
+    {:via, Registry, wfCmfPurchaseRegistry, deal_id}}
   end
 
   # WvdA Soundness: OCEL Event Emission

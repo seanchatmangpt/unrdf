@@ -1,14 +1,11 @@
 
 
-defmodule .Quality.Metric do
+defmodule codemanufactoryRevops.Quality.purchaseWorkflowDpmoMetric do
   @moduledoc """
-   Quality Metric - OStar quality measurement
+  Purchase Workflow Dpmo Quality Metric
 
   Implements WvdA-sound quality metric with:
-  - DPMO (Defects Per Million Opportunities)
-  - Sigma Level (Six Sigma scale)
-  - Process Capability (Cp/Cpk)
-  - SPC Control Charts (p-chart, c-chart, etc.)
+  - Target: 3500 defects_per_million
   - Bounded calibration loop with max iterations
   - Timeout protection on all operations
   - OpenTelemetry tracing for all operations
@@ -16,8 +13,6 @@ defmodule .Quality.Metric do
 
   use GenServer
   require Logger
-
-  alias .Repo
 
   # WvdA Soundness Constants
   @default_timeout_ms 5000
@@ -31,7 +26,7 @@ defmodule .Quality.Metric do
   """
   def start_link(opts \\ []) do
     ctx = OpenTelemetry.start_span(:start_metric, fn ->
-      Logger.info("Starting  Metric")
+      Logger.info("Starting Purchase Workflow Dpmo Quality Metric")
 
       {:ok, _pid} = GenServer.start_link(__MODULE__, opts, name: __MODULE__)
     end)
@@ -43,8 +38,8 @@ defmodule .Quality.Metric do
   def record_event(event_type, metadata \\ %{}) do
     ctx = OpenTelemetry.start_span(:record_event, fn ->
       OpenTelemetry.set_attributes(ctx, %{
-        "metric.name" => "",
-        "metric.type" => "",
+        "metric.name" => "Purchase Workflow Dpmo",
+        "metric.type" => "dpmo",
         "event.type" => inspect(event_type)
       })
 
@@ -117,11 +112,11 @@ defmodule .Quality.Metric do
 
   @impl true
   def init(_opts) do
-    Logger.info("Starting  Metric")
+    Logger.info("Starting Purchase Workflow Dpmo Metric")
 
     state = %{
-      metric_name: "",
-      metric_type: "",
+      metric_name: "Purchase Workflow Dpmo",
+      metric_type: "dpmo",
       events: [],
       opportunities: 0,
       defects: 0,
@@ -131,7 +126,7 @@ defmodule .Quality.Metric do
     }
 
     # Emit OCEL lifecycle event
-    emit_lifecycle_event("metric_start", %{"metric_type" => ""})
+    emit_lifecycle_event("metric_start", %{"metric_type" => "dpmo"})
 
     {:ok, state, {:continue, :calibrate, @calibration_interval_ms}}
   end
@@ -141,15 +136,13 @@ defmodule .Quality.Metric do
     ctx = OpenTelemetry.start_span(:calibrate, fn ->
       Logger.debug("Calibrating metric (iteration #{count + 1}/#{@max_calibrations})")
 
-      # Calibration interval - calculate metric value with error handling
       value =
         try do
           calculate_metric_value(state)
         rescue
           e in [ArithmeticError, RuntimeError] ->
-            Logger.error("Metric calculation error: #{inspect(e)}")
-            # Fallback: return previous value or 0.0
-            state[:current_value] || 0.0
+          Logger.error("Metric calculation error: #{inspect(e)}")
+          state[:current_value] || 0.0
         end
 
       new_state = %{state | current_value: value, calibration_count: count + 1}
@@ -161,7 +154,6 @@ defmodule .Quality.Metric do
         "metric.opportunities" => state.opportunities
       })
 
-      # Emit OCEL state transition event
       emit_state_transition("calibrating", "calibrated", %{
         "calibration_count" => count + 1,
         "metric_value" => value
@@ -169,11 +161,9 @@ defmodule .Quality.Metric do
 
       {:noreply, new_state, {:continue, :calibrate, @calibration_interval_ms}}
     end)
-  end
 
   @impl true
   def handle_info(:calibrate, state) do
-    # Initial calibration (count = 0)
     handle_info({:calibrate, %{calibration_count: 0}}, state)
   end
 
@@ -181,7 +171,6 @@ defmodule .Quality.Metric do
   def handle_info({:calibrate, %{calibration_count: count}}, state) when count >= @max_calibrations do
     Logger.warn("Calibration loop exceeded max iterations: #{@max_calibrations}")
 
-    # Emit OCEL error event
     emit_error_event("max_calibrations_exceeded", "calibration_loop", %{
       "max_calibrations" => @max_calibrations,
       "final_value" => state.current_value
@@ -192,7 +181,6 @@ defmodule .Quality.Metric do
 
   @impl true
   def handle_cast({:record_event, event_type, metadata}, state) do
-    # Bounded events list
     new_events =
       if length(state.events) >= @max_events do
         Logger.warn("Events list at max capacity: #{@max_events}, dropping oldest")
@@ -224,7 +212,6 @@ defmodule .Quality.Metric do
         :sample ->
           sample_value = metadata[:value]
 
-          # Bounded samples list
           new_samples =
             if length(state.samples) >= @max_samples do
               Logger.warn("Samples list at max capacity: #{@max_samples}, dropping oldest")
@@ -253,9 +240,8 @@ defmodule .Quality.Metric do
 
   @impl true
   def terminate(_reason, state) do
-    Logger.info("Terminating  Metric after #{state.calibration_count} calibrations")
+    Logger.info("Terminating Purchase Workflow Dpmo Metric after #{state.calibration_count} calibrations")
 
-    # Emit OCEL lifecycle event
     emit_lifecycle_event("metric_stop", %{
       "final_value" => state.current_value,
       "total_calibrations" => state.calibration_count,
@@ -268,18 +254,42 @@ defmodule .Quality.Metric do
 
   # Private Functions
 
-defp mean(list) when length(list) == 0 do
-    0.0
+defp calculate_metric_value(state) do
+    if state.opportunities == 0 do
+      0.0
+    else
+      dpmo = (state.defects / state.opportunities) * 1_000_000
+      Float.round(dpmo, 2)
+    end
   end
 
-  defp mean(list) do
-    Enum.sum(list) / length(list)
+  defp calculate_statistics(state) do
+    dpmo = calculate_metric_value(state)
+    sigma = dpmo_to_sigma(dpmo)
+
+    %{
+      dpmo: dpmo,
+      sigma: sigma,
+      opportunities: state.opportunities,
+      defects: state.defects,
+      defect_rate: if state.opportunities > 0, do: state.defects / state.opportunities, else: 0.0
+    }
   end
 
-  defp standard_deviation(list) when length(list) < 2 do
-    0.0
+  defp dpmo_to_sigma(dpmo) do
+    cond do
+      dpmo <= 3.4 -> 6.0  # Six Sigma
+      dpmo <= 23 -> 5.0  # Five Sigma
+      dpmo <= 66 -> 4.0  # Four Sigma
+      dpmo <= 233 -> 3.0  # Three Sigma
+      dpmo <= 66807 -> 2.0 # Two Sigma
+      true -> 1.0           # One Sigma
+    end
   end
+defp mean(list) when length(list) == 0, do: 0.0
+  defp mean(list), do: Enum.sum(list) / length(list)
 
+  defp standard_deviation(list) when length(list) < 2, do: 0.0
   defp standard_deviation(list) do
     avg = mean(list)
     variance = Enum.reduce(list, 0, fn acc, val ->
@@ -297,11 +307,11 @@ defp mean(list) when length(list) == 0 do
       "ocel:timestamp" => DateTime.utc_now() |> DateTime.to_iso8601(),
       "ocel:id" => generate_event_id(),
       "ocel:type" => ["quality_metric", "lifecycle"],
-      "ocel:objectIds" => ["_metric"],
+      "ocel:objectIds" => ["purchase_workflow_dpmo_metric"],
       "ocel:attributes" => Enum.into(attributes, %{
-        "app_name" => "",
-        "metric_name" => "",
-        "metric_type" => ""
+        "app_name" => "codemanufactory-revops",
+        "metric_name" => "Purchase Workflow Dpmo",
+        "metric_type" => "dpmo"
       })
     }
 
@@ -314,10 +324,9 @@ defp mean(list) when length(list) == 0 do
       "ocel:timestamp" => DateTime.utc_now() |> DateTime.to_iso8601(),
       "ocel:id" => generate_event_id(),
       "ocel:type" => ["quality_metric", "state_transition"],
-      "ocel:objectIds" => ["_metric"],
+      "ocel:objectIds" => ["purchase_workflow_dpmo_metric"],
       "ocel:attributes" => Enum.into(attributes, %{
-        "app_name" => "",
-        "metric_name" => "",
+        "app_name" => "codemanufactory-revops",
         "from_state" => from_state,
         "to_state" => to_state
       })
@@ -332,10 +341,9 @@ defp mean(list) when length(list) == 0 do
       "ocel:timestamp" => DateTime.utc_now() |> DateTime.to_iso8601(),
       "ocel:id" => generate_event_id(),
       "ocel:type" => ["quality_metric", "error"],
-      "ocel:objectIds" => ["_metric"],
+      "ocel:objectIds" => ["purchase_workflow_dpmo_metric"],
       "ocel:attributes" => Enum.into(attributes, %{
-        "app_name" => "",
-        "metric_name" => "",
+        "app_name" => "codemanufactory-revops",
         "error.type" => error_type,
         "error.message" => error_message
       })

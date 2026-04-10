@@ -4,6 +4,10 @@
 # Integration: CodeManufactory artifacts → BusinessOS purchasing deals
 # Purpose: Automated RevOps workflow for code artifact procurement
 # Compliance: SOC2, GDPR, SOX procurement controls
+#
+# Architecture: SELECT queries return named variable bindings that map
+# directly to Nunjucks template variables. Each row becomes an iteration
+# context in the template with {{ variableName }} access.
 
 [project]
 name = "codemanufactory-businessos-revops"
@@ -26,70 +30,29 @@ output_dir = "./generated/businessos-revops"
 # ============================================================================
 # RULE 1: Generate BusinessOS Deal Records from CodeManufactory Artifacts
 # ============================================================================
+# Template: /Users/sac/ostar/templates/fibo-deal.njk
+# Expected variables: dealId, dealName, dealDesc, price, artifactType, created
 
 [[generation.rules]]
 name = "businessos-deal-from-artifact"
 description = "Generate BusinessOS deal (FIBO) for CodeManufactory artifact purchase"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bos: <https://businessos.dev/revops/code-purchase/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 
-CONSTRUCT {
-  ?deal a bos:Deal ;
-    a <https://spec.edmcouncil.org/fibo/ontology/FND/Agreement> ;
-    a <https://spec.edmcouncil.org/fibo/ontology/FBC/FinancialInstrument> ;
-    bos:dealIdentifier ?dealId ;
-    bos:dealName ?dealName ;
-    bos:dealDescription ?dealDesc ;
-    bos:dealStatus bos:ApprovalStage ;
-    bos:hasPrimaryBuyer bos:BusinessOSInternal ;
-    bos:hasPrimarySeller bos:CodeManufactory ;
-    bos:dealAmount ?amount ;
-    bos:dealCurrency "USD" ;
-    bos:artifactType ?artifactType ;
-    bos:pricingModel bos:StandardPricing ;
-    bos:codeManufacturingStage ?stage ;
-    bos:qualityGates ?proofGate ;
-    <http://schema.org/dateCreated> ?created ;
-    <http://schema.org/creator> "sean.chatman@businessos.dev" ;
-    bos:complianceFramework <https://businessos.dev/id/requirements/soc2-procurement> .
-
-  ?amount a bos:MonetaryAmount ;
-    a <https://spec.edmcouncil.org/fibo/ontology/FND/MonetaryAmount> ;
-    bos:amount ?price ;
-    bos:currency "USD" .
-}
+SELECT ?artifactName ?artifactType ?dealId ?dealName ?dealDesc ?price ?created
 WHERE {
-  # Find all artifact kind concepts
-  [] a skos:ConceptScheme ;
-     dcterms:title "CodeManufactory artifact kind scheme" ;
-     skos:hasTopConcept ?artifact .
-
-  # Extract artifact properties
+  ?scheme a skos:ConceptScheme ;
+           dcterms:title "CodeManufactory artifact kind scheme" ;
+           skos:hasTopConcept ?artifact .
   ?artifact skos:prefLabel ?artifactName ;
              skos:notation ?artifactType .
-
-  # Filter for purchasable artifacts
-  FILTER (?artifactType IN ("ontology", "schema", "source-code", "package", "repository", "benchmark", "validation", "documentation", "test"))
-
-  # Generate synthetic deal data
-  BIND(IRI(CONCAT("https://businessos.dev/id/deals/d-cmf-", REPLACE(LCASE(STR(?artifactName)), " ", "-"), "-2026")) AS ?deal)
   BIND(CONCAT("d-cmf-", REPLACE(LCASE(STR(?artifactName)), " ", "-"), "-2026") AS ?dealId)
   BIND(CONCAT("CodeManufactory ", STR(?artifactName), " Purchase") AS ?dealName)
   BIND(CONCAT("Purchase of ", STR(?artifactName), " artifact from CodeManufactory pipeline") AS ?dealDesc)
-
-  # Calculate pricing (base + LOC estimate)
-  BIND("5000" AS ?basePrice)  # Standard base
-  BIND(CONCAT(?basePrice, " + LOC pricing") AS ?price)
-
-  # Generate metadata
-  BIND(NOW() AS ?created)
-  BIND(bos:SeededStage AS ?stage)
-  BIND(bos:SchemaValid AS ?proofGate)
+  BIND(CONCAT("5000 + LOC pricing") AS ?price)
+  BIND(STR(NOW()) AS ?created)
 }
 ORDER BY ?artifactName
 """
@@ -100,39 +63,20 @@ mode = "overwrite"
 # ============================================================================
 # RULE 2: Generate RevOps Purchase Workflow State Machine
 # ============================================================================
+# Template: /Users/sac/ostar/templates/elixir-gen-server.njk
+# Expected variables: workflowId, workflowLabel, timeout, retries
+# Strategy: Single-row result from VALUES + BIND
 
 [[generation.rules]]
 name = "revops-purchase-workflow"
 description = "Generate Elixir GenServer for RevOps purchase workflow (WvdA-compliant)"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bos: <https://businessos.dev/revops/code-purchase/>
-
-CONSTRUCT {
-  ?workflow a bos:PurchaseWorkflow ;
-    rdfs:label ?workflowLabel ;
-    bos:workflowIdentifier ?workflowId ;
-    bos:stages ?stages ;
-    bos:timeoutSeconds ?timeout ;
-    bos:maxRetries ?retries .
-}
+SELECT ?workflowId ?workflowLabel ?stages ?timeout ?retries
 WHERE {
-  # Find workflow stages
-  [] a bos:PurchaseWorkflow ;
-     dcterms:title "CodeManufactory Purchase Workflow" ;
-     skos:hasTopConcept ?firstStage .
-
-  # Generate workflow definition
-  BIND(IRI(CONCAT("https://businessos.dev/id/workflows/wf-cmf-purchase")) AS ?workflow)
-  BIND("wf-cmf-purchase" AS ?workflowId)
-  BIND("CodeManufactory Purchase Workflow" AS ?workflowLabel)
-  BIND("request,approval,procurement,delivery,acceptance,payment" AS ?stages)
-  BIND("2592000" AS ?timeout)  # 30 days
-  BIND("3" AS ?retries)
+  VALUES (?workflowId ?workflowLabel ?stages ?timeout ?retries) {
+    ("wf-cmf-purchase" "CodeManufactory Purchase Workflow" "request,approval,procurement,delivery,acceptance,payment" "2592000" "3")
+  }
 }
 """
 template = "/Users/sac/ostar/templates/elixir-gen-server.njk"
@@ -142,38 +86,24 @@ mode = "overwrite"
 # ============================================================================
 # RULE 3: Generate MCP Tools for RevOps Operations
 # ============================================================================
+# Template: /Users/sac/ostar/templates/mcp-tool-registration.njk
+# Expected variables: operation, toolName, toolDescription, app_name
+# Strategy: VALUES provides all tool definitions, output_file iterates per row
 
 [[generation.rules]]
 name = "revops-mcp-tools"
 description = "Generate MCP tool registration for RevOps operations (create-purchase, approve-deal, etc.)"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bos: <https://businessos.dev/revops/code-purchase/>
-
-CONSTRUCT {
-  ?tool a bos:MCPTool ;
-    bos:toolName ?toolName ;
-    bos:toolOperation ?operation ;
-    bos:toolDescription ?desc ;
-    bos:inputFormat ?inputFmt ;
-    bos:outputFormat ?outputFmt ;
-    bos:toolType "revops" .
-}
+SELECT ?operation ?toolName ?toolDescription ?app_name
 WHERE {
-  # Define RevOps tools
-  VALUES (?operation ?toolName ?desc ?inputFmt ?outputFmt) {
-    ("create_purchase_request" "Create Purchase Request" "Create new RevOps purchase request for code artifact" "application/json" "application/json")
-    ("approve_purchase" "Approve Purchase" "Manager approval for purchase request" "application/json" "application/json")
-    ("trigger_manufacturing" "Trigger Manufacturing" "Trigger CodeManufactory pipeline execution" "application/json" "application/json")
-    ("verify_delivery" "Verify Delivery" "Verify artifact meets quality gates" "application/json" "application/json")
-    ("process_payment" "Process Payment" "Process payment to CodeManufactory" "application/json" "application/json")
+  VALUES (?operation ?toolName ?toolDescription ?app_name) {
+    ("create_purchase_request" "Create Purchase Request" "Create new RevOps purchase request for code artifact" "codemanufactory-revops")
+    ("approve_purchase" "Approve Purchase" "Manager approval for purchase request" "codemanufactory-revops")
+    ("trigger_manufacturing" "Trigger Manufacturing" "Trigger CodeManufactory pipeline execution" "codemanufactory-revops")
+    ("verify_delivery" "Verify Delivery" "Verify artifact meets quality gates" "codemanufactory-revops")
+    ("process_payment" "Process Payment" "Process payment to CodeManufactory" "codemanufactory-revops")
   }
-
-  BIND(IRI(CONCAT("https://businessos.dev/id/tools/", REPLACE(?operation, "_", "-"))) AS ?tool)
 }
 """
 template = "/Users/sac/ostar/templates/mcp-tool-registration.njk"
@@ -183,36 +113,23 @@ mode = "overwrite"
 # ============================================================================
 # RULE 4: Generate Quality Metrics for RevOps Process
 # ============================================================================
+# Template: /Users/sac/ostar/templates/quality-metrics.njk
+# Expected variables: metricName, app_name, metricType, process
+# Strategy: VALUES provides all metric definitions, output_file iterates per row
 
 [[generation.rules]]
 name = "revops-quality-metrics"
 description = "Generate quality metrics (DPMO, Sigma, cycle time) for RevOps purchasing"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bos: <https://businessos.dev/revops/code-purchase/>
-
-CONSTRUCT {
-  ?metric a bos:QualityMetric ;
-    bos:metricName ?metricName ;
-    bos:process ?process ;
-    bos:metricType ?metricType ;
-    bos:targetValue ?target ;
-    bos:unit ?unit .
-}
+SELECT ?metricName ?app_name ?metricType ?process ?target ?unit
 WHERE {
-  # Define RevOps quality metrics
-  VALUES (?process ?metricType ?target ?unit ?metricName) {
-    ("purchase_workflow" "dpmo" "3500" "defects_per_million" "Purchase Workflow DPMO")
-    ("purchase_approval" "cycle_time_hours" "24" "hours" "Approval Cycle Time")
-    ("artifact_delivery" "sigma" "5" "sigma_level" "Delivery Sigma Level")
-    ("payment_processing" "accuracy" "99.9" "percent" "Payment Accuracy")
+  VALUES (?process ?metricType ?target ?unit ?metricName ?app_name) {
+    ("purchase_workflow" "dpmo" "3500" "defects_per_million" "Purchase Workflow DPMO" "codemanufactory-revops")
+    ("purchase_approval" "cycle_time_hours" "24" "hours" "Approval Cycle Time" "codemanufactory-revops")
+    ("artifact_delivery" "sigma" "5" "sigma_level" "Delivery Sigma Level" "codemanufactory-revops")
+    ("payment_processing" "accuracy" "99.9" "percent" "Payment Accuracy" "codemanufactory-revops")
   }
-
-  BIND(IRI(CONCAT("https://businessos.dev/id/metrics/", REPLACE(?metricName, " ", "-"))) AS ?metric)
 }
 """
 template = "/Users/sac/ostar/templates/quality-metrics.njk"
@@ -222,38 +139,19 @@ mode = "overwrite"
 # ============================================================================
 # RULE 5: Generate OpenTelemetry Semantic Conventions for RevOps
 # ============================================================================
+# Template: /Users/sac/ostar/templates/otel-semconv-generator.njk
+# Expected variables: app_name
+# Strategy: This template is self-contained (all data hardcoded in template body).
+# Query exists to satisfy sync pipeline requirement but template ignores results.
 
 [[generation.rules]]
 name = "revops-otel-semconv"
 description = "Generate OTel semantic conventions for RevOps span attributes"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bos: <https://businessos.dev/revops/code-purchase/>
-
-CONSTRUCT {
-  ?attr a bos:SpanAttribute ;
-    bos:attributeName ?attrName ;
-    bos:attributeType ?attrType ;
-    bos:attributeBrief ?brief .
-}
+SELECT ?app_name
 WHERE {
-  # Define RevOps span attributes
-  VALUES (?attrName ?attrType ?brief) {
-    ("revops.deal_id" "string" "BusinessOS deal identifier")
-    ("revops.artifact_type" "string" "CodeManufactory artifact type")
-    ("revops.pricing_model" "string" "Pricing model (standard/enterprise/custom)")
-    ("revops.approval_level" "string" "Approval level required")
-    ("revops.budget_code" "string" "Cost center budget code")
-    ("revops.stage" "string" "Purchase workflow stage")
-    ("revops.quality_gate" "string" "Quality gate being verified")
-    ("revops.compliance_framework" "string" "Compliance framework (SOC2/GDPR/SOX)")
-  }
-
-  BIND(IRI(CONCAT("https://businessos.dev/id/attributes/", REPLACE(?attrName, ".", "_"))) AS ?attr)
+  VALUES (?app_name) { ("codemanufactory-revops") }
 }
 """
 template = "/Users/sac/ostar/templates/otel-semconv-generator.njk"
