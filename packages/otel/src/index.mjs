@@ -27,3 +27,9 @@ export * from './monitoring.mjs';
 
 // Export semantic invariants validation layer
 export * from './validation/index.mjs';
+
+// Export OCEL conversion (OTel spans → object-centric event log)
+export * from './ocel/index.mjs';
+
+// Export Van der Aalst conformance pipeline
+export * from './conformance/index.mjs';

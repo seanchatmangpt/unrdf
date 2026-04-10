@@ -56,3 +56,5 @@ export class CausalityChain {
     };
   }
 }
+
+export { verifyProcessConformance, DEVIATION_TYPES } from './process-verifier.mjs';

@@ -11,7 +11,9 @@
     "./pm4py": "./src/pm4py.mjs",
     "./monitoring": "./src/monitoring.mjs",
     "./validation": "./src/validation/index.mjs",
-    "./collector-config": "./deploy/otel-collector-config.yaml"
+    "./collector-config": "./deploy/otel-collector-config.yaml",
+    "./ocel": "./src/ocel/index.mjs",
+    "./conformance": "./src/conformance/index.mjs"
   },
   "files": [
     "src/",
@@ -38,7 +40,8 @@
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/semantic-conventions": "^1.28.0"
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "@unrdf/manufacturing": "workspace:*"
   },
   "peerDependencies": {
     "pm4py": ">=2.7.0"
