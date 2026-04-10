@@ -298,6 +298,7 @@ export function createNunjucksEnvironment(templatesDir) {
   env.addFilter('keys', obj => (obj ? Object.keys(obj) : []));
   env.addFilter('values', obj => (obj ? Object.values(obj) : []));
   env.addFilter('items', obj => (obj ? Object.entries(obj) : []));
+  env.addFilter('join', (arr, sep = ',') => Array.isArray(arr) ? arr.join(sep) : '');
 
   // String filters
   env.addFilter(
@@ -327,6 +328,28 @@ export function createNunjucksEnvironment(templatesDir) {
       .replace('HH', p(dt.getHours()))
       .replace('mm', p(dt.getMinutes()))
       .replace('ss', p(dt.getSeconds()));
+  });
+  env.addFilter('artifact_extension', type => {
+    const extensions = {
+      'powl': 'ttl',
+      'sparql': 'rq',
+      'shacl': 'ttl',
+      'mcp-tool': 'mjs',
+      'documentation': 'md',
+      'python': 'py',
+      'typescript': 'ts',
+      'elixir': 'ex',
+      'go': 'go',
+      'rust': 'rs',
+      'java': 'java',
+      'yaml': 'yaml',
+      'json': 'json',
+      'ttl': 'ttl',
+      'njk': 'njk',
+      'rq': 'rq',
+      'mjs': 'mjs'
+    };
+    return extensions[type] || 'txt';
   });
   env.addFilter('default', (val, defaultValue) => val != null ? val : defaultValue);
 

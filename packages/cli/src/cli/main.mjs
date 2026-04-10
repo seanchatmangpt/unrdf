@@ -33,7 +33,7 @@ import { doctor } from './commands/doctor/index.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '26.4.4',
+    version: '26.4.10',
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {
