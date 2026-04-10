@@ -1,23 +1,12 @@
----
-to: "openapi.yaml"
-description: "Generate OpenAPI 3.0 specification"
-category: api
-requires:
-  - api_title
-variables:
-  api_title: "API title"
-  version: "API version (e.g., 1.0.0)"
-mode: overwrite
----
 
 openapi: 3.0.0
 info:
-  title: {{ api_title | default("CodeManufactory API") }}
-  version: {{ version | default("1.0.0") }}
-  description: API specification for {{ api_title | default("codemanufactory") | lower }}
+  title: API title
+  version: API version (e.g., 1.0.0)
+  description: API specification for api title
 
 servers:
-  - url: http://localhost:8080{{ base_path | default("/api/v1") }}
+  - url: http://localhost:8080/api/v1
     description: Development server
 
 paths:

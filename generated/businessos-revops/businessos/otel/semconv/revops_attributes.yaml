@@ -1,0 +1,188 @@
+
+# RevOps Purchase Semantic Convention Registry
+# Generated from CodeManufactory ontology
+# Purpose: OTel span attributes for RevOps purchasing workflow
+#
+# WvdA Soundness Compliance:
+# - Deadlock Freedom: All operations have explicit timeout_ms
+# - Liveness: Bounded state machine transitions
+# - Boundedness: MAX_STATE_TRANSITIONS constant enforced
+# - OTel Observability: Spans emitted for all operations
+# - OCEL Events: Lifecycle and state transition events emitted
+
+groups:
+  - id: revops.purchase
+    type: attribute_group
+    display_name: 'RevOps Purchase Attributes'
+    brief: 'Semantic convention attributes for RevOps purchasing operations'
+    attributes:
+      - id: revops.deal_id
+        type: string
+        brief: 'BusinessOS deal identifier (e.g., d-cmf-ontology-purchase-2026)'
+        requirement_level: required
+        examples: ['d-cmf-ontology-purchase-2026', 'd-cmf-schema-purchase-2026']
+
+      - id: revops.artifact_type
+        type: string
+        brief: 'CodeManufactory artifact type being purchased'
+        requirement_level: required
+        examples: ['ontology', 'schema', 'source-code', 'package', 'repository', 'benchmark', 'validation', 'documentation', 'test']
+
+      - id: revops.pricing_model
+        type: string
+        brief: 'Pricing model for the artifact'
+        requirement_level: required
+        examples: ['standard', 'enterprise', 'custom']
+
+      - id: revops.approval_level
+        type: string
+        brief: 'Approval level required (manager, director, vp)'
+        requirement_level: required
+        examples: ['manager', 'director', 'vp', 'executive']
+
+      - id: revops.budget_code
+        type: string
+        brief: 'Cost center budget code (e.g., 2026-q2-eng-001)'
+        requirement_level: required
+        examples: ['2026-q2-eng-001', '2026-q2-rnd-042']
+
+      - id: revops.stage
+        type: string
+        brief: 'Purchase workflow stage'
+        requirement_level: required
+        examples: ['request', 'approval', 'procurement', 'delivery', 'acceptance', 'payment']
+
+      - id: revops.quality_gate
+        type: string
+        brief: 'Quality gate being verified'
+        requirement_level: optional
+        examples: ['schema-valid', 'projection-complete', 'cross-system-causality-proven', 'benchmark-pass']
+
+      - id: revops.compliance_framework
+        type: string
+        brief: 'Compliance framework (SOC2, GDPR, SOX)'
+        requirement_level: required
+        examples: ['SOC2', 'GDPR', 'SOX', 'HIPAA']
+
+      - id: revops.approver
+        type: string
+        brief: 'Approver email address'
+        requirement_level: conditional
+        examples: ['manager@example.com', 'director@example.com']
+
+      - id: revops.cycle_time_ms
+        type: int
+        brief: 'Time spent in current stage (milliseconds)'
+        requirement_level: required
+        examples: [86400000, 172800000]
+
+      - id: revops.timeout_ms
+        type: int
+        brief: 'Timeout for stage completion (milliseconds)'
+        requirement_level: required
+        examples: [2592000000, 1209600000]
+
+  - id: revops.purchase.spans
+    type: span
+    display_name: 'RevOps Purchase Spans'
+    brief: 'Span definitions for RevOps purchasing operations'
+    spans:
+      - id: revops.purchase.create_request
+        name: 'revops.purchase.create_request'
+        kind: server
+        brief: 'Create new RevOps purchase request for code artifact'
+        attributes:
+          - ref: revops.deal_id
+          - ref: revops.artifact_type
+          - ref: revops.pricing_model
+          - ref: revops.budget_code
+        events:
+          - id: revops.purchase.request_created
+            name: 'request_created'
+          - id: revops.purchase.approval_required
+            name: 'approval_required'
+
+      - id: revops.purchase.approve
+        name: 'revops.purchase.approve'
+        kind: server
+        brief: 'Manager approval for purchase request'
+        attributes:
+          - ref: revops.deal_id
+          - ref: revops.approval_level
+          - ref: revops.approver
+        events:
+          - id: revops.purchase.approved
+            name: 'approved'
+          - id: revops.purchase.rejected
+            name: 'rejected'
+
+      - id: revops.purchase.trigger_manufacturing
+        name: 'revops.purchase.trigger_manufacturing'
+        kind: client
+        brief: 'Trigger CodeManufactory pipeline execution'
+        attributes:
+          - ref: revops.deal_id
+          - ref: revops.artifact_type
+        events:
+          - id: revops.purchase.manufacturing_started
+            name: 'manufacturing_started'
+          - id: revops.purchase.manufacturing_completed
+            name: 'manufacturing_completed'
+
+      - id: revops.purchase.verify_delivery
+        name: 'revops.purchase.verify_delivery'
+        kind: server
+        brief: 'Verify artifact meets quality gates'
+        attributes:
+          - ref: revops.deal_id
+          - ref: revops.quality_gate
+        events:
+          - id: revops.purchase.verification_passed
+            name: 'verification_passed'
+          - id: revops.purchase.verification_failed
+            name: 'verification_failed'
+
+      - id: revops.purchase.process_payment
+        name: 'revops.purchase.process_payment'
+        kind: client
+        brief: 'Process payment to CodeManufactory'
+        attributes:
+          - ref: revops.deal_id
+          - ref: revops.pricing_model
+        events:
+          - id: revops.purchase.payment_initiated
+            name: 'payment_initiated'
+          - id: revops.purchase.payment_completed
+            name: 'payment_completed'
+          - id: revops.purchase.payment_failed
+            name: 'payment_failed'
+
+  - id: revops.purchase.metrics
+    type: metric
+    display_name: 'RevOps Purchase Metrics'
+    brief: 'Metric definitions for RevOps purchasing performance'
+    metrics:
+      - id: revops.purchase.cycle_time
+        name: 'revops_purchase_cycle_time'
+        unit: ms
+        type: histogram
+        brief: 'Time to complete purchase request (request → payment)'
+        attributes:
+          - ref: revops.artifact_type
+          - ref: revops.pricing_model
+
+      - id: revops.purchase.approval_rate
+        name: 'revops_purchase_approval_rate'
+        unit: '%'
+        type: gauge
+        brief: 'Percentage of purchase requests approved'
+        attributes:
+          - ref: revops.approval_level
+
+      - id: revops.purchase.dpmo
+        name: 'revops_purchase_dpmo'
+        unit: defects_per_million
+        type: gauge
+        brief: 'Defects per million opportunities (purchase workflow errors)'
+        attributes:
+          - ref: revops.stage

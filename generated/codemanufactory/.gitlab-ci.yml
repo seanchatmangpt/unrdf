@@ -1,0 +1,154 @@
+
+
+
+
+
+
+
+variables:
+  PROJECT_NAME: PROJECT NAME
+  CACHE_KEY_PREFIX: "Cache key template"
+
+
+stages:
+  - P
+  - i
+  - p
+  - e
+  - l
+  - i
+  - n
+  - e
+  -  
+  - s
+  - t
+  - a
+  - g
+  - e
+  - s
+  -  
+  - (
+  - d
+  - e
+  - f
+  - a
+  - u
+  - l
+  - t
+  - :
+  -  
+  - b
+  - u
+  - i
+  - l
+  - d
+  - ,
+  -  
+  - t
+  - e
+  - s
+  - t
+  - ,
+  -  
+  - d
+  - e
+  - p
+  - l
+  - o
+  - y
+  - )
+
+build:
+  stage: build
+  script:
+  artifacts:
+    paths:
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+test:
+  stage: test
+  script:
+  coverage: '/\d+\.\d+% coverage/'
+  artifacts:
+    reports:
+  only:
+    - branches
+    - merge_requests
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying Project name..."
+    # Add deployment commands here
+  environment:
+    name: production
+    url: https://project name.example.com
+  when: manual
+  only:
+    - main
+
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, yaml, gitlab-ci-pipeline)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: gitlab-ci-pipeline
+
+## Usage
+
+```bash
+# Commit .gitlab-ci.yml
+git add .gitlab-ci.yml
+git commit -m "ci: add GitLab CI pipeline"
+
+# Push to trigger pipeline
+git push origin main
+
+# View pipeline status
+# Visit: https://gitlab.com/Project name/pipelines
+```
+
+## Pipeline Stages
+
+Customize stages with `stages` variable:
+
+```yaml
+stages:
+  - lint
+  - build
+  - test
+  - security
+  - deploy
+```
+
+## Environment Variables
+
+Set in GitLab UI: Settings → CI/CD → Variables
+
+- `DOCKER_USERNAME` - Docker Hub username
+- `DOCKER_PASSWORD` - Docker Hub password
+- `DEPLOY_KEY` - SSH key for deployment
+- `API_ENDPOINT` - Production API endpoint
+
+## Deployment
+
+Enable deployment with `deploy_enabled: true` and configure:
+
+```yaml
+deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/Project name Project name=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - kubectl rollout status deployment/Project name
+  environment:
+    name: production
+  only:
+    - main
+```

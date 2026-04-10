@@ -1,0 +1,15 @@
+
+
+# 
+# Type: 
+# Description: 
+# Generated: 2026-04-10 02:02:07
+
+
+# =============================================================================
+# Parameters
+# =============================================================================
+# $graph_uri: The named graph to query (default: )
+# $limit: Maximum number of results (default: 100)
+# $offset: Number of results to skip (default: 0)
+# 

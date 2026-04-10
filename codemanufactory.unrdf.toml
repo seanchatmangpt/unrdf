@@ -13,167 +13,209 @@ format = "turtle"
 [generation]
 output_dir = "./generated/codemanufactory"
 
-# Generate MCP tool registration for participant surfaces
+# Rule 1: Generate MCP tool stubs from artifact kind concepts
 [[generation.rules]]
-name = "mcp-participant-surface"
-description = "Generate MCP tool registration from Schema:potentialAction"
+name = "artifact-kinds"
+description = "Generate scaffolding from CodeManufactory artifact kind concepts"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX schema: <https://schema.org/>
-PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?action ?roleName ?potentialAction ?toolName ?toolDescription ?toolCategory
+SELECT ?concept ?label ?notation ?description
 WHERE {
-  ?action a schema:potentialAction ;
-         rdfs:label ?label .
-  OPTIONAL { ?action schema:roleName ?roleName }
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  OPTIONAL { ?concept skos:definition ?description }
+}
+ORDER BY ?notation
+"""
+template = "packages/cli/templates/scaffolding/sparql-query.njk"
+output_file = "artifacts/kinds/{{ notation }}_kind.mjs"
+
+# Rule 2: Generate SHACL shapes as validation modules
+[[generation.rules]]
+name = "shacl-shapes"
+description = "Generate SHACL validation modules from ontology shapes"
+enabled = true
+query = """
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX schema: <https://schema.org/>
+
+SELECT ?shape ?targetClass ?path ?severity ?description
+WHERE {
+  ?shape a sh:NodeShape .
+  OPTIONAL { ?shape sh:targetClass ?targetClass }
   OPTIONAL {
-    ?action schema:potentialAction ?potentialAction .
-    ?potentialAction schema:name ?toolName .
+    ?shape sh:property ?prop .
+    ?prop sh:path ?path .
+    OPTIONAL { ?prop sh:message ?description }
+    OPTIONAL { ?prop sh:severity ?severity }
   }
-  OPTIONAL { ?potentialAction schema:description ?toolDescription }
-
-  # Filter for MCP participant surface type
-  ?action dcterms:type ?type .
-  ?type skos:notation "mcp-participant-surface" .
-
-  BIND(CONCAT("mcp-", LCASE(STR(?toolName))) AS ?toolCategory)
 }
-ORDER BY ?toolName
+ORDER BY ?targetClass ?path
 """
-template = "/Users/sac/ostar/templates/mcp-tool-registration.njk"
-output_file = "mcp_tools/{{ toolName | snakeCase }}_tool.mjs"
+template = "packages/cli/templates/testing/integration-test.njk"
+output_file = "validation/shacl_{{ targetClass | default('shared') }}_test.mjs"
 
-# Generate semantic convention registries for telemetry mappings
+# Rule 3: Generate semantic convention YAML from telemetry concepts
 [[generation.rules]]
-name = "semantic-convention-registry"
-description = "Generate OTel semconv YAML for telemetry mapping"
+name = "telemetry-registry"
+description = "Generate OTel semantic convention YAML from telemetry-mapping concepts"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT ?telemetryMapping ?mappingName ?mappingDescription ?attribute ?attributeType ?attributeBrief
+SELECT ?concept ?label ?notation ?definition
 WHERE {
-  [] a skos:ConceptScheme ;
-     dcterms:title "CodeManufactory artifact kind scheme" ;
-     skos:hasTopConcept ?telemetryMapping .
-
-  ?telemetryMapping skos:prefLabel ?mappingName ;
-                  skos:notation "telemetry-mapping" .
-
-  # Extract attribute definitions (simulated for example)
-  BIND(CONCAT("registry.", ?mappingName, ".", LCASE(?mappingName), "_attr")) AS ?attribute
-  BIND("string" AS ?attributeType)
-  BIND(CONCAT("Attribute for ", ?mappingName) AS ?attributeBrief)
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  FILTER (REGEX(?notation, "telemetry") || REGEX(?notation, "observability") || REGEX(?notation, "receipt"))
+  OPTIONAL { ?concept skos:definition ?definition }
 }
-LIMIT 10
+ORDER BY ?notation
 """
-template = "/Users/sac/ostar/templates/semantic-convention-generator.njk"
-output_file = "semconv/{{ semanticConventionName | snakeCase }}.yaml"
+template = "packages/cli/templates/config/github-actions-ci.njk"
+output_file = "semconv/{{ notation }}_registry.yaml"
 
-# Generate benchmark runners for benchmark artifacts
+# Rule 4: Generate benchmark infrastructure from benchmark concepts
 [[generation.rules]]
-name = "benchmark-runner"
-description = "Generate benchmark execution runner"
+name = "benchmark-infrastructure"
+description = "Generate benchmark runners from benchmark-related concepts"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?concept ?label ?notation ?definition
+WHERE {
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  FILTER (REGEX(?notation, "benchmark"))
+  OPTIONAL { ?concept skos:definition ?definition }
+}
+ORDER BY ?notation
+"""
+template = "packages/cli/templates/testing/unit-test.njk"
+output_file = "benchmarks/{{ notation }}_benchmark.mjs"
+
+# Rule 5: Generate participant surface MCP tools
+[[generation.rules]]
+name = "mcp-surfaces"
+description = "Generate MCP participant surface tool registrations"
+enabled = true
+query = """
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX schema: <https://schema.org/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT ?benchmark ?benchmarkName ?benchmarkDescription ?measurementTechnique ?variableMeasured
+SELECT ?concept ?label ?notation ?definition ?actionName ?targetProp
 WHERE {
-  ?benchmark a schema:Dataset ;
-           dcterms:type ?type .
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  FILTER (REGEX(?notation, "participant-surface") || REGEX(?notation, "mcp"))
 
-  ?type skos:notation "benchmark" .
-
-  OPTIONAL { ?benchmark dcterms:title ?benchmarkName }
-  OPTIONAL { ?benchmark dcterms:description ?benchmarkDescription }
-  OPTIONAL { ?benchmark schema:measurementTechnique ?measurementTechnique }
-  OPTIONAL { ?benchmark schema:variableMeasured ?variableMeasured }
+  OPTIONAL { ?concept skos:definition ?definition }
+  OPTIONAL {
+    ?shape sh:targetSubjectsOf ?action .
+    ?shape sh:path ?targetProp .
+    ?action a schema:potentialAction .
+    ?action schema:name ?actionName .
+  }
 }
-LIMIT 5
+ORDER BY ?notation
 """
-template = "/Users/sac/ostar/templates/benchmark-runner.njk"
-output_file = "benchmarks/{{ benchmarkName | snakeCase }}_runner.mjs"
+template = "packages/cli/templates/scaffolding/service-init.njk"
+output_file = "mcp-tools/{{ notation }}_tool.mjs"
 
-# Generate validation runners for validation artifacts
+# Rule 6: Generate OpenAPI spec from schema:Action shapes
 [[generation.rules]]
-name = "validation-runner"
-description = "Generate SHACL/SPARQL validation runner"
+name = "openapi-spec"
+description = "Generate OpenAPI spec from schema:potentialAction definitions"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <https://schema.org/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?validation ?validationName ?validationDescription ?validationType
+SELECT ?action ?actionName ?actionDesc ?targetClass ?path
 WHERE {
-  ?validation a schema:CheckAction ;
-           dcterms:type ?type .
-
-  ?type skos:notation "validation-artifact" .
-
-  OPTIONAL { ?validation dcterms:title ?validationName }
-  OPTIONAL { ?validation dcterms:description ?validationDescription }
-
-  BIND(COALESCE(?validationType, "sparql") AS ?validationType)
+  ?action a schema:potentialAction .
+  OPTIONAL { ?action schema:name ?actionName }
+  OPTIONAL { ?action schema:description ?actionDesc }
+  OPTIONAL { ?action schema:target ?targetClass }
+  OPTIONAL {
+    ?shape sh:targetSubjectsOf ?action .
+    ?shape sh:path ?path .
+  }
 }
-LIMIT 5
+ORDER BY ?actionName
 """
-template = "/Users/sac/ostar/templates/validation-runner.njk"
-output_file = "validation/{{ validationName | snakeCase }}_runner.mjs"
+template = "packages/cli/templates/api/openapi-spec.njk"
+output_file = "api/openapi-codemanufactory.yaml"
 
-# Generate projected artifacts from ProjectedArtifact ontology
+# Rule 7: Generate documentation from all concept schemes
 [[generation.rules]]
-name = "projected-artifact"
-description = "Generate projected artifacts (POWL, SPARQL, SHACL, MCP-tool, docs)"
+name = "documentation"
+description = "Generate documentation from ontology concept schemes"
 enabled = true
 query = """
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?scheme ?title ?concept ?label ?notation ?definition
+WHERE {
+  ?scheme a skos:ConceptScheme ;
+           dcterms:title ?title ;
+           skos:hasTopConcept ?concept .
+  ?concept skos:prefLabel ?label ;
+           skos:notation ?notation .
+  OPTIONAL { ?concept skos:definition ?definition }
+}
+ORDER BY ?title ?notation
+"""
+template = "packages/cli/templates/docs/readme.njk"
+output_file = "docs/{{ title | lower | replace(' ', '-') }}-reference.md"
+
+# Rule 8: Generate Docker/deploy configs from infrastructure concepts
+[[generation.rules]]
+name = "infrastructure"
+description = "Generate infrastructure configs from deployment-related concepts"
+enabled = true
+query = """
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?artifact ?artifactName ?artifactType ?transformation ?prefix_namespace ?namespace_uri ?queryType ?queryPurpose ?class_name ?source_class ?toolDescription ?toolCategory
+SELECT ?concept ?label ?notation ?definition
 WHERE {
-  # Find all artifact kind concepts
-  [] a skos:ConceptScheme ;
-     dcterms:title "CodeManufactory artifact kind scheme" ;
-     skos:hasTopConcept ?artifact .
-
-  # Extract artifact properties
-  ?artifact skos:prefLabel ?artifactName ;
-             skos:notation ?artifactType .
-
-  # Generate transformation metadata
-  BIND("OStarProjection" AS ?transformation)
-
-  # Generate namespace info
-  BIND("http://example.org/ontology" AS ?namespace_uri)
-  BIND("cmf" AS ?prefix_namespace)
-
-  # Generate SPARQL-specific metadata
-  BIND("SELECT" AS ?queryType)
-  BIND("Data extraction query" AS ?queryPurpose)
-  BIND("ex:Entity" AS ?class_name)
-  BIND("ex:Entity" AS ?source_class)
-
-  # Generate MCP tool metadata
-  BIND(?artifactName AS ?toolDescription)
-  BIND("ontology" AS ?toolCategory)
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  FILTER (REGEX(?notation, "cloud") || REGEX(?notation, "desktop") || REGEX(?notation, "browser") || REGEX(?notation, "edge"))
+  OPTIONAL { ?concept skos:definition ?definition }
 }
+ORDER BY ?notation
 """
-template = "/Users/sac/ostar/templates/projected-artifact.njk"
-output_file = "artifacts/{{ artifactName | snakeCase }}.{{ artifactType | artifact_extension }}"
+template = "packages/cli/templates/config/dockerfile.njk"
+output_file = "infra/{{ notation }}_Dockerfile"
+
+# Rule 9: Generate CI/CD from process concepts (breed, compile, project, etc.)
+[[generation.rules]]
+name = "ci-pipeline"
+description = "Generate CI/CD pipeline from process lifecycle concepts"
+enabled = true
+query = """
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?concept ?label ?notation ?definition
+WHERE {
+  ?concept a skos:Concept ;
+           skos:prefLabel ?label ;
+           skos:notation ?notation .
+  FILTER (REGEX(?notation, "breed") || REGEX(?notation, "compile") || REGEX(?notation, "project") || REGEX(?notation, "receipt") || REGEX(?notation, "proof"))
+  OPTIONAL { ?concept skos:definition ?definition }
+}
+ORDER BY ?notation
+"""
+template = "packages/cli/templates/config/gitlab-ci.njk"
+output_file = "ci/{{ notation }}_pipeline.yml"

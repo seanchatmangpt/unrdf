@@ -1,79 +1,33 @@
 ---
-to: "{{ service_name | lower }}/README.md"
+to: '{{ service_name | default("service") | lower }}/README.md'
 description: "Initialize microservice with standard structure"
 category: scaffolding
 requires:
   - service_name
-  - port
-  - protocol
-  - database
-  - cache
-  - author
 mode: overwrite
-
-
-
 ---
 
+# {{ service_name | default("codemanufactory-service") }}
 
-
-
-
-
-
-# {{ service_name }}
-
-> {{ protocol | upper }} microservice with {{ database | default("no database") }} and {{ cache | default("no cache") }}
+> Microservice scaffolded from CodeManufactory ontology
 
 ## Overview
 
-{{ service_name }} is a {{ protocol | lower }} microservice built for high-performance and scalability.
+{{ service_name | default("codemanufactory-service") }} is a microservice built for high-performance and scalability.
 
 ## Quick Start
 
 ```bash
-# Start the service
-cd {{ service_name | lower }}
+cd {{ service_name | lower | default("service") }}
 make dev
-
-# Run tests
 make test
-
-# Build for production
 make build
 ```
 
 ## Service Details
 
-- **Name**: {{ service_name }}
-- **Port**: {{ port }}
-- **Protocol**: {{ protocol | upper }}
-- **Database**: {{ database | default("None") }}
-- **Cache**: {{ cache | default("None") }}
-
-## Architecture
-
-```
-┌─────────────┐
-│   Client    │
-└─────┬───────┘
-      │
-      ▼
-┌─────────────┐
-│   API Gateway│
-└─────┬───────┘
-      │
-      ▼
-┌─────────────┐
-│ {{ service_name }} │
-└─────────────┘
-      │
-      ├─────────────┬─────────────┐
-      ▼             ▼             ▼
-┌───────────┐  ┌───────────┐  ┌───────────┐
-│ Database  │  │  Cache     │  │ Monitoring │
-└───────────┘  └───────────┘  └───────────┘
-```
+- **Name**: {{ service_name | default("codemanufactory-service") }}
+- **Port**: {{ port | default("8080") }}
 
 ## API Endpoints
 
@@ -87,15 +41,9 @@ GET /health
 ```json
 {
   "status": "healthy",
-  "service": "{{ service_name }}",
+  "service": "{{ service_name | lower | default("service") }}",
   "version": "1.0.0"
 }
-```
-
-### Main Endpoint
-
-```
-{{ protocol | upper }} /api/v1/{{ service_name | lower }}
 ```
 
 ## Configuration
@@ -103,130 +51,10 @@ GET /health
 ### Environment Variables
 
 ```bash
-# Service
-SERVICE_NAME={{ service_name | upper }}
-SERVICE_PORT={{ port }}
+SERVICE_NAME={{ service_name | upper | default("SERVICE") }}
+SERVICE_PORT={{ port | default("8080") }}
 NODE_ENV=development
-
-{% if database %}
-# Database
-DATABASE_URL={{ database | upper }}_URL
-DATABASE_POOL_SIZE=10
-{% endif %}
-
-{% if cache %}
-# Cache
-CACHE_URL={{ cache | upper }}_URL
-CACHE_TTL=3600
-{% endif %}
-
-# Monitoring
 OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
-```
-
-### Configuration File
-
-`config/config.yaml`:
-```yaml
-service:
-  name: {{ service_name }}
-  port: {{ port }}
-  protocol: {{ protocol | lower }}
-
-{% if database %}
-database:
-  type: {{ database | lower }}
-  host: localhost
-  port: 5432
-  database: {{ service_name | lower }}
-  pool_size: 10
-{% endif %}
-
-{% if cache %}
-cache:
-  type: {{ cache | lower }}
-  host: localhost
-  port: 6379
-  ttl: 3600
-{% endif %}
-
-monitoring:
-  enabled: true
-  traces_exporter: otlp
-  metrics_exporter: prometheus
-```
-
-## Database Schema
-
-{% if database %}
-### Tables
-
-**users**
-```sql
-CREATE TABLE users (
-  id UUID PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**{{ service_name | lower }}_data**
-```sql
-CREATE TABLE {{ service_name | lower }}_data (
-  id UUID PRIMARY KEY,
-  user_id UUID REFERENCES users(id),
-  data JSONB NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-{% else %}
-No database configured for this service.
-{% endif %}
-
-## Development
-
-### Prerequisites
-
-- Docker and Docker Compose
-- Make
-- {% if 'Go' in tech_stack %}Go 1.24+{% endif %}
-- {% if 'Node.js' in tech_stack %}Node.js 20+{% endif %}
-- {% if 'Elixir' in tech_stack %}Elixir 1.15+{% endif %}
-
-### Local Development
-
-```bash
-# Start all services
-make dev
-
-# Run database migrations
-make migrate
-
-# Seed database
-make seed
-
-# Run tests
-make test
-
-# View logs
-make logs
-```
-
-### Testing
-
-```bash
-# Unit tests
-make test-unit
-
-# Integration tests
-make test-integration
-
-# End-to-end tests
-make test-e2e
-
-# Coverage report
-make coverage
 ```
 
 ## Deployment
@@ -234,42 +62,12 @@ make coverage
 ### Docker
 
 ```bash
-# Build image
-docker build -t {{ service_name | lower }}:latest .
-
-# Run container
-docker run -p {{ port }}:{{ port }} {{ service_name | lower }}:latest
+docker build -t {{ service_name | lower | default("service") }}:latest .
+docker run -p {{ port | default("8080") }}:{{ port | default("8080") }} {{ service_name | lower | default("service") }}:latest
 ```
 
-### Kubernetes
+## Monitoring
 
-```bash
-# Deploy to Kubernetes
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-```
-
-### Monitoring
-
-- **Health Endpoint**: `http://localhost:{{ port }}/health`
-- **Metrics**: `http://localhost:{{ port }}/metrics`
+- **Health Endpoint**: `http://localhost:{{ port | default("8080") }}/health`
+- **Metrics**: `http://localhost:{{ port | default("8080") }}/metrics`
 - **Traces**: Available via OpenTelemetry
-
-## Documentation
-
-- [API Documentation](docs/API.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-
-## License
-
-Copyright © {{ author }}. All rights reserved.
-
-## Signal Theory
-
-**Signal**: `S=(linguistic, documentation, inform, markdown, service-readme)`
-- **Mode**: linguistic
-- **Genre**: documentation
-- **Type**: inform
-- **Format**: markdown
-- **Structure**: service-readme
