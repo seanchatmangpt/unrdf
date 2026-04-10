@@ -470,6 +470,10 @@ export class FederationCoordinator extends EventEmitter {
 
     // Remove all event listeners to prevent memory leaks
     this.removeAllListeners();
+
+    // Clear Maps to release references and prevent memory leaks
+    this.stores.clear();
+    this.storeHealth.clear();
   }
 }
 
