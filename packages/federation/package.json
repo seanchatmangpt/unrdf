@@ -1,13 +1,14 @@
 {
   "name": "@unrdf/federation",
-  "version": "26.4.7",
+  "version": "26.4.9",
   "description": "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication",
   "type": "module",
   "main": "src/index.mjs",
   "exports": {
     ".": "./src/index.mjs",
-    "./coordinator": "./src/coordinator.mjs",
-    "./advanced-sparql": "./src/advanced-sparql-federation.mjs"
+    "./coordinator": "./src/federation/coordinator.mjs",
+    "./advanced-sparql": "./src/advanced-sparql-federation.mjs",
+    "./ml/predictor": "./src/ml/predictor.mjs"
   },
   "sideEffects": false,
   "files": [

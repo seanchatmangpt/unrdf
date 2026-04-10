@@ -18,8 +18,8 @@ source = "./ontology/schema.ttl"
 format = "turtle"
 
 [generation]
-# Directory where generated files will be written
-output_dir = "./generated"
+# Directory where files will be written
+output_dir = "./src"
 
 # Single generation rule
 [[generation.rules]]

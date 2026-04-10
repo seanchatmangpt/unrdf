@@ -163,7 +163,7 @@ function checkOptionalServices() {
     };
   }
 
-  const unavailable = results.filter((r) => r.status !== 'pass').map((r) => r.name);
+  const unavailable = results.filter(r => r.status !== 'pass').map(r => r.name);
   return {
     status: 'warn',
     actual: `Optional services unavailable: ${unavailable.join(', ')}`,

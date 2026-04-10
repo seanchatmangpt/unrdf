@@ -56,9 +56,10 @@ function checkBuildArtifacts() {
     }
 
     if (missingDist.length === 0) {
-      const statusMsg = noBuildNeeded.length > 0
-        ? `All packages OK (${noBuildNeeded.length} packages are source-only)`
-        : 'Build artifacts present';
+      const statusMsg =
+        noBuildNeeded.length > 0
+          ? `All packages OK (${noBuildNeeded.length} packages are source-only)`
+          : 'Build artifacts present';
       return {
         status: 'pass',
         actual: statusMsg,
@@ -230,12 +231,24 @@ async function checkPorts() {
 
   return {
     status: 'warn',
-    actual: `Port conflicts: ${conflicts.map((c) => `:${c.port} (${c.service})`).join(', ')}`,
+    actual: `Port conflicts: ${conflicts.map(c => `:${c.port} (${c.service})`).join(', ')}`,
     expected: 'All ports available',
     ports: [
-      { port: 8089, service: 'Daemon', status: conflicts.find((c) => c.port === 8089) ? 'conflict' : 'available' },
-      { port: 9089, service: 'Canopy', status: conflicts.find((c) => c.port === 9089) ? 'conflict' : 'available' },
-      { port: 50051, service: 'KGC Sidecar', status: conflicts.find((c) => c.port === 50051) ? 'conflict' : 'available' },
+      {
+        port: 8089,
+        service: 'Daemon',
+        status: conflicts.find(c => c.port === 8089) ? 'conflict' : 'available',
+      },
+      {
+        port: 9089,
+        service: 'Canopy',
+        status: conflicts.find(c => c.port === 9089) ? 'conflict' : 'available',
+      },
+      {
+        port: 50051,
+        service: 'KGC Sidecar',
+        status: conflicts.find(c => c.port === 50051) ? 'conflict' : 'available',
+      },
     ],
     fix: 'Stop conflicting services or use different ports',
   };
@@ -297,10 +310,15 @@ async function checkDiskSpace() {
 
         // Convert to GB
         availableGB =
-          unit === 'T' || unit === 'TI' ? value * 1024 :
-          unit === 'G' || unit === 'GI' ? value :
-          unit === 'M' || unit === 'MI' ? value / 1024 :
-          unit === 'K' || unit === 'KI' ? value / 1024 / 1024 : 0;
+          unit === 'T' || unit === 'TI'
+            ? value * 1024
+            : unit === 'G' || unit === 'GI'
+              ? value
+              : unit === 'M' || unit === 'MI'
+                ? value / 1024
+                : unit === 'K' || unit === 'KI'
+                  ? value / 1024 / 1024
+                  : 0;
 
         availableStr = available;
       } else {

@@ -1,0 +1,61 @@
+---
+to: "{{ route_path | replace('/', '_') }}/+page.server.ts"
+description: "SvelteKit server load function with database queries and error handling"
+category: scaffolding
+requires:
+  - route_path
+  - page_title
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+import type { PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
+import { db } from '$lib/database';
+
+export const load: PageServerLoad = async ({ params, url, request }) => {
+	try {
+		// Extract query parameters
+		const urlParams = new URLSearchParams(url.search);
+		const limit = parseInt(urlParams.get('limit') || '10', 10);
+		const offset = parseInt(urlParams.get('offset') || '0', 10);
+
+		// Database query with error handling
+		const items = await db.query(`
+			SELECT id, name, description
+			FROM items
+			ORDER BY created_at DESC
+			LIMIT $1 OFFSET $2
+		`, [limit, offset]);
+
+		// Get metadata
+		const metadata = await db.query(`
+			SELECT COUNT(*) as total, MAX(updated_at) as updated_at
+			FROM items
+		`);
+
+		return {
+			items: items.rows,
+			metadata: {
+				total: parseInt(metadata.rows[0].total),
+				updatedAt: metadata.rows[0].updated_at,
+				limit,
+				offset
+			}
+		};
+	} catch (error) {
+		console.error('Failed to load {{ page_title }}:', error);
+		// Return empty state instead of throwing
+		return {
+			items: [],
+			metadata: {
+				total: 0,
+				updatedAt: new Date().toISOString(),
+				limit: 10,
+				offset: 0
+			}
+		};
+	}
+};

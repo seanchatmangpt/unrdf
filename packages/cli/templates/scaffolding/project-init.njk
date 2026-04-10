@@ -1,0 +1,217 @@
+---
+to: "{{ project_name | lower }}/README.md"
+description: "Initialize new project with standard structure"
+category: scaffolding
+requires:
+  - project_name
+  - project_type
+  - tech_stack
+  - author
+  - license
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ project_name }}
+
+> {{ project_type | title }} project initialized with {{ tech_stack }}
+
+## Overview
+
+{{ project_name }} is a {{ project_type | lower }} project built with {{ tech_stack }}.
+
+## Getting Started
+
+### Prerequisites
+
+{% if 'Go' in tech_stack %}
+- Go 1.24+
+- Node.js 20+
+{% endif %}
+{% if 'Elixir' in tech_stack %}
+- Elixir 1.15+
+- Phoenix 1.8.5+
+- Node.js 20+
+{% endif %}
+{% if 'Rust' in tech_stack %}
+- Rust 1.70+
+- Cargo
+{% endif %}
+{% if 'TypeScript' in tech_stack or 'SvelteKit' in tech_stack %}
+- Node.js 20+
+- pnpm 9+
+{% endif %}
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url> {{ project_name | lower }}
+cd {{ project_name | lower }}
+
+{% if 'Go' in tech_stack %}
+# Install Go dependencies
+go mod download
+
+# Run the server
+go run main.go
+{% endif %}
+
+{% if 'Elixir' in tech_stack %}
+# Install dependencies
+mix deps.get
+
+# Setup database
+mix ecto.setup
+
+# Start Phoenix server
+mix phx.server
+{% endif %}
+
+{% if 'Rust' in tech_stack %}
+# Build the project
+cargo build
+
+# Run tests
+cargo test
+{% endif %}
+
+{% if 'SvelteKit' in tech_stack %}
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+{% endif %}
+```
+
+## Project Structure
+
+```
+{{ project_name | lower }}/
+├── README.md              # This file
+├── LICENSE                # {{ license }} license
+├── .gitignore             # Git ignore rules
+├── {{ project_name | lower }}/      # Main source code
+├── tests/                  # Test files
+├── docs/                   # Documentation
+└── scripts/                # Build and deployment scripts
+```
+
+## Configuration
+
+Configuration files are located in the root directory:
+
+{% if 'Go' in tech_stack %}
+- `go.mod` - Go module definition
+- `config.yaml` - Application configuration
+- `.env.example` - Environment variables template
+{% endif %}
+
+{% if 'Elixir' in tech_stack %}
+- `mix.exs` - Elixir configuration
+- `config/dev.exs` - Development environment
+- `config/runtime.exs` - Runtime configuration
+{% endif %}
+
+{% if 'Rust' in techstack %}
+- `Cargo.toml` - Rust project configuration
+- `src/main.rs` - Application entry point
+{% endif %}
+
+{% if 'SvelteKit' in tech_stack %}
+- `svelte.config.js` - Svelte configuration
+- `vite.config.ts` - Vite build configuration
+{% endif %}
+
+## Development
+
+### Running Tests
+
+```bash
+{% if 'Go' in tech_stack %}
+go test ./...
+{% endif %}
+
+{% if 'Elixir' in tech_stack %}
+mix test
+{% endif %}
+
+{% if 'Rust' in techstack %}
+cargo test
+{% endif %}
+
+{% if 'TypeScript' in techstack %}
+pnpm test
+{% endif %}
+```
+
+### Building
+
+```bash
+{% if 'Go' in tech_stack %}
+go build -o bin/{{ project_name | lower }}
+{% endif %}
+
+{% if 'Elixir' in techstack %}
+mix release
+{% endif %}
+
+{% if 'Rust' in techstack %}
+cargo build --release
+{% endif %}
+
+{% if 'SvelteKit' in techstack %}
+pnpm build
+{% endif %}
+```
+
+## Deployment
+
+### Docker
+
+```bash
+# Build Docker image
+docker build -t {{ project_name | lower }}:latest .
+
+# Run container
+docker run -p 8080:8080 {{ project_name | lower }}:latest
+```
+
+### Kubernetes
+
+```bash
+# Apply Kubernetes manifests
+kubectl apply -f k8s/
+```
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) - System architecture overview
+- [API Documentation](docs/API.md) - API endpoints and usage
+- [Contributing](CONTRIBUTING.md) - Contribution guidelines
+
+## License
+
+This project is licensed under the {{ license }} License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+Created by {{ author }}.
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, inform, markdown, project-readme)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: inform
+- **Format**: markdown
+- **Structure**: project-readme

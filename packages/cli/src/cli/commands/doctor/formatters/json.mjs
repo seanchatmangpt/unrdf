@@ -17,15 +17,11 @@ export function formatJSON(results) {
     warnings: results.warnings,
     failed: results.failedChecks,
     overallStatus:
-      results.failedChecks === 0
-        ? 'healthy'
-        : results.failedChecks <= 3
-          ? 'degraded'
-          : 'unhealthy',
+      results.failedChecks === 0 ? 'healthy' : results.failedChecks <= 3 ? 'degraded' : 'unhealthy',
   };
 
-  const categories = results.categories.map((category) => {
-    const checks = category.checks.map((check) => {
+  const categories = results.categories.map(category => {
+    const checks = category.checks.map(check => {
       const result = {
         name: check.name,
         status: check.status,

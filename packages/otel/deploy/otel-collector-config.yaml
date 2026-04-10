@@ -1,0 +1,88 @@
+# OpenTelemetry Collector Configuration for PM4Py
+# Receives traces, metrics, and logs from PM4Py
+
+receivers:
+  # OTLP gRPC receiver
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Prometheus metrics receiver
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'pm4py'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['pm4py-api:8000']
+
+processors:
+  # Batch processing for better performance
+  batch:
+    timeout: 5s
+    send_batch_size: 10000
+
+  # Memory limiter
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+
+  # Resource detection
+  resourcedetection:
+    detectors: [env, system]
+
+  # Resource attributes
+  resource:
+    service.name: unrdf
+    service.version: 26.4.7
+    deployment.environment: production
+
+exporters:
+  # Jaeger trace exporter
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+  # Prometheus metrics exporter
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    tls:
+      insecure: true
+
+  # Logging exporter (for debugging)
+  logging:
+    loglevel: info
+
+extensions:
+  # Health check extension
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # Pprof extension
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  # ZPages extension
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, memory_limiter, resourcedetection]
+      exporters: [jaeger, logging]
+
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [batch, memory_limiter]
+      exporters: [prometheusremotewrite]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch, memory_limiter]
+      exporters: [logging]

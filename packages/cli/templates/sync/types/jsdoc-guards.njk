@@ -1,10 +1,15 @@
 ---
-to: {{ output_dir }}/guards/entities.mjs
-description: Type guard functions for runtime entity validation using Zod schemas
+to: "{{ output_dir }}/guards/entities.mjs"
+description: "Type guard functions for runtime entity validation using Zod schemas"
 requires:
   - sparql_results: Array of entity bindings from ontology query
   - output_dir: Target output directory
+
+category: codegen
+
 ---
+
+
 /**
  * @file Type Guard Functions
  * @module {{ module_name | default("generated/guards/entities") }}

@@ -5,7 +5,7 @@
  */
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
-import { resolve, dirname, isAbsolute } from 'path';
+import { resolve, dirname, isAbsolute, parse } from 'path';
 import { SyncConfigSchema, detectRDFFormat } from './schemas.mjs';
 
 /**
@@ -282,13 +282,22 @@ export function resolveConfigPaths(config, baseDir) {
   }
 
   if (resolved.templates) {
-    resolved.templates = resolved.templates.map(t => ({
-      ...t,  // Preserve all original properties including name
-      source: resolve(baseDir, t.source),  // Resolve source path
-      output: t.output ? resolve(baseDir, t.output) : t.output,  // Resolve output path
-      resolvedSource: resolve(baseDir, t.source),
-      resolvedOutput: t.output ? resolve(baseDir, t.output) : t.output,
-    }));
+    resolved.templates = resolved.templates.map(t => {
+      const resolvedTemplate = {
+        name: t.name,
+        source: resolve(baseDir, t.source),
+        output: t.output ? resolve(baseDir, t.output) : t.output,
+        resolvedSource: resolve(baseDir, t.source),
+        resolvedOutput: t.output ? resolve(baseDir, t.output) : t.output,
+      };
+      // Preserve any additional properties from original template config
+      for (const key of Object.keys(t)) {
+        if (!(key in resolvedTemplate)) {
+          resolvedTemplate[key] = t[key];
+        }
+      }
+      return resolvedTemplate;
+    });
   }
 
   return resolved;
@@ -439,16 +448,29 @@ function toTomlValue(value) {
 }
 
 /**
- * Find configuration file in directory
- * @param {string} dir - Directory to search
+ * Find configuration file in directory or parent directories
+ * @param {string} dir - Directory to search (will search upward)
  * @returns {Promise<string|null>} Path to config file or null
  */
 export async function findConfigFile(dir) {
   const candidates = ['unrdf.toml'];
-  for (const name of candidates) {
-    const path = resolve(dir, name);
-    if (existsSync(path)) return path;
+
+  // Start from the given directory and search upward
+  let currentDir = resolve(dir);
+  const root = parse(currentDir).root;
+
+  while (currentDir !== root && currentDir !== resolve(root, '..')) {
+    for (const name of candidates) {
+      const path = resolve(currentDir, name);
+      if (existsSync(path)) return path;
+    }
+
+    // Move to parent directory
+    const parentDir = resolve(currentDir, '..');
+    if (parentDir === currentDir) break; // Reached root
+    currentDir = parentDir;
   }
+
   return null;
 }
 

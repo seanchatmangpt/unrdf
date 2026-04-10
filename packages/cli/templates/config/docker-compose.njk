@@ -1,0 +1,162 @@
+---
+to: "docker-compose.yml"
+description: "Generate Docker Compose configuration for multi-service applications"
+category: config
+requires:
+  - project_name
+  - services
+variables:
+  project_name: "Project name used for container naming"
+  services: "Array of service definitions (name, image, port, environment)"
+  networks: "Array of network definitions"
+  volumes: "Array of volume definitions"
+  version: "Docker Compose version (default: 3.8)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+version: '{{ version | default("3.8") }}'
+
+services:
+{% for service in services %}
+  {{ service.name }}:
+    image: {{ service.image }}
+    container_name: {{ project_name | lower }}-{{ service.name }}
+{% if service.build %}
+    build:
+      context: {{ service.build.context | default(".") }}
+      dockerfile: {{ service.build.dockerfile | default("Dockerfile") }}
+{% endif %}
+{% if service.ports %}
+    ports:
+{% for port_mapping in service.ports %}
+      - "{{ port_mapping }}"
+{% endfor %}
+{% endif %}
+{% if service.environment %}
+    environment:
+{% for key, value in service.environment %}
+      - {{ key }}=${{ value }}
+{% endfor %}
+{% endif %}
+{% if service.volumes %}
+    volumes:
+{% for volume in service.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% endif %}
+{% if service.depends_on %}
+    depends_on:
+{% for dependency in service.depends_on %}
+      - {{ dependency }}
+{% endfor %}
+{% endif %}
+{% if service.networks %}
+    networks:
+{% for network in service.networks %}
+      - {{ network }}
+{% endfor %}
+{% endif %}
+{% if service.healthcheck %}
+    healthcheck:
+      test: {{ service.healthcheck.test | default(["CMD", "curl", "-f", "http://localhost:8080/health"]) | tojson }}
+      interval: {{ service.healthcheck.interval | default(30) }}s
+      timeout: {{ service.healthcheck.timeout | default(3) }}s
+      retries: {{ service.healthcheck.retries | default(3) }}
+      start_period: {{ service.healthcheck.start_period | default(5) }}s
+{% endif %}
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+{% if networks %}
+networks:
+{% for network in networks %}
+  {{ network.name }}:
+    driver: {{ network.driver | default("bridge") }}
+{% if network.external %}
+    external: {{ network.external }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if volumes %}
+volumes:
+{% for volume in volumes %}
+  {{ volume.name }}:
+{% if volume.driver %}
+    driver: {{ volume.driver }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, yaml, orchestration-config)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: orchestration-config
+
+## Usage
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up -d --build
+
+# Scale a service
+docker-compose up -d --scale {{ services[0].name if services else 'web' }}=3
+```
+
+## Service Configuration Example
+
+```yaml
+services:
+  - name: app
+    image: node:20-alpine
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://db:5432/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+
+  - name: db
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    networks:
+      - backend
+
+networks:
+  - name: backend
+    driver: bridge
+
+volumes:
+  - name: postgres_data
+```

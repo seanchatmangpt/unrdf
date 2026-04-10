@@ -1,0 +1,268 @@
+---
+to: ".gitlab-ci.yml"
+description: "Generate GitLab CI pipeline configuration"
+category: config
+requires:
+  - project_name
+  - language
+variables:
+  project_name: "Project name"
+  language: "Programming language (node, go, python, rust, elixir)"
+  docker_image: "Docker image for runners"
+  cache_key: "Cache key template"
+  stages: "Pipeline stages (default: build, test, deploy)"
+  deploy_enabled: "Enable deployment stage (default: false)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+variables:
+  PROJECT_NAME: {{ project_name | upper }}
+  CACHE_KEY_PREFIX: "{{ cache_key | default("$CI_COMMIT_REF_SLUG") }}"
+
+{% if language == "node" %}
+image: {{ docker_image | default("node:20") }}
+
+cache:
+  key: ${CACHE_KEY_PREFIX}
+  paths:
+    - node_modules/
+    - .pnpm-store/
+
+before_script:
+  - npm install -g pnpm@{{ node_version | default("10") }}
+  - pnpm config set store-dir .pnpm-store
+  - pnpm install --frozen-lockfile
+
+{% elif language == "go" %}
+image: {{ docker_image | default("golang:1.24") }}
+
+cache:
+  key: ${CACHE_KEY_PREFIX}
+  paths:
+    - .cache/pkg/mod/
+
+variables:
+  GOPATH: $CI_PROJECT_DIR/.cache
+
+before_script:
+  - mkdir -p .cache/pkg/mod
+  - go mod download
+
+{% elif language == "python" %}
+image: {{ docker_image | default("python:3.13") }}
+
+cache:
+  key: ${CACHE_KEY_PREFIX}
+  paths:
+    - .cache/pip
+
+variables:
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip
+
+before_script:
+  - pip install -r requirements.txt
+
+{% elif language == "rust" %}
+image: {{ docker_image | default("rust:latest") }}
+
+cache:
+  key: ${CACHE_KEY_PREFIX}
+  paths:
+    - target/
+    - .cargo/registry/
+
+variables:
+  CARGO_HOME: $CI_PROJECT_DIR/.cargo
+
+before_script:
+  - cargo --version
+
+{% elif language == "elixir" %}
+image: {{ docker_image | default("elixir:1.15") }}
+
+cache:
+  key: ${CACHE_KEY_PREFIX}
+  paths:
+    - deps/
+    - _build/
+
+before_script:
+  - mix local.hex --force
+  - mix local.rebar --force
+  - mix deps.get
+{% endif %}
+
+stages:
+{% for stage in stages | default(["build", "test", "deploy"]) %}
+  - {{ stage }}
+{% endfor %}
+
+{% if "build" in stages | default(["build", "test", "deploy"]) %}
+build:
+  stage: build
+  script:
+{% if language == "node" %}
+    - pnpm build
+{% elif language == "go" %}
+    - go build -v ./...
+{% elif language == "python" %}
+    - python -m compile
+{% elif language == "rust" %}
+    - cargo build --release
+{% elif language == "elixir" %}
+    - mix compile
+{% endif %}
+  artifacts:
+    paths:
+{% if language == "node" %}
+      - dist/
+{% elif language == "rust" %}
+      - target/release/
+{% elif language == "elixir" %}
+      - _build/
+{% endif %}
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+{% endif %}
+{% if "test" in stages | default(["build", "test", "deploy"]) %}
+test:
+  stage: test
+  script:
+{% if language == "node" %}
+    - pnpm test
+{% elif language == "go" %}
+    - go test -v -race -coverprofile=coverage.out ./...
+{% elif language == "python" %}
+    - pytest --cov=./ --cov-report=xml
+{% elif language == "rust" %}
+    - cargo test --verbose
+{% elif language == "elixir" %}
+    - mix test
+{% endif %}
+  coverage: '/\d+\.\d+% coverage/'
+  artifacts:
+    reports:
+{% if language == "go" %}
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+{% elif language == "python" %}
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+{% endif %}
+  only:
+    - branches
+    - merge_requests
+
+{% endif %}
+{% if "lint" in stages | default(["build", "test", "deploy"]) %}
+lint:
+  stage: test
+  script:
+{% if language == "node" %}
+    - pnpm lint
+{% elif language == "go" %}
+    - go vet ./...
+    - gofmt -l .
+{% elif language == "python" %}
+    - ruff check .
+{% elif language == "rust" %}
+    - cargo clippy -- -D warnings
+{% elif language == "elixir" %}
+    - mix format --check-formatted
+{% endif %}
+  allow_failure: false
+  only:
+    - branches
+    - merge_requests
+
+{% endif %}
+{% if deploy_enabled and "deploy" in stages | default(["build", "test", "deploy"]) %}
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying {{ project_name }}..."
+    # Add deployment commands here
+  environment:
+    name: production
+    url: https://{{ project_name | lower }}.example.com
+  when: manual
+  only:
+    - main
+
+{% endif %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, yaml, gitlab-ci-pipeline)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: gitlab-ci-pipeline
+
+## Usage
+
+```bash
+# Commit .gitlab-ci.yml
+git add .gitlab-ci.yml
+git commit -m "ci: add GitLab CI pipeline"
+
+# Push to trigger pipeline
+git push origin main
+
+# View pipeline status
+# Visit: https://gitlab.com/{{ project_name }}/pipelines
+```
+
+## Pipeline Stages
+
+Customize stages with `stages` variable:
+
+```yaml
+stages:
+  - lint
+  - build
+  - test
+  - security
+  - deploy
+```
+
+## Environment Variables
+
+Set in GitLab UI: Settings → CI/CD → Variables
+
+- `DOCKER_USERNAME` - Docker Hub username
+- `DOCKER_PASSWORD` - Docker Hub password
+- `DEPLOY_KEY` - SSH key for deployment
+- `API_ENDPOINT` - Production API endpoint
+
+## Deployment
+
+Enable deployment with `deploy_enabled: true` and configure:
+
+```yaml
+deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/{{ project_name }} {{ project_name }}=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - kubectl rollout status deployment/{{ project_name }}
+  environment:
+    name: production
+  only:
+    - main
+```

@@ -108,5 +108,5 @@ export async function applyAutoFix(check) {
  * Get list of fixable checks
  */
 export function getFixableChecks() {
-  return Object.keys(FIX_IMPLEMENTATIONS).filter((key) => FIX_IMPLEMENTATIONS[key] !== null);
+  return Object.keys(FIX_IMPLEMENTATIONS).filter(key => FIX_IMPLEMENTATIONS[key] !== null);
 }

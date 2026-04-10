@@ -1,0 +1,118 @@
+groups:
+  - id: registry.chatman.comm
+    type: attribute_group
+    display_name: 'Chatman Cross-System Communication Attributes'
+    brief: 'Attributes for causally correlated communication acts across BusinessOS, Canopy, and OSA.'
+    attributes:
+      - id: chatman.comm.trace_id
+        type: string
+        brief: 'Correlated trace ID across all systems (W3C Trace Context).'
+        examples: ['4bf92f3577b34da6a3ce929d0e0e4736']
+      - id: chatman.comm.source_system
+        type: string
+        brief: 'Originating system identifier.'
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+      - id: chatman.comm.target_system
+        type: string
+        brief: 'Destination system identifier.'
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+      - id: chatman.comm.direction
+        type: string
+        brief: 'Communication direction (request or response).'
+        examples: ['request', 'response']
+      - id: chatman.comm.communication_type
+        type: string
+        brief: 'Type of communication act (sync, async, broadcast, multicast).'
+        examples: ['sync', 'async', 'broadcast', 'multicast']
+      - id: chatman.comm.operation_name
+        type: string
+        brief: 'Operation being performed (e.g., create_deal, healing_diagnosis).'
+        examples: ['create_deal', 'healing_diagnosis', 'agent_spawn', 'pipeline_stage']
+      - id: chatman.comm.request_id
+        type: string
+        brief: 'Unique request identifier for correlation.'
+        examples: ['req_8f3d2a1b', 'msg_a1b2c3d4']
+      - id: chatman.comm.parent_span_id
+        type: string
+        brief: 'Parent span ID for distributed trace correlation.'
+        examples: ['00f067aa0ba902b7']
+      - id: chatman.comm.payload_type
+        type: string
+        brief: 'Type of payload being communicated.'
+        examples: ['rdf_quad', 'sparql_query', 'agent_state', 'quality_metric', 'deal']
+      - id: chatman.comm.payload_size_bytes
+        type: int
+        brief: 'Size of payload in bytes.'
+        examples: [1024, 4096, 1048576]
+      - id: chatman.comm.latency_ms
+        type: double
+        brief: 'End-to-end latency in milliseconds.'
+        examples: [45.2, 123.8, 1000.0]
+      - id: chatman.comm.status
+        type: string
+        brief: 'Communication status (ok, error, timeout, rejected).'
+        examples: ['ok', 'error', 'timeout', 'rejected']
+      - id: chatman.comm.status_code
+        type: int
+        brief: 'HTTP-style status code (200, 400, 500, etc.).'
+        examples: [200, 400, 500, 503]
+      - id: chatman.comm.status_message
+        type: string
+        brief: 'Human-readable status message or error description.'
+        examples: ['Deal created successfully', 'Validation failed: missing required field']
+      - id: chatman.comm.topology_role
+        type: string
+        brief: 'Role in communication topology (producer, consumer, proxy, aggregator).'
+        examples: ['producer', 'consumer', 'proxy', 'aggregator']
+      - id: chatman.comm.topology_layer
+        type: string
+        brief: 'Layer in 7-layer architecture (network, signal, composition, interface, data, feedback, governance).'
+        examples: ['network', 'signal', 'composition', 'interface', 'data', 'feedback', 'governance']
+      - id: chatman.comm.provenance_chain
+        type: string
+        brief: 'BLAKE3 hash chain for provenance tracking (receipt chaining).'
+        examples: ['blake3:abc123...', 'blake3:def456...']
+      - id: chatman.comm.trust_score
+        type: double
+        brief: 'Trust/confidence score [0.0-1.0].'
+        examples: [0.95, 0.87, 0.42]
+      - id: chatman.comm.validation_result
+        type: string
+        brief: 'Validation result (passed, failed, soft_failed).'
+        examples: ['passed', 'failed', 'soft_failed']
+      - id: chatman.comm.retry_count
+        type: int
+        brief: 'Number of retry attempts.'
+        examples: [0, 1, 2, 3]
+      - id: chatman.comm.max_retries
+        type: int
+        brief: 'Maximum retry attempts allowed.'
+        examples: [3, 5, 10]
+      - id: chatman.comm.timeout_ms
+        type: int
+        brief: 'Timeout in milliseconds for this communication.'
+        examples: [5000, 10000, 30000]
+      - id: chatman.comm.deadlock_free
+        type: boolean
+        brief: 'True if communication verified deadlock-free (WvdA compliance).'
+        examples: [true, false]
+      - id: chatman.comm.bounded
+        type: boolean
+        brief: 'True if communication bounded (WvdA compliance).'
+        examples: [true, false]
+      - id: chatman.comm.live
+        type: boolean
+        brief: 'True if communication guarantees liveness (WvdA compliance).'
+        examples: [true, false]
+      - id: chatman.comm.ocel_activity
+        type: string
+        brief: 'OCEL activity name for event log.'
+        examples: ['send_request', 'receive_response', 'validate', 'transform']
+      - id: chatman.comm.ocel_object_type
+        type: string
+        brief: 'OCEL object type being communicated.'
+        examples: ['deal', 'agent', 'composition', 'quality_metric']
+      - id: chatman.comm.ocel_lifecycle_transition
+        type: string
+        brief: 'OCEL lifecycle transition (create, assign, complete, terminate).'
+        examples: ['create', 'assign', 'complete', 'terminate']

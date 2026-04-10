@@ -120,6 +120,7 @@ export async function runSync(options) {
             project: config.project,
             prefixes,
             output_dir: outputDir,
+            outputPath: rule.output_file,
           });
           content = result.content;
           outputPath = result.outputPath;

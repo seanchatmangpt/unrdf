@@ -211,7 +211,7 @@ async function runTest() {
     const ontologyPath = join(testDir, 'schema.ttl');
     const templatePath = join(testDir, 'templates', 'entities.njk');
     const configPath = join(testDir, 'unrdf.toml');
-    const outputDir = join(testDir, 'generated');
+    const outputDir = join(testDir, 'src');
 
     await mkdir(join(testDir, 'templates'), { recursive: true });
     await mkdir(outputDir, { recursive: true });

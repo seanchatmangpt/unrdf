@@ -297,7 +297,7 @@ jobs:
           format = "turtle"
 
           [generation]
-          output_dir = "$TEST_DIR/generated"
+          output_dir = "$TEST_DIR/src"
 
           [[generation.rules]]
           name = "entities"
@@ -342,32 +342,32 @@ jobs:
 
           # Verify generated files exist
           echo "Verifying generated files..."
-          test -f "$TEST_DIR/generated/entities.mjs" || {
-            echo "❌ entities.mjs not generated"
+          test -f "$TEST_DIR/src/entities.mjs" || {
+            echo "❌ entities.mjs not created"
             exit 1
           }
-          test -f "$TEST_DIR/generated/properties.mjs" || {
-            echo "❌ properties.mjs not generated"
+          test -f "$TEST_DIR/src/properties.mjs" || {
+            echo "❌ properties.mjs not created"
             exit 1
           }
 
           # Verify ESM syntax is valid
           echo "Checking ESM syntax..."
-          timeout 5s node -c "$TEST_DIR/generated/entities.mjs" || {
+          timeout 5s node -c "$TEST_DIR/src/entities.mjs" || {
             echo "❌ entities.mjs has syntax errors"
-            cat "$TEST_DIR/generated/entities.mjs"
+            cat "$TEST_DIR/src/entities.mjs"
             exit 1
           }
-          timeout 5s node -c "$TEST_DIR/generated/properties.mjs" || {
+          timeout 5s node -c "$TEST_DIR/src/properties.mjs" || {
             echo "❌ properties.mjs has syntax errors"
-            cat "$TEST_DIR/generated/properties.mjs"
+            cat "$TEST_DIR/src/properties.mjs"
             exit 1
           }
 
           # Test that files can be imported
           echo "Testing ESM imports..."
           timeout 5s node --input-type=module -e "
-            import('$TEST_DIR/generated/entities.mjs').then(m => {
+            import('$TEST_DIR/src/entities.mjs').then(m => {
               console.log('✅ entities.mjs imports successfully');
               console.log('  Exports:', Object.keys(m).length, 'symbols');
               if (!m.ALL_ENTITIES || m.ALL_ENTITIES.length === 0) {
@@ -378,41 +378,41 @@ jobs:
           " || exit 1
 
           timeout 5s node --input-type=module -e "
-            import('$TEST_DIR/generated/properties.mjs').then(m => {
+            import('$TEST_DIR/src/properties.mjs').then(m => {
               console.log('✅ properties.mjs imports successfully');
               console.log('  Exports:', Object.keys(m).length, 'symbols');
             });
           " || exit 1
 
           # Verify content quality
-          echo "Verifying generated content..."
+          echo "Verifying output content..."
 
           # Check entities.mjs contains expected content
-          grep -q "USER_URI" "$TEST_DIR/generated/entities.mjs" || {
+          grep -q "USER_URI" "$TEST_DIR/src/entities.mjs" || {
             echo "❌ entities.mjs missing expected exports"
             exit 1
           }
-          grep -q "POST_URI" "$TEST_DIR/generated/entities.mjs" || {
+          grep -q "POST_URI" "$TEST_DIR/src/entities.mjs" || {
             echo "❌ entities.mjs missing POST entity"
             exit 1
           }
-          grep -q "ALL_ENTITIES" "$TEST_DIR/generated/entities.mjs" || {
+          grep -q "ALL_ENTITIES" "$TEST_DIR/src/entities.mjs" || {
             echo "❌ entities.mjs missing ALL_ENTITIES export"
             exit 1
           }
 
           # Check properties.mjs contains expected content
-          grep -q "PROP_USERNAME" "$TEST_DIR/generated/properties.mjs" || {
+          grep -q "PROP_USERNAME" "$TEST_DIR/src/properties.mjs" || {
             echo "❌ properties.mjs missing expected properties"
             exit 1
           }
 
-          # Display generated files for debugging
-          echo "Generated entities.mjs:"
-          cat "$TEST_DIR/generated/entities.mjs"
+          # Display output files for debugging
+          echo "Output entities.mjs:"
+          cat "$TEST_DIR/src/entities.mjs"
           echo ""
-          echo "Generated properties.mjs:"
-          cat "$TEST_DIR/generated/properties.mjs"
+          echo "Output properties.mjs:"
+          cat "$TEST_DIR/src/properties.mjs"
 
           # Cleanup
           rm -rf "$TEST_DIR"

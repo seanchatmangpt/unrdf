@@ -59,7 +59,7 @@ async function checkOTLPEndpoints() {
   if (reachable.length === endpoints.length) {
     return {
       status: 'pass',
-      actual: `All OTLP endpoints reachable: ${reachable.map((e) => `:${e.port} (${e.protocol})`).join(', ')}`,
+      actual: `All OTLP endpoints reachable: ${reachable.map(e => `:${e.port} (${e.protocol})`).join(', ')}`,
       expected: 'OTLP gRPC (:4317) and HTTP (:4318) endpoints reachable',
       endpoints: [...reachable, ...unreachable],
     };
@@ -77,7 +77,7 @@ async function checkOTLPEndpoints() {
 
   return {
     status: 'warn',
-    actual: `Some OTLP endpoints unreachable: ${unreachable.map((e) => `:${e.port} (${e.protocol})`).join(', ')}`,
+    actual: `Some OTLP endpoints unreachable: ${unreachable.map(e => `:${e.port} (${e.protocol})`).join(', ')}`,
     expected: 'All OTLP endpoints reachable',
     endpoints: [...reachable, ...unreachable],
     fix: 'Check OTEL collector status: kubectl get pods -n unrdf-observability -l app=otel-collector',
@@ -90,7 +90,9 @@ async function checkOTLPEndpoints() {
 async function checkOTELSDK() {
   try {
     // Try to import and check if OTEL is instrumented
-    const { isInstrumented } = await import('@unrdf/core/otel').catch(() => ({ isInstrumented: () => false }));
+    const { isInstrumented } = await import('@unrdf/core/otel').catch(() => ({
+      isInstrumented: () => false,
+    }));
 
     if (typeof isInstrumented === 'function' && isInstrumented()) {
       return {

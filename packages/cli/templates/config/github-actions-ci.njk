@@ -1,0 +1,246 @@
+---
+to: ".github/workflows/ci.yml"
+description: "Generate GitHub Actions CI workflow"
+category: config
+requires:
+  - project_name
+  - language
+variables:
+  project_name: "Project name"
+  language: "Programming language (node, go, python, rust, elixir)"
+  node_version: "Node.js version (default: 20)"
+  go_version: "Go version (default: 1.24)"
+  python_version: "Python version (default: 3.13)"
+  rust_version: "Rust version (default: stable)"
+  elixir_version: "Elixir version (default: 1.15)"
+  run_tests: "Test command (default: true)"
+  run_lint: "Lint command (default: true)"
+  run_build: "Build command (default: true)"
+  docker_build: "Enable Docker build (default: false)"
+  cache_deps: "Cache dependencies (default: true)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+{% if language == "node" %}
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [{{ node_version | default("20") }}.x]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+{% if cache_deps %}
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+{% endif %}
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+{% if run_tests %}
+    - name: Run tests
+      run: pnpm test
+{% endif %}
+{% if run_lint %}
+    - name: Lint
+      run: pnpm lint
+{% endif %}
+{% if run_build %}
+    - name: Build
+      run: pnpm build
+{% endif %}
+
+{% elif language == "go" %}
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: {{ go_version | default("1.24") }}
+{% if cache_deps %}
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+{% endif %}
+{% if run_tests %}
+    - name: Test
+      run: go test -v -race -coverprofile=coverage.out ./...
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.out
+{% endif %}
+{% if run_lint %}
+    - name: Lint
+      run: |
+        go vet ./...
+        gofmt -l .
+{% endif %}
+{% if run_build %}
+    - name: Build
+      run: go build -v ./...
+{% endif %}
+
+{% elif language == "python" %}
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: {{ python_version | default("3.13") }}
+{% if cache_deps %}
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+{% endif %}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+{% if run_tests %}
+    - name: Test
+      run: |
+        pip install pytest pytest-cov
+        pytest --cov=./ --cov-report=xml
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+{% endif %}
+{% if run_lint %}
+    - name: Lint
+      run: |
+        pip install ruff
+        ruff check .
+{% endif %}
+
+{% elif language == "rust" %}
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        rust-version: {{ rust_version | default("stable") }}
+{% if cache_deps %}
+    - name: Cache cargo registry
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo index
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    - name: Cache cargo build
+      uses: actions/cache@v4
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+{% endif %}
+{% if run_tests %}
+    - name: Test
+      run: cargo test --verbose
+{% endif %}
+{% if run_lint %}
+    - name: Lint
+      run: cargo clippy -- -D warnings
+{% endif %}
+{% if run_build %}
+    - name: Build
+      run: cargo build --verbose
+{% endif %}
+
+{% elif language == "elixir" %}
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: {{ elixir_version | default("1.15") }}
+        otp-version: 26
+{% if cache_deps %}
+    - name: Cache mix deps
+      uses: actions/cache@v4
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+{% endif %}
+    - name: Install dependencies
+      run: mix deps.get
+{% if run_tests %}
+    - name: Test
+      run: mix test
+{% endif %}
+{% if run_lint %}
+    - name: Lint
+      run: mix format --check-formatted
+{% endif %}
+{% if run_build %}
+    - name: Build
+      run: mix compile
+{% endif %}
+{% endif %}
+
+{% if docker_build %}
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          {{ project_name | lower }}:latest
+          {{ project_name | lower }}:${{ github.sha }}
+{% endif %}

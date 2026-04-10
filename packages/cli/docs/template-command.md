@@ -99,7 +99,7 @@ to: src/types/{{ entityName | kebabCase }}.ts
 ---
 
 ---
-to: {{ output_dir }}/generated/{{ class_name | snakeCase }}.mjs
+to: {{ output_dir }}/{{ class_name | snakeCase }}.mjs
 ---
 ```
 
@@ -641,7 +641,7 @@ Positional Arguments:
 
 Options:
   -t, --template PATH   Path to Nunjucks template file (required)
-  -o, --output-dir DIR  Output directory for generated files (default: "./generated")
+  -o, --output-dir DIR  Output directory for generated files (default: "./src")
   -s, --subject URI     Focus on single RDF subject (replaces ?subject)
   -q, --sparql QUERY    SPARQL SELECT query (overrides frontmatter)
   --batch               Batch mode: one output per instance of --class-uri

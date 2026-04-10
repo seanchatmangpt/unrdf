@@ -1,0 +1,225 @@
+---
+to: "test/e2e/{{ test_name }}.spec.js"
+description: "Generate end-to-end test with browser automation"
+category: testing
+requires:
+  - test_name
+variables:
+  test_name: "Name of the E2E test suite"
+  base_url: "Base URL of the application (default: http://localhost:3000)"
+  browser: "Browser to use (chromium, firefox, webkit)"
+  viewports: "Array of viewport configurations (width, height, device)"
+  scenarios: "Array of E2E test scenarios"
+  timeout: "Default timeout in ms (default: 30000)"
+  retries: "Number of retries for flaky tests (default: 2)"
+  language: "Test framework (playwright, cypress)"
+mode: overwrite}
+
+
+
+---
+
+
+
+
+
+
+{% if language == "playwright" %}
+import { test, expect } from '@playwright/test';
+
+test.describe('{{ test_name }} E2E Tests', () => {
+  test.beforeAll(async ({ page }) => {
+    // Setup before all tests
+    console.log('Setting up E2E test environment...');
+  });
+
+  test.afterAll(async ({ page }) => {
+    // Cleanup after all tests
+    console.log('Tearing down E2E test environment...');
+  });
+
+{% for scenario in scenarios | default([{name: "user login", description: "should login successfully", steps: [{action: "navigate", url: "/login"}, {action: "fill", selector: "#username", value: "testuser"}, {action: "fill", selector: "#password", value: "password"}, {action: "click", selector: "button[type='submit']"}, {action: "waitForNavigation", url: "/dashboard"}]}]) %}
+  test('{{ scenario.description | default(scenario.name) }}', async ({ page }) => {
+    test.setTimeout({{ scenario.timeout | default(timeout) }});
+    test.slow();
+
+    // Test steps
+{% for step in scenario.steps %}
+    {% if step.action == "navigate" %}
+    // Navigate to URL
+    await page.goto('{{ base_url | default("http://localhost:3000") }}{{ step.url }}');
+    {% elif step.action == "fill" %}
+    // Fill input field
+    await page.fill('{{ step.selector }}', '{{ step.value }}');
+    {% elif step.action == "click" %}
+    // Click element
+    await page.click('{{ step.selector }}');
+    {% elif step.action == "waitForNavigation" %}
+    // Wait for navigation
+    await page.waitForURL('{{ step.url | base_url | default(base_url) }}');
+    {% elif step.action == "waitForSelector" %}
+    // Wait for element
+    await page.waitForSelector('{{ step.selector }}');
+    {% elif step.action == "screenshot" %}
+    // Take screenshot
+    await page.screenshot({ path: 'screenshots/{{ step.name | default("screenshot") }}.png' });
+    {% elif step.action == "assertText" %}
+    // Assert text content
+    await expect(page.locator('{{ step.selector }}')).toContainText('{{ step.text }}');
+    {% elif step.action == "assertVisible" %}
+    // Assert element is visible
+    await expect(page.locator('{{ step.selector }}')).toBeVisible();
+    {% elif step.action == "assertHidden" %}
+    // Assert element is hidden
+    await expect(page.locator('{{ step.selector }}')).toBeHidden();
+    {% endif %}
+{% endfor %}
+  });
+{% endfor %}
+});
+
+// Configure test options
+test.use({
+  // Viewport configurations
+  viewport: {{ viewports | default([{width: 1280, height: 720}]) | tojson }},
+  // Base URL
+  baseURL: '{{ base_url | default("http://localhost:3000") }}',
+  // Video recording on failure
+  video: 'on-first-retry',
+  // Screenshot on failure
+  screenshot: 'only-on-failure',
+  // Trace on failure
+  trace: 'retain-on-failure',
+});
+
+{% elsif language == "cypress" %}
+describe('{{ test_name }} E2E Tests', () => {
+  const baseUrl = '{{ base_url | default("http://localhost:3000") }}';
+
+  beforeEach(() => {
+    cy.visit(baseUrl);
+  });
+
+{% for scenario in scenarios | default([{name: "user login", description: "should login successfully", steps: []}]) %}
+  it('{{ scenario.description | default(scenario.name) }}', () => {
+    cy.viewport({{ viewports | default([{width: 1280, height: 720}]).0.width }}, {{ viewports | default([{width: 1280, height: 720}]).0.height }});
+
+    // Test steps
+{% for step in scenario.steps %}
+    {% if step.action == "fill" %}
+    cy.get('{{ step.selector }}').type('{{ step.value }}');
+    {% elif step.action == "click" %}
+    cy.get('{{ step.selector }}').click();
+    {% elif step.action == "waitFor" %}
+    cy.get('{{ step.selector }}', { timeout: {{ step.timeout | default(10000) }});
+    {% elif step.action == "assertText" %}
+    cy.get('{{ step.selector }}').should('contain.text', '{{ step.text }}');
+    {% elif step.action == "assertVisible" %}
+    cy.get('{{ step.selector }}').should('be.visible');
+    {% elif step.action == "assertHidden" %}
+    cy.get('{{ step.selector }}').should('not.be.visible');
+    {% elif step.action == "screenshot" %}
+    cy.screenshot('{{ step.name | default("screenshot") }}');
+    {% endif %}
+{% endfor %}
+  });
+{% endfor %}
+});
+
+{% endif %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, testing, verify, code, e2e-test)`
+- **Mode**: linguistic
+- **Genre**: testing
+- **Type**: verify
+- **Format**: code
+- **Structure**: e2e-test
+
+## Usage
+
+```bash
+# Generate E2E test
+unrdf template render \
+  --template packages/cli/templates/testing/e2e-test.njk \
+  --test-name "CheckoutFlow" \
+  --language "playwright" \
+  --base-url "http://localhost:3000"
+
+# Run E2E tests
+npx playwright test
+npx cypress run
+
+# Run with different browsers
+npx playwright test --project=chromium
+npx cypress run --browser chrome
+
+# Run in headless mode
+npx playwright test --headed
+```
+
+## Test Scenarios Example
+
+```json
+--scenarios '[
+  {
+    "name": "complete purchase",
+    "description": "should complete purchase flow",
+    "steps": [
+      {"action": "navigate", "url": "/products"},
+      {"action": "click", "selector": "#product-1"},
+      {"action": "click", "selector": "button.add-to-cart"},
+      {"action": "click", "selector": "a.cart"},
+      {"action": "click", "selector": "button.checkout"},
+      {"action": "fill", "selector": "#email", "value": "user@example.com"},
+      {"action": "fill", "selector": "#credit-card", "value": "4111111111111111"},
+      {"action": "click", "selector": "button.place-order"},
+      {"action": "waitForNavigation", "url": "/order-confirmation"},
+      {"action": "assertText", "selector": ".order-number", "text": "ORD"}
+    ]
+  }
+]'
+```
+
+## Viewport Configurations
+
+```json
+--viewports '[
+  {"width": 1920, "height": 1080, "device": "desktop"},
+  {"width": 768, "height": 1024, "device": "tablet"},
+  {"width": 375, "height": 667, "device": "mobile"}
+]'
+```
+
+## E2E Testing Best Practices
+
+1. **Test Critical Paths**: Focus on user-facing functionality
+2. **Use Realistic Data**: Test with production-like data
+3. **Handle Asynchrony**: Wait for async operations properly
+4. **Avoid Flaky Tests**: Use explicit waits, not fixed timeouts
+5. **Clean Up**: Reset state between tests
+6. **Parallel Execution**: Design tests to run in parallel
+7. **Monitor Performance**: Check load times and responsiveness
+
+## Browser Automation Tools
+
+### Playwright
+- Modern, fast, reliable
+- Cross-browser support
+- Auto-wait for elements
+- Network interception
+- Video recording
+
+### Cypress
+- Real-time reload
+- Time travel debugging
+- Stable across reruns
+- Interactive test runner
+- Easy debugging
+
+## References
+
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- [Cypress Best Practices](https://docs.cypress.io/guides/references/best-practices)
+- [E2E Testing Patterns](https://martinfowler.com/articles/mocksArentStubs.html)

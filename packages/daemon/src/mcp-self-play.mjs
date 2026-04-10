@@ -127,6 +127,7 @@ export class SelfPlayAgent {
 
       // Validate tool exists
       if (!this.toolRegistry[toolName]) {
+        episode.recordStep(toolName, input, null, { success: false, error: 'Tool not found' });
         episode.recordFeedback(-1, `Tool not found: ${toolName}`);
         episode.terminate(`unknown tool: ${toolName}`);
         break;

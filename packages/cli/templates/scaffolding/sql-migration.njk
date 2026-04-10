@@ -1,0 +1,59 @@
+---
+to: "{{ timestamp }}_{{ migration_name | snake_case }}.sql"
+description: "SQL migration with up/down transactions and rollback support"
+category: scaffolding
+requires:
+  - migration_name
+  - table_name
+  - timestamp
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+-- Migration: {{ migration_name }}
+-- Created: {{ timestamp | date("YYYY-MM-DD HH:mm:ss") }}
+-- Description: {{ migration_description }}
+
+-- Up migration
+BEGIN;
+
+{% if operation == 'create_table' %}
+CREATE TABLE {{ table_name }} (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+{% for field in fields %}
+-- Add custom field: {{ field.name }} ({{ field.type }})
+ALTER TABLE {{ table_name }} ADD COLUMN {{ field.name }} {{ field.type }}{% if field.required %} NOT NULL{% endif %}{% if field.default %} DEFAULT {{ field.default }}{% endif %};
+
+{% endfor %}
+{% elsif operation == 'add_column' %}
+ALTER TABLE {{ table_name }} ADD COLUMN {{ column_name }} {{ column_type }}{% if column_required %} NOT NULL{% endif %}{% if column_default %} DEFAULT {{ column_default }}{% endif %};
+
+{% elsif operation == 'create_index' %}
+CREATE INDEX idx_{{ table_name }}_{{ column_name }} ON {{ table_name }}({{ column_name }});
+
+{% endif %}
+COMMIT;
+
+-- Down migration
+BEGIN;
+
+{% if operation == 'create_table' %}
+DROP TABLE IF EXISTS {{ table_name }} CASCADE;
+
+{% elsif operation == 'add_column' %}
+ALTER TABLE {{ table_name }} DROP COLUMN IF EXISTS {{ column_name }};
+
+{% elsif operation == 'create_index' %}
+DROP INDEX IF EXISTS idx_{{ table_name }}_{{ column_name }};
+
+{% endif %}
+COMMIT;

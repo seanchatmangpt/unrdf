@@ -1,0 +1,132 @@
+---
+to: "queries/{{ query_name | snake_case }}.rq"
+description: "SPARQL query template with CONSTRUCT/SELECT support and parameterization"
+category: scaffolding
+requires:
+  - query_name
+  - query_type
+  - graph_uri
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+# {{ query_name | title }}
+# Type: {{ query_type }}
+# Description: {{ query_description }}
+# Generated: {{ timestamp | date("YYYY-MM-DD HH:mm:ss") }}
+
+{% if query_type == 'construct' %}
+# CONSTRUCT Query: Generate new triples from existing data
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX {{ prefix_namespace }}: <{{ namespace_uri }}>
+
+CONSTRUCT {
+  ?subject a {{ class_name }} ;
+    {{ prefix_namespace }}:name ?name ;
+    {{ prefix_namespace }}:description ?description ;
+    {{ prefix_namespace }}:createdAt ?createdAt ;
+    {{ prefix_namespace }}:updatedAt ?updatedAt .
+}
+WHERE {
+  GRAPH $graph_uri {
+    ?subject a {{ class_name }} ;
+      {{ prefix_namespace }}:name ?name ;
+      OPTIONAL { ?subject {{ prefix_namespace }}:description ?description . }
+      OPTIONAL { ?subject {{ prefix_namespace }}:createdAt ?createdAt . }
+      OPTIONAL { ?subject {{ prefix_namespace }}:updatedAt ?updatedAt . }
+  }
+}
+
+{% elif query_type == 'select' %}
+# SELECT Query: Retrieve and filter data
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX {{ prefix_namespace }}: <{{ namespace_uri }}>
+
+SELECT ?subject ?name ?description
+WHERE {
+  GRAPH $graph_uri {
+    ?subject a {{ class_name }} ;
+      {{ prefix_namespace }}:name ?name ;
+      OPTIONAL { ?subject {{ prefix_namespace }}:description ?description . }
+  }
+
+  # Filter parameters (if provided)
+  {% if filters %}
+  {% for filter in filters %}
+  {% if filter.type == 'string' %}
+  FILTER (regex(?name, "{{ filter.value }}", "i"))
+  {% elif filter.type == 'exact' %}
+  FILTER (?name = "{{ filter.value }}")
+  {% elif filter.type == 'range' %}
+  FILTER (?{{ filter.property }} >= "{{ filter.min }}" && ?{{ filter.property }} <= "{{ filter.max }}")
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+
+  # Limit results
+  LIMIT $limit
+  OFFSET $offset
+}
+
+{% elif query_type == 'ask' %}
+# ASK Query: Boolean check for existence
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX {{ prefix_namespace }}: <{{ namespace_uri }}>
+
+ASK {
+  GRAPH $graph_uri {
+    ?subject a {{ class_name }} ;
+      {{ prefix_namespace }}:name ?name .
+    FILTER (?name = "{{ entity_name }}")
+  }
+}
+
+{% elif query_type == 'update' %}
+# UPDATE Query: Modify data in the graph
+PREFIX {{ prefix_namespace }}: <{{ namespace_uri }}>
+
+DELETE {
+  GRAPH $graph_uri {
+    ?subject {{ prefix_namespace }}:status ?oldStatus .
+  }
+}
+INSERT {
+  GRAPH $graph_uri {
+    ?subject {{ prefix_namespace }}:status "{{ new_status }}" ;
+      {{ prefix_namespace }}:updatedAt "$timestamp"^^xsd:dateTime .
+  }
+}
+WHERE {
+  GRAPH $graph_uri {
+    ?subject a {{ class_name }} ;
+      {{ prefix_namespace }}:id "{{ entity_id }}" ;
+      {{ prefix_namespace }}:status ?oldStatus .
+  }
+}
+
+{% endif %}
+
+# =============================================================================
+# Parameters
+# =============================================================================
+# $graph_uri: The named graph to query (default: {{ graph_uri }})
+# $limit: Maximum number of results (default: 100)
+# $offset: Number of results to skip (default: 0)
+# {% if query_type == 'construct' %}
+# No additional parameters
+# {% elif query_type == 'select' %}
+# $entity_type: Filter by RDF type (optional)
+# {% elif query_type == 'ask' %}
+# $entity_name: Exact name match (required)
+# {% elif query_type == 'update' %}
+# $entity_id: ID of entity to update (required)
+# $new_status: New status value (required)
+# $timestamp: ISO 8601 timestamp (auto-generated)
+# {% endif %}

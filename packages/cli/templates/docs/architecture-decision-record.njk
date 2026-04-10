@@ -1,0 +1,111 @@
+---
+to: "docs/architecture/adr-{{ slug }}.md"
+description: "Generate Architecture Decision Record (ADR)"
+category: docs
+requires:
+  - title
+  - status
+variables:
+  title: "Decision title"
+  status: "Status (Accepted, Deprecated, Superseded, Proposed)"
+  slug: "URL-friendly slug for ADR"
+  context: "Context and problem statement"
+  decision: "Decision description"
+  consequences: "Positive and negative consequences"
+  alternatives: "Alternative approaches considered"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ title }} - Architecture Decision Record
+
+**Status**: {{ status }}
+**Date**: {{ now | date("YYYY-MM-DD") }}
+**Context**: {{ context | default("Technical decision context") }}
+
+## Context
+
+{{ context | default("Describe the context and problem statement that led to this decision.") }}
+
+## Decision
+
+{{ decision | default("Describe the decision that was made and why this approach was chosen.") }}
+
+## Rationale
+
+Explain why this decision was made:
+
+- **Performance**: {{ performance_rationale | default("N/A") }}
+- **Scalability**: {{ scalability_rationale | default("N/A") }}
+- **Maintainability**: {{ maintainability_rationale | default("N/A") }}
+- **Security**: {{ security_rationale | default("N/A") }}
+
+## Alternatives Considered
+
+{% for alternative in alternatives | default([]) %}
+### {{ alternative.title }}
+
+{{ alternative.description }}
+
+**Pros**:
+- {{ alternative.pros | join("\n- ") }}
+
+**Cons**:
+- {{ alternative.cons | join("\n- ") }}
+
+**Rejected because**: {{ alternative.rejection_reason }}
+
+{% endfor %}
+
+## Consequences
+
+### Positive
+
+- {{ positive_consequence_1 | default("Improved system performance") }}
+- {{ positive_consequence_2 | default("Better code maintainability") }}
+
+### Negative
+
+- {{ negative_consequence_1 | default("Increased complexity") }}
+- {{ negative_consequence_2 | default("Additional learning curve") }}
+
+## Implementation
+
+### Steps Required
+
+1. {{ step_1 | default("Update component architecture") }}
+2. {{ step_2 | default("Refactor existing code") }}
+3. {{ step_3 | default("Add tests for new approach") }}
+
+### Migration Strategy
+
+{{ migration_strategy | default("Gradual migration with feature flags") }}
+
+## Related Decisions
+
+- [ADR-001](adr-001.md) - Previous related decision
+- [ADR-003](adr-003.md) - Follow-up decision
+
+## References
+
+- [Reference 1](https://example.com)
+- [Reference 2](https://example.com)
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, decide, markdown, adr)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: decide
+- **Format**: markdown
+- **Structure**: adr---
+
+**Template**: This ADR follows the template from [ThoughtWorks Architecture Decision Records](https://www.thoughtworks.com/radar/techniques/prescriptive-test-driven-development.html).

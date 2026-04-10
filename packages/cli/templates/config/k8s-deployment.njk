@@ -1,0 +1,158 @@
+---
+to: "k8s/deployment.yaml"
+description: "Generate Kubernetes Deployment manifest"
+category: config
+requires:
+  - app_name
+  - image
+  - replicas
+variables:
+  app_name: "Application name"
+  image: "Container image (e.g., myapp:v1.0.0)"
+  replicas: "Number of replicas (default: 3)"
+  container_port: "Container port to expose"
+  resources_requests_cpu: "CPU resource requests (default: 100m)"
+  resources_requests_memory: "Memory resource requests (default: 128Mi)"
+  resources_limits_cpu: "CPU resource limits (default: 500m)"
+  resources_limits_memory: "Memory resource limits (default: 512Mi)"
+  liveness_probe_path: "Liveness probe endpoint (default: /healthz)"
+  readiness_probe_path: "Readiness probe endpoint (default: /ready)"
+  env_vars: "Array of environment variables (name, value, secret)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ app_name | lower }}
+  labels:
+    app: {{ app_name | lower }}
+    version: v1
+spec:
+  replicas: {{ replicas | default(3) }}
+  selector:
+    matchLabels:
+      app: {{ app_name | lower }}
+  template:
+    metadata:
+      labels:
+        app: {{ app_name | lower }}
+        version: v1
+    spec:
+      containers:
+      - name: {{ app_name | lower }}
+        image: {{ image }}
+        ports:
+        - name: http
+          containerPort: {{ container_port | default(8080) }}
+          protocol: TCP
+        resources:
+          requests:
+            cpu: {{ resources_requests_cpu | default("100m") }}
+            memory: {{ resources_requests_memory | default("128Mi") }}
+          limits:
+            cpu: {{ resources_limits_cpu | default("500m") }}
+            memory: {{ resources_limits_memory | default("512Mi") }}
+{% if liveness_probe_path or liveness_probe_path is same as true %}
+        livenessProbe:
+          httpGet:
+            path: {{ liveness_probe_path | default("/healthz") }}
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+{% endif %}
+{% if readiness_probe_path or readiness_probe_path is same as true %}
+        readinessProbe:
+          httpGet:
+            path: {{ readiness_probe_path | default("/ready") }}
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+{% endif %}
+{% if env_vars %}
+        env:
+{% for env in env_vars %}
+{% if env.secret %}
+        - name: {{ env.name }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ env.secret }}
+              key: {{ env.key | env.name }}
+{% else %}
+        - name: {{ env.name }}
+          value: "{{ env.value }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+      imagePullSecrets:
+      - name: regcred
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, yaml, k8s-deployment)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: k8s-deployment
+
+## Usage
+
+```bash
+# Apply deployment
+kubectl apply -f k8s/deployment.yaml
+
+# Check deployment status
+kubectl rollout status deployment/{{ app_name | lower }}
+
+# Scale deployment
+kubectl scale deployment/{{ app_name | lower }} --replicas=5
+
+# View pods
+kubectl get pods -l app={{ app_name | lower }}
+
+# Update deployment
+kubectl set image deployment/{{ app_name | lower }} \
+  {{ app_name | lower }}={{ image }} \
+  --record
+
+# Rollback deployment
+kubectl rollout undo deployment/{{ app_name | lower }}
+```
+
+## Strategy Options
+
+### RollingUpdate (default)
+```yaml
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+```
+
+### Recreate
+```yaml
+spec:
+  strategy:
+    type: Recreate
+```
+
+### Blue/Green
+Create separate deployment with `-green` suffix, then switch service selector.

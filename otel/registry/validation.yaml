@@ -1,0 +1,110 @@
+groups:
+  - id: registry.chatman.validation
+    type: attribute_group
+    display_name: 'Chatman Cross-System Validation Attributes'
+    brief: 'Attributes for validation acts across BusinessOS, Canopy, and OSA (SHACL, business rules, compliance).'
+    attributes:
+      - id: chatman.validation.trace_id
+        type: string
+        brief: 'Correlated trace ID across validation systems.'
+        examples: ['4bf92f3577b34da6a3ce929d0e0e4736']
+      - id: chatman.validation.source_system
+        type: string
+        brief: 'System performing validation.'
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+      - id: chatman.validation.validation_type
+        type: string
+        brief: 'Type of validation (shacl, business_rule, compliance, schema).'
+        examples: ['shacl', 'business_rule', 'compliance', 'schema']
+      - id: chatman.validation.validation_id
+        type: string
+        brief: 'Unique validation identifier (e.g., SHACL shape URI, rule ID).'
+        examples: ['https://ontology.businessos.dev/shapes/deal#DealShape', 'rule.max_amount']
+      - id: chatman.validation.target_resource
+        type: string
+        brief: 'Resource being validated (RDF subject IRI, entity ID).'
+        examples: ['https://example.com/deals/deal-001', 'agent-42']
+      - id: chatman.validation.validation_result
+        type: string
+        brief: 'Validation result (conforms, violates, error).'
+        examples: ['conforms', 'violates', 'error']
+      - id: chatman.validation.violation_count
+        type: int
+        brief: 'Number of constraint violations found.'
+        examples: [0, 1, 5, 10]
+      - id: chatman.validation.violation_details
+        type: string
+        brief: 'JSON-encoded violation details (path, constraint, message).'
+        examples: ['[{"path": "amount", "constraint": "maxInclusive", "message": "Exceeds maximum"}]']
+      - id: chatman.validation.severity
+        type: string
+        brief: 'Violation severity (critical, high, medium, low, info).'
+        examples: ['critical', 'high', 'medium', 'low', 'info']
+      - id: chatman.validation.framework
+        type: string
+        brief: 'Compliance framework (SOC2, HIPAA, GDPR, SOX, CUSTOM).'
+        examples: ['SOC2', 'HIPAA', 'GDPR', 'SOX', 'CUSTOM']
+      - id: chatman.validation.rule_id
+        type: string
+        brief: 'Compliance rule identifier (e.g., soc2.cc6.1).'
+        examples: ['soc2.cc6.1', 'hipaa.164.312.a1', 'gdpr.art.32']
+      - id: chatman.validation.action
+        type: string
+        brief: 'Action taken on validation failure (escalate, create_gap, notify, audit).'
+        examples: ['escalate', 'create_gap', 'notify', 'audit']
+      - id: chatman.validation.soft_fail
+        type: boolean
+        brief: 'True if validation soft-fails (logs but does not block).'
+        examples: [true, false]
+      - id: chatman.validation.latency_ms
+        type: double
+        brief: 'Validation latency in milliseconds.'
+        examples: [12.5, 45.2, 100.0]
+      - id: chatman.validation.shacl_shape
+        type: string
+        brief: 'SHACL shape IRI being validated.'
+        examples: ['https://ontology.businessos.dev/shapes/deal#DealShape']
+      - id: chatman.validation.shacl_focus_node
+        type: string
+        brief: 'SHACL focus node (subject being validated).'
+        examples: ['https://example.com/deals/deal-001']
+      - id: chatman.validation.shacl_result_message
+        type: string
+        brief: 'SHACL validation result message.'
+        examples: ['Validation conforms to shape DealShape', '2 violations found']
+      - id: chatman.validation.business_rule_condition
+        type: string
+        brief: 'Business rule condition expression.'
+        examples: ['user.role != admin', 'data.encrypted == true']
+      - id: chatman.validation.business_rule_evaluation
+        type: string
+        brief: 'Rule evaluation result (true, false, error).'
+        examples: ['true', 'false', 'error']
+      - id: chatman.validation.compliance_check
+        type: string
+        brief: 'Compliance check name.'
+        examples: ['logical_access_control', 'data_encryption', 'audit_trail']
+      - id: chatman.validation.compliance_status
+        type: string
+        brief: 'Compliance status (compliant, non_compliant, partial).'
+        examples: ['compliant', 'non_compliant', 'partial']
+      - id: chatman.validation.evidence_url
+        type: string
+        brief: 'URL to evidence (audit log, screenshot, report).'
+        examples: ['https://audit.example.com/evidence/abc123']
+      - id: chatman.validation.validator_id
+        type: string
+        brief: 'Validator component identifier.'
+        examples: ['shacl-validator', 'business-rule-engine', 'soc2-engine']
+      - id: chatman.validation.wvda_compliant
+        type: boolean
+        brief: 'True if validation is WvdA-compliant (deadlock-free, bounded, live).'
+        examples: [true, false]
+      - id: chatman.validation.ocel_activity
+        type: string
+        brief: 'OCEL activity name for validation event log.'
+        examples: ['validate', 'check_compliance', 'audit']
+      - id: chatman.validation.ocel_object_type
+        type: string
+        brief: 'OCEL object type being validated.'
+        examples: ['deal', 'user', 'agent', 'configuration']

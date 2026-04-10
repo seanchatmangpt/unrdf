@@ -1,0 +1,244 @@
+---
+to: "test/{{ test_name }}.test.js"
+description: "Generate unit test following Chicago TDD principles"
+category: testing
+requires:
+  - test_name
+variables:
+  test_name: "Name of the test suite"
+  module_name: "Module being tested"
+  language: "Programming language (javascript, typescript, python, go, rust)"
+  functions: "Array of function test definitions"
+  setup_code: "Code to run before each test"
+  teardown_code: "Code to run after each test"
+  imports: "Array of module imports"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+{% if language == "javascript" or language == "typescript" %}
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+
+{% for import in imports | default([]) %}
+import { {{ import.name }} } from '{{ import.path }}';
+{% endfor %}
+
+describe('{{ test_name }}', () => {
+{% if setup_code %}
+  beforeEach(() => {
+    {{ setup_code }}
+  });
+{% endif %}
+
+{% if teardown_code %}
+  afterEach(() => {
+    {{ teardown_code }}
+  });
+{% endif %}
+
+{% for func in functions | default([{name: "add", description: "adds two numbers", given: "a and b", when: "both are positive", then: "returns sum"}, {name: "subtract", description: "subtracts b from a", given: "a is greater than b", when: "both are positive", then: "returns difference"}]) %}
+  describe('{{ func.name }}', () => {
+    it('{{ func.description | default(func.name + " works") }}', () => {
+      // Given: {{ func.given | default("valid inputs") }}
+      const input = {
+        {% for key, value in func.inputs | default({}) %}
+        {{ key }}: {{ value }},
+        {% endfor %}
+      };
+
+      // When: {{ func.when | default("function is called") }}
+      const result = {{ module_name }}.{{ func.name }}(
+        {% for key, value in func.inputs | default({}) %}
+        {{ value }},
+        {% endfor %}
+      );
+
+      // Then: {{ func.then | default("returns expected result") }}
+      {% for assertion in func.assertions | default([{"field": "result", "operator": "toBe", "expected": "expected"}]) %}
+      expect({{ assertion.field }}).{{ assertion.operator }}({{ assertion.expected }});
+      {% endfor %}
+    });
+  });
+
+{% endfor %}
+});
+
+{% elif language == "python" %}
+import pytest
+{% for import in imports | default([]) %}
+from {{ import.path }} import {{ import.name }}
+{% endfor %}
+
+class Test{{ test_name | replace(" ", "_") | title }}:
+{% if setup_code %}
+    def setup_method(self):
+        """Setup before each test"""
+        {{ setup_code }}
+{% endif %}
+
+{% if teardown_code %}
+    def teardown_method(self):
+        """Teardown after each test"""
+        {{ teardown_code }}
+{% endif %}
+
+{% for func in functions | default([]) %}
+    def test_{{ func.name | replace(" ", "_") | lower }}(self):
+        """
+        {{ func.description | default(func.name + " test") }}
+
+        Given: {{ func.given | default("valid inputs") }}
+        When: {{ func.when | default("function is called") }}
+        Then: {{ func.then | default("returns expected result") }}
+        """
+        # Given
+        input = {
+            {% for key, value in func.inputs | default({}) %}
+            "{{ key }}": {{ value }},
+            {% endfor %}
+        }
+
+        # When
+        result = {{ module_name }}.{{ func.name }}(**input)
+
+        # Then
+        {% for assertion in func.assertions | default([]) %}
+        assert {{ assertion.field }} {{ assertion.operator }} {{ assertion.expected }}
+        {% endfor %}
+{% endfor %}
+
+{% elif language == "go" %}
+package {{ module_name | lower }}_test
+
+import (
+    "testing"
+
+    {% for import in imports | default([]) %}
+    "{{ import.path }}"
+    {% endfor %}
+)
+
+{% if setup_code %}
+func setup{{ test_name | replace(" ", "_") | title }}(t *testing.T) {
+    {{ setup_code }}
+}
+
+func teardown{{ test_name | replace(" ", "_") | title }}(t *testing.T) {
+    {{ teardown_code | default("// No teardown needed") }}
+}
+{% endif %}
+
+{% for func in functions | default([]) %}
+func Test{{ func.name | title }}(t *testing.T) {
+    // Given: {{ func.given | default("valid inputs") }}
+    input := {
+        {% for key, value in func.inputs | default({}) %}
+        {{ key }}: {{ value }},
+        {% endfor %}
+    }
+
+    // When: {{ func.when | default("function is called") }}
+    result := {{ func.name }}(input)
+
+    // Then: {{ func.then | default("returns expected result") }}
+    {% for assertion in func.assertions | default([]) %}
+    if result.{{ assertion.field }} != {{ assertion.expected }} {
+        t.Errorf("Expected {{ assertion.field }} to be {{ assertion.expected }}, got %v", result.{{ assertion.field }})
+    }
+    {% endfor %}
+}
+{% endfor %}
+
+{% elif language == "rust" %}
+{% for import in imports | default([]) %}
+use {{ import.path }}::{{ import.name }};
+{% endfor %}
+
+{% if setup_code %}
+fn {{ setup_code }}
+{% endif %}
+
+{% for func in functions | default([]) %}
+#[test]
+fn test_{{ func.name | replace(" ", "_") | lower }}() {
+    // Given: {{ func.given | default("valid inputs") }}
+    let input = {{ func.inputs | default("{}") | indent(4) }};
+
+    // When: {{ func.when | default("function is called") }}
+    let result = {{ func.name }}(input);
+
+    // Then: {{ func.then | default("returns expected result") }}
+    {% for assertion in func.assertions | default([]) %}
+    assert_eq!(result.{{ assertion.field }}, {{ assertion.expected }});
+    {% endfor %}
+}
+{% endfor %}
+
+{% if teardown_code %}
+fn {{ teardown_code }}
+{% endif %}
+{% endif %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, testing, verify, code, unit-test)`
+- **Mode**: linguistic
+- **Genre**: testing
+- **Type**: verify
+- **Format**: code
+- **Structure**: unit-test
+
+## Usage
+
+```bash
+# Generate unit test
+unrdf template render \
+  --template packages/cli/templates/testing/unit-test.njk \
+  --test-name "Calculator" \
+  --language "javascript" \
+  --functions '[
+    {
+      "name": "add",
+      "description": "adds two numbers",
+      "inputs": {"a": 1, "b": 2},
+      "assertions": [
+        {"field": "result", "operator": "toBe", "expected": 3}
+      ]
+    }
+  ]'
+
+# Run tests
+npm test          # JavaScript
+pytest            # Python
+go test ./...     # Go
+cargo test        # Rust
+```
+
+## Chicago TDD Principles
+
+All generated tests follow Chicago TDD:
+
+1. **Red**: Write failing test first
+2. **Green**: Implement minimal code to pass
+3. **Refactor**: Clean code without changing behavior
+
+## Test Characteristics
+
+- **Fast**: Tests run in milliseconds
+- **Independent**: No test depends on another
+- **Repeatable**: Same result every time
+- **Self-Checking**: Clear PASS/FAIL assertions
+- **Timely**: Written at same time as implementation
+
+## References
+
+- [Chicago TDD](https://www.jamesshore.com/tdd/)
+- [Jest Best Practices](https://jestjs.io/docs/getting-started)
+- [Pytest Documentation](https://docs.pytest.org/)

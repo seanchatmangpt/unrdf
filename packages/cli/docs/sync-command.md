@@ -213,6 +213,32 @@ variables:
 | `mode`        | Write mode: `overwrite`, `append`, `skip_existing` |
 | `variables`   | Custom variables available in template             |
 
+#### Auto-Quoting of Template Syntax
+
+When writing template frontmatter, values containing `{{ }}` template syntax are **automatically quoted** during processing. This means you can write cleaner frontmatter without manual quoting:
+
+```yaml
+# This works - auto-quoted during processing:
+to: {{ output_dir }}/generated.py
+description: Generate models from {{ ontology_name }}
+
+# This also works - manually quoted (backward compatible):
+to: "{{ output_dir }}/generated.py"
+description: "Generate models from {{ ontology_name }}"
+```
+
+**What gets auto-quoted:**
+- Values containing `{{` or `}}`
+- Strings with template syntax anywhere in the value
+
+**What does NOT get auto-quoted:**
+- Boolean values: `true`, `false`
+- Null: `null`
+- Numbers: `42`, `3.14`
+- Already-quoted strings (no double-quoting)
+
+This feature ensures compatibility with js-yaml 3.x's strict parsing while maintaining backward compatibility with existing templates.
+
 ### Available Context Variables
 
 | Variable         | Type   | Description                     |

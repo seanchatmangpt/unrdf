@@ -100,7 +100,7 @@ import { customFilters } from './templates/filters.mjs';
 export default {
   rdfSource: './ontology.ttl',
   templatesDir: './templates',
-  outputDir: './generated',
+  outputDir: './src',
   filters: customFilters,
 };
 ```
@@ -180,7 +180,7 @@ timeout 10s unrdf sync --dry-run --verbose
 Verify generated content:
 
 ```bash
-timeout 10s unrdf sync && cat generated/person.mjs | head -15
+timeout 10s unrdf sync && cat src/person.mjs | head -15
 ```
 
 **Expected output:**

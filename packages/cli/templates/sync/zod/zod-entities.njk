@@ -1,13 +1,18 @@
 ---
-to: {{ output_dir }}/schemas/entities.mjs
-description: Generates Zod validation schemas for entities from RDF ontology
+to: "{{ output_dir }}/schemas/entities.mjs"
+description: "Generates Zod validation schemas for entities from RDF ontology"
 requires:
   - sparql_results: Array of SPARQL query results with ?entityName, ?propertyName, ?propertyType, ?required, ?description
   - now: Current timestamp for generation metadata
 filters:
   - zod_type: Converts RDF/XSD types to Zod schema types
   - camel_case: Converts to camelCase for JavaScript identifiers
+
+category: codegen
+
 ---
+
+
 /**
  * @file Entity Validation Schemas
  * @module schemas/entities

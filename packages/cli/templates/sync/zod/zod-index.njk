@@ -1,12 +1,17 @@
 ---
-to: {{ output_dir }}/schemas/index.mjs
-description: Barrel export file for all generated Zod schemas
+to: "{{ output_dir }}/schemas/index.mjs"
+description: "Barrel export file for all generated Zod schemas"
 requires:
   - now: Current timestamp for generation metadata
   - entities: List of entity names (from entities template)
   - operations: List of operation names (from requests template)
   - api_version: API version string
+
+category: codegen
+
 ---
+
+
 /**
  * @file Schema Index
  * @module schemas

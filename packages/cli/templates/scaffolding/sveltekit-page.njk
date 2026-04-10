@@ -1,0 +1,46 @@
+---
+to: "{{ route_path | replace('/', '_') }}/+page.svelte"
+description: "SvelteKit page with load function and server-side data fetching"
+category: scaffolding
+requires:
+  - route_path
+  - page_title
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+<script lang="ts">
+	import type { PageData, PageServerLoad } from './$types';
+
+	export let data: PageData;
+
+	// Page props will be available here
+	let { items, metadata } = data;
+</script>
+
+<svelte:head>
+	<title>{{ page_title }}</title>
+	<meta name="description" content="{{ page_title }} page" />
+</svelte:head>
+
+<h1>{{ page_title }}</h1>
+
+{#if items && items.length > 0}
+	<ul>
+		{#each items as item}
+			<li>
+				<strong>{item.name}</strong>: {item.description}
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<p>No items found.</p>
+{/if}
+
+{#if metadata}
+	<footer>
+		<small>Last updated: {new Date(metadata.updatedAt).toLocaleString()}</small>
+	</footer>
+{/if}

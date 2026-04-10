@@ -31,7 +31,7 @@ function checkCoverage() {
 
     // Parse coverage from output
     const lines = result.split('\n');
-    const coverageLine = lines.find((line) => line.includes('% stmt'));
+    const coverageLine = lines.find(line => line.includes('% stmt'));
 
     if (coverageLine) {
       const match = coverageLine.match(/(\d+\.?\d*)%/);
@@ -105,7 +105,10 @@ async function runLint() {
  */
 function checkFileSize() {
   try {
-    const files = glob.sync('packages/**/*.mjs', { cwd: projectRoot, ignore: ['**/node_modules/**'] });
+    const files = glob.sync('packages/**/*.mjs', {
+      cwd: projectRoot,
+      ignore: ['**/node_modules/**'],
+    });
     const violations = [];
 
     for (const file of files) {
@@ -183,7 +186,10 @@ function checkNoTypeScript() {
  */
 function checkN3Imports() {
   try {
-    const files = glob.sync('packages/**/*.mjs', { cwd: projectRoot, ignore: ['**/node_modules/**'] });
+    const files = glob.sync('packages/**/*.mjs', {
+      cwd: projectRoot,
+      ignore: ['**/node_modules/**'],
+    });
     const violations = [];
 
     for (const file of files) {

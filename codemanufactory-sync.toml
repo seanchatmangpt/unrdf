@@ -1,0 +1,28 @@
+# UNRDF Sync Configuration for CodeManufactory Public O v2
+
+[general]
+output_dir = "./generated/codemanufactory"
+template_dir = "/Users/sac/ostar/templates"
+
+[[ontologies]]
+source = "/Users/sac/Downloads/codemanufactory-public-o-v2.ttl"
+format = "turtle"
+prefix = "cmf"
+
+# Generate semantic convention registries
+[[ontologies.rules]]
+template = "semantic-convention-generator"
+to = "semconv/{{ semanticConventionName | snake_case }}.yaml"
+mode = "overwrite"
+
+# Generate benchmark runners
+[[ontologies.rules]]
+template = "benchmark-runner"
+to = "benchmarks/{{ benchmarkName | snake_case }}_runner.mjs"
+mode = "overwrite"
+
+# Generate validation runners
+[[ontologies.rules]]
+template = "validation-runner"
+to = "validation/{{ validationName | snake_case }}_runner.mjs"
+mode = "overwrite"

@@ -1,0 +1,284 @@
+---
+to: "docs/reference/api.md"
+description: "Generate API documentation from OpenAPI/Swagger spec"
+category: docs
+requires:
+  - api_title
+  - version
+variables:
+  api_title: "API title"
+  version: "API version"
+  base_path: "Base API path (default: /api/v1)"
+  servers: "Array of server objects (url, description)"
+  tags: "Array of tag objects (name, description)"
+  auth_type: "Authentication type (none, apikey, oauth2, jwt)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ api_title }} API Reference
+
+**Version**: {{ version }}
+**Base Path**: {{ base_path | default("/api/v1") }}
+
+## Overview
+
+This API provides endpoints for managing {{ api_title | lower }} resources.
+
+## Authentication
+
+{% if auth_type == "apikey" %}
+### API Key Authentication
+
+Include your API key in the request header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Get your API key from the dashboard.
+{% elif auth_type == "oauth2" %}
+### OAuth2 Authentication
+
+1. Obtain access token via OAuth2 flow
+2. Include token in request header:
+
+```
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+{% elif auth_type == "jwt" %}
+### JWT Authentication
+
+1. Obtain JWT token via login endpoint
+2. Include token in request header:
+
+```
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+{% else %}
+No authentication required.
+{% endif %}
+
+## Servers
+
+{% for server in servers | default([{url: "http://localhost:8080", description: "Development server"}]) %}
+- **{{ server.description }}**: {{ server.url }}
+{% endfor %}
+
+## Tags
+
+{% for tag in tags | default([{name: "users", description: "User management"}, {name: "data", description: "Data operations"}]) %}
+### {{ tag.name | title }}
+{{ tag.description }}
+{% endfor %}
+
+## Endpoints
+
+{% for tag in tags | default([{name: "users"}]) %}
+
+### {{ tag.name | title }}
+
+#### List {{ tag.name }}
+
+```http
+GET {{ base_path | default("/api/v1") }}/{{ tag.name }}
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "name": "string",
+      "created_at": "timestamp"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 100
+  }
+}
+```
+
+#### Get {{ tag.name | slice(0, -1) }}
+
+```http
+GET {{ base_path | default("/api/v1") }}/{{ tag.name }}/{id}
+```
+
+**Parameters**:
+- `id` (path, required): Resource identifier
+
+**Response**: `200 OK`
+
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "string",
+    "created_at": "timestamp",
+    "updated_at": "timestamp"
+  }
+}
+```
+
+#### Create {{ tag.name | slice(0, -1) }}
+
+```http
+POST {{ base_path | default("/api/v1") }}/{{ tag.name }}
+```
+
+**Request Body**:
+
+```json
+{
+  "name": "string",
+  "data": "object"
+}
+```
+
+**Response**: `201 Created`
+
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "string",
+    "created_at": "timestamp"
+  }
+}
+```
+
+#### Update {{ tag.name | slice(0, -1) }}
+
+```http
+PUT {{ base_path | default("/api/v1") }}/{{ tag.name }}/{id}
+```
+
+**Parameters**:
+- `id` (path, required): Resource identifier
+
+**Request Body**:
+
+```json
+{
+  "name": "string",
+  "data": "object"
+}
+```
+
+**Response**: `200 OK`
+
+```json
+{
+  "data": {
+    "id": "uuid",
+    "name": "string",
+    "updated_at": "timestamp"
+  }
+}
+```
+
+#### Delete {{ tag.name | slice(0, -1) }}
+
+```http
+DELETE {{ base_path | default("/api/v1") }}/{{ tag.name }}/{id}
+```
+
+**Parameters**:
+- `id` (path, required): Resource identifier
+
+**Response**: `204 No Content`
+
+{% endfor %}
+
+## Error Responses
+
+### 400 Bad Request
+
+```json
+{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Validation failed",
+    "details": {
+      "field": "name",
+      "issue": "required"
+    }
+  }
+}
+```
+
+### 401 Unauthorized
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication required"
+  }
+}
+```
+
+### 404 Not Found
+
+```json
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Resource not found"
+  }
+}
+```
+
+### 500 Internal Server Error
+
+```json
+{
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "An unexpected error occurred"
+  }
+}
+```
+
+## Rate Limiting
+
+API requests are rate limited to 1000 requests per hour per IP address.
+
+The rate limit headers are included in every response:
+
+```
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1617184000
+```
+
+## Changelog
+
+### {{ version }}
+
+- Initial release
+- CRUD operations for all resources
+- OAuth2 authentication
+- Rate limiting
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, inform, markdown, api-reference)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: inform
+- **Format**: markdown
+- **Structure**: api-reference

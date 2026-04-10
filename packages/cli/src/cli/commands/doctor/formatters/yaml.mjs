@@ -17,11 +17,7 @@ export function formatYAML(results) {
     warnings: results.warnings,
     failed: results.failedChecks,
     overallStatus:
-      results.failedChecks === 0
-        ? 'healthy'
-        : results.failedChecks <= 3
-          ? 'degraded'
-          : 'unhealthy',
+      results.failedChecks === 0 ? 'healthy' : results.failedChecks <= 3 ? 'degraded' : 'unhealthy',
   };
 
   let yaml = `# UNRDF Doctor Health Check Report\n`;

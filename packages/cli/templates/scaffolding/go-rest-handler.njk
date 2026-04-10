@@ -1,0 +1,214 @@
+---
+to: "internal/handlers/{{ resource_name | snake_case }}_handler.go"
+description: "Go REST handler with OTEL tracing, structured logging, and error handling"
+category: scaffolding
+requires:
+  - resource_name
+  - package_name
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+package handlers
+
+import (
+	"encoding/json"
+	"log/slog"
+	"net/http"
+	"strconv"
+
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+
+	"{{ package_name }}/internal/services"
+)
+
+// Handler handles HTTP requests for {{ resource_name }}
+type Handler struct {
+	service *services.{{ resource_name | camel_case }}Service
+	logger  *slog.Logger
+	tracer  trace.Tracer
+}
+
+// NewHandler creates a new {{ resource_name }} handler
+func NewHandler(service *services.{{ resource_name | camel_case }}Service, logger *slog.Logger) *Handler {
+	return &Handler{
+		service: service,
+		logger:  logger,
+		tracer:  otel.Tracer("{{ package_name }}"),
+	}
+}
+
+// List handles GET /{{ resource_name | snake_case }}
+func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx, span := h.tracer.Start(ctx, "{{ resource_name | snake_case }}.list")
+	defer span.End()
+
+	// Parse query parameters
+	limit := 50
+	offset := 0
+
+	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil {
+			limit = l
+		}
+	}
+
+	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
+		if o, err := strconv.Atoi(offsetStr); err == nil {
+			offset = o
+		}
+	}
+
+	span.SetAttributes(
+		attribute.Int("{{ resource_name | snake_case }}.limit", limit),
+		attribute.Int("{{ resource_name | snake_case }}.offset", offset),
+	)
+
+	// Call service
+	items, err := h.service.List(ctx, limit, offset)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		h.logger.Error("Failed to list {{ resource_name }}", "error", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	span.SetAttributes(
+		attribute.Int("{{ resource_name | snake_case }}.count", len(items)),
+	)
+	span.SetStatus(codes.Ok, "")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"items": items,
+		"count": len(items),
+	})
+}
+
+// Get handles GET /{{ resource_name | snake_case }}/:id
+func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx, span := h.tracer.Start(ctx, "{{ resource_name | snake_case }}.get")
+	defer span.End()
+
+	// Extract ID from path
+	id := r.PathValue("id")
+	span.SetAttributes(attribute.String("{{ resource_name | snake_case }}.id", id))
+
+	// Call service
+	item, err := h.service.Get(ctx, id)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		h.logger.Error("Failed to get {{ resource_name }}", "id", id, "error", err)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	span.SetStatus(codes.Ok, "")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(item)
+}
+
+// Create handles POST /{{ resource_name | snake_case }}
+func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx, span := h.tracer.Start(ctx, "{{ resource_name | snake_case }}.create")
+	defer span.End()
+
+	// Decode request body
+	var input services.Create{{ resource_name | singular | camel_case }}Input
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "Invalid request body")
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	span.SetAttributes(
+		attribute.String("{{ resource_name | snake_case }}.input.name", input.Name),
+	)
+
+	// Call service
+	item, err := h.service.Create(ctx, input)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		h.logger.Error("Failed to create {{ resource_name }}", "error", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	span.SetStatus(codes.Ok, "")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(item)
+}
+
+// Update handles PUT /{{ resource_name | snake_case }}/:id
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx, span := h.tracer.Start(ctx, "{{ resource_name | snake_case }}.update")
+	defer span.End()
+
+	// Extract ID from path
+	id := r.PathValue("id")
+	span.SetAttributes(attribute.String("{{ resource_name | snake_case }}.id", id))
+
+	// Decode request body
+	var input services.Update{{ resource_name | singular | camel_case }}Input
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "Invalid request body")
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Call service
+	item, err := h.service.Update(ctx, id, input)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		h.logger.Error("Failed to update {{ resource_name }}", "id", id, "error", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	span.SetStatus(codes.Ok, "")
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(item)
+}
+
+// Delete handles DELETE /{{ resource_name | snake_case }}/:id
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx, span := h.tracer.Start(ctx, "{{ resource_name | snake_case }}.delete")
+	defer span.End()
+
+	// Extract ID from path
+	id := r.PathValue("id")
+	span.SetAttributes(attribute.String("{{ resource_name | snake_case }}.id", id))
+
+	// Call service
+	if err := h.service.Delete(ctx, id); err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		h.logger.Error("Failed to delete {{ resource_name }}", "id", id, "error", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	span.SetStatus(codes.Ok, "")
+
+	w.WriteHeader(http.StatusNoContent)
+}

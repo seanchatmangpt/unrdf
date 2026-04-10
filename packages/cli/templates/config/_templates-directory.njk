@@ -1,0 +1,169 @@
+---
+to: "_templates/.gitkeep"
+description: "Initialize local templates directory for project-specific overrides"
+category: scaffolding
+requires: []
+variables: {}
+mode: skip_existing
+
+
+
+---
+
+
+
+
+
+
+
+# Local Templates Directory
+
+This directory allows you to define project-specific templates that override or extend the global unrdf templates.
+
+## Template Priority
+
+1. **Local templates** (`_templates/`) - Highest priority
+2. **Global templates** (`packages/cli/templates/`) - Fallback
+
+## Directory Structure
+
+```
+_templates/
+├── scaffolding/          # Project scaffolding templates
+│   ├── project-init.njk
+│   └── service-init.njk
+├── config/              # Configuration templates
+│   ├── dockerfile.njk
+│   └── k8s-deployment.njk
+├── docs/                # Documentation templates
+│   └── readme.njk
+└── .template-catalog.yaml # Local template catalog
+```
+
+## Creating Custom Templates
+
+### Step 1: Create template file
+
+Create a new template in `_templates/`:
+
+```nunjucks---
+to: "custom/path/{{ name }}.md"
+description: "My custom template"
+category: scaffolding
+requires:
+  - name
+variables:
+  name: "Resource name"
+mode: overwrite---
+
+# {{ name | title }}
+
+Generated from custom template.
+```
+
+### Step 2: Register in local catalog
+
+Create or update `_templates/.template-catalog.yaml`:
+
+```yaml
+templates:
+  scaffolding:
+    - name: my-template
+      path: _templates/scaffolding/my-template.njk
+      variables:
+        - name
+      category: scaffolding
+```
+
+### Step 3: Use custom template
+
+```bash
+# List all templates (includes local)
+unrdf template list
+
+# Use custom template
+unrdf template render --template _templates/scaffolding/my-template.njk
+```
+
+## Overriding Global Templates
+
+To override a global template, create a template with the same name in `_templates/`:
+
+```bash
+# Override global project-init.njk
+mkdir -p _templates/scaffolding
+# Create your custom _templates/scaffolding/project-init.njk
+```
+
+The local template will be used instead of the global one.
+
+## Template Discovery
+
+The `unrdf template` command automatically discovers:
+
+1. Global templates from `packages/cli/templates/`
+2. Local templates from `_templates/` in current directory
+3. Ancestral `_templates/` directories (searches up the directory tree)
+
+## Example: Project-Specific Agent Template
+
+```nunjucks---
+to: "agents/{{ agent_name | lower }}/IDENTITY.md"
+description: "Company-specific agent template with custom policies"
+category: scaffolding
+requires:
+  - agent_name
+  - capabilities
+variables:
+  agent_name: "Agent name"
+  capabilities: "Array of capability strings"
+mode: overwrite---
+
+# {{ agent_name }} Agent Identity
+
+> Custom agent for {{ company_name | default("Our Company") }}
+
+## Capabilities
+
+{% for capability in capabilities %}
+### {{ capability | title }}
+
+Company-specific implementation of {{ capability }}.
+
+{% endfor %}
+
+## Compliance
+
+All agent actions must comply with:
+- SOC2 security policies
+- Company data retention policies
+- Approved AI usage guidelines
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, inform, markdown, agent-identity)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: inform
+- **Format**: markdown
+- **Structure**: agent-identity
+```
+
+## Best Practices
+
+1. **Keep templates focused** - One template per concern
+2. **Use descriptive names** - Make template purpose clear
+3. **Document variables** - List all required and optional variables
+4. **Test locally** - Verify template renders before sharing
+5. **Version control** - Commit `_templates/` to your project
+
+## Ignoring Files
+
+To prevent certain files from being treated as templates, add them to `.templateignore`:
+
+```
+_templates/
+*.bak
+*.tmp
+draft-*
+```

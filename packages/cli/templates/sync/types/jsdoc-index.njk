@@ -1,10 +1,15 @@
 ---
-to: {{ output_dir }}/index.mjs
-description: Barrel export file for all generated type definitions
+to: "{{ output_dir }}/index.mjs"
+description: "Barrel export file for all generated type definitions"
 requires:
   - sparql_results: Array of entity bindings from ontology query
   - output_dir: Target output directory
+
+category: codegen
+
 ---
+
+
 /**
  * @file Generated Types Index
  * @module {{ module_name | default("generated/types") }}

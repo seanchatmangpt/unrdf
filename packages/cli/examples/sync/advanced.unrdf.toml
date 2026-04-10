@@ -22,7 +22,7 @@ source = "./ontology/complete-schema.ttl"
 format = "turtle"
 
 [generation]
-output_dir = "./src/generated"
+output_dir = "./src"
 
 # =============================================================================
 # Rule 1: Extract OWL Classes

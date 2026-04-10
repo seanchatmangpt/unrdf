@@ -539,7 +539,7 @@ export function createMCPServer() {
         "dryRun": z.boolean().describe('Print paths without writing').default(false).optional(),
         "file": z.string().describe('RDF file (Turtle, N-Triples, N-Quads, …). Optional if template sets `rdf:` in frontmatter.').optional(),
         "force": z.boolean().describe('Overwrite existing files').default(false).optional(),
-        "outputDir": z.string().describe('Output directory for generated files').default('./generated').optional(),
+        "outputDir": z.string().describe('Output directory for generated files').default('./src').optional(),
         "sparql": z.string().describe('SPARQL SELECT (overrides frontmatter `sparql:`)').optional(),
         "subject": z.string().describe('Focus subject URI; replaces ?subject in SPARQL when present').optional(),
         "template": z.string().describe('Template .njk path'),

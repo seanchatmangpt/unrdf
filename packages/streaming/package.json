@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/streaming",
-  "version": "26.4.7",
+  "version": "26.4.9",
   "description": "UNRDF Streaming - Change Feeds and Real-time Synchronization",
   "type": "module",
   "bin": {

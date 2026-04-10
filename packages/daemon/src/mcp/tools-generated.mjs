@@ -675,7 +675,7 @@ export const mcpGeneratedTools = [
         "outputDir": {
           type: 'string',
           description: 'Output directory for generated files',
-          default: './generated',
+          default: './src',
         },
         "sparql": {
           type: 'string',

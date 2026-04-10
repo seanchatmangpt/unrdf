@@ -49,7 +49,7 @@ async function main() {
     },
   });
 
-  const html = join(genOut, 'generated', 'alice-smith.html');
+  const html = join(genOut, 'src', 'alice-smith.html');
   const snippet = existsSync(html)
     ? readFileSync(html, 'utf8').slice(0, 120).replace(/\n/g, ' ')
     : '(missing)';

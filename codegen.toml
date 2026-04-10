@@ -8,5 +8,5 @@ source = "schemas/unrdf-packages.ttl"
 format = "turtle"
 
 [generation]
-output_dir = "codegen/generated/"
+output_dir = "codegen/"
 rules = []

@@ -18,7 +18,7 @@ project-root/
 ├── templates/
 │   └── class.mjs.hbs  # Handlebars templates
 └── lib/
-    └── generated/     # Output directory
+    └── src/           # Output directory
 ```
 
 ---
@@ -153,7 +153,7 @@ source = "${SCHEMA_PATH:-./ontology/schema.ttl}"
 prefixes = { ex = "${EXAMPLE_NS:-https://example.org/}" }
 
 [generation]
-output_dir = "${GEN_OUTPUT:-lib/generated}"
+output_dir = "${GEN_OUTPUT:-lib}"
 ```
 
 ---

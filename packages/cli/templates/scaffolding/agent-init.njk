@@ -1,0 +1,317 @@
+---
+to: "{{ agent_name | lower }}/IDENTITY.md"
+description: "Initialize agent with standard structure"
+category: scaffolding
+requires:
+  - agent_name
+  - agent_type
+  - capabilities
+  - parent_agent
+  - author
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ agent_name }} Agent Identity
+
+> {{ agent_type | title }} agent with {{ capabilities | join(", ") }} capabilities
+
+## Agent Overview
+
+**Name**: {{ agent_name }}
+**Type**: {{ agent_type }}
+**Capabilities**: {{ capabilities | join(", ") }}
+**Parent Agent**: {{ parent_agent | default("None") }}
+
+## Signal Classification
+
+**Mode**: {{ agent_mode | default("EXECUTE") }}
+**Genre**: {{ agent_genre | default("DIRECT") }}
+**Type**: {{ agent_type | lower }}
+**Format**: message
+**Weight**: {{ weight | default(0.5) }}
+
+## Capabilities
+
+{% for capability in capabilities %}
+### {{ capability | title }}
+
+{{ capability | default("No description provided") }}
+
+{% endfor %}
+
+## Agent Configuration
+
+### Memory
+
+```yaml
+memory:
+  type: "{{ memory_type | default("episodic") }}"
+  max_size: "{{ max_memory_size | default("1GB") }}"
+  retention: "{{ retention_period | default("7d") }}"
+```
+
+### Budget
+
+```yaml
+budget:
+  time_ms: {{ time_budget_ms | default(5000) }}
+  max_tokens: {{ max_tokens | default(4000) }}
+  tier: {{ budget_tier | default("normal") }}
+```
+
+### Tools
+
+```yaml
+tools:
+  - file
+  - system
+  - web
+  - agent
+  - code
+{% if additional_tools %}
+  - {{ additional_tools | join("\n  - ") }}
+{% endif %}
+```
+
+## Interface
+
+### Input Schema
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "description": "Task description for the agent"
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context information"
+    }
+  },
+  "required": ["task"]
+}
+```
+
+### Output Schema
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "string",
+      "description": "Execution result"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence score"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Supporting evidence"
+    }
+  }
+}
+```
+
+## Execution Flow
+
+```
+Input Task
+    ↓
+Signal Classification
+    ↓
+Capability Selection
+    ↓
+Tool Execution
+    ↓
+Result Aggregation
+    ↓
+Confidence Scoring
+    ↓
+Output Generation
+```
+
+## Examples
+
+### Basic Usage
+
+```javascript
+const agent = new {{ agent_name }}();
+
+const result = await agent.execute({
+  task: "Analyze the performance metrics",
+  context: {
+    timeframe: "last-24h",
+    threshold: 0.8
+  }
+});
+```
+
+### Advanced Usage
+
+```javascript
+const agent = new {{ agent_name }}({
+  budget: {
+    time_ms: 10000,
+    max_tokens: 8000,
+    tier: "high"
+  },
+  tools: ["file", "system", "code"]
+});
+
+const result = await agent.execute({
+  task: "Debug the failing integration test",
+  context: {
+    test_file: "integration/test/auth.test.js",
+    error_log: "logs/error.log"
+  }
+});
+```
+
+## Error Handling
+
+```javascript
+try {
+  const result = await agent.execute({ task: "Complex task" });
+} catch (error) {
+  // Handle errors
+  if (error.code === 'TIMEOUT') {
+    console.error('Agent execution timed out');
+  } else if (error.code === 'BUDGET_EXCEEDED') {
+    console.error('Agent exceeded budget constraints');
+  } else {
+    console.error('Unexpected error:', error.message);
+  }
+}
+```
+
+## Monitoring
+
+### Metrics
+
+- **Execution Time**: Time taken to complete tasks
+- **Success Rate**: Percentage of successful executions
+- **Confidence Distribution**: Average confidence scores
+- **Tool Usage**: Frequency of tool usage
+
+### Logging
+
+```javascript
+const agent = new {{ agent_name }}({
+  logging: {
+    level: "info",
+    format: "json",
+    destination: "console"
+  }
+});
+```
+
+### Tracing
+
+The agent emits OpenTelemetry spans for all executions:
+
+```javascript
+const tracer = trace.getTracer('{{ agent_name }}');
+const span = tracer.startSpan('agent.execute');
+```
+
+## Testing
+
+### Unit Tests
+
+```javascript
+describe('{{ agent_name }}', () => {
+  it('should execute basic task', async () => {
+    const agent = new {{ agent_name }}();
+    const result = await agent.execute({
+      task: "Test task"
+    });
+    expect(result.confidence).toBeGreaterThan(0.7);
+  });
+
+  it('should handle errors gracefully', async () => {
+    const agent = new {{ agent_name }}();
+    await expect(
+      agent.execute({ task: "Invalid task" })
+    ).rejects.toThrow('InvalidTaskError');
+  });
+});
+```
+
+### Integration Tests
+
+```javascript
+describe('{{ agent_name }} Integration', () => {
+  it('should integrate with parent agent', async () => {
+    const agent = new {{ agent_name }}();
+    const parent = new {{ parent_agent }}();
+    await parent.registerAgent(agent);
+    // Test integration
+  });
+});
+```
+
+## Deployment
+
+### Environment Variables
+
+```bash
+AGENT_NAME={{ agent_name | upper }}
+AGENT_TYPE={{ agent_type | upper }}
+CAPABILITIES={{ capabilities | join(",") | upper }}
+PARENT_AGENT={{ parent_agent | upper | default("NONE") }}
+LOG_LEVEL=info
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+```
+
+### Docker
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE {{ port | default(8080) }}
+CMD ["node", "src/index.js"]
+```
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [API Reference](docs/API.md)
+- [Examples](docs/EXAMPLES.md)
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+Copyright © {{ author }}. All rights reserved.
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, inform, markdown, agent-identity)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: inform
+- **Format**: markdown
+- **Structure**: agent-identity

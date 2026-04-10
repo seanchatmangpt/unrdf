@@ -10,6 +10,89 @@
 import matter from 'gray-matter';
 
 /**
+ * Frontmatter field schema — defines allowed keys, types, and constraints.
+ */
+export const FRONTMATTER_SCHEMA = {
+  /** Fields that must be present */
+  required: ['to'],
+
+  /** All recognized frontmatter keys grouped by category */
+  allowed: [
+    'to',
+    'mode',
+    'inject',
+    'append',
+    'prepend',
+    'lineAt',
+    'before',
+    'after',
+    'rdf',
+    'turtle',
+    'turtleData',
+    'sparql',
+    'skipIf',
+    'skip_if',
+    'unless_exists',
+    'eof_last',
+    'chmod',
+    'force',
+    'sh',
+    'sh_ignore_exit',
+    'from',
+    'requires',
+    'description',
+    'name',
+    'type',
+    'variables',
+    'filters',
+    // OStar template extensions
+    'category',
+    'author',
+  ],
+
+  /** Type expectations per key */
+  types: {
+    to: 'string',
+    mode: { type: 'string', enum: ['overwrite', 'append', 'skip_existing', 'prepend'] },
+    inject: 'boolean',
+    append: 'boolean',
+    prepend: 'boolean',
+    lineAt: 'number',
+    before: 'string',
+    after: 'string',
+    rdf: 'string',
+    sparql: 'string',
+    skipIf: 'string',
+    skip_if: 'string',
+    unless_exists: 'boolean',
+    eof_last: 'boolean',
+    chmod: 'string',
+    force: 'boolean',
+    sh: 'string',
+    sh_ignore_exit: 'boolean',
+    from: 'string',
+    requires: { type: 'oneOf', values: ['string', 'array'] },
+    description: 'string',
+    name: 'string',
+    type: 'string',
+    variables: 'object',
+    filters: 'object',
+  },
+
+  /** Groups of keys that are mutually exclusive */
+  exclusive: [
+    ['inject', 'append', 'prepend', 'lineAt'],
+    ['skipIf', 'skip_if'],
+  ],
+
+  /** Dependency rules: if key is present, companion must also be present */
+  requires: [
+    { key: 'before', companion: 'inject', message: '"before" requires "inject: true"' },
+    { key: 'after', companion: 'inject', message: '"after" requires "inject: true"' },
+  ],
+};
+
+/**
  * Parse YAML frontmatter + body from template file content.
  * Expects format:
  *   ---
@@ -68,7 +151,7 @@ export function getOperationMode(frontmatter) {
 
 /**
  * Evaluate a skip condition against template variables.
- * Supports: 'var', '!var', 'var==value', 'var!=value'
+ * Supports: 'var', '!var', 'var==value', 'var!=value', '/regex/' (Hygen parity)
  * Also supports 'skip_if' as snake_case alias for 'skipIf'
  * Ported from kgen-core FrontmatterParser
  * @param {Object} frontmatter
@@ -83,6 +166,23 @@ export function shouldSkip(frontmatter, variables) {
   if (!skipExpr) return false;
 
   const expr = skipExpr.trim();
+
+  // Check for regex pattern: /pattern/flags
+  const regexMatch = expr.match(/^\/(.+)\/([gimsuy]*)$/);
+  if (regexMatch) {
+    const pattern = regexMatch[1];
+    const flags = regexMatch[2];
+    try {
+      const regex = new RegExp(pattern, flags);
+      // Check all variable values for regex match
+      for (const val of Object.values(variables)) {
+        if (regex.test(String(val))) return true;
+      }
+      return false;
+    } catch {
+      // Invalid regex — fall through to legacy equality
+    }
+  }
 
   // Check for 'var==value' or 'var!=value'
   const eqMatch = expr.match(/^(\w+)(==|!=)(.+)$/);
@@ -128,7 +228,7 @@ export class FrontmatterParser {
   }
 
   /**
-   * Validate frontmatter against required/optional fields
+   * Validate frontmatter against full schema (required, allowed, types, exclusivity, combinations)
    * @param {Object} frontmatter
    * @returns {{valid: boolean, errors: string[], warnings: string[]}}
    */
@@ -143,37 +243,68 @@ export class FrontmatterParser {
       return { valid: errors.length === 0, errors, warnings };
     }
 
-    // Validate operation mode
-    const mode = getOperationMode(frontmatter);
-    if (mode.mode === 'before' || mode.mode === 'after') {
-      if (!mode.anchor) {
-        errors.push(`${mode.mode} directive requires anchor pattern`);
+    // 1. Required fields
+    for (const field of FRONTMATTER_SCHEMA.required) {
+      if (!(field in frontmatter) || frontmatter[field] == null) {
+        errors.push(`Required field missing: "${field}"`);
       }
     }
 
-    if (mode.mode === 'lineAt') {
-      if (typeof mode.line !== 'number' || mode.line < 1) {
-        errors.push('lineAt must be a positive number');
+    // 2. Unknown fields
+    for (const key of Object.keys(frontmatter)) {
+      if (!FRONTMATTER_SCHEMA.allowed.includes(key)) {
+        errors.push(`Unknown frontmatter key: "${key}"`);
       }
     }
 
-    // Validate mutually exclusive directives
-    const hasInject = frontmatter.inject;
-    const hasAppend = frontmatter.append;
-    const hasPrepend = frontmatter.prepend;
-    const hasLineAt = frontmatter.lineAt;
-    const modeCount = [hasInject, hasAppend, hasPrepend, hasLineAt].filter(Boolean).length;
-    if (modeCount > 1) {
-      errors.push('Cannot specify multiple operation modes (inject, append, prepend, lineAt)');
+    // 3. Type checking
+    for (const [key, schema] of Object.entries(FRONTMATTER_SCHEMA.types)) {
+      if (!(key in frontmatter)) continue;
+      const value = frontmatter[key];
+
+      if (schema.type === 'oneOf') {
+        // Special handling for 'requires' field which can be array
+        const actualType = Array.isArray(value) ? 'array' : typeof value;
+        if (!schema.values.includes(actualType)) {
+          errors.push(
+            `"${key}" must be one of types: ${schema.values.join(' | ')}, got ${actualType}`
+          );
+        }
+      } else if (schema.enum) {
+        if (typeof value !== schema.type || !schema.enum.includes(value)) {
+          errors.push(`"${key}" must be one of: ${schema.enum.join(', ')}, got "${value}"`);
+        }
+      } else {
+        if (typeof value !== schema) {
+          errors.push(`"${key}" must be ${schema}, got ${typeof value}`);
+        }
+      }
     }
 
-    // Warn about missing recommended fields
+    // 4. Mutually exclusive groups
+    for (const group of FRONTMATTER_SCHEMA.exclusive) {
+      const present = group.filter(k => frontmatter[k]);
+      if (present.length > 1) {
+        errors.push(
+          `Cannot specify both ${present.map(k => `"${k}"`).join(' and ')} — they are mutually exclusive`
+        );
+      }
+    }
+
+    // 5. Dependency rules
+    for (const rule of FRONTMATTER_SCHEMA.requires) {
+      if (rule.key in frontmatter && !(rule.companion in frontmatter)) {
+        errors.push(rule.message);
+      }
+    }
+
+    // 6. Warn about missing recommended fields
     const recommended = ['name', 'description', 'type'];
-    recommended.forEach(field => {
+    for (const field of recommended) {
       if (!(field in frontmatter)) {
         warnings.push(`Recommended field missing: ${field}`);
       }
-    });
+    }
 
     return { valid: errors.length === 0, errors, warnings };
   }

@@ -1,0 +1,345 @@
+groups:
+  - id: registry.chatman.invariants
+    type: attribute_group
+    display_name: 'Chatman Semantic Invariants — Laws for Lawful Cross-System Communication'
+    brief: 'Formal invariants proving semantic stability across interaction, time, and recomputation. These are LAWS, not just attributes.'
+
+    constraints:
+      - id: chatman.invariant.semantic_causality
+        type: invariant
+        brief: 'Semantic object identity is preserved across all system transformations.'
+        description: |
+          For any trace_id, the semantic identifiers (task_id, workflow_id, case_id) MUST remain
+          stable across all systems in the communication chain. No system may transform or remap
+          these identifiers.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ trace_id, ∀ systems s1, s2 ∈ chain:
+            s1.task_id == s2.task_id ∧
+            s1.workflow_id == s2.workflow_id ∧
+            s1.case_id == s2.case_id
+
+        violation_severity: critical
+
+        validation:
+          - type: span_attribute_correlation
+            check: 'task_id values identical across all spans with same trace_id'
+            error: 'semantic.causality.violation.task_id_mismatch'
+
+          - type: span_attribute_correlation
+            check: 'workflow_id values identical across all spans with same trace_id'
+            error: 'semantic.causality.violation.workflow_id_mismatch'
+
+          - type: span_attribute_correlation
+            check: 'case_id values stable (no duplicates, no orphaned case_ids)'
+            error: 'semantic.causality.violation.case_id_instability'
+
+      - id: chatman.invariant.otel_ocel_isomorphism
+        type: invariant
+        brief: 'OTel spans and OCEL events have 1:1 isomorphic mapping. No lossy conversion.'
+        description: |
+          Every OTel span MUST have exactly one corresponding OCEL event with equivalent
+          semantic fields. Conversion is lossless and bi-directional.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ otel_span: ∃! ocel_event:
+            ocel_event.activity == otel_span.name ∧
+            ocel_event.timestamp == otel_span.start_time ∧
+            ocel_event.trace_id == otel_span.trace_id ∧
+            attributes(ocel_event) ≡ attributes(otel_span)
+
+        violation_severity: critical
+
+        validation:
+          - type: bijection_check
+            check: 'Count(otel_spans) == Count(ocel_events) for same trace_id'
+            error: 'isomorphism.violation.count_mismatch'
+
+          - type: field_mapping
+            check: 'All OTel span attributes present in OCEL event attributes'
+            error: 'isomorphism.violation.lossy_conversion'
+
+          - type: no_orphan_events
+            check: 'No OCEL events without corresponding OTel span'
+            error: 'isomorphism.violation.orphan_ocel_event'
+
+          - type: no_orphan_spans
+            check: 'No OTel spans without corresponding OCEL event'
+            error: 'isomorphism.violation.orphan_otel_span'
+
+      - id: chatman.invariant.temporal_consistency
+        type: invariant
+        brief: 'Process state transitions are consistent across time. No orphan tasks or broken workflows.'
+        description: |
+          For any process instance (task, workflow, case), state transitions MUST follow valid
+          state machine rules over the observation window (default: 5 minutes). No transitions
+          may be skipped, and no terminal state may have subsequent transitions.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ process_id, ∀ times t1, t2 where t2 > t1:
+            state(process_id, t1) → state(process_id, t2) ∈ valid_transitions ∧
+            ¬∃ orphan: orphan.start_time < now ∧ orphan.end_time == null ∧
+            age(orphan) > max_process_lifetime
+
+        violation_severity: critical
+
+        validation:
+          - type: state_machine_check
+            check: 'All state transitions valid for process type'
+            error: 'temporal.violation.invalid_state_transition'
+
+          - type: orphan_detection
+            check: 'No tasks/workflows with start_time but no end_time exceeding max_lifetime'
+            error: 'temporal.violation.orphan_task'
+
+          - type: duplicate_prevention
+            check: 'No duplicate task_id/workflow_id/case_id in same observation window'
+            error: 'temporal.violation.duplicate_identifier'
+
+          - type: window_validation
+            observation_window_ms: 300000  # 5 minutes
+            check: 'All invariants hold over sliding window'
+            error: 'temporal.violation.window_breach'
+
+      - id: chatman.invariant.replay_determinism
+        type: invariant
+        brief: 'Receipt replay produces identical results. Same input → same output, guaranteed.'
+        description: |
+          For any receipt (captured execution trace), replaying the receipt with identical inputs
+          MUST produce byte-for-byte identical outputs. This is the mathematical foundation of
+          determinism: μ(O) = A and replay(O) = A.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ receipt: hash(replay(receipt.inputs)) == hash(receipt.outputs) ∧
+            receipt.timestamp != replay.timestamp ∧
+            receipt.trace_id == replay.trace_id
+
+        violation_severity: critical
+
+        validation:
+          - type: hash_comparison
+            check: 'BLAKE3 hash of original output matches hash of replay output'
+            error: 'determinism.violation.hash_mismatch'
+
+          - type: semantic_equivalence
+            check: 'Reproduced spans have identical attributes (except timestamp, span_id)'
+            error: 'determinism.violation.semantic_drift'
+
+          - type: causal_integrity
+            check: 'Replay produces identical trace_id chain and provenance_chain'
+            error: 'determinism.violation.provenance_break'
+
+      - id: chatman.invariant.closed_loop_completion
+        type: invariant
+        brief: 'Cross-system loops complete semantically. BusinessOS → Canopy → OSA → BusinessOS.'
+        description: |
+          Any cross-system workflow MUST complete a full semantic loop. For any trace_id originating
+          in BusinessOS, the chain MUST traverse: BusinessOS → Canopy → OSA → BusinessOS with
+          identical semantic identifiers preserved. Partial loops are violations.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ trace_id where source_system == "businessos":
+            ∃ complete_chain:
+              trace_id ∈ businessos_spans ∧
+              trace_id ∈ canopy_spans ∧
+              trace_id ∈ osa_spans ∧
+              final_span(businessos).trace_id == initial_trace_id ∧
+              final_span(businessos).task_id == initial_task_id ∧
+              final_span(businessos).workflow_id == initial_workflow_id
+
+        violation_severity: critical
+
+        validation:
+          - type: loop_detection
+            check: 'Trace_id appears in all required systems (businessos, canopy, osa)'
+            error: 'loop.violation.incomplete_chain'
+
+          - type: semantic_preservation
+            check: 'Final businessos span has same task_id/workflow_id as initial'
+            error: 'loop.violation.semantic_drift'
+
+          - type: response_correlation
+            check: 'OSA response correlates to BusinessOS request via trace_id'
+            error: 'loop.violation.missing_response'
+
+      - id: chatman.invariant.minimality
+        type: invariant
+        brief: 'No redundant execution paths. Every transformation is necessary and unique.'
+        description: |
+          For any semantic operation, there MUST NOT exist multiple execution paths that produce
+          identical semantic results. Duplicate transformations, redundant service calls, or
+          unnecessary intermediate steps violate minimality.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ operation: ∄! path1, path2 where path1 ≠ path2 ∧
+            semantic_result(path1) == semantic_result(path2) ∧
+            trace_id(path1) == trace_id(path2)
+
+        violation_severity: high
+
+        validation:
+          - type: redundant_path_detection
+            check: 'No duplicate (operation, inputs) pairs in same trace'
+            error: 'minimality.violation.redundant_path'
+
+          - type: duplicate_event_detection
+            check: 'No duplicate (ocel:activity, ocel:objectIds, ocel:timestamp) triples'
+            error: 'minimality.violation.duplicate_event'
+
+          - type: unnecessary_transformation
+            check: 'Every transformation changes semantic state (no identity ops)'
+            error: 'minimality.violation.noop_transformation'
+
+      - id: chatman.invariant.semantic_validity
+        type: invariant
+        brief: 'All semantic transformations are valid according to system ontologies.'
+        description: |
+          Every cross-system transformation MUST validate against source and target ontologies.
+          Invalid transformations (type mismatches, constraint violations, ontology violations)
+          must be detected and blocked.
+
+        requirement_level: required
+
+        invariant_expression: |
+          ∀ transformation from A to B:
+            validate(A, ontology_A) ∧
+            validate(B, ontology_B) ∧
+            check_constraints(A → B) ∧
+            ¬∃ violation: violation.type ∈ [type_mismatch, constraint_violation, ontology_violation]
+
+        violation_severity: critical
+
+        validation:
+          - type: schema_validation
+            check: 'All transformations valid against source/target schemas'
+            error: 'validity.violation.schema_mismatch'
+
+          - type: constraint_check
+            check: 'All business/SHACL constraints satisfied post-transformation'
+            error: 'validity.violation.constraint_breach'
+
+          - type: ontology_compliance
+            check: 'All entities exist in target ontology (no dangling references)'
+            error: 'validity.violation.ontology_violation'
+
+    attributes:
+      # Semantic Causality Attributes
+      - id: chatman.invariant.task_id
+        type: string
+        brief: 'Stable task identifier preserved across all systems in trace.'
+        examples: ['task-8f3d2a1b', 'workflow-42-step-1']
+        requirement_level: required
+
+      - id: chatman.invariant.workflow_id
+        type: string
+        brief: 'Stable workflow identifier preserved across all systems in trace.'
+        examples: ['wf-deal-approval-001', 'pipeline-healing-123']
+        requirement_level: required
+
+      - id: chatman.invariant.case_id
+        type: string
+        brief: 'Stable case identifier (OCEL object reference) preserved across trace.'
+        examples: ['case-deal-xyz-789', 'process-instance-456']
+        requirement_level: required
+
+      # OTel-OCEL Isomorphism Attributes
+      - id: chatman.invariant.ocel_mapping_id
+        type: string
+        brief: 'OCEL event ID corresponding to OTel span (bijection key).'
+        examples: ['ocel-event-abc123', 'otel-span-def456']
+        requirement_level: required
+
+      - id: chatman.invariant.isomorphism_hash
+        type: string
+        brief: 'BLAKE3 hash of (OTel_span_attributes + OCEL_event_attributes) proving 1:1 mapping.'
+        examples: ['blake3:a1b2c3d4...']
+        requirement_level: required
+
+      # Temporal Consistency Attributes
+      - id: chatman.invariant.observation_window_ms
+        type: int
+        brief: 'Time window for temporal invariant validation (default: 300000ms = 5 minutes).'
+        examples: [300000, 600000, 900000]
+        requirement_level: required
+
+      - id: chatman.invariant.state_before
+        type: string
+        brief: 'Process state before transition (for state machine validation).'
+        examples: ['pending', 'running', 'waiting']
+        requirement_level: required
+
+      - id: chatman.invariant.state_after
+        type: string
+        brief: 'Process state after transition (for state machine validation).'
+        examples: ['completed', 'failed', 'cancelled']
+        requirement_level: required
+
+      # Replay Determinism Attributes
+      - id: chatman.invariant.replay_id
+        type: string
+        brief: 'Unique replay execution identifier (links original execution to replay).'
+        examples: ['replay-20250409-123456']
+        requirement_level: required
+
+      - id: chatman.invariant.output_hash
+        type: string
+        brief: 'BLAKE3 hash of execution output (for determinism verification).'
+        examples: ['blake3:e5f6g7h8...']
+        requirement_level: required
+
+      # Closed-Loop Completion Attributes
+      - id: chatman.invariant.loop_chain
+        type: string
+        brief: 'Ordered list of systems in closed loop (e.g., businessos→canopy→osa→businessos).'
+        examples: ['["businessos", "canopy", "osa", "businessos"]']
+        requirement_level: required
+
+      - id: chatman.invariant.initial_trace_id
+        type: string
+        brief: 'Original trace_id at loop start (for correlation check).'
+        examples: ['4bf92f3577b34da6a3ce929d0e0e4736']
+        requirement_level: required
+
+      # Minimality Attributes
+      - id: chatman.invariant.operation_hash
+        type: string
+        brief: 'Hash of (operation + inputs) for redundant path detection.'
+        examples: ['blake3:i9j0k1l2...']
+        requirement_level: required
+
+      - id: chatman.invariant.semantic_hash
+        type: string
+        brief: 'Hash of semantic result (for duplicate detection).'
+        examples: ['blake3:m3n4o5p6...']
+        requirement_level: required
+
+      # Validity Attributes
+      - id: chatman.invariant.schema_id
+        type: string
+        brief: 'Schema/ontology identifier for validation.'
+        examples: ['https://ontology.businessos.dev/fibo-deals', 'https://ontology.canopy.dev/agents']
+        requirement_level: required
+
+      - id: chatman.invariant.constraint_id
+        type: string
+        brief: 'Constraint identifier that was validated (SHACL shape, business rule).'
+        examples: ['soc2.cc6.1', 'DealShape', 'max-amount-rule']
+        requirement_level: required
+
+      - id: chatman.invariant.validation_status
+        type: string
+        brief: 'Result of semantic validity check (valid, invalid, error).'
+        examples: ['valid', 'invalid', 'error']
+        requirement_level: required

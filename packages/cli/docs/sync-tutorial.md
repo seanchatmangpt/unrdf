@@ -610,7 +610,7 @@ npx unrdf sync --rule zod-schemas
 Override the output directory:
 
 ```bash
-npx unrdf sync --output-dir ./generated
+npx unrdf sync --output-dir ./src
 ```
 
 ### JSON Output for CI/CD

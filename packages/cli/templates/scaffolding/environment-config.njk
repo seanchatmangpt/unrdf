@@ -1,0 +1,105 @@
+---
+to: ".env.{{ environment }}"
+description: "Environment configuration template with database, API, and security variables"
+category: scaffolding
+requires:
+  - environment
+  - project_name
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+# {{ project_name | title }} - {{ environment | title }} Environment Configuration
+# Generated: {{ timestamp | date("YYYY-MM-DD HH:mm:ss") }}
+
+# =============================================================================
+# Application
+# =============================================================================
+APP_NAME={{ project_name | snake_case }}
+APP_ENV={{ environment }}
+APP_DEBUG={{ 'true' if environment == 'development' else 'false' }}
+APP_PORT={{ 3000 if environment == 'development' else 80 }}
+APP_URL={{ 'http://localhost:3000' if environment == 'development' else 'https://' + project_name + '.com' }}
+
+# =============================================================================
+# Database
+# =============================================================================
+DB_HOST={{ 'localhost' if environment == 'development' else 'postgres.' + environment + '.svc.cluster.local' }}
+DB_PORT=5432
+DB_NAME={{ project_name | snake_case }}_{{ environment }}
+DB_USER={{ project_name | snake_case }}_user
+DB_PASSWORD={{ 'dev_password' if environment == 'development' else 'CHANGE_ME_IN_PRODUCTION' }}
+DB_SSLMODE=disable
+DB_POOL_MIN=5
+DB_POOL_MAX=20
+DB_MAX_CONNS_LIFETIME=1h
+
+# =============================================================================
+# Redis (Cache/Sessions)
+# =============================================================================
+REDIS_HOST={{ 'localhost' if environment == 'development' else 'redis.' + environment + '.svc.cluster.local' }}
+REDIS_PORT=6379
+REDIS_PASSWORD={{ '' if environment == 'development' else 'CHANGE_ME_IN_PRODUCTION' }}
+REDIS_DB=0
+REDIS_TLS_ENABLED={{ 'false' if environment == 'development' else 'true' }}
+
+# =============================================================================
+# OpenTelemetry
+# =============================================================================
+OTEL_SERVICE_NAME={{ project_name | snake_case }}
+OTEL_SERVICE_VERSION=1.0.0
+OTEL_EXPORTER_OTLP_ENDPOINT={{ 'http://localhost:4317' if environment == 'development' else 'http://otel-collector:4317' }}
+OTEL_EXPORTER_OTLP_PROTOCOL=http
+OTEL_RESOURCE_ATTRIBUTES=service.name={{ project_name | snake_case }},deployment.environment={{ environment }}
+
+# =============================================================================
+# Security
+# =============================================================================
+JWT_SECRET={{ 'dev-secret-change-in-production' if environment == 'development' else 'CHANGE_ME_IN_PRODUCTION' }}
+JWT_EXPIRATION={{ '24h' if environment == 'development' else '1h' }}
+JWT_REFRESH_EXPIRATION=7d
+
+# CORS (Comma-separated origins)
+CORS_ALLOWED_ORIGINS={{ 'http://localhost:5173,http://localhost:3000' if environment == 'development' else 'https://' + project_name + '.com' }}
+
+# =============================================================================
+# External APIs
+# =============================================================================
+{% if environment == 'production' %}
+# Production API keys
+GROQ_API_KEY=
+ANTHROPIC_API_KEY=
+
+{% elif environment == 'staging' %}
+# Staging API keys
+GROQ_API_KEY=
+ANTHROPIC_API_KEY=
+
+{% else %}
+# Development/local API keys (optional)
+# GROQ_API_KEY=
+# ANTHROPIC_API_KEY=
+{% endif %}
+
+# =============================================================================
+# Feature Flags
+# =============================================================================
+FEATURE_OTEL_ENABLED=true
+FEATURE_CACHE_ENABLED=true
+FEATURE_RATE_LIMITING_ENABLED={{ 'false' if environment == 'development' else 'true' }}
+
+# =============================================================================
+# Logging
+# =============================================================================
+LOG_LEVEL={{ 'DEBUG' if environment == 'development' else 'INFO' }}
+LOG_FORMAT=json
+LOG_OUTPUT=stdout
+
+# =============================================================================
+# Timeouts (in milliseconds)
+# =============================================================================
+HTTP_TIMEOUT=30000
+DB_QUERY_TIMEOUT=10000
+CACHE_TIMEOUT=5000

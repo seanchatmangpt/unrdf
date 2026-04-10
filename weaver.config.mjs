@@ -112,7 +112,7 @@ export default {
     components: './playground/app/components/',
     layouts: './playground/app/layouts/',
     pages: './playground/app/pages/',
-    tests: './playground/test/generated/'
+    tests: './playground/test/'
   },
 
   // ============================================================================

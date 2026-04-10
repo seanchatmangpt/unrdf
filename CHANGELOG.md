@@ -1,5 +1,52 @@
 # CHANGELOG
 
+## [26.4.9] - 2026-04-09
+
+### Features
+
+**Hygen Parity — Template Renderer** (7 fixes):
+
+- `mode: prepend` from frontmatter now works (was silent no-op)
+- `force: true` read from frontmatter (was dead code — only read from options)
+- `before`/`after` anchors support regex patterns (`/MARKER.*/`) with multi-line matching
+- `skipIf` supports regex patterns (`/pattern/flags`) alongside legacy `var==value`
+- `from` directive — load template body from another file
+- `sh` directive — execute shell command after file write
+- `eof_last` directive — control trailing newline on injected content
+
+**Frontmatter Schema** (NEW):
+
+- `FRONTMATTER_SCHEMA` exported from `frontmatter-parser.mjs` — defines allowed keys, types, required fields, exclusive groups, and dependency rules
+- Template validation on render — invalid frontmatter throws descriptive error
+
+**Federation — Predictive Bypass**:
+
+- ML-based query routing: skip M-of-N voting when confidence threshold met
+- `enablePredictiveBypass` and `predictorConfig` on CoordinatorConfig
+
+**OTEL — pm4py Integration**:
+
+- Process mining metrics via pm4py-rust MetricCollector
+- Monitoring utilities and alerting integration
+- Exports: `pm4py.mjs`, `monitoring.mjs`
+
+### Changes
+
+- Test consolidation: 4,717 lines removed across CLI test suites (templates, orchestrator, sparql-executor, config-parser, ontology-loader, e2e)
+- CLAUDE.md compressed 58% (414 → 175 lines); content redistributed to `.claude/rules/` and `.skills/`
+- New rules: `commands.md`, `verification.md`, `versions.md`
+- New skills: `setup.md`, `mcp-setup.md`, `integration-tests.md`, `otel-k8s.md`
+- `renderWithOptions` refactored: `effectiveForce` merges options + frontmatter, dead `skip_existing` if-block removed
+- `renderTemplate` now validates frontmatter before rendering and checks `shouldSkip` early
+
+### Test Coverage
+
+- 159 CLI tests passing (7 new Hygen parity tests added)
+- 1,249 total tests in `test:fast` suite
+- Zero regressions
+
+---
+
 ## [26.4.8] - 2026-04-07
 
 ### Major Features

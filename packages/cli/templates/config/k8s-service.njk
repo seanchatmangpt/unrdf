@@ -1,0 +1,114 @@
+---
+to: "k8s/service.yaml"
+description: "Generate Kubernetes Service manifest for exposing deployments"
+category: config
+requires:
+  - app_name
+  - service_type
+variables:
+  app_name: "Application name"
+  service_type: "Service type (ClusterIP, NodePort, LoadBalancer)"
+  port: "Service port (default: 80)"
+  target_port: "Container port to forward to (default: 8080)"
+  selector: "Label selector (default: app={app_name})"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ app_name | lower }}
+  labels:
+    app: {{ app_name | lower }}
+spec:
+  type: {{ service_type | default("ClusterIP") }}
+  selector:
+    app: {{ selector | default(app_name | lower) }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ port | default(80) }}
+    targetPort: {{ target_port | default(8080) }}
+{% if service_type == "NodePort" %}
+    nodePort: {{ node_port | default(30080) }}
+{% endif %}
+{% if service_type == "LoadBalancer" %}
+  loadBalancerIP: {{ load_balancer_ip | default("") }}
+{% endif %}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ session_timeout | default(10800) }}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, yaml, k8s-service)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: k8s-service
+
+## Usage
+
+```bash
+# Apply service
+kubectl apply -f k8s/service.yaml
+
+# Get service URL
+minikube service {{ app_name | lower }} --url
+
+# Get service info
+kubectl describe service {{ app_name | lower }}
+
+# Port forward to local
+kubectl port-forward service/{{ app_name | lower }} 8080:80
+```
+
+## Service Types
+
+### ClusterIP (default)
+- Internal cluster access only
+- Stable IP within cluster
+- Use for backend services
+
+### NodePort
+- External access via node IP + port
+- Port range: 30000-32767
+- Use for development/testing
+
+### LoadBalancer
+- External load balancer (cloud provider)
+- Assigns public IP
+- Use for production external access
+
+### Ingress (alternative)
+For HTTP/HTTPS routing with Ingress controller:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ app_name | lower }}
+spec:
+  rules:
+  - host: {{ app_name | lower }}.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ app_name | lower }}
+            port:
+              number: 80
+```

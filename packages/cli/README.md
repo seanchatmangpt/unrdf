@@ -1,85 +1,62 @@
 # @unrdf/cli
 
-Command-line interface for RDF knowledge graph operations, SPARQL queries, and ontology-driven code generation.
+RDF ontology to code generation. Transform your RDF knowledge graphs into typed code artifacts—Zod schemas, OpenAPI specs, JSDoc types, GraphQL schemas—using SPARQL queries and Nunjucks templates.
 
-## Overview
-
-`@unrdf/cli` provides a unified command-line tool for working with RDF data in the UNRDF ecosystem. Features include:
-
-- **Graph Operations**: Create, load, query, and export RDF datasets
-- **SPARQL Queries**: Execute SELECT, CONSTRUCT, ASK, and DESCRIBE queries
-- **Code Generation**: Transform RDF ontologies into typed code artifacts (Zod schemas, OpenAPI specs, JSDoc types)
-- **Context Management**: Manage RDF named graphs and contexts
-- **Hook Evaluation**: Test and debug hook policies
+**Version**: 26.4.9 | **Node.js**: >=18.0.0
 
 ## Installation
 
+### Global Install (recommended for CLI usage)
+
 ```bash
-# Global installation
+# Using pnpm (recommended)
 pnpm add -g @unrdf/cli
 
-# Or use with pnpm exec
-pnpm exec unrdf <command>
+# Using npm
+npm install -g @unrdf/cli
 
-# Or via npx
-npx @unrdf/cli <command>
+# Using yarn
+yarn global add @unrdf/cli
 ```
+
+Verify installation:
+
+```bash
+unrdf --version
+# Output: 26.4.9
+```
+
+### Project-Local Install
+
+```bash
+# Install as dev dependency
+pnpm add -D @unrdf/cli
+
+# Run via pnpm exec
+pnpm exec unrdf sync
+
+# Or add script to package.json
+# "scripts": { "sync": "unrdf sync" }
+```
+
+### Use Without Installing (npx)
+
+```bash
+npx @unrdf/cli sync
+```
+
+**Note**: npx downloads the package each time. For frequent use, global install is faster.
 
 ## Quick Start
 
-### Create and Query a Graph
-
 ```bash
-# Create a new graph
-unrdf graph create --name my-dataset
+# Install
+pnpm add -g @unrdf/cli
 
-# Load RDF data
-unrdf graph load --graph my-dataset --file data.ttl
-
-# Execute SPARQL query
-unrdf graph query --graph my-dataset --query "SELECT ?s WHERE { ?s ?p ?o }"
-
-# Export to different format
-unrdf graph export --graph my-dataset --format jsonld > output.jsonld
-```
-
-### Complete Workflow Example
-
-```bash
-# Create graph
-unrdf graph create --name people
-
-# Load Turtle data
-unrdf graph load --graph people --file people.ttl
-
-# Query with SPARQL
-unrdf graph query --graph people --query "SELECT ?name WHERE { ?p foaf:name ?name }"
-
-# Transform with CONSTRUCT
-unrdf graph query --graph people --query "CONSTRUCT { ?s schema:name ?n } WHERE { ?s foaf:name ?n }" > transformed.ttl
-
-# Export as JSON-LD
-unrdf graph export --graph people --format jsonld > people.jsonld
-```
-
-## Code Generation (sync)
-
-The `sync` command transforms RDF ontologies into typed code artifacts using SPARQL queries and Nunjucks templates. This enables ontology-driven development where your RDF schema becomes the single source of truth for generated code.
-
-**Common use cases:**
-
-- Generate Zod validation schemas from RDF class definitions
-- Create OpenAPI specifications from API ontologies
-- Produce JSDoc type definitions from RDFS/OWL vocabularies
-- Build GraphQL schemas from RDF domain models
-
-### Quick Example
-
-**1. Create `unrdf.toml` configuration:**
-
-```toml
+# Create configuration
+cat > unrdf.toml << 'EOF'
 [project]
-name = "blog-api"
+name = "my-api"
 version = "1.0.0"
 
 [ontology]
@@ -94,106 +71,208 @@ name = "zod-schemas"
 template = "templates/entities.njk"
 output_file = "schemas/entities.mjs"
 query = """
-SELECT ?entityName ?propertyName ?propertyType ?required
+SELECT ?entityName ?propertyName ?propertyType
 WHERE {
   ?entity a rdfs:Class ; rdfs:label ?entityName .
   ?property rdfs:domain ?entity ; rdfs:label ?propertyName ; rdfs:range ?propertyType .
-  OPTIONAL { ?property api:required ?required }
 }
 ORDER BY ?entityName ?propertyName
 """
+EOF
+
+# Create template
+mkdir -p templates
+cat > templates/entities.njk << 'EOF'
+---
+to: {{ output_dir }}/schemas/entities.mjs
+---
+import { z } from 'zod';
+
+{% for entityName, props in sparql_results | groupBy("?entityName") %}
+export const {{ entityName | camelCase }}Schema = z.object({
+{% for row in props %}
+  {{ row["?propertyName"] | camelCase }}: {{ row["?propertyType"] | zodType }},
+{% endfor %}
+});
+{% endfor %}
+EOF
+
+# Generate code
+unrdf sync
 ```
 
-**2. Run sync command:**
+## unrdf sync
+
+Ontology-driven code generation. Reads RDF ontologies, executes SPARQL queries, and renders results through Nunjucks templates to generate typed code artifacts.
+
+### Configuration (unrdf.toml)
+
+```toml
+[project]
+name = "my-api"
+version = "1.0.0"
+
+[ontology]
+source = "ontology/schema.ttl"     # RDF file path
+format = "turtle"                   # RDF format (auto-detected)
+base_iri = "http://example.org/"    # Base IRI for relative URIs
+
+[generation]
+output_dir = "lib"                  # Output directory
+parallel = false                    # Run rules in parallel
+
+[[generation.rules]]
+name = "zod-schemas"                # Rule identifier
+template = "templates/zod.njk"      # Nunjucks template
+output_file = "schemas.mjs"         # Output file
+mode = "overwrite"                  # overwrite | append | skip_existing
+query = """
+SELECT ?entityName ?propertyName ?propertyType
+WHERE {
+  ?entity a rdfs:Class ; rdfs:label ?entityName .
+  ?property rdfs:domain ?entity ; rdfs:range ?propertyType .
+}
+"""
+```
+
+### Template Features
+
+**Filters:**
+
+- Case conversion: `camelCase`, `pascalCase`, `snakeCase`, `kebabCase`
+- RDF utilities: `localName`, `namespace`
+- Type mapping: `zodType`, `jsdocType`, `zodDefault`
+- Data manipulation: `groupBy`, `sortBy`, `distinctValues`, `requiredArgs`
+
+**Hygen Directives** (line-based modification):
+
+```yaml
+---
+to: src/index.ts
+inject: true
+after: '^// Auto-generated exports$'
+---
+```
+
+Available directives: `inject`, `before`, `after`, `append`, `prepend`, `lineAt`, `skipIf`
+
+### CLI Usage
 
 ```bash
-# Generate code from ontology
+# Generate code from config
 unrdf sync
 
-# Preview without writing files
-unrdf sync --dry-run --verbose
+# Preview without writing
+unrdf sync --dry-run
 
-# Run specific generation rule
+# Run specific rule
 unrdf sync --rule zod-schemas
 
-# Watch mode for development
+# Verbose output
+unrdf sync --verbose
+
+# Watch mode (regenerate on ontology changes)
 unrdf sync --watch
 ```
 
-The command reads your RDF ontology, executes the SPARQL query against it, and renders the results through your Nunjucks template to generate code. Templates support filters for case conversion (`camelCase`, `pascalCase`), RDF utilities (`localName`, `namespace`), and type mapping (`zodType`, `jsdocType`).
+### Documentation
 
-**Full documentation:** See [docs/sync-command.md](./docs/sync-command.md) for complete configuration reference, template syntax, available filters, and end-to-end examples.
+- **Complete guide**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-command.md
+- **Hygen integration**: Line-based file modification, anchor patterns, conditional skips
+- **Template reference**: All filters, context variables, SPARQL results structure
+- **Examples**: https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync
 
-### Template workflows (`template` vs `sync`)
+## Other Commands
 
-- **`unrdf sync`** — Project-wide codegen from a config file (ontology path, rules, output dir). Same Nunjucks + Hygen semantics as below.
-- **`unrdf template generate`** — Ad-hoc generation: one RDF file, one `.njk` template, optional `--sparql` (or `sparql:` / `rdf:` in frontmatter). Uses the same `renderTemplate` / `renderWithOptions` path as sync.
-- **`unrdf query`** — Full SPARQL (CONSTRUCT, ASK, DESCRIBE). **`unrdf template query`** — SELECT plus template-friendly context for debugging.
-- **Pipelines** — Use `unrdf convert` to normalize formats, then run `template generate` on `.ttl`, `.nt`, `.nq`, etc. Example script: [examples/template-pipeline.mjs](./examples/template-pipeline.mjs).
+### MCP Server (AI Agent Integration)
 
-## Available Commands
+```bash
+unrdf mcp start              # Start MCP server (stdio/SSE)
+unrdf mcp status             # Check server status
+unrdf mcp inspect            # List tools/resources
+unrdf mcp stop               # Stop server
+unrdf mcp self-play          # Autonomous tool chaining
+```
+
+### Diagnostics
+
+```bash
+unrdf doctor                  # Health check
+unrdf doctor --fix            # Auto-fix issues
+unrdf doctor --watch          # Continuous monitoring
+```
+
+Checks: env, system, quality, integration, OTEL, Kubernetes
+
+See https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/doctor-command.md
 
 ### Graph Operations
 
-- `unrdf graph create --name <name>` - Create new named graph
-- `unrdf graph load --graph <name> --file <path>` - Load RDF data into graph
-- `unrdf graph query --graph <name> --query <sparql>` - Execute SPARQL query
-- `unrdf graph export --graph <name> --format <format>` - Export graph data
+```bash
+unrdf graph create --name <name>
+unrdf graph load --graph <name> --file <path>
+unrdf graph query --graph <name> --query <sparql>
+unrdf graph export --graph <name> --format <format>
+```
 
-**Supported formats:** `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig`
+Formats: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig`
+
+### Template Generation (Ad-hoc)
+
+```bash
+unrdf template generate --template <path> [file]
+unrdf template list
+unrdf template query
+```
 
 ### Context Management
 
-- `unrdf context create --name <name>` - Create RDF context
-- `unrdf context list` - List all contexts
-- `unrdf context delete --name <name>` - Delete context
+```bash
+unrdf context create --name <name>
+unrdf context add --name <name> --prefix <prefix> --namespace <ns>
+unrdf context list
+unrdf context delete --name <name>
+```
 
 ### Hook Evaluation
 
-- `unrdf hook eval --policy <path>` - Evaluate hook policy
-- `unrdf hook validate --policy <path>` - Validate hook configuration
-
-### Diagnostics & Health Checks
-
-- `unrdf doctor` - Comprehensive health check for development environment and system state
-  - `--mode quick` - Fast checks (30s): environment + system
-  - `--mode standard` - Standard checks (2min): adds code quality
-  - `--mode full` - Full diagnostics (5min): includes integrations
-  - `--category <name>` - Run specific category: env, system, quality, integration
-  - `--format json` - Output as JSON for CI/CD integration
-  - `--fix` - Attempt automatic fixes for safe issues
-  - `--watch` - Continuous monitoring mode (5s refresh)
-
-**Example:**
-
 ```bash
-# Quick health check
-unrdf doctor
-
-# Auto-fix safe issues
-unrdf doctor --fix
-
-# Check code quality only
-unrdf doctor --category quality
-
-# Continuous monitoring
-unrdf doctor --watch
+unrdf hook eval --policy <path>
+unrdf hook validate --policy <path>
 ```
-
-See [docs/doctor-command.md](./docs/doctor-command.md) for complete diagnostics documentation.
-
-### Code Generation
-
-- `unrdf sync [--config <path>]` - Generate code from RDF ontology (see above)
-- `unrdf template generate [--template <path>] [file]` - Generate from RDF + Nunjucks (see Template workflows)
-- `unrdf template list` - List discovered templates under `templates/sync`
-- `unrdf template query` / `unrdf template extract` - Inspect SELECT context / per-subject properties
 
 ## Advanced Topics
 
-### Automation Scripts
+### CI/CD Integration
 
-Integrate CLI commands into Node.js automation workflows:
+```yaml
+# .github/workflows/ontology-sync.yml
+name: Ontology Sync
+on:
+  push:
+    paths: ['ontology/**', 'unrdf.toml']
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pnpm add -g @unrdf/cli
+      - run: unrdf sync
+      - run: git add lib/
+      - run: git commit -m "chore: sync generated code"
+```
+
+### Environment Variables
+
+```bash
+export UNRDF_DEFAULT_GRAPH=main
+export UNRDF_DEFAULT_FORMAT=turtle
+export UNRDF_CONFIG_PATH=./unrdf.toml
+export UNRDF_FILE_LOCK_RETRY_MS=10
+export UNRDF_FILE_LOCK_MAX_RETRIES=50
+```
+
+### Automation Scripts
 
 ```javascript
 // automation-script.mjs
@@ -203,77 +282,32 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 
 async function pipeline() {
-  await execAsync('unrdf graph create --name daily-import');
-  await execAsync('unrdf graph load --graph daily-import --file daily.ttl');
-
-  const { stdout } = await execAsync(
-    'unrdf graph query --graph daily-import --query "SELECT * WHERE { ?s ?p ?o }"'
-  );
-
-  console.log('Query results:', stdout);
+  await execAsync('unrdf sync');
+  await execAsync('unrdf doctor --format json > health.json');
 }
 
 pipeline();
 ```
 
-### CI/CD Integration
+## Documentation
 
-```yaml
-# .github/workflows/ontology-sync.yml
-name: Ontology Sync
-
-on:
-  push:
-    paths:
-      - 'ontology/**'
-      - 'unrdf.toml'
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - run: pnpm add -g @unrdf/cli
-      - run: unrdf sync --verbose
-      - run: git add lib/
-      - run: git commit -m "chore: sync generated code from ontology"
-      - run: git push
-```
-
-### Environment Configuration
-
-Set default options via environment variables:
-
-```bash
-export UNRDF_DEFAULT_GRAPH=main
-export UNRDF_DEFAULT_FORMAT=turtle
-export UNRDF_CONFIG_PATH=./config/unrdf.toml
-
-unrdf graph query --query "SELECT * WHERE { ?s ?p ?o }"
-# Uses UNRDF_DEFAULT_GRAPH automatically
-```
+- **Sync Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-command.md
+- **Sync Tutorial**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-tutorial.md
+- **Template Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/template-command.md
+- **Doctor Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/doctor-command.md
+- **Daemon CLI**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/daemon-cli.md
+- **Quick Start**: https://github.com/unrdf/unrdf/blob/main/packages/cli/QUICKSTART-CLI.md
 
 ## Examples
 
-See [examples/](./examples/) directory for complete examples:
-
-- `01-minimal-parse-query.mjs` - Basic RDF parsing and querying
-- `basic-knowledge-hook.mjs` - Hook policy evaluation
-- Additional sync examples in [docs/sync-command.md](./docs/sync-command.md)
-
-## Documentation
-
-- **Quick Start**: [QUICKSTART-CLI.md](./QUICKSTART-CLI.md)
-- **Sync Command**: [docs/sync-command.md](./docs/sync-command.md)
-- **Daemon CLI**: [docs/daemon-cli.md](./docs/daemon-cli.md)
-- **Core Package**: [@unrdf/core](../core/README.md)
+- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync/basic.unrdf.toml
+- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync/advanced.unrdf.toml
+- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/template-pipeline.mjs
 
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/unrdf/unrdf/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/unrdf/unrdf/discussions)
-- **Examples**: [examples/](./examples/)
 
 ## License
 

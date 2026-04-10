@@ -1,0 +1,179 @@
+# UNRDF Sync Configuration for CodeManufactory Public O v2
+# Usage: unrdf sync --config=codemanufactory.unrdf.toml
+
+[project]
+name = "codemanufactory"
+version = "2.0.0"
+description = "CodeManufactory public ontology v2 - deterministic code manufacturing system"
+
+[ontology]
+source = "/Users/sac/Downloads/codemanufactory-public-o-v2.ttl"
+format = "turtle"
+
+[generation]
+output_dir = "./generated/codemanufactory"
+
+# Generate MCP tool registration for participant surfaces
+[[generation.rules]]
+name = "mcp-participant-surface"
+description = "Generate MCP tool registration from Schema:potentialAction"
+enabled = true
+query = """
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?action ?roleName ?potentialAction ?toolName ?toolDescription ?toolCategory
+WHERE {
+  ?action a schema:potentialAction ;
+         rdfs:label ?label .
+  OPTIONAL { ?action schema:roleName ?roleName }
+  OPTIONAL {
+    ?action schema:potentialAction ?potentialAction .
+    ?potentialAction schema:name ?toolName .
+  }
+  OPTIONAL { ?potentialAction schema:description ?toolDescription }
+
+  # Filter for MCP participant surface type
+  ?action dcterms:type ?type .
+  ?type skos:notation "mcp-participant-surface" .
+
+  BIND(CONCAT("mcp-", LCASE(STR(?toolName))) AS ?toolCategory)
+}
+ORDER BY ?toolName
+"""
+template = "/Users/sac/ostar/templates/mcp-tool-registration.njk"
+output_file = "mcp_tools/{{ toolName | snakeCase }}_tool.mjs"
+
+# Generate semantic convention registries for telemetry mappings
+[[generation.rules]]
+name = "semantic-convention-registry"
+description = "Generate OTel semconv YAML for telemetry mapping"
+enabled = true
+query = """
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?telemetryMapping ?mappingName ?mappingDescription ?attribute ?attributeType ?attributeBrief
+WHERE {
+  [] a skos:ConceptScheme ;
+     dcterms:title "CodeManufactory artifact kind scheme" ;
+     skos:hasTopConcept ?telemetryMapping .
+
+  ?telemetryMapping skos:prefLabel ?mappingName ;
+                  skos:notation "telemetry-mapping" .
+
+  # Extract attribute definitions (simulated for example)
+  BIND(CONCAT("registry.", ?mappingName, ".", LCASE(?mappingName), "_attr")) AS ?attribute
+  BIND("string" AS ?attributeType)
+  BIND(CONCAT("Attribute for ", ?mappingName) AS ?attributeBrief)
+}
+LIMIT 10
+"""
+template = "/Users/sac/ostar/templates/semantic-convention-generator.njk"
+output_file = "semconv/{{ semanticConventionName | snakeCase }}.yaml"
+
+# Generate benchmark runners for benchmark artifacts
+[[generation.rules]]
+name = "benchmark-runner"
+description = "Generate benchmark execution runner"
+enabled = true
+query = """
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?benchmark ?benchmarkName ?benchmarkDescription ?measurementTechnique ?variableMeasured
+WHERE {
+  ?benchmark a schema:Dataset ;
+           dcterms:type ?type .
+
+  ?type skos:notation "benchmark" .
+
+  OPTIONAL { ?benchmark dcterms:title ?benchmarkName }
+  OPTIONAL { ?benchmark dcterms:description ?benchmarkDescription }
+  OPTIONAL { ?benchmark schema:measurementTechnique ?measurementTechnique }
+  OPTIONAL { ?benchmark schema:variableMeasured ?variableMeasured }
+}
+LIMIT 5
+"""
+template = "/Users/sac/ostar/templates/benchmark-runner.njk"
+output_file = "benchmarks/{{ benchmarkName | snakeCase }}_runner.mjs"
+
+# Generate validation runners for validation artifacts
+[[generation.rules]]
+name = "validation-runner"
+description = "Generate SHACL/SPARQL validation runner"
+enabled = true
+query = """
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?validation ?validationName ?validationDescription ?validationType
+WHERE {
+  ?validation a schema:CheckAction ;
+           dcterms:type ?type .
+
+  ?type skos:notation "validation-artifact" .
+
+  OPTIONAL { ?validation dcterms:title ?validationName }
+  OPTIONAL { ?validation dcterms:description ?validationDescription }
+
+  BIND(COALESCE(?validationType, "sparql") AS ?validationType)
+}
+LIMIT 5
+"""
+template = "/Users/sac/ostar/templates/validation-runner.njk"
+output_file = "validation/{{ validationName | snakeCase }}_runner.mjs"
+
+# Generate projected artifacts from ProjectedArtifact ontology
+[[generation.rules]]
+name = "projected-artifact"
+description = "Generate projected artifacts (POWL, SPARQL, SHACL, MCP-tool, docs)"
+enabled = true
+query = """
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?artifact ?artifactName ?artifactType ?transformation ?prefix_namespace ?namespace_uri ?queryType ?queryPurpose ?class_name ?source_class ?toolDescription ?toolCategory
+WHERE {
+  # Find all artifact kind concepts
+  [] a skos:ConceptScheme ;
+     dcterms:title "CodeManufactory artifact kind scheme" ;
+     skos:hasTopConcept ?artifact .
+
+  # Extract artifact properties
+  ?artifact skos:prefLabel ?artifactName ;
+             skos:notation ?artifactType .
+
+  # Generate transformation metadata
+  BIND("OStarProjection" AS ?transformation)
+
+  # Generate namespace info
+  BIND("http://example.org/ontology" AS ?namespace_uri)
+  BIND("cmf" AS ?prefix_namespace)
+
+  # Generate SPARQL-specific metadata
+  BIND("SELECT" AS ?queryType)
+  BIND("Data extraction query" AS ?queryPurpose)
+  BIND("ex:Entity" AS ?class_name)
+  BIND("ex:Entity" AS ?source_class)
+
+  # Generate MCP tool metadata
+  BIND(?artifactName AS ?toolDescription)
+  BIND("ontology" AS ?toolCategory)
+}
+"""
+template = "/Users/sac/ostar/templates/projected-artifact.njk"
+output_file = "artifacts/{{ artifactName | snakeCase }}.{{ artifactType | artifact_extension }}"

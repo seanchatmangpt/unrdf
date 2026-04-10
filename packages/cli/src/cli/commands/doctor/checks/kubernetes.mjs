@@ -52,14 +52,11 @@ function checkNamespace() {
  */
 function checkPodHealth() {
   try {
-    const output = execSync(
-      'kubectl get pods -n unrdf-observability -o json',
-      {
-        encoding: 'utf-8',
-        stdio: 'pipe',
-        timeout: 10000,
-      }
-    );
+    const output = execSync('kubectl get pods -n unrdf-observability -o json', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
+      timeout: 10000,
+    });
 
     const data = JSON.parse(output);
     const pods = data.items || [];
@@ -85,7 +82,7 @@ function checkPodHealth() {
     if (crashLoop.length > 0) {
       return {
         status: 'fail',
-        actual: `${crashLoop.length} pods in crash loop (${crashLoop.map((p) => p.name).join(', ')})`,
+        actual: `${crashLoop.length} pods in crash loop (${crashLoop.map(p => p.name).join(', ')})`,
         expected: 'All pods healthy and running',
         critical: true,
         violations: crashLoop,
@@ -96,7 +93,7 @@ function checkPodHealth() {
     if (unhealthy.length > 0) {
       return {
         status: 'warn',
-        actual: `${unhealthy.length} unhealthy pods: ${unhealthy.map((p) => p.name).join(', ')}`,
+        actual: `${unhealthy.length} unhealthy pods: ${unhealthy.map(p => p.name).join(', ')}`,
         expected: 'All pods healthy and running',
         violations: [...unhealthy, ...healthy],
         fix: 'Check pod status: kubectl get pods -n unrdf-observability',
@@ -123,14 +120,11 @@ function checkPodHealth() {
  */
 function checkPVCStorage() {
   try {
-    const output = execSync(
-      'kubectl get pvc -n unrdf-observability -o json',
-      {
-        encoding: 'utf-8',
-        stdio: 'pipe',
-        timeout: 10000,
-      }
-    );
+    const output = execSync('kubectl get pvc -n unrdf-observability -o json', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
+      timeout: 10000,
+    });
 
     const data = JSON.parse(output);
     const pvcs = data.items || [];
@@ -162,7 +156,7 @@ function checkPVCStorage() {
     if (pressure.length > 0) {
       return {
         status: 'warn',
-        actual: `${pressure.length} PVC(s) with issues: ${pressure.map((p) => `${p.name} (${p.phase})`).join(', ')}`,
+        actual: `${pressure.length} PVC(s) with issues: ${pressure.map(p => `${p.name} (${p.phase})`).join(', ')}`,
         expected: 'All PVCs bound and healthy',
         violations: [...pressure, ...healthy],
         fix: 'Check PVC status: kubectl describe pvc -n unrdf-observability <pvc-name>',
@@ -226,14 +220,11 @@ async function checkDaemonMetrics() {
 async function checkGrafanaDatasources() {
   try {
     // Check Grafana API for datasource health
-    const response = execSync(
-      'curl -s http://localhost:3001/api/datasources -u admin:admin',
-      {
-        encoding: 'utf-8',
-        stdio: 'pipe',
-        timeout: 5000,
-      }
-    );
+    const response = execSync('curl -s http://localhost:3001/api/datasources -u admin:admin', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
+      timeout: 5000,
+    });
 
     const datasources = JSON.parse(response);
     const unhealthy = [];

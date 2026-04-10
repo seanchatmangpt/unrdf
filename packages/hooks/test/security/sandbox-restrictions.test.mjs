@@ -172,18 +172,18 @@ describe('SandboxRestrictions - Execution', () => {
     expect(result.error).toContain('Security validation failed');
   });
 
-  it('should reject hooks using restricted globals', async () => {
-    // Hooks using async delays are caught by code validation (setTimeout is restricted)
+  it('should reject long-running or unsafe hooks', async () => {
+    // Hooks using restricted globals (setTimeout) are blocked by code analysis.
+    // This test verifies that the sandbox prevents execution of such hooks.
     const shortTimeout = new SandboxRestrictions({ timeoutMs: 50 });
     const hookFn = async function () {
-       
-      const delay = new Promise(resolve => setInterval(resolve, 5000));
-      await delay;
+      await new Promise(resolve => setTimeout(resolve, 5000));
       return { result: 'too late' };
     };
 
     const result = await shortTimeout.executeRestricted(hookFn, {});
     expect(result.success).toBe(false);
+    // Either blocked at validation (setTimeout is restricted) or timed out
     expect(result.error).toBeTruthy();
   }, 2000);
 });

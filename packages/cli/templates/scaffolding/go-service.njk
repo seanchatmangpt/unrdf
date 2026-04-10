@@ -1,0 +1,125 @@
+---
+to: "{{ service_name | snake_case }}/internal/{{ service_name | snake_case }}.go"
+description: "Go service with Handler→Service→Repository layers and OTEL tracing"
+category: scaffolding
+requires:
+  - service_name
+  - package_name
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+package {{ service_name | snake_case }}
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"net/http"
+
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
+)
+
+// Service handles business logic for {{ service_name }}
+type Service struct {
+	repo   *Repository
+	logger *slog.Logger
+	tracer trace.Tracer
+}
+
+// NewService creates a new {{ service_name }} service
+func NewService(repo *Repository, logger *slog.Logger) *Service {
+	return &Service{
+		repo:   repo,
+		logger: logger,
+		tracer: otel.Tracer("{{ package_name }}"),
+	}
+}
+
+// DoSomething performs the core operation
+func (s *Service) DoSomething(ctx context.Context, input string) (string, error) {
+	ctx, span := s.tracer.Start(ctx, "{{ service_name | snake_case }}.do_something", trace.WithAttributes(
+		attribute.String("{{ service_name | snake_case }}.input", input),
+	))
+	defer span.End()
+
+	s.logger.Info("Doing something", "service", "{{ service_name }}", "input", input)
+
+	// Business logic here
+	result, err := s.repo.DoQuery(ctx, input)
+	if err != nil {
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		return "", fmt.Errorf("failed to do something: %w", err)
+	}
+
+	span.SetAttributes(
+		attribute.String("{{ service_name | snake_case }}.result", result),
+	)
+	span.SetStatus(codes.Ok, "")
+
+	return result, nil
+}
+
+// Repository handles data access for {{ service_name }}
+type Repository struct {
+	db     *sql.DB
+	logger *slog.Logger
+}
+
+// NewRepository creates a new {{ service_name }} repository
+func NewRepository(db *sql.DB, logger *slog.Logger) *Repository {
+	return &Repository{
+		db:     db,
+		logger: logger,
+	}
+}
+
+// DoQuery executes a database query
+func (r *Repository) DoQuery(ctx context.Context, input string) (string, error) {
+	// Database query implementation
+	// Use parameterized queries to prevent SQL injection
+	return fmt.Sprintf("processed: %s", input), nil
+}
+
+// Handler handles HTTP requests for {{ service_name }}
+type Handler struct {
+	service *Service
+	logger  *slog.Logger
+}
+
+// NewHandler creates a new {{ service_name }} handler
+func NewHandler(service *Service, logger *slog.Logger) *Handler {
+	return &Handler{
+		service: service,
+		logger:  logger,
+	}
+}
+
+// HandleSomething handles an HTTP request
+func (h *Handler) HandleSomething(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// Extract input from request
+	input := r.URL.Query().Get("input")
+	if input == "" {
+		http.Error(w, "input parameter required", http.StatusBadRequest)
+		return
+	}
+
+	// Call service
+	result, err := h.service.DoSomething(ctx, input)
+	if err != nil {
+		h.logger.Error("Failed to do something", "error", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(fmt.Sprintf(`{"result": "%s"}`, result)))
+}

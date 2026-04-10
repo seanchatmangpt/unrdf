@@ -12,6 +12,7 @@ import {
   routeQuery,
 } from './distributed-query.mjs';
 import { recordQuery, recordError, updatePeerMetrics, trackConcurrentQuery } from './metrics.mjs';
+import { getGlobalPredictor } from '../ml/predictor.mjs';
 
 const tracer = trace.getTracer('@unrdf/federation');
 
@@ -56,6 +57,13 @@ export const CoordinatorConfigSchema = z.object({
   strategy: z.enum(['broadcast', 'selective', 'first-available']).optional().default('broadcast'),
   timeout: z.number().positive().optional().default(30000),
   healthCheckInterval: z.number().positive().optional().default(60000),
+  enablePredictiveBypass: z.boolean().optional().default(false),
+  predictorConfig: z
+    .object({
+      confidenceThreshold: z.number().min(0).max(1).optional().default(0.95),
+      maxHistorySize: z.number().positive().optional().default(10000),
+    })
+    .optional(),
 });
 
 /* ========================================================================= */
@@ -75,6 +83,11 @@ export function createCoordinator(config = {}) {
   let healthCheckTimer = null;
   let queryCount = 0;
   let errorCount = 0;
+
+  // Initialize ML predictor if enabled
+  const predictor = validatedConfig.enablePredictiveBypass
+    ? getGlobalPredictor(validatedConfig.predictorConfig)
+    : null;
 
   // Register initial peers
   for (const peer of validatedConfig.peers) {
@@ -183,6 +196,60 @@ export function createCoordinator(config = {}) {
 
       try {
         queryCount++;
+
+        // Predictive bypass: Check if we can skip M-of-N voting
+        if (predictor && validatedConfig.enablePredictiveBypass) {
+          const bypassSpan = tracer.startSpan('coordinator.predictiveBypass');
+          try {
+            const stats = this.getStats();
+            const features = predictor.extractFeatures(sparqlQuery, {
+              ...stats,
+              concurrentQueries: 0, // TODO: Track actual concurrency
+            });
+
+            const prediction = predictor.predict(features);
+
+            bypassSpan.setAttributes({
+              'prediction.should_bypass': prediction.shouldBypass,
+              'prediction.confidence': prediction.confidence,
+              'prediction.strategy': prediction.recommendedStrategy,
+            });
+
+            if (prediction.shouldBypass) {
+              // Bypass M-of-N voting, execute directly
+              bypassSpan.setStatus({ code: 0, message: 'Bypass enabled' });
+
+              const bypassResult = await executeWithBypass(
+                allPeers,
+                sparqlQuery,
+                prediction,
+                options,
+                span
+              );
+
+              // Record outcome for learning
+              predictor.recordOutcome(features, {
+                success: bypassResult.success,
+                latency: bypassResult.totalDuration || 0,
+                strategy: prediction.recommendedStrategy,
+                peerResults: bypassResult.peerResults,
+              });
+
+              bypassSpan.end();
+              endConcurrent();
+              span.end();
+
+              return bypassResult;
+            }
+
+            bypassSpan.setStatus({ code: 0, message: 'Bypass not recommended' });
+          } catch (error) {
+            bypassSpan.recordException(error);
+            // Continue with normal execution if prediction fails
+          } finally {
+            bypassSpan.end();
+          }
+        }
 
         const strategy = options.strategy || validatedConfig.strategy;
         const timeout = options.timeout || validatedConfig.timeout;
@@ -348,6 +415,94 @@ export function createCoordinator(config = {}) {
         }
       } finally {
         endConcurrent();
+      }
+    },
+
+    /**
+     * Execute query with predictive bypass (skip M-of-N voting)
+     *
+     * @param {Array} allPeers - All available peers
+     * @param {string} sparqlQuery - SPARQL query
+     * @param {Object} prediction - Prediction result
+     * @param {Object} options - Query options
+     * @param {Object} parentSpan - Parent span for tracing
+     * @returns {Promise<Object>} Query result
+     * @private
+     */
+    async executeWithBypass(allPeers, sparqlQuery, prediction, options, parentSpan) {
+      const bypassSpan = tracer.startSpan('coordinator.executeWithBypass', undefined, parentSpan);
+
+      try {
+        bypassSpan.setAttributes({
+          'bypass.strategy': prediction.recommendedStrategy,
+          'bypass.predicted_latency': prediction.predictedLatency,
+        });
+
+        // Select optimal peer based on prediction
+        let targetPeers;
+        switch (prediction.recommendedStrategy) {
+          case 'single-peer':
+            // Use single best peer
+            targetPeers = allPeers.slice(0, 1);
+            break;
+          case 'first-available':
+            // Use first available peer
+            targetPeers = allPeers.slice(0, 1);
+            break;
+          case 'selective':
+            // Use subset of peers
+            targetPeers = allPeers.slice(0, Math.min(3, allPeers.length));
+            break;
+          default:
+            // Fallback to all peers
+            targetPeers = allPeers;
+        }
+
+        bypassSpan.setAttributes({
+          'peers.target': targetPeers.length,
+          'peers.total': allPeers.length,
+        });
+
+        // Execute with selected peers only
+        const startTime = Date.now();
+        const result = await executeDistributedQuery(targetPeers, sparqlQuery, {
+          timeout: options.timeout || validatedConfig.timeout,
+          format: options.format,
+          strategy: 'sequential', // Use sequential for bypass
+        });
+
+        const duration = Date.now() - startTime;
+
+        // Enhance result with bypass metadata
+        result.bypassed = true;
+        result.bypassStrategy = prediction.recommendedStrategy;
+        result.bypassConfidence = prediction.confidence;
+        result.totalDuration = duration;
+        result.peersSkipped = allPeers.length - targetPeers.length;
+
+        bypassSpan.setAttributes({
+          'bypass.success': result.success,
+          'bypass.duration_ms': duration,
+          'bypass.peers_skipped': result.peersSkipped,
+        });
+
+        // Record metrics
+        if (result.success) {
+          for (const peerResult of result.peerResults || []) {
+            if (peerResult.success) {
+              recordQuery(peerResult.peerId, peerResult.duration || 0, 'bypass');
+            } else {
+              recordError(peerResult.peerId, 'bypass_query_failed');
+            }
+          }
+        }
+
+        return result;
+      } catch (error) {
+        bypassSpan.recordException(error);
+        throw error;
+      } finally {
+        bypassSpan.end();
       }
     },
 

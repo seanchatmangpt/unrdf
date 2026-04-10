@@ -132,7 +132,7 @@ source = "schema.ttl"
 format = "turtle"
 
 [generation]
-output_dir = "generated"
+output_dir = "src"
 
 [[generation.rules]]
 name = "types"

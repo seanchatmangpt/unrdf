@@ -1,0 +1,114 @@
+---
+to: "Dockerfile"
+description: "Generate Dockerfile for containerized applications"
+category: config
+requires:
+  - app_name
+  - base_image
+  - port
+  - build_command
+  - start_command
+variables:
+  app_name: "Application name"
+  base_image: "Base Docker image (e.g., node:20-alpine, golang:1.24-alpine)"
+  port: "Application port"
+  build_command: "Command to build the application"
+  start_command: "Command to start the application"
+  workdir: "Working directory (default: /app)"
+  install_deps: "Dependency installation command"
+  healthcheck_path: "Health check endpoint path (default: /health)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ app_name | title }} Dockerfile
+
+FROM {{ base_image }}
+
+# Set working directory
+WORKDIR {{ workdir | default("/app") }}
+
+# Install system dependencies if needed
+{% if base_image contains "alpine" %}
+RUN apk add --no-cache \
+    ca-certificates \
+    tzdata \
+    && update-ca-certificates
+{% endif %}
+
+# Install application dependencies
+{% if install_deps %}
+{{ install_deps }}
+{% endif %}
+
+# Copy application files
+COPY . .
+
+# Build application
+{{ build_command }}
+
+# Expose application port
+EXPOSE {{ port }}
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:{{ port }}{{ healthcheck_path | default("/health") }} || exit 1
+
+# Run application
+{{ start_command }}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, configuration, inform, dockerfile, container-config)`
+- **Mode**: linguistic
+- **Genre**: configuration
+- **Type**: inform
+- **Format**: dockerfile
+- **Structure**: container-config
+
+## Usage
+
+```bash
+# Build image
+docker build -t {{ app_name | lower }}:latest .
+
+# Run container
+docker run -p {{ port }}:{{ port }} {{ app_name | lower }}:latest
+
+# Run with environment variables
+docker run -p {{ port }}:{{ port }} \
+  -e NODE_ENV=production \
+  {{ app_name | lower }}:latest
+```
+
+## Multi-Stage Build Example
+
+For production builds, use multi-stage:
+
+```dockerfile
+# Build stage
+FROM {{ base_image | split(":") | first }}-{{ base_image | split(":") | last }} AS builder
+WORKDIR /app
+COPY . .
+RUN {{ build_command }}
+
+# Runtime stage
+FROM {{ base_image }}
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+{{ start_command }}
+```
+
+## Tags
+
+- `latest` - Most recent build
+- `v{{ version }}` - Versioned release
+- `sha-{{ git_sha }}` - Git commit SHA

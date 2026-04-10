@@ -523,7 +523,7 @@ jobs:
           format = "turtle"
 
           [generation]
-          output_dir = "$TEST_DIR/generated"
+          output_dir = "$TEST_DIR/src"
 
           [[generation.rules]]
           name = "test"
@@ -536,20 +536,20 @@ jobs:
           timeout 10s node $OLDPWD/packages/cli/src/cli/main.mjs sync --config unrdf.toml --verbose
 
           # Verify output exists
-          if [ ! -f "generated/entities.mjs" ]; then
-            echo "❌ Generated file not created"
+          if [ ! -f "src/entities.mjs" ]; then
+            echo "❌ Output file not created"
             exit 1
           fi
 
-          # Test that generated code is valid ESM
-          timeout 5s node -c generated/entities.mjs || {
-            echo "❌ Generated code has syntax errors"
-            cat generated/entities.mjs
+          # Test that code is valid ESM
+          timeout 5s node -c src/entities.mjs || {
+            echo "❌ Output code has syntax errors"
+            cat src/entities.mjs
             exit 1
           }
 
-          # Test that generated code can be imported
-          timeout 5s node --input-type=module -e "import('./generated/entities.mjs').then(() => console.log('✅ Generated code imports successfully'))" || {
+          # Test that code can be imported
+          timeout 5s node --input-type=module -e "import('./src/entities.mjs').then(() => console.log('✅ Output code imports successfully'))" || {
             echo "❌ Generated code cannot be imported"
             exit 1
           }

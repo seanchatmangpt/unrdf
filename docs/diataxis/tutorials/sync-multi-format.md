@@ -52,7 +52,7 @@ Create a directory structure for the project:
 ```bash
 mkdir -p /tmp/sync-demo/ontology
 mkdir -p /tmp/sync-demo/templates
-mkdir -p /tmp/sync-demo/lib/generated
+mkdir -p /tmp/sync-demo/lib
 cd /tmp/sync-demo
 ```
 
@@ -770,7 +770,7 @@ base_iri = "https://example.org/api#"
 prefixes = { api = "https://example.org/api#", xsd = "http://www.w3.org/2001/XMLSchema#", rdfs = "http://www.w3.org/2000/01/rdf-schema#", sh = "http://www.w3.org/ns/shacl#" }
 
 [generation]
-output_dir = "lib/generated"
+output_dir = "lib"
 templates_dir = "templates"
 incremental = true
 
@@ -1042,27 +1042,27 @@ Phase 3: Processing rules...
 
    Rule: openapi-spec
    Query returned 5 results
-   OK lib/generated/openapi.yaml (1842 bytes)
+   OK lib/openapi.yaml (1842 bytes)
 
    Rule: openapi-schemas
    Query returned 24 results
-   OK lib/generated/openapi-schemas.yaml (2156 bytes)
+   OK lib/openapi-schemas.yaml (2156 bytes)
 
    Rule: zod-schemas
    Query returned 18 results
-   OK lib/generated/schemas.mjs (2834 bytes)
+   OK lib/schemas.mjs (2834 bytes)
 
    Rule: jsdoc-types
    Query returned 22 results
-   OK lib/generated/types.mjs (3521 bytes)
+   OK lib/types.mjs (3521 bytes)
 
    Rule: api-client
    Query returned 5 results
-   OK lib/generated/api-client.mjs (2108 bytes)
+   OK lib/api-client.mjs (2108 bytes)
 
    Rule: index
    Query returned 3 results
-   OK lib/generated/index.mjs (312 bytes)
+   OK lib/index.mjs (312 bytes)
 
 Sync complete!
    Rules processed: 6
@@ -1079,7 +1079,7 @@ Check that all outputs reference the same type definitions.
 **Verify OpenAPI schemas:**
 
 ```bash
-cat /tmp/sync-demo/lib/generated/openapi-schemas.yaml | head -50
+cat /tmp/sync-demo/lib/openapi-schemas.yaml | head -50
 ```
 
 **Expected snippet:**
@@ -1105,7 +1105,7 @@ components:
 **Verify Zod schema matches:**
 
 ```bash
-cat /tmp/sync-demo/lib/generated/schemas.mjs | head -30
+cat /tmp/sync-demo/lib/schemas.mjs | head -30
 ```
 
 **Expected snippet:**
@@ -1129,7 +1129,7 @@ export const CreateUserRequestSchema = z.object({
 **Verify JSDoc types match:**
 
 ```bash
-cat /tmp/sync-demo/lib/generated/types.mjs | head -25
+cat /tmp/sync-demo/lib/types.mjs | head -25
 ```
 
 **Expected snippet:**

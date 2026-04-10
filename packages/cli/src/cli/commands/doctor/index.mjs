@@ -74,10 +74,7 @@ async function runAllChecks(args, categories) {
       const categoryResult = await Promise.race([
         checkFn(),
         new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new Error(`Timeout after ${modeTimeout}ms`)),
-            modeTimeout
-          )
+          setTimeout(() => reject(new Error(`Timeout after ${modeTimeout}ms`)), modeTimeout)
         ),
       ]);
 
@@ -102,9 +99,7 @@ async function runAllChecks(args, categories) {
           {
             name: 'Category check',
             status: 'error',
-            actual: isTimeout
-              ? `Category check exceeded ${modeTimeout}ms timeout`
-              : error.message,
+            actual: isTimeout ? `Category check exceeded ${modeTimeout}ms timeout` : error.message,
             expected: `Check to complete within ${modeTimeout}ms`,
             fix: isTimeout
               ? 'Optimize check performance or increase timeout with --mode'
@@ -200,7 +195,7 @@ async function watchMode(args, categories) {
     console.log(`\n⏱️  Next refresh in ${interval / 1000}s... (Ctrl+C to exit)`);
 
     // Wait for interval
-    await new Promise((resolve) => setTimeout(resolve, interval));
+    await new Promise(resolve => setTimeout(resolve, interval));
   }
 
   console.log('✅ Watch mode stopped');
@@ -221,7 +216,8 @@ export const doctor = defineCommand({
     category: {
       type: 'string',
       default: null,
-      description: 'Run specific category only (env, system, quality, integration, otel, kubernetes)',
+      description:
+        'Run specific category only (env, system, quality, integration, otel, kubernetes)',
       alias: 'c',
     },
     format: {

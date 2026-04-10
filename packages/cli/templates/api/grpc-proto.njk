@@ -1,0 +1,129 @@
+---
+to: "service.proto"
+description: "Generate gRPC service definition with Protobuf"
+category: api
+requires:
+  - service_name
+  - package_name
+variables:
+  service_name: "Service name"
+  package_name: "Protobuf package name (e.g., myservice.v1)"
+  version: "API version (default: v1)"
+  java_package: "Java package name (default: com.example.myservice)"
+  go_package: "Go package name (default: ./service)"
+  services: "Array of service definitions (name, methods, rpcs)"
+  messages: "Array of message type definitions"
+  enums: "Array of enum definitions"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+syntax = "proto3";
+
+package {{ package_name }};
+
+option java_package = "{{ java_package | default("com.example." + service_name | lower) }}";
+option go_package = "{{ go_package | default("./" + service_name | lower) }}";
+
+// Imports
+{% for import in imports | default([]) %}
+import "{{ import }}";
+{% endfor %}
+
+## Enums
+
+{% for enum in enums | default([{name: "Status", values: [{name: "UNKNOWN", value: 0}, {name: "ACTIVE", value: 1}, {name: "INACTIVE", value: 2}]}]) %}
+enum {{ enum.name }} {
+{% for value in enum.values %}
+  {{ value.name | upper }} = {{ value.value }};
+{% endfor %}
+}
+{% endfor %}
+
+## Messages
+
+{% for message in messages | default([{name: "GetUserRequest", fields: [{name: "user_id", type: "string", number: 1}]}, {name: "GetUserResponse", fields: [{name: "user", type: "User"}]}, {name: "User", fields: [{name: "id", type: "string", number: 1}, {name: "name", type: "string", number: 2}, {name: "email", type: "string", number: 3}]}]) %}
+message {{ message.name }} {
+{% for field in message.fields %}
+  {{ field.type }} {{ field.name }} = {{ field.number | default(loop.index) }};
+{% endfor %}
+}
+
+{% endfor %}
+
+## Services
+
+{% for service in services | default([{name: "UserService", methods: [{name: "GetUser", request_type: "GetUserRequest", response_type: "GetUserResponse"}]}]) %}
+service {{ service.name }} {
+{% for method in service.methods %}
+  rpc {{ method.name }} ({{ method.request_type }}) returns ({{ method.response_type }}) {
+    // {{ method.description | default("RPC method for " + method.name) }}
+  }
+{% endfor %}
+}
+
+{% endfor %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, specification, inform, proto, grpc-spec)`
+- **Mode**: linguistic
+- **Genre**: specification
+- **Type**: inform
+- **Format**: proto
+- **Structure**: grpc-spec
+
+## Usage
+
+```bash
+# Generate gRPC proto file
+unrdf template render \
+  --template packages/cli/templates/api/grpc-proto.njk \
+  --service-name "UserService" \
+  --package-name "myservice.v1"
+
+# Generate server code
+protoc --go_out=. --go-grpc_out=. service.proto
+
+# Generate client code
+protoc --python_out=. service.proto
+
+# Generate documentation
+protoc --doc_out=. --doc_opt=markdown,index.md service.proto
+```
+
+## gRPC Best Practices
+
+1. **Use descriptive names** - Service and method names should be clear
+2. **Version your APIs** - Use package versioning (e.g., v1, v2)
+3. **Handle streaming** - Use `stream` keyword for bidirectional streaming
+4. **Add comments** - Document all RPC methods and messages
+5. **Use proper field numbers** - Reserve field numbers 1-15 for frequently used fields
+
+## Streaming Example
+
+```protobuf
+service ChatService {
+  rpc SendMessage (stream MessageRequest) returns (stream MessageResponse) {
+    // Bidirectional streaming for chat messages
+  }
+
+  rpc GetMessages (GetMessagesRequest) returns (stream MessageResponse) {
+    // Server streaming for message history
+  }
+}
+```
+
+## References
+
+- [Protocol Buffers](https://developers.google.com/protocol-buffers/)
+- [gRPC Concepts](https://grpc.io/docs/what-is-grpc/)
+- [Protobuf Style Guide](https://developers.google.com/protocol-buffers/docs/style)

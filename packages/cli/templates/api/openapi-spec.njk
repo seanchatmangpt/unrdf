@@ -1,0 +1,231 @@
+---
+to: "openapi.yaml"
+description: "Generate OpenAPI 3.0 specification"
+category: api
+requires:
+  - api_title
+  - version
+variables:
+  api_title: "API title"
+  version: "API version (e.g., 1.0.0)"
+  base_path: "Base path for all endpoints (default: /api/v1)"
+  servers: "Array of server objects (url, description)"
+  tags: "Array of tag objects (name, description, externalDocs)"
+  paths: "API paths definitions"
+  components: "Reusable components (schemas, securitySchemes, parameters)"
+  security: "Global security schemes"
+  info_contact_name: "Contact name"
+  info_contact_email: "Contact email"
+  info_license_name: "License name (default: MIT)"
+  info_license_url: "License URL"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+openapi: 3.0.0
+info:
+  title: {{ api_title }}
+  version: {{ version }}
+  description: API specification for {{ api_title | lower }}
+{% if info_contact_name %}
+  contact:
+    name: {{ info_contact_name }}
+{% if info_contact_email %}
+    email: {{ info_contact_email }}
+{% endif %}
+{% endif %}
+{% if info_license_name %}
+  license:
+    name: {{ info_license_name | default("MIT") }}
+{% if info_license_url %}
+    url: {{ info_license_url }}
+{% endif %}
+{% endif %}
+
+{% if servers | length > 0 %}
+servers:
+{% for server in servers %}
+  - url: {{ server.url }}
+    description: {{ server.description | default("Server endpoint") }}
+{% endfor %}
+{% else %}
+servers:
+  - url: http://localhost:8080{{ base_path | default("/api/v1") }}
+    description: Development server
+{% endif %}
+
+{% if tags | length > 0 %}
+tags:
+{% for tag in tags %}
+  - name: {{ tag.name }}
+    description: {{ tag.description }}
+{% if tag.externalDocs %}
+    externalDocs:
+      description: {{ tag.externalDocs.description }}
+      url: {{ tag.externalDocs.url }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if security %}
+security:
+{% for scheme in security %}
+  {{ scheme.name }}:
+{% if scheme.type == "apiKey" %}
+    {{ scheme.location | default("header") }}: {{ scheme.name | lower }}Authorization
+{% elif scheme.type == "http" %}
+    scheme: {{ scheme.scheme | default("bearer") }}
+    bearerFormat: {{ scheme.bearerFormat | default("JWT") }}
+{% elif scheme.type == "oauth2" %}
+    flows:
+      {{ scheme.flow }}:
+        authorizationUrl: {{ scheme.authorizationUrl }}
+        tokenUrl: {{ scheme.tokenUrl }}
+        scopes: {{ scheme.scopes | tojson }}
+{% endif %}
+{% endfor %}
+{% endif %}
+
+paths:
+{% for path_def in paths | default([]) %}
+  {{ path_def.path }}:
+{% for method in path_def.methods %}
+    {{ method.operation | lower }}:
+      tags:
+        - {{ method.tag | default(path_def.name) }}
+      summary: {{ method.summary }}
+      description: {{ method.description | default("") }}
+      operationId: {{ method.operationId }}
+{% if method.parameters %}
+      parameters:
+{% for param in method.parameters %}
+        - name: {{ param.name }}
+          in: {{ param.in | default("query") }}
+          description: {{ param.description }}
+          required: {{ param.required | default(false) }}
+{% if param.schema %}
+          schema:
+            type: {{ param.schema.type | default("string") }}
+{% if param.schema.format %}
+            format: {{ param.schema.format }}
+{% endif %}
+{% endif %}
+{% if param.example %}
+          example: {{ param.example }}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% if method.requestBody %}
+      requestBody:
+        description: {{ method.requestBody.description }}
+        required: {{ method.requestBody.required | default(true) }}
+        content:
+{% for content_type, content_def in method.requestBody.content.items() %}
+          {{ content_type }}:
+            schema:
+              {{ content_def.schema | default("{}") | indent(6) }}
+{% endfor %}
+{% endif %}
+{% if method.responses %}
+      responses:
+{% for status_code, response_def in method.responses.items() %}
+        {{ status_code }}:
+          description: {{ response_def.description }}
+{% if response_def.content %}
+          content:
+{% for content_type, content_def in response_def.content.items() %}
+            {{ content_type }}:
+              schema:
+                {{ content_def.schema | indent(8) }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+    {% endfor %}
+{% endfor %}
+
+components:
+  securitySchemes:
+{% for scheme in security | default([]) %}
+    {{ scheme.name }}:
+      type: {{ scheme.type }}
+{% if scheme.type == "apiKey" %}
+      in: {{ scheme.location | default("header") }}
+      name: {{ scheme.name | lower }}Authorization
+{% elif scheme.type == "http" %}
+      scheme: {{ scheme.scheme | default("bearer") }}
+      bearerFormat: {{ scheme.bearerFormat | default("JWT") }}
+{% elif scheme.type == "oauth2" %}
+      flows:
+        {{ scheme.flow }}:
+          authorizationUrl: {{ scheme.authorizationUrl }}
+          tokenUrl: {{ scheme.tokenUrl }}
+          scopes:
+            {{ scheme.scopes | tojson | indent(6) }}
+{% endif %}
+{% endfor %}
+  schemas:
+{% for schema_name, schema_def in components.schemas.items() | default({}) %}
+    {{ schema_name }}:
+      type: {{ schema_def.type | default("object") }}
+{% if schema_def.properties %}
+      properties:
+{% for prop_name, prop_def in schema_def.properties.items() %}
+        {{ prop_name }}:
+          type: {{ prop_def.type | default("string") }}
+{% if prop_def.format %}
+          format: {{ prop_def.format }}
+{% endif %}
+{% if prop_def.description %}
+          description: {{ prop_def.description }}
+{% endif %}
+{% if prop_def.enum %}
+          enum:
+            {{ prop_def.enum | tojson | indent(6) }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if schema_def.required %}
+      required:
+        {{ schema_def.required | tojson | indent(4) }}
+{% endif %}
+{% endfor %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, specification, inform, yaml, openapi-spec)`
+- **Mode**: linguistic
+- **Genre**: specification
+- **Type**: inform
+- **Format**: yaml
+- **Structure**: openapi-spec
+
+## Usage
+
+```bash
+# Generate OpenAPI spec
+unrdf template render \
+  --template packages/cli/templates/api/openapi-spec.njk \
+  --api-title "My API" \
+  --version 1.0.0
+
+# Validate with swagger-cli
+swagger-cli validate openapi.yaml
+
+# Generate documentation
+swagger-codegen generate -i openapi.yaml -l html2 -o ./docs
+```
+
+## OpenAPI Specification Reference
+
+- [OpenAPI Specification](https://swagger.io/specification/)
+- [Swagger Tools](https://swagger.io/tools/)
+- [OpenAPI Generator](https://openapi-generator.tech)

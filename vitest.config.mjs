@@ -37,6 +37,7 @@ export default defineConfig({
       "test/browser/browser-shims.test.mjs",
       "test/browser/indexeddb-store.test.mjs",
       "test/validation/otel-validation-v3.1.test.mjs",
+      "test/validation/semantic-invariants.test.mjs",
       "test/streaming/streaming.test.mjs",
     ],
 

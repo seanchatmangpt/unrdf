@@ -1,10 +1,15 @@
 ---
-to: {{ output_dir }}/types/entities.mjs
-description: Generates JSDoc type definitions for entities from RDF ontology
+to: "{{ output_dir }}/types/entities.mjs"
+description: "Generates JSDoc type definitions for entities from RDF ontology"
 requires:
   - sparql_results: Array of entity/property bindings from ontology query
   - output_dir: Target output directory
+
+category: codegen
+
 ---
+
+
 /**
  * @file Entity Type Definitions
  * @module {{ module_name | default("generated/types/entities") }}

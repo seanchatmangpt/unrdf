@@ -1,0 +1,185 @@
+---
+to: "slack-notification.json"
+description: "Generate Slack notification message payload"
+category: notifications
+requires:
+  - webhook_url
+variables:
+  webhook_url: "Slack webhook URL"
+  channel: "Slack channel (default: #alerts)"
+  username: "Bot username (default: AlertBot)"
+  icon_emoji: "Bot icon emoji (default: :warning:)"
+  message_type: "Message type (info, warning, error, success)"
+  title: "Notification title"
+  message: "Main message body"
+  fields: "Array of field objects (title, value, short)"
+  attachments: "Array of attachment objects"
+  timestamp: "Event timestamp (ISO 8601)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+{
+  "channel": "{{ channel | default("#alerts") }}",
+  "username": "{{ username | default("AlertBot") }}",
+  "icon_emoji": "{{ icon_emoji | default(":warning:") }}",
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "{{ title | default("System Notification") }}"
+      }
+    },
+    {
+      "type": "section",
+      "fields": [
+        {
+          "type": "mrkdwn",
+          "text": "*Type:*\n{{ message_type | default("info") | upper }}"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*Time:*\n{{ timestamp | default(now | date("YYYY-MM-DD HH:mm:ss")) }}"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "{{ message | default("Notification message body") }}"
+      }
+    }
+{% if fields | length > 0 %}
+    ,
+    {
+      "type": "section",
+      "fields": [
+{% for field in fields | default([]) %}
+        {
+          "type": "mrkdwn",
+          "text": "*{{ field.title }}:*\n{{ field.value }}"
+        }{% if not loop.last %},{% endif %}
+{% endfor %}
+      ]
+    }
+{% endif %}
+  ]
+{% if attachments | length > 0 %}
+  ,
+  "attachments": [
+{% for attachment in attachments %}
+    {
+      "color": "{{ attachment.color | default("#36a64f") }}",
+      "blocks": [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "{{ attachment.text | default("Attachment details") }}"
+          }
+        }
+      ]
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+  ]
+{% endif %}
+}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, notification, inform, json, slack-payload)`
+- **Mode**: linguistic
+- **Genre**: notification
+- **Type**: inform
+- **Format**: json
+- **Structure**: slack-payload
+
+## Usage
+
+```bash
+# Generate Slack notification
+unrdf template render \
+  --template packages/cli/templates/notifications/slack-notification.njk \
+  --webhook-url "https://hooks.slack.com/services/..." \
+  --message-type "error" \
+  --title "Production Alert" \
+  --message "Service unavailable"
+
+# Send notification
+curl -X POST {{ webhook_url }} \
+  -H 'Content-Type: application/json' \
+  -d @slack-notification.json
+```
+
+## Message Types
+
+### Info (Blue)
+```bash
+--message-type "info" \
+--icon-emoji ":information_source:"
+```
+
+### Warning (Yellow)
+```bash
+--message-type "warning" \
+--icon-emoji ":warning:"
+```
+
+### Error (Red)
+```bash
+--message-type "error" \
+--icon-emoji ":x:"
+```
+
+### Success (Green)
+```bash
+--message-type "success" \
+--icon-emoji ":white_check_mark:"
+```
+
+## Field Examples
+
+```json
+--fields '[
+  {"title": "Service", "value": "api-gateway"},
+  {"title": "Status", "value": "500"},
+  {"title": "Region", "value": "us-west-2"}
+]'
+```
+
+## Attachment Examples
+
+```json
+--attachments '[
+  {
+    "color": "#danger",
+    "text": "Error details",
+    "fields": [
+      {"title": "Error Code", "value": "ERR-5001"},
+      {"title": "Stack Trace", "value": "at..." }
+    ]
+  }
+]'
+```
+
+## Slack API Limits
+
+- **Max attachments**: 100
+- **Max fields per section**: 10
+- **Max text length**: 40,000 characters
+- **Rate limiting**: 1 message per second per workspace
+
+## References
+
+- [Slack API: Messages](https://api.slack.com/methods/chat.postMessage)
+- [Slack Block Kit](https://api.slack.com/block-kit)
+- [Slack Webhooks](https://api.slack.com/messaging/webhooks)

@@ -1,0 +1,70 @@
+---
+to: "lib/{{ app_name }}_web/{{ context_name }}/{{ context_name }}_ex"
+description: "Phoenix context with schema, migration, and CRUD operations"
+category: scaffolding
+requires:
+  - context_name
+  - app_name
+  - fields
+author: "Sean Chatman"
+mode: overwrite
+
+---
+
+
+defmodule {{ app_name | camel_case }}Web.{{ context_name | camel_case }}Context do
+  @moduledoc """
+  The {{ context_name | camel_case }} context.
+  """
+
+  import Ecto.{Query, Changeset}
+  alias {{ app_name | camel_case }}.{{ context_name | camel_case }}
+
+  @doc """
+  Returns the list of {{ context_name }}.
+  """
+  def list(opts \\ []) do
+    {{ context_name | camel_case }}
+    |> Query.limit(opts[:limit] || 50)
+    |> Query.offset(opts[:offset] || 0)
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single {{ context_name | singular | camel_case }}.
+  Raises `Ecto.NoResultsError` if the {{ context_name | singular | camel_case }} does not exist.
+  """
+  def get!(id), do: Repo.get!({{ context_name | camel_case }}, id)
+
+  @doc """
+  Creates a {{ context_name | singular | camel_case }}.
+  """
+  def create(attrs \\ %{}) do
+    %{{ context_name | singular | camel_case }}{}
+    |> {{ context_name | singular | camel_case }}.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a {{ context_name | singular | camel_case }}.
+  """
+  def update(%{{ context_name | singular | camel_case }}{} = {{ context_name | singular | camel_case }}, attrs) do
+    {{ context_name | singular | camel_case }}
+    |> {{ context_name | singular | camel_case }}.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a {{ context_name | singular | camel_case }}.
+  """
+  def delete(%{{ context_name | singular | camel_case }}{} = {{ context_name | singular | camel_case }}) do
+    Repo.delete({{ context_name | singular | camel_case }})
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking {{ context_name | singular | camel_case }} changes.
+  """
+  def change(%{{ context_name | singular | camel_case }}{} = {{ context_name | singular | camel_case }}, attrs \\ %{}) do
+    {{ context_name | singular | camel_case }}.changeset({{ context_name | singular | camel_case }}, attrs)
+  end
+end

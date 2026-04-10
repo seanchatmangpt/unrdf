@@ -247,7 +247,7 @@ function checkRequiredTools() {
     };
   }
 
-  const missing = results.filter((r) => !r.present).map((r) => r.tool);
+  const missing = results.filter(r => !r.present).map(r => r.tool);
   return {
     status: 'fail',
     actual: `Missing: ${missing.join(', ')}`,

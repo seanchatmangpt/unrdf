@@ -16,6 +16,8 @@ out
 
 # Claude Flow generated files
 .claude/settings.local.json
+.claude.local.md
+*.local.md
 .mcp.json
 claude-flow.config.json
 .swarm/
@@ -46,3 +48,8 @@ hive-mind-prompt-*.txt
 .claude-flow/metrics/
 .swarm/memory.db
 .claude/worktrees/
+*.tgz
+LOCAL_TEMPLATES.md
+TEMPLATE_IMPLEMENTATION_COMPLETE.md
+UNRDF_TOML_VALIDATION.md
+test-template.njk

@@ -221,8 +221,18 @@ export const syncCommand = defineCommand({
     },
   },
   async run({ args }) {
-    // Check config file exists
-    if (!existsSync(args.config)) {
+    // Check config file exists - try to find it if not at the default path
+    let configPath = args.config;
+    if (!existsSync(configPath)) {
+      // Auto-discover config from current directory and parent directories
+      const { findConfigFile } = await import('./sync/config-parser.mjs');
+      const discoveredPath = await findConfigFile(process.cwd());
+      if (discoveredPath) {
+        configPath = discoveredPath;
+      }
+    }
+
+    if (!existsSync(configPath)) {
       console.error(`Error: Configuration file not found: ${args.config}`);
       console.error('\nCreate a `unrdf.toml` file with:');
       console.error(`
@@ -246,11 +256,11 @@ rules = []
 
       if (args.watch) {
         // Watch mode - continuous execution
-        await startWatchMode(args, runSync);
+        await startWatchMode({ ...args, config: configPath }, runSync);
       } else {
         // Single run mode
         const result = await runSync({
-          config: args.config,
+          config: configPath,
           dryRun: args['dry-run'],
           verbose: args.verbose,
           force: args.force,

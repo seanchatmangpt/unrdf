@@ -1,0 +1,220 @@
+---
+to: "email-notification.html"
+description: "Generate HTML email notification with responsive design"
+category: notifications
+requires:
+  - subject
+variables:
+  subject: "Email subject line"
+  from_email: "Sender email (default: noreply@example.com)"
+  from_name: "Sender name (default: System Notifications)"
+  to_email: "Recipient email"
+  to_name: "Recipient name"
+  template_type: "Email template type (alert, notification, report)"
+  greeting: "Personalized greeting"
+  body_text: "Email body text"
+  cta_text: "Call-to-action button text"
+  cta_url: "Call-to-action button URL"
+  footer_text: "Footer text (default: unsubscribe info)"
+  company_name: "Company name"
+  company_logo_url: "Company logo URL"
+  company_address: "Company address"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .logo {
+      max-width: 200px;
+      height: auto;
+    }
+    .content {
+      padding: 30px 20px;
+    }
+    .greeting {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .body-text {
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #007bff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .cta-button:hover {
+      background: #0056b3;
+    }
+    .footer {
+      background: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #6c757d;
+      border-top: 1px solid #dee2e6;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        padding: 10px;
+      }
+      .content {
+        padding: 20px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+{% if company_logo_url %}
+      <img src="{{ company_logo_url }}" alt="{{ company_name }}" class="logo">
+{% else %}
+      <h1>{{ company_name | default("Company Name") }}</h1>
+{% endif %}
+    </div>
+
+    <div class="content">
+      <div class="greeting">
+        {{ greeting | default("Hello " + to_name + ",") }}
+      </div>
+
+      <div class="body-text">
+        {{ body_text | default("This is an automated notification message.") }}
+      </div>
+
+{% if cta_text and cta_url %}
+      <div style="text-align: center;">
+        <a href="{{ cta_url }}" class="cta-button">{{ cta_text }}</a>
+      </div>
+{% endif %}
+    </div>
+
+    <div class="footer">
+      <p>{{ footer_text | default("You received this email because you opted in for notifications.") }}</p>
+      <p>&copy; {{ now | date("YYYY") }} {{ company_name | default("Company Name") }}</p>
+{% if company_address %}
+      <p>{{ company_address }}</p>
+{% endif %}
+    </div>
+  </div>
+</body>
+</html>
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, notification, inform, html, email-template)`
+- **Mode**: linguistic
+- **Genre**: notification
+- **Type**: inform
+- **Format**: html
+- **Structure**: email-template
+
+## Usage
+
+```bash
+# Generate email notification
+unrdf template render \
+  --template packages/cli/templates/notifications/email-notification.njk \
+  --subject "Alert: Production Issue" \
+  --to-email "user@example.com" \
+  --to-name "John Doe" \
+  --body-text "Service XYZ is experiencing downtime"
+
+# Send email via sendmail
+sendmail -t < email-notification.html
+
+# Send via mailgun
+curl -s --user 'api:{{ MAILGUN_API_KEY }}' \
+  https://api.mailgun.net/v3/{{ MAILGUN_DOMAIN }}/messages \
+  -F from='{{ from_email }}' \
+  -F to='{{ to_email }}' \
+  -F subject='{{ subject }}' \
+  -F html=<email-notification.html
+```
+
+## Email Template Types
+
+### Alert Email
+```bash
+--template-type "alert" \
+--subject "🚨 Alert: {{ service_name }} Incident"
+```
+
+### Notification Email
+```bash
+--template-type "notification" \
+--subject "📢 Update: {{ update_type }}"
+```
+
+### Report Email
+```bash
+--template-type "report" \
+--subject "📊 Weekly Report: Week of {{ week_date }}"
+```
+
+## Best Practices
+
+1. **Responsive Design**: Test on mobile devices
+2. **Plain Text Fallback**: Always provide plain text version
+3. **Unsubscribe Link**: Include opt-out mechanism
+4. **SPF/DKIM**: Configure email authentication
+5. **Test Before Sending**: Use email testing services
+
+## Email Testing
+
+```bash
+# Use Mailtrap for testing
+curl -s --user 'api:{{ MAILTRAP_API_KEY }}' \
+  https://send.api.mailtrap.io/api/v1/send \
+  -F from={{ from_email }} \
+  -F to={{ to_email }} \
+  -F subject="{{ subject }}" \
+  -F html=<email-notification.html
+```
+
+## References
+
+- [Email HTML Design Guide](https://www.campaignmonitor.com/blog/guides/)
+- [Mailgun API Documentation](https://documentation.mailgun.com/)
+- [SendGrid API Documentation](https://sendgrid.com/docs/API_Reference/)

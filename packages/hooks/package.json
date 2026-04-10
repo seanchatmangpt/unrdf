@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks",
-  "version": "26.4.7",
+  "version": "26.4.9",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
   "bin": {
@@ -10,7 +10,10 @@
   "exports": {
     ".": "./src/index.mjs",
     "./define": "./src/define.mjs",
-    "./executor": "./src/executor.mjs"
+    "./executor": "./src/executor.mjs",
+    "./parallel-executor": "./src/hooks/parallel-executor.mjs",
+    "./dependency-graph": "./src/hooks/dependency-graph.mjs",
+    "./worker-pool": "./src/hooks/worker-pool.mjs"
   },
   "sideEffects": false,
   "files": [

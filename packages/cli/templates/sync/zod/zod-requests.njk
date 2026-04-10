@@ -1,6 +1,6 @@
 ---
-to: {{ output_dir }}/schemas/requests.mjs
-description: Generates Zod validation schemas for API requests from RDF ontology
+to: "{{ output_dir }}/schemas/requests.mjs"
+description: "Generates Zod validation schemas for API requests from RDF ontology"
 requires:
   - sparql_results: Array of SPARQL query results with ?operation, ?inputType, ?outputType, ?paramName, ?paramType, ?required
   - now: Current timestamp for generation metadata
@@ -9,7 +9,12 @@ filters:
   - zod_type: Converts RDF/XSD types to Zod schema types
   - camel_case: Converts to camelCase for JavaScript identifiers
   - pascal_case: Converts to PascalCase for type names
+
+category: codegen
+
 ---
+
+
 /**
  * @file Request Validation Schemas
  * @module schemas/requests

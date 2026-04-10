@@ -70,20 +70,22 @@ export const queryCommand = defineCommand({
       console.log(`📊 Loaded ${store.size} quads from ${file}`);
       console.log(`🔍 Executing query...\n`);
 
-      // Execute query
-      const results = store.query(queryString);
+      // Execute query using the executor for proper result formatting
+      const { executeQuerySync } = await import('@unrdf/core/sparql/executor-sync');
+      const queryResult = executeQuerySync(store, queryString);
 
-      // Detect query type (SELECT returns Maps, CONSTRUCT returns quads, ASK returns boolean)
-      const isSELECT = /^\s*SELECT/i.test(queryString);
-      const isASK = /^\s*ASK/i.test(queryString);
+      // Detect query type from result
+      const isSELECT = queryResult.type === 'select';
+      const isASK = typeof queryResult === 'boolean';
 
       // Handle ASK queries
       if (isASK) {
-        console.log(results ? '✅ true' : '❌ false');
+        console.log(queryResult ? '✅ true' : '❌ false');
         return;
       }
 
-      const resultArray = Array.from(results);
+      // Extract the actual results array
+      const resultArray = isSELECT ? queryResult.rows : queryResult;
 
       // Format and display results
       if (resultArray.length === 0) {
@@ -175,17 +177,19 @@ export const queryFileCommand = defineCommand({
  */
 function outputTable(results, isSELECT) {
   if (isSELECT) {
-    // SELECT results are Maps with variable bindings
+    // SELECT results are objects with variable bindings
     if (results.length === 0) return;
 
     const firstResult = results[0];
-    const variables = Array.from(firstResult.keys());
+    const variables = Object.keys(firstResult).filter(k => k !== 'get');
 
     const data = results.map((binding, idx) => {
       const row = [idx + 1];
       for (const variable of variables) {
-        const term = binding.get(variable);
-        row.push(term ? shortenIRI(term.value) : '-');
+        const term = binding[variable];
+        // Handle both wrapped term objects and raw values
+        const value = term && typeof term === 'object' && 'value' in term ? term.value : term;
+        row.push(value ? shortenIRI(String(value)) : '-');
       }
       return row;
     });
@@ -228,11 +232,13 @@ function outputTable(results, isSELECT) {
  */
 function outputJSON(results, isSELECT) {
   if (isSELECT) {
-    // SELECT results are Maps with variable bindings
+    // SELECT results are objects with variable bindings
     const jsonResults = results.map(binding => {
       const obj = {};
-      for (const [variable, term] of binding) {
-        obj[variable] = term ? term.value : null;
+      for (const [variable, term] of Object.entries(binding)) {
+        if (variable === 'get') continue;
+        // Handle both wrapped term objects and raw values
+        obj[variable] = term && typeof term === 'object' && 'value' in term ? term.value : term;
       }
       return obj;
     });
@@ -254,11 +260,11 @@ function outputJSON(results, isSELECT) {
  */
 function outputCSV(results, isSELECT) {
   if (isSELECT) {
-    // SELECT results are Maps with variable bindings
+    // SELECT results are objects with variable bindings
     if (results.length === 0) return;
 
     const firstResult = results[0];
-    const variables = Array.from(firstResult.keys());
+    const variables = Object.keys(firstResult).filter(k => k !== 'get');
 
     // Header
     console.log(variables.join(','));
@@ -266,8 +272,10 @@ function outputCSV(results, isSELECT) {
     // Data
     for (const binding of results) {
       const parts = variables.map(variable => {
-        const term = binding.get(variable);
-        return term ? escapeCSV(term.value) : '';
+        const term = binding[variable];
+        // Handle both wrapped term objects and raw values
+        const value = term && typeof term === 'object' && 'value' in term ? term.value : term;
+        return value ? escapeCSV(String(value)) : '';
       });
       console.log(parts.join(','));
     }

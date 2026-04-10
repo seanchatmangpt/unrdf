@@ -1,0 +1,155 @@
+---
+to: "schema.graphql"
+description: "Generate GraphQL schema with queries, mutations, and subscriptions"
+category: api
+requires:
+  - schema_name
+variables:
+  schema_name: "Schema name"
+  types: "Array of GraphQL type definitions"
+  queries: "Array of query definitions"
+  mutations: "Array of mutation definitions"
+  subscriptions: "Array of subscription definitions"
+  directives: "Array of custom directive definitions"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ schema_name }} GraphQL Schema
+
+## Directives
+
+{% for directive in directives | default([{name: "auth", description: "Authentication directive"}]) %}
+"""
+{{ directive.description }}
+"""
+directive @{{ directive.name }}(
+{% for arg in directive.args | default([]) %}
+  {{ arg.name }}: {{ arg.type }}
+{% endfor %}
+) on {{ directive.locations | default("FIELD_DEFINITION") | join(" | ") }}
+
+{% endfor %}
+
+## Types
+
+{% for type in types | default([{name: "User", fields: [{name: "id", type: "ID!"}, {name: "name", type: "String!"}]}, {name: "Post", fields: [{name: "id", type: "ID!"}, {name: "title", type: "String!"}, {name: "author", type: "User!"}])}) %}
+"""
+{{ type.description | default(type.name + " type") }}
+"""
+type {{ type.name }} {
+{% for field in type.fields %}
+  """
+  {{ field.description | default(field.name + " field") }}
+  """
+  {{ field.name }}: {{ field.type }}
+{% endfor %}
+}
+
+{% endfor %}
+
+## Queries
+
+type Query {
+{% for query in queries | default([{name: "user", type: "User", description: "Get user by ID", args: [{name: "id", type: "ID!", description: "User ID"}]}, {name: "users", type: "[User!]", description: "List all users"}]) %}
+  """
+  {{ query.description }}
+  """
+  {{ query.name }}(
+{% for arg in query.args | default([]) %}
+    {{ arg.name }}: {{ arg.type }}
+{% endfor %}
+  ): {{ query.type }}
+{% endfor %}
+}
+
+## Mutations
+
+type Mutation {
+{% for mutation in mutations | default([{name: "createUser", type: "User!", description: "Create new user", args: [{name: "input", type: "UserInput!", description: "User data"}]}, {name: "updateUser", type: "User!", description: "Update user", args: [{name: "id", type: "ID!"}, {name: "input", type: "UserInput!", description: "User data"}]}, {name: "deleteUser", type: "Boolean!", description: "Delete user", args: [{name: "id", type: "ID!"}]}]) %}
+  """
+  {{ mutation.description }}
+  """
+  {{ mutation.name }}(
+{% for arg in mutation.args | default([]) %}
+    {{ arg.name }}: {{ arg.type }}
+{% endfor %}
+  ): {{ mutation.type }}
+{% endfor %}
+}
+
+## Subscriptions
+
+type Subscription {
+{% for subscription in subscriptions | default([{name: "userUpdated", type: "User!", description: "Subscribe to user updates", args: [{name: "id", type: "ID!", description: "User ID"}]}) %}
+  """
+  {{ subscription.description }}
+  """
+  {{ subscription.name }}(
+{% for arg in subscription.args | default([]) %}
+    {{ arg.name }}: {{ arg.type }}
+{% endfor %}
+  ): {{ subscription.type }}
+{% endfor %}
+}
+
+## Input Types
+
+{% for type in types | default([]) | selectattr("input", "true") %}
+"""
+Input type for {{ type.name }}
+"""
+input {{ type.name }}Input {
+{% for field in type.fields %}
+  {{ field.name }}: {{ field.type }}
+{% endfor %}
+}
+
+{% endfor %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, specification, inform, graphql, graphql-schema)`
+- **Mode**: linguistic
+- **Genre**: specification
+- **Type**: inform
+- **Format**: graphql
+- **Structure**: graphql-schema
+
+## Usage
+
+```bash
+# Generate GraphQL schema
+unrdf template render \
+  --template packages/cli/templates/api/graphql-schema.njk \
+  --schema-name "MyAPI" \
+  --types '[{"name": "User", "fields": [{"name": "id", "type": "ID!"}]}]'
+
+# Validate with graphql-cli
+graphql-cli validate schema.graphql
+
+# Generate TypeScript types
+graphql-codegen --schema schema.graphql --output ./src/generated/
+```
+
+## GraphQL Best Practices
+
+1. **Use descriptive type names** - Avoid abbreviations
+2. **Provide descriptions** - Document all types and fields
+3. **Use non-null by default** - Add `!` to make fields required
+4. **Batch queries** - Use list queries to reduce round trips
+5. **Handle errors gracefully** - Use GraphQL error handling
+
+## References
+
+- [GraphQL Specification](https://spec.graphql.org/)
+- [GraphQL Code Generator](https://graphql-code-generator.com/)
+- [Apollo Best Practices](https://www.apollographql.com/docs/technical-career/)

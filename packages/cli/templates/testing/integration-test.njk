@@ -1,0 +1,272 @@
+---
+to: "test/integration/{{ test_name }}.test.js"
+description: "Generate integration test with real dependencies"
+category: testing
+requires:
+  - test_name
+variables:
+  test_name: "Name of the integration test suite"
+  system_under_test: "System or service being tested"
+  dependencies: "Array of external dependencies (database, api, etc.)"
+  fixtures: "Array of test fixtures (name, data)"
+  test_cases: "Array of integration test cases"
+  setup_timeout: "Setup timeout in ms (default: 10000)"
+  teardown_timeout: "Teardown timeout in ms (default: 5000)"
+  language: "Programming language (javascript, python, go, rust)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+{% if language == "javascript" or language == "typescript" %}
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
+import { {{ system_under_test }} } from '../src/{{ system_under_test | lower }}';
+
+describe('{{ test_name }} Integration Tests', () => {
+  let dbConnection;
+  let apiClient;
+
+  beforeAll(async () => {
+    // Setup all dependencies
+    console.log('Setting up integration test environment...');
+    dbConnection = await setupDatabase();
+    apiClient = await setupApiClient();
+  }, {{ setup_timeout | default(10000) }});
+
+  afterAll(async () => {
+    // Cleanup all dependencies
+    console.log('Tearing down integration test environment...');
+    await teardownDatabase(dbConnection);
+    await teardownApiClient(apiClient);
+  }, {{ teardown_timeout | default(5000) }});
+
+  beforeEach(async () => {
+    // Reset fixtures before each test
+    await loadFixtures(dbConnection);
+  });
+
+  afterEach(async () => {
+    // Cleanup after each test
+    await clearTestData(dbConnection);
+  });
+
+{% for test_case in test_cases | default([{name: "creates user", description: "should create user in database", setup: "seed user data", action: "call API", expected: "user created"}]) %}
+  it('{{ test_case.description | default(test_case.name) }}', async () => {
+    // Setup
+    {% if test_case.setup %}
+    await {{ test_case.setup }}();
+    {% endif %}
+
+    // Action
+    {% if test_case.action == "call API" %}
+    const response = await apiClient.{{ test_case.api_method | default("post") }}({
+      endpoint: '{{ test_case.endpoint | default("/api/users") }}',
+      data: {{ test_case.data | default("{}") }}
+    });
+    {% endif %}
+
+    // Expected
+    {% if test_case.expected == "user created" %}
+    expect(response.status).toBe(201);
+    expect(response.data.id).toBeDefined();
+    expect(response.data.name).toBe('{{ test_case.expected_name | default("Test User") }}');
+    {% endif %}
+  });
+{% endfor %}
+
+  // Helper functions
+  async function setupDatabase() {
+    // Connect to test database
+    console.log('Connecting to test database...');
+    // Return database connection
+    return {};
+  }
+
+  async function setupApiClient() {
+    // Initialize API client
+    console.log('Initializing API client...');
+    // Return API client
+    return {};
+  }
+
+  async function teardownDatabase(db) {
+    // Close database connection
+    console.log('Closing database connection...');
+  }
+
+  async function teardownApiClient(client) {
+    // Close API client
+    console.log('Closing API client...');
+  }
+
+  async function loadFixtures(db) {
+    // Load test fixtures
+    console.log('Loading test fixtures...');
+    {% for fixture in fixtures | default([]) %}
+    await db.query(`
+      INSERT INTO {{ fixture.table | default("test_data") }} (name, value)
+      VALUES ('{{ fixture.name }}', '{{ fixture.value }}')
+    `);
+    {% endfor %}
+  }
+
+  async function clearTestData(db) {
+    // Clear test data
+    console.log('Clearing test data...');
+    await db.query('DELETE FROM test_data');
+  }
+});
+
+{% elif language == "python" %}
+import pytest
+import asyncio
+from datetime import datetime
+from {{ system_under_test }} import {{ system_under_test | camelCase }}
+
+@pytest.fixture(scope="module")
+async def db_connection():
+    """Setup database connection for all tests"""
+    print("Setting up database connection...")
+    conn = await create_test_db_connection()
+    yield conn
+    await conn.close()
+
+@pytest.fixture(scope="module")
+async def api_client():
+    """Setup API client for all tests"""
+    print("Initializing API client...")
+    client = await create_test_api_client()
+    yield client
+    await client.close()
+
+@pytest.fixture(autouse=True)
+async def reset_fixtures(db_connection):
+    """Reset fixtures before each test"""
+    await load_fixtures(db_connection)
+    yield
+    await clear_test_data(db_connection)
+
+@pytest.mark.integration
+class Test{{ test_name | replace(" ", "_") | title }}:
+{% for test_case in test_cases | default([]) %}
+    @pytest.mark.asyncio
+    async def test_{{ test_case.name | replace(" ", "_") | lower }}(db_connection, api_client):
+        """
+        {{ test_case.description | default(test_case.name) }}
+
+        Integration test with real dependencies.
+        """
+        # Given
+        {% if test_case.setup %}
+        await {{ test_case.setup }}()
+        {% endif %}
+
+        # When
+        {% if test_case.action == "call API" %}
+        response = await api_client.{{ test_case.api_method | default("post") }}(
+            "{{ test_case.endpoint | default("/api/users") }}",
+            json={{ test_case.data | default("{}") }}
+        )
+        {% endif %}
+
+        # Then
+        {% if test_case.expected == "user created" %}
+        assert response.status_code == 201
+        assert response.json()["id"] is not None
+        assert response.json()["name"] == "{{ test_case.expected_name | default("Test User") }}"
+        {% endif %}
+{% endfor %}
+
+# Helper functions
+async def create_test_db_connection():
+    """Create test database connection"""
+    # Implementation
+    pass
+
+async def create_test_api_client():
+    """Create test API client"""
+    # Implementation
+    pass
+
+async def load_fixtures(db):
+    """Load test fixtures"""
+    # Implementation
+    pass
+
+async def clear_test_data(db):
+    """Clear test data"""
+    # Implementation
+    pass
+
+{% endif %}
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, testing, verify, code, integration-test)`
+- **Mode**: linguistic
+- **Genre**: testing
+- **Type**: verify
+- **Format**: code
+- **Structure**: integration-test
+
+## Usage
+
+```bash
+# Generate integration test
+unrdf template render \
+  --template packages/cli/templates/testing/integration-test.njk \
+  --test-name "UserAPI" \
+  --system-under-test "UserAPI" \
+  --dependencies '["postgresql", "redis"]' \
+  --language "javascript"
+
+# Run integration tests
+npm run test:integration
+pytest tests/integration/
+
+# With Docker Compose
+docker-compose up -d test-db
+npm run test:integration
+docker-compose down
+```
+
+## Integration Test Guidelines
+
+1. **Use Real Dependencies**: Connect to actual services
+2. **Isolate Tests**: Each test should be independent
+3. **Cleanup**: Always clean up after tests
+4. **Timeouts**: Set reasonable timeouts for external calls
+5. **Fixtures**: Use fixtures for consistent test data
+6. **Error Handling**: Test both success and failure cases
+
+## Test Dependencies
+
+### PostgreSQL
+```bash
+--dependencies '["postgresql"]' \
+--setup-code 'await db.connect("postgres://localhost:5432/test")'
+```
+
+### Redis
+```bash
+--dependencies '["redis"]' \
+--setup-code 'await redis.connect("redis://localhost:6379")'
+```
+
+### External APIs
+```bash
+--dependencies '["external-api"]' \
+--setup-code 'apiClient = new ApiClient("https://api.example.com")'
+```
+
+## References
+
+- [Integration Testing Best Practices](https://martinfowler.com/bliki/IntegrationTest.html)
+- [Jest Integration Tests](https://jestjs.io/docs/configuration)
+- [Pytest Fixtures](https://docs.pytest.org/en/fixture.html)

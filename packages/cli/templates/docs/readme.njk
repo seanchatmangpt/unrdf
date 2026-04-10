@@ -1,0 +1,148 @@
+---
+to: "README.md"
+description: "Generate comprehensive README.md following Diátaxis framework"
+category: docs
+requires:
+  - project_name
+  - project_description
+variables:
+  project_name: "Project name"
+  project_description: "Brief project description"
+  tech_stack: "Technology stack (e.g., Go 1.24, PostgreSQL)"
+  author: "Author name"
+  license: "License type (default: MIT)"
+  badges: "Array of badge objects (name, image, url)"
+  sections: "Documentation sections to include (tutorials, how-to, explanation, reference)"
+mode: overwrite
+
+
+
+---
+
+
+
+
+
+
+
+# {{ project_name }}
+
+{{ project_description }}
+
+## Status
+
+{% for badge in badges | default([]) %}
+[![{{ badge.name }}]({{ badge.image }})]({{ badge.url }})
+{% endfor %}
+
+## Overview
+
+{{ project_name }} is built with {{ tech_stack }}.
+
+## Quick Start
+
+### Prerequisites
+
+- {{ tech_stack }}
+- Node.js 20+ (if applicable)
+- Docker (optional)
+
+### Installation
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd {{ project_name | lower }}
+
+# Install dependencies
+npm install  # or go mod download / mix deps.get
+
+# Start development server
+npm run dev  # or go run main.go / mix phx.server
+```
+
+## Documentation
+
+This project follows the **Diátaxis Framework**:
+
+### Tutorials
+Learning-oriented guides for step-by-step usage:
+{% if "tutorials" in sections | default(["tutorials", "how-to", "explanation", "reference"]) %}
+- [Getting Started](docs/tutorials/getting-started.md)
+{% endif %}
+
+### How-to Guides
+Problem-oriented guides for specific tasks:
+{% if "how-to" in sections | default(["tutorials", "how-to", "explanation", "reference"]) %}
+- [Configuration Guide](docs/how-to/configuration.md)
+- [Deployment Guide](docs/how-to/deployment.md)
+{% endif %}
+
+### Explanation
+Understanding-oriented documentation:
+{% if "explanation" in sections | default(["tutorials", "how-to", "explanation", "reference"]) %}
+- [Architecture Overview](docs/explanation/architecture.md)
+- [Design Decisions](docs/explanation/design.md)
+{% endif %}
+
+### Reference
+Technical specifications:
+{% if "reference" in sections | default(["tutorials", "how-to", "explanation", "reference"]) %}
+- [API Reference](docs/reference/api.md)
+- [CLI Reference](docs/reference/cli.md)
+{% endif %}
+
+## Development
+
+### Running Tests
+
+```bash
+npm test  # or go test ./... / mix test
+```
+
+### Code Quality
+
+```bash
+npm run lint  # or gofmt / mix format
+npm run build # or go build / mix compile
+```
+
+## Deployment
+
+### Docker
+
+```bash
+docker build -t {{ project_name | lower }}:latest .
+docker run -p 8080:8080 {{ project_name | lower }}:latest
+```
+
+### Kubernetes
+
+```bash
+kubectl apply -f k8s/
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## License
+
+{{ license | default("MIT") }} - see [LICENSE](LICENSE) file for details
+
+## Author
+
+Created by {{ author | default("Your Name") }}.
+
+## Signal Theory
+
+**Signal**: `S=(linguistic, documentation, inform, markdown, readme)`
+- **Mode**: linguistic
+- **Genre**: documentation
+- **Type**: inform
+- **Format**: markdown
+- **Structure**: readme

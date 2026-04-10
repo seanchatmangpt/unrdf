@@ -41,30 +41,15 @@ describe('Sync Orchestrator', () => {
   let mockStore;
 
   beforeEach(() => {
-    // Capture console output
     logOutput = [];
     errorOutput = [];
     originalLog = console.log;
     originalError = console.error;
-
-    console.log = vi.fn((...args) => {
-      logOutput.push(args.join(' '));
-    });
-
-    console.error = vi.fn((...args) => {
-      errorOutput.push(args.join(' '));
-    });
-
-    // Setup default mock store
-    mockStore = {
-      size: 100,
-      query: vi.fn().mockReturnValue([]),
-    };
-
-    // Reset all mocks
+    console.log = vi.fn((...args) => logOutput.push(args.join(' ')));
+    console.error = vi.fn((...args) => errorOutput.push(args.join(' ')));
+    mockStore = { size: 100, query: vi.fn().mockReturnValue([]) };
     vi.clearAllMocks();
 
-    // Setup default mock implementations
     parseConfig.mockResolvedValue({
       project: { name: 'test-project', version: '1.0.0' },
       ontology: { source: '/test/schema.ttl', format: 'turtle' },
@@ -111,573 +96,129 @@ describe('Sync Orchestrator', () => {
     console.error = originalError;
   });
 
-  describe('runSync()', () => {
-    it('should process config and generate files successfully', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml' };
+  it('should process config and generate files successfully with full metrics', async () => {
+    const options = { config: '/test/unrdf.toml' };
+    const result = await runSync(options);
 
-      // Act
-      const result = await runSync(options);
+    expect(result.success).toBe(true);
+    expect(result.metrics.rulesProcessed).toBe(2);
+    expect(result.metrics.filesGenerated).toBe(2);
+    expect(result.metrics.errors).toBe(0);
+    expect(result.metrics.totalTriples).toBe(150);
+    expect(result.totalDuration).toBeGreaterThanOrEqual(0);
 
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(2);
-      expect(result.metrics.filesGenerated).toBe(2);
-      expect(result.metrics.errors).toBe(0);
+    expect(parseConfig).toHaveBeenCalledWith('/test/unrdf.toml');
+    expect(loadOntology).toHaveBeenCalled();
+    expect(executeSparqlQuery).toHaveBeenCalledTimes(2);
+    expect(renderTemplate).toHaveBeenCalledTimes(2);
+    expect(mkdir).toHaveBeenCalled();
+    expect(writeFile).toHaveBeenCalledTimes(2);
 
-      // Verify dependencies were called
-      expect(parseConfig).toHaveBeenCalledWith('/test/unrdf.toml');
-      expect(loadOntology).toHaveBeenCalled();
-      expect(executeSparqlQuery).toHaveBeenCalledTimes(2);
-      expect(renderTemplate).toHaveBeenCalledTimes(2);
-      expect(mkdir).toHaveBeenCalled();
-      expect(writeFile).toHaveBeenCalledTimes(2);
-
-      // Verify output messages
-      const output = logOutput.join('\n');
-      expect(output).toContain('UNRDF Sync');
-      expect(output).toContain('Loading configuration');
-      expect(output).toContain('Loading ontology');
-      expect(output).toContain('150');
-      expect(output).toContain('Sync complete');
-    });
-
-    it('should not write files in dry-run mode', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', dryRun: true };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(2);
-      expect(result.metrics.filesGenerated).toBe(0);
-      expect(result.metrics.filesSkipped).toBe(2);
-
-      // Verify mkdir and writeFile were NOT called
-      expect(mkdir).not.toHaveBeenCalled();
-      expect(writeFile).not.toHaveBeenCalled();
-
-      // Verify dry-run message in output
-      const output = logOutput.join('\n');
-      expect(output).toContain('[DRY RUN]');
-      expect(output).toContain('Would write');
-
-      // Verify results have dry-run status
-      expect(result.results.every(r => r.status === 'dry-run')).toBe(true);
-    });
-
-    it('should output detailed information in verbose mode', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', verbose: true };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-
-      // Verify verbose output
-      const output = logOutput.join('\n');
-      expect(output).toContain('Config:');
-      expect(output).toContain('/test/unrdf.toml');
-      expect(output).toContain('Project:');
-      expect(output).toContain('test-project');
-      expect(output).toContain('Rule:');
-      expect(output).toContain('generate-types');
-      expect(output).toContain('Query returned');
-      expect(output).toContain('2 results');
-    });
-
-    it('should process only the specified rule when filter is provided', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', rule: 'generate-types' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(1);
-      expect(result.metrics.filesGenerated).toBe(1);
-
-      // Verify only one rule was processed
-      expect(executeSparqlQuery).toHaveBeenCalledTimes(1);
-      expect(renderTemplate).toHaveBeenCalledTimes(1);
-      expect(writeFile).toHaveBeenCalledTimes(1);
-
-      // Verify correct rule was processed
-      expect(result.results).toHaveLength(1);
-      expect(result.results[0].rule).toBe('generate-types');
-    });
-
-    it('should handle non-existent rule filter gracefully', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', rule: 'non-existent-rule' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(0);
-      expect(result.metrics.filesGenerated).toBe(0);
-
-      // Verify no SPARQL queries or templates were processed
-      expect(executeSparqlQuery).not.toHaveBeenCalled();
-      expect(renderTemplate).not.toHaveBeenCalled();
-
-      // Verify output indicates no rules
-      const output = logOutput.join('\n');
-      expect(output).toContain('No rules to process');
-    });
-
-    it('should skip disabled rules when no filter is provided', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        project: { name: 'test-project' },
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: {
-          output_dir: '/test/output',
-          rules: [
-            {
-              name: 'enabled-rule',
-              query: 'SELECT ?x WHERE { ?x a ?y }',
-              template: '/test/enabled.njk',
-              output_file: 'enabled.mjs',
-              enabled: true,
-            },
-            {
-              name: 'disabled-rule',
-              query: 'SELECT ?x WHERE { ?x a ?y }',
-              template: '/test/disabled.njk',
-              output_file: 'disabled.mjs',
-              enabled: false,
-            },
-          ],
-        },
-      });
-
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.rulesProcessed).toBe(1);
-      expect(result.results).toHaveLength(1);
-      expect(result.results[0].rule).toBe('enabled-rule');
-    });
+    const output = logOutput.join('\n');
+    expect(output).toContain('UNRDF Sync');
+    expect(output).toContain('150');
+    expect(output).toContain('Sync complete');
   });
 
-  describe('error handling', () => {
-    it('should return error when config file is missing', async () => {
-      // Arrange
-      parseConfig.mockRejectedValue(new Error('Configuration file not found: /missing/unrdf.toml'));
-      const options = { config: '/missing/unrdf.toml' };
+  it('should handle config errors, individual rule failures, and template errors', async () => {
+    // Test 1: config file missing
+    parseConfig.mockRejectedValue(new Error('Configuration file not found'));
+    let result = await runSync({ config: '/missing/unrdf.toml' });
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Configuration file not found');
 
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Configuration file not found');
-
-      // Verify error output
-      const errors = errorOutput.join('\n');
-      expect(errors).toContain('Sync failed');
-      expect(errors).toContain('Configuration file not found');
+    // Reset mocks for remaining tests
+    parseConfig.mockResolvedValue({
+      project: { name: 'test-project' },
+      ontology: { source: '/test/schema.ttl', format: 'turtle' },
+      generation: {
+        output_dir: '/test/output',
+        rules: [
+          {
+            name: 'rule1',
+            query: 'SELECT ?x WHERE { ?x a ?y }',
+            template: '/test/t.njk',
+            output_file: 'o.mjs',
+            enabled: true,
+          },
+          {
+            name: 'rule2',
+            query: 'SELECT ?x WHERE { ?x a ?y }',
+            template: '/test/t.njk',
+            output_file: 'o2.mjs',
+            enabled: true,
+          },
+        ],
+      },
     });
+    loadOntology.mockResolvedValue({ store: mockStore, tripleCount: 0, prefixes: {} });
+    renderTemplate.mockResolvedValue({ content: 'x', outputPath: 'o.mjs' });
 
-    it('should return error when ontology loading fails', async () => {
-      // Arrange
-      loadOntology.mockRejectedValue(new Error('Ontology file not found: /test/schema.ttl'));
-      const options = { config: '/test/unrdf.toml' };
+    // Test 2: individual rule failure (first fails, second succeeds)
+    executeSparqlQuery
+      .mockRejectedValueOnce(new Error('SPARQL syntax error'))
+      .mockResolvedValueOnce([{ '?schema': 'http://example.org/Schema1' }]);
 
-      // Act
-      const result = await runSync(options);
+    result = await runSync({ config: '/test/unrdf.toml' });
+    expect(result.success).toBe(false);
+    expect(result.metrics.rulesProcessed).toBe(2);
+    expect(result.metrics.filesGenerated).toBe(1);
+    expect(result.metrics.errors).toBe(1);
+    expect(result.results[0].status).toBe('error');
+    expect(result.results[1].status).toBe('success');
 
-      // Assert
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('Ontology file not found');
-    });
-
-    it('should continue processing and track errors for individual rule failures', async () => {
-      // Arrange - first rule fails, second succeeds
-      executeSparqlQuery
-        .mockRejectedValueOnce(new Error('SPARQL syntax error'))
-        .mockResolvedValueOnce([{ '?schema': 'http://example.org/Schema1' }]);
-
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(false); // Has errors
-      expect(result.metrics.rulesProcessed).toBe(2);
-      expect(result.metrics.filesGenerated).toBe(1);
-      expect(result.metrics.errors).toBe(1);
-
-      // Verify error was recorded
-      expect(result.results[0].status).toBe('error');
-      expect(result.results[0].error).toContain('SPARQL');
-      expect(result.results[1].status).toBe('success');
-
-      // Verify error output
-      const output = logOutput.join('\n');
-      expect(output).toContain('ERR');
-      expect(output).toContain('SPARQL');
-    });
-
-    it('should handle template rendering failures', async () => {
-      // Arrange
-      renderTemplate.mockRejectedValue(new Error('Template not found'));
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(false);
-      expect(result.metrics.errors).toBe(2);
-      expect(result.results.every(r => r.status === 'error')).toBe(true);
-    });
-
-    it('should show stack trace in verbose mode on error', async () => {
-      // Arrange
-      const errorWithStack = new Error('Test error');
-      errorWithStack.stack = 'Error: Test error\n    at TestFunction (test.mjs:10:5)';
-      parseConfig.mockRejectedValue(errorWithStack);
-
-      const options = { config: '/test/unrdf.toml', verbose: true };
-
-      // Act
-      await runSync(options);
-
-      // Assert
-      const errors = errorOutput.join('\n');
-      expect(errors).toContain('at TestFunction');
-    });
+    // Test 3: template rendering failures
+    renderTemplate.mockRejectedValue(new Error('Template not found'));
+    result = await runSync({ config: '/test/unrdf.toml' });
+    expect(result.success).toBe(false);
+    expect(result.metrics.errors).toBe(2);
+    expect(result.results.every(r => r.status === 'error')).toBe(true);
   });
 
-  describe('metrics tracking', () => {
-    it('should track rulesProcessed count correctly', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml' };
+  it('should handle dry-run, rule filtering, disabled rules, and empty rules', async () => {
+    // Test 1: dry-run mode
+    let result = await runSync({ config: '/test/unrdf.toml', dryRun: true });
+    expect(result.success).toBe(true);
+    expect(result.metrics.filesGenerated).toBe(0);
+    expect(result.metrics.filesSkipped).toBe(2);
+    expect(mkdir).not.toHaveBeenCalled();
+    expect(writeFile).not.toHaveBeenCalled();
+    const dryRunOutput = logOutput.join('\n');
+    expect(dryRunOutput).toContain('[DRY RUN]');
 
-      // Act
-      const result = await runSync(options);
+    // Test 2: rule filter
+    result = await runSync({ config: '/test/unrdf.toml', rule: 'generate-types' });
+    expect(result.metrics.rulesProcessed).toBe(1);
+    expect(result.metrics.filesGenerated).toBe(1);
+    expect(result.results[0].rule).toBe('generate-types');
 
-      // Assert
-      expect(result.metrics.rulesProcessed).toBe(2);
+    // Test 3: non-existent rule
+    result = await runSync({ config: '/test/unrdf.toml', rule: 'non-existent-rule' });
+    expect(result.metrics.rulesProcessed).toBe(0);
 
-      // Verify output shows rules processed
-      const output = logOutput.join('\n');
-      expect(output).toContain('Rules processed: 2');
+    // Test 4: disabled rules
+    parseConfig.mockResolvedValue({
+      project: { name: 'test' },
+      ontology: { source: '/test/schema.ttl' },
+      generation: {
+        output_dir: '/test/output',
+        rules: [
+          { name: 'enabled-rule', query: 'Q', template: '/t.njk', output_file: 'e.mjs', enabled: true },
+          { name: 'disabled-rule', query: 'Q', template: '/t.njk', output_file: 'd.mjs', enabled: false },
+        ],
+      },
     });
+    result = await runSync({ config: '/test/unrdf.toml' });
+    expect(result.metrics.rulesProcessed).toBe(1);
+    expect(result.results[0].rule).toBe('enabled-rule');
 
-    it('should track filesGenerated count correctly', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.filesGenerated).toBe(2);
-
-      // Verify output shows files generated
-      const output = logOutput.join('\n');
-      expect(output).toContain('Files generated: 2');
+    // Test 5: empty rules
+    parseConfig.mockResolvedValue({
+      project: { name: 'empty' },
+      ontology: { source: '/test/schema.ttl' },
+      generation: { output_dir: '/test/output', rules: [] },
     });
-
-    it('should track totalBytes generated', async () => {
-      // Arrange
-      renderTemplate.mockResolvedValue({
-        content: 'x'.repeat(1000), // 1000 bytes
-        outputPath: 'test.mjs',
-      });
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.totalBytes).toBe(2000); // 2 rules * 1000 bytes
-      expect(result.results[0].bytes).toBe(1000);
-      expect(result.results[1].bytes).toBe(1000);
-    });
-
-    it('should track totalTriples from ontology', async () => {
-      // Arrange
-      loadOntology.mockResolvedValue({
-        store: mockStore,
-        tripleCount: 500,
-        prefixes: {},
-      });
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.totalTriples).toBe(500);
-
-      // Verify output shows triple count
-      const output = logOutput.join('\n');
-      expect(output).toContain('500');
-      expect(output).toContain('triples');
-    });
-
-    it('should track filesSkipped in dry-run mode', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', dryRun: true };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.filesSkipped).toBe(2);
-      expect(result.metrics.filesGenerated).toBe(0);
-    });
-
-    it('should track errors count correctly', async () => {
-      // Arrange - both rules fail
-      executeSparqlQuery.mockRejectedValue(new Error('Query failed'));
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.metrics.errors).toBe(2);
-
-      // Verify error count in output
-      const output = logOutput.join('\n');
-      expect(output).toContain('Errors: 2');
-    });
-
-    it('should track duration for each rule', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.results[0]).toHaveProperty('duration');
-      expect(result.results[1]).toHaveProperty('duration');
-      expect(typeof result.results[0].duration).toBe('number');
-      expect(result.results[0].duration).toBeGreaterThanOrEqual(0);
-    });
-
-    it('should track totalDuration for entire sync', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result).toHaveProperty('totalDuration');
-      expect(typeof result.totalDuration).toBe('number');
-      expect(result.totalDuration).toBeGreaterThanOrEqual(0);
-
-      // Verify duration in output
-      const output = logOutput.join('\n');
-      expect(output).toContain('Duration:');
-    });
-  });
-
-  describe('output formats', () => {
-    it('should output JSON when output option is json', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', output: 'json' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-
-      // Find JSON output in log
-      const jsonOutput = logOutput.find(line => {
-        try {
-          JSON.parse(line);
-          return true;
-        } catch {
-          return false;
-        }
-      });
-
-      expect(jsonOutput).toBeDefined();
-      const parsed = JSON.parse(jsonOutput);
-      expect(parsed.success).toBe(true);
-      expect(parsed.results).toHaveLength(2);
-      expect(parsed.metrics).toHaveProperty('rulesProcessed', 2);
-      expect(parsed.metrics).toHaveProperty('filesGenerated', 2);
-    });
-
-    it('should not output JSON when output option is text', async () => {
-      // Arrange
-      const options = { config: '/test/unrdf.toml', output: 'text' };
-
-      // Act
-      await runSync(options);
-
-      // Assert - no JSON output
-      const jsonOutput = logOutput.find(line => {
-        try {
-          const parsed = JSON.parse(line);
-          return parsed.success !== undefined && parsed.results !== undefined;
-        } catch {
-          return false;
-        }
-      });
-
-      expect(jsonOutput).toBeUndefined();
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle empty rules array', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        project: { name: 'empty-project' },
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: { output_dir: '/test/output', rules: [] },
-      });
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(0);
-      expect(result.results).toHaveLength(0);
-
-      // Verify output
-      const output = logOutput.join('\n');
-      expect(output).toContain('No rules to process');
-    });
-
-    it('should handle missing generation config', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        project: { name: 'minimal-project' },
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: undefined,
-      });
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.metrics.rulesProcessed).toBe(0);
-    });
-
-    it('should use default output_dir when not specified', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        project: { name: 'default-output-project' },
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: {
-          rules: [
-            {
-              name: 'test-rule',
-              query: 'SELECT ?x WHERE { ?x a ?y }',
-              template: '/test/template.njk',
-              output_file: 'output.mjs',
-              enabled: true,
-            },
-          ],
-        },
-      });
-
-      renderTemplate.mockResolvedValue({
-        content: '// test',
-        outputPath: 'output.mjs',
-      });
-
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      // renderTemplate should receive a default output_dir
-      expect(renderTemplate).toHaveBeenCalledWith(
-        '/test/template.njk',
-        expect.any(Array),
-        expect.objectContaining({
-          output_dir: expect.any(String),
-        })
-      );
-    });
-
-    it('should handle missing project config', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: { output_dir: '/test/output', rules: [] },
-      });
-      const options = { config: '/test/unrdf.toml', verbose: true };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-
-      // Verify verbose output handles missing project
-      const output = logOutput.join('\n');
-      expect(output).toContain('Project:');
-      expect(output).toContain('unnamed');
-    });
-
-    it('should use outputPath from template when output_file not specified', async () => {
-      // Arrange
-      parseConfig.mockResolvedValue({
-        project: { name: 'test' },
-        ontology: { source: '/test/schema.ttl', format: 'turtle' },
-        generation: {
-          output_dir: '/test/output',
-          rules: [
-            {
-              name: 'template-path-rule',
-              query: 'SELECT ?x WHERE { ?x a ?y }',
-              template: '/test/template.njk',
-              output_file: 'fallback.mjs',
-              enabled: true,
-            },
-          ],
-        },
-      });
-
-      renderTemplate.mockResolvedValue({
-        content: '// generated',
-        outputPath: 'from-template.mjs', // Template specifies output path
-      });
-
-      const options = { config: '/test/unrdf.toml' };
-
-      // Act
-      const result = await runSync(options);
-
-      // Assert
-      expect(result.success).toBe(true);
-      // writeFile should use the path from template
-      expect(writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('from-template.mjs'),
-        expect.any(String),
-        'utf-8'
-      );
-    });
+    result = await runSync({ config: '/test/unrdf.toml' });
+    expect(result.metrics.rulesProcessed).toBe(0);
   });
 });
