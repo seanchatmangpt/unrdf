@@ -376,7 +376,7 @@ export function createPredictor(config = {}) {
    * @param {Object} weights - Feature weights
    * @returns {number} Prediction score [0, 1]
    */
-  function calculatePredictionScore(features, weights) {
+  function calculatePredictionScore(features, _weights) {
     let score = 0;
 
     // Federation health score (higher is better for bypass)
@@ -446,7 +446,7 @@ export function createPredictor(config = {}) {
    * @param {boolean} success - Whether execution succeeded
    * @param {number} latency - Execution latency
    */
-  function updateFeatureWeights(features, success, latency) {
+  function updateFeatureWeights(features, success, _latency) {
     const learningRate = validatedConfig.learningRate;
     const adjustment = success ? learningRate : -learningRate;
 
@@ -728,7 +728,6 @@ function calculateTrainingMetrics(history) {
  * @returns {number} Prediction score
  */
 function calculatePredictionScoreFromHistory(sample) {
-  const weights = DEFAULT_FEATURE_WEIGHTS;
   let score = 0.5;
 
   score += (sample.features.healthyPeerCount / Math.max(sample.features.totalPeerCount, 1)) * 0.2;

@@ -219,7 +219,7 @@ export function createCoordinator(config = {}) {
               // Bypass M-of-N voting, execute directly
               bypassSpan.setStatus({ code: 0, message: 'Bypass enabled' });
 
-              const bypassResult = await executeWithBypass(
+              const bypassResult = await this.executeWithBypass(
                 allPeers,
                 sparqlQuery,
                 prediction,
