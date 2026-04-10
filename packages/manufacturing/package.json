@@ -1,0 +1,32 @@
+{
+  "name": "@unrdf/manufacturing",
+  "version": "26.4.9",
+  "description": "μ(O) Manufacturing Operator Runtime — composable operators for deterministic artifact manufacturing",
+  "type": "module",
+  "private": true,
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./operators": "./src/operators/index.mjs",
+    "./pipeline": "./src/pipeline/index.mjs",
+    "./gate": "./src/gate/index.mjs",
+    "./causality": "./src/causality/index.mjs",
+    "./artifact": "./src/artifact/index.mjs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:fast": "vitest run --reporter=verbose",
+    "test:watch": "vitest watch",
+    "build": "echo 'ESM — no build step required'"
+  },
+  "dependencies": {
+    "@unrdf/core": "workspace:*",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
