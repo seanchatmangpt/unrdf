@@ -88,7 +88,12 @@ async function startWatchMode(args, runSyncFn) {
         output: args.output,
       });
     } catch (err) {
-      console.error(`Error: ${err.message}`);
+      // Format detailed validation errors if ConfigValidationError
+      if (err.name === 'ConfigValidationError' && err.format) {
+        console.error(err.format());
+      } else {
+        console.error(`Error: ${err.message}`);
+      }
       if (args.verbose && err.stack) {
         console.error(err.stack);
       }
@@ -273,7 +278,12 @@ rules = []
         }
       }
     } catch (err) {
-      console.error(`Error: ${err.message}`);
+      // Format detailed validation errors if ConfigValidationError
+      if (err.name === 'ConfigValidationError' && err.format) {
+        console.error(err.format());
+      } else {
+        console.error(`Error: ${err.message}`);
+      }
       if (args.verbose && err.stack) {
         console.error(err.stack);
       }

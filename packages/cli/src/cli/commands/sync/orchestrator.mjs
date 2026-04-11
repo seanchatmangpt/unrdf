@@ -57,6 +57,13 @@ export async function runSync(options) {
 
     console.log('\n' + c.cyan + 'Phase 2:' + c.reset + ' Loading ontology...');
 
+    if (!config.ontology) {
+      throw new Error(
+        'Configuration missing required "ontology" section.\n' +
+        'Add to unrdf.toml:\n[ontology]\nsource = "path/to/ontology.ttl"\n'
+      );
+    }
+
     const { store, tripleCount, prefixes } = await loadOntology(config.ontology, baseDir);
     metrics.totalTriples = tripleCount;
     console.log('   Loaded: ' + c.green + tripleCount + c.reset + ' triples');
@@ -87,15 +94,17 @@ export async function runSync(options) {
         }
 
         const templatePath = resolve(baseDir, rule.template);
-        try {
-          await access(templatePath, constants.R_OK);
-        } catch (accessErr) {
-          throw new Error(
-            `Template file not found or not readable: ${templatePath}\n` +
-              `  Rule: ${rule.name}\n` +
-              `  Config: ${configPath}\n` +
-              `  Fix: Check that the template path is correct and the file exists`
-          );
+        if (!dryRun) {
+          try {
+            await access(templatePath, constants.R_OK);
+          } catch (accessErr) {
+            throw new Error(
+              `Template file not found or not readable: ${templatePath}\n` +
+                `  Rule: ${rule.name}\n` +
+                `  Config: ${configPath}\n` +
+                `  Fix: Check that the template path is correct and the file exists`
+            );
+          }
         }
 
         // Execute SPARQL query
@@ -124,6 +133,7 @@ export async function runSync(options) {
               project: config.project,
               prefixes,
               output_dir: outputDir,
+              templates_dir: config.generation?.templates_dir,
               outputPath: rule.output_file,
               ...row,
             });
@@ -217,16 +227,22 @@ export async function runSync(options) {
 
     return { success: metrics.errors === 0, results, totalDuration, metrics };
   } catch (err) {
-    console.error('\n' + c.red + 'Sync failed:' + c.reset + ' ' + err.message);
-      if (verbose && err.stack) console.error(err.stack);
-      return {
-        success: false,
-        results,
-        totalDuration: performance.now() - startTime,
-        metrics,
-        error: err.message,
-      };
+    console.error('\n' + c.red + 'Sync failed:' + c.reset);
+    // Format detailed validation errors if ConfigValidationError
+    if (err.name === 'ConfigValidationError' && err.format) {
+      console.error(err.format());
+    } else {
+      console.error(' ' + err.message);
     }
+    if (verbose && err.stack) console.error(err.stack);
+    return {
+      success: false,
+      results,
+      totalDuration: performance.now() - startTime,
+      metrics,
+      error: err.message,
+    };
   }
+}
 
 export default { runSync };

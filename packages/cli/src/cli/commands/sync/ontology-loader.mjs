@@ -8,13 +8,19 @@ import { existsSync, constants } from 'fs';
 import { resolve, extname } from 'path';
 import { createStore, COMMON_PREFIXES } from '@unrdf/core';
 
-const FORMAT_TO_EXT = {
-  turtle: 'ttl',
-  'text/turtle': 'ttl',
-  ntriples: 'nt',
-  nquads: 'nq',
-  trig: 'trig',
-  rdfxml: 'rdf',
+const FORMAT_TO_MIME = {
+  turtle: 'text/turtle',
+  'text/turtle': 'text/turtle',
+  ntriples: 'application/n-triples',
+  'application/n-triples': 'application/n-triples',
+  nquads: 'application/n-quads',
+  'application/n-quads': 'application/n-quads',
+  trig: 'application/trig',
+  'application/trig': 'application/trig',
+  rdfxml: 'application/rdf+xml',
+  'application/rdf+xml': 'application/rdf+xml',
+  jsonld: 'application/ld+json',
+  'application/ld+json': 'application/ld+json',
 };
 const EXT_TO_FORMAT = {
   '.ttl': 'turtle',
@@ -98,11 +104,11 @@ export async function loadOntology(ontologyConfig, baseDir = process.cwd()) {
 
   // Load content into store
   let tripleCount = 0;
-  const ext = FORMAT_TO_EXT[detectedFormat] || detectedFormat;
+  const mimeType = FORMAT_TO_MIME[detectedFormat] || detectedFormat;
 
   if (typeof store.load === 'function') {
     try {
-      await store.load(content, { format: ext, baseIRI: base_iri });
+      await store.load(content, { format: mimeType, baseIri: base_iri });
       tripleCount = store.size || 0;
     } catch (loadErr) {
       // Extract helpful information from parse error

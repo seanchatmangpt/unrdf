@@ -19,6 +19,14 @@ export const ProjectConfigSchema = z.object({
   description: z.string().optional(),
   author: z.string().optional(),
   license: z.string().optional(),
+}).strict();
+
+/**
+ * Schema for a single ontology source
+ */
+const OntologySourceSchema = z.object({
+  source: z.string().min(1),
+  format: RDFFormatSchema.default('turtle'),
 });
 
 /**
@@ -30,7 +38,8 @@ export const OntologyConfigSchema = z.object({
   base_iri: z.string().url().optional(),
   prefixes: z.record(z.string(), z.string()).optional(),
   follow_imports: z.boolean().default(false),
-});
+  additional: z.array(OntologySourceSchema).optional(),
+}).strict();
 
 /**
  * Schema for a single generation rule
@@ -44,7 +53,7 @@ export const GenerationRuleSchema = z.object({
   enabled: z.boolean().default(true),
   mode: z.enum(['overwrite', 'append', 'skip_existing']).default('overwrite'),
   depends_on: z.array(z.string()).optional(),
-});
+}).strict();
 
 /**
  * Schema for generation configuration
@@ -58,7 +67,7 @@ export const GenerationConfigSchema = z.object({
   parallel: z.boolean().default(false),
   incremental: z.boolean().default(true),
   overwrite: z.boolean().default(false),
-});
+}).strict();
 
 /**
  * Schema for sync configuration
@@ -67,7 +76,7 @@ export const SyncConfigSchema2 = z.object({
   enabled: z.boolean().default(true),
   on_change: z.enum(['manual', 'auto', 'watch']).default('manual'),
   conflict_mode: z.enum(['warn', 'error', 'overwrite', 'skip']).default('warn'),
-});
+}).strict();
 
 /**
  * Schema for RDF configuration
@@ -75,7 +84,7 @@ export const SyncConfigSchema2 = z.object({
 export const RDFConfigSchema = z.object({
   base_uri: z.string().url().optional(),
   default_prefix: z.string().optional(),
-});
+}).strict();
 
 /**
  * Template configuration schema
@@ -84,7 +93,7 @@ export const TemplateConfigSchema = z.object({
   name: z.string().min(1),
   source: z.string().min(1),
   output: z.string().optional(),
-});
+}).strict();
 
 /**
  * Main configuration schema for `unrdf.toml`
@@ -96,7 +105,7 @@ export const SyncConfigSchema = z.object({
   sync: SyncConfigSchema2.default({}),
   rdf: RDFConfigSchema.optional(),
   templates: z.array(TemplateConfigSchema).optional(),
-});
+}).strict();
 
 /**
  * CLI arguments schema
@@ -109,7 +118,7 @@ export const SyncArgsSchema = z.object({
   rule: z.string().optional(),
   output: z.enum(['text', 'json']).default('text'),
   timeout: z.number().positive().default(30000),
-});
+}).strict();
 
 /**
  * Detect RDF format from file extension

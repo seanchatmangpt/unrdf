@@ -19,8 +19,44 @@ export const TEMPLATE_EXTENSIONS = ['.njk', '.nunjucks', '.jinja', '.jinja2', '.
 export const DEFAULT_PREFIXES = { ...COMMON_PREFIXES };
 
 /**
+ * Recursively strip leading/trailing double quotes from string values that
+ * contain {{ }} template syntax. This is a safety net for values that were
+ * auto-quoted by preprocessFrontmatter() but where js-yaml did not strip
+ * the quotes during parsing (e.g., nested values, edge cases).
+ *
+ * @param {*} value - Any value from parsed frontmatter
+ * @returns {*} Value with quotes stripped from template-syntax strings
+ */
+function stripQuotesFromTemplateVars(value) {
+  if (typeof value === 'string') {
+    // Only strip if the value contains template syntax AND is wrapped in matching quotes
+    if ((value.includes('{{') || value.includes('}}')) &&
+        ((value.startsWith('"') && value.endsWith('"')) ||
+         (value.startsWith("'") && value.endsWith("'")))) {
+      return value.slice(1, -1);
+    }
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(stripQuotesFromTemplateVars);
+  }
+  if (value !== null && typeof value === 'object') {
+    const result = {};
+    for (const [k, v] of Object.entries(value)) {
+      result[k] = stripQuotesFromTemplateVars(v);
+    }
+    return result;
+  }
+  return value;
+}
+
+/**
  * Preprocess YAML frontmatter to auto-quote values containing {{ }} template syntax
  * This fixes js-yaml 3.x's strict parsing that treats unquoted {{ as starting a multi-line key
+ *
+ * IMPORTANT: Only quotes TOP-LEVEL key-value pairs (no nested children). Nested YAML
+ * structures (objects, lists) are left untouched because quoting them breaks js-yaml parsing.
+ *
  * @param {string} content - Full template content with frontmatter
  * @returns {string} Preprocessed content with quoted {{ }} values
  */
@@ -29,28 +65,52 @@ export function preprocessFrontmatter(content) {
   const frontmatterMatch = content.match(/^---\n([\s\S]+?)\n---/);
   if (!frontmatterMatch) return content;
 
-  let frontmatter = frontmatterMatch[1];
+  const lines = frontmatterMatch[1].split('\n');
+  const result = [];
 
-  // Find values containing {{ that aren't already quoted
-  // Pattern matches: key: value where value contains {{ anywhere
-  // Works with multi-line values and preserves indentation
-  frontmatter = frontmatter.replace(
-    /^(\s*)([a-zA-Z_][a-zA-Z0-9_-]*):\s+(.+?)$/gm,
-    (match, indent, key, value) => {
-      // Skip if already quoted (starts with " or ')
-      if (value.startsWith('"') || value.startsWith("'")) return match;
-      // Skip if it's a boolean, null, or number
-      if (/^(true|false|null|[0-9]+(\.[0-9]+)?)$/.test(value.trim())) return match;
-      // If value contains {{ }}, quote it
-      if (value.includes('{{') || value.includes('}}')) {
-        return `${indent}${key}: "${value}"`;
-      }
-      return match;
+  for (const line of lines) {
+    const trimmed = line.trimStart();
+
+    // Skip empty lines and comments
+    if (!trimmed || trimmed.startsWith('#')) {
+      result.push(line);
+      continue;
     }
-  );
+
+    // Match top-level key: value (line must NOT start with whitespace — no nested entries)
+    const topLevelMatch = line.match(/^([a-zA-Z_][a-zA-Z0-9_-]*):\s+(.+)$/);
+    if (topLevelMatch) {
+      const [, key, rawValue] = topLevelMatch;
+      const value = rawValue.trimStart();
+
+      // Skip if value starts a block (object or list indicator)
+      if (value === '|' || value === '>' || value === '{' || value === '[') {
+        result.push(line);
+        continue;
+      }
+      // Skip if already quoted
+      if (value.startsWith('"') || value.startsWith("'")) {
+        result.push(line);
+        continue;
+      }
+      // Skip booleans, null, numbers
+      if (/^(true|false|null|[0-9]+(\.[0-9]+)?)$/.test(value)) {
+        result.push(line);
+        continue;
+      }
+      // If value contains {{ or }}, quote it
+      if (value.includes('{{') || value.includes('}}')) {
+        result.push(`${key}: "${value}"`);
+        continue;
+      }
+    }
+
+    // For nested lines (indented) or non-matching lines, pass through unchanged
+    result.push(line);
+  }
 
   // Replace the frontmatter in the original content
-  return content.replace(/^---\n[\s\S]+?\n---/, `---\n${frontmatter}\n---`);
+  return content.replace(/^---\n[\s\S]+?\n---/, `---\n${result.join('\n')}\n---`);
 }
 
 /**
@@ -69,7 +129,7 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   let frontmatter, rawTemplate;
   try {
     const parsed = matter(preprocessedContent);
-    frontmatter = parsed.data;
+    frontmatter = stripQuotesFromTemplateVars(parsed.data);
     rawTemplate = parsed.content;
   } catch (error) {
     throw new Error(
@@ -83,8 +143,15 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   }
 
   // Validate frontmatter against schema
+  const hadExplicitTo = 'to' in frontmatter;
+  const synthesizedTo = frontmatter.to || context.outputPath;
+  const validationFrontmatter = { ...frontmatter };
+  if (synthesizedTo && !hadExplicitTo) {
+    validationFrontmatter.to = synthesizedTo;
+  }
+
   const parser = new FrontmatterParser({ strict: true });
-  const validation = parser.validate(frontmatter);
+  const validation = parser.validate(validationFrontmatter);
   if (!validation.valid) {
     throw new Error(
       `Template frontmatter validation failed for ${absPath}:\n${validation.errors.join('\n')}`
@@ -114,7 +181,13 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     template = await readFile(fromPath, 'utf-8');
   }
 
-  const env = createNunjucksEnvironment(dirname(absPath));
+  const templatesDir = context.templates_dir ? resolve(context.templates_dir) : null;
+  const searchPaths = [dirname(absPath)];
+  if (templatesDir && templatesDir !== dirname(absPath)) {
+    searchPaths.unshift(templatesDir);
+  }
+  const mergedPrefixes = { ...DEFAULT_PREFIXES, ...(context.prefixes || {}) };
+  const env = createNunjucksEnvironment(searchPaths, mergedPrefixes);
 
   const renderContext = {
     sparql_results: sparqlResults,
@@ -146,7 +219,7 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     throw new Error(errorMsg);
   }
 
-  let outputPath = frontmatter.to || context.outputPath;
+  let outputPath = context.outputPath || frontmatter.to;
   if (outputPath?.includes('{{')) outputPath = env.renderString(outputPath, renderContext);
 
   if (!outputPath) {
@@ -168,11 +241,14 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
 
 /**
  * Create Nunjucks environment with custom filters
- * @param {string} [templatesDir] - Templates directory
+ * @param {string|Array<string>} [searchPaths] - Templates directory or array of search paths
+ * @param {Object} [prefixes={}] - Custom namespace prefixes for the expand filter
  * @returns {nunjucks.Environment} Nunjucks environment
  */
-export function createNunjucksEnvironment(templatesDir) {
-  const loader = templatesDir ? new nunjucks.FileSystemLoader(templatesDir) : null;
+export function createNunjucksEnvironment(searchPaths, prefixes = {}) {
+  const paths = Array.isArray(searchPaths) ? searchPaths : searchPaths ? [searchPaths] : [];
+  const validPaths = paths.filter(Boolean);
+  const loader = validPaths.length > 0 ? new nunjucks.FileSystemLoader(validPaths) : null;
   const env = new nunjucks.Environment(loader, {
     autoescape: false,
     trimBlocks: true,
@@ -227,10 +303,13 @@ export function createNunjucksEnvironment(templatesDir) {
     const i = Math.max(uri?.lastIndexOf('#') ?? -1, uri?.lastIndexOf('/') ?? -1);
     return i >= 0 ? uri.substring(0, i + 1) : '';
   });
-  env.addFilter('expand', (prefixedName, prefixes = DEFAULT_PREFIXES) => {
+  // Merged prefixes: caller-supplied prefixes override defaults
+  const mergedPrefixes = { ...DEFAULT_PREFIXES, ...prefixes };
+  env.addFilter('expand', (prefixedName, overridePrefixes) => {
     if (!prefixedName?.includes(':')) return prefixedName;
     const [prefix, local] = prefixedName.split(':', 2);
-    const ns = prefixes[prefix] || DEFAULT_PREFIXES[prefix];
+    const effective = overridePrefixes || mergedPrefixes;
+    const ns = effective[prefix] || DEFAULT_PREFIXES[prefix];
     return ns ? ns + local : prefixedName;
   });
   env.addFilter('toTurtle', triples => {
@@ -353,6 +432,30 @@ export function createNunjucksEnvironment(templatesDir) {
   });
   env.addFilter('default', (val, defaultValue) => val != null ? val : defaultValue);
 
+  // wordwrap filter
+  env.addFilter('wordwrap', (s, width = 80) => {
+    if (!s) return '';
+    const str = String(s);
+    const lines = [];
+    let currentLine = '';
+    for (const word of str.split(/\s+/)) {
+      if (!currentLine) currentLine = word;
+      else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
+      else { lines.push(currentLine); currentLine = word; }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines.join('\n');
+  });
+
+  // Alias filters for snake_case naming convention
+  env.addFilter('camel_case', env.getFilter('camelCase'));
+  env.addFilter('pascal_case', env.getFilter('pascalCase'));
+  env.addFilter('snake_case', env.getFilter('snakeCase'));
+  env.addFilter('kebab_case', env.getFilter('kebabCase'));
+  env.addFilter('zod_type', env.getFilter('zodType'));
+  env.addFilter('jsdoc_type', env.getFilter('jsdocType'));
+  env.addFilter('word_wrap', env.getFilter('wordwrap'));
+
   return env;
 }
 
@@ -365,15 +468,33 @@ export function createNunjucksEnvironment(templatesDir) {
  */
 export async function createTemplateEngine(options = {}) {
   const { templateDir, prefixes = {} } = options;
-  const env = createNunjucksEnvironment(templateDir);
   const enginePrefixes = { ...DEFAULT_PREFIXES, ...prefixes };
+  const env = createNunjucksEnvironment(templateDir, enginePrefixes);
 
-  // Add expand filter with merged prefixes
-  env.addFilter('expand', prefixedName => {
-    if (!prefixedName?.includes(':')) return prefixedName;
-    const [prefix, local] = prefixedName.split(':', 2);
-    const ns = enginePrefixes[prefix];
-    return ns ? ns + local : prefixedName;
+  // Re-apply filter aliases (createNunjucksEnvironment registers them, but
+  // the expand override above replaces the filter — ensure aliases survive)
+  env.addFilter('camel_case',  env.getFilter('camelCase'));
+  env.addFilter('pascal_case', env.getFilter('pascalCase'));
+  env.addFilter('snake_case',  env.getFilter('snakeCase'));
+  env.addFilter('kebab_case',  env.getFilter('kebabCase'));
+  env.addFilter('zod_type',    env.getFilter('zodType'));
+  env.addFilter('jsdoc_type',  env.getFilter('jsdocType'));
+  env.addFilter('local_name',  env.getFilter('localName'));
+  env.addFilter('pascal',      env.getFilter('pascalCase'));
+
+  // wordwrap may be overridden by expand; re-register to be safe
+  env.addFilter('wordwrap', (s, width = 79) => {
+    if (!s) return '';
+    const str = String(s);
+    const lines = [];
+    let currentLine = '';
+    for (const word of str.split(/\s+/)) {
+      if (!currentLine) currentLine = word;
+      else if ((currentLine + ' ' + word).length <= width) currentLine += ' ' + word;
+      else { lines.push(currentLine); currentLine = word; }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines.join('\n');
   });
 
   // Add global functions
@@ -659,7 +780,7 @@ export async function batchRender(templates, sharedContext = {}, _options = {}) 
     let frontmatter, templateBody;
     try {
       const parsed = matter(preprocessedContent);
-      frontmatter = parsed.data;
+      frontmatter = stripQuotesFromTemplateVars(parsed.data);
       templateBody = parsed.content;
     } catch (error) {
       results.push({
@@ -669,7 +790,12 @@ export async function batchRender(templates, sharedContext = {}, _options = {}) 
       });
       continue;
     }
-    const env = createNunjucksEnvironment(dirname(absPath));
+    const templatesDir = mergedContext.templates_dir ? resolve(mergedContext.templates_dir) : null;
+    const batchSearchPaths = [dirname(absPath)];
+    if (templatesDir && templatesDir !== dirname(absPath)) {
+      batchSearchPaths.unshift(templatesDir);
+    }
+    const env = createNunjucksEnvironment(batchSearchPaths);
 
     const renderContext = {
       sparql_results: sparqlResults,
@@ -734,7 +860,7 @@ export async function discoverTemplates(dir, options = {}) {
           let frontmatter = {};
           let validationErrors = [];
           try {
-            frontmatter = matter(preprocessedContent).data;
+            frontmatter = stripQuotesFromTemplateVars(matter(preprocessedContent).data);
             const listParser = new FrontmatterParser({ strict: true });
             const v = listParser.validate(frontmatter);
             if (!v.valid) validationErrors = v.errors;
@@ -854,6 +980,8 @@ function getTemplateSuggestions(errorMsg, context = {}) {
 
   return suggestions;
 }
+
+export { stripQuotesFromTemplateVars };
 
 export default {
   renderTemplate,

@@ -40,6 +40,7 @@ export class SandboxOperator extends BaseOperator {
     };
 
     let result;
+    let effectError;
     try {
       result = await effect(effectInput);
       auditEntry.status = 'committed';
@@ -47,10 +48,16 @@ export class SandboxOperator extends BaseOperator {
       auditEntry.status = 'rolled_back';
       auditEntry.error = err.message;
       result = undefined;
+      effectError = err;
     }
 
     auditEntry.duration_ms = performance.now() - startTime;
     const fullLog = [...auditLog, auditEntry];
+
+    // Rethrow effect error after updating audit entry
+    if (effectError) {
+      throw new Error(`Effect execution failed: ${effectError.message}`, { cause: effectError });
+    }
 
     return {
       result,

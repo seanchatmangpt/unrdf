@@ -141,8 +141,7 @@ export function loadConfigFromToml(configPath) {
     const config = parseToml(content);
     return DaemonFullConfigSchema.parse(config);
   } catch (err) {
-    console.warn(`Could not load config from ${path}:`, err instanceof Error ? err.message : String(err));
-    return {};
+    throw new Error(`Failed to load configuration from ${path}: ${err instanceof Error ? err.message : String(err)}`, { cause: err });
   }
 }
 

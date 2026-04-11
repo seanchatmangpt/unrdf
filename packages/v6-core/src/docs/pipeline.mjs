@@ -162,16 +162,16 @@ export async function emitReceipt(stage, input, output, outputPath) {
  */
 async function collectMarkdownFiles(dir) {
   const files = [];
-  
+
   try {
     const entries = await readdir(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'README.md') {
         const filePath = join(dir, entry.name);
         const content = await readFile(filePath, 'utf-8');
         const { frontmatter, body } = parseFrontmatter(content);
-        
+
         files.push({
           path: filePath,
           name: entry.name,
@@ -182,9 +182,12 @@ async function collectMarkdownFiles(dir) {
       }
     }
   } catch (error) {
-    // Gracefully handle missing directories
+    // Only gracefully handle ENOENT (missing directory); rethrow other errors
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
   }
-  
+
   return files;
 }
 
@@ -198,6 +201,10 @@ async function readPackageJson(path) {
     const content = await readFile(path, 'utf-8');
     return JSON.parse(content);
   } catch (error) {
+    // Only gracefully handle ENOENT (missing file); rethrow other errors
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
     return null;
   }
 }

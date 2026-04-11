@@ -64,9 +64,12 @@ export function createStreamProcessor(feed) {
             const batch = buffer.splice(0, batchSize);
             for (const subscriber of subscribers) {
               try {
-                subscriber(batch);
+                subscriber.callback(batch);
               } catch (error) {
                 console.error('[stream-processor] Batch subscriber error:', error);
+                if (subscriber.onError) {
+                  subscriber.onError(error);
+                }
               }
             }
           }
@@ -78,11 +81,11 @@ export function createStreamProcessor(feed) {
       feed.addEventListener('change', listener);
 
       return {
-        subscribe(callback) {
-          subscribers.push(callback);
+        subscribe(callback, onError) {
+          subscribers.push({ callback, onError });
         },
         unsubscribe(callback) {
-          const index = subscribers.indexOf(callback);
+          const index = subscribers.findIndex(s => s.callback === callback);
           if (index !== -1) {
             subscribers.splice(index, 1);
           }
@@ -127,9 +130,12 @@ export function createStreamProcessor(feed) {
             try {
               for (const subscriber of subscribers) {
                 try {
-                  subscriber(latestChange);
+                  subscriber.callback(latestChange);
                 } catch (error) {
                   console.error('[stream-processor] Debounce subscriber error:', error);
+                  if (subscriber.onError) {
+                    subscriber.onError(error);
+                  }
                 }
               }
             } finally {
@@ -145,11 +151,11 @@ export function createStreamProcessor(feed) {
       feed.addEventListener('change', listener);
 
       return {
-        subscribe(callback) {
-          subscribers.push(callback);
+        subscribe(callback, onError) {
+          subscribers.push({ callback, onError });
         },
         unsubscribe(callback) {
-          const index = subscribers.indexOf(callback);
+          const index = subscribers.findIndex(s => s.callback === callback);
           if (index !== -1) {
             subscribers.splice(index, 1);
           }
@@ -203,8 +209,9 @@ export function createStreamProcessor(feed) {
      * Subscribe to processed changes
      *
      * @param {Function} callback - Callback to receive changes
+     * @param {Function} [onError] - Optional error callback
      */
-    subscribe(callback) {
+    subscribe(callback, onError) {
       feed.addEventListener('change', event => {
         try {
           const change = applyOperations(event.detail);
@@ -213,6 +220,9 @@ export function createStreamProcessor(feed) {
           }
         } catch (error) {
           console.error('[stream-processor] Subscribe listener error:', error);
+          if (onError) {
+            onError(error);
+          }
         }
       });
     },

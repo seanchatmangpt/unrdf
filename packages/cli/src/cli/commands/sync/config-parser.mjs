@@ -6,6 +6,7 @@
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { resolve, dirname, isAbsolute, parse } from 'path';
+import TOML from '@iarna/toml';
 import { SyncConfigSchema, detectRDFFormat } from './schemas.mjs';
 
 /**
@@ -103,10 +104,12 @@ export async function parseConfig(configPath, options = {}) {
 
   let parsed;
   try {
-    parsed = parseSimpleToml(content);
+    parsed = TOML.parse(content);
   } catch (err) {
     throw new ConfigParseError('Invalid TOML syntax', {
       path: absolutePath,
+      line: err.line,
+      column: err.column,
       cause: err.message,
     });
   }
@@ -128,117 +131,48 @@ export async function parseConfig(configPath, options = {}) {
     throw new ConfigValidationError('Configuration validation failed', errors);
   }
 
+  findUnknownKeysRecursive(resolved, KNOWN_CONFIG_KEYS, []);
   return result.data;
 }
 
-function parseSimpleToml(content) {
-  const result = {};
-  let currentSection = result;
-  // let currentArraySection = null; // Unused variable reserved for future array handling
-  let inMultilineString = false;
-  let multilineKey = '';
-  let multilineValue = '';
+/**
+ * Known top-level and nested config keys for typo detection.
+ * Each key maps to known child keys (or null if leaf/object without strict children).
+ */
+const KNOWN_CONFIG_KEYS = {
+  project: { name: null, version: null, description: null, author: null, license: null },
+  ontology: { source: null, format: null, base_iri: null, prefixes: null, follow_imports: null, additional: null },
+  generation: {
+    output_dir: null, templates_dir: null, ontology_dir: null, rules: null,
+    require_audit_trail: null, parallel: null, incremental: null, overwrite: null,
+  },
+  sync: { enabled: null, on_change: null, conflict_mode: null },
+  rdf: { base_uri: null, default_prefix: null },
+  templates: null, // array — skip recursive check
+};
 
-  const lines = content.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Handle multiline strings
-    if (inMultilineString) {
-      if (trimmed.endsWith('"""')) {
-        multilineValue += '\n' + line.slice(0, line.lastIndexOf('"""'));
-        currentSection[multilineKey] = multilineValue.trim();
-        inMultilineString = false;
-        multilineKey = '';
-        multilineValue = '';
-      } else {
-        multilineValue += '\n' + line;
-      }
+/**
+ * Recursively detect unknown keys in parsed config and emit warnings.
+ * @param {Object} obj - Current config object to inspect
+ * @param {Object} knownKeys - Map of known key names to their children
+ * @param {string[]} path - Current key path for error messages
+ */
+function findUnknownKeysRecursive(obj, knownKeys, path) {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+  for (const key of Object.keys(obj)) {
+    const currentPath = [...path, key];
+    if (!(key in knownKeys)) {
+      process.emitWarning(
+        `Unknown configuration key: "${currentPath.join('.')}" — possible typo.`,
+        { code: 'UNRDF_UNKNOWN_CONFIG_KEY' }
+      );
       continue;
     }
-
-    if (!trimmed || trimmed.startsWith('#')) continue;
-
-    // Array table [[section.name]]
-    const arrayMatch = trimmed.match(/^\[\[([^\]]+)\]\]$/);
-    if (arrayMatch) {
-      const parts = arrayMatch[1].split('.');
-      let parent = result;
-      for (let j = 0; j < parts.length - 1; j++) {
-        if (!parent[parts[j]]) parent[parts[j]] = {};
-        parent = parent[parts[j]];
-      }
-      const lastPart = parts[parts.length - 1];
-      if (!parent[lastPart]) parent[lastPart] = [];
-      const newItem = {};
-      parent[lastPart].push(newItem);
-      currentSection = newItem;
-      // currentArraySection = parent[lastPart]; // Unused variable reserved for future array handling
-      continue;
-    }
-
-    // Regular section [section.name]
-    const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
-    if (sectionMatch) {
-      const parts = sectionMatch[1].split('.');
-      currentSection = result;
-      for (const part of parts) {
-        if (!currentSection[part]) currentSection[part] = {};
-        currentSection = currentSection[part];
-      }
-      // currentArraySection = null; // Unused variable reserved for future array handling
-      continue;
-    }
-
-    // Key-value pair
-    const kvMatch = trimmed.match(/^([^=]+)\s*=\s*(.*)$/);
-    if (kvMatch) {
-      const key = kvMatch[1].trim();
-      let value = kvMatch[2].trim();
-
-      // Start of multiline string """
-      if (value === '"""' || value.startsWith('"""')) {
-        if (value === '"""') {
-          inMultilineString = true;
-          multilineKey = key;
-          multilineValue = '';
-        } else if (value.endsWith('"""') && value.length > 6) {
-          // Single line triple-quoted
-          currentSection[key] = value.slice(3, -3);
-        } else {
-          // Start of multiline
-          inMultilineString = true;
-          multilineKey = key;
-          multilineValue = value.slice(3);
-        }
-        continue;
-      }
-
-      // Regular value parsing
-      if (value.startsWith('"') && value.endsWith('"')) {
-        value = value.slice(1, -1).replace(/\\n/g, '\n').replace(/\\"/g, '"');
-      } else if (value === 'true') {
-        value = true;
-      } else if (value === 'false') {
-        value = false;
-      } else if (/^\d+$/.test(value)) {
-        value = parseInt(value, 10);
-      } else if (/^\d+\.\d+$/.test(value)) {
-        value = parseFloat(value);
-      } else if (value.startsWith('[') && value.endsWith(']')) {
-        try {
-          value = JSON.parse(value.replace(/'/g, '"'));
-        } catch (e) {
-          /* keep as string */
-        }
-      }
-
-      currentSection[key] = value;
+    const children = knownKeys[key];
+    if (children && typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+      findUnknownKeysRecursive(obj[key], children, currentPath);
     }
   }
-
-  return result;
 }
 
 /**

@@ -71,23 +71,7 @@ export async function validateShacl(dataStore, shapesStore, options = {}) {
       timestamp: Date.now(),
     };
   } catch (error) {
-    if (validatedOptions.strict) {
-      throw error;
-    }
-
-    // In non-strict mode, return error as violation
-    return {
-      conforms: false,
-      results: [
-        {
-          severity: 'http://www.w3.org/ns/shacl#Violation',
-          message: `Validation error: ${error.message}`,
-          sourceConstraintComponent: 'http://www.w3.org/ns/shacl#ValidationError',
-        },
-      ],
-      warnings: [],
-      timestamp: Date.now(),
-    };
+    throw error;
   }
 }
 
@@ -133,7 +117,7 @@ function extractShapes(shapesStore) {
       });
     }
   } catch (error) {
-    console.warn('[validateShacl] Failed to extract shapes:', error.message);
+    throw new Error(`Failed to extract SHACL shapes: ${error.message}`, { cause: error });
   }
 
   return shapes;

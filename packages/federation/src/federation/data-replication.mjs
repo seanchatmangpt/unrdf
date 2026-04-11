@@ -645,6 +645,7 @@ export class DataReplicationManager extends EventEmitter {
       } catch (error) {
         span.recordException(error);
         span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        throw error;
       } finally {
         span.end();
       }

@@ -253,15 +253,7 @@ export function createPredictor(config = {}) {
     } catch (error) {
       span.recordException(error);
       span.setStatus({ code: 1, message: error.message });
-
-      // Return safe default on error
-      return {
-        shouldBypass: false,
-        confidence: 0,
-        predictedLatency: 0,
-        recommendedStrategy: 'broadcast',
-        reasoning: 'Prediction failed, using safe default',
-      };
+      throw new Error(`Prediction failed: ${error.message}`, { cause: error });
     } finally {
       span.end();
     }

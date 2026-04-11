@@ -252,7 +252,19 @@ export class ConsensusManager extends EventEmitter {
             const granted = await this.requestVote(peer);
             if (granted) votesReceived++;
           } catch (error) {
-            // Ignore vote request failures
+            // Log vote request failure and update peer status
+            console.error(`[consensus] Vote request failed from peer ${peer.nodeId}:`, error.message);
+            span.addEvent('vote_request_failed', {
+              attributes: {
+                'peer.id': peer.nodeId,
+                'error.message': error.message
+              }
+            });
+            // Update peer status to unreachable
+            if (this.peers.has(peer.nodeId)) {
+              const peerState = this.peers.get(peer.nodeId);
+              peerState.status = 'unreachable';
+            }
           }
         });
 
@@ -412,7 +424,14 @@ export class ConsensusManager extends EventEmitter {
       try {
         await this.sendAppendEntries(peer, []);
       } catch (error) {
-        // Ignore heartbeat failures
+        // Log heartbeat failure and update peer status
+        console.error(`[consensus] Heartbeat failed to peer ${peer.nodeId}:`, error.message);
+        // Update peer status to unreachable
+        if (this.peers.has(peer.nodeId)) {
+          const peerState = this.peers.get(peer.nodeId);
+          peerState.status = 'unreachable';
+          peerState.lastContact = Date.now();
+        }
       }
     });
 
@@ -457,7 +476,8 @@ export class ConsensusManager extends EventEmitter {
           }
         }
       } catch (error) {
-        // Handle replication failure
+        // Rethrow replication failure so batch is not silently lost
+        throw new Error(`Replication to peer ${peerId} failed: ${error.message}`, { cause: error });
       }
     });
 

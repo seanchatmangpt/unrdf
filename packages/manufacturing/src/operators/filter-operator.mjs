@@ -38,14 +38,9 @@ export class FilterOperator extends BaseOperator {
     const skipped = [];
 
     for (const item of items) {
-      try {
-        if (predicate(item)) {
-          passed.push(item);
-        } else {
-          skipped.push(item);
-        }
-      } catch (err) {
-        // Predicate evaluation error: skip the item
+      if (predicate(item)) {
+        passed.push(item);
+      } else {
         skipped.push(item);
       }
     }

@@ -332,15 +332,7 @@ export function createCoordinator(config = {}) {
         for (const peer of targetPeers) {
           recordError(peer.id, 'execution_error');
         }
-        return {
-          success: false,
-          results: [],
-          peerResults: [],
-          totalDuration: 0,
-          successCount: 0,
-          failureCount: targetPeers.length,
-          error: error.message,
-        };
+        throw new Error(`Query execution failed: ${error.message}`, { cause: error });
       } finally {
         endConcurrent();
         span.end();
@@ -405,13 +397,7 @@ export function createCoordinator(config = {}) {
           errorCount++;
           peerManager.updateStatus(peerId, 'unreachable');
           recordError(peerId, 'execution_error');
-          return {
-            success: false,
-            data: null,
-            error: error.message,
-            duration: 0,
-            peerId,
-          };
+          throw new Error(`Query execution failed for peer ${peerId}: ${error.message}`, { cause: error });
         }
       } finally {
         endConcurrent();

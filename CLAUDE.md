@@ -1,14 +1,18 @@
-# CLAUDE.md
+# UNRDF — Claude Code Configuration
 
 ## UNRDF v26.4.9 - RDF Knowledge Graph Platform
+
+**REQUIRED READING:**
+
+- **Root instructions**: See `../CLAUDE.md` (Constitutional Law, Evidence Standards, Git Safety, Dependencies)
 
 > **Status**: Research Prototype | **Language**: JavaScript ESM (.mjs), Zod validation
 > **Package Manager**: pnpm (required) | **Test Framework**: Vitest 4.1.x
 
-| Fact | Value |
-|------|-------|
-| Version | workspace 26.4.9 |
-| Packages | 20 (YAWL/KGC moved to separate repos) |
+| Fact           | Value                                                  |
+| -------------- | ------------------------------------------------------ |
+| Version        | workspace 26.4.9                                       |
+| Packages       | 20 (YAWL/KGC moved to separate repos)                  |
 | Node.js / pnpm | >=18.0.0 / >=7.0.0 (.tool-versions: 24.11.1 / 10.33.0) |
 
 ---
@@ -51,7 +55,7 @@ Backends (Memory, Oxigraph, Remote)
 **Core packages**: `@unrdf/core`, `@unrdf/oxigraph`, `@unrdf/hooks`, `@unrdf/v6-core`
 **Extended**: `@unrdf/daemon`, `@unrdf/streaming`, `@unrdf/federation`, `@unrdf/cli`, `@unrdf/otel`
 
-### O* Innovations
+### O\* Innovations
 
 - **Innovation 4** — Federation Quorum: M-of-N voting, BLAKE3 receipt chaining → `packages/federation/`
 - **Innovation 5** — Hooks Marketplace: SPARQL CONSTRUCT, N3 forward-chaining, SHACL soft-fail → `packages/hooks/`
@@ -68,16 +72,19 @@ Backends (Memory, Oxigraph, Remote)
 ## Gotchas
 
 ### Zod v4
+
 - `.args()` / `.returns()` removed → use bare `z.function()`
 - `parse()` returns plain object (prototype methods lost) → validate-only pattern
 - `eslint-env` comments ignored → use `/* global window, document */`
 
 ### Hooks Package
+
 - **N3 quad spread broken**: `cloneQuad(quad, {...overrides})` instead of `{...quad}`
 - **`executeHooksByTrigger` returns `ChainResult`**: use `result.valid`, not `result[0].valid`
 - **Infinite loops hang vitest**: `while(true)` blocks event loop; use async hooks
 
 ### Template Renderer
+
 - **Empty if-block fallthrough**: `if (cond) { /* handled */ } else if ...` with empty body matching → ALL else branches skip, silently no-op. Remove the block.
 - **Auto-quoting of template syntax**: Values containing `{{ }}` in YAML frontmatter are automatically quoted before parsing (js-yaml 3.x compatibility). Example: `to: {{ output_dir }}/file.py` → `to: "{{ output_dir }}/file.py"`. Works in `renderTemplate()` and `batchRender()`.
 - **Preprocessing limitations**: Simple regex-based approach handles key-value pairs, not complex nested YAML. Test against actual template patterns, not edge cases.
@@ -86,17 +93,20 @@ Backends (Memory, Oxigraph, Remote)
 - **force from frontmatter**: `effectiveForce = options.force || frontmatter.force`; all skip checks must use `effectiveForce`
 
 ### OTel Weaver
+
 - Binary: `~/.cargo/bin/weaver` v0.22.1+; commands: `registry check`, `registry generate`, `registry live-check`
 - Template path: `templates/{registry_basename}/{target}/`; iterate `ctx.groups` NOT `ctx`
 - `@unrdf/otel` is generated — don't edit `packages/otel/src/generated/` directly
 
 ### Test Utils (`@unrdf/test-utils`)
+
 - **Import pattern**: relative imports (pnpm workspace linking unreliable)
 - **Quote stripping in tests**: `extractFrontmatter()` utility strips quotes from values. When testing templates with quoted `{{ }}` values, assertions must account for quote removal.
 - **pnpm install blocker**: full `pnpm install` may fail → use `pnpm install --filter @unrdf/X`
 - **Pre-existing failures**: `federation/test/metrics.test.mjs` (21 failures) — do NOT fix unless asked
 
 ### Integration Tests
+
 - open-ontologies: skips if `~/.local/bin/open-ontologies` missing
 - Groq: skips if `GROQ_API_KEY` not set
 - Timing: relax μs-level assertions to 50–200ms; use 10x multipliers for CI
@@ -106,13 +116,13 @@ Backends (Memory, Oxigraph, Remote)
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---------|-----|
-| `pnpm install` fails | `pnpm install --filter @unrdf/core` |
-| Tests timeout/hang | `timeout 5s pnpm test:fast`; grep `while(true)` for blockers |
-| Port in use | `lsof -ti:8090 \| xargs kill -9` |
-| MCP tools not found | `pnpm --filter @unrdf/daemon build && pnpm mcp:sync` |
-| Vitest watch stale | `rm -rf node_modules/.vite && pnpm test:watch` |
+| Problem              | Fix                                                          |
+| -------------------- | ------------------------------------------------------------ |
+| `pnpm install` fails | `pnpm install --filter @unrdf/core`                          |
+| Tests timeout/hang   | `timeout 5s pnpm test:fast`; grep `while(true)` for blockers |
+| Port in use          | `lsof -ti:8090 \| xargs kill -9`                             |
+| MCP tools not found  | `pnpm --filter @unrdf/daemon build && pnpm mcp:sync`         |
+| Vitest watch stale   | `rm -rf node_modules/.vite && pnpm test:watch`               |
 
 ---
 
@@ -122,14 +132,21 @@ Backends (Memory, Oxigraph, Remote)
 - Never force-push to `main`; always pull before push
 - Pre-commit: `pnpm mcp:sync && pnpm lint && pnpm test:fast`
 
+## Code Generation (unrdf) Gotchas
+
+- **Nunjucks filter syntax**: Use parentheses `filter(arg)` not colons `filter: arg`. Wrong: `| join: ', '`. Right: `| join(', ')`.
+- **Template output paths**: Rule `outputPath` takes precedence over template `to:` field via `context.outputPath || frontmatter.to`.
+- **Dry-run file checks**: Wrap `fs.access()` with `if (!dryRun)` to allow CI validation without requiring files to exist on runner.
+- **SPARQL-to-template variables**: SPARQL results produce clean key names (no `?` prefix) but both `system` and `?system` available in templates. Must match rule SPARQL SELECT bindings exactly (case-sensitive).
+
 ## Key Docs
 
-| Document | Purpose |
-|----------|---------|
-| `package.json` | Authoritative version, dependencies, scripts |
-| `docs/MCP_INTEGRATION.md` | MCP protocol and tools guide |
-| `packages/daemon/GROQ-INTEGRATION.md` | Groq LLM integration |
-| `docs/GETTING_STARTED.md` | Installation and first example |
+| Document                              | Purpose                                      |
+| ------------------------------------- | -------------------------------------------- |
+| `package.json`                        | Authoritative version, dependencies, scripts |
+| `docs/MCP_INTEGRATION.md`             | MCP protocol and tools guide                 |
+| `packages/daemon/GROQ-INTEGRATION.md` | Groq LLM integration                         |
+| `docs/GETTING_STARTED.md`             | Installation and first example               |
 
 ---
 

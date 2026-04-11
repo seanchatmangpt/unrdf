@@ -212,8 +212,7 @@ async function applyOperation(store, op, conflicts) {
       return true;
     }
   } catch (error) {
-    console.error(`Failed to apply operation: ${error.message}`);
-    return false;
+    throw new Error(`Failed to apply operation: ${error.message}`, { cause: error });
   }
 
   return false;
