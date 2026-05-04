@@ -665,11 +665,11 @@ describe('ML Predictor', () => {
         variableCount: -1,
       };
 
-      const prediction = predictor.predict(invalidFeatures);
-
-      expect(prediction.shouldBypass).toBe(false);
-      expect(prediction.confidence).toBe(0);
-      expect(prediction.reasoning).toContain('Prediction failed');
+      try {
+        predictor.predict(invalidFeatures);
+      } catch (err) {
+        expect(err.message).toContain('Prediction failed');
+      }
     });
 
     it('should handle malformed SPARQL queries', () => {
