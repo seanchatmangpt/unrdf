@@ -8,7 +8,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   PrometheusMetricsExporter,
   OtelSpanTracer,
-  YawlMetricsCollector,
+  Wasm4pmMetricsCollector,
   AlertManager,
   DaemonHealthMonitor,
 } from '../src/integrations/observability.mjs';
@@ -253,11 +253,11 @@ describe('OtelSpanTracer', () => {
   });
 });
 
-describe('YawlMetricsCollector', () => {
+describe('Wasm4pmMetricsCollector', () => {
   let collector;
 
   beforeEach(() => {
-    collector = new YawlMetricsCollector({ serviceName: 'test-daemon' });
+    collector = new Wasm4pmMetricsCollector({ serviceName: 'test-daemon' });
   });
 
   it('should record case creation', () => {

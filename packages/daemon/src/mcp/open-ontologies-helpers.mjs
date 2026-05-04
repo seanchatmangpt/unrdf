@@ -94,9 +94,9 @@ export async function validateOntoInstallation() {
     );
   }
 
-  // Try running --version to verify it works
+  // Try running --help to verify it works
   try {
-    await runOntoCommand(['--version'], { timeoutMs: 2000 });
+    await runOntoCommand(['--help'], { timeoutMs: 2000 });
     return true;
   } catch (error) {
     throw new Error(`open-ontologies binary exists but failed to run: ${error.message}`);

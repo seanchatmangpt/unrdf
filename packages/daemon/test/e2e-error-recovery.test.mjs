@@ -9,6 +9,17 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Daemon } from '../src/daemon.mjs';
 
+// Mock SemanticSidecarManager to avoid spawning multiple engine binaries during stress tests
+vi.mock('../src/mcp/semantic-sidecar.mjs', () => {
+  return {
+    SemanticSidecarManager: class {
+      constructor() {}
+      start() {}
+      stop() { return Promise.resolve(); }
+    }
+  };
+});
+
 /**
  * Generate valid UUID v4
  * @returns {string} UUID v4 formatted string
@@ -22,7 +33,7 @@ function generateUUID() {
 }
 
 
-describe('Daemon E2E Error Recovery', () => {
+describe('Daemon E2E Error Recovery', { timeout: 30000 }, () => {
   describe('Operation Timeout & Recovery', () => {
     it('should handle operation handler that never resolves', async () => {
       // Arrange

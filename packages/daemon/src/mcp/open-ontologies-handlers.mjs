@@ -378,12 +378,18 @@ export async function onto_version(args) {
     await ensureDataDir();
 
     const { tag, restore, list } = VersionSchema.parse(args);
-    const cliArgs = ['version'];
+    
+    if (restore) {
+      const result = await runOntoCommand(['rollback', restore], { timeoutMs: 10000 });
+      return createOntoResponse(result, 'onto_version');
+    }
+    
+    if (list) {
+      const result = await runOntoCommand(['history'], { timeoutMs: 10000 });
+      return createOntoResponse(result, 'onto_version');
+    }
 
-    if (tag) cliArgs.push('--tag', tag);
-    if (restore) cliArgs.push('--restore', restore);
-    if (list) cliArgs.push('--list');
-
+    const cliArgs = ['version', tag || `snapshot-${Date.now()}`];
     const result = await runOntoCommand(cliArgs, { timeoutMs: 10000 });
     return createOntoResponse(result, 'onto_version');
   } catch (error) {

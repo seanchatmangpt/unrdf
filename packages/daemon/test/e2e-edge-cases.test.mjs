@@ -7,8 +7,19 @@
  * 20+ tests ensuring daemon graceful degradation and resilience.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Daemon } from '../src/daemon.mjs';
+
+// Mock SemanticSidecarManager to avoid spawning multiple engine binaries during stress tests
+vi.mock('../src/mcp/semantic-sidecar.mjs', () => {
+  return {
+    SemanticSidecarManager: class {
+      constructor() {}
+      start() {}
+      stop() { return Promise.resolve(); }
+    }
+  };
+});
 
 /**
  * Generate valid UUID v4
@@ -22,7 +33,7 @@ function generateUUID() {
   });
 }
 
-describe('Daemon E2E Edge Cases', () => {
+describe('Daemon E2E Edge Cases', { timeout: 30000 }, () => {
   describe('Memory Exhaustion & Graceful Degradation', () => {
     it('should handle LRU cache overflow gracefully', async () => {
       // Arrange

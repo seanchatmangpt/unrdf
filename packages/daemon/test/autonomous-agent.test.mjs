@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DataFactory  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { AutonomousKnowledgeAgent } from '../src/autonomous-agent.mjs';
 
 const { namedNode: _namedNode, literal: _literal, quad: _quad } = DataFactory;

@@ -368,5 +368,5 @@ export function integrateOTelMetrics(daemon, meter) {
 }
 
 // Re-export from monitors
-export { YawlMetricsCollector, AlertManager, integrateAlertManager, DaemonHealthMonitor } from './observability.monitors.mjs';
+export { Wasm4pmMetricsCollector, AlertManager, integrateAlertManager, DaemonHealthMonitor } from './observability.monitors.mjs';
 export { ConfigSchema } from './observability.schema.mjs';

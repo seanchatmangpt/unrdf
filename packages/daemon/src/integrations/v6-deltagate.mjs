@@ -10,7 +10,7 @@
  * - Deterministic receipt generation with ΔGate schema
  * - Differential state tracking (old→new)
  * - Rollback support via delta reversal
- * - Cross-package delta coordination (YAWL, streaming, hooks)
+ * - Cross-package delta coordination (WASM4PM, streaming, hooks)
  * - Health status tracked via deltas
  */
 
@@ -270,14 +270,14 @@ export class DaemonDeltaGate extends EventEmitter {
   /**
    * Register cross-package coordinator
    *
-   * Allows other packages (YAWL, streaming, hooks) to coordinate deltas.
+   * Allows other packages (WASM4PM, streaming, hooks) to coordinate deltas.
    *
-   * @param {string} packageName - Package name (e.g., '@unrdf/yawl')
+   * @param {string} packageName - Package name (e.g., '@pictl/engine')
    * @param {Object} coordinator - Coordinator implementation
    * @returns {void}
    *
    * @example
-   * gate.registerCoordinator('@unrdf/yawl', yawlCoordinator);
+   * gate.registerCoordinator('@pictl/engine', wasm4pmCoordinator);
    */
   registerCoordinator(packageName, coordinator) {
     this.coordinators.set(packageName, coordinator);

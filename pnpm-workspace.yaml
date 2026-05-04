@@ -1,5 +1,8 @@
 packages:
   - 'packages/*'
+  - 'packages/wasm4pm/wasm4pm'
+  - 'packages/wasm4pm/packages/*'
+  - 'packages/wasm4pm/apps/*'
   - 'packages/kgc-4d/playground'
   - 'packages/cli/examples/*'
   - 'packages/hooks/examples/*'

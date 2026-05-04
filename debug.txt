@@ -1,0 +1,2 @@
+<urn:chatman:deal#test> a <urn:chatman:equation:Deal> ;
+      <urn:chatman:equation:riskScore> 0.8 .

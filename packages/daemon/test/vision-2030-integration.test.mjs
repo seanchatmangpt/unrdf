@@ -4,8 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
-import { DataFactory  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { N3Store as Store, UnrdfDataFactory as DataFactory } from '@unrdf/core/rdf/n3-justified-only';
 import { AutonomousKnowledgeAgent } from '../src/autonomous-agent.mjs';
 import { EnsembleGroqProvider } from '../src/providers/ensemble-groq.mjs';
 import { OntologyLearner } from '../../hooks/src/hooks/ontology-learner.mjs';
@@ -235,5 +234,24 @@ describe('Vision 2030 Phase 1 Integration', () => {
     });
 
     expect(agent.getReasoningTrace().length).toBe(1);
+  });
+
+  it('should daemon start and stop the semantic sidecar', async () => {
+    const { Daemon } = await import('../src/daemon.mjs');
+    const daemon = new Daemon({ 
+      nodeId: 'test-node',
+      daemonId: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'test-daemon'
+    });
+    
+    // Mock the start and stop methods of the sidecar manager
+    daemon.semanticSidecar.start = vi.fn();
+    daemon.semanticSidecar.stop = vi.fn();
+    
+    await daemon.start();
+    expect(daemon.semanticSidecar.start).toHaveBeenCalled();
+    
+    await daemon.stop();
+    expect(daemon.semanticSidecar.stop).toHaveBeenCalled();
   });
 });

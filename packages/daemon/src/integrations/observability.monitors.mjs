@@ -1,19 +1,19 @@
 /**
  * @file Daemon Observability Monitors
  * @module @unrdf/daemon/integrations/observability-monitors
- * @description Monitoring components: YAWL metrics, alerts, and health monitoring
+ * @description Monitoring components: WASM4PM metrics, alerts, and health monitoring
  */
 
 import { z } from 'zod';
 import { ConfigSchema } from './observability.schema.mjs';
 
 /**
- * YAWL workflow metrics collector
+ * WASM4PM workflow metrics collector
  * Tracks workflow execution and case management metrics
  */
-export class YawlMetricsCollector {
+export class Wasm4pmMetricsCollector {
   /**
-   * Create YAWL metrics collector
+   * Create WASM4PM metrics collector
    * @param {Object} config - Collector configuration
    */
   constructor(config = {}) {

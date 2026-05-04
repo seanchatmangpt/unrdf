@@ -12,7 +12,7 @@ export const ConfigSchema = z.object({
   healthCheckInterval: z.number().default(10000),
   prometheusPort: z.number().optional(),
   alertManagerUrl: z.string().optional(),
-  enableYawlMetrics: z.boolean().default(true),
+  enableWasm4pmMetrics: z.boolean().default(true),
   enableSpanTracing: z.boolean().default(true),
   metricsHistorySize: z.number().default(10000),
 });

@@ -1,0 +1,3 @@
+load /Users/sac/chatmangpt/unrdf/packages/daemon/.tmp-semantics/oo-raw-1777929694929-0.nt
+reason rdfs
+query "ASK { ?s ?p ?o }"

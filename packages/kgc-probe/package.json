@@ -51,7 +51,6 @@
     "@unrdf/v6-core": "26.4.23",
     "@unrdf/oxigraph": "26.4.23",
     "@unrdf/hooks": "26.4.23",
-    "@unrdf/yawl": "26.4.23",
     "hash-wasm": "^4.12.0",
     "zod": "^4.1.13"
   },

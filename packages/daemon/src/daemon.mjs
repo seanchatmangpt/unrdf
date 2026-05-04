@@ -7,6 +7,7 @@
 import { EventEmitter } from 'events';
 import { DaemonConfigSchema } from './schemas.mjs';
 import { initializeOTelSDK, shutdownOTelSDK } from './integrations/otel-sdk.mjs';
+import { SemanticSidecarManager } from './mcp/semantic-sidecar.mjs';
 
 /**
  * Simple LRU cache implementation for completed operations
@@ -95,6 +96,9 @@ export class Daemon extends EventEmitter {
     this.logger = config.logger || console;
     this.startTime = null;
     this.activeCount = 0;
+
+    // Vision 2030 Semantic Sidecar Integration
+    this.semanticSidecar = new SemanticSidecarManager(this.logger);
   }
 
   /**
@@ -105,6 +109,9 @@ export class Daemon extends EventEmitter {
     if (this.isRunning) {
       return;
     }
+    
+    // Vision 2030 Semantic Sidecar Integration
+    this.semanticSidecar.start();
 
     this.isRunning = true;
     this.startTime = Date.now();
@@ -134,6 +141,9 @@ export class Daemon extends EventEmitter {
     if (!this.isRunning) {
       return;
     }
+
+    // Vision 2030 Semantic Sidecar Integration
+    await this.semanticSidecar.stop();
 
     try {
       // Shutdown OTEL SDK last

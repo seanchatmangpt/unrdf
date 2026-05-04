@@ -5,9 +5,21 @@
  * execution, pattern matching, inference chains, confidence scoring, and performance.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import {  describe, it, expect, beforeEach, afterEach , vi } from 'vitest';
 import { DaemonRuleEngine } from '../src/integrations/knowledge-rules.mjs';
 import { Daemon } from '../src/daemon.mjs';
+
+// Mock SemanticSidecarManager to avoid spawning multiple engine binaries during stress tests
+vi.mock("../src/mcp/semantic-sidecar.mjs", () => {
+  return {
+    SemanticSidecarManager: class {
+      constructor() {}
+      start() {}
+      stop() { return Promise.resolve(); }
+    }
+  };
+});
+
 
 // Mock daemon for testing
 function createMockDaemon() {

@@ -12,6 +12,18 @@ import { z } from 'zod';
 import { EventEmitter } from 'events';
 import { Daemon } from '../src/daemon.mjs';
 
+// Mock SemanticSidecarManager to avoid spawning multiple engine binaries during stress tests
+vi.mock("../src/mcp/semantic-sidecar.mjs", () => {
+  return {
+    SemanticSidecarManager: class {
+      constructor() {}
+      start() {}
+      stop() { return Promise.resolve(); }
+    }
+  };
+});
+
+
 /**
  * Generate a valid UUID v4 for testing
  * @returns {string} Valid UUID v4

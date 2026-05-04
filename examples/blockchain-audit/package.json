@@ -18,7 +18,6 @@
     "receipts"
   ],
   "dependencies": {
-    "@unrdf/yawl": "26.4.23",
     "@unrdf/oxigraph": "26.4.23",
     "@opentelemetry/api": "^1.9.0",
     "hash-wasm": "^4.11.0",
