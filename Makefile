@@ -9,7 +9,7 @@
 # VARIABLES
 # ============================================================================
 
-VERSION ?= 26.4.2
+VERSION ?= 26.4.23
 NPM_TAG ?= latest
 NPM_TOKEN ?=
 DRY_RUN ?= false
@@ -40,7 +40,7 @@ help:
 	@echo "  make publish-single PKG=<name>  # Publish single package"
 	@echo ""
 	@echo "$(YELLOW)Configuration:$(NC)"
-	@echo "  VERSION=26.4.3           # Override version (default: $(VERSION))"
+	@echo "  VERSION=26.4.23           # Override version (default: $(VERSION))"
 	@echo "  NPM_TOKEN=<token>        # Set npm token for publishing"
 	@echo "  DRY_RUN=true             # Simulate publish without actual upload"
 	@echo "  NPM_TAG=latest           # npm tag (default: latest)"

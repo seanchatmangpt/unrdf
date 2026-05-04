@@ -41,7 +41,7 @@ export async function POST(request) {
       results,
       query: processedQuery,
       count: results.length,
-      executionTime: 0 // TODO: Add timing
+      executionTime: 0 // DEFERRED_ACTION(#gap-closure): Add timing
     });
 
   } catch (error) {
@@ -57,7 +57,7 @@ export async function POST(request) {
  * Simple SPARQL executor (80/20 implementation)
  *
  * Supports basic SELECT queries only
- * TODO: Integrate with Oxigraph SPARQL engine
+ * DEFERRED_ACTION(#gap-closure): Integrate with Oxigraph SPARQL engine
  */
 function executeSimpleSPARQL(universe, query) {
   // Extract SELECT variables

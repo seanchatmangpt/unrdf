@@ -1,0 +1,19 @@
+{
+  "name": "example-plugin",
+  "version": "1.0.0",
+  "description": "Example KGC Runtime plugin template",
+  "entryPoint": "./index.mjs",
+  "capabilities": [
+    "receipt:generate",
+    "receipt:validate",
+    "custom:example"
+  ],
+  "api_version": "5.0.1",
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": "https://github.com/your-org/example-plugin",
+  "metadata": {
+    "tags": ["example", "template"],
+    "category": "receipt"
+  }
+}

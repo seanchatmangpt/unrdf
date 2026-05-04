@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/cli",
-  "version": "26.4.10",
+  "version": "26.4.23",
   "description": "UNRDF CLI - Command-line Tools for Graph Operations and Context Management",
   "type": "module",
   "bin": {
@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "test": "vitest run",
+    "test:harden": "vitest run test/harden-gate.test.mjs && node ../kgc-4d/test/simulation/cfe-iec-loop.test.mjs",
     "test:fast": "vitest run",
     "test:watch": "vitest",
     "build": "unbuild && tsc --emitDeclarationOnly",
@@ -42,11 +43,11 @@
   ],
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@unrdf/core": "workspace:*",
-    "@unrdf/daemon": "workspace:*",
-    "@unrdf/federation": "workspace:*",
-    "@unrdf/hooks": "workspace:*",
-    "@unrdf/streaming": "workspace:*",
+    "@unrdf/core": "26.4.23",
+    "@unrdf/daemon": "26.4.23",
+    "@unrdf/federation": "26.4.23",
+    "@unrdf/hooks": "26.4.23",
+    "@unrdf/streaming": "26.4.23",
     "citty": "^0.1.6",
     "gray-matter": "^4.0.3",
     "nunjucks": "^3.2.4",

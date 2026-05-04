@@ -29,9 +29,13 @@ const alice = dataFactory.namedNode('http://example.org/Alice');
 const rdfType = dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
 const person = dataFactory.namedNode('http://example.org/Person');
 
-// Append event atomically
+// Append event atomically (L5 hardening: requires policy bounds)
 await store.appendEvent(
-  { type: EVENT_TYPES.CREATE, payload: { description: 'Added Alice' } },
+  { 
+    type: EVENT_TYPES.CREATE, 
+    policy: { '@type': ['odrl:Policy'], action: 'mcpp:MutateGraph' },
+    payload: { description: 'Added Alice' } 
+  },
   [{ type: 'add', subject: alice, predicate: rdfType, object: person }]
 );
 
@@ -43,7 +47,11 @@ console.log(`✓ Hash: ${frozen.universe_hash}`);
 // Add more data
 const bob = dataFactory.namedNode('http://example.org/Bob');
 await store.appendEvent(
-  { type: EVENT_TYPES.CREATE, payload: { description: 'Added Bob' } },
+  { 
+    type: EVENT_TYPES.CREATE, 
+    policy: { '@type': ['odrl:Policy'], action: 'mcpp:MutateGraph' },
+    payload: { description: 'Added Bob' } 
+  },
   [{ type: 'add', subject: bob, predicate: rdfType, object: person }]
 );
 

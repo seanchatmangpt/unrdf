@@ -1,6 +1,6 @@
 # UNRDF Package Maturity Matrix
 
-> **Version**: 26.4.4 | **Packages**: 65 | **Updated**: 2026-04-03
+> **Version**: 26.4.23 | **Packages**: 65 | **Updated**: 2026-04-03
 
 This document classifies every package in the UNRDF monorepo by maturity level to help teams make informed adoption decisions.
 

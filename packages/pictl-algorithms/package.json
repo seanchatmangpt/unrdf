@@ -1,0 +1,71 @@
+{
+  "name": "@unrdf/pictl-algorithms",
+  "version": "26.4.23",
+  "description": "PICTL Process Mining Algorithms for UNRDF Federation - OCEL discovery, conformance, and prediction via WASM",
+  "type": "module",
+  "main": "src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./discovery": "./src/discovery.mjs",
+    "./conformance": "./src/conformance.mjs",
+    "./prediction": "./src/prediction.mjs",
+    "./ocel": "./src/ocel.mjs",
+    "./pictl-wrapper": "./src/pictl-wrapper.mjs"
+  },
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "data/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "test:fast": "vitest run --coverage",
+    "test:watch": "vitest --coverage",
+    "build": "unbuild || true",
+    "lint": "eslint src/ test/ --max-warnings=0",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "clean": "rm -rf dist/ .nyc_output/ coverage/",
+    "dev": "echo 'Development mode for @unrdf/pictl-algorithms'"
+  },
+  "keywords": [
+    "rdf",
+    "pictl",
+    "process-mining",
+    "ocel",
+    "federation",
+    "wasm",
+    "discovery",
+    "conformance",
+    "prediction"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@unrdf/core": "26.4.23",
+    "@unrdf/pictl-semantics": "26.4.23",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@unrdf/test-utils": "26.4.23",
+    "vitest": "^4.0.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/pictl-algorithms"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

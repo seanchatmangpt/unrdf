@@ -1,13 +1,13 @@
-# pm4py-rust Deprecation Pattern Documentation
+# pm4py-mcp Deprecation Pattern Documentation
 
 **Date:** 2026-04-11
-**Purpose:** Document the Python-based pm4py interaction pattern before deprecating pm4py-rust
+**Purpose:** Document the Python-based pm4py interaction pattern before deprecating pm4py-mcp
 
 ---
 
 ## Executive Summary
 
-The pm4py integration lives entirely in Python at `~/chatmangpt/unrdf/otel/`. **pm4py-rust is NOT used** in this integration. The pattern is:
+The pm4py integration lives entirely in Python at `~/chatmangpt/unrdf/otel/`. **pm4py-mcp is NOT used** in this integration. The pattern is:
 
 1. **Tempo** stores OTel traces (HTTP API at `/api/search`, `/api/traces/{trace_id}`)
 2. **Loki** stores logs (HTTP API at `/loki/api/v1/query_range`)
@@ -318,39 +318,39 @@ GET /loki/api/v1/query_range?query={service_name}.*&start=...&end=...&limit=1000
 
 ---
 
-## pm4py-rust Deprecation Strategy
+## pm4py-mcp Deprecation Strategy
 
 ### Current State
 
-- **pm4py-rust** exists at `/Users/sac/chatmangpt/pm4py-rust/` with Rust bindings
+- **pm4py-mcp** exists at `/Users/sac/chatmangpt/pm4py-mcp/` with Rust bindings
 - **NOT USED** in the UNRDF otel integration
 - All process mining uses direct Python pm4py via `pm4py-analyze.py`
 
 ### Deprecation Steps
 
-1. **Verify no dependencies on pm4py-rust**
+1. **Verify no dependencies on pm4py-mcp**
 
    ```bash
    cd /Users/sac/chatmangpt
-   grep -r "pm4py-rust" --exclude-dir=target --exclude-dir=.git
+   grep -r "pm4py-mcp" --exclude-dir=target --exclude-dir=.git
    grep -r "pm4py" OSA/ BusinessOS/ canopy/
    ```
 
 2. **Document migration path** (this document)
 
-3. **Remove pm4py-rust from integration chain**
+3. **Remove pm4py-mcp from integration chain**
    - Remove from docker-compose.yml (if present)
    - Remove from make targets (if present)
    - Update health checks (8090 port checks)
 
-4. **Archive pm4py-rust repository**
-   - Tag final commit: `pm4py-rust-deprecated-v1.0.0`
+4. **Archive pm4py-mcp repository**
+   - Tag final commit: `pm4py-mcp-deprecated-v1.0.0`
    - Move to `attic/` or archive organization
    - Add README with pointer to Python pm4py integration
 
 5. **Update documentation**
    - CLAUDE.md references
-   - Build commands (remove pm4py-rust)
+   - Build commands (remove pm4py-mcp)
    - Port map (remove 8090)
 
 ---

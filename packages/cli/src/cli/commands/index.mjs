@@ -12,3 +12,4 @@ export { daemonCommand } from './daemon.mjs';
 export { syncCommand } from './sync.mjs';
 export { templateCommand } from './template.mjs';
 export { hooksCommand } from './hooks.mjs';
+export { validateCommand } from './validate.mjs';

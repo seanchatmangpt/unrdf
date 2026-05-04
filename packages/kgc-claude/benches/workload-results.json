@@ -1,0 +1,22 @@
+{
+  "workload1_runCapsules": {
+    "operations": 1000,
+    "durationMs": 16.23150899999996,
+    "opsPerSecond": "61608.57"
+  },
+  "workload2_checkpoints": {
+    "operations": 10,
+    "durationMs": 1.7762270000000058,
+    "opsPerSecond": "5629.91"
+  },
+  "workload3_shardMerge": {
+    "operations": 100,
+    "durationMs": 0.3343889999999874,
+    "opsPerSecond": "299052.90"
+  },
+  "workload4_asyncWorkflow": {
+    "operations": 50,
+    "durationMs": 0.37274300000001404,
+    "opsPerSecond": "134140.68"
+  }
+}

@@ -85,10 +85,17 @@ export default [
       'no-undef': 'error',
       // Catch N3 quad spread bug: {...quad} silently loses prototype getter properties.
       // Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, ... } instead.
-      'no-restricted-syntax': ['warn', {
-        selector: 'SpreadElement[argument.name=/^(quad|q|triple|t)$/]',
-        message: 'Spreading RDF quad variables loses N3 prototype getters. Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, predicate: q.predicate, object: q.object, graph: q.graph }.'
-      }]
+      'no-restricted-syntax': [
+        'warn', 
+        {
+          selector: 'SpreadElement[argument.name=/^(quad|q|triple|t)$/]',
+          message: 'Spreading RDF quad variables loses N3 prototype getters. Use cloneQuad() from @unrdf/core or explicit { subject: q.subject, predicate: q.predicate, object: q.object, graph: q.graph }.'
+        },
+        {
+          selector: 'Comment[value=/\\b(TODO|FIXME|HACK)\\b/i]',
+          message: 'Production technical debt markers (TODO/FIXME/HACK) are prohibited. Use DEFERRED_ACTION(issue_id) for planned work.'
+        }
+      ]
     }
   },
   // Browser-specific files

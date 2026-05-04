@@ -18,7 +18,7 @@ Tutorials are learning-oriented. You will build something real in each one, pick
 ## Prerequisites
 
 - Node.js >= 18
-- `pnpm add @unrdf/yawl` (or the workspace dep `@unrdf/yawl: 26.4.4`)
+- `pnpm add @unrdf/yawl` (or the workspace dep `@unrdf/yawl: 26.4.23`)
 - Familiarity with async/await JavaScript
 
 ---

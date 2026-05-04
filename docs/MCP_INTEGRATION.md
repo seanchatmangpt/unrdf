@@ -1,6 +1,6 @@
 # MCP Integration: Knowledge Self-Play Autonomics
 
-> **Package:** `@unrdf/daemon` | **Since:** v26.4.4 | **Status:** Production
+> **Package:** `@unrdf/daemon` | **Since:** v26.4.23 | **Status:** Production
 
 ## What is Knowledge Self-Play Autonomics?
 

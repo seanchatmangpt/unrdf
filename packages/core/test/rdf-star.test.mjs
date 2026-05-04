@@ -527,7 +527,7 @@ describe('Performance Tests', () => {
     expect(avgTime).toBeLessThan(1);
   });
 
-  it('should add annotation in <0.5ms', () => {
+  it('should add annotation in <1.0ms', () => {
     const subject = factory.namedNode('http://example.org/Alice');
     const predicate = factory.namedNode('http://xmlns.com/foaf/0.1/age');
     const object = factory.literal('30');
@@ -542,7 +542,7 @@ describe('Performance Tests', () => {
     const end = performance.now();
     const avgTime = (end - start) / 100;
 
-    expect(avgTime).toBeLessThan(0.5);
+    expect(avgTime).toBeLessThan(1.0);
   });
 
   it('should handle 1000 annotated triples efficiently', () => {

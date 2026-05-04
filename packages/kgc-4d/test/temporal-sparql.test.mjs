@@ -28,8 +28,8 @@ import { now, toISO, fromISO } from '../src/time.mjs';
 
 const { namedNode, literal } = dataFactory;
 
-// DEFERRED to v26.4.5: KGC-4D temporal SPARQL implementation incomplete
-describe.skip('Temporal SPARQL - Query Parser', () => {
+// DEFERRED to v26.4.23: KGC-4D temporal SPARQL implementation incomplete
+describe('Temporal SPARQL - Query Parser', () => {
   describe('parseTemporalQuery()', () => {
     it('should parse AT TIMESTAMP query', () => {
       const query = `
@@ -144,7 +144,7 @@ describe.skip('Temporal SPARQL - Query Parser', () => {
   });
 });
 
-describe.skip('Temporal SPARQL - Cache', () => {
+describe('Temporal SPARQL - Cache', () => {
   let cache;
 
   beforeEach(() => {
@@ -250,7 +250,7 @@ describe.skip('Temporal SPARQL - Cache', () => {
   });
 });
 
-describe.skip('Temporal SPARQL - History Reconstructor', () => {
+describe('Temporal SPARQL - History Reconstructor', () => {
   let store;
   let git;
   let tempDir;
@@ -341,7 +341,7 @@ describe.skip('Temporal SPARQL - History Reconstructor', () => {
   });
 });
 
-describe.skip('Temporal SPARQL - Integration Tests', () => {
+describe('Temporal SPARQL - Integration Tests', () => {
   let store;
   let git;
   let tempDir;
@@ -390,6 +390,11 @@ describe.skip('Temporal SPARQL - Integration Tests', () => {
       );
       const freeze2 = await freezeUniverse(store, git);
       const time2 = BigInt(freeze2.t_ns);
+
+      const typePredi = namedNode('http://kgc.io/type');
+      const eventLogGraph = namedNode(GRAPHS.EVENT_LOG);
+      const snapshotQuads = [...store.match(null, typePredi, literal('SNAPSHOT'), eventLogGraph)];
+      console.log('Test snapshotQuads:', snapshotQuads.length);
 
       // Query at time1 - should only see Alice
       const result1 = await temporal.query(`
@@ -582,8 +587,8 @@ describe.skip('Temporal SPARQL - Integration Tests', () => {
     it('should achieve >75% cache hit rate for repeated queries', async () => {
       const times = [];
       for (let i = 0; i < 5; i++) {
-        times.push(now());
-        await freezeUniverse(store, git);
+        const freezeReceipt = await freezeUniverse(store, git);
+        times.push(BigInt(freezeReceipt.t_ns));
         await new Promise(r => setTimeout(r, 5));
       }
 

@@ -1,0 +1,62 @@
+---
+description: "Generate command reference documentation from CLI ontology"
+to: "docs/commands/{{ command_name }}.md"
+mode: overwrite
+---
+
+# {{ name }}
+
+**Category:** {{ category }}
+
+## Description
+
+{{ description }}
+
+## Usage
+
+```bash
+unrdf {{ name }} [options]
+```
+
+## Arguments
+
+{% for arg in arguments %}
+### `--{{ arg.argName }}`
+
+{{ arg.argDescription }}
+
+- **Type:** {{ arg.argType }}
+{% if arg.alias %}
+- **Alias:** `{{ arg.alias }}`
+{% endif %}
+{% if arg.hasDefault %}
+- **Default:** `{{ arg.hasDefault }}`
+{% endif %}
+{% if arg.isRequired == "true" %}
+- **Required:** Yes
+{% endif %}
+
+{% endfor %}
+
+## Examples
+
+{% for ex in examples %}
+```bash
+{{ ex.exampleCommand }}
+```
+
+{{ ex.exampleDescription }}
+
+{% endfor %}
+
+## Long Description
+
+{{ longDescription }}
+
+{% if related_commands %}
+## Related Commands
+
+{% for cmd in related_commands %}
+- [`{{ cmd.name }}`](./{{ cmd.name }}.md) - {{ cmd.description }}
+{% endfor %}
+{% endif %}

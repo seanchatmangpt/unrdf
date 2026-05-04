@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  atomvm-node:
+    image: node:18-alpine
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache erlang
+        mkdir -p /app
+        echo '-module(msg).' > /app/msg.erl
+        echo '-export([loop/1]).' >> /app/msg.erl
+        echo 'loop(Msgs) ->' >> /app/msg.erl
+        echo '  receive' >> /app/msg.erl
+        echo '    {send, From, Content} ->' >> /app/msg.erl
+        echo '      io:format("[MSG] From ~p: ~p~n", [From, Content]),' >> /app/msg.erl
+        echo '      loop([{From, Content} | Msgs]);' >> /app/msg.erl
+        echo '    {get, Pid} ->' >> /app/msg.erl
+        echo '      Pid ! {msgs, Msgs},' >> /app/msg.erl
+        echo '      loop(Msgs)' >> /app/msg.erl
+        echo '  end.' >> /app/msg.erl
+        cd /app && erl -compile msg.erl
+        HN=$$(hostname)
+        erl -noshell -sname node_$$HN -setcookie secret -eval "register(msg, spawn(msg, loop, [[]])), io:format('Node ~p started~n', [node()]), timer:sleep(infinity)."
+    networks:
+      - atomvm-swarm
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: any
+      placement:
+        max_replicas_per_node: 5
+
+networks:
+  atomvm-swarm:
+    driver: overlay
+    attachable: true

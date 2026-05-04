@@ -10,14 +10,14 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import {
   parseConfig,
-  resolveConfigPaths,
+  _resolveConfigPaths,
   substituteEnvVars,
   validateConfig,
-  createDefaultConfig,
+  _createDefaultConfig,
   serializeConfig,
   findConfigFile,
-  ConfigParseError,
-  ConfigValidationError,
+  _ConfigParseError,
+  _ConfigValidationError,
 } from '../../src/cli/commands/sync/config-parser.mjs';
 
 describe('Config Parser', () => {

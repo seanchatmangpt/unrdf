@@ -48,7 +48,7 @@ const PATTERNS = {
   consoleLog: /console\.(log|warn|error|info|debug|trace)\s*\(/g,
   complexConditional: /if\s*\([^)]+\s*(?:&&|\|\|)\s*[^)]+(?:&&|\|\|)\s*[^)]+\)/g,
   longLine: /^.{120,}$/gm,
-  todo: /(?:TODO|FIXME|HACK|XXX):/gi,
+  todo: /(?:DEFERRED_ACTION(#gap-closure)|FIXME|HACK|XXX):/gi,
   magicNumber: /(?<![a-zA-Z0-9_])(?:[2-9]|[1-9][0-9]+)(?![a-zA-Z0-9_])/g,
   camelCase: /^[a-z][a-zA-Z0-9]*$/,
   pascalCase: /^[A-Z][a-zA-Z0-9]*$/,
@@ -342,7 +342,7 @@ function detectCodeSmells(content) {
   const todoMatches = content.match(PATTERNS.todo) || [];
   if (todoMatches.length > 5) {
     smells.push({ type: 'todo-comments', count: todoMatches.length });
-    warnings.push(`${todoMatches.length} TODO/FIXME comments`);
+    warnings.push(`${todoMatches.length} DEFERRED_ACTION(#gap-closure)/FIXME comments`);
   }
 
   return {

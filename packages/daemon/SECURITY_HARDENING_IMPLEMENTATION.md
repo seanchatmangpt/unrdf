@@ -385,8 +385,8 @@ grep -c "it(" test/security-headers.test.mjs
 wc -l src/middleware/security-headers.mjs
 # Expected: 645
 
-# Verify no TODOs
-grep -r "TODO\|FIXME" src/middleware/security-headers.mjs
+# Verify no DEFERRED_ACTION(#gap-closure)s
+grep -r "DEFERRED_ACTION(#gap-closure)\|FIXME" src/middleware/security-headers.mjs
 # Expected: (no output)
 
 # Verify no skipped tests

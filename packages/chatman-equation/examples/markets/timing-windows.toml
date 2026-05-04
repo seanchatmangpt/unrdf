@@ -1,0 +1,252 @@
+# Timing Windows - Window Function Example
+# Chatman Equation: A = μ(O)
+# Demonstrates temporal opportunity detection with closure over time-series data
+
+[metadata]
+name = "Market Timing Windows"
+description = "Optimal entry/exit detection via closure operator on price action windows"
+domain = "algorithmic-trading"
+equation = "TradingSignals = μ(PriceWindows)"
+
+# Observations (O): Time-series market data
+[observations]
+timestamp = "2026-01-18T08:00:00Z"
+symbol = "AAPL"
+timeframe = "5min"
+window_size = 20  # 20 periods = 100 minutes
+
+# Price action observations
+[[observations.candles]]
+timestamp = "2026-01-18T06:00:00Z"
+open = 185.50
+high = 186.20
+low = 185.30
+close = 185.90
+volume = 1250000
+vwap = 185.75
+
+[[observations.candles]]
+timestamp = "2026-01-18T06:05:00Z"
+open = 185.90
+high = 186.50
+low = 185.80
+close = 186.30
+volume = 1450000
+vwap = 186.15
+
+[[observations.candles]]
+timestamp = "2026-01-18T06:10:00Z"
+open = 186.30
+high = 186.80
+low = 186.10
+close = 186.20
+volume = 980000
+vwap = 186.40
+
+[[observations.candles]]
+timestamp = "2026-01-18T06:15:00Z"
+open = 186.20
+high = 186.40
+low = 185.60
+close = 185.70
+volume = 1780000
+vwap = 186.00
+
+[[observations.candles]]
+timestamp = "2026-01-18T06:20:00Z"
+open = 185.70
+high = 186.00
+low = 185.50
+close = 185.80
+volume = 1120000
+vwap = 185.75
+
+# Technical indicators (derived from observations)
+[observations.indicators]
+sma_20 = 186.10
+ema_20 = 186.05
+rsi_14 = 58.5
+macd_line = 0.35
+macd_signal = 0.28
+macd_histogram = 0.07
+bollinger_upper = 187.50
+bollinger_lower = 184.70
+bollinger_width = 2.80
+
+# Volume profile
+[observations.volume_profile]
+total_volume = 6580000
+avg_volume_20 = 1250000
+volume_ratio = 1.05
+high_volume_node_price = 186.00
+point_of_control = 185.90
+
+# Closure Operator (μ): Window-based signal generation
+[closure_operator]
+name = "timing_signal_generator"
+type = "temporal_window"
+idempotent = true
+deterministic = true
+
+# Rule 1: Momentum breakout detection
+[[closure_operator.rules]]
+name = "momentum_breakout"
+condition = "price > bollinger_upper AND volume > avg_volume * 1.5"
+action = "generate_long_signal"
+
+[closure_operator.rules.parameters]
+confirmation_periods = 2
+stop_loss_atr_multiple = 2.0
+take_profit_atr_multiple = 3.0
+
+# Rule 2: Mean reversion setup
+[[closure_operator.rules]]
+name = "mean_reversion"
+condition = "rsi < 30 OR rsi > 70"
+action = "generate_counter_signal"
+
+[closure_operator.rules.parameters]
+rsi_oversold = 30
+rsi_overbought = 70
+reversion_target = "sma_20"
+
+# Rule 3: MACD convergence
+[[closure_operator.rules]]
+name = "macd_convergence"
+condition = "macd_histogram crosses zero"
+action = "generate_trend_signal"
+
+[closure_operator.rules.parameters]
+histogram_threshold = 0.05
+signal_strength_multiplier = 1.0
+
+# Rule 4: Volume confirmation
+[[closure_operator.rules]]
+name = "volume_confirmation"
+condition = "signal_exists AND volume > avg_volume * 1.2"
+action = "increase_signal_confidence"
+
+[closure_operator.rules.parameters]
+volume_threshold_multiplier = 1.2
+confidence_boost = 0.15
+
+# Rule 5: Window closure
+[[closure_operator.rules]]
+name = "window_closure"
+condition = "end_of_window"
+action = "finalize_signals"
+
+[closure_operator.rules.parameters]
+min_signal_confidence = 0.60
+max_signals_per_window = 3
+
+# Artifacts (A): Trading signals from μ(O)
+[artifacts]
+total_signals = 2
+window_closed = true
+high_confidence_signals = 1
+
+[[artifacts.signals]]
+id = "sig-001"
+timestamp = "2026-01-18T06:15:00Z"
+type = "mean_reversion_long"
+direction = "long"
+confidence = 0.75
+trigger_price = 185.70
+entry_price = 185.80
+stop_loss = 184.50
+take_profit = 187.70
+risk_reward_ratio = 2.3
+
+[[artifacts.signals.reasoning]]
+indicator = "rsi"
+value = 58.5
+interpretation = "Neutral, trending towards oversold on 5min but within range"
+
+[[artifacts.signals.reasoning]]
+indicator = "price_vs_sma"
+value = -0.30
+interpretation = "Below SMA, potential mean reversion opportunity"
+
+[[artifacts.signals.reasoning]]
+indicator = "volume"
+value = 1.42
+interpretation = "Above average, confirms interest in move"
+
+[[artifacts.signals]]
+id = "sig-002"
+timestamp = "2026-01-18T06:20:00Z"
+type = "trend_continuation"
+direction = "neutral"
+confidence = 0.45
+trigger_price = 185.80
+note = "Below minimum confidence threshold, no entry"
+# No entry_price, stop_loss, take_profit, risk_reward_ratio - signal not executed
+
+[[artifacts.signals.reasoning]]
+indicator = "macd_histogram"
+value = 0.07
+interpretation = "Positive but small, weak trend signal"
+
+[[artifacts.signals.reasoning]]
+indicator = "bollinger_position"
+value = 0.39
+interpretation = "Mid-range, no breakout or reversal setup"
+
+# Window statistics
+[artifacts.window_stats]
+price_range = 2.80
+price_change_percent = 0.16
+volume_profile = "balanced"
+dominant_pattern = "consolidation"
+next_window_bias = "neutral"
+
+# Verification: Prove A = μ(O)
+[verification]
+method = "backtest_replay"
+historical_accuracy = 0.68
+sharpe_ratio = 1.85
+max_drawdown = 0.12
+
+[verification.assertions]
+signal_count_deterministic = true
+confidence_scores_reproducible = true
+entry_prices_invariant = true
+window_closure_complete = true
+
+[verification.invariants]
+max_signals_per_window = 3
+min_confidence_threshold = 0.60
+risk_reward_min = 1.5
+stop_loss_always_set = true  # For executed signals only
+
+# Determinism verification
+[verification.determinism]
+input_candles_hash = "sha256:d8f3a1c4..."
+output_signals_hash = "sha256:e9b2c7f5..."
+run_count = 500
+unique_outputs = 1
+determinism_score = 1.0
+
+# Idempotence verification (μ(μ(O)) = μ(O))
+[verification.idempotence]
+first_run_signals = 2
+second_run_signals = 2
+signals_identical = true
+idempotent = true
+note = "Re-running on same window produces identical signals"
+
+# Temporal consistency
+[verification.temporal_consistency]
+window_overlap = 10  # 10 period overlap with next window
+signal_consistency_score = 0.92
+conflicting_signals_count = 0
+description = "Overlapping windows produce consistent signals"
+
+# Composability verification
+[verification.composability]
+window_1_signals = 2
+window_2_signals = 1
+combined_signals = 3
+composable = true
+note = "μ(W₁) ∪ μ(W₂) combines without conflicts due to timestamps"

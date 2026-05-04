@@ -3,7 +3,7 @@
  * @module cli/commands/sync/template-renderer
  * @description Renders code generation templates using Nunjucks
  */
-import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
+import { readFile, writeFile, mkdir, readdir, stat, chmod, copyFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { resolve, dirname, basename, extname, join, isAbsolute } from 'path';
 import matter from 'gray-matter';
@@ -121,6 +121,18 @@ export function preprocessFrontmatter(content) {
  * @returns {Promise<Object>} Render result with content, outputPath, etc.
  */
 export async function renderTemplate(templatePath, sparqlResults, context = {}) {
+  const env = createNunjucksEnvironment(context.templates_dir || dirname(resolve(templatePath)), context.prefixes || {});
+  
+  // Inject hardening globals
+  const harden_enabled = !!context.harden;
+  const renderContext = { 
+    ...context, 
+    harden: harden_enabled,
+    harden_enabled,
+    sparql_results: sparqlResults, 
+    results: sparqlResults, 
+    now: new Date() 
+  };
   const absPath = resolve(templatePath);
   if (!existsSync(absPath)) throw new Error(`Template not found: ${absPath}`);
 
@@ -148,6 +160,18 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
   const validationFrontmatter = { ...frontmatter };
   if (synthesizedTo && !hadExplicitTo) {
     validationFrontmatter.to = synthesizedTo;
+  }
+
+
+  
+
+  // Interpolate frontmatter strings
+  for (const [key, value] of Object.entries(frontmatter)) {
+    if (typeof value === "string" && value.includes("{{")) {
+      try {
+        frontmatter[key] = env.renderString(value, renderContext);
+      } catch (e) { /* ignore interpolation errors in frontmatter for now */ }
+    }
   }
 
   const parser = new FrontmatterParser({ strict: true });
@@ -181,22 +205,7 @@ export async function renderTemplate(templatePath, sparqlResults, context = {}) 
     template = await readFile(fromPath, 'utf-8');
   }
 
-  const templatesDir = context.templates_dir ? resolve(context.templates_dir) : null;
-  const searchPaths = [dirname(absPath)];
-  if (templatesDir && templatesDir !== dirname(absPath)) {
-    searchPaths.unshift(templatesDir);
-  }
-  const mergedPrefixes = { ...DEFAULT_PREFIXES, ...(context.prefixes || {}) };
-  const env = createNunjucksEnvironment(searchPaths, mergedPrefixes);
-
-  const renderContext = {
-    sparql_results: sparqlResults,
-    results: sparqlResults,
-    prefixes: { ...DEFAULT_PREFIXES, ...(context.prefixes || {}) },
-    now: new Date(),
-    ...frontmatter.variables,
-    ...context,
-  };
+  
 
   let rendered;
   try {
@@ -536,15 +545,21 @@ export async function createTemplateEngine(options = {}) {
 export async function renderWithOptions(templatePath, sparqlResults, options = {}) {
   const {
     dryRun = false,
-    outputDir,
+    outputDir, baseDir,
     force: optionsForce = false,
+    mode: optionsMode,
     outputPath: overridePath,
-    context = {},
+    context: providedContext = {},
+    ...rest
   } = options;
+  const context = { ...providedContext, ...rest, outputPath: overridePath };
   const result = await renderTemplate(templatePath, sparqlResults, {
     ...context,
     output_dir: outputDir,
   });
+
+  // Effective mode: frontmatter takes precedence, then options, then default 'overwrite'
+  const effectiveMode = result.frontmatter.mode || optionsMode || result.mode || 'overwrite';
 
   // Merge force from frontmatter (Hygen parity: force: true in template)
   const effectiveForce = optionsForce || Boolean(result.frontmatter.force);
@@ -563,14 +578,21 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
 
   // Allow outputPath override from options
   let finalOutputPath = overridePath || result.outputPath;
+  if (finalOutputPath && finalOutputPath.includes('{{')) {
+    const env = createNunjucksEnvironment(context.templates_dir || baseDir, context.prefixes || {});
+    finalOutputPath = env.renderString(finalOutputPath, context);
+  }
+  
   if (!finalOutputPath) throw new Error(`Template ${templatePath} does not specify output path`);
 
-  // Determine final path based on whether outputDir is provided and if path is absolute
+  // Determine final path: outputDir (CLI/config) > baseDir (project relative) > templateDir
   let finalPath;
   if (isAbsolute(finalOutputPath)) {
     finalPath = finalOutputPath;
   } else if (outputDir) {
     finalPath = resolve(outputDir, finalOutputPath);
+  } else if (baseDir && result.frontmatter.to === finalOutputPath) {
+    finalPath = resolve(baseDir, finalOutputPath);
   } else {
     finalPath = resolve(dirname(templatePath), finalOutputPath);
   }
@@ -586,7 +608,29 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     };
   }
 
-  if (existsSync(finalPath) && !effectiveForce && result.mode === 'skip_existing') {
+  const fm = result.frontmatter;
+
+  // skipIf/skip_if: regex — skip if content exists in file (Hygen parity)
+  const skipExpr = (fm.skipIf || fm.skip_if)?.trim();
+  if (existsSync(finalPath) && !effectiveForce && skipExpr) {
+    const regexMatch = skipExpr.match(/^\/(.+)\/([gimsuy]*)$/);
+    if (regexMatch) {
+      const existing = await readFile(finalPath, "utf-8");
+      const regex = new RegExp(regexMatch[1], regexMatch[2]);
+      if (regex.test(existing)) {
+        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
+      }
+    } else {
+      // String match
+      const existing = await readFile(finalPath, "utf-8");
+      if (existing.includes(skipExpr)) {
+        return { ...result, finalPath, status: "skipped", written: false, skipped: true, reason: 'skipIf matched' };
+      }
+    }
+  }
+
+  // mode: skip_existing check
+  if (existsSync(finalPath) && !effectiveForce && effectiveMode === 'skip_existing') {
     return {
       ...result,
       finalPath,
@@ -594,6 +638,7 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       written: false,
       skipped: true,
       dryRun: false,
+      reason: 'file exists and mode is skip_existing',
     };
   }
 
@@ -606,14 +651,23 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       written: false,
       skipped: true,
       dryRun: false,
+      reason: 'file exists and unless_exists is true',
     };
   }
 
   await mkdir(dirname(finalPath), { recursive: true });
 
+  // Backup before modification if enabled
+  if (options.backup_before_overwrite && existsSync(finalPath)) {
+    const backupPath = finalPath + (options.backup_suffix || '.bak');
+    // Only create backup if it doesn't exist (don't overwrite backups)
+    if (!existsSync(backupPath)) {
+      await copyFile(finalPath, backupPath);
+    }
+  }
+
   // Determine operation mode from frontmatter
   const opMode = getOperationMode(result.frontmatter);
-  const fm = result.frontmatter;
 
   // eof_last: control trailing newline on injected content
   let contentToWrite = result.content;
@@ -628,7 +682,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
   if (opMode.mode === 'inject' || opMode.mode === 'append' || result.mode === 'append') {
     if (existsSync(finalPath)) {
       const existing = await readFile(finalPath, 'utf-8');
-      await writeFile(finalPath, existing + '\n' + contentToWrite, 'utf-8');
+      const separator = existing.endsWith('\n') ? '' : '\n';
+      await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
     }
@@ -636,7 +691,8 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
     // Fix: support both opMode.prepend AND frontmatter.mode === 'prepend'
     if (existsSync(finalPath)) {
       const existing = await readFile(finalPath, 'utf-8');
-      await writeFile(finalPath, contentToWrite + '\n' + existing, 'utf-8');
+      const separator = contentToWrite.endsWith('\n') ? '' : '\n';
+      await writeFile(finalPath, contentToWrite + separator + existing, 'utf-8');
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
     }
@@ -665,9 +721,11 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       if (idx !== -1) {
         const before = existing.substring(0, idx);
         const after = existing.substring(idx);
-        await writeFile(finalPath, before + contentToWrite + '\n' + after, 'utf-8');
+        const separator = contentToWrite.endsWith('\n') ? '' : '\n';
+        await writeFile(finalPath, before + contentToWrite + separator + after, 'utf-8');
       } else {
-        await writeFile(finalPath, contentToWrite + '\n' + existing, 'utf-8');
+        const separator = existing.endsWith('\n') ? '' : '\n';
+        await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
@@ -702,9 +760,12 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       if (insertAt !== -1) {
         const before = existing.substring(0, insertAt);
         const after = existing.substring(insertAt);
-        await writeFile(finalPath, before + '\n' + contentToWrite + after, 'utf-8');
+        const separatorBefore = before.endsWith('\n') ? '' : '\n';
+        const separatorAfter = (contentToWrite.endsWith('\n') || after.startsWith('\n')) ? '' : '\n';
+        await writeFile(finalPath, before + separatorBefore + contentToWrite + separatorAfter + after, 'utf-8');
       } else {
-        await writeFile(finalPath, existing + '\n' + contentToWrite, 'utf-8');
+        const separator = existing.endsWith('\n') ? '' : '\n';
+        await writeFile(finalPath, existing + separator + contentToWrite, 'utf-8');
       }
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
@@ -715,7 +776,7 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
       const existing = await readFile(finalPath, 'utf-8');
       const lines = existing.split('\n');
       const clampedLine = Math.max(0, Math.min(lineNum, lines.length));
-      lines.splice(clampedLine, 0, contentToWrite);
+      lines.splice(clampedLine, 0, contentToWrite.trimEnd());
       await writeFile(finalPath, lines.join('\n'), 'utf-8');
     } else {
       await writeFile(finalPath, contentToWrite, 'utf-8');
@@ -723,6 +784,14 @@ export async function renderWithOptions(templatePath, sparqlResults, options = {
   } else {
     // Default: overwrite
     await writeFile(finalPath, contentToWrite, 'utf-8');
+  }
+
+  // chmod directive: set file permissions (Hygen parity)
+  if (result.frontmatter.chmod) {
+    const mode = typeof result.frontmatter.chmod === 'string'
+      ? parseInt(result.frontmatter.chmod, 8)
+      : result.frontmatter.chmod;
+    await chmod(finalPath, mode);
   }
 
   // sh directive: execute shell command after write (Hygen parity)

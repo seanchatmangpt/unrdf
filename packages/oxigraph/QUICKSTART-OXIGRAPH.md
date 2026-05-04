@@ -8,19 +8,25 @@
 - pnpm
 - Terminal
 
-## One-Command Demo
+## One-Command Demo (5-Minute Benchmark)
+
+Experience the performance of Oxigraph in under 5 minutes. This demo initializes the WASM engine, generates a synthetic dataset, and executes a full battery of SPARQL benchmarks.
 
 ```bash
+# Run from the package root
 node examples/production-benchmark.mjs
 ```
 
-**What it does:**
-1. ✅ Creates Oxigraph store (WASM-based)
-2. ✅ Loads sample RDF data (multiple formats)
-3. ✅ Runs comprehensive SPARQL benchmark suite
-4. ✅ Compares query performance
-5. ✅ Tests all SPARQL 1.1 operations
-6. ✅ Shows performance metrics
+**What happens in these 5 minutes:**
+1. **WASM Initialization** (~1s): The Rust-based engine is loaded into the Node.js runtime.
+2. **Dataset Generation** (~1s): 200+ RDF triples are generated in memory.
+3. **Execution Phase** (~2s):
+    - ✅ **Add Operations**: Tests raw insertion throughput.
+    - ✅ **SELECT Queries**: Executes complex pattern matching.
+    - ✅ **ASK Queries**: Tests existence check performance.
+    - ✅ **CONSTRUCT Queries**: Measures graph construction speed.
+    - ✅ **Pattern Matching**: Directly queries the triple store index.
+4. **Verification**: Ensures all results are logically correct and performance is within production tolerances.
 
 ## Quick Start
 

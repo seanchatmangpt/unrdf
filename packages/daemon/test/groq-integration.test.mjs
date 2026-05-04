@@ -7,8 +7,8 @@
 import { generateText } from 'ai';
 import { getGroqProvider, initializeGroqProvider } from '../../packages/daemon/src/providers/groq.mjs';
 import { loadConfig } from '../../packages/daemon/src/config.mjs';
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { DataFactory  } from '@unrdf/core/rdf/n3-justified-only.mjs';
 
 const { namedNode, literal, quad } = DataFactory;
 

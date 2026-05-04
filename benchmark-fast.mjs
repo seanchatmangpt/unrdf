@@ -186,8 +186,8 @@ log(`  📏 Average file size: ${fmtMB(avgFileSizeBytes * 1024 * 1024)} per .mjs
 log('\n' + '='.repeat(70), 'bold');
 
 // Save detailed JSON
-fs.writeFileSync('/home/user/unrdf/benchmark-results.json', JSON.stringify(results, null, 2));
-log('💾 Results: /home/user/unrdf/benchmark-results.json', 'blue');
+fs.writeFileSync('benchmark-results.json', JSON.stringify(results, null, 2));
+log('💾 Results: benchmark-results.json', 'blue');
 
 // Save CSV
 const csv = [
@@ -205,7 +205,7 @@ const csv = [
   `Memory_Delta,${((afterLoad.rss - baseline.rss)/1024/1024).toFixed(2)},MB,N/A,INFO`
 ].join('\n');
 
-fs.writeFileSync('/home/user/unrdf/benchmark-summary.csv', csv);
-log('📊 CSV: /home/user/unrdf/benchmark-summary.csv\n', 'blue');
+fs.writeFileSync('benchmark-summary.csv', csv);
+log('📊 CSV: benchmark-summary.csv\n', 'blue');
 
 process.exit(results.sla.passed ? 0 : 1);

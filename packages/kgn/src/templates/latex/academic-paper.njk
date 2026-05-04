@@ -1,0 +1,186 @@
+---
+name: LaTeX Academic Paper
+description: IEEE/ACM style academic paper with proper formatting and bibliography
+version: 1.0.0
+type: document
+category: latex
+variables:
+  title: Paper title
+  authors: Array of author objects with name, affiliation, email
+  abstract: Paper abstract text
+  keywords: Array of paper keywords
+  sections: Paper sections with title and content
+  references: Bibliography references
+  documentClass: LaTeX document class (default: article)
+  usePackages: Additional LaTeX packages to include
+  twoColumn: Use two-column format (default: false)
+---
+\documentclass[{% if twoColumn %}twocolumn,{% endif %}10pt,conference]{{{ documentClass | default('IEEEtran') }}}
+
+% Standard packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{balance}
+{% if usePackages -%}
+{% for package in usePackages %}
+\usepackage{{{ package }}}
+{% endfor %}
+{% endif %}
+
+% Document information
+\title{{{ title }}}
+
+{% if authors -%}
+\author{%
+{% for author in authors -%}
+\IEEEauthorblockN{{{ author.name }}}
+\IEEEauthorblockA{{{ author.affiliation }}{% if author.email %}\\
+Email: {{ author.email }}{% endif %}}{% if not loop.last %}
+\and
+{% endif %}
+{% endfor %}
+}
+{% endif %}
+
+\begin{document}
+
+\maketitle
+
+{% if abstract -%}
+\begin{abstract}
+{{ abstract }}
+\end{abstract}
+{% endif %}
+
+{% if keywords -%}
+\begin{IEEEkeywords}
+{{ keywords | join(', ') }}
+\end{IEEEkeywords}
+{% endif %}
+
+{% for section in sections %}
+\section{{{ section.title }}}
+{% if section.label -%}
+\label{sec:{{ section.label }}}
+{% endif %}
+
+{% if section.content -%}
+{{ section.content }}
+{% endif %}
+
+{% if section.subsections -%}
+{% for subsection in section.subsections %}
+\subsection{{{ subsection.title }}}
+{% if subsection.label -%}
+\label{subsec:{{ subsection.label }}}
+{% endif %}
+
+{{ subsection.content }}
+
+{% endfor %}
+{% endif %}
+
+{% if section.figure -%}
+\begin{figure}[{{ section.figure.placement | default('htbp') }}]
+\centering
+\includegraphics[width={{ section.figure.width | default('0.8\\columnwidth') }}]{{{ section.figure.file }}}
+\caption{{{ section.figure.caption }}}
+{% if section.figure.label -%}
+\label{fig:{{ section.figure.label }}}
+{% endif %}
+\end{figure}
+{% endif %}
+
+{% if section.table -%}
+\begin{table}[{{ section.table.placement | default('htbp') }}]
+\centering
+\caption{{{ section.table.caption }}}
+{% if section.table.label -%}
+\label{tab:{{ section.table.label }}}
+{% endif %}
+\begin{tabular}{{{ section.table.columns }}}
+\hline
+{% for header in section.table.headers -%}
+{{ header }}{% if not loop.last %} & {% endif %}
+{% endfor %} \\
+\hline
+{% for row in section.table.rows %}
+{% for cell in row -%}
+{{ cell }}{% if not loop.last %} & {% endif %}
+{% endfor %} \\
+{% endfor %}
+\hline
+\end{tabular}
+\end{table}
+{% endif %}
+
+{% if section.algorithm -%}
+\begin{algorithm}[{{ section.algorithm.placement | default('htbp') }}]
+\caption{{{ section.algorithm.caption }}}
+{% if section.algorithm.label -%}
+\label{alg:{{ section.algorithm.label }}}
+{% endif %}
+\begin{algorithmic}[1]
+{% for step in section.algorithm.steps %}
+\{{ step.command | default('STATE') }} {{ step.text }}
+{% endfor %}
+\end{algorithmic}
+\end{algorithm}
+{% endif %}
+
+{% endfor %}
+
+{% if acknowledgments -%}
+\section*{Acknowledgments}
+{{ acknowledgments }}
+{% endif %}
+
+{% if references -%}
+\begin{thebibliography}{99}
+{% for ref in references %}
+\bibitem{{{ ref.key }}}
+{% if ref.authors -%}
+{{ ref.authors | join(', ') }}.
+{% endif %}
+``{{ ref.title }}.''
+{% if ref.journal -%}
+\emph{{{ ref.journal }}}{% if ref.volume %}, vol.~{{ ref.volume }}{% endif %}{% if ref.number %}, no.~{{ ref.number }}{% endif %}{% if ref.pages %}, pp.~{{ ref.pages }}{% endif %}, {{ ref.year }}.
+{% elif ref.booktitle -%}
+In \emph{{{ ref.booktitle }}}{% if ref.pages %}, pp.~{{ ref.pages }}{% endif %}, {{ ref.year }}.
+{% elif ref.publisher -%}
+{{ ref.publisher }}, {{ ref.year }}.
+{% else %}
+{{ ref.year }}.
+{% endif %}
+{% if ref.doi -%}
+DOI: {{ ref.doi }}
+{% endif %}
+{% if ref.url -%}
+Available: {{ ref.url }}
+{% endif %}
+
+{% endfor %}
+\end{thebibliography}
+{% endif %}
+
+{% if appendices -%}
+\appendices
+{% for appendix in appendices %}
+\section{{{ appendix.title }}}
+{% if appendix.label -%}
+\label{app:{{ appendix.label }}}
+{% endif %}
+
+{{ appendix.content }}
+
+{% endfor %}
+{% endif %}
+
+{% if twoColumn -%}
+\balance
+{% endif %}
+\end{document}

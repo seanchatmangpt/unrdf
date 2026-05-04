@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/test-utils",
-  "version": "26.4.9",
+  "version": "26.4.23",
   "description": "Shared test utilities and fixtures for unrdf packages",
   "type": "module",
   "private": true,
@@ -9,7 +9,7 @@
     ".": "./src/index.mjs"
   },
   "dependencies": {
-    "@unrdf/oxigraph": "workspace:*"
+    "@unrdf/oxigraph": "26.4.23"
   },
   "devDependencies": {
     "vitest": "^4.0.16"

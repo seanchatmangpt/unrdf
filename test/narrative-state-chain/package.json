@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/narrative-state-chain-tests",
-  "version": "1.0.0",
+  "version": "26.4.23",
   "description": "Test suite for Narrative State Chain",
   "type": "module",
   "scripts": {

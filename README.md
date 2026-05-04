@@ -6,7 +6,7 @@
 
 UNRDF is a JavaScript platform for building intelligent knowledge graph applications using semantic web standards (RDF, SPARQL, SHACL) with modern tooling.
 
-[![npm version](https://img.shields.io/badge/npm-v-26.4.7-blue)](https://www.npmjs.com/package/@unrdf/core)
+[![npm version](https://img.shields.io/badge/npm-v-26.4.23-blue)](https://www.npmjs.com/package/@unrdf/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![tests](https://img.shields.io/badge/tests-100%25%20passing-brightgreen)](permutation-tests/)
@@ -143,6 +143,7 @@ Perfect for knowledge graph curation, data quality improvement, and automated en
 
 | Resource                                          | Purpose                                 |
 | ------------------------------------------------- | --------------------------------------- |
+| **[VISION-2030-BEST-PRACTICES.md](VISION-2030-BEST-PRACTICES.md)** | Foundational principles & best practices ⭐ |
 | **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** | Installation & tutorials (15 min setup) |
 | **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**       | System design & architecture            |
 | **[PACKAGES.md](docs/PACKAGES.md)**               | Complete package documentation          |
@@ -171,7 +172,7 @@ pnpm test --coverage
 
 ## 🔒 Security
 
-- ✅ Zero CRITICAL/HIGH CVEs (as of v26.4.7)
+- ✅ Zero CRITICAL/HIGH CVEs (as of v26.4.23)
 - ✅ Input validation via Zod schemas
 - ✅ Sandboxed handler execution
 - ✅ API key authentication (BLAKE3 hashing)
@@ -179,6 +180,40 @@ pnpm test --coverage
 - ✅ Comprehensive security audit
 
 **Report vulnerabilities:** security@unrdf.dev
+
+### Admission Engine
+
+Control what data enters the knowledge graph with policy-based admission:
+
+```javascript
+import { createAdmissionEngine, wouldAdmit } from './src/admission/admission-engine.mjs';
+
+// Create engine with config
+const engine = createAdmissionEngine({ maxTriples: 10000 });
+
+// Check if a delta capsule would be admitted
+const admitted = await wouldAdmit(capsule, { maxTriples: 10000 });
+```
+
+#### `AdmissionConfigSchema`
+
+Zod schema validating `{ maxTriples?, allowedPrefixes?, denyPatterns? }`.
+
+#### `DecisionResultSchema`
+
+Zod schema for admission decisions: `{ admitted: boolean, reason: string, violations: string[] }`.
+
+#### `AdmissionEngine`
+
+Class with `.evaluate(capsule)` returning a `DecisionResult`.
+
+#### `createAdmissionEngine(config?)`
+
+Factory that validates config via `AdmissionConfigSchema` and returns an `AdmissionEngine`.
+
+#### `wouldAdmit(capsule, config?)`
+
+Stateless helper — creates an ephemeral engine and returns `true` if the capsule passes admission.
 
 ---
 
@@ -257,10 +292,9 @@ git push
 
 ## 📜 Resources
 
-- **[Official Docs](https://unrdf.dev)** - Complete guides
-- **[API Reference](https://unrdf.dev/api)** - Full API documentation
-- **[GitHub Issues](https://github.com/unrdf/unrdf/issues)** - Bug reports
-- **[GitHub Discussions](https://github.com/unrdf/unrdf/discussions)** - Community Q&A
+- **[Official Docs](docs/GETTING_STARTED.md)** - Complete guides
+- **[API Reference](docs/API_REFERENCE.md)** - Full API documentation
+- **[GitHub](https://github.com/seanchatmangpt)** - Source & issues
 - **[RDF Spec](https://www.w3.org/RDF/)** - W3C RDF standard
 - **[SPARQL Spec](https://www.w3.org/TR/sparql11-query/)** - SPARQL 1.1
 

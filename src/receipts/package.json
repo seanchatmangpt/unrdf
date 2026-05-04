@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/receipts",
-  "version": "1.0.0",
+  "version": "26.4.23",
   "description": "Receipt and provenance system for UNRDF audit trails",
   "type": "module",
   "main": "receipt.mjs",

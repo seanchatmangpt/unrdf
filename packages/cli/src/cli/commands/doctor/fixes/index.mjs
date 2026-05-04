@@ -10,6 +10,8 @@
 import { execSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { glob } from 'glob';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const projectRoot = join(__dirname, '../../../../../../..');
@@ -22,10 +24,12 @@ const FIX_IMPLEMENTATIONS = {
   'Workspace dependencies': fixWorkspaceDeps,
   'Build artifacts': fixBuildArtifacts,
   'ESLint status': fixLint,
+  'Environment variables': fixEnvVars,
+  'N3 import violations': fixN3Imports,
+  'Skipped tests': fixSkippedTests,
   // Manual fixes that cannot be automated
   'Node.js version': null,
   'pnpm version': null,
-  'Environment variables': null,
   'Required tools': null,
   'Daemon status': null,
   'MCP server status': null,
@@ -35,8 +39,6 @@ const FIX_IMPLEMENTATIONS = {
   'Test coverage': null,
   'File size violations': null,
   'TypeScript contamination': null,
-  'N3 import violations': null,
-  'Skipped tests': null,
   'Federation peers': null,
   'OTEL exporter': null,
   'Test containers (Docker)': null,
@@ -92,7 +94,86 @@ async function fixLint() {
 }
 
 /**
+ * Fix missing environment variables
+ */
+async function fixEnvVars() {
+  const examplePath = join(projectRoot, '.env.example');
+  const localPath = join(projectRoot, '.env.local');
+
+  if (existsSync(examplePath) && !existsSync(localPath)) {
+    console.log('   Copying .env.example to .env.local');
+    copyFileSync(examplePath, localPath);
+    console.log('   ✅ .env.local created (please configure secrets manually)');
+  } else {
+    console.log('   ⚠️  Manual configuration of .env.local required');
+  }
+}
+
+/**
+ * Fix N3 import violations
+ */
+async function fixN3Imports() {
+  console.log('   Searching for N3 import violations...');
+  const files = glob.sync('packages/**/*.mjs', {
+    cwd: projectRoot,
+    ignore: ['**/node_modules/**', '**/n3-justified-only.mjs'],
+  });
+
+  let fixedCount = 0;
+  for (const file of files) {
+    const filePath = join(projectRoot, file);
+    const content = readFileSync(filePath, 'utf-8');
+
+    const hasN3Import = /^import\s+.*from\s+['"]n3['"]/m.test(content) || /^const\s+.*=\s+require\(['"]n3['"]\)/m.test(content);
+
+    if (hasN3Import) {
+      const updated = content
+        .replace(/import\s+\{\s*([^}]+)\s*\}\s+from\s+['"]n3['"]/g, "import { $1 } from '@unrdf/core/rdf/n3-justified-only.mjs'")
+        .replace(/import\s+N3\s+from\s+['"]n3['"]/g, "import * as N3 from '@unrdf/core/rdf/n3-justified-only.mjs'");
+
+      if (updated !== content) {
+        writeFileSync(filePath, updated, 'utf-8');
+        fixedCount++;
+      }
+    }
+  }
+
+  console.log(`   ✅ Fixed N3 imports in ${fixedCount} file(s)`);
+}
+
+/**
+ * Fix skipped tests
+ */
+async function fixSkippedTests() {
+  console.log('   Unskipping tests...');
+  const testFiles = glob.sync('**/*.{test.mjs,test.ts,test.js}', {
+    cwd: projectRoot,
+    ignore: ['**/node_modules/**', '**/vendors/**'],
+  });
+
+  let fixedCount = 0;
+  for (const file of testFiles) {
+    const filePath = join(projectRoot, file);
+    const content = readFileSync(filePath, 'utf-8');
+
+    const updated = content
+      .replace(/\bdescribe\.skip\(/g, 'describe(')
+      .replace(/\bit\.skip\(/g, 'it(')
+      .replace(/\btest\.skip\(/g, 'test(')
+      .replace(/\bxit\(/g, 'it(');
+
+    if (updated !== content) {
+      writeFileSync(filePath, updated, 'utf-8');
+      fixedCount++;
+    }
+  }
+
+  console.log(`   ✅ Unskipped tests in ${fixedCount} file(s)`);
+}
+
+/**
  * Apply auto-fix for a specific check
+ * @param {Object} check - Check result object
  */
 export async function applyAutoFix(check) {
   const fixFn = FIX_IMPLEMENTATIONS[check.name];
@@ -106,6 +187,7 @@ export async function applyAutoFix(check) {
 
 /**
  * Get list of fixable checks
+ * @returns {string[]} List of check names
  */
 export function getFixableChecks() {
   return Object.keys(FIX_IMPLEMENTATIONS).filter(key => FIX_IMPLEMENTATIONS[key] !== null);

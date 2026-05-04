@@ -1,0 +1,73 @@
+{# Example Code Generator Template #}
+{# Generates runnable examples from configuration #}
+
+/**
+ * @file {{ filename }}
+ * @description {{ description }}
+ * @example-type {{ example_type }}
+ * @difficulty {{ difficulty }}
+ */
+
+{% if imports %}
+// Dependencies
+{% for import in imports %}
+import {{ import.what }} from '{{ import.from }}';
+{% endfor %}
+
+{% endif %}
+{% if constants %}
+// Constants
+{% for const in constants %}
+const {{ const.name }} = {{ const.value }};  // {{ const.comment }}
+{% endfor %}
+
+{% endif %}
+{% if setup %}
+// Setup
+{{ setup }}
+
+{% endif %}
+{% if main_code %}
+// Main Example
+{{ main_code }}
+
+{% endif %}
+{% if helpers %}
+// Helper Functions
+{% for helper in helpers %}
+/**
+ * {{ helper.description }}
+ {% for param in helper.params %}
+ * @param {{ '{' }}{{ param.type }}{{ '}' }} {{ param.name }} - {{ param.description }}
+ {% endfor %}
+ * @returns {{ '{' }}{{ helper.returns.type }}{{ '}' }} {{ helper.returns.description }}
+ */
+{{ helper.code }}
+
+{% endfor %}
+{% endif %}
+{% if usage %}
+// Usage Example
+{{ usage }}
+
+{% endif %}
+{% if output %}
+// Expected Output:
+/*
+{{ output }}
+*/
+{% endif %}
+
+{% if notes %}
+// Notes:
+{% for note in notes %}
+// - {{ note }}
+{% endfor %}
+{% endif %}
+
+{% if related_examples %}
+// Related Examples:
+{% for example in related_examples %}
+// - {{ example.name }}: {{ example.path }}
+{% endfor %}
+{% endif %}

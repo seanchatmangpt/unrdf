@@ -200,7 +200,7 @@ export async function sidecarConfigSetCommand(ctx, config) {
   console.log(`🔧 Setting config: ${args.key} = ${args.value}`);
   console.log('⚠️  Note: This requires sidecar restart to take effect');
 
-  // TODO: Implement config persistence
+  // DEFERRED_ACTION(#hive-303): Implement persistent storage for sidecar configuration overrides.
   console.log('✅ Config updated (restart required)');
 }
 

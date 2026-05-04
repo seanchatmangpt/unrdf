@@ -145,6 +145,7 @@ const KNOWN_CONFIG_KEYS = {
   generation: {
     output_dir: null, templates_dir: null, ontology_dir: null, rules: null,
     require_audit_trail: null, parallel: null, incremental: null, overwrite: null,
+    backup_before_overwrite: null, backup_suffix: null,
   },
   sync: { enabled: null, on_change: null, conflict_mode: null },
   rdf: { base_uri: null, default_prefix: null },

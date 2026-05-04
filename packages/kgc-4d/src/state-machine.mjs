@@ -27,7 +27,7 @@ const UniverseStateSchema = z.enum(['MUTABLE', 'FROZEN', 'SEALED']);
  * const sm = new UniverseStateMachine();
  * sm.guardMutableOperation('appendEvent'); // OK in MUTABLE
  * sm.freeze(); // Transition to FROZEN
- * sm.guardMutableOperation('appendEvent'); // Throws: cannot mutate FROZEN universe
+ * try { sm.guardMutableOperation('appendEvent'); } catch (e) {} // Throws: cannot mutate FROZEN universe
  */
 export class UniverseStateMachine {
   constructor(initialState = 'MUTABLE') {

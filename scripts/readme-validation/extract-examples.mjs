@@ -79,8 +79,23 @@ function extractCodeBlocks(content) {
  */
 function validateSyntax(code) {
   try {
-    // Basic syntax check using Function constructor
-    new Function(code);
+    // Strip ESM import/export statements — new Function() runs in non-module
+    // context and throws on import/export. Wrap in async function to allow
+    // top-level await patterns common in ESM README examples.
+    const stripped = code
+      .split('\n')
+      .map(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('import ') || trimmed.startsWith('import{') ||
+            trimmed.startsWith('export ') || trimmed.startsWith('export{') ||
+            trimmed.startsWith('export default ')) {
+          return '/* ' + line + ' */';
+        }
+        return line;
+      })
+      .join('\n');
+    // Wrap in async IIFE so top-level await is syntactically valid
+    new Function(`(async () => {\n${stripped}\n})()`);
     return { valid: true };
   } catch (error) {
     return { valid: false, error: error.message };

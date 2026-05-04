@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.nyc_output/
+*.log
+.env
+.env.local
+cdk.out/
+test-output/
+*.js.gz
+metafile.json

@@ -38,7 +38,7 @@ async function main() {
     // Update service name in config for UNRDF
     let config = await readFile(collectorDest, 'utf-8');
     config = config.replace(/service\.name: pm4py/g, 'service.name: unrdf');
-    config = config.replace(/service\.version: .*/g, 'service.version: 26.4.7');
+    config = config.replace(/service\.version: .*/g, 'service.version: 26.4.23');
     await writeFile(collectorDest, config);
     console.log('✅ Config updated for UNRDF\n');
 

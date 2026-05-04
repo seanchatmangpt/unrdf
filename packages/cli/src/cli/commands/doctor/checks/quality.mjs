@@ -8,13 +8,27 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { glob } from 'glob';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const projectRoot = join(__dirname, '../../../../../../..');
+
+const COMMON_IGNORES = [
+  '**/node_modules/**',
+  '**/vendors/**',
+  '**/dist/**',
+  '**/unrdf-archive/**',
+  '**/archive/**',
+  '**/historical/**',
+  '**/.claude/**',
+  '**/.next/**',
+  '**/tmp/**',
+  '**/.volta/**',
+  '**/docs/templates/**',
+];
 
 /**
  * Check test coverage
@@ -27,6 +41,7 @@ function checkCoverage() {
       encoding: 'utf-8',
       stdio: 'pipe',
       timeout: 60000,
+      maxBuffer: 1024 * 1024 * 10, // 10MB to prevent ENOBUFS
     });
 
     // Parse coverage from output
@@ -75,7 +90,7 @@ function checkCoverage() {
  */
 async function runLint() {
   try {
-    const result = execSync('pnpm lint', {
+    execSync('pnpm lint', {
       cwd: projectRoot,
       encoding: 'utf-8',
       stdio: 'pipe',
@@ -107,7 +122,7 @@ function checkFileSize() {
   try {
     const files = glob.sync('packages/**/*.mjs', {
       cwd: projectRoot,
-      ignore: ['**/node_modules/**'],
+      ignore: COMMON_IGNORES,
     });
     const violations = [];
 
@@ -153,7 +168,7 @@ function checkNoTypeScript() {
   try {
     const tsFiles = glob.sync('**/*.{ts,tsx,d.ts}', {
       cwd: projectRoot,
-      ignore: ['**/node_modules/**', '**/vendors/**', '**/.volta/**'],
+      ignore: COMMON_IGNORES,
     });
 
     if (tsFiles.length === 0) {
@@ -188,7 +203,7 @@ function checkN3Imports() {
   try {
     const files = glob.sync('packages/**/*.mjs', {
       cwd: projectRoot,
-      ignore: ['**/node_modules/**'],
+      ignore: COMMON_IGNORES,
     });
     const violations = [];
 
@@ -196,8 +211,10 @@ function checkN3Imports() {
       const filePath = join(projectRoot, file);
       const content = readFileSync(filePath, 'utf-8');
 
-      // Check for N3 imports (except in allowed files)
-      if (content.includes("from 'n3'") || content.includes('from "n3"')) {
+      // Check for actual N3 import statements, ignoring string literals in logic
+      const hasN3Import = /^import\s+.*from\s+['"]n3['"]/m.test(content) || /^const\s+.*=\s+require\(['"]n3['"]\)/m.test(content);
+      
+      if (hasN3Import) {
         // Allowed file
         if (!file.includes('n3-justified-only')) {
           violations.push(file);
@@ -237,7 +254,7 @@ function checkSkippedTests() {
   try {
     const testFiles = glob.sync('**/*.{test.mjs,test.ts,test.js}', {
       cwd: projectRoot,
-      ignore: ['**/node_modules/**', '**/vendors/**'],
+      ignore: COMMON_IGNORES,
     });
 
     let skippedCount = 0;
@@ -286,6 +303,68 @@ function checkSkippedTests() {
 }
 
 /**
+ * Check Definition of Done criteria (DEFERRED_ACTION(#gap-closure)s, console.log, etc.)
+ */
+function checkDefinitionOfDone() {
+  try {
+    const srcFiles = glob.sync('packages/**/*.mjs', {
+      cwd: projectRoot,
+      ignore: [...COMMON_IGNORES, '**/test/**', '**/examples/**', '**/playground/**'],
+    });
+
+    let todoCount = 0;
+    let consoleLogCount = 0;
+    const violations = [];
+
+    for (const file of srcFiles) {
+      const filePath = join(projectRoot, file);
+      const content = readFileSync(filePath, 'utf-8');
+
+      // Check for DEFERRED_ACTION(#gap-closure)/FIXME
+      const todos = (content.match(/(?:DEFERRED_ACTION(#gap-closure)|FIXME|HACK|XXX):/gi) || []).length;
+      if (todos > 0) {
+        todoCount += todos;
+        violations.push(`${file}: ${todos} DEFERRED_ACTION(#gap-closure)(s)`);
+      }
+
+      // Check for console.log (allow in cli/commands, bin/)
+      // This is a "Definition of Done" check to prevent rogue logs in core/daemon
+      if (!file.includes('cli/commands') && !file.includes('bin/')) {
+        const logs = (content.match(/console\.log\(/g) || []).length;
+        if (logs > 0) {
+          consoleLogCount += logs;
+          violations.push(`${file}: ${logs} console.log(s)`);
+        }
+      }
+    }
+
+    if (todoCount === 0 && consoleLogCount === 0) {
+      return {
+        status: 'pass',
+        actual: 'No DEFERRED_ACTION(#gap-closure)s or rogue console.logs',
+        expected: 'Clean production code',
+      };
+    }
+
+    // It's a warning if there are DEFERRED_ACTION(#gap-closure)s/logs, but not a hard fail unless production mode (future)
+    return {
+      status: 'warn',
+      actual: `${todoCount} DEFERRED_ACTION(#gap-closure)s, ${consoleLogCount} console.logs found`,
+      expected: 'Zero DEFERRED_ACTION(#gap-closure)s and console.logs in production core',
+      violations: violations.slice(0, 10),
+      fix: 'Resolve DEFERRED_ACTION(#gap-closure)s and replace console.log with proper logger',
+    };
+  } catch (error) {
+    return {
+      status: 'warn',
+      actual: `Could not check Definition of Done: ${error.message}`,
+      expected: 'Clean production code',
+      fix: 'Manually verify code against Definition of Done',
+    };
+  }
+}
+
+/**
  * Run all quality checks
  */
 export async function checkQuality() {
@@ -315,6 +394,10 @@ export async function checkQuality() {
       {
         name: 'Skipped tests',
         ...checkSkippedTests(),
+      },
+      {
+        name: 'Definition of Done',
+        ...checkDefinitionOfDone(),
       },
     ],
   };

@@ -447,4 +447,4 @@ console.log('Stream Receipt Chain:', stream.getReceiptChain(...));
 
 ---
 
-**Version**: 26.4.4 | **Date**: April 3, 2026
+**Version**: 26.4.23 | **Date**: April 3, 2026

@@ -14,6 +14,7 @@ import { checkQuality } from './checks/quality.mjs';
 import { checkIntegrations } from './checks/integration.mjs';
 import { checkOTEL } from './checks/otel.mjs';
 import { checkKubernetes } from './checks/kubernetes.mjs';
+import { checkTruth } from './checks/truth.mjs';
 import { formatHuman } from './formatters/human.mjs';
 import { formatJSON } from './formatters/json.mjs';
 import { formatYAML } from './formatters/yaml.mjs';
@@ -25,15 +26,15 @@ import { applyAutoFix } from './fixes/index.mjs';
 const MODES = {
   quick: {
     timeout: 30000,
-    categories: ['env', 'system'],
+    categories: ['env', 'system', 'truth'],
   },
   standard: {
     timeout: 120000,
-    categories: ['env', 'system', 'quality'],
+    categories: ['env', 'system', 'truth', 'quality'],
   },
   full: {
     timeout: 300000,
-    categories: ['env', 'system', 'quality', 'integration', 'otel', 'kubernetes'],
+    categories: ['env', 'system', 'truth', 'quality', 'integration', 'otel', 'kubernetes'],
   },
 };
 
@@ -52,6 +53,7 @@ async function runAllChecks(args, categories) {
   const checkFunctions = {
     env: checkEnvironment,
     system: checkSystem,
+    truth: checkTruth,
     quality: checkQuality,
     integration: checkIntegrations,
     otel: checkOTEL,
@@ -132,7 +134,7 @@ function formatOutput(results, format) {
 /**
  * Apply auto-fixes to failed checks
  */
-async function applyFixes(results, args) {
+async function applyFixes(results) {
   let fixedCount = 0;
   const fixResults = [];
 
@@ -179,7 +181,6 @@ async function watchMode(args, categories) {
 
   while (watching) {
     // Clear screen (platform-specific)
-    const clearCmd = process.platform === 'win32' ? 'cls' : 'clear';
     try {
       console.log('\x1Bc'); // ANSI clear screen
     } catch {
@@ -238,6 +239,12 @@ export const doctor = defineCommand({
       description: 'Continuous monitoring mode (refresh every 5s)',
       alias: 'w',
     },
+    strict: {
+      type: 'boolean',
+      default: false,
+      description: 'Production mode: escalate quality warnings to hard failures',
+      alias: 's',
+    },
   },
   async run({ args }) {
     try {
@@ -259,6 +266,19 @@ export const doctor = defineCommand({
       // Single run mode
       const results = await runAllChecks(args, categories);
 
+      // Escalate warnings to failures in strict mode
+      if (args.strict) {
+        for (const category of results.categories) {
+          for (const check of category.checks) {
+            if (check.status === 'warn') {
+              check.status = 'fail';
+              results.failedChecks++;
+              results.warnings--;
+            }
+          }
+        }
+      }
+
       // Format output
       const formatted = formatOutput(results, args.format);
       console.log(formatted);
@@ -266,7 +286,7 @@ export const doctor = defineCommand({
       // Apply fixes if requested
       if (args.fix && results.failedChecks > 0) {
         console.log('\n🔧 Attempting auto-remediation...\n');
-        const { fixedCount, fixResults } = await applyFixes(results, args);
+        const { fixedCount, fixResults } = await applyFixes(results);
 
         console.log(`\n✅ Fixed ${fixedCount} issue(s)`);
         for (const result of fixResults) {

@@ -86,6 +86,8 @@ async function startWatchMode(args, runSyncFn) {
         force: args.force,
         rule: args.rule,
         output: args.output,
+        breed: args.breed,
+        harden: args.harden,
       });
     } catch (err) {
       // Format detailed validation errors if ConfigValidationError
@@ -224,6 +226,15 @@ export const syncCommand = defineCommand({
       description: 'Watch ontology and template files for changes',
       default: false,
     },
+    harden: {
+      type: 'boolean',
+      description: 'Enforce L4/L5 hardening protocols during code generation',
+      default: false,
+    },
+    breed: {
+      type: 'string',
+      description: 'Cognitive Breed morphology (dachshund|shepherd)',
+    },
   },
   async run({ args }) {
     // Check config file exists - try to find it if not at the default path
@@ -255,6 +266,52 @@ rules = []
       process.exit(1);
     }
 
+    // PHASE 3: Gate 1 (Input Validation) - Block projection if source ontology lacks SpecKit receipt
+    if (args.harden) {
+       const { parseConfig } = await import('./sync/config-parser.mjs');
+       const config = await parseConfig(configPath);
+       const ontologySource = config.ontology?.source;
+       
+       if (ontologySource && existsSync(ontologySource)) {
+         const { readFile } = await import('fs/promises');
+         const { verifyPQReceipt } = await import('@unrdf/receipts');
+         const { UnrdfStore } = await import('@unrdf/core');
+
+         const receiptPath = `${ontologySource}.receipt.json`;
+         if (!existsSync(receiptPath)) {
+           console.error('Error: [Gate 1] Constitutional Integrity Failure');
+           console.error(`Missing PQ receipt for hardened projection: ${receiptPath}`);
+           process.exit(1);
+         }
+
+         try {
+           const receipt = JSON.parse(await readFile(receiptPath, 'utf-8'));
+           const ontologyContent = await readFile(ontologySource, 'utf-8');
+           
+           // Load ontology into store to get canonical triples for verification
+           const store = new UnrdfStore();
+           store.load(ontologyContent, { format: 'turtle' });
+           const triples = store.match();
+
+           const verification = await verifyPQReceipt(receipt, triples);
+           if (!verification.valid || !verification.signatureValid) {
+             console.error('Error: [Gate 1] Constitutional Integrity Failure');
+             console.error(`Invalid PQ receipt for: ${ontologySource}`);
+             console.error(`Reason: ${verification.reason || 'Signature verification failed'}`);
+             process.exit(1);
+           }
+           
+           if (args.verbose) {
+             console.log(`[Gate 1] Verified PQ receipt for ${ontologySource} (${verification.signatureScheme})`);
+           }
+         } catch (err) {
+           console.error('Error: [Gate 1] Constitutional Integrity Failure');
+           console.error(`Verification process failed: ${err.message}`);
+           process.exit(1);
+         }
+       }
+    }
+
     try {
       // Dynamic import to avoid loading dependencies if not needed
       const { runSync } = await import('./sync/orchestrator.mjs');
@@ -271,6 +328,8 @@ rules = []
           force: args.force,
           rule: args.rule,
           output: args.output,
+          harden: args.harden,
+          breed: args.breed,
         });
 
         if (!result.success) {

@@ -1,6 +1,6 @@
 {
   "name": "unrdf-benchmarks",
-  "version": "1.0.0",
+  "version": "26.4.23",
   "type": "module",
   "private": true,
   "description": "Performance benchmarks for UNRDF Knowledge Hooks",
@@ -12,6 +12,6 @@
     "open-dashboard": "node generate-dashboard.mjs && open dashboard.html || xdg-open dashboard.html || echo 'Open dashboard.html manually: file://$(pwd)/dashboard.html'"
   },
   "dependencies": {
-    "@unrdf/oxigraph": "workspace:*"
+    "@unrdf/oxigraph": "26.4.23"
   }
 }

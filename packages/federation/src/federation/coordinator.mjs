@@ -83,6 +83,7 @@ export function createCoordinator(config = {}) {
   let healthCheckTimer = null;
   let queryCount = 0;
   let errorCount = 0;
+  let totalDuration = 0;
 
   // Initialize ML predictor if enabled
   const predictor = validatedConfig.enablePredictiveBypass
@@ -204,7 +205,7 @@ export function createCoordinator(config = {}) {
             const stats = this.getStats();
             const features = predictor.extractFeatures(sparqlQuery, {
               ...stats,
-              concurrentQueries: 0, // TODO: Track actual concurrency
+              concurrentQueries: 0, // DEFERRED_ACTION(#gap-closure): Track actual concurrency
             });
 
             const prediction = predictor.predict(features);
@@ -254,12 +255,15 @@ export function createCoordinator(config = {}) {
         const strategy = options.strategy || validatedConfig.strategy;
         const timeout = options.timeout || validatedConfig.timeout;
 
-        const allPeers = peerManager.listPeers({ status: 'healthy' });
+        const healthyPeers = peerManager.listPeers({ status: 'healthy' });
+        const degradedPeers = peerManager.listPeers({ status: 'degraded' });
+        const allPeers = [...healthyPeers, ...degradedPeers];
 
         span.setAttributes({
           'query.strategy': strategy,
           'query.timeout': timeout,
-          'peers.healthy': allPeers.length,
+          'peers.healthy': healthyPeers.length,
+          'peers.degraded': degradedPeers.length,
           'query.length': sparqlQuery.length,
         });
 
@@ -289,6 +293,8 @@ export function createCoordinator(config = {}) {
           format: options.format,
           strategy: options.executionStrategy || 'parallel',
         });
+
+        totalDuration += result.totalDuration || 0;
 
         if (!result.success) {
           errorCount++;
@@ -601,6 +607,7 @@ export function createCoordinator(config = {}) {
         unreachablePeers: peers.filter(p => p.status === 'unreachable').length,
         totalQueries: queryCount,
         totalErrors: errorCount,
+        totalDuration,
         errorRate: queryCount > 0 ? errorCount / queryCount : 0,
       };
     },

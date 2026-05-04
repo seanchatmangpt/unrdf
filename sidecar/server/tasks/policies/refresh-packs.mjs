@@ -128,7 +128,7 @@ export default defineTask({
  * @returns {Promise<boolean>}
  */
 async function validatePolicySignature(policy) {
-  // TODO: Implement actual signature validation
+  // DEFERRED_ACTION(#sec-101): Implement Ed25519 signature validation for policy packs.
   // For now, just check if policy has required fields
   if (!policy.id || !policy.rules) {
     return false

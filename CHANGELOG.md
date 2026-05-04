@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [26.4.9] - 2026-04-09
+## [26.4.23] - 2026-04-09
 
 ### Features
 
@@ -47,7 +47,7 @@
 
 ---
 
-## [26.4.8] - 2026-04-07
+## [26.4.23] - 2026-04-07
 
 ### Major Features
 
@@ -95,7 +95,7 @@
 
 ---
 
-## [26.4.7] - 2026-04-07
+## [26.4.23] - 2026-04-07
 
 ### Major Features
 
@@ -154,7 +154,7 @@
 ### Documentation
 
 - New: [playground/OTEL-K8S-DEPLOYMENT-GUIDE.md](playground/OTEL-K8S-DEPLOYMENT-GUIDE.md) -- Complete OTEL and K8s deployment guide
-- New: [playground/V26.4.7-VERIFICATION-STATUS.md](playground/V26.4.7-VERIFICATION-STATUS.md) -- Release verification report
+- New: [playground/V26.4.23-VERIFICATION-STATUS.md](playground/V26.4.23-VERIFICATION-STATUS.md) -- Release verification report
 - Updated: [playground/INTEGRATION-VALIDATION-SUMMARY.md](playground/INTEGRATION-VALIDATION-SUMMARY.md) -- Integration status
 - Updated: [playground/BLUE-OCEAN-THESIS.md](playground/BLUE-OCEAN-THESIS.md) -- Blue ocean strategy
 
@@ -162,15 +162,15 @@
 
 - Linting fixes: 26 warnings resolved across hooks, daemon, and cli packages
 - MCP sync: All 15 open-ontologies tools registered and validated
-- Version preparation: Bumped all packages from 26.4.5 to 26.4.7
+- Version preparation: Bumped all packages from 26.4.23 to 26.4.23
 
 ### Breaking Changes
 
-**None** -- v26.4.7 is fully backward compatible with v26.4.4.
+**None** -- v26.4.23 is fully backward compatible with v26.4.23.
 
 ---
 
-## [26.4.4] - 2026-04-03
+## [26.4.23] - 2026-04-03
 
 ### Major Features
 
@@ -227,7 +227,7 @@
 - New: [MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md) -- Self-play autonomics guide with examples and API reference
 - New: MCP self-play loop documentation and examples
 - Updated: README.md with daemon production status and MCP section
-- Prepared documentation for v26.4.3 publication
+- Prepared documentation for v26.4.23 publication
 
 ### Chores
 
@@ -239,7 +239,7 @@
 
 ### Breaking Changes
 
-**None** -- v26.4.4 is fully backward compatible with v26.4.3.
+**None** -- v26.4.23 is fully backward compatible with v26.4.23.
 
 ---
 

@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { randomBytes, createHash } from 'crypto';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('@unrdf/pictl-semantics', '26.4.9');
+const tracer = trace.getTracer('@unrdf/pictl-semantics', '26.4.23');
 
 /**
  * Quorum Configuration Schema

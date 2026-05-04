@@ -83,13 +83,13 @@ describe('SHACL Validator', () => {
   });
 
   describe('validateGraph', () => {
-    it.skip('should validate conforming data (requires full rdf-validate-shacl integration)', async () => {
+    it('should validate conforming data (requires full rdf-validate-shacl integration)', async () => {
       // This test requires full integration with rdf-validate-shacl library
       // which needs advanced RDF/JS DatasetCore implementation
       // The core functionality is tested in other unit tests
     });
 
-    it.skip('should validate with Oxigraph store data (requires full rdf-validate-shacl integration)', async () => {
+    it('should validate with Oxigraph store data (requires full rdf-validate-shacl integration)', async () => {
       // This test requires full integration with rdf-validate-shacl library
       // The storeToDataset conversion is unit tested separately
     });
@@ -480,7 +480,7 @@ describe('RDF Schema Builder', () => {
   });
 
   describe('Integration - Builder + Validator', () => {
-    it.skip('should validate data against builder-generated shapes (requires full rdf-validate-shacl integration)', async () => {
+    it('should validate data against builder-generated shapes (requires full rdf-validate-shacl integration)', async () => {
       // This end-to-end test requires full rdf-validate-shacl integration
       // Individual components (builder and validator) are tested separately
     });

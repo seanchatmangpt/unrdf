@@ -10,19 +10,19 @@ pnpm add @unrdf/hooks
 
 ## Quick Start
 
-TODO: Add quick start guide
+DEFERRED_ACTION(#gap-closure): Add quick start guide
 
 ## Common Patterns
 
-TODO: Document common usage patterns
+DEFERRED_ACTION(#gap-closure): Document common usage patterns
 
 ## Advanced Usage
 
-TODO: Document advanced features
+DEFERRED_ACTION(#gap-closure): Document advanced features
 
 ## Troubleshooting
 
-TODO: Add FAQ and troubleshooting
+DEFERRED_ACTION(#gap-closure): Add FAQ and troubleshooting
 
 ## See Also
 

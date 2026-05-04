@@ -251,7 +251,7 @@ describe('Real-Time Validator Cache', () => {
       // Expected: expect(hitsAfter).toBe(hitsBefore); // Cache miss after TTL
     });
 
-    it.skip('PROPOSED: should expire entries after TTL', async () => {
+    it('PROPOSED: should expire entries after TTL', async () => {
       validator = createRealTimeValidator({
         shapes: shapeTurtle,
         enableCaching: true,
@@ -293,7 +293,7 @@ describe('Real-Time Validator Cache', () => {
       expect(metrics5.cacheMisses).toBe(metrics4.cacheMisses + 1);
     });
 
-    it.skip('PROPOSED: should have configurable TTL', async () => {
+    it('PROPOSED: should have configurable TTL', async () => {
       validator = createRealTimeValidator({
         shapes: shapeTurtle,
         enableCaching: true,
@@ -317,7 +317,7 @@ describe('Real-Time Validator Cache', () => {
       expect(metricsAfter.cacheHits).toBe(metricsBefore.cacheHits);
     });
 
-    it.skip('PROPOSED: should clean up expired entries in background', async () => {
+    it('PROPOSED: should clean up expired entries in background', async () => {
       validator = createRealTimeValidator({
         shapes: shapeTurtle,
         enableCaching: true,

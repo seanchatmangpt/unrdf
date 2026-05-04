@@ -415,6 +415,69 @@ const quadWithGraph = quad(subject, predicate, object, graph);
 - rdf-canonize
 - @rdfjs/\*
 
+## Architecture
+
+The `@unrdf/core` package is designed as a modular, high-performance RDF substrate. It provides the foundational types, store implementations, and query executors used across the UNRDF ecosystem.
+
+```mermaid
+graph TD
+    A[Application/Extensions] --> B[@unrdf/core]
+    subgraph "@unrdf/core"
+        B --> C[UnrdfStore]
+        B --> D[SPARQL Executor]
+        B --> E[Canonicalizer]
+        B --> F[Serializers/Parsers]
+        C --> G[In-Memory Quad Index]
+        D --> H[Sync/Async Engines]
+        E --> I[N-Quads Deterministic]
+        F --> J[Turtle/JSON-LD/N-Triples]
+    end
+    C --- D
+    E --- F
+```
+
+### Core Components:
+
+1.  **UnrdfStore**: A high-performance, synchronous-first RDF store optimized for in-memory operations. It implements the RDF/JS Store interface while providing bulk operation extensions.
+2.  **SPARQL Executor**: A flexible query engine that supports both synchronous execution (for local stores) and asynchronous execution (for remote or complex sources).
+3.  **Canonicalizer**: Implements deterministic RDF canonicalization, essential for signing, hashing, and graph comparison.
+4.  **Serialization Layer**: Pluggable parsers and serializers for common RDF formats (Turtle, JSON-LD, N-Triples, N-Quads).
+
+## Troubleshooting
+
+### Common Issues
+
+#### "Cannot parse Turtle syntax"
+**Symptom**: `Parser error: Unexpected token`
+**Solution**: Ensure your Turtle syntax is valid. Check that all prefixes are defined, IRIs are enclosed in `<>`, and literals are properly quoted.
+
+#### "SPARQL query returns empty results"
+**Symptom**: `results.length === 0` even when data exists.
+**Solution**:
+1. Verify prefix definitions match the data exactly.
+2. Check for case sensitivity in IRIs and literals.
+3. Use a simple `SELECT * WHERE { ?s ?p ?o }` to verify data presence.
+
+#### "Performance is slower than expected"
+**Symptom**: Query execution takes >100ms for small datasets.
+**Solution**:
+1. Use the **Synchronous API** (`UnrdfStore` + `executeQuerySync`) for in-memory operations to avoid microtask overhead.
+2. Ensure you are using `bulkAdd()` for large datasets instead of individual `add()` calls.
+
+## SLA Requirements
+
+To ensure the reliability and performance of the UNRDF ecosystem, `@unrdf/core` adheres to the following Service Level Agreement (SLA) targets for in-memory operations (tested on modern hardware, ~1000 quads):
+
+| Metric | Target | Description |
+|--------|--------|-------------|
+| **Availability** | 99.99% | Core logic is stateless and side-effect free |
+| **Store Initialization** | < 5ms | Time to create a new `UnrdfStore` instance |
+| **Triple Insertion** | < 1ms | Latency for single `add()` operation |
+| **Query Latency (Simple)** | < 10ms | SELECT query with 1-2 triple patterns |
+| **Query Latency (Complex)** | < 50ms | SELECT query with JOINs and FILTERs |
+| **Canonicalization** | < 100ms | Deterministic hashing of up to 5000 quads |
+| **Memory Overhead** | < 2KB/quad | Heap usage per RDF quad stored |
+
 ## When to Use @unrdf/core
 
 ✅ Always needed for:

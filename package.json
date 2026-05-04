@@ -1,7 +1,12 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.4.11",
+  "version": "26.4.25",
   "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
+  "vision2030": {
+    "status": "integrated",
+    "standard": "L4/L5",
+    "artifacts": "hardened"
+  },
   "private": true,
   "type": "module",
   "repository": {
@@ -17,6 +22,20 @@
     "npm": ">=8.0.0",
     "pnpm": ">=7.0.0"
   },
+  "workspaces": [
+    "packages/*",
+    "packages/kgc-4d/playground",
+    "packages/cli/examples/*",
+    "packages/hooks/examples/*",
+    "packages/federation/examples/*",
+    "packages/streaming/examples/*",
+    "playground/full-stack-example/apps/*",
+    "apps/*",
+    "examples",
+    "AUTONOMIC_INNOVATION/agent-*",
+    "exploration/agents/agent-*",
+    "benchmarks"
+  ],
   "scripts": {
     "prepare": "husky install",
     "test": "pnpm -r test",
@@ -121,15 +140,29 @@
     "glob": "^13.0.0",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
-    "jsdom": "^27.2.0",
+    "jsdom": "25.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
     "tinybench": "^6.0.0",
     "unbuild": "^3.6.1",
     "vitest": "^4.0.16"
   },
+  "overrides": {
+    "jsdom": "25.0.1",
+    "html-encoding-sniffer": "4.0.0",
+    "sharp": "^0.34.5",
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^4.1.13",
+    "esbuild": ">=0.25.0",
+    "@rdfjs/types": "^2.0.1",
+    "@swc/helpers": "^0.5.18",
+    "pm4py": "npm:noop-package@1.0.0"
+  },
   "pnpm": {
     "overrides": {
+      "jsdom": "25.0.1",
+      "html-encoding-sniffer": "4.0.0",
+      "sharp": "^0.34.5",
       "@opentelemetry/api": "^1.7.0",
       "zod": "^4.1.13",
       "esbuild@<=0.24.2": ">=0.25.0",
@@ -158,8 +191,8 @@
     "@noble/hashes": "^2.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@rdfjs/dataset": "^2.0.2",
-    "@unrdf/core": "workspace:*",
-    "@unrdf/oxigraph": "workspace:*",
+    "@unrdf/core": "26.4.23",
+    "@unrdf/oxigraph": "26.4.23",
     "clownface": "^2.0.3",
     "fetch": "^1.1.0",
     "hash-wasm": "^4.12.0",
@@ -171,6 +204,6 @@
     "rdf-ext": "^2.6.0",
     "rdf-validate-shacl": "^0.6.5",
     "sparqljs": "^3.7.3",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   }
 }

@@ -1,0 +1,442 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claude Code Capability Synthesis Report",
+  "version": "1.0.0",
+  "generated": "2025-12-27",
+  "agent": "cc-agent-10-librarian",
+  "description": "Comprehensive synthesis of Claude Code capabilities from research agents 1-9",
+
+  "capability_taxonomy": {
+    "categories": {
+      "execution": {
+        "description": "Task execution and parallel processing",
+        "capabilities": ["subagents", "background_tasks"]
+      },
+      "control": {
+        "description": "Governance, policy enforcement, and permissions",
+        "capabilities": ["hooks", "slash_commands", "tool_permissions"]
+      },
+      "extension": {
+        "description": "Shareable, bundled capability packages",
+        "capabilities": ["plugins"]
+      },
+      "integration": {
+        "description": "External system and tool connectivity",
+        "capabilities": ["mcp"]
+      },
+      "automation": {
+        "description": "Non-interactive, machine-readable workflows",
+        "capabilities": ["programmatic", "output_formats"]
+      },
+      "safety": {
+        "description": "State management and recovery mechanisms",
+        "capabilities": ["checkpointing"]
+      },
+      "interface": {
+        "description": "Rich user interaction surfaces",
+        "capabilities": ["ide_surface"]
+      },
+      "capability": {
+        "description": "Dynamic, context-aware feature injection",
+        "capabilities": ["skills"]
+      }
+    },
+    "total_capabilities": 12,
+    "total_categories": 8
+  },
+
+  "capability_atoms": [
+    {
+      "id": "subagents",
+      "name": "Subagents & Delegation",
+      "category": "execution",
+      "primitives": ["Task tool", "agent types", "parallel spawning", "stateless execution"],
+      "implementations": ["agent-harness.mjs"],
+      "research_agent": "cc-agent-01-subagents",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/agents",
+        "tutorial": "tutorials/01-first-subagent.md",
+        "reference": "reference/subagent-types.md"
+      }
+    },
+    {
+      "id": "hooks",
+      "name": "Hooks & Tool Governance",
+      "category": "control",
+      "primitives": ["PreToolUse", "PostToolUse", "PreCompact", "Stop", "matchers", "allow/deny/ask"],
+      "implementations": ["hook-composition.mjs", "governance-engine.mjs"],
+      "research_agent": "cc-agent-02-hooks",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/hooks",
+        "tutorial": "tutorials/02-first-hook.md",
+        "reference": "reference/hook-lifecycle.md"
+      }
+    },
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "category": "extension",
+      "primitives": ["namespaced routing", "versioning", "bundling", "distribution"],
+      "implementations": [],
+      "research_agent": "cc-agent-03-plugins",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/plugins",
+        "tutorial": "tutorials/03-first-plugin.md",
+        "reference": "reference/plugin-structure.md"
+      }
+    },
+    {
+      "id": "slash_commands",
+      "name": "Slash Commands",
+      "category": "control",
+      "primitives": ["project commands", "personal commands", "arguments", "namespacing"],
+      "implementations": [],
+      "research_agent": "cc-agent-04-slash-commands",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/slash-commands",
+        "tutorial": "tutorials/04-first-command.md",
+        "reference": "reference/slash-commands.md"
+      }
+    },
+    {
+      "id": "mcp",
+      "name": "Model Context Protocol",
+      "category": "integration",
+      "primitives": ["server config", "tool discovery", "permission rules", "dynamic invocation"],
+      "implementations": [],
+      "research_agent": "cc-agent-05-mcp",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/mcp",
+        "tutorial": "tutorials/05-first-mcp-tool.md",
+        "reference": "reference/mcp-config.md"
+      }
+    },
+    {
+      "id": "programmatic",
+      "name": "Programmatic/Headless Execution",
+      "category": "automation",
+      "primitives": ["claude -p", "text/json/stream-json", "session resume", "--allowedTools"],
+      "implementations": [],
+      "research_agent": "cc-agent-06-programmatic",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/agent-sdk",
+        "tutorial": "tutorials/06-first-pipeline.md",
+        "reference": "reference/cli-flags.md"
+      }
+    },
+    {
+      "id": "checkpointing",
+      "name": "Checkpointing & Rewind",
+      "category": "safety",
+      "primitives": ["/rewind", "escape shortcut", "code-only rewind", "conversation-only rewind"],
+      "implementations": ["time-travel.mjs"],
+      "research_agent": "cc-agent-07-checkpointing",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/checkpoints",
+        "tutorial": "tutorials/07-time-travel.md",
+        "reference": "reference/checkpointing.md"
+      }
+    },
+    {
+      "id": "ide_surface",
+      "name": "IDE/VS Code Surface",
+      "category": "interface",
+      "primitives": ["plan review", "inline diffs", "@-mentions", "multi-conversation tabs"],
+      "implementations": ["ide-integration.mjs"],
+      "research_agent": "cc-agent-08-ide",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/ide",
+        "tutorial": "tutorials/08-ide-workflow.md",
+        "reference": "reference/ide-features.md"
+      }
+    },
+    {
+      "id": "background_tasks",
+      "name": "Background Tasks",
+      "category": "execution",
+      "primitives": ["/bashes", "async execution", "output monitoring"],
+      "implementations": [],
+      "research_agent": "supplementary",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/background",
+        "tutorial": "tutorials/09-background-tasks.md"
+      }
+    },
+    {
+      "id": "skills",
+      "name": "Agent Skills",
+      "category": "capability",
+      "primitives": ["context triggers", "automatic invocation", "capability injection"],
+      "implementations": [],
+      "research_agent": "supplementary",
+      "maturity": "beta",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/skills"
+      }
+    },
+    {
+      "id": "tool_permissions",
+      "name": "Tool Permission Rules",
+      "category": "control",
+      "primitives": ["permission patterns", "glob matching", "safety rules"],
+      "implementations": ["governance-engine.mjs"],
+      "research_agent": "supplementary",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/claude-code/permissions",
+        "reference": "reference/permissions.md"
+      }
+    },
+    {
+      "id": "output_formats",
+      "name": "Output Formats",
+      "category": "automation",
+      "primitives": ["text", "json", "stream-json", "machine-readable"],
+      "implementations": [],
+      "research_agent": "supplementary",
+      "maturity": "production",
+      "documentation": {
+        "official": "https://docs.anthropic.com/en/docs/agent-sdk/output"
+      }
+    }
+  ],
+
+  "composition_matrix": {
+    "high_priority": [
+      {
+        "components": ["hooks", "subagents", "programmatic"],
+        "composes_with": "productive",
+        "emergent_property": "Parallel execution with enforceable policy and machine-readable outputs",
+        "measurable_metrics": ["policy_strength", "parallel_throughput", "reproducibility"],
+        "expected_value": "high",
+        "status": "pending_validation",
+        "test_design": "Spawn 3 subagents with different hook policies in programmatic mode, verify policy enforcement and JSON output"
+      },
+      {
+        "components": ["checkpointing", "subagents", "ide_surface"],
+        "composes_with": "productive",
+        "emergent_property": "Aggressive parallel exploration with visual review and rapid recovery",
+        "measurable_metrics": ["recovery_time", "exploration_branches", "operator_steps"],
+        "expected_value": "high",
+        "status": "pending_validation",
+        "test_design": "Spawn parallel agents making conflicting changes, use IDE to compare, rewind bad branches"
+      },
+      {
+        "components": ["plugins", "mcp", "slash_commands"],
+        "composes_with": "productive",
+        "emergent_property": "Portable, shareable capability products with external integration",
+        "measurable_metrics": ["operator_steps", "reproducibility", "setup_time"],
+        "expected_value": "high",
+        "status": "pending_validation",
+        "test_design": "Create plugin with MCP server config and slash command, install in fresh environment"
+      },
+      {
+        "components": ["skills", "hooks"],
+        "composes_with": "productive",
+        "emergent_property": "Automatic capability injection with safety guardrails",
+        "measurable_metrics": ["policy_strength", "automation_level"],
+        "expected_value": "medium",
+        "status": "pending_validation",
+        "test_design": "Define skill with auto-activation, add hook to constrain tool access, verify enforcement"
+      }
+    ],
+    "medium_priority": [
+      {
+        "components": ["background_tasks", "hooks", "output_formats"],
+        "composes_with": "pending",
+        "emergent_property": "Long-running monitored jobs with policy enforcement",
+        "measurable_metrics": ["parallel_throughput", "policy_strength"],
+        "expected_value": "medium"
+      },
+      {
+        "components": ["ide_surface", "mcp", "skills"],
+        "composes_with": "pending",
+        "emergent_property": "Rich IDE with external data and auto-capabilities",
+        "measurable_metrics": ["operator_steps", "automation_level"],
+        "expected_value": "medium"
+      }
+    ],
+    "low_priority": [
+      {
+        "components": ["checkpointing", "mcp", "background_tasks"],
+        "composes_with": "pending",
+        "emergent_property": "Stateful external integrations with recovery",
+        "expected_value": "low"
+      }
+    ]
+  },
+
+  "implementation_guide": {
+    "governance_engine": {
+      "module": "governance-engine.mjs",
+      "capabilities": ["hooks", "tool_permissions"],
+      "features": [
+        "RBAC with role inheritance",
+        "Permission matrices for tool access",
+        "Actor-based tool restrictions",
+        "Audit trail with cryptographic receipts",
+        "Policy decision points (PDP)",
+        "Policy enforcement points (PEP)"
+      ],
+      "usage_pattern": "Initialize with policy, register actors, check permissions before tool use",
+      "example": "See capability-api.mjs getGovernanceExample()"
+    },
+    "hook_composition": {
+      "module": "hook-composition.mjs",
+      "capabilities": ["hooks"],
+      "features": [
+        "Before/After/Around hooks (AOP-style)",
+        "Conditional hook execution",
+        "Hook priority ordering",
+        "Async hook chains",
+        "Error boundary hooks",
+        "Circuit breaker pattern"
+      ],
+      "usage_pattern": "Create hooks, compose into chain, execute with target function",
+      "example": "See capability-api.mjs getHookComposerExample()"
+    },
+    "ide_integration": {
+      "module": "ide-integration.mjs",
+      "capabilities": ["ide_surface"],
+      "features": [
+        "Code actions (quickfix, refactor)",
+        "Diagnostics (error, warning, info, hint)",
+        "Inline suggestions with autocomplete",
+        "Position and range management",
+        "Edit application with conflict resolution"
+      ],
+      "usage_pattern": "Register actions/diagnostics, query by position/range, apply edits",
+      "example": "See capability-api.mjs getIDEIntegrationExample()"
+    },
+    "time_travel": {
+      "module": "time-travel.mjs",
+      "capabilities": ["checkpointing"],
+      "features": [
+        "Named checkpoints with labels",
+        "Branch-aware checkpointing",
+        "Checkpoint diffing and comparison",
+        "Selective rollback to specific points",
+        "Tag-based organization",
+        "Export/import for persistence"
+      ],
+      "usage_pattern": "Create named checkpoints, restore by label or time, diff between checkpoints",
+      "example": "See capability-api.mjs getTimeTravelExample()"
+    }
+  },
+
+  "recommended_patterns": {
+    "parallel_execution": {
+      "pattern": "Spawn multiple subagents with Task tool in single message",
+      "when_to_use": "Independent subtasks that can run concurrently",
+      "capabilities": ["subagents"],
+      "benefits": ["Reduced wall-clock time", "Natural task decomposition"],
+      "example": "Task('agent1', 'subtask1', 'analyst') && Task('agent2', 'subtask2', 'coder')"
+    },
+    "policy_enforcement": {
+      "pattern": "Use hooks with permission matchers to control tool access",
+      "when_to_use": "Safety-critical workflows, multi-tenant environments",
+      "capabilities": ["hooks", "tool_permissions"],
+      "benefits": ["Prevent dangerous operations", "Audit compliance", "Role-based access"],
+      "example": "PreToolUse hook with Bash(rm:*) matcher returning deny"
+    },
+    "safe_exploration": {
+      "pattern": "Create checkpoint before risky changes, rewind on failure",
+      "when_to_use": "Aggressive refactoring, experimental features",
+      "capabilities": ["checkpointing"],
+      "benefits": ["Rapid recovery", "Confidence to experiment", "Zero-cost rollback"],
+      "example": "Create checkpoint 'before-refactor', attempt changes, rewind if broken"
+    },
+    "pipeline_automation": {
+      "pattern": "Use programmatic mode with output formats for CI/CD integration",
+      "when_to_use": "Automated testing, code generation pipelines",
+      "capabilities": ["programmatic", "output_formats"],
+      "benefits": ["Machine-readable results", "Scriptable workflows", "Reproducible builds"],
+      "example": "claude -p 'generate tests' --output-format json --allowedTools 'Write'"
+    },
+    "portable_capabilities": {
+      "pattern": "Bundle commands, hooks, and MCP configs into plugins",
+      "when_to_use": "Team standardization, shared workflows",
+      "capabilities": ["plugins", "slash_commands", "hooks", "mcp"],
+      "benefits": ["One-time setup", "Consistent behavior", "Version management"],
+      "example": "Create plugin with /team-lint command and lint-enforcement hooks"
+    }
+  },
+
+  "research_summary": {
+    "total_research_agents": 9,
+    "synthesis_agent": "cc-agent-10-librarian",
+    "capabilities_documented": 12,
+    "implementations_created": 4,
+    "compositions_identified": 7,
+    "status": {
+      "exploration_phase": "completed",
+      "implementation_phase": "in_progress",
+      "validation_phase": "pending"
+    },
+    "next_steps": [
+      "Validate high-priority compositions with empirical tests",
+      "Generate complete Diataxis documentation set",
+      "Implement missing capability wrappers",
+      "Create integration test suite",
+      "Measure composition deltas against novelty thresholds"
+    ]
+  },
+
+  "quality_metrics": {
+    "capability_coverage": {
+      "total_primitives": 12,
+      "with_implementations": 4,
+      "coverage_pct": 33.3
+    },
+    "documentation_coverage": {
+      "with_tutorials": 9,
+      "with_reference": 8,
+      "with_how_to": 4,
+      "with_explanations": 4
+    },
+    "composition_readiness": {
+      "high_priority_tested": 0,
+      "high_priority_total": 4,
+      "pending_validation": 4
+    }
+  },
+
+  "evidence_index": {
+    "research_agents": [
+      "/home/user/unrdf/.claude/agents/research/cc-agent-01-subagents.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-02-hooks.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-03-plugins.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-04-slash-commands.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-05-mcp.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-06-programmatic.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-07-checkpointing.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-08-ide.md",
+      "/home/user/unrdf/.claude/agents/research/cc-agent-09-composition.md"
+    ],
+    "implementations": [
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/governance-engine.mjs",
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/hook-composition.mjs",
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/ide-integration.mjs",
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/time-travel.mjs"
+    ],
+    "synthesis_artifacts": [
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/capability-map.mjs",
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/capability-api.mjs",
+      "/home/user/unrdf/packages/kgc-claude/src/capabilities/capability-docs.mjs"
+    ],
+    "research_data": [
+      "/home/user/unrdf/research/claude-code-capabilities/capability-lattice.json",
+      "/home/user/unrdf/research/claude-code-capabilities/novelty-metrics.json",
+      "/home/user/unrdf/research/claude-code-capabilities/composition-closure-report.md"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
-# Migration Guide - UNRDF Hooks v26.4.5
+# Migration Guide - UNRDF Hooks v26.4.23
 
-**Current Version:** v26.4.4  
-**Target Version:** v26.4.5+  
+**Current Version:** v26.4.23  
+**Target Version:** v26.4.23+  
 **Breaking Changes:** NONE (backward compatible)  
 **New Features:** BLAKE3 hashing, SHACL enforcement modes, Window condition, Delta decrease detection
 
@@ -9,23 +9,23 @@
 
 ## Quick Start
 
-If you're upgrading from v26.4.0-v26.4.4:
+If you're upgrading from v26.4.23-v26.4.23:
 
 ```bash
-npm install @unrdf/hooks@26.4.5
+npm install @unrdf/hooks@26.4.23
 # No code changes required — all APIs remain the same
 # But read the sections below for new capabilities
 ```
 
 ---
 
-## What's New in v26.4.5
+## What's New in v26.4.23
 
 ### 1. BLAKE3 Cryptographic Hashing (Security Fix)
 
 **Status:** AUTOMATIC - No code changes needed
 
-**Before (v26.4.0-v26.4.4):**
+**Before (v26.4.23-v26.4.23):**
 
 ```javascript
 // Receipts used weak hashing
@@ -34,7 +34,7 @@ const receipt = await engine.execute(hooks, store);
 // ❌ Could not verify audit trail integrity
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // Receipts now use BLAKE3 (256-bit cryptographic hash)
@@ -47,7 +47,7 @@ const receipt = await engine.execute(hooks, store);
 **Migration:**
 
 - No code changes required
-- Old receipts from v26.4.0-v26.4.4 should be marked as legacy
+- Old receipts from v26.4.23-v26.4.23 should be marked as legacy
 - New receipts will automatically use BLAKE3
 - See [SECURITY-DISCLOSURE.md](SECURITY-DISCLOSURE.md) for detailed security migration
 
@@ -57,7 +57,7 @@ const receipt = await engine.execute(hooks, store);
 
 **Status:** Major feature fix
 
-**Before (v26.4.4 and earlier):**
+**Before (v26.4.23 and earlier):**
 
 ```javascript
 // Repair mode was a stub—it didn't actually repair
@@ -79,7 +79,7 @@ const hook = defineHook({
 });
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // Repair mode actually applies repairs and re-validates
@@ -133,7 +133,7 @@ const result2 = await engine.execute([repairHook], store);
 
 **Status:** Major feature fix
 
-**Before (v26.4.4 and earlier):**
+**Before (v26.4.23 and earlier):**
 
 ```javascript
 // Annotate mode generated invalid RDF
@@ -154,7 +154,7 @@ const result = await engine.execute([hook], store);
 // Error: Invalid RDF in SHACL report (couldn't be stored)
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // Annotate mode generates valid RDF that can be stored
@@ -212,7 +212,7 @@ for (const violation of violations) {
 
 **Status:** Major feature fix
 
-**Before (v26.4.4 and earlier):**
+**Before (v26.4.23 and earlier):**
 
 ```javascript
 // Decrease detection never worked
@@ -234,7 +234,7 @@ const result = await engine.execute([hook], store);
 // ❌ Decrease never triggered
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // Decrease detection now works correctly
@@ -309,7 +309,7 @@ console.assert(result.successful === true, 'Decrease should be detected');
 
 **Status:** Major feature implementation
 
-**Before (v26.4.4 and earlier):**
+**Before (v26.4.23 and earlier):**
 
 ```javascript
 // Window condition was a stub—only basic structure
@@ -329,7 +329,7 @@ const hook = defineHook({
 // Window monitoring didn't actually work
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // Window condition now fully implemented
@@ -425,7 +425,7 @@ defineHook({
 
 **Status:** Major feature restoration
 
-**Before (v26.4.4 and earlier):**
+**Before (v26.4.23 and earlier):**
 
 ```javascript
 // knowledge-engine was removed, N3 reasoning unavailable
@@ -433,7 +433,7 @@ defineHook({
 // No way to use forward-chaining inference
 ```
 
-**After (v26.4.5+):**
+**After (v26.4.23+):**
 
 ```javascript
 // N3 reasoning now available via n3 condition kind
@@ -584,13 +584,13 @@ defineHook({
 
 ```bash
 # Using npm
-npm install @unrdf/hooks@26.4.5
+npm install @unrdf/hooks@26.4.23
 
 # Using pnpm (recommended)
-pnpm add @unrdf/hooks@26.4.5
+pnpm add @unrdf/hooks@26.4.23
 
 # Using yarn
-yarn add @unrdf/hooks@26.4.5
+yarn add @unrdf/hooks@26.4.23
 ```
 
 ### Step 2: Verify Dependencies
@@ -654,7 +654,7 @@ defineHook({
 
 ```javascript
 // Test that new features work
-describe('v26.4.5 Features', () => {
+describe('v26.4.23 Features', () => {
   it('should apply SHACL repairs', async () => {
     const result = await engine.execute([repairHook], store);
     expect(result.successful).toBe(true);
@@ -760,11 +760,11 @@ defineHook({ condition: { kind: 'n3', rules: '/* rules 61-100 */' } });
 If you need to downgrade:
 
 ```bash
-# Go back to v26.4.4 (still recommended to upgrade)
-npm install @unrdf/hooks@26.4.4
+# Go back to v26.4.23 (still recommended to upgrade)
+npm install @unrdf/hooks@26.4.23
 
-# Go back to v26.4.4 (re-introduces security issue)
-npm install @unrdf/hooks@26.4.4  # ⚠️ SECURITY ISSUE
+# Go back to v26.4.23 (re-introduces security issue)
+npm install @unrdf/hooks@26.4.23  # ⚠️ SECURITY ISSUE
 ```
 
 **Note:** Downgrading reintroduces the weak hashing vulnerability. Only downgrade if absolutely necessary and for temporary troubleshooting.
@@ -775,10 +775,10 @@ npm install @unrdf/hooks@26.4.4  # ⚠️ SECURITY ISSUE
 
 Complete this checklist before deploying to production:
 
-- [ ] Upgraded to @unrdf/hooks@26.4.5
+- [ ] Upgraded to @unrdf/hooks@26.4.23
 - [ ] Verified @noble/hashes@2.0.1+ is installed
 - [ ] Ran full test suite successfully
-- [ ] Old receipts from v26.4.0-v26.4.4 archived or deleted
+- [ ] Old receipts from v26.4.23-v26.4.23 archived or deleted
 - [ ] New receipts verified to use BLAKE3
 - [ ] All SHACL repair hooks tested (now they actually work)
 - [ ] All SHACL annotate hooks tested (now they generate valid RDF)
@@ -798,11 +798,11 @@ Complete this checklist before deploying to production:
 
 | Version | Date       | Status     | Notes                                     |
 | ------- | ---------- | ---------- | ----------------------------------------- |
-| 26.4.5  | 2026-04-04 | CURRENT    | Security fix (BLAKE3) + 5 major features  |
-| 26.4.4  | 2026-04-03 | Previous   | Vision 2030 Phase 1 work                  |
-| 26.4.4  | 2026-03-15 | Deprecated | Had weak hashing vulnerability            |
-| 26.4.2  | 2026-03-01 | Deprecated | Earlier maturity work                     |
-| 26.4.0  | 2026-01-15 | Deprecated | Initial v26.4 release (had vulnerability) |
+| 26.4.23  | 2026-04-04 | CURRENT    | Security fix (BLAKE3) + 5 major features  |
+| 26.4.23  | 2026-04-03 | Previous   | Vision 2030 Phase 1 work                  |
+| 26.4.23  | 2026-03-15 | Deprecated | Had weak hashing vulnerability            |
+| 26.4.23  | 2026-03-01 | Deprecated | Earlier maturity work                     |
+| 26.4.23  | 2026-01-15 | Deprecated | Initial v26.4 release (had vulnerability) |
 
 ---
 

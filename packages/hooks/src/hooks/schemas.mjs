@@ -61,6 +61,7 @@ export const HookConditionSchema = z.object({
     'window',
     'n3',
     'datalog',
+    'semantic-inference'
   ]),
   ref: HookConditionRefSchema.optional(),
   query: z.string().optional(),

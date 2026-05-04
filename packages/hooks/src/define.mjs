@@ -48,6 +48,9 @@ export const THRESHOLD = 'threshold';
 /** @type {'count'} Count-based condition */
 export const COUNT = 'count';
 
+/** @type {'semantic-inference'} Open Ontologies reasoning query */
+export const SEMANTIC_INFERENCE = 'semantic-inference';
+
 /** @type {'window'} Sliding window temporal condition */
 export const WINDOW = 'window';
 

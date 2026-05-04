@@ -5,7 +5,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
-import { Parser } from 'n3';
+import { Parser  } from '@unrdf/core/rdf/n3-justified-only.mjs';
 import { createStore } from '../rdf/store.mjs';
 import { toDOT, toMermaid, toASCII, toHTML } from '../viz/graph-visualizer.mjs';
 

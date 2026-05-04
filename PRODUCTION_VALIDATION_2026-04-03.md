@@ -192,7 +192,7 @@ return combined.map((r) => InferenceResultSchema.parse(r));
 
 **Evidence**:
 ```
-ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @unrdf/chatman-equation@26.4.2 lint: 
+ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @unrdf/chatman-equation@26.4.23 lint: 
 `eslint src/ test/ --max-warnings=0`
 Exit status 1
 ```

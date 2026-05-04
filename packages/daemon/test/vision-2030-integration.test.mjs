@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { DataFactory  } from '@unrdf/core/rdf/n3-justified-only.mjs';
 import { AutonomousKnowledgeAgent } from '../src/autonomous-agent.mjs';
 import { EnsembleGroqProvider } from '../src/providers/ensemble-groq.mjs';
 import { OntologyLearner } from '../../hooks/src/hooks/ontology-learner.mjs';

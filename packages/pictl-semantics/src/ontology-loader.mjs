@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { DataFactory } from '@rdfjs/data-model';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('@unrdf/pictl-semantics', '26.4.9');
+const tracer = trace.getTracer('@unrdf/pictl-semantics', '26.4.23');
 
 /**
  * PICTL Ontology Namespace URIs

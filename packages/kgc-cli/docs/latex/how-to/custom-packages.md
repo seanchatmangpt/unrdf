@@ -1,0 +1,489 @@
+# How-To: Add Custom LaTeX Packages
+
+**Goal**: Use local, custom, or proprietary LaTeX packages that aren't available on CTAN.
+
+**Use cases**:
+- Corporate style files (`.cls`, `.sty`)
+- Custom macros and templates
+- Proprietary packages (license restrictions)
+- In-development packages (not yet published)
+- Modified CTAN packages (forked versions)
+
+**Time**: ~5 minutes
+
+## Strategy Overview
+
+Custom packages can be added to your project in two ways:
+
+1. **Project-local files**: Place `.sty`/`.cls` files in your project directory
+2. **VFS injection** (advanced): Programmatically add files to the virtual file system
+
+The pipeline automatically includes all project files in the VFS.
+
+## Method 1: Project-Local Packages (Recommended)
+
+This is the simplest approach.
+
+### Step 1: Create Your Custom Package
+
+Create a directory for custom packages:
+
+```bash
+mkdir -p thesis/style/
+```
+
+Create a custom style file `thesis/style/mythesis.sty`:
+
+```latex
+% mythesis.sty - Custom thesis style
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mythesis}[2025/12/27 My Thesis Style]
+
+% Custom commands
+\newcommand{\institution}{My University}
+\newcommand{\department}{Department of Computer Science}
+
+% Custom title format
+\renewcommand{\maketitle}{%
+  \begin{center}
+    {\Large\bfseries\@title}\\[1em]
+    {\large\@author}\\[0.5em]
+    {\large\department}\\
+    {\large\institution}\\[0.5em]
+    {\@date}
+  \end{center}
+}
+
+% Custom section formatting
+\RequirePackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\sffamily}
+  {\thesection}{1em}{}
+
+\endinput
+```
+
+### Step 2: Use the Custom Package
+
+In your main document `thesis/main.tex`:
+
+```latex
+\documentclass{article}
+
+% Load custom package (no path needed if in project)
+\usepackage{mythesis}
+
+\title{My Research Thesis}
+\author{Jane Doe}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This thesis uses a custom style file from the \institution{} \department{}.
+
+\end{document}
+```
+
+### Step 3: Compile
+
+```bash
+kgc latex build --input thesis/main.tex --output dist/thesis.pdf
+```
+
+**Expected output**:
+
+```
+✓ Collecting project files...
+  Found: main.tex, style/mythesis.sty
+✓ Building VFS (2 files)...
+✓ Running compilation...
+✓ PDF generated: dist/thesis.pdf
+```
+
+The pipeline automatically:
+1. Scans the project directory
+2. Finds `style/mythesis.sty`
+3. Adds it to the VFS
+4. LaTeX can `\usepackage{mythesis}` successfully
+
+### How It Works
+
+The VFS collector (Agent 2) recursively scans your project and includes:
+
+**Included by default**:
+- `.tex` files
+- `.sty` files (style packages)
+- `.cls` files (document classes)
+- `.bib` files (bibliographies)
+- `.bst` files (bibliography styles)
+- Image files (`.pdf`, `.png`, `.jpg`)
+- Data files (`.csv`, `.dat`)
+
+**Excluded by default**:
+- `node_modules/`
+- `.git/`
+- `dist/`, `build/`
+- `.latex-cache/`
+
+## Method 2: Nested Directory Structure
+
+For larger projects with many custom files:
+
+```
+thesis/
+├── main.tex
+├── chapters/
+│   ├── introduction.tex
+│   ├── methods.tex
+│   └── results.tex
+├── style/
+│   ├── mythesis.cls           # Custom document class
+│   ├── mycommands.sty         # Custom commands
+│   └── mycolors.sty           # Custom colors
+├── figures/
+│   ├── diagram.pdf
+│   └── logo.png
+└── bibliography/
+    └── references.bib
+```
+
+In `main.tex`:
+
+```latex
+\documentclass{mythesis}  % Uses style/mythesis.cls
+
+\usepackage{mycommands}   % Uses style/mycommands.sty
+\usepackage{mycolors}     % Uses style/mycolors.sty
+
+\begin{document}
+\input{chapters/introduction.tex}
+\input{chapters/methods.tex}
+\input{chapters/results.tex}
+
+\bibliographystyle{plain}
+\bibliography{bibliography/references}
+\end{document}
+```
+
+Compile normally:
+
+```bash
+kgc latex build --input thesis/main.tex --output dist/thesis.pdf
+```
+
+All files are automatically included in the VFS.
+
+## Method 3: Programmatic VFS Injection (Advanced)
+
+For complex scenarios, you can programmatically control the VFS.
+
+### Use Case: Inject Files from Outside Project
+
+```javascript
+import { compileLatexToPdf } from '@unrdf/kgc-cli/src/lib/latex/compile.mjs';
+import { collectProjectFiles } from '@unrdf/kgc-cli/src/lib/latex/project-files.mjs';
+import { readFile } from 'node:fs/promises';
+
+// Step 1: Collect project files normally
+const vfs = await collectProjectFiles('/path/to/project');
+
+// Step 2: Inject custom package from external source
+const customPackageContent = await readFile('/external/proprietary.sty');
+vfs.set('texmf/tex/latex/proprietary/proprietary.sty', new Uint8Array(customPackageContent));
+
+// Step 3: Compile with augmented VFS
+const pdf = await compileWithSwiftLatex({
+  engine: 'xetex',
+  vfs,
+  entry: 'main.tex',
+  cacheDir: '.latex-cache',
+  passes: 2
+});
+
+// Step 4: Write output
+await writeFile('output.pdf', pdf.pdf);
+```
+
+### Use Case: Generate Package on the Fly
+
+```javascript
+// Generate a custom package dynamically
+const generatedPackageContent = `
+\\NeedsTeXFormat{LaTeX2e}
+\\ProvidesPackage{autogenerated}[2025/12/27 Auto-Generated Package]
+
+\\newcommand{\\buildDate}{${new Date().toISOString()}}
+\\newcommand{\\gitCommit}{${process.env.GIT_COMMIT || 'unknown'}}
+
+\\endinput
+`;
+
+// Inject into VFS
+vfs.set('work/autogenerated.sty', Buffer.from(generatedPackageContent, 'utf-8'));
+
+// Now LaTeX can use \usepackage{autogenerated}
+```
+
+## Method 4: Symlink CTAN Packages Locally
+
+If you want to modify a CTAN package:
+
+### Step 1: Download from CTAN
+
+```bash
+mkdir -p thesis/vendor/
+cd thesis/vendor/
+curl -O https://mirrors.ctan.org/macros/latex/contrib/algorithm2e/algorithm2e.sty
+```
+
+### Step 2: Modify the Package
+
+Edit `thesis/vendor/algorithm2e.sty` with your changes.
+
+### Step 3: Use the Local Version
+
+The VFS collector will find it automatically:
+
+```latex
+\documentclass{article}
+\usepackage{algorithm2e}  % Uses local vendor/algorithm2e.sty, not CTAN
+
+\begin{document}
+% Your modified algorithm2e usage
+\end{document}
+```
+
+**Important**: The local version **overrides** CTAN. The pipeline:
+1. Checks project files first
+2. Falls back to cache
+3. Falls back to CTAN fetch
+
+## Debugging Custom Packages
+
+### Error: Package Not Found
+
+```
+! LaTeX Error: File `mypackage.sty' not found.
+```
+
+**Diagnosis**:
+
+1. Check file exists in project:
+   ```bash
+   find thesis/ -name "mypackage.sty"
+   ```
+
+2. Check VFS included it:
+   ```bash
+   # Enable verbose logging (programmatic API)
+   console.log(Array.from(vfs.keys()));
+   ```
+
+3. Verify filename matches `\usepackage{...}`:
+   - `\usepackage{mypackage}` looks for `mypackage.sty`
+   - Case-sensitive on Linux!
+
+**Solution**: Ensure file is in project directory and not excluded by VFS collector.
+
+### Error: Package Version Mismatch
+
+```
+! Package mypackage Error: Version mismatch.
+```
+
+This can happen if you have:
+- Local version in `thesis/style/mypackage.sty`
+- Cached CTAN version in `.latex-cache/ctan/`
+
+**Solution**: Clear cache to force using local version:
+
+```bash
+rm -rf .latex-cache/ctan/
+kgc latex build --input thesis/main.tex
+```
+
+### Error: LaTeX Syntax Error in Custom Package
+
+```
+! Undefined control sequence.
+l.15 \newcommand{\mycommand{...}
+```
+
+**Solution**: Check your `.sty` file syntax. Use `texdoc` or LaTeX documentation:
+
+```bash
+# Validate package syntax (if you have TeX installed locally)
+pdflatex -draftmode mypackage.sty
+```
+
+## VFS Path Mapping
+
+Understanding where files are placed in the VFS:
+
+| Project File | VFS Path | LaTeX Searches |
+|--------------|----------|----------------|
+| `main.tex` | `work/main.tex` | ✓ (current dir) |
+| `style/mypackage.sty` | `work/style/mypackage.sty` | ✓ (recursive search) |
+| `figures/logo.png` | `work/figures/logo.png` | ✓ (relative path) |
+| **Vendor override** |  |  |
+| `vendor/algorithm2e.sty` | `work/vendor/algorithm2e.sty` | ✓ (found first) |
+| **CTAN package** |  |  |
+| (fetched) `algorithm2e.sty` | `texmf/tex/latex/algorithm2e/algorithm2e.sty` | ✓ (if not in project) |
+
+**Order of precedence**:
+1. Project-local files (`work/...`)
+2. Cached packages (`texmf/...`)
+3. CTAN fetch (if enabled)
+
+## Best Practices
+
+### 1. Version Control Custom Packages
+
+```bash
+# DO commit custom packages
+git add thesis/style/*.sty
+git commit -m "Add custom thesis style"
+
+# DON'T commit CTAN packages (use lockfile instead)
+# .gitignore:
+.latex-cache/ctan/
+```
+
+### 2. Document Custom Packages
+
+Add a README to your style directory:
+
+```bash
+# thesis/style/README.md
+
+## Custom LaTeX Packages
+
+- `mythesis.sty`: Main thesis style (title page, formatting)
+- `mycommands.sty`: Common commands and macros
+- `mycolors.sty`: Color definitions
+
+## Usage
+
+```latex
+\usepackage{mythesis}
+\usepackage{mycommands}
+```
+
+## License
+
+Proprietary - Internal use only
+```
+
+### 3. Namespace Custom Commands
+
+Avoid conflicts with standard packages:
+
+```latex
+% Bad: Generic name
+\newcommand{\title}{...}  % Conflicts with \title
+
+% Good: Prefixed name
+\newcommand{\mythesisTitle}{...}
+```
+
+### 4. Provide Package Metadata
+
+```latex
+% mypackage.sty
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mypackage}[2025/12/27 v1.0 My Custom Package]
+
+% Declare dependencies
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+```
+
+## Example: Corporate Style File
+
+A complete example of a corporate style:
+
+```latex
+% acmecorp.sty - ACME Corporation Document Style
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{acmecorp}[2025/12/27 v2.1 ACME Corp Style]
+
+% Dependencies
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{fancyhdr}
+\RequirePackage{geometry}
+
+% Corporate colors
+\definecolor{acmeBlue}{RGB}{0, 51, 102}
+\definecolor{acmeOrange}{RGB}{255, 102, 0}
+
+% Page geometry
+\geometry{
+  letterpaper,
+  margin=1in,
+  headheight=0.5in
+}
+
+% Header/footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=0.4in]{logo.png}}
+\fancyhead[R]{\color{acmeBlue}\sffamily ACME Corporation}
+\fancyfoot[C]{\thepage}
+
+% Custom title
+\renewcommand{\maketitle}{%
+  \begin{center}
+    {\Huge\sffamily\color{acmeBlue}\@title}\\[1em]
+    {\Large\@author}\\[0.5em]
+    {\large\@date}
+  \end{center}
+}
+
+% Section formatting
+\RequirePackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\sffamily\color{acmeBlue}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\large\bfseries\sffamily\color{acmeOrange}}
+  {\thesubsection}{1em}{}
+
+\endinput
+```
+
+Usage:
+
+```latex
+\documentclass{article}
+\usepackage{acmecorp}
+
+\title{Quarterly Report}
+\author{Engineering Team}
+\date{Q4 2025}
+
+\begin{document}
+\maketitle
+
+\section{Executive Summary}
+% Content with ACME branding
+\end{document}
+```
+
+## Summary
+
+You can add custom LaTeX packages by:
+
+- ✓ Placing `.sty`/`.cls` files in your project directory (automatic VFS inclusion)
+- ✓ Using nested directories for organization
+- ✓ Programmatically injecting files into VFS (advanced)
+- ✓ Overriding CTAN packages with local versions
+
+**Next steps**:
+- Learn about [VFS Architecture](../explanation/vfs.md)
+- Set up [Deterministic Builds](./deterministic-builds.md)
+- Understand [Caching Strategy](../explanation/caching.md)

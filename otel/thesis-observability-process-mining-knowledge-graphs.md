@@ -273,7 +273,7 @@ The UTPM architecture consists of 11 core services deployed via Docker Compose, 
 
 #### 4.3.1 OpenTelemetry Collector (otel/opentelemetry-collector-contrib:0.119.0)
 
-The collector is the central telemetry pipeline. It receives OTLP data via gRPC (port 4317) and HTTP (port 4318), applies processing (batching, resource attribution), and exports to multiple backends. The resource processor enforces consistent service naming (`unrdf-daemon`, version `26.4.4`, environment `development`).
+The collector is the central telemetry pipeline. It receives OTLP data via gRPC (port 4317) and HTTP (port 4318), applies processing (batching, resource attribution), and exports to multiple backends. The resource processor enforces consistent service naming (`unrdf-daemon`, version `26.4.23`, environment `development`).
 
 #### 4.3.2 Grafana Tempo (grafana/tempo:2.7.1)
 

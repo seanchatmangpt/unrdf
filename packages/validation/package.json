@@ -1,0 +1,47 @@
+{
+  "name": "@unrdf/validation",
+  "version": "26.4.23",
+  "description": "OTEL validation framework for UNRDF development",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "timeout 30s pnpm test:fast",
+    "test:fast": "timeout 30s vitest run test.mjs --reporter=verbose",
+    "test:watch": "timeout 60s vitest run test.mjs",
+    "build": "unbuild && tsc --emitDeclarationOnly || true",
+    "build:types": "tsc --emitDeclarationOnly"
+  },
+  "keywords": [
+    "rdf",
+    "validation",
+    "otel",
+    "observability"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/validation"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "@unrdf/knowledge-engine": "26.4.23"
+  }
+}

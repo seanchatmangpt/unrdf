@@ -24,6 +24,7 @@ export const FRONTMATTER_SCHEMA = {
     'append',
     'prepend',
     'lineAt',
+    'at_line',
     'before',
     'after',
     'rdf',
@@ -58,6 +59,7 @@ export const FRONTMATTER_SCHEMA = {
     append: 'boolean',
     prepend: 'boolean',
     lineAt: 'number',
+    at_line: 'number',
     before: 'string',
     after: 'string',
     rdf: 'string',
@@ -81,7 +83,7 @@ export const FRONTMATTER_SCHEMA = {
 
   /** Groups of keys that are mutually exclusive */
   exclusive: [
-    ['inject', 'append', 'prepend', 'lineAt'],
+    ['before', 'after', 'lineAt', 'at_line'],
     ['skipIf', 'skip_if'],
   ],
 
@@ -89,6 +91,7 @@ export const FRONTMATTER_SCHEMA = {
   requires: [
     { key: 'before', companion: 'inject', message: '"before" requires "inject: true"' },
     { key: 'after', companion: 'inject', message: '"after" requires "inject: true"' },
+    { key: 'at_line', companion: 'inject', message: '"at_line" requires "inject: true"' },
   ],
 };
 
@@ -119,7 +122,7 @@ export function parseFrontmatter(fileContent) {
 export function getOperationMode(frontmatter) {
   if (!frontmatter) return { mode: 'write' };
 
-  // inject: true with anchor
+  // inject: true enables partial file modification
   if (frontmatter.inject) {
     if (frontmatter.before) {
       return { mode: 'before', anchor: frontmatter.before };
@@ -127,21 +130,26 @@ export function getOperationMode(frontmatter) {
     if (frontmatter.after) {
       return { mode: 'after', anchor: frontmatter.after };
     }
-    // inject: true without anchor = append
+    // at_line or lineAt
+    const line = frontmatter.at_line ?? frontmatter.lineAt;
+    if (line !== undefined) {
+      return { mode: 'lineAt', line };
+    }
+    // prepend: true (at top of file)
+    if (frontmatter.prepend) {
+      return { mode: 'prepend' };
+    }
+    // append: true or default (at bottom of file)
     return { mode: 'inject' };
   }
 
-  // lineAt: N
+  // Legacy/Compatibility support without inject: true
   if (frontmatter.lineAt) {
     return { mode: 'lineAt', line: frontmatter.lineAt };
   }
-
-  // append: true
   if (frontmatter.append) {
     return { mode: 'append' };
   }
-
-  // prepend: true
   if (frontmatter.prepend) {
     return { mode: 'prepend' };
   }
@@ -201,7 +209,7 @@ export function shouldSkip(frontmatter, variables) {
 
   // Check for bare 'var' (truthy)
   const varName = expr;
-  return !Boolean(variables[varName]);
+  return Boolean(variables[varName]);
 }
 
 /**

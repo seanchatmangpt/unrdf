@@ -54,7 +54,7 @@ data:
             value: unrdf-daemon
             action: upsert
           - key: service.version
-            value: '26.4.3'
+            value: '26.4.23'
             action: upsert
           - key: deployment.environment
             value: development

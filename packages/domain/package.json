@@ -1,0 +1,42 @@
+{
+  "name": "@unrdf/domain",
+  "version": "26.4.23",
+  "description": "Domain models and types for UNRDF",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "echo 'No tests for @unrdf/domain (type-only package)'",
+    "test:fast": "echo 'No tests for @unrdf/domain (type-only package)'",
+    "test:watch": "echo 'No tests for @unrdf/domain (type-only package)'",
+    "build": "echo 'No build for @unrdf/domain (type-only package)'"
+  },
+  "keywords": [
+    "rdf",
+    "domain",
+    "models",
+    "types"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=7.0.0"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unrdf/unrdf.git",
+    "directory": "packages/domain"
+  },
+  "bugs": {
+    "url": "https://github.com/unrdf/unrdf/issues"
+  },
+  "homepage": "https://github.com/unrdf/unrdf#readme",
+  "author": "UNRDF Contributors",
+  "license": "MIT",
+  "private": true
+}

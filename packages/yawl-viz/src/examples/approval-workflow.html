@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YAWL Workflow Visualization - Multi-Instance Approval Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .controls {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: white;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .status.active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    #workflow-canvas {
+      width: 100%;
+      height: 600px;
+      position: relative;
+    }
+
+    .event-log {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .event-log h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #495057;
+    }
+
+    .event-item {
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: white;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .event-item .time {
+      color: #6c757d;
+      margin-right: 10px;
+    }
+
+    .event-item .type {
+      font-weight: 600;
+      color: #667eea;
+      margin-right: 10px;
+    }
+
+    .legend {
+      padding: 20px 30px;
+      background: white;
+      border-top: 1px solid #dee2e6;
+    }
+
+    .legend h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #495057;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-color {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      border: 2px solid #333;
+    }
+
+    .legend-label {
+      font-size: 14px;
+      color: #495057;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔄 YAWL Workflow Visualization</h1>
+      <p>Real-time Multi-Instance Document Approval Workflow</p>
+    </div>
+
+    <div class="controls">
+      <button id="btn-create-case">Create New Case</button>
+      <button id="btn-start-task" disabled>Start Task</button>
+      <button id="btn-complete-task" disabled>Complete Task</button>
+      <button id="btn-reset-zoom">Reset Zoom</button>
+      <div class="status" id="status">Ready</div>
+    </div>
+
+    <div id="workflow-canvas"></div>
+
+    <div class="legend">
+      <h3>Van der Aalst Patterns</h3>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <div class="legend-color" style="background: #4A90E2;"></div>
+          <span class="legend-label">Sequence (WP1)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #7ED321;"></div>
+          <span class="legend-label">Parallel Split (WP2)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #F5A623;"></div>
+          <span class="legend-label">XOR Split/Merge (WP4/5)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #BD10E0;"></div>
+          <span class="legend-label">OR Multi-Choice (WP6/7)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #81C784;"></div>
+          <span class="legend-label">Running Task</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #A5D6A7;"></div>
+          <span class="legend-label">Completed Task</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="event-log">
+      <h3>Live Event Stream</h3>
+      <div id="event-list"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import YAWL and visualizer (in real deployment, use proper imports)
+    // For this demo, we'll simulate the modules
+
+    // Mock YAWL Engine for standalone demo
+    class MockEngine {
+      constructor() {
+        this.workflows = new Map();
+        this.cases = new Map();
+        this.eventHandlers = new Map();
+      }
+
+      on(eventType, handler) {
+        if (!this.eventHandlers.has(eventType)) {
+          this.eventHandlers.set(eventType, []);
+        }
+        this.eventHandlers.get(eventType).push(handler);
+        return () => {
+          const handlers = this.eventHandlers.get(eventType);
+          const index = handlers.indexOf(handler);
+          if (index > -1) handlers.splice(index, 1);
+        };
+      }
+
+      emit(eventType, data) {
+        const handlers = this.eventHandlers.get(eventType) || [];
+        for (const handler of handlers) {
+          handler({ type: eventType, ...data });
+        }
+      }
+
+      registerWorkflow(workflow) {
+        this.workflows.set(workflow.id, workflow);
+      }
+
+      createCase(workflowId) {
+        const caseId = `case-${Date.now()}`;
+        this.cases.set(caseId, { id: caseId, workflowId, workItems: new Map() });
+        this.emit('case:created', { caseId, workflowId });
+        this.emit('case:started', { caseId, workflowId });
+        return { case: this.cases.get(caseId) };
+      }
+    }
+
+    // Mock Workflow
+    const mockWorkflow = {
+      id: 'doc-approval',
+      name: 'Document Approval',
+      tasks: new Map([
+        ['submit', { name: 'Submit Document', splitType: 'sequence', joinType: 'sequence' }],
+        ['review-parallel', { name: 'Parallel Review', splitType: 'and', joinType: 'sequence' }],
+        ['legal-review', { name: 'Legal Review', splitType: 'sequence', joinType: 'sequence' }],
+        ['technical-review', { name: 'Technical Review', splitType: 'sequence', joinType: 'sequence' }],
+        ['sync-reviews', { name: 'Sync Reviews', splitType: 'sequence', joinType: 'and' }],
+        ['final-approval', { name: 'Final Approval', splitType: 'xor', joinType: 'sequence' }],
+        ['publish', { name: 'Publish', splitType: 'sequence', joinType: 'sequence' }],
+        ['reject', { name: 'Reject', splitType: 'sequence', joinType: 'sequence' }],
+      ]),
+      flows: new Map([
+        ['submit', new Set(['review-parallel'])],
+        ['review-parallel', new Set(['legal-review', 'technical-review'])],
+        ['legal-review', new Set(['sync-reviews'])],
+        ['technical-review', new Set(['sync-reviews'])],
+        ['sync-reviews', new Set(['final-approval'])],
+        ['final-approval', new Set(['publish', 'reject'])],
+      ]),
+      startTaskId: 'submit',
+      endTaskIds: ['publish', 'reject'],
+    };
+
+    // Initialize engine
+    const engine = new MockEngine();
+    engine.registerWorkflow(mockWorkflow);
+
+    // Note: In production, import from @unrdf/yawl-viz
+    // import { YAWLVisualizer } from '@unrdf/yawl-viz';
+    // For demo, we show the integration pattern:
+
+    console.log('YAWL Workflow Visualization Demo Ready');
+    console.log('In production, use:');
+    console.log('  import { createWorkflowEngine } from "@unrdf/yawl";');
+    console.log('  import { YAWLVisualizer } from "@unrdf/yawl-viz";');
+    console.log('');
+    console.log('Workflow:', mockWorkflow.id);
+    console.log('Tasks:', Array.from(mockWorkflow.tasks.keys()));
+    console.log('');
+    console.log('Event subscription pattern:');
+    console.log('  const viz = new YAWLVisualizer({ engine, container });');
+    console.log('  viz.subscribeToEvents(); // Auto-subscribes to all ENGINE_EVENTS');
+    console.log('  viz.renderWorkflow("doc-approval");');
+
+    // Event log
+    const eventList = document.getElementById('event-list');
+    const status = document.getElementById('status');
+
+    let currentCase = null;
+    let eventCount = 0;
+
+    // Subscribe to engine events
+    engine.on('case:created', (event) => {
+      addEvent('case:created', `Case ${event.caseId} created`);
+      status.textContent = `Case ${event.caseId} active`;
+      status.classList.add('active');
+      document.getElementById('btn-start-task').disabled = false;
+    });
+
+    engine.on('task:enabled', (event) => {
+      addEvent('task:enabled', `Task ${event.taskId} enabled`);
+    });
+
+    engine.on('task:started', (event) => {
+      addEvent('task:started', `Task ${event.taskId} started`);
+      document.getElementById('btn-complete-task').disabled = false;
+    });
+
+    engine.on('task:completed', (event) => {
+      addEvent('task:completed', `Task ${event.taskId} completed`);
+    });
+
+    function addEvent(type, message) {
+      eventCount++;
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'event-item';
+      div.innerHTML = `<span class="time">${time}</span><span class="type">${type}</span>${message}`;
+      eventList.insertBefore(div, eventList.firstChild);
+
+      // Keep only last 20 events
+      if (eventCount > 20) {
+        eventList.removeChild(eventList.lastChild);
+      }
+    }
+
+    // Button handlers
+    document.getElementById('btn-create-case').addEventListener('click', () => {
+      const result = engine.createCase('doc-approval');
+      currentCase = result.case.id;
+      addEvent('system', `Created case: ${currentCase}`);
+    });
+
+    document.getElementById('btn-start-task').addEventListener('click', () => {
+      engine.emit('task:enabled', { taskId: 'submit', caseId: currentCase });
+      engine.emit('task:started', { taskId: 'submit', caseId: currentCase });
+    });
+
+    document.getElementById('btn-complete-task').addEventListener('click', () => {
+      engine.emit('task:completed', { taskId: 'submit', caseId: currentCase });
+      engine.emit('task:enabled', { taskId: 'review-parallel', caseId: currentCase });
+      document.getElementById('btn-complete-task').disabled = true;
+    });
+
+    document.getElementById('btn-reset-zoom').addEventListener('click', () => {
+      addEvent('system', 'Zoom reset (feature available in full visualizer)');
+    });
+
+    // Initial message
+    addEvent('system', 'Visualization demo ready - click "Create New Case" to begin');
+    addEvent('info', 'This demo shows event stream integration pattern');
+  </script>
+</body>
+</html>

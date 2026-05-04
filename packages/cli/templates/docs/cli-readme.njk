@@ -1,0 +1,101 @@
+---
+description: "Generate CLI README from ontology"
+to: "CLI.md"
+mode: overwrite
+---
+
+# UNRDF CLI
+
+Command-line tools for RDF graph operations and ontology-driven code generation.
+
+## Installation
+
+```bash
+npm install -g @unrdf/cli
+```
+
+## Quick Start
+
+```bash
+# Generate code from ontology
+unrdf sync
+
+# Validate RDF files
+unrdf validate ontology.nt --summary
+
+# Convert between RDF formats
+unrdf convert schema.ttl schema.nt
+
+# Query RDF with SPARQL
+unrdf query "SELECT * WHERE { ?s a ?type }"
+```
+
+## Commands
+
+### Code Generation
+
+{% for cmd in commands if cmd.category == "Code Generation" %}
+#### [`{{ cmd.name }}`](docs/commands/{{ cmd.name }}.md)
+
+{{ cmd.description }}
+
+{% endfor %}
+
+### RDF Operations
+
+{% for cmd in commands if cmd.category == "RDF Operations" %}
+#### [`{{ cmd.name }}`](docs/commands/{{ cmd.name }}.md)
+
+{{ cmd.description }}
+
+{% endfor %}
+
+### Validation
+
+{% for cmd in commands if cmd.category == "Validation" %}
+#### [`{{ cmd.name }}`](docs/commands/{{ cmd.name }}.md)
+
+{{ cmd.description }}
+
+{% endfor %}
+
+## Configuration
+
+Create an `unrdf.toml` file in your project root:
+
+```toml
+[project]
+name = "my-project"
+version = "1.0.0"
+
+[ontology]
+source = "ontology/schema.ttl"
+
+[generation]
+output_dir = "lib"
+templates_dir = "templates"
+
+[[generation.rules]]
+name = "generate-types"
+template = "templates/types.njk"
+output_file = "types.ts"
+query = """
+SELECT ?className ?superClass WHERE {
+  ?className a rdfs:Class .
+  OPTIONAL { ?className rdfs:subClassOf ?superClass }
+}
+"""
+```
+
+## Features
+
+- **Template-based code generation**: Use Nunjucks templates with SPARQL queries
+- **Multi-format support**: Turtle, N-Triples, RDF/XML, JSON-LD, TriG, N-Quads
+- **Watch mode**: Automatically regenerate when files change
+- **Validation**: Check RDF files for errors and extract statistics
+- **Directory loading**: Load entire directories of RDF files
+- **Backup safety**: Automatic backups before overwriting files
+
+## License
+
+MIT

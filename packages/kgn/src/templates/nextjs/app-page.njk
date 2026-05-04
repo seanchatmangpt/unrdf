@@ -1,0 +1,66 @@
+---
+name: Next.js App Router Page
+description: Page component for Next.js App Router with metadata and error handling
+version: 1.0.0
+type: component
+category: nextjs
+variables:
+  pageName: Page component name (e.g., "Home", "About")
+  routePath: Route path (e.g., "/", "/about") 
+  withMetadata: Include metadata export (default: true)
+  withLoading: Include loading component (default: false)
+  withError: Include error component (default: false)
+  title: Page title for metadata
+  description: Page description for metadata
+---
+{% if withMetadata !== false -%}
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '{{ title | default(pageName) }}',
+  description: '{{ description | default("") }}',
+}
+
+{% endif -%}
+{% if withLoading -%}
+export default function Loading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+    </div>
+  )
+}
+
+{% endif -%}
+{% if withError -%}
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <h2 className="text-2xl font-bold mb-4">Something went wrong!</h2>
+      <button
+        onClick={() => reset()}
+        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Try again
+      </button>
+    </div>
+  )
+}
+
+{% endif -%}
+export default function {{ pageName | pascalCase }}() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">{{ pageName }}</h1>
+      <p className="text-gray-600">
+        Welcome to the {{ pageName | lower }} page.
+      </p>
+    </div>
+  )
+}

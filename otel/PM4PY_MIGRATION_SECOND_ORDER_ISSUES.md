@@ -1,7 +1,7 @@
-# pm4py-rust → pm4py-mcp Migration: Second-Order Issues & Plan
+# pm4py-mcp → pm4py-mcp Migration: Second-Order Issues & Plan
 
 **Date:** 2026-04-11
-**Scope:** Complete migration from pm4py-rust (Rust, HTTP, port 8090) to pm4py-mcp (Python, MCP protocol)
+**Scope:** Complete migration from pm4py-mcp (Rust, HTTP, port 7015) to pm4py-mcp (Python, MCP protocol)
 
 ---
 
@@ -31,13 +31,13 @@
 **Current Architecture:**
 
 ```
-Go Handler → HTTP Client → pm4py-rust:8090 → Response
+Go Handler → HTTP Client → pm4py-mcp:7015 → Response
 ```
 
 **Required Changes:**
 
 - Remove HTTP client (lines 84-90)
-- Remove pm4py-rust URL constants (lines 28-34)
+- Remove pm4py-mcp URL constants (lines 28-34)
 - Implement MCP client (NEW)
 - Rewrite 3 handlers: Discover, CheckConformance, GetStatistics
 - Update XES parsing to use pm4py-mcp tool
@@ -126,8 +126,8 @@ func (c *MCPClient) CallTool(ctx context.Context, name string, params map[string
 **Current Pattern (47 files):**
 
 ```bash
-PM4PY_RUST_URL=http://localhost:8090
-PM4PY_RUST_PORT=8090
+PM4PY_MCP_URL=http://localhost:7015
+PM4PY_MCP_PORT=7015
 ```
 
 **New Pattern:**
@@ -140,7 +140,7 @@ PM4PY_MCP_PORT=7015
 **Transition Strategy:**
 
 - Support BOTH env vars during migration
-- Deprecation warning for PM4PY_RUST_URL
+- Deprecation warning for PM4PY_MCP_URL
 - Default to PM4PY_MCP_URL if both present
 
 ### 3.2 Config Struct Updates
@@ -153,7 +153,7 @@ type Config struct {
     PM4PYMCPURL string `mapstructure:"PM4PY_MCP_URL"`
 
     // DEPRECATED (keep for transition)
-    PM4PyRustURL string `mapstructure:"PM4PY_RUST_URL"`
+    PM4PyRustURL string `mapstructure:"PM4PY_MCP_URL"`
 }
 ```
 
@@ -166,11 +166,11 @@ type Config struct {
 **Current (docker-compose.yml):**
 
 ```yaml
-pm4py-rust:
-  build: ../pm4py-rust
-  ports: ['8090:8090']
+pm4py-mcp:
+  build: ../pm4py-mcp
+  ports: ['7015:7015']
   healthcheck:
-    test: ['CMD-SHELL', 'curl -sf http://localhost:8090/api/health']
+    test: ['CMD-SHELL', 'curl -sf http://localhost:7015/api/health']
 ```
 
 **New:**
@@ -240,7 +240,7 @@ func TestDiscoverRealMCP_Success(t *testing.T) {
 
 **Files:**
 
-- `canopy/backend/test/canopy/adapters/pm4py_rust_test.exs`
+- `canopy/backend/test/canopy/adapters/pm4py_mcp_test.exs`
 - `canopy/backend/test/canopy/workflows/process_discovery_test.exs`
 
 **Required:** Same pattern - mock MCP server
@@ -260,7 +260,7 @@ func TestDiscoverRealMCP_Success(t *testing.T) {
 
 ```go
 const BosGatewayDiscoverSpan = "bos.gateway.discover"
-const BosGatewayPM4PyRustSpan = "pm4py_rust.discover"
+const BosGatewayPM4PyRustSpan = "pm4py_mcp.discover"
 ```
 
 **New:**
@@ -296,8 +296,8 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 
 **Changes:**
 
-- `PM4PY_RUST_URL` → `PM4PY_MCP_URL`
-- Port 8090 → 7015
+- `PM4PY_MCP_URL` → `PM4PY_MCP_URL`
+- Port 7015 → 7015
 - Health check endpoint changes
 
 ### 7.2 Monitoring Scripts
@@ -310,8 +310,8 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 
 **Changes:**
 
-- Service name: pm4py-rust → pm4py-mcp
-- Port monitoring: 8090 → 7015
+- Service name: pm4py-mcp → pm4py-mcp
+- Port monitoring: 7015 → 7015
 - Recovery logic for MCP protocol
 
 ---
@@ -322,7 +322,7 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 
 **Integration Guides:**
 
-- `docs/integrations/BUSINESSOS_PM4PY_RUST_API.md` - COMPLETE REWRITE
+- `docs/integrations/BUSINESSOS_PM4PY_MCP_API.md` - COMPLETE REWRITE
 - `docs/CANOPY_PM4PY_INTEGRATION.md` - COMPLETE REWRITE
 - `docs/CROSS_PROJECT_INTEGRATION_ARCHITECTURE.md` - Update diagrams
 
@@ -452,7 +452,7 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 **Deliverables:**
 
 - All handlers using MCP clients
-- Both pm4py-rust and pm4py-mcp running
+- Both pm4py-mcp and pm4py-mcp running
 - Feature flag for protocol selection
 
 ### Phase 3: Testing (Weeks 6-7)
@@ -518,14 +518,14 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 1. Canary deployment (10% traffic)
 2. Monitor metrics closely
 3. Gradual rollout to 100%
-4. Keep pm4py-rust available for rollback
-5. Remove pm4py-rust after 30 days
+4. Keep pm4py-mcp available for rollback
+5. Remove pm4py-mcp after 30 days
 
 **Deliverables:**
 
 - Production running pm4py-mcp
 - Rollback plan documented
-- pm4py-rust decommissioned
+- pm4py-mcp decommissioned
 
 ---
 
@@ -558,12 +558,12 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 
 **Rollback Steps:**
 
-1. Switch feature flag to pm4py-rust
+1. Switch feature flag to pm4py-mcp
 2. Restart affected services
 3. Verify health checks pass
 4. Investigate failure in staging
 
-**Rollback Window:** Keep pm4py-rust deployable for 30 days post-migration
+**Rollback Window:** Keep pm4py-mcp deployable for 30 days post-migration
 
 ### 11.3 Success Criteria
 
@@ -574,7 +574,7 @@ const BosGatewayPM4PyMCPSpan = "pm4py_mcp.discover"
 - [ ] Performance within 20% of baseline
 - [ ] Error rate < 0.1%
 - [ ] Documentation updated
-- [ ] pm4py-rust decommissioned
+- [ ] pm4py-mcp decommissioned
 
 ---
 
@@ -607,10 +607,10 @@ B. HTTP (slower, but networked)
 
 **Options:**
 A. 7015 (ostar default)
-B. 8090 (keep pm4py-rust port)
+B. 7015 (keep pm4py-mcp port)
 C. New port (8091)
 
-**Recommendation:** 8090 for backward compatibility, change later
+**Recommendation:** 7015 for backward compatibility, change later
 
 ### 12.4 Feature Flag Implementation
 

@@ -1,0 +1,145 @@
+[
+  {
+    "transaction_id": "tx_1766831572995_o8r3l",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:32:52.997Z"
+  },
+  {
+    "transaction_id": "tx_1766831630620_2xk58i",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:33:50.628Z"
+  },
+  {
+    "transaction_id": "tx_1766831642793_1rbgwr",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:34:02.795Z"
+  },
+  {
+    "transaction_id": "tx_1766831663902_j4477k",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:34:23.911Z"
+  },
+  {
+    "transaction_id": "tx_1766831728502_3pdow",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:35:28.505Z"
+  },
+  {
+    "transaction_id": "tx_1766831807915_n9mbn9",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:36:47.926Z"
+  },
+  {
+    "transaction_id": "tx_1766831868403_slf2f5",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:37:48.406Z"
+  },
+  {
+    "transaction_id": "tx_1766831945749_ocvri5k",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:39:05.751Z"
+  },
+  {
+    "transaction_id": "tx_1766831965696_1bmgsn",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:39:25.716Z"
+  },
+  {
+    "transaction_id": "tx_1766832031147_n0kpg9",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:40:31.151Z"
+  },
+  {
+    "transaction_id": "tx_1766832415731_964ni",
+    "operations": [
+      {
+        "id": "undo_admit_c1",
+        "type": "remove_capsule",
+        "data": {
+          "capsule_id": "c1"
+        }
+      }
+    ],
+    "timestamp": "2025-12-27T10:46:55.735Z"
+  }
+]

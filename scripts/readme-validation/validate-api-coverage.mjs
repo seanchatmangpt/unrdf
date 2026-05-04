@@ -94,39 +94,36 @@ function extractDocumentedAPIs(content) {
 }
 
 /**
- * Get all source files recursively
- * @param {string} dir - Directory to scan
- * @param {string} ext - File extension filter
+ * Extract source file paths referenced in README code blocks.
+ * Looks for `from '...'` and `from "..."` import paths that point to local files.
+ * @param {string} readmeContent - README content
+ * @param {string} projectRoot - Project root directory
+ * @returns {Array<string>} Absolute file paths referenced in README
+ */
+function extractReferencedFiles(readmeContent, projectRoot) {
+  const files = new Set();
+  // Match: from './src/foo.mjs' or from '../src/foo.mjs' etc.
+  const importRe = /from\s+['"](\.[^'"]+)['"]/g;
+  let match;
+  while ((match = importRe.exec(readmeContent)) !== null) {
+    const relPath = match[1];
+    // Resolve relative to project root
+    const absPath = join(projectRoot, relPath);
+    files.add(absPath);
+  }
+  return Array.from(files);
+}
+
+/**
+ * Get source files to check — only files explicitly referenced in the README.
+ * This avoids requiring 3000+ internal symbols to appear in the README.
+ * @param {string} dir - Root src directory (unused, kept for signature compat)
+ * @param {string} readmeContent - README content for extracting referenced files
+ * @param {string} projectRoot - Project root
  * @returns {Promise<Array<string>>}
  */
-async function getSourceFiles(dir, ext = '.mjs') {
-  const files = [];
-
-  async function scan(currentDir) {
-    const entries = await readdir(currentDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = join(currentDir, entry.name);
-
-      if (entry.isDirectory()) {
-        // Skip node_modules, test directories
-        if (!entry.name.startsWith('.') &&
-            entry.name !== 'node_modules' &&
-            entry.name !== '__tests__' &&
-            !entry.name.endsWith('.test.mjs')) {
-          await scan(fullPath);
-        }
-      } else if (entry.isFile() && entry.name.endsWith(ext)) {
-        // Skip test files
-        if (!entry.name.includes('.test.') && !entry.name.includes('.spec.')) {
-          files.push(fullPath);
-        }
-      }
-    }
-  }
-
-  await scan(dir);
-  return files;
+async function getSourceFiles(dir, readmeContent = '', projectRoot = dir) {
+  return extractReferencedFiles(readmeContent, projectRoot);
 }
 
 async function main() {
@@ -140,9 +137,9 @@ async function main() {
 
     console.log(`📖 Found ${documentedAPIs.size} documented APIs in README`);
 
-    // Find all source files (check both src/ and lib/ if they exist)
+    // Find source files referenced in README (not full src/ crawl)
     const srcDir = join(projectRoot, 'src');
-    const sourceFiles = await getSourceFiles(srcDir);
+    const sourceFiles = await getSourceFiles(srcDir, readmeContent, projectRoot);
 
     console.log(`📂 Scanning ${sourceFiles.length} source files...\n`);
 

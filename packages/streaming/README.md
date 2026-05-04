@@ -17,13 +17,15 @@ pnpm add @unrdf/streaming
 
 See these examples that demonstrate @unrdf/streaming:
 
+- **[production-change-feed.mjs](./examples/production-change-feed.mjs)** - Production-ready change feed with validation
 - **[streaming/basic-stream.mjs](../../examples/streaming/basic-stream.mjs)** - Real-time change feeds basics
 - **[streaming/advanced-filters.mjs](../../examples/streaming/advanced-filters.mjs)** - Stream filtering and transformation
-- **[comprehensive-feature-test.mjs](../../examples/comprehensive-feature-test.mjs)** - Streaming integration
 
-**Need real-time updates?** Start with [streaming/basic-stream.mjs](../../examples/streaming/basic-stream.mjs).
+**Need real-time updates?** Start with [QUICKSTART-STREAMING.md](./QUICKSTART-STREAMING.md).
 
-## Quick Start
+## 🚀 Quick Start
+
+Get started in 5 minutes with our **[Quick Start Guide](./QUICKSTART-STREAMING.md)**.
 
 ```javascript
 import { subscribeToChanges } from '@unrdf/streaming'
@@ -37,6 +39,58 @@ const unsubscribe = subscribeToChanges(store, (change) => {
 // Unsubscribe when done
 unsubscribe()
 ```
+
+## 🏗️ Architecture
+
+@unrdf/streaming is designed as a modular pipeline for RDF data in motion.
+
+```text
+  [ RDF Data Source ]
+          │
+          ▼
+┌───────────────────┐
+│   Change Feed     │ ───► Event Emitters (add/remove/update)
+└───────────────────┘
+          │
+          ▼
+┌───────────────────┐
+│Stream Processor   │ ───► Filtering, Mapping, Aggregation
+└───────────────────┘
+          │
+          ▼
+┌───────────────────┐
+│Real-Time Validator│ ───► Incremental SHACL Validation
+└───────────────────┘
+          │
+          ▼
+┌───────────────────┐
+│  Sync Protocol    │ ───► WebSocket / Remote Sync
+└───────────────────┘
+          │
+          ▼
+  [ RDF Consumers ] (UI, Search Index, Remote Store)
+```
+
+### Key Components:
+
+- **Change Feed**: Wraps an RDF store to emit events for every atomic change.
+- **Stream Processor**: A functional pipeline for transforming RDF streams with backpressure support.
+- **Real-Time Validator**: Provides high-performance SHACL validation by only checking deltas.
+- **Sync Protocol**: A robust mechanism for synchronizing state across distributed nodes.
+
+## 🛠️ Troubleshooting
+
+### High Latency in Validation
+If validation is slow, ensure you are using `ValidationMode.DELTA`. For large complex graphs, `ValidationMode.INCREMENTAL` is often the best balance between speed and correctness.
+
+### Missed Events
+Ensure the `store` you are monitoring is passed to `createChangeFeed` *before* you start making changes. The feed monkey-patches the store's mutation methods to capture events.
+
+### Out of Memory
+The Change Feed maintains a ring buffer of recent changes. If you are processing millions of changes, reduce the `maxHistorySize` (default: 10,000) or disable history entirely if not needed for replay.
+
+### WebSocket Connection Drops
+The Sync Protocol includes built-in heartbeat support, but you should implement your own reconnection logic at the application level if using raw WebSockets.
 
 ## Features
 

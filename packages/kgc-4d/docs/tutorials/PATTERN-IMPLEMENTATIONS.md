@@ -397,7 +397,7 @@ export const TASK_HOOKS = {
     id: 'validate-status-transition',
     field: 'status',
     validate: (value, context) => {
-      const allowedStates = ['TODO', 'IN_PROGRESS', 'DONE', 'BLOCKED'];
+      const allowedStates = ['DEFERRED_ACTION(#gap-closure)', 'IN_PROGRESS', 'DONE', 'BLOCKED'];
 
       if (!allowedStates.includes(value)) {
         return { valid: false, reason: 'Invalid status' };
@@ -406,9 +406,9 @@ export const TASK_HOOKS = {
       // State transition rules
       const currentStatus = context.currentTask?.status;
       const validTransitions = {
-        'TODO': ['IN_PROGRESS', 'BLOCKED'],
-        'IN_PROGRESS': ['DONE', 'TODO', 'BLOCKED'],
-        'BLOCKED': ['TODO', 'IN_PROGRESS'],
+        'DEFERRED_ACTION(#gap-closure)': ['IN_PROGRESS', 'BLOCKED'],
+        'IN_PROGRESS': ['DONE', 'DEFERRED_ACTION(#gap-closure)', 'BLOCKED'],
+        'BLOCKED': ['DEFERRED_ACTION(#gap-closure)', 'IN_PROGRESS'],
         'DONE': [], // No transitions from DONE
       };
 

@@ -1,13 +1,7 @@
-const myHook = defineHook({
-  meta: { name: 'auto-notify-friends' },
-  trigger: 'INSERT',
-  pattern: '?person foaf:status ?status .',
+import { createAdmissionEngine, wouldAdmit } from './src/admission/admission-engine.mjs';
 
-  run(event) {
-    // When someone's status changes, notify their friends
-    const friends = queryFriends(event.quad.subject);
-    notifyUsers(friends, `Friend updated: ${event.quad.object.value}`);
-  },
-});
+// Create engine with config
+const engine = createAdmissionEngine({ maxTriples: 10000 });
 
-registerHook(myHook);
+// Check if a delta capsule would be admitted
+const admitted = await wouldAdmit(capsule, { maxTriples: 10000 });

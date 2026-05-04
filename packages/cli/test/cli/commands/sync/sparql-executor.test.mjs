@@ -6,7 +6,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   executeSparqlQuery,
-  executeParameterizedQuery,
+  _executeParameterizedQuery,
   buildPrefixDeclarations,
   transformResults,
   substituteParameters,

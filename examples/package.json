@@ -1,14 +1,14 @@
 {
   "name": "@unrdf/examples",
-  "version": "5.0.1",
+  "version": "26.4.23",
   "private": true,
   "type": "module",
   "description": "UNRDF usage examples",
   "dependencies": {
-    "@unrdf/core": "workspace:*",
-    "@unrdf/hooks": "workspace:*"
+    "@unrdf/core": "26.4.23",
+    "@unrdf/hooks": "26.4.23"
   },
   "scripts": {
-    "test": "echo 'Examples are executable scripts, not tests' && exit 0"
+    "test": "echo 'Examples are executable scripts, not tests'"
   }
 }

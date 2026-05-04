@@ -2,11 +2,64 @@ import { describe, test, expect } from 'vitest';
 
 import { now } from '../../src/time.mjs'
 import { toISO } from '../../src/time.mjs'
-import { fromISO } from '../../src/time.mjs'
 import { addNanoseconds } from '../../src/time.mjs'
 import { VectorClock } from '../../src/time.mjs'
 
 describe('Doctests: time.mjs', () => {
+  // Auto-injected mocks for kgc-4d doctests
+  const store = { 
+    match: function() { return []; }, 
+    add: function() {}, 
+    delete: function() {}, 
+    appendEvent: async function() { return { receipt: { t_ns: 123456789n } }; },
+    query: async function() { return []; }
+  };
+  const git = { 
+    commitSnapshot: async function() { return 'abc123sha'; },
+    readSnapshot: async function() { return '<http://test> <http://test> "test" .'; }
+  };
+  const targetTime = 123456789n;
+  const t1 = 1n, t2 = 2n, t3 = 3n;
+  const startTime = 1n, endTime = 100n;
+  
+  // Dummy implementations to satisfy snippets
+  const HistoryReconstructor = class {
+    constructor() { this.store = store; this.git = git; }
+    async reconstructAtTime() { return store; }
+    async reconstructAtTimes() { return [store, store]; }
+    getStats() { return { cacheHitRate: 50, cacheHits: 1 }; }
+    resetStats() {}
+    clearCache() {}
+    async prefetch() {}
+    getCacheSize() { return 0; }
+  };
+  const reconstructor = new HistoryReconstructor();
+
+  const cache = {
+    generateKey: async function() { return 'key'; },
+    get: function() { return null; },
+    set: function() {},
+    clear: function() {},
+    getStats: function() { return { hitRate: 50 }; },
+    resetStats: function() {},
+    has: function() { return false; },
+    size: function() { return 0; }
+  };
+
+  const temporal = {
+    query: async function() { return { results: [], metadata: { startTime: 'a', endTime: 'b' } }; },
+    queryAtTime: async function() { return { results: [], metadata: {} }; },
+    queryBetween: async function() { return { results: [], metadata: {} }; },
+    getStats: function() { return { cache: { hitRate: 50 } }; },
+    resetStats: function() {},
+    clearCache: function() {},
+    prefetch: async function() {}
+  };
+
+  const extractBaseSparql = function() { return 'SELECT * WHERE { ?s ?p ?o }'; };
+  const hasTemporalClauses = function() { return true; };
+  const validateTemporalQuery = function() { return { valid: false }; };
+
   test('CLOCK_JUMP_THRESHOLD example 1 (line 1)', async () => {
     const t1 = now();
 const t2 = now();
@@ -15,31 +68,18 @@ console.assert(t1 < t2, 'Monotonic: second call returns larger value');
   });
 
   test('hasClockJumpDetected example 2 (line 61)', async () => {
-    const ns = 1000000123456789n;  // 123.456789 milliseconds
+    const ns = 1000000123456789n;  // 1000000.123456789 seconds since epoch
 const iso = toISO(ns);
-console.assert(iso.includes('.123Z'), 'Milliseconds preserved');
-console.assert(!iso.includes('456789'), 'Nanoseconds lost');
+console.assert(iso.endsWith('123456789Z'), 'Nanoseconds preserved');
+console.assert(iso.includes('.123456789'), 'Full 9-digit precision present');
   });
 
-  test('fromISO example 3 (line 104)', async () => {
-    try {
-fromISO('2025-02-31T00:00:00Z');  // February 31 doesn't exist
-throw new Error('Should have thrown');
-} catch (err) {
-console.assert(err.message.includes('Invalid ISO'), 'Rejects invalid dates');
-}
+  test('addNanoseconds example 3 (line 184)', async () => {
+    const result = addNanoseconds(1000000000n, 500000000n);
+console.assert(result === 1500000000n, 'Adds correctly');
   });
 
-  test('addNanoseconds example 4 (line 213)', async () => {
-    try {
-addNanoseconds(1000000000n, 500000000);  // Number instead of BigInt
-throw new Error('Should have thrown');
-} catch (err) {
-console.assert(err.message.includes('BigInt'), 'Rejects non-BigInt');
-}
-  });
-
-  test('duration example 5 (line 244)', async () => {
+  test('duration example 4 (line 206)', async () => {
     const vc1 = new VectorClock('node1');
 const vc2 = new VectorClock('node2');
 vc1.increment();

@@ -9,8 +9,8 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { Store  } from '@unrdf/core/rdf/n3-justified-only.mjs';
+import { DataFactory  } from '@unrdf/core/rdf/n3-justified-only.mjs';
 import { generateText } from 'ai';
 import { createMCPServer } from '../src/mcp/index.mjs';
 import {

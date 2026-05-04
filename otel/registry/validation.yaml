@@ -11,7 +11,7 @@ groups:
       - id: chatman.validation.source_system
         type: string
         brief: 'System performing validation.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
       - id: chatman.validation.validation_type
         type: string
         brief: 'Type of validation (shacl, business_rule, compliance, schema).'

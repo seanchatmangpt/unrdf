@@ -200,7 +200,7 @@ describe('Streaming Batch Processor Cleanup', () => {
   });
 
   describe('Memory Profiling', () => {
-    it.skip('should not leak memory when creating many batch processors', () => {
+    it('should not leak memory when creating many batch processors', () => {
       const initialMemory = getHeapUsed();
 
       // Create 1000 batch processors
@@ -362,7 +362,7 @@ describe('Streaming Batch Processor Cleanup', () => {
      * Currently, these tests will fail because the API doesn't exist
      */
 
-    it.skip('PROPOSED: should provide destroy() method on batch processor', () => {
+    it('PROPOSED: should provide destroy() method on batch processor', () => {
       const processor = createStreamProcessor(feed);
       const subscriber = vi.fn();
 
@@ -388,7 +388,7 @@ describe('Streaming Batch Processor Cleanup', () => {
       expect(subscriber).not.toHaveBeenCalled();
     });
 
-    it.skip('PROPOSED: should provide unsubscribe() return value', () => {
+    it('PROPOSED: should provide unsubscribe() return value', () => {
       const processor = createStreamProcessor(feed);
       const subscriber = vi.fn();
 
@@ -415,7 +415,7 @@ describe('Streaming Batch Processor Cleanup', () => {
       expect(subscriber).not.toHaveBeenCalled();
     });
 
-    it.skip('PROPOSED: should cleanup debounce timer on destroy', () => {
+    it('PROPOSED: should cleanup debounce timer on destroy', () => {
       const processor = createStreamProcessor(feed);
       const debounceProcessor = processor.debounce(100);
 

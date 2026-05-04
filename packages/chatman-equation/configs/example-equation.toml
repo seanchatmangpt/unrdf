@@ -1,0 +1,175 @@
+# Example Chatman Equation Configuration
+# This TOML file demonstrates the structure for generating API reference documentation
+
+template = "equation-reference.tera"
+output = "reference/chatman-equation-api.md"
+
+title = "Chatman Equation API Reference"
+module = "@unrdf/chatman-equation"
+version = "1.0.0"
+updated = "2026-01-18"
+description = """
+The Chatman Equation is a mathematical framework for modeling information flow
+in conversational AI systems, providing deterministic measurement of semantic
+coherence and context propagation.
+"""
+
+usage_example = """
+import { ChatmanEquation } from '@unrdf/chatman-equation';
+
+const equation = new ChatmanEquation({
+  contextWindow: 100000,
+  coherenceThreshold: 0.85
+});
+
+const result = equation.calculate({
+  tokens: tokenStream,
+  context: conversationHistory
+});
+
+console.log('Coherence Score:', result.coherence);
+console.log('Information Entropy:', result.entropy);
+"""
+
+# Equations
+[[equations]]
+name = "Semantic Coherence"
+formula = "C(t) = ∑(w_i × s_i) / √(∑w_i²)"
+description = """
+Calculates the semantic coherence of a token sequence based on weighted
+similarity scores between consecutive tokens.
+"""
+
+[[equations.parameters]]
+name = "tokens"
+type = "Array<Token>"
+description = "Input token sequence"
+
+[[equations.parameters]]
+name = "weights"
+type = "Array<number>"
+description = "Token importance weights"
+default = "[1.0, ...]"
+
+[[equations.parameters]]
+name = "contextWindow"
+type = "number"
+description = "Maximum context window size"
+default = "100000"
+constraints = "Must be positive integer"
+
+[equations.returns]
+type = "CoherenceScore"
+description = "Semantic coherence score between 0 and 1"
+
+complexity = "O(n) where n is token count"
+
+examples = [
+  """
+const tokens = ['hello', 'world', 'example'];
+const score = equation.calculateCoherence(tokens);
+// => { coherence: 0.92, entropy: 2.4 }
+  """,
+  """
+const result = equation.calculateCoherence(tokens, {
+  weights: [1.0, 0.8, 0.6],
+  contextWindow: 50000
+});
+  """
+]
+
+[[equations.see_also]]
+title = "Information Entropy"
+url = "#information-entropy"
+
+[[equations]]
+name = "Context Propagation"
+formula = "P(c_t+1 | c_t) = exp(-λ × d(c_t, c_t+1))"
+description = """
+Models the probability of context propagation from one state to the next
+based on semantic distance.
+"""
+
+[[equations.parameters]]
+name = "currentContext"
+type = "Context"
+description = "Current conversation context"
+
+[[equations.parameters]]
+name = "nextContext"
+type = "Context"
+description = "Next conversation context"
+
+[[equations.parameters]]
+name = "lambda"
+type = "number"
+description = "Decay parameter"
+default = "0.1"
+
+[equations.returns]
+type = "number"
+description = "Propagation probability [0, 1]"
+
+# Constants
+[[constants]]
+name = "MAX_CONTEXT_WINDOW"
+type = "number"
+value = "200000"
+description = "Maximum supported context window"
+
+[[constants]]
+name = "MIN_COHERENCE_THRESHOLD"
+type = "number"
+value = "0.5"
+description = "Minimum coherence threshold for valid results"
+
+[[constants]]
+name = "DEFAULT_LAMBDA"
+type = "number"
+value = "0.1"
+description = "Default decay parameter for context propagation"
+
+# Types
+[[types]]
+name = "Token"
+definition = """
+interface Token {
+  text: string;
+  embedding: number[];
+  weight: number;
+}
+"""
+description = "Represents a single token with semantic embedding"
+
+[[types.properties]]
+name = "text"
+type = "string"
+description = "Token text content"
+
+[[types.properties]]
+name = "embedding"
+type = "number[]"
+description = "Vector embedding representation"
+
+[[types.properties]]
+name = "weight"
+type = "number"
+description = "Token importance weight"
+
+[[types]]
+name = "CoherenceScore"
+definition = """
+interface CoherenceScore {
+  coherence: number;
+  entropy: number;
+  tokens: number;
+}
+"""
+description = "Result of coherence calculation"
+
+# Notes
+notes = [
+  "Coherence scores below 0.5 indicate low semantic alignment",
+  "Context window size significantly impacts calculation performance",
+  "Weights should be normalized to sum to 1.0 for optimal results"
+]

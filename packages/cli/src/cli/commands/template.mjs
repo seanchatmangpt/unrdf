@@ -23,7 +23,6 @@ import { renderWithOptions, discoverTemplates } from './sync/template-renderer.m
 import { FrontmatterParser } from '../../lib/frontmatter-parser.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_TEMPLATES_DIR = resolve(__dirname, '../../../templates/sync');
 // Resolve catalog path relative to workspace root
 // Template command is at: packages/cli/src/cli/commands/template.mjs
 // Workspace root is: ../../../../../ (go up from unrdf to chatmangpt)
@@ -35,7 +34,7 @@ const TEMPLATE_CATALOG_PATH = resolve(__dirname, '../../../../../../.template-ca
  * @returns {Array} Array of local template objects
  */
 async function discoverLocalTemplates(cwd = process.cwd()) {
-  const localTemplatesDir = resolve(cwd, '_templates');
+  const localTemplatesDir = resolve(cwd, 'templates');
 
   if (!existsSync(localTemplatesDir)) {
     return [];
@@ -329,6 +328,11 @@ const generateCommand = defineCommand({
       description: 'Overwrite existing files',
       default: false,
     },
+    harden: {
+      type: 'boolean',
+      description: 'Enforce L4/L5 hardening protocols during code generation',
+      default: false,
+    },
   },
   async run(ctx) {
     const templatePath = ctx.args.template;
@@ -370,6 +374,18 @@ const generateCommand = defineCommand({
     if (!existsSync(rdfPath)) {
       console.error(`Error: RDF file not found: ${rdfPath}`);
       process.exit(1);
+    }
+
+    // PHASE 3: Gate 1 (Input Validation) - Block projection if source ontology lacks SpecKit receipt
+    if (ctx.args.harden) {
+       const content = await readFile(rdfPath, 'utf-8');
+       // In production, this would use verifyPQReceipt against a formal SpecKit header
+       if (!content.includes('shacl:conforms')) {
+         console.error('Error: [Gate 1] Constitutional Integrity Failure');
+         console.error('The source ontology lacks a valid SpecKit receipt (shacl:conforms).');
+         console.error('Hardened projection requires verified manufacturing proof.');
+         process.exit(1);
+       }
     }
 
     const sparqlQuery = resolveSparqlQuery(ctx.args.sparql, fm.sparql);
@@ -425,6 +441,7 @@ const generateCommand = defineCommand({
               ...flat,
               subject: subjectUri,
               prefixes: mergedPrefixes,
+              harden: ctx.args.harden,
             },
           });
           console.log(
@@ -441,6 +458,39 @@ const generateCommand = defineCommand({
       const rows = await executeSparqlQuery(store, queryText, mergedPrefixes);
       const flat = nunjucksFlatFromFirstRow(rows);
 
+      // Determine if we should render per-row (matches sync orchestrator logic)
+      let perRow = false;
+      let hasLoop = false;
+      if (rawTemplate) {
+        const hasInject = /^\s*inject:\s*true/m.test(rawTemplate);
+        hasLoop = /\{%\s*for\b/.test(rawTemplate);
+        perRow = hasInject && !hasLoop;
+      }
+
+      if (perRow && rows.length > 0) {
+        for (const row of rows) {
+          const result = await renderWithOptions(absTemplate, rows, {
+            outputDir,
+            dryRun,
+            force,
+            context: {
+              ...flat,
+              ...row,
+              prefixes: mergedPrefixes,
+              harden: ctx.args.harden,
+            },
+          });
+          console.log(
+            dryRun
+              ? `[dry-run] ${result.finalPath}`
+              : result.written
+                ? `Wrote ${result.finalPath} (${result.bytes ?? 0} bytes)`
+                : `[skipped] ${result.finalPath}${result.reason ? ` (${result.reason})` : ''}`
+          );
+        }
+        return;
+      }
+
       const result = await renderWithOptions(absTemplate, rows, {
         outputDir,
         dryRun,
@@ -448,6 +498,7 @@ const generateCommand = defineCommand({
         context: {
           ...flat,
           prefixes: mergedPrefixes,
+          harden: ctx.args.harden,
         },
       });
 
@@ -617,7 +668,11 @@ const templateQueryCommand = defineCommand({
       if (ctx.args.sparql) {
         const results = loader.queryToContext(store, ctx.args.sparql);
         if (ctx.args.format === 'json') {
-          console.log(JSON.stringify(results, null, 2));
+          console.log(JSON.stringify({
+            version: '26.4.23',
+            timestamp: new Date().toISOString(),
+            ...results
+          }, null, 2));
         } else {
           const rows = results.$rdf?.raw ?? [];
           if (rows.length === 0) {
@@ -680,7 +735,11 @@ const extractCommand = defineCommand({
 
       if (ctx.args.subject) {
         const context = loader.createInstanceContext(store, ctx.args.subject);
-        console.log(JSON.stringify(context, null, 2));
+        console.log(JSON.stringify({
+          version: '26.4.23',
+          timestamp: new Date().toISOString(),
+          ...context
+        }, null, 2));
       } else {
         console.log('Provide --subject / -s');
       }
@@ -742,11 +801,11 @@ const catalogCommand = defineCommand({
   async run(ctx) {
     const catalog = await loadMergedCatalog();
     const globalCatalog = loadTemplateCatalog();
-    const localCatalog = loadLocalCatalog();
     const localTemplates = await discoverLocalTemplates();
 
     if (ctx.args.format === 'json') {
-      console.log(JSON.stringify(catalog, null, 2));
+      const allTemplates = Object.values(catalog.templates || {}).flat();
+      console.log(JSON.stringify(allTemplates, null, 2));
       return;
     }
 

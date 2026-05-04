@@ -3,7 +3,7 @@
 > Complete learning path from absolute beginner to advanced UNRDF practitioner
 >
 > **Last Updated:** 2026-04-07  
-> **UNRDF Version:** 26.4.8
+> **UNRDF Version:** 26.4.23
 
 ---
 
@@ -832,9 +832,9 @@ After completing this guide:
 
 | Version | Date             | Changes                                                |
 | ------- | ---------------- | ------------------------------------------------------ |
-| 26.4.8  | 2026-04-07       | Added doctor command, created zero-to-hero guide       |
-| 26.4.7  | 2026-04-07       | Open-Ontologies integration, Groq LLM, OTEL deployment |
-| 26.4.6  | Earlier versions | See [CHANGELOG.md](../../CHANGELOG.md)                 |
+| 26.4.23  | 2026-04-07       | Added doctor command, created zero-to-hero guide       |
+| 26.4.23  | 2026-04-07       | Open-Ontologies integration, Groq LLM, OTEL deployment |
+| 26.4.23  | Earlier versions | See [CHANGELOG.md](../../CHANGELOG.md)                 |
 
 ---
 

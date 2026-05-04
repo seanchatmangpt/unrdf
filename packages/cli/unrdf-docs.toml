@@ -1,0 +1,71 @@
+[project]
+name = "@unrdf/cli"
+version = "26.4.23"
+description = "Command-line tools for RDF operations and ontology-driven code generation"
+
+[ontology]
+source = "ontology/domains/cli"
+format = "ntriples"
+
+[generation]
+output_dir = "docs"
+templates_dir = "templates/docs"
+backup_before_overwrite = false
+
+[[generation.rules]]
+name = "cli-readme"
+template = "cli-readme.njk"
+output_file = "CLI.md"
+query = """
+SELECT ?command ?name ?description ?category WHERE {
+  ?command a cli:Command .
+  ?command cli:name ?name .
+  ?command cli:description ?description .
+  ?command cli:category ?category .
+}
+ORDER BY ?category ?name
+"""
+
+[[generation.rules]]
+name = "command-reference"
+template = "command-reference.njk"
+output_file = "commands/{{ command_name }}.md"
+query = """
+SELECT ?command ?command_name ?description ?longDescription ?category ?arg ?argName ?argType ?argDescription ?hasDefault ?alias ?isRequired ?example ?exampleCommand ?exampleDescription WHERE {
+  ?command a cli:Command .
+  ?command cli:name ?command_name .
+  ?command cli:description ?description .
+  OPTIONAL { ?command cli:longDescription ?longDescription }
+  ?command cli:category ?category .
+
+  OPTIONAL {
+    ?command cli:hasArgument ?arg .
+    ?arg cli:argName ?argName .
+    ?arg cli:argType ?argType .
+    ?arg cli:argDescription ?argDescription .
+    OPTIONAL { ?arg cli:hasDefault ?hasDefault }
+    OPTIONAL { ?arg cli:alias ?alias }
+    OPTIONAL { ?arg cli:isRequired ?isRequired }
+  }
+
+  OPTIONAL {
+    ?command cli:hasExample ?example .
+    ?example cli:exampleCommand ?exampleCommand .
+    ?example cli:exampleDescription ?exampleDescription .
+  }
+}
+ORDER BY ?command_name
+"""
+
+[[generation.rules]]
+name = "usage-examples"
+template = "usage-examples.njk"
+output_file = "usage/examples.md"
+query = """
+SELECT ?command ?name ?description WHERE {
+  ?command a cli:Command .
+  ?command cli:name ?name .
+  ?command cli:description ?description .
+}
+ORDER BY ?name
+"""

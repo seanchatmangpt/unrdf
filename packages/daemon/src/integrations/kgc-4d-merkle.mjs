@@ -10,19 +10,27 @@ export async function buildMerkleTree(leaves) {
   if (leaves.length === 0) {
     return await blake3('');
   }
+  if (leaves.length === 1) {
+    return leaves[0];
+  }
   let current = leaves;
   while (current.length > 1) {
     const next = [];
     for (let i = 0; i < current.length; i += 2) {
       const left = current[i];
-      const right = current[i + 1] || current[i];
-      const combined = left + right;
+      const right = i + 1 < current.length ? current[i + 1] : current[i];
+      // Use separator to prevent ambiguity between leaf content and combinations
+      const combined = left + ':' + right;
       const hash = await blake3(combined);
       next.push(hash);
     }
     current = next;
   }
-  return current[0];
+  // CVE-2012-2459 mitigation: include leaf count in root hash to ensure
+  // a tree with N leaves always has a different root than N+1 leaves
+  // even if the extra leaf is a duplicate.
+  const rawRoot = current[0];
+  return await blake3(`${leaves.length}:${rawRoot}`);
 }
 
 export async function getMerkleProofPath(leaves, index) {
@@ -43,8 +51,8 @@ export async function getMerkleProofPath(leaves, index) {
     const next = [];
     for (let i = 0; i < current.length; i += 2) {
       const left = current[i];
-      const right = current[i + 1] || current[i];
-      const combined = left + right;
+      const right = i + 1 < current.length ? current[i + 1] : current[i];
+      const combined = left + ':' + right;
       const hash = await blake3(combined);
       next.push(hash);
     }

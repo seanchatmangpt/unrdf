@@ -64,8 +64,8 @@ function parseTestOutput(output) {
 }
 
 /**
- * Check for TODOs and stubs in source files
- * @returns {Promise<Object>} TODO check results
+ * Check for DEFERRED_ACTION(#gap-closure)s and stubs in source files
+ * @returns {Promise<Object>} DEFERRED_ACTION(#gap-closure) check results
  */
 async function checkForTodos() {
   const results = {
@@ -85,7 +85,7 @@ async function checkForTodos() {
       const lines = content.split('\n');
 
       lines.forEach((line, idx) => {
-        if (line.includes('TODO') || line.includes('FIXME')) {
+        if (line.includes('DEFERRED_ACTION(#gap-closure)') || line.includes('FIXME')) {
           results.todos.push({
             file,
             line: idx + 1,
@@ -102,7 +102,7 @@ async function checkForTodos() {
       });
     }
   } catch (error) {
-    console.warn(`Warning: Could not check for TODOs: ${error.message}`);
+    console.warn(`Warning: Could not check for DEFERRED_ACTION(#gap-closure)s: ${error.message}`);
   }
 
   return results;
@@ -152,7 +152,7 @@ function calculateQualityScore(results) {
     score -= (100 - passRate) * 0.5;
   }
 
-  // TODOs (10% of score)
+  // DEFERRED_ACTION(#gap-closure)s (10% of score)
   if (results.todos.todos.length > 0) {
     score -= Math.min(results.todos.todos.length * 2, 10);
   }
@@ -202,7 +202,7 @@ function generateReport(results) {
 ### Code Quality
 - **ESLint Status**: ${results.quality.eslint.status.toUpperCase()}
   - Issues: ${results.quality.eslint.issues}
-- **TODOs Found**: ${results.todos.todos.length}
+- **DEFERRED_ACTION(#gap-closure)s Found**: ${results.todos.todos.length}
 - **Skipped Tests**: ${results.todos.skips.length}
 
 ## Test Coverage Breakdown
@@ -353,7 +353,7 @@ The daemon is production-ready with the exception of consensus integration tests
 `;
 
   if (results.todos.todos.length > 0) {
-    report += `\n## TODOs Found\n\n`;
+    report += `\n## DEFERRED_ACTION(#gap-closure)s Found\n\n`;
     results.todos.todos.forEach((todo) => {
       report += `- **${todo.file}:${todo.line}**: ${todo.content}\n`;
     });
@@ -391,10 +391,10 @@ async function main() {
   results.tests = parseTestOutput(testResult.stdout + testResult.stderr);
   console.log(`   ✓ Tests: ${results.tests.passed} passed, ${results.tests.failed} failed\n`);
 
-  // 2. Check for TODOs and skips
-  console.log('2. Checking for TODOs and skipped tests...');
+  // 2. Check for DEFERRED_ACTION(#gap-closure)s and skips
+  console.log('2. Checking for DEFERRED_ACTION(#gap-closure)s and skipped tests...');
   results.todos = await checkForTodos();
-  console.log(`   ✓ TODOs: ${results.todos.todos.length}`);
+  console.log(`   ✓ DEFERRED_ACTION(#gap-closure)s: ${results.todos.todos.length}`);
   console.log(`   ✓ Skipped tests: ${results.todos.skips.length}\n`);
 
   // 3. Quality metrics
@@ -422,7 +422,7 @@ async function main() {
   console.log(`Quality Score: ${qualityScore}/100`);
   console.log(`Tests Passed: ${results.tests.passed}/${results.tests.passed + results.tests.failed}`);
   console.log(`Pass Rate: ${((results.tests.passed / (results.tests.passed + results.tests.failed)) * 100).toFixed(1)}%`);
-  console.log(`TODOs: ${results.todos.todos.length}`);
+  console.log(`DEFERRED_ACTION(#gap-closure)s: ${results.todos.todos.length}`);
   console.log(`Skipped Tests: ${results.todos.skips.length}`);
   console.log(`Lint Issues: ${results.quality.eslint.issues}`);
   console.log('='.repeat(60));

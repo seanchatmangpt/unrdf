@@ -1,0 +1,156 @@
+{
+  "confidence": {
+    "explanation": 0.4,
+    "howtos": 0.25,
+    "reference": 0.5,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "eb06e6f3d365e2084befa3c74eae7aa6cafe03ddbe0e68e2b1629b261a3a702d",
+    "readmeHeadings": []
+  },
+  "explanation": {
+    "architecture": "@unrdf/otel is a package in the UNRDF ecosystem",
+    "concepts": [
+      "opentelemetry",
+      "otel",
+      "semantic-conventions",
+      "rdf",
+      "unrdf"
+    ],
+    "confidenceScore": 0.4,
+    "id": "explanation-unrdf-otel-explanation",
+    "source": [
+      "keywords",
+      "inferred"
+    ],
+    "title": "Understanding @unrdf/otel",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with opentelemetry in your project",
+      "id": "howto-integrate-with-opentelemetry",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @unrdf/otel with opentelemetry",
+      "title": "Integrate with opentelemetry"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@unrdf/otel",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-unrdf-otel-reference",
+    "items": [
+      {
+        "description": "Export: ./attributes",
+        "example": "import from \"./src/generated/attributes.mjs\"",
+        "name": "./attributes",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./collector-config",
+        "example": "import from \"./deploy/otel-collector-config.yaml\"",
+        "name": "./collector-config",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./conformance",
+        "example": "import from \"./src/conformance/index.mjs\"",
+        "name": "./conformance",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./metrics",
+        "example": "import from \"./src/generated/metrics.mjs\"",
+        "name": "./metrics",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./monitoring",
+        "example": "import from \"./src/monitoring.mjs\"",
+        "name": "./monitoring",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./ocel",
+        "example": "import from \"./src/ocel/index.mjs\"",
+        "name": "./ocel",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./pm4py",
+        "example": "import from \"./src/pm4py.mjs\"",
+        "name": "./pm4py",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./validation",
+        "example": "import from \"./src/validation/index.mjs\"",
+        "name": "./validation",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": "import from \"./src/index.mjs\"",
+        "name": "@unrdf/otel",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@unrdf/otel Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @unrdf/otel in your project",
+      "id": "tutorial-getting-started-with-unrdf-otel",
+      "prerequisites": [
+        "Basic RDF knowledge"
+      ],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @unrdf/otel"
+    }
+  ],
+  "version": "26.4.23"
+}

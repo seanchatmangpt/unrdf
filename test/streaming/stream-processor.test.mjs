@@ -125,7 +125,7 @@ describe('StreamProcessor', () => {
       await eventPromise;
     });
 
-    it.skip('should emit window-closed event', async () => {
+    it('should emit window-closed event', async () => {
       // SKIP REASON: Test not in vitest.config.mjs include list (orphaned test)
       // Also noted as flaky timing test in original comment
       // RESOLUTION: Move to packages/streaming/test/ or add to vitest config if needed

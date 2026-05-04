@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Store } from 'n3';
-import { DataFactory } from 'n3';
+import { Store  } from 'n3';
+import { DataFactory  } from 'n3';
 import { OntologyLearner } from '../src/hooks/ontology-learner.mjs';
 
 const { namedNode, literal, quad } = DataFactory;

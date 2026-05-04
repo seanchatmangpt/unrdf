@@ -1,0 +1,12 @@
+obligation:
+  id: obl-kgc-4d-readme-doctest-repair-001
+  kind: DocumentationExecutableExampleRepair
+  target: "@unrdf/kgc-4d"
+  severity: medium
+  reason: >
+    README snippets reference variables that are missing in generated doctests.
+    pnpm test:fast passes, but full executable documentation is not clean.
+  acceptance:
+    - README code snippets include all required setup variables
+    - generated doctests pass
+    - examples remain aligned with current API

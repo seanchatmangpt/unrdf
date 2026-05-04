@@ -187,76 +187,53 @@ console.log(`Error rate: ${(stats.errorRate * 100).toFixed(2)}%`)
 
 ## Architecture
 
-```
-Federation Coordinator
-│
-├── Peer Manager
-│   ├── Peer Registration
-│   ├── Health Tracking
-│   ├── Metadata Management
-│   └── Connection Pooling
-│
-├── Distributed Query Engine
-│   ├── Query Routing
-│   ├── Strategy Selection
-│   │   ├── Broadcast (all peers)
-│   │   ├── Selective (healthy only)
-│   │   └── Failover (single with fallback)
-│   ├── Parallel Execution
-│   └── Result Aggregation
-│
-├── Health Monitor
-│   ├── Periodic Health Checks
-│   ├── Health Score Calculation
-│   ├── Degradation Detection
-│   └── Auto-Failover
-│
-└── Statistics Tracker
-    ├── Query Metrics
-    ├── Error Tracking
-    ├── Performance Monitoring
-    └── Per-Peer Statistics
+The @unrdf/federation package provides a robust distributed systems substrate for RDF data.
 
-Query Flow:
-1. Coordinator receives SPARQL query
-2. Strategy determines which peers to query
-3. Queries executed in parallel across selected peers
-4. Results aggregated and returned
-5. Health scores updated
-6. Statistics recorded
+### High-Level Components
+
+```mermaid
+graph TD
+    Client[SPARQL Client] --> Coord[Federation Coordinator]
+    
+    subgraph "Core Coordination"
+        Coord --> PM[Peer Manager]
+        Coord --> DQE[Distributed Query Engine]
+        Coord --> HM[Health Monitor]
+    }
+    
+    subgraph "Advanced V6 Features"
+        Coord --> CM[Consensus Manager / RAFT]
+        Coord --> DRM[Data Replication Manager]
+        Coord --> AE[Advanced Federation Engine]
+    }
+    
+    PM --> P1[Peer A]
+    PM --> P2[Peer B]
+    PM --> P3[Peer C]
+    
+    DQE --> Strategy{Strategy}
+    Strategy --> Broadcast
+    Strategy --> Selective
+    Strategy --> Failover
 ```
 
-### Peer Lifecycle
+### Detailed Architecture
 
-```
-┌─────────────┐
-│   INITIAL   │
-└──────┬──────┘
-       │
-       │ addPeer()
-       ▼
-┌─────────────┐
-│   ACTIVE    │◄────────┐
-└──────┬──────┘         │
-       │                │
-       │ healthCheck()  │
-       ▼                │
-┌─────────────┐         │
-│  DEGRADED   │─────────┘
-└──────┬──────┘  recover
-       │
-       │ continued failure
-       ▼
-┌─────────────┐
-│ UNREACHABLE │
-└──────┬──────┘
-       │
-       │ removePeer()
-       ▼
-┌─────────────┐
-│   REMOVED   │
-└─────────────┘
-```
+- **Federation Coordinator**: The central orchestrator managing all sub-components and providing the public API.
+- **Peer Manager**: Handles registration, metadata, and connection pooling for remote endpoints.
+- **Distributed Query Engine**: Routes SPARQL queries across peers using pluggable strategies and aggregates results.
+- **Consensus Manager (V6)**: Implements RAFT consensus for consistent state across the federation.
+- **Data Replication Manager (V6)**: Manages multi-master replication and conflict resolution between nodes.
+- **Health Monitor**: Periodically probes peers and calculates health scores (0-100) for intelligent routing.
+- **Statistics Tracker**: Provides real-time metrics and observability via OpenTelemetry.
+
+### Query Flow
+
+1. **Request**: Coordinator receives a SPARQL query from the client.
+2. **Routing**: The Strategy determines which peers are eligible based on health and metadata.
+3. **Execution**: Queries are dispatched in parallel to the selected peers.
+4. **Aggregation**: Results are merged, deduplicated, and normalized.
+5. **Feedback**: Execution metrics are recorded and health scores are updated.
 
 ## API Reference
 
@@ -476,6 +453,19 @@ const coordinator = createCoordinator({
 - `@unrdf/core` - RDF substrate
 - `@unrdf/hooks` - Policy enforcement
 - `@opentelemetry/api` - Observability instrumentation
+
+## SLA Requirements
+
+**Strict SLA for Federated Queries**:
+- **Coordination Latency**: <100ms overhead per query (excluding network)
+- **Health Detection**: <1s to detect and route around a failed peer
+- **Success Rate**: >99% success rate for healthy peer sets
+- **Error Rate**: <0.1% internal coordinator error rate
+
+**Enforcement**:
+- Automatic failover when latency exceeds 1.5x average
+- Circuit breaking for repeatedly failing endpoints
+- Real-time SLA monitoring via OpenTelemetry metrics
 
 ## Browser Compatibility
 

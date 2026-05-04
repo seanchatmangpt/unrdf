@@ -39,7 +39,7 @@ export async function initializeOTelSDK(config = {}) {
   const resource = Resource.default().merge(
     new Resource({
       [ATTR_SERVICE_NAME]: config.serviceName || 'unrdf-daemon',
-      [ATTR_SERVICE_VERSION]: config.version || '26.4.3',
+      [ATTR_SERVICE_VERSION]: config.version || '26.4.23',
       [ATTR_DEPLOYMENT_ENVIRONMENT]: config.environment || 'development',
     })
   );
@@ -79,8 +79,8 @@ export async function initializeOTelSDK(config = {}) {
   await sdk.start();
 
   // Export tracer and meter for cross-package use
-  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || '26.4.3');
-  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || '26.4.3');
+  tracer = trace.getTracer(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
+  meter = metrics.getMeter(config.serviceName || 'unrdf-daemon', config.version || '26.4.23');
 
   console.log('[OTEL SDK] OpenTelemetry SDK initialized successfully');
   console.log(`[OTEL SDK] Service: ${config.serviceName || 'unrdf-daemon'}`);

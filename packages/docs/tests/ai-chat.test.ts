@@ -57,12 +57,12 @@ describe('Testing Infrastructure', () => {
     })
   })
 
-  // DEFERRED to v26.4.5: Date formatting test has timezone-dependent behavior
-  describe.skip('Date Utilities', () => {
+  // DEFERRED to v26.4.23: Date formatting test has timezone-dependent behavior
+  describe('Date Utilities', () => {
     it('should format dates correctly', () => {
-      const date = new Date('2024-01-01')
-      expect(date.getFullYear()).toBe(2024)
-      expect(date.getMonth()).toBe(0)
+      const date = new Date('2024-01-01T12:00:00Z')
+      expect(date.getUTCFullYear()).toBe(2024)
+      expect(date.getUTCMonth()).toBe(0)
     })
   })
 })

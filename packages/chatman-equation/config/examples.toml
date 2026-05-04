@@ -1,0 +1,420 @@
+# Chatman Equation Examples
+# Concrete instances of μ(O ⊔ Δ) → A transformations
+
+# ============================================================================
+# MARKET DYNAMICS EXAMPLE
+# ============================================================================
+[market_equilibrium]
+description = "Market finding equilibrium after supply shock"
+
+[market_equilibrium.observation]
+id = "obs-market-001"
+timestamp = "2026-01-15T10:00:00Z"
+domain = "market"
+
+[market_equilibrium.observation.state]
+supply = 10000
+demand = 12000
+price = 100.0
+competitors = 5
+market_saturation = 0.65
+
+[market_equilibrium.observation.metadata]
+region = "North America"
+product_category = "SaaS Tools"
+
+[market_equilibrium.delta]
+id = "delta-market-001"
+timestamp = "2026-01-15T10:30:00Z"
+domain = "market"
+
+[[market_equilibrium.delta.operations]]
+op = "update"
+field = "supply"
+value = 15000
+reason = "New production capacity online"
+
+[[market_equilibrium.delta.operations]]
+op = "update"
+field = "competitors"
+value = 7
+reason = "Two new entrants"
+
+[market_equilibrium.closure_operator]
+type = "reconcile"
+name = "market_equilibrium"
+domain = "market"
+conflict_resolution = "delta_wins"
+policies = ["supply_demand_balance", "price_elasticity"]
+
+[market_equilibrium.expected_artifact]
+id = "artifact-market-001"
+timestamp = "2026-01-15T10:30:01Z"
+source_observation = "obs-market-001"
+applied_deltas = ["delta-market-001"]
+operator = "market_equilibrium"
+
+[market_equilibrium.expected_artifact.result]
+supply = 15000
+demand = 12000
+equilibrium_price = 85.0
+market_share_change = -0.12
+competitive_intensity = 0.72
+market_saturation = 0.78
+
+# ============================================================================
+# ORGANIZATIONAL TRANSFORMATION EXAMPLE
+# ============================================================================
+[org_restructuring]
+description = "Organization restructuring to improve agility"
+
+[org_restructuring.observation]
+id = "obs-org-001"
+timestamp = "2026-01-10T09:00:00Z"
+domain = "organization"
+
+[org_restructuring.observation.state]
+structure = "hierarchical"
+layers = 5
+teams = 12
+headcount = 150
+decision_speed_days = 14
+innovation_rate = 0.15
+
+[org_restructuring.observation.metadata]
+company_size = "medium"
+industry = "technology"
+
+[org_restructuring.delta]
+id = "delta-org-001"
+timestamp = "2026-01-10T09:30:00Z"
+domain = "organization"
+
+[[org_restructuring.delta.operations]]
+op = "update"
+field = "structure"
+value = "network"
+reason = "Move to autonomous teams"
+
+[[org_restructuring.delta.operations]]
+op = "update"
+field = "layers"
+value = 3
+reason = "Flatten hierarchy"
+
+[[org_restructuring.delta.operations]]
+op = "add"
+field = "cross_functional_squads"
+value = 8
+reason = "Create product-aligned squads"
+
+[org_restructuring.closure_operator]
+type = "transform"
+name = "org_transformation"
+domain = "organization"
+policies = ["resource_conservation", "capability_preservation"]
+invariants = ["headcount_stable", "no_skill_loss"]
+
+[org_restructuring.expected_artifact]
+id = "artifact-org-001"
+timestamp = "2026-01-10T09:30:01Z"
+source_observation = "obs-org-001"
+applied_deltas = ["delta-org-001"]
+operator = "org_transformation"
+
+[org_restructuring.expected_artifact.result]
+structure = "network"
+layers = 3
+teams = 8
+headcount = 150
+decision_speed_days = 3
+innovation_rate = 0.35
+autonomy_score = 0.82
+collaboration_index = 0.78
+
+# ============================================================================
+# STRATEGIC POSITIONING EXAMPLE
+# ============================================================================
+[strategy_pivot]
+description = "Strategic pivot to new market segment"
+
+[strategy_pivot.observation]
+id = "obs-strategy-001"
+timestamp = "2026-01-12T14:00:00Z"
+domain = "strategy"
+
+[strategy_pivot.observation.state]
+current_segment = "enterprise"
+revenue = 5000000
+customer_count = 50
+avg_deal_size = 100000
+sales_cycle_days = 180
+market_share = 0.08
+
+[strategy_pivot.observation.metadata]
+product = "Analytics Platform"
+geography = "Global"
+
+[strategy_pivot.delta]
+id = "delta-strategy-001"
+timestamp = "2026-01-12T14:30:00Z"
+domain = "strategy"
+
+[[strategy_pivot.delta.operations]]
+op = "add"
+field = "target_segment"
+value = "smb"
+reason = "Expand addressable market"
+
+[[strategy_pivot.delta.operations]]
+op = "update"
+field = "pricing_model"
+value = "self_service"
+reason = "Lower acquisition cost"
+
+[[strategy_pivot.delta.operations]]
+op = "add"
+field = "product_simplification"
+value = true
+reason = "Reduce onboarding friction"
+
+[strategy_pivot.closure_operator]
+type = "reconcile"
+name = "strategy_synthesis"
+domain = "strategy"
+conflict_resolution = "merge"
+policies = ["resource_alignment", "capability_fit", "market_timing"]
+
+[strategy_pivot.expected_artifact]
+id = "artifact-strategy-001"
+timestamp = "2026-01-12T14:30:01Z"
+source_observation = "obs-strategy-001"
+applied_deltas = ["delta-strategy-001"]
+operator = "strategy_synthesis"
+
+[strategy_pivot.expected_artifact.result]
+segments = ["enterprise", "smb"]
+projected_revenue = 8000000
+projected_customers = 500
+avg_deal_size_enterprise = 100000
+avg_deal_size_smb = 10000
+sales_cycle_smb_days = 14
+addressable_market_increase = 5.0
+execution_risk = 0.35
+
+# ============================================================================
+# BLUE OCEAN FORMATION EXAMPLE
+# ============================================================================
+[blue_ocean_creation]
+description = "Creating blue ocean through ERRC framework"
+
+[blue_ocean_creation.observation]
+id = "obs-blueocean-001"
+timestamp = "2026-01-14T11:00:00Z"
+domain = "blue_ocean"
+
+[blue_ocean_creation.observation.state]
+industry = "fitness"
+red_ocean_factors = ["equipment_variety", "personal_trainers", "amenities", "location_convenience"]
+competition_intensity = 0.95
+price_sensitivity = 0.85
+differentiation_low = true
+
+[blue_ocean_creation.observation.metadata]
+context = "Traditional gym market highly competitive"
+
+[blue_ocean_creation.delta]
+id = "delta-blueocean-001"
+timestamp = "2026-01-14T11:30:00Z"
+domain = "blue_ocean"
+
+[[blue_ocean_creation.delta.operations]]
+op = "add"
+field = "eliminate"
+value = ["equipment_variety", "personal_trainers", "amenities"]
+reason = "Reduce cost structure dramatically"
+
+[[blue_ocean_creation.delta.operations]]
+op = "add"
+field = "reduce"
+value = ["location_premium"]
+reason = "Strip down to essentials"
+
+[[blue_ocean_creation.delta.operations]]
+op = "add"
+field = "raise"
+value = ["cleanliness", "equipment_maintenance", "motivational_environment"]
+reason = "Exceed industry standards on key factors"
+
+[[blue_ocean_creation.delta.operations]]
+op = "add"
+field = "create"
+value = ["judgment_free_zone", "community_atmosphere", "affordable_luxury"]
+reason = "Appeal to non-customers (casual exercisers)"
+
+[blue_ocean_creation.closure_operator]
+type = "transform"
+name = "blue_ocean_formation"
+domain = "blue_ocean"
+policies = ["simultaneous_differentiation_cost", "buyer_value_leap"]
+invariants = ["cost_reduction", "value_increase"]
+
+[blue_ocean_creation.expected_artifact]
+id = "artifact-blueocean-001"
+timestamp = "2026-01-14T11:30:01Z"
+source_observation = "obs-blueocean-001"
+applied_deltas = ["delta-blueocean-001"]
+operator = "blue_ocean_formation"
+
+[blue_ocean_creation.expected_artifact.result]
+new_market_space = "affordable_fitness_for_masses"
+value_curve_shift = 0.85
+cost_reduction = 0.60
+target_non_customers = true
+price_point = 10.0
+projected_market_size_multiplier = 10.0
+competition_irrelevance = true
+differentiation_score = 0.92
+
+# ============================================================================
+# PRODUCT EVOLUTION EXAMPLE
+# ============================================================================
+[product_feature_release]
+description = "Product evolution with new features and deprecations"
+
+[product_feature_release.observation]
+id = "obs-product-001"
+timestamp = "2026-01-16T08:00:00Z"
+domain = "product"
+
+[product_feature_release.observation.state]
+version = "2.5.0"
+features = ["dashboard", "reports", "export_csv", "user_management", "api_v1"]
+test_coverage = 0.82
+technical_debt_score = 35
+user_satisfaction = 0.75
+
+[product_feature_release.observation.metadata]
+platform = "web"
+language = "javascript"
+
+[product_feature_release.delta]
+id = "delta-product-001"
+timestamp = "2026-01-16T08:30:00Z"
+domain = "product"
+
+[[product_feature_release.delta.operations]]
+op = "add"
+field = "features"
+value = ["real_time_collaboration", "ai_insights", "api_v2"]
+reason = "Customer requested features"
+
+[[product_feature_release.delta.operations]]
+op = "delete"
+field = "features"
+value = ["api_v1"]
+reason = "Deprecate old API version"
+
+[[product_feature_release.delta.operations]]
+op = "update"
+field = "export_csv"
+value = "export_multi_format"
+reason = "Enhance export capabilities"
+
+[product_feature_release.closure_operator]
+type = "reconcile"
+name = "product_evolution"
+domain = "product"
+conflict_resolution = "delta_wins"
+policies = ["backward_compatibility", "quality_threshold"]
+invariants = ["test_coverage_maintained", "no_regression"]
+
+[product_feature_release.expected_artifact]
+id = "artifact-product-001"
+timestamp = "2026-01-16T08:30:01Z"
+source_observation = "obs-product-001"
+applied_deltas = ["delta-product-001"]
+operator = "product_evolution"
+
+[product_feature_release.expected_artifact.result]
+version = "3.0.0"
+features = ["dashboard", "reports", "export_multi_format", "user_management", "api_v2", "real_time_collaboration", "ai_insights"]
+deprecated = ["api_v1"]
+test_coverage = 0.85
+technical_debt_score = 28
+user_satisfaction_projected = 0.88
+migration_path_provided = true
+breaking_changes = ["api_v1_removed"]
+
+# ============================================================================
+# CUSTOMER JOURNEY OPTIMIZATION EXAMPLE
+# ============================================================================
+[customer_experience]
+description = "Optimizing customer onboarding journey"
+
+[customer_experience.observation]
+id = "obs-customer-001"
+timestamp = "2026-01-17T10:00:00Z"
+domain = "customer"
+
+[customer_experience.observation.state]
+touchpoints = ["website_visit", "signup", "email_verification", "profile_setup", "first_use"]
+friction_points = ["complex_signup", "slow_email_verification", "confusing_profile_setup"]
+time_to_value_days = 7
+completion_rate = 0.45
+satisfaction_score = 6.5
+
+[customer_experience.observation.metadata]
+customer_segment = "freemium"
+cohort = "2026-Q1"
+
+[customer_experience.delta]
+id = "delta-customer-001"
+timestamp = "2026-01-17T10:30:00Z"
+domain = "customer"
+
+[[customer_experience.delta.operations]]
+op = "update"
+field = "signup"
+value = "oauth_signup"
+reason = "Reduce friction with social login"
+
+[[customer_experience.delta.operations]]
+op = "delete"
+field = "email_verification"
+value = true
+reason = "Remove unnecessary step for OAuth users"
+
+[[customer_experience.delta.operations]]
+op = "add"
+field = "touchpoints"
+value = ["onboarding_wizard", "in_app_tutorial"]
+reason = "Guide users to first value"
+
+[[customer_experience.delta.operations]]
+op = "update"
+field = "profile_setup"
+value = "progressive_profile"
+reason = "Defer optional information"
+
+[customer_experience.closure_operator]
+type = "transform"
+name = "experience_optimization"
+domain = "customer"
+policies = ["friction_reduction", "value_delivery"]
+invariants = ["data_quality_maintained", "privacy_preserved"]
+
+[customer_experience.expected_artifact]
+id = "artifact-customer-001"
+timestamp = "2026-01-17T10:30:01Z"
+source_observation = "obs-customer-001"
+applied_deltas = ["delta-customer-001"]
+operator = "experience_optimization"
+
+[customer_experience.expected_artifact.result]
+touchpoints = ["website_visit", "oauth_signup", "onboarding_wizard", "in_app_tutorial", "progressive_profile", "first_use"]
+friction_points = []
+time_to_value_minutes = 15
+completion_rate_projected = 0.82
+satisfaction_score_projected = 8.7
+activation_rate_increase = 0.82

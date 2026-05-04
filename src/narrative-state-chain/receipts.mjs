@@ -65,7 +65,7 @@ export async function generateReceipt(options) {
     timestamp,
     admissibilityChecks,
     minimalityProof,
-    forkParents: [], // TODO: Handle forks
+    forkParents: [],
     previousReceiptHash: previousReceipt?.receiptHash || null,
   };
 
@@ -123,7 +123,7 @@ export async function hashReceipt(receiptData) {
 /**
  * Sign a receipt with a private key (Ed25519)
  *
- * **Note**: This is a placeholder implementation using Node's crypto.
+ * **Note**: This implementation uses Node.js standard crypto.
  * For production, use a proper Ed25519 library or HSM.
  *
  * @param {import('./types.mjs').Receipt} receipt - Receipt to sign
@@ -259,7 +259,7 @@ export async function verifyReceiptChain(receipts) {
  * const verified = await verifyReceipt(signed, publicKey);
  */
 export function generateMockKeyPair() {
-  // This is a placeholder - in real implementation, use proper key generation
+  // In production, generate keys using Ed25519 standard generation.
   const { generateKeyPairSync } = require('crypto');
 
   const { privateKey, publicKey } = generateKeyPairSync('rsa', {

@@ -37,7 +37,7 @@ processors:
   # Resource attributes
   resource:
     service.name: unrdf
-    service.version: 26.4.7
+    service.version: 26.4.23
     deployment.environment: production
 
 exporters:

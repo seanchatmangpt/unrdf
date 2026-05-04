@@ -22,7 +22,7 @@
 - ✅ Automatic span instrumentation for all MCP tools
 - ✅ Semantic conventions via Weaver validation
 - ✅ Service name: `unrdf-daemon-mcp`
-- ✅ Service version: `26.4.4` (auto-updates with releases)
+- ✅ Service version: `26.4.23` (auto-updates with releases)
 
 **2. OTEL Environment Variables**
 
@@ -37,7 +37,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 
 # Service identity
 export OTEL_SERVICE_NAME=unrdf-daemon
-export OTEL_SERVICE_VERSION=26.4.4
+export OTEL_SERVICE_VERSION=26.4.23
 
 # Sampling (10% recommended for production)
 export OTEL_TRACES_SAMPLER=parentbased_traceidratio
@@ -209,7 +209,7 @@ make k8s-destroy  # Delete Kind cluster
 
    ```bash
    # Update image tag in values.yaml
-   imageTag: "26.4.7"  # Change to your version
+   imageTag: "26.4.23"  # Change to your version
 
    # Build and push image (requires GitHub Actions or manual build)
    # See: .github/workflows/deploy-production.yml
@@ -220,7 +220,7 @@ make k8s-destroy  # Delete Kind cluster
    ```yaml
    unrdf:
      enabled: true
-     imageTag: '26.4.7'
+     imageTag: '26.4.23'
      env:
        - name: OTEL_EXPORTER_OTLP_ENDPOINT
          value: 'http://unrdf-otel-collector:4318'
@@ -249,7 +249,7 @@ helm upgrade --install unrdf-observability k8s/helm/unrdf-observability \
    --namespace unrdf-observability --create-namespace \
    -f k8s/helm/unrdf-observability/values.yaml \
    --set unrdf.enabled=true \
-   --set unrdf.imageTag=26.4.7 \
+   --set unrdf.imageTag=26.4.23 \
    --set unrdf.env[0].name=OTEL_EXPORTER_OTLP_ENDPOINT \
    --set unrdf.env[0].value=your-otel-collector:4318
 ```
@@ -272,7 +272,7 @@ env:
   - name: OTEL_SERVICE_NAME
     value: 'unrdf-daemon'
   - name: OTEL_SERVICE_VERSION
-    value: '26.4.7'
+    value: '26.4.23'
 
   # Sampling (10% recommended)
   - name: OTEL_TRACES_SAMPLER

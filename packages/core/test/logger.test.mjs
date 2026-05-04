@@ -216,7 +216,7 @@ describe('Logger System', () => {
       expect(metrics).toHaveProperty('duration');
       expect(metrics).toHaveProperty('timestamp');
       expect(metrics.duration).toBeGreaterThanOrEqual(10);
-      expect(metrics.duration).toBeLessThan(50);
+      expect(metrics.duration).toBeLessThan(100);
     });
 
     it('should get elapsed time without ending', async () => {

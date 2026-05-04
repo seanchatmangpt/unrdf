@@ -1,0 +1,190 @@
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":0}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":1}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":2}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":3}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":4}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":5}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":6}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":7}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":8}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":9}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":10}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":11}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":12}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":13}
+{"command":"load","result":{"error":"Parser error at line 36 between columns 15 and 31: No scheme found in an absolute IRI"},"seq":14}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/tools/test-detailed.ttl","triples_loaded":2},"seq":15}
+{"command":"load","result":{"error":"Parser error at line 4 column 7: Unexpected end"},"seq":16}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test/fixtures/test-universe.ttl","triples_loaded":32},"seq":17}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/ontologies/papers-thesis.ttl","triples_loaded":581},"seq":18}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/ontologies/examples.ttl","triples_loaded":411},"seq":19}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/ontologies/playground-shapes.ttl","triples_loaded":36},"seq":20}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/ontologies/playground.ttl","triples_loaded":45},"seq":21}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/smoke-test/data.ttl","triples_loaded":16},"seq":22}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/papers-thesis-cli/ontologies/papers-thesis.ttl","triples_loaded":482},"seq":23}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/playground/papers-thesis-cli/ontologies/examples.ttl","triples_loaded":157},"seq":24}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/ontologies/disney-governed-universe.ttl","triples_loaded":275},"seq":25}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-data/persons.ttl","triples_loaded":13},"seq":26}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-data/shapes.ttl","triples_loaded":12},"seq":27}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-data/rules.ttl","triples_loaded":2},"seq":28}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/tools/test-detailed.ttl","triples_loaded":2},"seq":29}
+{"command":"load","result":{"error":"Parser error at line 4 column 7: Unexpected end"},"seq":30}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test/fixtures/test-universe.ttl","triples_loaded":32},"seq":31}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/ontologies/papers-thesis.ttl","triples_loaded":581},"seq":32}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/ontologies/examples.ttl","triples_loaded":411},"seq":33}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/ontologies/playground-shapes.ttl","triples_loaded":36},"seq":34}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/ontologies/playground.ttl","triples_loaded":45},"seq":35}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/smoke-test/data.ttl","triples_loaded":16},"seq":36}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/papers-thesis-cli/ontologies/papers-thesis.ttl","triples_loaded":482},"seq":37}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/papers-thesis-cli/ontologies/examples.ttl","triples_loaded":157},"seq":38}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/ontologies/disney-governed-universe.ttl","triples_loaded":275},"seq":39}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-data/persons.ttl","triples_loaded":13},"seq":40}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-data/shapes.ttl","triples_loaded":12},"seq":41}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-data/rules.ttl","triples_loaded":2},"seq":42}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/ontology/minimal-n3-routing.ttl","triples_loaded":203},"seq":43}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/schema/examples.ttl","triples_loaded":682},"seq":44}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/schema/shacl-validation.ttl","triples_loaded":806},"seq":45}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/schema/documentation-ontology.ttl","triples_loaded":1127},"seq":46}
+{"command":"load","result":{"error":"Parser error at line 126 between columns 16 and 24: \"Atomvm\" is not a valid predicate"},"seq":47}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-governance-cli/ontologies/registry.ttl","triples_loaded":25},"seq":48}
+{"command":"load","result":{"error":"Parser error at line 25 column 1: Triples should be followed by a dot"},"seq":49}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-governance-cli/overlays/bu/studios.delta.ttl","triples_loaded":17},"seq":50}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test-governance-cli/policies/system-policy.ttl","triples_loaded":34},"seq":51}
+{"command":"load","result":{"error":"Parser error at line 7 between columns 1 and 20: The prefix unrdf: has not been declared"},"seq":52}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/schema/domain.ttl","triples_loaded":181},"seq":53}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/schema/project-structure.ttl","triples_loaded":164},"seq":54}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/rdf-kgn/data/sample-data.ttl","triples_loaded":22},"seq":55}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/rdf-kgn/data/sample-ontology.ttl","triples_loaded":30},"seq":56}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/rdf-kgn/data/sample-shapes.ttl","triples_loaded":41},"seq":57}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/openapi/ontology/blog-api.ttl","triples_loaded":86},"seq":58}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/hooks/quality/data-quality.shacl.ttl","triples_loaded":40},"seq":59}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/fibo-ontology-snippet.nt","triples_loaded":107},"seq":60}
+{"command":"load","result":{"error":"Parser error at line 147 between columns 31 and 40: The prefix owl: has not been declared"},"seq":61}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/src/ontologies/unfs-ontology.ttl","triples_loaded":64},"seq":62}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/src/ontologies/unmetric-ontology.ttl","triples_loaded":59},"seq":63}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe/final-test/observations.ttl","triples_loaded":7},"seq":64}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe/test-output/observations.ttl","triples_loaded":7},"seq":65}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe/examples/example-output.ttl","triples_loaded":98},"seq":66}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe/src/vocabulary.ttl","triples_loaded":103},"seq":67}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/shapes/chatman-shapes.ttl","triples_loaded":260},"seq":68}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/ontology/examples.ttl","triples_loaded":255},"seq":69}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/ontology/chatman.ttl","triples_loaded":335},"seq":70}
+{"command":"load","result":{"error":"Parser error at line 295 between columns 19 and 38: The prefix lineage: has not been declared"},"seq":71}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/examples/turtle/shapes.ttl","triples_loaded":18},"seq":72}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/examples/turtle/ontology.ttl","triples_loaded":52},"seq":73}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/data/achievements.ttl","triples_loaded":157},"seq":74}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation/data/lineage.ttl","triples_loaded":196},"seq":75}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/test/fixtures/person.ttl","triples_loaded":14},"seq":76}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/examples/sync/ontology/schema.ttl","triples_loaded":57},"seq":77}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/examples/sync/schema.ttl","triples_loaded":154},"seq":78}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/.example-template-pipeline/person.nt","triples_loaded":14},"seq":79}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/test-data-cli-1766303513888-0bbdg8463e1f/graph1.ttl","triples_loaded":1},"seq":80}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli/test-data-cli-1766303513888-0bbdg8463e1f/graph2.ttl","triples_loaded":1},"seq":81}
+{"command":"load","result":{"error":"Parser error at line 147 between columns 31 and 40: The prefix owl: has not been declared"},"seq":82}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src/ontologies/unfs-ontology.ttl","triples_loaded":64},"seq":83}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/docs/ontology/minimal-n3-routing.ttl","triples_loaded":203},"seq":84}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/docs/schema/examples.ttl","triples_loaded":682},"seq":85}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/docs/schema/shacl-validation.ttl","triples_loaded":806},"seq":86}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/docs/schema/documentation-ontology.ttl","triples_loaded":1127},"seq":87}
+{"command":"load","result":{"error":"Parser error at line 126 between columns 16 and 24: \"Atomvm\" is not a valid predicate"},"seq":88}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-governance-cli/ontologies/registry.ttl","triples_loaded":25},"seq":89}
+{"command":"load","result":{"error":"Parser error at line 25 column 1: Triples should be followed by a dot"},"seq":90}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-governance-cli/overlays/bu/studios.delta.ttl","triples_loaded":17},"seq":91}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/test-governance-cli/policies/system-policy.ttl","triples_loaded":34},"seq":92}
+{"command":"load","result":{"error":"Parser error at line 7 between columns 1 and 20: The prefix unrdf: has not been declared"},"seq":93}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/schema/domain.ttl","triples_loaded":181},"seq":94}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/schema/project-structure.ttl","triples_loaded":164},"seq":95}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/generated/pizza-ai.ttl","triples_loaded":1168},"seq":96}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/generated/boro-building-ai.ttl","triples_loaded":126},"seq":97}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/generated/ies-building-extension.ttl","triples_loaded":3273},"seq":98}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/foaf.ttl","triples_loaded":631},"seq":99}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/saref.ttl","triples_loaded":1151},"seq":100}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/music.ttl","triples_loaded":2141},"seq":101}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/goodrelations.ttl","triples_loaded":1834},"seq":102}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/gufo.ttl","triples_loaded":766},"seq":103}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/time.ttl","triples_loaded":1367},"seq":104}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/movie.ttl","triples_loaded":296},"seq":105}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/nordstream.ttl","triples_loaded":362},"seq":106}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/pizza.ttl","triples_loaded":1848},"seq":107}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/ontoaxiom/data/ontoaxiom/ontologies/era.ttl","triples_loaded":7021},"seq":108}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/epc/iris-building.ttl","triples_loaded":1349},"seq":109}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/mushroom/mushroom-ontology.ttl","triples_loaded":241},"seq":110}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_2.ttl","triples_loaded":254},"seq":111}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_3.ttl","triples_loaded":286},"seq":112}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_10.ttl","triples_loaded":184},"seq":113}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_1.ttl","triples_loaded":370},"seq":114}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_4.ttl","triples_loaded":275},"seq":115}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_5.ttl","triples_loaded":355},"seq":116}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_7.ttl","triples_loaded":259},"seq":117}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_6.ttl","triples_loaded":155},"seq":118}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_8.ttl","triples_loaded":257},"seq":119}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/vision/dataset/img_9.ttl","triples_loaded":145},"seq":120}
+{"command":"load","result":{"error":"Parser error at line 15799 column 118: Unexpected end"},"seq":121}
+{"command":"load","result":{"error":"Parser error at line 32970 column 44: Unexpected end"},"seq":122}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/gvr/iteration1.ttl","triples_loaded":148},"seq":123}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/gvr/iteration2.ttl","triples_loaded":309},"seq":124}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/movement.ttl","triples_loaded":46},"seq":125}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/events.ttl","triples_loaded":15},"seq":126}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/when-and-where.ttl","triples_loaded":19},"seq":127}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/relationships.ttl","triples_loaded":11},"seq":128}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/hospital.ttl","triples_loaded":52},"seq":129}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/sometimes.ttl","triples_loaded":13},"seq":130}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/valid-PersonState.ttl","triples_loaded":8},"seq":131}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/event-participation.ttl","triples_loaded":42},"seq":132}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/event-linkages.ttl","triples_loaded":15},"seq":133}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/types.ttl","triples_loaded":9},"seq":134}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/invalid-PersonState.ttl","triples_loaded":4},"seq":135}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/period-of-time.ttl","triples_loaded":13},"seq":136}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/characteristics-and-measures.ttl","triples_loaded":18},"seq":137}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/identifiers.ttl","triples_loaded":24},"seq":138}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/assessment.ttl","triples_loaded":41},"seq":139}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/pizza-shapes.ttl","triples_loaded":13},"seq":140}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/data/communication.ttl","triples_loaded":29},"seq":141}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/ies4.ttl","triples_loaded":3976},"seq":142}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/ies-top.ttl","triples_loaded":239},"seq":143}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/boro-building-handcrafted.ttl","triples_loaded":355},"seq":144}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/ies-core.ttl","triples_loaded":1083},"seq":145}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/BirthStateShape.shacl.ttl","triples_loaded":5},"seq":146}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/benchmark/reference/PersonState.shacl.ttl","triples_loaded":23},"seq":147}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/tests/test_ontology.ttl","triples_loaded":6},"seq":148}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/tests/data/sample.ttl","triples_loaded":19},"seq":149}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/case-studies/heritage-aerial/pipeline/generated-from-csv.ttl","triples_loaded":309},"seq":150}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/case-studies/heritage-aerial/ontology/naph-shapes.ttl","triples_loaded":101},"seq":151}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/open-ontologies/case-studies/heritage-aerial/ontology/naph-core.ttl","triples_loaded":198},"seq":152}
+{"command":"load","result":{"error":"Parser error at line 22 between columns 1 and 29: The prefix yourns: has not been declared"},"seq":153}
+{"command":"load","result":{"error":"Parser error at line 25 between columns 1 and 36: Invalid host IP (invalid IPv6 address syntax)"},"seq":154}
+{"command":"load","result":{"error":"Parser error at line 25 between columns 17 and 27: The prefix rdfs: has not been declared"},"seq":155}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/pizza.ttl","triples_loaded":31},"seq":156}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/rdf-kgn/data/sample-data.ttl","triples_loaded":22},"seq":157}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/rdf-kgn/data/sample-ontology.ttl","triples_loaded":30},"seq":158}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/rdf-kgn/data/sample-shapes.ttl","triples_loaded":41},"seq":159}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/openapi/ontology/blog-api.ttl","triples_loaded":86},"seq":160}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/hooks/quality/data-quality.shacl.ttl","triples_loaded":40},"seq":161}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/examples/fibo-ontology-snippet.nt","triples_loaded":107},"seq":162}
+{"command":"load","result":{"error":"Parser error at line 147 between columns 31 and 40: The prefix owl: has not been declared"},"seq":163}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/core/src/ontologies/unfs-ontology.ttl","triples_loaded":64},"seq":164}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/core/src/ontologies/unmetric-ontology.ttl","triples_loaded":59},"seq":165}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/kgc-probe/final-test/observations.ttl","triples_loaded":7},"seq":166}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/kgc-probe/test-output/observations.ttl","triples_loaded":7},"seq":167}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/kgc-probe/examples/example-output.ttl","triples_loaded":98},"seq":168}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/kgc-probe/src/vocabulary.ttl","triples_loaded":103},"seq":169}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/shapes/chatman-shapes.ttl","triples_loaded":260},"seq":170}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/ontology/examples.ttl","triples_loaded":255},"seq":171}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/ontology/chatman.ttl","triples_loaded":335},"seq":172}
+{"command":"load","result":{"error":"Parser error at line 295 between columns 19 and 38: The prefix lineage: has not been declared"},"seq":173}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/examples/turtle/shapes.ttl","triples_loaded":18},"seq":174}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/examples/turtle/ontology.ttl","triples_loaded":52},"seq":175}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/data/achievements.ttl","triples_loaded":157},"seq":176}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/chatman-equation/data/lineage.ttl","triples_loaded":196},"seq":177}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/test/fixtures/person.ttl","triples_loaded":14},"seq":178}
+{"command":"load","result":{"error":"Parser error at line 1 column 37: The predicate of a triple must be an IRI"},"seq":179}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/ontology/cli-vocabulary.ttl","triples_loaded":106},"seq":180}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/examples/sync/ontology/schema.ttl","triples_loaded":57},"seq":181}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/examples/sync/schema.ttl","triples_loaded":154},"seq":182}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/.example-template-pipeline/person.nt","triples_loaded":14},"seq":183}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/test-data-cli-1766303513888-0bbdg8463e1f/graph1.ttl","triples_loaded":1},"seq":184}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/cli/test-data-cli-1766303513888-0bbdg8463e1f/graph2.ttl","triples_loaded":1},"seq":185}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/packages/daemon/src/mcp/cli-commands.ttl","triples_loaded":797},"seq":186}
+{"command":"load","result":{"error":"Parser error at line 147 between columns 31 and 40: The prefix owl: has not been declared"},"seq":187}
+{"command":"load","result":{"ok":true,"path":"/Users/sac/chatmangpt/unrdf/src/ontologies/unfs-ontology.ttl","triples_loaded":64},"seq":188}
+{"command":"stats","result":{"classes":8219,"data_properties":0,"individuals":12821,"object_properties":1915,"properties":1915,"triples":94319},"seq":189}

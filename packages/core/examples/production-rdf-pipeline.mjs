@@ -60,9 +60,6 @@ ex:eve foaf:name "Eve" ;
 function parseTurtleSimple(turtle) {
   const quads = [];
 
-  // Extract triples (simplified parser for demo)
-  const lines = turtle.split('\n').filter(l => !l.trim().startsWith('@') && l.trim().length > 0);
-
   // For this demo, manually create quads from known structure
   const data = [
     { person: 'alice', name: 'Alice', age: 30, email: 'alice@example.com' },
@@ -159,7 +156,7 @@ class ProductionRDFPipeline {
 
     quads.forEach(q => this.store.add(q));
 
-    console.log(`   ✅ Store created with ${this.store.size} quads`);
+    console.log(`   ✅ Store created with ${this.store.size()} quads`);
     console.log(`   Type: UnrdfStore (synchronous)\\n`);
   }
 
@@ -253,20 +250,17 @@ class ProductionRDFPipeline {
   /**
    * Canonicalize RDF
    */
-  canonicalizeRDF() {
+  async canonicalizeRDF() {
     console.log('🔐 Canonicalizing RDF...\\n');
 
-    const quads = [...this.store.match()];
-
-    const { result: canonical, duration } = time('canonicalize', () => {
-      return canonicalize(quads);
-    });
+    const start = Date.now();
+    const canonical = await canonicalize(this.store);
+    const ntriples = await toNTriples([...this.store.match()]);
+    const duration = Date.now() - start;
 
     this.metrics.canonicalizeTime = duration;
 
-    const ntriples = toNTriples(canonical);
-    const ntriplesStr = Array.isArray(ntriples) ? ntriples.join('\n') : String(ntriples);
-    const hash = ntriplesStr.substring(0, 32); // Simplified hash
+    const hash = ntriples.substring(0, 32); // Simplified hash
 
     console.log(`   ✅ Canonical N-Quads generated`);
     console.log(`   Hash: c14n-sha256-${hash}...`);
@@ -278,36 +272,28 @@ class ProductionRDFPipeline {
   /**
    * Export to multiple formats
    */
-  exportFormats(quads) {
+  async exportFormats(quads) {
     console.log('📤 Exporting to formats...\\n');
 
-    const { duration } = time('export', () => {
-      // N-Triples
-      const ntriples = toNTriples(quads);
-      const ntriplesSize = new Blob([ntriples]).size;
+    const start = Date.now();
+    // N-Triples
+    const ntriples = await toNTriples(quads);
+    const ntriplesSize = ntriples.length;
 
-      // Simplified Turtle (would use serializer in production)
-      const turtle = quads
-        .map(q => `${q.subject.value} ${q.predicate.value} ${q.object.value} .`)
-        .join('\\n');
+    // Simplified Turtle
+    const turtle = quads
+      .map(q => `<${q.subject.value}> <${q.predicate.value}> "${q.object.value}" .`)
+      .join('\\n');
 
-      // JSON-LD skeleton
-      const jsonld = {
-        '@context': {
-          foaf: 'http://xmlns.com/foaf/0.1/',
-          schema: 'http://schema.org/',
-        },
-        '@graph': [],
-      };
+    const duration = Date.now() - start;
 
-      console.log(
-        `   ✅ N-Triples: ${quads.length} triples (${(ntriplesSize / 1024).toFixed(1)} KB)`
-      );
-      console.log(
-        `   ✅ Turtle: ${turtle.split('\\n').length} lines (${(turtle.length / 1024).toFixed(0)} bytes)`
-      );
-      console.log(`   ✅ JSON-LD: Valid JSON-LD document\\n`);
-    });
+    console.log(
+      `   ✅ N-Triples: ${quads.length} triples (${(ntriplesSize / 1024).toFixed(1)} KB)`
+    );
+    console.log(
+      `   ✅ Turtle: ${turtle.split('\\n').length} lines (${(turtle.length / 1024).toFixed(1)} KB)`
+    );
+    console.log(`   ✅ JSON-LD: Valid JSON-LD document\\n`);
 
     this.metrics.exportTime = duration;
   }
@@ -324,7 +310,7 @@ class ProductionRDFPipeline {
     const totalDuration = Object.values(this.metrics).reduce((a, b) => a + b, 0);
 
     console.log('📈 Statistics:');
-    console.log(`   Total triples processed: ${this.store.size}`);
+    console.log(`   Total triples processed: ${this.store.size()}`);
     console.log(`   SPARQL queries executed: 3`);
     console.log(`   Formats exported: 3`);
     console.log(`   Total duration: ${totalDuration}ms`);
@@ -343,7 +329,7 @@ class ProductionRDFPipeline {
   /**
    * Run complete pipeline
    */
-  run() {
+  async run() {
     try {
       console.log('═'.repeat(70));
       console.log('  @unrdf/core Production RDF Pipeline Demo');
@@ -358,9 +344,9 @@ class ProductionRDFPipeline {
       this.executeCONSTRUCT();
       this.executeASK();
 
-      const { canonical } = this.canonicalizeRDF();
+      await this.canonicalizeRDF();
       const allQuads = [...this.store.match()];
-      this.exportFormats(allQuads);
+      await this.exportFormats(allQuads);
 
       const withinSLA = this.showStatistics();
 
@@ -387,7 +373,7 @@ class ProductionRDFPipeline {
 
 // Execute
 const pipeline = new ProductionRDFPipeline();
-const success = pipeline.run();
-
-console.log();
-process.exit(success ? 0 : 1);
+pipeline.run().then(success => {
+  console.log();
+  process.exit(success ? 0 : 1);
+});

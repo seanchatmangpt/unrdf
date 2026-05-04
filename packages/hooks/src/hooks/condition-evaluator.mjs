@@ -403,6 +403,8 @@ export async function evaluateCondition(condition, graph, options = {}) {
         return await evaluateWindow(condition, graph, resolver, env, options);
       case 'n3':
         return await evaluateN3(condition, graph, resolver, env);
+      case 'semantic-inference':
+        return await evaluateSemanticInference(condition, graph, resolver, env);
       default:
         throw new Error(`Unsupported condition kind: ${condition.kind}`);
     }

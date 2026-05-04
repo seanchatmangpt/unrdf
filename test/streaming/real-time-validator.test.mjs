@@ -91,7 +91,7 @@ describe('RealTimeValidator', () => {
       expect(result.violations).toHaveLength(0);
     });
 
-    it.skip('should detect violations in delta', async () => {
+    it('should detect violations in delta', async () => {
       // SKIP REASON: Test not in vitest.config.mjs include list (orphaned test)
       // Test file not part of core test suite - only test/streaming/streaming.test.mjs is included
       // RESOLUTION: Move to packages/streaming/test/ or add to vitest config if needed
@@ -354,7 +354,7 @@ describe('RealTimeValidator', () => {
   });
 
   describe('Events', () => {
-    it.skip('should emit violation event', async () => {
+    it('should emit violation event', async () => {
       // SKIP REASON: Test not in vitest.config.mjs include list (orphaned test)
       // RESOLUTION: Move to packages/streaming/test/ or add to vitest config if needed
       const eventPromise = new Promise(resolve => {

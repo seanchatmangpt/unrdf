@@ -2,7 +2,7 @@
 
 ## Overview
 
-UNRDF v26.4.7+ implements **autonomous knowledge graph self-improvement** through four integrated components:
+UNRDF v26.4.23+ implements **autonomous knowledge graph self-improvement** through four integrated components:
 
 1. **AutonomousKnowledgeAgent** - Reasoning agent with persistent knowledge graph
 2. **AutonomousRefinementEngine** - LLM-driven graph refinement with full UNRDF ecosystem integration
@@ -914,6 +914,6 @@ const results = await executeHooksParallel(hooks, store, delta, {}, {
 
 ---
 
-**Version**: 26.4.7
+**Version**: 26.4.23
 **Last Updated**: 2026-04-07
 **Status**: Production Ready ✅

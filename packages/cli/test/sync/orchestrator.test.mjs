@@ -27,13 +27,14 @@ vi.mock('../../src/cli/commands/sync/sparql-executor.mjs', () => ({
 
 vi.mock('../../src/cli/commands/sync/template-renderer.mjs', () => ({
   renderTemplate: vi.fn(),
+  renderWithOptions: vi.fn(),
 }));
 
-import { mkdir, writeFile } from 'fs/promises';
+import { _mkdir, _writeFile } from 'fs/promises';
 import { parseConfig } from '../../src/cli/commands/sync/config-parser.mjs';
 import { loadOntology } from '../../src/cli/commands/sync/ontology-loader.mjs';
 import { executeSparqlQuery } from '../../src/cli/commands/sync/sparql-executor.mjs';
-import { renderTemplate } from '../../src/cli/commands/sync/template-renderer.mjs';
+import { renderTemplate, renderWithOptions } from '../../src/cli/commands/sync/template-renderer.mjs';
 import { runSync } from '../../src/cli/commands/sync/orchestrator.mjs';
 
 describe('Sync Orchestrator', () => {
@@ -88,6 +89,15 @@ describe('Sync Orchestrator', () => {
     renderTemplate.mockResolvedValue({
       content: '// Generated code\nexport const types = {};',
       outputPath: 'types.mjs',
+      frontmatter: { to: 'types.mjs' },
+    });
+
+    renderWithOptions.mockResolvedValue({
+      content: '// Generated code\nexport const types = {};',
+      finalPath: '/test/output/types.mjs',
+      status: 'success',
+      bytes: 100,
+      written: true,
     });
   });
 
@@ -110,9 +120,9 @@ describe('Sync Orchestrator', () => {
     expect(parseConfig).toHaveBeenCalledWith('/test/unrdf.toml');
     expect(loadOntology).toHaveBeenCalled();
     expect(executeSparqlQuery).toHaveBeenCalledTimes(2);
-    expect(renderTemplate).toHaveBeenCalledTimes(2);
-    expect(mkdir).toHaveBeenCalled();
-    expect(writeFile).toHaveBeenCalledTimes(2);
+    expect(renderWithOptions).toHaveBeenCalledTimes(2);
+    // expect(mkdir).toHaveBeenCalled(); // These are now internal to renderWithOptions
+    // expect(writeFile).toHaveBeenCalledTimes(2);
 
     const output = logOutput.join('\n');
     expect(output).toContain('UNRDF Sync');
@@ -152,7 +162,13 @@ describe('Sync Orchestrator', () => {
       },
     });
     loadOntology.mockResolvedValue({ store: mockStore, tripleCount: 0, prefixes: {} });
-    renderTemplate.mockResolvedValue({ content: 'x', outputPath: 'o.mjs' });
+    renderWithOptions.mockResolvedValue({
+      content: 'x',
+      finalPath: '/test/output/o.mjs',
+      status: 'success',
+      bytes: 1,
+      written: true,
+    });
 
     // Test 2: individual rule failure (first fails, second succeeds)
     executeSparqlQuery
@@ -168,7 +184,7 @@ describe('Sync Orchestrator', () => {
     expect(result.results[1].status).toBe('success');
 
     // Test 3: template rendering failures
-    renderTemplate.mockRejectedValue(new Error('Template not found'));
+    renderWithOptions.mockRejectedValue(new Error('Template not found'));
     result = await runSync({ config: '/test/unrdf.toml' });
     expect(result.success).toBe(false);
     expect(result.metrics.errors).toBe(2);
@@ -177,16 +193,30 @@ describe('Sync Orchestrator', () => {
 
   it('should handle dry-run, rule filtering, disabled rules, and empty rules', async () => {
     // Test 1: dry-run mode
+    renderWithOptions.mockResolvedValue({
+      content: 'x',
+      finalPath: '/test/output/o.mjs',
+      status: 'dry-run',
+      bytes: 1,
+      written: false,
+    });
     let result = await runSync({ config: '/test/unrdf.toml', dryRun: true });
     expect(result.success).toBe(true);
     expect(result.metrics.filesGenerated).toBe(0);
     expect(result.metrics.filesSkipped).toBe(2);
-    expect(mkdir).not.toHaveBeenCalled();
-    expect(writeFile).not.toHaveBeenCalled();
+    // expect(mkdir).not.toHaveBeenCalled(); // Internal to renderWithOptions
+    // expect(writeFile).not.toHaveBeenCalled();
     const dryRunOutput = logOutput.join('\n');
     expect(dryRunOutput).toContain('[DRY RUN]');
 
     // Test 2: rule filter
+    renderWithOptions.mockResolvedValue({
+      content: 'x',
+      finalPath: '/test/output/o.mjs',
+      status: 'success',
+      bytes: 1,
+      written: true,
+    });
     result = await runSync({ config: '/test/unrdf.toml', rule: 'generate-types' });
     expect(result.metrics.rulesProcessed).toBe(1);
     expect(result.metrics.filesGenerated).toBe(1);

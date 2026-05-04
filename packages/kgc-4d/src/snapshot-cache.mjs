@@ -450,10 +450,12 @@ export async function reconstructStateWithCache(store, snapshotManager, targetTi
   const TempStore = store.constructor;
   const tempStore = new TempStore();
 
-  await tempStore.load(snapshotNQuads, {
-    format: 'application/n-quads',
-    graph: 'http://kgc.io/Universe',
-  });
+  if (snapshotNQuads && snapshotNQuads.trim().length > 0) {
+    await tempStore.load(snapshotNQuads, {
+      format: 'application/n-quads',
+      graph: 'http://kgc.io/Universe',
+    });
+  }
 
   // Replay events between snapshot and target
   await replayEvents(store, tempStore, bestSnapshot.t_ns, targetTime, dataFactory);

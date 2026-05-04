@@ -1,0 +1,145 @@
+<http://unrdf.dev/cli/command/sync> a <http://unrdf.dev/cli#Command> ;
+  <http://unrdf.dev/cli#name> "sync" ;
+  <http://unrdf.dev/cli#description> "Generate synchronized code artifacts from RDF ontology" ;
+  <http://unrdf.dev/cli#longDescription> """The sync command is the core code generation feature of UNRDF. It loads an RDF ontology, executes SPARQL queries defined in configuration rules, and renders templates to generate code artifacts.
+
+Key features:
+- Automatic format detection for RDF files
+- Template-based code generation with Nunjucks
+- Multi-source ontology merging
+- Watch mode for continuous generation
+- Dry-run mode for previewing changes
+- Backup before overwrite for safety""" ;
+  <http://unrdf.dev/cli#category> "Code Generation" ;
+  <http://unrdf.dev/cli#hasArgument> <http://unrdf.dev/cli/arg/sync-config>, <http://unrdf.dev/cli/arg/sync-dry-run>, <http://unrdf.dev/cli/arg/sync-verbose>, <http://unrdf.dev/cli/arg/sync-force>, <http://unrdf.dev/cli/arg/sync-rule>, <http://unrdf.dev/cli/arg/sync-watch>, <http://unrdf.dev/cli/arg/sync-output> ;
+  <http://unrdf.dev/cli#hasExample> <http://unrdf.dev/cli/example/sync-basic>, <http://unrdf.dev/cli/example/sync-watch>, <http://unrdf.dev/cli/example/sync-dry-run>, <http://unrdf.dev/cli/example/sync-rule> .
+
+<http://unrdf.dev/cli/command/validate> a <http://unrdf.dev/cli#Command> ;
+  <http://unrdf.dev/cli#name> "validate" ;
+  <http://unrdf.dev/cli#description> "Validate RDF files and extract summary statistics" ;
+  <http://unrdf.dev/cli#longDescription> """The validate command checks RDF files for syntax errors and provides summary statistics about the ontology contents.
+
+Features:
+- Line-by-line N-Triples validation with specific error messages
+- Fast triple counting (line-based, not full parse)
+- Summary extraction: classes, properties, shapes, concepts, policies
+- Namespace listing
+- JSON output mode for CI/CD integration""" ;
+  <http://unrdf.dev/cli#category> "Validation" ;
+  <http://unrdf.dev/cli#hasArgument> <http://unrdf.dev/cli/arg/validate-file>, <http://unrdf.dev/cli/arg/validate-format>, <http://unrdf.dev/cli/arg/validate-summary>, <http://unrdf.dev/cli/arg/validate-json> ;
+  <http://unrdf.dev/cli#hasExample> <http://unrdf.dev/cli/example/validate-basic>, <http://unrdf.dev/cli/example/validate-summary>, <http://unrdf.dev/cli/example/validate-json> .
+
+<http://unrdf.dev/cli/command/convert> a <http://unrdf.dev/cli#Command> ;
+  <http://unrdf.dev/cli#name> "convert" ;
+  <http://unrdf.dev/cli#description> "Convert RDF files between different formats" ;
+  <http://unrdf.dev/cli#longDescription> "Convert RDF files between supported formats: Turtle, N-Triples, N-Quads, TriG, RDF/XML, JSON-LD." ;
+  <http://unrdf.dev/cli#category> "RDF Operations" ;
+  <http://unrdf.dev/cli#hasExample> <http://unrdf.dev/cli/example/convert-turtle-to-nt> .
+
+<http://unrdf.dev/cli/command/query> a <http://unrdf.dev/cli#Command> ;
+  <http://unrdf.dev/cli#name> "query" ;
+  <http://unrdf.dev/cli#description> "Execute SPARQL queries against RDF graphs" ;
+  <http://unrdf.dev/cli#longDescription> "Execute SPARQL SELECT, ASK, CONSTRUCT, and DESCRIBE queries against RDF files or stores." ;
+  <http://unrdf.dev/cli#category> "RDF Operations" .
+
+<http://unrdf.dev/cli/command/template> a <http://unrdf.dev/cli#Command> ;
+  <http://unrdf.dev/cli#name> "template" ;
+  <http://unrdf.dev/cli#description> "Render Nunjucks templates with context data" ;
+  <http://unrdf.dev/cli#category> "Code Generation" .
+
+<http://unrdf.dev/cli/arg/sync-config> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "config" ;
+  <http://unrdf.dev/cli#argType> "string" ;
+  <http://unrdf.dev/cli#argDescription> "Path to unrdf.toml configuration file" ;
+  <http://unrdf.dev/cli#hasDefault> "unrdf.toml" .
+
+<http://unrdf.dev/cli/arg/sync-dry-run> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "dry-run" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Preview changes without writing files" ;
+  <http://unrdf.dev/cli#hasDefault> "false" .
+
+<http://unrdf.dev/cli/arg/sync-verbose> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "verbose" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Enable verbose output" ;
+  <http://unrdf.dev/cli#alias> "v" .
+
+<http://unrdf.dev/cli/arg/sync-force> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "force" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Overwrite existing files without prompting" ;
+  <http://unrdf.dev/cli#alias> "f" .
+
+<http://unrdf.dev/cli/arg/sync-rule> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "rule" ;
+  <http://unrdf.dev/cli#argType> "string" ;
+  <http://unrdf.dev/cli#argDescription> "Run only the specified rule by name" .
+
+<http://unrdf.dev/cli/arg/sync-watch> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "watch" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Watch ontology and template files for changes" ;
+  <http://unrdf.dev/cli#alias> "w" .
+
+<http://unrdf.dev/cli/arg/sync-output> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "output" ;
+  <http://unrdf.dev/cli#argType> "string" ;
+  <http://unrdf.dev/cli#argDescription> "Output format: text or json" ;
+  <http://unrdf.dev/cli#hasDefault> "text" .
+
+<http://unrdf.dev/cli/arg/validate-file> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "file" ;
+  <http://unrdf.dev/cli#argType> "string" ;
+  <http://unrdf.dev/cli#argDescription> "RDF file to validate" ;
+  <http://unrdf.dev/cli#isRequired> "true" .
+
+<http://unrdf.dev/cli/arg/validate-format> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "format" ;
+  <http://unrdf.dev/cli#argType> "string" ;
+  <http://unrdf.dev/cli#argDescription> "RDF format (ntriples, turtle, rdfxml, jsonld)" ;
+  <http://unrdf.dev/cli#hasDefault> "ntriples" .
+
+<http://unrdf.dev/cli/arg/validate-summary> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "summary" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Extract and display summary statistics" ;
+  <http://unrdf.dev/cli#hasDefault> "false" .
+
+<http://unrdf.dev/cli/arg/validate-json> a <http://unrdf.dev/cli#Argument> ;
+  <http://unrdf.dev/cli#argName> "json" ;
+  <http://unrdf.dev/cli#argType> "boolean" ;
+  <http://unrdf.dev/cli#argDescription> "Output results as JSON" ;
+  <http://unrdf.dev/cli#hasDefault> "false" .
+
+<http://unrdf.dev/cli/example/sync-basic> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf sync" ;
+  <http://unrdf.dev/cli#exampleDescription> "Run all generation rules from unrdf.toml" .
+
+<http://unrdf.dev/cli/example/sync-watch> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf sync --watch" ;
+  <http://unrdf.dev/cli#exampleDescription> "Watch for changes and regenerate automatically" .
+
+<http://unrdf.dev/cli/example/sync-dry-run> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf sync --dry-run" ;
+  <http://unrdf.dev/cli#exampleDescription> "Preview what would be generated without writing files" .
+
+<http://unrdf.dev/cli/example/sync-rule> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf sync --rule generate-types" ;
+  <http://unrdf.dev/cli#exampleDescription> "Run only the specified rule" .
+
+<http://unrdf.dev/cli/example/validate-basic> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf validate ontology.nt" ;
+  <http://unrdf.dev/cli#exampleDescription> "Validate an N-Triples file" .
+
+<http://unrdf.dev/cli/example/validate-summary> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf validate ontology.nt --summary" ;
+  <http://unrdf.dev/cli#exampleDescription> "Validate and show summary statistics" .
+
+<http://unrdf.dev/cli/example/validate-json> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf validate ontology.nt --json" ;
+  <http://unrdf.dev/cli#exampleDescription> "Output validation results as JSON" .
+
+<http://unrdf.dev/cli/example/convert-turtle-to-nt> a <http://unrdf.dev/cli#Example> ;
+  <http://unrdf.dev/cli#exampleCommand> "unrdf convert schema.ttl schema.nt" ;
+  <http://unrdf.dev/cli#exampleDescription> "Convert Turtle to N-Triples" .

@@ -109,6 +109,11 @@ export const TemporalResultMetadataSchema = z.object({
   targetTime: z.string().optional(),
   targetTimeISO: z.string().optional(),
   reconstructionTime_ms: z.number().nonnegative().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+  sampleCount: z.number().optional(),
+  totalAdditions: z.number().optional(),
+  totalDeletions: z.number().optional(),
 });
 
 /**

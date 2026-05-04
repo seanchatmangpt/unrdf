@@ -1,0 +1,475 @@
+{
+  "metadata": {
+    "timestamp": "2026-04-14T20:20:15.044Z",
+    "nodeVersion": "v25.7.0",
+    "platform": "darwin arm64",
+    "scales": [
+      1,
+      5,
+      10
+    ],
+    "tripleSizes": [
+      100,
+      1000,
+      5000
+    ],
+    "iterations": 2,
+    "totalDuration": 550.0984169999999
+  },
+  "benchmarks": {
+    "ontologyLoading": [
+      {
+        "tripleCount": 100,
+        "iterations": 2,
+        "timing": {
+          "mean": 4.949687499999996,
+          "median": 8.875291000000004,
+          "min": 1.0240839999999878,
+          "max": 8.875291000000004,
+          "stddev": 3.9256035000000082,
+          "p95": 8.875291000000004
+        },
+        "memory": {
+          "rssDelta": 97.84375
+        }
+      },
+      {
+        "tripleCount": 1000,
+        "iterations": 2,
+        "timing": {
+          "mean": 7.176603999999983,
+          "median": 9.176333,
+          "min": 5.176874999999967,
+          "max": 9.176333,
+          "stddev": 1.9997290000000163,
+          "p95": 9.176333
+        },
+        "memory": {
+          "rssDelta": 113.765625
+        }
+      },
+      {
+        "tripleCount": 5000,
+        "iterations": 2,
+        "timing": {
+          "mean": 16.01497949999998,
+          "median": 16.272374999999954,
+          "min": 15.757584000000008,
+          "max": 16.272374999999954,
+          "stddev": 0.2573954999999728,
+          "p95": 16.272374999999954
+        },
+        "memory": {
+          "rssDelta": 134.890625
+        }
+      }
+    ],
+    "sparqlQueries": [
+      {
+        "ruleCount": 1,
+        "tripleCount": 10000,
+        "queries": 1,
+        "timing": {
+          "mean": 10.219083000000012,
+          "median": 10.219083000000012,
+          "min": 10.219083000000012,
+          "max": 10.219083000000012,
+          "stddev": 0,
+          "p95": 10.219083000000012
+        },
+        "resultCounts": {
+          "mean": 2,
+          "median": 2,
+          "min": 2,
+          "max": 2,
+          "stddev": 0,
+          "p95": 2
+        }
+      },
+      {
+        "ruleCount": 5,
+        "tripleCount": 10000,
+        "queries": 5,
+        "timing": {
+          "mean": 2.3808333999999944,
+          "median": 1.2716249999999718,
+          "min": 0.18791599999997288,
+          "max": 5.363583999999946,
+          "stddev": 2.241365363421285,
+          "p95": 5.363583999999946
+        },
+        "resultCounts": {
+          "mean": 5.4,
+          "median": 2,
+          "min": 1,
+          "max": 20,
+          "stddev": 7.310266752998826,
+          "p95": 20
+        }
+      },
+      {
+        "ruleCount": 10,
+        "tripleCount": 10000,
+        "queries": 10,
+        "timing": {
+          "mean": 0.4266042999999911,
+          "median": 0.12041599999997743,
+          "min": 0.06266699999997627,
+          "max": 2.0162090000000035,
+          "stddev": 0.6640698309547127,
+          "p95": 2.0162090000000035
+        },
+        "resultCounts": {
+          "mean": 5.4,
+          "median": 2,
+          "min": 0,
+          "max": 20,
+          "stddev": 7.337574531137657,
+          "p95": 20
+        }
+      }
+    ],
+    "templateRendering": [
+      {
+        "complexity": "simple",
+        "resultCount": 0,
+        "iterations": 2,
+        "timing": {
+          "mean": 2.960125000000005,
+          "median": 5.352374999999995,
+          "min": 0.567875000000015,
+          "max": 5.352374999999995,
+          "stddev": 2.39224999999999,
+          "p95": 5.352374999999995
+        }
+      },
+      {
+        "complexity": "simple",
+        "resultCount": 10,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.3776670000000024,
+          "median": 0.4077919999999722,
+          "min": 0.34754200000003266,
+          "max": 0.4077919999999722,
+          "stddev": 0.03012499999996976,
+          "p95": 0.4077919999999722
+        }
+      },
+      {
+        "complexity": "simple",
+        "resultCount": 50,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.32314600000000837,
+          "median": 0.3366250000000264,
+          "min": 0.30966699999999037,
+          "max": 0.3366250000000264,
+          "stddev": 0.013479000000018004,
+          "p95": 0.3366250000000264
+        }
+      },
+      {
+        "complexity": "simple",
+        "resultCount": 100,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.2670630000000074,
+          "median": 0.2830420000000231,
+          "min": 0.25108399999999165,
+          "max": 0.2830420000000231,
+          "stddev": 0.01597900000001573,
+          "p95": 0.2830420000000231
+        }
+      },
+      {
+        "complexity": "medium",
+        "resultCount": 0,
+        "iterations": 2,
+        "timing": {
+          "mean": 1.0120209999999759,
+          "median": 1.4429169999999658,
+          "min": 0.5811249999999859,
+          "max": 1.4429169999999658,
+          "stddev": 0.43089599999998995,
+          "p95": 1.4429169999999658
+        }
+      },
+      {
+        "complexity": "medium",
+        "resultCount": 10,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.5029579999999783,
+          "median": 0.5175830000000019,
+          "min": 0.4883329999999546,
+          "max": 0.5175830000000019,
+          "stddev": 0.014625000000023647,
+          "p95": 0.5175830000000019
+        }
+      },
+      {
+        "complexity": "medium",
+        "resultCount": 50,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.43085449999998104,
+          "median": 0.4424589999999853,
+          "min": 0.4192499999999768,
+          "max": 0.4424589999999853,
+          "stddev": 0.011604500000004236,
+          "p95": 0.4424589999999853
+        }
+      },
+      {
+        "complexity": "medium",
+        "resultCount": 100,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.3833750000000009,
+          "median": 0.4206249999999727,
+          "min": 0.3461250000000291,
+          "max": 0.4206249999999727,
+          "stddev": 0.037249999999971806,
+          "p95": 0.4206249999999727
+        }
+      },
+      {
+        "complexity": "complex",
+        "resultCount": 0,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.6048954999999978,
+          "median": 0.8126250000000255,
+          "min": 0.39716599999997015,
+          "max": 0.8126250000000255,
+          "stddev": 0.20772950000002766,
+          "p95": 0.8126250000000255
+        }
+      },
+      {
+        "complexity": "complex",
+        "resultCount": 10,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.411104000000023,
+          "median": 0.4410000000000309,
+          "min": 0.3812080000000151,
+          "max": 0.4410000000000309,
+          "stddev": 0.029896000000007916,
+          "p95": 0.4410000000000309
+        }
+      },
+      {
+        "complexity": "complex",
+        "resultCount": 50,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.3723960000000375,
+          "median": 0.38383400000003576,
+          "min": 0.3609580000000392,
+          "max": 0.38383400000003576,
+          "stddev": 0.011437999999998283,
+          "p95": 0.38383400000003576
+        }
+      },
+      {
+        "complexity": "complex",
+        "resultCount": 100,
+        "iterations": 2,
+        "timing": {
+          "mean": 0.4224999999999852,
+          "median": 0.4521249999999668,
+          "min": 0.39287500000000364,
+          "max": 0.4521249999999668,
+          "stddev": 0.029624999999981583,
+          "p95": 0.4521249999999668
+        }
+      }
+    ],
+    "fullPipeline": [
+      {
+        "ruleCount": 1,
+        "tripleCount": 10000,
+        "iterations": 2,
+        "timing": {
+          "mean": 37.14102100000002,
+          "median": 41.74433300000004,
+          "min": 32.53770900000001,
+          "max": 41.74433300000004,
+          "stddev": 4.603312000000017,
+          "p95": 41.74433300000004
+        },
+        "filesGenerated": {
+          "mean": 1,
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "stddev": 0,
+          "p95": 1
+        },
+        "totalBytes": {
+          "mean": 39,
+          "median": 39,
+          "min": 39,
+          "max": 39,
+          "stddev": 0,
+          "p95": 39
+        },
+        "memory": {
+          "rss": 183.65625,
+          "heapUsed": 40.63933563232422,
+          "heapTotal": 55.65625,
+          "external": 40.78549003601074
+        },
+        "throughput": {
+          "rulesPerSecond": 26.92440792082693,
+          "bytesPerSecond": 1050.0519089122504
+        }
+      },
+      {
+        "ruleCount": 5,
+        "tripleCount": 10000,
+        "iterations": 2,
+        "timing": {
+          "mean": 59.97831249999999,
+          "median": 82.230208,
+          "min": 37.72641699999997,
+          "max": 82.230208,
+          "stddev": 22.251895500000018,
+          "p95": 82.230208
+        },
+        "filesGenerated": {
+          "mean": 5,
+          "median": 5,
+          "min": 5,
+          "max": 5,
+          "stddev": 0,
+          "p95": 5
+        },
+        "totalBytes": {
+          "mean": 520,
+          "median": 520,
+          "min": 520,
+          "max": 520,
+          "stddev": 0,
+          "p95": 520
+        },
+        "memory": {
+          "rss": 205.109375,
+          "heapUsed": 29.676361083984375,
+          "heapTotal": 57.1875,
+          "external": 56.43203544616699
+        },
+        "throughput": {
+          "rulesPerSecond": 83.36346575272522,
+          "bytesPerSecond": 8669.800438283424
+        }
+      },
+      {
+        "ruleCount": 10,
+        "tripleCount": 10000,
+        "iterations": 2,
+        "timing": {
+          "mean": 37.729562000000044,
+          "median": 38.90220800000009,
+          "min": 36.556916,
+          "max": 38.90220800000009,
+          "stddev": 1.172646000000043,
+          "p95": 38.90220800000009
+        },
+        "filesGenerated": {
+          "mean": 10,
+          "median": 10,
+          "min": 10,
+          "max": 10,
+          "stddev": 0,
+          "p95": 10
+        },
+        "totalBytes": {
+          "mean": 1201,
+          "median": 1201,
+          "min": 1201,
+          "max": 1201,
+          "stddev": 0,
+          "p95": 1201
+        },
+        "memory": {
+          "rss": 209.34375,
+          "heapUsed": 44.35700988769531,
+          "heapTotal": 62.46875,
+          "external": 57.49135780334473
+        },
+        "throughput": {
+          "rulesPerSecond": 265.0441582120669,
+          "bytesPerSecond": 31831.80340126924
+        }
+      }
+    ],
+    "memoryScaling": [
+      {
+        "ruleCount": 1,
+        "tripleCount": 10000,
+        "memoryBefore": {
+          "rss": 211.4375,
+          "heapUsed": 49.37928771972656,
+          "heapTotal": 64.46875,
+          "external": 58.48722839355469
+        },
+        "memoryAfter": {
+          "rss": 216.9375,
+          "heapUsed": 56.86670684814453,
+          "heapTotal": 70,
+          "external": 58.99055767059326
+        },
+        "delta": {
+          "rss": 5.5,
+          "heapUsed": 7.487419128417969,
+          "heapTotal": 5.53125
+        }
+      },
+      {
+        "ruleCount": 5,
+        "tripleCount": 10000,
+        "memoryBefore": {
+          "rss": 216.9375,
+          "heapUsed": 56.90931701660156,
+          "heapTotal": 70,
+          "external": 58.99114799499512
+        },
+        "memoryAfter": {
+          "rss": 212.671875,
+          "heapUsed": 45.26753234863281,
+          "heapTotal": 65.21875,
+          "external": 56.9551944732666
+        },
+        "delta": {
+          "rss": -4.265625,
+          "heapUsed": -11.64178466796875,
+          "heapTotal": -4.78125
+        }
+      },
+      {
+        "ruleCount": 10,
+        "tripleCount": 10000,
+        "memoryBefore": {
+          "rss": 212.671875,
+          "heapUsed": 45.32307434082031,
+          "heapTotal": 65.21875,
+          "external": 56.96363353729248
+        },
+        "memoryAfter": {
+          "rss": 220.390625,
+          "heapUsed": 56.57115173339844,
+          "heapTotal": 72.75,
+          "external": 57.48298263549805
+        },
+        "delta": {
+          "rss": 7.71875,
+          "heapUsed": 11.248077392578125,
+          "heapTotal": 7.53125
+        }
+      }
+    ]
+  }
+}

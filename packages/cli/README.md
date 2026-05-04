@@ -2,7 +2,7 @@
 
 RDF ontology to code generation. Transform your RDF knowledge graphs into typed code artifacts—Zod schemas, OpenAPI specs, JSDoc types, GraphQL schemas—using SPARQL queries and Nunjucks templates.
 
-**Version**: 26.4.9 | **Node.js**: >=18.0.0
+**Version**: 26.4.23 | **Node.js**: >=18.0.0
 
 ## Installation
 
@@ -14,301 +14,95 @@ pnpm add -g @unrdf/cli
 
 # Using npm
 npm install -g @unrdf/cli
-
-# Using yarn
-yarn global add @unrdf/cli
 ```
 
 Verify installation:
 
 ```bash
 unrdf --version
-# Output: 26.4.9
+# Output: 26.4.23
 ```
 
-### Project-Local Install
-
-```bash
-# Install as dev dependency
-pnpm add -D @unrdf/cli
-
-# Run via pnpm exec
-pnpm exec unrdf sync
-
-# Or add script to package.json
-# "scripts": { "sync": "unrdf sync" }
-```
-
-### Use Without Installing (npx)
-
-```bash
-npx @unrdf/cli sync
-```
-
-**Note**: npx downloads the package each time. For frequent use, global install is faster.
-
-## Quick Start
-
-```bash
-# Install
-pnpm add -g @unrdf/cli
-
-# Create configuration
-cat > unrdf.toml << 'EOF'
-[project]
-name = "my-api"
-version = "1.0.0"
-
-[ontology]
-source = "ontology/schema.ttl"
-format = "turtle"
-
-[generation]
-output_dir = "lib"
-
-[[generation.rules]]
-name = "zod-schemas"
-template = "templates/entities.njk"
-output_file = "schemas/entities.mjs"
-query = """
-SELECT ?entityName ?propertyName ?propertyType
-WHERE {
-  ?entity a rdfs:Class ; rdfs:label ?entityName .
-  ?property rdfs:domain ?entity ; rdfs:label ?propertyName ; rdfs:range ?propertyType .
-}
-ORDER BY ?entityName ?propertyName
-"""
-EOF
-
-# Create template
-mkdir -p templates
-cat > templates/entities.njk << 'EOF'
 ---
-to: {{ output_dir }}/schemas/entities.mjs
----
-import { z } from 'zod';
 
-{% for entityName, props in sparql_results | groupBy("?entityName") %}
-export const {{ entityName | camelCase }}Schema = z.object({
-{% for row in props %}
-  {{ row["?propertyName"] | camelCase }}: {{ row["?propertyType"] | zodType }},
-{% endfor %}
-});
-{% endfor %}
-EOF
+## Quick Start (5 Minutes)
 
-# Generate code
-unrdf sync
-```
-
-## unrdf sync
-
-Ontology-driven code generation. Reads RDF ontologies, executes SPARQL queries, and renders results through Nunjucks templates to generate typed code artifacts.
-
-### Configuration (unrdf.toml)
-
-```toml
-[project]
-name = "my-api"
-version = "1.0.0"
-
-[ontology]
-source = "ontology/schema.ttl"     # RDF file path
-format = "turtle"                   # RDF format (auto-detected)
-base_iri = "http://example.org/"    # Base IRI for relative URIs
-
-[generation]
-output_dir = "lib"                  # Output directory
-parallel = false                    # Run rules in parallel
-
-[[generation.rules]]
-name = "zod-schemas"                # Rule identifier
-template = "templates/zod.njk"      # Nunjucks template
-output_file = "schemas.mjs"         # Output file
-mode = "overwrite"                  # overwrite | append | skip_existing
-query = """
-SELECT ?entityName ?propertyName ?propertyType
-WHERE {
-  ?entity a rdfs:Class ; rdfs:label ?entityName .
-  ?property rdfs:domain ?entity ; rdfs:range ?propertyType .
-}
-"""
-```
-
-### Template Features
-
-**Filters:**
-
-- Case conversion: `camelCase`, `pascalCase`, `snakeCase`, `kebabCase`
-- RDF utilities: `localName`, `namespace`
-- Type mapping: `zodType`, `jsdocType`, `zodDefault`
-- Data manipulation: `groupBy`, `sortBy`, `distinctValues`, `requiredArgs`
-
-**Hygen Directives** (line-based modification):
-
-```yaml
----
-to: src/index.ts
-inject: true
-after: '^// Auto-generated exports$'
----
-```
-
-Available directives: `inject`, `before`, `after`, `append`, `prepend`, `lineAt`, `skipIf`
-
-### CLI Usage
-
+1. **Initialize Project**
 ```bash
-# Generate code from config
-unrdf sync
-
-# Preview without writing
-unrdf sync --dry-run
-
-# Run specific rule
-unrdf sync --rule zod-schemas
-
-# Verbose output
-unrdf sync --verbose
-
-# Watch mode (regenerate on ontology changes)
-unrdf sync --watch
+unrdf sync init
 ```
 
-### Documentation
-
-- **Complete guide**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-command.md
-- **Hygen integration**: Line-based file modification, anchor patterns, conditional skips
-- **Template reference**: All filters, context variables, SPARQL results structure
-- **Examples**: https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync
-
-## Other Commands
-
-### MCP Server (AI Agent Integration)
-
+2. **Run Generation**
 ```bash
-unrdf mcp start              # Start MCP server (stdio/SSE)
-unrdf mcp status             # Check server status
-unrdf mcp inspect            # List tools/resources
-unrdf mcp stop               # Stop server
-unrdf mcp self-play          # Autonomous tool chaining
+unrdf sync --config unrdf.toml
+```
+
+For a detailed walkthrough, see [Getting Started Guide](docs/GETTING_STARTED.md).
+
+---
+
+## Key Features
+
+### 🚀 RDF-Driven Generation
+Query your ontology with SPARQL and use the results directly in Nunjucks templates. Access URI local names, namespaces, and datatypes automatically.
+
+### 🧩 Hygen Parity
+Full support for Hygen-style frontmatter directives for surgical file modifications:
+- **`inject`**: Enable line-based modification.
+- **`before` / `after`**: Inject content relative to string or regex anchors.
+- **`at_line`**: Insert at specific line numbers.
+- **`skip_if`**: Prevent duplication with regex-based existence checks.
+- **`chmod`**: Set file permissions (e.g., `755` for scripts).
+- **`sh`**: Run post-generation shell commands.
+
+### 🔄 Smart Injection
+Automatic detection of per-row vs. summary rendering. Use `inject: true` to automatically iterate over SPARQL results and update a single file (like an `index.ts` registry).
+
+---
+
+## CLI Usage
+
+### Sync (Project-wide Generation)
+```bash
+unrdf sync                 # Run all rules in unrdf.toml
+unrdf sync --watch         # Regenerate on ontology changes
+unrdf sync --dry-run       # Preview changes without writing
+```
+
+### Template (Ad-hoc Generation)
+```bash
+unrdf template generate data.ttl --template service.njk --batch --class-uri owl:Class
+```
+
+### WASM Runtimes (AtomVM)
+```bash
+unrdf atomvm doctor        # Check for erlc and packbeam dependencies
+unrdf atomvm build <mod>   # Compile .erl to .avm bytecode
+unrdf atomvm execute <avm> # Run bytecode on WASM runtime
 ```
 
 ### Diagnostics
-
 ```bash
-unrdf doctor                  # Health check
-unrdf doctor --fix            # Auto-fix issues
-unrdf doctor --watch          # Continuous monitoring
+unrdf doctor               # Health check and auto-fix
 ```
 
-Checks: env, system, quality, integration, OTEL, Kubernetes
-
-See https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/doctor-command.md
-
-### Graph Operations
-
-```bash
-unrdf graph create --name <name>
-unrdf graph load --graph <name> --file <path>
-unrdf graph query --graph <name> --query <sparql>
-unrdf graph export --graph <name> --format <format>
-```
-
-Formats: `turtle`, `ntriples`, `nquads`, `jsonld`, `rdfxml`, `trig`
-
-### Template Generation (Ad-hoc)
-
-```bash
-unrdf template generate --template <path> [file]
-unrdf template list
-unrdf template query
-```
-
-### Context Management
-
-```bash
-unrdf context create --name <name>
-unrdf context add --name <name> --prefix <prefix> --namespace <ns>
-unrdf context list
-unrdf context delete --name <name>
-```
-
-### Hook Evaluation
-
-```bash
-unrdf hook eval --policy <path>
-unrdf hook validate --policy <path>
-```
-
-## Advanced Topics
-
-### CI/CD Integration
-
-```yaml
-# .github/workflows/ontology-sync.yml
-name: Ontology Sync
-on:
-  push:
-    paths: ['ontology/**', 'unrdf.toml']
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: pnpm add -g @unrdf/cli
-      - run: unrdf sync
-      - run: git add lib/
-      - run: git commit -m "chore: sync generated code"
-```
-
-### Environment Variables
-
-```bash
-export UNRDF_DEFAULT_GRAPH=main
-export UNRDF_DEFAULT_FORMAT=turtle
-export UNRDF_CONFIG_PATH=./unrdf.toml
-export UNRDF_FILE_LOCK_RETRY_MS=10
-export UNRDF_FILE_LOCK_MAX_RETRIES=50
-```
-
-### Automation Scripts
-
-```javascript
-// automation-script.mjs
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
-
-async function pipeline() {
-  await execAsync('unrdf sync');
-  await execAsync('unrdf doctor --format json > health.json');
-}
-
-pipeline();
-```
+---
 
 ## Documentation
 
-- **Sync Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-command.md
-- **Sync Tutorial**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/sync-tutorial.md
-- **Template Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/template-command.md
-- **Doctor Command**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/doctor-command.md
-- **Daemon CLI**: https://github.com/unrdf/unrdf/blob/main/packages/cli/docs/daemon-cli.md
-- **Quick Start**: https://github.com/unrdf/unrdf/blob/main/packages/cli/QUICKSTART-CLI.md
+- **[Getting Started](docs/GETTING_STARTED.md)**: 5-minute quickstart.
+- **[Sync Command Guide](docs/sync-command.md)**: Configuration reference for `unrdf.toml`.
+- **[Template Command Reference](docs/template-command.md)**: Full list of directives and Nunjucks filters.
+- **[Migration Guide](docs/MIGRATION.md)**: Upgrading from v5 and adopting from other engines.
+- **[API Reference](docs/API.md)**: Stable JSON schemas and configuration specifications.
+- **[Doctor Command](docs/doctor-command.md)**: Diagnostic and health checks.
+- **[Examples](examples/)**: Complete pipeline and configuration examples.
 
-## Examples
+---
 
-- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync/basic.unrdf.toml
-- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/sync/advanced.unrdf.toml
-- https://github.com/unrdf/unrdf/tree/main/packages/cli/examples/template-pipeline.mjs
+## API Stability
 
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/unrdf/unrdf/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/unrdf/unrdf/discussions)
-
-## License
-
-MIT
+UNRDF is committed to stable interfaces for automated workflows:
+*   **Versioned JSON**: All machine-readable outputs include a `version` field for compatibility tracking.
+*   **Schema Consistency**: The `unrdf.toml` schema follows Semantic Versioning; no breaking changes in minor/patch releases.
+*   **Backward Compatibility**: v6 fully supports legacy `ggen.toml` configurations.

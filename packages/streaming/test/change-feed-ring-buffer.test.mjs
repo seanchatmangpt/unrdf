@@ -101,7 +101,7 @@ describe('Change Feed Ring Buffer', () => {
       expect(listener).not.toHaveBeenCalled();
     });
 
-    it.skip('should bound memory with ring buffer (flaky in CI)', () => {
+    it('should bound memory with ring buffer (flaky in CI)', () => {
       // Skipped: Buffer objects in metadata cause Zod validation issues
       // This is a non-critical memory test that's flaky in CI environments
       function getHeapUsed() {
@@ -259,7 +259,7 @@ describe('Change Feed Ring Buffer', () => {
       expect(avgLast1000).toBeLessThan(avgFirst1000 * 2);
     });
 
-    it.skip('should bound memory with ring buffer (flaky in CI)', () => {
+    it('should bound memory with ring buffer (flaky in CI)', () => {
       // Skipped: Buffer objects in metadata cause Zod validation issues
       // This is a non-critical memory test that's flaky in CI environments
       function getHeapUsed() {

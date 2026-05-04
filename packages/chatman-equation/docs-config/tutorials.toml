@@ -1,0 +1,1371 @@
+# Chatman Equation - Tutorials Configuration
+# Learning-oriented step-by-step guides for mastering the 4D state equation
+
+[metadata]
+category = "tutorials"
+output_dir = "docs/diataxis/chatman-equation/tutorials"
+template = "tutorial.tera"
+
+# Tutorial 1: Understanding the Chatman Equation
+[[tutorial]]
+id = "01-understanding-chatman-equation"
+title = "Understanding the Chatman Equation: S(t) = ⟨O, t_ns, V, G⟩"
+duration = "15 minutes"
+difficulty = "beginner"
+prerequisites = ["Basic RDF knowledge", "Understanding of temporal data"]
+learning_outcomes = [
+    "Understand the four dimensions of observable state",
+    "Recognize why traditional CRUD fails for knowledge graphs",
+    "Grasp the paradigm shift from discrete to continuous state"
+]
+
+[tutorial.context]
+problem = "Traditional databases represent state as snapshots, losing temporal and causal information crucial for knowledge graphs."
+solution = "The Chatman Equation defines state as a 4-tuple integrating observability, time, causality, and cryptographic proof."
+
+[tutorial.equation]
+formula = "S(t) = ⟨O, t_{ns}, \\vec{V}, G⟩"
+latex = "S(t) = \\langle O, t_{ns}, \\vec{V}, G \\rangle"
+
+[[tutorial.equation.components]]
+symbol = "O"
+name = "Observable State"
+description = "The current RDF graph state - what you see when you query"
+type = "RDF Dataset (Named Graphs)"
+example = "{ <http://ex.org/alice> foaf:name \"Alice\" }"
+
+[[tutorial.equation.components]]
+symbol = "t_ns"
+name = "Nanosecond Timestamp"
+description = "When this state existed - precision temporal ordering"
+type = "BigInt (nanoseconds since epoch)"
+example = "1704067200000000000"
+
+[[tutorial.equation.components]]
+symbol = "V"
+name = "Vector Clock"
+description = "Causal relationships - what caused this state"
+type = "Map<NodeID, Counter>"
+example = "{ node1: 42, node2: 17 }"
+
+[[tutorial.equation.components]]
+symbol = "G"
+name = "Git Dimension"
+description = "Content-addressed proof - cryptographic immutability"
+type = "SHA-256 Hash"
+example = "a7f3e1c9d42b..."
+
+[[tutorial.steps]]
+number = 1
+title = "Visualize Traditional State"
+content = """
+Traditional databases store state as discrete snapshots:
+
+```
+Time:  t0        t1        t2        t3
+State: [A]  -->  [B]  -->  [C]  -->  [D]
+       Lost      Lost      Lost
+```
+
+What's missing:
+- How did we get from A to B? (Lost causality)
+- When exactly did it change? (Lost precision)
+- Can we prove this is correct? (Lost verification)
+"""
+code_example = """
+// Traditional CRUD - No temporal/causal info
+db.update('users', { name: 'Alice' });
+// State before update: LOST
+// Time of update: Approximate (second precision)
+// Causal chain: UNKNOWN
+// Verification: Trust the database
+"""
+
+[[tutorial.steps]]
+number = 2
+title = "Introduce the O Dimension: Observable State"
+content = """
+The **O** dimension captures what we observe at any moment:
+
+```
+O = {
+  <http://ex.org/alice> foaf:name "Alice" .
+  <http://ex.org/bob> foaf:knows <http://ex.org/alice> .
+}
+```
+
+This is the RDF graph state - the "current reality" of your knowledge graph.
+
+**Key Insight**: O alone is insufficient. We need temporal context.
+"""
+code_example = """
+import { createStore } from '@unrdf/kgc-4d';
+
+const store = createStore();
+
+// Observable state at current moment
+const O = await store.query(`
+  SELECT ?s ?p ?o WHERE {
+    ?s ?p ?o
+  }
+`);
+
+// But when did this state exist? How did it arise?
+// O alone cannot answer these questions.
+"""
+
+[[tutorial.steps]]
+number = 3
+title = "Add the t_ns Dimension: Nanosecond Time"
+content = """
+The **t_ns** dimension adds precise temporal ordering:
+
+```
+State at t=1704067200000000000:
+  <alice> foaf:name "Alice"
+
+State at t=1704067200500000000:
+  <alice> foaf:name "Alice Smith"
+```
+
+**Why nanosecond precision?**
+- High-frequency trading: microsecond matters
+- Distributed systems: total ordering requires precision
+- Event sourcing: replay must be exact
+
+**What t_ns enables:**
+- Time-travel queries ("What was alice's name at t=X?")
+- Audit trails (nanosecond-level provenance)
+- Deterministic replay (exact event ordering)
+"""
+code_example = """
+// Append event with nanosecond timestamp
+await store.appendEvent({
+  operation: 'insert',
+  quads: [
+    { subject: 'alice', predicate: 'foaf:name', object: '"Alice"' }
+  ],
+  timestamp: BigInt(1704067200000000000)
+});
+
+// Query state at specific nanosecond
+const stateAtT = await store.reconstructState({
+  timestamp: BigInt(1704067200000000000)
+});
+
+console.log('State at t:', stateAtT.O);
+// Deterministic: Always returns same result for same t
+"""
+
+[[tutorial.steps]]
+number = 4
+title = "Add the V Dimension: Vector Clocks"
+content = """
+The **V** dimension tracks causality across distributed nodes:
+
+```
+Node A: V = { A: 3, B: 1 }  →  "I've seen 3 of my events, 1 from B"
+Node B: V = { A: 1, B: 5 }  →  "I've seen 1 from A, 5 of my own"
+
+Event from A: V = { A: 4, B: 1 }
+Event from B: V = { A: 1, B: 6 }
+
+Can we order these?
+- A:4,B:1 happened after A:3,B:1 (A incremented)
+- A:1,B:6 happened after A:1,B:5 (B incremented)
+- A:4,B:1 vs A:1,B:6 are CONCURRENT (neither causally dominates)
+```
+
+**What V enables:**
+- Detect concurrent edits (conflict detection)
+- Merge distributed states (CRDTs, operational transforms)
+- Prove causal relationships (happens-before relation)
+"""
+code_example = """
+// Distributed system: Two nodes editing concurrently
+const nodeA = createStore({ nodeId: 'A' });
+const nodeB = createStore({ nodeId: 'B' });
+
+// Node A appends event
+await nodeA.appendEvent({
+  operation: 'insert',
+  quads: [{ subject: 'alice', predicate: 'foaf:age', object: '30' }],
+  vectorClock: { A: 4, B: 1 } // Seen 4 from A, 1 from B
+});
+
+// Node B appends event (concurrently)
+await nodeB.appendEvent({
+  operation: 'insert',
+  quads: [{ subject: 'alice', predicate: 'foaf:age', object: '31' }],
+  vectorClock: { A: 1, B: 6 } // Seen 1 from A, 6 from B
+});
+
+// Conflict detection
+const conflicts = detectConflicts(nodeA.vectorClock, nodeB.vectorClock);
+// Returns: CONCURRENT - neither causally dominates
+// Resolution: Merge strategy required (LWW, max, custom)
+"""
+
+[[tutorial.steps]]
+number = 5
+title = "Add the G Dimension: Git-Backed Snapshots"
+content = """
+The **G** dimension provides cryptographic proof via content addressing:
+
+```
+Snapshot at t=1704067200000000000:
+  State Hash: sha256(O) = a7f3e1c9d42b...
+  Stored in Git: .kgc/snapshots/a7f3e1c9d42b.nq
+  Receipt: Signed(StateHash, t_ns, V)
+```
+
+**What G enables:**
+- Immutability (tampering changes hash, breaks verification)
+- Auditability (cryptographic receipts prove state existed)
+- Time-travel (reconstruct exact state from Git)
+- Disaster recovery (Git is the source of truth)
+"""
+code_example = """
+// Freeze state to Git (creates snapshot)
+const freezeResult = await store.freeze({
+  message: 'Snapshot at end of trading day',
+  author: 'system@example.com'
+});
+
+console.log('Git SHA:', freezeResult.commitSHA);
+// Git SHA: a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7
+
+console.log('Receipt:', freezeResult.receipt);
+// Receipt: {
+//   operation: 'freeze',
+//   stateHash: 'sha256:a7f3...',
+//   timestamp: 1704067200000000000,
+//   vectorClock: { node1: 42 },
+//   signature: '0x3a7f...'
+// }
+
+// Verify receipt (cryptographic proof)
+const isValid = await verifyReceipt(freezeResult.receipt);
+// Returns: true (state hash matches Git object)
+
+// Reconstruct state from Git
+const reconstructed = await store.reconstructFromGit({
+  commitSHA: 'a7f3e1c9d42b...'
+});
+
+console.log('Reconstructed O:', reconstructed.O);
+// Exact state at freeze time, verified by Git SHA
+"""
+
+[[tutorial.steps]]
+number = 6
+title = "Putting It All Together: The Complete Equation"
+content = """
+Now we combine all four dimensions:
+
+```
+S(t) = ⟨O, t_ns, V, G⟩
+
+Where:
+- O   = Observable RDF state
+- t_ns = Nanosecond timestamp
+- V   = Vector clock (causality)
+- G   = Git SHA (cryptographic proof)
+```
+
+**Example State**:
+```javascript
+S(1704067200000000000) = {
+  O: {
+    <alice> foaf:name "Alice Smith" .
+    <alice> foaf:age 30 .
+    <bob> foaf:knows <alice> .
+  },
+  t_ns: 1704067200000000000,
+  V: { node1: 42, node2: 17 },
+  G: "a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7"
+}
+```
+
+**Properties**:
+1. **Deterministic**: Given t, we always reconstruct same S(t)
+2. **Auditable**: G proves S(t) existed at t_ns
+3. **Causal**: V proves how S(t) relates to other states
+4. **Queryable**: O enables SPARQL at any t
+"""
+code_example = """
+// Complete 4D state management
+import { KGCStore } from '@unrdf/kgc-4d';
+
+const store = new KGCStore({
+  gitDir: '.kgc',
+  nodeId: 'node1'
+});
+
+// Append event (updates all 4 dimensions)
+await store.appendEvent({
+  operation: 'insert',
+  quads: [
+    { subject: 'alice', predicate: 'foaf:name', object: '"Alice Smith"' }
+  ]
+});
+
+// Current state
+const current = await store.getCurrentState();
+console.log('O:', current.O);           // RDF quads
+console.log('t_ns:', current.t_ns);     // Nanosecond timestamp
+console.log('V:', current.V);           // Vector clock
+console.log('G:', current.G);           // null (not frozen yet)
+
+// Freeze to Git
+const freeze = await store.freeze({ message: 'End of day' });
+console.log('G:', freeze.commitSHA);    // Git SHA
+
+// Time-travel query
+const past = await store.reconstructState({
+  timestamp: current.t_ns - BigInt(1000000000) // 1 second ago
+});
+
+// Verify integrity
+const receipt = await store.generateReceipt({
+  operation: 'freeze',
+  stateHash: freeze.stateHash,
+  timestamp: current.t_ns,
+  vectorClock: current.V
+});
+
+const isValid = await store.verifyReceipt(receipt);
+console.log('Valid:', isValid); // true
+
+// This is the Chatman Equation in action:
+// S(t) fully captures state across all dimensions
+"""
+
+[[tutorial.steps]]
+number = 7
+title = "Why This Matters: Beyond Traditional Databases"
+content = """
+**Comparison Table**:
+
+| Feature | Traditional DB | Chatman Equation |
+|---------|---------------|------------------|
+| State Representation | Snapshot | 4D Tuple |
+| Temporal Precision | Second/millisecond | Nanosecond |
+| Causality Tracking | None | Vector Clocks |
+| Auditability | Logs (mutable) | Git (immutable) |
+| Time-Travel | Expensive (event replay) | O(log n) Git checkout |
+| Distributed Merge | Manual | Automatic (V dimension) |
+| Proof of State | Trust database | Cryptographic receipt |
+
+**Use Cases Unlocked**:
+
+1. **High-Frequency Trading**
+   - Nanosecond event ordering
+   - Cryptographic audit trail
+   - Deterministic replay for compliance
+
+2. **Federated Learning**
+   - Vector clocks for distributed merge
+   - Git-backed model versioning
+   - Provenance of training data
+
+3. **Healthcare Records**
+   - Immutable audit trail (G)
+   - Temporal queries (t_ns)
+   - Multi-institution merge (V)
+
+4. **Regulatory Compliance**
+   - Cryptographic receipts (G)
+   - Nanosecond precision (t_ns)
+   - Causal provenance (V)
+"""
+code_example = """
+// Use Case: High-Frequency Trading Audit
+
+// 1. Record trade at nanosecond precision
+await store.appendEvent({
+  operation: 'insert',
+  quads: [
+    { subject: 'trade:12345', predicate: 'trade:price', object: '100.50' },
+    { subject: 'trade:12345', predicate: 'trade:timestamp', object: '1704067200123456789' }
+  ],
+  timestamp: BigInt(1704067200123456789)
+});
+
+// 2. Freeze end-of-day state to Git
+const eod = await store.freeze({
+  message: 'End of trading day 2024-01-01',
+  author: 'trading-system@example.com'
+});
+
+// 3. Generate cryptographic receipt for regulators
+const receipt = {
+  operation: 'freeze',
+  stateHash: eod.stateHash,
+  timestamp: eod.timestamp,
+  vectorClock: eod.vectorClock,
+  gitSHA: eod.commitSHA,
+  signature: await signReceipt(eod.stateHash, privateKey)
+};
+
+// 4. Regulator verification (years later)
+const reconstructed = await store.reconstructFromGit({
+  commitSHA: receipt.gitSHA
+});
+
+const isValid = await verifyReceipt(receipt, publicKey);
+console.log('Trade audit valid:', isValid);
+console.log('Exact state at EOD:', reconstructed.O);
+
+// This would be impossible with traditional databases:
+// - No nanosecond precision
+// - No cryptographic proof
+// - No immutable Git history
+"""
+
+[tutorial.next_steps]
+tutorials = [
+    "02-implementing-4d-state",
+    "03-time-travel-queries",
+    "04-distributed-merge"
+]
+how_to = [
+    "freeze-and-verify",
+    "reconstruct-state",
+    "resolve-conflicts"
+]
+reference = [
+    "kgc-store-api",
+    "receipt-schema",
+    "vector-clock-ops"
+]
+
+
+# Tutorial 2: Implementing 4D State in Your Application
+[[tutorial]]
+id = "02-implementing-4d-state"
+title = "Implementing 4D State in Your Application"
+duration = "30 minutes"
+difficulty = "intermediate"
+prerequisites = ["Understanding the Chatman Equation", "Node.js/JavaScript experience"]
+learning_outcomes = [
+    "Create a KGCStore instance with 4D state tracking",
+    "Append events with all four dimensions",
+    "Query and reconstruct historical states"
+]
+
+[tutorial.context]
+problem = "You understand the theory but need practical implementation patterns."
+solution = "Step-by-step guide to building a 4D event-sourced application."
+
+[[tutorial.steps]]
+number = 1
+title = "Install Dependencies"
+content = """
+First, install the KGC-4D package:
+
+```bash
+pnpm add @unrdf/kgc-4d @unrdf/core
+```
+
+Verify installation:
+```bash
+pnpm list @unrdf/kgc-4d
+# Should show: @unrdf/kgc-4d 6.0.0-rc.1
+```
+"""
+code_example = """
+// package.json
+{
+  "name": "my-4d-app",
+  "type": "module",
+  "dependencies": {
+    "@unrdf/kgc-4d": "^6.0.0-rc.1",
+    "@unrdf/core": "^6.0.0-rc.1"
+  }
+}
+"""
+
+[[tutorial.steps]]
+number = 2
+title = "Initialize KGCStore"
+content = """
+Create a store instance with Git backing:
+
+```javascript
+import { KGCStore } from '@unrdf/kgc-4d';
+import { resolve } from 'node:path';
+
+const store = new KGCStore({
+  // Git directory for G dimension
+  gitDir: resolve('.kgc'),
+
+  // Node ID for V dimension
+  nodeId: 'node1',
+
+  // Optional: Initialize empty repository
+  initRepo: true
+});
+
+await store.initialize();
+```
+
+This creates:
+- `.kgc/` directory (Git repository for G)
+- Event log (for t_ns ordering)
+- Vector clock state (for V tracking)
+"""
+code_example = """
+// src/store.mjs
+import { KGCStore } from '@unrdf/kgc-4d';
+
+export async function createKGCStore(config = {}) {
+  const store = new KGCStore({
+    gitDir: config.gitDir || '.kgc',
+    nodeId: config.nodeId || 'default-node',
+    initRepo: config.initRepo ?? true,
+
+    // Optional: Event log persistence
+    eventLogPath: config.eventLogPath || '.kgc/events.log',
+
+    // Optional: Receipt signing
+    privateKey: config.privateKey,
+  });
+
+  await store.initialize();
+
+  console.log('KGCStore initialized');
+  console.log('Git dir:', store.gitDir);
+  console.log('Node ID:', store.nodeId);
+
+  return store;
+}
+
+// Usage
+const store = await createKGCStore({
+  gitDir: '/var/lib/kgc',
+  nodeId: 'production-node-1'
+});
+"""
+
+[[tutorial.steps]]
+number = 3
+title = "Append Your First Event"
+content = """
+Add data with full 4D tracking:
+
+```javascript
+const result = await store.appendEvent({
+  operation: 'insert',
+  quads: [
+    {
+      subject: 'http://example.org/alice',
+      predicate: 'http://xmlns.com/foaf/0.1/name',
+      object: '"Alice Smith"'
+    }
+  ]
+});
+
+console.log('Event appended:');
+console.log('  Timestamp (t_ns):', result.timestamp);
+console.log('  Vector clock (V):', result.vectorClock);
+console.log('  State hash:', result.stateHash);
+```
+
+The store automatically:
+- Generates nanosecond timestamp (t_ns)
+- Increments vector clock (V)
+- Computes state hash
+- Appends to event log
+"""
+code_example = """
+// src/append-event.mjs
+import { store } from './store.mjs';
+
+async function addPerson(name, age) {
+  const personId = `http://example.org/${name.toLowerCase()}`;
+
+  const result = await store.appendEvent({
+    operation: 'insert',
+    quads: [
+      {
+        subject: personId,
+        predicate: 'http://xmlns.com/foaf/0.1/name',
+        object: `"${name}"`
+      },
+      {
+        subject: personId,
+        predicate: 'http://xmlns.com/foaf/0.1/age',
+        object: `"${age}"^^http://www.w3.org/2001/XMLSchema#integer`
+      }
+    ],
+
+    // Optional: Provide your own timestamp
+    // timestamp: BigInt(Date.now()) * BigInt(1000000),
+
+    // Optional: Custom metadata
+    metadata: {
+      actor: 'user@example.com',
+      reason: 'Initial data load'
+    }
+  });
+
+  return {
+    personId,
+    timestamp: result.timestamp,
+    vectorClock: result.vectorClock,
+    stateHash: result.stateHash
+  };
+}
+
+// Example usage
+const alice = await addPerson('Alice', 30);
+console.log('Added Alice:', alice);
+// {
+//   personId: 'http://example.org/alice',
+//   timestamp: 1704067200123456789n,
+//   vectorClock: { 'node1': 1 },
+//   stateHash: 'sha256:a7f3e1c9...'
+// }
+
+const bob = await addPerson('Bob', 35);
+console.log('Added Bob:', bob);
+// {
+//   personId: 'http://example.org/bob',
+//   timestamp: 1704067200987654321n,
+//   vectorClock: { 'node1': 2 },  // Incremented!
+//   stateHash: 'sha256:b2e4f8d1...'
+// }
+"""
+
+[[tutorial.steps]]
+number = 4
+title = "Query Current State (O Dimension)"
+content = """
+Query the current observable state:
+
+```javascript
+const currentState = await store.getCurrentState();
+
+console.log('Current RDF state (O):');
+for (const quad of currentState.O) {
+  console.log('  ', quad.subject, quad.predicate, quad.object);
+}
+
+// SPARQL query on current state
+const results = await store.query(`
+  SELECT ?name ?age WHERE {
+    ?person foaf:name ?name .
+    ?person foaf:age ?age .
+    FILTER(?age > 25)
+  }
+`);
+```
+
+The O dimension is always up-to-date with latest events.
+"""
+code_example = """
+// src/query-current.mjs
+import { store } from './store.mjs';
+
+async function queryCurrentState() {
+  // Get full state
+  const state = await store.getCurrentState();
+
+  console.log('=== Current State (4D) ===');
+  console.log('Observable (O):', state.O.length, 'quads');
+  console.log('Timestamp (t_ns):', state.t_ns);
+  console.log('Vector Clock (V):', state.V);
+  console.log('Git SHA (G):', state.G || 'not frozen');
+
+  // SPARQL query
+  const people = await store.query(`
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT ?person ?name ?age WHERE {
+      ?person foaf:name ?name .
+      ?person foaf:age ?age .
+    }
+    ORDER BY DESC(?age)
+  `);
+
+  console.log('\\n=== People (SPARQL) ===');
+  for (const row of people) {
+    console.log(`${row.name}: ${row.age} years old`);
+  }
+
+  return { state, people };
+}
+
+// Example output:
+// === Current State (4D) ===
+// Observable (O): 4 quads
+// Timestamp (t_ns): 1704067200987654321n
+// Vector Clock (V): { 'node1': 2 }
+// Git SHA (G): not frozen
+//
+// === People (SPARQL) ===
+// Bob: 35 years old
+// Alice: 30 years old
+"""
+
+[[tutorial.steps]]
+number = 5
+title = "Freeze State to Git (G Dimension)"
+content = """
+Create an immutable snapshot in Git:
+
+```javascript
+const freezeResult = await store.freeze({
+  message: 'Daily snapshot',
+  author: 'system@example.com'
+});
+
+console.log('Git commit SHA (G):', freezeResult.commitSHA);
+console.log('Receipt:', freezeResult.receipt);
+```
+
+This:
+1. Serializes current O to N-Quads
+2. Commits to Git at `.kgc/snapshots/`
+3. Generates cryptographic receipt
+4. Returns Git SHA for the G dimension
+"""
+code_example = """
+// src/freeze-state.mjs
+import { store } from './store.mjs';
+
+async function createDailySnapshot() {
+  const now = new Date();
+
+  const freezeResult = await store.freeze({
+    message: `Daily snapshot: ${now.toISOString()}`,
+    author: 'system@example.com',
+
+    // Optional: Sign with private key
+    sign: true,
+
+    // Optional: Custom metadata
+    metadata: {
+      type: 'daily-snapshot',
+      environment: 'production',
+      datasetSize: await store.size()
+    }
+  });
+
+  console.log('=== Freeze Complete ===');
+  console.log('Git SHA (G):', freezeResult.commitSHA);
+  console.log('State hash:', freezeResult.stateHash);
+  console.log('Timestamp:', freezeResult.timestamp);
+  console.log('Vector clock:', freezeResult.vectorClock);
+
+  // Receipt for audit/verification
+  const receipt = freezeResult.receipt;
+  console.log('\\n=== Receipt ===');
+  console.log(JSON.stringify(receipt, null, 2));
+
+  // Verify receipt immediately
+  const isValid = await store.verifyReceipt(receipt);
+  console.log('\\nReceipt valid:', isValid);
+
+  return freezeResult;
+}
+
+// Schedule daily snapshots
+import { schedule } from 'node-cron';
+
+schedule('0 0 * * *', async () => {
+  console.log('Creating daily snapshot...');
+  await createDailySnapshot();
+});
+
+// Example receipt:
+// {
+//   "operation": "freeze",
+//   "entityType": "State",
+//   "stateHash": "sha256:a7f3e1c9d42b...",
+//   "timestamp": "1704067200000000000",
+//   "vectorClock": { "node1": 42 },
+//   "gitSHA": "a7f3e1c9d42b8f1a9e3d5c7b2a1f8e4c6d9b3a7",
+//   "signature": "0x3a7f...",
+//   "metadata": {
+//     "type": "daily-snapshot",
+//     "environment": "production",
+//     "datasetSize": 1024
+//   }
+// }
+"""
+
+[[tutorial.steps]]
+number = 6
+title = "Time-Travel Queries (t_ns Dimension)"
+content = """
+Reconstruct state at any nanosecond:
+
+```javascript
+const pastTimestamp = BigInt(1704067200000000000); // Specific nanosecond
+
+const pastState = await store.reconstructState({
+  timestamp: pastTimestamp
+});
+
+console.log('State at', pastTimestamp);
+console.log('Observable (O):', pastState.O);
+console.log('Vector clock (V):', pastState.V);
+```
+
+The store replays events up to `timestamp` to reconstruct exact S(t).
+"""
+code_example = """
+// src/time-travel.mjs
+import { store } from './store.mjs';
+
+async function queryPast(hoursAgo) {
+  const now = BigInt(Date.now()) * BigInt(1000000); // Convert to nanoseconds
+  const nanosecondsPerHour = BigInt(3600) * BigInt(1000000000);
+  const targetTime = now - (BigInt(hoursAgo) * nanosecondsPerHour);
+
+  console.log(`=== Time-Travel: ${hoursAgo} hours ago ===`);
+  console.log('Target timestamp:', targetTime);
+
+  // Reconstruct state at target time
+  const pastState = await store.reconstructState({
+    timestamp: targetTime
+  });
+
+  console.log('\\nState at target time:');
+  console.log('  Quads:', pastState.O.length);
+  console.log('  Vector clock:', pastState.V);
+
+  // Query the past state
+  const pastPeople = await store.queryAt(targetTime, `
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT ?name WHERE {
+      ?person foaf:name ?name
+    }
+  `);
+
+  console.log('\\nPeople at that time:');
+  for (const { name } of pastPeople) {
+    console.log('  -', name);
+  }
+
+  return pastState;
+}
+
+// Compare current vs past
+async function compareStates() {
+  const current = await store.getCurrentState();
+  const past = await queryPast(24); // 24 hours ago
+
+  const currentSize = current.O.length;
+  const pastSize = past.O.length;
+  const growth = currentSize - pastSize;
+
+  console.log('\\n=== State Growth ===');
+  console.log('Current quads:', currentSize);
+  console.log('Past quads:', pastSize);
+  console.log('Growth:', growth, `(+${((growth / pastSize) * 100).toFixed(1)}%)`);
+
+  return { current, past, growth };
+}
+
+// Usage
+await queryPast(1);  // 1 hour ago
+await queryPast(24); // 1 day ago
+await compareStates();
+"""
+
+[[tutorial.steps]]
+number = 7
+title = "Distributed Merge (V Dimension)"
+content = """
+Merge states from multiple nodes using vector clocks:
+
+```javascript
+// Node 1 state
+const node1State = {
+  O: [...],
+  V: { node1: 5, node2: 2 }
+};
+
+// Node 2 state
+const node2State = {
+  O: [...],
+  V: { node1: 3, node2: 8 }
+};
+
+// Merge using vector clocks
+const merged = await store.merge({
+  states: [node1State, node2State],
+  strategy: 'lww' // Last-Writer-Wins
+});
+
+console.log('Merged vector clock:', merged.V);
+// { node1: 5, node2: 8 } - took max of each component
+```
+
+The V dimension enables conflict-free distributed merge.
+"""
+code_example = """
+// src/distributed-merge.mjs
+import { KGCStore } from '@unrdf/kgc-4d';
+
+async function setupDistributedSystem() {
+  // Create two independent nodes
+  const node1 = new KGCStore({
+    gitDir: '.kgc-node1',
+    nodeId: 'node1'
+  });
+
+  const node2 = new KGCStore({
+    gitDir: '.kgc-node2',
+    nodeId: 'node2'
+  });
+
+  await node1.initialize();
+  await node2.initialize();
+
+  return { node1, node2 };
+}
+
+async function concurrentEdits() {
+  const { node1, node2 } = await setupDistributedSystem();
+
+  // Node 1 adds Alice
+  await node1.appendEvent({
+    operation: 'insert',
+    quads: [
+      { subject: 'alice', predicate: 'foaf:name', object: '"Alice"' }
+    ]
+  });
+
+  // Node 2 adds Bob (concurrently!)
+  await node2.appendEvent({
+    operation: 'insert',
+    quads: [
+      { subject: 'bob', predicate: 'foaf:name', object: '"Bob"' }
+    ]
+  });
+
+  console.log('Node 1 vector clock:', node1.vectorClock);
+  // { node1: 1, node2: 0 }
+
+  console.log('Node 2 vector clock:', node2.vectorClock);
+  // { node1: 0, node2: 1 }
+
+  // These are CONCURRENT - neither causally dominates
+
+  return { node1, node2 };
+}
+
+async function mergeNodes() {
+  const { node1, node2 } = await concurrentEdits();
+
+  // Get states
+  const state1 = await node1.getCurrentState();
+  const state2 = await node2.getCurrentState();
+
+  console.log('\\n=== Merging States ===');
+  console.log('Node 1:', state1.V);
+  console.log('Node 2:', state2.V);
+
+  // Merge into node1
+  const merged = await node1.merge({
+    states: [state2],
+    strategy: 'lww', // Last-Writer-Wins for conflicts
+
+    // Optional: Custom conflict resolution
+    resolveConflict: (quad1, quad2) => {
+      // Use timestamp to pick winner
+      return quad1.timestamp > quad2.timestamp ? quad1 : quad2;
+    }
+  });
+
+  console.log('\\n=== Merged Result ===');
+  console.log('Vector clock:', merged.V);
+  // { node1: 1, node2: 1 } - Merged!
+
+  console.log('Observable state:', merged.O.length, 'quads');
+  // Contains both Alice and Bob
+
+  // Sync vector clock to node2
+  await node2.sync(merged.V);
+
+  console.log('\\nNodes synchronized!');
+  console.log('Node 1 V:', node1.vectorClock);
+  console.log('Node 2 V:', node2.vectorClock);
+  // Both: { node1: 1, node2: 1 }
+
+  return merged;
+}
+
+// Run the example
+await mergeNodes();
+"""
+
+[tutorial.next_steps]
+tutorials = [
+    "03-time-travel-queries",
+    "04-distributed-merge",
+    "05-cryptographic-receipts"
+]
+how_to = [
+    "optimize-time-travel",
+    "handle-merge-conflicts",
+    "verify-receipts"
+]
+
+
+# Tutorial 3: Advanced Time-Travel Queries
+[[tutorial]]
+id = "03-time-travel-queries"
+title = "Mastering Time-Travel Queries Across the t_ns Dimension"
+duration = "25 minutes"
+difficulty = "advanced"
+prerequisites = ["Implementing 4D State", "SPARQL knowledge"]
+learning_outcomes = [
+    "Perform efficient time-travel queries",
+    "Optimize reconstruction performance",
+    "Implement temporal SPARQL patterns"
+]
+
+[tutorial.context]
+problem = "Naive time-travel is O(n) event replay - too slow for production."
+solution = "Use Git snapshots + delta replay for O(log n) reconstruction."
+
+[[tutorial.steps]]
+number = 1
+title = "Understanding Reconstruction Algorithms"
+content = """
+**Naive Approach** (O(n)):
+```
+To get S(t):
+  1. Replay all events from t=0 to t=target
+  2. Apply each event to build state
+```
+
+**Optimized Approach** (O(log n)):
+```
+To get S(t):
+  1. Find closest Git snapshot BEFORE t
+  2. Load snapshot from Git (O(1))
+  3. Replay deltas from snapshot to t (O(k) where k << n)
+```
+
+**Example**:
+```
+Events:  [e1 e2 e3 ... e1000000]
+Target:  t = 999000
+
+Naive:     Replay 999000 events
+Optimized: Load snapshot at t=900000 + replay 99000 events
+Speedup:   10x
+```
+"""
+code_example = """
+// src/reconstruction-algorithms.mjs
+
+// Naive O(n) reconstruction
+async function naiveReconstruct(store, targetTime) {
+  const startTime = performance.now();
+
+  // Get ALL events from beginning
+  const events = await store.getEvents({
+    from: BigInt(0),
+    to: targetTime
+  });
+
+  console.log('Replaying', events.length, 'events...');
+
+  // Apply each event
+  let state = { O: [], V: {} };
+  for (const event of events) {
+    state = applyEvent(state, event);
+  }
+
+  const elapsed = performance.now() - startTime;
+  console.log('Naive reconstruction:', elapsed, 'ms');
+
+  return state;
+}
+
+// Optimized O(log n) reconstruction
+async function optimizedReconstruct(store, targetTime) {
+  const startTime = performance.now();
+
+  // 1. Find closest snapshot BEFORE target
+  const snapshot = await store.findClosestSnapshot(targetTime);
+  console.log('Found snapshot at t =', snapshot.timestamp);
+
+  // 2. Load snapshot from Git (fast!)
+  const baseState = await store.loadSnapshot(snapshot.gitSHA);
+  console.log('Loaded', baseState.O.length, 'quads from Git');
+
+  // 3. Replay deltas from snapshot to target
+  const deltas = await store.getEvents({
+    from: snapshot.timestamp,
+    to: targetTime
+  });
+  console.log('Replaying', deltas.length, 'deltas...');
+
+  let state = baseState;
+  for (const delta of deltas) {
+    state = applyEvent(state, delta);
+  }
+
+  const elapsed = performance.now() - startTime;
+  console.log('Optimized reconstruction:', elapsed, 'ms');
+
+  return state;
+}
+
+// Benchmark
+const targetTime = BigInt(Date.now()) * BigInt(1000000) - BigInt(86400000000000); // 1 day ago
+
+await naiveReconstruct(store, targetTime);
+// Naive reconstruction: 12453 ms
+
+await optimizedReconstruct(store, targetTime);
+// Optimized reconstruction: 847 ms (14.7x faster!)
+"""
+
+[[tutorial.steps]]
+number = 2
+title = "Snapshot Strategy"
+content = """
+**Key Decision**: How often to create Git snapshots?
+
+**Trade-offs**:
+```
+Frequent snapshots (every 1000 events):
+  ✅ Fast reconstruction (fewer deltas to replay)
+  ❌ Large Git repository
+  ❌ Slower freeze operations
+
+Infrequent snapshots (every 1000000 events):
+  ✅ Small Git repository
+  ✅ Fast freeze operations
+  ❌ Slow reconstruction (many deltas to replay)
+```
+
+**Recommended Strategy**:
+- **Periodic**: Daily snapshots (cron)
+- **Event-based**: Every N events (e.g., 10000)
+- **Semantic**: After important operations (e.g., end-of-day)
+"""
+code_example = """
+// src/snapshot-strategy.mjs
+import { schedule } from 'node-cron';
+
+class SnapshotManager {
+  constructor(store, config = {}) {
+    this.store = store;
+    this.eventThreshold = config.eventThreshold || 10000;
+    this.eventsSinceSnapshot = 0;
+  }
+
+  // Hook into event appending
+  async onEventAppended(event) {
+    this.eventsSinceSnapshot++;
+
+    if (this.eventsSinceSnapshot >= this.eventThreshold) {
+      await this.createSnapshot('Event threshold reached');
+      this.eventsSinceSnapshot = 0;
+    }
+  }
+
+  // Periodic snapshots
+  scheduleDailySnapshots() {
+    // Every day at midnight
+    schedule('0 0 * * *', async () => {
+      await this.createSnapshot('Daily snapshot');
+    });
+  }
+
+  // Semantic snapshots
+  async afterImportantOperation(operationType) {
+    const importantOps = ['batch-import', 'migration', 'merge'];
+
+    if (importantOps.includes(operationType)) {
+      await this.createSnapshot(`After ${operationType}`);
+    }
+  }
+
+  async createSnapshot(reason) {
+    console.log('Creating snapshot:', reason);
+
+    const result = await this.store.freeze({
+      message: reason,
+      author: 'snapshot-manager@system'
+    });
+
+    console.log('  Git SHA:', result.commitSHA);
+    console.log('  State size:', result.stateSize, 'quads');
+
+    return result;
+  }
+}
+
+// Usage
+const snapshots = new SnapshotManager(store, {
+  eventThreshold: 10000 // Snapshot every 10k events
+});
+
+snapshots.scheduleDailySnapshots();
+
+// Intercept event appending
+const originalAppend = store.appendEvent.bind(store);
+store.appendEvent = async (event) => {
+  const result = await originalAppend(event);
+  await snapshots.onEventAppended(result);
+  return result;
+};
+
+// Semantic snapshots
+await snapshots.afterImportantOperation('batch-import');
+"""
+
+[[tutorial.steps]]
+number = 3
+title = "Temporal SPARQL Patterns"
+content = """
+Query state at specific times using custom SPARQL functions:
+
+```sparql
+PREFIX time: <http://kgc.example.org/time/>
+
+# Query state at specific timestamp
+SELECT ?name WHERE {
+  time:at("1704067200000000000") {
+    ?person foaf:name ?name
+  }
+}
+
+# Query range of states
+SELECT ?time ?name WHERE {
+  time:between("1704000000000000000", "1704086400000000000") {
+    ?person foaf:name ?name .
+    BIND(time:current() AS ?time)
+  }
+}
+
+# Temporal aggregation
+SELECT ?person (COUNT(?change) AS ?changeCount) WHERE {
+  time:all() {
+    ?person foaf:name ?name
+  }
+  GROUP BY ?person
+}
+```
+"""
+code_example = """
+// src/temporal-sparql.mjs
+
+class TemporalSPARQL {
+  constructor(store) {
+    this.store = store;
+  }
+
+  // Query state at specific timestamp
+  async queryAt(timestamp, sparql) {
+    const state = await this.store.reconstructState({ timestamp });
+    return await this.store.queryState(state, sparql);
+  }
+
+  // Query range of timestamps
+  async queryRange(start, end, interval, sparql) {
+    const results = [];
+
+    for (let t = start; t <= end; t += interval) {
+      const stateResults = await this.queryAt(t, sparql);
+      results.push({
+        timestamp: t,
+        results: stateResults
+      });
+    }
+
+    return results;
+  }
+
+  // Temporal aggregation
+  async aggregateOverTime(start, end, interval, aggregateFn) {
+    const snapshots = await this.queryRange(start, end, interval, `
+      SELECT ?s ?p ?o WHERE {
+        ?s ?p ?o
+      }
+    `);
+
+    return aggregateFn(snapshots);
+  }
+}
+
+// Usage examples
+const temporal = new TemporalSPARQL(store);
+
+// 1. Query at specific time
+const yesterday = BigInt(Date.now() - 86400000) * BigInt(1000000);
+const peopleYesterday = await temporal.queryAt(yesterday, `
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  SELECT ?name WHERE {
+    ?person foaf:name ?name
+  }
+`);
+
+console.log('People yesterday:', peopleYesterday);
+
+// 2. Query hourly for last 24 hours
+const now = BigInt(Date.now()) * BigInt(1000000);
+const oneDayAgo = now - BigInt(86400000000000);
+const oneHour = BigInt(3600000000000);
+
+const hourlySnapshots = await temporal.queryRange(
+  oneDayAgo,
+  now,
+  oneHour,
+  `
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    SELECT (COUNT(?person) AS ?count) WHERE {
+      ?person foaf:name ?name
+    }
+  `
+);
+
+console.log('\\nHourly person counts:');
+for (const { timestamp, results } of hourlySnapshots) {
+  const date = new Date(Number(timestamp / BigInt(1000000)));
+  console.log(date.toISOString(), '->', results[0].count, 'people');
+}
+
+// 3. Temporal aggregation: growth rate
+const growthRate = await temporal.aggregateOverTime(
+  oneDayAgo,
+  now,
+  oneHour,
+  (snapshots) => {
+    const counts = snapshots.map(s => s.results[0].count);
+    const first = counts[0];
+    const last = counts[counts.length - 1];
+    const growth = last - first;
+    const rate = (growth / first) * 100;
+
+    return {
+      initial: first,
+      final: last,
+      growth,
+      rate: `${rate.toFixed(2)}%`
+    };
+  }
+);
+
+console.log('\\n24-hour growth:', growthRate);
+// {
+//   initial: 100,
+//   final: 150,
+//   growth: 50,
+//   rate: '50.00%'
+// }
+"""
+
+[tutorial.next_steps]
+tutorials = ["04-distributed-merge", "05-cryptographic-receipts"]
+how_to = ["optimize-snapshots", "temporal-analytics", "time-travel-debugging"]

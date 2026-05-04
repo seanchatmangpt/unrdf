@@ -1,0 +1,216 @@
+[
+  {
+    "method": "concurrency.worker_threads_available",
+    "inputs": {},
+    "outputs": {
+      "available": true,
+      "module": "worker_threads",
+      "nodeVersion": "v22.21.1"
+    },
+    "timestamp": 1766824576989,
+    "guardDecision": "allowed",
+    "metadata": {
+      "minVersion": "v10.5.0"
+    }
+  },
+  {
+    "method": "concurrency.shared_array_buffer",
+    "inputs": {},
+    "outputs": {
+      "available": true,
+      "testSize": 8,
+      "functional": true
+    },
+    "timestamp": 1766824576989,
+    "guardDecision": "allowed"
+  },
+  {
+    "method": "concurrency.atomics",
+    "inputs": {},
+    "outputs": {
+      "available": true,
+      "functional": true,
+      "operations": ["add", "and", "compareExchange", "exchange", "load", "or", "store", "sub", "xor", "wait", "notify"]
+    },
+    "timestamp": 1766824576989,
+    "guardDecision": "allowed"
+  },
+  {
+    "method": "concurrency.thread_pool_size",
+    "inputs": {},
+    "outputs": {
+      "uvThreadpoolSize": null,
+      "default": 4,
+      "effective": 4
+    },
+    "timestamp": 1766824576989,
+    "guardDecision": "allowed",
+    "metadata": {
+      "note": "UV_THREADPOOL_SIZE can be set to customize libuv thread pool"
+    }
+  },
+  {
+    "method": "concurrency.event_loop_latency",
+    "inputs": {
+      "samples": 10
+    },
+    "outputs": {
+      "mean": 2.636688799999999,
+      "median": 0.07676700000001802,
+      "p95": 22.712030999999996,
+      "min": 0.01639599999998609,
+      "max": 22.712030999999996,
+      "stddev": 6.757490655403836,
+      "unit": "ms",
+      "samples": 10
+    },
+    "timestamp": 1766824576989,
+    "guardDecision": "allowed"
+  },
+  {
+    "method": "concurrency.message_passing_overhead",
+    "inputs": {
+      "samples": 10,
+      "timeout": 5000
+    },
+    "outputs": {
+      "mean": 5.3600572,
+      "median": 0.40531500000000165,
+      "p95": 50.07743099999999,
+      "min": 0.21313699999998903,
+      "max": 50.07743099999999,
+      "stddev": 14.906128941238523,
+      "unit": "ms",
+      "samples": 10
+    },
+    "timestamp": 1766824576992,
+    "guardDecision": "allowed"
+  },
+  {
+    "method": "concurrency.parallel_io_contention",
+    "inputs": {
+      "numReaders": 4,
+      "timeout": 5000,
+      "fileSize": 1048576
+    },
+    "outputs": {
+      "totalTime": 3.942323999999985,
+      "throughputMBps": 1014.63,
+      "perReaderStats": {
+        "mean": 3.5596087500000024,
+        "median": 3.608495000000005,
+        "p95": 3.663363000000004,
+        "min": 3.439177000000001,
+        "max": 3.663363000000004,
+        "stddev": 0.08469949795711762
+      },
+      "unit": "ms",
+      "samples": 4
+    },
+    "timestamp": 1766824576994,
+    "guardDecision": "allowed",
+    "metadata": {
+      "testDir": "/tmp/kgc-probe-1766824576995",
+      "fileSize": 1048576
+    }
+  },
+  {
+    "method": "concurrency.event_loop_ordering",
+    "inputs": {},
+    "outputs": {
+      "executionOrder": ["queueMicrotask", "promise", "nextTick", "setImmediate"],
+      "expectedOrder": ["nextTick", "queueMicrotask", "promise", "setImmediate"],
+      "matchesExpected": false
+    },
+    "timestamp": 1766824576996,
+    "guardDecision": "allowed",
+    "metadata": {
+      "note": "nextTick > microtasks > setImmediate in Node.js event loop"
+    }
+  },
+  {
+    "method": "concurrency.stack_depth",
+    "inputs": {
+      "maxAttempts": 10000
+    },
+    "outputs": {
+      "maxStackDepth": 8946,
+      "hitGuardLimit": false,
+      "guardLimit": 10000
+    },
+    "timestamp": 1766824576997,
+    "guardDecision": "allowed",
+    "metadata": {
+      "errorType": "RangeError",
+      "note": "Recursion bounded to prevent VM crash"
+    }
+  },
+  {
+    "method": "concurrency.async_local_storage",
+    "inputs": {},
+    "outputs": {
+      "available": true,
+      "functional": true,
+      "testValue": "test-value"
+    },
+    "timestamp": 1766824576998,
+    "guardDecision": "allowed",
+    "metadata": {
+      "nodeVersion": "v22.21.1",
+      "note": "AsyncLocalStorage available since Node.js v13.10.0"
+    }
+  },
+  {
+    "method": "concurrency.microtask_queue_depth",
+    "inputs": {
+      "maxMicrotasks": 1000
+    },
+    "outputs": {
+      "queued": 1000,
+      "executed": 1000,
+      "allExecuted": true
+    },
+    "timestamp": 1766824576998,
+    "guardDecision": "allowed",
+    "metadata": {
+      "note": "Microtasks execute before next event loop phase"
+    }
+  },
+  {
+    "method": "concurrency.max_concurrent_promises",
+    "inputs": {
+      "maxPromises": 1000,
+      "timeout": 5000
+    },
+    "outputs": {
+      "created": 1000,
+      "resolved": 1000,
+      "rejected": 0,
+      "timeMs": 14,
+      "success": true
+    },
+    "timestamp": 1766824577001,
+    "guardDecision": "allowed",
+    "metadata": {
+      "note": "Tests VM ability to handle many concurrent promises"
+    }
+  },
+  {
+    "method": "concurrency.stream_backpressure",
+    "inputs": {
+      "chunkCount": 100
+    },
+    "outputs": {
+      "chunksWritten": 100,
+      "chunksRead": 100,
+      "backpressureDetected": false,
+      "backpressureCount": 0,
+      "allChunksDelivered": true
+    },
+    "timestamp": 1766824577002,
+    "guardDecision": "allowed",
+    "metadata": {
+      "note": "Backpressure prevents memory overflow in streams"
+    }
+  }
+]

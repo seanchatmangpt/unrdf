@@ -11,11 +11,11 @@ groups:
       - id: chatman.comm.source_system
         type: string
         brief: 'Originating system identifier.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
       - id: chatman.comm.target_system
         type: string
         brief: 'Destination system identifier.'
-        examples: ['businessos', 'canopy', 'osa', 'pm4py-rust']
+        examples: ['businessos', 'canopy', 'osa', 'pm4py-mcp']
       - id: chatman.comm.direction
         type: string
         brief: 'Communication direction (request or response).'

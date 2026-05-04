@@ -205,14 +205,14 @@ test('determinism: same input produces same receipt hash', async () => {
 3. **Tag Release**
 
    ```bash
-   git tag v26.4.4
-   git push origin v26.4.4
+   git tag v26.4.23
+   git push origin v26.4.23
    ```
 
 4. **Deploy to Staging**
 
    ```bash
-   npm deploy --target staging --version 26.4.4
+   npm deploy --target staging --version 26.4.23
    ```
 
 5. **Run Integration Tests**
@@ -228,7 +228,7 @@ test('determinism: same input produces same receipt hash', async () => {
 
 7. **Deploy to Production**
    ```bash
-   npm deploy --target production --version 26.4.4
+   npm deploy --target production --version 26.4.23
    ```
 
 ---
@@ -383,4 +383,4 @@ node --prof-process isolate-*.log > profile.txt
 
 ---
 
-**Version**: 26.4.4 | **Date**: April 3, 2026
+**Version**: 26.4.23 | **Date**: April 3, 2026

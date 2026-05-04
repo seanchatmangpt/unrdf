@@ -6,7 +6,9 @@
 /**
  * @typedef {Object} Managers
  * @property {Object} hookManager - Knowledge Hook Manager
- * @property {Object} transactionManager - Transaction Manager
+ * @property {Object} transactionManager - Transaction Manager (KGCStore)
+ * @property {Object} kgcStore - 4D Knowledge Store
+ * @property {Object} swarm - Swarm Membership Manager
  * @property {Object} policyPack - Policy Pack
  * @property {Object} effectSandbox - Effect Sandbox
  * @property {Object} lockchainWriter - Lockchain Writer

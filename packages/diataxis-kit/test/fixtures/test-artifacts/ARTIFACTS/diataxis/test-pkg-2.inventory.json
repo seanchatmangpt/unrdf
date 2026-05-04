@@ -1,0 +1,93 @@
+{
+  "packageName": "@unrdf/test-pkg-2",
+  "version": "0.5.0",
+  "generatedAt": "2025-01-01T00:00:00.000Z",
+  "confidence": {
+    "tutorials": 0.3,
+    "howtos": 0.4,
+    "reference": 0.5,
+    "explanation": 0.4
+  },
+  "tutorials": [
+    {
+      "id": "tutorial-basic",
+      "title": "Basic Tutorial",
+      "goal": "Learn",
+      "prerequisites": [],
+      "stepsOutline": [
+        "Step 1"
+      ],
+      "confidenceScore": 0.3,
+      "source": [
+        "inferred"
+      ]
+    }
+  ],
+  "howtos": [
+    {
+      "id": "howto-use",
+      "title": "Use Package",
+      "task": "Use it",
+      "context": "When needed",
+      "steps": [
+        "Import",
+        "Use"
+      ],
+      "confidenceScore": 0.4,
+      "source": [
+        "inferred"
+      ]
+    },
+    {
+      "id": "howto-troubleshoot",
+      "title": "Troubleshoot",
+      "task": "Fix issues",
+      "context": "When broken",
+      "steps": [
+        "Check",
+        "Fix"
+      ],
+      "confidenceScore": 0.4,
+      "source": [
+        "inferred"
+      ]
+    }
+  ],
+  "reference": {
+    "id": "reference-api",
+    "title": "API Reference",
+    "items": [
+      {
+        "name": "unknown",
+        "type": "unknown",
+        "description": "To be added",
+        "example": null
+      }
+    ],
+    "confidenceScore": 0.5,
+    "source": [
+      "inferred"
+    ]
+  },
+  "explanation": {
+    "id": "explanation-overview",
+    "title": "Understanding Package",
+    "concepts": [
+      "core"
+    ],
+    "architecture": "Basic package",
+    "tradeoffs": [
+      "Generic tradeoff"
+    ],
+    "confidenceScore": 0.4,
+    "source": [
+      "inferred"
+    ]
+  },
+  "evidence": {
+    "readmeHeadings": [],
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "def456"
+  }
+}

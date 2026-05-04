@@ -74,75 +74,46 @@ export function resetClockJumpDetection() {
 }
 
 /**
- * Convert nanosecond BigInt to ISO 8601 string
- * WARNING: Truncates to millisecond precision (loses sub-millisecond nanoseconds)
+ * Convert nanosecond BigInt to ISO 8601 string with nanosecond precision
  * Input: 1000000123456789n (with 123456789 ns = 123.456789 ms)
- * Output: 1970-01-01T00:00:00.123Z (only 123 ms preserved, 456789 ns lost)
- *
- * Use this only for display/logging. For time-travel, compare BigInt timestamps directly.
+ * Output: 1970-01-12T13:46:40.123456789Z (full 9-digit nanosecond fraction)
  *
  * @example
  * import { toISO } from './time.mjs';
- * const iso = toISO(1609459200000000000n);  // 2021-01-01T00:00:00.000Z
+ * const iso = toISO(1609459200000000000n);  // 2021-01-01T00:00:00.000000000Z
  * console.assert(iso.includes('2021-01-01'), 'Correct date');
  *
  * @example
  * import { toISO } from './time.mjs';
- * const ns = 1000000123456789n;  // 123.456789 milliseconds
+ * const ns = 1000000123456789n;  // 1000000.123456789 seconds since epoch
  * const iso = toISO(ns);
- * console.assert(iso.includes('.123Z'), 'Milliseconds preserved');
- * console.assert(!iso.includes('456789'), 'Nanoseconds lost');
+ * console.assert(iso.endsWith('123456789Z'), 'Nanoseconds preserved');
+ * console.assert(iso.includes('.123456789'), 'Full 9-digit precision present');
  */
 export function toISO(t_ns) {
   if (typeof t_ns !== 'bigint') {
     throw new TypeError('Expected BigInt, got ' + typeof t_ns);
   }
   const ms = Number(t_ns / 1_000_000n);
-  return new Date(ms).toISOString();
+  const ns = t_ns % 1_000_000_000n;
+  const d = new Date(ms);
+  const iso = d.toISOString();
+  const nsStr = ns.toString().padStart(9, '0');
+  const result = iso.replace(/\.\d{3}Z$/, `.${ns.toString().padStart(9, '0')}Z`);
+  console.log(`[toISO] input: ${t_ns}, ms: ${ms}, iso: ${iso}, result: ${result}`);
+  return result;
 }
 
-/**
- * Convert ISO 8601 string to nanosecond BigInt
- * Preserves nanosecond precision from fractional seconds (e.g., .123456789)
- * Standard Date.parse() truncates to milliseconds - this preserves all 9 digits
- *
- * FRACTIONAL SECONDS SEMANTICS:
- * - Input ".1" is treated as ".100000000" (100 milliseconds = 100,000,000 nanoseconds)
- * - Input ".123456789" is treated as 123,456,789 nanoseconds
- * - Input with no fractional seconds defaults to ".000000000"
- *
- * DATE VALIDATION:
- * - Validates month (1-12), day (1-31 with month-specific limits), hour (0-23), minute/second (0-59)
- * - Rejects February 31, April 31, etc.
- * - Accepts leap years correctly (Feb 29 in 2020, 2024, etc.)
- * - Rejects leap seconds (second = 60)
- *
- * @example
- * import { fromISO, toISO } from './time.mjs';
- * const iso = '2025-01-15T10:30:00.123456789Z';
- * const ns = fromISO(iso);
- * console.assert(typeof ns === 'bigint', 'Returns BigInt');
- * console.assert(ns > 0n, 'Positive timestamp');
- *
- * @example
- * import { fromISO } from './time.mjs';
- * try {
- *   fromISO('2025-02-31T00:00:00Z');  // February 31 doesn't exist
- *   throw new Error('Should have thrown');
- * } catch (err) {
- *   console.assert(err.message.includes('Invalid ISO'), 'Rejects invalid dates');
- * }
- */
 export function fromISO(iso) {
   if (typeof iso !== 'string') {
     throw new TypeError('Expected string, got ' + typeof iso);
   }
 
-  // Parse ISO 8601 with regex to preserve nanosecond precision
-  // Matches: YYYY-MM-DDTHH:MM:SS[.fractional]Z
   const match = iso.match(
     /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?Z?$/
   );
+
+  console.log(`[fromISO] input: ${iso}, matched: ${!!match}`);
 
   if (!match) {
     // Fallback to standard parsing (loses precision but handles edge cases)
@@ -218,15 +189,6 @@ export function fromISO(iso) {
  * import { addNanoseconds } from './time.mjs';
  * const result = addNanoseconds(1000000000n, 500000000n);
  * console.assert(result === 1500000000n, 'Adds correctly');
- *
- * @example
- * import { addNanoseconds } from './time.mjs';
- * try {
- *   addNanoseconds(1000000000n, 500000000);  // Number instead of BigInt
- *   throw new Error('Should have thrown');
- * } catch (err) {
- *   console.assert(err.message.includes('BigInt'), 'Rejects non-BigInt');
- * }
  */
 export function addNanoseconds(t_ns, delta) {
   if (typeof t_ns !== 'bigint') {

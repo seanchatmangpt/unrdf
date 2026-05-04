@@ -162,7 +162,35 @@ Returns the number of quads in the store.
 
 Removes all quads from the store.
 
-## Benchmarking
+## Architecture
+
+The `@unrdf/oxigraph` package provides a high-performance RDF store by wrapping the Oxigraph Rust engine compiled to WebAssembly.
+
+```mermaid
+graph TD
+    App[JS Application] --> Wrapper[@unrdf/oxigraph Wrapper]
+    Wrapper --> WASM[Oxigraph WASM Module]
+    WASM --> Engine[Rust SPARQL Engine]
+    Engine --> Memory[In-Memory Store]
+    
+    subgraph "Native Layer (Rust)"
+    Engine
+    Memory
+    end
+    
+    subgraph "JS Layer"
+    App
+    Wrapper
+    WASM
+    end
+```
+
+### Data Flow
+
+1. **Query Execution**: SPARQL queries are passed from JS to the WASM module, executed in Rust, and results are serialized back to JS.
+2. **Data Loading**: RDF data is parsed by the Rust engine (supporting multiple formats) and stored in highly optimized indexes.
+
+## Benchmarking & Performance
 
 Run the benchmark suite to compare performance:
 
@@ -170,16 +198,47 @@ Run the benchmark suite to compare performance:
 pnpm test:bench
 ```
 
-The benchmark suite includes:
+Or run the production benchmark directly:
 
-- **Add Operations**: Triple insertion throughput
-- **SELECT Queries**: Query execution performance
-- **ASK Queries**: Existence check performance
-- **CONSTRUCT Queries**: Graph construction performance
-- **Pattern Matching**: Triple pattern matching throughput
-- **Delete Operations**: Triple deletion throughput
-- **Bulk Load**: RDF data loading performance
-- **Dump Operations**: RDF data export performance
+```bash
+node examples/production-benchmark.mjs
+```
+
+### Benchmark Evidence
+
+Performance results and evidence can be found in the [experiments/](./experiments/) directory.
+
+| Operation | Performance | Notes |
+|-----------|-------------|-------|
+| **Add Triple** | ~1ms | Single insertion |
+| **SELECT Query** | <10ms | Simple patterns |
+| **CONSTRUCT** | <20ms | 100 triples |
+| **Bulk Load** | ~50ms | 1000 triples |
+
+## Troubleshooting
+
+### WASM Initialization Issues
+
+**Error**: `WebAssembly.instantiate(): memory import has no initial size`
+**Solution**: Ensure you are using Node.js 18 or higher. Some older environments might require specific WASM flags.
+
+### Query Performance
+
+**Issue**: Large queries are slow or timing out.
+**Solution**: 
+- Use `LIMIT` to restrict result sets.
+- Ensure triple patterns are as specific as possible to utilize Oxigraph's indexing.
+- For very large datasets, consider pre-filtering data before loading into the in-memory store.
+
+### Memory Constraints
+
+**Issue**: `RangeError: WebAssembly.Memory.grow(): maximum memory size exceeded`
+**Solution**: Oxigraph WASM uses a fixed memory buffer that can grow up to a certain limit (default is often 4GB in modern environments). If you hit this, you may need to reduce the size of the dataset you are processing in-memory.
+
+### Format Support
+
+**Error**: `Unsupported format: application/json`
+**Solution**: Ensure you use the correct MIME type. For JSON-LD, use `application/ld+json`. See [Supported RDF Formats](#supported-rdf-formats).
 
 ## Supported RDF Formats
 

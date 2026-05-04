@@ -9,7 +9,8 @@ import { createVaultClient } from '../utils/vault-client.mjs'
 
 // Import KGC library managers from parent project
 import { KnowledgeHookManager } from '../../../src/knowledge-engine/knowledge-hook-manager.mjs'
-import { TransactionManager } from '../../../src/knowledge-engine/transaction.mjs'
+import { KGCStore } from '../../../packages/kgc-4d/src/store.mjs'
+import { MembershipManager } from '../../../packages/kgc-swarm/src/consensus/membership.mjs'
 import { PolicyPack } from '../../../src/knowledge-engine/policy-pack.mjs'
 import { EffectSandbox } from '../../../src/knowledge-engine/effect-sandbox.mjs'
 import { LockchainWriter } from '../../../src/knowledge-engine/lockchain-writer.mjs'
@@ -91,14 +92,17 @@ export default defineNitroPlugin(async (nitroApp) => {
       otlpEndpoint: config.otelEndpoint
     })
 
+    // Initialize 4D Store (replacing legacy TransactionManager)
+    const kgcStore = new KGCStore({
+      nodeId: config.nodeId || process.env.NODE_ID || 'sidecar-node',
+      harden: true // Enable L5 hardening by default
+    })
+
     // Initialize core managers with secrets from Vault
     const hookManager = new KnowledgeHookManager({
       apiKey: secrets.apiKey,
-      encryptionKey: secrets.encryptionKey
-    })
-
-    const transactionManager = new TransactionManager({
-      databaseUrl: secrets.database.url
+      encryptionKey: secrets.encryptionKey,
+      store: kgcStore // Pass store for persistence
     })
 
     const policyPack = new PolicyPack({
@@ -133,7 +137,8 @@ export default defineNitroPlugin(async (nitroApp) => {
     // Store in singleton
     setManagers({
       hookManager,
-      transactionManager,
+      kgcStore, // Store the new 4D engine
+      transactionManager: kgcStore, // Provide backward compatibility for existing code
       policyPack,
       effectSandbox,
       lockchainWriter,
@@ -142,7 +147,7 @@ export default defineNitroPlugin(async (nitroApp) => {
       vaultClient: globalThis.__vaultClient
     })
 
-    console.log('[KGC] Managers initialized successfully')
+    console.log('[KGC] Managers initialized successfully (4D Enabled)')
   } catch (error) {
     console.error('[KGC] Manager initialization failed:', error)
     throw error

@@ -1,0 +1,26 @@
+// PLACEHOLDER: SwiftLaTeX pdfTeX WASM Binary
+//
+// This is a placeholder file. The actual pdfTeX WASM binary is not included
+// in the repository due to size constraints (~10-20 MB).
+//
+// TO USE SWIFTLATEX:
+// 1. Download production WASM binaries from:
+//    https://github.com/SwiftLaTeX/SwiftLaTeX/releases
+//
+// 2. Replace this file with the actual pdftex.wasm binary
+//
+// 3. Verify integrity:
+//    sha256sum vendor/swiftlatex/pdftex.wasm
+//    (Compare against official checksums)
+//
+// RUNTIME ERROR:
+// If the loader attempts to use this placeholder, it will fail with:
+// "SwiftLaTeX WASM binary not found: vendor/swiftlatex/pdftex.wasm"
+//
+// FILE LOCATION: /home/user/unrdf/packages/kgc-cli/vendor/swiftlatex/pdftex.wasm
+// EXPECTED SIZE: ~10-20 MB (actual binary)
+// CURRENT SIZE: <1 KB (placeholder)
+//
+// LICENSE NOTE: pdfTeX is GPL-2.0 licensed. See LICENSES/WASM-BINARIES.md
+//
+// See vendor/swiftlatex/README.md for detailed instructions.

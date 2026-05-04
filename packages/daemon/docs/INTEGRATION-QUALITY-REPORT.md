@@ -13,7 +13,7 @@
 ### Code Quality
 - **ESLint Status**: FAIL
   - Issues: 1
-- **TODOs Found**: 0
+- **DEFERRED_ACTION(#gap-closure)s Found**: 0
 - **Skipped Tests**: 0
 
 ## Test Coverage Breakdown

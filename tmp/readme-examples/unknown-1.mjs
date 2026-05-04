@@ -1,8 +1,21 @@
-// Add triples
-store.addQuad(subj, pred, obj);
+import { getGroqProvider } from '@unrdf/daemon';
+import { generateText } from 'ai';
 
-// Query
-const quads = store.match(subj, pred, obj);
+const provider = getGroqProvider();
+const model = provider.getDefaultModel();
 
-// Validate against SHACL shapes
-const isValid = await validateShacl(store, shapes);
+const result = await generateText({
+  model,
+  prompt: 'Analyze this RDF graph and suggest enrichments',
+  tools: {
+    queryGraph: {
+      description: 'Query the knowledge graph',
+      execute: async ({ query }) => await store.query(query),
+    },
+    enrichGraph: {
+      description: 'Add triples to improve the graph',
+      execute: async ({ triple }) => await store.add(triple),
+    },
+  },
+  toolChoice: 'auto',
+});

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-4d",
-  "version": "26.4.9",
+  "version": "26.4.23",
   "description": "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots",
   "type": "module",
   "exports": {
@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "test": "vitest",
+    "test:fast": "vitest run --exclude test/doctest/** --no-coverage",
     "test:watch": "vitest --watch",
     "test:doctest": "node scripts/generate-doctests.mjs && vitest run test/doctest/",
     "test:doctest:watch": "vitest watch test/doctest/",
@@ -29,8 +30,8 @@
     "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "@unrdf/core": "26.4.7",
-    "@unrdf/oxigraph": "26.4.7",
+    "@unrdf/core": "26.4.23",
+    "@unrdf/oxigraph": "26.4.23",
     "hash-wasm": "^4.12.0",
     "isomorphic-git": "^1.36.1"
   },

@@ -447,9 +447,9 @@ OUTPUT: receipt
 
 ```json
 {
-  "@unrdf/core": "^26.4.5",
-  "@unrdf/hooks": "^26.4.5",
-  "@unrdf/daemon": "^26.4.5"
+  "@unrdf/core": "^26.4.23",
+  "@unrdf/hooks": "^26.4.23",
+  "@unrdf/daemon": "^26.4.23"
 }
 ```
 
@@ -1150,7 +1150,7 @@ I hereby declare that this dissertation represents my original work and has not 
 
 The author acknowledges the support of the ChatmanGPT research community and the open-source contributors to the UNRDF project. Special thanks to the MIOSA collaboration (Roberto, Straughter) for their work on BusinessOS, Canopy, and OSA systems that enabled this research.
 
-The 10-hour autonomous execution experiment was conducted on UNRDF v26.4.5, a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
+The 10-hour autonomous execution experiment was conducted on UNRDF v26.4.23, a research-grade RDF knowledge graph platform implementing O\* Innovations 4-6 (Federation Quorum, Hooks Marketplace, Streaming Admission).
 
 This dissertation is dedicated to advancing the state of the art in autonomous knowledge systems.
 

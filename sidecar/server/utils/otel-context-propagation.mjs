@@ -258,7 +258,7 @@ export function createChildSpan(name, attributes = {}, parentCtx = null) {
 
   // If parent context is provided, create span from it
   if (parentCtx) {
-    // TODO: Create span from extracted context
+    // DEFERRED_ACTION(#otel-202): Extract OpenTelemetry SpanContext from parent carrier.
     // This requires converting the context to OpenTelemetry SpanContext
     // For now, create span from current context
   }

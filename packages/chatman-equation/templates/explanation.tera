@@ -1,0 +1,33 @@
+# {{ title }}
+
+**Audience**: {{ audience }}
+**Reading time**: {{ reading_time }}
+
+---
+
+## Abstract
+
+{{ abstract.content }}
+
+---
+
+{% for section in sections %}
+{{ section.content }}
+
+---
+
+{% endfor %}
+
+{% if bibliography %}
+## References
+
+{% for ref in bibliography.references %}
+{{ loop.index }}. {{ ref }}
+{% endfor %}
+
+{% endif %}
+
+---
+
+**Generated from**: `packages/chatman-equation/docs-config/explanation.toml`
+**Last updated**: 2026-01-18

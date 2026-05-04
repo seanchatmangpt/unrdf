@@ -1,0 +1,105 @@
+{# Chatman Equation API Reference Template #}
+{# Tera/Jinja2 syntax for API documentation generation #}
+
+# {{ title }}
+
+> **Module**: `{{ module }}`
+> **Version**: {{ version }}
+> **Updated**: {{ updated }}
+
+---
+
+## Overview
+
+{{ description }}
+
+{% if equations %}
+## Equations
+
+{% for eq in equations %}
+### {{ eq.name }}
+
+**Formula**: `{{ eq.formula }}`
+
+{{ eq.description }}
+
+**Parameters**:
+{% for param in eq.parameters %}
+- **`{{ param.name }}`** (`{{ param.type }}`): {{ param.description }}
+  {% if param.default %}- Default: `{{ param.default }}`{% endif %}
+  {% if param.constraints %}- Constraints: {{ param.constraints }}{% endif %}
+{% endfor %}
+
+**Returns**: `{{ eq.returns.type }}` - {{ eq.returns.description }}
+
+{% if eq.complexity %}
+**Complexity**: {{ eq.complexity }}
+{% endif %}
+
+{% if eq.examples %}
+**Examples**:
+```javascript
+{{ eq.examples | join('\n\n') }}
+```
+{% endif %}
+
+{% if eq.see_also %}
+**See Also**: {% for link in eq.see_also %}[{{ link.title }}]({{ link.url }}){% if not loop.last %}, {% endif %}{% endfor %}
+{% endif %}
+
+---
+
+{% endfor %}
+{% endif %}
+
+{% if constants %}
+## Constants
+
+| Name | Type | Value | Description |
+|------|------|-------|-------------|
+{% for const in constants %}
+| `{{ const.name }}` | `{{ const.type }}` | `{{ const.value }}` | {{ const.description }} |
+{% endfor %}
+{% endif %}
+
+{% if types %}
+## Type Definitions
+
+{% for type in types %}
+### {{ type.name }}
+
+```typescript
+{{ type.definition }}
+```
+
+{{ type.description }}
+
+{% if type.properties %}
+**Properties**:
+{% for prop in type.properties %}
+- **`{{ prop.name }}`** (`{{ prop.type }}`): {{ prop.description }}
+{% endfor %}
+{% endif %}
+
+---
+
+{% endfor %}
+{% endif %}
+
+## Usage
+
+```javascript
+{{ usage_example }}
+```
+
+{% if notes %}
+## Notes
+
+{% for note in notes %}
+- {{ note }}
+{% endfor %}
+{% endif %}
+
+---
+
+*Generated from TOML configuration by Chatman Equation Template Engine*

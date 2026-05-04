@@ -308,7 +308,7 @@ Before using any claim from this documentation:
 ### Documentation Questions
 - **"What does this benchmark number mean?"** → See BENCHMARKS.md section 8 (Q&A interpretation)
 - **"How confident are these numbers?"** → INSIGHTS.md section 7 (evidence requirements)
-- **"What's missing from this documentation?"** → Check `TODO` comments in each file
+- **"What's missing from this documentation?"** → Check `DEFERRED_ACTION(#gap-closure)` comments in each file
 
 ### Technical Questions
 - **Performance**: See BENCHMARKS.md and optimization roadmap

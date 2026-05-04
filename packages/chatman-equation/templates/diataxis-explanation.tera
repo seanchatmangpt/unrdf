@@ -1,0 +1,69 @@
+{# Diataxis Explanation Template #}
+{# Deep-dive conceptual documentation #}
+
+# {{ title }}
+
+> **Type**: Explanation
+> **Difficulty**: {{ difficulty }}
+> **Reading Time**: {{ reading_time }} min
+
+---
+
+## Introduction
+
+{{ introduction }}
+
+{% if key_concepts %}
+## Key Concepts
+
+{% for concept in key_concepts %}
+### {{ concept.name }}
+
+{{ concept.explanation }}
+
+{% if concept.diagram %}
+```
+{{ concept.diagram }}
+```
+{% endif %}
+
+{% if concept.examples %}
+**Examples**:
+{% for example in concept.examples %}
+- {{ example }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if how_it_works %}
+## How It Works
+
+{{ how_it_works.overview }}
+
+{% if how_it_works.steps %}
+{% for step in how_it_works.steps %}
+### Step {{ loop.index }}: {{ step.title }}
+
+{{ step.description }}
+
+{% if step.code %}
+```javascript
+{{ step.code }}
+```
+{% endif %}
+
+{% if step.diagram %}
+```
+{{ step.diagram }}
+```
+{% endif %}
+
+{% endfor %}
+{% endif %}
+{% endif %}
+
+---
+
+*Generated from TOML configuration by Chatman Equation Template Engine*

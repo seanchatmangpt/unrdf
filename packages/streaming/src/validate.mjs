@@ -8,7 +8,13 @@
  */
 
 import { z } from 'zod';
-import { createStore } from '@unrdf/oxigraph';
+import { createStore, dataFactory } from '@unrdf/oxigraph';
+
+const { namedNode } = dataFactory;
+
+const RDF_TYPE = namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+const SHACL_NODE_SHAPE = namedNode('http://www.w3.org/ns/shacl#NodeShape');
+const SHACL_PROPERTY_SHAPE = namedNode('http://www.w3.org/ns/shacl#PropertyShape');
 
 /**
  * SHACL validation options schema
@@ -89,8 +95,8 @@ function extractShapes(shapesStore) {
     // Query for all sh:NodeShape and sh:PropertyShape instances
     const shapeQuads = shapesStore.getQuads(
       null,
-      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-      'http://www.w3.org/ns/shacl#NodeShape',
+      RDF_TYPE,
+      SHACL_NODE_SHAPE,
       null
     );
 
@@ -104,8 +110,8 @@ function extractShapes(shapesStore) {
 
     const propertyShapeQuads = shapesStore.getQuads(
       null,
-      'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-      'http://www.w3.org/ns/shacl#PropertyShape',
+      RDF_TYPE,
+      SHACL_PROPERTY_SHAPE,
       null
     );
 

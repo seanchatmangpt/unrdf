@@ -19,8 +19,6 @@ const projectRoot = join(__dirname, '../../../../../../..');
  * Check federation peer connectivity
  */
 async function checkFederationPeers() {
-  // This is a placeholder - in a real implementation, this would
-  // check actual federation peer status from the federation coordinator
   const federationEnabled = existsSync(join(projectRoot, 'packages/federation'));
 
   if (!federationEnabled) {
@@ -31,13 +29,30 @@ async function checkFederationPeers() {
     };
   }
 
-  // TODO: Implement real federation peer check
-  // For now, just check if the package exists
+  const peers = process.env.FEDERATION_PEERS;
+  if (!peers) {
+    return {
+      status: 'warn',
+      actual: 'Federation package present but no peers configured',
+      expected: 'FEDERATION_PEERS environment variable set',
+      fix: 'Set FEDERATION_PEERS (comma-separated list of URLs) in .env.local',
+    };
+  }
+
+  const peerList = peers.split(',').map(p => p.trim()).filter(Boolean);
+  if (peerList.length === 0) {
+    return {
+      status: 'fail',
+      actual: 'FEDERATION_PEERS is empty',
+      expected: 'List of peer URLs',
+      fix: 'Add peer URLs to FEDERATION_PEERS',
+    };
+  }
+
   return {
     status: 'pass',
-    actual: 'Federation package present (peer check not implemented)',
-    expected: 'Federation peers connected',
-    fix: 'Implement federation peer status check',
+    actual: `${peerList.length} peer(s) configured: ${peerList.join(', ')}`,
+    expected: 'Federation peers configured',
   };
 }
 

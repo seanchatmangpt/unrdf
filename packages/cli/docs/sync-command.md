@@ -531,6 +531,44 @@ paths:
 {% endfor %}
 ```
 
+## Advanced Hygen Integration
+
+`unrdf sync` provides full parity with Hygen's frontmatter-driven modification engine.
+
+### Per-Row Rendering Logic
+The orchestrator automatically determines how to render a rule:
+1.  **Iterative**: If `output_file` contains `{{ }}` OR the template contains `inject: true` (and no internal loop), the template is rendered **once per SPARQL result row**.
+2.  **Summary**: Otherwise, the template is rendered **once** with the full result set available in `results`.
+
+### Supported Directives
+All standard Hygen directives are supported in the template frontmatter:
+
+| Directive | Type | Description |
+| --------- | -------------- | ----------------------------------------------------- |
+| `inject`  | boolean        | Enable Hygen injection mode (line-based modification) |
+| `before`  | string (regex) | Insert content before matching line                   |
+| `after`   | string (regex) | Insert content after matching line                    |
+| `append`  | boolean        | Append content to end of file                         |
+| `prepend` | boolean        | Prepend content to start of file                      |
+| `lineAt` / `at_line` | number | Insert at specific line number                     |
+| `skip_if` / `skipIf` | string | Skip generation if file content or variable matches |
+| `unless_exists` | boolean  | Skip if output file already exists                    |
+| `force`   | boolean        | Overwrite file even if it exists or matches skip_if    |
+| `eof_last`| boolean        | Ensure/prevent trailing newline at end of file        |
+| `chmod`   | string (octal) | Set file permissions (e.g., "755")                    |
+| `sh`      | string (shell) | Execute shell command after file write                |
+| `from`    | string (path)  | Load template body from another file                  |
+
+## Backwards Compatibility
+
+### Format Stability
+The `unrdf.toml` (formerly `ggen.toml`) format is stable for v6. Migration from v5 to v6 is automatic for most common configurations.
+
+### v5 -> v6 Upgrade Path
+1.  Rename `ggen.toml` to `unrdf.toml` (optional, both are supported).
+2.  Update `[[rules]]` to `[[generation.rules]]`.
+3.  Prefix unused SPARQL variables with `_` to avoid Nunjucks context clutter.
+
 ## Troubleshooting
 
 ### Config file not found
@@ -747,10 +785,16 @@ Add these to template frontmatter for advanced file manipulation:
 | `inject`  | boolean        | Enable Hygen injection mode (line-based modification) |
 | `before`  | string (regex) | Insert content before matching line                   |
 | `after`   | string (regex) | Insert content after matching line                    |
-| `append`  | string (regex) | Append content to file ending with pattern            |
-| `prepend` | string (regex) | Prepend content to file starting with pattern         |
+| `append`  | boolean        | Append content to end of file                         |
+| `prepend` | boolean        | Prepend content to start of file                      |
 | `lineAt`  | number         | Insert at specific line number                        |
-| `skipIf`  | string (regex) | Skip generation if file contains pattern              |
+| `skipIf`  | string (regex) | Skip generation if file content matches pattern       |
+| `unless_exists` | boolean  | Skip if output file already exists                    |
+| `force`   | boolean        | Overwrite file even if it exists or matches skipIf    |
+| `eof_last`| boolean        | Ensure/prevent trailing newline at end of file        |
+| `chmod`   | string (octal) | Set file permissions (e.g., "755")                    |
+| `sh`      | string (shell) | Execute shell command after file write                |
+| `from`    | string (path)  | Load template body from another file                  |
 
 ### Hygen Example 1: Inject After Marker
 
@@ -812,6 +856,19 @@ inject: true
 lineAt: 5
 ---
 // New imports added by sync
+```
+
+### Hygen Example 4: Executable Scripts
+
+Set executable permissions for generated scripts:
+
+```yaml
+---
+to: bin/run.sh
+chmod: "755"
+---
+#!/bin/bash
+echo "Hello from generated script!"
 ```
 
 ### Anchor Pattern Examples

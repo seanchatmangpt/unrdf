@@ -1,17 +1,17 @@
-# pm4py-rust Replacement Plan
+# pm4py-mcp Replacement Plan
 
 **Date:** 2026-04-11
-**Goal:** Replace pm4py-rust (Rust) with Python pm4py (pm4py-mcp) in ChatmanGPT
+**Goal:** Replace pm4py-mcp (Rust) with Python pm4py (pm4py-mcp) in ChatmanGPT
 
 ---
 
 ## Current State Analysis
 
-### pm4py-rust Integration Points
+### pm4py-mcp Integration Points
 
 **1. BusinessOS Go Handler** (`bos_gateway.go`)
 
-- Makes HTTP calls to `http://localhost:8090`
+- Makes HTTP calls to `http://localhost:7015`
 - 3 endpoints:
   - `POST /api/discovery/alpha` - Process model discovery
   - `POST /api/conformance/token-replay` - Fitness checking
@@ -21,21 +21,21 @@
 **2. Docker Compose** (`BusinessOS/docker-compose.yml`)
 
 ```yaml
-pm4py-rust:
-  build: ../pm4py-rust
-  ports: ['8090:8090']
-  healthcheck: curl -sf http://localhost:8090/api/health
+pm4py-mcp:
+  build: ../pm4py-mcp
+  ports: ['7015:7015']
+  healthcheck: curl -sf http://localhost:7015/api/health
 ```
 
 **3. Tests**
 
 - 15 test cases in `bos_gateway_pm4py_test.go`
-- Uses mock pm4py-rust server on random port
+- Uses mock pm4py-mcp server on random port
 - Validates response schema parsing
 
 **4. Environment Variables**
 
-- `PM4PY_RUST_URL` - Base URL (default: `http://localhost:8090`)
+- `PM4PY_MCP_URL` - Base URL (default: `http://localhost:7015`)
 
 ---
 
@@ -43,7 +43,7 @@ pm4py-rust:
 
 ### Option A: HTTP API Wrapper (Recommended)
 
-Wrap the Python pm4py-mcp tools with a Flask/FastAPI HTTP server that matches pm4py-rust's API contract.
+Wrap the Python pm4py-mcp tools with a Flask/FastAPI HTTP server that matches pm4py-mcp's API contract.
 
 **Pros:**
 
@@ -82,8 +82,8 @@ Have BusinessOS call pm4py-mcp directly via MCP protocol.
 Create a FastAPI server that:
 
 1. Wraps pm4py-mcp tools
-2. Matches pm4py-rust's request/response schemas
-3. Listens on port 8090
+2. Matches pm4py-mcp's request/response schemas
+3. Listens on port 7015
 
 **Endpoints to implement:**
 
@@ -95,7 +95,7 @@ async def discovery_alpha(request: DiscoveryRequest):
         hours=24,  # Not used - we have the full log
         limit=1000
     )
-    # Transform to pm4py-rust schema
+    # Transform to pm4py-mcp schema
     return {
         "model_id": str(uuid.uuid4()),
         "algorithm": request.variant,
@@ -163,11 +163,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY pm4py-mcp/ ./pm4py-mcp/
 COPY server.py .
 
-# Expose port 8090 (same as pm4py-rust)
-EXPOSE 8090
+# Expose port 7015 (same as pm4py-mcp)
+EXPOSE 7015
 
 # Run FastAPI server
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8090"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "7015"]
 ```
 
 **requirements.txt:**
@@ -185,7 +185,7 @@ pydantic>=2.0.0
 **File:** `BusinessOS/docker-compose.yml`
 
 ```yaml
-# Replace pm4py-rust service with pm4py-python
+# Replace pm4py-mcp service with pm4py-python
 pm4py-python:
   build:
     context: ../unrdf/otel/pm4py-http
@@ -194,14 +194,14 @@ pm4py-python:
   container_name: businessos-pm4py-python
   restart: unless-stopped
   ports:
-    - '${PM4PY_PORT:-8090}:8090'
+    - '${PM4PY_PORT:-7015}:7015'
   environment:
-    PM4PY_PORT: '8090'
+    PM4PY_PORT: '7015'
     TEMPO_URL: 'http://tempo:3200'
     LOKI_URL: 'http://loki:3100'
     OTEL_SERVICE_NAME: 'pm4py-python'
   healthcheck:
-    test: ['CMD-SHELL', 'curl -sf http://localhost:8090/api/health || exit 1']
+    test: ['CMD-SHELL', 'curl -sf http://localhost:7015/api/health || exit 1']
     interval: 10s
     timeout: 5s
     retries: 3
@@ -212,7 +212,7 @@ pm4py-python:
 
 **Environment variable rename (optional):**
 
-- Keep `PM4PY_RUST_URL` for backward compatibility
+- Keep `PM4PY_MCP_URL` for backward compatibility
 - Or add `PM4PY_URL` as new standard
 
 ### Phase 4: Update BusinessOS Configuration
@@ -220,19 +220,19 @@ pm4py-python:
 **File:** `BusinessOS/desktop/backend-go/internal/config/config_types.go`
 
 ```go
-// Add PM4PY_URL (keep PM4PY_RUST_URL as alias for compat)
+// Add PM4PY_URL (keep PM4PY_MCP_URL as alias for compat)
 PM4PyURL string `mapstructure:"PM4PY_URL"`
-PM4PyRustURL string `mapstructure:"PM4PY_RUST_URL"` // Deprecated
+PM4PyRustURL string `mapstructure:"PM4PY_MCP_URL"` // Deprecated
 ```
 
 **File:** `BusinessOS/desktop/backend-go/internal/handlers/bos_gateway.go`
 
 ```go
-// Try PM4PY_URL first, fall back to PM4PY_RUST_URL
-pm4pyURL := "http://localhost:8090"
+// Try PM4PY_URL first, fall back to PM4PY_MCP_URL
+pm4pyURL := "http://localhost:7015"
 if envURL := os.Getenv("PM4PY_URL"); envURL != "" {
     pm4pyURL = envURL
-} else if envURL := os.Getenv("PM4PY_RUST_URL"); envURL != "" {
+} else if envURL := os.Getenv("PM4PY_MCP_URL"); envURL != "" {
     pm4pyURL = envURL
 }
 ```
@@ -254,7 +254,7 @@ go test ./internal/handlers -run "TestDiscover|TestConformance|TestStatistics" -
 
 **Files to update:**
 
-1. `BusinessOS/CLAUDE.md` - Replace "pm4py-rust" with "pm4py-python"
+1. `BusinessOS/CLAUDE.md` - Replace "pm4py-mcp" with "pm4py-python"
 2. `BusinessOS/desktop/backend-go/docs/BOS_GATEWAY_PM4PY_INTEGRATION.md` - Rewrite for Python
 3. `CLAUDE.md` (root) - Update integration chain description
 4. `make/includes/95-tps.mk` - Update health check if needed
@@ -263,9 +263,9 @@ go test ./internal/handlers -run "TestDiscover|TestConformance|TestStatistics" -
 
 ## Schema Mapping
 
-### pm4py-rust → pm4py-mcp Response Mapping
+### pm4py-mcp → pm4py-mcp Response Mapping
 
-| Operation   | pm4py-rust Response       | pm4py-mcp Tool      | Mapping                                               |
+| Operation   | pm4py-mcp Response       | pm4py-mcp Tool      | Mapping                                               |
 | ----------- | ------------------------- | ------------------- | ----------------------------------------------------- |
 | Discovery   | `petri_net.places[]`      | `pm4py_discover`    | `process_model.places` → `petri_net.places`           |
 |             | `petri_net.transitions[]` |                     | `process_model.transitions` → `petri_net.transitions` |
@@ -287,7 +287,7 @@ go test ./internal/handlers -run "TestDiscover|TestConformance|TestStatistics" -
 If issues arise:
 
 1. Revert docker-compose.yml change
-2. Rebuild pm4py-rust container
+2. Rebuild pm4py-mcp container
 3. No code changes needed in BusinessOS (API contract unchanged)
 
 ---
@@ -307,11 +307,11 @@ If issues arise:
 ## Open Questions
 
 1. **Should we keep the Rust code?**
-   - Archive to `attic/pm4py-rust/` for reference
+   - Archive to `attic/pm4py-mcp/` for reference
    - Or delete entirely after verification
 
 2. **Port mapping:**
-   - Keep 8090 for backward compatibility
+   - Keep 7015 for backward compatibility
    - Or use new port (e.g., 8091) and update all references
 
 3. **Response schema differences:**
@@ -339,10 +339,10 @@ If issues arise:
 
 | File                                                                  | Changes                           |
 | --------------------------------------------------------------------- | --------------------------------- |
-| `BusinessOS/docker-compose.yml`                                       | Replace pm4py-rust service        |
+| `BusinessOS/docker-compose.yml`                                       | Replace pm4py-mcp service        |
 | `BusinessOS/desktop/backend-go/internal/handlers/bos_gateway.go`      | Update PM4PY_URL env var handling |
 | `BusinessOS/desktop/backend-go/internal/config/config_types.go`       | Add PM4PY_URL field               |
-| `BusinessOS/CLAUDE.md`                                                | Replace pm4py-rust references     |
+| `BusinessOS/CLAUDE.md`                                                | Replace pm4py-mcp references     |
 | `BusinessOS/desktop/backend-go/docs/BOS_GATEWAY_PM4PY_INTEGRATION.md` | Rewrite for Python                |
 | `CLAUDE.md`                                                           | Update integration chain          |
 | `make/includes/95-tps.mk`                                             | Update health check (if needed)   |

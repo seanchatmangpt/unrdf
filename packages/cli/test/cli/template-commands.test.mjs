@@ -55,7 +55,8 @@ SELECT ?name ?title ?mbox WHERE {
     } finally {
       console.log = orig;
     }
-    const parsed = JSON.parse(logs[0]);
+    const jsonLog = logs.find(l => l.trim().startsWith('[') || l.trim().startsWith('{'));
+    const parsed = JSON.parse(jsonLog || '[]');
     expect(Array.isArray(parsed)).toBe(true);
     expect(parsed.length).toBeGreaterThan(0);
   });

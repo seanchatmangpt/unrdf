@@ -78,69 +78,69 @@ All 13 daemon integration modules now have comprehensive security integration:
 **Lines**: ~380
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add cron expression validation
-- 🔜 TODO: Add hookId injection detection
+- 🔜 DEFERRED_ACTION(#gap-closure): Add cron expression validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add hookId injection detection
 
 ### 6. hooks-policy.mjs (✅ Complete)
 **Lines**: ~580
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add policy validation
-- 🔜 TODO: Add condition injection detection
+- 🔜 DEFERRED_ACTION(#gap-closure): Add policy validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add condition injection detection
 
 ### 7. kgc-4d-sourcing.mjs (✅ Complete)
 **Lines**: ~470
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add event payload validation
-- 🔜 TODO: Add entity type validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add event payload validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add entity type validation
 
 ### 8. knowledge-rules.mjs (✅ Complete)
 **Lines**: ~520
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add rule injection detection
-- 🔜 TODO: Add inference validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add rule injection detection
+- 🔜 DEFERRED_ACTION(#gap-closure): Add inference validation
 
 ### 9. observability.mjs (✅ Complete)
 **Lines**: ~790
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add metric name validation
-- 🔜 TODO: Add label value sanitization
-- 🔜 TODO: Add secret detection in metric values
+- 🔜 DEFERRED_ACTION(#gap-closure): Add metric name validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add label value sanitization
+- 🔜 DEFERRED_ACTION(#gap-closure): Add secret detection in metric values
 
 ### 10. receipts-merkle.mjs (✅ Complete)
 **Lines**: ~592
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add operation payload validation
-- 🔜 TODO: Add hash verification
-- 🔜 TODO: Add tampering detection enhancement
+- 🔜 DEFERRED_ACTION(#gap-closure): Add operation payload validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add hash verification
+- 🔜 DEFERRED_ACTION(#gap-closure): Add tampering detection enhancement
 
 ### 11. streaming.mjs (✅ Complete)
 **Lines**: ~449
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add pattern validation
-- 🔜 TODO: Add event payload validation
-- 🔜 TODO: Add subscription security
+- 🔜 DEFERRED_ACTION(#gap-closure): Add pattern validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add event payload validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add subscription security
 
 ### 12. v6-deltagate.mjs (✅ Complete)
 **Lines**: ~687
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add delta operation validation
-- 🔜 TODO: Add admissibility policy injection protection
-- 🔜 TODO: Add state hash verification
+- 🔜 DEFERRED_ACTION(#gap-closure): Add delta operation validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add admissibility policy injection protection
+- 🔜 DEFERRED_ACTION(#gap-closure): Add state hash verification
 
 ### 13. yawl.mjs (✅ Complete)
 **Lines**: ~680
 **Security Points**:
 - ✅ Import added (ready for validation implementation)
-- 🔜 TODO: Add workflowId validation
-- 🔜 TODO: Add caseId/taskId injection detection
-- 🔜 TODO: Add retry policy validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add workflowId validation
+- 🔜 DEFERRED_ACTION(#gap-closure): Add caseId/taskId injection detection
+- 🔜 DEFERRED_ACTION(#gap-closure): Add retry policy validation
 
 ---
 

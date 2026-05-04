@@ -29,6 +29,9 @@ unrdf doctor --fix
 
 # Continuous monitoring mode
 unrdf doctor --watch
+
+# Strict mode (CI/CD gate)
+unrdf doctor --strict
 ```
 
 ## Command Options
@@ -146,7 +149,30 @@ unrdf doctor --watch
 # Press Ctrl+C to exit
 ```
 
+### --strict | -s
+
+Production mode that escalates all `warn` statuses to `fail`. Useful for CI/CD gates.
+
+**Behavior:**
+
+- If any quality check (DEFERRED_ACTION(#gap-closure)s, skipped tests, file size) returns a warning, it is treated as a failure.
+- Command exits with code 1 if any escalated failures are found.
+
+**Example:**
+
+```bash
+# Use as CI/CD gate
+unrdf doctor --mode full --strict
+```
+
 ## Check Categories
+
+### Epistemic Truth
+
+Validates the operational reality of the workspace against assumptions (anti-lie layer).
+
+- **Version Consistency**: Ensures all packages in the workspace have identical versions matching the root configuration.
+- **Build Artifact Truth**: Verifies that built `dist/` artifacts are newer than their `src/` counterparts, detecting "stale builds" that lie about the deployed state.
 
 ### Environment Checks
 
@@ -607,7 +633,7 @@ wait
 
 ## Version History
 
-- **v26.4.4** - Initial doctor command implementation
+- **v26.4.23** - Initial doctor command implementation
   - Environment, system, quality, integration checks
   - Auto-fix capability for safe operations
   - Watch mode for continuous monitoring

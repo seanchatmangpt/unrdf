@@ -1,4 +1,4 @@
-# pm4py-rust Replacement Plan — Direct MCP Integration
+# pm4py-mcp Replacement Plan — Direct MCP Integration
 
 **Date:** 2026-04-11
 **Goal:** BusinessOS Go calls pm4py-mcp tools directly via MCP protocol
@@ -7,10 +7,10 @@
 
 ## Current State
 
-**BusinessOS → pm4py-rust (HTTP on port 8090):**
+**BusinessOS → pm4py-mcp (HTTP on port 7015):**
 
 ```
-Go Handler → HTTP POST → pm4py-rust → Response
+Go Handler → HTTP POST → pm4py-mcp → Response
 ```
 
 **New: BusinessOS → pm4py-mcp (MCP protocol):**
@@ -321,19 +321,19 @@ var mcpServers = map[string]MCPServer{
 ```go
 var mcpServers = map[string]MCPServer{
     "pm4py": {
-        URL: "http://localhost:8090/mcp",  // If pm4py-mcp exposes HTTP
+        URL: "http://localhost:7015/mcp",  // If pm4py-mcp exposes HTTP
     },
 }
 ```
 
 ### Phase 4: Update docker-compose.yml
 
-**Remove pm4py-rust service entirely:**
+**Remove pm4py-mcp service entirely:**
 
 ```yaml
 # DELETE these lines:
-# pm4py-rust:
-#   build: ../pm4py-rust
+# pm4py-mcp:
+#   build: ../pm4py-mcp
 #   ...
 ```
 
@@ -423,7 +423,7 @@ func TestDiscoverRealMCP_Success(t *testing.T) {
 | --------------------------------------------- | -------------------------------------- |
 | `internal/handlers/bos_gateway.go`            | Replace HTTP calls with MCP tool calls |
 | `internal/handlers/bos_gateway_pm4py_test.go` | Replace mock HTTP server with mock MCP |
-| `docker-compose.yml`                          | Remove pm4py-rust service              |
+| `docker-compose.yml`                          | Remove pm4py-mcp service              |
 | `internal/mcp-tools/client.go`                | Add pm4py-mcp server config            |
 
 ---
@@ -442,7 +442,7 @@ func TestDiscoverRealMCP_Success(t *testing.T) {
 1. Implement `mcptools/pm4py_tools.go`
 2. Update `bos_gateway.go` to use MCP tools
 3. Update tests to use mock MCP client
-4. Remove pm4py-rust from docker-compose.yml
+4. Remove pm4py-mcp from docker-compose.yml
 5. Verify all tests pass
 6. Update documentation
 

@@ -178,6 +178,9 @@ export function createPeerManager() {
         try {
           const response = await fetch(peer.endpoint, {
             method: 'HEAD',
+            headers: {
+              'User-Agent': 'unrdf-federation/6.0.0 (https://github.com/unrdf/unrdf)',
+            },
             signal: controller.signal,
           });
 

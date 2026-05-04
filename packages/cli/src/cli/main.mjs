@@ -22,10 +22,15 @@ import {
 } from './commands/convert.mjs';
 import { daemonCommand } from './commands/daemon.mjs';
 import { syncCommand } from './commands/sync.mjs';
+import { initCommand } from './commands/init.mjs';
 import { templateCommand } from './commands/template.mjs';
 import { hooksCommand } from './commands/hooks.mjs';
 import { mcpCommand } from './commands/mcp.mjs';
 import { doctor } from './commands/doctor/index.mjs';
+import { atomvmCommand } from './commands/atomvm.mjs';
+import { validateCommand } from './commands/validate.mjs';
+import { packCommand } from './commands/pack.mjs';
+import { publishCommand } from './commands/publish.mjs';
 
 /**
  * Main CLI application
@@ -33,10 +38,13 @@ import { doctor } from './commands/doctor/index.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '26.4.10',
+    version: '26.4.23',
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {
+    // Project Initialization
+    init: initCommand,
+
     // RDF Graph Operations
     graph: graphCommand,
     query: queryCommand,
@@ -57,9 +65,15 @@ export const main = defineCommand({
     // Code Generation
     sync: syncCommand,
     template: templateCommand,
+    pack: packCommand,
+    publish: publishCommand,
+
+    // WASM Runtimes
+    atomvm: atomvmCommand,
 
     // Diagnostics
     doctor,
+    validate: validateCommand,
   },
 });
 

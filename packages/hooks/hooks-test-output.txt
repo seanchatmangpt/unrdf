@@ -1,0 +1,80 @@
+
+> @unrdf/hooks@26.4.23 test:fast /Users/sac/chatmangpt/unrdf/packages/hooks
+> vitest run --coverage
+
+
+ RUN  v4.1.3 /Users/sac/chatmangpt/unrdf/packages/hooks
+      Coverage enabled with v8
+
+6:42:33 PM [vite] (ssr) warning: File URL host must be "localhost" or empty on darwin
+  Plugin: vite:dynamic-import-vars
+  File: /Users/sac/chatmangpt/unrdf/packages/hooks/src/hooks/policy-pack.mjs
+
+ Test Files  40 passed (40)
+      Tests  1218 passed (1218)
+   Start at  18:42:33
+   Duration  2.19s (transform 2.89s, setup 0ms, import 12.56s, tests 3.77s, environment 6ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    45.8 |       40 |   46.06 |   46.18 |                   
+ ...ook-chains/src |   25.51 |    34.54 |   35.29 |    25.8 |                   
+  index.mjs        |   25.51 |    34.54 |   35.29 |    25.8 | ...23,200-323,347 
+ ...licy-hooks/src |    26.8 |    45.45 |      30 |   30.12 |                   
+  index.mjs        |    26.8 |    45.45 |      30 |   30.12 | 63,146-256,274    
+ src               |   88.42 |    73.46 |   79.41 |   91.22 |                   
+  atomvm.mjs       |       0 |        0 |       0 |       0 |                   
+  define.mjs       |     100 |      100 |     100 |     100 |                   
+  executor.mjs     |       0 |        0 |       0 |       0 |                   
+  index.mjs        |       0 |        0 |       0 |       0 |                   
+  ...-compiler.mjs |   87.64 |    73.46 |   77.41 |   90.56 | ...23-424,450-451 
+ src/hooks         |   47.62 |    40.66 |   49.09 |   48.14 |                   
+  ...vm-bridge.mjs |       0 |        0 |       0 |       0 | 42-331            
+  ...tin-hooks.mjs |   91.66 |     87.5 |     100 |   94.54 | 180,219,229       
+  ...ion-cache.mjs |     100 |      100 |     100 |     100 |                   
+  ...evaluator.mjs |   26.02 |    22.22 |      25 |   26.05 | ...8-596,686-1325 
+  define-hook.mjs  |     100 |     92.3 |     100 |     100 | 181               
+  ...ncy-graph.mjs |   96.82 |    70.58 |     100 |   96.77 | 101,107,276,303   
+  ...-executor.mjs |   90.55 |    89.28 |   72.72 |   90.96 | ...80,492,514,593 
+  ...ox-worker.mjs |       0 |        0 |       0 |       0 | 15-167            
+  ...t-sandbox.mjs |   63.57 |    46.87 |   67.64 |   63.08 | ...08,426,512-519 
+  ...-resolver.mjs |   36.57 |    45.51 |    40.9 |   36.84 | ...53-508,521-524 
+  ...-compiler.mjs |   53.52 |    42.85 |      60 |   55.38 | ...83-187,203-205 
+  ...-batching.mjs |       0 |        0 |       0 |       0 | 19-276            
+  ...-executor.mjs |    93.7 |    88.77 |     100 |   93.38 | ...83-384,429-430 
+  ...anagement.mjs |   95.55 |    71.42 |     100 |   95.55 | 95,146            
+  ...scheduler.mjs |   36.27 |    30.13 |   27.27 |    37.5 | ...67,376-387,406 
+  ...ok-engine.mjs |      50 |    52.45 |      50 |    49.6 | ...35,470,475-477 
+  ...k-manager.mjs |    72.5 |    69.23 |   76.47 |    72.5 | ...01-217,231-236 
+  ...rvability.mjs |       0 |        0 |       0 |       0 | 17-524            
+  ...y-learner.mjs |   86.84 |    79.22 |     100 |   96.87 | 77,162            
+  ...-executor.mjs |   92.85 |    84.61 |     100 |   92.59 | 116,185,222-229   
+  policy-pack.mjs  |    2.14 |        0 |       0 |    2.18 | 117-577           
+  quad-pool.mjs    |   58.92 |    78.94 |   63.63 |   61.53 | 113,144-191,230   
+  ...y-metrics.mjs |   15.49 |    15.85 |   11.11 |    17.6 | ...39-449,490-532 
+  ...optimizer.mjs |       0 |        0 |       0 |       0 | 19-184            
+  query.mjs        |     3.7 |     7.54 |   33.33 |     3.7 | 24-148            
+  schemas.mjs      |   78.94 |       50 |      40 |   78.94 | 181-207           
+  ...utonomics.mjs |   69.71 |    64.28 |   68.18 |   67.93 | ...85-387,397-412 
+  store-cache.mjs  |      50 |    36.36 |   55.55 |      50 | ...98,118-164,180 
+  telemetry.mjs    |   95.34 |    96.77 |     100 |   95.23 | 54,137            
+  validate.mjs     |   91.66 |    72.54 |     100 |   91.11 | 47-48,175,189     
+  worker-pool.mjs  |   48.92 |    26.22 |   44.82 |   50.38 | ...03,420,461-476 
+ ...hooks/security |   74.59 |    62.93 |    62.5 |   74.31 |                   
+  ...sanitizer.mjs |   65.45 |    46.42 |   54.54 |   65.45 | ...42,226-264,278 
+  ...validator.mjs |   76.36 |    70.58 |    62.5 |   75.47 | ...66-177,192-193 
+  ...trictions.mjs |      80 |    66.66 |   69.23 |      80 | ...61-267,275-289 
+ src/lib           |   91.07 |    80.95 |    87.5 |   90.65 |                   
+  admit-hook.mjs   |   91.07 |    80.95 |    87.5 |   90.65 | ...30,453-457,607 
+ src/security      |       0 |        0 |       0 |       0 |                   
+  ...x-adapter.mjs |       0 |        0 |       0 |       0 | 20-140            
+ ...curity/sandbox |       0 |        0 |       0 |       0 |                   
+  ...-executor.mjs |       0 |        0 |       0 |       0 | 17-217            
+  detector.mjs     |       0 |        0 |       0 |       0 | 15-341            
+  ...-executor.mjs |       0 |        0 |       0 |       0 | 21-370            
+  vm2-executor.mjs |       0 |        0 |       0 |       0 | 24-202            
+  ...r-runtime.mjs |       0 |        0 |       0 |       0 | 8-69              
+  ...-executor.mjs |       0 |        0 |       0 |       0 | 21-209            
+-------------------|---------|----------|---------|---------|-------------------

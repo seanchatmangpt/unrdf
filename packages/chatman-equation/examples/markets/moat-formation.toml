@@ -1,0 +1,302 @@
+# Moat Formation - Barrier Height Example
+# Chatman Equation: A = μ(O)
+# Demonstrates competitive advantage emergence via closure over market position data
+
+[metadata]
+name = "Moat Formation Analysis"
+description = "Competitive barrier detection via closure operator on market position metrics"
+domain = "strategic-positioning"
+equation = "CompetitiveAdvantage = μ(MarketPositionData)"
+
+# Observations (O): Market position data
+[observations]
+timestamp = "2026-01-18T08:00:00Z"
+company = "TechCorp"
+industry = "cloud-infrastructure"
+analysis_period_years = 5
+
+# Market position metrics
+[observations.market_position]
+market_share = 0.38
+revenue_growth_rate = 0.45
+gross_margin = 0.72
+operating_margin = 0.28
+r_and_d_intensity = 0.18
+customer_count = 125000
+enterprise_customer_percentage = 0.42
+
+# Competitive landscape
+[[observations.competitors]]
+name = "CompetitorA"
+market_share = 0.25
+revenue_growth_rate = 0.32
+gross_margin = 0.65
+switching_cost_index = 0.45
+
+[[observations.competitors]]
+name = "CompetitorB"
+market_share = 0.18
+revenue_growth_rate = 0.28
+gross_margin = 0.58
+switching_cost_index = 0.38
+
+[[observations.competitors]]
+name = "NewEntrant1"
+market_share = 0.02
+revenue_growth_rate = 0.85
+gross_margin = 0.35
+switching_cost_index = 0.15
+
+# Moat indicators
+[observations.moat_indicators]
+network_effect_strength = 0.78
+brand_recognition_score = 8.5
+patent_portfolio_size = 450
+regulatory_approvals = 12
+switching_cost_score = 7.2
+scale_advantage_multiplier = 2.3
+
+# Customer behavior data
+[observations.customer_metrics]
+net_retention_rate = 1.25
+customer_acquisition_cost = 15000
+lifetime_value = 250000
+ltv_cac_ratio = 16.67
+churn_rate_annual = 0.08
+nps_score = 72
+
+# Technology moat
+[observations.technology]
+proprietary_algorithms = 23
+unique_datasets_tb = 450
+engineering_team_size = 890
+avg_engineer_experience_years = 8.5
+deployment_automation_score = 9.2
+performance_vs_competitors = 1.85
+
+# Closure Operator (μ): Moat strength calculation
+[closure_operator]
+name = "moat_strength_analyzer"
+type = "barrier_formation"
+idempotent = true
+deterministic = true
+
+# Rule 1: Network effects moat
+[[closure_operator.rules]]
+name = "network_effects_moat"
+condition = "network_effect_strength > 0.5 AND market_share > 0.2"
+action = "calculate_network_barrier_height"
+
+[closure_operator.rules.parameters]
+metcalfe_coefficient = 0.8
+critical_mass_threshold = 50000
+reinforcement_rate = 0.15
+
+# Rule 2: Scale economies moat
+[[closure_operator.rules]]
+name = "scale_economies_moat"
+condition = "scale_advantage_multiplier > 1.5 AND gross_margin > 0.6"
+action = "calculate_cost_barrier_height"
+
+[closure_operator.rules.parameters]
+fixed_cost_leverage = 2.1
+unit_economics_advantage = 0.35
+margin_compression_resistance = 0.72
+
+# Rule 3: Switching costs moat
+[[closure_operator.rules]]
+name = "switching_costs_moat"
+condition = "switching_cost_score > 5.0 AND net_retention_rate > 1.0"
+action = "calculate_retention_barrier_height"
+
+[closure_operator.rules.parameters]
+integration_depth_score = 8.5
+data_lock_in_factor = 0.68
+workflow_entrenchment = 0.75
+
+# Rule 4: Intangible assets moat
+[[closure_operator.rules]]
+name = "intangible_assets_moat"
+condition = "brand_recognition_score > 7.0 OR patent_portfolio_size > 200"
+action = "calculate_ip_barrier_height"
+
+[closure_operator.rules.parameters]
+brand_value_multiplier = 1.8
+patent_defensibility_score = 0.82
+regulatory_approval_time_years = 3.5
+
+# Rule 5: Combined moat score
+[[closure_operator.rules]]
+name = "combined_moat_score"
+condition = "all_moats_calculated"
+action = "aggregate_barrier_heights"
+
+[closure_operator.rules.parameters]
+aggregation_method = "weighted_geometric_mean"
+interaction_effect_coefficient = 0.25
+
+# Artifacts (A): Competitive advantage barriers
+[artifacts]
+overall_moat_strength = 8.7
+moat_rating = "wide"
+estimated_moat_duration_years = 12
+barrier_to_entry_score = 9.1
+
+# Individual moat components
+[[artifacts.moat_components]]
+type = "network_effects"
+strength = 9.2
+barrier_height_score = 9.5
+durability_years = 15
+contribution_percentage = 35.0
+
+[[artifacts.moat_components.evidence]]
+metric = "network_effect_strength"
+value = 0.78
+interpretation = "Strong multi-sided platform effects"
+
+[[artifacts.moat_components.evidence]]
+metric = "customer_count"
+value = 125000
+interpretation = "Above critical mass, self-reinforcing"
+
+[[artifacts.moat_components]]
+type = "scale_economies"
+strength = 8.5
+barrier_height_score = 8.8
+durability_years = 10
+contribution_percentage = 25.0
+
+[[artifacts.moat_components.evidence]]
+metric = "gross_margin"
+value = 0.72
+interpretation = "Significantly above industry average of 0.55"
+
+[[artifacts.moat_components.evidence]]
+metric = "scale_advantage_multiplier"
+value = 2.3
+interpretation = "2.3x cost advantage over average competitor"
+
+[[artifacts.moat_components]]
+type = "switching_costs"
+strength = 8.9
+barrier_height_score = 9.0
+durability_years = 8
+contribution_percentage = 30.0
+
+[[artifacts.moat_components.evidence]]
+metric = "net_retention_rate"
+value = 1.25
+interpretation = "Revenue expansion from existing customers"
+
+[[artifacts.moat_components.evidence]]
+metric = "switching_cost_score"
+value = 7.2
+interpretation = "High integration complexity and data migration costs"
+
+[[artifacts.moat_components]]
+type = "intangible_assets"
+strength = 7.8
+barrier_height_score = 8.2
+durability_years = 20
+contribution_percentage = 10.0
+
+[[artifacts.moat_components.evidence]]
+metric = "patent_portfolio_size"
+value = 450
+interpretation = "Substantial IP protection"
+
+[[artifacts.moat_components.evidence]]
+metric = "brand_recognition_score"
+value = 8.5
+interpretation = "Strong brand associated with reliability"
+
+# Competitive threats analysis
+[[artifacts.threats]]
+threat_type = "new_entrant"
+probability = 0.15
+impact_on_moat = -1.2
+mitigation_strategy = "Accelerate network effects via platform expansion"
+
+[[artifacts.threats]]
+threat_type = "technology_disruption"
+probability = 0.25
+impact_on_moat = -2.5
+mitigation_strategy = "Increase R&D investment, acquire emerging tech companies"
+
+[[artifacts.threats]]
+threat_type = "regulatory_change"
+probability = 0.20
+impact_on_moat = -1.8
+mitigation_strategy = "Diversify regulatory dependencies, lobby for favorable policy"
+
+# Moat reinforcement opportunities
+[[artifacts.reinforcement_opportunities]]
+opportunity = "Expand ecosystem integrations"
+estimated_moat_increase = 0.8
+investment_required_millions = 45
+roi_percentage = 2.5
+timeframe_years = 2
+
+[[artifacts.reinforcement_opportunities]]
+opportunity = "Acquire strategic patents"
+estimated_moat_increase = 0.5
+investment_required_millions = 120
+roi_percentage = 1.2
+timeframe_years = 5
+
+[[artifacts.reinforcement_opportunities]]
+opportunity = "Increase customer data network effects"
+estimated_moat_increase = 1.2
+investment_required_millions = 25
+roi_percentage = 4.8
+timeframe_years = 1
+
+# Verification: Prove A = μ(O)
+[verification]
+method = "historical_correlation_analysis"
+prediction_accuracy_5yr = 0.84
+moat_persistence_validated = true
+
+[verification.assertions]
+moat_score_deterministic = true
+component_scores_sum_correctly = true
+barrier_height_monotonic_in_metrics = true
+threat_impact_bounded = true
+
+[verification.invariants]
+min_moat_strength = 0.0
+max_moat_strength = 10.0
+component_contributions_sum_to_100 = true
+durability_positive = true
+
+# Determinism verification
+[verification.determinism]
+input_metrics_hash = "sha256:f2a9d3e7..."
+output_moat_score_hash = "sha256:b8c4f1a6..."
+run_count = 200
+unique_outputs = 1
+determinism_score = 1.0
+
+# Idempotence verification (μ(μ(O)) = μ(O))
+[verification.idempotence]
+first_run_moat_strength = 8.7
+second_run_moat_strength = 8.7
+difference = 0.0
+idempotent = true
+note = "Moat analysis on same data produces identical results"
+
+# Temporal stability
+[verification.temporal_stability]
+moat_score_volatility_annual = 0.15
+trend_direction = "strengthening"
+confidence_interval_95 = [8.4, 9.0]
+stable = true
+
+# Composability verification
+[verification.composability]
+individual_component_sum = 8.5
+interaction_effects = 0.2
+combined_moat_strength = 8.7
+composable = true
+note = "μ(M₁ ∪ M₂ ∪ M₃ ∪ M₄) includes positive interaction effects between moat types"

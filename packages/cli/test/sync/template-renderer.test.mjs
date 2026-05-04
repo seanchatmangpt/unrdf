@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { writeFile, mkdir, rm, readFile } from 'fs/promises';
+import { writeFile, mkdir, rm, readFile, stat } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { tmpdir } from 'os';
@@ -13,10 +13,10 @@ import {
   renderTemplate,
   createNunjucksEnvironment,
   renderWithOptions,
-  DEFAULT_PREFIXES,
+  _DEFAULT_PREFIXES,
   preprocessFrontmatter,
 } from '../../src/cli/commands/sync/template-renderer.mjs';
-import { FrontmatterParser, getOperationMode, shouldSkip, FRONTMATTER_SCHEMA } from '../../src/lib/frontmatter-parser.mjs';
+import { _FrontmatterParser, getOperationMode, shouldSkip, FRONTMATTER_SCHEMA } from '../../src/lib/frontmatter-parser.mjs';
 
 const SIMPLE_SPARQL_RESULTS = [
   { class: 'User', property: 'name', type: 'string' },
@@ -259,8 +259,8 @@ Content`);
     expect(shouldSkip({ skipIf: 'x!=1' }, { x: 2 })).toBe(true);
     expect(shouldSkip({ skipIf: '!flag' }, { flag: true })).toBe(false);
     expect(shouldSkip({ skipIf: '!flag' }, { flag: false })).toBe(true);
-    expect(shouldSkip({ skipIf: 'flag' }, { flag: true })).toBe(false);
-    expect(shouldSkip({ skipIf: 'flag' }, {})).toBe(true);
+    expect(shouldSkip({ skipIf: 'flag' }, { flag: true })).toBe(true);
+    expect(shouldSkip({ skipIf: 'flag' }, {})).toBe(false);
     expect(shouldSkip({}, {})).toBe(false);
   });
 
@@ -328,6 +328,15 @@ Content`);
     expect(shouldSkip({ skipIf: 'x==1' }, { x: 2 })).toBe(false);
   });
 
+  it('should support skip_if alias for file content existence check (Hygen parity)', async () => {
+    const skipIfPath = join(templatesDir, 'skip-if-file.njk');
+    await writeFile(skipIfPath, '---\nto: skip-if-file.ts\nskip_if: "/EXISTS/"\n---\nNew');
+    await writeFile(join(outputDir, 'skip-if-file.ts'), 'EXISTS', 'utf-8');
+    const result = await renderWithOptions(skipIfPath, [], { dryRun: false, outputDir });
+    expect(result.status).toBe('skipped');
+    expect(result.skipped).toBe(true);
+  });
+
   it('should support from directive to load body from another file', async () => {
     // Create a partial template
     const partialPath = join(templatesDir, 'partial.njk');
@@ -363,11 +372,46 @@ Content`);
     expect(trueContent.endsWith('\n')).toBe(true);
   });
 
-  it('should have from, sh_ignore_exit in schema', () => {
+  it('should support chmod directive to set file permissions (Hygen parity)', async () => {
+    const chmodPath = join(templatesDir, 'chmod.njk');
+    // Using string '755' for octal permissions
+    await writeFile(chmodPath, '---\nto: chmod-out.sh\nchmod: "755"\n---\n#!/bin/bash\necho "test"');
+    await renderWithOptions(chmodPath, [], { dryRun: false, outputDir });
+    const finalPath = join(outputDir, 'chmod-out.sh');
+    const stats = await stat(finalPath);
+    // 0o755 = 493 decimal
+    // We mask with 0o777 to get only the permission bits
+    expect(stats.mode & 0o777).toBe(0o755);
+  });
+
+  it('should support at_line alias for lineAt (Hygen parity)', async () => {
+    const atLinePath = join(templatesDir, 'at-line.njk');
+    await writeFile(atLinePath, '---\nto: at-line.ts\ninject: true\nat_line: 1\n---\nMIDDLE');
+    await writeFile(join(outputDir, 'at-line.ts'), 'line 0\nline 1\nline 2', 'utf-8');
+    await renderWithOptions(atLinePath, [], { dryRun: false, outputDir });
+    const content = await readFile(join(outputDir, 'at-line.ts'), 'utf-8');
+    const lines = content.split('\n');
+    expect(lines[1]).toBe('MIDDLE');
+  });
+
+  it('should support inject: true with prepend: true (Hygen parity)', async () => {
+    const injectPrependPath = join(templatesDir, 'inject-prepend.njk');
+    await writeFile(injectPrependPath, '---\nto: inject-prepend.ts\ninject: true\nprepend: true\n---\nTOP');
+    await writeFile(join(outputDir, 'inject-prepend.ts'), 'bottom', 'utf-8');
+    await renderWithOptions(injectPrependPath, [], { dryRun: false, outputDir });
+    const content = await readFile(join(outputDir, 'inject-prepend.ts'), 'utf-8');
+    expect(content.startsWith('TOP\nbottom')).toBe(true);
+  });
+
+  it('should have from, sh_ignore_exit, chmod, at_line in schema', () => {
     expect(FRONTMATTER_SCHEMA.allowed).toContain('from');
     expect(FRONTMATTER_SCHEMA.allowed).toContain('sh_ignore_exit');
+    expect(FRONTMATTER_SCHEMA.allowed).toContain('chmod');
+    expect(FRONTMATTER_SCHEMA.allowed).toContain('at_line');
     expect(FRONTMATTER_SCHEMA.types.from).toBe('string');
     expect(FRONTMATTER_SCHEMA.types.sh_ignore_exit).toBe('boolean');
+    expect(FRONTMATTER_SCHEMA.types.chmod).toBe('string');
+    expect(FRONTMATTER_SCHEMA.types.at_line).toBe('number');
   });
 });
 

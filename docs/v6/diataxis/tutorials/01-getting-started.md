@@ -42,7 +42,7 @@ npm install @unrdf/v6-core @unrdf/oxigraph @unrdf/kgc-4d
 ```bash
 # Check CLI is available
 unrdf --version
-# Expected output: @unrdf/cli 26.4.8
+# Expected output: @unrdf/cli 26.4.23
 
 # Run health check
 unrdf doctor

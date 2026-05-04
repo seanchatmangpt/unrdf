@@ -55,7 +55,7 @@ describe('useIndexedDBStore', () => {
   });
 
   describe('CRUD Operations', () => {
-    it.skip(
+    it(
       'should add quad to IndexedDB',
       // SKIP REASON: Test requires fake-indexeddb package (not installed)
       // Also not in vitest.config.mjs include list - needs React testing setup

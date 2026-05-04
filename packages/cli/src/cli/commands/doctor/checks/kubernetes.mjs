@@ -12,11 +12,6 @@
  */
 
 import { execSync } from 'node:child_process';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const projectRoot = join(__dirname, '../../../../../../..');
 
 /**
  * Check K8s namespace existence

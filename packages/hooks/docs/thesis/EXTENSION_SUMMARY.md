@@ -288,7 +288,7 @@ Execute(Δ, H, S_t) = Execute(Δ, H, S_t)
 
 ### Evidence Quality
 - **NO external URLs** (all local file paths)
-- **NO TODOs** (100% production-ready content)
+- **NO DEFERRED_ACTION(#gap-closure)s** (100% production-ready content)
 - **100% backed by test receipts** from packages/hooks/test/
 - **100% backed by benchmarks** from benchmarks/core/
 - **100% backed by production code** from packages/hooks/src/

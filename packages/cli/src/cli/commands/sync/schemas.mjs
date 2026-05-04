@@ -19,6 +19,7 @@ export const ProjectConfigSchema = z.object({
   description: z.string().optional(),
   author: z.string().optional(),
   license: z.string().optional(),
+  breed: z.enum(['dachshund', 'shepherd']).default('dachshund'),
 }).strict();
 
 /**
@@ -49,7 +50,7 @@ export const GenerationRuleSchema = z.object({
   description: z.string().optional(),
   query: z.string().min(1),
   template: z.string().min(1),
-  output_file: z.string().min(1),
+  output_file: z.string().min(1).optional(),
   enabled: z.boolean().default(true),
   mode: z.enum(['overwrite', 'append', 'skip_existing']).default('overwrite'),
   depends_on: z.array(z.string()).optional(),
@@ -67,6 +68,8 @@ export const GenerationConfigSchema = z.object({
   parallel: z.boolean().default(false),
   incremental: z.boolean().default(true),
   overwrite: z.boolean().default(false),
+  backup_before_overwrite: z.boolean().default(false),
+  backup_suffix: z.string().default('.bak'),
 }).strict();
 
 /**
@@ -118,6 +121,9 @@ export const SyncArgsSchema = z.object({
   rule: z.string().optional(),
   output: z.enum(['text', 'json']).default('text'),
   timeout: z.number().positive().default(30000),
+  harden: z.boolean().default(false),
+  watch: z.boolean().default(false),
+  breed: z.enum(['dachshund', 'shepherd']).optional(),
 }).strict();
 
 /**

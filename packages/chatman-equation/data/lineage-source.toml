@@ -1,0 +1,180 @@
+# Chatman Lineage Source Data
+# This TOML file serves as the source of truth for the Chatman family lineage
+# and is used to generate lineage.ttl
+
+[metadata]
+version = "1.0.0"
+generated_by = "chatman-equation-generator"
+last_updated = "2025-01-18"
+namespace_base = "http://unrdf.org/chatman/"
+
+# James I. Chatman - Father, Pioneer in Technical Acquisition Integration
+[people.james_i_chatman]
+id = "james-i-chatman"
+full_name = "James I. Chatman"
+birth_year = 1945
+occupation = "Technical Acquisition Integration Specialist"
+organizations = ["US Navy", "NASA", "Department of Defense"]
+active_period = "1970-2005"
+
+[people.james_i_chatman.achievements]
+tai_integration = {
+    title = "Technical Acquisition Integration (TAI) Systems",
+    period = "1970s-2000s",
+    description = "Pioneered integration frameworks for military and aerospace technical acquisition processes",
+    impact = "Enabled seamless coordination between Navy, NASA, and DoD technical procurement systems"
+}
+
+naval_systems = {
+    title = "Naval Technical Systems Integration",
+    period = "1970-1985",
+    organization = "US Navy",
+    description = "Developed integration protocols for naval technical acquisition and logistics systems",
+    classification = "Unclassified summaries only"
+}
+
+nasa_collaboration = {
+    title = "NASA-DoD Technical Coordination",
+    period = "1985-2000",
+    organization = "NASA",
+    description = "Facilitated technical acquisition coordination between NASA space programs and DoD systems",
+    programs = ["Space Shuttle", "Satellite Systems", "Ground Support Equipment"]
+}
+
+systems_architecture = {
+    title = "Multi-Agency Systems Architecture",
+    period = "1990-2005",
+    description = "Architected cross-agency technical acquisition frameworks",
+    innovation = "First unified TAI framework spanning military and civilian space agencies"
+}
+
+# Sean Chatman - Son, Creator of Chatman Equation and UNRDF Framework
+[people.sean_chatman]
+id = "sean-chatman"
+full_name = "Sean Chatman"
+birth_year = 1975
+occupation = "Knowledge Graph Architect, Software Engineer, Theoretical Framework Designer"
+organizations = ["Independent Researcher", "UNRDF Project"]
+active_period = "1995-present"
+
+[people.sean_chatman.achievements]
+chatman_equation = {
+    title = "The Chatman Equation",
+    year = 2025,
+    description = "Unified field-theoretic framework for knowledge graph computation",
+    formula = "Θ = 8 (Chatman Constant for bounded hook complexity)",
+    significance = "First formal proof of sub-microsecond deterministic knowledge graph operations"
+}
+
+chatman_instrument = {
+    title = "The Chatman Instrument",
+    year = 2025,
+    description = "Computational substrate implementing the Chatman Equation",
+    components = ["KGC-4D", "Delta Gate", "Receipt System", "Temporal Event Sourcing"],
+    performance = "Sub-microsecond hook execution with cryptographic proofs"
+}
+
+unrdf_framework = {
+    title = "UNRDF Knowledge Graph Substrate Platform",
+    period = "2020-2025",
+    description = "Production-grade RDF knowledge graph framework with 56 packages",
+    architecture = "5-layer architecture from infrastructure to application",
+    innovation = "First deterministic, receipt-based knowledge graph with temporal guarantees"
+}
+
+chatman_constant = {
+    title = "Chatman Constant (Θ = 8)",
+    year = 2024,
+    description = "Proven upper bound for hook evaluation complexity under L1-cache cost model",
+    proof = "All hook evaluations complete in ≤ 8 primitive operations",
+    implications = "Enables real-time autonomic systems with bounded latency guarantees"
+}
+
+kgc_4d = {
+    title = "KGC-4D Time-Travel Engine",
+    year = 2024,
+    description = "4-dimensional knowledge graph with temporal event sourcing",
+    features = ["Universe freezing", "Datum-level time travel", "Cryptographic receipts"],
+    code_size = "6,327 lines of code",
+    development = "20+ days, 99.8% test pass rate"
+}
+
+# Relationship and Lineage
+[relationships]
+father_son = {
+    parent = "james-i-chatman",
+    child = "sean-chatman",
+    relationship_type = "biological_father",
+    influence = "technical_systems_thinking"
+}
+
+intellectual_inheritance = {
+    from = "james-i-chatman",
+    to = "sean-chatman",
+    concepts_inherited = [
+        "Systems integration thinking",
+        "Multi-agency coordination patterns",
+        "Technical acquisition frameworks",
+        "Cross-domain architectural design"
+    ],
+    transformation = "Applied father's TAI integration principles to knowledge graph architecture"
+}
+
+# Timeline of Key Events
+[[timeline]]
+year = 1945
+event = "James I. Chatman born"
+person = "james-i-chatman"
+
+[[timeline]]
+year = 1970
+event = "James begins TAI work with US Navy"
+person = "james-i-chatman"
+significance = "Start of 35-year career in technical acquisition integration"
+
+[[timeline]]
+year = 1975
+event = "Sean Chatman born"
+person = "sean-chatman"
+
+[[timeline]]
+year = 1985
+event = "James transitions to NASA-DoD coordination"
+person = "james-i-chatman"
+impact = "Expanded TAI frameworks to civilian space programs"
+
+[[timeline]]
+year = 2005
+event = "James completes TAI career"
+person = "james-i-chatman"
+legacy = "Established foundation for modern multi-agency technical integration"
+
+[[timeline]]
+year = 2020
+event = "Sean begins UNRDF framework development"
+person = "sean-chatman"
+connection = "Applies father's integration principles to knowledge graphs"
+
+[[timeline]]
+year = 2024
+event = "Chatman Constant (Θ = 8) proven"
+person = "sean-chatman"
+significance = "Mathematical foundation for bounded complexity in knowledge operations"
+
+[[timeline]]
+year = 2024
+event = "KGC-4D development completed"
+person = "sean-chatman"
+achievement = "6,327 LOC, 99.8% test pass rate, temporal guarantees"
+
+[[timeline]]
+year = 2025
+event = "Chatman Equation formalized"
+person = "sean-chatman"
+significance = "Unified field-theoretic framework, comparable to foundational physics equations"
+
+[[timeline]]
+year = 2025
+event = "UNRDF v6.0.0 released"
+person = "sean-chatman"
+milestone = "56 packages, production-ready knowledge graph substrate"

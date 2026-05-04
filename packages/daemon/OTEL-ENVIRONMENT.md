@@ -1,6 +1,6 @@
 # OTEL Environment Configuration - @unrdf/daemon
 
-**Version**: 26.4.4
+**Version**: 26.4.23
 **Last Updated**: 2026-04-03
 
 ---
@@ -103,13 +103,13 @@ export OTEL_SERVICE_NAME=unrdf-daemon
 Service version.
 
 **Type**: `string`
-**Default**: `26.4.4`
+**Default**: `26.4.23`
 **Description**: Version of the service for tracing
 
 **Example**:
 
 ```bash
-export OTEL_SERVICE_VERSION=26.4.4
+export OTEL_SERVICE_VERSION=26.4.23
 ```
 
 ---
@@ -119,13 +119,13 @@ export OTEL_SERVICE_VERSION=26.4.4
 Additional resource attributes.
 
 **Type**: `string`
-**Default**: `service.name=unrdf-daemon,service.version=26.4.4`
+**Default**: `service.name=unrdf-daemon,service.version=26.4.23`
 **Description**: Comma-separated list of additional resource attributes
 
 **Example**:
 
 ```bash
-export OTEL_RESOURCE_ATTRIBUTES=service.name=unrdf-daemon,service.version=26.4.4,deployment.environment=production
+export OTEL_RESOURCE_ATTRIBUTES=service.name=unrdf-daemon,service.version=26.4.23,deployment.environment=production
 ```
 
 ---
@@ -231,7 +231,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector.company.com:4317
 
 # Service identity
 export OTEL_SERVICE_NAME=unrdf-daemon
-export OTEL_SERVICE_VERSION=26.4.4
+export OTEL_SERVICE_VERSION=26.4.23
 export OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production,cluster=us-west-2
 
 # Sampling (10% recommended)

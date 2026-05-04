@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { doctor } from '../../src/cli/commands/doctor/index.mjs';
-import { execSync } from 'node:child_process';
+import { _execSync } from 'node:child_process';
 
 // Mock external dependencies
 vi.mock('node:child_process', () => ({
@@ -175,18 +175,18 @@ describe('Doctor Command', () => {
 
   describe('timeout enforcement', () => {
     it('should enforce timeout for quick mode (30s)', async () => {
-      const quickTimeout = 30000; // 30 seconds
+      const _quickTimeout = 30000; // 30 seconds
       // Timeout enforcement is tested by ensuring checks complete within timeout
       // This is more of an integration test
     });
 
     it('should enforce timeout for standard mode (2min)', async () => {
-      const standardTimeout = 120000; // 2 minutes
+      const _standardTimeout = 120000; // 2 minutes
       // Timeout enforcement for standard mode
     });
 
     it('should enforce timeout for full mode (5min)', async () => {
-      const fullTimeout = 300000; // 5 minutes
+      const _fullTimeout = 300000; // 5 minutes
       // Timeout enforcement for full mode
     });
   });
@@ -226,7 +226,7 @@ describe('Doctor Command', () => {
   describe('external dependencies mocking', () => {
     it('should mock kubectl commands', async () => {
       // Mock execSync for kubectl commands
-      mockExecSync.mockImplementation((command, args) => {
+      mockExecSync.mockImplementation((command, _args) => {
         if (command.includes('kubectl')) {
           return JSON.stringify({
             apiVersion: 'v1',

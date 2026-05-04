@@ -5,7 +5,7 @@
 **Author:** Sean Chatman  
 **Affiliation:** UNRDF Research Platform  
 **Date:** April 2026  
-**Version:** 26.4.4
+**Version:** 26.4.23
 
 ---
 
@@ -1464,7 +1464,7 @@ The contribution is threefold:
 
 #### 8.2.1 Workflow Specification
 
-The test workflow was the **LinkedIn Profile Update v26.4.6** specification (`ontology/core/powl-example-linkedin.nt`), a production-representative POWL process with the following structure:
+The test workflow was the **LinkedIn Profile Update v26.4.23** specification (`ontology/core/powl-example-linkedin.nt`), a production-representative POWL process with the following structure:
 
 | Dimension              | Value                                                                                                                            |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -1503,8 +1503,8 @@ This models the dual nature of AI-augmented professional work: fully automated u
 
 | Component     | Version            | Role                                                                  |
 | ------------- | ------------------ | --------------------------------------------------------------------- |
-| ostar daemon  | 26.4.6             | MCP server: sparql_query, parse_rdf, execute_hook + 3 new swarm tools |
-| unRDF         | 26.4.4             | Knowledge graph substrate (N3.js + Oxigraph backends)                 |
+| ostar daemon  | 26.4.23             | MCP server: sparql_query, parse_rdf, execute_hook + 3 new swarm tools |
+| unRDF         | 26.4.23             | Knowledge graph substrate (N3.js + Oxigraph backends)                 |
 | Vercel AI SDK | ^6.0.146           | generateText agentic loop for worker execution                        |
 | @ai-sdk/groq  | ^3.0.33            | Groq API client                                                       |
 | Groq model    | openai/gpt-oss-20b | LLM for agent task execution                                          |

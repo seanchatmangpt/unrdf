@@ -8,7 +8,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { writeFile, mkdir, rm } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import { loadOntology, extractPrefixes } from '../../src/cli/commands/sync/ontology-loader.mjs';
+import { loadOntology, _extractPrefixes } from '../../src/cli/commands/sync/ontology-loader.mjs';
 import { COMMON_PREFIXES } from '@unrdf/core';
 
 describe('Ontology Loader', () => {
@@ -57,7 +57,7 @@ ex:Subject ex:predicate ex:Object .
     const config = { source: 'nonexistent.ttl' };
 
     // Act & Assert
-    await expect(loadOntology(config, testDir)).rejects.toThrow('Ontology file not found');
+    await expect(loadOntology(config, testDir)).rejects.toThrow('Ontology source not found');
   });
 
   it('should handle various RDF formats (turtle, ntriples, nquads, trig) and reject unknown formats', async () => {

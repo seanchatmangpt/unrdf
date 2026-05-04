@@ -654,6 +654,40 @@ export function guardEventCountConsistency(memoryCount, storeCount) {
   return true;
 }
 
+// ============================================================================
+// VALIDATION GUARDS (V1-V3)
+// ============================================================================
+
+/**
+ * Validation Mode Enum
+ */
+export const ValidationMode = {
+  FULL: 'FULL',
+  INCREMENTAL: 'INCREMENTAL',
+  DELTA: 'DELTA',
+};
+
+/**
+ * Guard V1: Delta-based validation
+ * Prevents: Invalid mutations by checking SHACL shapes ONLY against provided deltas
+ * Action: Call validator.validateMutation for each delta
+ */
+export function guardDeltaValidation(validator, deltas) {
+  if (!validator || typeof validator.validateMutation !== 'function') {
+    throw new TypeError('Guard V1 failed: Invalid validator, must have validateMutation method');
+  }
+  if (!Array.isArray(deltas)) {
+    throw new TypeError('Guard V1 failed: Deltas must be an array');
+  }
+
+  for (const delta of deltas) {
+    const subjectIri = delta.subject.value || delta.subject;
+    validator.validateMutation(subjectIri, delta);
+  }
+
+  return true;
+}
+
 /**
  * Export all guards for testing and usage
  */
@@ -700,4 +734,7 @@ export const allGuards = {
   guardEventIDUniqueness,
   guardTimeStateEncapsulation,
   guardEventCountConsistency,
+
+  // Validation
+  guardDeltaValidation,
 };

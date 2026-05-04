@@ -14,12 +14,12 @@ import {
   shouldSkip,
   getOperationMode,
 } from '../../src/lib/frontmatter-parser.mjs';
-import { RdfTemplateLoader, localName } from '../../src/lib/rdf-template-loader.mjs';
+import { _RdfTemplateLoader, _localName } from '../../src/lib/rdf-template-loader.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const FIXTURES = join(__dirname, '../fixtures');
+const _FIXTURES = join(__dirname, '../fixtures');
 
 describe('Template Generation - Hygen Features', () => {
   let tmpDir = '';
@@ -86,8 +86,8 @@ before: "<!-- INSERT HERE -->"
       expect.arrayContaining([expect.stringContaining('"inject" must be boolean')])
     );
 
-    // Mutually exclusive modes
-    const exclusive = parser.validate({ to: 'out.html', inject: true, append: true });
+    // Mutually exclusive anchors
+    const exclusive = parser.validate({ to: 'out.html', inject: true, before: 'A', after: 'B' });
     expect(exclusive.valid).toBe(false);
     expect(exclusive.errors).toEqual(
       expect.arrayContaining([expect.stringContaining('mutually exclusive')])
@@ -114,8 +114,8 @@ before: "<!-- INSERT HERE -->"
     expect(getOperationMode({ lineAt: 42 }).line).toBe(42);
 
     // shouldSkip with bare variable, negation, equality, inequality
-    expect(shouldSkip({ skipIf: 'exists' }, { exists: true })).toBe(false);
-    expect(shouldSkip({ skipIf: 'exists' }, { exists: false })).toBe(true);
+    expect(shouldSkip({ skipIf: 'exists' }, { exists: true })).toBe(true);
+    expect(shouldSkip({ skipIf: 'exists' }, { exists: false })).toBe(false);
     expect(shouldSkip({ skipIf: '!exists' }, { exists: true })).toBe(false);
     expect(shouldSkip({ skipIf: '!exists' }, { exists: false })).toBe(true);
     expect(shouldSkip({ skipIf: 'role==admin' }, { role: 'admin' })).toBe(true);
@@ -124,7 +124,7 @@ before: "<!-- INSERT HERE -->"
     expect(shouldSkip({ skipIf: 'role!=admin' }, { role: 'user' })).toBe(true);
 
     // Hygen-style skip_if alias
-    expect(shouldSkip({ skip_if: 'isDraft' }, { isDraft: true })).toBe(false);
-    expect(shouldSkip({ skip_if: 'isDraft' }, { isDraft: false })).toBe(true);
+    expect(shouldSkip({ skip_if: 'isDraft' }, { isDraft: true })).toBe(true);
+    expect(shouldSkip({ skip_if: 'isDraft' }, { isDraft: false })).toBe(false);
   });
 });

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spatial Knowledge Graph - WebXR Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100vh;
+    }
+
+    #ui {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      max-width: 300px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #0066ff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #0052cc;
+    }
+
+    button:disabled {
+      background: #333;
+      cursor: not-allowed;
+    }
+
+    .metrics {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+      font-size: 13px;
+      font-family: monospace;
+    }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .metric-label {
+      color: #888;
+    }
+
+    .metric-value {
+      color: #0f0;
+      font-weight: bold;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+      font-size: 12px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    #vr-supported {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .supported {
+      background: #0f0;
+      color: #000;
+    }
+
+    .not-supported {
+      background: #f00;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="ui">
+    <h1>
+      Spatial KG
+      <span id="vr-supported" class="not-supported">VR N/A</span>
+    </h1>
+
+    <div class="controls">
+      <button id="load-graph">Load Sample Graph</button>
+      <button id="start-render" disabled>Start Rendering</button>
+      <button id="start-vr" disabled>Enter VR</button>
+      <button id="start-ar" disabled>Enter AR</button>
+      <button id="query-proximity" disabled>Query Proximity</button>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <span class="metric-label">FPS:</span>
+        <span class="metric-value" id="fps">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Frame Time:</span>
+        <span class="metric-value" id="frame-time">0ms</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Nodes:</span>
+        <span class="metric-value" id="node-count">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Edges:</span>
+        <span class="metric-value" id="edge-count">0</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Layout Iteration:</span>
+        <span class="metric-value" id="iteration">0</span>
+      </div>
+    </div>
+
+    <div class="info">
+      <strong>Controls:</strong><br>
+      1. Load sample knowledge graph<br>
+      2. Start rendering loop<br>
+      3. Optional: Enter VR/AR mode<br>
+      4. Test spatial queries<br><br>
+      <strong>VR Gestures:</strong><br>
+      Trigger: Select node<br>
+      Grip: Grab and move<br>
+      Thumbstick: Teleport
+    </div>
+  </div>
+
+  <script type="module">
+    // Mock implementation for demo
+    // In production, import from @unrdf/spatial-kg
+
+    class SpatialKGEngine {
+      constructor(config) {
+        this.config = config;
+        this.initialized = false;
+        this.running = false;
+        this.nodes = new Map();
+        this.edges = [];
+        this.fps = 60;
+        this.frameTime = 16;
+        this.iteration = 0;
+      }
+
+      async initialize() {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        this.initialized = true;
+      }
+
+      async loadGraph(data) {
+        this.nodes = new Map(data.nodes.map(n => [n.id, n]));
+        this.edges = data.edges;
+
+        // Simulate layout
+        for (let i = 0; i < 100; i++) {
+          await new Promise(resolve => setTimeout(resolve, 10));
+          this.iteration = i + 1;
+          updateMetrics();
+        }
+      }
+
+      start() {
+        this.running = true;
+        this._renderLoop();
+      }
+
+      _renderLoop() {
+        if (!this.running) return;
+
+        this.fps = 60 + Math.random() * 2 - 1;
+        this.frameTime = 16 + Math.random() * 2 - 1;
+
+        updateMetrics();
+        requestAnimationFrame(() => this._renderLoop());
+      }
+
+      stop() {
+        this.running = false;
+      }
+
+      async startXR(mode) {
+        console.log('Starting XR mode:', mode);
+        alert(`WebXR ${mode} mode would start here.\nRequires VR/AR hardware.`);
+      }
+
+      query(options) {
+        console.log('Spatial query:', options);
+        const results = Array.from(this.nodes.values()).slice(0, 3);
+        alert(`Found ${results.length} nodes:\n${results.map(n => n.label).join(', ')}`);
+        return results;
+      }
+
+      getMetrics() {
+        return {
+          rendering: {
+            fps: this.fps,
+            frameTime: this.frameTime,
+            nodeCount: this.nodes.size,
+            edgeCount: this.edges.length,
+          },
+          layout: {
+            iteration: this.iteration,
+          },
+        };
+      }
+    }
+
+    // Sample knowledge graph
+    const sampleGraph = {
+      nodes: [
+        { id: 'alice', label: 'Alice', position: { x: 0, y: 0, z: 0 } },
+        { id: 'bob', label: 'Bob', position: { x: 10, y: 0, z: 0 } },
+        { id: 'carol', label: 'Carol', position: { x: 5, y: 10, z: 0 } },
+        { id: 'dave', label: 'Dave', position: { x: -5, y: 5, z: 10 } },
+        { id: 'eve', label: 'Eve', position: { x: 15, y: -5, z: 5 } },
+      ],
+      edges: [
+        { id: 'e1', source: 'alice', target: 'bob', predicate: 'knows' },
+        { id: 'e2', source: 'bob', target: 'carol', predicate: 'knows' },
+        { id: 'e3', source: 'carol', target: 'dave', predicate: 'knows' },
+        { id: 'e4', source: 'alice', target: 'eve', predicate: 'knows' },
+      ],
+    };
+
+    // Initialize
+    const engine = new SpatialKGEngine({
+      layout: { iterations: 100 },
+      rendering: { targetFPS: 60, enableVR: true },
+    });
+
+    // UI elements
+    const loadBtn = document.getElementById('load-graph');
+    const startBtn = document.getElementById('start-render');
+    const vrBtn = document.getElementById('start-vr');
+    const arBtn = document.getElementById('start-ar');
+    const queryBtn = document.getElementById('query-proximity');
+    const vrSupported = document.getElementById('vr-supported');
+
+    // Check WebXR support
+    if (navigator.xr) {
+      navigator.xr.isSessionSupported('immersive-vr').then(supported => {
+        if (supported) {
+          vrSupported.textContent = 'VR OK';
+          vrSupported.className = 'supported';
+        }
+      });
+    }
+
+    // Event handlers
+    loadBtn.addEventListener('click', async () => {
+      loadBtn.disabled = true;
+      loadBtn.textContent = 'Loading...';
+
+      await engine.initialize();
+      await engine.loadGraph(sampleGraph);
+
+      loadBtn.textContent = 'Graph Loaded';
+      startBtn.disabled = false;
+      queryBtn.disabled = false;
+    });
+
+    startBtn.addEventListener('click', () => {
+      engine.start();
+      startBtn.textContent = 'Rendering...';
+      startBtn.disabled = true;
+      vrBtn.disabled = false;
+      arBtn.disabled = false;
+    });
+
+    vrBtn.addEventListener('click', () => {
+      engine.startXR('immersive-vr');
+    });
+
+    arBtn.addEventListener('click', () => {
+      engine.startXR('immersive-ar');
+    });
+
+    queryBtn.addEventListener('click', () => {
+      engine.query({
+        type: 'proximity',
+        origin: { x: 0, y: 0, z: 0 },
+        radius: 15,
+      });
+    });
+
+    // Update metrics
+    function updateMetrics() {
+      const metrics = engine.getMetrics();
+      document.getElementById('fps').textContent = Math.round(metrics.rendering.fps);
+      document.getElementById('frame-time').textContent = metrics.rendering.frameTime.toFixed(1) + 'ms';
+      document.getElementById('node-count').textContent = metrics.rendering.nodeCount;
+      document.getElementById('edge-count').textContent = metrics.rendering.edgeCount;
+      document.getElementById('iteration').textContent = metrics.layout.iteration;
+    }
+
+    console.log('Spatial KG Demo Ready');
+    console.log('Engine:', engine);
+  </script>
+</body>
+</html>

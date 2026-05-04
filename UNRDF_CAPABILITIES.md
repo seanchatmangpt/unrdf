@@ -1,4 +1,4 @@
-# UNRDF v26.4.10 — Complete Capabilities Overview
+# UNRDF v26.4.23 — Complete Capabilities Overview
 
 ## Architecture
 
@@ -353,7 +353,7 @@ When running `unrdf mcp start`, exposes these ontology tools:
 
 ## Development Features
 
-- **Monorepo** — 20 packages, unified versioning (26.4.10)
+- **Monorepo** — 20 packages, unified versioning (26.4.23)
 - **Hot reload** — Configuration changes without restart
 - **Watch mode** — File monitoring for sync, templates
 - **Dry run** — Preview changes before applying

@@ -1,0 +1,107 @@
+# Chatman Equation Configuration
+# Example TOML configuration for Chatman Equation operations
+
+[chatman]
+version = "1.0.0"
+observable_ratio = 0.05    # 5% observable, 95% dark field
+closure_threshold = 0.95   # 95% completeness threshold
+
+# Market Dynamics Rules
+[[market_dynamics]]
+id = "md-custom-001"
+name = "Hidden Customer Pain Points"
+category = "customer_needs"
+pattern = "hidden_pain_points"
+dark_field_multiplier = 19
+confidence = 0.87
+
+[[market_dynamics]]
+id = "md-custom-002"
+name = "Emergent Buying Behaviors"
+category = "demand_patterns"
+pattern = "emergent_buying_behaviors"
+dark_field_multiplier = 19
+confidence = 0.84
+
+[[market_dynamics]]
+id = "md-custom-003"
+name = "Latent Value Perceptions"
+category = "value_drivers"
+pattern = "latent_value_perceptions"
+dark_field_multiplier = 19
+confidence = 0.82
+
+# Organizational Dynamics Rules
+[[organizational_dynamics]]
+id = "od-custom-001"
+name = "Shadow Reporting Structures"
+category = "power_structures"
+pattern = "shadow_reporting_structures"
+dark_field_multiplier = 19
+confidence = 0.85
+
+[[organizational_dynamics]]
+id = "od-custom-002"
+name = "Tribal Knowledge Repositories"
+category = "knowledge_networks"
+pattern = "tribal_knowledge_repositories"
+dark_field_multiplier = 19
+confidence = 0.83
+
+[[organizational_dynamics]]
+id = "od-custom-003"
+name = "Hidden Incentive Structures"
+category = "decision_criteria"
+pattern = "hidden_incentive_structures"
+dark_field_multiplier = 19
+confidence = 0.86
+
+# Strategic Dynamics Rules
+[[strategic_dynamics]]
+id = "sd-custom-001"
+name = "Unexplored Strategic Pivots"
+category = "strategic_options"
+pattern = "unexplored_strategic_pivots"
+dark_field_multiplier = 19
+confidence = 0.84
+
+[[strategic_dynamics]]
+id = "sd-custom-002"
+name = "Latent Core Competencies"
+category = "competitive_advantages"
+pattern = "latent_core_competencies"
+dark_field_multiplier = 19
+confidence = 0.88
+
+[[strategic_dynamics]]
+id = "sd-custom-003"
+name = "Implicit Industry Conventions"
+category = "strategic_assumptions"
+pattern = "implicit_industry_conventions"
+dark_field_multiplier = 19
+confidence = 0.81
+
+# Disruption Arithmetic Rules
+[[disruption_arithmetic]]
+id = "da-custom-001"
+name = "Stealth Disruption Signals"
+category = "disruption_vectors"
+pattern = "stealth_disruption_signals"
+dark_field_multiplier = 19
+confidence = 0.86
+
+[[disruption_arithmetic]]
+id = "da-custom-002"
+name = "Hidden Adoption Accelerators"
+category = "adoption_triggers"
+pattern = "hidden_adoption_accelerators"
+dark_field_multiplier = 19
+confidence = 0.83
+
+[[disruption_arithmetic]]
+id = "da-custom-003"
+name = "Latent Technology Synergies"
+category = "technology_convergence"
+pattern = "latent_technology_synergies"
+dark_field_multiplier = 19
+confidence = 0.87

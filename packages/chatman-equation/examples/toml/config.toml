@@ -1,0 +1,29 @@
+# 3T Methodology Configuration Example
+# TOML configuration for knowledge graph generation
+
+[metadata]
+name = "chatman-equation-example"
+version = "1.0.0"
+description = "Example configuration demonstrating 3T methodology"
+author = "UNRDF Team"
+created = "2026-01-18T00:00:00Z"
+
+[ontology]
+namespace = "http://unrdf.org/chatman-equation#"
+prefix = "ce"
+imports = [
+  "http://www.w3.org/2000/01/rdf-schema#",
+  "http://www.w3.org/2002/07/owl#"
+]
+
+[templates]
+engine = "tera"
+
+[templates.variables]
+project_name = "Chatman Equation"
+component_count = 3
+components = ["TOML", "Tera", "Turtle"]
+
+[validation]
+strict = true
+shacl = "examples/turtle/shapes.ttl"
