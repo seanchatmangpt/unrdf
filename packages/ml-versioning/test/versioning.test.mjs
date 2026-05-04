@@ -3,9 +3,14 @@
  * Comprehensive test suite for model serialization, hash chains, and time-travel
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import * as tf from '@tensorflow/tfjs-node';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-backend-cpu';
 import { MLVersionStore } from '../src/version-store.mjs';
+
+beforeAll(async () => {
+  await tf.setBackend('cpu');
+});
 
 /**
  * Helper: Create a simple test model
