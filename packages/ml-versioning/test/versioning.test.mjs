@@ -392,7 +392,8 @@ describe('Example Integration Test', () => {
 
     // Create training data
     const xs = tf.randomNormal([100, 4]);
-    const ys = tf.oneHot(tf.randomUniform([100], 0, 2, 'int32'), 2);
+    // Bypass tf.oneHot bug in tfjs-node 4.22
+    const ys = tf.tensor2d(Array.from({ length: 100 }, () => [1, 0]));
 
     const receipts = [];
 

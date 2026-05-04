@@ -1,0 +1,112 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.5,
+    "reference": 0.8,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "b88c1be673f33cf57f61a1826c570f96e212e7d398161b52b39848b191915a16",
+    "readmeHeadings": [
+      "Features",
+      "Usage",
+      "Convergence Criteria"
+    ]
+  },
+  "explanation": {
+    "architecture": "Multi-worker coordinator with convergence detection for parallel process mining.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-pictl-swarm-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @pictl/swarm",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 1,
+      "context": "When you need to use the package from the command line",
+      "id": "howto-use-the-cli",
+      "source": [
+        "bin"
+      ],
+      "steps": [
+        "Install package globally or locally",
+        "Run CLI command with options",
+        "Process command output"
+      ],
+      "task": "Execute wasm4pm-swarm command-line interface",
+      "title": "Use the CLI"
+    }
+  ],
+  "packageName": "@pictl/swarm",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-pictl-swarm-reference",
+    "items": [
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@pictl/swarm",
+        "type": "export"
+      },
+      {
+        "description": "CLI command: wasm4pm-swarm",
+        "example": "wasm4pm-swarm [options]",
+        "name": "wasm4pm-swarm",
+        "type": "bin"
+      }
+    ],
+    "source": [
+      "exports",
+      "bin"
+    ],
+    "title": "@pictl/swarm Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @pictl/swarm in your project",
+      "id": "tutorial-getting-started-with-pictl-swarm",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @pictl/swarm"
+    }
+  ],
+  "version": "26.4.17"
+}
