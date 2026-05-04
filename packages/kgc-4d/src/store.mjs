@@ -112,7 +112,7 @@ export class KGCStore extends UnrdfStore {
     }
 
     const cacheKey = `query:${sparql}`;
-    return this.queryCache.get(cacheKey, () => super.query(sparql, options));
+    return this.queryCache.get(cacheKey, async () => super.query(sparql, options));
   }
 
   /**
