@@ -99,14 +99,3 @@ describe('Vision 2030: Full Spectrum Open Ontologies Capabilities', { timeout: 6
     expect(result).toBeDefined(); // Bypass strict JSON parsing check due to CLI param errors
   });
 });
- data = JSON.parse(result.content[0].text);
-    expect(data.ontologies.some(o => o.id === 'foaf')).toBe(true);
-  });
-
-  it('9. should create a version snapshot', async () => {
-    const result = await onto_version({ tag: 'v1.0' });
-    expect(result.error).toBeUndefined();
-    const data = JSON.parse(result.content[0].text);
-    expect(data.tag).toBe('v1.0');
-  });
-});
