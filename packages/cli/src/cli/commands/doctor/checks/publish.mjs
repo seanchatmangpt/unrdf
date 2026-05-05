@@ -5,6 +5,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { execSync } from 'node:child_process';
 
 function checkPackageJson(pkgPath) {
   const pkgJsonPath = path.join(pkgPath, 'package.json');
@@ -91,6 +92,106 @@ function checkMainEntry(pkgPath, pkg) {
   return { status: 'pass', actual: 'Exists', expected: 'File exists' };
 }
 
+function checkExports(pkgPath, pkg) {
+  if (!pkg.exports) return { status: 'pass', actual: 'No exports defined', expected: 'Optional' };
+  
+  const missing = [];
+  const traverseExports = (obj) => {
+    if (typeof obj === 'string') {
+      if (!fs.existsSync(path.join(pkgPath, obj))) {
+        missing.push(obj);
+      }
+    } else if (typeof obj === 'object' && obj !== null) {
+      for (const val of Object.values(obj)) {
+        traverseExports(val);
+      }
+    }
+  };
+
+  traverseExports(pkg.exports);
+
+  if (missing.length > 0) {
+    return {
+      status: 'fail',
+      actual: `${missing.length} missing export files`,
+      expected: 'All export paths exist',
+      critical: true,
+      fix: `Ensure build artifacts exist for: ${missing.join(', ')}`
+    };
+  }
+  return { status: 'pass', actual: 'All valid', expected: 'All export paths exist' };
+}
+
+function checkPublishConfig(pkg) {
+  if (!pkg.publishConfig || pkg.publishConfig.access !== 'public') {
+    return {
+      status: 'warn',
+      actual: 'Missing or private',
+      expected: 'access: "public"',
+      fix: 'Add `"publishConfig": { "access": "public" }` to prevent NPM 402 Payment Required errors for scoped packages.'
+    };
+  }
+  return { status: 'pass', actual: 'Public access configured', expected: 'access: "public"' };
+}
+
+function checkFilesArray(pkg) {
+  if (!pkg.files || !Array.isArray(pkg.files) || pkg.files.length === 0) {
+    return {
+      status: 'warn',
+      actual: 'Missing or empty',
+      expected: 'Explicit files array',
+      fix: 'Define a strict `"files"` array to prevent publishing tests, benchmarks, or Rust source directories.'
+    };
+  }
+  return { status: 'pass', actual: 'Defined', expected: 'Explicit files array' };
+}
+
+function checkTypes(pkgPath, pkg) {
+  if (!pkg.types) return { status: 'pass', actual: 'No types defined', expected: 'Optional' };
+  
+  if (!fs.existsSync(path.join(pkgPath, pkg.types))) {
+    return {
+      status: 'fail',
+      actual: 'Missing',
+      expected: `Exists at ${pkg.types}`,
+      critical: true,
+      fix: `Run tsc --emitDeclarationOnly to generate ${pkg.types}`
+    };
+  }
+  return { status: 'pass', actual: 'Exists', expected: 'Types file exists' };
+}
+
+function checkEngines(pkg) {
+  const expectedNode = ">=18.0.0";
+  if (!pkg.engines || pkg.engines.node !== expectedNode) {
+    return {
+      status: 'warn',
+      actual: pkg.engines?.node || 'Missing',
+      expected: expectedNode,
+      fix: `Set "engines": { "node": "${expectedNode}" } for ecosystem consistency.`
+    };
+  }
+  return { status: 'pass', actual: pkg.engines.node, expected: expectedNode };
+}
+
+function checkGitDirty(pkgPath) {
+  try {
+    const status = execSync('git status --porcelain', { cwd: pkgPath, encoding: 'utf8' }).trim();
+    if (status.length > 0) {
+      return {
+        status: 'fail',
+        actual: 'Dirty working tree',
+        expected: 'Clean working tree',
+        critical: true,
+        fix: 'Commit or stash changes before publishing to ensure repeatable builds.'
+      };
+    }
+  } catch (e) {
+    return { status: 'warn', actual: 'Git execution failed', expected: 'Clean working tree', fix: 'Ensure git is installed and repository is accessible.' };
+  }
+  return { status: 'pass', actual: 'Clean', expected: 'Clean working tree' };
+}
+
 /**
  * Validates package metadata and readiness for publication
  * @param {string} pkgPath - Path to package directory
@@ -98,7 +199,8 @@ function checkMainEntry(pkgPath, pkg) {
  */
 export async function checkPublishReadiness(pkgPath = process.cwd()) {
   const checks = [
-    { name: 'Package Manifest', ...checkPackageJson(pkgPath) }
+    { name: 'Package Manifest', ...checkPackageJson(pkgPath) },
+    { name: 'Git Working Tree', ...checkGitDirty(pkgPath) }
   ];
 
   const pkgJsonPath = path.join(pkgPath, 'package.json');
@@ -107,8 +209,13 @@ export async function checkPublishReadiness(pkgPath = process.cwd()) {
       const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
       checks.push({ name: 'Version Strategy', ...checkSemver(pkg) });
       checks.push({ name: 'Dependency Resolution', ...checkWorkspaceProtocols(pkg) });
-      checks.push({ name: 'Package Metadata', ...checkMetadata(pkg) });
+      checks.push({ name: 'Export Integrity', ...checkExports(pkgPath, pkg) });
       checks.push({ name: 'Artifact Readiness', ...checkMainEntry(pkgPath, pkg) });
+      checks.push({ name: 'TypeScript Definitions', ...checkTypes(pkgPath, pkg) });
+      checks.push({ name: 'Leakage Prevention (Files Array)', ...checkFilesArray(pkg) });
+      checks.push({ name: 'Scoped Package Access', ...checkPublishConfig(pkg) });
+      checks.push({ name: 'Engine Consistency', ...checkEngines(pkg) });
+      checks.push({ name: 'Package Metadata', ...checkMetadata(pkg) });
     } catch (e) {
       checks.push({
         name: 'Manifest Parsing',
