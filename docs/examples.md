@@ -53,12 +53,12 @@ import { namedNode, literal } from '@rdfjs/data-model';
 store.addQuad(
   namedNode('http://example.org/charlie'),
   namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-  namedNode('http://xmlns.com/foaf/latest/Person')
+  namedNode('http://xmlns.com/foaf/0.1/Person')
 );
 
 store.addQuad(
   namedNode('http://example.org/charlie'),
-  namedNode('http://xmlns.com/foaf/latest/name'),
+  namedNode('http://xmlns.com/foaf/0.1/name'),
   literal('Charlie')
 );
 
@@ -319,11 +319,11 @@ try {
     store.addQuad(
       namedNode(`http://example.org/employee/${emp.id}`),
       namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-      namedNode('http://xmlns.com/foaf/latest/Person')
+      namedNode('http://xmlns.com/foaf/0.1/Person')
     );
     store.addQuad(
       namedNode(`http://example.org/employee/${emp.id}`),
-      namedNode('http://xmlns.com/foaf/latest/name'),
+      namedNode('http://xmlns.com/foaf/0.1/name'),
       literal(emp.name)
     );
   }

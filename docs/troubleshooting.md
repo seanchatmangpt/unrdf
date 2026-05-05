@@ -626,10 +626,10 @@ Include:
 Brief description of the issue
 
 ## Environment
-- Node.js version: latest
-- UNRDF version: latest
-- OS: Ubuntu latest
-- Package manager: pnpm latest
+- Node.js version: 18.19.0
+- UNRDF version: 18.19.0
+- OS: Ubuntu 18.19.0
+- Package manager: pnpm 18.19.0
 
 ## Steps to Reproduce
 1. Step 1
