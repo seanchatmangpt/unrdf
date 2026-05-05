@@ -1,8 +1,8 @@
 # @unrdf/kgc-4d Capability Map
 
-**Version**: 5.0.1
+**Version**: latest
 **Status**: Production Ready
-**Runtime**: Node.js ≥18.0.0
+**Runtime**: Node.js ≥latest
 **Last Updated**: 2025-12-28
 
 ---
@@ -31,7 +31,7 @@ import {
 ```
 
 **Dependencies**:
-- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `hash-wasm` (^4.12.0), `isomorphic-git` (^1.35.1)
+- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `hash-wasm` (^latest), `isomorphic-git` (^latest)
 - Optional: None
 
 **Evidence**:
@@ -310,7 +310,7 @@ timeout 30s pnpm --filter @unrdf/kgc-4d run benchmark
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: 2025-12-28
 - **Maintainer**: @unrdf/core-team
 - **Last Review**: 2025-12-28

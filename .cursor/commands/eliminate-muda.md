@@ -139,7 +139,7 @@ Step 1: Identify Muda → Step 2: Measure Waste Impact → Step 3: Eliminate Was
 
 **Action**: Systematically remove waste, starting with high-priority items.
 
-#### 3.1: Remove Dead Code (Inventory Muda)
+#### latest: Remove Dead Code (Inventory Muda)
 
 **Action**: Remove unused code, files, dependencies.
 
@@ -153,7 +153,7 @@ Step 1: Identify Muda → Step 2: Measure Waste Impact → Step 3: Eliminate Was
 
 **Verification**: `pnpm lint` passes, no unused warnings
 
-#### 3.2: Eliminate Duplication (Motion Muda)
+#### latest: Eliminate Duplication (Motion Muda)
 
 **Action**: Extract common patterns, remove copy-paste code.
 
@@ -167,7 +167,7 @@ Step 1: Identify Muda → Step 2: Measure Waste Impact → Step 3: Eliminate Was
 
 **Verification**: Tests pass, code duplication reduced
 
-#### 3.3: Remove Unnecessary Abstractions (Over-processing Muda)
+#### latest: Remove Unnecessary Abstractions (Over-processing Muda)
 
 **Action**: Simplify code by removing premature abstractions.
 
@@ -181,7 +181,7 @@ Step 1: Identify Muda → Step 2: Measure Waste Impact → Step 3: Eliminate Was
 
 **Verification**: Tests pass, code simpler
 
-#### 3.4: Optimize Data Flow (Transportation Muda)
+#### latest: Optimize Data Flow (Transportation Muda)
 
 **Action**: Eliminate unnecessary data movement.
 
@@ -195,7 +195,7 @@ Step 1: Identify Muda → Step 2: Measure Waste Impact → Step 3: Eliminate Was
 
 **Verification**: Tests pass, fewer allocations
 
-#### 3.5: Fix Error-Prone Patterns (Defects Muda)
+#### latest: Fix Error-Prone Patterns (Defects Muda)
 
 **Action**: Fix patterns that cause rework.
 

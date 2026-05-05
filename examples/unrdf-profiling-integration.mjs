@@ -16,7 +16,7 @@ class UnrdfProfiler {
       enableMemory: true,
       enableCpu: false,
       enableOtel: true,
-      labels: ['unrdf', 'v3.1.0'],
+      labels: ['unrdf', 'latest'],
     });
 
     // Performance budgets for UNRDF operations

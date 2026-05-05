@@ -1,6 +1,6 @@
 # L5 Validation Criteria
 
-**Version**: v6.0.0
+**Version**: vlatest
 **Purpose**: Objective checklist to prove a module is L5 mature
 
 ---
@@ -13,7 +13,7 @@
 3. **Adversarial Safety** - Validates all inputs, handles all errors gracefully
 4. **Full Composition** - Can compose with other L5 modules while preserving L5 properties
 
-**Goal**: 47 packages → 10 at L5 by v6.0 (P0+P1)
+**Goal**: 47 packages → 10 at L5 by vlatest (P0+P1)
 
 ---
 
@@ -21,11 +21,11 @@
 
 Use this checklist to PROVE a module is L5. ALL items must pass.
 
-### 1. Stable Contracts (L5.1)
+### 1. Stable Contracts (Llatest)
 
 **Criterion**: API surface is stable, versioned, and documented.
 
-#### 1.1. Semantic Versioning
+#### latest. Semantic Versioning
 
 - [ ] Package uses semantic versioning (MAJOR.MINOR.PATCH)
 - [ ] Breaking changes increment MAJOR version
@@ -35,10 +35,10 @@ Use this checklist to PROVE a module is L5. ALL items must pass.
 **How to verify**:
 ```bash
 cat packages/my-package/package.json | jq .version
-# Should show: "1.0.0" (or higher)
+# Should show: "latest" (or higher)
 ```
 
-#### 1.2. Zod Schemas for ALL Public Functions
+#### latest. Zod Schemas for ALL Public Functions
 
 - [ ] ALL exported functions have input schema (Zod)
 - [ ] ALL exported functions have output schema (Zod)
@@ -59,7 +59,7 @@ export const CreateUserInputSchema = z.object({...});
 export const UserSchema = z.object({...});
 ```
 
-#### 1.3. JSDoc Coverage ≥ 100%
+#### latest. JSDoc Coverage ≥ 100%
 
 - [ ] ALL public functions have JSDoc comments
 - [ ] JSDoc includes `@param`, `@returns`, `@throws`, `@example`
@@ -75,7 +75,7 @@ grep -B5 "^export function" packages/my-package/src/*.mjs | grep -v "^/\*\*"
 # Should return 0 results
 ```
 
-#### 1.4. No Breaking Changes Within Major Version
+#### latest. No Breaking Changes Within Major Version
 
 - [ ] API surface hasn't changed (same function names, params, return types)
 - [ ] Deprecated functions are marked with `@deprecated` (not removed)
@@ -83,7 +83,7 @@ grep -B5 "^export function" packages/my-package/src/*.mjs | grep -v "^/\*\*"
 **How to verify**:
 ```bash
 # Compare current API with previous version
-git diff v1.0.0..HEAD packages/my-package/src/index.mjs
+git diff vlatest..HEAD packages/my-package/src/index.mjs
 
 # Check for @deprecated tags
 grep -r "@deprecated" packages/my-package/src/
@@ -91,11 +91,11 @@ grep -r "@deprecated" packages/my-package/src/
 
 ---
 
-### 2. Deterministic Code (L5.2)
+### 2. Deterministic Code (Llatest)
 
 **Criterion**: Execution is reproducible (same inputs → same outputs → same receipts).
 
-#### 2.1. NO Banned Non-Deterministic Operations
+#### latest. NO Banned Non-Deterministic Operations
 
 - [ ] NO `Date.now()` (use injected `context.time.now()`)
 - [ ] NO `Math.random()` (use injected `context.random.random()`)
@@ -118,7 +118,7 @@ grep -rn "process\.env\." packages/my-package/src/
 # Should return 0 results (except in environment provider)
 ```
 
-#### 2.2. Determinism Context Injection
+#### latest. Determinism Context Injection
 
 - [ ] ALL public functions accept `DeterminismContext` parameter
 - [ ] Context is passed down to all internal functions that need it
@@ -142,7 +142,7 @@ export function createUser(input, context) {
 }
 ```
 
-#### 2.3. Deterministic Serialization
+#### latest. Deterministic Serialization
 
 - [ ] ALL object serialization uses `deterministicSerialize()` (sorted keys)
 - [ ] NO `JSON.stringify()` for objects with hashing
@@ -154,7 +154,7 @@ grep -rn "JSON\.stringify" packages/my-package/src/ | grep -i hash
 # Should use deterministicSerialize instead
 ```
 
-#### 2.4. Determinism Tests Pass
+#### latest. Determinism Tests Pass
 
 - [ ] Test: Same context → same output
 - [ ] Test: Same context → same receipt hash
@@ -184,11 +184,11 @@ it('is deterministic', () => {
 
 ---
 
-### 3. Adversarial Safety (L5.3)
+### 3. Adversarial Safety (Llatest)
 
 **Criterion**: Module handles ALL errors gracefully and validates ALL inputs.
 
-#### 3.1. Input Validation (Zod) on ALL Public Functions
+#### latest. Input Validation (Zod) on ALL Public Functions
 
 - [ ] ALL public functions call `.parse()` on inputs
 - [ ] Validation errors are caught and handled
@@ -202,7 +202,7 @@ grep -rn "\.parse\(" packages/my-package/src/
 grep -rn "\.safeParse\(" packages/my-package/src/
 ```
 
-#### 3.2. Output Validation (Zod) on ALL Public Functions
+#### latest. Output Validation (Zod) on ALL Public Functions
 
 - [ ] ALL public functions call `.parse()` on outputs before returning
 - [ ] Ensures internal logic doesn't produce invalid data
@@ -222,7 +222,7 @@ export function createUser(input, context) {
 }
 ```
 
-#### 3.3. Error Handling (Try-Catch on ALL Async)
+#### latest. Error Handling (Try-Catch on ALL Async)
 
 - [ ] ALL async operations have try-catch
 - [ ] Errors are logged and/or returned (not swallowed)
@@ -250,7 +250,7 @@ export async function fetchUser(userId, context) {
 }
 ```
 
-#### 3.4. Adversarial Tests Pass
+#### latest. Adversarial Tests Pass
 
 - [ ] Test: Invalid input rejected (Zod error)
 - [ ] Test: Edge cases handled (empty arrays, null values, etc.)
@@ -278,11 +278,11 @@ it('handles edge case: empty name', () => {
 
 ---
 
-### 4. Full Composition (L5.4)
+### 4. Full Composition (Llatest)
 
 **Criterion**: Module can compose with other L5 modules while preserving L5 properties.
 
-#### 4.1. Exports L5 Module Interface
+#### latest. Exports L5 Module Interface
 
 - [ ] Module exports object with: `name`, `version`, `InputSchema`, `OutputSchema`, `operation`
 - [ ] Module exports `operationWithReceipt` (Receipt HOF wrapper)
@@ -297,7 +297,7 @@ grep -rn "export const.*Module = {" packages/my-package/src/index.mjs
 ```javascript
 export const UserModule = {
   name: '@unrdf/users',
-  version: '1.0.0',
+  version: 'latest',
   InputSchema: CreateUserInputSchema,
   OutputSchema: UserSchema,
   operation: createUser,
@@ -308,7 +308,7 @@ export const UserModule = {
 };
 ```
 
-#### 4.2. Composable with Other L5 Modules
+#### latest. Composable with Other L5 Modules
 
 - [ ] Module can be composed with `composeThen()` (sequential)
 - [ ] Module can be composed with `composeAnd()` (parallel)
@@ -334,7 +334,7 @@ it('composes with another L5 module', () => {
 });
 ```
 
-#### 4.3. Receipts Chain Correctly
+#### latest. Receipts Chain Correctly
 
 - [ ] Receipt chain: `receiptB.previousHash === receiptA.receiptHash`
 - [ ] Chain is unbroken across composition boundaries
@@ -355,7 +355,7 @@ it('maintains receipt chain in composition', () => {
 });
 ```
 
-#### 4.4. Composition Proofs Documented
+#### latest. Composition Proofs Documented
 
 - [ ] Module README includes composition examples
 - [ ] Composition proofs show L5 preservation
@@ -424,34 +424,34 @@ Use this scorecard to track progress:
 | Criterion | Weight | Score (0-10) | Weighted Score |
 |-----------|--------|--------------|----------------|
 | **1. Stable Contracts** | 25% | ? | ? |
-| 1.1. Semantic Versioning | | ? | |
-| 1.2. Zod Schemas | | ? | |
-| 1.3. JSDoc Coverage | | ? | |
-| 1.4. No Breaking Changes | | ? | |
+| latest. Semantic Versioning | | ? | |
+| latest. Zod Schemas | | ? | |
+| latest. JSDoc Coverage | | ? | |
+| latest. No Breaking Changes | | ? | |
 | **2. Deterministic Code** | 30% | ? | ? |
-| 2.1. No Banned Operations | | ? | |
-| 2.2. Context Injection | | ? | |
-| 2.3. Deterministic Serialization | | ? | |
-| 2.4. Determinism Tests Pass | | ? | |
+| latest. No Banned Operations | | ? | |
+| latest. Context Injection | | ? | |
+| latest. Deterministic Serialization | | ? | |
+| latest. Determinism Tests Pass | | ? | |
 | **3. Adversarial Safety** | 25% | ? | ? |
-| 3.1. Input Validation | | ? | |
-| 3.2. Output Validation | | ? | |
-| 3.3. Error Handling | | ? | |
-| 3.4. Adversarial Tests Pass | | ? | |
+| latest. Input Validation | | ? | |
+| latest. Output Validation | | ? | |
+| latest. Error Handling | | ? | |
+| latest. Adversarial Tests Pass | | ? | |
 | **4. Full Composition** | 20% | ? | ? |
-| 4.1. L5 Module Interface | | ? | |
-| 4.2. Composable | | ? | |
-| 4.3. Receipt Chaining | | ? | |
-| 4.4. Composition Proofs | | ? | |
+| latest. L5 Module Interface | | ? | |
+| latest. Composable | | ? | |
+| latest. Receipt Chaining | | ? | |
+| latest. Composition Proofs | | ? | |
 | **TOTAL** | 100% | ? | **? / 10** |
 
-**Passing Threshold**: ≥ 8.0 / 10
+**Passing Threshold**: ≥ latest / 10
 
 **Interpretation**:
-- **10.0**: Perfect L5 (all criteria met)
-- **8.0-9.9**: L5 compliant (minor improvements possible)
-- **6.0-7.9**: L4 (approaching L5, missing some criteria)
-- **< 6.0**: L3 or below (significant work needed)
+- **latest**: Perfect L5 (all criteria met)
+- **latest.9**: L5 compliant (minor improvements possible)
+- **latest.9**: L4 (approaching L5, missing some criteria)
+- **< latest**: L3 or below (significant work needed)
 
 ---
 
@@ -464,7 +464,7 @@ Use this scorecard to track progress:
 ```bash
 # Check version
 cat packages/yawl/package.json | jq .version
-# Output: "1.0.0" ✅
+# Output: "latest" ✅
 
 # Check Zod schemas
 grep -r "export const.*Schema = z\." packages/yawl/src/
@@ -528,12 +528,12 @@ npm -C packages/yawl test -- composition.test.mjs
 ### Total Score
 
 ```
-Total = 0.25 * 10 + 0.30 * 10 + 0.25 * 9 + 0.20 * 5
-      = 2.5 + 3.0 + 2.25 + 1.0
-      = 8.75 / 10 ✅ L5 COMPLIANT
+Total = latest * 10 + latest * 10 + latest * 9 + latest * 5
+      = latest + latest + latest + latest
+      = latest / 10 ✅ L5 COMPLIANT
 ```
 
-**Verdict**: `@unrdf/yawl` is **L5 compliant** (8.75/10). Minor improvement: Add composition layer.
+**Verdict**: `@unrdf/yawl` is **L5 compliant** (latest/10). Minor improvement: Add composition layer.
 
 ---
 
@@ -544,10 +544,10 @@ Total = 0.25 * 10 + 0.30 * 10 + 0.25 * 9 + 0.20 * 5
 **Process**:
 1. Run automated validation script
 2. Calculate scorecard score
-3. If score ≥ 8.0 → L5 compliant
-4. If score < 8.0 → Identify gaps and fix
+3. If score ≥ latest → L5 compliant
+4. If score < latest → Identify gaps and fix
 
 **Next Steps**:
 - Use this checklist for ALL P0+P1 packages
-- Automate validation in CI/CD (fail if score < 8.0)
+- Automate validation in CI/CD (fail if score < latest)
 - Track progress toward 10/47 packages at L5

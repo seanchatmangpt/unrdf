@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/graphql-gateway",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "GraphQL API gateway for UNRDF workflows with subscriptions",
   "type": "module",
   "main": "src/index.mjs",

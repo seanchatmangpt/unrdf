@@ -1,6 +1,6 @@
 # UNRDF CI/CD Pipeline Documentation
 
-**Version:** 6.0.0-alpha.1
+**Version:** latest-alpha.1
 **Last Updated:** 2025-12-27
 **Audience:** Maintainers, Release Engineers
 
@@ -159,7 +159,7 @@ The UNRDF CI/CD pipeline enforces sophisticated invariants including determinism
 ```yaml
 env:
   NODE_VERSION: '18'
-  PNPM_VERSION: '10.15.0'
+  PNPM_VERSION: 'latest'
   VALIDATION_TIMEOUT: '5s'
   BENCHMARK_TIMEOUT: '30s'
   TEST_TIMEOUT: '30s'
@@ -233,10 +233,10 @@ env:
 
 | Type   | Tag Pattern     | npm Tag  | Requirements             |
 | ------ | --------------- | -------- | ------------------------ |
-| alpha  | `6.0.0-alpha.1` | `alpha`  | Rolling, any PR merged   |
-| beta   | `6.0.0-beta.1`  | `beta`   | Consensus + 7-day soak   |
-| rc     | `6.0.0-rc.1`    | `rc`     | 3x external user testing |
-| stable | `6.0.0`         | `latest` | Final with guarantees    |
+| alpha  | `latest-alpha.1` | `alpha`  | Rolling, any PR merged   |
+| beta   | `latest-beta.1`  | `beta`   | Consensus + 7-day soak   |
+| rc     | `latest-rc.1`    | `rc`     | 3x external user testing |
+| stable | `latest`         | `latest` | Final with guarantees    |
 
 #### Required Secrets
 
@@ -247,8 +247,8 @@ env:
 
 ```bash
 # Create and push tag
-git tag 6.0.0-alpha.2
-git push origin 6.0.0-alpha.2
+git tag latest-alpha.2
+git push origin latest-alpha.2
 
 # Or use workflow dispatch in GitHub UI
 ```
@@ -412,7 +412,7 @@ Generates comprehensive release notes with receipt.
 
 ```bash
 node .github/scripts/release-notes.mjs \
-  --version 6.0.0-alpha.2 \
+  --version latest-alpha.2 \
   --type alpha \
   --output release-notes.md
 ```
@@ -444,25 +444,25 @@ Merged                      Period                    Validation              Gu
 
 ### Stage Requirements
 
-1. **Alpha (6.0.0-alpha.N)**
+1. **Alpha (latest-alpha.N)**
    - Requirements: PR merged to main
    - Frequency: Rolling releases
    - Stability: Expect breaking changes
    - Audience: Early adopters, testing
 
-2. **Beta (6.0.0-beta.N)**
+2. **Beta (latest-beta.N)**
    - Requirements: Team consensus + 7-day soak time
    - Frequency: Milestone-based
    - Stability: API stabilizing, fewer breaks
    - Audience: Integration testing
 
-3. **RC (6.0.0-rc.N)**
+3. **RC (latest-rc.N)**
    - Requirements: 3+ external user tests
    - Frequency: Pre-release only
    - Stability: Production-candidate
    - Audience: Pre-production validation
 
-4. **Stable (6.0.0)**
+4. **Stable (latest)**
    - Requirements: RC validation + final review
    - Frequency: Major/minor releases
    - Stability: Full guarantees

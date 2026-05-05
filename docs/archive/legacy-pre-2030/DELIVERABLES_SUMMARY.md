@@ -1,7 +1,7 @@
 # UNRDF Migration Plan - Deliverables Summary
 
 **Date**: 2025-12-27
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Status**: Planning Phase Complete
 
 ## ✅ Deliverables Completed
@@ -143,7 +143,7 @@ Zod schema generation:
 #### `package.json`
 
 - Name: `@unrdf/v6-compat`
-- Version: `6.0.0-alpha.1`
+- Version: `latest.1`
 - Dependencies: `@unrdf/core`, `@unrdf/kgc-4d`, `@unrdf/oxigraph`, `zod`
 - Peer: `eslint` (optional)
 
@@ -160,7 +160,7 @@ Complete usage guide with examples:
 
 ### 5. Workspace Update
 
-- **Root package.json** updated to `6.0.0-alpha.1`
+- **Root package.json** updated to `latest.1`
 - **Workspace includes** @unrdf/v6-compat package
 - **pnpm workspace** recognizes new package
 
@@ -272,15 +272,15 @@ const store = await createStore();
 
 ## 📈 Package Maturity Level Distribution
 
-### Current State (v5.0.1)
+### Current State (vlatest)
 
-- **Average Maturity**: L1.4 (weighted)
+- **Average Maturity**: Llatest (weighted)
 - **Production Ready (L4+)**: 6% (3 packages)
 - **Needs Work**: 94% (44 packages)
 
-### Target State (6.0.0)
+### Target State (latest)
 
-- **Average Maturity**: L5.0 (all packages)
+- **Average Maturity**: Llatest (all packages)
 - **Production Ready (L5)**: 100% (47 packages)
 - **Regression**: 0% (all tests pass)
 
@@ -302,7 +302,7 @@ const store = await createStore();
 7. `@unrdf/federation` - Current L2, needs L3→L5 (14 days)
 8. `@unrdf/cli` - Current L2, needs L3→L5 (10 days)
 
-**Total**: 49 days (parallelizable to ~2.5 weeks for 5 devs)
+**Total**: 49 days (parallelizable to ~latest weeks for 5 devs)
 
 #### Tier 3-6: Remaining 39 Packages
 
@@ -333,7 +333,7 @@ Average effort: 18 days each
 
 **Core 10 packages only**: P0 + P1 = 232 hours (~6 weeks for 5 devs)
 
-**Release**: `6.0.0-core` (subset release for 80% of users)
+**Release**: `latest` (subset release for 80% of users)
 
 **Full release**: Backfill remaining 37 packages over 3-6 months post-core.
 
@@ -446,7 +446,7 @@ timeout 10s pnpm lint
 
 ### Configuration
 
-- ✅ Root `package.json` updated to `6.0.0-alpha.1`
+- ✅ Root `package.json` updated to `latest.1`
 - ✅ Workspace includes @unrdf/v6-compat
 - ✅ pnpm workspace configured
 
@@ -465,7 +465,7 @@ timeout 10s pnpm lint
 
 1. Complete P0 (critical path)
 2. Complete P1 (core 10 packages)
-3. Release `6.0.0-core` (fast-track)
+3. Release `latest` (fast-track)
 4. External testing
 
 ### Medium-Term (Weeks 9-35)
@@ -477,7 +477,7 @@ timeout 10s pnpm lint
 
 ### Long-Term (Week 36+)
 
-1. Release `6.0.0` stable
+1. Release `latest` stable
 2. Deprecate legacy versions
 3. 6-month support overlap
 4. Legacy end-of-life (Oct 2025)
@@ -486,7 +486,7 @@ timeout 10s pnpm lint
 
 ## ✅ Success Criteria
 
-Before declaring 6.0.0 stable, ALL of the following must be true:
+Before declaring latest stable, ALL of the following must be true:
 
 - [ ] All 47 packages at L5 maturity
 - [ ] 100% test pass rate (no regressions)

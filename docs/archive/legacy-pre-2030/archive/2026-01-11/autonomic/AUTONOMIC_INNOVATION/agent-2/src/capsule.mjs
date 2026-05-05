@@ -3,7 +3,7 @@
  * @module capsule
  */
 
-import { z } from '../../../node_modules/.pnpm/zod@4.2.1/node_modules/zod/index.js';
+import { z } from '../../../node_modules/.pnpm/zod@latest/node_modules/zod/index.js';
 import { hashCapsule } from './hash.mjs';
 import { canonicalizeQuads } from './canonicalize.mjs';
 import { now, toISO } from '../../../packages/kgc-4d/src/index.mjs';

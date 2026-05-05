@@ -211,8 +211,8 @@ function FactDisplay({ fact }) {
 }
 
 function getConfidenceClass(confidence) {
-  if (confidence > 0.9) return 'high-confidence';
-  if (confidence > 0.7) return 'medium-confidence';
+  if (confidence > [VERSION]) return 'high-confidence';
+  if (confidence > [VERSION]) return 'medium-confidence';
   return 'low-confidence';
 }
 ```

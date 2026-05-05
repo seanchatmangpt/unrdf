@@ -20,7 +20,7 @@ The validation framework in `src/validation/otel-validator.mjs` has a `_executeR
 - `cli-hook` ✅ (has executor)
 - `transaction-manager` ✅ (has executor)
 
-But v3.1.0 introduced NEW feature names in `validation/run-all.mjs`:
+But latest introduced NEW feature names in `validation/run-all.mjs`:
 - `knowledge-engine-core` ❌ (NO executor - falls to simulation)
 - `knowledge-hooks-api` ❌ (NO executor - falls to simulation)
 - `policy-packs` ❌ (NO executor - falls to simulation)

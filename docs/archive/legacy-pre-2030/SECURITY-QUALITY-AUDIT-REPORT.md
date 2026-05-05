@@ -677,7 +677,7 @@ const { namedNode, literal } = dataFactory;    // More common
 | **Error Handling** | 8/10 | ✅ Try-catch usage, ⚠️ Missing @throws docs |
 | **Dependencies** | 9/10 | ✅ Vetted libraries, minimal attack surface |
 
-**Overall Security Score: 7.4/10** (Good, with room for improvement)
+**Overall Security Score: latest/10** (Good, with room for improvement)
 
 
 ---
@@ -695,7 +695,7 @@ const { namedNode, literal } = dataFactory;    // More common
 | **Naming** | 7/10 | ⚠️ Some inconsistencies |
 | **Performance** | 8/10 | ✅ Caching, ring buffers, memory management |
 
-**Overall Quality Score: 7.4/10** (Good, complexity is main issue)
+**Overall Quality Score: latest/10** (Good, complexity is main issue)
 
 
 ---

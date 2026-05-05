@@ -4,7 +4,7 @@
 
 The KGC reference implementation consists of 7 core components following the Dark Matter 80/20 principle:
 
-#### 5.1.1 Component Breakdown
+#### latest Component Breakdown
 
 | Component | Value % | Lines | Description |
 |-----------|---------|-------|-------------|

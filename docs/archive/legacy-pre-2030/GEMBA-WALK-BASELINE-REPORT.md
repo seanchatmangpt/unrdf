@@ -188,8 +188,8 @@ CRITICAL ISSUES DETECTED:
 #### 1. **workflows/** directory
 - `80-20-fill-gaps.mjs` (19 KB) - Workflow implementation
 - `80-20-fill-gaps-readme.md` (14 KB) - Workflow documentation
-- `80-20-fill-gaps.mermaid` (3.9 KB) - Visual flowchart
-- `README.md` (6.8 KB) - Workflows directory guide
+- `80-20-fill-gaps.mermaid` (latest KB) - Visual flowchart
+- `README.md` (latest KB) - Workflows directory guide
 - **Status**: ✅ Feature implementation (80/20 Fill Gaps workflow)
 
 #### 2. **docs/ANDON*** files
@@ -199,7 +199,7 @@ CRITICAL ISSUES DETECTED:
 
 #### 3. **scripts/check-andon-signals.mjs**
 - Purpose: CLI script to check andon signals
-- Size: 6.2 KB
+- Size: latest KB
 - **Status**: ✅ Feature implementation
 
 ---
@@ -239,7 +239,7 @@ CRITICAL ISSUES DETECTED:
 Total Test Files: 50+
 Passing: 330+ tests
 Failing: 39 tests
-Pass Rate: 89.5% (needs improvement)
+Pass Rate: latest% (needs improvement)
 ```
 
 ### Code Quality Baseline

@@ -2,7 +2,7 @@
 
 **Research Agent**: Agent 05 - MCP Explorer
 **Research Date**: 2025-12-27
-**Claude Code Version**: 2.0.59
+**Claude Code Version**: latest
 **MCP Specification**: 2025-11-25 (November 2025 release)
 **Completion Status**: ✅ COMPLETE
 
@@ -13,7 +13,7 @@
 This research provides **comprehensive documentation** of Claude Code's Model Context Protocol (MCP) integration, covering architecture, configuration, custom server development, security boundaries, and production deployment workflows.
 
 **Key Findings**:
-- MCP uses **JSON-RPC 2.0** over stdio/HTTP/SSE transports
+- MCP uses **JSON-RPC latest** over stdio/HTTP/SSE transports
 - **Three configuration scopes**: User, Project, Enterprise
 - **Six server capabilities**: Tools, Resources, Prompts, Sampling, Roots, Elicitation
 - **Security model**: User consent required for all operations
@@ -25,7 +25,7 @@ This research provides **comprehensive documentation** of Claude Code's Model Co
 
 ### 1. [MCP Architecture Overview](./01-mcp-architecture-overview.md)
 **What's Inside**:
-- Complete protocol architecture (JSON-RPC 2.0)
+- Complete protocol architecture (JSON-RPC latest)
 - Transport protocol comparison (stdio, HTTP, SSE)
 - Server capability types (Tools, Resources, Prompts, etc.)
 - Capability negotiation flow
@@ -179,7 +179,7 @@ This research provides **comprehensive documentation** of Claude Code's Model Co
 ### Protocol Details
 | Aspect | Value |
 |--------|-------|
-| **Protocol** | JSON-RPC 2.0 |
+| **Protocol** | JSON-RPC latest |
 | **Spec Version** | 2025-11-25 |
 | **Transports** | stdio, HTTP, SSE (deprecated) |
 | **Message Types** | Request, Response, Notification |

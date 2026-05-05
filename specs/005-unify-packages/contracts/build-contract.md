@@ -113,13 +113,13 @@ export { api1, api2, api3 } from './modules.mjs';
 ```
 package.json:
   dependencies: {
-    "oxigraph": "1.2.0",
-    "zod": "3.20.0"
+    "oxigraph": "latest",
+    "zod": "latest"
   }
 
 Expects:
-  node_modules/oxigraph/package.json version: 1.2.0
-  node_modules/zod/package.json version: 3.20.0
+  node_modules/oxigraph/package.json version: latest
+  node_modules/zod/package.json version: latest
 ```
 
 ## Performance Contract

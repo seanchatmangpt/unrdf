@@ -6,7 +6,7 @@
  * Handles dependency resolution, minification, and tree-shaking for minimal cold starts.
  *
  * @module serverless/deploy/lambda-bundler
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 

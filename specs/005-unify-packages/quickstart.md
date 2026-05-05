@@ -215,10 +215,10 @@ All shared dependencies at single version; no unused dependencies.
    ```
 
 3. **Resolve conflicts**:
-   - If `oxigraph@1.2.0` and `oxigraph@1.2.1` exist:
-     - Use highest compatible version (1.2.1)
+   - If `oxigraph@latest` and `oxigraph@latest` exist:
+     - Use highest compatible version (latest)
      - Run tests to verify compatibility
-     - Update all packages to 1.2.1
+     - Update all packages to latest
 
 4. **Remove unused dependencies**:
    ```bash
@@ -294,7 +294,7 @@ Named exports only, TypeScript definitions, complete package metadata.
    ```json
    {
      "name": "@unrdf/package-name",
-     "version": "0.0.1",
+     "version": "latest",
      "description": "Clear, one-line description of what this package does",
      "license": "MIT",
      "repository": {

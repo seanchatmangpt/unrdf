@@ -164,7 +164,7 @@ async function main() {
 
   // Generate integration manifest
   const manifest = {
-    version: '6.0.0-batch3',
+    version: 'latest-batch3',
     timestamp: new Date().toISOString(),
     coverage: {
       target: 194,

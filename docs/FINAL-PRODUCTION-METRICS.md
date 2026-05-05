@@ -1,4 +1,4 @@
-# FINAL PRODUCTION METRICS - UNRDF v2.1.1
+# FINAL PRODUCTION METRICS - UNRDF vlatest
 
 **Generated**: 2025-10-01
 **Test Run**: Production Validation Smoke Test Suite
@@ -110,7 +110,7 @@ Total Directory Structure: 11 subdirectories
 
 | Command | Mean | p50 | p95 | p99 | Target | Status |
 |---------|------|-----|-----|-----|--------|--------|
-| Hook Eval | 468.71ms | 460ms | 601ms | **659ms** | <2ms | ❌ **333x SLOWER** |
+| Hook Eval | latestms | 460ms | 601ms | **659ms** | <2ms | ❌ **333x SLOWER** |
 | Store Import | ~200ms | - | - | - | <500ms | ✅ Within target |
 | Policy Apply | ~150ms | - | - | - | <500ms | ✅ Within target |
 | Graph Create | ~180ms | - | - | - | <500ms | ✅ Within target |
@@ -386,7 +386,7 @@ node scripts/generate-production-metrics.mjs
 
 ## 📝 CONCLUSION
 
-**UNRDF v2.1.1 is NOT READY for production deployment.**
+**UNRDF vlatest is NOT READY for production deployment.**
 
 While core functionality (RDF storage, SPARQL queries, policy application) is operational, **critical components are failing**:
 

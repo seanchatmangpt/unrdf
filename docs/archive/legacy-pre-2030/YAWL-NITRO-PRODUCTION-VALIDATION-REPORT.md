@@ -19,7 +19,7 @@ The YAWL-Nitro integration is **functionally complete and well-tested**, but has
 4. **No dedicated performance benchmarks** (only metrics tracking in tests)
 
 **Strengths**:
-- ✅ 745/753 tests passing (98.9% pass rate)
+- ✅ 745/753 tests passing (latest% pass rate)
 - ✅ ZERO TODOs in production code
 - ✅ Comprehensive Zod validation schemas
 - ✅ Extensive documentation (1,528 lines)
@@ -30,7 +30,7 @@ The YAWL-Nitro integration is **functionally complete and well-tested**, but has
 
 ## 1. Code Quality Validation
 
-### 1.1 File Size Compliance
+### latest File Size Compliance
 
 **Requirement**: Maximum 500 lines per file
 **Result**: ⚠️ **FAIL** - 3 violations found
@@ -64,7 +64,7 @@ find /home/user/unrdf/packages/daemon/src/integrations -name "*.mjs" -exec sh -c
 ❌ e2e-nitro-tasks-integration.test.mjs: 783 lines (FAIL - exceeds limit by 283 lines)
 ```
 
-### 1.2 TODO/FIXME Check
+### latest TODO/FIXME Check
 
 **Requirement**: ZERO TODOs in production code
 **Result**: ✅ **PASS**
@@ -79,7 +79,7 @@ grep -r "TODO" /home/user/unrdf/packages/daemon/src/integrations --include="*.mj
 
 **Evidence**: No TODOs, FIXMEs, or placeholder comments found in production code.
 
-### 1.3 ESM Compliance
+### latest ESM Compliance
 
 **Requirement**: All files must be ESM (.mjs) with proper imports
 **Result**: ✅ **PASS**
@@ -103,7 +103,7 @@ grep -r "from 'n3'" /home/user/unrdf/packages/daemon/src --include="*.mjs" | gre
 
 ## 2. Test Suite Validation
 
-### 2.1 Test Execution Results
+### latest Test Execution Results
 
 **Requirement**: 100% pass rate, 80%+ coverage, no skipped tests
 **Result**: ⚠️ **PARTIAL PASS** - High pass rate but 2 unrelated failures
@@ -115,14 +115,14 @@ cd /home/user/unrdf/packages/daemon && timeout 30s pnpm test -- nitro
 # Test Results:
 Test Files:  2 failed | 23 passed (25 total)
 Tests:       1 failed | 745 passed | 7 skipped (753 total)
-Duration:    10.74s
+Duration:    latests
 ```
 
 **Pass Rate Breakdown**:
 - **Total Tests**: 753
-- **Passed**: 745 (98.9%)
-- **Failed**: 1 (0.1%) - `e2e-consensus-integration.test.mjs` (unrelated to Nitro)
-- **Skipped**: 7 (0.9%)
+- **Passed**: 745 (latest%)
+- **Failed**: 1 (latest%) - `e2e-consensus-integration.test.mjs` (unrelated to Nitro)
+- **Skipped**: 7 (latest%)
 
 **Failed Test Details**:
 ```
@@ -133,7 +133,7 @@ AssertionError: expected 'healthy' to be 'partitioned' // Object.is equality
 
 **Analysis**: Failed test is a timing issue in consensus module, **NOT related to Nitro integration**. All Nitro-specific tests passed.
 
-### 2.2 Nitro Integration Test Coverage
+### latest Nitro Integration Test Coverage
 
 **Test File**: `/home/user/unrdf/packages/daemon/test/e2e-nitro-tasks-integration.test.mjs`
 **Lines**: 783
@@ -165,7 +165,7 @@ AssertionError: expected 'healthy' to be 'partitioned' // Object.is equality
 ✓ should calculate average duration
 ```
 
-### 2.3 Skipped Tests
+### latest Skipped Tests
 
 **Requirement**: ZERO skipped tests
 **Result**: ⚠️ **FAIL** - 7 skipped tests
@@ -181,7 +181,7 @@ grep -r "it.skip\|describe.skip" /home/user/unrdf/packages/daemon/test --include
 
 ## 3. Integration Functionality Verification
 
-### 3.1 YAWL → Daemon → Nitro Data Flow
+### latest YAWL → Daemon → Nitro Data Flow
 
 **Architecture**:
 ```
@@ -221,7 +221,7 @@ grep -r "it.skip\|describe.skip" /home/user/unrdf/packages/daemon/test --include
    - 62 test cases
    - E2E workflow execution verified
 
-### 3.2 Event Flow Verification
+### latest Event Flow Verification
 
 **Test Evidence**:
 ```javascript
@@ -248,7 +248,7 @@ it('should relay daemon events to executor', async () => {
 - ✅ `executor:started` - Executor lifecycle
 - ✅ `executor:stopped` - Executor lifecycle
 
-### 3.3 Receipt Generation Integration
+### latest Receipt Generation Integration
 
 **v6-core ΔGate Integration**:
 
@@ -271,7 +271,7 @@ console.log('Workflow created:', workflowReceipt.workflow_id);
 
 ## 4. Documentation Completeness
 
-### 4.1 JSDoc Coverage
+### latest JSDoc Coverage
 
 **Requirement**: All exports must have JSDoc
 **Result**: ✅ **PASS**
@@ -302,7 +302,7 @@ grep -c "@param\|@returns\|@throws" /home/user/unrdf/packages/daemon/src/integra
 async runTask(nitroTaskId, payload = {}) { ... }
 ```
 
-### 4.2 Documentation Files
+### latest Documentation Files
 
 **Requirement**: Complete tutorials, API reference, examples
 **Result**: ✅ **PASS**
@@ -332,7 +332,7 @@ async runTask(nitroTaskId, payload = {}) { ... }
 - ✅ Metrics reporting
 - ✅ Graceful shutdown
 
-### 4.3 API Reference Completeness
+### latest API Reference Completeness
 
 **From `nitro-tasks-integration.md`**:
 
@@ -354,7 +354,7 @@ async runTask(nitroTaskId, payload = {}) { ... }
 
 ## 5. Performance Validation
 
-### 5.1 Performance Metrics
+### latest Performance Metrics
 
 **Requirement**: Task scheduling <100ms, throughput >100 tasks/sec
 **Result**: ⚠️ **NO DEDICATED BENCHMARKS** - Only metrics tracking
@@ -362,15 +362,15 @@ async runTask(nitroTaskId, payload = {}) { ... }
 **From Test Output**:
 ```
 ✓ Test 1 PASSED: 100 cases in 0ms (Infinity cases/sec, P50=0ms, P95=0ms, P99=0ms)
-✓ Test 2 PASSED: 500 tasks processed with 0.74MB memory growth (avg 1.51KB/task)
+✓ Test 2 PASSED: 500 tasks processed with latestMB memory growth (avg latestKB/task)
 ✓ Test 3 PASSED: Timeout accuracy within ±50ms for 6 timeouts
 ✓ Test 4 PASSED: Retry backoff exponential progression verified (2s→4s→8s→16s)
-✓ Test 5 PASSED: Parallel distribution with -72.22% overhead (seq=54ms, par=15ms)
+✓ Test 5 PASSED: Parallel distribution with -latest% overhead (seq=54ms, par=15ms)
 ```
 
 **Analysis**: Performance is measured indirectly through YAWL integration tests, showing:
 - ✅ 100+ cases/sec throughput (Infinity in mock tests)
-- ✅ Low memory footprint (1.51KB/task)
+- ✅ Low memory footprint (latestKB/task)
 - ✅ Timeout accuracy ±50ms
 - ⚠️ **No dedicated Nitro benchmark file**
 
@@ -382,7 +382,7 @@ find /home/user/unrdf/packages/daemon/benchmarks -name "*nitro*"
 
 **Recommendation**: Create dedicated benchmark file `benchmarks/nitro-tasks-executor.bench.mjs`.
 
-### 5.2 Metrics Collection
+### latest Metrics Collection
 
 **From Code** (`nitro-tasks.mjs:77-83`):
 ```javascript
@@ -410,7 +410,7 @@ it('should calculate average duration', async () => {
 
 ## 6. Zod Validation Schemas
 
-### 6.1 Schema Definitions
+### latest Schema Definitions
 
 **Requirement**: All public APIs validated with Zod
 **Result**: ✅ **PASS**
@@ -451,7 +451,7 @@ const config = NitroTaskConfigSchema.parse(options);
 
 **Validation Coverage**: ✅ All constructor inputs, all task metadata validated with Zod.
 
-### 6.2 Schema Export
+### latest Schema Export
 
 **From Code** (lines 452-459):
 ```javascript
@@ -468,7 +468,7 @@ export default {
 
 ## 7. Lint & Code Quality
 
-### 7.1 Lint Results
+### latest Lint Results
 
 **Requirement**: 0 errors, 0 warnings
 **Result**: ❌ **FAIL** - 1 error, 48 warnings
@@ -497,7 +497,7 @@ pnpm -C packages/daemon lint
 
 ## 8. Security & Safety
 
-### 8.1 Input Validation
+### latest Input Validation
 
 **From Code** (lines 62-64):
 ```javascript
@@ -508,7 +508,7 @@ if (!(daemon instanceof Daemon)) {
 
 **Zod Validation**: ✅ All inputs validated via Zod schemas before use.
 
-### 8.2 Timeout Protection
+### latest Timeout Protection
 
 **From Code** (lines 255-262):
 ```javascript
@@ -532,7 +532,7 @@ it('should handle task timeout', async () => {
 ✓ PASSED
 ```
 
-### 8.3 Error Handling
+### latest Error Handling
 
 **From Code** (lines 275-286):
 ```javascript
@@ -562,7 +562,7 @@ catch (error) {
 | **Code Quality** | Zero TODOs | ✅ PASS | 0 TODOs in src/integrations |
 | **Code Quality** | ESM compliance | ✅ PASS | All .mjs, no CommonJS |
 | **Code Quality** | No N3 imports | ✅ PASS | 0 forbidden imports |
-| **Testing** | 100% pass rate | ⚠️ PARTIAL | 98.9% (1 unrelated failure) |
+| **Testing** | 100% pass rate | ⚠️ PARTIAL | latest% (1 unrelated failure) |
 | **Testing** | 80%+ coverage | ⚠️ UNKNOWN | No coverage report available |
 | **Testing** | Zero skipped tests | ⚠️ FAIL | 7 skipped (none in Nitro) |
 | **Integration** | Event flow verified | ✅ PASS | All events tested |
@@ -773,7 +773,7 @@ wc -l /home/user/unrdf/packages/daemon/examples/nitro-app-integration.mjs
 ```
 Test Files:  23 passed (25 total, 2 unrelated failures)
 Tests:       745 passed | 1 failed | 7 skipped (753 total)
-Duration:    10.74s
+Duration:    latests
 
 ✓ should create executor with valid daemon
 ✓ should execute task via runTask()
@@ -792,7 +792,7 @@ Duration:    10.74s
 | Examples | nitro-app-integration.mjs | 535 lines ✅ |
 | JSDoc | Annotations | 44 ✅ |
 | Test Cases | Nitro integration | 62 ✅ |
-| Pass Rate | All tests | 98.9% ⚠️ |
+| Pass Rate | All tests | latest% ⚠️ |
 | Lint Issues | Errors + Warnings | 49 ❌ |
 
 ---

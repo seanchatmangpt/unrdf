@@ -2,7 +2,7 @@
   "merkle_root": "13303c265155675edeba85a9a6089c602c7d354e8b9e83d594f1d5254c8197b6",
   "o_hash": "kgc-example-001",
   "receipt_count": 2,
-  "timestamp": "2025-12-27T00:03:43.582Z",
+  "timestamp": "2025-12-27T00:03:latestZ",
   "linkage": [
     {
       "receipt_hash": "d845e81178baf7e3281558cbf3be0b847de2486d55e2ca62119e0039fd76123d",

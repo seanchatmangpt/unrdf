@@ -22,7 +22,7 @@ export class KGenAttestor {
    * @param {boolean} [options.enableAttestation=true] - Enable attestation generation
    * @param {string} [options.algorithm='sha256'] - Hash algorithm to use
    * @param {string} [options.attestorId='kgen-templates'] - Attestor identifier
-   * @param {string} [options.version='2.0.0'] - Attestor version
+   * @param {string} [options.version='latest'] - Attestor version
    * @param {string} [options.staticBuildTime] - Static timestamp for deterministic mode
    * @param {boolean} [options.deterministicMode=true] - Enable deterministic mode
    * @param {boolean} [options.includeMetadata=true] - Include additional metadata
@@ -32,7 +32,7 @@ export class KGenAttestor {
       enableAttestation: options.enableAttestation !== false,
       algorithm: options.algorithm || 'sha256',
       attestorId: options.attestorId || 'kgen-templates',
-      version: options.version || '2.0.0',
+      version: options.version || 'latest',
       staticBuildTime: options.staticBuildTime || '2024-01-01T00:00:00.000Z',
       deterministicMode: options.deterministicMode !== false,
       includeMetadata: options.includeMetadata !== false,

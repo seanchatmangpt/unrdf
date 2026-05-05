@@ -1,5 +1,5 @@
 
-> @unrdf/yawl@6.0.0 lint /home/user/unrdf/packages/yawl
+> @unrdf/yawl@latest lint /home/user/unrdf/packages/yawl
 > eslint src/ test/ --max-warnings=0
 
 

@@ -1,7 +1,7 @@
 # V6-Core Comprehensive Test Suite - Summary Report
 
 **Date**: 2025-12-27
-**Package**: @unrdf/v6-core v6.0.0-alpha.1
+**Package**: @unrdf/v6-core [VERSION]-alpha.1
 **Test Framework**: Node.js `node:test` (native)
 **Total Test Files**: 12 (up from 3 baseline)
 

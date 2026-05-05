@@ -35,7 +35,7 @@ This document summarizes the standardized receipt system implementation, includi
 
 **Directory**: `/home/user/unrdf/packages/v6-core/src/receipts/merkle/`
 
-#### a. `tree.mjs` (7.2 KB)
+#### a. `tree.mjs` (latest KB)
 
 **Exports**:
 
@@ -63,7 +63,7 @@ const proof = await getProofPath(tree, 'r2', [r1, r2, r3]);
 const isValid = await verifyInclusion(tree.root, r2, proof);
 ```
 
-#### b. `anchor.mjs` (4.5 KB)
+#### b. `anchor.mjs` (latest KB)
 
 **Exports**:
 
@@ -86,7 +86,7 @@ const anchorReceipt = await anchorToChain(merkleRoot, {
 // Returns: { txHash, blockNumber, network, timestamp }
 ```
 
-#### c. `proofchain.mjs` (6.3 KB)
+#### c. `proofchain.mjs` (latest KB)
 
 **Exports**:
 
@@ -114,7 +114,7 @@ console.log(result.tamperedReceipts); // [] if no tampering
 
 ### 3. CLI Commands
 
-**File**: `/home/user/unrdf/packages/v6-core/src/cli/commands/receipt.mjs` (2.9 KB)
+**File**: `/home/user/unrdf/packages/v6-core/src/cli/commands/receipt.mjs` (latest KB)
 
 #### Commands Available:
 
@@ -138,7 +138,7 @@ kgc receipt export --file=receipts.json --format=json --output=trail.json
 
 ### 4. Tamper Detection Test
 
-**File**: `/home/user/unrdf/packages/v6-core/test/receipts/tamper-detection.test.mjs` (5.6 KB)
+**File**: `/home/user/unrdf/packages/v6-core/test/receipts/tamper-detection.test.mjs` (latest KB)
 
 #### Test Cases:
 
@@ -250,7 +250,7 @@ return currentHash === expectedRoot
 
 | Operation         | Time   | Notes       |
 | ----------------- | ------ | ----------- |
-| Single receipt    | ~0.5ms | BLAKE3 hash |
+| Single receipt    | ~latestms | BLAKE3 hash |
 | Chain of 100      | ~50ms  | Sequential  |
 | Merkle tree (100) | ~100ms | O(n log n)  |
 
@@ -258,9 +258,9 @@ return currentHash === expectedRoot
 
 | Operation            | Time   | Notes            |
 | -------------------- | ------ | ---------------- |
-| Single receipt hash  | ~0.5ms | BLAKE3 recompute |
+| Single receipt hash  | ~latestms | BLAKE3 recompute |
 | Chain (100 receipts) | ~50ms  | O(n) sequential  |
-| Merkle proof         | ~0.8ms | O(log n)         |
+| Merkle proof         | ~latestms | O(log n)         |
 
 ### Storage
 
@@ -379,7 +379,7 @@ const anchorReceipt = await anchorToChain(tree.root, {
   network: 'goerli',
 });
 
-// Gas savings: 1000 * 50k = 50M gas → 60k gas (99.9% savings)
+// Gas savings: 1000 * 50k = 50M gas → 60k gas (latest% savings)
 ```
 
 ### Example 3: Prove Receipt Inclusion
@@ -438,11 +438,11 @@ console.log(isValid); // true
 ### Created Files
 
 - `/home/user/unrdf/docs/v6/RECEIPT_AUDIT.md` (27 KB)
-- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/tree.mjs` (7.2 KB)
-- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/anchor.mjs` (4.5 KB)
-- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/proofchain.mjs` (6.3 KB)
-- `/home/user/unrdf/packages/v6-core/src/cli/commands/receipt.mjs` (2.9 KB)
-- `/home/user/unrdf/packages/v6-core/test/receipts/tamper-detection.test.mjs` (5.6 KB)
+- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/tree.mjs` (latest KB)
+- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/anchor.mjs` (latest KB)
+- `/home/user/unrdf/packages/v6-core/src/receipts/merkle/proofchain.mjs` (latest KB)
+- `/home/user/unrdf/packages/v6-core/src/cli/commands/receipt.mjs` (latest KB)
+- `/home/user/unrdf/packages/v6-core/test/receipts/tamper-detection.test.mjs` (latest KB)
 
 **Total**: 6 new files, ~53 KB of code
 

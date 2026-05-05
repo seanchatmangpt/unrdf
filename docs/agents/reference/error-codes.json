@@ -3,9 +3,9 @@
     "@vocab": "urn:unrdf:error:",
     "schema": "http://schema.org/"
   },
-  "@id": "urn:unrdf:error-codes:v4.0.0",
+  "@id": "urn:unrdf:error-codes:vlatest",
   "@type": "error:ErrorRegistry",
-  "version": "4.0.0",
+  "version": "latest",
   "errors": {
     "E_MAPEK_INVALID_STORE": {
       "code": "E_MAPEK_INVALID_STORE",

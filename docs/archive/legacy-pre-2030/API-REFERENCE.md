@@ -52,7 +52,7 @@ import { executeSelectSync } from '@unrdf/core';
 const results = executeSelectSync(
   store,
   `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }
@@ -126,7 +126,7 @@ import { namedNode, literal, quad } from '@unrdf/core';
 
 // Create terms
 const alice = namedNode('http://example.org/Alice');
-const name = namedNode('http://xmlns.com/foaf/0.1/name');
+const name = namedNode('http://xmlns.com/foaf/latest/name');
 const aliceLit = literal('Alice');
 
 // Create quad
@@ -373,7 +373,7 @@ await kgc.record({
 await kgc.record({
   type: 'ORDER_PAID',
   subject: 'order:12345',
-  data: { amount: 99.99 },
+  data: { amount: latest },
   timestamp: Date.now() * 1_000_000, // nanoseconds
 });
 ```
@@ -750,7 +750,7 @@ Use consistent namespace prefixes:
 ```javascript
 const query = `
   PREFIX yawl: <http://yawl.sourceforge.net/ontology/>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
   SELECT ?task ?status

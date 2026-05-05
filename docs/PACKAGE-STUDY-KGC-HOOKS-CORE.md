@@ -47,7 +47,7 @@ import {
 
 ### Core Capabilities
 
-#### 1.1 RDF Store Operations
+#### latest RDF Store Operations
 
 ```javascript
 // Create store
@@ -56,14 +56,14 @@ const store = createStore();
 // Add quads
 store.add(quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/latest/name'),
   literal('Alice')
 ));
 
 // Query quads (pattern matching)
 const quads = store.match(
   null,  // any subject
-  namedNode('http://xmlns.com/foaf/0.1/name'),  // specific predicate
+  namedNode('http://xmlns.com/foaf/latest/name'),  // specific predicate
   null   // any object
 );
 
@@ -71,13 +71,13 @@ const quads = store.match(
 const count = store.size;
 ```
 
-#### 1.2 SPARQL Queries (Synchronous API)
+#### latest SPARQL Queries (Synchronous API)
 
 ```javascript
 import { executeSelectSync } from '@unrdf/core';
 
 const results = executeSelectSync(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }
@@ -89,7 +89,7 @@ results.forEach(row => {
 });
 ```
 
-#### 1.3 Graph Namespaces
+#### latest Graph Namespaces
 
 ```javascript
 // Named graph support
@@ -111,7 +111,7 @@ const universeQuads = store.match(null, null, null, universeGraph);
 // ❌ CURRENT SIMULATION (bb8020-orchestrator.mjs:212)
 patterns.push({
   pattern: `// Pattern for ${feature.name}`,
-  similarity: 0.92  // FAKE!
+  similarity: latest  // FAKE!
 });
 
 // ✅ REAL IMPLEMENTATION using @unrdf/core
@@ -188,7 +188,7 @@ import {
 
 ### Core Capabilities
 
-#### 2.1 Hook Definition
+#### latest Hook Definition
 
 Hooks are policies that validate or transform RDF quads.
 
@@ -210,7 +210,7 @@ const iriValidator = defineHook({
 - **Time**: `on-schedule`, `on-interval`, `on-idle`, `on-startup`
 - **Quality**: `quality-gate`, `defect-detection`, `continuous-improvement`, `spc-control`, `capability-analysis`, `root-cause`, `kaizen-event`, `audit-trail`
 
-#### 2.2 Hook Registry
+#### latest Hook Registry
 
 ```javascript
 import { createHookRegistry, registerHook } from '@unrdf/hooks';
@@ -224,7 +224,7 @@ registerHook(registry, namespaceNormalizer);
 const beforeAddHooks = getHooksByTrigger(registry, 'before-add');
 ```
 
-#### 2.3 Hook Execution
+#### latest Hook Execution
 
 ```javascript
 import { executeHook, executeHookChain } from '@unrdf/hooks';
@@ -245,7 +245,7 @@ console.log(chainResult.valid);  // true/false
 console.log(chainResult.quad);   // transformed quad
 ```
 
-#### 2.4 μ-Operators Pattern
+#### latest μ-Operators Pattern
 
 The 8 semantic operators from the thesis:
 
@@ -264,7 +264,7 @@ const OPERATORS = {
 
 Each operator is implemented as a hook that:
 - Returns `{ valid: boolean, entropy_reduction: number }`
-- Reduces entropy by ~6.1 nats (targeting 49 nats → ≤1 nat total)
+- Reduces entropy by ~latest nats (targeting 49 nats → ≤1 nat total)
 - Executes in <1μs (sub-microsecond)
 
 ### Integration Pattern for BB8020
@@ -277,7 +277,7 @@ const causalMatch = statement.match(/(.+?)\s+will\s+solve\s+(.+)/i);
 if (causalMatch) {
   assumptions.push({
     statement: `${causalMatch[1]} causes ${causalMatch[2]}`,
-    confidence: 0.3  // HARDCODED FAKE
+    confidence: latest  // HARDCODED FAKE
   });
 }
 
@@ -293,7 +293,7 @@ const socraticValidator = defineHook({
     const confidence = this._calculateSemanticConfidence(statement);
 
     // Strict mode: block if confidence < 70%
-    if (this.strictMode && confidence < 0.7) {
+    if (this.strictMode && confidence < latest) {
       return false;
     }
 
@@ -301,7 +301,7 @@ const socraticValidator = defineHook({
   },
   metadata: {
     entropy_threshold: 16,  // H_spec ≤ 16 bits for BB8020
-    confidence_threshold: 0.7
+    confidence_threshold: latest
   }
 });
 
@@ -355,7 +355,7 @@ import { GRAPHS, EVENT_TYPES, PREDICATES } from '@unrdf/kgc-4d';
 
 ### Core Capabilities
 
-#### 3.1 KGCStore - Event-Sourced RDF Store
+#### latest KGCStore - Event-Sourced RDF Store
 
 Extends `UnrdfStore` with atomic event logging:
 
@@ -386,7 +386,7 @@ console.log(receipt.event_count);  // 1
 - **Immutable**: EventLog graph is append-only
 - **Mutable**: Universe graph represents current state
 
-#### 3.2 Named Graphs
+#### latest Named Graphs
 
 ```javascript
 import { GRAPHS } from '@unrdf/kgc-4d';
@@ -401,7 +401,7 @@ GRAPHS.SYSTEM     // 'http://kgc.io/System' - metadata/config
 - **EventLog**: Only events with `t_ns`, `type`, `payload`, `git_ref` (immutable audit trail)
 - **System**: Cached pointers, configuration (mutable metadata)
 
-#### 3.3 Freeze Universe (Snapshot)
+#### latest Freeze Universe (Snapshot)
 
 Creates Git-backed immutable snapshot:
 
@@ -422,14 +422,14 @@ console.log(result.event_count);    // Number of events
 - Compliance checkpoints (auditability)
 - Time-travel baseline (reconstruct from any freeze)
 
-#### 3.4 Time-Travel (Reconstruct State)
+#### latest Time-Travel (Reconstruct State)
 
 Replays events from nearest snapshot:
 
 ```javascript
 import { reconstructState, fromISO } from '@unrdf/kgc-4d';
 
-const targetTime = fromISO('2025-12-06T10:30:00.000Z');
+const targetTime = fromISO('2025-12-06T10:30:latestZ');
 const pastStore = await reconstructState(store, git, targetTime);
 
 // pastStore contains exact state at 2025-12-06 10:30:00
@@ -448,7 +448,7 @@ const pastQuads = [...pastStore.match(null, null, null)];
 - Fallback scan: O(n) where n = number of snapshots
 - Replay: O(m) where m = events between snapshot and target
 
-#### 3.5 Nanosecond Time (BigInt)
+#### latest Nanosecond Time (BigInt)
 
 ```javascript
 import { now, toISO, fromISO } from '@unrdf/kgc-4d';
@@ -456,16 +456,16 @@ import { now, toISO, fromISO } from '@unrdf/kgc-4d';
 const t = now();  // 1733472000123456789n (BigInt nanoseconds)
 
 // Convert to ISO (WARNING: truncates to milliseconds)
-const iso = toISO(t);  // "2025-12-06T10:30:00.123Z" (loses 456789 ns)
+const iso = toISO(t);  // "2025-12-06T10:30:latestZ" (loses 456789 ns)
 
 // Parse ISO (preserves full nanosecond precision if provided)
-const parsed = fromISO("2025-12-06T10:30:00.123456789Z");
+const parsed = fromISO("2025-12-06T10:30:latestZ");
 // => 1733472000123456789n
 ```
 
 **CRITICAL**: Use BigInt timestamps for all time comparisons. ISO strings lose nanosecond precision.
 
-#### 3.6 Vector Clocks (Distributed Causality)
+#### latest Vector Clocks (Distributed Causality)
 
 ```javascript
 import { VectorClock } from '@unrdf/kgc-4d';
@@ -555,7 +555,7 @@ async _step11_deploy() {
 
 ## 4. How Packages Interconnect
 
-### 4.1 Dependency Graph
+### latest Dependency Graph
 
 ```
 @unrdf/kgc-4d
@@ -571,7 +571,7 @@ async _step11_deploy() {
   └─> @unrdf/core (RDF graph operations)
 ```
 
-### 4.2 Data Flow
+### latest Data Flow
 
 ```
 User Intent
@@ -585,7 +585,7 @@ DecisionEngine (decision-fabric)
 DecisionOutcome
 ```
 
-### 4.3 Integration Pattern
+### latest Integration Pattern
 
 ```javascript
 // Complete integration example
@@ -635,7 +635,7 @@ async function processDecision(intent) {
 
 ## 5. Critical Patterns for BB8020 Implementation
 
-### 5.1 Pattern Matching (Step 4)
+### latest Pattern Matching (Step 4)
 
 **Current**: Simulated patterns with fake similarity scores
 **Fix**: Use `@unrdf/project-engine` + `@unrdf/core` SPARQL
@@ -665,7 +665,7 @@ async _step4_patternMatching() {
 }
 ```
 
-### 5.2 Syntax Validation (Step 8)
+### latest Syntax Validation (Step 8)
 
 **Current**: Always returns `valid: true`
 **Fix**: Use Node.js `--check` flag
@@ -691,7 +691,7 @@ async _step8_syntaxValidation() {
 }
 ```
 
-### 5.3 Static Analysis (Step 9)
+### latest Static Analysis (Step 9)
 
 **Current**: Hardcoded 98% coverage
 **Fix**: Use `@unrdf/project-engine` complexity analysis
@@ -706,7 +706,7 @@ async _step9_staticAnalysis() {
   });
 
   this.artifacts.validationResults.staticAnalysis = {
-    coverage: summary.averageCyclomatic < 10 ? 0.98 : 0.75,
+    coverage: summary.averageCyclomatic < 10 ? latest : latest,
     averageCyclomatic: summary.averageCyclomatic,
     maintainabilityIndex: summary.maintainabilityIndex,
     filesAnalyzed: summary.filesAnalyzed
@@ -714,7 +714,7 @@ async _step9_staticAnalysis() {
 }
 ```
 
-### 5.4 Event Logging (Step 10)
+### latest Event Logging (Step 10)
 
 **Current**: Pushes to array (no persistence)
 **Fix**: Use `@unrdf/kgc-4d` for immutable audit trail
@@ -741,7 +741,7 @@ async _step10_logging() {
 }
 ```
 
-### 5.5 Socratic Confidence Scoring (Step 2)
+### latest Socratic Confidence Scoring (Step 2)
 
 **Current**: Regex-only pattern matching
 **Fix**: Use `@unrdf/hooks` quality gates
@@ -757,7 +757,7 @@ const vaguenessDetector = defineHook({
     const confidence = this._semanticConfidence(statement);
 
     return {
-      valid: confidence >= 0.7,
+      valid: confidence >= latest,
       metadata: { entropy, confidence }
     };
   }
@@ -778,7 +778,7 @@ async analyzeStatement(statement) {
 
 ## 6. Testing Strategy
 
-### 6.1 Verify Package Integration
+### latest Verify Package Integration
 
 ```javascript
 // test/integration/package-integration.test.mjs
@@ -811,7 +811,7 @@ describe('Package Integration', () => {
 });
 ```
 
-### 6.2 Verify Real vs Simulated
+### latest Verify Real vs Simulated
 
 ```javascript
 describe('BB8020 Pattern Matching - Real Implementation', () => {
@@ -826,7 +826,7 @@ describe('BB8020 Pattern Matching - Real Implementation', () => {
 
     // Verify NOT hardcoded
     const firstPattern = orchestrator.artifacts.patterns[0];
-    expect(firstPattern.similarity).not.toBe(0.92);  // Not the fake value
+    expect(firstPattern.similarity).not.toBe(latest);  // Not the fake value
     expect(firstPattern.pattern).not.toContain('// Pattern for');  // Not fake comment
   });
 });
@@ -863,7 +863,7 @@ describe('BB8020 Pattern Matching - Real Implementation', () => {
 5. **Add Socratic confidence scoring** (Step 2)
    - File: `packages/decision-fabric/src/socratic-agent.mjs:42`
    - Use: `@unrdf/hooks` quality gates
-   - Test: Verify confidence scores 0-100%, not hardcoded 0.3
+   - Test: Verify confidence scores 0-100%, not hardcoded latest
 
 6. **Add OTEL validation integration**
    - Use: `@unrdf/validation` package

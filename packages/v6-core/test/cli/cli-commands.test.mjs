@@ -59,7 +59,7 @@ const V6_COMMANDS = {
   'v6:status': async () => ({
     command: 'v6:status',
     status: 'success',
-    version: '6.0.0-alpha.1',
+    version: '[VERSION]-alpha.1',
     features: { receipts: true, delta: true },
   }),
 
@@ -201,7 +201,7 @@ test('CLI - v6:status returns system status', async () => {
   const result = await executeCommand('v6:status');
 
   assert.strictEqual(result.command, 'v6:status');
-  assert.strictEqual(result.version, '6.0.0-alpha.1');
+  assert.strictEqual(result.version, '[VERSION]-alpha.1');
   assert.ok(result.features);
   assert.strictEqual(result.features.receipts, true);
 });

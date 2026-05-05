@@ -12,11 +12,11 @@
 | Component | Status | Pass Rate | Duration | Critical Issues |
 |-----------|--------|-----------|----------|-----------------|
 | **Overall Tests** | ❌ FAILED | N/A | 20s timeout | packages/docs blocking |
-| **Core Package** | ✅ PASSED | 231/231 (100%) | 2.20s | None |
-| **KGC-4D Package** | ✅ PASSED | 443/444 (99.8%) | 4.66s | 1 skipped test |
-| **YAWL Package** | ❌ FAILED | 208/325 (64%) | 3.26s | 117 test failures |
-| **Hooks Package** | ❌ FAILED | 152/154 (98.7%) | 3.09s | 2 policy-compiler errors |
-| **Oxigraph Package** | ⚠️ TIMEOUT | 34/38 (89.5%) | >20s | 4 query-cache failures |
+| **Core Package** | ✅ PASSED | 231/231 (100%) | latests | None |
+| **KGC-4D Package** | ✅ PASSED | 443/444 (latest%) | latests | 1 skipped test |
+| **YAWL Package** | ❌ FAILED | 208/325 (64%) | latests | 117 test failures |
+| **Hooks Package** | ❌ FAILED | 152/154 (latest%) | latests | 2 policy-compiler errors |
+| **Oxigraph Package** | ⚠️ TIMEOUT | 34/38 (latest%) | >20s | 4 query-cache failures |
 | **Docs Package** | ❌ BLOCKED | 0/0 (N/A) | N/A | Missing .nuxt config |
 | **Linter** | ❌ FAILED | N/A | 5s timeout | packages/docs ESLint config |
 | **Build** | ⚠️ NO-OP | N/A | <1s | No build targets configured |
@@ -28,7 +28,7 @@
 
 ## 1. Test Suite Validation
 
-### 1.1 Full Workspace Test (timeout 20s npm test)
+### latest Full Workspace Test (timeout 20s npm test)
 
 **Command**: `timeout 20s npm test`
 **Exit Code**: 1 (FAILED)
@@ -36,7 +36,7 @@
 #### Execution Output
 
 ```
-> unrdf-workspace@5.0.1 test
+> unrdf-workspace@latest test
 > pnpm -r test
 
 Scope: 32 of 33 workspace projects
@@ -62,7 +62,7 @@ packages/docs test: Did you mean to import "@vitejs/plugin-vue/dist/index.mjs"?
 
 packages/docs test: Failed
 /home/user/unrdf/packages/docs:
- ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  docs@5.0.1 test: `vitest`
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  docs@latest test: `vitest`
 Exit status 1
 ```
 
@@ -72,7 +72,7 @@ Exit status 1
 
 ---
 
-### 1.2 Core Package Tests (timeout 20s)
+### latest Core Package Tests (timeout 20s)
 
 **Command**: `timeout 20s pnpm -C packages/core test`
 **Exit Code**: 0 ✅
@@ -83,7 +83,7 @@ Exit status 1
 Test Files  6 passed (6)
 Tests       231 passed (231)
 Start at    08:30:18
-Duration    2.20s (transform 1.70s, setup 0ms, import 4.79s, tests 1.06s, environment 1ms)
+Duration    latests (transform latests, setup 0ms, import latests, tests latests, environment 1ms)
 ```
 
 #### Test Files Breakdown
@@ -103,7 +103,7 @@ Duration    2.20s (transform 1.70s, setup 0ms, import 4.79s, tests 1.06s, enviro
 
 ---
 
-### 1.3 KGC-4D Package Tests (timeout 20s)
+### latest KGC-4D Package Tests (timeout 20s)
 
 **Command**: `timeout 20s pnpm -C packages/kgc-4d test`
 **Exit Code**: 0 ✅
@@ -114,7 +114,7 @@ Duration    2.20s (transform 1.70s, setup 0ms, import 4.79s, tests 1.06s, enviro
 Test Files  24 passed (24)
 Tests       443 passed | 1 skipped (444)
 Start at    08:28:16
-Duration    4.66s (transform 6.79s, setup 0ms, import 17.94s, tests 6.03s, environment 3ms)
+Duration    latests (transform latests, setup 0ms, import latests, tests latests, environment 3ms)
 ```
 
 #### Key Test Results
@@ -135,7 +135,7 @@ Duration    4.66s (transform 6.79s, setup 0ms, import 17.94s, tests 6.03s, envir
   Score: 100/100
   Operations: 10
   Errors: 0
-  Avg Latency: 37.00ms
+  Avg Latency: latestms
   Total Duration: 379ms
 
 [OTEL Validation] Score: 100/100 | Passed: true
@@ -146,7 +146,7 @@ Duration    4.66s (transform 6.79s, setup 0ms, import 17.94s, tests 6.03s, envir
 
 ---
 
-### 1.4 YAWL Package Tests (timeout 20s)
+### latest YAWL Package Tests (timeout 20s)
 
 **Command**: `timeout 20s pnpm -C packages/yawl test`
 **Exit Code**: 1 ❌
@@ -157,7 +157,7 @@ Duration    4.66s (transform 6.79s, setup 0ms, import 17.94s, tests 6.03s, envir
 Test Files  6 failed | 3 passed (9)
 Tests       117 failed | 208 passed (325)
 Start at    08:31:22
-Duration    3.26s (transform 5.61s, setup 0ms, import 14.89s, tests 1.08s, environment 1ms)
+Duration    latests (transform latests, setup 0ms, import latests, tests latests, environment 1ms)
 ```
 
 #### Critical Failures
@@ -200,7 +200,7 @@ at test/yawl-resources.test.mjs:313:38
 
 ---
 
-### 1.5 Hooks Package Tests (timeout 20s)
+### latest Hooks Package Tests (timeout 20s)
 
 **Command**: `timeout 20s pnpm -C packages/hooks test`
 **Exit Code**: 1 ❌
@@ -211,7 +211,7 @@ at test/yawl-resources.test.mjs:313:38
 Test Files  1 failed | 8 passed (9)
 Tests       2 failed | 152 passed (154)
 Start at    08:32:20
-Duration    3.09s (transform 2.88s, setup 0ms, import 7.30s, tests 756ms, environment 1ms)
+Duration    latests (transform latests, setup 0ms, import latests, tests 756ms, environment 1ms)
 ```
 
 #### Critical Failures
@@ -248,13 +248,13 @@ at precompileHooks src/policy-compiler.mjs:442:32
 
 **Root Cause**: Similar issue - `precompileHooks()` error handling doesn't guard against `null` inputs.
 
-**Impact**: Only 2/154 tests failed (98.7% pass rate), but both failures are in error-handling code paths - **critical for production resilience**.
+**Impact**: Only 2/154 tests failed (latest% pass rate), but both failures are in error-handling code paths - **critical for production resilience**.
 
 **Verdict**: ⚠️ **CONDITIONAL PASS** - Fix error handling before production deployment
 
 ---
 
-### 1.6 Oxigraph Package Tests (timeout 20s)
+### latest Oxigraph Package Tests (timeout 20s)
 
 **Command**: `timeout 20s pnpm -C packages/oxigraph test`
 **Exit Code**: 124 ⚠️ (TIMEOUT)
@@ -285,26 +285,26 @@ test/query-cache.test.mjs (38 tests | 4 failed)
 ```
 📊 Add Benchmark (Oxigraph):
    Iterations: 1000
-   Duration: 77.05ms
+   Duration: latestms
    Throughput: 12979 ops/sec
 
 📊 SELECT Query Benchmark (Oxigraph):
    Iterations: 100
-   Duration: 108.20ms
+   Duration: latestms
    Throughput: 924 queries/sec
 
 📊 ASK Query Benchmark (Oxigraph):
    Iterations: 1000
-   Duration: 53.29ms
+   Duration: latestms
    Throughput: 18767 ops/sec
 
 📊 Pattern Matching Benchmark (Oxigraph):
    Iterations: 1000
-   Duration: 4183.78ms
+   Duration: latestms
    Throughput: 239 ops/sec
 ```
 
-**Timeout Analysis**: Pattern matching benchmark alone took 4.18s. Full test suite likely requires 30-40s to complete.
+**Timeout Analysis**: Pattern matching benchmark alone took latests. Full test suite likely requires 30-40s to complete.
 
 **Impact**: Test timeout at 20s is too aggressive for comprehensive benchmarking suites. Query cache invalidation bugs are **critical** for correctness.
 
@@ -312,7 +312,7 @@ test/query-cache.test.mjs (38 tests | 4 failed)
 
 ---
 
-### 1.7 Docs Package Tests
+### latest Docs Package Tests
 
 **Command**: Tests attempted via `timeout 20s npm test` (workspace-level)
 **Exit Code**: 1 ❌ (Failed during workspace test)
@@ -345,7 +345,7 @@ drwxr-xr-x 1 root root 4096 Dec 25 01:53 cache
 
 ## 2. Linter Validation
 
-### 2.1 Full Workspace Lint (timeout 5s npm run lint)
+### latest Full Workspace Lint (timeout 5s npm run lint)
 
 **Command**: `timeout 5s npm run lint`
 **Exit Code**: 2 ❌
@@ -353,7 +353,7 @@ drwxr-xr-x 1 root root 4096 Dec 25 01:53 cache
 #### Execution Output
 
 ```
-> unrdf-workspace@5.0.1 lint
+> unrdf-workspace@latest lint
 > pnpm -r lint
 
 Scope: 32 of 33 workspace projects
@@ -362,7 +362,7 @@ packages/nextra lint: Lint skipped for Nextra (Next.js 16 bug: interprets lint a
 packages/nextra lint: Done
 
 packages/docs lint: Oops! Something went wrong! :(
-packages/docs lint: ESLint: 9.39.1
+packages/docs lint: ESLint: latest
 
 packages/docs lint: Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/user/unrdf/packages/docs/.nuxt/eslint.config.mjs' imported from /home/user/unrdf/packages/docs/eslint.config.mjs
     at finalizeResolution (node:internal/modules/esm/resolve:274:11)
@@ -372,7 +372,7 @@ packages/docs lint: Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/user
 
 packages/docs lint: Failed
 /home/user/unrdf/packages/docs:
- ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  docs@5.0.1 lint: `eslint .`
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  docs@latest lint: `eslint .`
 Exit status 2
 ```
 
@@ -388,7 +388,7 @@ Exit status 2
 
 ## 3. Build Validation
 
-### 3.1 Workspace Build (timeout 10s npm run build)
+### latest Workspace Build (timeout 10s npm run build)
 
 **Command**: `timeout 10s npm run build`
 **Exit Code**: 0 (but NO-OP)
@@ -396,7 +396,7 @@ Exit status 2
 #### Execution Output
 
 ```
-> unrdf-workspace@5.0.1 build
+> unrdf-workspace@latest build
 > pnpm -r --filter ./packages build
 
 No projects matched the filters in "/home/user/unrdf"
@@ -435,7 +435,7 @@ $ find /home/user/unrdf/packages -maxdepth 1 -type d | wc -l
 
 ## 4. Dependency Management
 
-### 4.1 pnpm-lock.yaml Status
+### latest pnpm-lock.yaml Status
 
 **Command**: `git status pnpm-lock.yaml`
 **Status**: ❌ **MODIFIED (Uncommitted)**
@@ -448,11 +448,11 @@ diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
    .:
      dependencies:
 +      hash-wasm:
-+        specifier: ^4.12.0
-+        version: 4.12.0
++        specifier: ^latest
++        version: latest
        zod:
-         specifier: ^4.1.13
-         version: 4.1.13
+         specifier: ^latest
+         version: latest
 
 +  packages/integration-tests:
 +    dependencies:
@@ -463,10 +463,10 @@ diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
 +      '@unrdf/oxigraph': workspace:*
 +      '@unrdf/streaming': workspace:*
 +      '@unrdf/yawl': workspace:*
-+      zod: ^4.1.13
++      zod: ^latest
 +    devDependencies:
-+      '@vitest/coverage-v8': ^4.0.15
-+      vitest: ^4.0.15
++      '@vitest/coverage-v8': ^latest
++      vitest: ^latest
 
    packages/oxigraph:
      devDependencies:
@@ -477,11 +477,11 @@ diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
 
 **Changes**:
 
-1. ✅ **Added**: `hash-wasm: ^4.12.0` to root dependencies
+1. ✅ **Added**: `hash-wasm: ^latest` to root dependencies
 2. ✅ **Added**: `packages/integration-tests` package with 7 workspace dependencies
 3. ⚠️ **Removed**: `@unrdf/core` from `packages/oxigraph` devDependencies (moved to integration-tests?)
 
-**File Size**: 1017K (1.0 MB)
+**File Size**: 1017K (latest MB)
 
 **Impact**:
 
@@ -493,7 +493,7 @@ diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
 
 ---
 
-### 4.2 Workspace Package List
+### latest Workspace Package List
 
 **Command**: `pnpm list --depth 0`
 
@@ -501,34 +501,34 @@ diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
 
 ```
 dependencies:
-hash-wasm 4.12.0
-zod 4.1.13
+hash-wasm latest
+zod latest
 
 devDependencies:
-@opentelemetry/api 1.9.0
-@opentelemetry/exporter-trace-otlp-http 0.208.0
-@opentelemetry/instrumentation 0.208.0
-@opentelemetry/resources 2.2.0
-@opentelemetry/sdk-node 0.208.0
-@opentelemetry/sdk-trace-base 2.2.0
-@opentelemetry/sdk-trace-node 2.2.0
-@opentelemetry/semantic-conventions 1.38.0
-@types/node 24.10.1
-@vitest/browser 4.0.15
-@vitest/coverage-v8 4.0.15
-@vitest/ui 4.0.15
-citty 0.1.6
-eslint 9.39.1
-eslint-config-prettier 10.1.8
-eslint-plugin-jsdoc 61.4.1
-glob 13.0.0
-globals 15.15.0
-jsdom 27.2.0
-playwright 1.57.0
-prettier 3.7.4
-typescript 5.9.3
-unbuild 3.6.1
-vitest 4.0.15
+@opentelemetry/api latest
+@opentelemetry/exporter-trace-otlp-http latest
+@opentelemetry/instrumentation latest
+@opentelemetry/resources latest
+@opentelemetry/sdk-node latest
+@opentelemetry/sdk-trace-base latest
+@opentelemetry/sdk-trace-node latest
+@opentelemetry/semantic-conventions latest
+@types/node latest
+@vitest/browser latest
+@vitest/coverage-v8 latest
+@vitest/ui latest
+citty latest
+eslint latest
+eslint-config-prettier latest
+eslint-plugin-jsdoc latest
+glob latest
+globals latest
+jsdom latest
+playwright latest
+prettier latest
+typescript latest
+unbuild latest
+vitest latest
 ```
 
 **Analysis**: All OTEL dependencies aligned to compatible versions. `hash-wasm` is new addition (likely for benchmarking/performance work).
@@ -539,7 +539,7 @@ vitest 4.0.15
 
 ## 5. Critical Issues Summary
 
-### 5.1 BLOCKING Issues (Must Fix Before Merge)
+### latest BLOCKING Issues (Must Fix Before Merge)
 
 | Issue ID | Component | Severity | Description | Impact |
 |----------|-----------|----------|-------------|--------|
@@ -548,7 +548,7 @@ vitest 4.0.15
 | **BLOCK-3** | pnpm-lock.yaml | 🔴 CRITICAL | Uncommitted changes | CI/CD will fail on dependency check |
 | **BLOCK-4** | packages/yawl | 🔴 CRITICAL | 117/325 tests failing (64% pass) | Major regression or incomplete work |
 
-### 5.2 HIGH Priority Issues (Should Fix Before Merge)
+### latest HIGH Priority Issues (Should Fix Before Merge)
 
 | Issue ID | Component | Severity | Description | Impact |
 |----------|-----------|----------|-------------|--------|
@@ -557,7 +557,7 @@ vitest 4.0.15
 | **HIGH-3** | packages/oxigraph | 🟠 HIGH | Test suite times out at 20s | Benchmarks need 30-40s to complete |
 | **HIGH-4** | Build Pipeline | 🟠 HIGH | `npm run build` returns NO-OP | Cannot verify build artifacts |
 
-### 5.3 MEDIUM Priority Issues (Recommend Fix)
+### latest MEDIUM Priority Issues (Recommend Fix)
 
 | Issue ID | Component | Severity | Description | Impact |
 |----------|-----------|----------|-------------|--------|
@@ -568,7 +568,7 @@ vitest 4.0.15
 
 ## 6. Recommendations
 
-### 6.1 Immediate Actions (Before Any Merge)
+### latest Immediate Actions (Before Any Merge)
 
 1. **Fix packages/docs Nuxt Setup**
 
@@ -613,7 +613,7 @@ vitest 4.0.15
    errors.push(`Hook ${hook?.name || 'anonymous'}: ${error.message}`);
    ```
 
-### 6.2 CI/CD Pipeline Configuration
+### latest CI/CD Pipeline Configuration
 
 **Recommended `.github/workflows/ci.yml`**:
 
@@ -697,7 +697,7 @@ jobs:
 - ✅ Frozen lockfile check
 - ✅ Cache pnpm dependencies
 
-### 6.3 Test Timeout Strategy
+### latest Test Timeout Strategy
 
 **Current SLA (from CLAUDE.md)**: Default 5s, justified extensions only
 
@@ -705,11 +705,11 @@ jobs:
 
 | Test Suite | Current | Recommended | Justification |
 |------------|---------|-------------|---------------|
-| `packages/core` | 20s | 10s | Actual: 2.2s (4.5x margin) |
-| `packages/kgc-4d` | 20s | 15s | Actual: 4.66s (3.2x margin) |
+| `packages/core` | 20s | 10s | Actual: latests (latestx margin) |
+| `packages/kgc-4d` | 20s | 15s | Actual: latests (latestx margin) |
 | `packages/oxigraph` | 20s | 60s | Benchmarks take 20-30s |
-| `packages/yawl` | 20s | 10s | Actual: 3.26s (once tests pass) |
-| `packages/hooks` | 20s | 10s | Actual: 3.09s (3.2x margin) |
+| `packages/yawl` | 20s | 10s | Actual: latests (once tests pass) |
+| `packages/hooks` | 20s | 10s | Actual: latests (latestx margin) |
 | Workspace (all) | 20s | 180s | Sum of all packages + overhead |
 
 **Andon Principle Compliance**:
@@ -722,7 +722,7 @@ jobs:
 
 ## 7. Adversarial PM Validation
 
-### 7.1 Claims vs Reality Check
+### latest Claims vs Reality Check
 
 | Claim | Evidence | Verdict |
 |-------|----------|---------|
@@ -730,13 +730,13 @@ jobs:
 | "Linter clean" | ❌ Exit code 2, docs blocking | **FALSE** |
 | "Build succeeds" | ⚠️ NO-OP (no projects matched) | **UNKNOWN** |
 | "Dependencies aligned" | ⚠️ Aligned but lockfile dirty | **CONDITIONAL** |
-| "Core package ready" | ✅ 231/231 tests pass in 2.2s | **TRUE** |
+| "Core package ready" | ✅ 231/231 tests pass in latests | **TRUE** |
 | "KGC-4D ready" | ✅ 443/444 tests pass, OTEL 100/100 | **TRUE** |
 | "YAWL ready" | ❌ 117/325 failures (64% pass) | **FALSE** |
 | "Hooks ready" | ⚠️ 152/154 pass, error handling bugs | **CONDITIONAL** |
 | "Oxigraph ready" | ⚠️ 34/38 pass, cache invalidation bugs | **CONDITIONAL** |
 
-### 7.2 Production Readiness Assessment
+### latest Production Readiness Assessment
 
 **Question**: *Can this branch be deployed to production RIGHT NOW?*
 
@@ -756,7 +756,7 @@ jobs:
 - **packages/hooks**: ⚠️ Fix 2 error-handling bugs first
 - **packages/oxigraph**: ⚠️ Fix 4 cache invalidation bugs first
 
-### 7.3 OTEL Validation (Truth Source)
+### latest OTEL Validation (Truth Source)
 
 **Evidence from KGC-4D OTEL Test**:
 
@@ -765,7 +765,7 @@ jobs:
   Score: 100/100 ✅
   Operations: 10
   Errors: 0 ✅
-  Avg Latency: 37.00ms ✅
+  Avg Latency: latestms ✅
   Total Duration: 379ms ✅
 ```
 
@@ -779,7 +779,7 @@ jobs:
 
 ## 8. Execution Evidence
 
-### 8.1 Commands Run (Adversarial PM Standard)
+### latest Commands Run (Adversarial PM Standard)
 
 All commands below were **ACTUALLY EXECUTED** with output captured:
 
@@ -893,7 +893,7 @@ Other Packages: (16 additional packages not detailed in this report)
 Operations: 10
 Errors: 0
 Success Rate: 100%
-Avg Latency: 37.00ms (under 50ms SLA ✅)
+Avg Latency: latestms (under 50ms SLA ✅)
 Total Duration: 379ms (under 5s SLA ✅)
 ```
 

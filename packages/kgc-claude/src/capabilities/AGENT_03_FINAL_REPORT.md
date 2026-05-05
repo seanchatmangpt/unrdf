@@ -193,9 +193,9 @@ All modules are **fully functional** and demonstrated via a comprehensive proof-
 ✓ Active plugins: 2
 ✓ Dependency tree for plugin-b: {
     "id": "plugin-b",
-    "version": "2.1.0",
+    "version": "latest",
     "dependencies": [
-      { "id": "plugin-a", "version": "1.0.0", "dependencies": [] }
+      { "id": "plugin-a", "version": "latest", "dependencies": [] }
     ]
   }
 ✓ Destroyed all sandboxes

@@ -2,7 +2,7 @@
 
 > KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

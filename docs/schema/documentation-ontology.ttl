@@ -8,7 +8,7 @@
 #
 # Base namespace: urn:unrdf:doc:
 # Compatible with: N3 reasoning, SPARQL querying, SHACL validation
-# Version: 1.0.0
+# Version: latest
 
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -39,7 +39,7 @@
 doc:DocumentationOntology a owl:Ontology ;
     rdfs:label "UNRDF Documentation Ontology"@en ;
     rdfs:comment "Comprehensive RDF ontology for autonomic documentation enabling capability discovery, protocol navigation, type understanding, and reasoning support for autonomous agents."@en ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "latest" ;
     dcterms:created "2024-01-01"^^xsd:date ;
     dcterms:creator "UNRDF Project" ;
     dcterms:license <https://opensource.org/licenses/MIT> .

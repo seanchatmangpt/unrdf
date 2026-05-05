@@ -1,7 +1,7 @@
 # KGC CLI Registry Performance Benchmark - Executive Summary
 
 **Date:** 2025-12-27
-**Environment:** Node.js v22.21.1, Linux 4.4.0
+**Environment:** Node.js [VERSION], Linux [VERSION]
 **Test Suite:** Mock Mode (45 synthetic extensions)
 **Status:** ✅ **ALL TARGETS MET (5/5)**
 

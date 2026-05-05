@@ -116,16 +116,16 @@ public YIdentifier getRootAncestor()
 **Hierarchical Naming**:
 ```
 Parent WorkItem:   123:Enrol_5
-Child Instance 1:  123.1:Enrol_5
-Child Instance 2:  123.2:Enrol_5
-Child Instance 3:  123.3:Enrol_5
+Child Instance 1:  latest:Enrol_5
+Child Instance 2:  latest:Enrol_5
+Child Instance 3:  latest:Enrol_5
 
 Nested MI Composite:
   Parent:          n.n.n:CompositeTask
   MI Instance 1:   n.n.n.1:CompositeTask
-    Atomic Task:   n.n.n.1.1:AtomicTask
+    Atomic Task:   n.n.n.latest:AtomicTask
   MI Instance 2:   n.n.n.2:CompositeTask
-    Atomic Task:   n.n.n.2.1:AtomicTask
+    Atomic Task:   n.n.n.latest:AtomicTask
 ```
 
 **Format**: `{parent_id}.{child_number}:{task_name}`
@@ -852,9 +852,9 @@ public void startMultiInstanceTask(YTask task, YIdentifier caseID, Map<String, O
 ## 13. Research Sources
 
 ### Official Documentation
-- [YAWL Technical Manual v4.3](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf) - Work item lifecycle, MI semantics
-- [YAWL Technical Manual v5.0](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual5.0.pdf) - Latest architecture
-- [YAWL User Manual v4.3](https://yawlfoundation.github.io/assets/files/YAWLUserManual4.3.pdf) - Configuration examples
+- [YAWL Technical Manual vlatest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf) - Work item lifecycle, MI semantics
+- [YAWL Technical Manual vlatest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf) - Latest architecture
+- [YAWL User Manual vlatest](https://yawlfoundation.github.io/assets/files/YAWLUserManuallatest.pdf) - Configuration examples
 
 ### JavaDoc API References
 - [YIdentifier](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/elements/state/YIdentifier.html) - Parent-child tracking, createChild methods

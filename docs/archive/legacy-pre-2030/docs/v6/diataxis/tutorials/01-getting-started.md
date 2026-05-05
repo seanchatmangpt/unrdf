@@ -42,7 +42,7 @@ npm install @unrdf/v6-core @unrdf/oxigraph @unrdf/kgc-4d
 ```bash
 # Check CLI is available
 unrdf --version
-# Expected output: @unrdf/cli 26.4.23
+# Expected output: @unrdf/cli latest
 
 # Run health check
 unrdf doctor
@@ -105,7 +105,7 @@ Receipt: {
   operation: "addWithReceipt",
   inputs: [5, 3],
   output: 8,
-  version: "6.0.0-alpha.1"
+  version: "latest-alpha.1"
 }
 Hash: sha256:3f79bb7b435b05321651daefd374cdc681dc06faa65e374e38337b88ca046dea
 Receipt valid? true
@@ -286,7 +286,7 @@ Now that you've completed the basics, try:
 **Solution**: Ensure you're using Node.js ≥18 and have installed the packages:
 
 ```bash
-node --version  # Should be ≥18.0.0
+node --version  # Should be ≥latest
 pnpm install
 ```
 

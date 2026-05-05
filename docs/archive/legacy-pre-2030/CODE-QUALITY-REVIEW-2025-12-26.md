@@ -49,8 +49,8 @@
 **Impact**:
 
 - Violates CLAUDE.md requirement: "All files <500 lines"
-- 69 files exceed limit (15.4% of codebase)
-- Worst offender: 2.6x over limit (1318 lines)
+- 69 files exceed limit (latest% of codebase)
+- Worst offender: latestx over limit (1318 lines)
 
 **Required Action**:
 
@@ -94,7 +94,7 @@
 **Evidence**:
 
 ```bash
-Error: connect ECONNREFUSED 127.0.0.1:3000
+Error: connect ECONNREFUSED latest.1:3000
 FAIL e2e/avatars/alex-api-developer.spec.ts
 FAIL e2e/avatars/chen-fullstack.spec.ts
 Error: Playwright Test did not expect test.describe()
@@ -121,16 +121,16 @@ Error: Playwright Test did not expect test.describe()
 **Evidence**:
 
 ```bash
-packages/graph-analytics: 63.63% statements (REQUIRED: ≥80%)
-- Branch coverage: 50.51% (REQUIRED: ≥80%)
-- Function coverage: 66.66% (REQUIRED: ≥80%)
-- Line coverage: 64.53% (REQUIRED: ≥80%)
+packages/graph-analytics: latest% statements (REQUIRED: ≥80%)
+- Branch coverage: latest% (REQUIRED: ≥80%)
+- Function coverage: latest% (REQUIRED: ≥80%)
+- Line coverage: latest% (REQUIRED: ≥80%)
 ```
 
 **Impact**:
 
 - Does not meet CLAUDE.md requirement: "Test coverage ≥80%"
-- 16.37% gap to minimum standard
+- latest% gap to minimum standard
 - Untested code paths in production
 
 **Required Action**:
@@ -237,7 +237,7 @@ console.log('coi-serviceworker loaded');
 ```bash
 Custom error classes found: 4
 Total modules: 447
-Error class coverage: 0.89%
+Error class coverage: latest%
 ```
 
 **Impact**:
@@ -315,7 +315,7 @@ docs/DIATAXIS-PHASE-*.md
 
 ```bash
 Zod validation instances: 2166
-Zod-to-module ratio: 4.8:1 (Good)
+Zod-to-module ratio: latest:1 (Good)
 ```
 
 **Impact**: ✅ POSITIVE
@@ -361,7 +361,7 @@ Zod-to-module ratio: 4.8:1 (Good)
 ```bash
 Total test files: 137
 Total source modules: 447
-Test-to-module ratio: 0.31:1 (Acceptable)
+Test-to-module ratio: latest:1 (Acceptable)
 ```
 
 **Impact**: ✅ POSITIVE
@@ -371,7 +371,7 @@ Test-to-module ratio: 0.31:1 (Acceptable)
 
 **Recommended Action**:
 
-- Increase test-to-module ratio to 0.5:1 (223 test files)
+- Increase test-to-module ratio to latest:1 (223 test files)
 - Focus on untested modules first
 
 ---
@@ -380,9 +380,9 @@ Test-to-module ratio: 0.31:1 (Acceptable)
 
 | Metric                     | Actual                   | Required     | Status  |
 | -------------------------- | ------------------------ | ------------ | ------- |
-| **File Size (<500 lines)** | 378/447 (84.6%)          | 100%         | ❌ FAIL |
+| **File Size (<500 lines)** | 378/447 (latest%)          | 100%         | ❌ FAIL |
 | **Test Pass Rate**         | ~95% (kgn fails)         | 100%         | ❌ FAIL |
-| **Test Coverage**          | 63.63% (graph-analytics) | ≥80%         | ❌ FAIL |
+| **Test Coverage**          | latest% (graph-analytics) | ≥80%         | ❌ FAIL |
 | **OTEL Validation**        | 100/100                  | ≥80/100      | ✅ PASS |
 | **Zod Validation**         | 2166 instances           | Present      | ✅ PASS |
 | **Console.log Free**       | No (20+ instances)       | Yes          | ❌ FAIL |
@@ -402,7 +402,7 @@ Test-to-module ratio: 0.31:1 (Acceptable)
 - ❌ **69 files over 500 lines** (CLAUDE.md violation)
 - ❌ **4 failing tests** (kgn package broken)
 - ❌ **7 failing E2E test suites** (docs package)
-- ❌ **Coverage 63.63%** (below 80% threshold)
+- ❌ **Coverage latest%** (below 80% threshold)
 - ❌ **Typecheck timeout** (cannot verify safety)
 - ❌ **Lint timeout** (cannot verify standards)
 
@@ -444,7 +444,7 @@ Test-to-module ratio: 0.31:1 (Acceptable)
 
 8. Add custom error classes (10+ types)
 9. Complete documentation DEFERRED_ACTION(#loop-closure)s
-10. Increase test-to-module ratio to 0.5:1
+10. Increase test-to-module ratio to latest:1
 
 ---
 
@@ -508,7 +508,7 @@ timeout 10s node validation/run-all.mjs comprehensive
 
 - [ ] Refactor all 69 oversized files
 - [ ] Achieve 90%+ test coverage
-- [ ] 0.5:1 test-to-module ratio
+- [ ] latest:1 test-to-module ratio
 
 ---
 
@@ -523,8 +523,8 @@ timeout 10s node validation/run-all.mjs comprehensive
 | Timeout all commands (5s default) | ⚠️ Partial | Some tests timeout properly  |
 | OTEL is truth (≥80/100)           | ✅ PASS    | 100/100 achieved             |
 | Pattern reuse                     | ⚠️ Unknown | Not assessed in review scope |
-| File size <500 lines              | ❌ FAIL    | 69 violations (15.4%)        |
-| Test coverage ≥80%                | ❌ FAIL    | graph-analytics at 63.63%    |
+| File size <500 lines              | ❌ FAIL    | 69 violations (latest%)        |
+| Test coverage ≥80%                | ❌ FAIL    | graph-analytics at latest%    |
 | JSDoc 100% coverage               | ⚠️ Unknown | Typecheck timeout            |
 | Zod validation                    | ✅ PASS    | 2166 instances               |
 | No console.log                    | ❌ FAIL    | 20+ instances in atomvm      |
@@ -579,7 +579,7 @@ timeout 10s node validation/run-all.mjs comprehensive
 A: ✅ YES - Ran `pnpm test:coverage` and captured failures
 
 **Q: Can you PROVE coverage is below 80%?**
-A: ✅ YES - graph-analytics: 63.63% (evidence in /tmp/coverage-output.txt)
+A: ✅ YES - graph-analytics: latest% (evidence in /tmp/coverage-output.txt)
 
 **Q: What BREAKS if we merge anyway?**
 A:
@@ -594,7 +594,7 @@ A:
 A:
 
 - Test output showing 4 FAIL in kgn, 7 FAIL in docs
-- Coverage report showing 63.63% < 80%
+- Coverage report showing latest% < 80%
 - File count showing 69 files >500 lines
 - Timeout errors for typecheck and lint
 

@@ -1,0 +1,154 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.7,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "44357a8a82f110e3625254fba87fcefdf890c0e791a7e6a8b4178cead9ae01cc",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "Configuration Sources",
+      "Configuration Files",
+      "Environment Variables",
+      "CLI Overrides",
+      "Provenance Tracking",
+      "Configuration Hash",
+      "Validation",
+      "Comparing Configs",
+      "Types",
+      "API Reference",
+      "Testing",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "Configuration management system for pictl with Zod-based validation, provenance tracking, and support for multiple config sources.",
+    "concepts": [
+      "config",
+      "configuration",
+      "zod",
+      "validation",
+      "provenance"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-pictl-config-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @pictl/config",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-pictl-config",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @pictl/config",
+      "title": "Configure @pictl/config"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with config in your project",
+      "id": "howto-integrate-with-config",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @pictl/config with config",
+      "title": "Integrate with config"
+    }
+  ],
+  "packageName": "@pictl/config",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-pictl-config-reference",
+    "items": [
+      {
+        "description": "Export: ./hash",
+        "example": null,
+        "name": "./hash",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./provenance",
+        "example": null,
+        "name": "./provenance",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./resolver",
+        "example": null,
+        "name": "./resolver",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./schema",
+        "example": null,
+        "name": "./schema",
+        "type": "export"
+      },
+      {
+        "description": "Export: ./types",
+        "example": null,
+        "name": "./types",
+        "type": "export"
+      },
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@pictl/config",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@pictl/config Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @pictl/config in your project",
+      "id": "tutorial-getting-started-with-pictl-config",
+      "prerequisites": [],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @pictl/config"
+    }
+  ],
+  "version": "[VERSION]"
+}

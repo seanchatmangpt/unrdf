@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/codegen",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Code generation and metaprogramming tools for UNRDF",
   "type": "module",
   "main": "./src/index.mjs",

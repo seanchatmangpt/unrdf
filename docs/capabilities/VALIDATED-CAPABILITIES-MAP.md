@@ -1,4 +1,4 @@
-# UNRDF v4.1.1 Validated Capabilities Map
+# UNRDF latest Validated Capabilities Map
 
 **Status**: Production-Ready | **Date**: 2025-12-02
 **Purpose**: Source of truth for Diataxis documentation refactor

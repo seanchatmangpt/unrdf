@@ -71,7 +71,7 @@ Step 1: Identify Error Modes → Step 2: Design Type-Level Prevention → Step 3
 
 **Action**: Use javascript's type system to make errors impossible.
 
-#### 2.1: Use Newtypes for Validation
+#### latest: Use Newtypes for Validation
 
 **Action**: Create newtypes that enforce invariants.
 
@@ -100,7 +100,7 @@ class Counter {
 }
 ```
 
-#### 2.2: Use Enums for State Machines
+#### latest: Use Enums for State Machines
 
 **Action**: Use enums to represent valid states only.
 
@@ -131,7 +131,7 @@ class Parser {
 }
 ```
 
-#### 2.3: Use Option/Result for Nullable Values
+#### latest: Use Option/Result for Nullable Values
 
 **Action**: Use `T | null` instead of nullable types.
 
@@ -159,7 +159,7 @@ async function process(value) {
 }
 ```
 
-#### 2.4: Use for Type-Level Invariants
+#### latest: Use for Type-Level Invariants
 
 **Action**: Use to encode invariants in types.
 
@@ -195,7 +195,7 @@ FileHandle<Open> {
 
 **Action**: Leverage javascript's compiler to catch errors.
 
-#### 3.1: Use Type Bounds
+#### latest: Use Type Bounds
 
 **Action**: Add trait bounds to restrict valid types.
 
@@ -212,7 +212,7 @@ function printValue(value) {
 // Type checking ensures only valid types are passed
 ```
 
-#### 3.2: Use Const Generics for Sizes
+#### latest: Use Const Generics for Sizes
 
 **Action**: Use const generics to prevent size errors.
 
@@ -229,7 +229,7 @@ function processArray(arr) {
 }
 ```
 
-#### 3.3: Use Lifetimes to Prevent Use-After-Free
+#### latest: Use Lifetimes to Prevent Use-After-Free
 
 **Action**: Use lifetimes to prevent memory errors.
 
@@ -246,7 +246,7 @@ function process(data) {
 }
 ```
 
-#### 3.4: Use Unsafe Blocks Sparingly
+#### latest: Use Unsafe Blocks Sparingly
 
 **Action**: Mark unsafe code explicitly, use safe abstractions.
 
@@ -275,7 +275,7 @@ async function safeOperation(input) {
 
 **Action**: Ensure type system prevents errors.
 
-#### 4.1: Attempt Invalid Operations
+#### latest: Attempt Invalid Operations
 
 **Action**: Try to write code that should fail to compile.
 
@@ -297,7 +297,7 @@ pnpm lint
 # Should show compile errors for invalid operations
 ```
 
-#### 4.2: Verify Valid Operations Compile
+#### latest: Verify Valid Operations Compile
 
 **Action**: Ensure valid code compiles successfully.
 
@@ -319,7 +319,7 @@ pnpm lint
 # Should compile successfully
 ```
 
-#### 4.3: Test Runtime Behavior
+#### latest: Test Runtime Behavior
 
 **Action**: Verify type-level prevention works at runtime.
 
@@ -328,7 +328,7 @@ pnpm test
 # Tests should pass - type system prevents errors
 ```
 
-#### 4.4: Measure Error Prevention (DMAIC Measurement)
+#### latest: Measure Error Prevention (DMAIC Measurement)
 
 **Action**: Measure error prevention effectiveness against baseline.
 
@@ -384,7 +384,7 @@ pnpm test 2>&1 | grep -c "panicked"
 
 **Action**: Explain why design prevents errors.
 
-#### 5.1: Document Type Invariants
+#### latest: Document Type Invariants
 
 **Action**: Document invariants enforced by types.
 
@@ -402,7 +402,7 @@ class Counter {
   } // Invariant: Always >= 0 (enforced by type});
 ```
 
-#### 5.2: Document State Machine Invariants
+#### latest: Document State Machine Invariants
 
 **Action**: Document valid state transitions.
 
@@ -424,7 +424,7 @@ const ParserState = {
 };);
 ```
 
-#### 5.3: Document Usage Patterns
+#### latest: Document Usage Patterns
 
 **Action**: Document how to use types safely.
 
@@ -445,7 +445,7 @@ const ParserState = {
 /// ```
 ```
 
-#### 5.4: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to ensure error prevention is sustained.
 
@@ -500,7 +500,7 @@ const ParserState = {
 
 **Principle**: Implement controls to sustain error prevention, don't just document them. Todos track progress, controls prevent regression.
 
-#### 5.5: Monitor (DMAIC Control)
+#### latest: Monitor (DMAIC Control)
 
 **Action**: Monitor to ensure error prevention is sustained.
 

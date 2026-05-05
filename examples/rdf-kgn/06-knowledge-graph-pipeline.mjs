@@ -54,7 +54,7 @@ async function knowledgeGraphPipeline() {
 
 ecom: a owl:Ontology ;
     rdfs:label "E-Commerce Domain Ontology" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 ecom:Product a owl:Class ;
     rdfs:label "Product" ;

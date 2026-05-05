@@ -36,8 +36,8 @@ This research identifies **15 cross-runtime integration patterns** (10 existing 
 2. **WASM Bootstrap** (`wasm-bootstrap.mjs`, 245 lines)
    - Environment detection (browser vs Node.js)
    - Asset validation and loading
-   - AtomVM v0.6.6 WASM binaries available
-   - Paths: `/public/AtomVM-{node|web}-v0.6.6.wasm`
+   - AtomVM latest WASM binaries available
+   - Paths: `/public/AtomVM-{node|web}-latest.wasm`
 
 3. **Message Validator** (`message-validator.mjs`, 16KB)
    - BEAM message format validation
@@ -139,7 +139,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', data);
    - 5-node AtomVM cluster
    - EPMD (Erlang Port Mapper Daemon) setup
    - Health checks every 5s
-   - Bridge network (172.25.0.0/16)
+   - Bridge network (172.2latest/16)
 
 2. **Kubernetes** (Evidence: Multiple Dockerfiles found)
    - `blockchain-audit/Dockerfile`

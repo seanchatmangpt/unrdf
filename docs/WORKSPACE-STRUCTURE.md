@@ -173,8 +173,8 @@ packages/core/
 
 ### Version Numbering
 
-- **Root:** 5.0.0-alpha.0 (monorepo version)
-- **Packages:** Independent semver (e.g., core might be v1.2.3 while hooks is v2.0.1)
+- **Root:** latest.0 (monorepo version)
+- **Packages:** Independent semver (e.g., core might be vlatest while hooks is vlatest)
 - **Pre-release:** `-alpha`, `-beta`, `-rc` for development versions
 
 ### Dependency Management
@@ -320,7 +320,7 @@ test/fixtures/
 ```json
 {
   "name": "@unrdf/core",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "description": "RDF storage with SPARQL & SHACL",
   "license": "MIT",
@@ -344,7 +344,7 @@ test/fixtures/
   },
 
   "devDependencies": {
-    "vitest": "^1.0.0"
+    "vitest": "^latest"
   }
 }
 ```

@@ -43,14 +43,14 @@ Full-stack compositions using 7+ atoms with observability.
 - Parse/serialize RDF formats (Turtle, N-Triples, JSON-LD)
 
 **Performance**:
-- **Latency**: 0.8ms (createStore), 1.2ms (10K triple insert)
+- **Latency**: latestms (createStore), latestms (10K triple insert)
 - **Memory**: 2MB baseline + 120 bytes/triple
 - **Throughput**: 850K triples/sec (batch insert)
 
 **Verification**:
 ```bash
 timeout 5s node /home/user/unrdf/packages/oxigraph/test/basic.test.mjs
-# Expected: All tests pass, ~1.5s total
+# Expected: All tests pass, ~latests total
 ```
 
 **Risk**: None (fully proven)
@@ -97,7 +97,7 @@ timeout 5s node /home/user/unrdf/packages/kgc-4d/test/integration.test.mjs
 - Shared memory arrays for WASM ↔ JS communication
 
 **Performance**:
-- **Latency**: 350ms (WASM load), 2.5ms (bridge call overhead)
+- **Latency**: 350ms (WASM load), latestms (bridge call overhead)
 - **Memory**: C1 baseline + 18MB WASM runtime
 - **Browser Compatibility**: Chrome 92+, Firefox 95+, Safari 16+
 
@@ -122,7 +122,7 @@ timeout 10s node /home/user/unrdf/packages/atomvm/test/node-runtime.test.mjs
 - Registry for discovering and managing hooks
 
 **Performance**:
-- **Latency**: 0.15ms/hook (validation), 0.35ms/hook (transformation)
+- **Latency**: latestms/hook (validation), latestms/hook (transformation)
 - **Memory**: 450KB registry + 2KB/hook
 - **Throughput**: 180K validations/sec
 
@@ -147,7 +147,7 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/hooks.test.mjs
 - Reject invalid data before it enters store
 
 **Performance**:
-- **Latency**: 0.08ms/quad (validation-only, 47% faster than C4)
+- **Latency**: latestms/quad (validation-only, 47% faster than C4)
 - **Memory**: 180KB (no transformation allocations)
 - **Throughput**: 320K validations/sec
 
@@ -175,8 +175,8 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/hooks.test.mjs
 - Freeze workflow state to Git for audit trail
 
 **Performance**:
-- **Latency**: 2.8ms/transition (receipt generation), 50ms (freeze state)
-- **Memory**: C2 baseline + 1.2KB/receipt
+- **Latency**: latestms/transition (receipt generation), 50ms (freeze state)
+- **Memory**: C2 baseline + latestKB/receipt
 - **Receipt Chain**: Tamper-proof (breaking one receipt invalidates all successors)
 
 **Verification**:
@@ -201,7 +201,7 @@ timeout 5s node /home/user/unrdf/packages/yawl/test/integration.test.mjs
 - Cache compiled chains (5-8x speedup on hot paths)
 
 **Performance**:
-- **Latency**: 0.02ms/quad (JIT compiled, 87% faster than C4)
+- **Latency**: latestms/quad (JIT compiled, 87% faster than C4)
 - **Memory**: Zero allocations (pooled quads)
 - **Compilation**: 12ms (one-time cost, amortized over 1000s of calls)
 
@@ -227,9 +227,9 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/policy-compiler.test.mjs
 - Supervision trees for fault tolerance
 
 **Performance**:
-- **Latency**: 4.5ms/transition (gen_statem + KGC-4D bridge)
+- **Latency**: latestms/transition (gen_statem + KGC-4D bridge)
 - **Memory**: C2 baseline + C3 baseline + 850KB/process
-- **WASM Overhead**: 2.5ms (bridge call, from C3)
+- **WASM Overhead**: latestms (bridge call, from C3)
 
 **Verification**:
 ```bash
@@ -278,8 +278,8 @@ timeout 10s node /home/user/unrdf/packages/atomvm/playground/test/bridge.test.mj
 - Verify "did this state exist at time T?" with BLAKE3 proof
 
 **Performance**:
-- **Latency**: C2 latency + 2.8ms (receipt generation)
-- **Memory**: C2 baseline + 1.2KB/receipt
+- **Latency**: C2 latency + latestms (receipt generation)
+- **Memory**: C2 baseline + latestKB/receipt
 - **Proof Strength**: BLAKE3 (128-bit collision resistance)
 
 **Verification**:
@@ -331,7 +331,7 @@ timeout 5s node /home/user/unrdf/packages/federation/test/federation.test.mjs
 - Visualize event relationships
 
 **Performance**:
-- **Latency**: 0.5ms/event (coordinate generation), 12ms (K=10 nearest)
+- **Latency**: latestms/event (coordinate generation), 12ms (K=10 nearest)
 - **Memory**: C2 baseline + 4KB/event (D=512 dimensions)
 - **Dimensions**: 512 (D_MEDIUM), configurable 128-2048
 
@@ -387,7 +387,7 @@ timeout 5s node /home/user/unrdf/packages/ml-inference/test/inference.test.mjs
 - OpenTelemetry traces for debugging
 
 **Performance**:
-- **Latency**: C11 latency + 2.8ms (receipt) + 0.5ms (metrics)
+- **Latency**: C11 latency + latestms (receipt) + latestms (metrics)
 - **Memory**: C11 baseline + 800KB (Prometheus client)
 - **Observability**: 15 Prometheus metrics, OTEL spans for every transition
 
@@ -413,7 +413,7 @@ timeout 5s node /home/user/unrdf/packages/yawl/test/integration.test.mjs
 - Audit trail of rejected data (optional)
 
 **Performance**:
-- **Latency**: 0.02ms/quad (JIT compiled, validation-only)
+- **Latency**: latestms/quad (JIT compiled, validation-only)
 - **Memory**: Zero allocations (pooled)
 - **Throughput**: 480K quads/sec (validation + rejection)
 
@@ -436,16 +436,16 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/policy-compiler.test.mjs
 
 | Composition | Latency (ms) | Feature Count | Pareto? |
 |-------------|--------------|---------------|---------|
-| C1 (RDF CRUD) | 1.2 | 3 | ✅ Yes (simplest) |
+| C1 (RDF CRUD) | latest | 3 | ✅ Yes (simplest) |
 | C2 (Time-Travel) | 45 | 7 | ✅ Yes |
-| C4 (Policy-Gated) | 0.15 | 4 | ❌ No (C7 dominates) |
-| C5 (Validation-Only) | 0.08 | 2 | ✅ Yes (fastest validation) |
-| C6 (Auditable Workflows) | 52.8 | 11 | ✅ Yes |
-| C7 (JIT Hooks) | 0.02 | 5 | ✅ Yes (dominates C4) |
-| C10 (Receipt Time-Travel) | 47.8 | 9 | ❌ No (C6 + C2 ≈ same) |
+| C4 (Policy-Gated) | latest | 4 | ❌ No (C7 dominates) |
+| C5 (Validation-Only) | latest | 2 | ✅ Yes (fastest validation) |
+| C6 (Auditable Workflows) | latest | 11 | ✅ Yes |
+| C7 (JIT Hooks) | latest | 5 | ✅ Yes (dominates C4) |
+| C10 (Receipt Time-Travel) | latest | 9 | ❌ No (C6 + C2 ≈ same) |
 | C11 (Distributed TT) | 225 | 12 | ✅ Yes (only distributed) |
-| C14 (Production WF) | 228.3 | 18 | ✅ Yes (most features) |
-| C15 (Zero-Trust) | 0.02 | 6 | ✅ Yes (tied C7, more features) |
+| C14 (Production WF) | latest | 18 | ✅ Yes (most features) |
+| C15 (Zero-Trust) | latest | 6 | ✅ Yes (tied C7, more features) |
 
 **Pareto Optimal Set**: C1, C2, C5, C6, C7, C11, C14, C15 (8 of 15 compositions)
 
@@ -457,10 +457,10 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/policy-compiler.test.mjs
 |-------------|-------------|---------------------|---------|
 | C1 | 2 | 850K | ✅ Yes (baseline) |
 | C2 | 10 | 22 (freezes/sec) | ✅ Yes |
-| C5 | 0.18 | 320K | ✅ Yes (smallest memory) |
-| C7 | 2.45 | 480K | ❌ No (C1 better memory, C5 comparable) |
-| C11 | 25 | 1.2K | ✅ Yes (only distributed) |
-| C15 | 2.45 | 480K | ✅ Yes (zero-alloc) |
+| C5 | latest | 320K | ✅ Yes (smallest memory) |
+| C7 | latest | 480K | ❌ No (C1 better memory, C5 comparable) |
+| C11 | 25 | latestK | ✅ Yes (only distributed) |
+| C15 | latest | 480K | ✅ Yes (zero-alloc) |
 
 ---
 
@@ -488,10 +488,10 @@ timeout 5s node /home/user/unrdf/packages/hooks/test/policy-compiler.test.mjs
 
 | Composition | Latency | Budget | Status |
 |-------------|---------|--------|--------|
-| C1 (CRUD) | 1.2ms | 5ms | ✅ 76% headroom |
+| C1 (CRUD) | latestms | 5ms | ✅ 76% headroom |
 | C2 (Freeze) | 45ms | 50ms | ✅ 10% headroom |
-| C5 (Validation) | 0.08ms | 5ms | ✅ 98% headroom |
-| C7 (JIT) | 0.02ms | 5ms | ✅ 99.6% headroom |
+| C5 (Validation) | latestms | 5ms | ✅ 98% headroom |
+| C7 (JIT) | latestms | 5ms | ✅ latest% headroom |
 | C11 (Distributed) | 225ms | 500ms | ⚠️ 45% budget used |
 | C14 (Production) | 228ms | 500ms | ⚠️ 46% budget used |
 

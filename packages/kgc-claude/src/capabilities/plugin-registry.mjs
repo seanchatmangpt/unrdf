@@ -22,7 +22,7 @@ import { randomUUID } from 'crypto';
  */
 const SemVerSchema = z.string().regex(
   /^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$/,
-  'Must be valid semver (e.g., 1.0.0, 2.1.3-beta.1)'
+  'Must be valid semver (e.g., latest, latest-beta.1)'
 );
 
 /**
@@ -30,7 +30,7 @@ const SemVerSchema = z.string().regex(
  */
 const DependencySchema = z.object({
   plugin: z.string().describe('Plugin ID'),
-  version: z.string().describe('Version range (e.g., ^1.0.0, >=2.0.0)'),
+  version: z.string().describe('Version range (e.g., ^latest, >=latest)'),
   optional: z.boolean().default(false).describe('Optional dependency')
 });
 

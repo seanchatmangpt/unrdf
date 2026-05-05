@@ -52,9 +52,9 @@
 | Effect registration (p95) | <150ms | ~125ms | ✅ 17% better |
 | Effect execution (p95) | <200ms | ~143ms | ✅ 29% better |
 | **OpenTelemetry** |
-| Span creation | <1ms | ~0.35ms | ✅ 65% better |
-| Memory overhead | <10MB | ~6.2MB | ✅ 38% better |
-| CPU overhead | <5% | ~2.8% absolute | ✅ |
+| Span creation | <1ms | ~latestms | ✅ 65% better |
+| Memory overhead | <10MB | ~latestMB | ✅ 38% better |
+| CPU overhead | <5% | ~latest% absolute | ✅ |
 
 ## Performance Bottlenecks Identified
 
@@ -70,7 +70,7 @@
 
 ### 3. OTel Relative CPU Overhead (Monitor)
 - **Impact**: 22% relative overhead in synthetic tests
-- **Severity**: Low (absolute overhead is 2.8%)
+- **Severity**: Low (absolute overhead is latest%)
 - **Recommendation**: Monitor in production, use BatchSpanProcessor
 
 ## Running Performance Tests

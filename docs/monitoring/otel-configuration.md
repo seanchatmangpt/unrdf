@@ -125,7 +125,7 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 const sdk = new NodeSDK({
   resource: new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'unrdf',
-    [SemanticResourceAttributes.SERVICE_VERSION]: '5.0.1',
+    [SemanticResourceAttributes.SERVICE_VERSION]: 'latest',
   }),
   traceExporter: new OTLPTraceExporter({
     url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4318/v1/traces',

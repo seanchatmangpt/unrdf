@@ -273,9 +273,9 @@ playground/
 ## Next Steps (When 100% Confident)
 
 1. **Publish Patterns as npm Packages** (if needed in other projects)
-   - `@unrdf/hook-registry@1.0.0`
-   - `@unrdf/delta-sync-reducer@1.0.0`
-   - `@unrdf/sse-client@1.0.0`
+   - `@unrdf/hook-registry@[VERSION]`
+   - `@unrdf/delta-sync-reducer@[VERSION]`
+   - `@unrdf/sse-client@[VERSION]`
 
 2. **Update Package Dependencies**
    - Other projects can then import from separate packages

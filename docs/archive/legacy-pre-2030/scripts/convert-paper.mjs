@@ -34,7 +34,7 @@ const DEFAULT_STATUS = 'draft'
 const main = defineCommand({
   meta: {
     name: 'convert-paper',
-    version: '2.0.0',
+    version: 'latest',
     description: 'Convert LaTeX papers to MDX for Nextra',
   },
   args: {

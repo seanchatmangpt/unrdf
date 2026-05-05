@@ -390,7 +390,7 @@ All V6 commands return consistent error envelopes:
   "_receipt": {
     "noun": "receipt",
     "verb": "invalid_verb",
-    "timestamp": "2025-12-27T10:30:00.000Z",
+    "timestamp": "2025-12-27T10:30:latestZ",
     "duration": 5,
     "status": "error"
   }
@@ -516,6 +516,6 @@ kgc package list --json | jq '.data.extensions'
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Next Review**: After Phase 2 completion

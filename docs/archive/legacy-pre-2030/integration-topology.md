@@ -1,6 +1,6 @@
 # Daemon Cross-Package Integration Topology
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-10
 **Scope**: @unrdf/daemon integration patterns with Core, Hooks, Streaming, Consensus, YAWL
 

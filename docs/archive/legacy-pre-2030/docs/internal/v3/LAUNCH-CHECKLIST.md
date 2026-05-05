@@ -1,6 +1,6 @@
 # UNRDF v3 Launch Checklist
 
-**Version**: 3.0.0
+**Version**: latest
 **Status**: Ready for Launch 🚀
 **Date**: 2025-10-01
 
@@ -68,16 +68,16 @@ npm run lint
 ### Step 2: Update Version (5 minutes)
 
 ```bash
-# Update to v3.0.0
-pnpm version major  # 2.1.1 → 3.0.0
+# Update to latest
+pnpm version major  # latest → latest
 
-# Or if already on 3.0.0-beta, promote to stable
-pnpm version 3.0.0
+# Or if already on latest-beta, promote to stable
+pnpm version latest
 ```
 
 ### Step 3: Create Release Notes (10 minutes)
 
-Create `CHANGELOG-v3.0.0.md` with:
+Create `CHANGELOG-latest.md` with:
 - Major features (Dark Matter, Sidecar, CLI v2 foundation)
 - Breaking changes (if any)
 - Migration guide link
@@ -97,10 +97,10 @@ Create `CHANGELOG-v3.0.0.md` with:
 ```bash
 # Commit version bump
 git add package.json
-git commit -m "Release v3.0.0"
+git commit -m "Release latest"
 
 # Create tag
-git tag v3.0.0
+git tag latest
 
 # Push to GitHub (triggers CI/CD)
 git push origin main --tags
@@ -120,11 +120,11 @@ git push origin main --tags
 ```bash
 # Check npm registry
 npm view unrdf version
-# Expected: 3.0.0
+# Expected: latest
 
 # Test installation
-npx unrdf@3.0.0 --version
-# Expected: 3.0.0
+npx unrdf@latest --version
+# Expected: latest
 ```
 
 ### Step 8: Announce Release (15 minutes)
@@ -158,7 +158,7 @@ npx unrdf@3.0.0 --version
 ## 🎯 Success Criteria
 
 **Launch is successful when**:
-- ✅ npm shows v3.0.0
+- ✅ npm shows latest
 - ✅ CI/CD all green
 - ✅ No critical bugs reported in first 24 hours
 - ✅ Documentation accessible
@@ -172,11 +172,11 @@ If critical issues discovered:
 
 ```bash
 # 1. Unpublish from npm (within 72 hours)
-npm unpublish unrdf@3.0.0
+npm unpublish unrdf@latest
 
 # 2. Revert git tag
-git tag -d v3.0.0
-git push origin :refs/tags/v3.0.0
+git tag -d latest
+git push origin :refs/tags/latest
 
 # 3. Publish previous stable version
 npm publish --tag latest
@@ -205,7 +205,7 @@ npm publish --tag latest
 ## 🎓 Release Notes Template
 
 ```markdown
-# UNRDF v3.0.0 - Major Release 🚀
+# UNRDF latest - Major Release 🚀
 
 **Release Date**: 2025-10-01
 
@@ -299,7 +299,7 @@ Before announcing launch publicly:
 
 - [ ] All tests passing (npm test)
 - [ ] Dark Matter 18/18 tests passing
-- [ ] npm shows v3.0.0
+- [ ] npm shows latest
 - [ ] GitHub release created
 - [ ] Documentation updated
 - [ ] CI/CD all green

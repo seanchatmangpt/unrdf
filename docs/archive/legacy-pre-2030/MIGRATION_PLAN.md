@@ -1,6 +1,6 @@
 # UNRDF Migration Plan
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Target Release**: Q1 2025
 **Status**: Planning Phase
 
@@ -259,26 +259,26 @@ All KGC-CLI extensions, YAWL extensions, domain packages.
 
 ### Phase 1: Alpha (Jan 2025)
 
-- **6.0.0-alpha.1**: Core packages (Tier 1-2) released
-- **v5.0.x**: Full support, no deprecation warnings
+- **latest.1**: Core packages (Tier 1-2) released
+- **vlatest.x**: Full support, no deprecation warnings
 - **Action**: Early adopters test core migration
 
 ### Phase 2: Beta (Feb 2025)
 
-- **6.0.0-beta.1**: All packages migrated
-- **v5.0.x**: Deprecation warnings in logs (not breaking)
+- **latest.1**: All packages migrated
+- **vlatest.x**: Deprecation warnings in logs (not breaking)
 - **Action**: Production testing with compatibility layer
 
 ### Phase 3: RC (Mar 2025)
 
-- **6.0.0-rc.1**: Feature freeze, bug fixes only
-- **v5.0.x**: Deprecation warnings escalate (console.warn)
+- **latest.1**: Feature freeze, bug fixes only
+- **vlatest.x**: Deprecation warnings escalate (console.warn)
 - **Action**: Migration deadline announced (Q2 2025)
 
 ### Phase 4: Stable (Apr 2025)
 
-- **6.0.0**: Official release
-- **v5.0.x**: Security fixes only (6-month EOL warning)
+- **latest**: Official release
+- **vlatest.x**: Security fixes only (6-month EOL warning)
 - **Action**: All new projects use current version
 
 ### Phase 5: End-of-Life (Oct 2025)
@@ -373,18 +373,18 @@ If critical issues arise during migration:
 
 ```bash
 # Restore entire workspace to v5
-git checkout v5.0.1
+git checkout vlatest
 pnpm install
 
 # Or per-package
-pnpm add @unrdf/core@5.0.1
+pnpm add @unrdf/core@latest
 ```
 
 ---
 
 ## Success Criteria
 
-- [ ] All 47 packages at 6.0.0
+- [ ] All 47 packages at latest
 - [ ] 100% test pass rate (no regressions)
 - [ ] OTEL validation ≥80/100 for all packages
 - [ ] Zero direct N3 imports outside justified modules

@@ -234,7 +234,7 @@ Add navigation between quadrants:
 | **Reference Pages** | 5 | 11 | API coverage % |
 | **Explanation Topics** | 6 | 12 | Conceptual understanding surveys |
 | **Cross-Links** | ~5% | 80% | Pages with ≥2 cross-quadrant links |
-| **User Satisfaction** | - | 4.5/5 | Feedback scores |
+| **User Satisfaction** | - | latest/5 | Feedback scores |
 
 ---
 

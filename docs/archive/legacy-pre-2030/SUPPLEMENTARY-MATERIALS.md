@@ -40,7 +40,7 @@ Comprehensive reference materials including glossary, acronyms, index, and quick
 : Minimal, single-purpose library (typically <500 LoC) addressing one concern. Composable building blocks following Unix philosophy: do one thing well.
 
 **Oxigraph**
-: Native Rust RDF store with SPARQL 1.1 query engine, compiled to WebAssembly. Provides 6-28x performance improvement over JavaScript-based N3.js.
+: Native Rust RDF store with SPARQL latest query engine, compiled to WebAssembly. Provides 6-28x performance improvement over JavaScript-based N3.js.
 
 **Pareto Frontier**
 : Set of features with optimal value/cost ratio. In BB80/20, features on the Pareto frontier are implemented in v1; others deferred to future releases.
@@ -321,7 +321,7 @@ import { createYAWLPolicyPack } from '@unrdf/yawl';
 
 const workflow = {
   name: 'my-workflow',
-  version: '1.0.0',
+  version: 'latest',
   tasks: [
     {
       id: 'task-a',
@@ -454,7 +454,7 @@ ORDER BY ?ts
 | Memory (per workflow) | <200 KB | <1 MB | >5 MB |
 | Bundle size (core + hooks) | <600 KB | <1 MB | >2 MB |
 | Startup time (cold) | <20 ms | <100 ms | >500 ms |
-| CPU utilization (idle) | <0.1% | <1% | >5% |
+| CPU utilization (idle) | <latest% | <1% | >5% |
 
 ---
 
@@ -468,7 +468,7 @@ ORDER BY ?ts
   author = {UNRDF Contributors},
   year = {2024},
   url = {https://github.com/unrdf/unrdf},
-  version = {5.0.0}
+  version = {latest}
 }
 
 @article{bigbang8020,

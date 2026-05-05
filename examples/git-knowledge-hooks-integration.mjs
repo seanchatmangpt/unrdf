@@ -6,7 +6,7 @@
  * - Knowledge hooks monitor git operations for compliance and quality
  * - Synchronous event-driven architecture
  *
- * @version 1.0.0
+ * @version latest
  * @author unrdf Team
  * @license MIT
  */

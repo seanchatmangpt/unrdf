@@ -38,7 +38,7 @@ The error occurs during static page generation phase, specifically when trying t
 The issue likely stems from:
 1. **Async Layout**: `app/layout.tsx` uses `await getPageMap()` which makes it async
 2. **Static Generation**: Next.js 16's static generation may not fully support async layouts during the _not-found page generation
-3. **Nextra Compatibility**: Potential incompatibility between Nextra 4.6.1's `getPageMap()` and Next.js 16's prerendering
+3. **Nextra Compatibility**: Potential incompatibility between Nextra [VERSION]'s `getPageMap()` and Next.js 16's prerendering
 
 ## Evidence
 

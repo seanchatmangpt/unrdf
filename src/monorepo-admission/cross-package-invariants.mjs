@@ -47,7 +47,7 @@ export const DEFAULT_THRESHOLDS = {
  * Q_version_consistency: Verify version alignment across packages
  *
  * Rules:
- * 1. If core is v5.x.y, dependent packages must be >=4.9.0
+ * 1. If core is v5.x.y, dependent packages must be >=[VERSION]
  * 2. Workspace packages should share major version
  * 3. Protected packages must be tightly aligned
  *

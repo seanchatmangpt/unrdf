@@ -36,7 +36,7 @@ async function runTest(test) {
 async function runAllTests() {
   console.log(`${colors.bold}${colors.blue}
 ╔════════════════════════════════════════════════╗
-║         UNRDF v3.0.1 Full Smoke Test          ║
+║         UNRDF latest Full Smoke Test          ║
 ║                                                ║
 ║  Testing all components of UNRDF              ║
 ╚════════════════════════════════════════════════╝
@@ -80,7 +80,7 @@ ${colors.reset}\n`);
 ║                                                ║
 ║  ${passed}/${results.length} test suites passed (${passRate}%)           ║
 ║                                                ║
-║  UNRDF v3.0.1 is fully validated! 🚀         ║
+║  UNRDF latest is fully validated! 🚀         ║
 ╚════════════════════════════════════════════════╝
 ${colors.reset}`);
     process.exit(0);

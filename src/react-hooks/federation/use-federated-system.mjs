@@ -1,7 +1,7 @@
 /**
  * @file use-federated-system.mjs
  * @description React hook for managing federated RDF systems across multiple stores
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
 /**
  * Hook for managing a federated RDF system with distributed stores
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Federation configuration
  * @param {string[]} config.stores - Array of store identifiers or URLs
  * @param {string} [config.consensusProtocol='raft'] - Consensus protocol (raft, gossip, byzantine)

@@ -13,7 +13,7 @@
  *   node index.mjs rdf load <file>           # Execute command
  *   node index.mjs rdf query --sparql "..." # Execute SPARQL query
  *
- * Version: 1.0.0
+ * Version: latest
  */
 
 import { defineCommand, runMain } from 'citty';
@@ -521,7 +521,7 @@ const policyCommand = defineCommand({
 const main = defineCommand({
   meta: {
     name: 'exploration-cli',
-    version: '1.0.0',
+    version: 'latest',
     description: 'UNRDF Substrate Exploration CLI - Noun-verb command pattern using citty',
   },
   subCommands: {

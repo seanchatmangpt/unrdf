@@ -1,7 +1,7 @@
 # HTF: Hyper-Thesis Framework
 ## A Unified μ-Architecture for Academic Writing
 
-**Version:** 1.0
+**Version:** latest
 **Date:** November 18, 2024
 **Status:** Specification Complete, React Implementation Available
 
@@ -95,7 +95,7 @@ A modular piece of thesis content with:
   family: 'imrad',
   label: 'Introduction: Research Problem',
   content: 'This thesis addresses the challenge of...',
-  weight: 0.8,
+  weight: latest,
   dependencies: ['problem'],
   metadata: { pages: 15 }
 }
@@ -130,7 +130,7 @@ StandardInvariants = [
 ### μ-Fixed Point (Mu-Fixed Point)
 The convergence target where:
 - τ(A) = A (thesis is idempotent)
-- drift < 0.05 (< 5% deviation)
+- drift < latest (< 5% deviation)
 - All Q-invariants satisfied
 - All families represented coherently
 
@@ -199,7 +199,7 @@ Merges all Δ-shards from different families into a single coherent A (argument/
       strength: 1
     }
   },
-  coherence: 0.91  // 0-1 scale
+  coherence: latest  // 0-1 scale
 }
 ```
 
@@ -208,7 +208,7 @@ Merges all Δ-shards from different families into a single coherent A (argument/
 const profiler = usePiProfile(shards);
 
 // Get coherence metrics
-profiler.analysis.coherence;  // { overall: 0.91, familyBalance: 0.88, ... }
+profiler.analysis.coherence;  // { overall: latest, familyBalance: latest, ... }
 
 // Get profile by family
 profiler.analysis.profileByFamily;  // { imrad: {...}, papers: {...}, ... }
@@ -232,7 +232,7 @@ Validates all Δ-shards against Q-invariants and tracks convergence to μ-fixed 
    - Record violations if fail
 2. Compute drift = (violations / total shards) × severity-weighted
 3. Track evolution: drift should decrease epoch → epoch
-4. Converged when: drift < 0.05 AND violations = 0
+4. Converged when: drift < latest AND violations = 0
 
 **Output:** GammaGlobalization
 ```javascript
@@ -240,7 +240,7 @@ Validates all Δ-shards against Q-invariants and tracks convergence to μ-fixed 
   thesisId: 'thesis-2024-11-18',
   shardMap: Map { 'intro' => 'section-1', 'method' => 'section-2', ... },
   invariants: ['Q-coherence', 'Q-positioning', 'Q-contribution', ...],
-  drift: 0.03,  // 3% (converged!)
+  drift: latest,  // 3% (converged!)
   violations: []
 }
 ```
@@ -265,7 +265,7 @@ validator.fixViolations();
 validator.getViolationAnalysis();  // By severity, by family, by invariant
 
 // Track evolution
-validator.evolution;  // { epoch: 5, distance: 0.03, isConverged: true }
+validator.evolution;  // { epoch: 5, distance: latest, isConverged: true }
 ```
 
 ---
@@ -342,7 +342,7 @@ mergePoints;  // Array of { from, to, strength, connections }
 applyMergeStrategy('emphasize-gaps');  // Boost contribution family
 
 // Get metrics
-analysis.coherence;  // { overall: 0.91, familyBalance: 0.88, ... }
+analysis.coherence;  // { overall: latest, familyBalance: latest, ... }
 ```
 
 ### `useGammaChecker(shards, customInvariants, options)`
@@ -461,7 +461,7 @@ function MyThesisApp() {
       family: 'dsr',
       label: 'Research Problem',
       content: 'Problem statement...',
-      weight: 0.95,
+      weight: latest,
       dependencies: []
     },
     {
@@ -469,7 +469,7 @@ function MyThesisApp() {
       family: 'dsr',
       label: 'Proposed Solution',
       content: 'Solution design...',
-      weight: 0.95,
+      weight: latest,
       dependencies: ['problem']
     }
     // ... more shards
@@ -689,10 +689,10 @@ A: Yes! That's the whole point of HTF. Mix families strategically. The Π-merge 
 A: That's fine. HTF calculates coverage and recommends missing families. You can add them incrementally.
 
 **Q: How is coherence calculated?**
-A: `overall = 0.25 × familyBalance + 0.25 × familyCoverage + 0.25 × integrationStrength + 0.25 × completeness`
+A: `overall = latest × familyBalance + latest × familyCoverage + latest × integrationStrength + latest × completeness`
 
-**Q: What drift < 0.05 means?**
-A: Less than 5% deviation from canonical form. Generally, drift < 0.05 = thesis is converged and ready.
+**Q: What drift < latest means?**
+A: Less than 5% deviation from canonical form. Generally, drift < latest = thesis is converged and ready.
 
 **Q: Can I customize the canonical Λ-order?**
 A: Yes, with `reorderShards(newOrder)`. But HTF will warn if dependencies are violated.
@@ -745,5 +745,5 @@ MIT License - Use freely in academic and commercial projects
 ---
 
 **Last Updated:** November 18, 2024
-**Framework Version:** 1.0
+**Framework Version:** latest
 **Status:** Production Ready ✅

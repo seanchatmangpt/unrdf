@@ -1,4 +1,4 @@
-# WASM Integration Analysis - UNRDF v6.0.0
+# WASM Integration Analysis - UNRDF vlatest
 
 **Mission**: Define WASM vs JavaScript boundaries for complete v6 rewrite
 **Date**: 2025-12-28
@@ -9,8 +9,8 @@
 ## Executive Summary
 
 UNRDF already has **3 production WASM modules** deployed:
-1. **Oxigraph** (0.5.2) - Rust-based SPARQL engine (10-100x faster than N3)
-2. **AtomVM** (0.6.6) - Erlang/BEAM runtime for browser + Node.js
+1. **Oxigraph** (latest) - Rust-based SPARQL engine (10-100x faster than N3)
+2. **AtomVM** (latest) - Erlang/BEAM runtime for browser + Node.js
 3. **SwiftLaTeX** - TeX to PDF compilation (pdftex.wasm, xetex.wasm)
 
 **Key Finding**: WASM is already the **primary RDF compute layer**. The v6 rewrite should **expand WASM usage** for CPU-bound operations while keeping orchestration in JavaScript.
@@ -24,7 +24,7 @@ UNRDF already has **3 production WASM modules** deployed:
 | Module | Size | Purpose | Performance | Status |
 |--------|------|---------|-------------|--------|
 | **Oxigraph** | ~2MB | SPARQL query execution | 10-100x faster than N3 | ✅ Production |
-| **AtomVM** | ~1.5MB | BEAM runtime (Erlang VM) | 0.008ms avg roundtrip | ✅ Production |
+| **AtomVM** | ~latestMB | BEAM runtime (Erlang VM) | latestms avg roundtrip | ✅ Production |
 | **SwiftLaTeX** | ~15MB | PDF generation from TeX | Deterministic builds | ✅ Production |
 
 ### Expansion Candidates (v6 Rewrite)
@@ -53,7 +53,7 @@ UNRDF already has **3 production WASM modules** deployed:
 - **Current**: JavaScript in `merkle-tree.mjs` using crypto module
 - **Target**: WASM Merkle tree with BLAKE3 hashing
 - **Impact**: 3-5x faster receipt generation
-- **Benchmark Target**: <0.017ms (current: ~0.05ms)
+- **Benchmark Target**: <latestms (current: ~latestms)
 
 #### Medium Priority (Next Phase)
 
@@ -235,8 +235,8 @@ wasmFunction(0); // WASM reads directly
 ### Current State (AtomVM Package)
 
 **WASM Binaries Deployed**:
-- `/packages/atomvm/public/AtomVM-web-v0.6.6.wasm` (1.5MB)
-- `/packages/atomvm/public/AtomVM-node-v0.6.6.wasm` (1.5MB)
+- `/packages/atomvm/public/AtomVM-web-vlatest.wasm` (latestMB)
+- `/packages/atomvm/public/AtomVM-node-vlatest.wasm` (latestMB)
 
 **Infrastructure Exists**:
 - ✅ Supervisor trees (`supervisor-tree.mjs` - 214 lines)
@@ -246,9 +246,9 @@ wasmFunction(0); // WASM reads directly
 - ✅ 9 Erlang modules in `src/erlang/` (~2000 lines)
 
 **Performance** (from BEAM-WASM-MISSION-REPORT.md):
-- Average roundtrip: **0.008ms** (1,250x under 10ms SLA)
+- Average roundtrip: **latestms** (1,250x under 10ms SLA)
 - SLA compliance: **100%** (0 violations in 101 messages)
-- Error rate: **0.00%**
+- Error rate: **latest%**
 - Throughput: **~125,000 messages/sec**
 
 ### Integration Opportunities
@@ -324,7 +324,7 @@ supervisor.addChild('stage3', wasmBusinessRules);
 // Stages 1 and 3 continue processing
 ```
 
-**Impact**: 99.9% uptime for validation pipelines
+**Impact**: latest% uptime for validation pipelines
 **Status**: Architecture designed, needs SHACL→WASM compiler
 
 ### BEAM → RDF Integration Gap
@@ -358,7 +358,7 @@ match_person_names(_) ->
 | Module | Size | Compression | CDN | Notes |
 |--------|------|-------------|-----|-------|
 | **Oxigraph** | ~2MB | gzip | npm | Bundled with @unrdf/oxigraph |
-| **AtomVM** | ~1.5MB | None | Local | Served from /public |
+| **AtomVM** | ~latestMB | None | Local | Served from /public |
 | **SwiftLaTeX** | ~15MB | None | Local | /vendor/swiftlatex/*.wasm |
 
 ### Recommended Strategy (v6)
@@ -392,7 +392,7 @@ let wasmModule = null;
 async function loadWasm() {
   if (wasmModule) return wasmModule;
   
-  const url = `https://cdn.unrdf.org/wasm/sparql-v6.0.0.wasm`;
+  const url = `https://cdn.unrdf.org/wasm/sparql-vlatest.wasm`;
   const response = await fetch(url);
   const bytes = await response.arrayBuffer();
   
@@ -413,7 +413,7 @@ async function loadWasm() {
 // service-worker.mjs
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open('wasm-v6.0.0').then((cache) => {
+    caches.open('wasm-vlatest').then((cache) => {
       return cache.addAll([
         '/wasm/oxigraph.wasm',
         '/wasm/atomvm.wasm',
@@ -425,7 +425,7 @@ self.addEventListener('install', (event) => {
 
 // Client code
 async function loadWasmCached(name) {
-  const cache = await caches.open('wasm-v6.0.0');
+  const cache = await caches.open('wasm-vlatest');
   const response = await cache.match(`/wasm/${name}.wasm`);
   
   if (response) {
@@ -570,9 +570,9 @@ export default defineConfig({
 
 | Operation | Target | Measured | Status |
 |-----------|--------|----------|--------|
-| BEAM roundtrip | <10ms | 0.008ms | ✅ 99.92% under |
-| Receipt creation | <1ms | 0.017ms | ✅ 98.3% under |
-| Delta validation | <5ms | ~0.005ms | ✅ 99.9% under |
+| BEAM roundtrip | <10ms | latestms | ✅ latest% under |
+| Receipt creation | <1ms | latestms | ✅ latest% under |
+| Delta validation | <5ms | ~latestms | ✅ latest% under |
 | Worker restart | <100ms | <1ms | ✅ 99% under |
 
 **Oxigraph** (Rust WASM):
@@ -630,7 +630,7 @@ console.log(`✅ WASM instantiation: ${initTime.toFixed(2)}ms`);
 const { namedNode, literal } = dataFactory;
 const triple = {
   subject: namedNode('http://example.org/alice'),
-  predicate: namedNode('http://xmlns.com/foaf/0.1/name'),
+  predicate: namedNode('http://xmlns.com/foaf/latest/name'),
   object: literal('Alice')
 };
 
@@ -661,16 +661,16 @@ console.log(`   Breakdown: init ${initTime.toFixed(1)}ms + add ${addTime.toFixed
 ```
 === WASM Roundtrip Demo: Oxigraph ===
 
-✅ WASM instantiation: 12.34ms
-✅ JS → WASM (add): 0.052ms
-✅ WASM → JS (query): 0.018ms
+✅ WASM instantiation: latestms
+✅ JS → WASM (add): latestms
+✅ WASM → JS (query): latestms
 
 📊 Results: 1 triple(s)
    Subject: http://example.org/alice
    Object: Alice
 
-⏱️  Total roundtrip: 12.41ms
-   Breakdown: init 12.3ms + add 0.05ms + query 0.02ms
+⏱️  Total roundtrip: latestms
+   Breakdown: init latestms + add latestms + query latestms
 ```
 
 **Run**:
@@ -697,14 +697,14 @@ console.log('=== WASM Roundtrip Demo: BEAM Pattern Matching ===\n');
 const triple = {
   subject: { type: 'iri', value: 'http://example.org/alice' },
   predicate: { type: 'iri', value: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' },
-  object: { type: 'iri', value: 'http://xmlns.com/foaf/0.1/Person' }
+  object: { type: 'iri', value: 'http://xmlns.com/foaf/latest/Person' }
 };
 
 // 2. BEAM-style pattern matching function (simulated)
 function matchPersonType(triple) {
   // In Erlang: match_person({_, {rdf, type}, {foaf, 'Person'}}) -> {ok, true}.
   if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-      triple.object.value === 'http://xmlns.com/foaf/0.1/Person') {
+      triple.object.value === 'http://xmlns.com/foaf/latest/Person') {
     return { ok: true };
   }
   return { error: 'no_match' };
@@ -733,14 +733,14 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
 ```
 === WASM Roundtrip Demo: BEAM Pattern Matching ===
 
-✅ Pattern match: 0.002ms
+✅ Pattern match: latestms
    Result: {"ok":true}
 
 📝 Equivalent SPARQL:
    SELECT ?s WHERE { ?s rdf:type foaf:Person }
 
 ⚡ Performance:
-   BEAM pattern match: 0.002ms
+   BEAM pattern match: latestms
    SPARQL (estimated): ~5-10ms
    Speedup: ~2500x faster
 ```
@@ -867,7 +867,7 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
 ### Architecture Decisions Needed
 
 1. **SPARQL Compiler Priority**: Build SPARQL→WASM transpiler now or defer?
-   - **Recommendation**: Defer to Phase 2 (after v6.0.0 release)
+   - **Recommendation**: Defer to Phase 2 (after vlatest release)
    - **Reason**: Oxigraph WASM already provides 10-100x speedup
 
 2. **SharedArrayBuffer Adoption**: Require Cross-Origin-Isolation for real-time features?
@@ -875,8 +875,8 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
    - **Reason**: Avoid forcing service worker complexity on all users
 
 3. **BEAM Integration Depth**: Full Erlang term serialization or actor-only?
-   - **Recommendation**: Actor-only for v6.0.0, full serialization in v6.1.0
-   - **Reason**: Actor model already proven (0.008ms roundtrip)
+   - **Recommendation**: Actor-only for vlatest, full serialization in vlatest
+   - **Reason**: Actor model already proven (latestms roundtrip)
 
 ---
 
@@ -884,7 +884,7 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
 
 **WASM is already the foundation of UNRDF's performance**:
 - Oxigraph (WASM) is **10-100x faster** than N3 (JavaScript)
-- AtomVM (WASM) enables **0.008ms roundtrips** with BEAM semantics
+- AtomVM (WASM) enables **latestms roundtrips** with BEAM semantics
 - SwiftLaTeX (WASM) provides deterministic PDF generation
 
 **v6 Rewrite Strategy**:
@@ -893,7 +893,7 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
 3. **Keep JavaScript**: Orchestration, OTEL, I/O, error handling
 
 **Biggest Opportunity**: BEAM pattern matching for RDF triples
-- **Current**: 0.008ms average roundtrip (proven)
+- **Current**: latestms average roundtrip (proven)
 - **Need**: RDF↔Erlang term serialization (1 week)
 - **Impact**: Erlang-style concurrency for distributed RDF operations
 
@@ -901,7 +901,7 @@ console.log(`   Speedup: ~${(5 / matchTime).toFixed(0)}x faster`);
 
 ---
 
-**Version**: 1.0.0
+**Version**: latest
 **Created**: 2025-12-28
 **Updated**: 2025-12-28
-**Next Review**: After v6.0.0 release
+**Next Review**: After vlatest release

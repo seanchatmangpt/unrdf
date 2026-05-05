@@ -33,7 +33,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 
 - Included: Release preparation steps, validation checks, release artifacts
 - Excluded: Post-release monitoring, deployment process
-  **Context**: Preparing v1.1.0 release for production
+  **Context**: Preparing vlatest release for production
   **Goal**: Prevent release failures (incomplete releases, uncommitted code, missing artifacts)
 ```
 
@@ -153,9 +153,9 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 | 6      | Low-Moderate     | Unlikely, 5-10% of time          | Failure occurs in 5-10% of releases    |
 | 5      | Low              | Rare, 2-5% of time               | Failure occurs in 2-5% of releases     |
 | 4      | Very Low         | Very rare, 1-2% of time          | Failure occurs in 1-2% of releases     |
-| 3      | Remote           | Extremely rare, 0.5-1% of time   | Failure occurs in 0.5-1% of releases   |
-| 2      | Very Remote      | Almost never, 0.1-0.5% of time   | Failure occurs in 0.1-0.5% of releases |
-| 1      | Extremely Remote | Nearly impossible, <0.1% of time | Failure occurs in <0.1% of releases    |
+| 3      | Remote           | Extremely rare, latest% of time   | Failure occurs in latest% of releases   |
+| 2      | Very Remote      | Almost never, latest.5% of time   | Failure occurs in latest.5% of releases |
+| 1      | Extremely Remote | Nearly impossible, <latest% of time | Failure occurs in <latest% of releases    |
 
 **Frequency assessment questions**:
 
@@ -288,7 +288,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 
 **Action**: Prioritize failure modes by RPN and implement fixes.
 
-#### 7.1: Prioritize by RPN
+#### latest: Prioritize by RPN
 
 **Action**: Sort failure modes by RPN (highest first).
 
@@ -320,7 +320,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 - **Action**: Monitor - already has detection, low risk
 ```
 
-#### 7.2: Design Fixes
+#### latest: Design Fixes
 
 **Action**: Design fixes that reduce RPN (reduce severity, frequency, or improve detection).
 
@@ -340,7 +340,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 - **Current RPN**: 504 (Critical)
 - **Fix Strategy**: Reduce frequency (prevent) + Improve detection (catch)
 - **Fix**: Add git state verification to release workflow
-  - Add "Step 2.6: Git State Verification" to workflow
+  - Add "Step latest: Git State Verification" to workflow
   - Add git status checks to release checklist
   - Make clean git state a release blocker
 - **Expected RPN after fix**:
@@ -350,7 +350,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
   - **New RPN**: 9 × 1 × 1 = 9 (Low risk)
 ```
 
-#### 7.3: Create Todo List and Execute Fixes
+#### latest: Create Todo List and Execute Fixes
 
 **Action**: Create a 10+ item todo list for all failure modes and execute them.
 
@@ -371,7 +371,7 @@ Step 1: Define Scope → Step 2: Identify Failure Modes → Step 3: Assess Sever
 **Priority 1 (Critical - RPN 501-1000)**:
 
 - [ ] Fix Failure Mode 1: Add git state verification to release workflow
-- [ ] Add "Step 2.6: Git State Verification" to release-preparation.md
+- [ ] Add "Step latest: Git State Verification" to release-preparation.md
 - [ ] Add git status checks to release checklist
 - [ ] Make clean git state a release blocker
 - [ ] Test: Run workflow with uncommitted changes

@@ -247,7 +247,7 @@ agent-3/
 {
   "@unrdf/core": "workspace:*",
   "@unrdf/oxigraph": "workspace:*",
-  "zod": "^3.22.4"
+  "zod": "^latest"
 }
 ```
 

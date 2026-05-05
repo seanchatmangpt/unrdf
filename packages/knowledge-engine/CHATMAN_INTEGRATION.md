@@ -138,7 +138,7 @@ console.log('Strategic Rules:', config.strategicDynamics.length);
 
 ```toml
 [chatman]
-version = "1.0.0"
+version = "[VERSION]"
 observable_ratio = 0.05
 closure_threshold = 0.95
 

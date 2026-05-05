@@ -89,20 +89,20 @@ if (actualLatency > contracts.graphOperations.storeCreation.p95Latency.blockThre
 
 **Latency** (all P95 unless noted):
 ```
-Store Creation:          0.4ms    (target: 2ms, EXCEEDS by 5x)
-Triple Insert (single):  0.15ms   (target: 1ms, EXCEEDS by 6.7x)
+Store Creation:          latestms    (target: 2ms, EXCEEDS by 5x)
+Triple Insert (single):  latestms   (target: 1ms, EXCEEDS by latestx)
 Triple Insert (100):     10ms     (target: 30ms, EXCEEDS by 3x)
-Triple Insert (10k):     1.2s     (target: 10s, EXCEEDS by 8.3x)
+Triple Insert (10k):     latests     (target: 10s, EXCEEDS by latestx)
 SPARQL Simple:           2ms      (target: 10ms, EXCEEDS by 5x)
-SPARQL Medium:           12.5ms   (target: 50ms, EXCEEDS by 4x)
-SPARQL Complex:          150ms    (target: 500ms, EXCEEDS by 3.3x)
-SPARQL Large Graph:      350ms    (target: 1s, EXCEEDS by 2.9x)
-Delta Validation:        0.005ms  (target: 25ms, EXCEEDS by 5000x)
-Receipt Creation:        0.017ms  (target: 5ms, EXCEEDS by 294x)
-Receipt Verification:    0.000ms  (target: 2ms, EXCEEDS by ∞)
-Receipt Chain (10):      0.347ms  (target: 250ms, EXCEEDS by 720x)
+SPARQL Medium:           latestms   (target: 50ms, EXCEEDS by 4x)
+SPARQL Complex:          150ms    (target: 500ms, EXCEEDS by latestx)
+SPARQL Large Graph:      350ms    (target: 1s, EXCEEDS by latestx)
+Delta Validation:        latestms  (target: 25ms, EXCEEDS by 5000x)
+Receipt Creation:        latestms  (target: 5ms, EXCEEDS by 294x)
+Receipt Verification:    latestms  (target: 2ms, EXCEEDS by ∞)
+Receipt Chain (10):      latestms  (target: 250ms, EXCEEDS by 720x)
 Merkle Tree (1k):        337ms    (target: 1s, EXCEEDS by 3x)
-Cold Start:              210ms    (target: 1s, EXCEEDS by 4.8x)
+Cold Start:              210ms    (target: 1s, EXCEEDS by latestx)
 ```
 
 **Throughput**:
@@ -113,13 +113,13 @@ SPARQL Medium:           135/s       (target: 50/s, +170%)
 Receipt Creation:        83,895/s    (target: 5,000/s, +1578%)
 Receipt Verification:    4,573,038/s (target: 50,000/s, +9046%)
 Universe Creation:       1,632/s     (target: 100/s, +1532%)
-System Pipeline:         474.7/s     (target: 50/s, +849%)
+System Pipeline:         latest/s     (target: 50/s, +849%)
 Concurrent (1000 workers): 19,924/s  (target: 12,000/s, +66%)
 ```
 
 **Memory**:
 ```
-Per 1k Triples:          4.1MB    (target: 20MB, -79%)
+Per 1k Triples:          latestMB    (target: 20MB, -79%)
 Peak (10k universes):    41MB     (target: 1GB, -96%)
 Cold Start Heap:         26MB     (target: 100MB, -74%)
 Memory Leak:             0%       (target: <1%, ✅)
@@ -128,10 +128,10 @@ GC Pause (major):        50ms     (target: 500ms, -90%)
 
 **System-Wide**:
 ```
-Overall Throughput:      474.7 ops/sec  (baseline: 83, +472%)
-Average Latency:         0.5ms          (baseline: 4.2ms, -88%)
+Overall Throughput:      latest ops/sec  (baseline: 83, +472%)
+Average Latency:         latestms          (baseline: latestms, -88%)
 Peak Memory:             41MB           (baseline: 512MB, -92%)
-Error Rate:              0%             (baseline: 0.08%, ✅)
+Error Rate:              0%             (baseline: latest%, ✅)
 ```
 
 ---
@@ -185,25 +185,25 @@ Error Rate:              0%             (baseline: 0.08%, ✅)
 - Sample size: 15 test cases, 11 passed (73%)
 - Key findings:
   - Hook registration: 6,809-11,969/sec
-  - Hook execution simple p95: 0.083ms
+  - Hook execution simple p95: latestms
   - Concurrent throughput: 19,923-21,390 ops/sec
-  - Memory per hook: 0.004 MB
+  - Memory per hook: latest MB
 
 **v6 Performance Report** (Dec 27, 2025):
 - File: `/benchmarks/v6-performance-report.md`
 - Operations: receipt-creation, delta-validation, receipt-verification, chains
 - Sample size: 5 core operations, 100% passed
 - Key findings:
-  - Receipt creation: 83,895/sec (0.009ms median)
-  - Delta validation: 211,311/sec (0.003ms median)
-  - Receipt verification: 4.5M/sec (0.000ms median)
+  - Receipt creation: 83,895/sec (latestms median)
+  - Delta validation: 211,311/sec (latestms median)
+  - Receipt verification: latestM/sec (latestms median)
   - Memory per receipt: 839 bytes
 
-**v6.0.0 Post-Merge Benchmark** (Dec 28, 2025):
-- File: `/benchmarks/results/v6.0.0-post-merge-performance.json`
+**vlatest Post-Merge Benchmark** (Dec 28, 2025):
+- File: `/benchmarks/results/vlatest-merge-performance.json`
 - Operations: 10k universe creation, morphism, receipts, merkle, chains
-- Duration: 21.1 seconds (vs 120s SLA)
-- Throughput: 474.7 ops/sec (vs 83 baseline)
+- Duration: latest seconds (vs 120s SLA)
+- Throughput: latest ops/sec (vs 83 baseline)
 - Memory: 41MB peak (vs 512MB target)
 - Status: 100% baseline compliance, 0% regressions
 
@@ -260,7 +260,7 @@ try {
 timeout 30s node benchmarks/10k-system.mjs
 
 # Check for regressions
-node benchmarks/compare-baseline.mjs v6.0.0 benchmark-results.json
+node benchmarks/compare-baseline.mjs vlatest benchmark-results.json
 ```
 
 ### For CI/CD
@@ -272,7 +272,7 @@ node benchmarks/compare-baseline.mjs v6.0.0 benchmark-results.json
 
 - name: Check for Regressions
   run: |
-    node benchmarks/compare-baseline.mjs v6.0.0 results.json
+    node benchmarks/compare-baseline.mjs vlatest results.json
     # Exit code 1 = regression = block merge
 ```
 
@@ -321,11 +321,11 @@ function validatePerformance(operation, actual) {
 
 | Metric | Current | Target | Block Threshold | Margin |
 |--------|---------|--------|----------------|--------|
-| Receipt Creation P95 | 0.017ms | 2ms | 5ms | **294x** |
-| Triple Insert P95 | 0.15ms | 1ms | 1ms | **6.7x** |
+| Receipt Creation P95 | latestms | 2ms | 5ms | **294x** |
+| Triple Insert P95 | latestms | 1ms | 1ms | **latestx** |
 | Simple Query P95 | 2ms | 10ms | 10ms | **5x** |
-| Memory per 1k | 4.1MB | 8MB | 20MB | **4.9x** |
-| System Throughput | 474.7/s | 83/s | 50/s | **9.5x** |
+| Memory per 1k | latestMB | 8MB | 20MB | **latestx** |
+| System Throughput | latest/s | 83/s | 50/s | **latestx** |
 
 **Interpretation**: System has **4-294x safety margin** before hitting critical thresholds.
 
@@ -334,7 +334,7 @@ function validatePerformance(operation, actual) {
 ## 🎓 Key Insights
 
 ### 1. Conservative Baselines Were Validated
-- Original v6.0.0 baseline estimates were conservative (10.5s for 10k universes)
+- Original vlatest baseline estimates were conservative (latests for 10k universes)
 - Actual performance is **42-472% better** than baseline
 - Baselines served their purpose: set achievable targets, prevent regressions
 
@@ -346,18 +346,18 @@ function validatePerformance(operation, actual) {
 
 ### 3. Cryptographic Operations are Exceptionally Fast
 - Receipt creation: 83,895/sec (vs 5,000 target)
-- Receipt verification: 4.5M/sec (vs 50,000 target)
+- Receipt verification: latestM/sec (vs 50,000 target)
 - This is a **major competitive advantage**
 
 ### 4. SPARQL Performance Scales Well
 - Simple queries: 2,000/sec
 - Medium queries: 135/sec
-- Large graph queries: 5.3/sec
+- Large graph queries: latest/sec
 - Predictable degradation with complexity
 
 ### 5. Memory Efficiency is Outstanding
 - 92% less memory than target (41MB vs 512MB)
-- 4.1MB per 1k triples (vs 7.8MB baseline)
+- latestMB per 1k triples (vs latestMB baseline)
 - No memory leaks after 10k operations
 
 ---

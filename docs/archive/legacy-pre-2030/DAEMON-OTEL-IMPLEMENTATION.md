@@ -2,8 +2,8 @@
 
 **Status**: ✅ **FULLY IMPLEMENTED AND VALIDATED**
 **Date**: 2026-04-03
-**Version**: 26.4.23
-**Implementation Duration**: ~2.5 hours
+**Version**: latest
+**Implementation Duration**: ~latest hours
 
 ---
 
@@ -35,12 +35,12 @@ Successfully integrated complete OpenTelemetry (OTEL) and Weaver platform into t
 
 ```json
 {
-  "@opentelemetry/api": "^1.7.0",
-  "@opentelemetry/exporter-trace-otlp-grpc": "^0.26.0",
-  "@opentelemetry/resources": "^1.17.0",
-  "@opentelemetry/sdk-node": "^0.26.0",
-  "@opentelemetry/sdk-trace-node": "^1.17.0",
-  "@opentelemetry/semantic-conventions": "^1.17.0"
+  "@opentelemetry/api": "^latest",
+  "@opentelemetry/exporter-trace-otlp-grpc": "^latest",
+  "@opentelemetry/resources": "^latest",
+  "@opentelemetry/sdk-node": "^latest",
+  "@opentelemetry/sdk-trace-node": "^latest",
+  "@opentelemetry/semantic-conventions": "^latest"
 }
 ```
 
@@ -185,7 +185,7 @@ async start() {
   try {
     await initializeOTelSDK({
       serviceName: 'unrdf-daemon',
-      version: '26.4.23',
+      version: 'latest',
       environment: process.env.NODE_ENV || 'development',
       otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
     });
@@ -454,10 +454,10 @@ weaver registry live-check \
 
 ### Latency Impact
 
-- **Span Creation**: <0.1ms
-- **Span End**: <0.1ms
+- **Span Creation**: <latestms
+- **Span End**: <latestms
 - **Export Delay**: 0ms (BatchSpanProcessor)
-- **Total Impact**: Negligible (<0.5% overhead)
+- **Total Impact**: Negligible (<latest% overhead)
 
 ### Sampling
 

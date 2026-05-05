@@ -61,7 +61,7 @@ const core = await createKnowledgeSubstrateCore();
 // Define some RDF data in Turtle format
 const rdfData = \`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
   # Alice - a person
@@ -99,7 +99,7 @@ console.log(\`✅ Knowledge base loaded with \${store.size} triples\`);
 
 The \`@prefix\` lines are shortcuts for long URLs:
 - \`ex:\` = \`http://example.org/\`
-- \`foaf:\` = \`http://xmlns.com/foaf/0.1/\` (a standard vocabulary for people)
+- \`foaf:\` = \`http://xmlns.com/foaf/latest/\` (a standard vocabulary for people)
 
 Run this step:
 \`\`\`bash
@@ -122,7 +122,7 @@ import { createKnowledgeSubstrateCore } from '@unrdf/core';
 const core = await createKnowledgeSubstrateCore();
 const rdfData = \`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
   ex:Alice a foaf:Person ;
     foaf:name "Alice Smith" ;
@@ -139,7 +139,7 @@ const store = core.parseRdf(rdfData);
 
 // First query: Find all people
 const sparqlQuery = \`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT ?person ?name
   WHERE {
@@ -192,7 +192,7 @@ import { createKnowledgeSubstrateCore } from '@unrdf/core';
 const core = await createKnowledgeSubstrateCore();
 const rdfData = \`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   ex:Alice foaf:name "Alice Smith" ;
     foaf:knows ex:Bob, ex:Charlie .
   ex:Bob foaf:name "Bob Johnson" ;
@@ -205,7 +205,7 @@ const store = core.parseRdf(rdfData);
 
 // Find all relationships
 const sparqlQuery = \`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
 
   SELECT ?person1Name ?person2Name
   WHERE {
@@ -253,7 +253,7 @@ const core = await createKnowledgeSubstrateCore();
 // Start with initial data
 const rdfData = \`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   ex:Alice foaf:name "Alice Smith" ;
     foaf:knows ex:Bob .
   ex:Bob foaf:name "Bob Johnson" .
@@ -265,7 +265,7 @@ console.log(\`Starting with \${store.size} triples\`);
 // Add a new person dynamically
 // Create the URIs and values we need
 const dianaUri = namedNode('http://example.org/Diana');
-const nameProperty = namedNode('http://xmlns.com/foaf/0.1/name');
+const nameProperty = namedNode('http://xmlns.com/foaf/latest/name');
 const dianaName = literal('Diana Lee');
 
 // Add the triple (Diana, name, "Diana Lee")
@@ -275,7 +275,7 @@ console.log(\`Now have \${store.size} triples\`);
 
 // Verify Diana was added
 const sparqlQuery = \`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE { ?person foaf:name ?name . }
 \`;
 
@@ -343,7 +343,7 @@ Now that you understand the basics:
 ## Common Mistakes
 
 ❌ **Forgetting @prefix** - Query won't find matches
-✅ Use \`PREFIX foaf: <http://xmlns.com/foaf/0.1/>\` in SPARQL
+✅ Use \`PREFIX foaf: <http://xmlns.com/foaf/latest/>\` in SPARQL
 
 ❌ **Variable naming** - \`name\` vs \`?name\`
 ✅ Always use \`?name\` in queries, not \`name\`
@@ -615,7 +615,7 @@ If you still have slow queries:
 \`\`\`javascript
 // Create an index for frequently queried properties
 await core.createIndex({
-  property: 'http://xmlns.com/foaf/0.1/name',
+  property: 'http://xmlns.com/foaf/latest/name',
   type: 'fulltext'
 });
 
@@ -766,7 +766,7 @@ const store = core.parseRdf(\`
 N-Triples format:
 \`\`\`javascript
 const store = core.parseRdf(
-  '<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "Alice" .',
+  '<http://example.org/Alice> <http://xmlns.com/foaf/latest/name> "Alice" .',
   'ntriples'
 );
 \`\`\`
@@ -775,7 +775,7 @@ JSON-LD format:
 \`\`\`javascript
 const store = core.parseRdf(
   {
-    "@context": { "foaf": "http://xmlns.com/foaf/0.1/" },
+    "@context": { "foaf": "http://xmlns.com/foaf/latest/" },
     "@id": "http://example.org/Alice",
     "foaf:name": "Alice"
   },
@@ -832,7 +832,7 @@ interface QueryOptions {
 
 \`\`\`javascript
 const results = await core.query(store, \`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/decision-fabric",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators",
   "type": "module",
   "main": "./src/index.mjs",

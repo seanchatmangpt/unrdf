@@ -356,7 +356,7 @@ async *generateProofs(receipts) {
 ```json
 {
   "package": "@unrdf/oxigraph",
-  "migrationDate": "2025-12-27T10:00:00.000Z",
+  "migrationDate": "2025-12-27T10:00:latestZ",
   "fromMaturity": "L3",
   "toMaturity": "L5",
   "changesApplied": [

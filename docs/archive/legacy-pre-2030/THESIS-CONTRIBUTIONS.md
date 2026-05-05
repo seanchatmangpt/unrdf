@@ -1,6 +1,6 @@
 # @unrdf/yawl: Thesis-Grade Contributions Summary
 
-**Package**: @unrdf/yawl@5.0.0
+**Package**: @unrdf/yawl@latest
 **Analysis Date**: 2025-12-25
 **Status**: Publication-Ready Research
 

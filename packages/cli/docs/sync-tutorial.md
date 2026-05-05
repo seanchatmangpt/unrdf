@@ -242,7 +242,7 @@ Create `unrdf.toml` at the project root:
 ```toml
 [project]
 name = "blog-api"
-version = "1.0.0"
+version = "[VERSION]"
 description = "Blog API code generation from RDF ontology"
 author = "Your Name"
 

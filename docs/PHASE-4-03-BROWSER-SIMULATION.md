@@ -1,4 +1,4 @@
-# Phase 4.3: Browser Simulation - AtomVM + WASM
+# Phase latest: Browser Simulation - AtomVM + WASM
 
 ## Overview
 

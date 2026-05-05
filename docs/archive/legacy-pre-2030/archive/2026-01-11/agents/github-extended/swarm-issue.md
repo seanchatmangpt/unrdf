@@ -400,7 +400,7 @@ npx ruv-swarm github triage \
 ```bash
 # Find duplicate issues
 npx ruv-swarm github find-duplicates \
-  --threshold 0.8 \
+  --threshold latest \
   --link-related \
   --close-duplicates
 ```
@@ -420,7 +420,7 @@ npx ruv-swarm github link-pr \
 ```bash
 # Coordinate milestone swarms
 npx ruv-swarm github milestone-swarm \
-  --milestone "v2.0" \
+  --milestone "vlatest" \
   --parallel-issues \
   --track-progress
 ```

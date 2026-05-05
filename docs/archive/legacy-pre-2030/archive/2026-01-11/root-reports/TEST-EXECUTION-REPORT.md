@@ -222,7 +222,7 @@ export default defineConfig({
 ```json
 {
   "name": "@unrdf/narrative-state-chain-tests",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "scripts": {
     "test": "vitest",
@@ -235,12 +235,12 @@ export default defineConfig({
     "test:coverage": "vitest run test/narrative-state-chain --coverage"
   },
   "devDependencies": {
-    "vitest": "^1.0.0",
-    "fast-check": "^3.13.0",
-    "@vitest/coverage-v8": "^1.0.0"
+    "vitest": "^latest",
+    "fast-check": "^latest",
+    "@vitest/coverage-v8": "^latest"
   },
   "dependencies": {
-    "zod": "^3.22.0"
+    "zod": "^latest"
   }
 }
 ```
@@ -272,11 +272,11 @@ export default defineConfig({
 
 ```
 Total Tests: 121 (100%)
-├── Unit Tests:         35 (28.9%)
-├── Property Tests:     20 (16.5%)
-├── Integration Tests:  27 (22.3%)
-├── Determinism Tests:  17 (14.0%)
-└── Adversarial Tests:  22 (18.2%)
+├── Unit Tests:         35 (latest%)
+├── Property Tests:     20 (latest%)
+├── Integration Tests:  27 (latest%)
+├── Determinism Tests:  17 (latest%)
+└── Adversarial Tests:  22 (latest%)
 ```
 
 ### Fixture/Generator Inventory
@@ -300,7 +300,7 @@ Total Tests: 121 (100%)
 
 ### What's Blocked 🚫
 1. **Dependency Installation Issue**:
-   - Error: `ENOTEMPTY: directory not empty, rmdir '/home/user/unrdf/node_modules/.pnpm/maplibre-gl@2.4.0'`
+   - Error: `ENOTEMPTY: directory not empty, rmdir '/home/user/unrdf/node_modules/.pnpm/maplibre-gl@latest'`
    - Root cause: pnpm cache conflict with maplibre-gl package
    - Impact: Cannot install vitest or run tests until resolved
 

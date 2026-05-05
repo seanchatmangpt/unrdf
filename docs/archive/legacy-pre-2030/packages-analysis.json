@@ -8,7 +8,7 @@
     "loc": 1977,
     "internalDeps": "",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/blockchain",
@@ -19,7 +19,7 @@
     "loc": 945,
     "internalDeps": "kgc-4d, yawl",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/caching",
@@ -30,7 +30,7 @@
     "loc": 1229,
     "internalDeps": "oxigraph",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/cli",
@@ -41,7 +41,7 @@
     "loc": 5592,
     "internalDeps": "core, federation, hooks, knowledge-engine, oxigraph, project-engine, streaming",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/collab",
@@ -52,7 +52,7 @@
     "loc": 1102,
     "internalDeps": "core",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/composables",
@@ -63,7 +63,7 @@
     "loc": 3448,
     "internalDeps": "core, streaming",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/consensus",
@@ -74,7 +74,7 @@
     "loc": 2143,
     "internalDeps": "federation",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/core",
@@ -85,7 +85,7 @@
     "loc": 19110,
     "internalDeps": "oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/dark-matter",
@@ -96,7 +96,7 @@
     "loc": 3049,
     "internalDeps": "core, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/diataxis-kit",
@@ -107,7 +107,7 @@
     "loc": 2620,
     "internalDeps": "",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "docs",
@@ -118,7 +118,7 @@
     "loc": 0,
     "internalDeps": "",
     "private": true,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/domain",
@@ -129,7 +129,7 @@
     "loc": 1693,
     "internalDeps": "",
     "private": true,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/engine-gateway",
@@ -140,7 +140,7 @@
     "loc": 476,
     "internalDeps": "core, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/federation",
@@ -151,7 +151,7 @@
     "loc": 4093,
     "internalDeps": "core, hooks",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/graph-analytics",
@@ -162,7 +162,7 @@
     "loc": 988,
     "internalDeps": "",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/hooks",
@@ -173,7 +173,7 @@
     "loc": 9676,
     "internalDeps": "core, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/integration-tests",
@@ -184,7 +184,7 @@
     "loc": 0,
     "internalDeps": "yawl, hooks, kgc-4d, federation, streaming, oxigraph, core",
     "private": true,
-    "version": "5.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/kgc-4d",
@@ -195,7 +195,7 @@
     "loc": 6327,
     "internalDeps": "core, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/kgn",
@@ -206,7 +206,7 @@
     "loc": 18581,
     "internalDeps": "core, test-utils",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/knowledge-engine",
@@ -217,7 +217,7 @@
     "loc": 23650,
     "internalDeps": "core, oxigraph, streaming",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/ml-inference",
@@ -228,7 +228,7 @@
     "loc": 1164,
     "internalDeps": "core, streaming, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/ml-versioning",
@@ -239,7 +239,7 @@
     "loc": 663,
     "internalDeps": "kgc-4d, oxigraph, core",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/nextra-docs",
@@ -250,7 +250,7 @@
     "loc": 0,
     "internalDeps": "",
     "private": true,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/observability",
@@ -261,7 +261,7 @@
     "loc": 1245,
     "internalDeps": "",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/oxigraph",
@@ -272,7 +272,7 @@
     "loc": 1376,
     "internalDeps": "",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/project-engine",
@@ -283,7 +283,7 @@
     "loc": 13413,
     "internalDeps": "core, knowledge-engine",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/rdf-graphql",
@@ -294,7 +294,7 @@
     "loc": 1720,
     "internalDeps": "oxigraph",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/semantic-search",
@@ -305,7 +305,7 @@
     "loc": 768,
     "internalDeps": "oxigraph",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/serverless",
@@ -316,7 +316,7 @@
     "loc": 1508,
     "internalDeps": "core, oxigraph",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/streaming",
@@ -327,7 +327,7 @@
     "loc": 1962,
     "internalDeps": "core, hooks, oxigraph",
     "private": false,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/test-utils",
@@ -338,7 +338,7 @@
     "loc": 1398,
     "internalDeps": "oxigraph",
     "private": true,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/validation",
@@ -349,7 +349,7 @@
     "loc": 4056,
     "internalDeps": "knowledge-engine",
     "private": true,
-    "version": "5.0.1"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl",
@@ -360,7 +360,7 @@
     "loc": 39022,
     "internalDeps": "hooks, kgc-4d, oxigraph",
     "private": false,
-    "version": "5.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-ai",
@@ -371,7 +371,7 @@
     "loc": 1925,
     "internalDeps": "",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-api",
@@ -382,7 +382,7 @@
     "loc": 1002,
     "internalDeps": "yawl, kgc-4d",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-durable",
@@ -393,7 +393,7 @@
     "loc": 1712,
     "internalDeps": "yawl, kgc-4d",
     "private": false,
-    "version": "0.1.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-kafka",
@@ -404,7 +404,7 @@
     "loc": 1560,
     "internalDeps": "core",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-langchain",
@@ -415,7 +415,7 @@
     "loc": 424,
     "internalDeps": "kgc-4d, oxigraph, yawl",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-observability",
@@ -426,7 +426,7 @@
     "loc": 1896,
     "internalDeps": "yawl",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-queue",
@@ -437,7 +437,7 @@
     "loc": 911,
     "internalDeps": "yawl, kgc-4d",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-realtime",
@@ -448,7 +448,7 @@
     "loc": 1414,
     "internalDeps": "yawl",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   },
   {
     "name": "@unrdf/yawl-viz",
@@ -459,6 +459,6 @@
     "loc": 0,
     "internalDeps": "yawl",
     "private": false,
-    "version": "1.0.0"
+    "version": "latest"
   }
 ]

@@ -1,6 +1,6 @@
 # UNRDF Package Maturity Matrix
 
-> **Version**: 26.5.4 | **Packages**: 65 | **Updated**: 2026-04-03
+> **Version**: latest | **Packages**: 65 | **Updated**: 2026-04-03
 
 This document classifies every package in the UNRDF monorepo by maturity level to help teams make informed adoption decisions.
 
@@ -167,10 +167,10 @@ Research prototypes and early-stage explorations. Not recommended for any worklo
 
 | Level        | Count  | %        |
 | ------------ | ------ | -------- |
-| Production   | 3      | 4.6%     |
-| Beta         | 10     | 15.4%    |
-| Alpha        | 15     | 23.1%    |
-| Experimental | 37     | 56.9%    |
+| Production   | 3      | latest%     |
+| Beta         | 10     | latest%    |
+| Alpha        | 15     | latest%    |
+| Experimental | 37     | latest%    |
 | **Total**    | **65** | **100%** |
 
 ---

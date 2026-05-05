@@ -174,7 +174,7 @@ MERGE-SPECIFIC FIELDS:
 
   mergeAlgorithm: Object   // Algorithm descriptor
     algorithm: String      // "merkle-tree-deterministic" | "conflict-free"
-    version: String        // e.g., "1.0.0"
+    version: String        // e.g., "latest"
     parameters: Object     // Leaf order, hash fn, etc.
 
   conflicts: Array | null  // null = no conflicts (deterministic)
@@ -665,7 +665,7 @@ PRECONDITIONS:
   - All shards have valid chainFinalHash (64-char hex)
 
 CONSTANTS:
-  ALGORITHM_VERSION = "1.0.0"
+  ALGORITHM_VERSION = "latest"
   LEAF_ORDER = "sorted-by-agentId"
 
 BEGIN

@@ -608,7 +608,7 @@ function TaskList() {
 ```json
 {
   "name": "@unrdf/hook-registry",
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "description": "Extensible validation hook system for business logic",
   "type": "module",
   "exports": {

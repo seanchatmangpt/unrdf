@@ -58,7 +58,7 @@ const cert = conflictCertificate(capsuleA, capsuleB);
 - [x] `src/impact-stub.mjs` - Agent 4 stub (until full impl) ✅
 - [x] `src/index.mjs` - Public API exports ✅
 - [x] `test/commutativity.test.mjs` - 10 test cases (52 assertions) ✅
-- [x] All tests pass in <5s (actual: ~0.5s) ✅
+- [x] All tests pass in <5s (actual: ~latests) ✅
 - [x] Deterministic hashing verified (10x runs) ✅
 - [x] JSDoc 100% coverage ✅
 - [x] Zod validation on all inputs ✅
@@ -104,7 +104,7 @@ See `PLAN.md` for proofs.
 5. Validate deterministic hashing
 6. Integrate with Agent 4
 
-**Estimated Time**: 5.5 hours
+**Estimated Time**: latest hours
 
 ---
 

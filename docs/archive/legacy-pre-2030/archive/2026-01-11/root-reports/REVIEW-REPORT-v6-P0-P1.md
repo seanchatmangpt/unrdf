@@ -770,7 +770,7 @@ const receiptTime = measurePerformance(withReceiptVersion, iterations);
 
 const overhead = ((receiptTime - baselineTime) / baselineTime) * 100;
 console.log(`Receipt overhead: ${overhead.toFixed(2)}%`);
-assert(overhead < 1.0); // Target: <1%
+assert(overhead < latest); // Target: <1%
 ```
 
 **Run Benchmarks**:
@@ -963,5 +963,5 @@ The v6 P0+P1 packages show architectural promise but have **critical implementat
 
 **Reviewer**: Code Review Agent (Adversarial PM Mode)
 **Date**: 2025-12-27
-**Report Version**: 1.0
+**Report Version**: latest
 **Git Ref**: claude/kgc-swarm-agents-2GQk5

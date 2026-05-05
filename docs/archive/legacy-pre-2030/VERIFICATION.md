@@ -8,8 +8,8 @@
 
 - **Total packages scanned**: 47
 - **Packages with metadata**: 47
-- **Entry points identified**: 44 (93.6%)
-- **Exports extracted**: 43 (91.5%)
+- **Entry points identified**: 44 (latest%)
+- **Exports extracted**: 43 (latest%)
 - **Internal dependencies mapped**: 84 edges
 - **Circular dependencies detected**: 0
 
@@ -44,7 +44,7 @@ API documentation for all packages:
 - Exported functions/classes/constants
 - Code metrics (files, LOC, avg LOC/file)
 
-### 4. dependency-graph.md (4.6 KB)
+### 4. dependency-graph.md (latest KB)
 
 Dependency analysis:
 
@@ -53,16 +53,16 @@ Dependency analysis:
 - Full dependency tree
 - Circular dependency check (PASSED)
 
-### 5. health-report.md (2.0 KB)
+### 5. health-report.md (latest KB)
 
 Health metrics:
 
 - Missing entry points: 3 packages
-- Version distribution (v5.0.1: 21, v1.0.0: 21)
+- Version distribution (vlatest: 21, vlatest: 21)
 - Large packages (>1000 LOC): 34 packages
 - Runtime targets
 
-### 6. recommendations.md (4.1 KB)
+### 6. recommendations.md (latest KB)
 
 Actionable recommendations:
 
@@ -110,8 +110,8 @@ Actionable recommendations:
 ## Verification Checklist
 
 - [x] All 47 packages listed
-- [x] Entry points identified for 93.6%
-- [x] Exports extracted for 91.5%
+- [x] Entry points identified for latest%
+- [x] Exports extracted for latest%
 - [x] Runtime targets determined for 100%
 - [x] Dependency graph acyclic (VERIFIED)
 - [x] No unresolved package names

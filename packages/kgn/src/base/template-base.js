@@ -34,7 +34,7 @@ export class KGenTemplateBase {
     // Template metadata
     this.metadata = {
       name: options.name || this.constructor.name,
-      version: options.version || '1.0.0',
+      version: options.version || 'latest',
       description: options.description || 'KGEN Template',
       author: options.author || 'KGEN Generator',
       created: this.options.staticBuildTime,

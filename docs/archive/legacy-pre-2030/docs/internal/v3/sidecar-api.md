@@ -312,7 +312,7 @@ unrdf sidecar health --output json
     "status": "✅ SERVING",
     "uptime_seconds": 3600,
     "details": {
-      "version": "2.0.0",
+      "version": "latest",
       "build": "abc123"
     }
   },

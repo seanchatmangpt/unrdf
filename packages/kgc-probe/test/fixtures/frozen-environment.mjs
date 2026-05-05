@@ -29,7 +29,7 @@ export const MOCK_FILESYSTEM = {
         type: 'file',
         content: JSON.stringify({
           name: 'test-project',
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'module'
         }, null, 2),
         size: 78
@@ -120,7 +120,7 @@ export const FORBIDDEN_ENV_PATTERNS = [
  * Mock Node.js runtime information
  */
 export const MOCK_RUNTIME = {
-  nodeVersion: 'v22.12.0',
+  nodeVersion: '[VERSION]',
   platform: 'linux',
   arch: 'x64',
   wasmSupported: true,

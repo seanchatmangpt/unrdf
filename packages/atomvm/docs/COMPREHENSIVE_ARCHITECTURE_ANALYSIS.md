@@ -873,7 +873,7 @@ export const executeQuerySync = (store, query, { timeout = 30000 } = {}) => {
 ```json
 // @unrdf/core/package.json
 {
-  "version": "5.0.1",
+  "version": "[VERSION]",
   "stability": "stable",
   "apiContractVersion": "5.x"
 }

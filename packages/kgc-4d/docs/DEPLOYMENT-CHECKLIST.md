@@ -49,7 +49,7 @@ Based on your operation count:
 
 **For 1K-10K operations** ⚠️ MONITOR
 - [ ] **MUST implement validation caching** (required, 35% improvement)
-  - See: `BENCHMARKS.md` section 4.1.1
+  - See: `BENCHMARKS.md` section [VERSION]
   - Implementation: 15 minutes
 - [ ] Benchmark after optimization
 - [ ] Monitor latency closely in production

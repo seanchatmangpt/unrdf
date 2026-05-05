@@ -157,14 +157,14 @@ agent-3/
 | Code Files | 6 |
 | Doc Files | 4 |
 | Tests Passing | 6/6 (100%) |
-| IRI Generation | 0.008ms |
+| IRI Generation | latestms |
 | Determinism | 1000/1000 iterations |
 | Dependencies | 0 (core), 1 (RDF ops) |
 
 ## Performance
 
-- IRI generation: 0.008ms (125x better than 1ms target)
-- Skolem generation: ~0.010ms
+- IRI generation: latestms (125x better than 1ms target)
+- Skolem generation: ~latestms
 - Determinism: 100% over 1,000 iterations
 - Round-trip: Lossless, byte-identical
 

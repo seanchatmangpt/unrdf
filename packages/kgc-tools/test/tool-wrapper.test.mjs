@@ -26,7 +26,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
     // Tool manifest with schemas
     manifest = {
       name: 'Read',
-      version: '1.0.0',
+      version: '[VERSION]',
       schema_in: z.object({
         path: z.string(),
         encoding: z.string().optional(),
@@ -111,7 +111,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
 
       expect(result.receipt).toMatchObject({
         tool_name: 'Read',
-        version: '1.0.0',
+        version: '[VERSION]',
         inputs: { path: '/test.txt' },
         outputs: { content: 'Content of /test.txt', size: 42 },
         status: 'success',
@@ -173,7 +173,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
 
       const stateManifest = {
         name: 'StatefulTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({ action: z.string() }),
         schema_out: z.object({
           mutated: z.boolean(),
@@ -202,13 +202,13 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
       const wrapped = Wrap(mockTool, manifest);
       const result = await wrapped({ path: '/test.txt' });
 
-      expect(result.receipt.version).toBe('1.0.0');
+      expect(result.receipt.version).toBe('[VERSION]');
     });
 
     it('should allow different versions of same tool', async () => {
       const manifestV2 = {
         ...manifest,
-        version: '2.0.0',
+        version: '[VERSION]',
         schema_out: z.object({
           content: z.string(),
           size: z.number(),
@@ -225,7 +225,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
       const wrappedV2 = Wrap(toolV2, manifestV2);
       const result = await wrappedV2({ path: '/test.txt' });
 
-      expect(result.receipt.version).toBe('2.0.0');
+      expect(result.receipt.version).toBe('[VERSION]');
       expect(result.receipt.outputs.hash).toBe('abc123');
     });
   });
@@ -244,7 +244,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
 
       const complexManifest = {
         name: 'ComplexTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({
           query: z.string(),
         }),
@@ -274,7 +274,7 @@ describe('ToolWrapper - Tool Contract Enforcement', () => {
 
       const arrayManifest = {
         name: 'ArrayTool',
-        version: '1.0.0',
+        version: '[VERSION]',
         schema_in: z.object({}),
         schema_out: z.object({
           items: z.array(z.number()),

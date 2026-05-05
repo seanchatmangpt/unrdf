@@ -32,7 +32,7 @@ Implements comprehensive security mechanisms for distributed consensus protocols
 1. **Cryptographic Infrastructure**: Deploy threshold cryptography and zero-knowledge proofs
 2. **Attack Detection**: Identify Byzantine, Sybil, Eclipse, and DoS attacks
 3. **Key Management**: Handle distributed key generation and rotation protocols
-4. **Secure Communications**: Ensure TLS 1.3 encryption and message authentication
+4. **Secure Communications**: Ensure TLS latest encryption and message authentication
 5. **Threat Mitigation**: Implement real-time security countermeasures
 
 ## Technical Implementation
@@ -316,12 +316,12 @@ class ConsensusSecurityMonitor {
     const diversityMetrics = this.analyzePeerDiversity(connectionRequests);
     
     // Check for geographic diversity
-    if (diversityMetrics.geographicEntropy < 2.0) {
+    if (diversityMetrics.geographicEntropy < latest) {
       await this.enforceGeographicDiversity(nodeId, connectionRequests);
     }
     
     // Check for network diversity (ASNs)
-    if (diversityMetrics.networkEntropy < 1.5) {
+    if (diversityMetrics.networkEntropy < latest) {
       await this.enforceNetworkDiversity(nodeId, connectionRequests);
     }
     

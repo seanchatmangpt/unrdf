@@ -57,7 +57,7 @@ const results = await bridge.queryPattern('?s', '?p', '?o');
 | Metric | Before | After |
 |--------|--------|-------|
 | SPARQL SELECT support | None | Full implementation |
-| Query latency target | <10ms (unmeasured) | **0.13ms measured** ✅ |
+| Query latency target | <10ms (unmeasured) | **latestms measured** ✅ |
 | Pattern compilation | None | BEAM pattern generation |
 | Query caching | None | 5s TTL, 100 entry limit |
 | OTEL spans | None | `sparql.matchPattern`, `sparql.executeQuery` |
@@ -158,7 +158,7 @@ await loader.reloadModule('handler'); // Workers continue without restart
 |--------|--------|-------|
 | Caching | None | LRU + TTL |
 | Cache hit rate | N/A | **>80%** ✅ |
-| Lookup latency | N/A | **<0.1ms** ✅ |
+| Lookup latency | N/A | **<latestms** ✅ |
 | Memory bounded | No | LRU eviction enforced |
 | Tests | 0 | All pass |
 
@@ -169,7 +169,7 @@ import { QueryCache } from '@unrdf/atomvm';
 const cache = new QueryCache({ maxSize: 100, ttl: 60000 });
 cache.set('SELECT ?s WHERE { ?s ?p ?o }', {}, results);
 const hit = cache.get('SELECT ?s WHERE { ?s ?p ?o }', {});
-// Hit: <0.1ms, 80%+ hit rate on realistic workloads
+// Hit: <latestms, 80%+ hit rate on realistic workloads
 ```
 
 ---
@@ -241,7 +241,7 @@ await preValidate(triples); // Throws on invalid RDF
 ```javascript
 import { SLAMonitor, OPERATION_TYPES } from '@unrdf/atomvm';
 
-const monitor = new SLAMonitor({ latencyThreshold: 10, errorRate: 0.001 });
+const monitor = new SLAMonitor({ latencyThreshold: 10, errorRate: latest });
 monitor.recordLatency(OPERATION_TYPES.SPARQL_QUERY, duration);
 const metrics = monitor.getMetrics('sparql_query');
 console.log(`P95: ${metrics.latency.p95}ms`);
@@ -265,13 +265,13 @@ const report = monitor.generateReport(); // Text SLA report
 ```
 Test Files  2 passed (2)
      Tests  39 passed (39)
-  Duration  7.82s
+  Duration  latests
 
 Performance SLA Compliance:
   Triple insertion:  20,868/sec (target: >1,000) ✅
-  SPARQL P50:        0.13ms (target: <10ms) ✅
-  SPARQL P95:        0.53ms (target: <100ms) ✅
-  Cache lookup:      <0.1ms (measured) ✅
+  SPARQL P50:        latestms (target: <10ms) ✅
+  SPARQL P95:        latestms (target: <100ms) ✅
+  Cache lookup:      <latestms (measured) ✅
 ```
 
 ---
@@ -365,9 +365,9 @@ GAPS CLOSED:
 ### Performance Improvements
 | Operation | Baseline | After Closure |
 |-----------|----------|--------------|
-| RDF query (SPARQL P50) | N/A | 0.13ms ✅ |
-| RDF query (SPARQL P95) | N/A | 0.53ms ✅ |
-| Cache lookup | N/A | <0.1ms ✅ |
+| RDF query (SPARQL P50) | N/A | latestms ✅ |
+| RDF query (SPARQL P95) | N/A | latestms ✅ |
+| Cache lookup | N/A | <latestms ✅ |
 | Triple streaming | ~1/roundtrip | 769,231/sec ✅ |
 | Triple insertion (bulk) | ~1/roundtrip | 20,868/sec ✅ |
 
@@ -458,7 +458,7 @@ export { SLAMonitor, createSLAMonitor, OPERATION_TYPES } from './sla-monitor.mjs
 ✅ 457 LOC implementation
 ✅ All tests passing
 ✅ >80% hit rate proven
-✅ <0.1ms lookup latency
+✅ <latestms lookup latency
 
 ### Gap 7 - OTEL Instrumentation
 ✅ 441 LOC implementation

@@ -1,6 +1,6 @@
 # KGC Runtime Schema Specification
 
-**Version:** 1.0.0
+**Version:** latest
 **Status:** Draft
 **Last Updated:** 2024-12-26
 
@@ -13,7 +13,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ### 1. Versioning
 
 - All schemas use semantic versioning (semver)
-- Default version: `1.0.0`
+- Default version: `latest`
 - Forward compatibility through version-aware parsing
 - Breaking changes increment major version
 
@@ -57,7 +57,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 
 ```typescript
 {
-  version: string;           // Semantic version (default: "1.0.0")
+  version: string;           // Semantic version (default: "latest")
   id: string;                // UUID v4
   timestamp: number;         // Unix epoch milliseconds
   runId: string;             // Associated run identifier
@@ -112,7 +112,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 
 ```javascript
 {
-  version: "1.0.0",
+  version: "latest",
   id: "550e8400-e29b-41d4-a716-446655440000",
   timestamp: 1703001600000,
   runId: "run-2024-001",
@@ -154,7 +154,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```typescript
 {
   id: string;                // Unique run identifier
-  version: string;           // Schema version (default: "1.0.0")
+  version: string;           // Schema version (default: "latest")
   startTime: number;         // Unix epoch milliseconds
   endTime?: number;          // Unix epoch milliseconds (null if running)
   status: enum;              // Run status
@@ -230,7 +230,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 ```javascript
 {
   id: "run-2024-12-26-001",
-  version: "1.0.0",
+  version: "latest",
   startTime: 1703001600000,
   endTime: 1703001620000,
   status: "completed",
@@ -495,7 +495,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 
 ```typescript
 {
-  version: string;           // Schema version (default: "1.0.0")
+  version: string;           // Schema version (default: "latest")
   surfaces: {
     cli?: {                  // CLI configuration
       commands?: Array<{
@@ -584,7 +584,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
 
 ```javascript
 {
-  version: "1.0.0",
+  version: "latest",
   surfaces: {
     cli: {
       commands: [
@@ -730,7 +730,7 @@ This document specifies the comprehensive Zod schemas for the KGC (Knowledge Gra
   type: "document",
   frontMatter: {
     title: "KGC Example",
-    version: "1.0.0",
+    version: "latest",
     ontology: ["http://schema.org/"]
   },
   children: [
@@ -824,7 +824,7 @@ if (result.success) {
 
 ### From v0.x to v1.0
 
-1. Add `version: "1.0.0"` to all schemas
+1. Add `version: "latest"` to all schemas
 2. Migrate `actor` strings to `type:identifier` format
 3. Replace custom hashes with SHA-256 (64 hex chars)
 4. Update UUIDs to v4 format

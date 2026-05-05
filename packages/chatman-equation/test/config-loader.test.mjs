@@ -33,14 +33,14 @@ describe('Config Loader', () => {
       const configPath = resolve(TEST_DIR, 'test.toml');
       const configContent = `
 title = "Test Config"
-version = "1.0.0"
+version = "[VERSION]"
 description = "Test description"
 `;
       writeFileSync(configPath, configContent);
 
       const config = loadConfig(configPath);
       expect(config.title).toBe('Test Config');
-      expect(config.version).toBe('1.0.0');
+      expect(config.version).toBe('[VERSION]');
       expect(config.description).toBe('Test description');
       expect(config._configPath).toBe(configPath);
       expect(config._loadedAt).toBeDefined();
@@ -120,7 +120,7 @@ value = 200
     it('should validate config against schema', () => {
       const config = {
         title: 'Test',
-        version: '1.0.0',
+        version: '[VERSION]',
         count: 42,
       };
 
@@ -156,14 +156,14 @@ value = 200
     it('should merge two configs', () => {
       const base = {
         title: 'Base',
-        version: '1.0.0',
+        version: '[VERSION]',
         metadata: {
           author: 'Base Author',
         },
       };
 
       const override = {
-        version: '2.0.0',
+        version: '[VERSION]',
         metadata: {
           date: '2026-01-18',
         },
@@ -171,7 +171,7 @@ value = 200
 
       const merged = mergeConfigs(base, override);
       expect(merged.title).toBe('Base');
-      expect(merged.version).toBe('2.0.0');
+      expect(merged.version).toBe('[VERSION]');
       expect(merged.metadata.author).toBe('Base Author');
       expect(merged.metadata.date).toBe('2026-01-18');
     });

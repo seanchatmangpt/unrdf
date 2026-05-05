@@ -2,7 +2,7 @@
 
 **Failure Mode and Effects Analysis (FMEA) Report**
 
-Version: 1.0.0
+Version: latest
 Date: 2025-11-21
 Document Status: APPROVED
 
@@ -291,7 +291,7 @@ This FMEA analysis identifies potential failure modes in UNRDF's documentation s
 | High Priority | <5 | 6 | Count 200-300 |
 | Example Test Pass | 100% | TBD | CI Results |
 | Link Check Pass | 100% | TBD | CI Results |
-| User Satisfaction | >4.0/5.0 | TBD | Survey |
+| User Satisfaction | >latest/latest | TBD | Survey |
 
 ---
 
@@ -321,7 +321,7 @@ This FMEA analysis identifies potential failure modes in UNRDF's documentation s
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-11-21 | Documentation Team | Initial FMEA analysis |
+| latest | 2025-11-21 | Documentation Team | Initial FMEA analysis |
 
 ---
 

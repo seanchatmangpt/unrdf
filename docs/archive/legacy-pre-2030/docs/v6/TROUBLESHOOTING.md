@@ -54,7 +54,7 @@ pnpm install
 **Symptom**:
 
 ```bash
-npm ERR! peer dep missing: zod@^3.0.0, required by @unrdf/core@6.0.0
+npm ERR! peer dep missing: zod@^latest, required by @unrdf/core@latest
 ```
 
 **Cause**: Missing peer dependency.
@@ -303,7 +303,7 @@ pnpm add @unrdf/oxigraph@latest
 # Clear cache
 pnpm store prune
 
-# Verify Node.js version (>=18.0.0)
+# Verify Node.js version (>=latest)
 node --version
 ```
 
@@ -738,7 +738,7 @@ import { dataFactory } from '@unrdf/core/rdf/n3-justified-only';
 
    ```bash
    # Node.js version
-   node --version  # Should be >=18.0.0
+   node --version  # Should be >=latest
 
    # Package versions
    pnpm list @unrdf/core @unrdf/oxigraph @unrdf/v6-core
@@ -756,10 +756,10 @@ Include:
 1. **Environment**:
 
    ```bash
-   Node version: v18.19.0
+   Node version: latest
    OS: macOS 14.1
-   Package manager: pnpm 8.15.0
-   UNRDF version: 6.0.0-alpha.1
+   Package manager: pnpm latest
+   UNRDF version: latest-alpha.1
    ```
 
 2. **Minimal reproduction**:
@@ -799,7 +799,7 @@ Include:
 
 ```bash
 # Installation
-pnpm add @unrdf/core@6.0.0-alpha.1 @unrdf/oxigraph @unrdf/v6-core zod
+pnpm add @unrdf/core@latest-alpha.1 @unrdf/oxigraph @unrdf/v6-core zod
 
 # Run code
 node app.mjs  # ESM

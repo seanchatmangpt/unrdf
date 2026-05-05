@@ -605,7 +605,7 @@ export class PluginInstaller {
 
   async getUnrdfVersion() {
     // Get UNRDF CLI version
-    return '2.0.0';
+    return 'latest';
   }
 
   async isPluginInstalled(pluginName) {
@@ -677,15 +677,15 @@ my-plugin/
 ```json
 {
   "name": "unrdf-plugin-my-plugin",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "My awesome UNRDF plugin",
   "author": "Your Name",
   "license": "MIT",
   "type": "command",
 
   "requires": {
-    "unrdf": "^2.0.0",
-    "node": ">=18.0.0"
+    "unrdf": "^latest",
+    "node": ">=latest"
   },
 
   "capabilities": {

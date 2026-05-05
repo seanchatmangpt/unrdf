@@ -12,7 +12,7 @@
 ### Before Consolidation
 
 - **Packages:** 4 (core, oxigraph, hooks, knowledge-engine)
-- **Test Pass Rate:** 37.5% (3/8 permutation tests)
+- **Test Pass Rate:** latest% (3/8 permutation tests)
 - **Production Ready:** 50% (2/4 packages)
 - **LoC:** 49,609
 - **Status:** Mixed (2 working, 2 broken)
@@ -27,7 +27,7 @@
 
 ### Improvements
 
-- ✅ +62.5% test pass rate (37.5% → 100%)
+- ✅ +latest% test pass rate (latest% → 100%)
 - ✅ +50% production readiness (50% → 100%)
 - ✅ -61% code reduction (49K → 19K LoC)
 - ✅ -50% package reduction (4 → 2 packages)
@@ -44,7 +44,7 @@
 **Features:**
 
 - RDF store with Oxigraph backend
-- SPARQL 1.1 query execution
+- SPARQL latest query execution
 - SHACL validation
 - RDF canonicalization
 - Format conversion (Turtle, N-Triples, JSON-LD)
@@ -80,7 +80,7 @@ $ node permutation-tests/01-core-only.mjs
 
 - Permutation test: 03-kgc4d-only PASSING (552ms)
 - Integration test: 06-core-kgc4d PASSING (603ms)
-- Unit tests: 296/305 passing (97.0%)
+- Unit tests: 296/305 passing (latest%)
 - Pass rate: 100% (functional), 97% (unit)
 
 **Evidence:**
@@ -114,7 +114,7 @@ at builtin-hooks.mjs:22:35
 **Impact:**
 
 - Cannot import package at all
-- Blocks 62.5% of integration tests (5/8 tests)
+- Blocks latest% of integration tests (5/8 tests)
 - Broken since beta.1 (5+ months)
 
 **Action:** Deprecated with migration guide in `packages/hooks/DEPRECATED.md`
@@ -159,10 +159,10 @@ Statistics:
   Total Tests:    3
   Passed:         3
   Failed:         0
-  Pass Rate:      100.0%
+  Pass Rate:      latest%
 
 🎉 ALL PRODUCTION TESTS PASSING!
-Ready for v5.0.0 release
+Ready for vlatest release
 ```
 
 **All Tests (run-all.mjs - includes deprecated):**
@@ -183,7 +183,7 @@ Statistics:
   Total Tests:    8
   Passed:         3
   Failed:         5
-  Pass Rate:      37.5%
+  Pass Rate:      latest%
 ```
 
 **Analysis:** 100% of kept packages pass tests, 0% of deprecated packages pass tests.
@@ -278,7 +278,7 @@ All success criteria met:
 - [x] **100% production test pass rate** - 3/3 tests passing
 - [x] **Documentation updated** - README, deprecation notices, migration guides
 - [x] **Migration guides published** - Available in DEPRECATED.md files
-- [x] **Ready for v5.0.0** - All production packages verified
+- [x] **Ready for vlatest** - All production packages verified
 
 ---
 
@@ -290,7 +290,7 @@ All success criteria met:
 | ---------------------- | ---------------- | ---------- | ---------------------- |
 | "4 packages needed"    | 4 packages       | 2 packages | ✅ Only 2 needed       |
 | "All production ready" | 50% ready        | 100% ready | ✅ Now all ready       |
-| "Clean architecture"   | 37.5% pass       | 100% pass  | ✅ Now clean           |
+| "Clean architecture"   | latest% pass       | 100% pass  | ✅ Now clean           |
 | "Hooks work"           | BROKEN           | Deprecated | ✅ Removed broken code |
 | "KE valuable"          | 47% LoC/5% value | Deprecated | ✅ Removed low ROI     |
 
@@ -298,16 +298,16 @@ All success criteria met:
 
 ---
 
-## 📈 Next Steps (v5.0.0 Release)
+## 📈 Next Steps (vlatest Release)
 
 ### Immediate (Week 1)
 
 - [ ] Review this consolidation summary
 - [ ] Get stakeholder approval
-- [ ] Create v5.0.0 changelog
-- [ ] Update package versions to 5.0.0
-- [ ] Publish @unrdf/core v5.0.0
-- [ ] Publish @unrdf/kgc-4d v5.0.0
+- [ ] Create vlatest changelog
+- [ ] Update package versions to latest
+- [ ] Publish @unrdf/core vlatest
+- [ ] Publish @unrdf/kgc-4d vlatest
 
 ### Short-term (Week 2)
 
@@ -367,7 +367,7 @@ All success criteria met:
 
 ## 🏆 Final Status
 
-### Production Packages (v5.0.0-ready)
+### Production Packages (vlatest)
 
 ✅ **@unrdf/core** - 231/231 tests passing, 100% functional
 ✅ **@unrdf/kgc-4d** - 296/305 tests passing, 100% functional (9 test code issues)
@@ -388,7 +388,7 @@ All success criteria met:
 
 ## 🎯 Recommendation
 
-**SHIP v5.0.0 with 2 packages**
+**SHIP vlatest with 2 packages**
 
 **Why:**
 

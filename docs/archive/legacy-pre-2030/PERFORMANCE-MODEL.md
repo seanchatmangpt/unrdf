@@ -36,7 +36,7 @@ Where:
 **Time Bound**:
 ```
 T_lookup = c₁ (constant)
-Empirical: c₁ ≈ 0.1-0.5μs (depends on Map size, but amortized O(1))
+Empirical: c₁ ≈ latest.5μs (depends on Map size, but amortized O(1))
 ```
 
 **Evidence**:
@@ -75,7 +75,7 @@ _isCircuitOpen(key) {
 **Time Bound**:
 ```
 T_circuit = c₂ (constant)
-Empirical: c₂ ≈ 0.1-0.5μs
+Empirical: c₂ ≈ latest.5μs
 ```
 
 #### 3. Policy Validation (`T_policy`)
@@ -99,13 +99,13 @@ Where:
 
 **Measured Hook Overhead** (from HOOK-OVERHEAD-ANALYSIS.md):
 ```
-Single hook:     29μs (p50), 15.63μs (p95)
-3-hook chain:   111μs (p50), 138.42μs (p95)
-5-hook chain:   230μs (p50), 221.42μs (p95)
+Single hook:     29μs (p50), latestμs (p95)
+3-hook chain:   111μs (p50), latestμs (p95)
+5-hook chain:   230μs (p50), latestμs (p95)
 
 Regression: T_hook_exec = 35h + 10 (μs)
   where h = number of hooks in chain
-  R² = 0.98 (excellent linear fit)
+  R² = latest (excellent linear fit)
 ```
 
 **SPARQL Query Complexity** (unmeasured, theoretical):
@@ -127,7 +127,7 @@ T_policy = (35h + 11 + T_sparql)μs
 
 Best case (no hooks):      T_policy = 11μs
 Typical (3 hooks, simple): T_policy = 116μs
-Worst case (5 hooks, complex): T_policy = 10,191μs = 10.2ms
+Worst case (5 hooks, complex): T_policy = 10,191μs = latestms
 ```
 
 #### 4. State Update (`T_state`)
@@ -183,11 +183,11 @@ T_event = c₅ + h × c₆
 
 Where:
   c₅ = Map lookup + object creation ≈ 1μs
-  c₆ = Function call overhead ≈ 0.5μs per handler
+  c₆ = Function call overhead ≈ latestμs per handler
   h  = Number of subscribed handlers
 
 Typical: h = 0-5 handlers
-T_event ≈ 1μs + 5 × 0.5μs = 3.5μs
+T_event ≈ 1μs + 5 × latestμs = latestμs
 ```
 
 ### Combined Model
@@ -195,8 +195,8 @@ T_event ≈ 1μs + 5 × 0.5μs = 3.5μs
 **Total Task Activation Latency**:
 ```
 T_activation = T_lookup + T_circuit + T_policy + T_state + T_event
-T_activation = 0.5μs + 0.5μs + (35h + 11 + T_sparql)μs + 23μs + 3.5μs
-T_activation = 38.5μs + 35h + T_sparql
+T_activation = latestμs + latestμs + (35h + 11 + T_sparql)μs + 23μs + latestμs
+T_activation = latestμs + 35h + T_sparql
 
 Simplified:
 T_activation ≈ 40μs + 35h + T_sparql (μs)
@@ -208,8 +208,8 @@ T_activation ≈ 40μs + 35h + T_sparql (μs)
 |----------|---|----------|--------------|------------|
 | **No policy** | 0 | 0μs | **40μs** | ✅ <1ms |
 | **Simple validation** | 1 | 100μs | **175μs** | ✅ <1ms |
-| **Typical policy** | 3 | 1ms | **1,146μs = 1.1ms** | ❌ >1ms |
-| **Complex policy** | 5 | 10ms | **10,215μs = 10.2ms** | ❌ >10x claim |
+| **Typical policy** | 3 | 1ms | **1,146μs = latestms** | ❌ >1ms |
+| **Complex policy** | 5 | 10ms | **10,215μs = latestms** | ❌ >10x claim |
 
 **Conclusion**: The <1ms claim holds **ONLY** for simple policies (≤1 hook, simple SPARQL). Realistic workflows with governance run at **1-10ms**.
 
@@ -233,14 +233,14 @@ Where T_receipt = time to generate one receipt
 
 **Receipt Generation Pipeline**:
 ```
-1. UUID generation:           T_uuid    ≈ 0.1μs
-2. Timestamp generation:       T_time    ≈ 0.1μs
+1. UUID generation:           T_uuid    ≈ latestμs
+2. Timestamp generation:       T_time    ≈ latestμs
 3. Payload serialization:      T_serial  ≈ 2μs (10-50 keys)
 4. BLAKE3 payload hash:        T_hash₁   ≈ 5μs
 5. BLAKE3 chain hash:          T_hash₂   ≈ 5μs
 6. Zod validation:             T_zod     ≈ 10μs
 ─────────────────────────────────────────────────────
-Total:                         T_receipt ≈ 22.2μs
+Total:                         T_receipt ≈ latestμs
 ```
 
 **Detailed Breakdown**:
@@ -251,7 +251,7 @@ Total:                         T_receipt ≈ 22.2μs
 
 **Complexity**: O(1)
 
-**Time**: ~0.1μs (hardware RNG + formatting)
+**Time**: ~latestμs (hardware RNG + formatting)
 
 #### 2. Timestamp (`T_time`)
 
@@ -267,7 +267,7 @@ export function now() {
 }
 ```
 
-**Time**: ~0.1μs (native hrtime syscall)
+**Time**: ~latestμs (native hrtime syscall)
 
 #### 3. Deterministic Serialization (`T_serial`)
 
@@ -305,8 +305,8 @@ function deterministicSerialize(obj) {
 ```
 T_serial = k × (key_sort + stringify)
 For k = 7 keys:
-  Sort: 7 log 7 ≈ 20 comparisons × 0.05μs = 1μs
-  Stringify: 7 keys × 0.15μs = 1.05μs
+  Sort: 7 log 7 ≈ 20 comparisons × latestμs = 1μs
+  Stringify: 7 keys × latestμs = latestμs
   Total: T_serial ≈ 2μs
 ```
 
@@ -320,11 +320,11 @@ For k = 7 keys:
 ```
 BLAKE3 throughput: ~1 GB/sec on modern CPU
 For 500-byte payload:
-  T_hash = 500 bytes / (1 GB/sec) = 0.5μs
+  T_hash = 500 bytes / (1 GB/sec) = latestμs
 
 But overhead dominates for small inputs:
   WASM call overhead: ~2μs
-  Hash computation: ~0.5μs
+  Hash computation: ~latestμs
   Hex encoding: ~2μs
   Total: T_hash ≈ 5μs
 ```
@@ -351,10 +351,10 @@ ReceiptSchema (20+ fields):
 
 **Sequential Generation**:
 ```
-T_receipt = 0.1 + 0.1 + 2 + 5 + 5 + 10 = 22.2μs per receipt
+T_receipt = latest + latest + 2 + 5 + 5 + 10 = latestμs per receipt
 
-R_throughput = 1 / 22.2μs
-R_throughput = 1,000,000μs / 22.2μs
+R_throughput = 1 / latestμs
+R_throughput = 1,000,000μs / latestμs
 R_throughput ≈ 45,045 receipts/sec
 ```
 
@@ -380,7 +380,7 @@ Batch 10 receipts at a time:
   - Amortize Zod overhead: 10μs / 10 = 1μs per receipt
   - Parallel hash computation: overlap hash₁ + hash₂
 
-T_receipt_batch = 0.1 + 0.1 + 2 + 5 + 5 + 1 = 13.2μs
+T_receipt_batch = latest + latest + 2 + 5 + 5 + 1 = latestμs
 
 R_throughput_batch ≈ 75,757 receipts/sec (67% improvement)
 ```
@@ -438,7 +438,7 @@ ASK {
 ```
 Best case (all indexed):  T_sparql = 3 × 100μs = 300μs
 Worst case (graph scan):  T_sparql = 3 × (n/2) comparisons
-  For n = 10,000: 3 × 5,000 × 0.1μs = 1,500μs = 1.5ms
+  For n = 10,000: 3 × 5,000 × latestμs = 1,500μs = latestms
 ```
 
 #### Class 3: Negation (FILTER NOT EXISTS)
@@ -455,7 +455,7 @@ ASK {
 **Estimate**:
 ```
 For n = 10,000 quads:
-  Scan time: 10,000 × 0.1μs = 1,000μs = 1ms
+  Scan time: 10,000 × latestμs = 1,000μs = 1ms
 ```
 
 ### Empirical Model (Unmeasured)
@@ -473,7 +473,7 @@ Where:
 
 Example (n=10,000, p=3):
   T_sparql = 50 + 10 × log₂(10,000) + 50 × 3
-  T_sparql = 50 + 10 × 13.3 + 150
+  T_sparql = 50 + 10 × latest + 150
   T_sparql = 50 + 133 + 150 = 333μs
 ```
 
@@ -587,20 +587,20 @@ for (const checkpoint of checkpoints) {
 **Time**:
 ```
 c = 720 checkpoints
-T_checkpoint_search = 720 × 1μs = 720μs = 0.7ms
+T_checkpoint_search = 720 × 1μs = 720μs = latestms
 
-T_replay_no_git = 0.7ms + 1ms = 1.7ms
+T_replay_no_git = latestms + 1ms = latestms
 ```
 
 **Speedup**:
 ```
 Speedup = T_linear / T_binary
-Speedup = 1.7ms / 1.0ms = 1.7x (for c=720)
+Speedup = latestms / latestms = latestx (for c=720)
 
 For c = 10,080 (week of checkpoints):
   T_binary = log₂(10,080) × 1μs = 13μs
   T_linear = 10,080 × 1μs = 10ms
-  Speedup = 10ms / 0.013ms ≈ 770x
+  Speedup = 10ms / latestms ≈ 770x
 ```
 
 **Scaling Law**:
@@ -625,10 +625,10 @@ c = 100,000 → Speedup = 100,000 / 17 = 5,882x
 
 **Data** (from HOOK-OVERHEAD-ANALYSIS.md):
 ```
-h=1: 35.01μs
-h=3: 110.98μs
-h=5: 229.73μs
-h=10: 255.74μs  (sub-linear due to JIT optimization)
+h=1: latestμs
+h=3: latestμs
+h=5: latestμs
+h=10: latestμs  (sub-linear due to JIT optimization)
 ```
 
 **Linear Regression** (h=1 to h=5):
@@ -638,7 +638,7 @@ T_hook_chain(h) = α + β × h
 Fit:
   α = 10μs (base overhead: Zod + result object)
   β = 45μs (per-hook cost)
-  R² = 0.99
+  R² = latest
 
 Model:
   T_hook_chain(h) = 10 + 45h (μs)
@@ -660,11 +660,11 @@ Hook execution components:
 ```
 Remove Zod validation (cache schemas):
   T_hook = 45μs - 10μs = 35μs
-  Speedup = 45/35 = 1.29x (29% faster)
+  Speedup = 45/35 = latestx (29% faster)
 
 Fast-path for validation-only:
   T_hook = 45μs - 10μs - 10μs = 25μs
-  Speedup = 45/25 = 1.8x (80% faster)
+  Speedup = 45/25 = latestx (80% faster)
 
 Combined optimizations:
   T_hook_optimized = 25μs
@@ -703,27 +703,27 @@ t=40μs:    Submit task enabled + started
              T_activation₁ = 175μs (simple policy)
              T_execution₁ = 10ms (API call)
 
-t=10.2ms:  Submit completed → Manager approval enabled
-             T_activation₂ = 1.1ms (SPARQL routing)
+t=latestms:  Submit completed → Manager approval enabled
+             T_activation₂ = latestms (SPARQL routing)
              T_execution₂ = 100ms (human)
 
-t=111.3ms: Approval completed → Finalize enabled
+t=latestms: Approval completed → Finalize enabled
              T_activation₃ = 175μs
              T_execution₃ = 5ms
 
-t=116.5ms: Workflow completed
+t=latestms: Workflow completed
 ```
 
 **Total Workflow Time**:
 ```
-T_workflow = 40μs + (175μs + 10ms) + (1.1ms + 100ms) + (175μs + 5ms)
-T_workflow = 40μs + 10.175ms + 101.1ms + 5.175ms
-T_workflow ≈ 116.49ms
+T_workflow = 40μs + (175μs + 10ms) + (latestms + 100ms) + (175μs + 5ms)
+T_workflow = 40μs + latestms + latestms + latestms
+T_workflow ≈ latestms
 
 Overhead breakdown:
-  Task activation overhead: 1.49ms
+  Task activation overhead: latestms
   Business logic execution: 115ms
-  Overhead %: 1.49 / 116.49 = 1.3%
+  Overhead %: latest / latest = latest%
 ```
 
 **Comparison to Temporal.io**:
@@ -734,10 +734,10 @@ Temporal (warm path):
   Total time: 75ms + 115ms = 190ms
 
 YAWL:
-  Total time: 116.5ms
+  Total time: latestms
 
-Speedup: 190ms / 116.5ms = 1.63x (63% faster)
-Overhead reduction: (75ms - 1.5ms) / 75ms = 98%
+Speedup: 190ms / latestms = latestx (63% faster)
+Overhead reduction: (75ms - latestms) / 75ms = 98%
 ```
 
 **Key Insight**: For workflows with long-running tasks (>10ms), YAWL activation overhead is **negligible** (<2% of total time).
@@ -748,10 +748,10 @@ Overhead reduction: (75ms - 1.5ms) / 75ms = 98%
 
 | Metric | Best Case | Typical | Worst Case | Claim | Meets Claim? |
 |--------|-----------|---------|------------|-------|--------------|
-| **Task activation** | 40μs | 1.1ms | 10.2ms | <1ms | Partial (best/typical) |
+| **Task activation** | 40μs | latestms | latestms | <1ms | Partial (best/typical) |
 | **Receipt throughput** | 75K/sec (batch) | 45K/sec | 45K/sec | >100K/sec | ❌ No (2x under) |
 | **SPARQL query** | 100μs | 1ms | 10ms | <10ms | ✅ Yes (p99) |
-| **Time-travel (1K ckpt)** | 1ms | 1.5ms | 2ms | O(log n) | ✅ Yes (arch) |
+| **Time-travel (1K ckpt)** | 1ms | latestms | 2ms | O(log n) | ✅ Yes (arch) |
 | **Hook overhead** | 35μs | 111μs (3h) | 230μs (5h) | N/A | N/A |
 | **Idle CPU** | 0% | 0% | 0% | 0% | ✅ Yes |
 

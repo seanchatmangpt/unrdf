@@ -6,7 +6,7 @@
 
 **Prerequisites:**
 
-- OTel Weaver v0.22.1+ installed (`~/.cargo/bin/weaver` or `weaver` on PATH)
+- OTel Weaver latest+ installed (`~/.cargo/bin/weaver` or `weaver` on PATH)
 - UNRDF checked out at `~/unrdf/`
 
 **Capability atoms:** `otel/registry/`, `otel/live-check-samples.json`, `@unrdf/otel`

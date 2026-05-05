@@ -31,7 +31,7 @@
 import { trace, SpanStatusCode, SpanKind } from '@opentelemetry/api';
 
 const TRACER_NAME = 'unrdf-pipeline';
-const TRACER_VERSION = '1.0.0';
+const TRACER_VERSION = '[VERSION]';
 
 /**
  * Get (or create) the UNRDF pipeline tracer.

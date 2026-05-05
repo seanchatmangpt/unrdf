@@ -100,7 +100,7 @@ pnpm test test/e2e/ --reporter=verbose
 | PostgreSQL         | `postgres:15-alpine`      | RDF storage     | 5432       |
 | Redis              | `redis:7-alpine`          | Caching         | 6379       |
 | MinIO              | `minio/minio:latest`      | Object storage  | 9000, 9001 |
-| Apache Jena Fuseki | `stain/jena-fuseki:4.9.0` | SPARQL endpoint | 3030       |
+| Apache Jena Fuseki | `stain/jena-fuseki:latest` | SPARQL endpoint | 3030       |
 
 ### Configuration
 
@@ -155,7 +155,7 @@ export const TEST_CONFIG = {
 {
   meta: {
     name: 'test-policy-pack',
-    version: '1.0.0',
+    version: 'latest',
     description: 'Test policy pack for E2E testing'
   },
   hooks: [

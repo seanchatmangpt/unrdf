@@ -3,7 +3,7 @@
  * @module test/fixtures/browser-scenarios
  *
  * @description
- * Comprehensive browser compatibility test scenarios for UNRDF v3.1.0.
+ * Comprehensive browser compatibility test scenarios for UNRDF latest.
  * Includes feature detection, polyfill testing, and cross-browser compatibility.
  */
 

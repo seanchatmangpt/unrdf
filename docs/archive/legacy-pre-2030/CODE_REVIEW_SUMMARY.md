@@ -3,7 +3,7 @@
 **Reviewer**: Code Review Agent  
 **Date**: April 3, 2026  
 **Repository**: @unrdf/cli (packages/cli)  
-**Version Under Review**: v5.0.0-alpha.0  
+**Version Under Review**: vlatest.0  
 
 ---
 
@@ -27,7 +27,7 @@ This code review assesses the @unrdf/cli package for production readiness across
 ```
 Test Suite:    423/423 passing (100%)
 Test Files:    13/13 passing
-Test Duration: 6.01s (fast)
+Test Duration: latests (fast)
 Skip/Flaky:    0
 Status:        EXCELLENT
 ```
@@ -156,13 +156,13 @@ Current (problematic):
 Required for production:
 ```json
 {
-  "version": "5.0.0-alpha.0",
+  "version": "latest.0",
   "results": [...],
   "metadata": {...}
 }
 ```
 
-Without versioning, schema changes in v6.0 cannot be handled gracefully.
+Without versioning, schema changes in vlatest cannot be handled gracefully.
 
 **Affected commands**:
 - `unrdf template query --format json`
@@ -239,7 +239,7 @@ Features to demonstrate:
 | Risk | Severity | Impact | Mitigation |
 |------|----------|--------|-----------|
 | Documentation gaps | HIGH | Users cannot adopt template feature | Complete Phase 1 docs |
-| No JSON versioning | MEDIUM | Breaking changes in v6.0 | Add version field, test |
+| No JSON versioning | MEDIUM | Breaking changes in vlatest | Add version field, test |
 | API stability unclear | MEDIUM | Users upgrade and configs break | Document backwards compat |
 | No end-to-end example | LOW | Harder adoption path | Create complete.example |
 

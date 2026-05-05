@@ -395,7 +395,7 @@ import { deepInspect, logDeep, prettyPrintJSON } from 'unrdf/utils';
 // Deep inspect complex object
 const complexObject = {
   store: store,
-  metadata: { version: '1.0', created: new Date() },
+  metadata: { version: 'latest', created: new Date() },
   circular: null
 };
 complexObject.circular = complexObject; // Create circular reference

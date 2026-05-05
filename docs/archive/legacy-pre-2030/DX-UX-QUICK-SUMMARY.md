@@ -30,7 +30,7 @@
 ✅ **Hooks Package:** 108/108 tests passing (100%)
 ✅ **YAWL Package:** 284/292 tests passing (97%)
 ✅ **Documentation:** 192 docs files, comprehensive coverage
-✅ **Speed:** Tests run in 7.6s (fast mode), lint in 25.9s
+✅ **Speed:** Tests run in latests (fast mode), lint in latests
 
 ---
 
@@ -51,8 +51,8 @@
 | Category            | Target        | Actual      | Status  |
 | ------------------- | ------------- | ----------- | ------- |
 | **DX: Onboarding**  | <3 min        | ∞ (broken)  | ❌ 0/10 |
-| **DX: Build**       | <10s          | 1.2s (skip) | ⚠️ 3/10 |
-| **DX: Test (Fast)** | <10s          | 7.6s        | ✅ 8/10 |
+| **DX: Build**       | <10s          | latests (skip) | ⚠️ 3/10 |
+| **DX: Test (Fast)** | <10s          | latests        | ✅ 8/10 |
 | **DX: Lint**        | 0 errors      | 1 error     | ❌ 3/10 |
 | **UX: Examples**    | 100%          | 33%         | ❌ 3/10 |
 | **UX: Errors**      | 90% clear     | 25%         | ❌ 4/10 |
@@ -122,7 +122,7 @@ No projects matched the filters
 # Test (PARTIAL)
 $ pnpm test:fast
 Test Files  1 failed | 6 passed (7)
-Duration    7.595s
+Duration    latests
 
 # Lint (FAILED)
 $ pnpm lint

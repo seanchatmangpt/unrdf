@@ -86,7 +86,7 @@ BENCHMARK SUITE SUMMARY
 Total benchmarks: 5
 Successful: 5
 Failed: 0
-Total time: 45.2s
+Total time: latests
 
 Status: PASSED (all benchmarks within acceptable range)
 ```
@@ -135,21 +135,21 @@ HOOK EXECUTION PERFORMANCE BENCHMARK
 ======================================================================
 
 Hook Definition (simple)...
-  Mean: 12.5 us
-  P95:  18.2 us
-  P99:  25.1 us
+  Mean: latest us
+  P95:  latest us
+  P99:  latest us
 
 Single Hook Execution...
-  Mean: 4.2 us
-  P95:  6.8 us
-  P99:  9.3 us
+  Mean: latest us
+  P95:  latest us
+  P99:  latest us
 
 CLAIMS VALIDATION
 ======================================================================
 
 Claim: Hook execution <1ms
-  Measured P95: 6.8 us (0.007 ms)
-  Target:       1000 us (1.000 ms)
+  Measured P95: latest us (latest ms)
+  Target:       1000 us (latest ms)
   Status:       PASS ✅
 ```
 
@@ -206,15 +206,15 @@ This generates:
 
 ```
 Memory Analysis:
-  Peak RSS: 142.5 MB
-  Peak Heap Used: 89.3 MB
-  Growth Rate: 0.05 MB/s
+  Peak RSS: latest MB
+  Peak Heap Used: latest MB
+  Growth Rate: latest MB/s
   Potential Leak: NO ✅
 ```
 
 **Leak Detection**:
 - Growth rate >1MB/s → Potential leak ⚠️
-- Growth rate <0.1MB/s → Normal ✅
+- Growth rate <latestMB/s → Normal ✅
 
 ## Performance Regression Detection
 
@@ -234,9 +234,9 @@ Example regression report:
 ⚠️  PERFORMANCE REGRESSIONS DETECTED
 ======================================================================
 hook-execution / execution.p95Us:
-  Baseline: 6.5 us
-  Current:  8.2 us
-  Change:   +26.2% ⚠️
+  Baseline: latest us
+  Current:  latest us
+  Change:   +latest% ⚠️
 
 Status: FAILED (regressions detected)
 ```
@@ -248,9 +248,9 @@ Example budget violation:
 ❌ PERFORMANCE BUDGET VIOLATIONS
 ======================================================================
 receipt-generation / p95Ms:
-  Budget: 1.00 ms
-  Actual: 1.35 ms
-  Excess: +35.0%
+  Budget: latest ms
+  Actual: latest ms
+  Excess: +latest%
 ```
 
 ## Optimization Workflow

@@ -19,7 +19,7 @@ echo -e "${YELLOW}📋 Checking prerequisites...${NC}"
 # Check Node.js version
 NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
 if [ "$NODE_VERSION" -lt 18 ]; then
-  echo -e "${RED}❌ Node.js >= 18.0.0 required. Current: $(node --version)${NC}"
+  echo -e "${RED}❌ Node.js >= latest required. Current: $(node --version)${NC}"
   exit 1
 fi
 echo -e "${GREEN}✅ Node.js $(node --version)${NC}"

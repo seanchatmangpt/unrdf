@@ -83,7 +83,7 @@ const result = executeHookChain([validator, transformer], quad);
 ```json
 {
   "id": "uuid",
-  "meta": { "name": "...", "version": "1.0.0", ... },
+  "meta": { "name": "...", "version": "latest", ... },
   "config": { "enabled": true, "priority": 50, ... },
   "hooks": [{ "name": "...", "file": "hook.mjs", ... }],
   "conditions": [{ "name": "...", "file": "condition.sparql", "type": "sparql-ask" }],

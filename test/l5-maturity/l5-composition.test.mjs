@@ -38,7 +38,7 @@ describe('L5: Full Composition', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Composition test: store + receipt',
     });
@@ -95,7 +95,7 @@ describe('L5: Full Composition', () => {
       afterHash: capsule.hash,
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'First in chain',
     });
@@ -138,7 +138,7 @@ describe('L5: Full Composition', () => {
         afterHash: `hash-${i}`,
         epoch: i + 1,
         timestamp: Date.now() + i,
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: `Operation ${i}`,
       });
@@ -186,7 +186,7 @@ describe('L5: Full Composition', () => {
       afterHash: '0'.repeat(64), // Query doesn't modify
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: `Query returned ${results.length} results`,
     });
@@ -232,7 +232,7 @@ describe('L5: Full Composition', () => {
       afterHash: '1'.repeat(64),
       epoch: i + 1,
       timestamp: Date.now() + i,
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: `Quad ${i}`,
     }));
@@ -264,7 +264,7 @@ describe('L5: Full Composition', () => {
         afterHash: '1'.repeat(64),
         epoch: 1,
         timestamp: Date.now(),
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: 'test',
       });
@@ -292,7 +292,7 @@ describe('L5: Full Composition', () => {
         afterHash: '1'.repeat(64),
         epoch: 1,
         timestamp: Date.now(),
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: 'test',
       });
@@ -312,7 +312,7 @@ describe('L5: Full Composition', () => {
         afterHash: '1'.repeat(64),
         epoch: 1,
         timestamp: Date.now(),
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: 'test',
       });
@@ -340,7 +340,7 @@ describe('L5: Full Composition', () => {
         afterHash: '0'.repeat(64),
         epoch: 1,
         timestamp: Date.now(),
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: `${results.length} results`,
       });
@@ -372,7 +372,7 @@ describe('L5: Full Composition', () => {
             afterHash: '1'.repeat(64),
             epoch: j + 1,
             timestamp: Date.now() + j,
-            toolchainVersion: '1.0.0',
+            toolchainVersion: 'latest',
             violations: [],
             reason: `Op ${j}`,
           });

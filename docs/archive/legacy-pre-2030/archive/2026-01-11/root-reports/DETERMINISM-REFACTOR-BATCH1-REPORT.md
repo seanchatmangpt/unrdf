@@ -97,7 +97,7 @@ const delta = adapter.createEntity('User', { name: 'Alice' });
 // Testing: Deterministic timestamps
 const delta = adapter.createEntity('User', { name: 'Alice' }, {
   t_ns: 1735315200000000000n,
-  timestamp_iso: '2025-12-27T12:00:00.000Z',
+  timestamp_iso: '2025-12-27T12:00:latestZ',
   uuid: 'test-uuid-1234'
 });
 ```
@@ -269,7 +269,7 @@ wrapped.execute = async function execute(task) {
   const endTime = performance.now();    // ❌ Non-deterministic
 
   const receipt = {
-    version: '6.0.0-alpha.1',
+    version: 'latest.1',
     operation: 'workflow.execute',
     task: task?.id || 'unknown',
     timestamp: Date.now(),              // ❌ Non-deterministic
@@ -292,7 +292,7 @@ wrapped.execute = async function execute(task, options = {}) {
   const timestamp = options.timestamp ?? Date.now();         // ✅ Deterministic via options
 
   const receipt = {
-    version: '6.0.0-alpha.1',
+    version: 'latest.1',
     operation: 'workflow.execute',
     task: task?.id || 'unknown',
     timestamp,                                               // ✅ Deterministic via options
@@ -367,7 +367,7 @@ export class MigrationTracker {
 ```bash
 $ timeout 10s pnpm --filter @unrdf/v6-core test
 
-> @unrdf/v6-core@6.0.0-alpha.1 test /home/user/unrdf/packages/v6-core
+> @unrdf/v6-core@latest.1 test /home/user/unrdf/packages/v6-core
 > node --test test/**/*.test.mjs
 
 TAP version 13
@@ -375,17 +375,17 @@ TAP version 13
 # Subtest: Grammar Parser - valid SPARQL query parses successfully
 ok 1 - Grammar Parser - valid SPARQL query parses successfully
   ---
-  duration_ms: 3.309044
+  duration_ms: latest
   ...
 # Subtest: Grammar Parser - valid SHACL shapes parse successfully
 ok 2 - Grammar Parser - valid SHACL shapes parse successfully
   ---
-  duration_ms: 0.339869
+  duration_ms: latest
   ...
 # Subtest: Grammar Parser - invalid grammar returns errors (no crash)
 ok 3 - Grammar Parser - invalid grammar returns errors (no crash)
   ---
-  duration_ms: 0.308713
+  duration_ms: latest
   ...
 ```
 
@@ -407,7 +407,7 @@ $ # Non-fallback violations (excluding context., options., //, etc.)
 **Violation Breakdown**:
 - **Before**: ~44 violations (32 target + 13 bonus)
 - **After**: 2 non-fallback violations
-- **Reduction**: 95.5% violation elimination
+- **Reduction**: latest% violation elimination
 - **Target**: ≤3 violations ✅ **ACHIEVED**
 
 ---
@@ -486,7 +486,7 @@ const delta = adapter.createEntity('User', { name: 'Alice' });
 // New deterministic usage
 const delta = adapter.createEntity('User', { name: 'Alice' }, {
   t_ns: 1735315200000000000n,
-  timestamp_iso: '2025-12-27T12:00:00.000Z',
+  timestamp_iso: '2025-12-27T12:00:latestZ',
   uuid: 'deterministic-id'
 });
 ```

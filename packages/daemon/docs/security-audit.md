@@ -211,7 +211,7 @@ if (!verification.verified) {
 ## Penetration Test Results
 
 ### Test Environment
-- **Framework**: Vitest 4.0.16
+- **Framework**: Vitest [VERSION]
 - **Test Coverage**: 28+ scenarios
 - **Payload Variations**: 50+ malicious inputs
 - **Duration**: <5 seconds
@@ -383,7 +383,7 @@ Coverage: 95%+ (lines, branches, functions)
 |--------|--------|----------|
 | **Unnecessary Features** | ✅ Verified | No default-enabled dangerous functions |
 | **Missing Security Headers** | ✅ Mitigated | Enforced at daemon HTTP layer |
-| **Outdated Dependencies** | ✅ Monitored | Zod ^3.25.76, Node.js crypto module |
+| **Outdated Dependencies** | ✅ Monitored | Zod ^[VERSION], Node.js crypto module |
 | **Unpatched Systems** | ✅ Addressed | Regular security updates via pnpm |
 
 **Controls**:

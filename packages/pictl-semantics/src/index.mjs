@@ -1,5 +1,5 @@
 /**
- * @unrdf/pictl-semantics v26.4.23
+ * @unrdf/pictl-semantics [VERSION]
  *
  * PICTL Semantics Integration with @unrdf Federation
  * Ontology-driven process mining with cryptographic quorum consensus

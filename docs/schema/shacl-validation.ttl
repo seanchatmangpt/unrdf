@@ -5,7 +5,7 @@
 # - Types (properties, constraints, hierarchies)
 # - SLOs (thresholds, metrics, alerts)
 #
-# Version: 1.0.0
+# Version: latest
 # Usage: Validate documentation resources against these shapes
 
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -67,7 +67,7 @@ shapes:CapabilityShape a sh:NodeShape ;
         sh:maxCount 1 ;
         sh:datatype xsd:string ;
         sh:pattern "^\\d+\\.\\d+\\.\\d+$" ;
-        sh:message "Version must be in semantic version format (e.g., 1.0.0)"
+        sh:message "Version must be in semantic version format (e.g., latest)"
     ] ;
 
     # Input type reference

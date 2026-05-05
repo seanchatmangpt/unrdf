@@ -12,7 +12,7 @@
 
 | Metric | Before | After | Improvement |
 |--------|--------|-------|-------------|
-| **Pass Rate** | 64.0% (208/325) | 77.8% (253/325) | **+13.8%** |
+| **Pass Rate** | latest% (208/325) | latest% (253/325) | **+latest%** |
 | **Failures** | 117 tests | 72 tests | **-45 tests** |
 | **Core API Status** | ❌ FAIL | ✅ **PASS (100%)** | **Critical fixed** |
 | **Files Modified** | 0 | 3 | 30 insertions, 16 deletions |
@@ -30,20 +30,20 @@
 $ timeout 15s npm test --prefix packages/yawl
 Test Files: 5 failed (9 total)
 Tests: 117 failed | 208 passed (325 total)
-Pass Rate: 64.0% ❌
+Pass Rate: latest% ❌
 ```
 
 ### Pareto Analysis: Failure Distribution
 
 | Root Cause | Tests Affected | % of Failures | Category |
 |-----------|----------------|---------------|----------|
-| **#1: Missing workflow-api exports** | 39 tests | 33.3% | 🔴 Critical |
-| **#2: `parallelHash` not exported** | 5 tests | 4.3% | 🔴 Critical |
-| **#3: Schema validation strictness** | 1 test | 0.9% | 🟡 Medium |
-| **#4: Event system incompatibility** | 21 tests | 17.9% | 🟢 Non-critical |
-| **#5: Pattern integration issues** | 33 tests | 28.2% | 🟢 Non-critical |
-| **#6: Hook integration issues** | 16 tests | 13.7% | 🟢 Non-critical |
-| **#7: Other edge cases** | 2 tests | 1.7% | 🟢 Non-critical |
+| **#1: Missing workflow-api exports** | 39 tests | latest% | 🔴 Critical |
+| **#2: `parallelHash` not exported** | 5 tests | latest% | 🔴 Critical |
+| **#3: Schema validation strictness** | 1 test | latest% | 🟡 Medium |
+| **#4: Event system incompatibility** | 21 tests | latest% | 🟢 Non-critical |
+| **#5: Pattern integration issues** | 33 tests | latest% | 🟢 Non-critical |
+| **#6: Hook integration issues** | 16 tests | latest% | 🟢 Non-critical |
+| **#7: Other edge cases** | 2 tests | latest% | 🟢 Non-critical |
 
 **80/20 Insight**: Root causes #1-#3 (38% of issues) required only 3 file edits.
 
@@ -207,7 +207,7 @@ $ timeout 15s npm test --prefix packages/yawl
 
 Test Files: 5 failed | 4 passed (9)
 Tests: 72 failed | 253 passed (325)
-Duration: 3.61s (transform 7.21s, import 16.35s, tests 1.10s)
+Duration: latests (transform latests, import latests, tests latests)
 ```
 
 ### Breakdown by Test Suite
@@ -240,7 +240,7 @@ $ git diff --stat
 
 **Lines**: 512 + 1148 + 466 = 2126 total
 **Changes**: 30 insertions, 16 deletions
-**Change Rate**: 2.2% of codebase
+**Change Rate**: latest% of codebase
 **Impact**: 38% failure reduction
 
 ---
@@ -255,7 +255,7 @@ $ git diff --stat
 | "80/20 methodology" | ✅ 3 files fixed 38% of failures | **TRUE** |
 | "Core API 100%" | ✅ workflow-api: 46/46 passing | **TRUE** |
 | "10 min to fix" | ✅ 3 edits, <30 LoC changed | **TRUE** |
-| "≥85% pass rate" | ❌ 77.8% actual | **PARTIAL** |
+| "≥85% pass rate" | ❌ latest% actual | **PARTIAL** |
 
 ### What BREAKS if We Ship This?
 
@@ -325,7 +325,7 @@ $ git diff --stat
 - Fixed 100% of critical API failures
 - Enabled downstream fixes (patterns depend on API)
 
-**Actual 80/20 ratio**: 9% of files modified → 38% of failures fixed → **4.2x leverage**
+**Actual 80/20 ratio**: 9% of files modified → 38% of failures fixed → **latestx leverage**
 
 ---
 
@@ -370,11 +370,11 @@ $ git diff --stat
 **Criteria Met**:
 - ✅ Core API 100% passing (workflow-api, receipt, cancellation)
 - ✅ No regressions in passing tests
-- ✅ 77.8% overall pass rate (up from 64%)
+- ✅ latest% overall pass rate (up from 64%)
 - ✅ Critical user paths validated
 
 **Criteria NOT Met**:
-- ❌ 85% pass rate target (77.8% actual)
+- ❌ 85% pass rate target (latest% actual)
 - ❌ Event sourcing system incomplete
 - ❌ Pattern integration tests failing
 
@@ -450,14 +450,14 @@ timeout 15s pnpm test --filter @unrdf/yawl
 
 # Expected output:
 # Tests: 72 failed | 253 passed (325)
-# Pass Rate: 77.8%
+# Pass Rate: latest%
 ```
 
 ---
 
 ## Final Verdict
 
-**80/20 VALIDATED**: 3 files (2.2% of codebase) fixed 45 tests (38% of failures) in 10 minutes.
+**80/20 VALIDATED**: 3 files (latest% of codebase) fixed 45 tests (38% of failures) in 10 minutes.
 
 **Core Principle Applied**: *Fix the ROOT CAUSES that cascade to multiple tests. Don't fix symptoms.*
 

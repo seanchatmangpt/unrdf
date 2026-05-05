@@ -31,7 +31,7 @@ describe('SCENARIO 1: Receipt Lifecycle', () => {
       afterHash: 'after-hash',
       epoch: 1,
       timestamp: Date.now(),
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Valid delta',
     });
@@ -51,7 +51,7 @@ describe('SCENARIO 1: Receipt Lifecycle', () => {
       afterHash: 'after-hash',
       epoch: 2,
       timestamp: 12345,
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Valid delta',
     };
@@ -67,7 +67,7 @@ describe('SCENARIO 1: Receipt Lifecycle', () => {
   });
 
   it('should chain 10 receipts and verify chain integrity', () => {
-    const generator = new ReceiptGenerator({ toolchainVersion: '1.0.0' });
+    const generator = new ReceiptGenerator({ toolchainVersion: 'latest' });
     const chain = new ReceiptChain();
 
     let previousHash = 'initial-hash';
@@ -432,7 +432,7 @@ describe('SCENARIO 5: Merkle Proof Chain', () => {
   });
 
   it('should use MerkleBatcher for receipt batching', () => {
-    const generator = new ReceiptGenerator({ toolchainVersion: '1.0.0' });
+    const generator = new ReceiptGenerator({ toolchainVersion: 'latest' });
     const receipts = [];
 
     // Create 20 receipts

@@ -418,12 +418,12 @@ Add to `package.json`:
 ```json
 {
   "dependencies": {
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/sdk-node": "^0.54.0",
-    "@opentelemetry/sdk-trace-base": "^1.28.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.51.1",
-    "@opentelemetry/resources": "^1.28.0",
-    "@opentelemetry/semantic-conventions": "^1.28.0"
+    "@opentelemetry/api": "^latest",
+    "@opentelemetry/sdk-node": "^latest",
+    "@opentelemetry/sdk-trace-base": "^latest",
+    "@opentelemetry/auto-instrumentations-node": "^latest",
+    "@opentelemetry/resources": "^latest",
+    "@opentelemetry/semantic-conventions": "^latest"
   }
 }
 ```

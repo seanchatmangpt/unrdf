@@ -97,7 +97,7 @@ describe('Agent 5: Commutativity Analysis', () => {
       expect(cert.hash).toMatch(/^[a-f0-9]{64}$/); // SHA-256 hex
       expect(cert.capsuleIds).toEqual(['A', 'B']);
       expect(cert.conflictType).toBe('add-del-conflict');
-      expect(cert.version).toBe('1.0.0');
+      expect(cert.version).toBe('latest');
       expect(cert.metadata.minimality).toBe('proven');
     });
   });

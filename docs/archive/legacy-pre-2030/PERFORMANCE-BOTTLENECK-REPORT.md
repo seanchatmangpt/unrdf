@@ -10,7 +10,7 @@
 
 **CRITICAL FAILURE**: Test suite violates 5s SLA by >2x (>10s actual)
 
-**Root Cause**: Synchronous blocking (3.3s of setTimeout delays) + excessive module import time (4-6s)
+**Root Cause**: Synchronous blocking (latests of setTimeout delays) + excessive module import time (4-6s)
 
 **Impact**: Development velocity reduced by 3-5x due to slow test feedback loop
 
@@ -24,50 +24,50 @@
 | ------------------ | ------ | --------- | ----------- | ----------------------------------- |
 | **Full workspace** | <5s    | **>10s**  | ❌ TIMEOUT  | `timeout 10s npm test` → terminated |
 | **Consensus**      | <5s    | **>8s**   | ❌ CRITICAL | 234 lines → 34ms/line               |
-| **Hooks**          | <5s    | **5.02s** | ❌ TIMEOUT  | Exit code 124                       |
-| **YAWL**           | <5s    | **5.03s** | ❌ TIMEOUT  | Exit code 124                       |
-| **Core**           | <5s    | **3.47s** | ✅ PASS     | 258 tests in 1.14s                  |
+| **Hooks**          | <5s    | **latests** | ❌ TIMEOUT  | Exit code 124                       |
+| **YAWL**           | <5s    | **latests** | ❌ TIMEOUT  | Exit code 124                       |
+| **Core**           | <5s    | **latests** | ✅ PASS     | 258 tests in latests                  |
 
 **Command Evidence**:
 
 ```bash
 $ time timeout 10s npm test
 # Result: Command timed out after 2m 0s Terminated
-# real  0m10.055s
+# real  0mlatests
 ```
 
 ### Build Performance
 
 | Operation             | Target | Actual    | Violation |
 | --------------------- | ------ | --------- | --------- |
-| **pnpm install**      | <5s    | **19.5s** | 3.9x      |
+| **pnpm install**      | <5s    | **latests** | latestx      |
 | **Oxigraph build**    | <5s    | **>5s**   | >1x       |
-| **node_modules size** | <500MB | **2.8GB** | 5.6x      |
+| **node_modules size** | <500MB | **latestGB** | latestx      |
 
 **Command Evidence**:
 
 ```bash
 $ time pnpm install --frozen-lockfile
-# real  0m19.469s
+# real  0mlatests
 # Packages: +209 -4
 
 $ du -sh node_modules/
-# 2.8G  node_modules/
+# latestG  node_modules/
 ```
 
 ### Module Import Performance
 
 | Package   | Transform | Import | Tests | Total | Bottleneck   |
 | --------- | --------- | ------ | ----- | ----- | ------------ |
-| **Core**  | 1.48s     | 4.24s  | 1.14s | 2.08s | Import (68%) |
-| **Hooks** | 2.24s     | 6.17s  | 0.70s | 2.89s | Import (77%) |
+| **Core**  | latests     | latests  | latests | latests | Import (68%) |
+| **Hooks** | latests     | latests  | latests | latests | Import (77%) |
 
 **Command Evidence**:
 
 ```bash
 $ cd packages/core && time timeout 5s npm test
-# Duration: 2.08s (transform 1.48s, setup 0ms, import 4.24s, tests 1.14s)
-# real  0m3.470s
+# Duration: latests (transform latests, setup 0ms, import latests, tests latests)
+# real  0mlatests
 ```
 
 ---
@@ -82,7 +82,7 @@ $ cd packages/core && time timeout 5s npm test
 await new Promise(resolve => setTimeout(resolve, 500));
 ```
 
-**Total Sleep Time**: 3.3 seconds across test suite
+**Total Sleep Time**: latest seconds across test suite
 
 | File                                       | Line          | Delay       | Justification |
 | ------------------------------------------ | ------------- | ----------- | ------------- |
@@ -113,7 +113,7 @@ await new Promise(resolve => setTimeout(resolve, 500));
 await vi.waitFor(() => expect(state.ready).toBe(true), { timeout: 100 });
 ```
 
-**Expected Improvement**: **5-10x speedup** (8s → 0.8-1.6s)
+**Expected Improvement**: **5-10x speedup** (8s → latest.6s)
 
 ---
 
@@ -152,7 +152,7 @@ beforeEach(() => {
 });
 ```
 
-**Expected Improvement**: **3-5x speedup** (consensus tests: >8s → 1.6-2.6s)
+**Expected Improvement**: **3-5x speedup** (consensus tests: >8s → latest.6s)
 
 ---
 
@@ -203,7 +203,7 @@ $ pnpm -r build
 ```bash
 $ time timeout 5s pnpm -C packages/oxigraph build
 # Command timed out after 2m 0s Terminated
-# real  0m5.022s
+# real  0mlatests
 ```
 
 **Missing Optimizations**:
@@ -227,7 +227,7 @@ export default defineConfig({
 });
 ```
 
-**Expected Improvement**: **2x speedup** (build: 5s → 2.5s)
+**Expected Improvement**: **2x speedup** (build: 5s → latests)
 
 ---
 
@@ -237,15 +237,15 @@ export default defineConfig({
 
 ```bash
 $ du -sh node_modules/ packages/*/node_modules | sort -hr
-# 2.8G  node_modules/
+# latestG  node_modules/
 # 100M  packages/docs/node_modules
 # 42M   packages/graph-analytics/node_modules
 ```
 
 **Unused Heavy Dependencies**:
 
-- `@tensorflow/tfjs-node`: 4.22.0 (heavy native bindings)
-- `playwright`: 1.57.0 (200MB+ browsers)
+- `@tensorflow/tfjs-node`: latest (heavy native bindings)
+- `playwright`: latest (200MB+ browsers)
 - `@vitest/browser`: Unused if not running browser tests
 
 **Recommendation**:
@@ -260,7 +260,7 @@ $ du -sh node_modules/ packages/*/node_modules | sort -hr
 }
 ```
 
-**Expected Improvement**: **2-3x faster installs** (19.5s → 6-10s)
+**Expected Improvement**: **2-3x faster installs** (latests → 6-10s)
 
 ---
 
@@ -358,7 +358,7 @@ export default defineBuildConfig({
 ```json
 {
   "optionalDependencies": {
-    "@tensorflow/tfjs-node": "4.22.0"
+    "@tensorflow/tfjs-node": "latest"
   }
 }
 ```
@@ -369,18 +369,18 @@ export default defineBuildConfig({
 
 | Metric              | Before | After    | Improvement         |
 | ------------------- | ------ | -------- | ------------------- |
-| **Full test suite** | >10s   | **<3s**  | **3.3x faster** ✅  |
+| **Full test suite** | >10s   | **<3s**  | **latestx faster** ✅  |
 | **Consensus tests** | >8s    | **<1s**  | **8x faster** ✅    |
 | **Module imports**  | 6s     | **2s**   | **3x faster** ✅    |
-| **Build time**      | 5s     | **2s**   | **2.5x faster** ✅  |
-| **pnpm install**    | 19.5s  | **7s**   | **2.8x faster** ✅  |
-| **node_modules**    | 2.8GB  | **<1GB** | **2.8x smaller** ✅ |
+| **Build time**      | 5s     | **2s**   | **latestx faster** ✅  |
+| **pnpm install**    | latests  | **7s**   | **latestx faster** ✅  |
+| **node_modules**    | latestGB  | **<1GB** | **latestx smaller** ✅ |
 
 **Total Developer Time Saved**:
 
 - Before: 10s (test) + 19s (install) = **29s per cycle**
 - After: 3s (test) + 7s (install) = **10s per cycle**
-- **Improvement**: **2.9x faster feedback loop**
+- **Improvement**: **latestx faster feedback loop**
 
 ---
 
@@ -393,18 +393,18 @@ export default defineBuildConfig({
 $ cd packages/core && time timeout 5s npm test
 # Test Files  7 passed (7)
 # Tests       258 passed (258)
-# Duration    2.08s (transform 1.48s, import 4.24s, tests 1.14s)
-# real        0m3.470s
+# Duration    latests (transform latests, import latests, tests latests)
+# real        0mlatests
 
 # Hooks package (TIMEOUT)
 $ cd packages/hooks && time timeout 5s npm test
 # Exit code 124
-# real        0m5.022s
+# real        0mlatests
 
 # Consensus package (CRITICAL TIMEOUT)
 $ cd packages/consensus && time timeout 8s npm test
 # Command timed out after 2m 0s Terminated
-# real        0m8.034s
+# real        0mlatests
 ```
 
 ### Bottleneck Locations
@@ -491,7 +491,7 @@ $ grep -rn "setTimeout.*[0-9]\{3,\}" packages/*/test  # Must return 0 results
 
 **Current State**: Test suite FAILS 5s SLA by >2x due to synchronous blocking
 
-**Root Cause**: 3.3s of setTimeout sleeps + 6s module import overhead
+**Root Cause**: latests of setTimeout sleeps + 6s module import overhead
 
 **Solution**: Mock time/I/O + fix workspace linking + optimize build
 

@@ -1,6 +1,6 @@
 # @unrdf/rdf-graphql API Reference
 
-**Version**: 1.0.0
+**Version**: latest
 **Maturity**: mature
 **Main Export**: src/adapter.mjs
 

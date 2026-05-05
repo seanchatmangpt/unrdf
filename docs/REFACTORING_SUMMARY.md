@@ -16,7 +16,7 @@ Replace all N3.Store patterns in 17-25 example files across packages with Oxigra
 |--------|--------|----------|--------|
 | Files Refactored | 17-25 | **32 files** | ✅ **127% of target** |
 | Pattern Replacements | All N3 patterns | 24 Store + 35 imports + 40 DataFactory | ✅ **99 total** |
-| Code Reduction | Improve maintainability | -73 lines (net) | ✅ **3.4% reduction** |
+| Code Reduction | Improve maintainability | -73 lines (net) | ✅ **latest% reduction** |
 | Oxigraph Adoption | Increase usage | **82%** adoption in examples | ✅ **Target exceeded** |
 
 ### 📊 Quantitative Results
@@ -197,7 +197,7 @@ Replace all N3.Store patterns in 17-25 example files across packages with Oxigra
 1. **Reduced Dependencies**: Fewer N3 imports across 35 files
 2. **Consistency**: Unified Oxigraph API in 51 files
 3. **Simplicity**: Single import source for store creation
-4. **Maintainability**: -73 lines of code (3.4% reduction)
+4. **Maintainability**: -73 lines of code (latest% reduction)
 
 ### Developer Experience ✅
 1. **Unified API**: `createStore()` pattern everywhere

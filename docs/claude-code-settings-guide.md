@@ -3,7 +3,7 @@
 > **Complete reference for configuring Claude Code across user, project, and local scopes**
 >
 > **Last Updated**: December 2025
-> **Claude Code Version**: 1.0.18+
+> **Claude Code Version**: latest+
 
 ---
 
@@ -411,7 +411,7 @@ export DEBUG="app:*"
   "env": {
     "HTTP_PROXY": "http://proxy.example.com:8080",
     "HTTPS_PROXY": "https://proxy.example.com:8443",
-    "NO_PROXY": "localhost,127.0.0.1,.example.com"
+    "NO_PROXY": "localhost,latest.1,.example.com"
   }
 }
 ```
@@ -687,12 +687,12 @@ claude --model "anthropic.claude-sonnet-4-5-20250929-v1:0[1m]"
 {
   "security": {
     "allowedNetworks": [
-      "10.0.0.0/8",      // Internal network
-      "192.168.0.0/16",  // Private network
-      "172.16.0.0/12"    // Docker network
+      "latest.0/8",      // Internal network
+      "latest.0/16",  // Private network
+      "172.1latest/12"    // Docker network
     ],
     "blockedNetworks": [
-      "0.0.0.0/0"        // Block all by default
+      "latest.0/0"        // Block all by default
     ]
   }
 }
@@ -902,7 +902,7 @@ claude --model "anthropic.claude-sonnet-4-5-20250929-v1:0[1m]"
   ],
 
   "security": {
-    "allowedNetworks": ["10.0.0.0/8"],
+    "allowedNetworks": ["latest.0/8"],
     "secretPatterns": [
       "sk-ant-[a-zA-Z0-9-_]+",
       "AKIA[0-9A-Z]{16}",

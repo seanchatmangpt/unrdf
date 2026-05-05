@@ -216,7 +216,7 @@ Reasons:
   - Agent 1: undefined symbol `foo` in src/main.rs:42
   - Agent 2: test_process_mining test failure
   - Agent 5: Missing OTEL span for `critical_operation`
-  - Agent 6: Vulnerability in regex@1.9.1 (CVE-2023-12345)
+  - Agent 6: Vulnerability in regex@latest (CVE-2023-12345)
 
 💡 Suggestion: Fix compilation errors, failing tests, and vulnerabilities before retry
 ```

@@ -2,7 +2,7 @@
 
 > High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

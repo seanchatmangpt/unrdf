@@ -304,7 +304,7 @@ export const {{ name|camelCase }} = {
         }
       ],
       properties: [
-        { name: 'version', value: '1.0.0' },
+        { name: 'version', value: 'latest' },
         { name: 'features', value: ['auth', 'cache'] }
       ]
     };

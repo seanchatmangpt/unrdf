@@ -12,14 +12,14 @@ The KGC Runtime plugin system allows you to extend core functionality with custo
 // plugin.json
 {
   "name": "my-plugin",
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "description": "My custom KGC plugin",
   "entryPoint": "./index.mjs",
   "capabilities": [
     "receipt:generate",
     "receipt:validate"
   ],
-  "api_version": "5.0.1",
+  "api_version": "[VERSION]",
   "author": "Your Name",
   "license": "MIT"
 }
@@ -38,7 +38,7 @@ import { PluginReceiptSchema } from '@unrdf/kgc-runtime/schemas';
 export default function plugin(runtime) {
   return {
     name: 'my-plugin',
-    version: '1.0.0',
+    version: '[VERSION]',
 
     /**
      * Initialize plugin
@@ -58,7 +58,7 @@ export default function plugin(runtime) {
         ...receipt,
         pluginMetadata: {
           pluginName: 'my-plugin',
-          pluginVersion: '1.0.0',
+          pluginVersion: '[VERSION]',
           receiptType: 'custom',
           customFields: {
             myData: 'example'
@@ -87,15 +87,15 @@ const manager = new PluginManager();
 // Register plugin
 await manager.registerPlugin({
   name: 'my-plugin',
-  version: '1.0.0',
+  version: '[VERSION]',
   entryPoint: './plugin.mjs',
   capabilities: ['receipt:generate'],
-  api_version: '5.0.1'
+  api_version: '[VERSION]'
 });
 
 // Load and activate
-await manager.loadPlugin('my-plugin@1.0.0');
-await manager.activatePlugin('my-plugin@1.0.0');
+await manager.loadPlugin('my-plugin@[VERSION]');
+await manager.activatePlugin('my-plugin@[VERSION]');
 ```
 
 ## API Reference
@@ -182,7 +182,7 @@ export async function generatePerformanceReceipt(operation, metrics) {
     ...receipt,
     pluginMetadata: {
       pluginName: 'my-plugin',
-      pluginVersion: '1.0.0',
+      pluginVersion: '[VERSION]',
       receiptType: 'performance',
       customFields: {
         executionTime: metrics.duration,
@@ -306,15 +306,15 @@ describe('Plugin Integration', () => {
 
     await manager.registerPlugin({
       name: 'test-plugin',
-      version: '1.0.0',
+      version: '[VERSION]',
       entryPoint: './test-plugin.mjs',
       capabilities: ['receipt:generate'],
-      api_version: '5.0.1'
+      api_version: '[VERSION]'
     });
 
-    await manager.loadPlugin('test-plugin@1.0.0');
+    await manager.loadPlugin('test-plugin@[VERSION]');
 
-    const state = manager.getPluginState('test-plugin@1.0.0');
+    const state = manager.getPluginState('test-plugin@[VERSION]');
     expect(state).toBe('loaded');
   });
 });
@@ -327,14 +327,14 @@ describe('Plugin Integration', () => {
 ```json
 {
   "name": "@my-scope/kgc-plugin-name",
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
     ".": "./index.mjs"
   },
   "peerDependencies": {
-    "@unrdf/kgc-runtime": "^1.0.0"
+    "@unrdf/kgc-runtime": "^[VERSION]"
   }
 }
 ```
@@ -359,7 +359,7 @@ Create a PR to the [KGC Plugin Registry](https://github.com/unrdf/kgc-plugins):
 ```json
 {
   "name": "my-plugin",
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "description": "My custom plugin",
   "repository": "https://github.com/my-org/my-plugin",
   "verified": false

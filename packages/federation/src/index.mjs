@@ -1,5 +1,5 @@
 /**
- * @unrdf/federation v6.0.0
+ * @unrdf/federation [VERSION]
  *
  * Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication
  *

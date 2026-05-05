@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/dark-matter
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -30,7 +30,7 @@ UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extens
 
 - `@unrdf/core`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
-- `typhonjs-escomplex`: ^0.1.0
+- `typhonjs-escomplex`: ^latest
 
 ### Exports
 

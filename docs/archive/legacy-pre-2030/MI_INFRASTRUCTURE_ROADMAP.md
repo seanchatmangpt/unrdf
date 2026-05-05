@@ -468,7 +468,7 @@ export class MICoordinator {
 
 ### Questions for YAWL_RUNTIME_EXECUTION_ANALYSIS.md:
 1. What runtime features are essential?
-2. What can be deferred to v6.1?
+2. What can be deferred to vlatest?
 
 ### Questions for MINIMAL_MI_INFRASTRUCTURE.md:
 1. What's the ABSOLUTE minimum for production?
@@ -602,7 +602,7 @@ Based on existing daemon performance:
 1. Execute Phases 2-4
 2. Validate with compliance tests
 3. Update YAWL_PATTERN_COMPLIANCE_REPORT.md
-4. Ship v6.1.0 with full MI support
+4. Ship vlatest with full MI support
 
 ---
 

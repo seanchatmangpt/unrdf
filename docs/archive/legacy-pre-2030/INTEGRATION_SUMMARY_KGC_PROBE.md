@@ -32,10 +32,10 @@ Comprehensive pseudocode specification covering:
 
 ### 2. **Package Structure**
 
-#### 2.1 Configuration
+#### latest Configuration
 ✅ **File**: `/home/user/unrdf/packages/kgc-probe/package.json`
 
-- Name: `@unrdf/kgc-probe@1.0.0`
+- Name: `@unrdf/kgc-probe@latest`
 - Type: ESM module (no CJS)
 - Exports: 7 main entry points
   - `.` → src/index.mjs (main)
@@ -48,7 +48,7 @@ Comprehensive pseudocode specification covering:
 - Dependencies: 6 @unrdf packages + hash-wasm + zod
 - No external runtime deps (only workspace + well-vetted libraries)
 
-#### 2.2 Source Files
+#### latest Source Files
 ✅ **Directory**: `/home/user/unrdf/packages/kgc-probe/src/`
 
 **Core Modules** (4 files):
@@ -205,8 +205,8 @@ Agents:
 | @unrdf/oxigraph | workspace:* | ✓ | None |
 | @unrdf/hooks | workspace:* | ✓ | None |
 | @unrdf/yawl | workspace:* | ✓ | None |
-| hash-wasm | ^4.12.0 | ✓ | None |
-| zod | ^4.1.13 | ✓ | Matches workspace |
+| hash-wasm | ^latest | ✓ | None |
+| zod | ^latest | ✓ | Matches workspace |
 
 **No Circular Dependencies Detected**:
 ```

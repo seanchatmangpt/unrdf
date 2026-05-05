@@ -2,7 +2,7 @@
 
 > Real-time collaboration framework for YAWL workflows using Socket.io
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

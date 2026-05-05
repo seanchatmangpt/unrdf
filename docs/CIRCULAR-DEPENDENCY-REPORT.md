@@ -1,7 +1,7 @@
-# Circular Dependency Report - UNRDF v5.0.1
+# Circular Dependency Report - UNRDF vlatest
 
 **Report Date:** 2025-12-20
-**Analysis Tool:** check-circular-deps.mjs + madge v8.0.0
+**Analysis Tool:** check-circular-deps.mjs + madge vlatest
 **Total Packages Scanned:** 19
 
 ---
@@ -65,9 +65,9 @@ LAYER 5 (Hub Package)
 ### Package Statistics
 
 - **Total Packages:** 19
-- **Leaf Packages (0 deps):** 6 (31.6%)
-- **Mid-Level Packages (1-3 deps):** 12 (63.2%)
-- **Hub Packages (4+ deps):** 1 (5.3%)
+- **Leaf Packages (0 deps):** 6 (latest%)
+- **Mid-Level Packages (1-3 deps):** 12 (latest%)
+- **Hub Packages (4+ deps):** 1 (latest%)
 
 **Most Depended Upon:**
 1. `@unrdf/core` - 12 dependents
@@ -217,9 +217,9 @@ The fix is **trivial** because the devDependency is unused:
 @@ -44,7 +44,6 @@
    },
    "devDependencies": {
-     "@types/node": "^24.10.1",
+     "@types/node": "^latest",
 -    "@unrdf/core": "workspace:*",
-     "vitest": "^4.0.15"
+     "vitest": "^latest"
    },
 ```
 
@@ -324,12 +324,12 @@ Processed 3 files
 
 ### Phase 1: Immediate Fix (5 minutes)
 
-**Task 1.1:** Remove stale devDependency
+**Task latest:** Remove stale devDependency
 - File: `packages/oxigraph/package.json`
 - Action: Delete `"@unrdf/core": "workspace:*"` from devDependencies
 - Risk: NONE (dependency is unused)
 
-**Task 1.2:** Verify with automated checks
+**Task latest:** Verify with automated checks
 ```bash
 pnpm install                    # Update lockfile
 pnpm run check:deps            # Should show 0 cycles
@@ -338,19 +338,19 @@ pnpm -C packages/oxigraph test # Should pass
 
 ### Phase 2: Validation (10 minutes)
 
-**Task 2.1:** Run full test suite
+**Task latest:** Run full test suite
 ```bash
 pnpm test                      # All packages
 pnpm test:coverage            # Coverage should be unchanged
 ```
 
-**Task 2.2:** Verify build order
+**Task latest:** Verify build order
 ```bash
 pnpm -r --workspace-concurrency=1 build
 # Should build in correct order: oxigraph → core → others
 ```
 
-**Task 2.3:** Independent scans (confirmation)
+**Task latest:** Independent scans (confirmation)
 ```bash
 # Run twice to confirm deterministic results
 pnpm run check:deps
@@ -360,9 +360,9 @@ pnpm run check:deps
 
 ### Phase 3: Documentation (5 minutes)
 
-**Task 3.1:** Update this report with fix status
-**Task 3.2:** Document architecture decisions
-**Task 3.3:** Add to CONTRIBUTING.md:
+**Task latest:** Update this report with fix status
+**Task latest:** Document architecture decisions
+**Task latest:** Add to CONTRIBUTING.md:
 
 ```markdown
 ## Dependency Guidelines
@@ -463,7 +463,7 @@ pnpm run check:deps || {
 - **Limitations:** Does NOT detect runtime import cycles (use madge for that)
 
 ### madge
-- **Version:** 8.0.0
+- **Version:** latest
 - **Purpose:** Detect runtime circular imports in JavaScript/TypeScript
 - **Usage:** `npx madge --circular --extensions mjs,js <directory>`
 - **Coverage:** Analyzes actual `import`/`require` statements

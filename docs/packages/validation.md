@@ -2,7 +2,7 @@
 
 > OTEL validation framework for UNRDF development
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Internal
 
 ## Overview

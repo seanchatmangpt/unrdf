@@ -74,7 +74,7 @@ export default defineConfig({
       // v3.0: CLI baseline (16 lines) - CLI smoke test
       "test/cli/baseline-cli.test.mjs",
 
-      // v3.1.0: E2E integration (110 lines) - CRITICAL end-to-end validation
+      // latest: E2E integration (110 lines) - CRITICAL end-to-end validation
       "test/e2e-integration.test.mjs",
 
       // v3.0: RingBuffer utilities (354 lines) - PERFORMANCE CRITICAL

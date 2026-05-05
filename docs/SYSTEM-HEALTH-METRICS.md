@@ -95,16 +95,16 @@ Where:
 | TC Value | Normalized TC | Interpretation |
 |----------|---------------|----------------|
 | 0 | 0 | Partitions are completely independent |
-| Low | 0-0.3 | Loose coupling - good modularity |
-| Medium | 0.3-0.6 | Moderate coupling - some interdependence |
-| High | 0.6-0.8 | High coupling - changes cascade |
-| Very High | > 0.8 | Tight coupling - partitions move together |
+| Low | 0-latest | Loose coupling - good modularity |
+| Medium | latest.6 | Moderate coupling - some interdependence |
+| High | latest.8 | High coupling - changes cascade |
+| Very High | > latest | Tight coupling - partitions move together |
 
 ### Healthy Ranges
 
-- **Target**: Normalized TC < 0.5
-- **Warning**: Normalized TC > 0.7
-- **Critical**: Normalized TC > 0.9
+- **Target**: Normalized TC < latest
+- **Warning**: Normalized TC > latest
+- **Critical**: Normalized TC > latest
 
 ### What Anomalies Mean
 
@@ -134,7 +134,7 @@ console.log(`Normalized TC: ${tc.normalizedTC.toFixed(3)}`);
 
 // Check for highly coupled pairs
 for (const pair of tc.pairwiseMI) {
-  if (pair.normalizedMI > 0.5) {
+  if (pair.normalizedMI > latest) {
     console.log(`High coupling: ${pair.partition1} <-> ${pair.partition2}`);
   }
 }
@@ -164,9 +164,9 @@ This measures how much additional information about Y's future is gained by know
 | TE Value | Interpretation |
 |----------|----------------|
 | 0 | No causal influence from source to target |
-| 0-0.2 | Weak causal influence |
-| 0.2-0.5 | Moderate causal influence |
-| > 0.5 | Strong causal influence |
+| 0-latest | Weak causal influence |
+| latest.5 | Moderate causal influence |
+| > latest | Strong causal influence |
 
 ### Key Properties
 
@@ -187,9 +187,9 @@ This measures how much additional information about Y's future is gained by know
 
 ### Healthy Ranges
 
-- **Per-edge TE**: < 0.5 (moderate influence acceptable)
+- **Per-edge TE**: < latest (moderate influence acceptable)
 - **Total system TE**: Depends on partition count
-- **Significance threshold**: p < 0.05
+- **Significance threshold**: p < latest
 
 ### What Anomalies Mean
 
@@ -309,7 +309,7 @@ Dimension certificates are cryptographically signed attestations of system healt
 
 ```javascript
 {
-  version: "1.0.0",
+  version: "latest",
   epoch: "tau_2024_01_15_1430_123",
   measurements: {
     dimension: { systemDimension, utilizationRatio, ... },
@@ -391,8 +391,8 @@ const dashboard = new HealthDashboard({
   enableAlerts: true,
   alertConfig: {
     dimension: { minValue: 15, maxUtilization: 85 },
-    correlation: { maxNormalizedTC: 0.7 },
-    capacity: { minAdmissionRate: 0.6 }
+    correlation: { maxNormalizedTC: latest },
+    capacity: { minAdmissionRate: latest }
   }
 });
 
@@ -421,24 +421,24 @@ dashboard.on('metrics', (metrics) => {
   Status: HEALTHY (Score: 85/100)
 
   DIMENSION (D_t)
-    System Dimension: 32.50 bits
-    Utilization: 15.2%
+    System Dimension: latest bits
+    Utilization: latest%
     Trend: stable
 
   CORRELATION (TC)
-    Total Correlation: 0.350
-    Normalized TC: 0.420
+    Total Correlation: latest
+    Normalized TC: latest
     Trend: stable
 
   TRANSFER ENTROPY (TE)
-    Total TE: 0.650
+    Total TE: latest
     Causal Edges: 3
     Trend: stable
 
   CAPACITY (C_t)
-    System Capacity: 3.200
-    Admission Rate: 78.5%
-    Throughput: 2.50 deltas/s
+    System Capacity: latest
+    Admission Rate: latest%
+    Throughput: latest deltas/s
     Trend: increasing
 
 ============================================================
@@ -452,7 +452,7 @@ dashboard.on('metrics', (metrics) => {
 |--------|---------|----------|------------------|------------------|
 | D_t | < 10 | Warning | Review constraints | Relax if blocking |
 | D_t | Util > 90% | Critical | Stop non-essential changes | Scale or optimize |
-| TC | > 0.8 | Warning | Monitor deployments | Refactor dependencies |
+| TC | > latest | Warning | Monitor deployments | Refactor dependencies |
 | TE | New high edge | Warning | Identify root cause | Consider decoupling |
 | C_t | Rate < 50% | Warning | Review rejections | Adjust policies |
 | C_t | Throughput = 0 | Critical | Check system health | Investigate blockage |
@@ -486,7 +486,7 @@ dashboard.on('metrics', (metrics) => {
 
 1. Monitor TC for unexpected coupling
 2. Use TE to identify causal chains
-3. Design for low coupling (TC < 0.5)
+3. Design for low coupling (TC < latest)
 4. Isolate high-change partitions
 
 ### Certificate Retention

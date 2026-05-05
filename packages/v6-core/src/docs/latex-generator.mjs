@@ -267,7 +267,7 @@ function generateMainFile(docs, chapterFiles) {
          '\\begin{document}\n\n' +
          '% Title page\n' +
          '\\title{UNRDF Documentation\\\\\n' +
-         '       \\large Version 6.0.0-alpha.1}\n' +
+         '       \\large Version [VERSION]-alpha.1}\n' +
          '\\author{UNRDF Contributors}\n' +
          '\\date{Generated: ' + new Date().toISOString() + '}\n' +
          '\\maketitle\n\n' +
@@ -428,7 +428,7 @@ function sanitizeLabel(name) {
  */
 function generateLockfile(docs, mainFile, chapterFiles, hashes) {
   return {
-    version: '6.0.0-alpha.1',
+    version: '[VERSION]-alpha.1',
     generatedAt: docs.generatedAt,
     merkleRoot: docs.merkleRoot,
     files: {

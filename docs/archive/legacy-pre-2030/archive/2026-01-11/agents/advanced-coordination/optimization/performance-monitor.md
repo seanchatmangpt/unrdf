@@ -188,10 +188,10 @@ class SLAMonitor {
   // Define SLA metrics and thresholds
   defineSLA(service, slaConfig) {
     this.slaDefinitions.set(service, {
-      availability: slaConfig.availability || 99.9, // percentage
+      availability: slaConfig.availability || latest, // percentage
       responseTime: slaConfig.responseTime || 1000, // milliseconds
       throughput: slaConfig.throughput || 100, // requests per second
-      errorRate: slaConfig.errorRate || 0.1, // percentage
+      errorRate: slaConfig.errorRate || latest, // percentage
       recoveryTime: slaConfig.recoveryTime || 300, // seconds
       
       // Time windows for measurements
@@ -200,9 +200,9 @@ class SLAMonitor {
       
       // Alerting configuration
       alertThresholds: slaConfig.alertThresholds || {
-        warning: 0.8, // 80% of SLA threshold
-        critical: 0.9, // 90% of SLA threshold
-        breach: 1.0 // 100% of SLA threshold
+        warning: latest, // 80% of SLA threshold
+        critical: latest, // 90% of SLA threshold
+        breach: latest // 100% of SLA threshold
       }
     });
   }
@@ -594,7 +594,7 @@ npx claude-flow health-check --components ["swarm", "agents", "coordination"]
 npx claude-flow metrics-collect --components ["cpu", "memory", "network"]
 
 # Monitor SLA compliance
-npx claude-flow sla-monitor --service swarm-coordination --threshold 99.9
+npx claude-flow sla-monitor --service swarm-coordination --threshold latest
 ```
 
 ### Alert Configuration

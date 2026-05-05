@@ -1,4 +1,4 @@
-# v5.0.0-beta2 Test Results - VERIFIED
+# vlatest Test Results - VERIFIED
 
 **Date**: 2025-12-06
 **Assessment**: Evidence-Based (All Commands RUN)
@@ -105,7 +105,7 @@
 
 **Results**:
 ```
-Suite: comprehensive-v3.1.0
+Suite: comprehensive-vlatest
 Duration: 3012ms
 Score: 83/100 ✅
 Features: 5/6 passed
@@ -121,11 +121,11 @@ Failed: 1
 - ✅ browser-compatibility: 100/100
 
 **Performance Metrics**:
-- knowledge-engine-core: 9.6ms latency, 5 ops, 7.30MB
-- policy-packs: 11ms latency, 3 ops, 7.52MB
-- lockchain-integrity: 12.3ms latency, 3 ops, 7.58MB
-- transaction-manager: 6.67ms latency, 3 ops, 7.67MB
-- browser-compatibility: 17.7ms latency, 3 ops, 7.73MB
+- knowledge-engine-core: latestms latency, 5 ops, latestMB
+- policy-packs: 11ms latency, 3 ops, latestMB
+- lockchain-integrity: latestms latency, 3 ops, latestMB
+- transaction-manager: latestms latency, 3 ops, latestMB
+- browser-compatibility: latestms latency, 3 ops, latestMB
 
 ---
 
@@ -148,7 +148,7 @@ Failed: 1
 
 1. **Tests work**: 166 tests passing (4 core files)
 2. **OTEL validation works**: 83/100 score (5/6 features passing)
-3. **Substantial implementation**: 15K+ LOC in @unrdf/core, 5.5K+ LOC in @unrdf/cli
+3. **Substantial implementation**: 15K+ LOC in @unrdf/core, latestK+ LOC in @unrdf/cli
 4. **Infrastructure fixed**: vitest configs added, OTEL import path fixed
 
 ### What's PARTIALLY VERIFIED ⚠️
@@ -261,7 +261,7 @@ timeout 15s node validation/run-all.mjs comprehensive
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Author**: Claude (Evidence-Based Testing)
 **Status**: ✅ VERIFICATION COMPLETE

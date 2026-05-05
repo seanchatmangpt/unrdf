@@ -6,7 +6,7 @@
     "operation": "create",
     "data": {
       "package": "@unrdf/chatman-equation",
-      "version": "1.0.0",
+      "version": "[VERSION]",
       "methodology": "3T",
       "components": ["TOML", "Tera", "Turtle"],
       "structure": {
@@ -17,7 +17,7 @@
       }
     },
     "signature": "sha256:a7f2c3e1d4b5a6c8",
-    "kgcVersion": "4.0.0",
+    "kgcVersion": "[VERSION]",
     "universe": "chatman-equation-v1"
   },
   "documentation": {
@@ -37,7 +37,7 @@
       }
     },
     "signature": "sha256:b8e3d4f2e5c6b7d9",
-    "kgcVersion": "4.0.0",
+    "kgcVersion": "[VERSION]",
     "universe": "chatman-equation-v1"
   },
   "ontology": {
@@ -68,7 +68,7 @@
       ]
     },
     "signature": "sha256:c9f4e5g3f6d7c8ea",
-    "kgcVersion": "4.0.0",
+    "kgcVersion": "[VERSION]",
     "universe": "chatman-equation-v1"
   },
   "integration": {
@@ -112,7 +112,7 @@
       }
     },
     "signature": "sha256:d1g5f6h4g7e8d9fb",
-    "kgcVersion": "4.0.0",
+    "kgcVersion": "[VERSION]",
     "universe": "chatman-equation-v1"
   },
   "metadata": {
@@ -120,7 +120,7 @@
     "totalReceipts": 4,
     "methodology": "3T (TOML + Tera + Turtle)",
     "package": "@unrdf/chatman-equation",
-    "version": "1.0.0",
+    "version": "[VERSION]",
     "receiptChain": [
       "receipt-package-1737192000000",
       "receipt-documentation-1737192060000",

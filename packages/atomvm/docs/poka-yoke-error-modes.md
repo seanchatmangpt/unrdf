@@ -61,12 +61,12 @@
 ### Resource Errors
 
 - [x] **AtomVM file not found (Node)**
-  - Error: `AtomVM-node-v0.6.6.js` not found in public directory
+  - Error: `AtomVM-node-[VERSION].js` not found in public directory
   - Current: Runtime check throws error
   - Prevention: File existence validation at load time
 
 - [x] **AtomVM script not found (Browser)**
-  - Error: `AtomVM-web-v0.6.6.js` not found
+  - Error: `AtomVM-web-[VERSION].js` not found
   - Current: Network error
   - Prevention: Script existence check before loading
 

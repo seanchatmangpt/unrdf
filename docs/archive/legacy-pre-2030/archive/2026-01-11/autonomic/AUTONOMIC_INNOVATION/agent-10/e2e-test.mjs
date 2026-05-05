@@ -30,7 +30,7 @@ function hashValue(value) {
  */
 const demoProfile = {
   name: 'CustomerDomain',
-  version: '1.0.0',
+  version: 'latest',
   entities: {
     Customer: {
       properties: {
@@ -56,7 +56,7 @@ const demoProfile = {
  */
 const demoLens = {
   name: 'CustomerLens',
-  version: '1.0.0',
+  version: 'latest',
   mappings: {
     Customer: {
       subject: 'http://example.org/customer/{id}',

@@ -1,8 +1,8 @@
 # RDF Core Performance Benchmark Report
 
 **Date**: 2026-01-11
-**Version**: @unrdf/core v6.0.0-alpha.1
-**Platform**: Node.js on Linux 4.4.0
+**Version**: @unrdf/core vlatest.1
+**Platform**: Node.js on Linux latest
 
 ## Executive Summary
 
@@ -26,10 +26,10 @@ Comprehensive performance benchmarking of @unrdf/core RDF operations including p
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 0.090ms | - | - |
-| P95 Latency | 3.497ms | <50ms | ✅ PASS |
-| P99 Latency | 3.497ms | - | - |
-| Mean Latency | 0.292ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <50ms | ✅ PASS |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 
 **Analysis**:
 - ✅ Excellent parsing performance for small Turtle documents
@@ -46,17 +46,17 @@ Comprehensive performance benchmarking of @unrdf/core RDF operations including p
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 2.959ms | - | - |
-| P95 Latency | 16.730ms | <10ms | ⚠️ FAIL |
-| P99 Latency | 16.730ms | - | - |
-| Mean Latency | 4.216ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <10ms | ⚠️ FAIL |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 | Throughput | ~6,000 quads/s | - | - |
 
 **Analysis**:
 - ⚠️ P95 latency exceeds target by 67%
 - ⚠️ High P99 tail latency indicates variability
 - ⚠️ Possible bottleneck in batch add operations
-- ℹ️ Mean performance is acceptable (4.2ms)
+- ℹ️ Mean performance is acceptable (latestms)
 
 **Recommendations**:
 1. **IMMEDIATE**: Investigate P95/P99 tail latencies
@@ -70,17 +70,17 @@ Comprehensive performance benchmarking of @unrdf/core RDF operations including p
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 0.229ms | - | - |
-| P95 Latency | 0.525ms | <5ms | ✅ PASS |
-| P99 Latency | 2.920ms | - | - |
-| Mean Latency | 0.306ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <5ms | ✅ PASS |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 | Throughput | ~3,267 queries/s | - | - |
 
 **Analysis**:
 - ✅ Excellent query performance for pattern matching
 - ✅ P95 latency well below target
 - ✅ High throughput suitable for production
-- ℹ️ P99 spike (2.92ms) likely GC-related
+- ℹ️ P99 spike (latestms) likely GC-related
 
 **Recommendation**: APPROVED for production use
 
@@ -88,10 +88,10 @@ Comprehensive performance benchmarking of @unrdf/core RDF operations including p
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 0.164ms | - | - |
-| P95 Latency | 0.327ms | <1ms | ✅ PASS |
-| P99 Latency | 0.980ms | - | - |
-| Mean Latency | 0.202ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <1ms | ✅ PASS |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 | Throughput | ~4,955 counts/s | - | - |
 
 **Analysis**:
@@ -109,21 +109,21 @@ Comprehensive performance benchmarking of @unrdf/core RDF operations including p
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 0.527ms | - | - |
-| P95 Latency | 26.118ms | <10ms | ⚠️ FAIL |
-| P99 Latency | 26.118ms | - | - |
-| Mean Latency | 1.872ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <10ms | ⚠️ FAIL |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 | Throughput | ~534 queries/s | - | - |
 
 **Query Tested**:
 ```sparql
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 SELECT ?name WHERE { ?s foaf:name ?name }
 ```
 
 **Analysis**:
 - ⚠️ P95 latency exceeds target by 161%
-- ⚠️ Significant P50 to P95 gap (0.5ms → 26ms)
+- ⚠️ Significant P50 to P95 gap (latestms → 26ms)
 - ⚠️ Indicates query optimization or caching issue
 - ℹ️ Mean latency is acceptable but variance is high
 
@@ -148,10 +148,10 @@ SELECT ?name WHERE { ?s foaf:name ?name }
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| P50 Latency | 0.008ms | - | - |
-| P95 Latency | 0.015ms | <0.1ms | ✅ PASS |
-| P99 Latency | 0.060ms | - | - |
-| Mean Latency | 0.011ms | - | - |
+| P50 Latency | latestms | - | - |
+| P95 Latency | latestms | <latestms | ✅ PASS |
+| P99 Latency | latestms | - | - |
+| Mean Latency | latestms | - | - |
 | Throughput | ~93,851 validations/s | - | - |
 
 **Analysis**:
@@ -169,12 +169,12 @@ SELECT ?name WHERE { ?s foaf:name ?name }
 | Operation | Target | Actual (P95) | Delta | Status |
 |-----------|--------|--------------|-------|--------|
 | Turtle Parse (10K) | <1000ms | Not tested | - | - |
-| SPARQL SELECT | <10ms | 26.118ms | +161% | ⚠️ FAIL |
+| SPARQL SELECT | <10ms | latestms | +161% | ⚠️ FAIL |
 | Graph Add (1K) | <50ms | Not tested | - | - |
-| Graph Add (100) | <10ms | 16.730ms | +67% | ⚠️ FAIL |
-| Graph Find | <5ms | 0.525ms | -89% | ✅ PASS |
-| Graph Count | <1ms | 0.327ms | -67% | ✅ PASS |
-| Quad Validation | <0.1ms | 0.015ms | -85% | ✅ PASS |
+| Graph Add (100) | <10ms | latestms | +67% | ⚠️ FAIL |
+| Graph Find | <5ms | latestms | -89% | ✅ PASS |
+| Graph Count | <1ms | latestms | -67% | ✅ PASS |
+| Quad Validation | <latestms | latestms | -85% | ✅ PASS |
 
 ## Comparison vs Baseline
 
@@ -233,7 +233,7 @@ Based on architectural differences:
 
 ## Test Configuration
 
-**Hardware**: Docker container (Linux 4.4.0)
+**Hardware**: Docker container (Linux latest)
 **Node.js**: v18+ (exact version from container)
 **Iterations**:
 - Parsing: 20 iterations
@@ -305,5 +305,5 @@ node benchmarks/rdf-core/runner.mjs --verbose
 ---
 
 **Report Generated**: 2026-01-11T06:23:00Z
-**Benchmark Version**: 1.0.0
+**Benchmark Version**: latest
 **Contact**: UNRDF Performance Team

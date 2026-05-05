@@ -1,7 +1,7 @@
 ---
 title: "test-deterministic Documentation"
 packageName: "test-deterministic"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2000-01-01T00:00:00.000Z"
 ---
 

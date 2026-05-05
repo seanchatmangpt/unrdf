@@ -1,4 +1,4 @@
-# UNRDF v3.0.1 Smoke Test
+# UNRDF latest Smoke Test
 
 Quick smoke test to verify UNRDF knowledge engine functionality.
 
@@ -39,7 +39,7 @@ pnpm test:utils
 
 ```
 ╔════════════════════════════════════════════════╗
-║   UNRDF v3.0.1 Knowledge Engine Smoke Test    ║
+║   UNRDF latest Knowledge Engine Smoke Test    ║
 ╚════════════════════════════════════════════════╝
 
 ━━━ 1. Initialize Knowledge Engine ━━━
@@ -100,7 +100,7 @@ pnpm test:utils
 ║                                                ║
 ║  6/6 tests passed (100.0%)                    ║
 ║                                                ║
-║  UNRDF v3.0.1 smoke test successful! 🚀       ║
+║  UNRDF latest smoke test successful! 🚀       ║
 ╚════════════════════════════════════════════════╝
 ```
 
@@ -160,7 +160,7 @@ npm install -g pnpm
 
 To test a specific version:
 ```bash
-pnpm add unrdf@3.0.1
+pnpm add unrdf@latest
 pnpm test
 ```
 

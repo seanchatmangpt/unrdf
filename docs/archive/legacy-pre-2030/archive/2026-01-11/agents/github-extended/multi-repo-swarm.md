@@ -189,7 +189,7 @@ dependencies:
 # Update dependencies across all repos with gh CLI
 # Create tracking issue first
 TRACKING_ISSUE=$(gh issue create \
-  --title "Dependency Update: typescript@5.0.0" \
+  --title "Dependency Update: typescript@latest" \
   --body "Tracking issue for updating TypeScript across all repositories" \
   --label "dependencies,tracking" \
   --json number -q .number)
@@ -210,21 +210,21 @@ echo "$TS_REPOS" | while read -r repo; do
   cd /tmp/$repo
   
   # Update dependency
-  npm install --save-dev typescript@5.0.0
+  npm install --save-dev typescript@latest
   
   # Test changes
   if npm test; then
     # Create PR
     git checkout -b update-typescript-5
     git add package.json package-lock.json
-    git commit -m "chore: Update TypeScript to 5.0.0
+    git commit -m "chore: Update TypeScript to latest
 
 Part of #$TRACKING_ISSUE"
     
     git push origin HEAD
     gh pr create \
-      --title "Update TypeScript to 5.0.0" \
-      --body "Updates TypeScript to version 5.0.0\n\nTracking: #$TRACKING_ISSUE" \
+      --title "Update TypeScript to latest" \
+      --body "Updates TypeScript to version latest\n\nTracking: #$TRACKING_ISSUE" \
       --label "dependencies"
   else
     # Report failure
@@ -396,7 +396,7 @@ npx ruv-swarm github health-check \
   "sync": {
     "strategy": "strong",
     "consensus": "raft",
-    "quorum": 0.51,
+    "quorum": latest,
     "timeout": "30s"
   }
 }
@@ -434,7 +434,7 @@ npx ruv-swarm github microservices \
 # Update shared library across consumers
 npx ruv-swarm github lib-update \
   --library "org/shared-lib" \
-  --version "2.0.0" \
+  --version "latest" \
   --find-consumers \
   --update-imports \
   --run-tests

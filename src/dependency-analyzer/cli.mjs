@@ -46,7 +46,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  */
 const CLI_CONFIG = {
   name: 'dependency-analyzer',
-  version: '1.0.0',
+  version: '[VERSION]',
   description: 'Monorepo dependency analysis toolkit'
 };
 

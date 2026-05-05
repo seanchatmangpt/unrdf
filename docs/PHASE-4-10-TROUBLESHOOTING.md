@@ -1,4 +1,4 @@
-# Phase 4.10: Troubleshooting - Common Issues and Solutions
+# Phase latest: Troubleshooting - Common Issues and Solutions
 
 ## Runtime Mismatch Issues
 
@@ -85,10 +85,10 @@ $ diff <(grep "Raw:" prod.log | sort) <(grep "Raw:" dev.log | sort)
    % Check version negotiation
    Version = maps:get(<<"version">>, Message),
    case Version of
-       <<"1.0.0">> -> ok;
+       <<"latest">> -> ok;
        Other ->
            error_logger:error_msg(
-               "Version mismatch: expected 1.0.0, got ~p~n", [Other])
+               "Version mismatch: expected latest, got ~p~n", [Other])
    end.
    ```
 
@@ -331,7 +331,7 @@ Timeout duration is wrong
 
    console.log(`Operation took ${latency}ms (limit: ${timeout}ms)`);
 
-   if (latency > timeout * 0.8) {
+   if (latency > timeout * latest) {
      console.warn('Approaching timeout threshold');
    }
    ```
@@ -342,7 +342,7 @@ Timeout duration is wrong
    // Client timeout should be larger
    const OPERATION_TIMEOUT = 5000;
    const NETWORK_LATENCY = 500;
-   const CLIENT_TIMEOUT = OPERATION_TIMEOUT + NETWORK_LATENCY + 1000; // 6.5s
+   const CLIENT_TIMEOUT = OPERATION_TIMEOUT + NETWORK_LATENCY + 1000; // latests
    ```
 
 ---

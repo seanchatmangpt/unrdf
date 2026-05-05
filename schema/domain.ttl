@@ -12,11 +12,11 @@
 <https://unrdf.io/> a owl:Ontology ;
     rdfs:label "UNRDF Domain Ontology" ;
     dcterms:title "RDF Knowledge Graph Substrate Platform Ontology" ;
-    dcterms:description "Ontology for UNRDF v6.0.0 Knowledge Graph substrate platform" ;
-    dcterms:version "6.0.0-rc.1" ;
+    dcterms:description "Ontology for UNRDF latest Knowledge Graph substrate platform" ;
+    dcterms:version "latest-rc.1" ;
     dcterms:issued "2025-01-01"^^xsd:date ;
     dcterms:license <https://spdx.org/licenses/Apache-2.0> ;
-    owl:versionIRI <https://unrdf.io/6.0.0-rc.1> .
+    owl:versionIRI <https://unrdf.io/latest-rc.1> .
 
 # Core Entities
 
@@ -156,41 +156,41 @@ unrdf:InternalTier a unrdf:Tier ;
 
 unrdf:CorePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/core" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "RDF Graph Operations, SPARQL, Foundational Substrate" ;
     unrdf:hasTier unrdf:EssentialTier .
 
 unrdf:OxigraphPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/oxigraph" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Oxigraph SPARQL engine binding (10-100x faster than N3)" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:KGCPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-4d" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "KGC 4D Datum & Universe Freeze Engine" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:HooksPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/hooks" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Policy Definition and Execution Framework" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:StreamingPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/streaming" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Change Feeds and Real-time Synchronization" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:V6CorePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/v6-core" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "ΔGate control plane, unified receipts, delta contracts" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage .
@@ -199,14 +199,14 @@ unrdf:V6CorePackage a unrdf:Package ;
 
 unrdf:FederationPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/federation" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Distributed RDF Query with RAFT Consensus" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:KnowledgeEnginePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/knowledge-engine" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Rule Engine, Inference, Pattern Matching" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -214,21 +214,21 @@ unrdf:KnowledgeEnginePackage a unrdf:Package ;
 
 unrdf:CLIPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/cli" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Command-line Tools for Graph Operations" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:ReceiptsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/receipts" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Batch receipt generation with Merkle trees" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage .
 
 unrdf:ConsensusPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/consensus" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "Production-grade Raft consensus" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;

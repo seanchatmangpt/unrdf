@@ -44,13 +44,13 @@ All packages emit OTEL traces, metrics, and logs. External OTEL collectors (Jaeg
    ```
    User Request
      ├─ @unrdf/core: parseRdf() [2ms]
-     │   └─ @unrdf/oxigraph: load() [1.8ms]
+     │   └─ @unrdf/oxigraph: load() [latestms]
      ├─ @unrdf/hooks: executeHookChain() [5ms]
-     │   ├─ Hook: validateEmail [0.5ms]
+     │   ├─ Hook: validateEmail [latestms]
      │   ├─ Hook: normalizeData [1ms]
-     │   └─ Hook: logInsertion [0.2ms]
+     │   └─ Hook: logInsertion [latestms]
      └─ @unrdf/kgc-4d: record() [3ms]
-         └─ Git commit [2.5ms]
+         └─ Git commit [latestms]
 
    Total: 10ms (breakdown visible in trace)
    ```

@@ -45,7 +45,7 @@ try {
     action: 'add-user',
     delta: result.delta,
     timestamp: new Date(),
-    metadata: { ip: '192.168.1.1', reason: 'User registration' }
+    metadata: { ip: 'latest.1', reason: 'User registration' }
   });
 
   console.log('Receipt created:', {

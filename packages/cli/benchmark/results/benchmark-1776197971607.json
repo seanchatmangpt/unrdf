@@ -1,7 +1,7 @@
 {
   "metadata": {
     "timestamp": "2026-04-14T20:19:31.606Z",
-    "nodeVersion": "v25.7.0",
+    "nodeVersion": "[VERSION]",
     "platform": "darwin arm64",
     "scales": [
       1,

@@ -62,12 +62,12 @@ test('v6-smoke: all modules import successfully', () => {
 
 // Test Suite: Version and Status
 test('v6-smoke: version is correct', () => {
-  assert.strictEqual(V6_VERSION, '6.0.0-alpha.1');
+  assert.strictEqual(V6_VERSION, '[VERSION]-alpha.1');
 });
 
 test('v6-smoke: getV6Status returns valid status', () => {
   const status = getV6Status();
-  assert.strictEqual(status.version, '6.0.0-alpha.1');
+  assert.strictEqual(status.version, '[VERSION]-alpha.1');
   assert.strictEqual(status.status, 'alpha');
   assert.ok(status.features);
   assert.ok(status.timestamp);
@@ -204,7 +204,7 @@ test('v6-smoke: buildCLISpine creates CLI structure', () => {
   const spine = buildCLISpine();
 
   assert.strictEqual(spine.name, 'v6');
-  assert.strictEqual(spine.version, '6.0.0-alpha.1');
+  assert.strictEqual(spine.version, '[VERSION]-alpha.1');
   assert.ok(spine.commands);
   assert.ok(spine.description);
 });
@@ -235,14 +235,14 @@ test('v6-smoke: V6_COMMANDS contains expected commands', () => {
 
 // Test Suite: Grammar Capsule
 test('v6-smoke: GRAMMAR_VERSION is correct', () => {
-  assert.strictEqual(GRAMMAR_VERSION, '6.0.0-alpha.1');
+  assert.strictEqual(GRAMMAR_VERSION, '[VERSION]-alpha.1');
 });
 
 test('v6-smoke: V6_GRAMMAR contains definitions', () => {
   assert.ok(V6_GRAMMAR.definitions.receipt);
   assert.ok(V6_GRAMMAR.definitions.delta);
   assert.ok(V6_GRAMMAR.definitions.operation);
-  assert.strictEqual(V6_GRAMMAR.version, '6.0.0-alpha.1');
+  assert.strictEqual(V6_GRAMMAR.version, '[VERSION]-alpha.1');
   assert.ok(Array.isArray(V6_GRAMMAR.types));
   assert.strictEqual(typeof V6_GRAMMAR.pipeline, 'function');
 });

@@ -1,6 +1,6 @@
 # UNRDF API Architecture
 
-> **Version**: 4.0.0
+> **Version**: latest
 > **Last Updated**: 2025-11-21
 
 ---
@@ -268,22 +268,22 @@ src/index.mjs
 
 | Dependency | Version | Purpose |
 |------------|---------|---------|
-| `n3` | ^1.17.0 | N3.js RDF library (Store, Parser, Writer) |
-| `@comunica/query-sparql` | ^3.0.0 | SPARQL query engine |
-| `rdf-ext` | ^2.0.0 | RDF/JS Dataset implementation |
-| `rdf-validate-shacl` | ^0.6.5 | SHACL validation |
-| `rdf-canonize` | ^2.0.0 | RDF canonicalization |
-| `eyereasoner` | ^1.0.0 | N3 reasoning engine |
-| `jsonld` | ^8.2.0 | JSON-LD processing |
-| `zod` | ^3.22.0 | Runtime validation |
-| `unctx` | ^1.0.0 | Composition context |
-| `citty` | ^0.1.6 | CLI framework |
+| `n3` | ^latest | N3.js RDF library (Store, Parser, Writer) |
+| `@comunica/query-sparql` | ^latest | SPARQL query engine |
+| `rdf-ext` | ^latest | RDF/JS Dataset implementation |
+| `rdf-validate-shacl` | ^latest | SHACL validation |
+| `rdf-canonize` | ^latest | RDF canonicalization |
+| `eyereasoner` | ^latest | N3 reasoning engine |
+| `jsonld` | ^latest | JSON-LD processing |
+| `zod` | ^latest | Runtime validation |
+| `unctx` | ^latest | Composition context |
+| `citty` | ^latest | CLI framework |
 | `@opentelemetry/*` | Various | Observability |
-| `@noble/hashes` | ^1.3.0 | Cryptographic hashing |
-| `lru-cache` | ^11.2.2 | Caching |
-| `isolated-vm` | ^6.0.2 | Secure sandboxing |
-| `vm2` | ^3.9.0 | VM sandboxing |
-| `ws` | ^8.18.3 | WebSocket support |
+| `@noble/hashes` | ^latest | Cryptographic hashing |
+| `lru-cache` | ^latest | Caching |
+| `isolated-vm` | ^latest | Secure sandboxing |
+| `vm2` | ^latest | VM sandboxing |
+| `ws` | ^latest | WebSocket support |
 
 ### Internal Module Dependencies
 
@@ -569,7 +569,7 @@ Create policy pack plugins:
 {
   "meta": {
     "name": "compliance-pack",
-    "version": "1.0.0"
+    "version": "latest"
   },
   "hooks": [
     {
@@ -762,6 +762,6 @@ class KnowledgeHookManager {
 
 ---
 
-> **Document Version**: 1.0.0
+> **Document Version**: latest
 > **Generated**: 2025-11-21
 > **Maintainer**: UNRDF Team

@@ -33,7 +33,7 @@ describe('loadEquationSchema', () => {
     // Assert
     expect(schema).toBeDefined();
     expect(schema.metadata).toBeDefined();
-    expect(schema.metadata.version).toBe('1.0.0');
+    expect(schema.metadata.version).toBe('[VERSION]');
     expect(schema.observations).toBeDefined();
     expect(schema.closure_operator).toBeDefined();
     expect(schema.artifacts).toBeDefined();

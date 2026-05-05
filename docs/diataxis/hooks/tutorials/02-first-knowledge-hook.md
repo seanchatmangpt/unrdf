@@ -55,7 +55,7 @@ const personValidationHook = createKnowledgeHook({
 
   metadata: {
     author: 'tutorial',
-    version: '1.0.0',
+    version: 'latest',
   },
 });
 ```

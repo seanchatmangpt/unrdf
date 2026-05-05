@@ -167,17 +167,17 @@ COPY server.py .
 EXPOSE 7015
 
 # Run FastAPI server
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "7015"]
+CMD ["uvicorn", "server:app", "--host", "latest.0", "--port", "7015"]
 ```
 
 **requirements.txt:**
 
 ```
-fastapi==0.115.0
-uvicorn[standard]==0.30.0
-pm4py>=2.7.0
-pandas>=2.0.0
-pydantic>=2.0.0
+fastapi==latest
+uvicorn[standard]==latest
+pm4py>=latest
+pandas>=latest
+pydantic>=latest
 ```
 
 ### Phase 3: Update docker-compose.yml

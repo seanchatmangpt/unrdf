@@ -9,11 +9,11 @@
 ## EXECUTIVE SUMMARY: ⚠️ NOT PRODUCTION READY
 
 ### Overall Verdict
-**Production Readiness Score**: **5.8/10** - BLOCKED by critical issues
+**Production Readiness Score**: **latest/10** - BLOCKED by critical issues
 
 ### Critical Blockers (Must Fix Before Deployment)
-1. ❌ **Test Failures**: 114/370 tests failing (69.2% pass rate, target: >95%)
-2. ❌ **YAWL Package**: 110/292 tests failing (62.3% pass rate)
+1. ❌ **Test Failures**: 114/370 tests failing (latest% pass rate, target: >95%)
+2. ❌ **YAWL Package**: 110/292 tests failing (latest% pass rate)
 3. ❌ **Linting Errors**: 42 errors, 25 warnings (target: 0 errors)
 4. ❌ **File Size Violations**: 11 files exceed 500-line limit (largest: 1709 lines)
 5. ❌ **N3 Import Violation**: 1 architectural violation in packages/core/src/rdf/n3-migration.mjs:25
@@ -27,7 +27,7 @@
 - ✅ Microframework Integration: 12-package mega-framework works
 - ✅ Cross-Package Imports: All dependencies resolve correctly
 - ✅ Documentation: 153% JSDoc coverage
-- ✅ Architecture: 87.8% pure functions, clean OTEL separation
+- ✅ Architecture: latest% pure functions, clean OTEL separation
 - ✅ Pattern Reuse: Excellent (createReceipt: 20+ usages)
 
 ---
@@ -45,20 +45,20 @@
 
 #### Agent 2: Code Analyzer
 - **Status**: ⚠️ QUALITY ISSUES
-- **Quality Score**: 5.5/10
+- **Quality Score**: latest/10
 - **File Size Violations**: 11 files >500 lines
-  - workflow-api.mjs: 1709 lines (3.4x over limit)
-  - yawl-resources.mjs: 1569 lines (3.1x over limit)
-  - yawl-cancellation.mjs: 1540 lines (3.0x over limit)
+  - workflow-api.mjs: 1709 lines (latestx over limit)
+  - yawl-resources.mjs: 1569 lines (latestx over limit)
+  - yawl-cancellation.mjs: 1540 lines (latestx over limit)
 - **Technical Debt**: 77-85 hours (2 engineer-weeks)
 
 #### Agent 3: Tester
 - **Status**: ❌ CRITICAL FAILURES
-- **Overall Pass Rate**: 69.2% (256/370 tests)
-- **YAWL**: 182/292 passed (62.3%)
-- **KGC-4D**: 296/305 passed (97.0%)
+- **Overall Pass Rate**: latest% (256/370 tests)
+- **YAWL**: 182/292 passed (latest%)
+- **KGC-4D**: 296/305 passed (latest%)
 - **AtomVM**: 45/45 passed (100%)
-- **Root Tests**: 24/28 passed (85.7%)
+- **Root Tests**: 24/28 passed (latest%)
 
 #### Agent 4: System Architect
 - **Status**: ✅ PASS
@@ -90,20 +90,20 @@
 ### Test Execution Results
 | Package | Pass | Fail | Total | Rate | Duration |
 |---------|------|------|-------|------|----------|
-| **@unrdf/yawl** | 182 | 110 | 292 | 62.3% | 2.54s |
-| **@unrdf/kgc-4d** | 296 | 9 | 305 | 97.0% | 3.34s |
-| **@unrdf/atomvm** | 45 | 0 | 45 | 100% | 18.36s ⚠️ |
-| **Root tests** | 24 | 4 | 28 | 85.7% | 3.06s |
-| **TOTAL** | **256** | **114** | **370** | **69.2%** | ~27s |
+| **@unrdf/yawl** | 182 | 110 | 292 | latest% | latests |
+| **@unrdf/kgc-4d** | 296 | 9 | 305 | latest% | latests |
+| **@unrdf/atomvm** | 45 | 0 | 45 | 100% | latests ⚠️ |
+| **Root tests** | 24 | 4 | 28 | latest% | latests |
+| **TOTAL** | **256** | **114** | **370** | **latest%** | ~27s |
 
 ### Performance Metrics
 | Operation | Measured | Target | Status |
 |-----------|----------|--------|--------|
 | **YAWL Import** | 903ms | <1000ms | ✅ PASS |
 | **YAWL Startup** | 733ms | <1000ms | ✅ PASS |
-| **YAWL Tests** | 2.54s | <30s | ✅ PASS |
-| **KGC-4D Tests** | 3.34s | <30s | ✅ PASS |
-| **AtomVM Tests** | 18.36s | <15s | ❌ FAIL (22% over) |
+| **YAWL Tests** | latests | <30s | ✅ PASS |
+| **KGC-4D Tests** | latests | <30s | ✅ PASS |
+| **AtomVM Tests** | latests | <15s | ❌ FAIL (22% over) |
 | **YAWL Build** | >120s | <15s | ❌ FAIL (8x over) |
 | **Lint Execution** | <15s | <15s | ✅ PASS (with errors) |
 
@@ -111,9 +111,9 @@
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
 | **JSDoc Coverage** | 153% | 100% | ✅ PASS |
-| **Pure Functions** | 87.8% | >80% | ✅ PASS |
+| **Pure Functions** | latest% | >80% | ✅ PASS |
 | **Zod Imports** | 33 | High | ✅ PASS |
-| **File Size <500** | 603/614 (98.2%) | 100% | ❌ FAIL |
+| **File Size <500** | 603/614 (latest%) | 100% | ❌ FAIL |
 | **Lint Errors** | 42 | 0 | ❌ FAIL |
 | **Lint Warnings** | 25 | <10 | ❌ FAIL |
 | **N3 Violations** | 1 | 0 | ❌ FAIL |
@@ -125,13 +125,13 @@
 
 ### Issue 1: YAWL Not Production Ready
 **CLAIM**: "Complete @unrdf/yawl implementation"
-**REALITY**: 110/292 tests failing (37.7% failure rate)
+**REALITY**: 110/292 tests failing (latest% failure rate)
 **EVIDENCE**:
 ```bash
 $ cd packages/yawl && pnpm test
 Test Files: 5 failed | 3 passed (8 total)
 Tests: 110 failed | 182 passed (292 total)
-Duration: 2.54s
+Duration: latests
 ```
 **ROOT CAUSE**: ZodError on `tasks` field (91+ occurrences)
 **IMPACT**: Workflow patterns WP1-WP20 non-functional
@@ -152,7 +152,7 @@ $ find . -name "max-combo-*.mjs" -o -name "microfw-*.mjs"
 
 ### Issue 3: File Size Violations
 **CLAIM**: "Files <500 lines" (CLAUDE.md rule)
-**REALITY**: 11 files violate (1.8% of codebase)
+**REALITY**: 11 files violate (latest% of codebase)
 **EVIDENCE**: workflow-api.mjs (1709 lines), yawl-resources.mjs (1569 lines), etc.
 **IMPACT**: Maintainability risk, cognitive overload
 **TECHNICAL DEBT**: 77-85 hours to refactor
@@ -220,16 +220,16 @@ TEST 1: GET /customers - Status: 200
 TEST 2: GET /customers/1 - Status: 200
 TEST 3: GET /customers/1/orders (RDF-routed) - Status: 200
 ```
-**Runtime**: 0.077s
+**Runtime**: latests
 
 ### 4. KGC-4D Package ✅
-**Result**: 296/305 tests passing (97.0%)
-**Duration**: 3.34s
+**Result**: 296/305 tests passing (latest%)
+**Duration**: latests
 **Known Issues**: 9 failures (time.test.mjs BigInt, store.test.mjs event counts)
 
 ### 5. AtomVM Package ✅
 **Result**: 45/45 tests passing (100%)
-**Duration**: 18.36s (⚠️ exceeds 15s SLA by 22%)
+**Duration**: latests (⚠️ exceeds 15s SLA by 22%)
 **Components**: Browser integration, service workers, terminal UI, poka-yoke
 
 ### 6. Cross-Package Imports ✅
@@ -248,7 +248,7 @@ Import time: 903ms
 ## PRESS RELEASE VALIDATION (OTEL-Style)
 
 **Validator**: packages/yawl/validation/press-release-validation.mjs
-**Execution Time**: 599.50ms
+**Execution Time**: latestms
 **Result**: 6/10 claims passed (60%)
 
 | Claim | Status | Evidence |
@@ -273,7 +273,7 @@ Import time: 903ms
 #### Strengths ✅
 1. **Dependency Graph**: Clean, acyclic, 21 packages
 2. **OTEL Separation**: 100% correct (no OTEL in business logic)
-3. **Pure Functions**: 87.8% (101/115 functions)
+3. **Pure Functions**: latest% (101/115 functions)
 4. **Scalability**: Federation support, horizontal scaling ready
 5. **Pattern Reuse**: createReceipt (20+ usages), appendEvent (9+ usages)
 
@@ -285,7 +285,7 @@ Import time: 903ms
 #### Compliance with CLAUDE.md
 | Rule | Status | Notes |
 |------|--------|-------|
-| Pure functions in business logic | ✅ PASS | 87.8% pure |
+| Pure functions in business logic | ✅ PASS | latest% pure |
 | No OTEL in implementation | ✅ PASS | 0 violations |
 | Zod validation at boundaries | ✅ PASS | 50 validation calls |
 | Files <500 lines | ❌ FAIL | 11 violations |
@@ -300,7 +300,7 @@ Import time: 903ms
 | Operation | SLA | Actual | Variance | Action Required |
 |-----------|-----|--------|----------|-----------------|
 | **YAWL Build** | 15s | >120s | +700% | ⚠️ INVESTIGATE ROOT CAUSE |
-| **AtomVM Tests** | 15s | 18.36s | +22% | ⚠️ PROFILE TEST SUITE |
+| **AtomVM Tests** | 15s | latests | +22% | ⚠️ PROFILE TEST SUITE |
 | **pnpm install** | 60s | 185s | +208% | ℹ️ ACCEPTABLE (first install) |
 
 ### Performance Wins ✅
@@ -308,9 +308,9 @@ Import time: 903ms
 | Operation | SLA | Actual | Savings |
 |-----------|-----|--------|---------|
 | **YAWL Import** | 1000ms | 903ms | -10% |
-| **YAWL Tests** | 30s | 2.54s | -92% |
-| **KGC-4D Tests** | 30s | 3.34s | -89% |
-| **Graph Routing** | 5s | 0.077s | -98% |
+| **YAWL Tests** | 30s | latests | -92% |
+| **KGC-4D Tests** | 30s | latests | -89% |
+| **Graph Routing** | 5s | latests | -98% |
 
 ---
 
@@ -319,7 +319,7 @@ Import time: 903ms
 ### P0 - Critical (Block Merge Until Fixed)
 
 1. **Fix YAWL Test Failures** [10 hours]
-   - **Issue**: 110/292 tests failing (37.7% failure rate)
+   - **Issue**: 110/292 tests failing (latest% failure rate)
    - **Root Cause**: ZodError on `tasks` field in WorkflowSpecSchema
    - **Files**: workflow-api.test.mjs (39 failures), yawl-events.test.mjs (21 failures)
    - **Target**: 100% pass rate
@@ -349,7 +349,7 @@ Import time: 903ms
    - **Action**: Profile `tsc --emitDeclarationOnly`, consider esbuild
 
 7. **Fix AtomVM Test Performance** [4 hours]
-   - **Issue**: 18.36s exceeds 15s SLA
+   - **Issue**: latests exceeds 15s SLA
    - **Action**: Profile test suite, parallelize where possible
 
 ### P2 - Medium Priority (This Quarter)
@@ -363,7 +363,7 @@ Import time: 903ms
    - **Scope**: KGC-4D temporal queries
 
 10. **Improve Test Coverage** [20 hours]
-    - **Current**: 69.2% overall, 62.3% YAWL
+    - **Current**: latest% overall, latest% YAWL
     - **Target**: 90%+ across all packages
 
 ---
@@ -381,12 +381,12 @@ Import time: 903ms
 ### Can I PROVE It?
 - ✅ **YES** - Test counts: 256 pass, 114 fail, 370 total
 - ✅ **YES** - File counts: 614 .mjs files, 79,747 lines
-- ✅ **YES** - Performance metrics: 903ms import, 2.54s tests
+- ✅ **YES** - Performance metrics: 903ms import, latests tests
 - ✅ **YES** - Exit codes captured (0 = success, 1 = failure)
 - ✅ **YES** - Stack traces for failures documented
 
 ### What BREAKS If I'm Wrong?
-- **YAWL Production Use**: 110 failing tests = 37.7% of features broken
+- **YAWL Production Use**: 110 failing tests = latest% of features broken
 - **Maintainability**: 11 files >500 lines = high refactoring cost
 - **Code Quality**: 42 lint errors = standards violations
 - **Architecture**: 1 N3 violation = pattern leakage
@@ -409,7 +409,7 @@ Import time: 903ms
 | **Test Output** | 90% | Ran + read output | ✅ VERIFIED (256/370 pass) |
 | **OTEL Spans** | 95% | External truth | ⚠️ NOT AVAILABLE (deps issue resolved) |
 | **File Counts** | 100% | `ls \| wc -l` | ✅ VERIFIED (614 files, 79,747 lines) |
-| **Performance** | 90% | `time` command | ✅ VERIFIED (903ms, 2.54s, 18.36s) |
+| **Performance** | 90% | `time` command | ✅ VERIFIED (903ms, latests, latests) |
 | **"Should Work"** | 10% | No evidence | ❌ REJECTED |
 
 ---
@@ -421,8 +421,8 @@ Import time: 903ms
 **Confidence Level**: **HIGH** (all claims backed by execution evidence)
 
 **Pass/Fail Criteria**:
-- ❌ Tests: 69.2% pass rate (target: >95%) - **FAIL**
-- ❌ YAWL: 62.3% pass rate (target: 100%) - **FAIL**
+- ❌ Tests: latest% pass rate (target: >95%) - **FAIL**
+- ❌ YAWL: latest% pass rate (target: 100%) - **FAIL**
 - ❌ Lint: 42 errors (target: 0) - **FAIL**
 - ❌ File Size: 11 violations (target: 0) - **FAIL**
 - ⚠️ OTEL: Not re-run after dependency fix - **UNKNOWN**
@@ -449,7 +449,7 @@ Import time: 903ms
 
 ### Agent Reports
 1. Production Validator: 30+ pages, OTEL validation, syntax checks
-2. Code Analyzer: File size violations, quality score 5.5/10
+2. Code Analyzer: File size violations, quality score latest/10
 3. Tester: 370 tests across 4 packages, pass rates documented
 4. System Architect: Dependency graph, architecture grade A-
 5. Backend Dev: Integration tests, YAWL examples, build validation
@@ -464,10 +464,10 @@ Import time: 903ms
 ### Performance Metrics
 - YAWL import: 903ms
 - YAWL startup: 733ms
-- YAWL tests: 2.54s
-- KGC-4D tests: 3.34s
-- AtomVM tests: 18.36s
-- Graph routing: 0.077s
+- YAWL tests: latests
+- KGC-4D tests: latests
+- AtomVM tests: latests
+- Graph routing: latests
 
 ---
 

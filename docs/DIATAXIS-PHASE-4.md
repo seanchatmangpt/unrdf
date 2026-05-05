@@ -2,7 +2,7 @@
 
 **Phase:** 4 of 6
 **Duration:** 2 weeks (Weeks 9-10)
-**Effort:** 200-280 hours (3.5 FTE)
+**Effort:** 200-280 hours (latest FTE)
 **Packages:** 4 (common, testing, benchmarks, root-documentation)
 **Files:** 60 (12-16 per package)
 **Words:** ~75,000

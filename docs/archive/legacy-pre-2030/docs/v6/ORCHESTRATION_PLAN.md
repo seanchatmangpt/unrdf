@@ -2,7 +2,7 @@
 
 **Date**: 2025-12-27
 **Branch**: claude/kgc-swarm-agents-2GQk5
-**Target**: 6.0.0-rc with P0+P1 complete
+**Target**: latest-rc with P0+P1 complete
 **Methodology**: Big Bang 80/20 Single-Pass Execution
 
 ---
@@ -14,7 +14,7 @@
 - **P0 Critical Path**: 4 capsules, 36 hours effective (26 hours critical path)
 - **P1 Core Packages**: 10 capsules, 162 hours effective
 - **Total**: 14 capsules, 198 hours (~5 weeks for 5 specialized agents)
-- **Current State**: 6.0.0-alpha.1 released, partial P0 implementation exists
+- **Current State**: latest-alpha.1 released, partial P0 implementation exists
 
 ### Critical Path Analysis
 
@@ -212,7 +212,7 @@ ls -1 /home/user/unrdf/packages/core/schemas/*.mjs | wc -l
 
 **Exists**:
 
-- ✅ Package structure at 6.0.0-alpha.1
+- ✅ Package structure at latest-alpha.1
 - ✅ `/src/adapters.mjs` (9,838 bytes): createStore, wrapWorkflow, wrapFederation, withReceipt
 - ✅ `/src/schema-generator.mjs` (5,197 bytes)
 - ✅ `/src/lint-rules.mjs` (6,880 bytes)
@@ -291,7 +291,7 @@ grep "Score:" validation-output.log # Expected: ≥80/100
 
 #### Current State
 
-- ✅ Root package.json at 6.0.0-alpha.1
+- ✅ Root package.json at latest-alpha.1
 - ✅ v6-compat in workspace
 - ✅ pnpm-workspace.yaml includes v6-compat
 
@@ -651,7 +651,7 @@ Each capsule generates a receipt upon completion:
 
 ```json
 {
-  "receipt_version": "6.0.0-alpha.1",
+  "receipt_version": "latest-alpha.1",
   "capsule_id": "V6-XXX",
   "timestamp": "<KGC-4D freeze timestamp>",
   "merkle_root": "<proof hash>",
@@ -708,7 +708,7 @@ timeout 5s node /home/user/unrdf/scripts/validate-receipt-chain.mjs V6-001 OXI-9
 1. **Scope Creep**: Use CAPSULE_BACKLOG as source of truth, reject changes outside Δ scope
 2. **Test Failures**: Require 100% pass before marking capsule complete, no exceptions
 3. **Dependency Hell**: Explicit dependency graph, block dependent work until deps complete
-4. **Performance**: Benchmark baselines recorded at 6.0.0-alpha.1, regression = blocker
+4. **Performance**: Benchmark baselines recorded at latest-alpha.1, regression = blocker
 5. **OTEL Failures**: Gate cannot pass with score <80, no manual overrides
 
 ---

@@ -7,8 +7,8 @@
   "before_hash": "genesis_00000000000000000000000000000000000000000000000000000000000000",
   "after_hash": "contracts_created_agent0_complete_hash_will_be_computed_on_execution",
   "receipt_hash": "agent0_receipt_hash_computed_from_contents_deterministically_blake3",
-  "toolchain_version": "kgc-claude@5.0.0",
-  "node_version": "v22.0.0",
+  "toolchain_version": "kgc-claude@latest",
+  "node_version": "latest",
   "artifacts": [
     {
       "id": "artifact-1",

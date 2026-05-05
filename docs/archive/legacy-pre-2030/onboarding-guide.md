@@ -6,7 +6,7 @@
 
 ### Prerequisites
 
-1. **Node.js >= 18.0.0**
+1. **Node.js >= latest**
 
    ```bash
    node --version  # Should show v18.x or higher

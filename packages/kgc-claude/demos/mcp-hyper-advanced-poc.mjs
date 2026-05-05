@@ -75,7 +75,7 @@ kgcBuilder.addPrompt(
 
 const kgcServer = await kgcBuilder.build('kgc-server', 'KGC RDF Tools', {
   transport: 'http',
-  version: '1.0.0',
+  version: 'latest',
 });
 
 console.log(`✓ Built KGC Server: ${kgcServer.name}`);

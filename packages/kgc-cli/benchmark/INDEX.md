@@ -226,7 +226,7 @@ If you see:
 
 **Issues?** Check:
 
-- Node version (requires >= 18.0.0)
+- Node version (requires >= [VERSION])
 - File permissions (`chmod +x benchmark/*.mjs`)
 - Dependencies (`pnpm install`)
 

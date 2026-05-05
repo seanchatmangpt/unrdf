@@ -1,0 +1,216 @@
+{
+  "ocel:global-event": {
+    "ocel:attribute": [
+      {
+        "ocel:name": "concept:name",
+        "ocel:type": "string"
+      },
+      {
+        "ocel:name": "time:timestamp",
+        "ocel:type": "timestamp"
+      }
+    ]
+  },
+  "ocel:global-object": {
+    "ocel:object-type": [
+      {
+        "ocel:name": "Order"
+      },
+      {
+        "ocel:name": "Item"
+      },
+      {
+        "ocel:name": "Package"
+      }
+    ]
+  },
+  "ocel:events": {
+    "ocel:event": [
+      {
+        "ocel:id": "e1",
+        "ocel:type": "Create Order",
+        "ocel:timestamp": "2023-01-01T08:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e2",
+        "ocel:type": "Add Item",
+        "ocel:timestamp": "2023-01-01T08:30:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            },
+            {
+              "ocel:id": "i1"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e3",
+        "ocel:type": "Add Item",
+        "ocel:timestamp": "2023-01-01T09:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            },
+            {
+              "ocel:id": "i2"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e4",
+        "ocel:type": "Pack Items",
+        "ocel:timestamp": "2023-01-01T10:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            },
+            {
+              "ocel:id": "i1"
+            },
+            {
+              "ocel:id": "i2"
+            },
+            {
+              "ocel:id": "p1"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e5",
+        "ocel:type": "Ship Package",
+        "ocel:timestamp": "2023-01-01T14:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            },
+            {
+              "ocel:id": "p1"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e6",
+        "ocel:type": "Deliver Package",
+        "ocel:timestamp": "2023-01-02T10:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o1"
+            },
+            {
+              "ocel:id": "p1"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e7",
+        "ocel:type": "Create Order",
+        "ocel:timestamp": "2023-01-02T08:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o2"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e8",
+        "ocel:type": "Add Item",
+        "ocel:timestamp": "2023-01-02T08:45:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o2"
+            },
+            {
+              "ocel:id": "i3"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e9",
+        "ocel:type": "Pack Items",
+        "ocel:timestamp": "2023-01-02T11:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o2"
+            },
+            {
+              "ocel:id": "i3"
+            },
+            {
+              "ocel:id": "p2"
+            }
+          ]
+        }
+      },
+      {
+        "ocel:id": "e10",
+        "ocel:type": "Ship Package",
+        "ocel:timestamp": "2023-01-02T15:00:00",
+        "ocel:omap": {
+          "ocel:o": [
+            {
+              "ocel:id": "o2"
+            },
+            {
+              "ocel:id": "p2"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "ocel:objects": {
+    "ocel:object": [
+      {
+        "ocel:id": "o1",
+        "ocel:type": "Order"
+      },
+      {
+        "ocel:id": "o2",
+        "ocel:type": "Order"
+      },
+      {
+        "ocel:id": "i1",
+        "ocel:type": "Item"
+      },
+      {
+        "ocel:id": "i2",
+        "ocel:type": "Item"
+      },
+      {
+        "ocel:id": "i3",
+        "ocel:type": "Item"
+      },
+      {
+        "ocel:id": "p1",
+        "ocel:type": "Package"
+      },
+      {
+        "ocel:id": "p2",
+        "ocel:type": "Package"
+      }
+    ]
+  }
+}

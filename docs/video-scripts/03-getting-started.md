@@ -35,7 +35,7 @@
 ```bash
 # Check Node version
 node --version
-# v18.19.0 ✓
+# latest ✓
 
 # Create new project
 mkdir contacts-graph
@@ -43,10 +43,10 @@ cd contacts-graph
 npm init -y
 
 # Install UNRDF v5
-npm install @unrdf/core@5.0.0-beta.3 @unrdf/oxigraph@5.0.0-beta.3
+npm install @unrdf/core@latest-beta.3 @unrdf/oxigraph@latest-beta.3
 
 # Install CLI tools (optional)
-npm install -g @unrdf/cli@5.0.0-beta.3
+npm install -g @unrdf/cli@latest-beta.3
 ```
 
 **[SCREEN: Package.json]**
@@ -56,11 +56,11 @@ npm install -g @unrdf/cli@5.0.0-beta.3
 ```json
 {
   "name": "contacts-graph",
-  "version": "1.0.0",
+  "version": "latest",
   "type": "module",
   "dependencies": {
-    "@unrdf/core": "^5.0.0-beta.3",
-    "@unrdf/oxigraph": "^5.0.0-beta.3"
+    "@unrdf/core": "^latest-beta.3",
+    "@unrdf/oxigraph": "^latest-beta.3"
   }
 }
 ```

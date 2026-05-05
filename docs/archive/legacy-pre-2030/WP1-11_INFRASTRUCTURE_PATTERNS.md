@@ -3,7 +3,7 @@
 **Document Purpose**: Reverse-engineered patterns from WP1-11 for reuse in WP12-15 (Multiple Instance patterns)
 
 **Last Updated**: 2026-01-11
-**Source**: UNRDF YAWL v6.0.0 production codebase
+**Source**: UNRDF YAWL vlatest production codebase
 **Target**: WP12-15 Multiple Instance pattern implementations
 
 ---
@@ -1188,7 +1188,7 @@ export async function spawnInstanceWithCircuitBreaker(taskDef, caseId, index, op
 }
 
 // Aggregate circuit breaker for MI spawn operations
-export function checkAggregateCircuitBreaker(engine, taskDefId, failureRate = 0.5) {
+export function checkAggregateCircuitBreaker(engine, taskDefId, failureRate = latest) {
   const breakerKey = `mi:aggregate:${taskDefId}`;
   const state = engine._circuitBreakers.get(breakerKey);
 
@@ -1848,7 +1848,7 @@ const auditTask = new TaskDefinition({
       // Release when 80% complete OR any instance finds fraud
       const percentComplete = ctx.completed / ctx.total;
       const hasFraud = ctx.instances.some(i => i.data?.fraudDetected);
-      return percentComplete >= 0.8 || hasFraud;
+      return percentComplete >= latest || hasFraud;
     },
   },
 });

@@ -10,7 +10,7 @@
  * - Canonicalization and isomorphism checks
  * - Transaction management with hooks and receipts
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 

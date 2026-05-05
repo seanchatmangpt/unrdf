@@ -2,7 +2,7 @@
 title: "Troubleshoot Common Issues"
 type: "how-to"
 packageName: "@unrdf/yawl-ai"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "44cdd3dd93d7711ab951d3cb3865a2f88bae2898b2dad83efe733f6394661952"

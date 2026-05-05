@@ -88,7 +88,7 @@ console.log('Result:', result);
 
 console.log('Receipt:', receipt);
 // {
-//   version: '6.0.0-alpha.1',
+//   version: 'latest-alpha.1',
 //   operation: 'user.processData',
 //   timestamp: 1704...,
 //   duration: 102.5,
@@ -107,7 +107,7 @@ node /tmp/my-operation.mjs
 
 ```
 Result: { userId: 'user-123', action: 'approve', status: 'completed', timestamp: 1704067200000 }
-Receipt: { version: '6.0.0-alpha.1', operation: 'user.processData', timestamp: 1704067200000, duration: 102.5, ... }
+Receipt: { version: 'latest-alpha.1', operation: 'user.processData', timestamp: 1704067200000, duration: 102.5, ... }
 ```
 
 ### Step 4: Verify Receipt

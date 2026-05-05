@@ -98,7 +98,7 @@ describe('Package RDF Model', () => {
     it('should parse basic package.json to quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Test package',
       });
 
@@ -116,10 +116,10 @@ describe('Package RDF Model', () => {
     it('should include dependencies as quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '1.0.0',
+        version: '[VERSION]',
         dependencies: {
           '@unrdf/core': 'workspace:*',
-          lodash: '^4.17.21',
+          lodash: '^[VERSION]',
         },
       });
 
@@ -134,7 +134,7 @@ describe('Package RDF Model', () => {
     it('should include exports as quads', () => {
       const quads = parsePackageToQuads({
         name: '@unrdf/test-pkg',
-        version: '1.0.0',
+        version: '[VERSION]',
         exports: {
           '.': './src/index.mjs',
           './api': './src/api.mjs',
@@ -150,7 +150,7 @@ describe('Package RDF Model', () => {
 
     it('should include partition assignment', () => {
       const quads = parsePackageToQuads(
-        { name: '@unrdf/core', version: '1.0.0' },
+        { name: '@unrdf/core', version: '[VERSION]' },
         { partition: 'O_foundational' }
       );
 
@@ -167,7 +167,7 @@ describe('Package RDF Model', () => {
     it('should validate valid package.json', () => {
       const result = validatePackageJson({
         name: 'test-package',
-        version: '1.0.0',
+        version: '[VERSION]',
       });
       expect(result.valid).toBe(true);
     });
@@ -175,7 +175,7 @@ describe('Package RDF Model', () => {
     it('should reject invalid package.json', () => {
       const result = validatePackageJson({
         // missing name
-        version: '1.0.0',
+        version: '[VERSION]',
       });
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -473,17 +473,17 @@ describe('Query Templates', () => {
 describe('Result Formatters', () => {
   it('should format results as objects', () => {
     const raw = [
-      { name: { value: 'test1' }, version: { value: '1.0.0' } },
-      { name: { value: 'test2' }, version: { value: '2.0.0' } },
+      { name: { value: 'test1' }, version: { value: '[VERSION]' } },
+      { name: { value: 'test2' }, version: { value: '[VERSION]' } },
     ];
     const formatted = formatResults(raw);
     expect(formatted[0].name).toBe('test1');
-    expect(formatted[0].version).toBe('1.0.0');
+    expect(formatted[0].version).toBe('[VERSION]');
   });
 
   it('should format as table', () => {
     const raw = [
-      { name: { value: 'test1' }, version: { value: '1.0.0' } },
+      { name: { value: 'test1' }, version: { value: '[VERSION]' } },
     ];
     const table = formatAsTable(raw);
     expect(table).toContain('name');

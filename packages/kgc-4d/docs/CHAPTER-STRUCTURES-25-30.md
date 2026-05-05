@@ -723,7 +723,7 @@
 - Pure ESM: No CommonJS, modern bundler support
 - Peer dependencies: `@unrdf/core` (RDF substrate)
 - Zero external dependencies: No N3, no CLI tools (ARD compliant)
-- Versioning: Semantic versioning (1.0.0 = stable API)
+- Versioning: Semantic versioning ([VERSION] = stable API)
 - Distribution: NPM registry + GitHub Packages
 
 **Cross-References**:

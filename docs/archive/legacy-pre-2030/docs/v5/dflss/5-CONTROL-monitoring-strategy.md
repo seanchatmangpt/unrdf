@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document establishes ongoing monitoring, quality gates, and governance for sustaining v5.0.0 improvements long-term and preventing regression to v4 levels of bloat.
+This document establishes ongoing monitoring, quality gates, and governance for sustaining latest improvements long-term and preventing regression to v4 levels of bloat.
 
 ---
 
@@ -386,25 +386,25 @@ Optimize: Prevent bloat recurrence
 ### Semantic Versioning Rules (for v5.x and beyond)
 
 ```
-v5.0.0 (Current)
+latest (Current)
 ├─ MAJOR.MINOR.PATCH
 │  ├─ MAJOR (5): Breaking changes only
 │  ├─ MINOR (0): New features (additive only)
 │  └─ PATCH (0): Bug fixes (no changes to API)
 │
-v5.1.0 (Next Quarter)
+latest (Next Quarter)
 ├─ MINOR bump for new feature package (e.g., unrdf-react-server)
 ├─ NO core API changes
 ├─ NO new exports added to core
 └─ Still <35,000 LOC, 70 functions
 │
-v5.2.0 (Next Release Cycle)
+latest (Next Release Cycle)
 ├─ MINOR bump for optimization
 ├─ Performance improvements allowed
 ├─ Documentation updates
 └─ Still maintains all v5.0 compatibility
 
-v6.0.0 (Future, if needed)
+latest (Future, if needed)
 ├─ MAJOR: Only if massive refactor needed
 ├─ Should be rare (goal: sustainable v5 for 2+ years)
 └─ Plan replacement 6+ months in advance
@@ -427,7 +427,7 @@ Pre-Release Testing:
 
 Release:
   [ ] Merge to main branch
-  [ ] Create git tag (e.g., v5.1.0)
+  [ ] Create git tag (e.g., latest)
   [ ] npm publish
   [ ] Update GitHub release notes
   [ ] Update documentation version selector
@@ -713,5 +713,5 @@ Documentation:
 
 **Document Version**: 1.0
 **Methodology**: Lean Six Sigma CONTROL Phase
-**Status**: Ready for deployment with v5.0.0
+**Status**: Ready for deployment with latest
 **Last Updated**: 2025-12-03

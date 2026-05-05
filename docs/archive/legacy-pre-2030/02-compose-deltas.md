@@ -59,11 +59,11 @@ Deltas (Δ) are **admissible state transitions** - minimal, composable changes t
       {
         "subject": "http://example.org/alice",
         "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "object": "http://xmlns.com/foaf/0.1/Person"
+        "object": "http://xmlns.com/foaf/latest/Person"
       },
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice Smith\""
       }
     ],
@@ -87,13 +87,13 @@ Deltas (Δ) are **admissible state transitions** - minimal, composable changes t
     "additions": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/member",
+        "predicate": "http://xmlns.com/foaf/latest/member",
         "object": "http://example.org/acme-corp"
       },
       {
         "subject": "http://example.org/acme-corp",
         "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "object": "http://xmlns.com/foaf/0.1/Organization"
+        "object": "http://xmlns.com/foaf/latest/Organization"
       }
     ],
     "deletions": []
@@ -125,22 +125,22 @@ npx kgc delta compose \
       {
         "subject": "http://example.org/alice",
         "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "object": "http://xmlns.com/foaf/0.1/Person"
+        "object": "http://xmlns.com/foaf/latest/Person"
       },
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice Smith\""
       },
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/member",
+        "predicate": "http://xmlns.com/foaf/latest/member",
         "object": "http://example.org/acme-corp"
       },
       {
         "subject": "http://example.org/acme-corp",
         "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "object": "http://xmlns.com/foaf/0.1/Organization"
+        "object": "http://xmlns.com/foaf/latest/Organization"
       }
     ],
     "deletions": []
@@ -175,11 +175,11 @@ const composePerson = withReceipt(async function composePerson(name, organizatio
         {
           subject: `http://example.org/${name}`,
           predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-          object: 'http://xmlns.com/foaf/0.1/Person'
+          object: 'http://xmlns.com/foaf/latest/Person'
         },
         {
           subject: `http://example.org/${name}`,
-          predicate: 'http://xmlns.com/foaf/0.1/name',
+          predicate: 'http://xmlns.com/foaf/latest/name',
           object: `"${name}"`
         }
       ],
@@ -194,7 +194,7 @@ const composePerson = withReceipt(async function composePerson(name, organizatio
       additions: [
         {
           subject: `http://example.org/${name}`,
-          predicate: 'http://xmlns.com/foaf/0.1/member',
+          predicate: 'http://xmlns.com/foaf/latest/member',
           object: `http://example.org/${organization}`
         }
       ],
@@ -395,10 +395,10 @@ npx kgc delta benchmark --file delta-composite.json
 
 **Output:**
 ```
-Composition time: 3.2ms
-Application time: 12.5ms
-Verification time: 5.1ms
-Receipt size: 2.4 KB
+Composition time: latestms
+Application time: latestms
+Verification time: latestms
+Receipt size: latest KB
 ```
 
 ---

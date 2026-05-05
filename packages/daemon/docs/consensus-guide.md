@@ -76,7 +76,7 @@ const daemon1 = new Daemon({
 const raftNode1 = createRaftCoordinator({
   nodeId: 'node-1',
   port: 8080,
-  host: '10.0.1.100', // Internal IP
+  host: '[VERSION].100', // Internal IP
 });
 
 const clusterMgr1 = createClusterManager({
@@ -102,20 +102,20 @@ After initializing leader node, add followers:
 
 ```javascript
 // On leader (node-1)
-raftNode1.addPeer('node-2', '10.0.1.101', 8081);
-raftNode1.addPeer('node-3', '10.0.1.102', 8082);
+raftNode1.addPeer('node-2', '[VERSION].101', 8081);
+raftNode1.addPeer('node-3', '[VERSION].102', 8082);
 
 // Add to cluster manager
 clusterMgr1.addNode({
   nodeId: 'node-2',
-  host: '10.0.1.101',
+  host: '[VERSION].101',
   port: 8081,
   capabilities: ['task-execution', 'event-processing'],
 });
 
 clusterMgr1.addNode({
   nodeId: 'node-3',
-  host: '10.0.1.102',
+  host: '[VERSION].102',
   port: 8082,
   capabilities: ['task-execution', 'event-processing'],
 });
@@ -446,8 +446,8 @@ Per 10,000 operations in log:
 **Diagnosis**:
 ```bash
 # Check network connectivity between nodes
-ping 10.0.1.101
-ping 10.0.1.102
+ping [VERSION].101
+ping [VERSION].102
 
 # Verify port accessibility
 netstat -tuln | grep 808

@@ -74,7 +74,7 @@
   "method": "runtime.node_version",
   "inputs": {},
   "outputs": {
-    "version": "v22.21.1"
+    "version": "[VERSION]"
   },
   "timestamp": 1735287745123,
   "hash": "2c8cb489f649b7af...",
@@ -194,8 +194,8 @@
 ### Runtime Environment
 
 ```
-Node.js Version: v22.21.1
-V8 Version: 12.4.254.21-node.33
+Node.js Version: [VERSION]
+V8 Version: 1[VERSION].21-node.33
 Platform: linux
 Architecture: x64
 Endianness: LE (Little Endian)
@@ -445,7 +445,7 @@ duration_ms: 4742.420026
 **Discovery Type**: Information
 **Importance**: High
 **Discovered By**: scout-runtime-2
-**Description**: VM has full modern Node.js capabilities (v22.21.1, ESM, WASM, Workers)
+**Description**: VM has full modern Node.js capabilities ([VERSION], ESM, WASM, Workers)
 **Location**: Runtime environment
 
 ---
@@ -468,5 +468,5 @@ All deliverables provided:
 
 *Report generated: 2025-12-27*
 *Agent: Scout Explorer - Runtime Surface*
-*Package: @unrdf/kgc-probe v1.0.0*
-*Node.js: v22.21.1*
+*Package: @unrdf/kgc-probe [VERSION]*
+*Node.js: [VERSION]*

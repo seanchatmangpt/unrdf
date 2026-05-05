@@ -46,7 +46,7 @@ export {
 export const metadata = {
   agent: 'agent-8',
   name: 'Domain Kit Generator',
-  version: '1.0.0',
+  version: 'latest',
   objective: 'Generate per-domain migration kit scaffolds from contracts',
   capabilities: [
     'kit-generation',

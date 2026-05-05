@@ -1,0 +1,113 @@
+{
+  "confidence": {
+    "explanation": 0.3,
+    "howtos": 0.25,
+    "reference": 0.7,
+    "tutorials": 0
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "ad4425aa5566f58a2a4c6563de30def6646e2a5955b1922d601cbf2f01402e7a",
+    "readmeHeadings": [
+      "Features",
+      "Architecture",
+      "API",
+      "Type Definitions",
+      "Testing",
+      "Error Handling Contract",
+      "Integration Points",
+      "Performance",
+      "Debugging",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "High-level engine lifecycle and state machine for pictl. Manages bootstrap, planning, execution, and error recovery with a well-defined state machine and comprehensive error handling.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.3,
+    "id": "explanation-pictl-engine-explanation",
+    "source": [
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @pictl/engine",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When you need to accomplish common tasks",
+      "id": "howto-use-pictl-engine",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Import the package",
+        "Initialize with options",
+        "Execute operations"
+      ],
+      "task": "Perform basic operations with @pictl/engine",
+      "title": "Use @pictl/engine"
+    }
+  ],
+  "packageName": "@pictl/engine",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-pictl-engine-reference",
+    "items": [
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@pictl/engine",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports",
+      "readme"
+    ],
+    "title": "@pictl/engine Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0,
+      "goal": "Learn how to set up and use @pictl/engine in your project",
+      "id": "tutorial-getting-started-with-pictl-engine",
+      "prerequisites": [],
+      "source": [
+        "inferred"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @pictl/engine"
+    }
+  ],
+  "version": "[VERSION]"
+}

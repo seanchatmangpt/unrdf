@@ -96,7 +96,7 @@ npm run benchmark -- --compare-baseline --fail-on-regression
 import { Bench } from 'tinybench';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('benchmark', '1.0.0');
+const tracer = trace.getTracer('benchmark', 'latest');
 
 export async function runBenchmark() {
   return await tracer.startActiveSpan('benchmark.{id}', async (span) => {
@@ -159,7 +159,7 @@ export async function runBenchmark() {
 
 ### Hook Registration
 ```
-Small:  100 hooks   | < 0.5ms | < 5MB
+Small:  100 hooks   | < latestms | < 5MB
 Medium: 1,000 hooks | < 1ms   | < 25MB
 Large:  10,000 hooks| < 1ms   | < 100MB
 ```
@@ -173,8 +173,8 @@ Complex: async + transaction + notify| < 10ms p50 | < 50ms p99
 
 ### Hook Validation
 ```
-Schema:  10,000 validations | > 10k ops/sec | < 0.1ms avg
-Runtime: 5,000 validations  | > 5k ops/sec  | < 0.2ms avg
+Schema:  10,000 validations | > 10k ops/sec | < latestms avg
+Runtime: 5,000 validations  | > 5k ops/sec  | < latestms avg
 ```
 
 ### Memory Profiling
@@ -249,23 +249,23 @@ grep "span.setAttribute" benchmark.mjs
 ### Example Result
 ```json
 {
-  "p50": 2.8,   // 50% of requests < 2.8ms ✅
-  "p95": 8.5,   // 95% of requests < 8.5ms ✅
-  "p99": 12.5,  // 99% of requests < 12.5ms ❌ (target: < 10ms)
-  "max": 45.2   // Worst case: 45.2ms (investigate!)
+  "p50": latest,   // 50% of requests < latestms ✅
+  "p95": latest,   // 95% of requests < latestms ✅
+  "p99": latest,  // 99% of requests < latestms ❌ (target: < 10ms)
+  "max": latest   // Worst case: latestms (investigate!)
 }
 ```
 
 **Interpretation:**
 - ✅ Median and p95 look great
 - ❌ p99 exceeds target by 25% → regression
-- ⚠️  Max is 4.5x p99 → outliers present → investigate
+- ⚠️  Max is latestx p99 → outliers present → investigate
 
 ### Regression Example
 ```
-Baseline:  p99 = 9.8ms
-Current:   p99 = 12.5ms
-Change:    +27.6% (critical threshold: +20%)
+Baseline:  p99 = latestms
+Current:   p99 = latestms
+Change:    +latest% (critical threshold: +20%)
 Status:    🚨 CRITICAL REGRESSION
 ```
 
@@ -308,7 +308,7 @@ cat benchmark/specs/BENCHMARK-SPECIFICATION.md
 | Baseline established | Yes | ⏳ In progress |
 | CI/CD integration | Yes | ⏳ In progress |
 | < 5% variance | < 5% | ⏳ To validate |
-| Error rate < 0.1% | < 0.1% | ⏳ To validate |
+| Error rate < latest% | < latest% | ⏳ To validate |
 
 ---
 

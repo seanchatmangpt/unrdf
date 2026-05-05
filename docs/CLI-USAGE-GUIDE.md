@@ -238,7 +238,7 @@ Execute hooks on test data.
 # Execute hooks for trigger
 unrdf hook execute before-add \
   --subject http://example.org/Alice \
-  --predicate http://xmlns.com/foaf/0.1/name \
+  --predicate http://xmlns.com/foaf/latest/name \
   --object "Alice Smith"
 
 # With graph
@@ -262,7 +262,7 @@ Test if data would pass hooks (dry-run validation).
 # Test data against hooks
 unrdf hook test before-add \
   --subject http://example.org/Bob \
-  --predicate http://xmlns.com/foaf/0.1/name \
+  --predicate http://xmlns.com/foaf/latest/name \
   --object "Bob Smith"
 
 # Verbose output (show which hooks would execute)
@@ -376,8 +376,8 @@ Quad Count:    1,234
 Subject Count: 567
 
 📋 Sample Quads (5):
-   1. <http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "Alice Smith"
-   2. <http://example.org/Bob> <http://xmlns.com/foaf/0.1/name> "Bob Smith"
+   1. <http://example.org/Alice> <http://xmlns.com/foaf/latest/name> "Alice Smith"
+   2. <http://example.org/Bob> <http://xmlns.com/foaf/latest/name> "Bob Smith"
    ...
 ```
 
@@ -456,7 +456,7 @@ unrdf policy get data-governance
 ```
 📋 Policy Pack: data-governance
 ══════════════════════════════════════════════════════
-Version:       1.0.0
+Version:       latest
 Description:   Core data governance policy
 Status:        ✅ Active
 Enabled:       Yes
@@ -508,7 +508,7 @@ unrdf policy validate policy-pack.json
 
 📋 Policy Details:
    Name:        data-governance
-   Version:     1.0.0
+   Version:     latest
    Enabled:     Yes
    Hooks:       2
    Rules:       2
@@ -543,7 +543,7 @@ unrdf policy test policy-pack.json --dry-run
 🧪 Testing Policy Pack: data-governance
 ══════════════════════════════════════════════════════
 File:        /path/to/policy-pack.json
-Version:     1.0.0
+Version:     latest
 Hooks:       3
 Dry Run:     No
 
@@ -659,7 +659,7 @@ unrdf store import data.ttl --graph http://example.org/mydata
 unrdf store query --query "
   SELECT ?subject ?name WHERE {
     GRAPH <http://example.org/mydata> {
-      ?subject <http://xmlns.com/foaf/0.1/name> ?name
+      ?subject <http://xmlns.com/foaf/latest/name> ?name
     }
   }
 "
@@ -682,14 +682,14 @@ unrdf hook create validator \
 # Test the hook with sample data
 unrdf hook test before-add \
   --subject http://example.org/Alice \
-  --predicate http://xmlns.com/foaf/0.1/name \
+  --predicate http://xmlns.com/foaf/latest/name \
   --object "Alice Smith" \
   --verbose
 
 # Execute the hook
 unrdf hook execute before-add \
   --subject http://example.org/Alice \
-  --predicate http://xmlns.com/foaf/0.1/name \
+  --predicate http://xmlns.com/foaf/latest/name \
   --object "Alice Smith"
 
 # List all hooks
@@ -1011,5 +1011,5 @@ https://github.com/unrdf/unrdf/issues
 ---
 
 **Last Updated**: 2025-12-06
-**CLI Version**: 2.0.0
+**CLI Version**: latest
 **Status**: ✅ Production Ready (91% Functional - 30/33 commands)

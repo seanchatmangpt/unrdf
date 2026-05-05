@@ -46,7 +46,7 @@ $ node scripts/architecture-analyzer.mjs
 ✅ No circular dependencies found
 ❌ Found 115 OTEL usages in business logic (32 files)
 ❌ Found 71 files exceeding 500 lines
-📊 Pure functions: 1431/1577 (90.7%)
+📊 Pure functions: 1431/1577 (latest%)
 
 ================================================================================
 ARCHITECTURE GRADE REPORT
@@ -58,7 +58,7 @@ Score Breakdown:
 ────────────────────────────────────────────────────────────────────────────────
 ✅ No Circular Dependencies                           20/20
 ❌ OTEL Separation (no business logic contamination)  0/20
-✅ Pure Functions (>80%)                              15/15 (90.7%)
+✅ Pure Functions (>80%)                              15/15 (latest%)
 ❌ File Size <500 lines                               0/15
 ✅ Low Module Coupling                                10/10
 ✅ Pattern Reuse                                      10/10
@@ -192,14 +192,14 @@ export class ConsensusManager {
    - DFS traversal confirms no cycles
 
 2. **High Pure Function Ratio** ✅
-   - 90.7% pure functions (1431/1577)
-   - Target: >80% (exceeded by 10.7%)
+   - latest% pure functions (1431/1577)
+   - Target: >80% (exceeded by latest%)
    - Excellent testability
 
 3. **Low Module Coupling** ✅
    - Clean separation of concerns
    - Layered architecture maintained
-   - Balanced coupling metrics (I = 0.57)
+   - Balanced coupling metrics (I = latest)
 
 4. **Excellent Pattern Reuse** ✅
    - `createReceipt`: 23 usages

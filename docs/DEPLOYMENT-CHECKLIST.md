@@ -1,6 +1,6 @@
-# Production Deployment Checklist - UNRDF v5.0.1
+# Production Deployment Checklist - UNRDF vlatest
 
-**Version**: 5.0.1
+**Version**: latest
 **Date**: 2025-12-20
 **Deployment Strategy**: Phased Rollout (3 Phases)
 
@@ -54,7 +54,7 @@
 
 ### 3. Security Validation
 
-- [x] **Security Policy**: SECURITY.md present (5.3 KB) ✅
+- [x] **Security Policy**: SECURITY.md present (latest KB) ✅
   ```bash
   ls -la SECURITY.md
   # Expected: -rw------- 1 user staff 5311 Dec 20 18:02 SECURITY.md
@@ -74,10 +74,10 @@
 
 ### 4. Documentation Verification
 
-- [x] **README.md**: Updated for v5.0.1 ✅
-- [x] **CHANGELOG.md**: v5.0.1 entries added ✅
+- [x] **README.md**: Updated for vlatest ✅
+- [x] **CHANGELOG.md**: vlatest entries added ✅
 - [x] **API Documentation**: Generated and complete ✅
-- [x] **Production Scorecard**: docs/PRODUCTION-READY-v5.0.1.md ✅
+- [x] **Production Scorecard**: docs/PRODUCTION-READY-vlatest.md ✅
 - [x] **Deployment Checklist**: docs/DEPLOYMENT-CHECKLIST.md ✅
 
 ### 5. Performance Baseline
@@ -101,9 +101,9 @@
 
 ### Packages to Deploy
 
-1. **@unrdf/core@5.0.1** (Mission Critical)
-2. **@unrdf/oxigraph@5.0.1** (High Performance Store)
-3. **@unrdf/validation@5.0.1** (OTEL Validation)
+1. **@unrdf/core@latest** (Mission Critical)
+2. **@unrdf/oxigraph@latest** (High Performance Store)
+3. **@unrdf/validation@latest** (OTEL Validation)
 
 ### Pre-Deployment Steps
 
@@ -126,8 +126,8 @@
 
 - [ ] **Tag Release**:
   ```bash
-  git tag v5.0.1-phase1
-  git push origin v5.0.1-phase1
+  git tag vlatest
+  git push origin vlatest
   ```
 
 ### Deployment Commands
@@ -148,9 +148,9 @@
 
 - [ ] **Verify on npm**:
   ```bash
-  npm view @unrdf/core@5.0.1
-  npm view @unrdf/oxigraph@5.0.1
-  npm view @unrdf/validation@5.0.1
+  npm view @unrdf/core@latest
+  npm view @unrdf/oxigraph@latest
+  npm view @unrdf/validation@latest
   ```
 
 ### Post-Deployment Validation
@@ -159,7 +159,7 @@
   ```bash
   mkdir /tmp/unrdf-test && cd /tmp/unrdf-test
   npm init -y
-  npm install @unrdf/core@5.0.1 @unrdf/oxigraph@5.0.1
+  npm install @unrdf/core@latest @unrdf/oxigraph@latest
   ```
 
 - [ ] **Smoke Test**:
@@ -189,11 +189,11 @@
 
 ```bash
 # Deprecate faulty version
-npm deprecate @unrdf/core@5.0.1 "Rolled back due to [ISSUE]"
-npm deprecate @unrdf/oxigraph@5.0.1 "Rolled back due to [ISSUE]"
+npm deprecate @unrdf/core@latest "Rolled back due to [ISSUE]"
+npm deprecate @unrdf/oxigraph@latest "Rolled back due to [ISSUE]"
 
-# Revert to v5.0.0
-git revert v5.0.1-phase1
+# Revert to vlatest
+git revert vlatest
 git push origin main
 ```
 
@@ -207,8 +207,8 @@ git push origin main
 
 ### Packages to Deploy
 
-1. **@unrdf/federation@5.0.1** (Distributed Queries)
-2. **@unrdf/atomvm@5.0.1** (WASM Runtime)
+1. **@unrdf/federation@latest** (Distributed Queries)
+2. **@unrdf/atomvm@latest** (WASM Runtime)
 
 ### Pre-Deployment Steps
 
@@ -253,8 +253,8 @@ git push origin main
 
 - [ ] **Tag Release**:
   ```bash
-  git tag v5.0.1-phase2
-  git push origin v5.0.1-phase2
+  git tag vlatest
+  git push origin vlatest
   ```
 
 ### Post-Deployment Validation
@@ -282,8 +282,8 @@ git push origin main
 ### Rollback Plan (Phase 2)
 
 ```bash
-npm deprecate @unrdf/federation@5.0.1 "Rolled back due to [ISSUE]"
-npm deprecate @unrdf/atomvm@5.0.1 "Rolled back due to [ISSUE]"
+npm deprecate @unrdf/federation@latest "Rolled back due to [ISSUE]"
+npm deprecate @unrdf/atomvm@latest "Rolled back due to [ISSUE]"
 ```
 
 ---
@@ -296,9 +296,9 @@ npm deprecate @unrdf/atomvm@5.0.1 "Rolled back due to [ISSUE]"
 
 ### Packages to Deploy (CONDITIONAL)
 
-1. **@unrdf/streaming@5.0.1** (ONLY after ring buffer fixes)
-2. **@unrdf/hooks@5.0.1** (ONLY after file resolver fixes)
-3. **@unrdf/composables@5.0.1** (ONLY after import resolution fixes)
+1. **@unrdf/streaming@latest** (ONLY after ring buffer fixes)
+2. **@unrdf/hooks@latest** (ONLY after file resolver fixes)
+3. **@unrdf/composables@latest** (ONLY after import resolution fixes)
 
 ### Prerequisites (MUST BE MET)
 
@@ -352,7 +352,7 @@ cd packages/composables && npm publish --access public
 **Monitor via OTEL/Application Dashboards**:
 
 1. **Error Rates**:
-   - Target: <0.1% error rate
+   - Target: <latest% error rate
    - Alert: >1% error rate
    - Critical: >5% error rate
 
@@ -440,18 +440,18 @@ severity: critical
 
 ```bash
 # 1. Deprecate faulty version
-npm deprecate @unrdf/[PACKAGE]@5.0.1 "Critical issue: [DESCRIPTION]"
+npm deprecate @unrdf/[PACKAGE]@latest "Critical issue: [DESCRIPTION]"
 
 # 2. Notify users
-echo "ALERT: @unrdf/[PACKAGE]@5.0.1 has critical issue. Rollback recommended."
+echo "ALERT: @unrdf/[PACKAGE]@latest has critical issue. Rollback recommended."
 
 # 3. Revert git tag
-git tag -d v5.0.1-phase[N]
-git push origin :refs/tags/v5.0.1-phase[N]
+git tag -d vlatest[N]
+git push origin :refs/tags/vlatest[N]
 
 # 4. Publish patch release (if needed)
 # Fix issue in code
-# Bump to v5.0.2
+# Bump to vlatest
 # npm publish
 ```
 
@@ -498,7 +498,7 @@ git push origin :refs/tags/v5.0.1-phase[N]
 
 **Phase 1 Deployment**:
 ```
-🚀 UNRDF v5.0.1 Phase 1 DEPLOYED
+🚀 UNRDF vlatest Phase 1 DEPLOYED
 Packages: @unrdf/core, @unrdf/oxigraph, @unrdf/validation
 Status: ✅ All tests passing (393/393)
 Monitoring: Active for 48 hours
@@ -507,7 +507,7 @@ Next: Phase 2 on 2025-12-22
 
 **Phase 2 Deployment**:
 ```
-🌐 UNRDF v5.0.1 Phase 2 DEPLOYED
+🌐 UNRDF vlatest Phase 2 DEPLOYED
 Packages: @unrdf/federation, @unrdf/atomvm
 Status: ✅ Phase 1 stable for 48 hours
 Monitoring: Active for 7 days
@@ -516,9 +516,9 @@ Next: Phase 3 (conditional on fixes)
 
 ### External Users (GitHub Release Notes)
 
-**v5.0.1 Release Notes**:
+**vlatest Release Notes**:
 ```markdown
-## UNRDF v5.0.1 - Production Ready
+## UNRDF vlatest - Production Ready
 
 ### Core Packages (READY) ✅
 - @unrdf/core: 231/231 tests passing
@@ -532,7 +532,7 @@ Next: Phase 3 (conditional on fixes)
 - @unrdf/composables: Import resolution errors - not recommended
 
 ### Migration Guide
-See docs/PRODUCTION-READY-v5.0.1.md for detailed scorecard.
+See docs/PRODUCTION-READY-vlatest.md for detailed scorecard.
 ```
 
 ---

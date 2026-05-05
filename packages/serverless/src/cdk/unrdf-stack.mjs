@@ -9,7 +9,7 @@
  * - CloudFront CDN for global distribution
  *
  * @module serverless/cdk/unrdf-stack
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 

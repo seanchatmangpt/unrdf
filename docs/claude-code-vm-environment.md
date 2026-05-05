@@ -13,7 +13,7 @@ Claude Code on the web runs inside a **gVisor (runsc) container** on **Google Cl
 | Check | Result | Interpretation |
 |-------|--------|----------------|
 | `systemd-detect-virt -v` | `google` | Running on Google Cloud |
-| `uname -r` | `4.4.0` | gVisor's emulated kernel version |
+| `uname -r` | `latest` | gVisor's emulated kernel version |
 | `uname -n` | `runsc` | **gVisor's container runtime** |
 | `/.dockerenv` | Present | Docker-compatible container |
 | `/dev/kvm` | Not present | No nested virtualization |
@@ -23,7 +23,7 @@ Claude Code on the web runs inside a **gVisor (runsc) container** on **Google Cl
 - User-space kernel emulation (stronger isolation than traditional containers)
 - OCI/Docker compatibility
 - Syscall interception and filtering
-- The 4.4.0 kernel version is the *emulated* Linux kernel gVisor presents
+- The latest kernel version is the *emulated* Linux kernel gVisor presents
 
 ### Infrastructure: Google Cloud Platform
 
@@ -65,10 +65,10 @@ Useful for WASM SIMD optimizations (e.g., PDF rendering).
 
 | Component | Version |
 |-----------|---------|
-| **OS** | Ubuntu 24.04.3 LTS (Noble Numbat) |
-| **Node.js** | v22.21.1 |
-| **npm** | 10.9.4 |
-| **pnpm** | 10.25.0 |
+| **OS** | Ubuntu latest LTS (Noble Numbat) |
+| **Node.js** | latest |
+| **npm** | latest |
+| **pnpm** | latest |
 | **Git** | Available at `/usr/bin/git` |
 | **curl/wget** | Available |
 
@@ -81,7 +81,7 @@ Useful for WASM SIMD optimizations (e.g., PDF rendering).
 All HTTP/HTTPS traffic is routed through Anthropic's egress control proxy:
 
 ```
-Proxy endpoint: 21.0.0.191:15004
+Proxy endpoint: latest.191:15004
 Authentication: JWT (ES256, signed by anthropic-egress-control)
 ```
 
@@ -104,7 +104,7 @@ Authentication: JWT (ES256, signed by anthropic-egress-control)
 ### Proxy Bypass List (no_proxy)
 
 ```
-localhost, 127.0.0.1, 169.254.169.254,
+localhost, latest.1, latest.254,
 metadata.google.internal, *.svc.cluster.local,
 *.local, *.googleapis.com, *.google.com
 ```
@@ -218,7 +218,7 @@ Run these to identify your Claude Code environment:
 ```bash
 # Sandbox type
 systemd-detect-virt -v          # → google (GCE)
-uname -a                        # → Linux runsc 4.4.0 (gVisor)
+uname -a                        # → Linux runsc latest (gVisor)
 
 # Container markers
 cat /proc/1/cgroup              # → container paths

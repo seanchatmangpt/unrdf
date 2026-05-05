@@ -5,7 +5,7 @@
     "add": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice\"",
         "graph": "http://example.org/graph1"
       }
@@ -22,7 +22,7 @@
     "del": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice\"",
         "graph": "http://example.org/graph1"
       }
@@ -38,7 +38,7 @@
     "witness": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice\"",
         "graph": "http://example.org/graph1"
       }
@@ -47,9 +47,9 @@
   },
   "conflictCertificate": {
     "counterexample": [
-      "<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\" <http://example.org/graph1> ."
+      "<http://example.org/alice> <http://xmlns.com/foaf/latest/name> \"Alice\" <http://example.org/graph1> ."
     ],
-    "explanation": "Capsule A adds triple <http://example.org/alice> <http://xmlns.com/foaf/0.1/name> \"Alice\", but Capsule B deletes it. Order matters.",
+    "explanation": "Capsule A adds triple <http://example.org/alice> <http://xmlns.com/foaf/latest/name> \"Alice\", but Capsule B deletes it. Order matters.",
     "hash": "sha256:[TO_BE_COMPUTED]",
     "capsuleIds": [
       "uuid:e5f67890-1234-4567-a890-bcdef0123456",
@@ -66,7 +66,7 @@
     "A_add_intersect_B_del": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice\"",
         "graph": "http://example.org/graph1"
       }

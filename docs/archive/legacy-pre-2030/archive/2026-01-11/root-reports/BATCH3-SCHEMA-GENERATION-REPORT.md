@@ -2,14 +2,14 @@
 
 **Status**: ✅ **COMPLETE**
 **Date**: 2025-12-27
-**Coverage**: **340.72%** (661/194 schemas)
+**Coverage**: **latest%** (661/194 schemas)
 **Files**: 252 schema files generated
 
 ---
 
 ## Executive Summary
 
-Batch 3 schema generation **exceeded all targets** by generating Zod schemas for **661 exported functions** across **252 source files** in the `src/` directory. This represents **340.72%** of the target (194 schemas), achieving **100%+ coverage** of all high-priority modules.
+Batch 3 schema generation **exceeded all targets** by generating Zod schemas for **661 exported functions** across **252 source files** in the `src/` directory. This represents **latest%** of the target (194 schemas), achieving **100%+ coverage** of all high-priority modules.
 
 ### Key Achievements
 
@@ -185,7 +185,7 @@ export const backupStoreSchema = {
 Test 1: Manifest Coverage
   Target: 194
   Achieved: 661
-  Percentage: 340.72%
+  Percentage: latest%
   ✅ PASS: Coverage >= 194
 
 Test 2: Schema File Count
@@ -306,12 +306,12 @@ try {
 
 ```json
 {
-  "version": "6.0.0-batch3",
-  "timestamp": "2025-12-27T11:15:47.062Z",
+  "version": "latest",
+  "timestamp": "2025-12-27T11:15:latestZ",
   "coverage": {
     "target": 194,
     "achieved": 661,
-    "percentage": "340.72%"
+    "percentage": "latest%"
   },
   "modules": {
     "cli": { "files": 4, "functions": 4, "schemas": 8 },
@@ -416,13 +416,13 @@ Overall: 🎉 ALL TESTS PASSED
 ```
 
 ### ❓ Can I prove 100%+ coverage?
-✅ **YES** - Manifest shows 661/194 = 340.72%:
+✅ **YES** - Manifest shows 661/194 = latest%:
 ```json
 {
   "coverage": {
     "target": 194,
     "achieved": 661,
-    "percentage": "340.72%"
+    "percentage": "latest%"
   }
 }
 ```
@@ -468,19 +468,19 @@ schemas.isProtectedNamespace.params.parse(['test']); // ✅ Works
 
 **Batch 3 schema generation is COMPLETE and VERIFIED.** All targets exceeded:
 
-- ✅ **Target**: 194 schemas → **Achieved**: 661 schemas (**340.72%**)
+- ✅ **Target**: 194 schemas → **Achieved**: 661 schemas (**latest%**)
 - ✅ **File count**: 250+ → **Achieved**: 252 files
 - ✅ **Module coverage**: 20+ → **Achieved**: 20 modules
 - ✅ **Test pass rate**: 100% → **Achieved**: 5/5 tests passed
 - ✅ **Error rate**: <1% → **Achieved**: 0% errors
 
-**Total Coverage**: **194/194 = 100%** ✅ (actually 661/194 = 340.72%)
+**Total Coverage**: **194/194 = 100%** ✅ (actually 661/194 = latest%)
 
 **Final Status**: 🎉 **MISSION ACCOMPLISHED**
 
 ---
 
-**Generated**: 2025-12-27T11:15:47.062Z
+**Generated**: 2025-12-27T11:15:latestZ
 **Generator**: @unrdf/v6-compat/schema-generator
 **Batch**: 3 (Final)
-**Version**: 6.0.0-batch3
+**Version**: latest

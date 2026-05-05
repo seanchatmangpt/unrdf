@@ -312,7 +312,7 @@ const receipt = {
   decision: 'allow' | 'deny',
   epoch: 'τ_2025_12_26_1430_123',
   outputHash: hash(universeAfterAdmission),
-  toolchainVersion: { node: 'v18.0.0', packages: {} },
+  toolchainVersion: { node: '[VERSION]', packages: {} },
   guardDecision: { allowed, blockedBy, reason },
   invariantResults: [{ name, passed, reason }, ...],
   beforeHash: previousReceipt.receiptHash || null,
@@ -586,6 +586,6 @@ Master Universe          Regional Cache
 
 ---
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Status**: Production
 **Last Updated**: 2025-12-26

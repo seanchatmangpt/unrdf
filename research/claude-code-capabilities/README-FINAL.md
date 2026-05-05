@@ -511,6 +511,6 @@ This research has produced the **definitive guide to Claude Code's full power**:
 
 ---
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Produced by**: Agent 10 (Librarian)

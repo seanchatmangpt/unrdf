@@ -68,7 +68,7 @@ const quads = performanceFixtures.generateQuads(10000); // Stress test data
 ```
 Test Files  1 passed (1)
 Tests       25 passed (25)
-Duration    1.82s
+Duration    latests
 ```
 
 ### 2. Integration Test Runner (`packages/integration-tests/test-runner.mjs`)
@@ -95,8 +95,8 @@ node packages/integration-tests/test-runner.mjs workflows
 # ✓ workflows tests passed in 2543ms
 #
 # === Test Summary ===
-# ✓ workflows        2.54s
-# ✓ federation       3.21s
+# ✓ workflows        latests
+# ✓ federation       latests
 #
 # Results:
 #   Passed: 2
@@ -242,7 +242,7 @@ Following the principle that 20% of features deliver 80% of value:
 - ✅ **RAN tests:** `pnpm test` → 25/25 passing
 - ✅ **COUNTED files:** `wc -l` → 2,311 LoC created
 - ✅ **VERIFIED helpers work:** All 9 utilities have passing tests
-- ✅ **MEASURED performance:** Tests complete in 1.82s
+- ✅ **MEASURED performance:** Tests complete in latests
 - ✅ **CHECKED coverage:** 80% thresholds configured
 
 ### What BREAKS if wrong?

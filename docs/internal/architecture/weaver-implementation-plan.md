@@ -404,7 +404,7 @@ import config from '../weaver.config.mjs'
 const main = defineCommand({
   meta: {
     name: 'weaver',
-    version: '1.0.0',
+    version: 'latest',
     description: 'UNRDF Weaver - Code generation for dashboard components'
   },
   subCommands: {

@@ -9,7 +9,7 @@
  * for observability and monitoring.
  *
  * @module cli
- * @version 2.1.1
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -24,7 +24,7 @@ import { autonomicCommand } from './commands/autonomic.mjs';
 const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '2.1.1',
+    version: '[VERSION]',
     description: 'Autonomic RDF framework CLI - Knowledge Hooks, policy packs, and audit trails',
   },
   subCommands: {

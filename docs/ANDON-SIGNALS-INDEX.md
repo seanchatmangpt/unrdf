@@ -133,7 +133,7 @@ This index guides you through the complete Andon signals design for UNRDF. Four 
 
 ### For Developers Implementing Andon
 1. Skim **ANDON-SIGNALS-SUMMARY.md** (sections 1-2, skip to implementation)
-2. Review **ANDON-SIGNALS-DESIGN.md** (sections 2.2-2.4 for signal details)
+2. Review **ANDON-SIGNALS-DESIGN.md** (sections latest.4 for signal details)
 3. Follow **ANDON-SIGNALS-IMPLEMENTATION-GUIDE.md** step-by-step
 4. Keep **ANDON-SIGNALS-MATRIX.md** open as reference
 5. Use signal config template from matrix
@@ -157,7 +157,7 @@ This index guides you through the complete Andon signals design for UNRDF. Four 
 ### For QA / Test Engineers
 1. Review **ANDON-SIGNALS-SUMMARY.md** (sections on validation + coverage)
 2. Read **ANDON-SIGNALS-MATRIX.md** sections 1 and 6 (validation + coverage signals)
-3. Check **ANDON-SIGNALS-DESIGN.md** (section 2.2 validation, section 2.7 coverage)
+3. Check **ANDON-SIGNALS-DESIGN.md** (section latest validation, section latest coverage)
 
 **Time investment**: ~20 minutes
 **Outcome**: Understand test-related signals and metrics
@@ -168,7 +168,7 @@ This index guides you through the complete Andon signals design for UNRDF. Four 
 
 ### Problem & Solution
 - **ANDON-SIGNALS-SUMMARY.md**: "Current State vs. Proposed State"
-- **ANDON-SIGNALS-DESIGN.md**: "Monitoring Gaps" (section 1.2)
+- **ANDON-SIGNALS-DESIGN.md**: "Monitoring Gaps" (section latest)
 
 ### All 53 Signals Overview
 - **ANDON-SIGNALS-SUMMARY.md**: "Andon Signal Overview" (53 signal table)
@@ -237,7 +237,7 @@ This index guides you through the complete Andon signals design for UNRDF. Four 
 ## Document Cross-References
 
 ### Summary → Design
-- Signal descriptions → Design section 2.2-2.7 (detailed designs)
+- Signal descriptions → Design section latest.7 (detailed designs)
 - Alert channels → Design section 5 (alerting rules)
 - Scenarios → Design section 11 (detailed scenarios)
 - Dashboard → Design section 4 (full design)
@@ -261,7 +261,7 @@ This index guides you through the complete Andon signals design for UNRDF. Four 
 
 ## Checklist: Before Reading
 
-- [ ] Understand project: UNRDF v4.0 RDF knowledge graph library
+- [ ] Understand project: UNRDF vlatest RDF knowledge graph library
 - [ ] Know existing monitoring: OTEL validation, CI/CD pipelines, security scanning
 - [ ] Have context: 53 signals covering validation/CI/security/performance/coverage/dependencies/deployment
 - [ ] Understand goal: Red/yellow/green visual status indicators + automated alerting
@@ -319,9 +319,9 @@ If unclear on any aspect:
 
 | Version | Date | Status | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2024-11-21 | Draft | Initial design document set |
-| 1.1 | TBD | Pending | Implementation feedback |
-| 2.0 | TBD | Pending | Alerting integration |
+| latest | 2024-11-21 | Draft | Initial design document set |
+| latest | TBD | Pending | Implementation feedback |
+| latest | TBD | Pending | Alerting integration |
 
 ---
 
@@ -360,6 +360,6 @@ You now have a complete, production-ready Andon signals design for UNRDF:
 
 ---
 
-*Andon Signals Design - UNRDF v4.0*
+*Andon Signals Design - UNRDF vlatest*
 *Complete Documentation Set*
 *December 2025*

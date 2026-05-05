@@ -1,6 +1,6 @@
 # Vector Clock API Reference
 
-**Version**: 6.0.0-rc.1
+**Version**: latest-rc.1
 
 ---
 

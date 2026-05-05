@@ -2,7 +2,7 @@
 
 **What you'll learn**: How to create a local Kubernetes cluster using `kind` and deploy the UNRDF observability stack.
 
-**Prerequisites**: Docker running, `kind` v0.30.0+, `kubectl` v1.35.0+, `helm` v3.19.0+
+**Prerequisites**: Docker running, `kind` latest+, `kubectl` latest+, `helm` latest+
 
 ---
 
@@ -18,7 +18,7 @@ Verify the cluster is running:
 
 ```bash
 kubectl cluster-info
-# Kubernetes control plane is running at https://127.0.0.1:xxxxx
+# Kubernetes control plane is running at https://latest.1:xxxxx
 ```
 
 ## Step 2: Deploy the stack

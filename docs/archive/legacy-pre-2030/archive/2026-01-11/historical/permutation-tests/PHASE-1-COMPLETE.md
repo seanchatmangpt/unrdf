@@ -14,7 +14,7 @@
 - ✅ Imports working (@unrdf/oxigraph + @unrdf/core)
 - ✅ Store creation successful
 - ✅ Quad add/query operations functional
-- ✅ **1/8 permutation tests passing (12.5%)**
+- ✅ **1/8 permutation tests passing (latest%)**
 
 ### What We Achieved (80% of Value)
 
@@ -77,7 +77,7 @@ $ timeout 5s node permutation-tests/01-core-only.mjs
 📊 Counting quads...
    ✅ Store contains 1 quad(s)
 
-✅ 01-core-only: PASS (245.43ms)
+✅ 01-core-only: PASS (latestms)
 ```
 
 ---
@@ -200,7 +200,7 @@ timeout 5s node permutation-tests/05-core-hooks.mjs
 
 | Phase       | Goal                | Status     | Tests Passing |
 | ----------- | ------------------- | ---------- | ------------- |
-| **Phase 1** | Core infrastructure | ✅ DONE    | 1/8 (12.5%)   |
+| **Phase 1** | Core infrastructure | ✅ DONE    | 1/8 (latest%)   |
 | **Phase 2** | Integrations        | 🔜 NEXT    | Target: 3/8   |
 | **Phase 3** | Full validation     | ⏳ PENDING | Target: 8/8   |
 | **Phase 4** | Consolidation       | ⏳ PENDING | N/A           |

@@ -73,7 +73,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 ### Unreasonable Performance Requirements
 
 - [ ] `src/api.mjs:67` - Requires <1ms latency for non-critical path
-- [ ] `src/query.mjs:89` - Optimized for 0.01% edge case
+- [ ] `src/query.mjs:89` - Optimized for latest% edge case
 
 ### Over-engineering
 
@@ -157,7 +157,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Action**: Systematically reduce overburden, starting with high-priority items.
 
-#### 3.1: Reduce Complexity (Over-complexity Muri)
+#### latest: Reduce Complexity (Over-complexity Muri)
 
 **Action**: Simplify complex code.
 
@@ -172,7 +172,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Verification**: Tests pass, complexity reduced (cyclomatic complexity < 10)
 
-#### 3.2: Simplify Architecture (Over-engineering Muri)
+#### latest: Simplify Architecture (Over-engineering Muri)
 
 **Action**: Remove unnecessary complexity from architecture.
 
@@ -187,7 +187,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Verification**: Tests pass, code simpler, fewer abstractions
 
-#### 3.3: Reduce Coupling (Tight Coupling Muri)
+#### latest: Reduce Coupling (Tight Coupling Muri)
 
 **Action**: Loosen dependencies between modules.
 
@@ -202,7 +202,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Verification**: Tests pass, no circular dependencies, modules more independent
 
-#### 3.4: Reduce Cognitive Load (Cognitive Overload Muri)
+#### latest: Reduce Cognitive Load (Cognitive Overload Muri)
 
 **Action**: Make code easier to understand.
 
@@ -218,7 +218,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Verification**: Tests pass, code more readable, functions shorter
 
-#### 3.5: Optimize Resource Usage (Resource Strain Muri)
+#### latest: Optimize Resource Usage (Resource Strain Muri)
 
 **Action**: Reduce resource consumption.
 
@@ -234,7 +234,7 @@ Step 1: Identify Muri → Step 2: Measure Strain Impact → Step 3: Reduce Overb
 
 **Verification**: Tests pass, resource usage reduced, performance improved
 
-#### 3.6: Remove Unnecessary Constraints (Unnecessary Constraints Muri)
+#### latest: Remove Unnecessary Constraints (Unnecessary Constraints Muri)
 
 **Action**: Remove constraints that don't add value.
 

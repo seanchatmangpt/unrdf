@@ -36,12 +36,12 @@ All 7 implementation files created and verified:
 
 ```json
 {
-  "@opentelemetry/api": "^1.7.0",
-  "@opentelemetry/exporter-trace-otlp-grpc": "^0.26.0",
-  "@opentelemetry/resources": "^1.17.0",
-  "@opentelemetry/sdk-node": "^0.26.0",
-  "@opentelemetry/sdk-trace-node": "^1.17.0",
-  "@opentelemetry/semantic-conventions": "^1.17.0"
+  "@opentelemetry/api": "^latest",
+  "@opentelemetry/exporter-trace-otlp-grpc": "^latest",
+  "@opentelemetry/resources": "^latest",
+  "@opentelemetry/sdk-node": "^latest",
+  "@opentelemetry/sdk-trace-node": "^latest",
+  "@opentelemetry/semantic-conventions": "^latest"
 }
 ```
 
@@ -153,7 +153,7 @@ const daemon = new Daemon({
 - **Total Tests**: 1,042
 - **Passed**: 1,036
 - **Failed**: 6
-- **Pass Rate**: 99.4%
+- **Pass Rate**: latest%
 
 **Note**: 6 test failures are pre-existing issues unrelated to OTEL integration:
 
@@ -162,7 +162,7 @@ const daemon = new Daemon({
 3. e2e-nitro-tasks-integration.test.mjs:85 - Daemon start issue (pre-existing)
 4. e2e-receipts-merkle.test.mjs:677 - Merkle tree issues (pre-existing)
 
-**Status**: ✅ 99.4% pass rate maintained (OTEL changes don't break existing tests)
+**Status**: ✅ latest% pass rate maintained (OTEL changes don't break existing tests)
 
 ---
 
@@ -188,7 +188,7 @@ async start() {
     // Initialize OTEL SDK first
     await initializeOTelSDK({
       serviceName: 'unrdf-daemon',
-      version: '26.4.23',
+      version: 'latest',
       environment: process.env.NODE_ENV || 'development',
       otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
     });
@@ -274,15 +274,15 @@ async stop() {
 - [x] All implementation files import successfully
 - [x] Daemon instantiates with OTEL integration
 - [x] No breaking changes to existing functionality
-- [x] 99.4% test pass rate maintained
+- [x] latest% test pass rate maintained
 - [x] OTEL SDK initialization has error handling
 - [x] Graceful degradation if OTEL fails
 
 ### Documentation ✅
 
 - [x] Implementation summary created (16 KB)
-- [x] Environment configuration guide created (7.5 KB)
-- [x] Custom conventions YAML created (2.4 KB)
+- [x] Environment configuration guide created (latest KB)
+- [x] Custom conventions YAML created (latest KB)
 - [x] Code is well-documented with JSDoc comments
 - [x] Example code provided
 
@@ -356,13 +356,13 @@ async stop() {
 
 ✅ **ALL VERIFICATION STEPS PASSED**
 
-The OTEL Weaver integration into the @unrdf/daemon package is **production-ready**. All implementation files are created, imports work correctly, daemon instantiates successfully, semantic conventions are defined, and existing tests maintain 99.4% pass rate.
+The OTEL Weaver integration into the @unrdf/daemon package is **production-ready**. All implementation files are created, imports work correctly, daemon instantiates successfully, semantic conventions are defined, and existing tests maintain latest% pass rate.
 
-**Implementation Timeline**: ~2.5 hours
+**Implementation Timeline**: ~latest hours
 **Files Created**: 7 (41 KB total)
 **Files Modified**: 4
 **Lines of Code**: ~900+
-**Test Coverage**: 99.4% pass rate maintained
+**Test Coverage**: latest% pass rate maintained
 
 **Status**: ✅ READY FOR DEPLOYMENT
 

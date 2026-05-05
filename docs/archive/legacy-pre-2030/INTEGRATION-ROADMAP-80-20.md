@@ -16,8 +16,8 @@ This roadmap identifies the **top 10 compositions** that deliver 80% of UNRDF's 
 
 Where:
 - **Use Case Breadth**: Number of distinct use cases enabled (1-10)
-- **Proof Status**: 1.0 (tested), 0.5 (blocked), 0.0 (failed)
-- **Performance**: Relative performance vs alternatives (0.5-2.0×)
+- **Proof Status**: latest (tested), latest (blocked), latest (failed)
+- **Performance**: Relative performance vs alternatives (latest.0×)
 - **Complexity**: Implementation complexity (1-5, lower is better)
 
 **Goal**: Guide users to the highest-ROI compositions first, with clear learning dependencies and proof verification steps.
@@ -27,7 +27,7 @@ Where:
 ## Top 10 High-Leverage Compositions
 
 ### 1. C03: Async Oxigraph - Production RDF Engine
-**Rank**: #1 (Leverage Score: 8.0)
+**Rank**: #1 (Leverage Score: latest)
 **Atoms**: A01 (rdf-store-create) + A03 (sparql-execute-async) + A05 (oxigraph-store)
 
 **Why It Matters**:
@@ -61,7 +61,7 @@ Where:
 - p95 latency: <20ms (current: ~15ms)
 - Throughput: >50K triples/sec (current: ~52K)
 
-**Risk**: WASM bundle size (1.2MB - acceptable for web apps)
+**Risk**: WASM bundle size (latestMB - acceptable for web apps)
 
 **Evidence**:
 - COMPOSITION-LATTICE.md:35-43
@@ -71,7 +71,7 @@ Where:
 ---
 
 ### 2. C17: Freeze + Git + Sync - Time-Travel RDF
-**Rank**: #2 (Leverage Score: 7.5)
+**Rank**: #2 (Leverage Score: latest)
 **Atoms**: A18 (freeze-universe) + A21 (git-backbone) + A08 (sync-protocol)
 
 **Why It Matters**:
@@ -114,7 +114,7 @@ Where:
 ---
 
 ### 3. C12: Multi-Layer Cache - High-Throughput Queries
-**Rank**: #3 (Leverage Score: 7.0)
+**Rank**: #3 (Leverage Score: latest)
 **Atoms**: A01 (rdf-store-create) + A22 (multi-layer-cache) + A24 (sparql-cache)
 
 **Why It Matters**:
@@ -142,7 +142,7 @@ Where:
 - **Expected Output**: 90%+ hit rate, <2ms L1 latency
 
 **Performance Budget**:
-- L1 hit latency: <2ms (current: ~1.5ms)
+- L1 hit latency: <2ms (current: ~latestms)
 - L2 hit latency: <10ms (current: ~8ms)
 - Hit rate: >90% (current: ~93%)
 
@@ -155,7 +155,7 @@ Where:
 ---
 
 ### 4. C27: Durable Workflows + Receipts - Long-Running Sagas
-**Rank**: #4 (Leverage Score: 6.8)
+**Rank**: #4 (Leverage Score: latest)
 **Atoms**: A35 (workflow-engine) + A39 (durable-workflow) + A36 (workflow-receipt)
 
 **Why It Matters**:
@@ -186,7 +186,7 @@ Where:
 **Performance Budget**:
 - Snapshot + receipt: <10ms (current: ~8ms)
 - Replay 100 events: <500ms (current: ~350ms)
-- Receipt verification: <2ms (current: ~0.5ms)
+- Receipt verification: <2ms (current: ~latestms)
 
 **Risk**: Replay nondeterminism (requires strict event ordering)
 
@@ -197,7 +197,7 @@ Where:
 ---
 
 ### 5. C25: Workflow + Hooks - Policy-Gated Workflows
-**Rank**: #5 (Leverage Score: 6.5)
+**Rank**: #5 (Leverage Score: latest)
 **Atoms**: A35 (workflow-engine) + A37 (workflow-patterns) + A47 (hook-system)
 
 **Why It Matters**:
@@ -237,7 +237,7 @@ Where:
 ---
 
 ### 6. C16: CRDT + WebSocket - Offline-First Collaboration
-**Rank**: #6 (Leverage Score: 6.2)
+**Rank**: #6 (Leverage Score: latest)
 **Atoms**: A06 (change-feed) + A43 (crdt-graph) + A44 (websocket-sync)
 
 **Why It Matters**:
@@ -277,7 +277,7 @@ Where:
 ---
 
 ### 7. C07: SPARQL + Optimizer - Query Performance
-**Rank**: #7 (Leverage Score: 5.8)
+**Rank**: #7 (Leverage Score: latest)
 **Atoms**: A02 (sparql-execute-sync) + A46 (query-optimizer)
 
 **Why It Matters**:
@@ -304,7 +304,7 @@ Where:
 
 **Performance Budget**:
 - Optimization overhead: <5ms (current: ~2ms)
-- Speedup: >2× on complex queries (current: ~3.5×)
+- Speedup: >2× on complex queries (current: ~latest×)
 
 **Risk**: Optimizer may introduce bugs (needs fuzzing - recommended)
 
@@ -315,7 +315,7 @@ Where:
 ---
 
 ### 8. C31: GraphQL + RDF - Modern APIs
-**Rank**: #8 (Leverage Score: 5.5)
+**Rank**: #8 (Leverage Score: latest)
 **Atoms**: A45 (graphql-adapter) + A01 (rdf-store-create)
 
 **Why It Matters**:
@@ -354,7 +354,7 @@ Where:
 ---
 
 ### 9. C04: Canonicalize + Store - Deterministic Graphs
-**Rank**: #9 (Leverage Score: 5.2)
+**Rank**: #9 (Leverage Score: latest)
 **Atoms**: A04 (rdf-canonicalize) + A01 (rdf-store-create)
 
 **Why It Matters**:
@@ -381,7 +381,7 @@ Where:
 
 **Performance Budget**:
 - Canonicalize (1000 quads): <15ms (current: ~12ms)
-- Hash (BLAKE3): <1ms (current: ~0.5ms)
+- Hash (BLAKE3): <1ms (current: ~latestms)
 
 **Risk**: None (algorithm is deterministic)
 
@@ -392,7 +392,7 @@ Where:
 ---
 
 ### 10. C20: Graph Analytics - PageRank + Clustering
-**Rank**: #10 (Leverage Score: 5.0)
+**Rank**: #10 (Leverage Score: latest)
 **Atoms**: A25 (rdf-to-graph) + A26 (pagerank) + A28 (community-detector)
 
 **Why It Matters**:

@@ -64,7 +64,7 @@ const result = await anchorer.anchorReceipt(receipt);
 
 ### 2. Smart Contract Integration
 
-**Contract**: `WorkflowVerifier.sol` (Solidity ^0.8.20)
+**Contract**: `WorkflowVerifier.sol` (Solidity ^latest)
 
 **Key Functions**:
 ```solidity
@@ -131,14 +131,14 @@ const isValid = generator.verifyProof(proof);
 | 1 | 50,000 | 50,000 | 60,000 | Individual | 0% |
 | 5 | 250,000 | 130,000 | 60,000 | Merkle | 76% |
 | 10 | 500,000 | 230,000 | 60,000 | Merkle | 88% |
-| 50 | 2,500,000 | 1,030,000 | 60,000 | Merkle | 97.6% |
-| 100 | 5,000,000 | 2,030,000 | 60,000 | Merkle | 98.8% |
-| 1,000 | 50,000,000 | 20,030,000 | 60,000 | Merkle | 99.88% |
+| 50 | 2,500,000 | 1,030,000 | 60,000 | Merkle | latest% |
+| 100 | 5,000,000 | 2,030,000 | 60,000 | Merkle | latest% |
+| 1,000 | 50,000,000 | 20,030,000 | 60,000 | Merkle | latest% |
 
 **At 20 Gwei gas price:**
-- 100 receipts individual: ~0.1 ETH
-- 100 receipts Merkle: ~0.0012 ETH
-- **Savings: 0.0988 ETH (98.8%)**
+- 100 receipts individual: ~latest ETH
+- 100 receipts Merkle: ~latest ETH
+- **Savings: latest ETH (latest%)**
 
 ### Recommendations
 
@@ -254,7 +254,7 @@ pnpm demo
 ✅ Anchored at block: 2
    Transaction: 0x...
    Gas used: 51234
-   Cost: 0.000051234 ETH
+   Cost: latest ETH
 ...
 ```
 
@@ -282,10 +282,10 @@ Cost Comparison by Batch Size:
 ┌──────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────┐
 │ Receipts │ Individual   │ Batch        │ Merkle       │ Optimal      │ Savings     │
 ├──────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
-│        1 │     0.000050 │     0.000050 │     0.000060 │ Individual   │          0% │
-│       10 │     0.000500 │     0.000230 │     0.000060 │ Merkle       │        88% │
-│      100 │     0.005000 │     0.002030 │     0.000060 │ Merkle       │      98.8% │
-│     1000 │     0.050000 │     0.020030 │     0.000060 │ Merkle       │     99.88% │
+│        1 │     latest │     latest │     latest │ Individual   │          0% │
+│       10 │     latest │     latest │     latest │ Merkle       │        88% │
+│      100 │     latest │     latest │     latest │ Merkle       │      latest% │
+│     1000 │     latest │     latest │     latest │ Merkle       │     latest% │
 └──────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────┘
 ```
 
@@ -539,11 +539,11 @@ forge verify-contract \
 
 ### Blockchain Performance
 
-- **Single anchor**: ~50k gas (~0.001 ETH @ 20 Gwei)
-- **Batch anchor (10)**: ~230k gas (~0.0046 ETH @ 20 Gwei)
-- **Merkle anchor (1000)**: ~60k gas (~0.0012 ETH @ 20 Gwei)
+- **Single anchor**: ~50k gas (~latest ETH @ 20 Gwei)
+- **Batch anchor (10)**: ~230k gas (~latest ETH @ 20 Gwei)
+- **Merkle anchor (1000)**: ~60k gas (~latest ETH @ 20 Gwei)
 
-**Cost per receipt (1000 receipts, Merkle)**: 0.0000012 ETH (~$0.003 @ $2500 ETH)
+**Cost per receipt (1000 receipts, Merkle)**: latest ETH (~$latest @ $2500 ETH)
 
 ## Comparison with Alternatives
 
@@ -551,8 +551,8 @@ forge verify-contract \
 
 | Aspect | Individual | Merkle | Improvement |
 |--------|-----------|--------|-------------|
-| Gas (1000 receipts) | 50M | 60k | **99.88%** |
-| Transactions | 1000 | 1 | **99.9%** |
+| Gas (1000 receipts) | 50M | 60k | **latest%** |
+| Transactions | 1000 | 1 | **latest%** |
 | On-chain storage | High | Minimal | **99%+** |
 | Verification | Direct | Proof required | Trade-off |
 

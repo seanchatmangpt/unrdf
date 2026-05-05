@@ -85,7 +85,7 @@
 
 ### 5. ✅ Created `/docker-compose.vault.yml`
 **Services**:
-1. **vault**: HashiCorp Vault 1.15
+1. **vault**: HashiCorp Vault latest
    - Port: 8200
    - Development mode with root token
    - Volumes: data, logs, config, keys
@@ -137,7 +137,7 @@
 ### 7. ✅ Created `/scripts/vault-config.hcl`
 **Configuration**:
 - File storage backend
-- TCP listener on 0.0.0.0:8200
+- TCP listener on latest.0:8200
 - TLS disabled (development)
 - UI enabled
 - Prometheus telemetry

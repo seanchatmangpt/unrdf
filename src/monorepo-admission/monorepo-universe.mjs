@@ -552,7 +552,7 @@ export class MonorepoUniverse {
    */
   _getUniverseVersion() {
     const core = this.partitions.get('@unrdf/core');
-    return core ? core.version : '0.0.0';
+    return core ? core.version : '[VERSION]';
   }
 
   /**

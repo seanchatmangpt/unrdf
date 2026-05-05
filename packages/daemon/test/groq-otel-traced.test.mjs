@@ -19,7 +19,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 // Initialize OpenTelemetry
 const resource = opentelemetryResources.resourceFromAttributes({
   [SemanticResourceAttributes.SERVICE_NAME]: 'unrdf-groq-test',
-  [SemanticResourceAttributes.SERVICE_VERSION]: '26.4.23',
+  [SemanticResourceAttributes.SERVICE_VERSION]: '[VERSION]',
 });
 
 const traceExporter = new OTLPTraceExporter({

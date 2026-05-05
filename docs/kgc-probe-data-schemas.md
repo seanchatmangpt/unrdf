@@ -162,7 +162,7 @@ Each agent produces one JSON file in `shards/` directory named `<agent-name>.jso
       }
     ],
     "metadata": {
-      "apiVersion": "5.0.1",
+      "apiVersion": "latest",
       "rdfGraph": true,
       "statementCount": 24
     }
@@ -299,7 +299,7 @@ Primary artifact file: `merged/index.json`
   "metadata": {
     "runId": "20250101-120000-abc123",
     "mergedAt": "2025-01-01T12:00:05.678Z",
-    "version": "1.0.0",
+    "version": "latest",
     "shardCount": 10
   },
   "agents": [
@@ -596,7 +596,7 @@ File: `receipts/merkle.json`
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "latest",
   "allowlist": [
     "orchestrator",
     "runtime",

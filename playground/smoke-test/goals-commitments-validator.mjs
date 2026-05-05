@@ -402,7 +402,7 @@ async function validateMetrics() {
     const exportCount = Object.keys(unrdf).length;
     const exportMetrics = {
       total: exportCount,
-      threshold: 250, // Expect at least 250 exports in v3.0.2
+      threshold: 250, // Expect at least 250 exports in latest
       status: exportCount >= 250,
     };
 
@@ -516,7 +516,7 @@ async function validateCompliance() {
       nodeCompliance,
       true,
       "Compliance",
-      "package.json engines.node >= 18.0.0",
+      "package.json engines.node >= latest",
     );
 
     // Compliance 3: ESM Module Standards
@@ -567,7 +567,7 @@ async function validateCompliance() {
 
 /**
  * 🚀 RELEASE READINESS VALIDATION
- * Validate that we're ready for v3.0.2 release
+ * Validate that we're ready for latest release
  */
 function validateReleaseReadiness() {
   logSection("🚀 RELEASE READINESS VALIDATION");

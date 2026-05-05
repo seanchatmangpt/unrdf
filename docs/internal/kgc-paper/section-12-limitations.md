@@ -2,7 +2,7 @@
 
 ### 8.1 Current Limitations
 
-#### 8.1.1 Canonicalization Performance
+#### latest Canonicalization Performance
 
 URDNA2015 has O(n log n) complexity for n-triple stores, limiting scalability to ~1M triples with acceptable latency.
 
@@ -13,7 +13,7 @@ URDNA2015 has O(n log n) complexity for n-triple stores, limiting scalability to
 - Hardware acceleration using SIMD instructions
 - Distributed canonicalization for multi-million triple stores
 
-#### 8.1.2 Predicate Expressiveness
+#### latest Predicate Expressiveness
 
 Current predicate types cover common use cases but lack:
 - Recursive graph patterns
@@ -25,7 +25,7 @@ Current predicate types cover common use cases but lack:
 - Integration with reasoning engines (EYE, Jena)
 - Probabilistic knowledge graphs with uncertainty quantification
 
-#### 8.1.3 Multi-Agent Coordination
+#### latest Multi-Agent Coordination
 
 Current resolution strategies are synchronous and require all agents to respond.
 
@@ -36,13 +36,13 @@ Current resolution strategies are synchronous and require all agents to respond.
 
 ### 8.2 Ongoing Research
 
-#### 8.2.1 Quantum-Resistant Cryptography
+#### latest Quantum-Resistant Cryptography
 
 Post-quantum cryptographic algorithms for long-term audit trail security.
 
 **Candidates**: CRYSTALS-Dilithium (signatures), SPHINCS+ (stateless hash-based signatures)
 
-#### 8.2.2 Federated Knowledge Hooks
+#### latest Federated Knowledge Hooks
 
 Hooks that span multiple federated knowledge graphs.
 
@@ -51,7 +51,7 @@ Hooks that span multiple federated knowledge graphs.
 - Distributed provenance tracking
 - Privacy-preserving hook evaluation
 
-#### 8.2.3 Machine Learning Integration
+#### latest Machine Learning Integration
 
 - **Anomaly Detection**: ML-based predicates for outlier detection
 - **Adaptive Thresholds**: Learn optimal thresholds from historical data
@@ -59,13 +59,13 @@ Hooks that span multiple federated knowledge graphs.
 
 ### 8.3 Standardization Efforts
 
-#### 8.3.1 W3C Community Group
+#### latest W3C Community Group
 
 Proposing Knowledge Hooks as a W3C standard for RDF reactivity.
 
 **Draft Specification**: https://w3c.github.io/knowledge-hooks/
 
-#### 8.3.2 Interoperability
+#### latest Interoperability
 
 **Target**: Compatibility with:
 - Apache Jena

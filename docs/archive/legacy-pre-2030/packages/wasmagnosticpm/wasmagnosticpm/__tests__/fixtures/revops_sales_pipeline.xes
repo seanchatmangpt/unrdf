@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log xes.version="1.0" xmlns="http://www.xes-standard.org/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.xes-standard.org/ xes.xsd">
+  <extension name="cost" prefix="cost" uri="http://www.xes-standard.org/cost.xesext"/>
+
+  <!-- Variant 1: Small deal - Direct path -->
+  <trace>
+    <string key="concept:name" value="deal_001"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_alice"/>
+      <date key="time:timestamp" value="2024-01-15T09:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_bob"/>
+      <date key="time:timestamp" value="2024-01-15T09:30:00Z"/>
+      <float key="cost:total" value="25000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_carol"/>
+      <date key="time:timestamp" value="2024-01-16T10:00:00Z"/>
+      <float key="cost:total" value="25000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Won"/>
+      <string key="org:resource" value="ae_carol"/>
+      <date key="time:timestamp" value="2024-01-18T14:00:00Z"/>
+      <float key="cost:total" value="25000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 2: Medium deal - Direct path -->
+  <trace>
+    <string key="concept:name" value="deal_002"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_alice"/>
+      <date key="time:timestamp" value="2024-01-20T08:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_dave"/>
+      <date key="time:timestamp" value="2024-01-20T09:00:00Z"/>
+      <float key="cost:total" value="75000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_eve"/>
+      <date key="time:timestamp" value="2024-01-22T11:00:00Z"/>
+      <float key="cost:total" value="75000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Won"/>
+      <string key="org:resource" value="ae_eve"/>
+      <date key="time:timestamp" value="2024-01-25T16:00:00Z"/>
+      <float key="cost:total" value="75000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 3: Large deal - Direct path -->
+  <trace>
+    <string key="concept:name" value="deal_003"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_frank"/>
+      <date key="time:timestamp" value="2024-02-01T09:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_grace"/>
+      <date key="time:timestamp" value="2024-02-01T10:00:00Z"/>
+      <float key="cost:total" value="150000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_hank"/>
+      <date key="time:timestamp" value="2024-02-03T13:00:00Z"/>
+      <float key="cost:total" value="150000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Won"/>
+      <string key="org:resource" value="ae_hank"/>
+      <date key="time:timestamp" value="2024-02-08T15:00:00Z"/>
+      <float key="cost:total" value="150000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 4: Small deal - Lost after proposal -->
+  <trace>
+    <string key="concept:name" value="deal_004"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_alice"/>
+      <date key="time:timestamp" value="2024-02-10T08:30:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_bob"/>
+      <date key="time:timestamp" value="2024-02-10T09:30:00Z"/>
+      <float key="cost:total" value="35000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_carol"/>
+      <date key="time:timestamp" value="2024-02-12T10:00:00Z"/>
+      <float key="cost:total" value="35000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Lost"/>
+      <string key="org:resource" value="ae_carol"/>
+      <date key="time:timestamp" value="2024-02-15T11:00:00Z"/>
+      <float key="cost:total" value="35000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 5: Medium deal - Lost after proposal -->
+  <trace>
+    <string key="concept:name" value="deal_005"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_iris"/>
+      <date key="time:timestamp" value="2024-02-18T09:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_jack"/>
+      <date key="time:timestamp" value="2024-02-18T10:00:00Z"/>
+      <float key="cost:total" value="60000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_kate"/>
+      <date key="time:timestamp" value="2024-02-20T14:00:00Z"/>
+      <float key="cost:total" value="60000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Lost"/>
+      <string key="org:resource" value="ae_kate"/>
+      <date key="time:timestamp" value="2024-02-23T15:00:00Z"/>
+      <float key="cost:total" value="60000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 6: Enterprise deal - Negotiation path then won -->
+  <trace>
+    <string key="concept:name" value="deal_006"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_frank"/>
+      <date key="time:timestamp" value="2024-03-01T08:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_grace"/>
+      <date key="time:timestamp" value="2024-03-01T09:30:00Z"/>
+      <float key="cost:total" value="250000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_hank"/>
+      <date key="time:timestamp" value="2024-03-05T11:00:00Z"/>
+      <float key="cost:total" value="250000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Negotiate"/>
+      <string key="org:resource" value="sales_director_lisa"/>
+      <date key="time:timestamp" value="2024-03-08T13:00:00Z"/>
+      <float key="cost:total" value="250000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Won"/>
+      <string key="org:resource" value="sales_director_lisa"/>
+      <date key="time:timestamp" value="2024-03-12T16:00:00Z"/>
+      <float key="cost:total" value="250000"/>
+    </event>
+  </trace>
+
+  <!-- Variant 7: Large deal - Negotiation path then won -->
+  <trace>
+    <string key="concept:name" value="deal_007"/>
+    <event>
+      <string key="concept:name" value="Lead"/>
+      <string key="org:resource" value="sales_rep_mike"/>
+      <date key="time:timestamp" value="2024-03-15T09:00:00Z"/>
+      <float key="cost:total" value="0"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Qualify"/>
+      <string key="org:resource" value="sdr_nancy"/>
+      <date key="time:timestamp" value="2024-03-15T10:30:00Z"/>
+      <float key="cost:total" value="180000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Propose"/>
+      <string key="org:resource" value="ae_olivia"/>
+      <date key="time:timestamp" value="2024-03-18T12:00:00Z"/>
+      <float key="cost:total" value="180000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Negotiate"/>
+      <string key="org:resource" value="sales_director_lisa"/>
+      <date key="time:timestamp" value="2024-03-21T14:00:00Z"/>
+      <float key="cost:total" value="180000"/>
+    </event>
+    <event>
+      <string key="concept:name" value="Close Won"/>
+      <string key="org:resource" value="sales_director_lisa"/>
+      <date key="time:timestamp" value="2024-03-25T17:00:00Z"/>
+      <float key="cost:total" value="180000"/>
+    </event>
+  </trace>
+</log>

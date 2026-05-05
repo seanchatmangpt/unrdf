@@ -6,7 +6,7 @@
  * OTEL span-based validation for transaction manager.
  * Tests ACID guarantees, rollback, and transaction lifecycle.
  *
- * v3.1.0 Feature: Transaction manager validation (10% weight)
+ * [VERSION] Feature: Transaction manager validation (10% weight)
  */
 
 import {

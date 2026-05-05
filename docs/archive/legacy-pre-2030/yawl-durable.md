@@ -2,7 +2,7 @@
 
 > Durable execution framework inspired by Temporal.io using YAWL and KGC-4D
 
-**Version**: `0.1.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

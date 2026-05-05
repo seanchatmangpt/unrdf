@@ -9,7 +9,7 @@
     "paper": "http://example.org/ontology/paper#",
     "thesis": "http://example.org/ontology/thesis#"
   },
-  "@id": "urn:playground:sparql-guide:v1.0.0",
+  "@id": "urn:playground:sparql-guide:latest",
   "@type": "query:QueryCatalog"
 }
 ```

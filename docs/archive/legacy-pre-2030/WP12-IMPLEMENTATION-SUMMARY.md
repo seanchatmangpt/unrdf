@@ -160,7 +160,7 @@ Instance Receipts (chain)
 
 Test Files  1 passed (1)
 Tests       23 passed (23)
-Duration    2.92s
+Duration    latests
 ```
 
 ### Test Distribution

@@ -59,7 +59,7 @@ case "$COMMAND" in
         cat > "$PACKAGE_DIR/package.json" << EOF
 {
   "name": "@unrdf/$PACKAGE_NAME",
-  "version": "5.0.0",
+  "version": "latest",
   "description": "UNRDF $PACKAGE_NAME package",
   "type": "module",
   "main": "./dist/index.mjs",
@@ -90,13 +90,13 @@ case "$COMMAND" in
   "license": "MIT",
   "dependencies": {
     "@unrdf/core": "workspace:*",
-    "zod": "^4.1.13"
+    "zod": "^latest"
   },
   "devDependencies": {
-    "vitest": "^4.0.15",
-    "unbuild": "^3.6.1",
-    "eslint": "^9.39.1",
-    "prettier": "^3.7.4"
+    "vitest": "^latest",
+    "unbuild": "^latest",
+    "eslint": "^latest",
+    "prettier": "^latest"
   }
 }
 EOF
@@ -254,7 +254,7 @@ EOF
         if [ "$NODE_MAJOR" -ge 18 ]; then
             print_success "Node.js $NODE_VERSION (OK)"
         else
-            print_error "Node.js $NODE_VERSION (Required: >= 18.0.0)"
+            print_error "Node.js $NODE_VERSION (Required: >= latest)"
             ERRORS=$((ERRORS + 1))
         fi
 

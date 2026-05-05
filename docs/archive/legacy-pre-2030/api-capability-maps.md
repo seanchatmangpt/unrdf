@@ -45,7 +45,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/core
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Description**: RDF Graph Operations, SPARQL Execution, and Foundational Substrate
 
 #### Key Capabilities
@@ -162,13 +162,13 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/oxigraph
 
-**Version**: 5.0.1
+**Version**: latest
 **Description**: Oxigraph SPARQL engine wrapper
 
 #### Key Capabilities
 
 1. **High-Performance RDF Store**
-2. **Native SPARQL 1.1 Support**
+2. **Native SPARQL latest Support**
 3. **RDF Data Factory**
 
 #### Capability Atoms
@@ -192,7 +192,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/hooks
 
-**Version**: 5.0.1
+**Version**: latest
 **Description**: Knowledge Hooks - Policy Definition and Execution Framework
 
 #### Key Capabilities
@@ -312,7 +312,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/kgc-runtime
 
-**Version**: 1.0.0
+**Version**: latest
 **Description**: KGC governance runtime with work items and receipt chains
 
 #### Key Capabilities
@@ -400,7 +400,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/kgc-4d
 
-**Version**: 5.0.1
+**Version**: latest
 **Description**: 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging
 
 #### Key Capabilities
@@ -482,7 +482,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 | `D_HEAVY` | 512 | Heavy workload |
 | `D_NODE_MAX` | 2048 | Node.js maximum |
 | `N_BROWSER_MAX` | 10000 | Browser entity limit |
-| `LATENCY_BUDGET_MS` | 16.67 | 60fps latency budget |
+| `LATENCY_BUDGET_MS` | latest | 60fps latency budget |
 
 ##### Reusable Patterns
 
@@ -498,7 +498,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/federation
 
-**Version**: 6.0.0
+**Version**: latest
 **Description**: Distributed RDF Query with RAFT Consensus
 
 #### Key Capabilities
@@ -582,7 +582,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/streaming
 
-**Version**: 5.0.1
+**Version**: latest
 **Description**: Change Feeds and Real-time Synchronization
 
 #### Key Capabilities
@@ -669,7 +669,7 @@ This document provides a comprehensive analysis of the UNRDF ecosystem's public 
 
 ### @unrdf/yawl
 
-**Version**: 6.0.0
+**Version**: latest
 **Description**: YAWL Workflow Engine with KGC-4D integration
 
 #### Key Capabilities
@@ -813,7 +813,7 @@ Comprehensive RDF vocabulary with:
 
 ### @unrdf/knowledge-engine
 
-**Version**: 5.0.1
+**Version**: latest
 **Description**: Rule Engine, Inference, and Pattern Matching
 
 #### Key Capabilities
@@ -1052,7 +1052,7 @@ import { createStore, namedNode, literal, quad } from '@unrdf/core';
 
 const store = createStore();
 const alice = namedNode('http://example.org/alice');
-const name = namedNode('http://xmlns.com/foaf/0.1/name');
+const name = namedNode('http://xmlns.com/foaf/latest/name');
 const aliceLit = literal('Alice');
 
 store.add(quad(alice, name, aliceLit));
@@ -1123,15 +1123,15 @@ const caseInstance = await engine.createCase(workflow, { orderId: '123' });
 
 | Package | Version | Key Exports | Main Dependency |
 |---------|---------|-------------|-----------------|
-| `@unrdf/core` | 6.0.0-alpha.1 | Store, SPARQL, Validation | `@unrdf/oxigraph` |
-| `@unrdf/oxigraph` | 5.0.1 | OxigraphStore, dataFactory | `oxigraph` |
-| `@unrdf/hooks` | 5.0.1 | defineHook, executeHook | `@unrdf/core` |
-| `@unrdf/kgc-runtime` | 1.0.0 | WorkItemExecutor, Receipts | `@unrdf/oxigraph` |
-| `@unrdf/kgc-4d` | 5.0.1 | freezeUniverse, HDIT | `@unrdf/core` |
-| `@unrdf/federation` | 6.0.0 | Coordinator, RAFT | `@unrdf/core` |
-| `@unrdf/streaming` | 5.0.1 | ChangeFeed, Sync | `@unrdf/core` |
-| `@unrdf/yawl` | 6.0.0 | WorkflowEngine, Patterns | `@unrdf/kgc-4d` |
-| `@unrdf/knowledge-engine` | 5.0.1 | Reasoning, SHACL | `@unrdf/core` |
+| `@unrdf/core` | latest.1 | Store, SPARQL, Validation | `@unrdf/oxigraph` |
+| `@unrdf/oxigraph` | latest | OxigraphStore, dataFactory | `oxigraph` |
+| `@unrdf/hooks` | latest | defineHook, executeHook | `@unrdf/core` |
+| `@unrdf/kgc-runtime` | latest | WorkItemExecutor, Receipts | `@unrdf/oxigraph` |
+| `@unrdf/kgc-4d` | latest | freezeUniverse, HDIT | `@unrdf/core` |
+| `@unrdf/federation` | latest | Coordinator, RAFT | `@unrdf/core` |
+| `@unrdf/streaming` | latest | ChangeFeed, Sync | `@unrdf/core` |
+| `@unrdf/yawl` | latest | WorkflowEngine, Patterns | `@unrdf/kgc-4d` |
+| `@unrdf/knowledge-engine` | latest | Reasoning, SHACL | `@unrdf/core` |
 
 ---
 

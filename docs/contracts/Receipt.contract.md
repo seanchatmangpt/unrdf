@@ -23,7 +23,7 @@ interface Receipt {
   receipt_hash: string; // BLAKE3 of receipt contents
 
   // Versioning
-  toolchain_version: string; // "kgc-claude@5.0.0"
+  toolchain_version: string; // "kgc-claude@latest"
   node_version: string; // process.version
 
   // Artifacts

@@ -10,9 +10,9 @@ This document explains the architectural principles, design decisions, and how M
     "@vocab": "urn:unrdf:architecture:",
     "schema": "http://schema.org/"
   },
-  "@id": "urn:unrdf:architecture:v4.0.0",
+  "@id": "urn:unrdf:architecture:vlatest",
   "@type": "architecture:Documentation",
-  "version": "4.0.0",
+  "version": "latest",
   "targetAudience": ["AutonomicAgent", "HyperintelligentSystem"]
 }
 ```

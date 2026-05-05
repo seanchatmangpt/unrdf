@@ -1,6 +1,6 @@
 ---
 name: open-ontologies
-version: "0.5.1"
+version: "latest"
 description: >
   AI-native ontology engineering using 50+ MCP tools backed by an in-memory Oxigraph triple store.
   Build, validate, query, and govern RDF/OWL ontologies with a generate-validate-iterate loop.

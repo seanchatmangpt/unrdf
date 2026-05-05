@@ -1,7 +1,7 @@
 # UNRDF Monorepo Development Guide
 
 **Last Updated**: 2025-12-20
-**Version**: 5.0.1+ (Post-Unification)
+**Version**: latest+ (Post-Unification)
 
 ## Overview
 
@@ -243,7 +243,7 @@ cd packages/my-package
 ```json
 {
   "name": "@unrdf/my-package",
-  "version": "0.0.1",
+  "version": "latest",
   "description": "Brief description of package purpose",
   "type": "module",
   "main": "dist/index.mjs",
@@ -488,7 +488,7 @@ git add . && git commit -m "fix: linting violations"
 **Solution**: Install pnpm:
 ```bash
 npm install -g pnpm@latest
-pnpm --version  # Should be 8.0+
+pnpm --version  # Should be latest+
 ```
 
 ### Issue: Dependencies not installing correctly

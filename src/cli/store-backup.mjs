@@ -7,7 +7,7 @@
  * Fully instrumented with OpenTelemetry for observability.
  *
  * @module cli/store-backup
- * @version 2.1.1
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -192,7 +192,7 @@ async function createBackupArchive(storePath, files, backupPath, options) {
 
   // Create manifest
   const manifest = {
-    version: '1.0.0',
+    version: '[VERSION]',
     created: new Date().toISOString(),
     storePath,
     files: files.map(f => ({

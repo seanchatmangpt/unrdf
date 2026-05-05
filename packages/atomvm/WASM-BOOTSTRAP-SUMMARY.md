@@ -17,7 +17,7 @@ Agent 1 of 10 has successfully created WASM bootstrap infrastructure for AtomVM 
 // Key exports
 export function checkAssets()    // Returns {missing, present, allPresent}
 export function getPublicDir()   // Returns absolute path to public/
-export const ATOMVM_VERSION      // 'v0.6.6'
+export const ATOMVM_VERSION      // '[VERSION]'
 export const REQUIRED_ASSETS     // Array of 4 filenames
 ```
 
@@ -87,14 +87,14 @@ $ node scripts/download-atomvm.mjs
 AtomVM Asset Verification
 ========================
 
-Version: v0.6.6
+Version: [VERSION]
 Public directory: /home/user/unrdf/packages/atomvm/public
 
 ✅ All required assets present:
-   - AtomVM-web-v0.6.6.js
-   - AtomVM-web-v0.6.6.wasm
-   - AtomVM-node-v0.6.6.js
-   - AtomVM-node-v0.6.6.wasm
+   - AtomVM-web-[VERSION].js
+   - AtomVM-web-[VERSION].wasm
+   - AtomVM-node-[VERSION].js
+   - AtomVM-node-[VERSION].wasm
 
 ✅ AtomVM WASM assets verified successfully
 ```
@@ -111,7 +111,7 @@ $ node -e "import('./scripts/download-atomvm.mjs').then(m => {
 Exports: [ 'checkAssets', 'getPublicDir', 'ATOMVM_VERSION', 'REQUIRED_ASSETS' ]
 Asset check result: {
   missing: [],
-  present: [ 'AtomVM-web-v0.6.6.js', ... ],
+  present: [ 'AtomVM-web-[VERSION].js', ... ],
   allPresent: true
 }
 Present: 4

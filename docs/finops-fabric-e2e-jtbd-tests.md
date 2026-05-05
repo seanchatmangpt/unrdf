@@ -398,7 +398,7 @@
   "inputs": {
     "O_old": "hash(...)",
     "ΔO": "hash(...)",
-    "generator_version": "1.0.1"
+    "generator_version": "latest"
   },
   "process": {
     "step_1_validation": "PASS",
@@ -553,7 +553,7 @@ O_old:
        inputs: {
          O_old_hash: "0x1a2b3c...",
          ΔO_hash: "0x4d5e6f...",
-         generator_version: "1.0.1"
+         generator_version: "latest"
        },
        generation: {
          duration_ms: 1847,
@@ -619,7 +619,7 @@ O_old:
 
 [T8] Auditor asks: "What changed?"
      → Auditor reads receipt
-     → Auditor replays μ_1.0.1(O_new)
+     → Auditor replays μ_latest(O_new)
      → Auditor verifies: hash(replayed_A) = hash(production_A)
      → Auditor concludes: "Controls are generated, not hand-written; coherence is proven"
 ```

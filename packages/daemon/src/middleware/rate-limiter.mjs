@@ -352,7 +352,7 @@ export class TokenBucketRateLimiter {
  * });
  *
  * const result = await rateLimitMiddleware({
- *   ip: '192.168.1.1',
+ *   ip: '[VERSION].1',
  *   apiKey: 'user-key',
  * });
  */
@@ -385,7 +385,7 @@ export function createRateLimitMiddleware(config = {}) {
  *   windowMs: 60000,
  * });
  *
- * const result = limiter.check({ ip: '192.168.1.1' });
+ * const result = limiter.check({ ip: '[VERSION].1' });
  * if (result.allowed) {
  *   // Process request
  * }

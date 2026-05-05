@@ -2,7 +2,7 @@
 
 ## Implementation Summary
 
-**Package**: @unrdf/event-automation v1.0.0
+**Package**: @unrdf/event-automation [VERSION]
 **Total Lines of Code**: 1,274 lines (source only)
 **Test Suite**: 37 tests across 4 test suites
 **Test Pass Rate**: 100% (37/37 passed)
@@ -105,9 +105,9 @@ All dependencies correctly specified in package.json:
 - @unrdf/v6-core (workspace)
 - @unrdf/hooks (workspace)
 - @unrdf/receipts (workspace)
-- @opentelemetry/api (v1.9.0)
-- hash-wasm (v4.12.0)
-- zod (v3.25.76)
+- @opentelemetry/api ([VERSION])
+- hash-wasm ([VERSION])
+- zod ([VERSION])
 
 ## Integration Points
 
@@ -156,7 +156,7 @@ All dependencies correctly specified in package.json:
 
 ## Next Steps (Future Enhancements)
 
-1. **OTEL Integration**: Add actual OpenTelemetry spans (not blocking for v1.0.0)
+1. **OTEL Integration**: Add actual OpenTelemetry spans (not blocking for [VERSION])
 2. **Performance Benchmarks**: Add formal benchmark suite with baseline tracking
 3. **Merkle Tree Integration**: Integrate with @unrdf/receipts for Merkle proofs
 4. **Persistence**: Add optional persistence layer for replay buffer
@@ -166,7 +166,7 @@ All dependencies correctly specified in package.json:
 
 **Status**: ✅ PRODUCTION READY
 
-The @unrdf/event-automation package is production-ready for v6.1.0. All requirements met:
+The @unrdf/event-automation package is production-ready for [VERSION]. All requirements met:
 - ✅ 100% test pass rate (37/37 tests)
 - ✅ ZERO lint errors/warnings
 - ✅ All performance targets exceeded

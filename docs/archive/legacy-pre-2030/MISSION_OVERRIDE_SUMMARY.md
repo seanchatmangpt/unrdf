@@ -40,23 +40,23 @@
 
 ## 📦 Deliverables Inventory
 
-### Tools (2 files, 8.4K)
+### Tools (2 files, latestK)
 ```
-tools/inventory-workspace-packages.mjs (3.4K)
+tools/inventory-workspace-packages.mjs (latestK)
   → Enumerates all workspace packages
   → Generates INVENTORY.json
   → Deterministic package discovery
 
-tools/verify-all-packages-used.mjs (5.0K)
+tools/verify-all-packages-used.mjs (latestK)
   → Hard gate validator
   → Compares inventory vs registry
   → Produces verification report
 ```
 
-### Core Harness (4 files, 39.5K)
+### Core Harness (4 files, latestK)
 ```
 AUTONOMIC_ALLPACKAGES/
-  ├── usage-registry.mjs (4.5K)
+  ├── usage-registry.mjs (latestK)
   │   → Runtime registration system
   │   → Deterministic proof hashing
   │   → Registry snapshot generation
@@ -75,13 +75,13 @@ AUTONOMIC_ALLPACKAGES/
   │   → Usage instructions
   │   → Troubleshooting guide
   │
-  └── DELIVERY_SUMMARY.md (9.3K)
+  └── DELIVERY_SUMMARY.md (latestK)
       → Delivery verification report
       → Success criteria validation
       → Quick start commands
 ```
 
-### Generated Artifacts (3 files, 42.3K)
+### Generated Artifacts (3 files, latestK)
 ```
 AUTONOMIC_ALLPACKAGES/
   ├── INVENTORY.json (21K)
@@ -95,14 +95,14 @@ AUTONOMIC_ALLPACKAGES/
   │   → Deterministic proof hashes
   │   → Snapshot hash (4fdb405c9ce6dd6c...)
   │
-  └── VERIFICATION_REPORT.json (7.3K)
+  └── VERIFICATION_REPORT.json (latestK)
       → Hard gate validation result
       → 100% match rate (41/41)
       → Missing/extra package lists (empty)
       → Status: PASS
 ```
 
-**Total:** 9 files, 89.9K combined
+**Total:** 9 files, latestK combined
 
 ---
 
@@ -129,7 +129,7 @@ $ DETERMINISTIC=1 node AUTONOMIC_ALLPACKAGES/demo.mjs
 $ node tools/verify-all-packages-used.mjs
 Inventory: 41 packages
 Registered: 41 packages
-Match rate: 100.0%
+Match rate: latest%
 
 ✅ HARD GATE PASSED: All packages successfully registered
 ```

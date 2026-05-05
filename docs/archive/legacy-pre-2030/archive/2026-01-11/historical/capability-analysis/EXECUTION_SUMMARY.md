@@ -25,7 +25,7 @@
 ---
 
 ### 2. pairwise-compositions-table.md ✅
-- **Size**: 7.8 KB, 180 lines
+- **Size**: latest KB, 180 lines
 - **Content**: Status of all 32 compositions
 - **Quality**: Honest reporting (blocked status documented)
 
@@ -63,7 +63,7 @@
 ---
 
 ### 4. README.md ✅
-- **Size**: 9.2 KB, 322 lines
+- **Size**: latest KB, 322 lines
 - **Content**: Complete analysis overview
 - **Quality**: Executive summary + quick reference
 

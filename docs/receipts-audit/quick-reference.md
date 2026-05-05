@@ -1,6 +1,6 @@
 # Receipt Quick Reference Guide
 
-**UNRDF v6.0.0 Receipt System**
+**UNRDF latest Receipt System**
 
 ---
 
@@ -42,7 +42,7 @@ const receipt = await createReceipt('compile', {
   eventType: 'GRAMMAR_COMPILED',
   inputHashes: ['abc...', 'def...'],
   outputHash: 'ghi...',
-  compilerVersion: '1.0.0',
+  compilerVersion: 'latest',
   grammarType: 'SPARQL',
   payload: { result: 'SUCCESS' }
 });

@@ -1,6 +1,6 @@
 # Security Penetration Testing Suite
 
-Comprehensive security penetration testing framework for UNRDF v6.0.0.
+Comprehensive security penetration testing framework for UNRDF latest.
 
 ## Overview
 
@@ -274,5 +274,5 @@ For security issues found:
 ---
 
 **Last Updated:** 2026-01-11
-**Version:** 1.0.0
+**Version:** latest
 **Status:** Production Ready

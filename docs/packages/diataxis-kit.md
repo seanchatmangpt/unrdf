@@ -2,7 +2,7 @@
 
 > Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

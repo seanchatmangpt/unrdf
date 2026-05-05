@@ -2,10 +2,10 @@
 
 > Comprehensive GOAP-based planning for transforming unrdf into a next-generation AI-powered, distributed, real-time knowledge platform
 
-**Version:** 1.0.0
+**Version:** latest
 **Created:** 2025-11-18
 **Planning Horizon:** Q1 2025 - Q4 2026 (2-year strategic plan)
-**Base Version:** unrdf v3.1.1
+**Base Version:** unrdf latest
 **Status:** 📋 Planning Phase
 
 ---
@@ -40,7 +40,7 @@ This roadmap consists of four comprehensive documents:
 ### 1. [UNRDF-2028-GOAP-ROADMAP.md](./UNRDF-2028-GOAP-ROADMAP.md)
 **Primary strategic document** containing:
 - GOAP planning methodology and principles
-- Current state analysis (v3.1.1 baseline)
+- Current state analysis (latest baseline)
 - 5 transformational goals with state models
 - 30 detailed actions with preconditions and effects
 - Quarterly roadmap (Q1 2025 - Q4 2026)
@@ -49,7 +49,7 @@ This roadmap consists of four comprehensive documents:
 - Phased implementation plan
 - Risk assessment and mitigation
 - Resource allocation ($2.45M budget)
-- Integration strategy with v3.1.1
+- Integration strategy with latest
 
 **Size:** ~20,000 words
 **Audience:** Executive team, engineering leadership, investors
@@ -225,7 +225,7 @@ setup_global_deployment (3w)
 
 ### Technical Metrics (Q4 2026 Targets)
 
-| Metric | Baseline (v3.1.1) | Q4 2026 Target | Improvement |
+| Metric | Baseline (latest) | Q4 2026 Target | Improvement |
 |--------|-------------------|----------------|-------------|
 | Query Latency (p95) | 500ms | 50ms | **10x faster** |
 | Event Latency (p95) | N/A | 50ms | **Real-time** |
@@ -432,7 +432,7 @@ If `integrate_vector_db` fails or takes too long, GOAP can find alternative path
 ## 🔗 Related Documentation
 
 ### Internal Links
-- [v3.1.1 Release Notes](../v3.0.0-RELEASE-NOTES.md)
+- [latest Release Notes](../latest-RELEASE-NOTES.md)
 - [Architecture Analysis](../architecture-80-20-analysis.md)
 - [Test Strategy](../TESTING-STRATEGY.md)
 - [Security Audit](../SECURITY-AUDIT-REPORT.md)
@@ -451,7 +451,7 @@ If `integrate_vector_db` fails or takes too long, GOAP can find alternative path
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-11-18 | GOAP Planning Agent | Initial comprehensive roadmap |
+| latest | 2025-11-18 | GOAP Planning Agent | Initial comprehensive roadmap |
 
 ---
 

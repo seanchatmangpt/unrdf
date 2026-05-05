@@ -6,7 +6,7 @@
  * All operations are instrumented with OpenTelemetry traces and metrics.
  *
  * @module cli/commands/store
- * @version 2.1.1
+ * @version [VERSION]
  * @license MIT
  */
 

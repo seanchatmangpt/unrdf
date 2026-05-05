@@ -8,8 +8,8 @@ import { LatencyProfiler } from './latency-profiler.mjs';
 import { MemoryProfiler } from './memory-profiler.mjs';
 import { CpuProfiler } from './cpu-profiler.mjs';
 
-const tracer = trace.getTracer('unrdf-profiler', '3.1.0');
-const meter = metrics.getMeter('unrdf-profiler', '3.1.0');
+const tracer = trace.getTracer('unrdf-profiler', '[VERSION]');
+const meter = metrics.getMeter('unrdf-profiler', '[VERSION]');
 
 /**
  * @typedef {Object} ProfilerOptions

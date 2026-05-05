@@ -141,7 +141,7 @@ Export metrics in Prometheus text format.
 
 **Configuration:**
 - `port`: HTTP port (default: 9090)
-- `host`: HTTP host (default: '0.0.0.0')
+- `host`: HTTP host (default: '[VERSION].0')
 - `path`: Metrics path (default: '/metrics')
 - `namespace`: Metric namespace (default: 'unrdf')
 

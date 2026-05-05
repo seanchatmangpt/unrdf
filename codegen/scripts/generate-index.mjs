@@ -190,7 +190,7 @@ async function main() {
   console.log('📝 Generating package.json...');
   const pkgJson = {
     name: '@unrdf/generated',
-    version: '6.0.0-rc.1',
+    version: 'latest-rc.1',
     description: 'Auto-generated package registry and utilities',
     type: 'module',
     main: 'index.js',

@@ -34,7 +34,7 @@ npm install @unrdf/core
 
 **What you get:**
 - RDF triple storage (in-memory by default)
-- SPARQL 1.1 query execution
+- SPARQL latest query execution
 - SHACL shape validation
 - Multiple RDF format support
 - Transaction support
@@ -199,7 +199,7 @@ import { defineHook, registerHook } from '@unrdf/hooks';
 
 // Define a hook
 const emailNotifier = defineHook({
-  meta: { name: 'email-notifier', version: '1.0' },
+  meta: { name: 'email-notifier', version: 'latest' },
   trigger: 'INSERT',
   pattern: '?user ex:email ?email .',
 
@@ -490,7 +490,7 @@ import { createProject } from '@unrdf/project-engine';
 
 const project = await createProject({
   name: 'my-knowledge-base',
-  version: '1.0.0'
+  version: 'latest'
 });
 
 // Add graphs
@@ -676,11 +676,11 @@ All packages are released together with compatible versions:
 
 ```json
 {
-  "@unrdf/core": "5.0.0",
-  "@unrdf/oxigraph": "5.0.0",
-  "@unrdf/hooks": "5.0.0",
-  "@unrdf/streaming": "5.0.0",
-  "@unrdf/federation": "5.0.0"
+  "@unrdf/core": "latest",
+  "@unrdf/oxigraph": "latest",
+  "@unrdf/hooks": "latest",
+  "@unrdf/streaming": "latest",
+  "@unrdf/federation": "latest"
 }
 ```
 

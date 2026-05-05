@@ -343,7 +343,7 @@ Generated for each package at each stage:
   "packageName": "@unrdf/core",
   "stage": "testing",
   "decision": "allow",
-  "timestamp": "2024-12-26T10:30:00.000Z",
+  "timestamp": "2024-12-26T10:30:latestZ",
   "duration": 1500,
   "hash": "abc123..."
 }
@@ -575,4 +575,4 @@ See the inline JSDoc documentation in each module for detailed API reference:
 ---
 
 *Last updated: December 2024*
-*Module version: 1.0.0*
+*Module version: latest*

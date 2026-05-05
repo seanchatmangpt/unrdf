@@ -4,7 +4,7 @@
 
 **Date**: 2025-12-25
 **Execution Time**: ~3 minutes
-**Validation Runtime**: 1.4s (down from 3.6s - 61% faster)
+**Validation Runtime**: latests (down from latests - 61% faster)
 
 ---
 
@@ -105,9 +105,9 @@ AllocationHook: true
 - **Type Safety**: Aligned with actual TypeScript/JSDoc types
 
 ### Performance
-- **Before**: 3.6s total runtime
-- **After**: 1.4s total runtime
-- **Improvement**: 61% faster (2.2s reduction)
+- **Before**: latests total runtime
+- **After**: latests total runtime
+- **Improvement**: 61% faster (latests reduction)
 
 ### Code Quality
 ```javascript
@@ -153,7 +153,7 @@ timeout 10s node packages/yawl/validation/press-release-validation.mjs
 ```
 RESULTS: 8/10 PASSED
 Failed: 2, Blocked: 0
-Total Time: 1418.59ms
+Total Time: latestms
 ```
 
 ### What BREAKS if we're wrong?
@@ -165,7 +165,7 @@ Total Time: 1418.59ms
 ✅ **Validation output** (external truth source)
 ✅ **Module exports** (verified via import)
 ✅ **Before/after comparison** (6/10 → 8/10)
-✅ **Execution time** (3.6s → 1.4s)
+✅ **Execution time** (latests → latests)
 
 ---
 
@@ -219,7 +219,7 @@ To reach 10/10 (100%), implement:
 **Mission accomplished in 3 minutes with 100% success:**
 - ✅ 6/10 → 8/10 (33% improvement, 80% pass rate)
 - ✅ Fixed 2 easiest claims (Auditable + Policy-First)
-- ✅ 61% faster validation runtime (3.6s → 1.4s)
+- ✅ 61% faster validation runtime (latests → latests)
 - ✅ Aligned validation with actual module API
 - ✅ Full evidence and reproducible results
 

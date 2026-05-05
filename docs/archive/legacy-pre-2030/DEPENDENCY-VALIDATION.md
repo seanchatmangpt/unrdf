@@ -12,9 +12,9 @@
 
 ### CRITICAL ISSUES FOUND: 3
 
-1. **VERSION MISMATCH - Zod** (CRITICAL): streaming package uses v3.24.1 while 17 others use v4.1.13
-2. **VERSION MISMATCH - hash-wasm**: yawl uses v4.11.0 while kgc-4d uses v4.12.0
-3. **VERSION MISMATCH - OpenTelemetry**: atomvm uses v1.8.0 while streaming uses v1.9.0
+1. **VERSION MISMATCH - Zod** (CRITICAL): streaming package uses vlatest while 17 others use vlatest
+2. **VERSION MISMATCH - hash-wasm**: yawl uses vlatest while kgc-4d uses vlatest
+3. **VERSION MISMATCH - OpenTelemetry**: atomvm uses vlatest while streaming uses vlatest
 
 ### N3 COMPLIANCE: ✅ PASSED
 
@@ -28,7 +28,7 @@
 
 ### Version Alignment
 ```
-packages/oxigraph/package.json: "oxigraph": "^0.5.2"
+packages/oxigraph/package.json: "oxigraph": "^latest"
 ```
 
 **Status**: ✅ Single source package, correctly versioned
@@ -100,23 +100,23 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"z
 ```
 
 **Results**:
-- **17 packages**: `"zod": "^4.1.13"` ✅
-- **1 package**: `"zod": "^3.24.1"` ❌ **CRITICAL**
+- **17 packages**: `"zod": "^latest"` ✅
+- **1 package**: `"zod": "^latest"` ❌ **CRITICAL**
 
 ### CRITICAL ISSUE: Version Mismatch
 
 **Violating Package**:
 ```
-/home/user/unrdf/packages/streaming/package.json: "zod": "^3.24.1"
+/home/user/unrdf/packages/streaming/package.json: "zod": "^latest"
 ```
 
-**Expected Version**: `^4.1.13` (from root pnpm override)
+**Expected Version**: `^latest` (from root pnpm override)
 
 **Root Override**:
 ```json
 "pnpm": {
   "overrides": {
-    "zod": "^4.1.13"
+    "zod": "^latest"
   }
 }
 ```
@@ -154,25 +154,25 @@ timeout 5s grep -r "z\.object\|z\.string\|z\.number\|z\.array" /home/user/unrdf/
 - 151 files would need testing after streaming upgrade
 
 ### Packages Using Zod (17 total)
-1. `@unrdf/core` - v4.1.13 ✅
-2. `@unrdf/hooks` - v4.1.13 ✅
-3. `@unrdf/oxigraph` - v4.1.13 ✅
-4. `@unrdf/yawl` - v4.1.13 ✅
-5. `@unrdf/federation` - v4.1.13 ✅
-6. `@unrdf/streaming` - v3.24.1 ❌ **CRITICAL**
-7. `@unrdf/cli` - v4.1.13 ✅
-8. `@unrdf/nextra` - v4.1.13 ✅
-9. `@unrdf/integration-tests` - v4.1.13 ✅
-10. Plus 8 example packages - all v4.1.13 ✅
+1. `@unrdf/core` - vlatest ✅
+2. `@unrdf/hooks` - vlatest ✅
+3. `@unrdf/oxigraph` - vlatest ✅
+4. `@unrdf/yawl` - vlatest ✅
+5. `@unrdf/federation` - vlatest ✅
+6. `@unrdf/streaming` - vlatest ❌ **CRITICAL**
+7. `@unrdf/cli` - vlatest ✅
+8. `@unrdf/nextra` - vlatest ✅
+9. `@unrdf/integration-tests` - vlatest ✅
+10. Plus 8 example packages - all vlatest ✅
 
 ### Issues
-❌ **CRITICAL**: streaming package must upgrade to Zod v4.1.13
+❌ **CRITICAL**: streaming package must upgrade to Zod vlatest
 
 **Fix Required**:
 ```bash
 # In packages/streaming/package.json
-- "zod": "^3.24.1"
-+ "zod": "^4.1.13"
+- "zod": "^latest"
++ "zod": "^latest"
 ```
 
 ---
@@ -186,10 +186,10 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"n
 ```
 
 **Results**:
-- **Core package**: `"n3": "^1.26.0"` (justified)
-- **6 packages**: `"n3": "^1.26.0"` ✅
-- **7 packages**: `"n3": "^1.21.3"` ⚠️
-- **3 packages**: `"n3": "^1.22.3"` ⚠️
+- **Core package**: `"n3": "^latest"` (justified)
+- **6 packages**: `"n3": "^latest"` ✅
+- **7 packages**: `"n3": "^latest"` ⚠️
+- **3 packages**: `"n3": "^latest"` ⚠️
 
 **Status**: ⚠️ Multiple minor versions (acceptable, but not ideal)
 
@@ -248,10 +248,10 @@ export const UnrdfDataFactory
 - Migration utilities
 
 ### Issues
-⚠️ **MINOR**: Version fragmentation (1.21.3, 1.22.3, 1.26.0)
+⚠️ **MINOR**: Version fragmentation (latest, latest, latest)
 ✅ **COMPLIANCE**: NO violations of N3 isolation rule
 
-**Recommendation**: Standardize on v1.26.0 across all packages
+**Recommendation**: Standardize on vlatest across all packages
 
 ---
 
@@ -265,15 +265,15 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"@
 
 **Results**:
 ```
-/home/user/unrdf/packages/atomvm/package.json: "@opentelemetry/api": "^1.8.0" ❌
-/home/user/unrdf/packages/streaming/package.json: "@opentelemetry/api": "^1.9.0" ✅
+/home/user/unrdf/packages/atomvm/package.json: "@opentelemetry/api": "^latest" ❌
+/home/user/unrdf/packages/streaming/package.json: "@opentelemetry/api": "^latest" ✅
 ```
 
 **Root Override**:
 ```json
 "pnpm": {
   "overrides": {
-    "@opentelemetry/api": "^1.7.0"
+    "@opentelemetry/api": "^latest"
   }
 }
 ```
@@ -314,12 +314,12 @@ timeout 5s grep -r "startSpan\|getTracer" /home/user/unrdf/packages/*/src --incl
 **Pattern Consistency**: ✅ GOOD - OTEL not polluting core business logic
 
 ### Issues
-⚠️ **MINOR**: atomvm using older v1.8.0, should upgrade to v1.9.0
-⚠️ **MINOR**: Root override at v1.7.0 conflicts with actual usage
+⚠️ **MINOR**: atomvm using older vlatest, should upgrade to vlatest
+⚠️ **MINOR**: Root override at vlatest conflicts with actual usage
 
 **Recommendation**:
-- Standardize on v1.9.0
-- Update root override to `"@opentelemetry/api": "^1.9.0"`
+- Standardize on vlatest
+- Update root override to `"@opentelemetry/api": "^latest"`
 
 ---
 
@@ -333,16 +333,16 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 **Results**:
 ```
-/home/user/unrdf/packages/kgc-4d/package.json: "hash-wasm": "^4.12.0" ✅
-/home/user/unrdf/packages/yawl/package.json: "hash-wasm": "^4.11.0" ⚠️
+/home/user/unrdf/packages/kgc-4d/package.json: "hash-wasm": "^latest" ✅
+/home/user/unrdf/packages/yawl/package.json: "hash-wasm": "^latest" ⚠️
 ```
 
 **Root Dependency**:
 ```
-/home/user/unrdf/package.json: "hash-wasm": "^4.12.0"
+/home/user/unrdf/package.json: "hash-wasm": "^latest"
 ```
 
-**Status**: ⚠️ Minor version mismatch (4.11 vs 4.12)
+**Status**: ⚠️ Minor version mismatch (latest vs latest)
 
 ### Usage Patterns
 
@@ -357,13 +357,13 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 **Pattern**: Cryptographic receipts and time-travel verification
 
 ### Issues
-⚠️ **MINOR**: yawl should upgrade to v4.12.0 for consistency
+⚠️ **MINOR**: yawl should upgrade to vlatest for consistency
 
 **Fix Required**:
 ```bash
 # In packages/yawl/package.json
-- "hash-wasm": "^4.11.0"
-+ "hash-wasm": "^4.12.0"
+- "hash-wasm": "^latest"
++ "hash-wasm": "^latest"
 ```
 
 ---
@@ -372,7 +372,7 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 ### Version Alignment
 ```
-/home/user/unrdf/packages/kgc-4d/package.json: "isomorphic-git": "^1.35.1"
+/home/user/unrdf/packages/kgc-4d/package.json: "isomorphic-git": "^latest"
 ```
 
 **Status**: ✅ Single package dependency, correctly versioned
@@ -398,11 +398,11 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 ### Packages Used
 ```
-@rdfjs/data-model: ^2.1.1 (core)
-@rdfjs/namespace: ^2.0.1 (core)
-@rdfjs/serializer-jsonld: ^2.0.1 (core)
-@rdfjs/serializer-turtle: ^1.1.5 (core)
-@rdfjs/to-ntriples: ^3.0.1 (core)
+@rdfjs/data-model: ^latest (core)
+@rdfjs/namespace: ^latest (core)
+@rdfjs/serializer-jsonld: ^latest (core)
+@rdfjs/serializer-turtle: ^latest (core)
+@rdfjs/to-ntriples: ^latest (core)
 ```
 
 **Status**: ✅ All isolated to `@unrdf/core` package
@@ -425,7 +425,7 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 ### Version Alignment
 ```
-5 packages use "citty": "^0.1.6"
+5 packages use "citty": "^latest"
 ```
 
 **Packages**:
@@ -456,33 +456,33 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 ## 9. OTHER KEY DEPENDENCIES
 
-### jsonld (^9.0.0)
+### jsonld (^latest)
 - **Usage**: 39 files
 - **Location**: Primarily in core package
 - **Pattern**: JSON-LD serialization/canonicalization
 - **Status**: ✅ Correct
 
-### rdf-canonize (^5.0.0)
+### rdf-canonize (^latest)
 - **Usage**: Core canonicalization
 - **Location**: `/home/user/unrdf/packages/core/src/rdf/canonicalize.mjs`
 - **Status**: ✅ Correct
 
-### rdf-ext (^2.6.0)
+### rdf-ext (^latest)
 - **Usage**: Extended RDF operations
 - **Location**: Core utilities
 - **Status**: ✅ Correct
 
-### rdf-validate-shacl (^0.6.5)
+### rdf-validate-shacl (^latest)
 - **Usage**: SHACL validation
 - **Location**: Core validation
 - **Status**: ✅ Correct
 
-### ws (^8.18.3)
+### ws (^latest)
 - **Usage**: WebSocket for streaming
 - **Packages**: 2 (streaming + examples)
 - **Status**: ✅ Correct
 
-### lru-cache (^10.0.0)
+### lru-cache (^latest)
 - **Usage**: Performance caching
 - **Location**: Streaming package
 - **Status**: ✅ Correct
@@ -492,13 +492,13 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 ## SUMMARY OF ISSUES
 
 ### CRITICAL (Must Fix)
-1. **Zod version mismatch in streaming**: v3.24.1 → v4.1.13
+1. **Zod version mismatch in streaming**: vlatest → vlatest
 
 ### WARNINGS (Should Fix)
-2. **hash-wasm version mismatch in yawl**: v4.11.0 → v4.12.0
-3. **@opentelemetry/api version mismatch in atomvm**: v1.8.0 → v1.9.0
-4. **N3 version fragmentation**: Multiple minor versions (1.21, 1.22, 1.26)
-5. **Root OTEL override conflict**: Root has v1.7.0, usage requires v1.9.0
+2. **hash-wasm version mismatch in yawl**: vlatest → vlatest
+3. **@opentelemetry/api version mismatch in atomvm**: vlatest → vlatest
+4. **N3 version fragmentation**: Multiple minor versions (latest, latest, latest)
+5. **Root OTEL override conflict**: Root has vlatest, usage requires vlatest
 
 ### COMPLIANT (No Issues)
 - ✅ **@unrdf/oxigraph**: Perfect usage pattern, no violations
@@ -516,7 +516,7 @@ timeout 5s find /home/user/unrdf/packages -name "package.json" -exec grep -H '"h
 
 ```bash
 # 1. Fix Zod in streaming package
-sed -i 's/"zod": "^3.24.1"/"zod": "^4.1.13"/' packages/streaming/package.json
+sed -i 's/"zod": "^latest"/"zod": "^latest"/' packages/streaming/package.json
 
 # 2. Run tests to verify Zod v4 compatibility
 timeout 5s pnpm -C packages/streaming test
@@ -526,21 +526,21 @@ timeout 5s pnpm -C packages/streaming test
 
 ```bash
 # 3. Fix hash-wasm in yawl
-sed -i 's/"hash-wasm": "^4.11.0"/"hash-wasm": "^4.12.0"/' packages/yawl/package.json
+sed -i 's/"hash-wasm": "^latest"/"hash-wasm": "^latest"/' packages/yawl/package.json
 
 # 4. Fix OTEL in atomvm
-sed -i 's/"@opentelemetry\/api": "^1.8.0"/"@opentelemetry\/api": "^1.9.0"/' packages/atomvm/package.json
+sed -i 's/"@opentelemetry\/api": "^latest"/"@opentelemetry\/api": "^latest"/' packages/atomvm/package.json
 
 # 5. Update root OTEL override
-sed -i 's/"@opentelemetry\/api": "^1.7.0"/"@opentelemetry\/api": "^1.9.0"/' package.json
+sed -i 's/"@opentelemetry\/api": "^latest"/"@opentelemetry\/api": "^latest"/' package.json
 ```
 
 ### Phase 3: N3 Standardization (Optional)
 
 ```bash
-# 6. Standardize N3 to v1.26.0 across all packages
-find packages -name "package.json" -exec sed -i 's/"n3": "^1.21.3"/"n3": "^1.26.0"/' {} \;
-find packages -name "package.json" -exec sed -i 's/"n3": "^1.22.3"/"n3": "^1.26.0"/' {} \;
+# 6. Standardize N3 to vlatest across all packages
+find packages -name "package.json" -exec sed -i 's/"n3": "^latest"/"n3": "^latest"/' {} \;
+find packages -name "package.json" -exec sed -i 's/"n3": "^latest"/"n3": "^latest"/' {} \;
 ```
 
 ### Phase 4: Verification

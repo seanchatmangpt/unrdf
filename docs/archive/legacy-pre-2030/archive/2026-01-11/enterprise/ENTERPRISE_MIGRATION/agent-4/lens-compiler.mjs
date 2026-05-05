@@ -32,7 +32,7 @@ import { validateFunction, validateString, hashObject } from './lens-utils.mjs';
  * @example
  * const compiled = compileLens({
  *   name: 'user-profile',
- *   version: '1.0.0',
+ *   version: 'latest',
  *   toSubstrate: (req) => ({ type: 'UPSERT', data: req }),
  *   fromSubstrate: (data) => ({ id: data.id }),
  * });
@@ -67,7 +67,7 @@ export function compileLens(definition) {
     metadata: {
       ...metadata,
       description,
-      compilationVersion: '1.0.0',
+      compilationVersion: 'latest',
     },
   };
 

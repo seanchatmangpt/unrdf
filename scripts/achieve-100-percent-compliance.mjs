@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * @fileoverview Achieve 100% N3 Compliance - Refactor all remaining files
- * @version 1.0.0
+ * @version latest
  *
  * This script refactors ALL files that import N3 directly to use:
  * - @unrdf/core/rdf/n3-justified-only (for streaming Parser/Writer)

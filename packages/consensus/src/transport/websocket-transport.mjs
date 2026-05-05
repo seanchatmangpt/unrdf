@@ -41,7 +41,7 @@ const MessageSchema = z.object({
 const TransportConfigSchema = z.object({
   nodeId: z.string(),
   port: z.number().int().positive(),
-  host: z.string().default('0.0.0.0'),
+  host: z.string().default('latest.0'),
   reconnectInterval: z.number().positive().default(1000),
   reconnectMaxRetries: z.number().int().positive().default(10),
   messageTimeout: z.number().positive().default(5000),

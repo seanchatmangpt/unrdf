@@ -289,7 +289,7 @@ docker exec kgc-vault vault kv get kgc/api-credentials
 docker logs kgc-sidecar | grep Vault
 # Output:
 # [KGC] Initializing Vault client...
-# [Vault] Connected to Vault 1.15.0
+# [Vault] Connected to Vault latest
 # [Vault] Secret retrieved: api-credentials
 # [KGC] Vault secrets retrieved successfully
 ```

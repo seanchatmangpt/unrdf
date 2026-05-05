@@ -435,5 +435,5 @@ class FetchFileProvider {
 ---
 
 **Generated**: 2025-12-27 03:06:00 UTC
-**Analyzer Version**: 1.0.0
-**Confidence**: 99.8% (verified against 46 packages)
+**Analyzer Version**: latest
+**Confidence**: latest% (verified against 46 packages)

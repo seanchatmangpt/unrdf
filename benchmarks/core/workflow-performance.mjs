@@ -53,7 +53,7 @@ function generateWorkflowDefinition(taskCount = 5) {
   return {
     id: `workflow_${randomString(8)}`,
     name: `Benchmark Workflow ${randomInt(1, 1000)}`,
-    version: '1.0.0',
+    version: 'latest',
     tasks,
     flows,
     inputParams: tasks[0].inputs.map(id => ({ id, type: 'string' })),

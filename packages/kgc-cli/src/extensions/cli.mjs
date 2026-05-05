@@ -15,7 +15,7 @@ const extension = {
         version: {
           description: 'Show version info',
           argsSchema: z.object({}),
-          handler: async () => ({ version: '1.0.0', node: process.version }),
+          handler: async () => ({ version: '[VERSION]', node: process.version }),
         },
       },
     },

@@ -358,7 +358,7 @@ const receipt = {
   },
   outputHash: 'output...',
   beforeHash: null,
-  toolchainVersion: { node: 'v22.0.0', packages: {} },
+  toolchainVersion: { node: '[VERSION]', packages: {} },
 };
 
 const entry = projector.parseReceipt(receipt);
@@ -377,7 +377,7 @@ Create changelog from receipts.
 ```javascript
 const result = await projector.project([receipt], {
   projectName: 'MyProject',
-  version: '1.0.0',
+  version: '[VERSION]',
 });
 
 console.log(result.markdown.includes('# Changelog'));  // true
@@ -437,7 +437,7 @@ import { DiataxisRenderer } from '@unrdf/projection';
 
 const renderer = new DiataxisRenderer({
   projectName: 'UNRDF',
-  version: '1.0.0',
+  version: '[VERSION]',
 });
 
 const tutorialDoc = {
@@ -535,7 +535,7 @@ import { ProjectionPipeline } from '@unrdf/projection';
 
 const pipeline = new ProjectionPipeline({
   projectName: 'MyProject',
-  version: '1.0.0',
+  version: '[VERSION]',
 });
 
 const result = await pipeline.run({

@@ -416,4 +416,4 @@ bash scripts/validate-capability-maps.sh
 
 **Report Generated**: 2025-12-28
 **Next Review**: After applying recommended fixes
-**Validator Version**: 1.0.0
+**Validator Version**: latest

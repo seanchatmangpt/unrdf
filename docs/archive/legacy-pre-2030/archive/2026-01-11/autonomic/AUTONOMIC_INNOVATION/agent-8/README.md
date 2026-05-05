@@ -201,7 +201,7 @@ Create Git-backed snapshot of current store state.
 import { GitBackbone } from '@unrdf/kgc-4d/git';
 
 const git = new GitBackbone('/path/to/snapshots');
-const freezeReceipt = await snapshotStore(store, 'v1.0', git);
+const freezeReceipt = await snapshotStore(store, 'vlatest', git);
 console.log(freezeReceipt.git_ref); // Git commit hash
 ```
 

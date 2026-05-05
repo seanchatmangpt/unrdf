@@ -48,7 +48,7 @@ Step 3: Starting EPMD daemon in each container...
   ✅ EPMD running: epmd: up and running on port 4369
 
 Step 5: Verifying Erlang installation...
-  ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version 14.2.5.10
+  ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version [VERSION].10
 ```
 
 **Evidence**: Real Docker containers with Erlang + EPMD
@@ -186,7 +186,7 @@ $ node run-swarm-messaging-test.mjs
 **Iteration 1 (testcontainers)**:
 - Erlang installed: ✅
 - EPMD daemon: ✅ (port 4369)
-- Erlang version: 14.2.5.10
+- Erlang version: [VERSION].10
 
 **Iteration 2 (Compose)**:
 - Erlang installed: ✅
@@ -285,7 +285,7 @@ $ node run-swarm-messaging-test.mjs
 
 **NOT Mocked**:
 - Real Docker container IDs (ea0c147d95bb, c661beb83581, etc.)
-- Real Erlang version (14.2.5.10)
+- Real Erlang version ([VERSION].10)
 - Real EPMD output ("epmd: up and running on port 4369")
 - Real chaos kills (`docker kill` command executed)
 - Real Docker Swarm (`docker swarm init`, `docker stack deploy`)

@@ -2,7 +2,7 @@
 
 **Research Date**: 2025-12-27
 **Agent**: Agent 8 - IDE/VS Code Surface Explorer
-**Version**: Extension v2.0.75, CLI (current stable)
+**Version**: Extension vlatest, CLI (current stable)
 
 ---
 
@@ -20,7 +20,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 1. Core Functionality Matrix
 
-### 1.1 Basic Operations
+### latest Basic Operations
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -39,7 +39,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 1.2 File Operations
+### latest File Operations
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -59,7 +59,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 1.3 Code Context & References
+### latest Code Context & References
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -77,7 +77,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 1.4 Plan Mode
+### latest Plan Mode
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -94,7 +94,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 1.5 Command Execution
+### latest Command Execution
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -113,7 +113,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 2. Advanced Features Matrix
 
-### 2.1 MCP (Model Context Protocol) Servers
+### latest MCP (Model Context Protocol) Servers
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -129,11 +129,11 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 2.2 LSP (Language Server Protocol) Integration
+### latest LSP (Language Server Protocol) Integration
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
-| LSP server support | ✅ v2.0.74+ | ✅ v2.0.74+ | Full parity |
+| LSP server support | ✅ vlatest+ | ✅ vlatest+ | Full parity |
 | goToDefinition | ✅ Text output | 🟡 Text + clickable | Extension superior |
 | findReferences | ✅ Text list | ✅ Interactive list | Extension superior |
 | documentSymbol | ✅ Text tree | ✅ Outline view | Extension superior |
@@ -147,7 +147,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 2.3 Slash Commands
+### latest Slash Commands
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -165,7 +165,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 2.4 Hooks & Automation
+### latest Hooks & Automation
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -182,7 +182,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 2.5 Checkpoints
+### latest Checkpoints
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -197,7 +197,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 2.6 Subagents
+### latest Subagents
 
 | Feature | CLI | Extension | Notes |
 |---------|-----|-----------|-------|
@@ -213,7 +213,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 3. Configuration & Settings Matrix
 
-### 3.1 Configuration Files
+### latest Configuration Files
 
 | Config Aspect | CLI | Extension | Notes |
 |---------------|-----|-----------|-------|
@@ -229,7 +229,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 3.2 Permission Settings
+### latest Permission Settings
 
 | Permission | CLI | Extension | Notes |
 |------------|-----|-----------|-------|
@@ -247,7 +247,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 4. User Experience Matrix
 
-### 4.1 Interface & Interaction
+### latest Interface & Interaction
 
 | UX Aspect | CLI | Extension | Notes |
 |-----------|-----|-----------|-------|
@@ -264,7 +264,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 4.2 Debugging & Logs
+### latest Debugging & Logs
 
 | Debug Feature | CLI | Extension | Notes |
 |---------------|-----|-----------|-------|
@@ -281,7 +281,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 5. Platform-Specific Features
 
-### 5.1 Integration with VS Code
+### latest Integration with VS Code
 
 | VS Code Feature | CLI | Extension | Notes |
 |-----------------|-----|-----------|-------|
@@ -297,7 +297,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 5.2 Portability
+### latest Portability
 
 | Portability Aspect | CLI | Extension | Notes |
 |--------------------|-----|-----------|-------|
@@ -315,7 +315,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 6. Performance Comparison
 
-### 6.1 Resource Usage
+### latest Resource Usage
 
 | Resource | CLI | Extension | Notes |
 |----------|-----|-----------|-------|
@@ -330,7 +330,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 6.2 Workflow Efficiency
+### latest Workflow Efficiency
 
 | Workflow | CLI | Extension | Best Choice |
 |----------|-----|-----------|-------------|
@@ -349,7 +349,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 7. Known Gaps & Missing Features
 
-### 7.1 Features Missing in Extension (Present in CLI)
+### latest Features Missing in Extension (Present in CLI)
 
 1. **Tab Completion**: No autocomplete for slash commands, file paths
 2. **! Bash Shortcut**: Can't use `!command` for direct shell execution
@@ -364,7 +364,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 7.2 Features Missing in CLI (Present in Extension)
+### latest Features Missing in CLI (Present in Extension)
 
 1. **Visual Diff Review**: Text-only diff display
 2. **Hunk-Level Actions**: All-or-nothing file acceptance
@@ -379,7 +379,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 7.3 Features Missing in Both
+### latest Features Missing in Both
 
 1. **Conversation Export**: Can't save/share as markdown
 2. **Checkpoints**: Not yet released
@@ -399,7 +399,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 8. Parity Improvement Roadmap
 
-### 8.1 High Priority (User Impact)
+### latest High Priority (User Impact)
 
 **Extension Should Add**:
 - [ ] Tab completion for slash commands (GitHub #10246)
@@ -414,7 +414,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 8.2 Medium Priority (Power User Features)
+### latest Medium Priority (Power User Features)
 
 **Extension Should Add**:
 - [ ] Glob-based @-mentions UI
@@ -427,7 +427,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 8.3 Low Priority (Nice-to-Have)
+### latest Low Priority (Nice-to-Have)
 
 **Both Should Add**:
 - [ ] Conversation export to markdown
@@ -439,7 +439,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 9. Decision Matrix: Which Interface to Use?
 
-### 9.1 Use CLI When...
+### latest Use CLI When...
 
 ✅ **Automation**: Integrating Claude Code into scripts or CI/CD
 ✅ **Speed**: Quick fixes where keyboard efficiency matters
@@ -458,7 +458,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 9.2 Use Extension When...
+### latest Use Extension When...
 
 ✅ **Visual Review**: Need to see diffs side-by-side
 ✅ **Plan Mode**: Complex changes requiring step approval
@@ -477,7 +477,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 9.3 Use Both (Hybrid) When...
+### latest Use Both (Hybrid) When...
 
 ✅ **Setup + Execution**: CLI for MCP config, extension for usage
 ✅ **Rapid Iteration + Review**: CLI for speed, extension for final review
@@ -498,7 +498,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ## 10. Conclusion
 
-### 10.1 Parity Summary
+### latest Parity Summary
 
 **Full Parity** (✅): ~60% of features
 - Core conversation
@@ -522,7 +522,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 10.2 Strategic Recommendations
+### latest Strategic Recommendations
 
 **For Anthropic**:
 1. Prioritize extension tab completion (high user demand)
@@ -544,7 +544,7 @@ This document provides a comprehensive feature-by-feature comparison between Cla
 
 ---
 
-### 10.3 Future Outlook
+### latest Future Outlook
 
 **Expected Parity Improvements**:
 - Checkpoints (both)

@@ -58,7 +58,7 @@ All output functions now accept `isSELECT` parameter and handle both modes:
 
 ## Test Results
 
-**Before Fix**: 15/18 tests passing (83.3%)
+**Before Fix**: 15/18 tests passing (latest%)
 **After Fix**: 18/18 tests passing (100%)
 
 ### Fixed Tests
@@ -124,7 +124,7 @@ pnpm test
 
 ### Why SELECT Returns Maps
 
-Oxigraph's SPARQL engine follows the SPARQL 1.1 specification:
+Oxigraph's SPARQL engine follows the SPARQL latest specification:
 - SELECT results are "solution sequences" - sets of variable bindings
 - Each binding maps variable names to RDF terms
 - JavaScript Map is the natural representation
@@ -174,7 +174,7 @@ store.query('SELECT ?s WHERE { ?s ?p ?o }')
 timeout 30s pnpm --filter "@unrdf/cli" test
 ```
 
-**Result**: All tests passed in 4.46s
+**Result**: All tests passed in latests
 
 **Example Query Execution**:
 ```bash

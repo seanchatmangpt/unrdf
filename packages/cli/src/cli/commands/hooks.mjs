@@ -723,7 +723,7 @@ function generateFIBOTemplate() {
       id: randomUUID(),
       meta: {
         name: 'verify-regulatory-compliance',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Verify regulatory compliance status for FIBO trades',
         tags: ['fibo', 'compliance'],
       },
@@ -758,7 +758,7 @@ function generateFIBOTemplate() {
       id: randomUUID(),
       meta: {
         name: 'assess-counterparty-risk',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Flag high-risk counterparties for manual approval',
         tags: ['fibo', 'risk'],
       },
@@ -788,7 +788,7 @@ function generateFIBOTemplate() {
       id: randomUUID(),
       meta: {
         name: 'maintain-audit-trail',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Mark completed transactions as audited',
         tags: ['fibo', 'audit'],
       },
@@ -831,7 +831,7 @@ function generateSecurityTemplate() {
       id: randomUUID(),
       meta: {
         name: 'validate-access-control',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Grant access to authorized users',
         tags: ['security', 'access-control'],
       },
@@ -870,7 +870,7 @@ function generateComplianceTemplate() {
       id: randomUUID(),
       meta: {
         name: 'check-data-quality',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Annotate records with data quality scores',
         tags: ['compliance', 'data-quality'],
       },
@@ -910,7 +910,7 @@ function generateGenericTemplate() {
       id: randomUUID(),
       meta: {
         name: 'example-sparql-ask',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Basic template demonstrating SPARQL ASK condition with CONSTRUCT effect',
       },
       condition: {

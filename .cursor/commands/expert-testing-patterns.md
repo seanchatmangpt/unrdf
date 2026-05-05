@@ -33,7 +33,7 @@ For complete testing documentation, see:
 
 ### Pattern 1: Error Path Testing (Critical - 80% of bugs)
 
-#### Step 1.1: Identify Error Scenarios
+#### Step latest: Identify Error Scenarios
 
 **Action**: List all possible error conditions for the function/feature.
 
@@ -51,7 +51,7 @@ For complete testing documentation, see:
 - Overflow → `ParseError.Overflow`
 - Edge cases: `"-0"`, `" 42 "`, etc.
 
-#### Step 1.2: Create Test Cases
+#### Step latest: Create Test Cases
 
 **Action**: Create test cases for each error scenario.
 
@@ -82,7 +82,7 @@ test('test_parse_number_all_error_paths', () => {
 });
 ```
 
-#### Step 1.3: Test Error Recovery
+#### Step latest: Test Error Recovery
 
 **Action**: Verify system can recover from errors.
 
@@ -100,7 +100,7 @@ test("test_error_recovery", async () => {
 });
 ```
 
-#### Step 1.4: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 
@@ -115,7 +115,7 @@ test("test_error_recovery", async () => {
 
 ### Pattern 2: Boundary Condition Testing
 
-#### Step 2.1: Identify Boundaries
+#### Step latest: Identify Boundaries
 
 **Action**: List all boundary conditions.
 
@@ -128,7 +128,7 @@ test("test_error_recovery", async () => {
 - Negative values (if applicable)
 - Minimum/maximum ranges
 
-#### Step 2.2: Create Boundary Tests
+#### Step latest: Create Boundary Tests
 
 **Action**: Test each boundary condition.
 
@@ -164,7 +164,7 @@ test('test_collection_boundaries', () => {
 });
 ```
 
-#### Step 2.3: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 
@@ -178,7 +178,7 @@ test('test_collection_boundaries', () => {
 
 ### Pattern 3: Resource Cleanup Testing
 
-#### Step 3.1: Identify Resources
+#### Step latest: Identify Resources
 
 **Action**: List all resources that need cleanup.
 
@@ -190,7 +190,7 @@ test('test_collection_boundaries', () => {
 - Memory allocations
 - Locks/mutexes
 
-#### Step 3.2: Test Normal Cleanup
+#### Step latest: Test Normal Cleanup
 
 **Action**: Verify resources are cleaned up in normal execution.
 
@@ -224,7 +224,7 @@ test('test_resource_cleanup_normal_path', () => {
 });
 ```
 
-#### Step 3.3: Test Error Path Cleanup
+#### Step latest: Test Error Path Cleanup
 
 **Action**: Verify resources are cleaned up even when errors occur.
 
@@ -247,7 +247,7 @@ test('test_resource_cleanup_error_path', async () => {
 });
 ```
 
-#### Step 3.4: Test Panic Safety
+#### Step latest: Test Panic Safety
 
 **Action**: Verify resources are cleaned up even on panic.
 
@@ -270,7 +270,7 @@ test('test_resource_cleanup_exception_safety', async () => {
 });
 ```
 
-#### Step 3.5: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 
@@ -283,7 +283,7 @@ test('test_resource_cleanup_exception_safety', async () => {
 
 ### Pattern 4: Concurrency Testing
 
-#### Step 4.1: Identify Concurrency Scenarios
+#### Step latest: Identify Concurrency Scenarios
 
 **Action**: List concurrent access patterns.
 
@@ -294,7 +294,7 @@ test('test_resource_cleanup_exception_safety', async () => {
 - Deadlocks
 - Thread safety
 
-#### Step 4.2: Test Concurrent Access
+#### Step latest: Test Concurrent Access
 
 **Action**: Create concurrent test.
 
@@ -337,7 +337,7 @@ test('test_concurrent_access', async () => {
 });
 ```
 
-#### Step 4.3: Test Thread Safety
+#### Step latest: Test Thread Safety
 
 **Action**: Verify concurrency safety.
 
@@ -361,7 +361,7 @@ test('test_thread_safety', () => {
 });
 ```
 
-#### Step 4.4: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 
@@ -374,7 +374,7 @@ test('test_thread_safety', () => {
 
 ### Pattern 5: Property-Based Testing
 
-#### Step 5.1: Identify Properties
+#### Step latest: Identify Properties
 
 **Action**: List invariants that should always hold.
 
@@ -385,7 +385,7 @@ test('test_thread_safety', () => {
 - Commutativity: `f(a, b) == f(b, a)`
 - Associativity: `f(f(a, b), c) == f(a, f(b, c))`
 
-#### Step 5.2: Implement Property Test
+#### Step latest: Implement Property Test
 
 **Action**: Create property test function.
 
@@ -429,7 +429,7 @@ test('test_reverse_property', () => {
 });
 ```
 
-#### Step 5.3: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 
@@ -444,7 +444,7 @@ test('test_reverse_property', () => {
 
 ### Pattern 6: Integration Testing with Real Collaborators
 
-#### Step 6.1: Identify Dependencies
+#### Step latest: Identify Dependencies
 
 **Action**: List external dependencies.
 
@@ -455,7 +455,7 @@ test('test_reverse_property', () => {
 - File systems
 - Network services
 
-#### Step 6.2: Set Up Real Dependencies
+#### Step latest: Set Up Real Dependencies
 
 **Action**: Use testcontainers or real test services.
 
@@ -489,7 +489,7 @@ test('test_integration_real_database', async () => {
 });
 ```
 
-#### Step 6.3: Verify Coverage
+#### Step latest: Verify Coverage
 
 **Checklist**:
 

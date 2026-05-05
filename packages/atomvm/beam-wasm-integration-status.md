@@ -1,7 +1,7 @@
 # BEAM-WASM Integration Status for UNRDF
 
 **Date:** 2025-12-26
-**AtomVM Version:** v0.6.6
+**AtomVM Version:** [VERSION]
 **WASM Status:** ✅ Available (browser + Node.js)
 **RDF Integration:** ❌ Not implemented (opportunity identified)
 
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**Current State:** AtomVM v0.6.6 is fully integrated and operational in both browser (WASM) and Node.js environments. The package includes a complete runtime, state machine implementations, and distributed messaging capabilities. **However, NO RDF integration exists.**
+**Current State:** AtomVM [VERSION] is fully integrated and operational in both browser (WASM) and Node.js environments. The package includes a complete runtime, state machine implementations, and distributed messaging capabilities. **However, NO RDF integration exists.**
 
 **Opportunity:** BEAM's pattern matching, actor model, and fault tolerance map naturally to RDF query execution, federated queries, and self-healing validation pipelines.
 
@@ -30,7 +30,7 @@
 | Component | Status | Location | Notes |
 |-----------|--------|----------|-------|
 | **AtomVM Runtime** | ✅ Operational | `src/atomvm-runtime.mjs` | Browser + Node.js |
-| **WASM Module** | ✅ Available | `public/AtomVM-wasm32.wasm` | v0.6.6 |
+| **WASM Module** | ✅ Available | `public/AtomVM-wasm32.wasm` | [VERSION] |
 | **Erlang Compiler** | ❌ Missing | - | Blocker for new modules |
 | **State Machines** | ✅ Working | `src/erlang/gen_statem.erl` | Actor model patterns |
 | **Message Passing** | ✅ Working | KGC-4D bridge | Event emission to JS |
@@ -477,7 +477,7 @@ $ grep -r "rdf\|triple\|quad\|sparql" packages/atomvm/src/erlang/*.erl
 
 ## 9. Conclusion
 
-**Status:** AtomVM v0.6.6 is production-ready, but **RDF integration is 0% complete**.
+**Status:** AtomVM [VERSION] is production-ready, but **RDF integration is 0% complete**.
 
 **Opportunity:** BEAM's strengths (pattern matching, actors, fault tolerance, hot reload) map perfectly to RDF challenges (query optimization, federation, validation, policy updates).
 
@@ -508,7 +508,7 @@ $ grep -r "rdf\|triple\|quad\|sparql" packages/atomvm/src/erlang/*.erl
 
 ## Appendix B: References
 
-- **AtomVM Docs:** https://www.atomvm.net/doc/v0.6.6/
+- **AtomVM Docs:** https://www.atomvm.net/doc/[VERSION]/
 - **Erlang Pattern Matching:** https://www.erlang.org/doc/reference_manual/patterns.html
 - **OTP Supervision:** https://www.erlang.org/doc/design_principles/sup_princ.html
 - **RDF Semantics:** https://www.w3.org/TR/rdf11-mt/

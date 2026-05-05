@@ -64,7 +64,7 @@ describe('TokenBucketRateLimiter', () => {
 
     it('should prioritize API key over IP', () => {
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
         apiKey: 'test-key-123',
       });
       expect(identifier).toBe('ratelimit:apikey:test-key-123');
@@ -72,9 +72,9 @@ describe('TokenBucketRateLimiter', () => {
 
     it('should use IP when API key not provided', () => {
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
       });
-      expect(identifier).toBe('ratelimit:ip:192.168.1.1');
+      expect(identifier).toBe('ratelimit:ip:[VERSION].1');
     });
 
     it('should return null when both disabled', () => {
@@ -83,7 +83,7 @@ describe('TokenBucketRateLimiter', () => {
         enablePerApiKey: false,
       });
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
         apiKey: 'test-key',
       });
       expect(identifier).toBeNull();
@@ -94,10 +94,10 @@ describe('TokenBucketRateLimiter', () => {
         enablePerApiKey: false,
       });
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
         apiKey: 'test-key',
       });
-      expect(identifier).toBe('ratelimit:ip:192.168.1.1');
+      expect(identifier).toBe('ratelimit:ip:[VERSION].1');
     });
 
     it('should respect enablePerIp flag', () => {
@@ -105,7 +105,7 @@ describe('TokenBucketRateLimiter', () => {
         enablePerIp: false,
       });
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
       });
       expect(identifier).toBeNull();
     });
@@ -115,9 +115,9 @@ describe('TokenBucketRateLimiter', () => {
         keyPrefix: 'custom',
       });
       const identifier = limiter.extractIdentifier({
-        ip: '192.168.1.1',
+        ip: '[VERSION].1',
       });
-      expect(identifier).toBe('custom:ip:192.168.1.1');
+      expect(identifier).toBe('custom:ip:[VERSION].1');
     });
   });
 
@@ -342,9 +342,9 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should check rate limit for IP', () => {
-      const result = limiter.check({ ip: '192.168.1.1' });
+      const result = limiter.check({ ip: '[VERSION].1' });
       expect(result.allowed).toBe(true);
-      expect(result.identifier).toContain('ip:192.168.1.1');
+      expect(result.identifier).toContain('ip:[VERSION].1');
     });
 
     it('should check rate limit for API key', () => {
@@ -361,10 +361,10 @@ describe('TokenBucketRateLimiter', () => {
 
     it('should block after exceeding limit', () => {
       for (let i = 0; i < 10; i++) {
-        limiter.check({ ip: '192.168.1.1' });
+        limiter.check({ ip: '[VERSION].1' });
       }
 
-      const result = limiter.check({ ip: '192.168.1.1' });
+      const result = limiter.check({ ip: '[VERSION].1' });
       expect(result.allowed).toBe(false);
     });
   });
@@ -386,8 +386,8 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should track total requests', () => {
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
 
       const stats = limiter.getStats();
       expect(stats.totalRequests).toBe(2);
@@ -395,7 +395,7 @@ describe('TokenBucketRateLimiter', () => {
 
     it('should calculate block rate correctly', () => {
       for (let i = 0; i < 100; i++) {
-        limiter.check({ ip: '192.168.1.1' });
+        limiter.check({ ip: '[VERSION].1' });
       }
 
       const stats = limiter.getStats();
@@ -404,17 +404,17 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should track unique identifiers', () => {
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
-      limiter.check({ ip: '192.168.1.1' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
+      limiter.check({ ip: '[VERSION].1' });
 
       const stats = limiter.getStats();
       expect(stats.uniqueIdentifiers).toBe(2);
     });
 
     it('should track cache size', () => {
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
 
       const stats = limiter.getStats();
       expect(stats.cacheSize).toBe(2);
@@ -429,8 +429,8 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should reset specific identifier', () => {
-      const id = limiter.extractIdentifier({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.1' });
+      const id = limiter.extractIdentifier({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].1' });
 
       limiter.reset(id);
 
@@ -439,11 +439,11 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should not affect other identifiers', () => {
-      const id1 = limiter.extractIdentifier({ ip: '192.168.1.1' });
-      const id2 = limiter.extractIdentifier({ ip: '192.168.1.2' });
+      const id1 = limiter.extractIdentifier({ ip: '[VERSION].1' });
+      const id2 = limiter.extractIdentifier({ ip: '[VERSION].2' });
 
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
 
       limiter.reset(id1);
 
@@ -460,8 +460,8 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should clear all buckets', () => {
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
 
       limiter.clear();
 
@@ -469,7 +469,7 @@ describe('TokenBucketRateLimiter', () => {
     });
 
     it('should reset statistics', () => {
-      limiter.check({ ip: '192.168.1.1' });
+      limiter.check({ ip: '[VERSION].1' });
 
       limiter.clear();
 
@@ -486,10 +486,10 @@ describe('TokenBucketRateLimiter', () => {
         storageMaxSize: 3,
       });
 
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
-      limiter.check({ ip: '192.168.1.3' });
-      limiter.check({ ip: '192.168.1.4' });
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
+      limiter.check({ ip: '[VERSION].3' });
+      limiter.check({ ip: '[VERSION].4' });
 
       const stats = limiter.getStats();
       expect(stats.cacheSize).toBe(3);
@@ -500,13 +500,13 @@ describe('TokenBucketRateLimiter', () => {
         storageMaxSize: 2,
       });
 
-      limiter.check({ ip: '192.168.1.1' });
-      limiter.check({ ip: '192.168.1.2' });
-      limiter.check({ ip: '192.168.1.1' }); // Refresh 1
-      limiter.check({ ip: '192.168.1.3' }); // Should evict 2, not 1
+      limiter.check({ ip: '[VERSION].1' });
+      limiter.check({ ip: '[VERSION].2' });
+      limiter.check({ ip: '[VERSION].1' }); // Refresh 1
+      limiter.check({ ip: '[VERSION].3' }); // Should evict 2, not 1
 
-      const id1 = limiter.extractIdentifier({ ip: '192.168.1.1' });
-      const id2 = limiter.extractIdentifier({ ip: '192.168.1.2' });
+      const id1 = limiter.extractIdentifier({ ip: '[VERSION].1' });
+      const id2 = limiter.extractIdentifier({ ip: '[VERSION].2' });
 
       expect(limiter.buckets.has(id1)).toBe(true);
       expect(limiter.buckets.has(id2)).toBe(false);
@@ -522,7 +522,7 @@ describe('createRateLimitMiddleware', () => {
 
   it('should allow valid requests', async () => {
     const middleware = createRateLimitMiddleware();
-    const result = await middleware({ ip: '192.168.1.1' });
+    const result = await middleware({ ip: '[VERSION].1' });
     expect(result.allowed).toBe(true);
   });
 
@@ -531,9 +531,9 @@ describe('createRateLimitMiddleware', () => {
       maxRequests: 1,
     });
 
-    await middleware({ ip: '192.168.1.1' });
+    await middleware({ ip: '[VERSION].1' });
 
-    await expect(middleware({ ip: '192.168.1.1' }))
+    await expect(middleware({ ip: '[VERSION].1' }))
       .rejects
       .toThrow('Rate limit exceeded');
   });
@@ -543,10 +543,10 @@ describe('createRateLimitMiddleware', () => {
       maxRequests: 1,
     });
 
-    await middleware({ ip: '192.168.1.1' });
+    await middleware({ ip: '[VERSION].1' });
 
     try {
-      await middleware({ ip: '192.168.1.1' });
+      await middleware({ ip: '[VERSION].1' });
     } catch (error) {
       expect(error.statusCode).toBe(429);
       expect(error.retryAfter).toBeGreaterThan(0);
@@ -559,7 +559,7 @@ describe('createRateLimitMiddleware', () => {
       windowMs: 120000,
     });
 
-    const result = await middleware({ ip: '192.168.1.1' });
+    const result = await middleware({ ip: '[VERSION].1' });
     expect(result.allowed).toBe(true);
   });
 });
@@ -621,7 +621,7 @@ describe('Edge Cases and Security', () => {
       });
 
       const promises = Array.from({ length: 20 }, (_, _i) =>
-        Promise.resolve(limiter.check({ ip: '192.168.1.1' }))
+        Promise.resolve(limiter.check({ ip: '[VERSION].1' }))
       );
 
       const results = await Promise.all(promises);
@@ -641,10 +641,10 @@ describe('Edge Cases and Security', () => {
         burstWindowMs: 1000,
       });
 
-      const r1 = limiter.check({ ip: '192.168.1.1' });
-      const r2 = limiter.check({ ip: '192.168.1.1' });
-      const r3 = limiter.check({ ip: '192.168.1.1' });
-      const r4 = limiter.check({ ip: '192.168.1.1' });
+      const r1 = limiter.check({ ip: '[VERSION].1' });
+      const r2 = limiter.check({ ip: '[VERSION].1' });
+      const r3 = limiter.check({ ip: '[VERSION].1' });
+      const r4 = limiter.check({ ip: '[VERSION].1' });
 
       expect(r1.allowed).toBe(true);
       expect(r2.allowed).toBe(true);
@@ -675,7 +675,7 @@ describe('Edge Cases and Security', () => {
       });
 
       for (let i = 0; i < 100; i++) {
-        limiter.check({ ip: `192.168.1.${i}` });
+        limiter.check({ ip: `[VERSION].${i}` });
       }
 
       const stats = limiter.getStats();

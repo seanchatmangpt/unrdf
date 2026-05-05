@@ -2,7 +2,7 @@
 
 > UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

@@ -29,7 +29,7 @@
 - API route examples provided
 
 ✅ **Dependencies Analyzed**
-- Compatible: Nuxt 4.1.2, Zod 4.1.11 ✅
+- Compatible: Nuxt latest, Zod latest ✅
 - Need to add: @nuxt/ui, @iconify-json/*, @unovis/*
 - Can remove: typescript, vue-tsc
 
@@ -213,12 +213,12 @@ curl -o /tmp/notifications.ts https://raw.githubusercontent.com/nuxt-ui-template
 ```bash
 # 1. Add dependencies
 cd /Users/sac/unrdf/sidecar
-pnpm add @nuxt/ui@^4.0.0
-pnpm add @iconify-json/lucide@^1.2.68
-pnpm add @iconify-json/simple-icons@^1.2.53
-pnpm add @unovis/ts@^1.6.1
-pnpm add @unovis/vue@^1.6.1
-pnpm add -D @nuxt/eslint@^1.9.0
+pnpm add @nuxt/ui@^latest
+pnpm add @iconify-json/lucide@^latest
+pnpm add @iconify-json/simple-icons@^latest
+pnpm add @unovis/ts@^latest
+pnpm add @unovis/vue@^latest
+pnpm add -D @nuxt/eslint@^latest
 
 # 2. Update nuxt.config.mjs
 # - Add '@nuxt/ui' module

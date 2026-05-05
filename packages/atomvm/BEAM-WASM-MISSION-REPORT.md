@@ -187,7 +187,7 @@ await actor.processMessages(); // Batch processing
 
 ## Performance Benchmarks
 
-All measurements from actual demo execution (Node.js v22.21.1):
+All measurements from actual demo execution (Node.js [VERSION]):
 
 | Metric             | Measured Value | SLA Target | Status          |
 | ------------------ | -------------- | ---------- | --------------- |

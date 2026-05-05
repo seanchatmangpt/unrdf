@@ -90,7 +90,7 @@ const ensemble = new EnsembleGroqProvider(groqProvider);
 const result = await ensemble.generateText({
   prompt: 'Graph state: ... what should we add?',
   maxTokens: 500,
-  temperature: 0.7,
+  temperature: latest,
 });
 
 console.log(result);
@@ -101,7 +101,7 @@ console.log(result);
 //     { role: 'validator', text: '...' },
 //     { role: 'refiner', text: '...' }
 //   ],
-//   confidence: 0.85,  // High agreement → high confidence
+//   confidence: latest,  // High agreement → high confidence
 //   ensemble_size: 3
 // }
 ```
@@ -110,8 +110,8 @@ console.log(result);
 - Analyzes keyword overlap across all specialist responses
 - Words appearing in 70%+ of responses increment agreement counter
 - Confidence = (agreed words) / (total unique words)
-- High confidence (>0.8) → low epistemic uncertainty
-- Low confidence (<0.5) → requires more reasoning
+- High confidence (>latest) → low epistemic uncertainty
+- Low confidence (<latest) → requires more reasoning
 
 **Benefits**:
 - Detects reasoning uncertainty automatically
@@ -153,7 +153,7 @@ store.addQuad(
 );
 
 // Learn shapes
-const shapes = await learner.inferShapes(store, { minSupport: 0.9 });
+const shapes = await learner.inferShapes(store, { minSupport: latest });
 
 console.log(shapes['http://example.org/Person']);
 // {
@@ -176,8 +176,8 @@ console.log(shapes['http://example.org/Person']);
 
 **minSupport Threshold**:
 - Filters properties by coverage percentage
-- minSupport: 0.9 → only properties in 90%+ of instances
-- minCount: set to 1 if supportRatio > 0.99, else 0
+- minSupport: latest → only properties in 90%+ of instances
+- minCount: set to 1 if supportRatio > latest, else 0
 - Conservative: requires strong evidence before adding constraints
 
 **Datatype Inference**:
@@ -220,7 +220,7 @@ const result = await agent.execute(reasoning.text);
 // 4. Learner auto-discovers constraints from refined KG
 const learner = new OntologyLearner();
 const shapes = await learner.inferShapes(agent.kg.store, {
-  minSupport: 0.9
+  minSupport: latest
 });
 
 // 5. Agent uses learned shapes to validate future mutations
@@ -306,7 +306,7 @@ const agent = new AutonomousKnowledgeAgent('researcher', {
 for (let i = 0; i < 5; i++) {
   const result = await agent.reason(
     `Iteration ${i}: Expand knowledge`,
-    { confidence_threshold: 0.8 }
+    { confidence_threshold: latest }
   );
 }
 
@@ -327,10 +327,10 @@ const result = await ensemble.generateText({
   prompt: 'Should we add this data? ' + JSON.stringify(candidate),
 });
 
-if (result.confidence > 0.9) {
+if (result.confidence > latest) {
   // High agreement → safe to commit
   await store.add(candidate);
-} else if (result.confidence > 0.5) {
+} else if (result.confidence > latest) {
   // Medium confidence → requires review
   console.log('REVIEW REQUIRED:', result.specialist_responses);
 } else {
@@ -348,7 +348,7 @@ const learner = new OntologyLearner();
 
 // Learn shapes from data
 const shapes = await learner.inferShapes(myStore, {
-  minSupport: 0.85, // At least 85% coverage
+  minSupport: latest, // At least 85% coverage
 });
 
 // Use shapes to validate mutations
@@ -425,7 +425,7 @@ console.log(JSON.stringify(shacl, null, 2));
 - ensemble-groq.test.mjs: ~165ms (11 tests)
 - ontology-learner.test.mjs: ~442ms (12 tests)
 - vision-2030-integration.test.mjs: ~269ms (10 tests)
-- **Total**: ~1.2s for 43 tests
+- **Total**: ~latests for 43 tests
 
 ### Memory Usage
 - AutonomousKnowledgeAgent: ~5MB per agent (empty KG)

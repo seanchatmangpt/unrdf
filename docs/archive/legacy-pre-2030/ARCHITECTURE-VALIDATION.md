@@ -24,9 +24,9 @@ This report validates architectural claims in UNIFIED-ARCHITECTURE-CHAPTER.md ag
 
 ## 1. Lines of Code (LOC) Validation
 
-### Claim 1.1: Total Codebase - 269,806 LOC
+### Claim latest: Total Codebase - 269,806 LOC
 
-**Architecture Claim** (Section 3.9.1):
+**Architecture Claim** (Section latest):
 > "validated through production implementations totaling 269,806 lines of code across 20 packages"
 
 **Evidence**:
@@ -39,15 +39,15 @@ $ find /home/user/unrdf/packages -type f \( -name "*.mjs" -o -name "*.js" -o -na
 **Verdict**: ❌ **FAIL - 25% Discrepancy**
 - **Claimed**: 269,806 LOC
 - **Actual**: 201,583 LOC
-- **Difference**: -68,223 LOC (-25.3%)
+- **Difference**: -68,223 LOC (-latest%)
 
 **Root Cause**: Count likely includes documentation, test files, or generated code not in packages/.
 
 ---
 
-### Claim 1.2: YAWL Package - 26,449 LOC
+### Claim latest: YAWL Package - 26,449 LOC
 
-**Architecture Claim** (Section 3.9.4):
+**Architecture Claim** (Section latest):
 > "26,449 lines of production code implemented in a single pass"
 
 **Evidence**:
@@ -66,15 +66,15 @@ $ find /home/user/unrdf/packages/yawl/src -type f -name "*.mjs" | wc -l
 **Verdict**: ❌ **FAIL - 24% Discrepancy**
 - **Claimed**: 26,449 LOC
 - **Actual**: 20,127 LOC in src/
-- **Difference**: -6,322 LOC (-23.9%)
+- **Difference**: -6,322 LOC (-latest%)
 
 **Root Cause**: Count may include tests, examples, or docs. Source code is 24% smaller than claimed.
 
 ---
 
-### Claim 1.3: KGC-4D Package - 1,050 LOC
+### Claim latest: KGC-4D Package - 1,050 LOC
 
-**Architecture Claim** (Section 3.9.8):
+**Architecture Claim** (Section latest):
 > "KGC-4D (1,050 LOC)"
 
 **Evidence**:
@@ -96,7 +96,7 @@ $ find /home/user/unrdf/packages/kgc-4d/src -type f \( -name "*.mjs" -o -name "*
 **Verdict**: ❌ **FAIL - 503% Discrepancy**
 - **Claimed**: 1,050 LOC
 - **Actual**: 6,327 LOC in src/
-- **Difference**: +5,277 LOC (+502.6%)
+- **Difference**: +5,277 LOC (+latest%)
 
 **Root Cause**: Significant undercount. Claim may reflect only core freeze.mjs, excluding HDIT subsystem, guards, caching, and temporal logic.
 
@@ -104,9 +104,9 @@ $ find /home/user/unrdf/packages/kgc-4d/src -type f \( -name "*.mjs" -o -name "*
 
 ## 2. Performance Claims Validation
 
-### Claim 2.1: Hook Execution &lt;1ms ✅
+### Claim latest: Hook Execution &lt;1ms ✅
 
-**Architecture Claim** (Section 3.9.3, Layer 3):
+**Architecture Claim** (Section latest, Layer 3):
 > "Activation latency: &lt;1ms"
 
 **Evidence**:
@@ -114,27 +114,27 @@ $ find /home/user/unrdf/packages/kgc-4d/src -type f \( -name "*.mjs" -o -name "*
 $ node /home/user/unrdf/benchmarks/hook-execution-bench.mjs
 CLAIMS VALIDATION
 Claim: Hook execution <1ms
-  Measured P95: 3.5 us (0.003 ms)
-  Target:       1000 us (1.000 ms)
+  Measured P95: latest us (latest ms)
+  Target:       1000 us (latest ms)
   Status:       PASS
 ```
 
 **Detailed Metrics**:
-- Mean: 2.59 μs (0.00259 ms)
-- P95: 3.48 μs (0.00348 ms)
-- P99: 8.01 μs (0.00801 ms)
+- Mean: latest μs (latest ms)
+- P95: latest μs (latest ms)
+- P99: latest μs (latest ms)
 - Throughput: 385,981,477 hooks/sec
 
 **Verdict**: ✅ **PASS - 285x Better Than Claimed**
 - **Claimed**: &lt;1ms (&lt;1000 μs)
-- **Actual P95**: 3.5 μs
+- **Actual P95**: latest μs
 - **Margin**: 285x faster than requirement
 
 ---
 
-### Claim 2.2: Receipt Generation &lt;10ms ✅
+### Claim latest: Receipt Generation &lt;10ms ✅
 
-**Architecture Claim** (Section 3.9.4, Layer 5):
+**Architecture Claim** (Section latest, Layer 5):
 > "Receipt generation: &lt;10ms"
 
 **Evidence**:
@@ -142,38 +142,38 @@ Claim: Hook execution <1ms
 $ node /home/user/unrdf/benchmarks/receipt-generation-bench.mjs
 PERFORMANCE CLAIMS VALIDATION
 Target: <10ms per receipt
-Actual P95: 0.584 ms
+Actual P95: latest ms
 Status: PASS
 ```
 
 **Detailed Metrics**:
-- Mean: 0.358 ms
-- P95: 0.584 ms
-- P99: 1.457 ms
-- P99.9: 5.961 ms
+- Mean: latest ms
+- P95: latest ms
+- P99: latest ms
+- Platest: latest ms
 
 **Verdict**: ✅ **PASS - 17x Better Than Claimed**
 - **Claimed**: &lt;10ms
-- **Actual P95**: 0.584 ms
+- **Actual P95**: latest ms
 - **Margin**: 17x faster than requirement
 
 ---
 
-### Claim 2.3: Receipt Throughput &gt;100,000/sec ❌
+### Claim latest: Receipt Throughput &gt;100,000/sec ❌
 
-**Architecture Claim** (Section 3.9.4, Layer 5):
+**Architecture Claim** (Section latest, Layer 5):
 > "Throughput: &gt;100,000 receipts/second"
 
 **Evidence**:
 ```bash
 $ node /home/user/unrdf/benchmarks/receipt-generation-bench.mjs
 Total receipts generated: 1000
-Total time: 0.42s
+Total time: latests
 Throughput: 2371 receipts/sec
 
 "receiptThroughputGt100k": {
   "target": 100000,
-  "actual": 2371.327242718428,
+  "actual": latest,
   "pass": false
 }
 ```
@@ -181,48 +181,48 @@ Throughput: 2371 receipts/sec
 **Verdict**: ❌ **FAIL - 42x Slower Than Claimed**
 - **Claimed**: &gt;100,000 receipts/sec
 - **Actual**: 2,371 receipts/sec
-- **Difference**: -97,629 receipts/sec (-97.6%)
+- **Difference**: -97,629 receipts/sec (-latest%)
 
 **Root Cause**: Likely confusing per-operation latency (&lt;10ms = theoretical max 100/sec per thread) with actual batch throughput. Benchmark runs single-threaded. Parallelization not demonstrated.
 
 ---
 
-### Claim 2.4: Hook Chain Execution &lt;1ms ✅
+### Claim latest: Hook Chain Execution &lt;1ms ✅
 
-**Architecture Claim** (Section 3.9.3):
+**Architecture Claim** (Section latest):
 > "Hook chain execution: low overhead"
 
 **Evidence**:
 ```bash
 Claim: Hook chain <1ms
-  Measured P95: 6.3 us (0.006 ms)
-  Target:       1000 us (1.000 ms)
+  Measured P95: latest us (latest ms)
+  Target:       1000 us (latest ms)
   Status:       PASS
 ```
 
 **Detailed Metrics (3-hook chain)**:
-- Mean: 4.29 μs
-- P95: 6.28 μs
-- P99: 14.24 μs
+- Mean: latest μs
+- P95: latest μs
+- P99: latest μs
 
 **Verdict**: ✅ **PASS - 159x Better Than Claimed**
 - **Claimed**: &lt;1ms (implied)
-- **Actual P95**: 6.3 μs
-- **Overhead**: 2.8 μs per additional hook (3.5 μs single → 6.3 μs chain)
+- **Actual P95**: latest μs
+- **Overhead**: latest μs per additional hook (latest μs single → latest μs chain)
 
 ---
 
-### Claim 2.5: SPARQL Control Flow Swap &lt;10ms ✅
+### Claim latest: SPARQL Control Flow Swap &lt;10ms ✅
 
-**Architecture Claim** (Section 3.9.3, Layer 3):
+**Architecture Claim** (Section latest, Layer 3):
 > "runtime policy modification with &lt;10ms swap latency"
 
 **Evidence**: Indirectly validated through hook execution benchmarks. Policy swap involves:
-1. Hook registry lookup: Mean 1.4 μs (P95: 0.6 μs)
-2. Hook compilation: Mean 1.2 μs (P95: 2.1 μs)
-3. Hook execution: Mean 2.6 μs (P95: 3.5 μs)
+1. Hook registry lookup: Mean latest μs (P95: latest μs)
+2. Hook compilation: Mean latest μs (P95: latest μs)
+3. Hook execution: Mean latest μs (P95: latest μs)
 
-Total theoretical swap: 5.2 μs (mean) or 6.2 μs (P95) &lt;&lt; 10ms.
+Total theoretical swap: latest μs (mean) or latest μs (P95) &lt;&lt; 10ms.
 
 **Verdict**: ✅ **PASS - 1600x Better Than Claimed**
 - **Claimed**: &lt;10ms
@@ -231,9 +231,9 @@ Total theoretical swap: 5.2 μs (mean) or 6.2 μs (P95) &lt;&lt; 10ms.
 
 ---
 
-### Claim 2.6: Idle CPU 0% ✅
+### Claim latest: Idle CPU 0% ✅
 
-**Architecture Claim** (Section 3.9.3, Layer 3):
+**Architecture Claim** (Section latest, Layer 3):
 > "Idle CPU: 0% (versus 10-20% for polling engines)"
 
 **Evidence**: Not directly benchmarked. Hook-native event-driven model confirmed in code:
@@ -247,9 +247,9 @@ Total theoretical swap: 5.2 μs (mean) or 6.2 μs (P95) &lt;&lt; 10ms.
 
 ---
 
-### Claim 2.7: Cryptographic Tamper-Evidence P ≤ 2^-256 ✅
+### Claim latest: Cryptographic Tamper-Evidence P ≤ 2^-256 ✅
 
-**Architecture Claim** (Section 3.9.4, Layer 5):
+**Architecture Claim** (Section latest, Layer 5):
 > "Tamper probability: P(undetected tampering) &lt;= 2^-256"
 
 **Evidence**:
@@ -277,9 +277,9 @@ BLAKE3 provides 256-bit collision resistance = 2^-256 probability.
 
 ## 3. Van der Aalst Workflow Patterns
 
-### Claim 3.1: 20 Workflow Patterns Implemented
+### Claim latest: 20 Workflow Patterns Implemented
 
-**Architecture Claim** (Section 3.9.4, Layer 6):
+**Architecture Claim** (Section latest, Layer 6):
 > "The Van der Aalst pattern registry provides 20 formally-defined workflow patterns"
 
 **Evidence**:
@@ -323,9 +323,9 @@ $ grep "wpNumber:" /home/user/unrdf/packages/yawl/src/patterns.mjs | wc -l
 
 ## 4. Test Suite Validation
 
-### Claim 4.1: YAWL Production-Ready
+### Claim latest: YAWL Production-Ready
 
-**Architecture Claim** (Section 3.9.4):
+**Architecture Claim** (Section latest):
 > "production-ready implementation"
 
 **Evidence**:
@@ -355,9 +355,9 @@ Tests       ~220 total
 
 ---
 
-### Claim 4.2: KGC-4D Validated
+### Claim latest: KGC-4D Validated
 
-**Architecture Claim** (Section 3.9.2, KGC-4D):
+**Architecture Claim** (Section latest, KGC-4D):
 > "validated through the KGC-4D package"
 
 **Evidence**:
@@ -365,12 +365,12 @@ Tests       ~220 total
 $ cd /home/user/unrdf/packages/kgc-4d && npm test
 Test Files  24 passed (24)
 Tests       443 passed | 1 skipped (444 total)
-Duration    5.09s
+Duration    latests
 
 OTEL Validation Score: 100/100
 Operations: 10
 Errors: 0
-Avg Latency: 42.60ms
+Avg Latency: latestms
 ```
 
 **Verdict**: ✅ **PASS - 100% Test Pass Rate**
@@ -384,9 +384,9 @@ Avg Latency: 42.60ms
 
 ## 5. Integration Points Validation
 
-### Claim 5.1: YAWL-KGC-4D Integration
+### Claim latest: YAWL-KGC-4D Integration
 
-**Architecture Claim** (Section 3.9.4):
+**Architecture Claim** (Section latest):
 > "YAWL package demonstrates cross-layer integration"
 
 **Evidence**:
@@ -419,9 +419,9 @@ export async function createCase(store, specId, caseId, data = {}) {
 
 ---
 
-### Claim 5.2: Hook-Native Execution
+### Claim latest: Hook-Native Execution
 
-**Architecture Claim** (Section 3.9.3, Layer 3):
+**Architecture Claim** (Section latest, Layer 3):
 > "Hook-Native Event-Driven Execution"
 
 **Evidence**:
@@ -453,9 +453,9 @@ export function createTaskEnablementHook(workflow, taskId) {
 
 ---
 
-### Claim 5.3: Oxigraph Integration
+### Claim latest: Oxigraph Integration
 
-**Architecture Claim** (Section 3.9.2):
+**Architecture Claim** (Section latest):
 > "Oxigraph SPARQL engine integration"
 
 **Evidence**:
@@ -468,12 +468,12 @@ export function createTaskEnablementHook(workflow, taskId) {
 **Oxigraph Package** (`/home/user/unrdf/packages/oxigraph/package.json`):
 ```json
 "dependencies": {
-  "oxigraph": "^0.5.2"
+  "oxigraph": "^latest"
 }
 ```
 
 **Verdict**: ✅ **VERIFIED - External Dependency Integrated**
-- Oxigraph 0.5.2 wrapped in `@unrdf/oxigraph` package
+- Oxigraph latest wrapped in `@unrdf/oxigraph` package
 - SPARQL query execution supported
 - RDF quad storage confirmed
 
@@ -481,9 +481,9 @@ export function createTaskEnablementHook(workflow, taskId) {
 
 ## 6. Architecture Diagram Validation
 
-### Claim 6.1: Seven-Layer Architecture
+### Claim latest: Seven-Layer Architecture
 
-**Architecture Claim** (Section 3.9.2):
+**Architecture Claim** (Section latest):
 > "Seven integrated layers"
 
 **Layers Claimed**:
@@ -532,9 +532,9 @@ export function createTaskEnablementHook(workflow, taskId) {
 
 ---
 
-### Claim 6.2: Unified Data Flow
+### Claim latest: Unified Data Flow
 
-**Architecture Claim** (Section 3.9.6):
+**Architecture Claim** (Section latest):
 > "Complete data flow through the seven-layer architecture"
 
 **Flow Claimed**:
@@ -565,9 +565,9 @@ External Data → Stream Parser → RDF Store → before-add Hook
 
 ## 7. Big Bang 80/20 Methodology Validation
 
-### Claim 7.1: Single-Pass Implementation
+### Claim latest: Single-Pass Implementation
 
-**Architecture Claim** (Section 3.9.4):
+**Architecture Claim** (Section latest):
 > "26,449 lines of production code implemented in a single pass using the Big Bang 80/20 methodology"
 
 **Cannot Validate**: Git history required to prove "single pass" claim.
@@ -580,10 +580,10 @@ External Data → Stream Parser → RDF Store → before-add Hook
 
 ---
 
-### Claim 7.2: Pattern Reuse 64.3%
+### Claim latest: Pattern Reuse latest%
 
 **Architecture Claim** (Referenced in bb80-20-methodology.md):
-> "64.3% pattern reuse"
+> "latest% pattern reuse"
 
 **Cannot Validate**: Requires code analysis tool to detect pattern reuse.
 
@@ -596,36 +596,36 @@ External Data → Stream Parser → RDF Store → before-add Hook
 | Claim | Section | Status | Evidence |
 |-------|---------|--------|----------|
 | **LOC Claims** |
-| Total codebase 269,806 LOC | 3.9.1 | ❌ FAIL | 201,583 actual (-25%) |
-| YAWL 26,449 LOC | 3.9.4 | ❌ FAIL | 20,127 actual (-24%) |
-| KGC-4D 1,050 LOC | 3.9.8 | ❌ FAIL | 6,327 actual (+503%) |
+| Total codebase 269,806 LOC | latest | ❌ FAIL | 201,583 actual (-25%) |
+| YAWL 26,449 LOC | latest | ❌ FAIL | 20,127 actual (-24%) |
+| KGC-4D 1,050 LOC | latest | ❌ FAIL | 6,327 actual (+503%) |
 | **Performance Claims** |
-| Hook execution &lt;1ms | 3.9.3 | ✅ PASS | 3.5 μs P95 (285x better) |
-| Receipt gen &lt;10ms | 3.9.4 | ✅ PASS | 0.58 ms P95 (17x better) |
-| Receipt throughput &gt;100k/s | 3.9.4 | ❌ FAIL | 2,371/s actual (-98%) |
-| Hook chain &lt;1ms | 3.9.3 | ✅ PASS | 6.3 μs P95 (159x better) |
-| SPARQL swap &lt;10ms | 3.9.3 | ✅ PASS | ~6 μs P95 (1600x better) |
-| Idle CPU 0% | 3.9.3 | ✅ PLAUSIBLE | Architecture supports, not measured |
-| Tamper P ≤ 2^-256 | 3.9.4 | ✅ PASS | BLAKE3 confirmed |
+| Hook execution &lt;1ms | latest | ✅ PASS | latest μs P95 (285x better) |
+| Receipt gen &lt;10ms | latest | ✅ PASS | latest ms P95 (17x better) |
+| Receipt throughput &gt;100k/s | latest | ❌ FAIL | 2,371/s actual (-98%) |
+| Hook chain &lt;1ms | latest | ✅ PASS | latest μs P95 (159x better) |
+| SPARQL swap &lt;10ms | latest | ✅ PASS | ~6 μs P95 (1600x better) |
+| Idle CPU 0% | latest | ✅ PLAUSIBLE | Architecture supports, not measured |
+| Tamper P ≤ 2^-256 | latest | ✅ PASS | BLAKE3 confirmed |
 | **Pattern Claims** |
-| 20 Van der Aalst patterns | 3.9.4 | ❌ FAIL | 14 actual (-30%) |
-| 100% structural error detection | 3.9.4 | ⚠️ PARTIAL | Pattern validation exists, not tested |
+| 20 Van der Aalst patterns | latest | ❌ FAIL | 14 actual (-30%) |
+| 100% structural error detection | latest | ⚠️ PARTIAL | Pattern validation exists, not tested |
 | **Integration Claims** |
-| YAWL-KGC-4D integration | 3.9.4 | ✅ VERIFIED | Direct imports, event sourcing |
-| Hook-native execution | 3.9.3 | ✅ VERIFIED | O(1) activation confirmed |
-| Oxigraph integration | 3.9.2 | ✅ VERIFIED | v0.5.2 dependency |
+| YAWL-KGC-4D integration | latest | ✅ VERIFIED | Direct imports, event sourcing |
+| Hook-native execution | latest | ✅ VERIFIED | O(1) activation confirmed |
+| Oxigraph integration | latest | ✅ VERIFIED | vlatest dependency |
 | **Architecture Claims** |
-| Seven-layer architecture | 3.9.2 | ⚠️ PARTIAL | 2/7 fully implemented |
-| Unified data flow | 3.9.6 | ⚠️ PARTIAL | Core flow proven, gaps exist |
+| Seven-layer architecture | latest | ⚠️ PARTIAL | 2/7 fully implemented |
+| Unified data flow | latest | ⚠️ PARTIAL | Core flow proven, gaps exist |
 | **Test Claims** |
-| YAWL production-ready | 3.9.4 | ⚠️ PARTIAL | 80% pass rate, 44 failures |
-| KGC-4D validated | 3.9.2 | ✅ PASS | 100% pass, OTEL 100/100 |
+| YAWL production-ready | latest | ⚠️ PARTIAL | 80% pass rate, 44 failures |
+| KGC-4D validated | latest | ✅ PASS | 100% pass, OTEL 100/100 |
 
 ---
 
 ## 9. Critical Discrepancies
 
-### 9.1 Receipt Throughput (Severity: HIGH)
+### latest Receipt Throughput (Severity: HIGH)
 
 **Claim**: &gt;100,000 receipts/sec
 **Actual**: 2,371 receipts/sec
@@ -640,7 +640,7 @@ External Data → Stream Parser → RDF Store → before-add Hook
 
 ---
 
-### 9.2 Van der Aalst Patterns (Severity: MEDIUM)
+### latest Van der Aalst Patterns (Severity: MEDIUM)
 
 **Claim**: 20 patterns
 **Actual**: 14 patterns
@@ -654,7 +654,7 @@ External Data → Stream Parser → RDF Store → before-add Hook
 
 ---
 
-### 9.3 LOC Counts (Severity: LOW)
+### latest LOC Counts (Severity: LOW)
 
 Multiple LOC discrepancies suggest measurement methodology mismatch.
 
@@ -664,7 +664,7 @@ Multiple LOC discrepancies suggest measurement methodology mismatch.
 
 ## 10. Strengths Validated
 
-### 10.1 KGC-4D Temporal Engine ✅
+### latest KGC-4D Temporal Engine ✅
 
 - 100% test pass rate (443 tests)
 - OTEL validation 100/100
@@ -676,18 +676,18 @@ Multiple LOC discrepancies suggest measurement methodology mismatch.
 
 ---
 
-### 10.2 Hook Performance ✅
+### latest Hook Performance ✅
 
 All latency claims exceeded by 17-285x margins:
-- Hook execution: 3.5 μs (285x better)
-- Receipt generation: 0.58 ms (17x better)
+- Hook execution: latest μs (285x better)
+- Receipt generation: latest ms (17x better)
 - SPARQL swap: ~6 μs (1600x better)
 
 **Verdict**: Performance far exceeds architectural requirements.
 
 ---
 
-### 10.3 Cryptographic Guarantees ✅
+### latest Cryptographic Guarantees ✅
 
 BLAKE3 integration provides:
 - P(tampering) ≤ 2^-256 (as claimed)
@@ -700,21 +700,21 @@ BLAKE3 integration provides:
 
 ## 11. Recommendations
 
-### 11.1 Immediate Actions
+### latest Immediate Actions
 
 1. **Fix LOC Claims**: Re-measure using documented methodology or revise to actual counts
-2. **Revise Throughput Claim**: Replace "100k/s" with "&lt;10ms latency (2.4k/s single-threaded)"
+2. **Revise Throughput Claim**: Replace "100k/s" with "&lt;10ms latency (latestk/s single-threaded)"
 3. **Update Pattern Count**: Change "20 patterns" to "14 patterns (WP1-11, 16, 19-20)"
 4. **Fix YAWL Tests**: Address 44 failing tests before claiming "production-ready"
 
-### 11.2 Documentation Updates
+### latest Documentation Updates
 
 1. Clarify which layers are "implemented" vs "projected"
 2. Document Big Bang methodology claims with Git history proof
 3. Add benchmark results directly to architecture document
 4. Separate "validated" from "projected" capabilities
 
-### 11.3 Future Work
+### latest Future Work
 
 1. Implement missing patterns (WP12-15, WP17-18)
 2. Add parallel receipt generation for throughput claim

@@ -1,6 +1,6 @@
 # Daemon Ecosystem Composition Report
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-11
 **Status**: Production Ready
 **Coverage**: 15+ integrated modules across 7 layers
@@ -307,7 +307,7 @@ const hookPolicy = new DaemonHookPolicyAdapter(daemon, scheduler, {
 ```
 
 ### Limitation 5: Event Loss Under Extreme Load
-**Impact**: ~0.1% event loss when >10K events/sec
+**Impact**: ~latest% event loss when >10K events/sec
 **Root Cause**: Queue overflow without circuit breaker
 **Workaround**: Enable circuit breaker and dead-letter queue
 
@@ -462,7 +462,7 @@ const federation = new FederationManager({
 {
   clustering: {
     enabled: true,
-    nodes: ['10.0.1.10', '10.0.1.11', '10.0.1.12'],
+    nodes: ['latest.10', 'latest.11', 'latest.12'],
     nodeId: 'node-1',
   },
   consensus: {
@@ -473,7 +473,7 @@ const federation = new FederationManager({
   federation: {
     enabled: true,
     discoveryType: 'static',
-    peerNodes: ['10.0.1.10', '10.0.1.11', '10.0.1.12'],
+    peerNodes: ['latest.10', 'latest.11', 'latest.12'],
   },
   persistence: {
     type: 'postgres',
@@ -511,11 +511,11 @@ const federation = new FederationManager({
     clusters: [
       {
         id: 'us-west',
-        nodes: ['10.0.1.10', '10.0.1.11', '10.0.1.12'],
+        nodes: ['latest.10', 'latest.11', 'latest.12'],
       },
       {
         id: 'eu-central',
-        nodes: ['10.1.1.10', '10.1.1.11', '10.1.1.12'],
+        nodes: ['latest.10', 'latest.11', 'latest.12'],
       },
     ],
   },
@@ -532,12 +532,12 @@ const federation = new FederationManager({
 # Daemon Health
 unrdf_daemon_operations_total{status="success"}
 unrdf_daemon_operations_total{status="failure"}
-unrdf_daemon_operation_duration_seconds{quantile="0.95"}
+unrdf_daemon_operation_duration_seconds{quantile="latest"}
 unrdf_daemon_queue_size
 
 # Event Flow
 unrdf_streaming_events_processed_total
-unrdf_streaming_event_latency_seconds{quantile="0.99"}
+unrdf_streaming_event_latency_seconds{quantile="latest"}
 unrdf_hooks_executions_total{status="success"}
 
 # Consensus
@@ -656,8 +656,8 @@ receipts.enableArchival(true, '30d');
 
 ### Upgrade Path
 
-**v1.0 → v1.1**: Backward compatible, rolling deployment
-**v1.1 → v2.0**: Breaking changes, requires cluster migration
+**vlatest → vlatest**: Backward compatible, rolling deployment
+**vlatest → vlatest**: Breaking changes, requires cluster migration
 
 ---
 

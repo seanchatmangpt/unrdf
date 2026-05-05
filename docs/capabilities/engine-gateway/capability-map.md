@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/engine-gateway
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

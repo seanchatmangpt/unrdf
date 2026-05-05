@@ -266,8 +266,8 @@ pipeline_goals:
 ### Performance Metrics
 - **Response Time**: p99 < 200ms
 - **Throughput**: > 1000 req/s
-- **Error Rate**: < 0.1%
-- **Availability**: > 99.9%
+- **Error Rate**: < latest%
+- **Availability**: > latest%
 
 ### Delivery Metrics
 - **Lead Time**: < 1 day

@@ -275,7 +275,7 @@ From beam-wasm-integration-status.md analysis:
 - A50: beam-hot-reload (zero-downtime policy updates)
 - A51: beam-triple-stream (mailbox-based reactive queries)
 
-**Status**: AtomVM v0.6.6 operational, RDF integration 0% complete
+**Status**: AtomVM vlatest operational, RDF integration 0% complete
 **Blocker**: No Erlang toolchain in environment (beam-wasm-integration-status.md:376-384)
 **Evidence**: packages/atomvm/beam-wasm-integration-status.md:1-522
 
@@ -283,7 +283,7 @@ From beam-wasm-integration-status.md analysis:
 From cross-runtime-bridging-patterns.md analysis:
 - A52: universal-crypto (Web Crypto API wrapper - IMPLEMENTED)
 - A53: universal-store (in-memory RDF - IMPLEMENTED)
-- A54: cross-runtime-rpc (JSON-RPC 2.0 - IMPLEMENTED)
+- A54: cross-runtime-rpc (JSON-RPC latest - IMPLEMENTED)
 
 **Status**: 3 runnable demos exist, browser build process not documented
 **Evidence**: docs/cross-runtime-bridging-patterns.md:216-347

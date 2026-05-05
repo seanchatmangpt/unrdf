@@ -252,7 +252,7 @@ Request → Middleware → Record Measurement
 
 - ✅ OpenTelemetry 1.0 API
 - ✅ W3C Trace Context 1.0
-- ✅ Semantic Conventions 1.23.0
+- ✅ Semantic Conventions latest
 - ✅ gRPC Core 1.9
 
 ## Support

@@ -1,7 +1,7 @@
 /**
  * @file use-data-replication.mjs
  * @description React hook for managing data replication and conflict resolution
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useFederatedSystem } from './use-federated-system.mjs';
 /**
  * Hook for managing distributed data replication with conflict resolution
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Replication configuration
  * @param {string} [config.strategy='eventual'] - Replication strategy: 'eventual', 'immediate'
  * @param {number} [config.replicationFactor=2] - Number of replicas

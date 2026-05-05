@@ -1,6 +1,6 @@
 # UNRDF V6 Diataxis Documentation Specification
 
-**Version:** 6.0.0-alpha.1  
+**Version:** latest.1  
 **Last Updated:** 2025-12-27  
 **Status:** Draft
 
@@ -75,7 +75,7 @@ packages/{package-name}/
 title: "Tutorial: [Action-Oriented Title]"
 category: "tutorials"
 audience: "beginner|intermediate|advanced"
-version: "6.0.0-alpha.1"
+version: "latest.1"
 estimated_time: "XX minutes"
 prerequisites:
   - "Prerequisite 1"
@@ -83,7 +83,7 @@ prerequisites:
 proof:
   source: ["path/to/code.mjs", "path/to/test.mjs"]
   hash: "sha256-hash-of-content"
-  confidence: 0.95
+  confidence: latest
 ---
 ```
 
@@ -131,12 +131,12 @@ A KGC-4D store that generates receipts for all operations.
 title: "How to [Solve Specific Problem]"
 category: "how-to"
 audience: "intermediate"
-version: "6.0.0-alpha.1"
+version: "latest.1"
 estimated_time: "X minutes"
 proof:
   source: ["path/to/implementation.mjs"]
   hash: "sha256-hash"
-  confidence: 0.90
+  confidence: latest
 ---
 ```
 
@@ -188,12 +188,12 @@ You need to verify that a receipt authentically represents a store operation.
 title: "[Module/Function] Reference"
 category: "reference"
 audience: "all"
-version: "6.0.0-alpha.1"
+version: "latest.1"
 source: "src/path/to/module.mjs"
 proof:
   source: ["src/receipts/index.mjs"]
   hash: "sha256-hash"
-  confidence: 1.00
+  confidence: latest
 ---
 ```
 
@@ -257,11 +257,11 @@ async function generateReceipt(operation) {}
 title: "[Concept/Topic]"
 category: "explanation"
 audience: "intermediate"
-version: "6.0.0-alpha.1"
+version: "latest.1"
 proof:
   source: ["docs/adr/NNNN-decision.md"]
   hash: "sha256-hash"
-  confidence: 0.85
+  confidence: latest
 ---
 ```
 
@@ -324,15 +324,15 @@ proof:
     - "src/receipts/index.mjs"
     - "test/receipts.test.mjs"
   hash: "sha256-..."  # Content fingerprint
-  confidence: 0.95    # 0.0-1.0 (1.0 = code-generated)
+  confidence: latest    # latest.0 (latest = code-generated)
 ```
 
 **Confidence Levels:**
-- `1.00` - Generated directly from code (reference docs)
-- `0.95` - Verified against tests + code
-- `0.90` - Manual review against code
-- `0.85` - Conceptual (explanation)
-- `0.80` - External sources
+- `latest` - Generated directly from code (reference docs)
+- `latest` - Verified against tests + code
+- `latest` - Manual review against code
+- `latest` - Conceptual (explanation)
+- `latest` - External sources
 
 ---
 
@@ -372,7 +372,7 @@ packages/yawl/
 title: "Tutorial: Create Your First YAWL Workflow"
 category: "tutorials"
 audience: "beginner"
-version: "4.0.0"
+version: "latest"
 estimated_time: "10 minutes"
 prerequisites:
   - "Node.js 18+"
@@ -381,7 +381,7 @@ proof:
     - "src/task.mjs"
     - "examples/basic-workflow.mjs"
   hash: "a1b2c3d4..."
-  confidence: 0.95
+  confidence: latest
 ---
 
 # Tutorial: Create Your First YAWL Workflow
@@ -443,11 +443,11 @@ Each pipeline stage emits a receipt:
 
 ```json
 {
-  "version": "6.0.0-alpha.1",
+  "version": "latest.1",
   "generatedAt": "2025-12-27T12:00:00Z",
   "packages": {
     "@unrdf/yawl": {
-      "version": "4.0.0",
+      "version": "latest",
       "tutorials": ["01-first-workflow.md"],
       "howtos": ["01-timeout-tasks.md"],
       "reference": ["api.md"],
@@ -457,7 +457,7 @@ Each pipeline stage emits a receipt:
   },
   "latex": {
     "compiler": "latexmk",
-    "version": "4.77",
+    "version": "latest",
     "hash": "sha256-..."
   },
   "merkleRoot": "sha256-..."
@@ -504,7 +504,7 @@ kgc thesis validate --comprehensive
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 6.0.0-alpha.1 | 2025-12-27 | Initial V6 specification |
+| latest.1 | 2025-12-27 | Initial V6 specification |
 
 ---
 

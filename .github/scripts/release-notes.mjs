@@ -311,7 +311,7 @@ function generateReleaseNotes() {
 
   // Footer
   lines.push('---\n');
-  lines.push('**Full Changelog**: https://github.com/unrdf/unrdf/compare/v5.0.0...v' + version + '\n');
+  lines.push('**Full Changelog**: https://github.com/unrdf/unrdf/compare/[VERSION]...v' + version + '\n');
   lines.push('**Documentation**: https://unrdf.github.io/unrdf\n');
   lines.push('**Issues**: https://github.com/unrdf/unrdf/issues\n');
 

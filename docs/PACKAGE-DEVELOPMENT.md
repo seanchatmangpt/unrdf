@@ -69,7 +69,7 @@ touch packages/cache/package.json
 ```json
 {
   "name": "@unrdf/cache",
-  "version": "0.1.0",
+  "version": "latest",
   "description": "Query result caching for UNRDF",
   "type": "module",
   "license": "MIT",
@@ -96,14 +96,14 @@ touch packages/cache/package.json
   },
 
   "devDependencies": {
-    "vitest": "^1.0.0"
+    "vitest": "^latest"
   }
 }
 ```
 
 **Key points:**
 - `"name"`: Always `@unrdf/<package-name>`
-- `"version"`: Start at 0.1.0 or 1.0.0
+- `"version"`: Start at latest or latest
 - `"type": "module"`: Required for ESM
 - Cross-package deps: Use `"workspace:*"`
 
@@ -300,7 +300,7 @@ Edit `packages/<name>/package.json`:
 
 ```json
 {
-  "version": "1.2.0"  // Update semantic version
+  "version": "latest"  // Update semantic version
 }
 ```
 
@@ -312,7 +312,7 @@ pnpm --filter @unrdf/<name> run build
 
 # Commit version bump
 git add packages/<name>/package.json
-git commit -m "chore: bump @unrdf/<name> to 1.2.0"
+git commit -m "chore: bump @unrdf/<name> to latest"
 ```
 
 ---
@@ -392,10 +392,10 @@ pnpm run build
 
 # 5. Commit
 git add .
-git commit -m "chore: prepare v1.2.0 release"
+git commit -m "chore: prepare vlatest release"
 
 # 6. Tag (for releases)
-git tag @unrdf/cache@1.2.0
+git tag @unrdf/cache@latest
 git push --tags
 ```
 

@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/atomvm
-**Version:** 5.0.1
+**Version:** [VERSION]
 
 ---
 
@@ -35,11 +35,11 @@ Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly
 
 ### Dependencies
 
-- `@opentelemetry/api`: ^1.8.0
+- `@opentelemetry/api`: ^[VERSION]
 - `@unrdf/core`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
 - `@unrdf/streaming`: workspace:*
-- `coi-serviceworker`: ^0.1.7
+- `coi-serviceworker`: ^[VERSION]
 
 ### Exports
 

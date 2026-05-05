@@ -21,11 +21,11 @@ Must complete before any other capsules can start.
 
 20% of work that delivers 80% of value.
 
-### P2: Standard (Required for 6.0.0)
+### P2: Standard (Required for latest)
 
 Essential for release, but not blocking.
 
-### P3: Nice-to-Have (Post-6.0.0)
+### P3: Nice-to-Have (Post-latest)
 
 Improves DX but not required for stable release.
 
@@ -144,7 +144,7 @@ Implement full compatibility layer for v5 → v6 migration.
 
 ---
 
-### V6-004: Update Root Workspace to 6.0.0-alpha.1
+### V6-004: Update Root Workspace to latest.1
 
 **Status**: Pending
 **Dependencies**: V6-003
@@ -155,7 +155,7 @@ Update root package.json and workspace config.
 
 **Deliverables**:
 
-- Version bump to 6.0.0-alpha.1
+- Version bump to latest.1
 - Add v6-compat to workspace
 - Update pnpm-lock.yaml
 
@@ -598,7 +598,7 @@ node scripts/validate-capsule.mjs V6-001
 
 **Capsules**: V6-001 to V6-019 (19 capsules)
 **Effort**: 196 hours (≈5 weeks for 5 devs)
-**Release**: `6.0.0-core` (subset release)
+**Release**: `latest` (subset release)
 
 **Remaining 37**: Backfill over 3-6 months post-core release.
 
@@ -609,10 +609,10 @@ node scripts/validate-capsule.mjs V6-001
 - [ ] All P0 capsules complete (Week 2)
 - [ ] All P1 capsules complete (Week 8)
 - [ ] Core 10 packages at L5 (Week 8)
-- [ ] `6.0.0-core` released (Week 9)
+- [ ] `latest` released (Week 9)
 - [ ] All P2 capsules complete (Week 14)
 - [ ] All P3 capsules complete (Week 35)
-- [ ] `v6.0.0` stable released (Week 36)
+- [ ] `vlatest` stable released (Week 36)
 
 **Final Validation**: OTEL ≥80/100 for ALL 47 packages.
 

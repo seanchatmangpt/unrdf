@@ -44,7 +44,7 @@ Implement a Lens primitive that deterministically maps existing API payloads ↔
     ```json
     {
       "name": "CustomerLens",
-      "version": "1.0.0",
+      "version": "latest",
       "toGraph": [...mapping rules...],
       "fromGraph": [...reverse mapping rules...],
       "stableIds": { "domain": "...", "entity": "..." }
@@ -65,7 +65,7 @@ Implement a Lens primitive that deterministically maps existing API payloads ↔
 ```json
 {
   "name": "CustomerLens",
-  "version": "1.0.0",
+  "version": "latest",
   "stableIds": {
     "domain": "kgc-facade",
     "entity": "customer"

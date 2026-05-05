@@ -10,10 +10,10 @@
 
 **CLAIM (README.md):** "Complete implementation of Van der Aalst's control flow patterns (WP1-WP20)"
 
-**REALITY:** **14 of 43 control flow patterns implemented (32.6% compliance)**
+**REALITY:** **14 of 43 control flow patterns implemented (latest% compliance)**
 
 **ADDITIONAL GAPS:**
-- **Resource Patterns:** 8 of 43 implemented (18.6%)
+- **Resource Patterns:** 8 of 43 implemented (latest%)
 - **Data Patterns:** Unknown (no analysis conducted)
 - **Exception Patterns:** Not evaluated
 - **Service Interaction Patterns:** Not evaluated
@@ -30,9 +30,9 @@ According to the [Workflow Patterns Initiative](http://www.workflowpatterns.com/
 
 | Perspective | Total Patterns | UNRDF Implementation | Compliance |
 |-------------|----------------|---------------------|------------|
-| **Control Flow** | 43 | 14 | 32.6% |
+| **Control Flow** | 43 | 14 | latest% |
 | **Data** | 40 | Unknown | ? |
-| **Resource** | 43 | ~8 | 18.6% |
+| **Resource** | 43 | ~8 | latest% |
 | **Exception Handling** | 16 | Not analyzed | ? |
 | **Service Interaction** | 24 | N/A | N/A |
 | **TOTAL** | **166** | **~22** | **~13%** |
@@ -644,7 +644,7 @@ Join waits for: A and B (C is optional)
 
 ## Category 3: State-based Patterns (WP16-18, WP23-25)
 
-**STATUS: 16.7% (1 of 6 partial)**
+**STATUS: latest% (1 of 6 partial)**
 
 **IMPACT: HIGH - Reactive workflows unavailable**
 
@@ -957,7 +957,7 @@ Approval Workflow:
 
 ## Category 8: Resource Patterns (43 Patterns Defined)
 
-**STATUS: 18.6% (~8 of 43 implemented)**
+**STATUS: latest% (~8 of 43 implemented)**
 
 **REFERENCE:** [Workflow Resource Patterns](https://www.researchgate.net/publication/228718063_Workflow_resource_patterns)
 
@@ -1090,7 +1090,7 @@ Customer Support:
 | **High (7-8)** | 10 | WP14, WP17, WP18, WP23, WP25, WP27, WP30, WP33, WP38 |
 | **Very High (9-10)** | 3 | WP15, WP34, (data patterns TBD) |
 
-### Average Complexity: 6.2/10
+### Average Complexity: latest/10
 
 **Interpretation:** Most missing patterns are **medium to high complexity**, explaining why they weren't implemented. However, this does **not** justify claiming "complete implementation."
 
@@ -1206,7 +1206,7 @@ Customer Support:
 | **Custom Forms** | ✅ XForms | ❌ No | -1 |
 | **Time Patterns** | ✅ Yes | ❌ No | -? |
 
-**Source:** [YAWL System Documentation](https://yawlfoundation.github.io/assets/files/YAWLUserManual4.3.pdf)
+**Source:** [YAWL System Documentation](https://yawlfoundation.github.io/assets/files/YAWLUserManuallatest.pdf)
 
 ---
 
@@ -1217,7 +1217,7 @@ Customer Support:
 | **Control Flow Patterns** | ~30 | 14 | Camunda |
 | **Multiple Instance** | ✅ Full | ❌ None | Camunda |
 | **Resource Patterns** | ~20 | ~8 | Camunda |
-| **BPMN 2.0** | ✅ Full | N/A | Camunda |
+| **BPMN latest** | ✅ Full | N/A | Camunda |
 | **DMN** | ✅ Yes | ❌ No | Camunda |
 | **Cockpit UI** | ✅ Yes | ❌ No | Camunda |
 | **RDF-Native** | ❌ No | ✅ Yes | UNRDF |
@@ -1389,9 +1389,9 @@ control flow patterns (WP1-WP20)
 **CLAIM:** "Complete implementation of Van der Aalst's control flow patterns (WP1-WP20)"
 
 **REALITY:**
-- **14 of 43** control flow patterns (32.6%)
+- **14 of 43** control flow patterns (latest%)
 - **0 of 4** multiple instance patterns (0%)
-- **8 of 43** resource patterns (18.6%)
+- **8 of 43** resource patterns (latest%)
 - **0 of 40** data patterns evaluated (?)
 - **~22 of 166** total patterns (~13%)
 
@@ -1409,7 +1409,7 @@ control flow patterns (WP1-WP20)
 
 ### What UNRDF YAWL Is NOT
 
-1. **NOT a complete YAWL implementation** (missing 67.4% of control flow patterns)
+1. **NOT a complete YAWL implementation** (missing latest% of control flow patterns)
 2. **NOT suitable for dynamic workflows** (no WP14-15)
 3. **NOT compliant with YAWL semantics** (WP16 misimplemented)
 4. **NOT comparable to YAWL Reference** (29 missing control flow patterns)
@@ -1431,7 +1431,7 @@ control flow patterns (WP1-WP20)
 
 > The claim of "complete implementation of Van der Aalst's control flow patterns (WP1-WP20)" is **FALSE and MISLEADING**.
 >
-> UNRDF YAWL implements **14 of 43** control flow patterns (32.6%), with critical gaps in Multiple Instance patterns (the defining feature of YAWL), incorrect semantics for Deferred Choice, and complete absence of State-based routing.
+> UNRDF YAWL implements **14 of 43** control flow patterns (latest%), with critical gaps in Multiple Instance patterns (the defining feature of YAWL), incorrect semantics for Deferred Choice, and complete absence of State-based routing.
 >
 > The implementation is **competent for basic workflows** but **fundamentally incomplete** for the claim made. Calling it "YAWL" without these patterns is like calling a bicycle a "car" because it has wheels and moves forward.
 >
@@ -1449,7 +1449,7 @@ control flow patterns (WP1-WP20)
 4. [Data Patterns](http://www.workflowpatterns.com/patterns/data/) - 40 data patterns
 5. [YAWL: Yet Another Workflow Language](https://yawlfoundation.github.io/assets/files/yawlrevtech.pdf) - Original YAWL paper
 6. [Workflow Patterns: The Definitive Guide](https://mitpress.mit.edu/9780262029827/workflow-patterns/) - MIT Press book
-7. [YAWL User Manual](https://yawlfoundation.github.io/assets/files/YAWLUserManual4.3.pdf) - Reference implementation
+7. [YAWL User Manual](https://yawlfoundation.github.io/assets/files/YAWLUserManuallatest.pdf) - Reference implementation
 8. [Workflow Control-Flow Patterns: A Revised View](http://www.workflowpatterns.com/documentation/documents/BPM-06-22.pdf) - BPM 2006 paper
 9. [Advanced Workflow Patterns](http://www.workflowpatterns.com/documentation/documents/coopis.pdf) - CoopIS paper
 

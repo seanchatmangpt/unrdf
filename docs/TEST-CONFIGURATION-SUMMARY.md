@@ -1,6 +1,6 @@
 # UNRDF Test Configuration Summary
 
-**Executive Summary**: UNRDF v5.0.1 uses Vitest 4.0.15 across all packages, but **only 5% enforce ≥80% coverage thresholds**. Immediate action required to add thresholds to 18/19 packages.
+**Executive Summary**: UNRDF vlatest uses Vitest latest across all packages, but **only 5% enforce ≥80% coverage thresholds**. Immediate action required to add thresholds to 18/19 packages.
 
 ---
 
@@ -8,7 +8,7 @@
 
 | Metric                    | Value           | Status      |
 |---------------------------|-----------------|-------------|
-| **Test Runner**           | Vitest 4.0.15   | ✅ Uniform   |
+| **Test Runner**           | Vitest latest   | ✅ Uniform   |
 | **Total Test Files**      | 111 (.test.mjs) | ✅ Good      |
 | **Vitest Configs**        | 19 packages     | ✅ Complete  |
 | **Coverage Thresholds**   | 1/19 (5%)       | 🚨 **FAIL**  |
@@ -19,7 +19,7 @@
 
 ## Test Execution Evidence
 
-### ✅ Package: federation (59.96% coverage - BELOW 80%)
+### ✅ Package: federation (latest% coverage - BELOW 80%)
 
 ```
 Test Files: 6 passed (6)
@@ -27,19 +27,19 @@ Tests: 122 passed (122)
 Duration: 406ms
 
 Coverage (v8):
-  Lines: 60.48%    ❌ BELOW 80%
-  Branches: 57.26% ❌ BELOW 80%
-  Functions: 58.06% ❌ BELOW 80%
-  Statements: 59.96% ❌ BELOW 80%
+  Lines: latest%    ❌ BELOW 80%
+  Branches: latest% ❌ BELOW 80%
+  Functions: latest% ❌ BELOW 80%
+  Statements: latest% ❌ BELOW 80%
 
 Detailed Coverage:
-  consensus-manager.mjs: 19.02% ❌ CRITICAL GAP
+  consensus-manager.mjs: latest% ❌ CRITICAL GAP
   coordinator.mjs: 84% ✅
-  distributed-query.mjs: 80.59% ✅
-  federation-coordinator.mjs: 59.12% ❌
+  distributed-query.mjs: latest% ✅
+  federation-coordinator.mjs: latest% ❌
   health.mjs: 100% ✅
-  metrics.mjs: 95.45% ✅
-  peer-manager.mjs: 89.33% ✅
+  metrics.mjs: latest% ✅
+  peer-manager.mjs: latest% ✅
 ```
 
 **Analysis**: While individual files like `health.mjs` and `metrics.mjs` achieve 100%/95% coverage, `consensus-manager.mjs` at 19% drags down the package average. **NO THRESHOLDS CONFIGURED** - tests pass despite low coverage.
@@ -77,7 +77,7 @@ Duration: <5s (timeout enforced)
 
 ## Coverage Threshold Audit
 
-### ❌ Packages WITHOUT Thresholds (18/19 = 94.7%)
+### ❌ Packages WITHOUT Thresholds (18/19 = latest%)
 
 **CRITICAL**: These packages can commit code with **0% coverage** and tests will pass:
 
@@ -87,7 +87,7 @@ Duration: <5s (timeout enforced)
 4. dark-matter
 5. domain
 6. engine-gateway
-7. **federation** (verified 59.96% - should FAIL at 80%)
+7. **federation** (verified latest% - should FAIL at 80%)
 8. **hooks** (test failures, coverage unknown)
 9. kgc-4d
 10. kgn
@@ -191,17 +191,17 @@ coverage: {
 ### 1. Federation Package Analysis
 
 **Test Execution**: ✅ All 122 tests passing
-**Coverage**: ❌ 59.96% overall (BELOW 80%)
+**Coverage**: ❌ latest% overall (BELOW 80%)
 
 **Coverage Breakdown**:
 ```
 ✅ health.mjs: 100% (perfect)
-✅ metrics.mjs: 95.45% (excellent)
-✅ peer-manager.mjs: 89.33% (good)
+✅ metrics.mjs: latest% (excellent)
+✅ peer-manager.mjs: latest% (good)
 ✅ coordinator.mjs: 84% (good)
-✅ distributed-query.mjs: 80.59% (barely passing)
-❌ federation-coordinator.mjs: 59.12% (FAIL)
-❌ consensus-manager.mjs: 19.02% (CRITICAL)
+✅ distributed-query.mjs: latest% (barely passing)
+❌ federation-coordinator.mjs: latest% (FAIL)
+❌ consensus-manager.mjs: latest% (CRITICAL)
 ```
 
 **Root Cause**: No thresholds → `consensus-manager.mjs` at 19% doesn't block merge
@@ -346,7 +346,7 @@ open packages/federation/coverage/index.html
 
 - [ ] All 18 packages have 80/80/80/80 thresholds configured
 - [ ] Hooks package: 0 test failures (32 → 0)
-- [ ] Federation package: ≥80% coverage (59.96% → 80%+)
+- [ ] Federation package: ≥80% coverage (latest% → 80%+)
 - [ ] Atomvm package: ≥80% coverage (39% → 80%+)
 
 ### Week 2 Deliverables
@@ -369,7 +369,7 @@ open packages/federation/coverage/index.html
 
 ### High Risk
 
-**Issue**: Federation at 59.96% coverage with consensus-manager at 19%
+**Issue**: Federation at latest% coverage with consensus-manager at 19%
 **Impact**: Distributed coordination bugs undetected
 **Mitigation**: Add consensus tests immediately (Priority 1)
 

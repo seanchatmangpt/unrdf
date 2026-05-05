@@ -4,7 +4,7 @@
  * This example shows how to use the new context-based approach where
  * there's only one store by default, managed through unctx.
  *
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */
@@ -15,7 +15,7 @@
  * This example shows how to use the new context-based approach where
  * there's only one store by default, managed through unctx.
  *
- * @version 1.0.0
+ * @version latest
  * @author GitVan Team
  * @license MIT
  */

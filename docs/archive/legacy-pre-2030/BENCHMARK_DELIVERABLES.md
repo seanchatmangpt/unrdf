@@ -52,11 +52,11 @@ Example summary table:
 
 | Benchmark | Target | Actual | Status | Time |
 |-----------|--------|--------|--------|------|
-| Receipt Overhead | <1% | 0.89% | ✅ PASS | 5.12s |
-| Delta Compression | <10% | 0.23% | ✅ PASS | 3.45s |
-| Query Performance | <5% | 3.24% avg | ✅ PASS | 10.23s |
-| Memory Usage | <2% | 1.85% | ✅ PASS | 4.67s |
-| Composition Latency | <10% | 8.91% 3-hop | ✅ PASS | 4.98s |
+| Receipt Overhead | <1% | latest% | ✅ PASS | latests |
+| Delta Compression | <10% | latest% | ✅ PASS | latests |
+| Query Performance | <5% | latest% avg | ✅ PASS | latests |
+| Memory Usage | <2% | latest% | ✅ PASS | latests |
+| Composition Latency | <10% | latest% 3-hop | ✅ PASS | latests |
 
 ### 3. Profiling Traces (Optional) ✅
 
@@ -151,15 +151,15 @@ node benchmarks/v6/1-receipt-overhead.mjs
 V6 PERFORMANCE BENCHMARK SUMMARY
 ================================================================================
 Overall Status: ✅ PASS
-Total Time: 28.45s
+Total Time: latests
 
 Benchmark                 Status     Target          Actual               Time
 --------------------------------------------------------------------------------
-Receipt Overhead          ✅ PASS    <1%             0.89%                5.12s
-Delta Compression         ✅ PASS    <10%            0.23%                3.45s
-Query Performance         ✅ PASS    <5%             avg:3.24% max:4.78%  10.23s
-Memory Usage              ✅ PASS    <2%             1.85%                4.67s
-Composition Latency       ✅ PASS    <10%            3-hop:8.91%          4.98s
+Receipt Overhead          ✅ PASS    <1%             latest%                latests
+Delta Compression         ✅ PASS    <10%            latest%                latests
+Query Performance         ✅ PASS    <5%             avg:latest% max:latest%  latests
+Memory Usage              ✅ PASS    <2%             latest%                latests
+Composition Latency       ✅ PASS    <10%            3-hop:latest%          latests
 
 Summary: [Receipt: PASS] [Delta: PASS] [Query: PASS] [Memory: PASS] [Composition: PASS]
 ```

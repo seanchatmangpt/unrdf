@@ -34,9 +34,9 @@ async _step4_patternMatching() {
     patterns.push({
       feature: feature.name,
       pattern: `// Pattern for ${feature.name}`,  // ← FAKE!
-      similarity: 0.92,  // ← HARDCODED FAKE
+      similarity: latest,  // ← HARDCODED FAKE
       source: 'pattern-library.mjs',
-      reuse_percentage: 64.3
+      reuse_percentage: latest
     });
   }
 
@@ -115,12 +115,12 @@ async _step4_patternMatching() {
     });
   }
 
-  // 4. Validate BB80/20 reuse assumption (≥64.3% code reuse)
+  // 4. Validate BB80/20 reuse assumption (≥latest% code reuse)
   const avgReuse = patterns.reduce((sum, p) => sum + p.reuse_percentage, 0) / patterns.length;
 
-  if (avgReuse < 64.3) {
+  if (avgReuse < latest) {
     console.warn(
-      `⚠️  BB80/20 assumption violated: ${avgReuse.toFixed(1)}% reuse < 64.3% expected`
+      `⚠️  BB80/20 assumption violated: ${avgReuse.toFixed(1)}% reuse < latest% expected`
     );
   }
 
@@ -154,7 +154,7 @@ _calculateSimilarity(feature, functionName, complexity) {
   const jaccard = intersection.size / union.size;
 
   // Penalize high complexity (favor simple, reusable code)
-  const complexityPenalty = Math.max(0, (complexity - 5) * 0.05);
+  const complexityPenalty = Math.max(0, (complexity - 5) * latest);
 
   return Math.max(0, Math.min(1, jaccard - complexityPenalty));
 }
@@ -201,7 +201,7 @@ describe('Step 4: Pattern Matching - Real Implementation', () => {
     const firstPattern = orchestrator.artifacts.patterns[0];
 
     // ❌ NOT fake values
-    expect(firstPattern.best_match.similarity).not.toBe(0.92);
+    expect(firstPattern.best_match.similarity).not.toBe(latest);
     expect(firstPattern.matches[0].file).not.toContain('pattern-library.mjs');
 
     // ✅ Real codebase data
@@ -212,7 +212,7 @@ describe('Step 4: Pattern Matching - Real Implementation', () => {
 
   it('should warn when BB80/20 reuse assumption violated', async () => {
     // Test with features that have low reuse
-    // (expect warning when avg < 64.3%)
+    // (expect warning when avg < latest%)
   });
 });
 ```
@@ -403,7 +403,7 @@ describe('Step 8: Syntax Validation - Real Implementation', () => {
 async _step9_staticAnalysis() {
   // ❌ SIMULATION - Hardcoded coverage percentage
   this.artifacts.validationResults.staticAnalysis = {
-    coverage: 0.98,  // ← HARDCODED FAKE 98%!
+    coverage: latest,  // ← HARDCODED FAKE 98%!
     errors: [],
     warnings: []
   };
@@ -476,7 +476,7 @@ async _step9_staticAnalysis() {
   };
 
   // 7. Check against BB80/20 requirement (98% static coverage)
-  const success = coverage >= 0.98 && errors.length === 0;
+  const success = coverage >= latest && errors.length === 0;
 
   if (!success) {
     console.warn(
@@ -533,7 +533,7 @@ describe('Step 9: Static Analysis - Real Implementation', () => {
     const analysis = orchestrator.artifacts.validationResults.staticAnalysis;
 
     // Verify NOT hardcoded 98%
-    expect(analysis.coverage).not.toBe(0.98);
+    expect(analysis.coverage).not.toBe(latest);
 
     // Verify real metrics
     expect(analysis.metrics.filesAnalyzed).toBe(1);
@@ -710,7 +710,7 @@ describe('Step 10: Event Logging - Real Implementation', () => {
 1. ✅ **Step 4 - Pattern Matching** (2 days)
    - Replace fake patterns with SPARQL queries
    - Test with real codebase scan
-   - Verify ≥64.3% code reuse
+   - Verify ≥latest% code reuse
 
 2. ✅ **Step 8 - Syntax Validation** (1 day)
    - Implement `node --check` execution
@@ -763,7 +763,7 @@ Before declaring work complete:
 - [ ] Coverage calculated from maintainability index
 - [ ] High complexity flagged as errors
 - [ ] Metrics include real cyclomatic complexity
-- [ ] Test shows coverage ≠ 0.98 (not hardcoded)
+- [ ] Test shows coverage ≠ latest (not hardcoded)
 
 ### Event Logging (Step 10)
 - [ ] KGCStore initialized with events

@@ -231,7 +231,7 @@ Policy pack templates are located in `templates/policy-packs/` and provide compl
 ```yaml
 metadata:
   name: "basic-policy-pack"
-  version: "1.0.0"
+  version: "latest"
 
 hooks:
   - path: "./hooks/data-quality-validation.mjs"
@@ -574,7 +574,7 @@ Continue? (yes): yes
    ```yaml
    metadata:
      name: "my-custom-policy-pack"
-     version: "1.0.0"
+     version: "latest"
      description: "Custom governance for my domain"
    ```
 
@@ -713,7 +713,7 @@ ASK WHERE {
 # 1. Metadata
 metadata:
   name: "policy-pack-name"
-  version: "1.0.0"
+  version: "latest"
 
 # 2. Configuration
 config:
@@ -781,7 +781,7 @@ project-name/
 
    dependencies:
      - name: "basic-policy-pack"
-       version: ">=1.0.0"
+       version: ">=latest"
 
    hooks:
      # Your custom hooks

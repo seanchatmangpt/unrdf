@@ -1,7 +1,7 @@
 /**
  * @file use-query-analyzer.mjs
  * @description React hook for SPARQL query optimization analysis
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * Hook for analyzing and optimizing SPARQL queries
  * Identifies slow queries, suggests optimizations, and tracks query patterns
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Query analyzer configuration
  * @param {boolean} [config.autoOptimize=false] - Auto-apply safe optimizations
  * @param {number} [config.slowThreshold=100] - Slow query threshold (ms)

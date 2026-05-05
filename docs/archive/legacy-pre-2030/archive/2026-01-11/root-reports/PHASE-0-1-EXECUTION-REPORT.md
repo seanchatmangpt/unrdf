@@ -10,8 +10,8 @@
 Both critical path phases completed successfully. The monorepo is now ready for PHASE 2+3 execution.
 
 **Success Criteria**:
-- ✅ **GATE 1**: Vitest version upgraded to ^4.0.16
-- ✅ **GATE 2**: pnpm install completed in 48.7s (no ERR_MODULE_NOT_FOUND)
+- ✅ **GATE 1**: Vitest version upgraded to ^latest
+- ✅ **GATE 2**: pnpm install completed in latests (no ERR_MODULE_NOT_FOUND)
 - ✅ **BONUS**: Test invocation successful (v6-core tests execute)
 
 ---
@@ -19,19 +19,19 @@ Both critical path phases completed successfully. The monorepo is now ready for 
 ## PHASE 0: Vitest Version Fix (COMPLETED)
 
 ### Problem Identified
-- **Root package.json** had: `"vitest": "^1.0.0"`
-- **Workspace packages** needed: `"vitest": "^4.0.15"` (for parseAstAsync support)
+- **Root package.json** had: `"vitest": "^latest"`
+- **Workspace packages** needed: `"vitest": "^latest"` (for parseAstAsync support)
 - **Impact**: Test failures across monorepo due to version mismatch
 
 ### Actions Taken
 1. Read `/home/user/unrdf/package.json` (line 107 identified)
-2. Changed `"vitest": "^1.0.0"` → `"vitest": "^4.0.15"`
+2. Changed `"vitest": "^latest"` → `"vitest": "^latest"`
 3. Verified with `grep '"vitest"' package.json`
 
 ### Verification Output
 ```bash
 $ grep '"vitest"' package.json
-    "vitest": "^4.0.15"
+    "vitest": "^latest"
 ```
 
 **Result**: ✅ **GATE 1 PASSED** - Version change confirmed
@@ -47,10 +47,10 @@ timeout 300s pnpm install --loglevel info
 
 ### Performance Metrics
 - **Timeout Limit**: 300 seconds (5 minutes)
-- **Actual Duration**: **48.7 seconds**
-- **Performance**: 83.8% faster than timeout (251.3s margin)
+- **Actual Duration**: **latest seconds**
+- **Performance**: latest% faster than timeout (latests margin)
 - **Packages Resolved**: 4,193 packages
-- **Packages Reused**: 3,914 packages (93.3% cache hit rate)
+- **Packages Reused**: 3,914 packages (latest% cache hit rate)
 - **Packages Downloaded**: 0 new packages
 - **Packages Added**: +4
 - **Packages Removed**: -7
@@ -60,20 +60,20 @@ timeout 300s pnpm install --loglevel info
 ```
 Scope: all 69 workspace projects
 Packages: +4 -7
-Done in 48.7s using pnpm v10.25.0
+Done in latests using pnpm vlatest
 
 devDependencies:
-- vitest 1.6.1
-+ vitest 4.0.16
+- vitest latest
++ vitest latest
 ```
 
-**Key Achievement**: Vitest automatically upgraded to 4.0.16 (exceeds 4.0.15 requirement)
+**Key Achievement**: Vitest automatically upgraded to latest (exceeds latest requirement)
 
 ### Issues Detected
 **Peer Dependency Warnings** (non-blocking):
-- `packages/blockchain`, `packages/cli`, `packages/fusion`: vitest 1.6.1 conflicts with @vitest/ui 4.0.16
-- `packages/docs`: Multiple @tiptap version mismatches (3.13.0 vs 3.14.0)
-- `packages/kgn`: vitest 2.1.9 conflicts with @vitest/ui 4.0.16
+- `packages/blockchain`, `packages/cli`, `packages/fusion`: vitest latest conflicts with @vitest/ui latest
+- `packages/docs`: Multiple @tiptap version mismatches (latest vs latest)
+- `packages/kgn`: vitest latest conflicts with @vitest/ui latest
 
 **Assessment**: These are warnings only. Installation completed successfully. Tests can execute.
 
@@ -90,7 +90,7 @@ timeout 10s pnpm --filter @unrdf/v6-core test 2>&1 | head -30
 
 ### Test Output
 ```
-> @unrdf/v6-core@6.0.0-alpha.1 test /home/user/unrdf/packages/v6-core
+> @unrdf/v6-core@latest.1 test /home/user/unrdf/packages/v6-core
 > node --test test/**/*.test.mjs
 
 TAP version 13
@@ -98,13 +98,13 @@ TAP version 13
 # Subtest: Grammar Parser - valid SPARQL query parses successfully
 ok 1 - Grammar Parser - valid SPARQL query parses successfully
   ---
-  duration_ms: 3.024625
+  duration_ms: latest
   type: 'test'
   ...
 # Subtest: Grammar Parser - valid SHACL shapes parse successfully
 ok 2 - Grammar Parser - valid SHACL shapes parse successfully
   ---
-  duration_ms: 0.384397
+  duration_ms: latest
   type: 'test'
   ...
 ```
@@ -126,8 +126,8 @@ ok 2 - Grammar Parser - valid SHACL shapes parse successfully
 
 ### Can I PROVE it?
 ✅ **YES** - Full command output documented:
-- Vitest version: `grep` output shows "^4.0.15"
-- Install duration: `Done in 48.7s` in pnpm output
+- Vitest version: `grep` output shows "^latest"
+- Install duration: `Done in latests` in pnpm output
 - Test execution: TAP output shows tests running
 
 ### What BREAKS if wrong?
@@ -137,9 +137,9 @@ ok 2 - Grammar Parser - valid SHACL shapes parse successfully
 
 ### What's the EVIDENCE?
 1. **File modification**: package.json line 107 changed (verified with grep)
-2. **Install success**: pnpm exit code 0, "Done in 48.7s" message
+2. **Install success**: pnpm exit code 0, "Done in latests" message
 3. **Test execution**: TAP output with passing tests, no module errors
-4. **Measured performance**: 48.7s install time (vs 300s timeout)
+4. **Measured performance**: latests install time (vs 300s timeout)
 
 ---
 
@@ -147,23 +147,23 @@ ok 2 - Grammar Parser - valid SHACL shapes parse successfully
 
 | Gate | Criterion | Status | Evidence |
 |------|-----------|--------|----------|
-| **GATE 1** | Vitest version ^4.0.15 | ✅ PASS | grep output: "vitest": "^4.0.15" |
-| **GATE 2** | pnpm install <300s, no ERR_MODULE_NOT_FOUND | ✅ PASS | 48.7s duration, vitest 1.6.1→4.0.16 |
+| **GATE 1** | Vitest version ^latest | ✅ PASS | grep output: "vitest": "^latest" |
+| **GATE 2** | pnpm install <300s, no ERR_MODULE_NOT_FOUND | ✅ PASS | latests duration, vitest latest→latest |
 | **BONUS** | Test invocation successful | ✅ PASS | v6-core tests execute, TAP output clean |
 
 ---
 
 ## Deliverables Completed
 
-1. ✅ **Edited package.json** with "vitest": "^4.0.15"
+1. ✅ **Edited package.json** with "vitest": "^latest"
    - File: `/home/user/unrdf/package.json`
    - Line 107 modified
    - Verified with grep
 
 2. ✅ **Successful pnpm install output** (no ERR_MODULE_NOT_FOUND)
-   - Duration: 48.7 seconds
+   - Duration: latest seconds
    - 4,193 packages resolved
-   - Vitest upgraded to 4.0.16
+   - Vitest upgraded to latest
 
 3. ✅ **Successful test invocation output** (v6-core tests start, deps resolved)
    - TAP version 13 output

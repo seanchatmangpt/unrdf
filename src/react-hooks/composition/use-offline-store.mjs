@@ -1,7 +1,7 @@
 /**
  * @file use-offline-store.mjs
  * @description Offline-first IndexedDB persistence with sync queue
- * @since 3.2.0
+ * @since [VERSION]
  *
  * Innovation: Enables knowledge graphs to work completely offline,
  * with automatic background sync when connectivity is restored.
@@ -35,7 +35,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 /**
  * Offline-first IndexedDB persistence hook
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {OfflineStoreConfig} config - Configuration
  * @returns {Object} Offline store interface
  * @throws {Error} When IndexedDB not initialized (insert/delete called too early)

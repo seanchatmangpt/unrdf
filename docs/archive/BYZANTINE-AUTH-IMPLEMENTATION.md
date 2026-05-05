@@ -355,9 +355,9 @@ curl -X POST http://localhost:3000/api/admin/byzantine-operation \
 
 ## Dependencies Added
 
-- `jsonwebtoken@9.0.2` - JWT token generation/validation
-- `bcrypt@6.0.0` - Password hashing
-- `elliptic@6.6.1` - ECDSA cryptography for Byzantine signatures
+- `jsonwebtoken@latest` - JWT token generation/validation
+- `bcrypt@latest` - Password hashing
+- `elliptic@latest` - ECDSA cryptography for Byzantine signatures
 
 ## Total Implementation
 

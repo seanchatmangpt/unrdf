@@ -86,7 +86,7 @@ O = FIBO ontology + policies + constraints
   "inputs": {
     "O_hash": "0x...",
     "ΔO_hash": "0x...",
-    "generator_version": "1.0.1"
+    "generator_version": "latest"
   },
   "generation": {
     "duration_ms": 3000,

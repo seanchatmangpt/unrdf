@@ -2,7 +2,7 @@
 
 RDF ontology to code generation. Transform your RDF knowledge graphs into typed code artifacts—Zod schemas, OpenAPI specs, JSDoc types, GraphQL schemas—using SPARQL queries and Nunjucks templates.
 
-**Version**: 26.5.4 | **Node.js**: >=18.0.0
+**Version**: [VERSION] | **Node.js**: >=[VERSION]
 
 ## Installation
 
@@ -20,7 +20,7 @@ Verify installation:
 
 ```bash
 unrdf --version
-# Output: 26.5.4
+# Output: [VERSION]
 ```
 
 ---

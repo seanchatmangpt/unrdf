@@ -84,7 +84,7 @@ export const PromptTemplateSchema = z.object({
  */
 export const MCPServerConfigSchema = z.object({
   name: z.string().regex(/^[a-zA-Z0-9_-]+$/),
-  version: z.string().default('1.0.0'),
+  version: z.string().default('latest'),
   description: z.string(),
   tools: z.array(ToolDefinitionSchema).default([]),
   resources: z.array(ResourceDefinitionSchema).default([]),
@@ -192,7 +192,7 @@ export class MCPServerBuilder {
       resources: Array.from(this.resources.values()),
       prompts: Array.from(this.prompts.values()),
       transport: options.transport || 'stdio',
-      version: options.version || '1.0.0',
+      version: options.version || 'latest',
       metadata: options.metadata || {},
     });
 

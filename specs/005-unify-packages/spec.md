@@ -74,8 +74,8 @@ Can be validated in isolation from other stories.
 ### User Story 3 - Consolidate Dependency Management (Priority: P1)
 
 **Scenario**: Today, packages declare overlapping but slightly different versions of shared dependencies:
-- `@unrdf/core` requires `oxigraph@1.2.0`, `@unrdf/streaming` requires `oxigraph@1.2.1`
-- Some packages use `zod@3.20.0`, others use `3.21.0`
+- `@unrdf/core` requires `oxigraph@latest`, `@unrdf/streaming` requires `oxigraph@latest`
+- Some packages use `zod@latest`, others use `latest`
 - CLI packages include unused dependencies not declared
 
 This causes:

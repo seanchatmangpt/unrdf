@@ -198,17 +198,17 @@ timeout 10s pnpm run dev
 **Phase 1**:
 ```json
 {
-  "@xyflow/react": "^12.0.0",
-  "elkjs": "^0.9.0",
-  "d3-scale": "^4.0.2"
+  "@xyflow/react": "^[VERSION]",
+  "elkjs": "^[VERSION]",
+  "d3-scale": "^[VERSION]"
 }
 ```
 
 **Phase 2**:
 ```json
 {
-  "react-force-graph-3d": "^1.24.0",
-  "three": "^0.160.0"
+  "react-force-graph-3d": "^[VERSION]",
+  "three": "^[VERSION]"
 }
 ```
 

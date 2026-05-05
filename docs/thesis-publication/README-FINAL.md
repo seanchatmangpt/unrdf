@@ -1,7 +1,7 @@
 # UNRDF Thesis Suite - Build and Publication Guide
 
 **Date**: December 25, 2025
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Pre-Submission
 
 ---
@@ -37,7 +37,7 @@ cargo install mdbook
 
 # Verification
 pdflatex --version  # TeX Live 2024+
-mdbook --version    # 0.4.35+
+mdbook --version    # latest+
 ```
 
 ### Required LaTeX Packages

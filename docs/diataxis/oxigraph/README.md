@@ -5,9 +5,9 @@ Rust-based SPARQL engine for UNRDF — a high-performance, in-memory RDF store c
 ## Package Identity
 
 ```
-@unrdf/oxigraph  v26.5.4
-wraps: oxigraph npm package (^0.5.2)
-runtime: Node.js >=18.0.0
+@unrdf/oxigraph  latest
+wraps: oxigraph npm package (^latest)
+runtime: Node.js >=latest
 ```
 
 ## Documentation Map

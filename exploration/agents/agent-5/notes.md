@@ -9,7 +9,7 @@
 ### 1. N3 Format Support is Complete
 
 - **Path**: `/packages/core/src/rdf/n3-justified-only.mjs`
-- **Library**: N3.js (v1.26.0+)
+- **Library**: N3.js (latest+)
 - **Formats Supported**:
   - `text/turtle` - Pure Turtle (no rules)
   - `text/n3` - N3 with rules and advanced features

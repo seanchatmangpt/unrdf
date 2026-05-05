@@ -14,10 +14,10 @@ Found 3 packages with no entry points:
 
 | Version | Package Count |
 | ------- | ------------- |
-| 5.0.1   | 21            |
-| 1.0.0   | 21            |
-| 5.0.0   | 3             |
-| 0.1.0   | 1             |
+| latest   | 21            |
+| latest   | 21            |
+| latest   | 3             |
+| latest   | 1             |
 
 ## Circular Dependencies
 

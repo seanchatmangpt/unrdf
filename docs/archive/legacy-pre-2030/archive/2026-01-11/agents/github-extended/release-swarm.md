@@ -84,25 +84,25 @@ CHANGELOG=$(gh api repos/:owner/:repo/compare/${LAST_TAG}...HEAD \
   npx ruv-swarm github generate-changelog)
 
 # Create release draft
-gh release create v2.0.0 \
+gh release create vlatest \
   --draft \
-  --title "Release v2.0.0" \
+  --title "Release vlatest" \
   --notes "$CHANGELOG" \
   --target main
 
 # Run release orchestration
 npx ruv-swarm github release-create \
-  --version "2.0.0" \
+  --version "latest" \
   --changelog "$CHANGELOG" \
   --build-artifacts \
   --deploy-targets "npm,docker,github"
 
 # Publish release after validation
-gh release edit v2.0.0 --draft=false
+gh release edit vlatest --draft=false
 
 # Create announcement issue
 gh issue create \
-  --title "🎉 Released v2.0.0" \
+  --title "🎉 Released vlatest" \
   --body "$CHANGELOG" \
   --label "announcement,release"
 ```
@@ -163,13 +163,13 @@ release:
 # Generate intelligent changelog with gh CLI
 # Get all merged PRs between versions
 PRS=$(gh pr list --state merged --base main --json number,title,labels,author,mergedAt \
-  --jq ".[] | select(.mergedAt > \"$(gh release view v1.0.0 --json publishedAt -q .publishedAt)\")")  
+  --jq ".[] | select(.mergedAt > \"$(gh release view vlatest --json publishedAt -q .publishedAt)\")")  
 
 # Get contributors
 CONTRIBUTORS=$(echo "$PRS" | jq -r '[.author.login] | unique | join(", ")')
 
 # Get commit messages
-COMMITS=$(gh api repos/:owner/:repo/compare/v1.0.0...HEAD \
+COMMITS=$(gh api repos/:owner/:repo/compare/vlatest...HEAD \
   --jq '.commits[].commit.message')
 
 # Generate categorized changelog
@@ -177,7 +177,7 @@ CHANGELOG=$(npx ruv-swarm github changelog \
   --prs "$PRS" \
   --commits "$COMMITS" \
   --contributors "$CONTRIBUTORS" \
-  --from v1.0.0 \
+  --from vlatest \
   --to HEAD \
   --categorize \
   --add-migration-guide)
@@ -187,7 +187,7 @@ echo "$CHANGELOG" > CHANGELOG.md
 
 # Create PR with changelog update
 gh pr create \
-  --title "docs: Update changelog for v2.0.0" \
+  --title "docs: Update changelog for vlatest" \
   --body "Automated changelog update" \
   --base main
 ```
@@ -203,7 +203,7 @@ gh pr create \
 ```bash
 # Determine next version
 npx ruv-swarm github version-suggest \
-  --current v1.2.3 \
+  --current vlatest \
   --analyze-commits \
   --check-compatibility \
   --suggest-pre-release
@@ -265,7 +265,7 @@ deployment:
       percentage: 5
       duration: 1h
       metrics:
-        - error-rate < 0.1%
+        - error-rate < latest%
         - latency-p99 < 200ms
         
     - name: partial
@@ -282,7 +282,7 @@ deployment:
 ```bash
 # Coordinate releases across repos
 npx ruv-swarm github multi-release \
-  --repos "frontend:v2.0.0,backend:v2.1.0,cli:v1.5.0" \
+  --repos "frontend:vlatest,backend:vlatest,cli:vlatest" \
   --ensure-compatibility \
   --atomic-release \
   --synchronized
@@ -293,7 +293,7 @@ npx ruv-swarm github multi-release \
 # Emergency hotfix process
 npx ruv-swarm github hotfix \
   --issue 789 \
-  --target-version v1.2.4 \
+  --target-version vlatest \
   --cherry-pick-commits \
   --fast-track-deploy
 ```
@@ -402,7 +402,7 @@ npx ruv-swarm github release-validate \
 ```bash
 # Test backward compatibility
 npx ruv-swarm github compat-test \
-  --previous-versions "v1.0,v1.1,v1.2" \
+  --previous-versions "vlatest,vlatest,vlatest" \
   --api-contracts \
   --data-migrations \
   --generate-report
@@ -424,7 +424,7 @@ npx ruv-swarm github release-security \
 ```bash
 # Monitor release health
 npx ruv-swarm github release-monitor \
-  --version v2.0.0 \
+  --version vlatest \
   --metrics "error-rate,latency,throughput" \
   --alert-thresholds \
   --duration 24h
@@ -437,7 +437,7 @@ npx ruv-swarm github rollback-config \
   --triggers '{
     "error-rate": ">5%",
     "latency-p99": ">1000ms",
-    "availability": "<99.9%"
+    "availability": "<latest%"
   }' \
   --grace-period 5m \
   --notify-on-rollback
@@ -447,8 +447,8 @@ npx ruv-swarm github rollback-config \
 ```bash
 # Analyze release performance
 npx ruv-swarm github release-analytics \
-  --version v2.0.0 \
-  --compare-with v1.9.0 \
+  --version vlatest \
+  --compare-with vlatest \
   --metrics "adoption,performance,stability" \
   --generate-insights
 ```
@@ -468,7 +468,7 @@ npx ruv-swarm github release-docs \
 ### Release Notes
 ```markdown
 <!-- Auto-generated release notes template -->
-# Release v2.0.0
+# Release vlatest
 
 ## 🎉 Highlights
 - Major feature X with 50% performance improvement
@@ -543,7 +543,7 @@ npx ruv-swarm github npm-release \
 # Docker multi-arch release
 npx ruv-swarm github docker-release \
   --platforms "linux/amd64,linux/arm64" \
-  --tags "latest,v2.0.0,stable" \
+  --tags "latest,vlatest,stable" \
   --scan-vulnerabilities \
   --push-to "dockerhub,gcr,ecr"
 ```
@@ -574,8 +574,8 @@ npx ruv-swarm github emergency-release \
 ```bash
 # Immediate rollback
 npx ruv-swarm github rollback \
-  --to-version v1.9.9 \
-  --reason "Critical bug in v2.0.0" \
+  --to-version vlatest \
+  --reason "Critical bug in vlatest" \
   --preserve-data \
   --notify-users
 ```

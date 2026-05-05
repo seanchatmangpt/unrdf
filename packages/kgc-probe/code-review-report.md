@@ -1,7 +1,7 @@
 # Code Review Report
 
 ## Review Scope
-- **Package**: @unrdf/kgc-probe v1.0.0
+- **Package**: @unrdf/kgc-probe [VERSION]
 - **Files Reviewed**: 8 source modules, 12 test files
 - **Total LoC Reviewed**: 2,220 lines (source) + ~180KB tests
 - **Review Date**: 2025-12-27

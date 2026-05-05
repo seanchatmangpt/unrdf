@@ -29,8 +29,8 @@ const receipt = await Receipt.create({
   decision: 'allow',
   outputHash: 'hash4',
   toolchainVersion: {
-    node: 'v18.19.0',
-    packages: { '@unrdf/core': '^5.0.1' }
+    node: '[VERSION]',
+    packages: { '@unrdf/core': '^[VERSION]' }
   }
 });
 
@@ -168,7 +168,7 @@ const options = {
   inputHashes: { ontologyReleases: ['h1'], deltaCapsule: 'h2' },
   decision: 'allow',
   outputHash: 'h3',
-  toolchainVersion: { node: 'v18.19.0', packages: {} },
+  toolchainVersion: { node: '[VERSION]', packages: {} },
   timestamp: new Date('2025-01-01T00:00:00Z')
 };
 

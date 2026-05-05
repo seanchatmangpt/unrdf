@@ -1,6 +1,6 @@
 # Novel RDF Pattern Prototypes
 
-This directory contains 3 working prototypes demonstrating novel RDF and knowledge graph patterns discovered in the UNRDF v6.0.0 codebase.
+This directory contains 3 working prototypes demonstrating novel RDF and knowledge graph patterns discovered in the UNRDF latest codebase.
 
 ## Prototypes
 
@@ -255,7 +255,7 @@ done
 
 ## Dependencies
 
-All prototypes use existing UNRDF v6.0.0 packages:
+All prototypes use existing UNRDF latest packages:
 - `@unrdf/core` - RDF operations
 - `@unrdf/oxigraph` - SPARQL engine
 - `packages/kgc-4d` - Time-travel

@@ -1,11 +1,11 @@
 {
   "benchmarkSuite": {
     "name": "Knowledge Hooks Performance Benchmark Suite",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Comprehensive performance benchmarking for knowledge hooks with OTEL integration",
     "principles": "80/20 - Focus on 5 core benchmarks that measure 80% of performance characteristics",
     "targetFramework": "vitest + tinybench",
-    "otelVersion": "@opentelemetry/api ^1.9.0"
+    "otelVersion": "@opentelemetry/api ^latest"
   },
 
   "benchmarks": [
@@ -28,11 +28,11 @@
             "timeout": 5000
           },
           "expectedTargets": {
-            "avgLatency": "< 0.5ms per hook",
+            "avgLatency": "< latestms per hook",
             "totalDuration": "< 50ms",
             "throughput": "> 2000 hooks/sec",
             "memoryOverhead": "< 5MB",
-            "errorRate": "< 0.01%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -52,7 +52,7 @@
             "totalDuration": "< 1000ms",
             "throughput": "> 1000 hooks/sec",
             "memoryOverhead": "< 25MB",
-            "errorRate": "< 0.1%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -73,7 +73,7 @@
             "totalDuration": "< 10000ms",
             "throughput": "> 1000 hooks/sec",
             "memoryOverhead": "< 100MB",
-            "errorRate": "< 0.1%"
+            "errorRate": "< latest%"
           }
         }
       ],
@@ -138,7 +138,7 @@
             "p99Latency": "< 10ms",
             "maxLatency": "< 50ms",
             "throughput": "> 1000 ops/sec",
-            "errorRate": "< 0.1%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -166,7 +166,7 @@
             "p99Latency": "< 15ms",
             "maxLatency": "< 100ms",
             "throughput": "> 200 ops/sec",
-            "errorRate": "< 0.1%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -195,7 +195,7 @@
             "p99Latency": "< 50ms",
             "maxLatency": "< 200ms",
             "throughput": "> 50 ops/sec",
-            "errorRate": "< 0.5%"
+            "errorRate": "< latest%"
           }
         }
       ],
@@ -246,8 +246,8 @@
           "parameters": {
             "validationCount": 10000,
             "schemaComplexity": "medium",
-            "validSchemaRatio": 0.8,
-            "invalidSchemaRatio": 0.2,
+            "validSchemaRatio": latest,
+            "invalidSchemaRatio": latest,
             "concurrency": 1,
             "warmupRuns": 100,
             "measurementRuns": 10000,
@@ -261,12 +261,12 @@
           ],
           "expectedTargets": {
             "throughput": "> 10000 ops/sec",
-            "avgLatency": "< 0.1ms per validation",
+            "avgLatency": "< latestms per validation",
             "p99Latency": "< 1ms",
-            "accuracy": "> 99.9%",
-            "falsePositiveRate": "< 0.01%",
-            "falseNegativeRate": "< 0.01%",
-            "errorRate": "< 0.1%"
+            "accuracy": "> latest%",
+            "falsePositiveRate": "< latest%",
+            "falseNegativeRate": "< latest%",
+            "errorRate": "< latest%"
           }
         },
         {
@@ -275,8 +275,8 @@
           "parameters": {
             "validationCount": 5000,
             "payloadComplexity": "high",
-            "validPayloadRatio": 0.9,
-            "invalidPayloadRatio": 0.1,
+            "validPayloadRatio": latest,
+            "invalidPayloadRatio": latest,
             "concurrency": 1,
             "warmupRuns": 50,
             "measurementRuns": 5000,
@@ -290,11 +290,11 @@
           ],
           "expectedTargets": {
             "throughput": "> 5000 ops/sec",
-            "avgLatency": "< 0.2ms per validation",
+            "avgLatency": "< latestms per validation",
             "p95Latency": "< 1ms",
             "p99Latency": "< 2ms",
-            "accuracy": "> 99.5%",
-            "errorRate": "< 0.5%"
+            "accuracy": "> latest%",
+            "errorRate": "< latest%"
           }
         }
       ],
@@ -361,7 +361,7 @@
             "memoryGrowthRate": "< 1MB per 1000 executions",
             "gcFrequency": "< 10 GC/sec",
             "gcPauseDuration": "< 10ms p95",
-            "memoryLeakRate": "< 0.1MB/min"
+            "memoryLeakRate": "< latestMB/min"
           }
         },
         {
@@ -391,7 +391,7 @@
             "gcFrequency": "< 20 GC/sec",
             "gcPauseDuration": "< 50ms p99",
             "memoryLeakRate": "< 1MB/min",
-            "oomErrorRate": "< 0.01%"
+            "oomErrorRate": "< latest%"
           }
         }
       ],
@@ -457,7 +457,7 @@
             "p95Latency": "< 50ms",
             "p99Latency": "< 100ms",
             "contentionRate": "< 5%",
-            "errorRate": "< 0.1%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -480,7 +480,7 @@
             "p95Latency": "< 150ms",
             "p99Latency": "< 300ms",
             "contentionRate": "< 15%",
-            "errorRate": "< 0.5%"
+            "errorRate": "< latest%"
           }
         },
         {
@@ -543,7 +543,7 @@
 
   "globalConfiguration": {
     "environment": {
-      "nodeVersion": ">= 18.0.0",
+      "nodeVersion": ">= latest",
       "runtime": "vitest",
       "benchmarkLibrary": "tinybench",
       "otelLibraries": [
@@ -566,7 +566,7 @@
       "requiredSpanStatus": "OK",
       "requiredSpanAttributes": true,
       "failOnMissingSpans": true,
-      "failOnRegressionThreshold": 0.2
+      "failOnRegressionThreshold": latest
     },
     "execution": {
       "parallelBenchmarks": false,
@@ -705,7 +705,7 @@
       },
       "errorRate": {
         "metric": "Overall error rate",
-        "target": "< 0.1%",
+        "target": "< latest%",
         "priority": "P1",
         "reasoning": "Reliability is non-negotiable for production"
       }
@@ -723,25 +723,25 @@
         "p95Latency": "< 8ms",
         "p99Latency": "< 10ms",
         "throughput": "> 100 ops/sec",
-        "errorRate": "< 0.1%"
+        "errorRate": "< latest%"
       },
       "validation": {
         "throughput": "> 10000 ops/sec",
-        "avgLatency": "< 0.1ms",
-        "accuracy": "> 99.9%",
-        "falsePositiveRate": "< 0.01%"
+        "avgLatency": "< latestms",
+        "accuracy": "> latest%",
+        "falsePositiveRate": "< latest%"
       },
       "memory": {
         "peakMemory": "< 50MB per 1000 hooks",
         "avgMemory": "< 30MB per 1000 hooks",
         "gcPauseDuration": "< 10ms p95",
-        "memoryLeakRate": "< 0.1MB/min"
+        "memoryLeakRate": "< latestMB/min"
       },
       "concurrency": {
         "throughput": "> 500 ops/sec @ 10 workers",
         "p95Latency": "< 50ms @ 10 workers",
         "contentionRate": "< 5% @ 10 workers",
-        "errorRate": "< 0.1%"
+        "errorRate": "< latest%"
       }
     },
     "regressionThresholds": {
@@ -816,7 +816,7 @@
       "otelSpansValid": "All required OTEL spans must exist with OK status",
       "noRegressions": "No critical regressions vs baseline (< 20%)",
       "minSampleSize": "Minimum 100 measurements per scenario",
-      "statisticalSignificance": "p-value < 0.05 for comparisons"
+      "statisticalSignificance": "p-value < latest for comparisons"
     },
     "otelValidationChecks": [
       "Root span exists for each benchmark",

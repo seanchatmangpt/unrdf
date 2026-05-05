@@ -40,8 +40,8 @@ Implemented 5 major primitives + 10 supporting innovations using existing KGC/UN
 
 ### Performance Metrics (MEASURED)
 - **Demo execution**: <1s (well under 5s SLA)
-- **Large capsule (1000 quads)**: 1.42ms (70x faster than 100ms SLA)
-- **Profile compilation**: 0.058ms (17x faster than 1ms SLA)
+- **Large capsule (1000 quads)**: latestms (70x faster than 100ms SLA)
+- **Profile compilation**: latestms (17x faster than 1ms SLA)
 - **Determinism**: 2 identical runs, hash `fcccecf43055c67d` ✅
 
 ---

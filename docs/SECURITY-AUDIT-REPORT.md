@@ -31,7 +31,7 @@ This security audit evaluated the KGC Sidecar's security implementation across f
 
 ### Implementation: `SandboxThreatDetector` (sandbox-threat-detector.mjs)
 
-#### 1.1 Threat Pattern Coverage
+#### latest Threat Pattern Coverage
 
 **Detected Patterns** (13 total):
 
@@ -51,7 +51,7 @@ This security audit evaluated the KGC Sidecar's security implementation across f
 | `BUFFER_OVERFLOW` | High | 80 | Large buffer allocations |
 | `TIMING_ATTACK` | Medium | 40 | Timing measurements (`performance.now()`) |
 
-#### 1.2 Scoring System
+#### latest Scoring System
 
 **Threat Severity Classification**:
 - **Critical**: Score ≥ 80 (blocked by default)
@@ -67,7 +67,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 - Behavior Score: Up to 30 points (capped)
 ```
 
-#### 1.3 ML-Based Features
+#### latest ML-Based Features
 
 **Complexity Analysis**:
 - Cyclomatic complexity detection (branching, nesting)
@@ -81,7 +81,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 - Large numeric constants (suspicious)
 - Base64 patterns (potential payloads)
 
-#### 1.4 Code Signing Integration
+#### latest Code Signing Integration
 
 **Trusted Signer Bypass**:
 - Code signed by trusted public keys bypasses all threat detection
@@ -97,7 +97,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 5. Else → Perform full pattern matching
 ```
 
-#### 1.5 Performance Optimizations
+#### latest Performance Optimizations
 
 **Caching**:
 - SHA-256 hash-based cache for analyzed code
@@ -109,7 +109,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 - Pattern occurrence frequency
 - Most common threats identification
 
-#### 1.6 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - Comprehensive pattern coverage (13 threat types)
@@ -130,7 +130,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 
 ### Implementation: `SecureSandbox` (secure-sandbox.mjs)
 
-#### 2.1 Isolation Technology
+#### latest Isolation Technology
 
 **V8 Isolates** (via `isolated-vm`):
 - Complete V8 instance isolation
@@ -138,7 +138,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 - No shared global state
 - Inspector disabled for security
 
-#### 2.2 Security Boundaries
+#### latest Security Boundaries
 
 **Prevented Access**:
 - ❌ Node.js `require()` / `import()`
@@ -155,7 +155,7 @@ Total Score = Pattern Scores + Complexity Score + Behavior Score
 - ✅ Standard JavaScript primitives
 - ✅ `global` reference (points to sandbox, not Node.js global)
 
-#### 2.3 Resource Limits
+#### latest Resource Limits
 
 **Memory Limits**:
 ```javascript
@@ -181,7 +181,7 @@ Separate timeouts for:
   - Effect execution
 ```
 
-#### 2.4 WASM Support
+#### latest WASM Support
 
 **WebAssembly Integration**:
 - Optional WASM execution (default: enabled)
@@ -189,7 +189,7 @@ Separate timeouts for:
 - Memory limits apply to WASM allocations
 - Configurable enable/disable
 
-#### 2.5 Lifecycle Management
+#### latest Lifecycle Management
 
 **Isolate Lifecycle**:
 1. **Creation**: `createIsolate(effectId)` → New V8 instance
@@ -202,7 +202,7 @@ Separate timeouts for:
 - Auto-cleanup on fatal errors
 - Prevents resource leaks
 
-#### 2.6 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - True V8-level isolation (not just vm2 or vm module)
@@ -224,7 +224,7 @@ Separate timeouts for:
 
 ### Implementation: Signature Verification (sandbox-threat-detector.mjs)
 
-#### 3.1 Cryptographic Algorithms
+#### latest Cryptographic Algorithms
 
 **Signature Algorithm**:
 - **Algorithm**: RSA with SHA-256
@@ -236,7 +236,7 @@ Separate timeouts for:
 - **Algorithm**: SHA-256 for code hashing
 - **Purpose**: Cache key generation, signature input
 
-#### 3.2 Signature Workflow
+#### latest Signature Workflow
 
 **Signing Process** (Client-side):
 ```javascript
@@ -256,7 +256,7 @@ Separate timeouts for:
 5. If valid + trusted → Bypass threat detection
 ```
 
-#### 3.3 Trusted Signer Management
+#### latest Trusted Signer Management
 
 **Configuration**:
 ```javascript
@@ -272,7 +272,7 @@ trustedSigners: [
 - Public keys stored as hex-encoded strings
 - Runtime validation against list
 
-#### 3.4 Validation Schema
+#### latest Validation Schema
 
 **Zod Schema** (`registerEffectSchema`):
 ```javascript
@@ -285,7 +285,7 @@ publicKey: z.string()
   .optional()
 ```
 
-#### 3.5 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - Strong cryptographic primitives (RSA-2048, SHA-256)
@@ -307,7 +307,7 @@ publicKey: z.string()
 
 ### Implementation: JWT Auth + Byzantine Consensus (auth.mjs, 00.auth.mjs)
 
-#### 4.1 Password Security
+#### latest Password Security
 
 **Hashing**:
 - **Algorithm**: bcrypt
@@ -318,7 +318,7 @@ publicKey: z.string()
 - Secure comparison (timing-safe)
 - No password exposure in logs or responses
 
-#### 4.2 JWT Implementation
+#### latest JWT Implementation
 
 **Token Types**:
 1. **Access Token**:
@@ -351,7 +351,7 @@ publicKey: z.string()
 - Expiration enforcement
 - Separate secrets for access/refresh tokens
 
-#### 4.3 Role-Based Access Control (RBAC)
+#### latest Role-Based Access Control (RBAC)
 
 **Roles**:
 - `user`: Standard user access
@@ -378,7 +378,7 @@ Protected Routes (require authentication):
   All other /api/* routes
 ```
 
-#### 4.4 Byzantine Fault-Tolerant Consensus
+#### latest Byzantine Fault-Tolerant Consensus
 
 **Validator Configuration**:
 - **Total Validators**: 5
@@ -419,7 +419,7 @@ Protected Routes (require authentication):
 4. Execute operation if consensus achieved
 ```
 
-#### 4.5 Rate Limiting
+#### latest Rate Limiting
 
 **Configuration**:
 - **Window**: 60 seconds
@@ -434,7 +434,7 @@ Protected Routes (require authentication):
 4. Return 429 Too Many Requests
 ```
 
-#### 4.6 Authentication Middleware
+#### latest Authentication Middleware
 
 **Middleware Chain** (`00.auth.mjs`):
 ```javascript
@@ -452,7 +452,7 @@ Protected Routes (require authentication):
 - `403 Forbidden`: Insufficient permissions
 - `429 Too Many Requests`: Rate limit exceeded
 
-#### 4.7 Default Admin Account
+#### latest Default Admin Account
 
 **Credentials**:
 ```javascript
@@ -463,7 +463,7 @@ Roles: ['admin', 'user']
 
 ⚠️ **CRITICAL**: Change default admin password in production!
 
-#### 4.8 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - Strong password hashing (bcrypt, 12 rounds)
@@ -492,7 +492,7 @@ Roles: ['admin', 'user']
 
 ### Implementation: Zod Schemas (validation.mjs)
 
-#### 5.1 Effect Registration Validation
+#### latest Effect Registration Validation
 
 **`registerEffectSchema`**:
 ```javascript
@@ -513,7 +513,7 @@ Roles: ['admin', 'user']
 - ✅ Memory limit (512MB) prevents resource exhaustion
 - ✅ Signature/publicKey format validation (hex only)
 
-#### 5.2 Other Validation Schemas
+#### latest Other Validation Schemas
 
 **Hook Registration**:
 - Validates SPARQL queries
@@ -528,7 +528,7 @@ Roles: ['admin', 'user']
 - Validates SHACL shapes
 - Validates priority ranges
 
-#### 5.3 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - Comprehensive runtime validation (Zod)
@@ -574,7 +574,7 @@ Roles: ['admin', 'user']
 - signatureValid (boolean)
 ```
 
-#### 6.1 Security Findings
+#### latest Security Findings
 
 ✅ **Strengths**:
 - Comprehensive security event tracking
@@ -593,7 +593,7 @@ Roles: ['admin', 'user']
 
 ### Attack Surface Analysis
 
-#### 7.1 Attack Vectors
+#### latest Attack Vectors
 
 | Vector | Mitigation | Status |
 |--------|-----------|--------|
@@ -610,7 +610,7 @@ Roles: ['admin', 'user']
 | **Cryptomining** | Pattern detection | ✅ Mitigated |
 | **Data Exfiltration** | Network blocking in sandbox | ✅ Mitigated |
 
-#### 7.2 Trust Boundaries
+#### latest Trust Boundaries
 
 ```
 External (Untrusted)
@@ -626,7 +626,7 @@ Sandbox Environment (Isolated-VM)
 Effect Execution
 ```
 
-#### 7.3 Byzantine Fault Tolerance
+#### latest Byzantine Fault Tolerance
 
 **Threat Model**:
 - Up to 2 malicious validators (out of 5)
@@ -644,7 +644,7 @@ Effect Execution
 
 ### Security Standards Alignment
 
-#### 8.1 OWASP Top 10 Coverage
+#### latest OWASP Top 10 Coverage
 
 | OWASP Risk | Status | Mitigation |
 |------------|--------|------------|
@@ -659,7 +659,7 @@ Effect Execution
 | A09:2021 - Security Logging Failures | ✅ | OpenTelemetry tracing |
 | A10:2021 - SSRF | ✅ | Network blocking in sandbox |
 
-#### 8.2 CWE Coverage
+#### latest CWE Coverage
 
 **Mitigated CWEs**:
 - CWE-78: OS Command Injection (sandbox isolation)
@@ -676,7 +676,7 @@ Effect Execution
 
 ### Security Test Suite
 
-#### 9.1 Test Files Created
+#### latest Test Files Created
 
 1. **`sandbox-threat-detector.test.mjs`** (450+ lines)
    - 13 threat pattern tests
@@ -710,7 +710,7 @@ Effect Execution
 
 **Total Test Coverage**: 1,800+ lines of security tests
 
-#### 9.2 Test Execution
+#### latest Test Execution
 
 Run security tests:
 ```bash

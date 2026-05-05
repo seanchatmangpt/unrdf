@@ -1,6 +1,6 @@
 # KGC-Swarm User Guide
 
-**Version**: 1.0.0
+**Version**: latest
 **Audience**: Developers, DevOps Engineers, Knowledge Engineers
 **Prerequisites**: Node.js ≥ 18, pnpm, basic understanding of RDF
 
@@ -79,7 +79,7 @@ await kgStore.add(
 // Generate receipt
 const receipt = await chain.append({
   agent_id: 'user-agent-1',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     {
       type: 'rdf',
@@ -101,7 +101,7 @@ console.log('Receipt:', receipt);
     after_hash: 'a7f3...c8d1',
     timestamp_ns: 1735329600000000000n,
     agent_id: 'user-agent-1',
-    toolchain_version: '1.0.0',
+    toolchain_version: 'latest',
     artifacts: [ ... ]
   },
   index: 0,
@@ -199,7 +199,7 @@ const H_pure = (func) => {
   after_hash: 'a7f3...',  // Current block hash
   timestamp_ns: 1735329600000000000n,
   agent_id: 'agent-42',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     { type: 'code', path: 'src/app.mjs', hash: '...', size_bytes: 1024 }
   ]
@@ -395,7 +395,7 @@ const chain = new ReceiptChain();
 // Agent 1: Data collection
 await chain.append({
   agent_id: 'collector-agent',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     { type: 'rdf', path: 'raw-data.ttl', hash: '...', size_bytes: 50000 }
   ]
@@ -404,7 +404,7 @@ await chain.append({
 // Agent 2: Data validation
 await chain.append({
   agent_id: 'validator-agent',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     { type: 'report', path: 'validation.json', hash: '...', size_bytes: 2048 }
   ]
@@ -413,7 +413,7 @@ await chain.append({
 // Agent 3: Data transformation
 await chain.append({
   agent_id: 'transformer-agent',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     { type: 'rdf', path: 'enriched-data.ttl', hash: '...', size_bytes: 75000 }
   ]
@@ -475,8 +475,8 @@ import fs from 'fs/promises';
 
 // Create and populate chain
 const chain = new ReceiptChain();
-await chain.append({ agent_id: 'agent-1', toolchain_version: '1.0.0', artifacts: [] });
-await chain.append({ agent_id: 'agent-2', toolchain_version: '1.0.0', artifacts: [] });
+await chain.append({ agent_id: 'agent-1', toolchain_version: 'latest', artifacts: [] });
+await chain.append({ agent_id: 'agent-2', toolchain_version: 'latest', artifacts: [] });
 
 // Serialize to file
 const json = chain.toJSON();
@@ -552,7 +552,7 @@ for (const quad of quads) {
 const chain = new ReceiptChain();
 const receipt = await chain.append({
   agent_id: 'kgn-renderer',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [
     {
       type: 'kgn',
@@ -601,14 +601,14 @@ const chain = new ReceiptChain();
 // Receipt for schema
 await chain.append({
   agent_id: 'schema-loader',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [{ type: 'schema', path: 'schema.kgn', hash: '...', size_bytes: schemaTemplate.length }]
 });
 
 // Receipt for data
 await chain.append({
   agent_id: 'data-loader',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [{ type: 'data', path: 'data.kgn', hash: '...', size_bytes: dataTemplate.length }]
 });
 
@@ -737,7 +737,7 @@ Error: ReceiptChain.append: Timestamp not monotonic (1735329600000000000 <= 1735
 const timestamp_ns = process.hrtime.bigint();
 await chain.append({
   agent_id: 'agent',
-  toolchain_version: '1.0.0',
+  toolchain_version: 'latest',
   artifacts: [],
   timestamp_ns
 });
@@ -899,7 +899,7 @@ console.log('Compression ratio:', compressed.length / data.length);
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Maintainer**: UNRDF Team
 **License**: See repository LICENSE

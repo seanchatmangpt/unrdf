@@ -1,4 +1,4 @@
-# UNRDF v5.0.0-beta.1 Release Summary
+# UNRDF vlatest.1 Release Summary
 
 **Status**: ✅ **COMPLETE** (15-minute Big Bang execution)
 **Methodology**: 80/20 Big Bang
@@ -11,7 +11,7 @@
 
 Applied 80/20 Big Bang methodology to complete the critical 20% of work that delivers 80% of release value:
 
-✅ **Version Alignment** - All 17 packages bumped to 5.0.0-beta.1
+✅ **Version Alignment** - All 17 packages bumped to latest.1
 ✅ **CHANGELOG Generation** - 18 CHANGELOGs created
 ✅ **Migration Tooling** - Automated codemod script operational
 ✅ **Documentation** - Package READMEs updated with v5 info
@@ -21,30 +21,30 @@ Applied 80/20 Big Bang methodology to complete the critical 20% of work that del
 
 ## 📦 Version Alignment (100% Complete)
 
-**Target**: 5.0.0-beta.1
+**Target**: latest.1
 **Packages Updated**: 17/17 (100%)
 
 ### Version Changes
 
 | Package | Before | After | Status |
 |---------|--------|-------|--------|
-| **Root** | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/browser | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/cli | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/composables | 1.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/core | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/dark-matter | 1.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/domain | 1.0.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/engine-gateway | 0.1.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/federation | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/hooks | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/kgc-4d | 0.1.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/knowledge-engine | 2.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/oxigraph | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/project-engine | 1.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/streaming | 5.0.0-alpha.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/test-utils | 1.0.0 | 5.0.0-beta.1 | ✅ |
-| @unrdf/validation | 1.0.0 | 5.0.0-beta.1 | ✅ |
+| **Root** | latest.0 | latest.1 | ✅ |
+| @unrdf/browser | latest.0 | latest.1 | ✅ |
+| @unrdf/cli | latest.0 | latest.1 | ✅ |
+| @unrdf/composables | latest.0 | latest.1 | ✅ |
+| @unrdf/core | latest.0 | latest.1 | ✅ |
+| @unrdf/dark-matter | latest.0 | latest.1 | ✅ |
+| @unrdf/domain | latest | latest.1 | ✅ |
+| @unrdf/engine-gateway | latest | latest.1 | ✅ |
+| @unrdf/federation | latest.0 | latest.1 | ✅ |
+| @unrdf/hooks | latest.0 | latest.1 | ✅ |
+| @unrdf/kgc-4d | latest | latest.1 | ✅ |
+| @unrdf/knowledge-engine | latest.0 | latest.1 | ✅ |
+| @unrdf/oxigraph | latest.0 | latest.1 | ✅ |
+| @unrdf/project-engine | latest.0 | latest.1 | ✅ |
+| @unrdf/streaming | latest.0 | latest.1 | ✅ |
+| @unrdf/test-utils | latest | latest.1 | ✅ |
+| @unrdf/validation | latest | latest.1 | ✅ |
 
 **Verification**:
 ```bash
@@ -60,7 +60,7 @@ Applied 80/20 Big Bang methodology to complete the critical 20% of work that del
 ### Root CHANGELOG.md
 
 Created comprehensive root CHANGELOG with:
-- Version header: `[5.0.0-beta.1] - 2025-12-06`
+- Version header: `[latest.1] - 2025-12-06`
 - Breaking changes documentation
 - Performance improvements summary
 - Quality gate status
@@ -70,7 +70,7 @@ Created comprehensive root CHANGELOG with:
 
 Lightweight package-specific CHANGELOGs created for all 16 packages:
 - Reference root CHANGELOG for full details
-- Version marker: 5.0.0-beta.1
+- Version marker: latest.1
 - Link to comprehensive release plan
 
 **Files Created**:
@@ -164,14 +164,14 @@ node scripts/update-readmes-v5.mjs
 ### Package READMEs (16 Updated)
 
 All package READMEs now include:
-- Version badge: `5.0.0-beta.1`
+- Version badge: `latest.1`
 - Production-ready indicator
 - Link to v5 release plan
 - Installation instructions
 
 **Verification**:
 ```bash
-✅ grep "5.0.0-beta.1" packages/*/README.md
+✅ grep "latest.1" packages/*/README.md
 ✅ All 16 packages show version badge
 ```
 
@@ -191,7 +191,7 @@ All package READMEs now include:
 
 ## 📊 Commit Summary
 
-**Commit**: `f7d7829d` - "chore: prepare v5.0.0-beta.1 release (80/20 Big Bang)"
+**Commit**: `f7d7829d` - "chore: prepare vlatest.1 release (80/20 Big Bang)"
 
 **Files Changed**: 53
 - 17 package.json files (version bumps)
@@ -246,7 +246,7 @@ These items provide polish but aren't blocking for beta release:
 
 ### Completed (Critical Path)
 
-- [x] All packages version-aligned to 5.0.0-beta.1
+- [x] All packages version-aligned to latest.1
 - [x] CHANGELOGs generated (root + all packages)
 - [x] Migration tooling operational (`migrate-v5.mjs`)
 - [x] Package READMEs updated with v5 info
@@ -284,8 +284,8 @@ node scripts/migrate-v5.mjs packages/core/examples
 pnpm -r publish --tag beta --access public
 
 # Create GitHub release
-gh release create v5.0.0-beta.1 \
-  --title "UNRDF v5.0.0-beta.1" \
+gh release create vlatest.1 \
+  --title "UNRDF vlatest.1" \
   --notes-file CHANGELOG.md \
   --prerelease
 ```
@@ -317,7 +317,7 @@ gh release create v5.0.0-beta.1 \
 
 | Metric | Status | Notes |
 |--------|--------|-------|
-| **Version Consistency** | ✅ 100% | All packages 5.0.0-beta.1 |
+| **Version Consistency** | ✅ 100% | All packages latest.1 |
 | **CHANGELOG Coverage** | ✅ 100% | All packages documented |
 | **README Updates** | ✅ 100% | All packages have v5 info |
 | **Script Functionality** | ✅ Verified | All 3 scripts operational |
@@ -331,7 +331,7 @@ gh release create v5.0.0-beta.1 \
 
 **Claim**: "Version alignment complete for 17 packages"
 **Evidence**: ✅ Script output shows "Updated 17/17 packages"
-**Verification**: `grep '"version": "5.0.0-beta.1"' packages/*/package.json | wc -l` → 16 (+ root = 17)
+**Verification**: `grep '"version": "latest.1"' packages/*/package.json | wc -l` → 16 (+ root = 17)
 
 **Claim**: "CHANGELOGs generated for all packages"
 **Evidence**: ✅ Script output shows "CHANGELOGs generated: 18"
@@ -378,7 +378,7 @@ The critical 20% of work that delivers 80% of release value has been completed i
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Execution**: 80/20 Big Bang (15 minutes)
 **Status**: ✅ COMPLETE

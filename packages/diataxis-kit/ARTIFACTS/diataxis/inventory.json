@@ -1,0 +1,1461 @@
+{
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "packageCount": 291,
+  "packages": [
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-8",
+      "name": "@agent-8/store-adapter",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-8",
+      "name": "@agent-8/store-adapter",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-5",
+      "name": "@autonomic-innovation/agent-5",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-5",
+      "name": "@autonomic-innovation/agent-5",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-4",
+      "name": "@autonomic-innovation/impact",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-4",
+      "name": "@autonomic-innovation/impact",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-9",
+      "name": "@autonomic-innovation/shadow-modes",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-9",
+      "name": "@autonomic-innovation/shadow-modes",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-2",
+      "name": "@autonomic/capsule-ir",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-2",
+      "name": "@autonomic/capsule-ir",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-6",
+      "name": "@autonomic/conventions-profile",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-6",
+      "name": "@autonomic/conventions-profile",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/eslint-config",
+      "name": "@nextra/eslint-config",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/prettier-config",
+      "name": "@nextra/prettier-config",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/tsdoc",
+      "name": "@nextra/tsdoc",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/agents",
+      "name": "@pictl/agents",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/config",
+      "name": "@pictl/config",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/contracts",
+      "name": "@pictl/contracts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/engine",
+      "name": "@pictl/engine",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/kernel",
+      "name": "@pictl/kernel",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/ml",
+      "name": "@pictl/ml",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/observability",
+      "name": "@pictl/observability",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/planner",
+      "name": "@pictl/planner",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/swarm",
+      "name": "@pictl/swarm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/packages/testing",
+      "name": "@pictl/testing",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm/validators",
+      "name": "@pictl/validators",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/apps/pictl",
+      "name": "@seanchatmangpt/pictl",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/blockchain-audit",
+      "name": "@unrdf-examples/blockchain-audit",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples/blockchain-audit",
+      "name": "@unrdf-examples/blockchain-audit",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/distributed-orchestration",
+      "name": "@unrdf-examples/distributed-orchestration",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples/distributed-orchestration",
+      "name": "@unrdf-examples/distributed-orchestration",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/graph-analytics",
+      "name": "@unrdf-examples/graph-analytics",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples/graph-analytics",
+      "name": "@unrdf-examples/graph-analytics",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/graphql-gateway",
+      "name": "@unrdf-examples/graphql-gateway",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples/graphql-gateway",
+      "name": "@unrdf-examples/graphql-gateway",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples/knowledge-rag",
+      "name": "@unrdf-examples/knowledge-rag",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples/knowledge-rag",
+      "name": "@unrdf-examples/knowledge-rag",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/exploration/agents/agent-4",
+      "name": "@unrdf-exploration/agent-4",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/exploration/agents/agent-4",
+      "name": "@unrdf-exploration/agent-4",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ai-ml-innovations",
+      "name": "@unrdf/ai-ml-innovations",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/ai-ml-innovations",
+      "name": "@unrdf/ai-ml-innovations",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm",
+      "name": "@unrdf/atomvm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm",
+      "name": "@unrdf/atomvm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/playground",
+      "name": "@unrdf/atomvm-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/playground",
+      "name": "@unrdf/atomvm-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION",
+      "name": "@unrdf/autonomic-innovation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION",
+      "name": "@unrdf/autonomic-innovation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/blockchain",
+      "name": "@unrdf/blockchain",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/blockchain",
+      "name": "@unrdf/blockchain",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/caching",
+      "name": "@unrdf/caching",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/caching",
+      "name": "@unrdf/caching",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/chatman-equation",
+      "name": "@unrdf/chatman-equation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/chatman-equation",
+      "name": "@unrdf/chatman-equation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/cli",
+      "name": "@unrdf/cli",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/cli",
+      "name": "@unrdf/cli",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/codegen",
+      "name": "@unrdf/codegen",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/codegen",
+      "name": "@unrdf/codegen",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/collab",
+      "name": "@unrdf/collab",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/collab",
+      "name": "@unrdf/collab",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/composables",
+      "name": "@unrdf/composables",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/composables",
+      "name": "@unrdf/composables",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/consensus",
+      "name": "@unrdf/consensus",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/consensus",
+      "name": "@unrdf/consensus",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/core",
+      "name": "@unrdf/core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/daemon",
+      "name": "@unrdf/daemon",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/daemon",
+      "name": "@unrdf/daemon",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/dark-matter",
+      "name": "@unrdf/dark-matter",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/dark-matter",
+      "name": "@unrdf/dark-matter",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/decision-fabric",
+      "name": "@unrdf/decision-fabric",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/decision-fabric",
+      "name": "@unrdf/decision-fabric",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/diataxis-kit",
+      "name": "@unrdf/diataxis-kit",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/diataxis-kit",
+      "name": "@unrdf/diataxis-kit",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/apps/docs-site",
+      "name": "@unrdf/docs-site",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/apps/docs-site",
+      "name": "@unrdf/docs-site",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/domain",
+      "name": "@unrdf/domain",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/domain",
+      "name": "@unrdf/domain",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/engine-gateway",
+      "name": "@unrdf/engine-gateway",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/engine-gateway",
+      "name": "@unrdf/engine-gateway",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/event-automation",
+      "name": "@unrdf/event-automation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/event-automation",
+      "name": "@unrdf/event-automation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/basic-store",
+      "name": "@unrdf/example-basic-store",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/basic-store",
+      "name": "@unrdf/example-basic-store",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/rdf-parsing",
+      "name": "@unrdf/example-rdf-parsing",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/rdf-parsing",
+      "name": "@unrdf/example-rdf-parsing",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/core/examples/sparql-queries",
+      "name": "@unrdf/example-sparql-queries",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/core/examples/sparql-queries",
+      "name": "@unrdf/example-sparql-queries",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/examples",
+      "name": "@unrdf/examples",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/examples",
+      "name": "@unrdf/examples",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/federation",
+      "name": "@unrdf/federation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/fusion",
+      "name": "@unrdf/fusion",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/fusion",
+      "name": "@unrdf/fusion",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/codegen/generated",
+      "name": "@unrdf/generated",
+      "version": "[VERSION]-rc.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/codegen/generated",
+      "name": "@unrdf/generated",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/geosparql",
+      "name": "@unrdf/geosparql",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/geosparql",
+      "name": "@unrdf/geosparql",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src",
+      "name": "@unrdf/governed-substrate",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/src",
+      "name": "@unrdf/governed-substrate",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/graph-analytics",
+      "name": "@unrdf/graph-analytics",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/graph-analytics",
+      "name": "@unrdf/graph-analytics",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks",
+      "name": "@unrdf/hooks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/hooks/examples/hook-chains",
+      "name": "@unrdf/hooks-example-chains",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/hook-chains",
+      "name": "@unrdf/hooks-example-chains",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/hooks/examples/policy-hooks",
+      "name": "@unrdf/hooks-example-policy",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/hooks/examples/policy-hooks",
+      "name": "@unrdf/hooks-example-policy",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/integration-tests",
+      "name": "@unrdf/integration-tests",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/integration-tests",
+      "name": "@unrdf/integration-tests",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-4d",
+      "name": "@unrdf/kgc-4d",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d",
+      "name": "@unrdf/kgc-4d",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-4d/playground",
+      "name": "@unrdf/kgc-4d-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-4d/playground",
+      "name": "@unrdf/kgc-4d-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-claude",
+      "name": "@unrdf/kgc-claude",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-claude",
+      "name": "@unrdf/kgc-claude",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-cli",
+      "name": "@unrdf/kgc-cli",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-cli",
+      "name": "@unrdf/kgc-cli",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-docs",
+      "name": "@unrdf/kgc-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-docs",
+      "name": "@unrdf/kgc-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-multiverse",
+      "name": "@unrdf/kgc-multiverse",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-multiverse",
+      "name": "@unrdf/kgc-multiverse",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-probe",
+      "name": "@unrdf/kgc-probe",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-probe",
+      "name": "@unrdf/kgc-probe",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-runtime",
+      "name": "@unrdf/kgc-runtime",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-runtime",
+      "name": "@unrdf/kgc-runtime",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-substrate",
+      "name": "@unrdf/kgc-substrate",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-substrate",
+      "name": "@unrdf/kgc-substrate",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-swarm",
+      "name": "@unrdf/kgc-swarm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-swarm",
+      "name": "@unrdf/kgc-swarm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgc-tools",
+      "name": "@unrdf/kgc-tools",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgc-tools",
+      "name": "@unrdf/kgc-tools",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/kgn",
+      "name": "@unrdf/kgn",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/kgn",
+      "name": "@unrdf/kgn",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/knowledge-engine",
+      "name": "@unrdf/knowledge-engine",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/knowledge-engine",
+      "name": "@unrdf/knowledge-engine",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-3",
+      "name": "@unrdf/lens",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/autonomic/AUTONOMIC_INNOVATION/agent-3",
+      "name": "@unrdf/lens",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/manufacturing",
+      "name": "@unrdf/manufacturing",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ml-inference",
+      "name": "@unrdf/ml-inference",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-inference",
+      "name": "@unrdf/ml-inference",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/ml-versioning",
+      "name": "@unrdf/ml-versioning",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/ml-versioning",
+      "name": "@unrdf/ml-versioning",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/test/narrative-state-chain",
+      "name": "@unrdf/narrative-state-chain-tests",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/test/narrative-state-chain",
+      "name": "@unrdf/narrative-state-chain-tests",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/nextra",
+      "name": "@unrdf/nextra-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/nextra",
+      "name": "@unrdf/nextra-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/observability",
+      "name": "@unrdf/observability",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/observability",
+      "name": "@unrdf/observability",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/otel",
+      "name": "@unrdf/otel",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/oxigraph",
+      "name": "@unrdf/oxigraph",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/docs/templates/package-template",
+      "name": "@unrdf/package-name",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/docs/templates/package-template",
+      "name": "@unrdf/package-name",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-algorithms",
+      "name": "@unrdf/pictl-algorithms",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/pictl-semantics",
+      "name": "@unrdf/pictl-semantics",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/project-engine",
+      "name": "@unrdf/project-engine",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/project-engine",
+      "name": "@unrdf/project-engine",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src/projection",
+      "name": "@unrdf/projection",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/src/projection",
+      "name": "@unrdf/projection",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/rdf-graphql",
+      "name": "@unrdf/rdf-graphql",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/rdf-graphql",
+      "name": "@unrdf/rdf-graphql",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/react",
+      "name": "@unrdf/react",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/react",
+      "name": "@unrdf/react",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/receipts",
+      "name": "@unrdf/receipts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/src/receipts",
+      "name": "@unrdf/receipts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/receipts",
+      "name": "@unrdf/receipts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/src/receipts",
+      "name": "@unrdf/receipts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/self-healing-workflows",
+      "name": "@unrdf/self-healing-workflows",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/self-healing-workflows",
+      "name": "@unrdf/self-healing-workflows",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/semantic-search",
+      "name": "@unrdf/semantic-search",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/semantic-search",
+      "name": "@unrdf/semantic-search",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/serverless",
+      "name": "@unrdf/serverless",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/serverless",
+      "name": "@unrdf/serverless",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/sidecar",
+      "name": "@unrdf/sidecar",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/sidecar",
+      "name": "@unrdf/sidecar",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/spatial-kg",
+      "name": "@unrdf/spatial-kg",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/spatial-kg",
+      "name": "@unrdf/spatial-kg",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/streaming",
+      "name": "@unrdf/streaming",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/streaming",
+      "name": "@unrdf/streaming",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/temporal-discovery",
+      "name": "@unrdf/temporal-discovery",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/temporal-discovery",
+      "name": "@unrdf/temporal-discovery",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/test-utils",
+      "name": "@unrdf/test-utils",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/test-utils",
+      "name": "@unrdf/test-utils",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/v6-compat",
+      "name": "@unrdf/v6-compat",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-compat",
+      "name": "@unrdf/v6-compat",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/v6-core",
+      "name": "@unrdf/v6-core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/v6-core",
+      "name": "@unrdf/v6-core",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/validation",
+      "name": "@unrdf/validation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/validation",
+      "name": "@unrdf/validation",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl",
+      "name": "@unrdf/yawl",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-ai",
+      "name": "@unrdf/yawl-ai",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-api",
+      "name": "@unrdf/yawl-api",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-durable",
+      "name": "@unrdf/yawl-durable",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-kafka",
+      "name": "@unrdf/yawl-kafka",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-langchain",
+      "name": "@unrdf/yawl-langchain",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-observability",
+      "name": "@unrdf/yawl-observability",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-queue",
+      "name": "@unrdf/yawl-queue",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-realtime",
+      "name": "@unrdf/yawl-realtime",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/yawl-viz",
+      "name": "@unrdf/yawl-viz",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/zkp",
+      "name": "@unrdf/zkp",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/zkp",
+      "name": "@unrdf/zkp",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/lab",
+      "name": "@wasm4pm/lab-cli-tests",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/playground",
+      "name": "@wasm4pm/playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/experiments/docker-cluster",
+      "name": "atomvm-docker-cluster-experiments",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/docker-cluster",
+      "name": "atomvm-docker-cluster-experiments",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/experiments/chaos-cluster",
+      "name": "chaos-cluster",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/chaos-cluster",
+      "name": "chaos-cluster",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/atomvm/experiments/docker-swarm-messaging",
+      "name": "docker-swarm-messaging",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/atomvm/experiments/docker-swarm-messaging",
+      "name": "docker-swarm-messaging",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/packages/docs",
+      "name": "docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/docs",
+      "name": "docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/docs",
+      "name": "docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/enterprise/ENTERPRISE_MIGRATION",
+      "name": "enterprise-migration",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/enterprise/ENTERPRISE_MIGRATION",
+      "name": "enterprise-migration",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/esbuild-react-compiler-plugin",
+      "name": "esbuild-react-compiler-plugin",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/examples/blog",
+      "name": "example-blog",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/examples/custom-theme",
+      "name": "example-custom-theme",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/examples/docs",
+      "name": "example-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/nextra",
+      "name": "nextra",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo",
+      "name": "nextra-monorepo",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/nextra-theme-blog",
+      "name": "nextra-theme-blog",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/packages/nextra-theme-docs",
+      "name": "nextra-theme-docs",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/open-ontologies/studio/src-tauri/sidecars/agent",
+      "name": "ontology-agent-sidecar",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/open-ontologies/studio",
+      "name": "open-ontologies-studio",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/papers-thesis-cli",
+      "name": "papers-thesis-cli",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/benchmarks/adversarial",
+      "name": "pictl-adversarial-audit",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm",
+      "name": "pictl-monorepo",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/scripts",
+      "name": "scripts",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/vendors/nextra-repo/examples/swr-site",
+      "name": "swr-site",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/benchmarks",
+      "name": "unrdf-benchmarks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/benchmarks",
+      "name": "unrdf-benchmarks",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/hooks-showcase",
+      "name": "unrdf-hooks-showcase",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/playground/hooks-showcase",
+      "name": "unrdf-hooks-showcase",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground",
+      "name": "unrdf-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/playground",
+      "name": "unrdf-playground",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/playground/smoke-test",
+      "name": "unrdf-smoke-test",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/playground/smoke-test",
+      "name": "unrdf-smoke-test",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/.claude/worktrees/ostar-innovations-4-6",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-rc.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835191953",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835652082",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-1766835999254",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/test-snapshot-20251227-112104",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/archive/2026-01-11/historical/.rollback-snapshots/v5-stable-baseline",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]-alpha.1"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf",
+      "name": "unrdf-workspace",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm",
+      "name": "wasm4pm",
+      "version": "[VERSION]"
+    },
+    {
+      "dir": "/Users/sac/chatmangpt/unrdf/packages/wasm4pm/wasm4pm/pkg",
+      "name": "wasm4pm",
+      "version": "[VERSION]"
+    }
+  ]
+}

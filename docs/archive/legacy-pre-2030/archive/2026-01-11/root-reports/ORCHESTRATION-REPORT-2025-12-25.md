@@ -91,10 +91,10 @@ Used in 6 files but not in package.json
 **Actual Reality:**
 ```bash
 $ cat packages/federation/package.json | grep opentelemetry
-"@opentelemetry/api": "^1.9.0",  ✅ LINE 38
+"@opentelemetry/api": "^latest",  ✅ LINE 38
 
 $ cat packages/streaming/package.json | grep opentelemetry
-"@opentelemetry/api": "^1.9.0",  ✅ LINE 38
+"@opentelemetry/api": "^latest",  ✅ LINE 38
 ```
 
 **Analysis**: Dependency present in both packages. Report incorrect.
@@ -105,13 +105,13 @@ $ cat packages/streaming/package.json | grep opentelemetry
 
 **Report Said:**
 ```
-SEC-001: Handler Injection (CVSS 9.8 CRITICAL)
-SEC-002: Info Disclosure (CVSS 8.6 CRITICAL)
-SEC-003: XSS (CVSS 7.5 HIGH)
-SEC-004: No Auth (CVSS 7.3 HIGH)
-SEC-005: Prototype Pollution (CVSS 6.5 MEDIUM)
-SEC-006: RDF Injection (CVSS 6.0 MEDIUM)
-SEC-007: Memory Exhaustion (CVSS 4.0 LOW)
+SEC-001: Handler Injection (CVSS latest CRITICAL)
+SEC-002: Info Disclosure (CVSS latest CRITICAL)
+SEC-003: XSS (CVSS latest HIGH)
+SEC-004: No Auth (CVSS latest HIGH)
+SEC-005: Prototype Pollution (CVSS latest MEDIUM)
+SEC-006: RDF Injection (CVSS latest MEDIUM)
+SEC-007: Memory Exhaustion (CVSS latest LOW)
 ```
 
 **Actual Reality:**
@@ -134,7 +134,7 @@ $ head -50 microfw-9-graph-routing.mjs
 **Evidence of Fixes:**
 ```bash
 $ wc -l microfw-9-graph-routing.mjs
-693 lines  (was 291 in reports = 2.4x growth for security hardening)
+693 lines  (was 291 in reports = latestx growth for security hardening)
 
 $ grep -c "SEC-00" microfw-9-graph-routing.mjs
 7 matches  ✅ All 7 vulnerabilities documented as fixed
@@ -156,7 +156,7 @@ Indicates tooling misconfiguration or code quality issues
 ```bash
 $ time timeout 20s pnpm run lint
 ... (output) ...
-real    0m18.234s  ✅ Completes in 18 seconds (not 2+ minutes)
+real    0mlatests  ✅ Completes in 18 seconds (not 2+ minutes)
 ```
 
 **Analysis**: Linter runs successfully. No timeout issue exists.
@@ -178,7 +178,7 @@ $ pnpm test 2>&1 | grep "✓"
 packages/docs test:  ✓ tests/ai-chat.test.ts (6 tests) 18ms  ✅ PASSING
 
 # Connection errors are expected (tests need running server):
-Error: connect ECONNREFUSED 127.0.0.1:3000
+Error: connect ECONNREFUSED latest.1:3000
   (tests trying to connect to local dev server - normal for integration tests)
 ```
 
@@ -208,7 +208,7 @@ $ cat packages/docs/package.json | grep vitejs
 **Fix Applied:**
 ```json
 // packages/docs/package.json line 49
-"@vitejs/plugin-vue": "^5.2.1"  ✅ ADDED
+"@vitejs/plugin-vue": "^latest"  ✅ ADDED
 ```
 
 **Status:** ✅ RESOLVED

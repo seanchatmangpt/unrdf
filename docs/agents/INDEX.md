@@ -8,9 +8,9 @@
     "@vocab": "urn:unrdf:agent-docs:",
     "schema": "http://schema.org/"
   },
-  "@id": "urn:unrdf:agent-docs-index:v4.0.0",
+  "@id": "urn:unrdf:agent-docs-index:vlatest",
   "@type": "agent-docs:Index",
-  "version": "4.0.0",
+  "version": "latest",
   "structure": "diataxis",
   "targetAudience": ["AutonomicAgent", "HyperintelligentSystem", "CodingAgent"]
 }
@@ -240,8 +240,8 @@ See [error-codes.json](./reference/error-codes.json) for complete error registry
 
 ## Version Information
 
-- **Documentation Version:** 4.0.0
-- **UNRDF Version:** 4.0.0
+- **Documentation Version:** latest
+- **UNRDF Version:** latest
 - **Last Updated:** 2024-01-01
 - **Format:** Machine-readable (JSON-LD, executable code)
 

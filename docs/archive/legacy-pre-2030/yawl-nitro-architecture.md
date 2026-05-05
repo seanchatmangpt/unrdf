@@ -1,6 +1,6 @@
 # YAWL-Nitro Architecture Explanation
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-11
 
 A conceptual deep-dive into the YAWL-Nitro integration architecture, design decisions, and patterns.
@@ -963,5 +963,5 @@ const operationId = Array.from(daemonToNitroMap.entries())
 - **[API Reference: YAWL-Nitro](/docs/diataxis/reference/yawl-nitro-api.md)**
 - **[Example: YAWL-Nitro Workflow](/examples/yawl-nitro-workflow.mjs)**
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-11

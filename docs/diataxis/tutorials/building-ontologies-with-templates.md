@@ -88,7 +88,7 @@ const ontologyData = {
   namespace: 'http://example.org/ontology#',
   title: 'Example Domain Ontology',
   description: 'An ontology for representing example domain concepts',
-  version: '1.0.0',
+  version: 'latest',
 
   classes: [
     {

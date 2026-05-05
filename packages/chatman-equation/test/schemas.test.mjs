@@ -105,7 +105,7 @@ describe('DeltaSchema', () => {
       domain: 'product',
       operations: [
         { op: 'add', field: 'feature', value: 'dark_mode' },
-        { op: 'update', field: 'version', value: '2.0.0' },
+        { op: 'update', field: 'version', value: '[VERSION]' },
         { op: 'delete', field: 'legacy_api', value: true },
       ],
     };

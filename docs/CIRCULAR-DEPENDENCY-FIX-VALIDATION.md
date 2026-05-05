@@ -35,9 +35,9 @@
 @@ -44,7 +44,6 @@
    },
    "devDependencies": {
-     "@types/node": "^24.10.1",
+     "@types/node": "^latest",
 -    "@unrdf/core": "workspace:*",
-     "vitest": "^4.0.15"
+     "vitest": "^latest"
    },
 ```
 
@@ -45,7 +45,7 @@
 
 #### Step 1: Dependency Removal ✅
 - Removed `@unrdf/core` from `packages/oxigraph/package.json` devDependencies
-- Updated lockfile: `pnpm install` (completed in 8.5s)
+- Updated lockfile: `pnpm install` (completed in latests)
 
 #### Step 2: Circular Dependency Scans ✅
 
@@ -90,8 +90,8 @@ Processed 3 files (227ms) (1 warning)
 $ pnpm -C packages/oxigraph test
 Test Files  4 passed (4)
 Tests       40 passed (40)
-Duration    5.76s
-Coverage    71.73% Stmts | 76.66% Branch | 87.5% Funcs | 74.41% Lines
+Duration    latests
+Coverage    latest% Stmts | latest% Branch | latest% Funcs | latest% Lines
 ```
 **Result:** PASS - All 40 tests passing, coverage unchanged
 
@@ -152,7 +152,7 @@ graph TD
 - ✅ Oxigraph now classified as **LEAF** (was "mid-level")
 - ✅ No bidirectional arrows
 - ✅ Clean dependency flow: oxigraph → core → services → cli
-- ✅ Leaf packages increased from 6 to 7 (36.8%)
+- ✅ Leaf packages increased from 6 to 7 (latest%)
 
 ---
 
@@ -167,7 +167,7 @@ All verification items completed:
 - [x] Ran `madge --circular packages/core/src` → Result: ✅ No cycles
 - [x] Ran `madge --circular packages/oxigraph/src` → Result: ✅ No cycles
 - [x] Ran `pnpm -C packages/oxigraph test` → Result: ✅ All 40 tests pass
-- [x] Verified coverage unchanged: 71.73% (same as before)
+- [x] Verified coverage unchanged: latest% (same as before)
 - [x] Verified `pnpm-lock.yaml` updated correctly
 - [x] No new warnings or errors introduced
 - [x] Dependency graph shows oxigraph as leaf package
@@ -238,14 +238,14 @@ DETERMINISTIC - Clear build order established
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
 | **Circular Dependencies** | 2 cycles | 0 cycles | ✅ -100% |
-| **Leaf Packages** | 6 (31.6%) | 7 (36.8%) | ✅ +16.5% |
-| **Mid-Level Packages** | 12 (63.2%) | 11 (57.9%) | ✅ -8.3% |
-| **Hub Packages** | 1 (5.3%) | 1 (5.3%) | → No change |
+| **Leaf Packages** | 6 (latest%) | 7 (latest%) | ✅ +latest% |
+| **Mid-Level Packages** | 12 (latest%) | 11 (latest%) | ✅ -latest% |
+| **Hub Packages** | 1 (latest%) | 1 (latest%) | → No change |
 | **Oxigraph Depth** | 2 (mid) | 0 (leaf) | ✅ -100% |
 | **Core Depth** | 2 | 1 | ✅ -50% |
 | **Build Order Ambiguity** | YES | NO | ✅ Eliminated |
 | **Test Pass Rate** | 40/40 (100%) | 40/40 (100%) | → Maintained |
-| **Code Coverage** | 71.73% | 71.73% | → Maintained |
+| **Code Coverage** | latest% | latest% | → Maintained |
 | **Runtime Import Cycles** | 0 | 0 | → Already clean |
 
 ---
@@ -255,9 +255,9 @@ DETERMINISTIC - Clear build order established
 ### Before Fix
 ```
 Total Packages: 19
-Leaf Packages (0 deps): 6 (31.6%)
-Mid-Level Packages (1-3 deps): 12 (63.2%)
-Hub Packages (4+ deps): 1 (5.3%)
+Leaf Packages (0 deps): 6 (latest%)
+Mid-Level Packages (1-3 deps): 12 (latest%)
+Hub Packages (4+ deps): 1 (latest%)
 
 Most Depended Upon:
   12x core
@@ -267,9 +267,9 @@ Most Depended Upon:
 ### After Fix
 ```
 Total Packages: 19
-Leaf Packages (0 deps): 7 (36.8%) ← IMPROVED
-Mid-Level Packages (1-3 deps): 11 (57.9%) ← IMPROVED
-Hub Packages (4+ deps): 1 (5.3%)
+Leaf Packages (0 deps): 7 (latest%) ← IMPROVED
+Mid-Level Packages (1-3 deps): 11 (latest%) ← IMPROVED
+Hub Packages (4+ deps): 1 (latest%)
 
 Most Depended Upon:
   11x core (was 12 - circular dep removed)
@@ -479,7 +479,7 @@ When adding tests that need fixtures from another package:
 1. ✅ Circular dependencies eliminated (2 → 0)
 2. ✅ Oxigraph is now a leaf package (proper layering)
 3. ✅ All tests pass (40/40, 100%)
-4. ✅ Coverage unchanged (71.73%)
+4. ✅ Coverage unchanged (latest%)
 5. ✅ Build order deterministic
 6. ✅ Independent package publishing enabled
 

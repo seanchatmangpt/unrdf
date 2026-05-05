@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/kgc-swarm
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -34,8 +34,8 @@ Multi-agent template orchestration with cryptographic receipts - KGC planning me
 - `@unrdf/kgn`: workspace:*
 - `@unrdf/knowledge-engine`: workspace:*
 - `@unrdf/kgc-4d`: workspace:*
-- `hash-wasm`: ^4.11.0
-- `zod`: ^4.1.13
+- `hash-wasm`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

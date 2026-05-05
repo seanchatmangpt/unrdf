@@ -11,9 +11,9 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 | Metric | UNRDF YAWL<br/>(Hook-Native) | Temporal.io<br/>(Activity-Based) | Camunda<br/>(BPMN Engine) | Improvement Factor |
 |--------|------------------------------|----------------------------------|---------------------------|-------------------|
 | **Cold Start Latency** | 12 ms | 450 ms | 850 ms | 37x - 71x |
-| **Condition Evaluation** | 1.2 ms (SPARQL-ASK) | 15 ms (Code execution) | 25 ms (Groovy script) | 12x - 21x |
-| **Control Flow Routing** | 0.8 ms (Hook trigger) | 45 ms (Activity scheduling) | 80 ms (Token propagation) | 56x - 100x |
-| **Memory Overhead (per workflow)** | 180 KB | 4.5 MB | 12 MB | 25x - 67x |
+| **Condition Evaluation** | latest ms (SPARQL-ASK) | 15 ms (Code execution) | 25 ms (Groovy script) | 12x - 21x |
+| **Control Flow Routing** | latest ms (Hook trigger) | 45 ms (Activity scheduling) | 80 ms (Token propagation) | 56x - 100x |
+| **Memory Overhead (per workflow)** | 180 KB | latest MB | 12 MB | 25x - 67x |
 | **Throughput (workflows/sec)** | 8,500 | 320 | 85 | 27x - 100x |
 | **Audit Trail Generation** | Built-in (Receipt hooks) | External integration | External integration | Native |
 | **Deterministic Replay** | Yes (Content-addressed conditions) | Yes (Event log) | Limited (Async callbacks) | Equal or better |
@@ -22,8 +22,8 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 | **SPARQL Query Integration** | Native (First-class) | Custom activity | External adapter | Native advantage |
 
 **Notes:**
-- Measurements performed on AMD EPYC 7742 (2.25 GHz), 64 GB RAM, Ubuntu 22.04 LTS
-- YAWL: v1.0.0, Temporal.io: v1.22.4, Camunda: v7.19.0
+- Measurements performed on AMD EPYC 7742 (latest GHz), 64 GB RAM, Ubuntu latest LTS
+- YAWL: vlatest, Temporal.io: vlatest, Camunda: vlatest
 - Workflow: 10-task approval process with XOR/AND splits, resource allocation
 - Throughput measured at p99 latency <100ms (YAWL), <500ms (Temporal), <2000ms (Camunda)
 
@@ -41,13 +41,13 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 
 | Metric | Hook-Native<br/>(@unrdf/hooks) | Polling<br/>(setInterval) | WebHook<br/>(HTTP Callback) | Improvement Factor |
 |--------|--------------------------------|---------------------------|-----------------------------|--------------------|
-| **Reaction Latency (p50)** | 0.8 ms | 1,250 ms (1s poll interval) | 45 ms (HTTP roundtrip) | 56x - 1563x |
-| **Reaction Latency (p99)** | 2.4 ms | 3,800 ms | 180 ms | 75x - 1583x |
-| **CPU Utilization (idle)** | 0.02% | 2.5% (continuous polling) | 0.1% (server listening) | 5x - 125x lower |
+| **Reaction Latency (p50)** | latest ms | 1,250 ms (1s poll interval) | 45 ms (HTTP roundtrip) | 56x - 1563x |
+| **Reaction Latency (p99)** | latest ms | 3,800 ms | 180 ms | 75x - 1583x |
+| **CPU Utilization (idle)** | latest% | latest% (continuous polling) | latest% (server listening) | 5x - 125x lower |
 | **Memory Overhead** | 120 KB (hook registry) | 15 KB (poll state) | 850 KB (HTTP server) | Equal to 7x lower |
 | **Missed Events (under load)** | 0 (event-driven) | 15% (during poll intervals) | 3% (webhook queue overflow) | Zero loss |
 | **Network Requests (per change)** | 0 (in-process) | 0 (in-process) | 2 (request + response) | Equal or better |
-| **Batching Efficiency** | 95% (automatic batching) | 60% (manual batching) | 40% (HTTP overhead) | 1.6x - 2.4x |
+| **Batching Efficiency** | 95% (automatic batching) | 60% (manual batching) | 40% (HTTP overhead) | latestx - latestx |
 | **Deterministic Ordering** | Yes (hook chain) | No (race conditions) | No (network delays) | Guaranteed vs. best-effort |
 | **Backpressure Handling** | Yes (async/await) | Manual implementation | Manual implementation | Built-in |
 | **Auditability** | Cryptographic receipts | Manual logging | HTTP logs (no integrity) | Cryptographic vs. plaintext |
@@ -73,17 +73,17 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 | Metric | Big Bang 80/20<br/>(Pattern-Based) | TDD<br/>(Red-Green-Refactor) | Agile/Scrum<br/>(Iterative Sprint) | Speedup Factor |
 |--------|-------------------------------------|------------------------------|-------------------------------------|----------------|
 | **Implementation Passes** | 1 (single pass) | 3-5 (iterative) | 5-8 (sprint cycles) | 3x - 8x |
-| **Time to Completion** | 2.8 hours | 160 hours (2 weeks) | 320 hours (4 weeks) | 57x - 114x |
+| **Time to Completion** | latest hours | 160 hours (2 weeks) | 320 hours (4 weeks) | 57x - 114x |
 | **Lines of Code (core)** | 5,465 LoC | 850 LoC (incl. rework) | 1,200 LoC (incl. experiments) | 21% - 71% less code |
-| **Pattern Reuse Rate** | 64.3% (450/5,465 LoC) | 18% (153/850 LoC) | 12% (144/1200 LoC) | 3.6x - 5.4x |
+| **Pattern Reuse Rate** | latest% (450/5,465 LoC) | 18% (153/850 LoC) | 12% (144/1200 LoC) | latestx - latestx |
 | **Defect Density (syntax)** | 0 errors (static analysis) | 5 errors (integration tests) | 18 errors (QA testing) | Zero defects vs. multiple |
 | **Defect Density (logic)** | 0 bugs (specification-driven) | 2 bugs (edge cases) | 7 bugs (requirements drift) | Zero bugs vs. multiple |
 | **Technical Debt** | Minimal (no DEFERRED_ACTION(#loop-closure)s) | Moderate (15 DEFERRED_ACTION(#loop-closure)s) | High (40 DEFERRED_ACTION(#loop-closure)s + refactor backlog) | Minimal vs. significant |
-| **Rework Iterations** | 0 (single pass) | 2.3 avg (refactoring) | 4.1 avg (sprint retros) | Zero rework |
+| **Rework Iterations** | 0 (single pass) | latest avg (refactoring) | latest avg (sprint retros) | Zero rework |
 | **Test Coverage** | 98% (static analysis) | 95% (unit + integration) | 78% (manual + automated) | Equal or better |
-| **Documentation Completeness** | 100% (JSDoc + specs) | 85% (JSDoc partial) | 60% (wiki pages) | 1.2x - 1.7x |
+| **Documentation Completeness** | 100% (JSDoc + specs) | 85% (JSDoc partial) | 60% (wiki pages) | latestx - latestx |
 | **Specification Entropy** | 16 bits (well-defined) | 18 bits (evolving) | 22 bits (ambiguous) | Lower entropy |
-| **Information-Theoretic Correctness** | P(Correct) ≥ 99.997% | P(Correct) ≈ 95% | P(Correct) ≈ 85% | 1.05x - 1.18x |
+| **Information-Theoretic Correctness** | P(Correct) ≥ latest% | P(Correct) ≈ 95% | P(Correct) ≈ 85% | latestx - latestx |
 
 **Notes:**
 - **Big Bang 80/20**: KGC-4D implementation (BigInt temporal indexing, 4D graph architecture)
@@ -93,10 +93,10 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 - Information-theoretic correctness: `P(Correct) = 1 - 2^(-H_error)` where `H_error = H_spec - log(reuse_rate) - log(static_coverage)`
 
 **Key Findings:**
-- Single-pass implementation achieves 57-114x speedup (2.8 hours vs. 2-4 weeks)
-- Pattern reuse (64.3%) drives zero-defect outcome
+- Single-pass implementation achieves 57-114x speedup (latest hours vs. 2-4 weeks)
+- Pattern reuse (latest%) drives zero-defect outcome
 - Well-defined specifications (H_spec ≤ 16 bits) enable Big Bang approach
-- Iterative methods introduce rework overhead (2.3-4.1 iterations avg)
+- Iterative methods introduce rework overhead (latest.1 iterations avg)
 - Static analysis (98%) provides equal or better coverage than dynamic testing
 
 **Applicability:**
@@ -112,28 +112,28 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 
 | Hook Configuration | Evaluation Time (μs) | Memory Overhead (KB) | SPARQL Query Time (μs) | Receipt Generation (μs) | Total Latency (μs) |
 |--------------------|----------------------|----------------------|------------------------|-------------------------|---------------------|
-| **No-op hook (minimal)** | 0.8 | 12 | N/A | N/A | 0.8 |
-| **Simple validation (quad filter)** | 1.2 | 15 | N/A | N/A | 1.2 |
-| **SPARQL-ASK (10 triples)** | 8.5 | 28 | 7.2 | N/A | 8.5 |
+| **No-op hook (minimal)** | latest | 12 | N/A | N/A | latest |
+| **Simple validation (quad filter)** | latest | 15 | N/A | N/A | latest |
+| **SPARQL-ASK (10 triples)** | latest | 28 | latest | N/A | latest |
 | **SPARQL-ASK (1000 triples)** | 42 | 180 | 38 | N/A | 42 |
 | **SPARQL-ASK (100K triples)** | 280 | 850 | 255 | N/A | 280 |
-| **With receipt generation** | 12 | 32 | 7.2 | 3.8 | 12 |
-| **With before/run/after (simple)** | 18 | 45 | 7.2 | 3.8 | 18 |
-| **With before/run/after (complex)** | 125 | 220 | 85 | 3.8 | 125 |
-| **Batch (10 hooks)** | 35 | 180 | 28 | 3.8 | 35 |
-| **Batch (100 hooks)** | 220 | 1200 | 195 | 3.8 | 220 |
+| **With receipt generation** | 12 | 32 | latest | latest | 12 |
+| **With before/run/after (simple)** | 18 | 45 | latest | latest | 18 |
+| **With before/run/after (complex)** | 125 | 220 | 85 | latest | 125 |
+| **Batch (10 hooks)** | 35 | 180 | 28 | latest | 35 |
+| **Batch (100 hooks)** | 220 | 1200 | 195 | latest | 220 |
 
 **Notes:**
-- Measurements on single-threaded Node.js v20.11.0, AMD EPYC 7742
+- Measurements on single-threaded Node.js vlatest, AMD EPYC 7742
 - SPARQL query complexity: Simple ASK with 2-5 triple patterns
 - Complex before/run/after: Includes payload transformation and async I/O simulation
 - Batch evaluation: Hooks evaluated concurrently (Promise.all)
 - Memory measured as RSS delta before/after hook execution
 
 **Key Findings:**
-- Sub-microsecond overhead for minimal hooks (0.8μs)
-- SPARQL-ASK scales linearly with triple count (0.25μs per triple)
-- Receipt generation adds only 3.8μs (cryptographic signing)
+- Sub-microsecond overhead for minimal hooks (latestμs)
+- SPARQL-ASK scales linearly with triple count (latestμs per triple)
+- Receipt generation adds only latestμs (cryptographic signing)
 - Batching provides 3-5x efficiency gain (amortizes setup cost)
 
 ---
@@ -144,26 +144,26 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 
 | Operation | Oxigraph (Native) | N3.js (JavaScript) | Speedup Factor |
 |-----------|-------------------|---------------------|----------------|
-| **Store Creation** | 2.5 ms | 15 ms | 6x |
-| **Quad Insertion (1K)** | 8 ms | 85 ms | 10.6x |
-| **Quad Insertion (100K)** | 450 ms | 12,500 ms | 27.8x |
-| **SPARQL Query (10 results)** | 3.2 ms | 28 ms | 8.8x |
-| **SPARQL Query (10K results)** | 180 ms | 4,200 ms | 23.3x |
-| **Streaming Iteration (100K)** | 220 ms | 3,800 ms | 17.3x |
-| **Memory (100K triples)** | 18 MB | 120 MB | 6.7x lower |
-| **Startup Time (cold)** | 12 ms | 45 ms | 3.8x |
-| **SPARQL-ASK Query** | 1.8 ms | 15 ms | 8.3x |
+| **Store Creation** | latest ms | 15 ms | 6x |
+| **Quad Insertion (1K)** | 8 ms | 85 ms | latestx |
+| **Quad Insertion (100K)** | 450 ms | 12,500 ms | latestx |
+| **SPARQL Query (10 results)** | latest ms | 28 ms | latestx |
+| **SPARQL Query (10K results)** | 180 ms | 4,200 ms | latestx |
+| **Streaming Iteration (100K)** | 220 ms | 3,800 ms | latestx |
+| **Memory (100K triples)** | 18 MB | 120 MB | latestx lower |
+| **Startup Time (cold)** | 12 ms | 45 ms | latestx |
+| **SPARQL-ASK Query** | latest ms | 15 ms | latestx |
 | **Transaction Commit** | 5 ms | N/A (no transactions) | Native feature |
 
 **Notes:**
-- Oxigraph v0.3.22 (Rust WASM bindings)
-- N3.js v1.17.2 (Pure JavaScript)
+- Oxigraph vlatest (Rust WASM bindings)
+- N3.js vlatest (Pure JavaScript)
 - Dataset: DBpedia subset, 100K triples, ~25K unique subjects
 - SPARQL queries: Typical application patterns (entity retrieval, relationship traversal)
 
 **Key Findings:**
 - 6-28x performance improvement across all operations
-- 6.7x lower memory footprint (Rust native vs. JavaScript heap)
+- latestx lower memory footprint (Rust native vs. JavaScript heap)
 - Native SPARQL engine eliminates query translation overhead
 - Transaction support enables ACID guarantees (N3.js lacks this)
 
@@ -177,11 +177,11 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 |----------|-----------|----------------------------------|---------------------------|----------------------|-------------------|
 | **Single Node (baseline)** | 1 | N/A | N/A | 0% | Strong consistency |
 | **Primary-Replica (sync)** | 2 | 4,500 | 18 | 0% | Strong consistency |
-| **Primary-Replica (async)** | 2 | 12,000 | 120 | 0.02% | Eventual consistency |
-| **Multi-Primary (3 nodes)** | 3 | 8,500 | 85 | 0.8% | Causal consistency |
-| **Multi-Primary (10 nodes)** | 10 | 6,200 | 280 | 2.3% | Causal consistency |
-| **Edge + Cloud (offline-first)** | 2 | 1,800 | 5,000 (on reconnect) | 1.2% | Eventual consistency |
-| **Mesh (5 nodes, full connectivity)** | 5 | 7,100 | 150 | 1.5% | Causal consistency |
+| **Primary-Replica (async)** | 2 | 12,000 | 120 | latest% | Eventual consistency |
+| **Multi-Primary (3 nodes)** | 3 | 8,500 | 85 | latest% | Causal consistency |
+| **Multi-Primary (10 nodes)** | 10 | 6,200 | 280 | latest% | Causal consistency |
+| **Edge + Cloud (offline-first)** | 2 | 1,800 | 5,000 (on reconnect) | latest% | Eventual consistency |
+| **Mesh (5 nodes, full connectivity)** | 5 | 7,100 | 150 | latest% | Causal consistency |
 
 **Notes:**
 - Delta: Single quad add/remove event
@@ -191,9 +191,9 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 - Conflict resolution: Vector clocks + last-write-wins (LWW) for deterministic merge
 
 **Key Findings:**
-- Async replication achieves 2.7x higher throughput vs. sync (12K vs 4.5K deltas/sec)
-- Multi-primary topology introduces 0.8-2.3% conflict rate (resolved via vector clocks)
-- Offline-first edge nodes achieve 1.2% conflict rate with 5-second sync on reconnect
+- Async replication achieves latestx higher throughput vs. sync (12K vs latestK deltas/sec)
+- Multi-primary topology introduces latest.3% conflict rate (resolved via vector clocks)
+- Offline-first edge nodes achieve latest% conflict rate with 5-second sync on reconnect
 - Causal consistency provides strong enough guarantees for workflow coordination
 
 ---
@@ -235,12 +235,12 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 
 | Query Type | Baseline<br/>(No optimization) | With Indexes<br/>(SPOG/POSG) | With Hook Caching<br/>(Condition reuse) | With Both | Speedup |
 |------------|-------------------------------|------------------------------|----------------------------------------|-----------|---------|
-| **Simple ASK (10 triples)** | 15 ms | 3.2 ms | 1.8 ms | 1.2 ms | 12.5x |
-| **Entity Retrieval (100 triples)** | 85 ms | 12 ms | 8.5 ms | 5.8 ms | 14.7x |
-| **Relationship Traversal (1K hops)** | 1,200 ms | 180 ms | 95 ms | 68 ms | 17.6x |
+| **Simple ASK (10 triples)** | 15 ms | latest ms | latest ms | latest ms | latestx |
+| **Entity Retrieval (100 triples)** | 85 ms | 12 ms | latest ms | latest ms | latestx |
+| **Relationship Traversal (1K hops)** | 1,200 ms | 180 ms | 95 ms | 68 ms | latestx |
 | **Aggregation (COUNT 100K)** | 4,500 ms | 280 ms | 280 ms | 250 ms | 18x |
-| **Complex Join (3-way, 10K results)** | 8,200 ms | 850 ms | 450 ms | 320 ms | 25.6x |
-| **Conditional Routing (XOR-split)** | 28 ms | 7.2 ms | 1.5 ms | 0.8 ms | 35x |
+| **Complex Join (3-way, 10K results)** | 8,200 ms | 850 ms | 450 ms | 320 ms | latestx |
+| **Conditional Routing (XOR-split)** | 28 ms | latest ms | latest ms | latest ms | 35x |
 
 **Notes:**
 - Baseline: Oxigraph with default configuration
@@ -283,9 +283,9 @@ pnpm --filter @unrdf/core run benchmark:stores
 
 **Statistical Significance:**
 
-- All measurements: n=1000 runs, outliers removed (Grubbs' test, α=0.05)
+- All measurements: n=1000 runs, outliers removed (Grubbs' test, α=latest)
 - Confidence intervals: 95% CI reported where variance > 10%
-- Hypothesis tests: Welch's t-test for performance comparisons (p < 0.001)
+- Hypothesis tests: Welch's t-test for performance comparisons (p < latest)
 
 ---
 

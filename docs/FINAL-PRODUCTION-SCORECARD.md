@@ -1,15 +1,15 @@
-# UNRDF v5.0.1 Final Production Scorecard
+# UNRDF vlatest Final Production Scorecard
 
 **Date**: 2025-12-20
 **Validation Type**: Production Readiness Assessment
 **Evaluator**: Production Validation Agent
-**Target**: UNRDF Monorepo v5.0.1
+**Target**: UNRDF Monorepo vlatest
 
 ---
 
 ## Executive Summary
 
-**Overall Score: 8.2/10** ⚠️ CONDITIONAL APPROVAL
+**Overall Score: latest/10** ⚠️ CONDITIONAL APPROVAL
 
 The UNRDF monorepo demonstrates strong production readiness in core functionality but has identified issues in federation and streaming packages that require remediation before full production deployment.
 
@@ -49,20 +49,20 @@ The UNRDF monorepo demonstrates strong production readiness in core functionalit
 
 ---
 
-### 2. @unrdf/hooks: 8.5/10 ✅ PRODUCTION READY
+### 2. @unrdf/hooks: latest/10 ✅ PRODUCTION READY
 
 **Test Results**: 108/108 (100%)
 **Pass Rate**: 100%
-**Coverage**: 13.1% (⚠️ Low coverage, high quality tests)
+**Coverage**: latest% (⚠️ Low coverage, high quality tests)
 **Status**: ✅ APPROVED
 
 **Coverage Breakdown**:
-- Policy hooks: 26.8%
-- Hook chains: 25.51%
-- Hook manager: 72.5%
-- Hook executor: 67.16%
-- Lifecycle management: 95.55%
-- Define hook: 89.47%
+- Policy hooks: latest%
+- Hook chains: latest%
+- Hook manager: latest%
+- Hook executor: latest%
+- Lifecycle management: latest%
+- Define hook: latest%
 
 **Highlights**:
 - All tests passing (108/108)
@@ -78,10 +78,10 @@ The UNRDF monorepo demonstrates strong production readiness in core functionalit
 
 **Performance Metrics**:
 ```
-Single validation: 0.529μs/op
-Single transform: 0.718μs/op
-Compiled chain: 1.023μs/op
-Batch validation: 0.489μs/op
+Single validation: latestμs/op
+Single transform: latestμs/op
+Compiled chain: latestμs/op
+Batch validation: latestμs/op
 10K operations: 2525492 ops/sec
 ```
 
@@ -101,10 +101,10 @@ Batch validation: 0.489μs/op
 
 ---
 
-### 3. @unrdf/federation: 7.0/10 ⚠️ CONDITIONAL
+### 3. @unrdf/federation: latest/10 ⚠️ CONDITIONAL
 
-**Test Results**: 116/122 (95.1%)
-**Pass Rate**: 95.1%
+**Test Results**: 116/122 (latest%)
+**Pass Rate**: latest%
 **Failed Tests**: 6
 **Status**: ⚠️ CONDITIONAL APPROVAL
 
@@ -158,10 +158,10 @@ FAILURES:
 
 ---
 
-### 4. @unrdf/streaming: 6.5/10 ⚠️ CONDITIONAL
+### 4. @unrdf/streaming: latest/10 ⚠️ CONDITIONAL
 
-**Test Results**: 39/59 (66.1%)
-**Pass Rate**: 66.1%
+**Test Results**: 39/59 (latest%)
+**Pass Rate**: latest%
 **Failed Tests**: 4 actual + 3 suite errors
 **Skipped Tests**: 16 (proposed ring buffer features)
 **Status**: ⚠️ CONDITIONAL APPROVAL
@@ -231,9 +231,9 @@ Error: done() callback is deprecated (6 occurrences)
 |---------|-----------|--------|--------|---------|-----------|
 | @unrdf/core | 231 | 231 | 0 | 0 | 100% |
 | @unrdf/hooks | 108 | 108 | 0 | 0 | 100% |
-| @unrdf/federation | 122 | 116 | 6 | 0 | 95.1% |
-| @unrdf/streaming | 59 | 39 | 4 | 16 | 66.1% |
-| **TOTAL** | **520** | **494** | **10** | **16** | **95.0%** |
+| @unrdf/federation | 122 | 116 | 6 | 0 | latest% |
+| @unrdf/streaming | 59 | 39 | 4 | 16 | latest% |
+| **TOTAL** | **520** | **494** | **10** | **16** | **latest%** |
 
 ---
 
@@ -271,9 +271,9 @@ Error: done() callback is deprecated (6 occurrences)
 **Memory Profiling Evidence**:
 ```
 Hooks:
-  Memory after 1000 processors: 1.37 MB
-  Memory after 100k changes: 26.73 MB
-  Memory with 1000 debounce processors: 1.27 MB
+  Memory after 1000 processors: latest MB
+  Memory after 100k changes: latest MB
+  Memory with 1000 debounce processors: latest MB
 
 Streaming:
   Warning: MaxListenersExceededWarning (11 > 10)
@@ -335,7 +335,7 @@ docs/
 ### Critical (MUST HAVE) ✅ 8/10 PASS
 
 - [x] Zero memory leaks in core packages
-- [x] Test pass rate ≥95% (95.0% achieved)
+- [x] Test pass rate ≥95% (latest% achieved)
 - [x] Core package 100% passing
 - [x] Security policy present
 - [x] Documentation complete
@@ -453,7 +453,7 @@ docs/
 | @unrdf/federation | 75% | ⚠️ CONDITIONAL | Event listener leaks |
 | @unrdf/streaming | 60% | ⚠️ CONDITIONAL | Missing dependency + ring buffer |
 
-**Overall Deployment Confidence**: 82.5%
+**Overall Deployment Confidence**: latest%
 
 ---
 
@@ -462,8 +462,8 @@ docs/
 | Criteria | Target | Actual | Status |
 |----------|--------|--------|--------|
 | Zero memory leaks | ✅ | ⚠️ (4 listener leaks) | PARTIAL |
-| Test pass rate | ≥95% | 95.0% (494/520) | ✅ PASS |
-| Coverage | ≥80% | 13.1% (hooks only) | ⚠️ (quality tests) |
+| Test pass rate | ≥95% | latest% (494/520) | ✅ PASS |
+| Coverage | ≥80% | latest% (hooks only) | ⚠️ (quality tests) |
 | Build succeeds | ✅ | N/A (pure ESM) | ✅ PASS |
 | TypeScript defs | ✅ | ❌ Missing | ❌ FAIL |
 | Security policy | ✅ | ✅ Present | ✅ PASS |
@@ -471,7 +471,7 @@ docs/
 | Health endpoints | ✅ | ⚠️ Partial | PARTIAL |
 | OTEL instrumentation | ✅ | ⚠️ Partial | PARTIAL |
 
-**Success Rate**: 6.5/9 (72%) + 2 partial
+**Success Rate**: latest/9 (72%) + 2 partial
 
 ---
 
@@ -542,27 +542,27 @@ docs/
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| Overall Test Pass Rate | 95.0% | ≥95% | ✅ PASS |
+| Overall Test Pass Rate | latest% | ≥95% | ✅ PASS |
 | Core Package Tests | 100% | 100% | ✅ PASS |
 | Production Packages Ready | 2/4 | 4/4 | ⚠️ PARTIAL |
 | Memory Leaks Detected | 4 | 0 | ⚠️ FIXABLE |
 | Documentation Quality | 10/10 | ≥8/10 | ✅ PASS |
 | Security Policy | ✅ | ✅ | ✅ PASS |
-| Deployment Confidence | 82.5% | ≥90% | ⚠️ CLOSE |
+| Deployment Confidence | latest% | ≥90% | ⚠️ CLOSE |
 
 ---
 
 ## Final Verdict
 
-### Overall Score: 8.2/10
+### Overall Score: latest/10
 
 **Status**: ⚠️ CONDITIONAL APPROVAL
 
 **Rationale**:
 - **Core functionality is production-ready** (231/231 tests passing)
 - **Hooks package is excellent** (108/108 tests passing, sub-μs performance)
-- **Federation needs minor fixes** (95.1% passing, event listener cleanup)
-- **Streaming needs dependency + optimization** (66.1% passing, missing oxigraph)
+- **Federation needs minor fixes** (latest% passing, event listener cleanup)
+- **Streaming needs dependency + optimization** (latest% passing, missing oxigraph)
 
 **Recommendation**:
 - ✅ **Deploy core + hooks immediately**
@@ -570,7 +570,7 @@ docs/
 - ⚠️ **Fix P1 issues before full rollout** (8-12 hours total)
 - 📊 **Monitor federation/streaming in production**
 
-**Timeline to 9.5/10**:
+**Timeline to latest/10**:
 - P0 fixes: Today (15 minutes)
 - P1 fixes: This week (8-12 hours)
 - P2 enhancements: Next sprint (6-10 hours)
@@ -583,7 +583,7 @@ docs/
 All claims in this scorecard are backed by:
 - ✅ Actual test execution output (520 tests run)
 - ✅ Test log files with full results
-- ✅ Coverage reports (hooks: 13.1%)
+- ✅ Coverage reports (hooks: latest%)
 - ✅ Memory profiling data
 - ✅ Performance benchmarks
 - ✅ Build verification attempts
@@ -625,7 +625,7 @@ Duration: 411ms
 
 Test Files: 8 passed (8)
 Tests: 108 passed (108)
-Coverage: 13.1% (high-quality focused tests)
+Coverage: latest% (high-quality focused tests)
 Duration: 718ms
 ```
 
@@ -633,7 +633,7 @@ Duration: 718ms
 ```
 Test Files: 2 failed | 4 passed (6)
 Tests: 6 failed | 116 passed (122)
-Pass Rate: 95.1%
+Pass Rate: latest%
 
 Failures:
   - Event listener cleanup (4 tests)
@@ -646,7 +646,7 @@ Failures:
 Test Files: 5 failed | 1 passed (6)
 Tests: 4 failed | 39 passed | 16 skipped (59)
 Errors: 6 unhandled errors
-Pass Rate: 66.1%
+Pass Rate: latest%
 
 Blockers:
   - Missing @unrdf/oxigraph dependency (3 suites)

@@ -15,12 +15,12 @@
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| **Test Pass Rate** | ≥95% | 62.3%-86.5% | ❌ FAIL |
+| **Test Pass Rate** | ≥95% | latest%-latest% | ❌ FAIL |
 | **OTEL Validation** | ≥80/100 | 0/100 (blocked) | ❌ CRITICAL |
-| **RDF Migration** | 100% | 97.5% (2 violations) | ⚠️ PARTIAL |
-| **Code Quality** | 8/10+ | 4.5/10 | ❌ FAIL |
-| **Performance** | <5s test runs | 1.38s | ✅ EXCELLENT |
-| **Architecture** | 8/10+ | 9.2/10 | ✅ EXCELLENT |
+| **RDF Migration** | 100% | latest% (2 violations) | ⚠️ PARTIAL |
+| **Code Quality** | 8/10+ | latest/10 | ❌ FAIL |
+| **Performance** | <5s test runs | latests | ✅ EXCELLENT |
+| **Architecture** | 8/10+ | latest/10 | ✅ EXCELLENT |
 
 **Overall Grade**: **D+ (Not Ready for Production)**
 
@@ -48,7 +48,7 @@ a37453f - feat: Complete @unrdf/yawl implementation - hook-native YAWL engine wi
 **Status**: ❌ **CRITICAL FAILURES**
 
 **Key Findings**:
-- **110/292 tests failing** (37.7% failure rate)
+- **110/292 tests failing** (latest% failure rate)
 - **15/18 files exceed 500-line limit** (83% violation)
 - **No lint script** configured
 - **No coverage reporting** (provider missing)
@@ -57,8 +57,8 @@ a37453f - feat: Complete @unrdf/yawl implementation - hook-native YAWL engine wi
 **Evidence**:
 ```bash
 cd packages/yawl && timeout 5s npm test
-Result: 110 failed | 182 passed (62.3% pass rate)
-Duration: 2.30s (within 5s SLA ✅)
+Result: 110 failed | 182 passed (latest% pass rate)
+Duration: latests (within 5s SLA ✅)
 ```
 
 **Critical Test Failures**:
@@ -84,7 +84,7 @@ Duration: 2.30s (within 5s SLA ✅)
 
 **Status**: ❌ **CRITICAL CODE QUALITY ISSUES**
 
-**Overall Score**: 4.5/10
+**Overall Score**: latest/10
 
 **Critical Violations**:
 
@@ -125,22 +125,22 @@ Duration: 2.30s (within 5s SLA ✅)
 **Overall Statistics**:
 - **Total Test Files**: 161
 - **Tests Run**: 1,029
-- **Pass Rate**: 86.5% (890 passed, 139 failed)
+- **Pass Rate**: latest% (890 passed, 139 failed)
 
 **Package-by-Package Results**:
 
 | Package | Pass Rate | Tests | Duration | Issues |
 |---------|-----------|-------|----------|--------|
-| @unrdf/core | 100% | 231/231 | 1.50s | None ✅ |
-| @unrdf/hooks | 100% | 108/108 | 2.09s | Low coverage (13.1%) |
-| @unrdf/yawl | 62.3% | 182/292 | 2.21s | 110 schema failures |
-| @unrdf/kgc-4d | 97.0% | 296/305 | 3.35s | BigInt type mismatches |
-| @unrdf/streaming | 58.3% | 28/48 | 1.16s | Deprecated API (done callback) |
-| @unrdf/atomvm | 100% | 45/45 | 14.95s | Playwright config error |
+| @unrdf/core | 100% | 231/231 | latests | None ✅ |
+| @unrdf/hooks | 100% | 108/108 | latests | Low coverage (latest%) |
+| @unrdf/yawl | latest% | 182/292 | latests | 110 schema failures |
+| @unrdf/kgc-4d | latest% | 296/305 | latests | BigInt type mismatches |
+| @unrdf/streaming | latest% | 28/48 | latests | Deprecated API (done callback) |
+| @unrdf/atomvm | 100% | 45/45 | latests | Playwright config error |
 | @unrdf/oxigraph | TIMEOUT | - | >120s | Exceeded timeout |
 
 **Critical Failures**:
-1. **YAWL**: 110 failures (37.7%) - missing `tasks` array
+1. **YAWL**: 110 failures (latest%) - missing `tasks` array
 2. **Streaming**: 20 failures + 6 errors - deprecated Vitest 4.x API
 3. **Oxigraph**: >120s timeout (24x over 5s SLA)
 
@@ -154,25 +154,25 @@ Duration: 2.30s (within 5s SLA ✅)
 
 | Metric | Actual | SLA | Margin |
 |--------|--------|-----|--------|
-| Test Execution (avg) | **1.381s** | 5.000s | **72.4% under** ✅ |
-| Test Execution (min) | 1.351s | 5.000s | 73.0% under ✅ |
-| Test Execution (max) | 1.411s | 5.000s | 71.8% under ✅ |
+| Test Execution (avg) | **latests** | latests | **latest% under** ✅ |
+| Test Execution (min) | latests | latests | latest% under ✅ |
+| Test Execution (max) | latests | latests | latest% under ✅ |
 
 **Verification**:
 ```bash
 time timeout 5s npm test
-real: 0m1.316s ✅ (matches benchmark average 1.381s)
+real: 0mlatests ✅ (matches benchmark average latests)
 ```
 
 **Performance Metrics**:
-- **Consistency**: ±30ms variance (2.2%)
-- **Speed**: 3.6x faster than SLA requirement
-- **Memory**: +0.76 MB overhead (excellent efficiency)
+- **Consistency**: ±30ms variance (latest%)
+- **Speed**: latestx faster than SLA requirement
+- **Memory**: +latest MB overhead (excellent efficiency)
 - **Import Resolution**: 105ms cold start
 
 **File System Impact**:
-- YAWL: 10 files, 0.77 MB
-- Total Microframeworks: 593 files, 16.73 MB
+- YAWL: 10 files, latest MB
+- Total Microframeworks: 593 files, latest MB
 - Modified in 24h: 593 files (100% of codebase)
 
 **Verdict**: **A+ (Excellent)** - Performance exceeds requirements
@@ -214,7 +214,7 @@ ERROR: Cannot find package '@unrdf/oxigraph'
 
 **Status**: ✅ **EXCELLENT ARCHITECTURE**
 
-**Overall Score**: 9.2/10
+**Overall Score**: latest/10
 
 **Architecture Quality** (6-Layer Design):
 
@@ -243,9 +243,9 @@ ERROR: Cannot find package '@unrdf/oxigraph'
 - ✅ **Pattern reuse**: 95%+ consistency
 
 **Coupling Metrics**:
-- ontology: I=0.0 (stable) ✅
-- patterns: I=0.0 (stable) ✅
-- engine: I=1.0 (unstable but acceptable for orchestrator)
+- ontology: I=latest (stable) ✅
+- patterns: I=latest (stable) ✅
+- engine: I=latest (unstable but acceptable for orchestrator)
 
 **Weaknesses**:
 - ⚠️ No test suite (vitest not installed)
@@ -257,7 +257,7 @@ ERROR: Cannot find package '@unrdf/oxigraph'
 
 **Status**: ❌ **FALSE CLAIMS IN COMMITS**
 
-**Overall Score**: 4.5/10
+**Overall Score**: latest/10
 
 **CRITICAL FINDING**: Deliverables gap
 
@@ -304,7 +304,7 @@ timeout 10s node max-combo-10-mega-framework.mjs
 
 ### Agent 8: Production Validator (RDF Store Migration)
 
-**Status**: ⚠️ **97.5% COMPLETE** (2 violations)
+**Status**: ⚠️ **latest% COMPLETE** (2 violations)
 
 **Migration Status**:
 - ✅ YAWL Package: 100% migrated (7/7 files using @unrdf/oxigraph)
@@ -356,7 +356,7 @@ Result: 0 ✅
 - Total oxigraph imports: 89
 - Files using createStore: 35
 - Total source files: 364
-- Migration rate: 24.5% direct usage (expected, many files don't need RDF)
+- Migration rate: latest% direct usage (expected, many files don't need RDF)
 
 ---
 
@@ -387,8 +387,8 @@ Result: 0 ✅
 **Existing Validation Report** (24 hours old):
 ```
 File: packages/yawl/validation/VALIDATION-REPORT.md
-Date: 2025-12-24T20:19:12.577Z
-Pass Rate: 0.0% (0/10 claims)
+Date: 2025-12-24T20:19:latestZ
+Pass Rate: latest% (0/10 claims)
 Status: CRITICAL: Implementation Missing
 ```
 
@@ -415,13 +415,13 @@ Status: CRITICAL: Implementation Missing
 **Historical Validation Results**:
 
 1. **Most Recent** (Dec 4, 2025): ✅ PRODUCTION READY
-   - Pass Rate: 85.7% (18/21 examples)
+   - Pass Rate: latest% (18/21 examples)
    - Total Tests: 404
    - File: `/home/user/unrdf/CORRECTED-FINAL-VALIDATION-REPORT.md`
 
 2. **OTEL Validation** (Oct 2, 2025): ❌ DO NOT DEPLOY
    - OTEL Score: 0/100 (framework broken)
-   - Traditional Tests: 95.3% pass rate
+   - Traditional Tests: latest% pass rate
    - File: `/home/user/unrdf/test/VALIDATION-REPORT.md`
 
 3. **Adversarial Testing** (Historical): ⚠️ PARTIAL
@@ -463,14 +463,14 @@ Status: CRITICAL: Implementation Missing
 - Test failures: Full output showing 110/292 failed
 - File sizes: `wc -l` output showing 1,709 lines
 - RDF migration: `grep` showing 0 N3 imports in YAWL
-- Performance: Timing data 1.381s average
+- Performance: Timing data latests average
 - Code quality: Cyclomatic complexity 78 (workflow.mjs)
 - Deliverables gap: `ls` showing 3 files, not 20
 
 #### 3. What BREAKS if we're wrong?
 
 **If deployed to production**:
-- 37.7% of YAWL features fail tests
+- latest% of YAWL features fail tests
 - Workflow patterns WP8-WP20 non-functional
 - OTEL validation completely absent (0/100 score)
 - 2 RDF migration violations in CLI and project engine
@@ -483,8 +483,8 @@ Status: CRITICAL: Implementation Missing
 **Test Output**: 292 YAWL tests, 110 failed (full stack traces)
 **File Counts**: 161 test files, 364 source files (verified with ls/wc -l)
 **Grep Results**: 0 N3 imports in YAWL, 89 oxigraph imports
-**Timing Data**: 1.381s average (3 runs with millisecond precision)
-**Coverage**: 13.1% hooks package (measured, not estimated)
+**Timing Data**: latests average (3 runs with millisecond precision)
+**Coverage**: latest% hooks package (measured, not estimated)
 **OTEL**: 0 spans emitted (validation didn't run)
 
 ---
@@ -499,7 +499,7 @@ Status: CRITICAL: Implementation Missing
    - Try: `pnpm install --force --shamefully-hoist`
 
 2. **Fix YAWL test failures** (40 hours)
-   - 110/292 tests failing (37.7%)
+   - 110/292 tests failing (latest%)
    - Root cause: Missing `tasks: []` in workflow specs
    - Fix: Update `createTestWorkflow()` helper
 
@@ -537,7 +537,7 @@ Status: CRITICAL: Implementation Missing
    - Migrate from `done()` callbacks to async/await
 
 9. **Add test coverage** (20 hours)
-   - hooks package: 13.1% (target: >80%)
+   - hooks package: latest% (target: >80%)
    - YAWL package: Cannot measure (missing provider)
 
 ---
@@ -547,7 +547,7 @@ Status: CRITICAL: Implementation Missing
 ### Immediate Actions (This Week)
 
 1. **DO NOT DEPLOY** to production
-   - 37.7% test failure rate
+   - latest% test failure rate
    - OTEL validation completely absent
    - RDF migration incomplete
 
@@ -608,22 +608,22 @@ Status: CRITICAL: Implementation Missing
 ### Production Readiness: ❌ **NOT READY**
 
 **Pass/Fail Criteria**:
-- ❌ Test Pass Rate: 62.3%-86.5% (target: ≥95%)
+- ❌ Test Pass Rate: latest%-latest% (target: ≥95%)
 - ❌ OTEL Validation: 0/100 (target: ≥80/100)
-- ⚠️ RDF Migration: 97.5% (target: 100%)
-- ❌ Code Quality: 4.5/10 (target: 8/10)
-- ✅ Performance: 1.38s (target: <5s)
-- ✅ Architecture: 9.2/10 (target: 8/10)
+- ⚠️ RDF Migration: latest% (target: 100%)
+- ❌ Code Quality: latest/10 (target: 8/10)
+- ✅ Performance: latests (target: <5s)
+- ✅ Architecture: latest/10 (target: 8/10)
 
 **Risk Level**: **HIGH**
 
 **Estimated Fix Time**: 80-120 hours (2-3 weeks with 2 engineers)
 
 **Sign-Off**: Cannot recommend production deployment until:
-1. YAWL tests: 100% pass rate (currently 62.3%)
+1. YAWL tests: 100% pass rate (currently latest%)
 2. OTEL validation: ≥80/100 score (currently 0/100)
-3. RDF migration: 100% complete (currently 97.5%)
-4. Code quality: ≥8/10 (currently 4.5/10)
+3. RDF migration: 100% complete (currently latest%)
+4. Code quality: ≥8/10 (currently latest/10)
 
 ---
 
@@ -631,7 +631,7 @@ Status: CRITICAL: Implementation Missing
 
 **If challenged on "Is the system production-ready?":**
 
-> **NO.** The evidence shows 37.7% of YAWL features failing tests, zero OTEL validation (blocked by dependency issues), 15 of 18 files violating size limits, and cyclomatic complexity 7-8x over acceptable thresholds. While performance is excellent (1.38s, 72% under SLA) and architecture is sound (9.2/10), the system cannot be deployed with 110 failing tests and no observability validation. The commits from the last 24 hours added a substantial YAWL implementation but with critical quality gaps that require 80-120 hours of remediation.
+> **NO.** The evidence shows latest% of YAWL features failing tests, zero OTEL validation (blocked by dependency issues), 15 of 18 files violating size limits, and cyclomatic complexity 7-8x over acceptable thresholds. While performance is excellent (latests, 72% under SLA) and architecture is sound (latest/10), the system cannot be deployed with 110 failing tests and no observability validation. The commits from the last 24 hours added a substantial YAWL implementation but with critical quality gaps that require 80-120 hours of remediation.
 
 **Trust Level**: 85% (high evidence quality, some areas blocked)
 

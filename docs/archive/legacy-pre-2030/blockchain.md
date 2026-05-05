@@ -2,7 +2,7 @@
 
 > Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview
@@ -34,7 +34,7 @@ See [API Documentation](../../docs/packages/blockchain.md) for complete API deta
 
 ## License
 
-Licensed under either of Apache License, Version 2.0 or MIT license at your option.
+Licensed under either of Apache License, Version latest or MIT license at your option.
 
 ---
 

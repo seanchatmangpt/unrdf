@@ -201,8 +201,8 @@ The critical security hole has been fixed. Lockchain now provides:
 
 ## References
 
-- Audit Document: `/docs/implementation-roadmap-v2.4.0.md`
-- Original Issue: ULTRATHINK v2.4.0 audit, Section 4.6
+- Audit Document: `/docs/implementation-roadmap-latest.md`
+- Original Issue: ULTRATHINK latest audit, Section 4.6
 - Test Suite: `/test/simple-merkle-test.mjs`
 - Implementation: `/src/knowledge-engine/lockchain-writer.mjs`
 

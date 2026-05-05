@@ -167,13 +167,13 @@ import {
 - Execute both handlers in parallel
 - Serve only legacy results
 - Report mismatches
-- **Success**: 99.9%+ match rate
+- **Success**: latest%+ match rate
 
 ### Phase 2: Shadow Read (7 days)
 - Query both stores
 - Serve only legacy data
 - Validate consistency
-- **Success**: 99.99%+ data match
+- **Success**: latest%+ data match
 
 ### Phase 3: Partial Serve (28 days)
 - Route traffic based on config

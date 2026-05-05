@@ -133,7 +133,7 @@ describe.skip('Monaco Editor - Component Initialization', () => {
 - `sidecar/app/composables/useHookExecution.mjs` ❌
 
 ### What Does Exist
-- `package.json` - `nuxt-monaco-editor@^1.4.0` dependency ✅
+- `package.json` - `nuxt-monaco-editor@^[VERSION]` dependency ✅
 - `server/api/hooks/register.post.mjs` - Registration endpoint ✅
 - `server/api/hooks/evaluate.post.mjs` - Evaluation endpoint ✅
 

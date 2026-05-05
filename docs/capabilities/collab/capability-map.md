@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/collab
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -29,12 +29,12 @@ Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first archite
 ### Dependencies
 
 - `@unrdf/core`: workspace:*
-- `yjs`: ^13.6.18
-- `y-websocket`: ^2.0.4
-- `y-indexeddb`: ^9.0.12
-- `lib0`: ^0.2.97
-- `zod`: ^4.1.13
-- `ws`: ^8.18.0
+- `yjs`: ^latest
+- `y-websocket`: ^latest
+- `y-indexeddb`: ^latest
+- `lib0`: ^latest
+- `zod`: ^latest
+- `ws`: ^latest
 
 ### Exports
 

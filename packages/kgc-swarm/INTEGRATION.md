@@ -262,7 +262,7 @@ class RenderingTracker {
       metadata: {
         taskId: context.__meta?.taskId,
         agentId: options.agentId,
-        version: '1.0.0'
+        version: '[VERSION]'
       },
       proof: {
         // Cryptographic proof: hash(template + context) → hash(output)

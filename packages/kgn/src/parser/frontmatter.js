@@ -182,7 +182,7 @@ export class FrontmatterParser {
       // Template metadata defaults
       name: frontmatter.name || defaults.name || 'Untitled Template',
       description: frontmatter.description || defaults.description || '',
-      version: frontmatter.version || defaults.version || '1.0.0',
+      version: frontmatter.version || defaults.version || 'latest',
       author: frontmatter.author || defaults.author || '',
       
       // Template configuration

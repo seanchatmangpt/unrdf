@@ -1,4 +1,4 @@
-# Remaining Issues - UNRDF v6.0.0-rc.1
+# Remaining Issues - UNRDF vlatest.1
 
 **Generated**: 2026-01-11
 **Validation Score**: 36/100
@@ -9,7 +9,7 @@
 ## Critical Blockers (MUST FIX - P0)
 
 ### BLOCKER-001: CLI Build Failure
-**Package**: `@unrdf/cli@5.0.1`
+**Package**: `@unrdf/cli@latest`
 **Severity**: CRITICAL (P0)
 **Category**: Build
 **Impact**: Cannot generate production artifacts
@@ -94,7 +94,7 @@ timeout 120s pnpm test && echo "ALL_TESTS_PASS" || echo "TESTS_FAILED"
 ---
 
 ### BLOCKER-003: Lint Violations in kgc-cli
-**Package**: `@unrdf/kgc-cli@5.0.1`
+**Package**: `@unrdf/kgc-cli@latest`
 **Severity**: CRITICAL (P0)
 **Category**: Code Quality
 **Impact**: Violates zero-warning policy
@@ -136,8 +136,8 @@ timeout 60s pnpm lint 2>&1 | grep -E "warnings|errors"
 **Vulnerability**:
 - **GHSA**: [GHSA-6rw7-vpxm-498p](https://github.com/advisories/GHSA-6rw7-vpxm-498p)
 - **Description**: arrayLimit bypass allows DoS via memory exhaustion
-- **Vulnerable**: `<6.14.1`
-- **Patched**: `>=6.14.1`
+- **Vulnerable**: `<latest`
+- **Patched**: `>=latest`
 - **Path**: `packages__observability > express > qs`
 
 **Fix**:
@@ -171,8 +171,8 @@ pnpm audit --audit-level=moderate
 **Vulnerability**:
 - **GHSA**: [GHSA-36hm-qxxp-pg3m](https://github.com/advisories/GHSA-36hm-qxxp-pg3m)
 - **Description**: JSON VNode Injection vulnerability
-- **Vulnerable**: `>=10.28.0 <10.28.2`
-- **Patched**: `>=10.28.2`
+- **Vulnerable**: `>=latest <latest`
+- **Patched**: `>=latest`
 - **Path**: `kgc-4d/playground > react-force-graph-3d > ... > preact`
 
 **Fix Option A** (Update):
@@ -212,7 +212,7 @@ pnpm audit --audit-level=moderate
 
 **Details**:
 - Files exceeding 500-line limit: **145**
-- Compliance rate: 92.75%
+- Compliance rate: latest%
 - Target: 100%
 
 **Top Violators**:
@@ -238,10 +238,10 @@ pnpm audit --audit-level=moderate
 **Details**:
 - Deprecated subdependencies: **30**
 - Notable deprecations:
-  - `glob@7.2.3` and `glob@8.1.0`
-  - `rimraf@2.7.1` and `rimraf@3.0.2`
-  - `inflight@1.0.6`
-  - `core-js@2.6.12`
+  - `glob@latest` and `glob@latest`
+  - `rimraf@latest` and `rimraf@latest`
+  - `inflight@latest`
+  - `core-js@latest`
 
 **Recommendation**: Update parent dependencies to use non-deprecated versions
 
@@ -265,20 +265,20 @@ pnpm update --latest --recursive
 **Details**:
 - Total packages: 69
 - Version distribution:
-  - `1.0.0`: 39 packages (56.5%)
-  - `5.0.1`: 17 packages (24.6%)
-  - `6.0.0-rc.1`: 3 packages (4.3%)
-  - Other: 10 packages (14.5%)
+  - `latest`: 39 packages (latest%)
+  - `latest`: 17 packages (latest%)
+  - `latest.1`: 3 packages (latest%)
+  - Other: 10 packages (latest%)
 
-**Recommendation**: Standardize all packages to `6.0.0-rc.1`
+**Recommendation**: Standardize all packages to `latest.1`
 
 **Fix**:
 ```bash
 # Standardize versions
-pnpm -r exec npm version 6.0.0-rc.1 --no-git-tag-version
+pnpm -r exec npm version latest.1 --no-git-tag-version
 
 # Verify
-find packages -name "package.json" -exec grep -H '"version"' {} \; | grep -v "6.0.0-rc.1"
+find packages -name "package.json" -exec grep -H '"version"' {} \; | grep -v "latest.1"
 # Expected: 0 results (or only dev packages)
 ```
 
@@ -325,12 +325,12 @@ import { Store } from 'n3';
 **Details**:
 
 **packages/docs**:
-- @tiptap/core: Found 3.13.0, required ^3.14.0
-- @tiptap/pm: Found 3.13.0, required ^3.14.0
+- @tiptap/core: Found latest, required ^latest
+- @tiptap/pm: Found latest, required ^latest
 
 **packages/blockchain**:
-- vitest: Found 1.6.1, required 4.0.16
-- @vitest/ui: Found 4.0.16, required 1.6.1
+- vitest: Found latest, required latest
+- @vitest/ui: Found latest, required latest
 
 **Recommendation**: Update dependencies to match peer requirements
 

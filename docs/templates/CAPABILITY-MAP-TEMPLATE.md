@@ -1,6 +1,6 @@
 # @unrdf/[PACKAGE-NAME] Capability Map
 
-**Version**: [VERSION]
+**Version**: latest
 **Status**: [Production Ready | Beta | Experimental]
 **Runtime**: [Node.js | Browser | BEAM/WASM | Universal]
 **Last Updated**: [DATE]
@@ -82,7 +82,7 @@ import { atom1, atom2 } from '@unrdf/[package]';
 **Goal**: [What learners will achieve by the end - specific, measurable outcome]
 
 **Prerequisites**:
-- Node.js ≥ 18.0.0 installed
+- Node.js ≥ latest installed
 - Basic understanding of [concept]
 - Familiarity with [technology]
 
@@ -247,7 +247,7 @@ const result = functionName('value1', 42, {
 ```
 
 **Runtime Compatibility**:
-- ✅ Node.js ≥ 18.0.0
+- ✅ Node.js ≥ latest
 - ✅ Browser (ES2020+)
 - ❌ BEAM/WASM (use [alternative])
 
@@ -882,7 +882,7 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for:
 
 See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 
-**Recent Changes** (v[VERSION]):
+**Recent Changes** (vlatest):
 - [Feature]: [Description]
 - [Fix]: [Description]
 - [Breaking]: [Description]
@@ -920,7 +920,7 @@ All documentation claims must include:
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: [DATE]
 - **Maintainer**: [@unrdf/core-team]
 - **Last Review**: [DATE]

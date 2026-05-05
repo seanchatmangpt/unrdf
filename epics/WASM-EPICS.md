@@ -1,7 +1,7 @@
 # WASM Integration & Cross-Runtime Performance EPICs
 
 **Domain**: WASM Integration & Cross-Runtime Performance
-**Version**: v6.0.0
+**Version**: [VERSION]
 **Date**: 2025-12-28
 **Status**: Draft
 
@@ -538,7 +538,7 @@ This document defines 7 EPICs for WASM integration in the UNRDF v6 rewrite. The 
 
 ### Phase 3: Advanced Features (Weeks 9-12)
 
-**Optional** - BEAM integration provides long-term value but not v6.0.0 critical
+**Optional** - BEAM integration provides long-term value but not [VERSION] critical
 
 | EPIC | Priority | Weeks | Dependencies |
 |------|----------|-------|--------------|
@@ -561,7 +561,7 @@ This document defines 7 EPICs for WASM integration in the UNRDF v6 rewrite. The 
 | **SPARQL compiler correctness** | 35% | Critical | W3C test suite (100+ queries), differential testing |
 | **SHACL compiler correctness** | 30% | Critical | Differential testing vs rdf-validate-shacl |
 | **Memory leaks in WASM** | 25% | High | Stress tests (10K iterations), heap profiling |
-| **BEAM integration complexity** | 50% | Medium | Defer to v6.1.0 if timeline slips |
+| **BEAM integration complexity** | 50% | Medium | Defer to [VERSION] if timeline slips |
 | **Performance regression** | 45% | High | CI benchmarks, alert on >20% degradation |
 
 ---
@@ -603,7 +603,7 @@ This document defines 7 EPICs for WASM integration in the UNRDF v6 rewrite. The 
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: [VERSION]
 **Created**: 2025-12-28
 **Next Review**: 2025-01-11 (2 weeks)
 **Owner**: WASM Integration Team

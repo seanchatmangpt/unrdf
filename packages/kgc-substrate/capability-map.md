@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/kgc-substrate
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -31,8 +31,8 @@ KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-
 - `@unrdf/kgc-4d`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
 - `@unrdf/core`: workspace:*
-- `hash-wasm`: ^4.12.0
-- `zod`: ^4.1.13
+- `hash-wasm`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

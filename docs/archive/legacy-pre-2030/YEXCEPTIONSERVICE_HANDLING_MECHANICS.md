@@ -1,7 +1,7 @@
 # YAWL Exception Handling Mechanics - Deep Research Analysis
 
 **Research Date**: 2026-01-11
-**Package**: @unrdf/yawl v5.0.0
+**Package**: @unrdf/yawl vlatest
 **Focus**: Exception detection, handling mechanisms, and state management
 **Methodology**: Code analysis, test inspection, Java YAWL comparison
 
@@ -23,7 +23,7 @@ UNRDF YAWL implements a **subset of YAWL exception handling** focused on operati
 
 ## 1. Exception Type Taxonomy
 
-### 1.1 Implemented Exception Types
+### latest Implemented Exception Types
 
 **Location**: `yawl-cancellation-core.mjs:23-32`
 
@@ -45,7 +45,7 @@ export const CancellationReasonSchema = z.enum([
 - No distinction between **recoverable** vs **fatal** exceptions
 - No **severity levels** (all treated equally)
 
-### 1.2 Missing Exception Types
+### latest Missing Exception Types
 
 Compared to Java YAWL Exception Service (YExceptionService.java):
 
@@ -63,7 +63,7 @@ Compared to Java YAWL Exception Service (YExceptionService.java):
 
 ## 2. Exception Detection Mechanisms
 
-### 2.1 Timeout Detection
+### latest Timeout Detection
 
 **Implementation**: `yawl-cancellation-manager.mjs:357-394`
 
@@ -126,12 +126,12 @@ startExecution(workItemId)
 **Limitations**:
 - ❌ No timeout **warning** before cancellation
 - ❌ No **extension/postponement** API
-- ❌ `setTimeout` unreliable for long durations (>24.8 days integer overflow)
+- ❌ `setTimeout` unreliable for long durations (>latest days integer overflow)
 - ❌ No **escalation** (e.g., warning at 80%, cancel at 100%)
 
 ---
 
-### 2.2 Circuit Breaker Detection
+### latest Circuit Breaker Detection
 
 **Implementation**: `yawl-cancellation-core.mjs:126-269`
 
@@ -245,7 +245,7 @@ recordFailure(workItemId)
 
 ---
 
-### 2.3 Constraint Validation
+### latest Constraint Validation
 
 **Hook-Based Validation**: `yawl-hooks.mjs:806-861`
 
@@ -311,7 +311,7 @@ if (validator) {
 
 ## 3. Exception Handler Selection
 
-### 3.1 Current Handler Mechanism
+### latest Current Handler Mechanism
 
 **Callback-Based** (no worklet selection):
 
@@ -346,7 +346,7 @@ Exception Detected
 
 ---
 
-### 3.2 Missing: Worklet Selection Algorithm
+### latest Missing: Worklet Selection Algorithm
 
 **Java YAWL YExceptionService** (what's missing):
 
@@ -409,7 +409,7 @@ UNRDF YAWL:
 
 ## 4. Worklet Framework Analysis
 
-### 4.1 Worklet Search Results
+### latest Worklet Search Results
 
 **Code Search**:
 ```bash
@@ -425,7 +425,7 @@ $ grep -r "rollback\|undo\|revert" packages/yawl/src --include="*.mjs"
 
 **Conclusion**: **ZERO worklet implementation**
 
-### 4.2 What Worklets Provide (Missing Features)
+### latest What Worklets Provide (Missing Features)
 
 **Worklet Capabilities** (from Van der Aalst et al., 2010):
 
@@ -452,7 +452,7 @@ Purchase Order Processing
 
 ---
 
-### 4.3 Worklet Execution Sequence (Java YAWL)
+### latest Worklet Execution Sequence (Java YAWL)
 
 **Standard Worklet Flow**:
 ```
@@ -485,7 +485,7 @@ Purchase Order Processing
 
 ## 5. Compensation Mechanisms
 
-### 5.1 Compensation in Workflow Systems
+### latest Compensation in Workflow Systems
 
 **Compensation Definition**: Undoing the effects of completed tasks when a later task fails.
 
@@ -500,7 +500,7 @@ Compensation Required:
   ← Cancel Hotel (refund $200)
 ```
 
-### 5.2 UNRDF YAWL Compensation Support
+### latest UNRDF YAWL Compensation Support
 
 **Search Results**:
 ```bash
@@ -526,7 +526,7 @@ $ grep -r "saga" packages/yawl/src --include="*.mjs"
 
 **Conclusion**: **NO compensation framework**
 
-### 5.3 Manual Compensation Required
+### latest Manual Compensation Required
 
 **Current Approach**:
 ```javascript
@@ -561,7 +561,7 @@ async function bookTravel() {
 
 ---
 
-### 5.4 Proposed Compensation API (Not Implemented)
+### latest Proposed Compensation API (Not Implemented)
 
 **Declarative Compensation** (Java YAWL-style):
 ```javascript
@@ -601,7 +601,7 @@ await saga.run(workflow);
 
 ## 6. State Management During Exceptions
 
-### 6.1 Work Item State Machine
+### latest Work Item State Machine
 
 **States**: `yawl-cancellation-core.mjs:37-44`
 ```javascript
@@ -631,7 +631,7 @@ pending
 
 ---
 
-### 6.2 Exception Log Persistence
+### latest Exception Log Persistence
 
 **Receipt Logger**: `yawl-cancellation-core.mjs:278-480`
 
@@ -711,7 +711,7 @@ const VALID_RECEIPT_TYPES = [
 
 ---
 
-### 6.3 Recovery After Exception (NOT IMPLEMENTED)
+### latest Recovery After Exception (NOT IMPLEMENTED)
 
 **Java YAWL Recovery**:
 ```
@@ -747,7 +747,7 @@ END (no recovery, no resume)
 
 ---
 
-### 6.4 Nested Exception Handling (NOT SUPPORTED)
+### latest Nested Exception Handling (NOT SUPPORTED)
 
 **Scenario**: Exception handler throws exception
 
@@ -795,7 +795,7 @@ if (this.config.onCancellation) {
 
 ## 7. Exception Propagation
 
-### 7.1 Cancellation Region Propagation
+### latest Cancellation Region Propagation
 
 **Implementation**: `yawl-cancellation-manager.mjs:273-304`
 
@@ -854,7 +854,7 @@ Region: "approval-process"
 
 ---
 
-### 7.2 Dependency Propagation
+### latest Dependency Propagation
 
 **Implementation**: `yawl-cancellation-manager.mjs:309-333`
 
@@ -1027,7 +1027,7 @@ const receipts = manager.receiptLogger.getAllReceipts();
 
 ## 9. Comparison with Java YAWL Exception Service
 
-### 9.1 Architecture Comparison
+### latest Architecture Comparison
 
 **Java YAWL YExceptionService**:
 ```
@@ -1052,7 +1052,7 @@ YawlCancellationManager
 
 ---
 
-### 9.2 Feature Parity Matrix
+### latest Feature Parity Matrix
 
 | Feature | Java YAWL | UNRDF YAWL | Gap Severity |
 |---------|-----------|------------|--------------|
@@ -1080,7 +1080,7 @@ YawlCancellationManager
 
 ## 10. Critical Gaps Summary
 
-### 10.1 Missing Worklet Framework
+### latest Missing Worklet Framework
 
 **Impact**: **CRITICAL** (Severity 10/10)
 
@@ -1125,7 +1125,7 @@ await executeWorklet(worklet, context);
 
 ---
 
-### 10.2 Missing Compensation Framework
+### latest Missing Compensation Framework
 
 **Impact**: **HIGH** (Severity 9/10)
 
@@ -1162,7 +1162,7 @@ await saga.run(workflow);
 
 ---
 
-### 10.3 Missing Constraint Violation Detection
+### latest Missing Constraint Violation Detection
 
 **Impact**: **MEDIUM** (Severity 6/10)
 
@@ -1196,7 +1196,7 @@ if (violation) {
 
 ## 11. Recommendations
 
-### 11.1 Immediate Actions (0-3 months)
+### latest Immediate Actions (0-3 months)
 
 **Priority 1: Worklet Framework**
 - Implement worklet repository
@@ -1212,7 +1212,7 @@ if (violation) {
 
 ---
 
-### 11.2 Medium-Term (3-6 months)
+### latest Medium-Term (3-6 months)
 
 **Priority 3: Constraint Framework**
 - Declarative constraint DSL
@@ -1228,7 +1228,7 @@ if (violation) {
 
 ---
 
-### 11.3 Long-Term (6-12 months)
+### latest Long-Term (6-12 months)
 
 **Priority 5: Exlet Integration**
 - External exception handler invocation

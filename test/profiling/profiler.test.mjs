@@ -11,7 +11,7 @@ import { MemoryProfiler } from '../../packages/profiling/memory-profiler.mjs';
 import { CpuProfiler } from '../../packages/profiling/cpu-profiler.mjs';
 import { Reporter } from '../../packages/profiling/reporter.mjs';
 
-const tracer = trace.getTracer('profiler-test', '1.0.0');
+const tracer = trace.getTracer('profiler-test', 'latest');
 
 describe('Profiler', () => {
   describe('Main Profiler', () => {

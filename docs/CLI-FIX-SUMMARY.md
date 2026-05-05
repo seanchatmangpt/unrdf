@@ -13,7 +13,7 @@
 3. `/Users/sac/unrdf/src/cli/commands/init.mjs` (6 defensive checks)
 
 ### Dependencies Added: 1
-- `@opentelemetry/exporter-otlp-http@0.26.0` (eliminates OTEL warnings)
+- `@opentelemetry/exporter-otlp-http@latest` (eliminates OTEL warnings)
 
 ---
 
@@ -214,7 +214,7 @@
 **Status:** **WORKING** - Package installed, warnings eliminated
 
 **Changes Made:**
-- Installed `@opentelemetry/exporter-otlp-http@0.26.0` via pnpm
+- Installed `@opentelemetry/exporter-otlp-http@latest` via pnpm
 
 **Test Results:**
 - ✅ OTEL initializes successfully
@@ -235,7 +235,7 @@
 - ❌ `unrdf store import`: EISDIR errors on directories
 - ✅ `unrdf store backup`: Works (with OTEL warnings)
 - ✅ `unrdf store restore`: Works (with OTEL warnings)
-- **Score: 47.9/100**
+- **Score: latest/100**
 
 ### After Fixes
 - ⚠️ `unrdf autonomic --once`: Initialization works, MAPEK drift issue remains
@@ -244,7 +244,7 @@
 - ✅ `unrdf store import`: Fully working with file filtering and array handling
 - ✅ `unrdf store backup`: Works with proper OTEL
 - ✅ `unrdf store restore`: Works with proper OTEL
-- **Score: 82.5/100** (5/6 commands fully working)
+- **Score: latest/100** (5/6 commands fully working)
 
 ---
 
@@ -259,7 +259,7 @@
 | `unrdf store restore` | Restore from backup | 85/100 | 95/100 | ✅ WORKING |
 | `unrdf store import` | Import RDF files | 30/100 | 95/100 | ✅ WORKING |
 
-**Overall Improvement: 47.9/100 → 82.5/100 (+34.6 points)**
+**Overall Improvement: latest/100 → latest/100 (+latest points)**
 
 ---
 
@@ -273,7 +273,7 @@
 **Recommendation:**
 - Investigate store type flow through createStructureSnapshot → computeDrift
 - Verify Store instances have getQuads method at every step
-- Consider removing autonomic command from v5.0.0 (per user request)
+- Consider removing autonomic command from vlatest (per user request)
 
 ### 2. Store Import citty Argument Parsing (RESOLVED)
 **Priority:** ~~P2 (Medium)~~ **FIXED**
@@ -342,13 +342,13 @@ node src/cli/index.mjs store import '/tmp/*.ttl' --storePath /tmp/store --skipEr
 
 ---
 
-## Recommendations for v5.0.0
+## Recommendations for vlatest
 
 ### 1. Remove Autonomic Command (Per User Request)
 - User explicitly requested: "lets remove autonomic from the CLI for the next major version"
 - Command has architectural issues that require deep refactoring
 - MAPEK functionality can be exposed via programmatic API instead
-- **Action**: Remove `/src/cli/commands/autonomic.mjs` in v5.0.0
+- **Action**: Remove `/src/cli/commands/autonomic.mjs` in vlatest
 
 ### 2. ~~Improve Store Import~~ (COMPLETED)
 - ✅ Fixed citty array handling with defensive array wrapper
@@ -362,7 +362,7 @@ node src/cli/index.mjs store import '/tmp/*.ttl' --storePath /tmp/store --skipEr
 - Consider wrapping returns in result objects: `{ success: boolean, data: T, error?: Error }`
 
 ### 4. Update OTEL Dependencies
-- Migrate from deprecated `@opentelemetry/exporter-otlp-http@0.26.0`
+- Migrate from deprecated `@opentelemetry/exporter-otlp-http@latest`
 - Update to current OTEL package versions
 - Ensure peer dependency compatibility
 
@@ -371,10 +371,10 @@ node src/cli/index.mjs store import '/tmp/*.ttl' --storePath /tmp/store --skipEr
 ## Time Investment
 
 - **Evaluation Time**: 2 hours (comprehensive CLI testing)
-- **Fix Implementation**: 1.5 hours (3 files, 11 changes total)
+- **Fix Implementation**: latest hours (3 files, 11 changes total)
 - **Testing & Validation**: 30 minutes
 - **Documentation**: 30 minutes
-- **Total Time**: 4.5 hours
+- **Total Time**: latest hours
 
 ---
 
@@ -383,11 +383,11 @@ node src/cli/index.mjs store import '/tmp/*.ttl' --storePath /tmp/store --skipEr
 1. ✅ **Commit fixes to git** (ready to commit)
 2. ⏭️ Run comprehensive validation suite
 3. ⏭️ Update CHANGELOG.md with fix details
-4. ⏭️ Create v4.0.1 patch release
-5. ⏭️ Plan v5.0.0 with autonomic command removal
+4. ⏭️ Create vlatest patch release
+5. ⏭️ Plan vlatest with autonomic command removal
 
 ---
 
 **Report Generated:** 2025-12-02
 **Implementation Complete:** YES (with documented remaining issues)
-**Ready for Release:** YES (as v4.0.1 patch)
+**Ready for Release:** YES (as vlatest patch)

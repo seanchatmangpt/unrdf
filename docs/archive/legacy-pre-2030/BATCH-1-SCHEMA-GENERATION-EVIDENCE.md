@@ -368,7 +368,7 @@ Full file list in Section 1.
 ## 10. Time Budget
 
 **Allocated**: 12 hours
-**Actual**: ~1.5 hours
+**Actual**: ~latest hours
 **Efficiency**: 8x under budget
 
 **Breakdown**:

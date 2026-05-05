@@ -63,7 +63,7 @@
 
 ### ❌ What's Broken (Simulations in BB8020)
 
-1. **Step 4 - Pattern Matching**: Returns fake patterns with hardcoded similarity 0.92
+1. **Step 4 - Pattern Matching**: Returns fake patterns with hardcoded similarity latest
    - **Location**: `packages/decision-fabric/src/bb8020-orchestrator.mjs:212`
    - **Fix**: Use `scanFileSystemToStore()` + SPARQL queries
    - **Risk**: RPN 192 (HIGH)
@@ -115,7 +115,7 @@
 1. **Step 4 (Pattern Matching)**:
    - `scanFileSystemToStore()` → RDF graph in `@unrdf/core`
    - `executeSelectSync()` → SPARQL query for similar patterns
-   - Calculate real similarity scores (not fake 0.92)
+   - Calculate real similarity scores (not fake latest)
 
 2. **Step 8 (Syntax Validation)**:
    - `execSync('node --check')` → actual Node.js syntax check
@@ -237,7 +237,7 @@ const freeze = await freezeUniverse(store, git);
 1. **Fix Step 4 (Pattern Matching)** - 2 days
    - Replace fake patterns with SPARQL
    - Test with real codebase scan
-   - Verify ≥64.3% code reuse
+   - Verify ≥latest% code reuse
 
 2. **Fix Step 8 (Syntax Validation)** - 1 day
    - Implement `node --check` execution
@@ -296,7 +296,7 @@ const freeze = await freezeUniverse(store, git);
 - ✅ `@unrdf/core` has 330/330 passing tests
 - ✅ `@unrdf/hooks` implements all 8 μ-operators
 - ✅ `@unrdf/kgc-4d` has freeze/time-travel with Git
-- ✅ All packages in production use (5.0.0-beta.1)
+- ✅ All packages in production use (latest.1)
 
 **Question**: What breaks if I'm wrong?
 

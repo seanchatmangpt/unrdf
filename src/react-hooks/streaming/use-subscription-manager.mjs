@@ -1,7 +1,7 @@
 /**
  * @file use-subscription-manager.mjs
  * @description React hook for managing pattern-based subscriptions to graph changes
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -12,7 +12,7 @@ import { RingBuffer } from '../../knowledge-engine/utils/ring-buffer.mjs';
  * Hook for managing pattern-based subscriptions to RDF graph changes
  * Uses RingBuffer (TRIZ #10 Prior Action) for O(1) event buffering
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Subscription configuration
  * @param {string} [config.pattern] - SPARQL pattern to match
  * @param {Function} [config.filter] - Custom filter function

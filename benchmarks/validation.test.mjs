@@ -22,7 +22,7 @@ describe('OTEL Span Validation', () => {
   let tracer;
 
   beforeEach(() => {
-    tracer = trace.getTracer('benchmark-validation-test', '1.0.0');
+    tracer = trace.getTracer('benchmark-validation-test', 'latest');
   });
 
   it('should create root span with required attributes', async () => {
@@ -31,7 +31,7 @@ describe('OTEL Span Validation', () => {
     await tracer.startActiveSpan('benchmark.test', (span) => {
       // Set required common attributes
       span.setAttribute('benchmark.suite.name', 'Test Suite');
-      span.setAttribute('benchmark.suite.version', '1.0.0');
+      span.setAttribute('benchmark.suite.version', 'latest');
       span.setAttribute('benchmark.id', 'test-benchmark');
       span.setAttribute('benchmark.name', 'Test Benchmark');
       span.setAttribute('benchmark.timestamp', new Date().toISOString());
@@ -43,7 +43,7 @@ describe('OTEL Span Validation', () => {
       // Validate attributes exist (in real implementation, extract from span)
       capturedAttributes = {
         suiteName: 'Test Suite',
-        suiteVersion: '1.0.0',
+        suiteVersion: 'latest',
         benchmarkId: 'test-benchmark',
         platform: process.platform,
         arch: process.arch,
@@ -56,7 +56,7 @@ describe('OTEL Span Validation', () => {
 
     // Validate all required attributes are present
     expect(capturedAttributes.suiteName).toBe('Test Suite');
-    expect(capturedAttributes.suiteVersion).toBe('1.0.0');
+    expect(capturedAttributes.suiteVersion).toBe('latest');
     expect(capturedAttributes.benchmarkId).toBe('test-benchmark');
     expect(capturedAttributes.platform).toBeTruthy();
     expect(capturedAttributes.arch).toBeTruthy();

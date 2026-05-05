@@ -6,7 +6,7 @@ UNRDF v6 represents a major architectural shift from v5, focusing on performance
 
 ## Migration Priority: HIGH
 
-**Timeline**: v6.0.0-alpha.1 → v6.0.0-rc.1 → v6.0.0 stable
+**Timeline**: vlatest.1 → vlatest.1 → vlatest stable
 **Status**: Currently in alpha - not production ready
 **Migration Guide**: See `/home/user/unrdf/docs/v6/MIGRATION_PLAN.md`
 
@@ -186,9 +186,9 @@ node validation/run-all.mjs comprehensive
 
 | Feature | Deprecated | Removed | Alternative |
 |---------|-----------|---------|-------------|
-| N3 Store direct use | v6.0.0-alpha.1 | v7.0.0 | `@unrdf/oxigraph` |
-| Direct N3 imports | v6.0.0-alpha.1 | v6.0.0-rc.1 | `n3-justified-only.mjs` |
-| Legacy hooks API | v6.0.0-alpha.1 | v6.0.0 | New hooks with Oxigraph |
+| N3 Store direct use | vlatest.1 | vlatest | `@unrdf/oxigraph` |
+| Direct N3 imports | vlatest.1 | vlatest.1 | `n3-justified-only.mjs` |
+| Legacy hooks API | vlatest.1 | vlatest | New hooks with Oxigraph |
 
 ---
 
@@ -243,9 +243,9 @@ npm run validate
 
 ## Version Status
 
-**Current**: 6.0.0-alpha.1
-**Next**: 6.0.0-rc.1 (pending validation 12/12)
-**Stable**: 6.0.0 (pending production validation)
+**Current**: latest.1
+**Next**: latest.1 (pending validation 12/12)
+**Stable**: latest (pending production validation)
 
 **Validation Status**: 4/12 checks passing (as of 2025-12-27)
 

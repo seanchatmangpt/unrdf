@@ -10,7 +10,7 @@
 
 | Metric                    | Result                         |
 | ------------------------- | ------------------------------ |
-| **Overall Quality Score** | 8.5/10                         |
+| **Overall Quality Score** | latest/10                         |
 | **Extensions Analyzed**   | 14 (active in manifest)        |
 | **Extensions Found**      | 31 (total files)               |
 | **Syntax Validation**     | ✅ PASSED (0 errors)           |
@@ -239,7 +239,7 @@ export const overrides = [
 
 ## 5. Code Quality Analysis
 
-### 5.1 Async/Await Compliance
+### latest Async/Await Compliance
 
 ✅ **PASSED:** All handlers are async functions
 
@@ -254,7 +254,7 @@ node --check packages/kgc-cli/src/extensions/*.mjs
 # Result: ✅ All extension files have valid syntax
 ```
 
-### 5.2 Zod Schema Validation
+### latest Zod Schema Validation
 
 ✅ **PASSED:** All argsSchema entries are valid Zod schemas
 
@@ -273,7 +273,7 @@ node --check packages/kgc-cli/src/extensions/*.mjs
 - ✅ All schemas have `.describe()` annotations
 - ✅ All schemas implement `.parse()` method (verified)
 
-### 5.3 Error Handling
+### latest Error Handling
 
 ⚠️ **PARTIAL:** Most handlers are placeholders with minimal error handling
 
@@ -318,7 +318,7 @@ async run(ctx) {
 
 ✅ **CONCLUSION:** Error handling is centralized in registry/CLI layer (correct pattern - no OTEL in business logic per CLAUDE.md).
 
-### 5.4 Static Analysis Findings
+### latest Static Analysis Findings
 
 **No Critical Issues Found:**
 
@@ -531,7 +531,7 @@ grep -r "handler: async" packages/kgc-cli/src/extensions/ | wc -l
 | Error Handling        | 8/10  | ⚠️ Centralized (correct) |
 | Documentation         | 7/10  | ⚠️ Coverage gaps         |
 
-**Overall Quality Score:** 8.5/10
+**Overall Quality Score:** latest/10
 
 ### Determinism Proof
 

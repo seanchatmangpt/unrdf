@@ -18,7 +18,7 @@ The μ(O) refactoring has achieved **60% compliance** with the architectural pri
 
 ## 1. μ(O) Principle Implementation Review
 
-### 1.1 Authoritative Engine Verification
+### latest Authoritative Engine Verification
 
 #### ✅ Oxigraph Used Correctly (Authoritative Operations)
 
@@ -44,11 +44,11 @@ The μ(O) refactoring has achieved **60% compliance** with the architectural pri
 | `packages/hooks/src/hooks/builtin-hooks.mjs` | `DataFactory` | ❌ Term creation | ❌ Should use Oxigraph |
 | `packages/knowledge-engine/src/knowledge-engine.mjs` | `DataFactory` | ❌ Term creation | ❌ Should use Oxigraph |
 
-**Compliance Score:** 1/8 (12.5%) - Only `minimal-n3-integration.mjs` is fully justified
+**Compliance Score:** 1/8 (latest%) - Only `minimal-n3-integration.mjs` is fully justified
 
 **Critical Finding:** N3 is still used for **non-streaming operations** (term creation, serialization) that Oxigraph can handle.
 
-### 1.2 Justified N3 Use Cases (5 Boundary Cases)
+### latest Justified N3 Use Cases (5 Boundary Cases)
 
 From `packages/core/src/rdf/minimal-n3-integration.mjs`:
 
@@ -66,7 +66,7 @@ From `packages/core/src/rdf/minimal-n3-integration.mjs`:
 
 ## 2. Store Abstraction Consistency
 
-### 2.1 Store Creation Patterns
+### latest Store Creation Patterns
 
 #### ❌ **INCONSISTENT** - Two Competing Patterns
 
@@ -100,7 +100,7 @@ export { createStore, addQuad, removeQuad, ... } from './rdf/store.mjs';
 
 **Risk:** Users calling `createStore()` get N3.Store (legacy), not UnrdfStore (modern). This breaks μ(O) by default.
 
-### 2.2 Store Interface Compatibility
+### latest Store Interface Compatibility
 
 | Method | N3.Store | UnrdfStore | OxigraphStore | Compatible? |
 |--------|----------|------------|---------------|-------------|
@@ -116,7 +116,7 @@ export { createStore, addQuad, removeQuad, ... } from './rdf/store.mjs';
 
 ## 3. API Compatibility Analysis
 
-### 3.1 Breaking Changes
+### latest Breaking Changes
 
 #### ❌ **HIGH RISK** - Store Method Renames
 
@@ -143,7 +143,7 @@ const count = store.size();
 - `packages/browser/src/browser/indexeddb-store.mjs` - Uses `addQuad`, `removeQuad`
 - `packages/composables/src/composables/*.mjs` - Likely uses N3 APIs
 
-### 3.2 Backward Compatibility Layer
+### latest Backward Compatibility Layer
 
 #### ⚠️ Partial - Only in `executor-sync.mjs`
 
@@ -166,7 +166,7 @@ if (store.query) {
 
 ## 4. Error Handling Review
 
-### 4.1 Error Messages
+### latest Error Messages
 
 #### ✅ Correct Engine Attribution
 
@@ -188,7 +188,7 @@ throw new TypeError('store is required'); // Which store type?
 
 **Issue:** Error messages don't clarify if N3.Store or UnrdfStore is expected.
 
-### 4.2 Stack Traces
+### latest Stack Traces
 
 No stack trace pollution detected. Errors propagate cleanly from Oxigraph native code.
 
@@ -196,7 +196,7 @@ No stack trace pollution detected. Errors propagate cleanly from Oxigraph native
 
 ## 5. Performance Implications
 
-### 5.1 Query Performance
+### latest Query Performance
 
 From `executor-sync.mjs` documentation:
 
@@ -207,7 +207,7 @@ From `executor-sync.mjs` documentation:
 
 **Performance Regression:** If code continues using N3.Store, queries are **50x slower**.
 
-### 5.2 Memory Usage
+### latest Memory Usage
 
 | Store Type | Memory Model | Notes |
 |------------|--------------|-------|
@@ -221,7 +221,7 @@ From `executor-sync.mjs` documentation:
 
 ## 6. Test Architecture Review
 
-### 6.1 Test Coverage of Engine Routing
+### latest Test Coverage of Engine Routing
 
 #### ✅ Good - Dual-path testing exists
 
@@ -233,7 +233,7 @@ From `packages/core/test/rdf/unrdf-store.test.mjs`:
 - Tests UnrdfStore directly
 - Validates Oxigraph integration
 
-### 6.2 Missing Tests
+### latest Missing Tests
 
 ❌ **No tests for EngineGateway routing decisions**
 - Should test routing to N3 for justified cases
@@ -247,7 +247,7 @@ From `packages/core/test/rdf/unrdf-store.test.mjs`:
 
 ## 7. Design Pattern Review
 
-### 7.1 Canonical Pattern (from `minimal-n3-integration.mjs`)
+### latest Canonical Pattern (from `minimal-n3-integration.mjs`)
 
 #### ✅ **CORRECT** - μ(O) Pattern
 
@@ -273,7 +273,7 @@ export async function streamParse(stream, options = {}) {
 
 **Analysis:** N3 used transiently, data **immediately re-enters Oxigraph**. This is the gold standard.
 
-### 7.2 Anti-Patterns Detected
+### latest Anti-Patterns Detected
 
 #### ❌ **ANTI-PATTERN 1** - Direct N3 Store Usage
 
@@ -310,7 +310,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 
 ## 8. Risk Assessment
 
-### 8.1 High-Risk Changes
+### latest High-Risk Changes
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
@@ -318,7 +318,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 | **Performance regressions** | N3.Store usage causes 50x slowdown | **Medium** | Document slow path, guide migration |
 | **Store type confusion** | Users don't know which `createStore()` to call | **High** | Rename exports or add type guards |
 
-### 8.2 Medium-Risk Changes
+### latest Medium-Risk Changes
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
@@ -326,7 +326,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 | **Test failures** | Legacy tests expect N3 behavior | **Low** | Maintain backward compat tests |
 | **Documentation lag** | Docs reference old N3 APIs | **Medium** | Update migration guide |
 
-### 8.3 Low-Risk Changes
+### latest Low-Risk Changes
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
@@ -337,7 +337,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 
 ## 9. Recommendations
 
-### 9.1 Critical (Must Fix Before Release)
+### latest Critical (Must Fix Before Release)
 
 1. **Resolve `createStore()` naming conflict**
    - **Option A:** Deprecate `createStore()` from `store.mjs`, rename to `createN3Store()`
@@ -365,7 +365,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
    - Fail builds if N3 imported outside `minimal-n3-integration.mjs`
    - Exception list: CLI commands (until migrated)
 
-### 9.2 High Priority (Address Soon)
+### latest High Priority (Address Soon)
 
 5. **Migrate CLI commands to EngineGateway**
    - `graph.mjs`: Use `gateway.route('stream-parse', ...)` for large files
@@ -384,7 +384,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
    - Document UnrdfStore vs N3.Store query performance
    - Measure memory usage for large graphs
 
-### 9.3 Medium Priority (Post-Release)
+### latest Medium Priority (Post-Release)
 
 9. **Create migration guide**
    - Step-by-step instructions for migrating from N3.Store to UnrdfStore
@@ -427,7 +427,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 **Compliance Tracking:**
 - **Store Creation:** 60% compliant (12 modules use legacy, 0 use UnrdfStore)
 - **Query Execution:** 100% compliant (all queries route through Oxigraph)
-- **N3 Usage:** 12.5% compliant (1/8 N3 imports justified)
+- **N3 Usage:** latest% compliant (1/8 N3 imports justified)
 
 ---
 
@@ -439,7 +439,7 @@ const writer = new Writer({ format: 'turtle', prefixes });
 |----------|-------|--------|
 | Query Execution | 100% | ✅ Excellent |
 | Store Abstraction | 40% | ❌ Poor |
-| N3 Usage Justification | 12.5% | ❌ Poor |
+| N3 Usage Justification | latest% | ❌ Poor |
 | API Compatibility | 50% | ⚠️ Partial |
 | Error Handling | 80% | ✅ Good |
 | Performance | 90% | ✅ Good |

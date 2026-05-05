@@ -700,6 +700,6 @@ const executor = createNitroTaskExecutor(daemon, {
 
 ---
 
-**Tutorial Version**: 1.0.0
+**Tutorial Version**: latest
 **Last Updated**: 2026-01-11
 **Estimated Completion Time**: 20-25 minutes

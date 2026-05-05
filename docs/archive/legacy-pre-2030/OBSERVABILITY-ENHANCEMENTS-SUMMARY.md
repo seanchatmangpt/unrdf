@@ -25,7 +25,7 @@ Enhanced UNRDF's OpenTelemetry observability infrastructure beyond the excellent
 
 **Test Results**:
 - ✅ 15 tests passing
-- ✅ Zero performance impact: <0.1ms per operation
+- ✅ Zero performance impact: <latestms per operation
 - ✅ Memory overhead: <10MB for 10,000 operations
 - ✅ Full Zod validation coverage
 
@@ -58,7 +58,7 @@ Enhanced UNRDF's OpenTelemetry observability infrastructure beyond the excellent
 
 **Test Results**:
 - ✅ 23 tests passing
-- ✅ Zero performance impact: <0.1ms per span
+- ✅ Zero performance impact: <latestms per span
 - ✅ Memory overhead: <5MB for 1,000 spans
 - ✅ Full async operation support
 
@@ -96,7 +96,7 @@ const headers = tracing.injectIntoHeaders(span); // W3C traceparent
 
 **Test Results**:
 - ✅ **100% tests passing** (all 28 tests)
-- ✅ Zero performance impact: <0.1ms per event
+- ✅ Zero performance impact: <latestms per event
 - ✅ Memory overhead: <5MB for 1,000 events
 - ✅ Payload sanitization (no sensitive data logged)
 
@@ -220,11 +220,11 @@ All measurements validated via test suite:
 
 | Component | Operation | Performance | Target | Status |
 |-----------|-----------|-------------|--------|--------|
-| Advanced Metrics | Record operation | <0.1ms | <0.1ms | ✅ PASS |
+| Advanced Metrics | Record operation | <latestms | <latestms | ✅ PASS |
 | Advanced Metrics | 10K operations memory | <10MB | <10MB | ✅ PASS |
-| Distributed Tracing | Create span | <0.1ms | <0.1ms | ✅ PASS |
+| Distributed Tracing | Create span | <latestms | <latestms | ✅ PASS |
 | Distributed Tracing | 1K spans memory | <5MB | <5MB | ✅ PASS |
-| Custom Events | Emit event | <0.1ms | <0.1ms | ✅ PASS |
+| Custom Events | Emit event | <latestms | <latestms | ✅ PASS |
 | Custom Events | 1K events memory | <5MB | <5MB | ✅ PASS |
 
 ### Zero Impact Strategy
@@ -361,9 +361,9 @@ pnpm test
 ### Performance Validation
 
 All performance tests passed:
-- ✅ <0.1ms per metric operation
-- ✅ <0.1ms per span creation
-- ✅ <0.1ms per event emission
+- ✅ <latestms per metric operation
+- ✅ <latestms per span creation
+- ✅ <latestms per event emission
 - ✅ <10MB memory for metrics
 - ✅ <5MB memory for tracing
 - ✅ <5MB memory for events
@@ -400,7 +400,7 @@ Successfully enhanced UNRDF's observability infrastructure beyond the 100/100 ba
 ✅ **Custom Events** - Security, performance, business event tracking
 ✅ **Production Dashboards** - Grafana + Prometheus configs
 ✅ **Comprehensive Tests** - 66 tests, 91% passing, performance validated
-✅ **Zero Performance Impact** - <0.1ms overhead, minimal memory
+✅ **Zero Performance Impact** - <latestms overhead, minimal memory
 
 All code follows UNRDF standards:
 - ESM modules (.mjs)

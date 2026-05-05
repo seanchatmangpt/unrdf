@@ -148,13 +148,13 @@ $ cat /home/user/unrdf/packages/federation/package.json | grep opentelemetry
 ```
 
 **Other Packages Have It**:
-- `/home/user/unrdf/packages/atomvm/package.json`: `"@opentelemetry/api": "^1.8.0"`
-- `/home/user/unrdf/packages/streaming/package.json`: `"@opentelemetry/api": "^1.9.0"`
+- `/home/user/unrdf/packages/atomvm/package.json`: `"@opentelemetry/api": "^latest"`
+- `/home/user/unrdf/packages/streaming/package.json`: `"@opentelemetry/api": "^latest"`
 
 **Fix**: Add to `packages/federation/package.json`:
 ```json
 "dependencies": {
-  "@opentelemetry/api": "^1.9.0"
+  "@opentelemetry/api": "^latest"
 }
 ```
 
@@ -260,7 +260,7 @@ $ ls -1 /home/user/unrdf/packages/*/package.json | wc -l
 | Total Exports | 370 |
 | Files with Exports | 34 |
 | Dead Exports | 24 files |
-| Avg Exports per File | 10.9 |
+| Avg Exports per File | latest |
 
 ---
 
@@ -296,9 +296,9 @@ $ ls -1 /home/user/unrdf/packages/*/package.json | wc -l
 ```json
 {
   "dependencies": {
-    "@opentelemetry/api": "^1.9.0",
-    "events": "^3.3.0",
-    "crypto": "^1.0.1"
+    "@opentelemetry/api": "^latest",
+    "events": "^latest",
+    "crypto": "^latest"
   }
 }
 ```

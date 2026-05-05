@@ -327,7 +327,7 @@ Pending: 26 (58%)
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: latest
 **Last Updated**: 2025-12-27
 **Frozen for V6**: Yes
 **Next Review**: V7 planning

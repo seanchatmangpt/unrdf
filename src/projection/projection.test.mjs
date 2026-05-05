@@ -93,8 +93,8 @@ const sampleReceipt = {
   outputHash: 'outputhash456',
   beforeHash: null,
   toolchainVersion: {
-    node: 'v22.0.0',
-    packages: { zod: '^4.0.0' },
+    node: '[VERSION]',
+    packages: { zod: '^[VERSION]' },
   },
 };
 
@@ -302,7 +302,7 @@ describe('DiataxisRenderer', () => {
   beforeEach(() => {
     renderer = new DiataxisRenderer({
       projectName: 'TestProject',
-      version: '1.0.0',
+      version: '[VERSION]',
       audiences: ['user', 'contributor'],
     });
   });
@@ -354,7 +354,7 @@ describe('ProjectionPipeline', () => {
   beforeEach(() => {
     pipeline = new ProjectionPipeline({
       projectName: 'TestProject',
-      version: '1.0.0',
+      version: '[VERSION]',
     });
   });
 

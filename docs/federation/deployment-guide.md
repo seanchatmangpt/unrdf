@@ -25,8 +25,8 @@ This guide covers deploying a distributed federation of RDF stores using UNRDF's
 
 ## Prerequisites
 
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0
+- Node.js >= latest
+- pnpm >= latest
 - Docker (optional, for containerized deployment)
 - Kubernetes cluster (optional, for k8s deployment)
 

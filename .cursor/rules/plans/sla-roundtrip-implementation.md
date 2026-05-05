@@ -1,12 +1,12 @@
 # SLA Implementation for JS→Erlang→JS Roundtrips
 
 ## Objective
-Implement strict SLA tracking (<10ms latency, <0.1% error rate) for JS→Erlang→JS roundtrips with poka-yoke prevention of SLA violations.
+Implement strict SLA tracking (<10ms latency, <latest% error rate) for JS→Erlang→JS roundtrips with poka-yoke prevention of SLA violations.
 
 ## Scope
 - Roundtrip measurement: JS calls Erlang (via AtomVM) → Erlang processes → Erlang calls back to JS (via bridge) → JS responds
 - Metrics: Latency (end-to-end) + error rate
-- Thresholds: <10ms latency, <0.1% error rate
+- Thresholds: <10ms latency, <latest% error rate
 - Poka-yoke: Prevent operations that would violate SLA
 
 ## Implementation Plan
@@ -24,7 +24,7 @@ Implement strict SLA tracking (<10ms latency, <0.1% error rate) for JS→Erlang�
 - `startRoundtrip(operationType, operationId)` - Start timing, returns roundtrip context
 - `endRoundtrip(operationId, success)` - End timing, record metrics
 - `getSLAStats(operationType)` - Get current SLA stats (latency, error rate, count)
-- `checkSLACompliance(operationType)` - Check if current metrics meet SLA (<10ms, <0.1%)
+- `checkSLACompliance(operationType)` - Check if current metrics meet SLA (<10ms, <latest%)
 - `canStartRoundtrip(operationType)` - Poka-yoke: Check if operation can start without violating SLA
 
 **Data structure**:
@@ -89,12 +89,12 @@ Implement strict SLA tracking (<10ms latency, <0.1% error rate) for JS→Erlang�
 
 **File**: `packages/atomvm/src/roundtrip-sla.mjs`
 - Before starting roundtrip, check if current error rate would exceed threshold
-- If error rate > 0.1%, reject operation (prevent SLA violation)
+- If error rate > latest%, reject operation (prevent SLA violation)
 - If average latency > 10ms, log warning but allow (latency is per-operation, not pre-checkable)
 - Add validation functions:
   - `canStartRoundtrip(operationType)` - Check if operation can start without violating SLA
   - `validateRoundtripLatency(latency)` - Validate latency meets SLA (<10ms)
-  - `validateErrorRate(errorRate)` - Validate error rate meets SLA (<0.1%)
+  - `validateErrorRate(errorRate)` - Validate error rate meets SLA (<latest%)
   - `enforceSLA(operationType)` - Poka-yoke: Throw error if SLA would be violated
 
 **Implementation**:
@@ -103,8 +103,8 @@ function canStartRoundtrip(operationType) {
   const stats = getSLAStats(operationType);
   if (stats.count === 0) return true; // No history, allow
   const errorRate = stats.errorCount / stats.count;
-  if (errorRate > 0.001) { // 0.1%
-    throw new Error(`SLA violation prevented: Error rate ${(errorRate * 100).toFixed(2)}% exceeds 0.1% threshold`);
+  if (errorRate > latest) { // latest%
+    throw new Error(`SLA violation prevented: Error rate ${(errorRate * 100).toFixed(2)}% exceeds latest% threshold`);
   }
   return true;
 }
@@ -129,15 +129,15 @@ function canStartRoundtrip(operationType) {
 **File**: `validation/atomvm-playground.mjs`
 - Add SLA-specific validation rules
 - Check that roundtrip latency < 10ms
-- Check that error rate < 0.1%
+- Check that error rate < latest%
 - Add to `performanceThresholds`:
   - `maxRoundtripLatency: 10`
-  - `maxRoundtripErrorRate: 0.001`
+  - `maxRoundtripErrorRate: latest`
 
 **File**: `packages/validation/src/otel-validator-core.mjs`
 - Add `_validateRoundtripSLA()` method
 - Check OTEL span attributes for roundtrip metrics
-- Validate against strict thresholds (<10ms, <0.1%)
+- Validate against strict thresholds (<10ms, <latest%)
 - Add violations if thresholds exceeded
 
 ### 8. Add SLA Monitoring and Reporting
@@ -154,7 +154,7 @@ function canStartRoundtrip(operationType) {
 ### 9. Update Documentation
 
 **File**: `packages/atomvm/README.md`
-- Document SLA requirements (<10ms latency, <0.1% error rate)
+- Document SLA requirements (<10ms latency, <latest% error rate)
 - Document roundtrip measurement methodology
 - Document poka-yoke enforcement (operations rejected if error rate too high)
 
@@ -192,8 +192,8 @@ function canStartRoundtrip(operationType) {
 
 ### Poka-Yoke Enforcement
 
-- **Pre-operation check**: Before starting roundtrip, check if error rate would exceed 0.1%
-  - If yes, throw error: "SLA violation prevented: Error rate X% exceeds 0.1% threshold"
+- **Pre-operation check**: Before starting roundtrip, check if error rate would exceed latest%
+  - If yes, throw error: "SLA violation prevented: Error rate X% exceeds latest% threshold"
   - This prevents operations that would violate SLA
 - **Post-operation validation**: After roundtrip, validate latency < 10ms
   - If exceeded, log warning but don't reject (may be transient)
@@ -244,8 +244,8 @@ function canStartRoundtrip(operationType) {
 
 - Roundtrip latency measured accurately (JS→Erlang→JS)
 - Error rate calculated correctly (failures / total)
-- Poka-yoke prevents operations when error rate > 0.1%
-- SLA validation passes when metrics meet thresholds (<10ms, <0.1%)
+- Poka-yoke prevents operations when error rate > latest%
+- SLA validation passes when metrics meet thresholds (<10ms, <latest%)
 - OTEL spans include roundtrip metrics
 - Documentation complete
 - All tests pass

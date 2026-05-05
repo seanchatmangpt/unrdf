@@ -119,7 +119,7 @@ Represents an UNRDF monorepo package with maturity assessment.
 <https://unrdf.org/ontology/maturity> a owl:Ontology ;
     rdfs:label "UNRDF Package Maturity Ontology" ;
     rdfs:comment "Ontology for assessing and tracking package maturity in UNRDF monorepo" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 # ============ CLASSES ============
 
@@ -338,7 +338,7 @@ mat:SynergyCategoryShape a sh:NodeShape ;
 # Package: core
 unrdf:core a mat:Package ;
     mat:name "core" ;
-    mat:version "5.0.0-beta.1" ;
+    mat:version "latest-beta.1" ;
     mat:hasMaturityLevel mat:L4_Stable ;
     mat:maturityScore 87.5 ;
     mat:apiStability "stable" ;

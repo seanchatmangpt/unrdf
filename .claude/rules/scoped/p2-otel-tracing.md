@@ -105,7 +105,7 @@ span.setAttribute('federation.receipt_hash', hash);
 ```javascript
 import { trace } from '@opentelemetry/api';
 
-const tracer = trace.getTracer('@unrdf/federation', '26.4.9');
+const tracer = trace.getTracer('@unrdf/federation', 'latest');
 ```
 
 ## Export Configuration

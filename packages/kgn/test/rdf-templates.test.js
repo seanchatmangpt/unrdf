@@ -54,7 +54,7 @@ describe('RDF Templates Integration', () => {
     it('should generate complete OWL ontology with classes and properties', () => {
       const data = {
         ontologyIRI: 'http://example.org/ontology/library',
-        version: '1.0.0',
+        version: 'latest',
         title: 'Library Ontology',
         description: 'An ontology for library systems',
         creator: 'http://example.org/people/librarian',
@@ -97,7 +97,7 @@ describe('RDF Templates Integration', () => {
       const result = env.render('ontology.njk', data);
 
       // Check metadata
-      expect(result).toContain('owl:versionInfo "1.0.0"');
+      expect(result).toContain('owl:versionInfo "latest"');
       expect(result).toContain('dc:description "An ontology for library systems"@en');
       expect(result).toContain('dcterms:creator <http://example.org/people/librarian>');
       expect(result).toContain('dcterms:created "2026-01-11"^^xsd:date');
@@ -129,7 +129,7 @@ describe('RDF Templates Integration', () => {
         schemaIRI: 'http://example.org/schema/vocab',
         title: 'Document Vocabulary',
         description: 'A vocabulary for documents',
-        version: '1.0.0',
+        version: 'latest',
         now: new Date(),
         classes: [
           {

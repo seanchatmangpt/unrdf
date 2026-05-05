@@ -1,4 +1,4 @@
-# Receipt Architecture & Patterns - UNRDF v6.0.0
+# Receipt Architecture & Patterns - UNRDF latest
 
 **Status**: Complete V6 Receipt Architecture Analysis  
 **Date**: 2025-12-28  

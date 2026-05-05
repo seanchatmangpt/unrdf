@@ -441,12 +441,12 @@ testCase('JWTSchema rejects invalid format', () => {
 });
 
 testCase('IPAddressSchema validates IPv4', () => {
-  const result = IPAddressSchema.safeParse('192.168.1.1');
+  const result = IPAddressSchema.safeParse('[VERSION].1');
   assert.ok(result.success);
 });
 
 testCase('IPAddressSchema rejects invalid IP', () => {
-  const result = IPAddressSchema.safeParse('999.999.999.999');
+  const result = IPAddressSchema.safeParse('[VERSION].999');
   assert.ok(!result.success);
 });
 

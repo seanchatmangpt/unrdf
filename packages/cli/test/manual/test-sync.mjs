@@ -140,7 +140,7 @@ function generateConfig(ontologyPath, templatePath, outputDir) {
   return `
 [project]
 name = "manual-test-sync"
-version = "1.0.0"
+version = "[VERSION]"
 description = "Manual test for sync command"
 
 [ontology]

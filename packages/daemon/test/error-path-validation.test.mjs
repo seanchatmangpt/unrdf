@@ -1001,21 +1001,21 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
       // Simulate operation with stored version
       const storedReceipt = {
         operationId: 'rollback-op',
-        version: 'v1.0.0',
+        version: '[VERSION]',
         timestamp: Date.now(),
         hash: 'abc123',
       };
 
       // Simulate current version
-      const currentVersion = 'v2.0.0';
+      const currentVersion = '[VERSION]';
 
       // Act: Check version match
       const versionMismatch = storedReceipt.version !== currentVersion;
 
       // Assert
       expect(versionMismatch).toBe(true);
-      expect(storedReceipt.version).toBe('v1.0.0');
-      expect(currentVersion).toBe('v2.0.0');
+      expect(storedReceipt.version).toBe('[VERSION]');
+      expect(currentVersion).toBe('[VERSION]');
     });
 
     it('should prevent rollback with version mismatch', async () => {
@@ -1053,11 +1053,11 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
 
       const receipt = {
         operationId: 'op-1',
-        version: 'v1.0.0',
-        expectedVersion: 'v1.0.0',
+        version: '[VERSION]',
+        expectedVersion: '[VERSION]',
       };
 
-      const currentVersion = 'v2.0.0';
+      const currentVersion = '[VERSION]';
 
       // Simulate version check with logging
       if (receipt.version !== currentVersion) {
@@ -1106,8 +1106,8 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
 
     it('should suggest compatibility check on mismatch', async () => {
       // Arrange
-      const receipt = { version: 'v1.0.0', operationId: 'op-1' };
-      const currentVersion = 'v1.1.0';
+      const receipt = { version: '[VERSION]', operationId: 'op-1' };
+      const currentVersion = '[VERSION]';
 
       // Simulate compatibility check
       const isCompatible = receipt.version.split('.')[0] === currentVersion.split('.')[0]; // Major version match
@@ -1116,8 +1116,8 @@ describe('Error Path Validation - JTBD Failure Modes', () => {
       expect(isCompatible).toBe(true); // v1.x compatible with v1.y
 
       // Now test true mismatch
-      const receipt2 = { version: 'v1.0.0', operationId: 'op-2' };
-      const currentVersion2 = 'v2.0.0';
+      const receipt2 = { version: '[VERSION]', operationId: 'op-2' };
+      const currentVersion2 = '[VERSION]';
       const isCompatible2 = receipt2.version.split('.')[0] === currentVersion2.split('.')[0];
 
       expect(isCompatible2).toBe(false); // v1.x not compatible with v2.x

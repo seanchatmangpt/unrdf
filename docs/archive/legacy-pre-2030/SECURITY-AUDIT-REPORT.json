@@ -213,7 +213,7 @@
     "kgc_multiverse_package": {
       "command": "cd packages/kgc-multiverse && npm test",
       "result": "141/141 tests passed",
-      "duration": "3.44s",
+      "duration": "latests",
       "tests": [
         "guards.test.mjs: 35 tests passed (12ms)",
         "morphism.test.mjs: 17 tests passed (25ms)",
@@ -226,7 +226,7 @@
     "adversarial_tests": {
       "command": "cd packages/integration-tests && npm test test/adversarial",
       "result": "25/25 tests passed",
-      "duration": "1.24s",
+      "duration": "latests",
       "tests": [
         "xss-injection.adversarial.test.mjs: 5 tests passed (27ms)",
         "fault-injection.adversarial.test.mjs: 5 tests passed (116ms)",
@@ -341,7 +341,7 @@
     "what_breaks_if_wrong": "Receipt chain integrity, worker isolation, input validation - ALL VERIFIED via tests",
     "whats_the_evidence": "211/211 tests passed, zero failures, full command output logged"
   },
-  "audit_conclusion": "UNRDF v6.0.0 Phase 3-5 implementation demonstrates enterprise-grade security with comprehensive cryptographic protections, zero unvalidated inputs, robust worker thread isolation, and verified receipt chain integrity. All 211 tests passed. GA READY with no critical fixes required. Security score: 98/100.",
+  "audit_conclusion": "UNRDF vlatest Phase 3-5 implementation demonstrates enterprise-grade security with comprehensive cryptographic protections, zero unvalidated inputs, robust worker thread isolation, and verified receipt chain integrity. All 211 tests passed. GA READY with no critical fixes required. Security score: 98/100.",
   "signed_by": "Agent 6 - Security Manager",
   "audit_hash": "64f48bc61b7eea99471edf32d184dbb617bbd72435ed2e8bfb9a04d47e2b6fac"
 }

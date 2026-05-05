@@ -421,6 +421,6 @@ console.log('Metrics retention:', daemon.config.metricsRetentionMs); // ms
 
 ---
 
-**Version**: 1.0.0  
+**Version**: latest  
 **Last Updated**: 2026-01-10  
 **Maintainer**: UNRDF Core Team

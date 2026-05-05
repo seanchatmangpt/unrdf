@@ -251,7 +251,7 @@ Phase 4: End-to-End Integration
 ```javascript
 {
   name: "safe-server",
-  version: "1.0.0",
+  version: "latest",
   tools: "Use tool() DSL with validated parameters",
   transport: "Start with 'stdio', upgrade to HTTP with TLS",
   metadata: {

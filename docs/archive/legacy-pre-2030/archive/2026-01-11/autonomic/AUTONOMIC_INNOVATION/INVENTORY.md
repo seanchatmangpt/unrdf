@@ -10,7 +10,7 @@
 
 ### 1. @unrdf/core
 - **Path**: `packages/core/src/index.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - RDF operations & data model
   - SPARQL execution engine
@@ -26,7 +26,7 @@
 
 ### 2. @unrdf/oxigraph
 - **Path**: `packages/oxigraph/src/store.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - Graph store implementation (Oxigraph WASM backend)
   - SPARQL queries & mutations
@@ -37,7 +37,7 @@
 
 ### 3. @unrdf/kgc-4d
 - **Path**: `packages/kgc-4d/src/index.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - **freeze.mjs** - Universe snapshots, nanosecond timestamps
   - **guards.mjs** - Change guards & invariant enforcement
@@ -53,7 +53,7 @@
 
 ### 4. @unrdf/hooks
 - **Path**: `packages/hooks/src/index.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - Policy definition framework
   - Hook execution & chaining
@@ -64,7 +64,7 @@
 
 ### 5. @unrdf/streaming
 - **Path**: `packages/streaming/src/index.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - Change feeds & event streams
   - Real-time synchronization
@@ -75,7 +75,7 @@
 
 ### 6. @unrdf/collab
 - **Path**: `packages/collab/src/index.mjs`
-- **Version**: 1.0.0
+- **Version**: latest
 - **Provides**:
   - CRDT-based collaboration (Yjs)
   - Offline-first architecture
@@ -87,7 +87,7 @@
 
 ### 7. @unrdf/consensus
 - **Path**: `packages/consensus/src/index.mjs`
-- **Version**: 1.0.0
+- **Version**: latest
 - **Provides**:
   - Raft consensus algorithm
   - Cluster management
@@ -100,7 +100,7 @@
 
 ### 8. @unrdf/federation
 - **Path**: `packages/federation/src/index.mjs`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Provides**:
   - Peer discovery
   - Distributed SPARQL queries
@@ -112,7 +112,7 @@
 
 ### 9. @unrdf/blockchain
 - **Path**: `packages/blockchain/src/index.mjs`
-- **Version**: 1.0.0
+- **Version**: latest
 - **Provides**:
   - Cryptographic receipt anchoring
   - Merkle proof generation
@@ -125,7 +125,7 @@
 
 ### 10. @unrdf/caching
 - **Path**: `packages/caching/src/index.mjs`
-- **Version**: 1.0.0
+- **Version**: latest
 - **Provides**:
   - Multi-layer caching (LRU + Redis)
   - SPARQL query caching
@@ -145,24 +145,24 @@
 ---
 
 ## Available Hashing & Canonicalization
-- **hash-wasm** (v4.12.0) - Workspace dep
-- **rdf-canonize** (v5.0.0) - Available in @unrdf/core
-- **@noble/hashes** (v1.3.3) - Available in @unrdf/blockchain
-- **isomorphic-git** (v1.35.1) - Available in @unrdf/kgc-4d
+- **hash-wasm** (vlatest) - Workspace dep
+- **rdf-canonize** (vlatest) - Available in @unrdf/core
+- **@noble/hashes** (vlatest) - Available in @unrdf/blockchain
+- **isomorphic-git** (vlatest) - Available in @unrdf/kgc-4d
 
 ---
 
 ## Determinism Guarantees
 - **Node.js ESM** - All source is `.mjs` (no CommonJS)
-- **Zod v4.1.13** - Validation (workspace override)
+- **Zod vlatest** - Validation (workspace override)
 - **Vitest** - Deterministic test runner (no flakes)
 - **Pnpm** - Locked dependency tree
 
 ---
 
 ## Execution Environment
-- **Node.js**: ≥18.0.0
-- **Pnpm**: ≥7.0.0
+- **Node.js**: ≥latest
+- **Pnpm**: ≥latest
 - **Type**: "module" (ESM only)
 - **Output**: `.mjs` files only
 

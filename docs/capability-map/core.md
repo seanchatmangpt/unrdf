@@ -1,9 +1,9 @@
 # Capability Map: @unrdf/core
 
-**Package Version**: 6.0.0-alpha.1
+**Package Version**: latest-alpha.1
 **Location**: `/home/user/unrdf/packages/core`
 **Entry Point**: `src/index.mjs`
-**Runtime Support**: Node.js ≥18.0.0, Browser (ES2020+)
+**Runtime Support**: Node.js ≥latest, Browser (ES2020+)
 
 ---
 

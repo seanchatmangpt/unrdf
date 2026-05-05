@@ -75,7 +75,7 @@ Create `/tmp/sync-demo/ontology/user-api.ttl`:
     a owl:Ontology ;
     rdfs:label "User Management API" ;
     rdfs:comment "API ontology for user management with CRUD operations" ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 # =============================================================================
 # DOMAIN CLASSES
@@ -390,11 +390,11 @@ Create `/tmp/sync-demo/templates/openapi-spec.yaml.njk`:
 to: openapi.yaml
 description: OpenAPI 3.0 specification generated from RDF ontology
 ---
-openapi: "3.0.3"
+openapi: "latest"
 info:
   title: {{ project.name | default('Generated API') }}
   description: {{ project.description | default('API generated from RDF ontology') }}
-  version: {{ project.version | default('1.0.0') }}
+  version: {{ project.version | default('latest') }}
   contact:
     name: API Support
     email: support@example.com
@@ -760,7 +760,7 @@ Create `/tmp/sync-demo/unrdf.toml`:
 
 [project]
 name = "User Management API"
-version = "1.0.0"
+version = "latest"
 description = "Complete API artifacts generated from RDF ontology"
 
 [ontology]

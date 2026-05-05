@@ -18,7 +18,7 @@
 
 ## 1. Extension Configuration Examples
 
-### Example 1.1: Basic VS Code Settings
+### Example latest: Basic VS Code Settings
 
 **File**: `.vscode/settings.json` (workspace-specific)
 
@@ -41,7 +41,7 @@
 
 ---
 
-### Example 1.2: Auto-Accept Mode (Testing/Sandbox)
+### Example latest: Auto-Accept Mode (Testing/Sandbox)
 
 **File**: `.vscode/settings.json`
 
@@ -60,7 +60,7 @@
 
 ---
 
-### Example 1.3: Highly Restricted Mode (Production Codebase)
+### Example latest: Highly Restricted Mode (Production Codebase)
 
 **File**: `.vscode/settings.json`
 
@@ -81,7 +81,7 @@
 
 ---
 
-### Example 1.4: Terminal-Style Mode (CLI Users)
+### Example latest: Terminal-Style Mode (CLI Users)
 
 **File**: `.vscode/settings.json`
 
@@ -98,7 +98,7 @@
 
 ---
 
-### Example 1.5: Multi-Root Workspace Configuration
+### Example latest: Multi-Root Workspace Configuration
 
 **File**: `project.code-workspace`
 
@@ -129,7 +129,7 @@
 
 ## 2. MCP Server Setup Examples
 
-### Example 2.1: GitHub MCP Server
+### Example latest: GitHub MCP Server
 
 **Setup** (CLI required):
 ```bash
@@ -169,7 +169,7 @@ Claude: [Uses GitHub MCP to fetch PRs]
 
 ---
 
-### Example 2.2: Filesystem MCP Server
+### Example latest: Filesystem MCP Server
 
 **Setup**:
 ```bash
@@ -199,7 +199,7 @@ Claude: [Uses filesystem MCP to access files]
 
 ---
 
-### Example 2.3: Database MCP Server (PostgreSQL)
+### Example latest: Database MCP Server (PostgreSQL)
 
 **Setup**:
 ```bash
@@ -232,7 +232,7 @@ Claude: [Queries PostgreSQL via MCP]
 
 ---
 
-### Example 2.4: Multiple MCP Servers (Stack-Specific)
+### Example latest: Multiple MCP Servers (Stack-Specific)
 
 **Configuration** (`~/.claude/settings.json`):
 ```json
@@ -271,7 +271,7 @@ Claude: [Queries PostgreSQL via MCP]
 
 ---
 
-### Example 2.5: Custom MCP Server
+### Example latest: Custom MCP Server
 
 **File**: `custom-mcp-server.mjs`
 
@@ -284,7 +284,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 const server = new Server(
   {
     name: 'custom-api-server',
-    version: '1.0.0',
+    version: 'latest',
   },
   {
     capabilities: {
@@ -362,7 +362,7 @@ Claude: [Uses custom MCP server to call API]
 
 ## 3. Custom Workflow Examples
 
-### Example 3.1: Plan-First Refactoring Workflow
+### Example latest: Plan-First Refactoring Workflow
 
 **Workflow**:
 ```
@@ -391,7 +391,7 @@ Claude: [Uses custom MCP server to call API]
 
 ---
 
-### Example 3.2: Multi-Tab Parallel Development
+### Example latest: Multi-Tab Parallel Development
 
 **Scenario**: Work on frontend and backend simultaneously
 
@@ -416,7 +416,7 @@ User switches between tabs to review progress
 
 ---
 
-### Example 3.3: Iterative Code Review Workflow
+### Example latest: Iterative Code Review Workflow
 
 **Workflow**:
 ```
@@ -439,7 +439,7 @@ User switches between tabs to review progress
 
 ---
 
-### Example 3.4: @-Mention Line Range Workflow
+### Example latest: @-Mention Line Range Workflow
 
 **Workflow**:
 ```
@@ -457,7 +457,7 @@ User switches between tabs to review progress
 
 ---
 
-### Example 3.5: LSP-Driven Bug Fix Workflow
+### Example latest: LSP-Driven Bug Fix Workflow
 
 **Workflow**:
 ```
@@ -472,7 +472,7 @@ User switches between tabs to review progress
 
 **Requirements**:
 - LSP plugin installed (e.g., vtsls for TypeScript)
-- Extension v2.0.74+
+- Extension vlatest+
 
 **Benefit**: Real-time error detection and fixing
 
@@ -480,7 +480,7 @@ User switches between tabs to review progress
 
 ## 4. Integration Examples
 
-### Example 4.1: Git Hooks Integration
+### Example latest: Git Hooks Integration
 
 **File**: `.git/hooks/pre-commit`
 
@@ -513,13 +513,13 @@ exit 0
 
 ---
 
-### Example 4.2: Task Runner Integration
+### Example latest: Task Runner Integration
 
 **File**: `.vscode/tasks.json`
 
 ```json
 {
-  "version": "2.0.0",
+  "version": "latest",
   "tasks": [
     {
       "label": "Claude Code: Analyze Performance",
@@ -562,13 +562,13 @@ exit 0
 
 ---
 
-### Example 4.3: Launch Configuration Integration
+### Example latest: Launch Configuration Integration
 
 **File**: `.vscode/launch.json`
 
 ```json
 {
-  "version": "0.2.0",
+  "version": "latest",
   "configurations": [
     {
       "type": "node",
@@ -586,7 +586,7 @@ exit 0
 **Associated Tasks** (`.vscode/tasks.json`):
 ```json
 {
-  "version": "2.0.0",
+  "version": "latest",
   "tasks": [
     {
       "label": "claude-code-review",
@@ -611,7 +611,7 @@ exit 0
 
 ---
 
-### Example 4.4: Snippet Integration
+### Example latest: Snippet Integration
 
 **File**: `.vscode/claude-code.code-snippets` (workspace-specific)
 
@@ -663,7 +663,7 @@ exit 0
 
 ---
 
-### Example 4.5: Extension API Integration (Custom Extension)
+### Example latest: Extension API Integration (Custom Extension)
 
 **File**: `my-claude-integration/extension.js`
 
@@ -717,7 +717,7 @@ module.exports = {
 
 ## 5. Troubleshooting Examples
 
-### Example 5.1: Debug Extension Not Loading
+### Example latest: Debug Extension Not Loading
 
 **Symptom**: Claude Code sidebar doesn't appear
 
@@ -725,7 +725,7 @@ module.exports = {
 ```bash
 # 1. Check VS Code version
 code --version
-# Should be >= 1.98.0
+# Should be >= latest
 
 # 2. Check extension installed
 code --list-extensions | grep anthropic
@@ -743,7 +743,7 @@ code --install-extension anthropic.claude-code
 
 ---
 
-### Example 5.2: Debug MCP Server Not Working
+### Example latest: Debug MCP Server Not Working
 
 **Symptom**: MCP tools not available in Claude Code
 
@@ -776,7 +776,7 @@ cat ~/.claude/logs/mcp-*.log
 
 ---
 
-### Example 5.3: Debug Permission Issues
+### Example latest: Debug Permission Issues
 
 **Symptom**: Claude Code can't read/write files
 
@@ -806,7 +806,7 @@ cat .claudeignore
 
 ---
 
-### Example 5.4: Debug LSP Not Providing Diagnostics
+### Example latest: Debug LSP Not Providing Diagnostics
 
 **Symptom**: Claude Code not detecting errors
 
@@ -814,7 +814,7 @@ cat .claudeignore
 ```bash
 # 1. Check extension version
 code --list-extensions --show-versions | grep anthropic
-# Should be >= 2.0.74
+# Should be >= latest
 
 # 2. Check LSP plugin installed
 claude mcp list | grep lsp
@@ -831,12 +831,12 @@ ps aux | grep -E "vtsls|pyright|rust-analyzer"
 
 **Solutions**:
 - Install LSP plugin: `claude mcp add typescript-lsp`
-- Upgrade extension to v2.0.74+
+- Upgrade extension to vlatest+
 - Check language server binary installed
 
 ---
 
-### Example 5.5: Debug Performance Issues
+### Example latest: Debug Performance Issues
 
 **Symptom**: Extension slow or unresponsive
 
@@ -869,7 +869,7 @@ code --max-memory=8192
 
 ## 6. Advanced Configuration Patterns
 
-### Example 6.1: Per-Project Configuration
+### Example latest: Per-Project Configuration
 
 **File**: `.vscode/settings.json` (project-specific)
 
@@ -907,7 +907,7 @@ code --max-memory=8192
 
 ---
 
-### Example 6.2: Team Shared Configuration
+### Example latest: Team Shared Configuration
 
 **File**: `.claude/mcp-servers.json` (committed to repo)
 
@@ -951,7 +951,7 @@ code --max-memory=8192
 
 ---
 
-### Example 6.3: Multi-Environment Configuration
+### Example latest: Multi-Environment Configuration
 
 **File**: `.vscode/settings.json`
 
@@ -1003,8 +1003,8 @@ These examples demonstrate:
 6. **Patterns**: Project-specific, team-shared, multi-environment configs
 
 **All examples tested against**:
-- Claude Code Extension v2.0.75
-- VS Code v1.98.0+
+- Claude Code Extension vlatest
+- VS Code vlatest+
 - macOS/Linux/Windows
 
 **Usage**:

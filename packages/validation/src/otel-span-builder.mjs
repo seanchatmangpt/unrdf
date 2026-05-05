@@ -627,7 +627,7 @@ export async function executeKnowledgeHooksAPI(validator, parentSpan, validation
     const _testHook = defineHook({
       meta: {
         name: 'test-validation-hook',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Test hook for validation',
       },
       when: {
@@ -735,7 +735,7 @@ export async function executePolicyPacks(validator, parentSpan, validationId) {
   spans.push(
     createSpanData('policy.load', 'ok', 10, {
       'policy.name': 'test-policy-pack',
-      'policy.version': '1.0.0',
+      'policy.version': '[VERSION]',
       'policy.hooks_count': 3,
     })
   );
@@ -743,7 +743,7 @@ export async function executePolicyPacks(validator, parentSpan, validationId) {
   spans.push(
     createSpanData('policy.activate', 'ok', 8, {
       'policy.name': 'test-policy-pack',
-      'policy.version': '1.0.0',
+      'policy.version': '[VERSION]',
       'policy.hooks_count': 3,
     })
   );
@@ -751,7 +751,7 @@ export async function executePolicyPacks(validator, parentSpan, validationId) {
   spans.push(
     createSpanData('policy.validate', 'ok', 15, {
       'policy.name': 'test-policy-pack',
-      'policy.version': '1.0.0',
+      'policy.version': '[VERSION]',
       'policy.hooks_count': 3,
     })
   );

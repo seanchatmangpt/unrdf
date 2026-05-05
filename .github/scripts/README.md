@@ -68,7 +68,7 @@ node release-notes.mjs \
 **Example:**
 ```bash
 node release-notes.mjs \
-  --version 6.0.0-alpha.2 \
+  --version [VERSION].2 \
   --type alpha \
   --output release-notes.md
 ```
@@ -93,7 +93,7 @@ node pr-comment.mjs --help
 node baseline-metrics.mjs compare test-baseline.json test-current.json --threshold 5
 
 # Test release-notes
-node release-notes.mjs --version 6.0.0-alpha.1 --type alpha --output /tmp/notes.md
+node release-notes.mjs --version [VERSION].1 --type alpha --output /tmp/notes.md
 ```
 
 ### Debugging

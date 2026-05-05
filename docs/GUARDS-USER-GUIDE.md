@@ -1,6 +1,6 @@
 # UNRDF Poka-Yoke Guards - User Guide
 
-**Version**: 2.0.0
+**Version**: latest
 **Status**: ✅ Production Ready
 **Purpose**: Prevent common errors before they happen
 
@@ -81,7 +81,7 @@ $ unrdf policy apply my-policy.json
 ```json
 {
   "name": "my-policy",
-  "version": "1.0.0",
+  "version": "latest",
   "hooks": [
     {
       "type": "sparql-ask",
@@ -114,7 +114,7 @@ $ unrdf policy apply my-policy.json
 ```bash
 unrdf> .status
 Session Diagnostics:
-  Duration: 3.2s
+  Duration: latests
   Buffer: 245KB / 10MB
   History: 12/1000 lines
   Errors: 2/10

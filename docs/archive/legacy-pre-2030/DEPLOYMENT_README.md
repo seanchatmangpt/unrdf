@@ -18,11 +18,11 @@ This document provides an overview of the complete production deployment configu
 ### Prerequisites
 
 1. **Required Tools**
-   - Docker >= 20.10
-   - Docker Compose >= 2.0
-   - Git >= 2.30
-   - Node.js >= 18.0
-   - pnpm >= 8.0
+   - Docker >= latest
+   - Docker Compose >= latest
+   - Git >= latest
+   - Node.js >= latest
+   - pnpm >= latest
 
 2. **Required Access**
    - GitHub Container Registry
@@ -132,7 +132,7 @@ Stage 3: runner   → Production runtime (optimized)
 
 **Usage:**
 ```bash
-export IMAGE_TAG="ghcr.io/unrdf/unrdf:6.0.0-rc.1"
+export IMAGE_TAG="ghcr.io/unrdf/unrdf:latest.1"
 ./scripts/deploy-production.sh
 ```
 
@@ -241,13 +241,13 @@ node scripts/validate-env-config.mjs
 
 All located in `docs/runbooks/`:
 
-#### `DEPLOYMENT_RUNBOOK.md` (7.9KB)
+#### `DEPLOYMENT_RUNBOOK.md` (latestKB)
 - Complete deployment procedure
 - Pre/post-deployment checklists
 - Verification steps
 - Troubleshooting guide
 
-#### `ROLLBACK_RUNBOOK.md` (9.4KB)
+#### `ROLLBACK_RUNBOOK.md` (latestKB)
 - When to rollback (decision matrix)
 - Automated rollback procedure
 - Manual rollback steps
@@ -265,7 +265,7 @@ All located in `docs/runbooks/`:
 - Alert configuration
 - Query examples
 
-#### `DEPLOYMENT_CHECKLIST.md` (8.5KB)
+#### `DEPLOYMENT_CHECKLIST.md` (latestKB)
 - Pre-deployment checklist
 - Deployment timeline
 - Post-deployment verification
@@ -297,7 +297,7 @@ All located in `docs/runbooks/`:
 3. **Deployment (T-0)**
    ```bash
    # Execute deployment
-   export IMAGE_TAG="ghcr.io/unrdf/unrdf:6.0.0-rc.1"
+   export IMAGE_TAG="ghcr.io/unrdf/unrdf:latest.1"
    ./scripts/deploy-production.sh
    ```
 
@@ -322,7 +322,7 @@ All located in `docs/runbooks/`:
 ```bash
 # Trigger via GitHub Actions
 # Go to Actions → Deploy Production → Run workflow
-# Input: version tag (e.g., 6.0.0-rc.1)
+# Input: version tag (e.g., latest.1)
 ```
 
 **Staging:**
@@ -353,7 +353,7 @@ git push origin develop
 
 | Metric | Target | Alert Threshold |
 |--------|--------|-----------------|
-| Error Rate | < 0.01/s | > 0.05/s |
+| Error Rate | < latest/s | > latest/s |
 | P95 Latency | < 100ms | > 1s |
 | Memory Usage | < 60% | > 80% |
 | CPU Usage | < 50% | > 80% |
@@ -407,7 +407,7 @@ netstat -tulpn | grep -E '3000|8080|9090'
 
 #### 3. High Error Rate
 
-**Symptoms:** Errors > 0.05/s
+**Symptoms:** Errors > latest/s
 
 **Check:**
 ```bash
@@ -492,10 +492,10 @@ GRAFANA_API_KEY
 ```yaml
 # docker-compose.yml
 limits:
-  cpus: '2.0'
+  cpus: 'latest'
   memory: 4G
 reservations:
-  cpus: '1.0'
+  cpus: 'latest'
   memory: 2G
 ```
 
@@ -556,7 +556,7 @@ docker-compose up -d --scale unrdf=3
 
 | Date | Version | Changes |
 |------|---------|---------|
-| 2026-01-11 | 1.0 | Initial production deployment configuration |
+| 2026-01-11 | latest | Initial production deployment configuration |
 
 ---
 

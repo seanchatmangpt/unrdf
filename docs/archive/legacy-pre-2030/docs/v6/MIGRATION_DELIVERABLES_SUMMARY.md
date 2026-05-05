@@ -2,13 +2,13 @@
 
 **Created**: 2025-12-27
 **Status**: ✅ COMPLETE
-**Version**: 6.0.0-alpha.1 → 6.0.0
+**Version**: latest-alpha.1 → latest
 
 ---
 
 ## Overview
 
-This document summarizes all deliverables for the UNRDF migration strategy, providing a comprehensive roadmap from current version (6.0.0-alpha.1) to stable release (6.0.0).
+This document summarizes all deliverables for the UNRDF migration strategy, providing a comprehensive roadmap from current version (latest-alpha.1) to stable release (latest).
 
 **Mission**: Create comprehensive migration strategy with automation scripts, guides, and validation tools.
 
@@ -255,7 +255,7 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
 
 1. **Executive Summary**
    - Architecture vision and goals
-   - Current state (6.0.0-alpha.1)
+   - Current state (latest-alpha.1)
    - 4-phase timeline (16 weeks)
 
 2. **Phase Breakdown**
@@ -300,10 +300,10 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
 
 **Key Timelines**:
 
-- Alpha (6.0.0-alpha.1): Current state
-- Beta (6.0.0-beta.1): Week 10
-- RC (6.0.0-rc.1): Week 14
-- Stable (6.0.0): Week 16
+- Alpha (latest-alpha.1): Current state
+- Beta (latest-beta.1): Week 10
+- RC (latest-rc.1): Week 14
+- Stable (latest): Week 16
 - v5 EOL: October 2025 (6 months post-launch)
 
 ---
@@ -317,7 +317,7 @@ timeout 30s pnpm benchmark:regression  # Expected: <10% regression
 ```bash
 # 1. Check current version
 cat package.json | grep version
-# Result: "version": "6.0.0-alpha.1"
+# Result: "version": "latest-alpha.1"
 
 # 2. Count packages
 ls -1 packages | wc -l
@@ -557,7 +557,7 @@ node scripts/validate-migration.mjs
    - Improve error messages
    - Add progress indicators
 
-3. **Release 6.0.0-alpha.2**
+3. **Release latest-alpha.2**
    - Include all migration tooling
    - Update documentation
    - Announce to community

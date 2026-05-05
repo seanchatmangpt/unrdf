@@ -17,8 +17,8 @@ The UNRDF Daemon Monitoring Dashboard is a real-time Vue 3 + Tailwind CSS applic
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0
+- Node.js >= [VERSION]
+- pnpm >= [VERSION]
 - Vue 3.x
 - Tailwind CSS 3.x
 

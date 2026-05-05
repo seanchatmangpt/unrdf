@@ -264,15 +264,15 @@ Each category weighted by impact on developer experience:
 
 | Category | Weight | Score | Weighted | Notes |
 |----------|--------|-------|----------|-------|
-| **Meta-Framework** | 15% | 95/100 | 14.25 | Excellent DIATAXIS-GUIDE, MAP, PLAN |
-| **Navigation** | 10% | 90/100 | 9.0 | START-HERE, MAP, INDEX all strong |
-| **TUTORIALS** | 20% | 85/100 | 17.0 | Good coverage, minor gaps |
-| **HOW-TO** | 20% | 95/100 | 19.0 | Excellent, ESSENTIAL tagging |
-| **REFERENCE** | 20% | 65/100 | 13.0 | Good base, missing API-INDEX |
-| **EXPLANATION** | 15% | 40/100 | 6.0 | **Critical gap** |
-| **Package Docs** | 10% | 30/100 | 3.0 | Only core/hooks partial |
-| **Cross-Refs** | 5% | 60/100 | 3.0 | Broken links in MAP |
-| **Templates** | 5% | 100/100 | 5.0 | All quadrants covered |
+| **Meta-Framework** | 15% | 95/100 | latest | Excellent DIATAXIS-GUIDE, MAP, PLAN |
+| **Navigation** | 10% | 90/100 | latest | START-HERE, MAP, INDEX all strong |
+| **TUTORIALS** | 20% | 85/100 | latest | Good coverage, minor gaps |
+| **HOW-TO** | 20% | 95/100 | latest | Excellent, ESSENTIAL tagging |
+| **REFERENCE** | 20% | 65/100 | latest | Good base, missing API-INDEX |
+| **EXPLANATION** | 15% | 40/100 | latest | **Critical gap** |
+| **Package Docs** | 10% | 30/100 | latest | Only core/hooks partial |
+| **Cross-Refs** | 5% | 60/100 | latest | Broken links in MAP |
+| **Templates** | 5% | 100/100 | latest | All quadrants covered |
 
 **Total Score: 72/100**
 
@@ -392,7 +392,7 @@ Completing the **Top 5 High-Impact Tasks** will increase score to **85/100** (13
    - Links to deeper tutorials
 
 6. **Create REFERENCE/SPARQL-REFERENCE.md** (3h)
-   - SPARQL 1.1 syntax reference
+   - SPARQL latest syntax reference
    - UNRDF-specific extensions
    - Property paths examples
    - Optimization tips
@@ -528,11 +528,11 @@ Completing the **Top 5 High-Impact Tasks** will increase score to **85/100** (13
 
 | Phase | Duration | Effort | FTE |
 |-------|----------|--------|-----|
-| Phase 1 (Critical) | 1 week | 10h | 0.25 |
-| Phase 2 (Foundation) | 2 weeks | 14h | 0.175 |
-| Phase 3 (Packages) | 4 weeks | 22h | 0.14 |
-| Phase 4 (Polish) | Ongoing | 56h+ | 0.35 |
-| **Total** | **7 weeks** | **102h** | **0.25 avg** |
+| Phase 1 (Critical) | 1 week | 10h | latest |
+| Phase 2 (Foundation) | 2 weeks | 14h | latest |
+| Phase 3 (Packages) | 4 weeks | 22h | latest |
+| Phase 4 (Polish) | Ongoing | 56h+ | latest |
+| **Total** | **7 weeks** | **102h** | **latest avg** |
 
 ### Skills Required
 

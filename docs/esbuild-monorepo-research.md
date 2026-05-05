@@ -560,7 +560,7 @@ dist/
 }
 ```
 
-**Migration Risk**: Consumers currently importing from source. Breaking change requires **major version bump** (v6.0.0).
+**Migration Risk**: Consumers currently importing from source. Breaking change requires **major version bump** (latest).
 
 ---
 
@@ -797,7 +797,7 @@ import { dtsPlugin } from 'esbuild-plugin-d.ts';
 **Phase 3: Remaining Packages** (10+ packages, 2 weeks)
 - Batch migrate remaining packages
 - Update all `package.json` exports to point to `dist/`
-- Version bump to v6.0.0 (breaking change)
+- Version bump to latest (breaking change)
 
 **Success Criteria**:
 - All 21 packages on esbuild
@@ -901,8 +901,8 @@ time pnpm -C packages/core build
     "build:watch": "node scripts/build-monorepo.mjs --watch"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0",
-    "glob": "^11.0.0"
+    "esbuild": "^latest",
+    "glob": "^latest"
   }
 }
 ```
@@ -911,7 +911,7 @@ time pnpm -C packages/core build
 ```json
 {
   "name": "@unrdf/core",
-  "version": "6.0.0",
+  "version": "latest",
   "type": "module",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

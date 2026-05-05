@@ -9,7 +9,7 @@
       "spec": {
         "var": "errorRate",
         "op": ">",
-        "value": 0.02,
+        "value": [VERSION],
         "aggregate": "avg"
       }
     },
@@ -25,8 +25,8 @@
   ],
   "combine": "OR",
   "_metadata": {
-    "created": "2025-09-25T04:35:45.780Z",
-    "updated": "2025-09-25T04:35:45.781Z",
-    "version": "1.0.0"
+    "created": "2025-09-25T04:35:[VERSION]Z",
+    "updated": "2025-09-25T04:35:[VERSION]Z",
+    "version": "[VERSION]"
   }
 }

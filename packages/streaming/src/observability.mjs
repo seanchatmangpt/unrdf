@@ -15,7 +15,7 @@ import { z } from 'zod';
  */
 export const ObservabilityConfigSchema = z.object({
   serviceName: z.string().default('unrdf-streaming'),
-  serviceVersion: z.string().default('1.0.0'),
+  serviceVersion: z.string().default('[VERSION]'),
   enableTracing: z.boolean().default(true),
   enableMetrics: z.boolean().default(true),
   enableLogging: z.boolean().default(true),
@@ -30,7 +30,7 @@ export class ObservabilityManager {
    *
    * @param {Object} [config] - Observability configuration
    * @param {string} [config.serviceName='unrdf-streaming'] - Service name
-   * @param {string} [config.serviceVersion='1.0.0'] - Service version
+   * @param {string} [config.serviceVersion='[VERSION]'] - Service version
    * @param {boolean} [config.enableTracing=true] - Enable tracing
    * @param {boolean} [config.enableMetrics=true] - Enable metrics
    * @param {boolean} [config.enableLogging=true] - Enable logging

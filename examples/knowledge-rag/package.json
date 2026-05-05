@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/knowledge-rag",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Knowledge Graph RAG with semantic search and LLM integration",
   "type": "module",
   "main": "src/index.mjs",

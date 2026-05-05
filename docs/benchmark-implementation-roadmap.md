@@ -459,7 +459,7 @@ export async function runBenchmarks(options = {}) {
   console.log(`   Running ${benchmarkFiles.length} benchmarks...\n`);
 
   const results = {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: new Date().toISOString(),
     environment: {
       node: process.version,

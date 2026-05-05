@@ -4,7 +4,7 @@
 
 ## Status
 
-**Version**: 6.0.0-alpha.1
+**Version**: [VERSION]-alpha.1
 **Status**: Alpha (Not production-ready)
 **Purpose**: Exploration and experimentation with v6 concepts
 
@@ -46,7 +46,7 @@ import {
 const status = getV6Status();
 console.log(status);
 // {
-//   version: '6.0.0-alpha.1',
+//   version: '[VERSION]-alpha.1',
 //   features: { receipts: true, delta: true, ... },
 //   status: 'alpha',
 //   timestamp: '2025-12-27T...'

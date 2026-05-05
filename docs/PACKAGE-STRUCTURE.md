@@ -1,6 +1,6 @@
 # UNRDF Package Structure Standard
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Canonical Standard
 **Last Updated**: 2025-12-25
 

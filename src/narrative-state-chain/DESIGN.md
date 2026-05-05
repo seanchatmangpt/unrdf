@@ -1,6 +1,6 @@
 # DESIGN: Narrative State Chain
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Status**: Production Validator Review
 **Date**: 2025-12-27
 **Authors**: System Architecture Team
@@ -1198,13 +1198,13 @@ class SystemError extends Error { ... }
 
 ### 5.5 Versioning Strategy
 
-**Policy**: **Semantic Versioning 2.0.0**
+**Policy**: **Semantic Versioning [VERSION]**
 
 - **MAJOR**: Breaking API changes (e.g., remove method, change signature)
 - **MINOR**: Backward-compatible additions (e.g., new optional parameter)
 - **PATCH**: Bug fixes (no API changes)
 
-**Current Version**: `1.0.0`
+**Current Version**: `[VERSION]`
 
 **Deprecation**: 2 minor versions notice before removal
 
@@ -1590,7 +1590,7 @@ describe('Adversarial Tests', () => {
 **Benchmark Methodology**:
 - 100 iterations per scenario
 - p50, p95, p99 percentiles measured
-- Benchmarks run on: Node.js v20, Linux 4.4.0, 2025-12-27
+- Benchmarks run on: Node.js v20, Linux [VERSION], 2025-12-27
 - Results: `/home/user/unrdf/benchmark-results.json`
 
 ### 8.3 Operational Targets
@@ -1719,7 +1719,7 @@ const userUniverse = await universeStore.create({
       }
     }
   ],
-  metadata: { name: 'User Universe', version: '1.0.0' }
+  metadata: { name: 'User Universe', version: '[VERSION]' }
 });
 
 // 3. Register user (scene 1)
@@ -1978,6 +1978,6 @@ This design document addresses all 8 critical blockers identified by the Product
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: [VERSION]
 **Last Updated**: 2025-12-27
 **Approval Status**: Pending Production Validator Review

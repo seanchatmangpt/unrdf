@@ -24,7 +24,7 @@ async function runVerification() {
 
   const manifest = {
     name: 'Read',
-    version: '1.0.0',
+    version: '[VERSION]',
     schema_in: z.object({
       path: z.string(),
     }),

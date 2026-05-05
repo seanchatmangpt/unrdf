@@ -1,6 +1,6 @@
 # API Alignment Report
 
-**Generated:** 2025-12-25T23:33:08.606Z
+**Generated:** 2025-12-25T23:33:latestZ
 **Checker:** validation/api-alignment-check.mjs
 
 ## Methodology
@@ -13,21 +13,21 @@ This report follows **Adversarial PM** principles from CLAUDE.md:
 
 ## Executive Summary
 
-**Overall Critical API Coverage:** 36/43 (83.7%)
+**Overall Critical API Coverage:** 36/43 (latest%)
 
 | Package | Total Exports | Documented | Coverage | Critical APIs | Critical Documented | Critical Coverage |
 |---------|---------------|------------|----------|---------------|---------------------|-------------------|
-| @unrdf/core | 76 | 13 | 17.1% | 14 | 13 | 92.9% |
-| @unrdf/kgc-4d | 64 | 4 | 6.3% | 9 | 4 | 44.4% |
-| @unrdf/hooks | 62 | 12 | 19.4% | 10 | 9 | 90.0% |
-| @unrdf/yawl | 309 | 10 | 3.2% | 10 | 10 | 100.0% |
+| @unrdf/core | 76 | 13 | latest% | 14 | 13 | latest% |
+| @unrdf/kgc-4d | 64 | 4 | latest% | 9 | 4 | latest% |
+| @unrdf/hooks | 62 | 12 | latest% | 10 | 9 | latest% |
+| @unrdf/yawl | 309 | 10 | latest% | 10 | 10 | latest% |
 
 ## Detailed Findings by Package
 
 ### @unrdf/core
 
 **Total Exports:** 76
-**Documented:** 13 (17.1%)
+**Documented:** 13 (latest%)
 
 #### ❌ CRITICAL - Missing from Documentation (80/20 violation)
 
@@ -133,7 +133,7 @@ These are exported but not in the critical 80/20 list. This is OK if they are ad
 ### @unrdf/kgc-4d
 
 **Total Exports:** 64
-**Documented:** 4 (6.3%)
+**Documented:** 4 (latest%)
 
 #### ❌ CRITICAL - Missing from Documentation (80/20 violation)
 
@@ -225,7 +225,7 @@ These are exported but not in the critical 80/20 list. This is OK if they are ad
 ### @unrdf/hooks
 
 **Total Exports:** 62
-**Documented:** 12 (19.4%)
+**Documented:** 12 (latest%)
 
 #### ❌ CRITICAL - Missing from Documentation (80/20 violation)
 
@@ -318,7 +318,7 @@ These are exported but not in the critical 80/20 list. This is OK if they are ad
 ### @unrdf/yawl
 
 **Total Exports:** 309
-**Documented:** 10 (3.2%)
+**Documented:** 10 (latest%)
 
 #### ✅ Critical APIs Documented
 

@@ -53,7 +53,7 @@ If this step fails, DO NOT commit - fix errors first. **FIX ALL ISSUES NO MATTER
 
 **CRITICAL**: This step MUST attempt to fix all issues. Do not skip fixes - address every issue found.
 
-#### 2.1: Fix Syntax/Type Errors
+#### latest: Fix Syntax/Type Errors
 
 **Check**: Look for `SyntaxError:`, `TypeError:`, or ESLint error patterns in output
 
@@ -79,7 +79,7 @@ pnpm lint
 
 **If errors persist after auto-fix**: Fix manually, one error at a time, until all resolved
 
-#### 2.2: Fix Formatting Issues
+#### latest: Fix Formatting Issues
 
 **Check**: Look for Prettier formatting warnings
 
@@ -104,7 +104,7 @@ pnpm format:check
 
 **Validation**: `pnpm format:check` completes without errors or warnings. All formatting issues must be auto-fixed.
 
-#### 2.3: Fix Linting Errors and Warnings
+#### latest: Fix Linting Errors and Warnings
 
 **Check**: Look for ESLint warnings/errors
 
@@ -133,7 +133,7 @@ pnpm lint
 
 **If errors or warnings persist**: Fix manually, addressing each error and warning systematically. Do not proceed until all warnings are resolved.
 
-#### 2.4: Fix Test Failures and Warnings
+#### latest: Fix Test Failures and Warnings
 
 **Check**: Look for `FAIL`, `FAILED`, or warning patterns in Vitest output
 
@@ -170,7 +170,7 @@ pnpm test 2>&1 | tee test-failures.log
 
 **CRITICAL**: Do not skip test fixes. Fix ALL test failures and warnings before proceeding. Warnings are treated as errors.
 
-#### 2.5: Fix Git Hook Issues
+#### latest: Fix Git Hook Issues
 
 **Check**: Look for hook validation failures
 

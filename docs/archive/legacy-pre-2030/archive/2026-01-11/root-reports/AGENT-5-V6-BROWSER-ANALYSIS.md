@@ -13,7 +13,7 @@
 
 ### Key Metrics
 - **v6-core LOC**: 5,543 lines
-- **Browser-incompatible files**: 9 of ~40 files (22.5%)
+- **Browser-incompatible files**: 9 of ~40 files (latest%)
 - **Browser-incompatible LOC**: ~200-300 lines estimated (5%)
 - **Dependencies**: All browser-compatible (hash-wasm, zod, oxigraph)
 - **Existing browser infrastructure**: Comprehensive (v5.x)
@@ -66,7 +66,7 @@ test/browser/
 
 ### ✅ Browser-Compatible Components (95%)
 
-#### 2.1 Receipt System (`src/receipts/`)
+#### latest Receipt System (`src/receipts/`)
 - **Status**: ✅ **FULLY compatible**
 - **Files**:
   - `base-receipt.mjs`: BLAKE3 hashing, UUID generation
@@ -94,7 +94,7 @@ export function generateUUID() {
 - `hash-wasm` (WASM, browser-compatible) ✅
 - `zod` (schema validation, browser-compatible) ✅
 
-#### 2.2 Delta System (`src/delta/`)
+#### latest Delta System (`src/delta/`)
 - **Status**: ⚠️ **Mostly compatible** (95%)
 - **Browser-compatible files**:
   - `schema.mjs`: Zod schemas only ✅
@@ -115,7 +115,7 @@ export function generateUUID() {
 
 **Solution**: Use same pattern as `base-receipt.mjs`
 
-#### 2.3 Adapters (`src/delta/adapters/`)
+#### latest Adapters (`src/delta/adapters/`)
 - **Status**: ⚠️ **Needs evaluation**
 - **Files**:
   - `graphql-adapter.mjs`: Uses GraphQL, likely browser-compatible
@@ -126,12 +126,12 @@ export function generateUUID() {
 
 ### ❌ Browser-Incompatible Components (5%)
 
-#### 3.1 CLI Commands (`src/cli/`)
+#### latest CLI Commands (`src/cli/`)
 - **Status**: ❌ **Not applicable for browser**
 - **Reason**: CLI is Node.js-only by design
 - **Action**: Exclude from browser build
 
-#### 3.2 Doc Generators (`src/docs/`)
+#### latest Doc Generators (`src/docs/`)
 - **Status**: ❌ **Not applicable for browser**
 - **Reason**: LaTeX generation requires Node.js
 - **Action**: Exclude from browser build
@@ -140,7 +140,7 @@ export function generateUUID() {
 
 ## 3. Dependency Analysis
 
-### hash-wasm (4.12.0)
+### hash-wasm (latest)
 **Browser Compatibility**: ✅ **FULL**
 
 **Evidence**:
@@ -159,7 +159,7 @@ import { blake3 } from 'hash-wasm';
 // - Chain hash computation
 ```
 
-### zod (4.2.1)
+### zod (latest)
 **Browser Compatibility**: ✅ **FULL**
 
 **Evidence**:
@@ -182,14 +182,14 @@ import { z } from 'zod';
 
 **Evidence**:
 - Oxigraph has WASM build: `web_bg.wasm`
-- Found at: `/home/user/unrdf/node_modules/.pnpm/oxigraph@0.5.3/node_modules/oxigraph/web_bg.wasm`
+- Found at: `/home/user/unrdf/node_modules/.pnpm/oxigraph@latest/node_modules/oxigraph/web_bg.wasm`
 - v5.x already uses Oxigraph in browser
 
 ---
 
 ## 4. Browser Support Requirements for v6
 
-### 4.1 What's Needed (New Work)
+### latest What's Needed (New Work)
 
 #### A. Browser Entry Point
 **Location**: `/home/user/unrdf/packages/v6-core/src/browser.mjs`
@@ -267,7 +267,7 @@ export { BrowserDeltaGate } from './browser/delta-gate.mjs';
 - Performance optimization
 - Migration from v5 browser
 
-### 4.2 What's Already Done (Reuse)
+### latest What's Already Done (Reuse)
 
 ✅ **v5 browser infrastructure** (fully functional):
 - IndexedDB implementations
@@ -485,12 +485,12 @@ function generateUUID() {
 ### Code Analysis Evidence
 - ✅ **Analyzed**: 40 source files in v6-core
 - ✅ **Measured**: 5,543 total lines of code
-- ✅ **Identified**: 9 files with Node.js dependencies (22.5%)
+- ✅ **Identified**: 9 files with Node.js dependencies (latest%)
 - ✅ **Verified**: All npm dependencies browser-compatible
 
 ### Dependency Evidence
-- ✅ **hash-wasm 4.12.0**: WASM module found, browser-compatible
-- ✅ **zod 4.2.1**: Pure JS, browser-compatible
+- ✅ **hash-wasm latest**: WASM module found, browser-compatible
+- ✅ **zod latest**: Pure JS, browser-compatible
 - ✅ **@unrdf/oxigraph**: web_bg.wasm found, browser-ready
 
 ### Existing Infrastructure Evidence
@@ -563,4 +563,4 @@ function generateUUID() {
 **Analysis performed by**: Agent 5 - Frontend Specialist
 **Analysis date**: 2025-12-27
 **Repository**: /home/user/unrdf
-**v6-core version**: 6.0.0-alpha.1
+**v6-core version**: latest.1

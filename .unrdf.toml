@@ -6,7 +6,7 @@ name = "unrdf-daemon"
 version = "26.4.23"
 description = "UNRDF Knowledge Graph Substrate with Groq LLM Integration"
 breed = "dachshund"
-vision2030 = true
+visionAutonomic = true
 standard = "L4/L5"
 status = "integrated"
 

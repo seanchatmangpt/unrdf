@@ -261,7 +261,7 @@ const events = createCustomEvents({
 events.emitAuthFailure({
   userId: 'user@example.com',
   reason: 'invalid_password',
-  ip: '192.168.1.100',
+  ip: '[VERSION].100',
 });
 
 // Injection attempt
@@ -269,7 +269,7 @@ events.emitInjectionAttempt({
   attackType: 'SPARQL',
   payload: 'DROP ALL; --',
   userId: 'attacker@evil.com',
-  ip: '1.2.3.4',
+  ip: '[VERSION].4',
 });
 ```
 

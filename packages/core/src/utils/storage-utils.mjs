@@ -1,7 +1,7 @@
 /**
  * @fileoverview Storage utilities for UNRDF - File-based persistence for hooks and receipts
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */
@@ -73,7 +73,7 @@ export class HookStorage {
       _metadata: {
         created: new Date().toISOString(),
         updated: new Date().toISOString(),
-        version: '1.0.0',
+        version: '[VERSION]',
       },
     };
 

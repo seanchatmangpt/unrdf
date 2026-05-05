@@ -75,7 +75,7 @@ export async function executeFederatedQuery(peerId, endpoint, sparqlQuery, optio
       headers: {
         'Content-Type': 'application/sparql-query',
         'Accept': getAcceptHeader(config.format),
-        'User-Agent': 'unrdf-federation/6.0.0 (https://github.com/unrdf/unrdf)',
+        'User-Agent': 'unrdf-federation/[VERSION] (https://github.com/unrdf/unrdf)',
       },
       body: config.sparql,
       signal: controller.signal,

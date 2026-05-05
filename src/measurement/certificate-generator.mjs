@@ -105,13 +105,13 @@ export class CertificateGenerator {
   /**
    * Create a new Certificate Generator
    * @param {Object} [config] - Configuration options
-   * @param {string} [config.version='1.0.0'] - Certificate version
+   * @param {string} [config.version='[VERSION]'] - Certificate version
    * @param {number} [config.maxCertHistory=100] - Max certificates to keep
    * @param {Object} [config.healthThresholds] - Custom health thresholds
    */
   constructor(config = {}) {
     this.config = {
-      version: config.version || '1.0.0',
+      version: config.version || '[VERSION]',
       maxCertHistory: config.maxCertHistory || 100,
       healthThresholds: {
         dimension: {

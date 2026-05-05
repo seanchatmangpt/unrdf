@@ -283,7 +283,7 @@ describe('formatHashValues', () => {
   it('should format comprehensive hash reference', () => {
     const frontmatter = {
       title: 'Test Document',
-      version: '1.0.0',
+      version: 'latest',
     };
     const receipts = [
       createMockReceipt(1, 'query'),
@@ -310,7 +310,7 @@ describe('formatHashValues', () => {
     // Verify metadata
     assert.ok(hashes.includes('verified_at:'));
     assert.ok(hashes.includes('document_title: Test Document'));
-    assert.ok(hashes.includes('document_version: 1.0.0'));
+    assert.ok(hashes.includes('document_version: latest'));
   });
 
   it('should handle missing frontmatter fields', () => {
@@ -417,7 +417,7 @@ describe('renderProofAsJSON', () => {
     const json = renderProofAsJSON(receipts, merkleRoot, o_hash, { merkleProofs });
 
     // Verify structure
-    assert.strictEqual(json.version, '1.0.0');
+    assert.strictEqual(json.version, 'latest');
     assert.strictEqual(json.type, 'kgc-document-proof');
     assert.strictEqual(json.o_hash, o_hash);
     assert.strictEqual(json.merkleRoot, merkleRoot);
@@ -440,13 +440,13 @@ describe('renderProofAsJSON', () => {
     const receipts = [createMockReceipt(1, 'test')];
     const frontmatter = {
       title: 'Test Doc',
-      version: '2.0.0',
+      version: 'latest',
     };
 
     const json = renderProofAsJSON(receipts, '0xabc', '0xdef', { frontmatter });
 
     assert.strictEqual(json.metadata.documentTitle, 'Test Doc');
-    assert.strictEqual(json.metadata.documentVersion, '2.0.0');
+    assert.strictEqual(json.metadata.documentVersion, 'latest');
   });
 
   it('should throw on invalid inputs', () => {

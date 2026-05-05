@@ -91,13 +91,13 @@
 4. AlertManager (config.yml)
 
 ### 4 Production Runbooks
-1. DEPLOYMENT_RUNBOOK.md (7.9KB)
-2. ROLLBACK_RUNBOOK.md (9.4KB)
+1. DEPLOYMENT_RUNBOOK.md (latestKB)
+2. ROLLBACK_RUNBOOK.md (latestKB)
 3. INCIDENT_RESPONSE.md (12KB)
 4. MONITORING_GUIDE.md (12KB)
 
 ### Deployment Checklist
-1. DEPLOYMENT_CHECKLIST.md (8.5KB)
+1. DEPLOYMENT_CHECKLIST.md (latestKB)
    - Pre-deployment checklist
    - Deployment timeline
    - Post-deployment verification

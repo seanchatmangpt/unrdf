@@ -1,7 +1,7 @@
 /**
  * @file Tests for useKnowledgeStack hook functionality
  * Tests stack presets, CRUD operations, dashboard variant, and production stack with telemetry
- * @since 3.2.0
+ * @since latest
  */
 
 import { describe, it, expect, _beforeEach, vi } from 'vitest';

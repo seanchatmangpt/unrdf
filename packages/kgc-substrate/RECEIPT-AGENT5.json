@@ -1,13 +1,13 @@
 {
   "type": "KGC-Receipt",
-  "version": "1.0.0",
+  "version": "[VERSION]",
   "agent": "Agent-5-Backend-Dev",
   "assignment": "Workspace Isolation & IO Contracts",
   "timestamp": "2025-12-27T00:56:50.349Z",
   "deliverable": {
     "name": "Workspace Isolation & IO Contracts",
     "package": "@unrdf/kgc-substrate",
-    "version": "5.0.0",
+    "version": "[VERSION]",
     "description": "Secure, isolated workspaces with cryptographically-enforced IO boundaries",
     "files": [
       "src/Workspace.mjs",
@@ -217,11 +217,11 @@
   },
   "dependencies": {
     "production": {
-      "zod": "^4.1.13",
-      "hash-wasm": "^4.12.0"
+      "zod": "^[VERSION]",
+      "hash-wasm": "^[VERSION]"
     },
     "dev": {
-      "vitest": "^4.0.15"
+      "vitest": "^[VERSION]"
     },
     "transitive_risk": "Low (stable dependencies)"
   },

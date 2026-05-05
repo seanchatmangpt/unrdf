@@ -23,7 +23,7 @@
         "runs": 2,
         "operationsPerRun": 100,
         "timestamp": "2026-01-11T01:35:52.741Z",
-        "nodeVersion": "v22.21.1",
+        "nodeVersion": "[VERSION]",
         "platform": "linux"
       },
       "baseline": {
@@ -63,7 +63,7 @@
         "runs": 2,
         "concurrentOps": 1000,
         "timestamp": "2026-01-11T01:35:52.796Z",
-        "nodeVersion": "v22.21.1",
+        "nodeVersion": "[VERSION]",
         "platform": "linux"
       },
       "baseline": {

@@ -10,7 +10,7 @@
 ## 🎯 What Was Accomplished
 
 ### 1. Infrastructure Discovered
-- ✅ AtomVM v0.6.6 operational (browser + Node.js)
+- ✅ AtomVM [VERSION] operational (browser + Node.js)
 - ✅ 29 Erlang modules exist (9 in src/, 20 in playground/)
 - ✅ WASM runtime fully functional
 - ✅ Distributed systems capability (Docker Swarm, EPMD, supervision)
@@ -66,7 +66,7 @@ AtomVM Package Structure:
 │   ├── beam-serialization-roundtrip.erl
 │   └── README.md
 ├── public/
-│   ├── AtomVM-wasm32.wasm (v0.6.6)
+│   ├── AtomVM-wasm32.wasm ([VERSION])
 │   └── hello_world.avm (compiled)
 └── tests/
     ├── vitest/ (unit tests)

@@ -47,7 +47,7 @@ describe('Health Endpoint', () => {
 
     expect(status.status).toBe('healthy');
     expect(status.uptime).toBeGreaterThanOrEqual(0);
-    expect(status.version).toBe('5.0.1');
+    expect(status.version).toBe('[VERSION]');
     expect(status.peers.healthy).toBe(0);
     expect(status.peers.total).toBe(0);
     expect(status.queries.total).toBe(0);

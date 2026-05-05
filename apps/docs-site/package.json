@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/docs-site",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "private": true,
   "description": "Unified documentation site for UNRDF ecosystem",
   "scripts": {

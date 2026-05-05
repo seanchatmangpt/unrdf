@@ -235,7 +235,7 @@ export async function startMCPServer({ transport = 'stdio', port = 3001 } = {}) 
   // Create SDK server
   const server = new McpServer({
     name: 'unrdf',
-    version: '26.4.23',
+    version: '[VERSION]',
   });
 
   // Register all tools with the SDK

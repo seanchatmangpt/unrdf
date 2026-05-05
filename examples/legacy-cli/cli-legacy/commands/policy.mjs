@@ -93,7 +93,7 @@ export async function policyApplyCommand(ctx, _config) {
         id: randomUUID(),
         meta: {
           name: policyData.name || 'applied-policy',
-          version: policyData.version || '1.0.0',
+          version: policyData.version || 'latest',
           description: policyData.description || 'Applied policy',
         },
         config: {

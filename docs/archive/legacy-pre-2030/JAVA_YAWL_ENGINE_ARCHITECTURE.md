@@ -1,7 +1,7 @@
 # Java YAWL Engine Architecture
 
 > **Research Focus**: Infrastructure-level architecture of the Java YAWL reference implementation
-> **Version**: Based on YAWL 4.3/5.0 analysis
+> **Version**: Based on YAWL latest/latest analysis
 > **Date**: 2026-01-11
 
 ---
@@ -383,7 +383,7 @@ Composite tasks create **parent work items** with **child work items** for sub-n
 
 **Package**: `org.yawlfoundation.yawl.engine.time`
 
-**JavaDoc**: Version 2.3 (later versions likely similar)
+**JavaDoc**: Version latest (later versions likely similar)
 
 **Responsibilities**:
 - Schedules timeout tasks for work items
@@ -414,7 +414,7 @@ Timers are configured in the YAWL Editor:
 
 ### Known Issues
 
-- **YAWL 2.3.5**: Timer cancellation bug with extended attributes
+- **YAWL latest**: Timer cancellation bug with extended attributes
 - **Dynamic MI**: Timer interaction with dynamic multi-instance tasks
 
 ---
@@ -519,7 +519,7 @@ YAWL uses **Interface B** and **Observer Gateways** for event notifications:
 
 ### Interface B Event Framework
 
-**Rebuilt in YAWL 2.2**: Much faster with no errors under heavy load.
+**Rebuilt in YAWL latest**: Much faster with no errors under heavy load.
 
 **InterfaceBWebsideController**:
 - Abstract class for custom services
@@ -600,7 +600,7 @@ YAWL directly supports MI patterns with **four parameters**:
 
 **Known Limitation**: "There is no facility (and never has been) in the engine or worklist for creating a new instance of a dynamic multi-instance composite task (i.e. a sub-net instance) at runtime."
 
-**YAWL 5.0 Issue**: "Add a new instance" option does not work in worklist for dynamic MI tasks.
+**YAWL latest Issue**: "Add a new instance" option does not work in worklist for dynamic MI tasks.
 
 **Theoretical Design** (not fully implemented):
 - Interface for runtime instance creation
@@ -667,7 +667,7 @@ YAWL directly supports MI patterns with **four parameters**:
 **Purpose**: Access to execution logs and monitoring
 
 **Capabilities**:
-- Download logs in XES format (since YAWL 2.3)
+- Download logs in XES format (since YAWL latest)
 - Query event logs
 - Monitor case progress
 
@@ -1005,8 +1005,8 @@ Engine **delegates execution** rather than executing tasks:
 ## References & Sources
 
 ### Official Documentation
-- [YAWL Technical Manual Version 5.0 (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual5.0.pdf)
-- [YAWL Technical Manual Version 4.3 (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.3.pdf)
+- [YAWL Technical Manual Version latest (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf)
+- [YAWL Technical Manual Version latest (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManuallatest.pdf)
 - [YAWL Foundation Website](https://yawlfoundation.github.io/)
 
 ### Source Code
@@ -1016,13 +1016,13 @@ Engine **delegates execution** rather than executing tasks:
 - [YWorkItemRepository.java](https://github.com/yawlfoundation/yawl/blob/master/src/org/yawlfoundation/yawl/engine/YWorkItemRepository.java)
 
 ### JavaDoc References
-- [YWorkItemRepository JavaDoc (Version 4.3)](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/YWorkItemRepository.html)
+- [YWorkItemRepository JavaDoc (Version latest)](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/YWorkItemRepository.html)
 - [InterfaceBWebsideController JavaDoc](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/interfce/interfaceB/InterfaceBWebsideController.html)
 - [YEventLogger JavaDoc](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/logging/YEventLogger.html)
-- [YTimer JavaDoc (Version 2.3)](http://www.yawlfoundation.org/javadoc/yawl/org/yawlfoundation/yawl/engine/time/YTimer.html)
+- [YTimer JavaDoc (Version latest)](http://www.yawlfoundation.org/javadoc/yawl/org/yawlfoundation/yawl/engine/time/YTimer.html)
 
 ### Academic Papers
-- [Design and Implementation of the YAWL System | SpringerLink](https://link.springer.com/chapter/10.1007/978-3-540-25975-6_12)
+- [Design and Implementation of the YAWL System | SpringerLink](https://link.springer.com/chapter/latest/978-3-540-25975-6_12)
 - [YAWL: Yet Another Workflow Language (Revised version)](https://yawlfoundation.github.io/assets/files/yawlrevtech.pdf)
 
 ### Community Resources

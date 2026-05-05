@@ -249,7 +249,7 @@ async function demo() {
   // Command 2: Broadcast set
   await framework.executeCommand('broadcast-set', {
     key: 'version',
-    value: '1.0.0',
+    value: 'latest',
   });
 
   // Command 3: List nodes

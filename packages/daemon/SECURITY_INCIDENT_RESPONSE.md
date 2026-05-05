@@ -1,6 +1,6 @@
 # Security Incident Response Runbook
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Last Updated**: 2026-01-11
 **Classification**: INTERNAL USE ONLY
 
@@ -868,7 +868,7 @@ tail -f /var/log/daemon/security.log | grep --color -E "WARN|ERROR|CRITICAL"
 
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0.0 | 2026-01-11 | Initial version | Security Team |
+| [VERSION] | 2026-01-11 | Initial version | Security Team |
 
 ---
 

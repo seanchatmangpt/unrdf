@@ -1,6 +1,6 @@
 # UNRDF API Reference
 
-**Version**: 6.0.0
+**Version**: latest
 **Last Updated**: 2025-12-27
 **Status**: Production Ready
 
@@ -2017,6 +2017,6 @@ const results = await executeSparql(store, 'SELECT * WHERE { ?s ?p ?o } LIMIT 10
 
 ---
 
-**Version**: 6.0.0
+**Version**: latest
 **License**: MIT
 **Maintained By**: UNRDF Core Team

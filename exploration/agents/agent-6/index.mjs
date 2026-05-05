@@ -249,7 +249,7 @@ function executeHookChain(hooks, quadData) {
  * Based on @unrdf/hooks/src/hooks/policy-pack.mjs
  */
 class PolicyPack {
-  constructor(name, version = '1.0.0') {
+  constructor(name, version = 'latest') {
     this.name = name;
     this.version = version;
     this.policies = [];
@@ -418,7 +418,7 @@ async function exploreHooksMachinery() {
     // Step 2: Create a policy pack with multiple policies
     console.log('\n[STEP 2] Creating policy pack...');
     const packName = 'data-quality-policies';
-    const packVersion = '1.0.0';
+    const packVersion = 'latest';
     const pack = new PolicyPack(packName, packVersion);
 
     pack

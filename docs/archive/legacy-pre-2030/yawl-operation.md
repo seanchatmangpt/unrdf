@@ -576,7 +576,7 @@ systemctl restart unrdf-daemon unrdf-bridge
 
 ---
 
-**Version**: 1.0.0  
+**Version**: latest  
 **Last Updated**: 2026-01-10  
 **Maintainer**: UNRDF Core Team  
 **On-call**: Slack #unrdf-oncall | PagerDuty: unrdf-workflows

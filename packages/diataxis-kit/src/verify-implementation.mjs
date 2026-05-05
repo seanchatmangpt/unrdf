@@ -61,9 +61,9 @@ assert(hashObj1 === hashObj2, 'hashObject should ignore key order');
 console.log('\n=== Testing diataxis-schema.mjs ===\n');
 
 // Test 7: createDiataxisEntry with minimal input
-const entry1 = createDiataxisEntry('test-package', '1.0.0', {});
+const entry1 = createDiataxisEntry('test-package', '[VERSION]', {});
 assert(entry1.packageName === 'test-package', 'Package name should be set');
-assert(entry1.version === '1.0.0', 'Version should be set');
+assert(entry1.version === '[VERSION]', 'Version should be set');
 assert(entry1.generatedAt, 'Timestamp should be generated');
 assert(Array.isArray(entry1.tutorials), 'Tutorials should be an array');
 assert(Array.isArray(entry1.howtos), 'Howtos should be an array');
@@ -72,7 +72,7 @@ assert(entry1.explanation && typeof entry1.explanation === 'object', 'Explanatio
 
 // Test 8: DETERMINISTIC mode
 process.env.DETERMINISTIC = '1';
-const entry2 = createDiataxisEntry('test-package', '1.0.0', {});
+const entry2 = createDiataxisEntry('test-package', '[VERSION]', {});
 assert(entry2.generatedAt === '2000-01-01T00:00:00.000Z', 'DETERMINISTIC=1 should use fixed timestamp');
 delete process.env.DETERMINISTIC;
 
@@ -88,7 +88,7 @@ assert(!validation2.valid, 'Invalid entry should fail validation');
 assert(validation2.errors.length > 0, 'Invalid entry should have errors');
 
 // Test 11: ensureMinimumDiataxis
-const minimalEntry = createDiataxisEntry('test', '1.0.0', {
+const minimalEntry = createDiataxisEntry('test', '[VERSION]', {
   tutorials: [],
   howtos: [],
   reference: null,
@@ -101,7 +101,7 @@ assert(ensured.confidence.reference === 0, 'Empty reference should have 0 confid
 assert(ensured.confidence.explanation === 0, 'Empty explanation should have 0 confidence');
 
 // Test 12: Evidence fingerprint
-const entry3 = createDiataxisEntry('test', '1.0.0', {
+const entry3 = createDiataxisEntry('test', '[VERSION]', {
   readmeHeadings: ['Installation', 'Usage'],
   docsFiles: ['README.md'],
   examplesFiles: ['example.js']
@@ -110,7 +110,7 @@ assert(entry3.evidence.fingerprint.length === 64, 'Fingerprint should be SHA256 
 assert(entry3.evidence.readmeHeadings.length === 2, 'Evidence should preserve headings');
 
 // Test 13: Tutorial/HowTo ID generation
-const entry4 = createDiataxisEntry('test', '1.0.0', {
+const entry4 = createDiataxisEntry('test', '[VERSION]', {
   tutorials: [
     { title: 'Getting Started with Test', goal: 'Learn basics', prerequisites: [], stepsOutline: [], confidenceScore: 0.8, source: ['README'] }
   ],

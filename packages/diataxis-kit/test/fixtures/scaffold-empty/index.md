@@ -1,7 +1,7 @@
 ---
 title: "empty-package Documentation"
 packageName: "empty-package"
-version: "0.0.1"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.162Z"
 ---
 

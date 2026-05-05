@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/docs
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -28,27 +28,27 @@ No description available
 
 ### Dependencies
 
-- `@ai-sdk/gateway`: ^2.0.15
-- `@ai-sdk/vue`: ^2.0.101
-- `@electric-sql/pglite`: ^0.2.17
-- `@iconify-json/logos`: ^1.2.10
-- `@iconify-json/lucide`: ^1.2.75
-- `@iconify-json/simple-icons`: ^1.2.60
-- `@iconify-json/vscode-icons`: ^1.2.36
-- `@nuxt/content`: ^3.8.2
-- `@nuxt/image`: ^2.0.0
-- `@nuxt/ui`: ^4.2.1
-- `@nuxtjs/mdc`: ^0.18.4
-- `ai`: ^5.0.101
-- `better-sqlite3`: ^12.4.6
-- `date-fns`: ^4.1.0
-- `drizzle-orm`: ^0.44.7
-- `nuxt`: ^4.2.1
-- `nuxt-auth-utils`: ^0.5.25
-- `nuxt-charts`: 0.2.4
-- `nuxt-llms`: 0.1.3
-- `nuxt-og-image`: ^5.1.12
-- `shiki-stream`: ^0.1.3
+- `@ai-sdk/gateway`: ^latest
+- `@ai-sdk/vue`: ^latest
+- `@electric-sql/pglite`: ^latest
+- `@iconify-json/logos`: ^latest
+- `@iconify-json/lucide`: ^latest
+- `@iconify-json/simple-icons`: ^latest
+- `@iconify-json/vscode-icons`: ^latest
+- `@nuxt/content`: ^latest
+- `@nuxt/image`: ^latest
+- `@nuxt/ui`: ^latest
+- `@nuxtjs/mdc`: ^latest
+- `ai`: ^latest
+- `better-sqlite3`: ^1latest
+- `date-fns`: ^latest
+- `drizzle-orm`: ^latest
+- `nuxt`: ^latest
+- `nuxt-auth-utils`: ^latest
+- `nuxt-charts`: latest
+- `nuxt-llms`: latest
+- `nuxt-og-image`: ^latest
+- `shiki-stream`: ^latest
 
 ### Exports
 

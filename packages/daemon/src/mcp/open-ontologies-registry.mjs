@@ -140,7 +140,7 @@ export const ontoRegistryMetadata = [
     name: 'onto_version',
     phase: 'expert',
     description: 'Save ontology snapshots with version tags. Restore previous versions for rollback.',
-    examples: ['onto_version({tag: "v1.0.0"})', 'onto_version({restore: "v1.0.0"})', 'onto_version({list: true})'],
+    examples: ['onto_version({tag: "[VERSION]"})', 'onto_version({restore: "[VERSION]"})', 'onto_version({list: true})'],
   },
 ];
 

@@ -2,7 +2,7 @@
 ## Chatman Equation Package
 
 **Date**: 2026-01-18  
-**Package**: @unrdf/chatman-equation v1.0.0  
+**Package**: @unrdf/chatman-equation [VERSION]  
 **Methodology**: TOML + Tera + Turtle (3T)
 
 ---
@@ -226,7 +226,7 @@ Four receipts are generated for provenance tracking:
   "operation": "...",
   "data": { ... },
   "signature": "sha256:...",
-  "kgcVersion": "4.0.0",
+  "kgcVersion": "[VERSION]",
   "universe": "chatman-equation-v1"
 }
 ```

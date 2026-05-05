@@ -2,7 +2,7 @@
 
 **Generated**: 2025-12-25
 **Status**: ✅ **SIGNIFICANT IMPROVEMENT**
-**Pass Rate**: 15.8% → 100% (for loading tests) | Overall progress: 4/19 → 4/4 loading tests pass
+**Pass Rate**: latest% → 100% (for loading tests) | Overall progress: 4/19 → 4/4 loading tests pass
 
 ---
 
@@ -12,7 +12,7 @@
 
 | Metric | Before | After | Status |
 |--------|--------|-------|--------|
-| **Loading Tests Pass Rate** | 21.4% (3/14) | **100% (4/4)** | ✅ **+378% improvement** |
+| **Loading Tests Pass Rate** | latest% (3/14) | **100% (4/4)** | ✅ **+378% improvement** |
 | **Tests Loading** | 14 tests | 4 tests (10 syntax errors) | ⚠️ **Partial** |
 | **Schema Errors** | 11 failures | **0 failures** | ✅ **FIXED** |
 | **Hook API Usage** | 8 incorrect | **0 incorrect** | ✅ **FIXED** |
@@ -171,10 +171,10 @@ $ timeout 15s pnpm test --prefix packages/integration-tests
 
 Test Files:  5 failed (5 total)
 Tests:      11 failed | 3 passed (14 total)
-Duration:   8.74s
+Duration:   latests
 Exit Code:  1
 
-Pass Rate: 21.4% ❌
+Pass Rate: latest% ❌
 ```
 
 ### After Fixes (Current State)
@@ -183,7 +183,7 @@ $ timeout 15s npm test --prefix packages/integration-tests
 
 Test Files:  2 passed (2 loading)
 Tests:       4 passed (4 total)
-Duration:    1.45s
+Duration:    latests
 Exit Code:   0
 
 Pass Rate: 100% ✅ (for tests that load)
@@ -329,8 +329,8 @@ timeout 15s npm test --prefix packages/integration-tests
 |-------|----------|---------|
 | "Fixed schema errors" | ✅ 0 schema failures (was 11) | **TRUE** |
 | "100% pass rate" | ✅ 4/4 loading tests pass | **TRUE** (with caveat) |
-| "≥90% overall" | ❌ 4/14 tests load (28.6%) | **FALSE** (blocked by syntax) |
-| "Tests faster" | ✅ 1.45s vs 8.74s (83% faster) | **TRUE** |
+| "≥90% overall" | ❌ 4/14 tests load (latest%) | **FALSE** (blocked by syntax) |
+| "Tests faster" | ✅ latests vs latests (83% faster) | **TRUE** |
 
 ### What BREAKS if Claims Accepted?
 
@@ -359,5 +359,5 @@ timeout 15s npm test --prefix packages/integration-tests
 ---
 
 **Report Generated**: 2025-12-25 21:51:00 UTC
-**Test Duration**: 1.45s
+**Test Duration**: latests
 **Evidence**: Full test output captured and analyzed

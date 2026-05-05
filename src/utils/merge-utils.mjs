@@ -4,7 +4,7 @@
  * These utilities provide comprehensive store operations including merging,
  * diffing, intersection, union, and other set operations on RDF stores.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

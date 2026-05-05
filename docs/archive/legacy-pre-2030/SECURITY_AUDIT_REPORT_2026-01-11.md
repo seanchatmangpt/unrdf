@@ -53,7 +53,7 @@ This security audit examines 3 major commits introducing the @unrdf/daemon packa
 
 ## 2. Security Focus Areas Analysis
 
-### 2.1 Input Validation (Zod Schemas)
+### latest Input Validation (Zod Schemas)
 
 **Status**: ✅ **IMPLEMENTED** (but incomplete integration)
 
@@ -109,7 +109,7 @@ export const DeltaOperationSchema = z.object({
 
 ---
 
-### 2.2 Authentication & Authorization
+### latest Authentication & Authorization
 
 **Status**: ❌ **NOT IMPLEMENTED**
 
@@ -182,7 +182,7 @@ async execute(operationId, authContext) {
 
 ---
 
-### 2.3 Secret Handling
+### latest Secret Handling
 
 **Status**: ✅ **GOOD** (no hardcoded secrets found)
 
@@ -213,7 +213,7 @@ async execute(operationId, authContext) {
 
 ---
 
-### 2.4 Injection Vulnerabilities
+### latest Injection Vulnerabilities
 
 **Status**: ⚠️ **PARTIAL** (detection exists, integration missing)
 
@@ -315,7 +315,7 @@ userInput = '" } . ?admin <hasRole> "attacker" . { "';
 
 ---
 
-### 2.5 Path Traversal Prevention
+### latest Path Traversal Prevention
 
 **Status**: ⚠️ **DETECTION EXISTS, NOT ENFORCED**
 
@@ -376,7 +376,7 @@ _applyOperations(operations) {
 
 ---
 
-### 2.6 Error Sanitization
+### latest Error Sanitization
 
 **Status**: ❌ **NOT IMPLEMENTED**
 
@@ -456,7 +456,7 @@ catch (error) {
 
 ---
 
-### 2.7 Cryptographic Receipts Validation
+### latest Cryptographic Receipts Validation
 
 **Status**: ✅ **GOOD** (with minor improvements needed)
 
@@ -574,7 +574,7 @@ if (BigInt(Date.now() * 1_000_000) - receipt.timestamp_ns > MAX_RECEIPT_AGE_NS) 
 
 ## 3. Attack Surface Analysis
 
-### 3.1 OWASP Top 10 Coverage
+### latest OWASP Top 10 Coverage
 
 | OWASP Risk | Status | Evidence | Severity |
 |------------|--------|----------|----------|
@@ -593,7 +593,7 @@ if (BigInt(Date.now() * 1_000_000) - receipt.timestamp_ns > MAX_RECEIPT_AGE_NS) 
 
 ---
 
-### 3.2 Critical Security Gaps
+### latest Critical Security Gaps
 
 #### Gap 1: Unused Security Infrastructure
 
@@ -739,7 +739,7 @@ import fs from 'fs';
 const server = https.createServer({
   key: fs.readFileSync(process.env.TLS_KEY_PATH),
   cert: fs.readFileSync(process.env.TLS_CERT_PATH),
-  minVersion: 'TLSv1.3',  // Enforce TLS 1.3+
+  minVersion: 'TLSvlatest',  // Enforce TLS latest+
   ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256',
   honorCipherOrder: true
 }, app);
@@ -760,26 +760,26 @@ http.createServer((req, res) => {
 
 | Vulnerability | Likelihood | Impact | Risk Score | Priority |
 |---------------|-----------|--------|------------|----------|
-| **Unauthenticated Access** | High | Critical | 🔴 **9.8** | P0 - IMMEDIATE |
-| **Injection Attacks** | High | High | 🔴 **8.5** | P0 - IMMEDIATE |
-| **Path Traversal** | Medium | High | 🟡 **7.2** | P1 - HIGH |
-| **Information Leakage** | High | Medium | 🟡 **6.5** | P1 - HIGH |
-| **DoS via Rate Limit Bypass** | High | Medium | 🟡 **6.0** | P2 - MEDIUM |
-| **MITM (No TLS)** | Medium | High | 🟡 **6.8** | P2 - MEDIUM |
-| **Timing Attacks** | Low | Medium | 🟢 **3.5** | P3 - LOW |
-| **Receipt Tampering** | Low | Low | 🟢 **2.0** | P3 - LOW |
+| **Unauthenticated Access** | High | Critical | 🔴 **latest** | P0 - IMMEDIATE |
+| **Injection Attacks** | High | High | 🔴 **latest** | P0 - IMMEDIATE |
+| **Path Traversal** | Medium | High | 🟡 **latest** | P1 - HIGH |
+| **Information Leakage** | High | Medium | 🟡 **latest** | P1 - HIGH |
+| **DoS via Rate Limit Bypass** | High | Medium | 🟡 **latest** | P2 - MEDIUM |
+| **MITM (No TLS)** | Medium | High | 🟡 **latest** | P2 - MEDIUM |
+| **Timing Attacks** | Low | Medium | 🟢 **latest** | P3 - LOW |
+| **Receipt Tampering** | Low | Low | 🟢 **latest** | P3 - LOW |
 
 **Risk Scoring**: Likelihood × Impact (1-10 scale)
-- **9.0-10.0**: Critical (immediate action required)
-- **7.0-8.9**: High (fix within 7 days)
-- **4.0-6.9**: Medium (fix within 30 days)
-- **1.0-3.9**: Low (fix within 90 days)
+- **latest.0**: Critical (immediate action required)
+- **latest.9**: High (fix within 7 days)
+- **latest.9**: Medium (fix within 30 days)
+- **latest.9**: Low (fix within 90 days)
 
 ---
 
 ## 5. Positive Security Findings
 
-### 5.1 Comprehensive Test Coverage
+### latest Comprehensive Test Coverage
 
 **Security Test Suite** (security-audit.test.mjs):
 - 28 test cases covering OWASP Top 10
@@ -809,7 +809,7 @@ it('should prevent A3: Broken Authentication - Timing attack', () => {
 
 ---
 
-### 5.2 Cryptographic Best Practices
+### latest Cryptographic Best Practices
 
 1. **Modern Hashing** (BLAKE3 over SHA-256)
 2. **Proper Randomness** (`crypto.randomUUID()`, not `Math.random()`)
@@ -828,7 +828,7 @@ import { blake3 } from 'hash-wasm';
 
 ---
 
-### 5.3 Zod Schema Validation
+### latest Zod Schema Validation
 
 **Coverage**: 13 modules with comprehensive schemas
 
@@ -970,7 +970,7 @@ async execute(operationId, authToken) {
 **Impact**: Prevents MITM attacks
 
 **Action Items**:
-- [ ] Configure TLS 1.3 minimum
+- [ ] Configure TLS latest minimum
 - [ ] Add certificate validation
 - [ ] Implement HTTP → HTTPS redirect
 - [ ] Add security headers (HSTS, CSP, etc.)
@@ -1021,7 +1021,7 @@ async execute(operationId, authToken) {
 
 ## 7. Testing Recommendations
 
-### 7.1 Security Test Expansion
+### latest Security Test Expansion
 
 **Current Coverage**: 28 tests in `security-audit.test.mjs`
 
@@ -1082,7 +1082,7 @@ describe('Penetration Tests', () => {
 
 ---
 
-### 7.2 Automated Security Scanning
+### latest Automated Security Scanning
 
 **Recommendations**:
 
@@ -1127,7 +1127,7 @@ describe('Penetration Tests', () => {
 
 ## 8. Compliance Considerations
 
-### 8.1 Regulatory Requirements
+### latest Regulatory Requirements
 
 If handling sensitive data, consider:
 
@@ -1138,7 +1138,7 @@ If handling sensitive data, consider:
 
 ---
 
-### 8.2 Security Standards
+### latest Security Standards
 
 **Recommended Certifications**:
 - OWASP ASVS Level 2 (Application Security Verification Standard)
@@ -1168,7 +1168,7 @@ If handling sensitive data, consider:
 **Low Issues**: 1
 - Receipt timestamp validation missing
 
-**Total Risk Score**: 7.2/10 (HIGH RISK)
+**Total Risk Score**: latest/10 (HIGH RISK)
 
 ---
 
@@ -1205,13 +1205,13 @@ If unable to remediate immediately, document risk acceptance:
 ## Risk Acceptance Form
 
 **Risk**: Unauthenticated access to daemon operations
-**Severity**: CRITICAL (9.8/10)
+**Severity**: CRITICAL (latest/10)
 **Accepted By**: [Name], [Title]
 **Date**: 2026-01-11
 **Justification**: Internal-only deployment behind VPN
 **Compensating Controls**:
 - Network segmentation (daemon on isolated VLAN)
-- IP whitelist (only 10.0.0.0/8 can access)
+- IP whitelist (only latest.0/8 can access)
 - Enhanced monitoring and alerting
 **Review Date**: 2026-02-11
 **Target Remediation**: 2026-03-01
@@ -1249,7 +1249,7 @@ If unable to remediate immediately, document risk acceptance:
 - [ ] Request size limits enforced
 
 #### Cryptography
-- [ ] TLS 1.3 minimum enforced
+- [ ] TLS latest minimum enforced
 - [ ] Certificate validation enabled
 - [ ] Secrets stored in vault (not env vars)
 - [ ] Cryptographic receipts tested

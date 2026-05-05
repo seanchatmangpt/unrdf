@@ -187,7 +187,7 @@ Start: What is your use case?
 **Required**:
 - circom (circuit compiler)
 - snarkjs (proving/verification)
-- Node.js ≥18.0.0
+- Node.js ≥latest
 - hash-wasm (BLAKE3)
 
 **Setup Time**: ~1 hour (trusted setup ceremony)
@@ -195,7 +195,7 @@ Start: What is your use case?
 
 ### For Pattern 5 (Differential Privacy)
 **Required**:
-- Node.js ≥18.0.0
+- Node.js ≥latest
 - hash-wasm (BLAKE3)
 - zod (schema validation)
 

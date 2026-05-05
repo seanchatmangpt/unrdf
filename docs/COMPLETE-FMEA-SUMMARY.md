@@ -87,7 +87,7 @@ ROI: ~5 minutes saved per error prevented
 
 **Benchmark Summary**:
 ```
-SPARQL validation:     +0.30ms (catches errors early)
+SPARQL validation:     +latestms (catches errors early)
 File validation:       +15ms   (prevents contradictions)
 Schema validation:     +7ms    (prevents corruption)
 REPL safeguards:       +1ms    (prevents crashes)
@@ -188,7 +188,7 @@ Gap: Implementation done, but unproven + undocumented
 ### Round 2: Gap Closure (Big Bang 80/20)
 ```
 Task: Close remaining gaps (tests, docs, perf, stubs)
-Timeline: Single day, 2.5 hours effort
+Timeline: Single day, latest hours effort
 Focus: High-impact/low-effort items only
 Result: 95% gap closure without full comprehensiveness
 
@@ -265,7 +265,7 @@ Approach:
 ### Round 1: Focused on High-RPN Failure Modes
 ```
 Input: 15 failure modes identified
-Focus: Top 5 (31.6% of RPN) = 69% of system risk
+Focus: Top 5 (latest% of RPN) = 69% of system risk
 Result: 75% overall reduction by addressing vital 20%
 ```
 
@@ -273,7 +273,7 @@ Result: 75% overall reduction by addressing vital 20%
 ```
 Input: 4 major gaps identified
 Focus: Highest impact per hour of effort
-Result: 95% gap closure in 2.5 hours
+Result: 95% gap closure in latest hours
 ```
 
 **Principle Applied**: Stop before perfect, when returns diminish

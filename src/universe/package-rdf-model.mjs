@@ -237,7 +237,7 @@ const RepositorySchema = z.union([
  */
 export const PackageJsonSchema = z.object({
   name: z.string(),
-  version: z.string().optional().default('0.0.0'),
+  version: z.string().optional().default('[VERSION]'),
   description: z.string().optional().default(''),
   type: z.string().optional().default('module'),
   main: z.string().optional(),
@@ -323,7 +323,7 @@ export function scriptToIri(packageName, scriptName) {
  * ```javascript
  * const quads = parsePackageToQuads({
  *   name: "@unrdf/core",
- *   version: "5.0.1",
+ *   version: "[VERSION]",
  *   dependencies: { "@unrdf/oxigraph": "workspace:*" }
  * });
  * console.log(`Generated ${quads.length} quads`);

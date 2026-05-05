@@ -457,21 +457,21 @@ await federation.registerStore({
 ```json
 {
   "@unrdf/federation": "workspace:*",  // Federation integration
-  "msgpackr": "^1.11.8",               // Efficient serialization
-  "ws": "^8.18.3",                     // WebSocket transport
-  "zod": "^4.1.13",                    // Schema validation
-  "@opentelemetry/api": "^1.9.0"       // Observability
+  "msgpackr": "^latest",               // Efficient serialization
+  "ws": "^latest",                     // WebSocket transport
+  "zod": "^latest",                    // Schema validation
+  "@opentelemetry/api": "^latest"       // Observability
 }
 ```
 
 **Development Dependencies**:
 ```json
 {
-  "@types/node": "^24.10.1",
-  "@types/ws": "^8.5.10",
-  "vitest": "^4.0.15",
-  "eslint": "^9.0.0",
-  "prettier": "^3.2.5"
+  "@types/node": "^latest",
+  "@types/ws": "^latest",
+  "vitest": "^latest",
+  "eslint": "^latest",
+  "prettier": "^latest"
 }
 ```
 

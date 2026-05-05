@@ -257,12 +257,12 @@ timeout 5s node --check src/alerts/alert-manager.mjs
 
 ```json
 {
-  "prom-client": "^15.1.0",
-  "@opentelemetry/api": "^1.9.0",
-  "@opentelemetry/exporter-prometheus": "^0.49.0",
-  "@opentelemetry/sdk-metrics": "^1.21.0",
-  "express": "^4.18.2",
-  "zod": "^4.1.13"
+  "prom-client": "^[VERSION]",
+  "@opentelemetry/api": "^[VERSION]",
+  "@opentelemetry/exporter-prometheus": "^[VERSION]",
+  "@opentelemetry/sdk-metrics": "^[VERSION]",
+  "express": "^[VERSION]",
+  "zod": "^[VERSION]"
 }
 ```
 
@@ -270,7 +270,7 @@ timeout 5s node --check src/alerts/alert-manager.mjs
 
 ```json
 {
-  "vitest": "^4.0.15"
+  "vitest": "^[VERSION]"
 }
 ```
 

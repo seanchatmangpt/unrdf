@@ -23,11 +23,11 @@
     "packages/kgc-substrate/vitest.config.mjs"
   ],
   "tool_versions": {
-    "node": ">=18.0.0",
-    "pnpm": ">=7.0.0",
-    "vitest": "4.0.15",
-    "zod": "4.2.1",
-    "hash-wasm": "4.12.0",
+    "node": ">=[VERSION]",
+    "pnpm": ">=[VERSION]",
+    "vitest": "[VERSION]",
+    "zod": "[VERSION]",
+    "hash-wasm": "[VERSION]",
     "@unrdf/kgc-4d": "workspace:*",
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/core": "workspace:*"

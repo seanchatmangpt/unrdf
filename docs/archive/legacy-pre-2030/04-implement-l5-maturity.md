@@ -38,7 +38,7 @@ We'll take `@unrdf/my-package` from L1 → L5.
 
 ## Step 1: Achieve L2 (Stable Contracts)
 
-### 1.1 Add JSDoc to All Public Functions
+### latest Add JSDoc to All Public Functions
 
 **Before:**
 ```javascript
@@ -74,7 +74,7 @@ timeout 5s grep -r "@param\|@returns" src/ --include="*.mjs" | wc -l
 # Should match number of public functions
 ```
 
-### 1.2 Add Zod Schemas
+### latest Add Zod Schemas
 
 ```javascript
 import { z } from 'zod';
@@ -98,7 +98,7 @@ export const processData = withReceipt(function processData(data) {
 timeout 5s grep -r "z\.object" src/ --include="*.mjs" | wc -l
 ```
 
-### 1.3 Define Receipt Schemas
+### latest Define Receipt Schemas
 
 ```javascript
 export const ProcessDataReceiptSchema = z.object({
@@ -114,12 +114,12 @@ export const ProcessDataReceiptSchema = z.object({
 });
 ```
 
-### 1.4 Update CHANGELOG.md
+### latest Update CHANGELOG.md
 
 ```markdown
 # Changelog
 
-## [2.0.0] - 2025-01-01
+## [latest] - 2025-01-01
 
 ### Breaking Changes
 - **Zod validation required**: All inputs now validated at runtime
@@ -144,7 +144,7 @@ timeout 5s pnpm run typecheck  # 0 errors
 
 ## Step 2: Achieve L3 (Deterministic)
 
-### 2.1 Remove Non-Deterministic Code
+### latest Remove Non-Deterministic Code
 
 **Before (Non-Deterministic):**
 ```javascript
@@ -179,7 +179,7 @@ timeout 5s grep -r "Date\.now\|Math\.random" src/ --include="*.mjs" | wc -l
 # Should be 0
 ```
 
-### 2.2 Add Reproducible Fixtures
+### latest Add Reproducible Fixtures
 
 Create `test/fixtures/`:
 
@@ -215,7 +215,7 @@ test('processData is deterministic', async () => {
 });
 ```
 
-### 2.3 Test Determinism
+### latest Test Determinism
 
 Run operation 10 times, verify identical results:
 
@@ -239,7 +239,7 @@ timeout 5s pnpm test                        # All pass
 
 ## Step 3: Achieve L4 (Adversarial Safety)
 
-### 3.1 Add Timeout Guards
+### latest Add Timeout Guards
 
 **Before (No timeout):**
 ```javascript
@@ -264,7 +264,7 @@ export const fetchData = withReceipt(async function fetchData(url) {
 timeout 5s grep -r "withTimeout\|timeout.*5[0-9]{3}" src/ --include="*.mjs" | wc -l
 ```
 
-### 3.2 Add Input Validation (Zod)
+### latest Add Input Validation (Zod)
 
 Ensure ALL external inputs are validated:
 
@@ -285,7 +285,7 @@ export const fetchData = withReceipt(async function fetchData(url) {
 });
 ```
 
-### 3.3 Add Resource Limits
+### latest Add Resource Limits
 
 ```javascript
 export const processLargeFile = withReceipt(async function processLargeFile(filePath) {
@@ -300,7 +300,7 @@ export const processLargeFile = withReceipt(async function processLargeFile(file
 });
 ```
 
-### 3.4 Write Adversarial Tests
+### latest Write Adversarial Tests
 
 Create `test/adversarial/`:
 
@@ -342,7 +342,7 @@ timeout 5s grep -r "eval\|Function(" src/ --include="*.mjs" | wc -l  # 0
 
 ## Step 4: Achieve L5 (Cross-Package Composition)
 
-### 4.1 Write Integration Tests with Other L5 Packages
+### latest Write Integration Tests with Other L5 Packages
 
 Create `test/integration/`:
 
@@ -370,7 +370,7 @@ timeout 30s pnpm test:integration
 # Tests with: @unrdf/kgc-4d, @unrdf/yawl, @unrdf/hooks, etc.
 ```
 
-### 4.2 Fix Circular Dependencies
+### latest Fix Circular Dependencies
 
 ```bash
 timeout 5s npx madge --circular src/
@@ -389,7 +389,7 @@ If found, refactor to break cycles:
 // b.mjs imports c.mjs
 ```
 
-### 4.3 Implement Receipt Composition
+### latest Implement Receipt Composition
 
 ```javascript
 import { composeDelta } from '@unrdf/v6-core/delta';
@@ -405,7 +405,7 @@ export const processAndFreeze = withReceipt(async function processAndFreeze(data
 });
 ```
 
-### 4.4 Add Performance Benchmarks
+### latest Add Performance Benchmarks
 
 Create `benchmarks/`:
 
@@ -440,8 +440,8 @@ timeout 10s node benchmarks/processData.bench.mjs
 ┌─────────┬──────────────────────────┬───────────┬──────────────┐
 │ (index) │ Name                     │ ops/sec   │ Margin       │
 ├─────────┼──────────────────────────┼───────────┼──────────────┤
-│ 0       │ small input (10 bytes)   │ 125,432   │ ±0.54%       │
-│ 1       │ large input (1 KB)       │ 98,234    │ ±1.23%       │
+│ 0       │ small input (10 bytes)   │ 125,432   │ ±latest%       │
+│ 1       │ large input (1 KB)       │ 98,234    │ ±latest%       │
 └─────────┴──────────────────────────┴───────────┴──────────────┘
 ```
 
@@ -457,7 +457,7 @@ node scripts/compare-benchmarks.mjs
 # Fails if regression >10%
 ```
 
-### 4.5 OTEL Validation
+### latest OTEL Validation
 
 ```bash
 node validation/run-all.mjs comprehensive --package @unrdf/my-package
@@ -494,7 +494,7 @@ npx @unrdf/v6-core maturity-report --package @unrdf/my-package
 ```json
 {
   "package": "@unrdf/my-package",
-  "version": "2.0.0",
+  "version": "latest",
   "maturityLevel": "L5",
   "timestamp": 1704067200000,
   "checks": {

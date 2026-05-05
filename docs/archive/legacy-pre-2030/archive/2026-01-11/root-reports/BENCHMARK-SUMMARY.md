@@ -1,6 +1,6 @@
 # UNRDF Performance Benchmark Summary
 
-Generated: 2025-12-25T08:23:17.610Z
+Generated: 2025-12-25T08:23:latestZ
 
 ## Executive Summary
 
@@ -13,10 +13,10 @@ All claims are validated against actual benchmark execution.
 
 | Claim | Target | Measured | Status |
 |-------|--------|----------|--------|
-| Hook execution | <1ms | 0.0037 ms (P95) | PASS |
-| Hook chain execution | <1ms | 0.0069 ms (P95) | PASS |
-| Task activation | <1ms | 0.724 ms (P95) | PASS |
-| Receipt generation | <10ms | 0.598 ms (P95) | PASS |
+| Hook execution | <1ms | latest ms (P95) | PASS |
+| Hook chain execution | <1ms | latest ms (P95) | PASS |
+| Task activation | <1ms | latest ms (P95) | PASS |
+| Receipt generation | <10ms | latest ms (P95) | PASS |
 
 ---
 
@@ -38,16 +38,16 @@ All claims are validated against actual benchmark execution.
 
 | Operation | Mean | P95 | P99 | Max |
 |-----------|------|-----|-----|-----|
-| Hook definition | 2.05 | 4.58 | 8.03 | - |
-| Single hook execution | 2.60 | 3.73 | 8.18 | - |
-| Hook chain (3 hooks) | 4.56 | 6.94 | 12.40 | - |
-| Registry lookup | 1.32 | 0.570 | 1.05 | - |
+| Hook definition | latest | latest | latest | - |
+| Single hook execution | latest | latest | latest | - |
+| Hook chain (3 hooks) | latest | latest | latest | - |
+| Registry lookup | latest | latest | latest | - |
 
 ### Task Operations (microseconds unless noted)
 
 | Operation | Mean | P95 | P99 |
 |-----------|------|-----|-----|
-| Basic task creation | 0.467 us | 0.728 us | 0.911 us |
+| Basic task creation | latest us | latest us | latest us |
 | Task + KGC event | 289 us | 480 us | 937 us |
 | Full activation (RDF) | 495 us | 724 us | 1312 us |
 
@@ -55,28 +55,28 @@ All claims are validated against actual benchmark execution.
 
 | Operation | Mean | P95 | P99 |
 |-----------|------|-----|-----|
-| 3-task workflow (total) | 2.44 | 4.06 | 6.21 |
-| Ingest task | 0.627 | - | - |
-| Transform task | 0.589 | - | - |
-| Output task | 0.612 | - | - |
-| Workflow + RDF | 2.17 | 3.69 | 4.89 |
+| 3-task workflow (total) | latest | latest | latest |
+| Ingest task | latest | - | - |
+| Transform task | latest | - | - |
+| Output task | latest | - | - |
+| Workflow + RDF | latest | latest | latest |
 
 ### SPARQL Query Performance (milliseconds)
 
 | Query Type | Dataset Size | Mean | P95 | P99 |
 |------------|-------------|------|-----|-----|
-| SIMPLE | 100 | 0.14 | 0.36 | 0.52 |
-| FILTERED | 100 | 0.16 | 0.35 | 0.52 |
-| JOIN | 100 | 0.20 | 0.33 | 0.41 |
-| AGGREGATE | 100 | 0.26 | 0.51 | 1.48 |
-| SIMPLE | 1000 | 0.14 | 0.36 | 0.52 |
-| FILTERED | 1000 | 0.16 | 0.35 | 0.52 |
-| JOIN | 1000 | 0.20 | 0.33 | 0.41 |
-| AGGREGATE | 1000 | 0.26 | 0.51 | 1.48 |
-| SIMPLE | 10000 | 0.14 | 0.36 | 0.52 |
-| FILTERED | 10000 | 0.16 | 0.35 | 0.52 |
-| JOIN | 10000 | 0.20 | 0.33 | 0.41 |
-| AGGREGATE | 10000 | 0.26 | 0.51 | 1.48 |
+| SIMPLE | 100 | latest | latest | latest |
+| FILTERED | 100 | latest | latest | latest |
+| JOIN | 100 | latest | latest | latest |
+| AGGREGATE | 100 | latest | latest | latest |
+| SIMPLE | 1000 | latest | latest | latest |
+| FILTERED | 1000 | latest | latest | latest |
+| JOIN | 1000 | latest | latest | latest |
+| AGGREGATE | 1000 | latest | latest | latest |
+| SIMPLE | 10000 | latest | latest | latest |
+| FILTERED | 10000 | latest | latest | latest |
+| JOIN | 10000 | latest | latest | latest |
+| AGGREGATE | 10000 | latest | latest | latest |
 
 ---
 
@@ -84,8 +84,8 @@ All claims are validated against actual benchmark execution.
 
 | Metric | Temporal.io | UNRDF | Factor |
 |--------|-------------|-------|--------|
-| Task latency | ~1 ms | 0.627 ms | 1.6x faster |
-| 3-task workflow | ~5-15 ms | 1.88 ms | 2.7x faster |
+| Task latency | ~1 ms | latest ms | latestx faster |
+| 3-task workflow | ~5-15 ms | latest ms | latestx faster |
 
 ---
 
@@ -93,9 +93,9 @@ All claims are validated against actual benchmark execution.
 
 | Event Count | Append Total (ms) | Per-Event (us) |
 |-------------|-------------------|----------------|
-| 10 | 2.82 | 282 |
-| 50 | 14.32 | 286 |
-| 100 | 27.02 | 270 |
+| 10 | latest | 282 |
+| 50 | latest | 286 |
+| 100 | latest | 270 |
 | 500 | 173 | 346 |
 
 ---
@@ -104,10 +104,10 @@ All claims are validated against actual benchmark execution.
 
 | Parallel Tasks | Mean (ms) | P95 (ms) |
 |----------------|-----------|----------|
-| 2 | 0.544 | 0.806 |
-| 4 | 1.09 | 1.53 |
-| 8 | 2.10 | 3.18 |
-| 16 | 4.93 | 5.90 |
+| 2 | latest | latest |
+| 4 | latest | latest |
+| 8 | latest | latest |
+| 16 | latest | latest |
 
 ---
 

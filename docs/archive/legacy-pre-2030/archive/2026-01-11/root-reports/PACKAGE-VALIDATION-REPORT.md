@@ -1,7 +1,7 @@
 # UNRDF Package Validation Report
 
 **Date**: 2025-12-20
-**Validator**: Claude Sonnet 4.5
+**Validator**: Claude Sonnet latest
 **Methodology**: Production-readiness validation
 **Baseline**: @unrdf/atomvm (246-line README, 285-line QUICKSTART, 300+ line examples)
 
@@ -140,7 +140,7 @@ Each package was validated against these criteria:
 
 **Notable Features Documented**:
 - Oxigraph WASM engine basics
-- SPARQL 1.1 full support
+- SPARQL latest full support
 - Comprehensive benchmark suite
 - Performance metrics table
 - All 6 RDF formats supported
@@ -606,7 +606,7 @@ All 6 priority @unrdf packages have been validated and meet or exceed the qualit
 
 ---
 
-**Validated by**: Claude Sonnet 4.5
+**Validated by**: Claude Sonnet latest
 **Date**: 2025-12-20
 **Status**: ✅ ALL PACKAGES VALIDATED
 **Quality**: Production-Ready

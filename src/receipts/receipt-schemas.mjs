@@ -282,7 +282,7 @@ export const UniversalReceiptSchema = z.object({
   // Identity
   id: z.string(),
   type: z.enum(['admission', 'test', 'build', 'deployment', 'projection', 'query', 'workflow', 'validation', 'migration', 'sync', 'audit', 'custom']),
-  version: z.literal('1.0.0'),
+  version: z.literal('[VERSION]'),
 
   // Package context
   package: z.string(),

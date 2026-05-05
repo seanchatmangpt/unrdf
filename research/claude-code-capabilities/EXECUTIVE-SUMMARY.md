@@ -437,4 +437,4 @@ This research has produced a **comprehensive capability atlas** documenting Clau
 **Produced by**: Agent 10 (Librarian)
 **Research Team**: 10-agent swarm
 **Date**: 2025-12-27
-**Version**: 1.0.0
+**Version**: latest

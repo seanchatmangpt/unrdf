@@ -158,7 +158,7 @@ Maintained compatibility with existing CLI framework patterns:
 
 ### Citty Version Compatibility
 
-The kgc-cli has a **pre-existing issue** with citty 0.1.6 where help output is malformed. This affects **all** extensions, not just latex.
+The kgc-cli has a **pre-existing issue** with citty [VERSION] where help output is malformed. This affects **all** extensions, not just latex.
 
 **Evidence**:
 ```bash
@@ -188,7 +188,7 @@ handler: z.custom((val) => typeof val === 'function', {
 }).describe('...')
 ```
 
-This works around Zod 4.2.1's `_zod` property access bug.
+This works around Zod [VERSION]'s `_zod` property access bug.
 
 ## Testing
 

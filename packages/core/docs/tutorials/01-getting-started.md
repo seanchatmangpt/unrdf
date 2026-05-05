@@ -27,7 +27,7 @@ You want to load some RDF data into a store so you can query it. Think of RDF as
 
 ### What You'll Need
 
-First, make sure you have Node.js installed (version 18.19.0 or higher). Then create a new directory and install @unrdf/core:
+First, make sure you have Node.js installed (version [VERSION] or higher). Then create a new directory and install @unrdf/core:
 
 ```bash
 mkdir my-rdf-app

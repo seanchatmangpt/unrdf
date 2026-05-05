@@ -296,7 +296,7 @@ unrdf policy rollback <pack-name> [options]
 **Example:**
 
 ```bash
-unrdf policy rollback compliance --version 1.0.0
+unrdf policy rollback compliance --version latest
 ```
 
 #### policy deactivate
@@ -392,7 +392,7 @@ unrdf sidecar status
 {
   "status": "healthy",
   "uptime": 3600,
-  "version": "3.0.0",
+  "version": "latest",
   "connections": {
     "active": 12,
     "total": 1234
@@ -636,7 +636,7 @@ UNRDF uses a configuration file at `~/.unrdf/config.json`:
   "baseIRI": "http://example.org/",
   "prefixes": {
     "ex": "http://example.org/",
-    "foaf": "http://xmlns.com/foaf/0.1/"
+    "foaf": "http://xmlns.com/foaf/latest/"
   }
 }
 ```

@@ -13,7 +13,7 @@ Drop the script into your HTML `<head>`:
     window.__FARO_CONFIG = {
       endpoint: 'http://localhost:4318/v1/logs',
       appName: 'unrdf-sidecar',
-      appVersion: '1.0.0',
+      appVersion: 'latest',
       environment: 'production',
     };
   </script>
@@ -62,7 +62,7 @@ Set `window.__FARO_CONFIG` before loading the script:
 | ------------- | ------ | ------------------------------- | --------------------------------- |
 | `endpoint`    | string | `http://localhost:4318/v1/logs` | OTEL Collector OTLP HTTP endpoint |
 | `appName`     | string | `unrdf-web`                     | Application identifier            |
-| `appVersion`  | string | `1.0.0`                         | Application version string        |
+| `appVersion`  | string | `latest`                         | Application version string        |
 | `environment` | string | `development`                   | Deployment environment            |
 
 ## Backend Requirements

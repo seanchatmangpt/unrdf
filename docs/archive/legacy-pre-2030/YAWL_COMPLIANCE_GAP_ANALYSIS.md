@@ -2,7 +2,7 @@
 ## Van der Aalst Workflow Patterns Framework - Complete Assessment
 
 **Date:** 2026-01-11
-**Current Compliance:** 32.6% (14 of 43 patterns)
+**Current Compliance:** latest% (14 of 43 patterns)
 **Target Compliance:** 80%+ (35 of 43 patterns)
 **Gap:** 21 patterns to implement
 **Source Framework:** Van der Aalst et al., "Workflow Patterns: The Definitive Guide"
@@ -12,14 +12,14 @@
 ## Executive Summary
 
 **Current State:**
-- **Fully Implemented:** 11 patterns (25.6%)
-- **Partially Implemented:** 3 patterns (7.0%)
-- **Missing:** 29 patterns (67.4%)
+- **Fully Implemented:** 11 patterns (latest%)
+- **Partially Implemented:** 3 patterns (latest%)
+- **Missing:** 29 patterns (latest%)
 
 **Critical Gaps:**
 1. **Multiple Instance Patterns (WP12-15):** ZERO implementation - 0/4 patterns
-2. **Advanced Synchronization (WP21-34):** 2/14 patterns (14.3%)
-3. **State-based Patterns (WP16-18, WP23-25):** 1/6 patterns (16.7%)
+2. **Advanced Synchronization (WP21-34):** 2/14 patterns (latest%)
+3. **State-based Patterns (WP16-18, WP23-25):** 1/6 patterns (latest%)
 4. **Structural Patterns (WP39-42):** 0/4 patterns (0%)
 
 **To Reach 80% Compliance:**
@@ -132,7 +132,7 @@
 - **Priority:** 🟡 HIGH
 - **Effort:** S (1-2 weeks)
 - **Dependencies:** None
-- **Reference:** Russell et al., "Workflow Patterns" §3.1.8
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -147,7 +147,7 @@
 - **Priority:** 🟢 MEDIUM
 - **Effort:** S (1 week)
 - **Dependencies:** None
-- **Reference:** Russell et al., "Workflow Patterns" §3.1.9
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -184,7 +184,7 @@
   - No completion tracking needed
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** None
-- **Reference:** Russell et al., "Workflow Patterns" §3.2.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -211,7 +211,7 @@
   - Instance completion tracking
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP12 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.2.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -238,7 +238,7 @@
   - Partial synchronization (threshold)
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** WP12, WP13
-- **Reference:** Russell et al., "Workflow Patterns" §3.2.3
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -246,7 +246,7 @@
     multipleInstance: {
       mode: 'dynamic-runtime',
       instanceCount: (context) => Math.ceil(context.amount / 10000),
-      threshold: (count) => Math.ceil(count * 0.5) + 1,  // Majority
+      threshold: (count) => Math.ceil(count * latest) + 1,  // Majority
       synchronization: 'threshold'
     }
   });
@@ -265,7 +265,7 @@
   - Completion condition evaluation
 - **Effort:** L (6-8 weeks)
 - **Dependencies:** WP12, WP13, WP14
-- **Reference:** Russell et al., "Workflow Patterns" §3.2.4
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -298,7 +298,7 @@
 - **Use Case:** "First customer service rep to claim ticket gets assigned"
 - **Effort:** L (6-7 weeks)
 - **Dependencies:** Event system integration, task state management
-- **Reference:** Russell et al., "Workflow Patterns" §3.3.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Test Evidence:** `pattern-controlflow.test.mjs:185` says "In real implementation..."
 - **Implementation Spec:**
   ```javascript
@@ -329,7 +329,7 @@
   - Dynamic ordering
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** Task locking mechanism
-- **Reference:** Russell et al., "Workflow Patterns" §3.3.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -355,7 +355,7 @@
   - Milestone invalidation
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** State management, condition evaluation
-- **Reference:** Russell et al., "Workflow Patterns" §3.3.3
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -383,7 +383,7 @@
 - **Gap:** Only cancels running tasks, not enabled tasks
 - **Effort:** S (2 weeks)
 - **Dependencies:** Task state management
-- **Reference:** Russell et al., "Workflow Patterns" §3.4.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -400,7 +400,7 @@
 - **Gap:** Limited to simple regions, no nesting
 - **Effort:** M (3 weeks)
 - **Dependencies:** WP19 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.4.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -415,7 +415,7 @@
   - Break/continue semantics
 - **Effort:** S (2 weeks)
 - **Dependencies:** WP10 (Arbitrary Cycles) provides foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.5.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addLoop({
@@ -442,7 +442,7 @@
   - Termination condition
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** Call stack management
-- **Reference:** Russell et al., "Workflow Patterns" §3.6.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Note:** Rarely used in business workflows, low priority
 
 ---
@@ -458,7 +458,7 @@
   - Signal expiry logic
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** Event system, WP16 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.7.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -473,7 +473,7 @@
   - Signal-task matching
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** WP23, persistent queue
-- **Reference:** Russell et al., "Workflow Patterns" §3.7.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -483,7 +483,7 @@
 - **Specification:** "An enabled task is disabled and removed from the workflow. If it is already executing, it is withdrawn."
 - **Note:** Similar to WP19 - may be consolidatable
 - **Effort:** See WP19
-- **Reference:** Russell et al., "Workflow Patterns" §3.4.3
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -498,7 +498,7 @@
   - Compensation handlers
 - **Effort:** S (2 weeks)
 - **Dependencies:** WP19, WP20
-- **Reference:** Russell et al., "Workflow Patterns" §3.4.4
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -521,7 +521,7 @@
   - Subsequent activation queue
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP9 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -535,7 +535,7 @@
   - Token removal from unfinished branches
 - **Effort:** M (3 weeks)
 - **Dependencies:** WP9, WP19
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -549,7 +549,7 @@
   - Partial branch completion
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP3 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.3
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -562,7 +562,7 @@
   - Dynamic branch tracking
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP30
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.4
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -575,7 +575,7 @@
   - Branch cleanup
 - **Effort:** M (3 weeks)
 - **Dependencies:** WP30, WP29
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.5
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -589,7 +589,7 @@
   - Active vs. possible branch distinction
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP3 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.6
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -603,7 +603,7 @@
   - Instance counting
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP12-15 (MI patterns)
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.7
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -626,7 +626,7 @@
   - Dynamic instance tracking
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** WP14, WP34
-- **Reference:** Russell et al., "Workflow Patterns" §3.8.8
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -639,7 +639,7 @@
   - Synchronization logic
 - **Effort:** M (3 weeks)
 - **Dependencies:** WP3, WP7
-- **Reference:** Russell et al., "Workflow Patterns" §3.9.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -652,7 +652,7 @@
   - Token replay detection
 - **Effort:** M (4 weeks)
 - **Dependencies:** WP10, WP37
-- **Reference:** Russell et al., "Workflow Patterns" §3.9.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -667,7 +667,7 @@
   - Deadlock detection
 - **Effort:** M (4-5 weeks)
 - **Dependencies:** Resource locking system
-- **Reference:** Russell et al., "Workflow Patterns" §3.10.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -692,7 +692,7 @@
   - Sequential enforcement
 - **Effort:** M (3-4 weeks)
 - **Dependencies:** WP17 or similar mechanism
-- **Reference:** Russell et al., "Workflow Patterns" §3.10.2
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -703,7 +703,7 @@
 - **Note:** Requires threaded execution model (not typical in business workflows)
 - **Effort:** L (6 weeks)
 - **Dependencies:** Threading model
-- **Reference:** Russell et al., "Workflow Patterns" §3.10.3
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -714,7 +714,7 @@
 - **Note:** Requires threaded execution model
 - **Effort:** L (6 weeks)
 - **Dependencies:** Threading model, WP41
-- **Reference:** Russell et al., "Workflow Patterns" §3.10.4
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 
 ---
 
@@ -728,7 +728,7 @@
   - Immediate case cleanup
 - **Effort:** S (1-2 weeks)
 - **Dependencies:** WP11 foundation
-- **Reference:** Russell et al., "Workflow Patterns" §3.11.1
+- **Reference:** Russell et al., "Workflow Patterns" §latest
 - **Implementation Spec:**
   ```javascript
   workflow.addTask({
@@ -846,11 +846,11 @@ WP43 (Explicit Termination)
 
 ## Compliance Roadmap to 80%+
 
-### Current State: 32.6% (14/43 patterns)
+### Current State: latest% (14/43 patterns)
 ```
-✅ Implemented:    11 patterns (25.6%)
-⚠️ Partial:         3 patterns (7.0%)
-❌ Missing:        29 patterns (67.4%)
+✅ Implemented:    11 patterns (latest%)
+⚠️ Partial:         3 patterns (latest%)
+❌ Missing:        29 patterns (latest%)
 ```
 
 ### Target State: 80%+ (35/43 patterns)
@@ -872,7 +872,7 @@ Total work items:      24 patterns
 - **WP8** - Multi-Merge fix (S: 1 week) [Parallel]
 - **WP9** - Discriminator reset (S: 1 week) [Parallel]
 - **Patterns Added:** 4
-- **Compliance:** 32.6% → 42.0% (+9.4%)
+- **Compliance:** latest% → latest% (+latest%)
 
 ### Sprint 3-4 (Weeks 5-8): MI Runtime + Quick Wins
 - **WP14** - MI Dynamic Runtime (M: 4-5 weeks)
@@ -880,9 +880,9 @@ Total work items:      24 patterns
 - **WP21** - Structured Loop (S: 2 weeks) [Parallel]
 - **WP43** - Explicit Termination (S: 1-2 weeks) [Parallel]
 - **Patterns Added:** 4
-- **Compliance:** 42.0% → 51.2% (+9.2%)
+- **Compliance:** latest% → latest% (+latest%)
 
-**Phase 1 Deliverable:** 22/43 patterns (51.2%)
+**Phase 1 Deliverable:** 22/43 patterns (latest%)
 
 ---
 
@@ -896,16 +896,16 @@ Total work items:      24 patterns
 - **WP20** - Cancel Region completion (M: 3 weeks) [Parallel]
 - **WP26** - Cancel Case (S: 2 weeks) [Parallel]
 - **Patterns Added:** 4
-- **Compliance:** 51.2% → 60.5% (+9.3%)
+- **Compliance:** latest% → latest% (+latest%)
 
 ### Sprint 7-8 (Weeks 13-16): Triggers & MI Dynamic
 - **WP16** - Deferred Choice (continued from Sprint 5-6)
 - **WP15** - MI Dynamic Unknown (L: 6-8 weeks)
 - **WP23** - Transient Trigger (M: 4-5 weeks) [Parallel start]
 - **Patterns Added:** 2
-- **Compliance:** 60.5% → 65.1% (+4.6%)
+- **Compliance:** latest% → latest% (+latest%)
 
-**Phase 2 Deliverable:** 28/43 patterns (65.1%)
+**Phase 2 Deliverable:** 28/43 patterns (latest%)
 
 ---
 
@@ -919,33 +919,33 @@ Total work items:      24 patterns
 - **WP30** - Structured Partial Join (M: 3-4 weeks) [Parallel]
 - **WP34** - MI Partial Join (M: 3-4 weeks) [Parallel]
 - **Patterns Added:** 3-4
-- **Compliance:** 65.1% → 72.1% (+7.0%)
+- **Compliance:** latest% → latest% (+latest%)
 
 ### Sprint 11-12 (Weeks 21-24): Advanced Discriminators + Critical Section
 - **WP28** - Blocking Discriminator (M: 3-4 weeks)
 - **WP29** - Cancelling Discriminator (M: 3 weeks) [Parallel]
 - **WP39** - Critical Section (M: 4-5 weeks)
 - **Patterns Added:** 3
-- **Compliance:** 72.1% → 79.1% (+7.0%)
+- **Compliance:** latest% → latest% (+latest%)
 
-**Phase 3 Deliverable:** 34/43 patterns (79.1%)
+**Phase 3 Deliverable:** 34/43 patterns (latest%)
 
 ---
 
 ## PHASE 4: Reach 80%+ (Weeks 25-26)
-**Target:** 81.4% compliance (35/43 patterns)
+**Target:** latest% compliance (35/43 patterns)
 **Focus:** One more pattern to cross 80% threshold
 
 ### Sprint 13 (Weeks 25-26): Choose One
 **Option A - Quick Win:**
 - **WP17** - Interleaved Parallel (M: 4-5 weeks)
-- **Compliance:** 79.1% → 81.4% (+2.3%)
+- **Compliance:** latest% → latest% (+latest%)
 
 **Option B - High Value:**
 - **WP36** - Dynamic MI Partial Join (M: 4-5 weeks)
-- **Compliance:** 79.1% → 81.4% (+2.3%)
+- **Compliance:** latest% → latest% (+latest%)
 
-**Phase 4 Deliverable:** 35/43 patterns (81.4%) ✅ **TARGET MET**
+**Phase 4 Deliverable:** 35/43 patterns (latest%) ✅ **TARGET MET**
 
 ---
 
@@ -959,7 +959,7 @@ Total work items:      24 patterns
 - **WP40** - Interleaved Routing (M: 3-4 weeks)
 - **Deferred:** WP22 (Recursion), WP41-42 (Threading) - Low priority
 
-**Phase 5 Deliverable:** 39/43 patterns (90.7%)
+**Phase 5 Deliverable:** 39/43 patterns (latest%)
 
 ---
 
@@ -967,12 +967,12 @@ Total work items:      24 patterns
 
 | Phase | Weeks | Patterns Added | Cumulative | Compliance | Status |
 |-------|-------|----------------|------------|------------|--------|
-| **Current** | 0 | 14 | 14 | 32.6% | Baseline |
-| **Phase 1** | 1-8 | 8 | 22 | 51.2% | Critical |
-| **Phase 2** | 9-16 | 6 | 28 | 65.1% | High Priority |
-| **Phase 3** | 17-24 | 6 | 34 | 79.1% | Required |
-| **Phase 4** | 25-26 | 1 | 35 | **81.4%** | ✅ **TARGET** |
-| **Phase 5** | 27+ | 4 | 39 | 90.7% | Stretch |
+| **Current** | 0 | 14 | 14 | latest% | Baseline |
+| **Phase 1** | 1-8 | 8 | 22 | latest% | Critical |
+| **Phase 2** | 9-16 | 6 | 28 | latest% | High Priority |
+| **Phase 3** | 17-24 | 6 | 34 | latest% | Required |
+| **Phase 4** | 25-26 | 1 | 35 | **latest%** | ✅ **TARGET** |
+| **Phase 5** | 27+ | 4 | 39 | latest% | Stretch |
 
 **Total Time to 80%:** 26 weeks (6 months)
 **Total Time to 90%:** 38 weeks (9 months)
@@ -985,7 +985,7 @@ Total work items:      24 patterns
 - **1 Senior Workflow Engineer** (Lead) - Full-time, all phases
 - **2 Mid-Level Engineers** (Implementation) - Full-time, Phases 1-4
 - **1 QA Engineer** (Testing) - Full-time, all phases
-- **0.5 DevOps Engineer** (CI/CD, benchmarks) - Part-time
+- **latest DevOps Engineer** (CI/CD, benchmarks) - Part-time
 
 ### Skills Required
 - YAWL specification expertise
@@ -1170,12 +1170,12 @@ Total work items:      24 patterns
 2. **Van der Aalst, W. M. P., & ter Hofstede, A. H. M. (2005)**
    *YAWL: Yet Another Workflow Language*
    Information Systems, 30(4), 245-275
-   DOI: 10.1016/j.is.2004.02.002
+   DOI: latest/j.is.latest
 
 3. **Van der Aalst, W. M. P., ter Hofstede, A. H. M., Kiepuszewski, B., & Barros, A. P. (2003)**
    *Workflow Patterns*
    Distributed and Parallel Databases, 14(1), 5-51
-   DOI: 10.1023/A:1022883727209
+   DOI: latest/A:1022883727209
 
 ### Implementation References
 - **YAWL System:** https://yawlfoundation.github.io/
@@ -1186,7 +1186,7 @@ Total work items:      24 patterns
 
 ## Document Metadata
 
-**Version:** 1.0
+**Version:** latest
 **Last Updated:** 2026-01-11
 **Authors:** Strategic Planning Agent, UNRDF Team
 **Review Status:** Draft

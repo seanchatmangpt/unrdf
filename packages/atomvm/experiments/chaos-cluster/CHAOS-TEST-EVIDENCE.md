@@ -277,7 +277,7 @@ Pre-kill: 3/3 running → After kill: 2/2 running
 
 ---
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Test Date**: 2025-12-20
 **Test Duration**: 3 minutes 4 seconds
 **Total Kills**: 10

@@ -108,7 +108,7 @@ async function main() {
 
   const exporter = new PrometheusExporter(collector, {
     port: prometheusPort,
-    host: '0.0.0.0',
+    host: '[VERSION].0',
     path: '/metrics',
     namespace: 'unrdf',
   });
@@ -120,7 +120,7 @@ async function main() {
 
   console.log(`✓ Metrics collector started (interval: 1s)`);
   console.log(`✓ Adaptive optimizer started (evaluation: 10s)`);
-  console.log(`✓ Prometheus exporter started (http://0.0.0.0:${prometheusPort}/metrics)`);
+  console.log(`✓ Prometheus exporter started (http://[VERSION].0:${prometheusPort}/metrics)`);
 
   if (!noDashboard) {
     console.log(`✓ Dashboard starting...`);

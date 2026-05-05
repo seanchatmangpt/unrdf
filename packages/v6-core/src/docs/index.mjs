@@ -66,7 +66,7 @@ export function listTopics() {
  * @property {Function} listTopics - List all available topics
  */
 export const V6_DOCS = {
-  version: '6.0.0',
+  version: '[VERSION]',
   topics: listTopics(),
   getDocumentation,
   listTopics,

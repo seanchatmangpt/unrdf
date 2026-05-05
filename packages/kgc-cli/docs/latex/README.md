@@ -137,7 +137,7 @@ await fs.writeFile('output.pdf', pdfBytes);
 
 ## Requirements
 
-- **Node.js**: ≥18.0.0
+- **Node.js**: ≥[VERSION]
 - **Memory**: ~200MB for TeX engine + document size
 - **Disk**: ~50MB for WASM binaries + cache
 

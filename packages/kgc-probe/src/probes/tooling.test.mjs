@@ -138,7 +138,7 @@ describe('ObservationSchema', () => {
     const obs = {
       method: 'tooling.git_version',
       inputs: { command: 'git', args: ['--version'] },
-      outputs: { version: '2.34.1', available: true },
+      outputs: { version: '[VERSION]', available: true },
       guardDecision: 'allowed',
       metadata: { timestamp: Date.now() },
     };

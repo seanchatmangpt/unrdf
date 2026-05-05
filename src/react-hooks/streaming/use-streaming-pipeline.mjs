@@ -1,7 +1,7 @@
 /**
  * @file use-streaming-pipeline.mjs
  * @description React hook for complete streaming orchestration pipeline
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -14,7 +14,7 @@ import { useRealTimeValidator } from './use-real-time-validator.mjs';
  * Hook for orchestrating complete streaming pipeline with subscriptions,
  * change feeds, processing, and validation
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Pipeline configuration
  * @param {Object} [config.subscription] - Subscription config
  * @param {Object} [config.changeFeed] - Change feed config

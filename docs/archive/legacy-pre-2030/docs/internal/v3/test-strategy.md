@@ -1,6 +1,6 @@
 # v3 Test Strategy: Sidecar & CLI Release
 
-**Version**: 3.0.0
+**Version**: latest
 **Status**: Production Release Candidate
 **Date**: 2025-10-01
 **Owner**: Tester Agent (Hive Mind Swarm)
@@ -138,7 +138,7 @@ The sidecar is the **core gRPC service** that enables:
 
 **P0 Test Coverage** (20% of effort, 80% of value):
 
-#### 2.1.1 gRPC API Contract Tests
+#### latest gRPC API Contract Tests
 ```javascript
 describe('Sidecar gRPC API Contract', () => {
   // Service availability
@@ -180,7 +180,7 @@ describe('Sidecar gRPC API Contract', () => {
 });
 ```
 
-#### 2.1.2 Connection Resilience Tests
+#### latest Connection Resilience Tests
 ```javascript
 describe('Sidecar Connection Resilience', () => {
   it('should retry on transient failure', async () => {
@@ -231,7 +231,7 @@ describe('Sidecar Connection Resilience', () => {
 });
 ```
 
-#### 2.1.3 Startup & Shutdown Tests
+#### latest Startup & Shutdown Tests
 ```javascript
 describe('Sidecar Lifecycle', () => {
   it('should start within 5 seconds', async () => {
@@ -277,7 +277,7 @@ describe('Sidecar Lifecycle', () => {
 
 ### 2.2 Important (P1) - Should Have
 
-#### 2.2.1 Performance & Scalability Tests
+#### latest Performance & Scalability Tests
 ```javascript
 describe('Sidecar Performance', () => {
   it('should handle 1000 RPS', async () => {
@@ -316,7 +316,7 @@ describe('Sidecar Performance', () => {
 });
 ```
 
-#### 2.2.2 Error Handling & Recovery Tests
+#### latest Error Handling & Recovery Tests
 ```javascript
 describe('Sidecar Error Handling', () => {
   it('should return structured errors', async () => {
@@ -376,7 +376,7 @@ The CLI is the **primary interface** for developers to:
 
 **P0 Test Coverage** (existing in test/cli-v2/commands/hook.test.mjs):
 
-#### 3.1.1 Hook Command Tests (Already Defined)
+#### latest Hook Command Tests (Already Defined)
 ```javascript
 describe('CLI v2: hook commands', () => {
   // P0: Core workflow
@@ -399,7 +399,7 @@ describe('CLI v2: hook commands', () => {
 
 **Status**: Tests defined but **not validated** - requires test-utils.mjs implementation.
 
-#### 3.1.2 CLI Startup Performance Tests
+#### latest CLI Startup Performance Tests
 ```javascript
 describe('CLI Performance', () => {
   it('should start within 100ms', async () => {
@@ -429,7 +429,7 @@ describe('CLI Performance', () => {
 
 ### 3.2 Important (P1) - Should Have
 
-#### 3.2.1 CLI Integration Tests
+#### latest CLI Integration Tests
 ```javascript
 describe('CLI Workflow Integration', () => {
   it('should complete full hook lifecycle', async () => {
@@ -461,7 +461,7 @@ describe('CLI Workflow Integration', () => {
 });
 ```
 
-#### 3.2.2 CLI Error Handling Tests
+#### latest CLI Error Handling Tests
 ```javascript
 describe('CLI Error Handling', () => {
   it('should show helpful error for missing hook file', async () => {
@@ -671,7 +671,7 @@ describe('E2E: Knowledge Hook Workflow', () => {
 
 **Load Test Scenarios**:
 
-#### 5.2.1 Sidecar Throughput Test
+#### latest Sidecar Throughput Test
 ```javascript
 import autocannon from 'autocannon';
 
@@ -698,7 +698,7 @@ describe('Sidecar Load Tests', () => {
 });
 ```
 
-#### 5.2.2 CLI Startup Benchmark
+#### latest CLI Startup Benchmark
 ```bash
 # Run 100 times and measure
 hyperfine --warmup 10 --runs 100 'unrdf --version'
@@ -999,7 +999,7 @@ export async function startMockSidecar(port = 50051) {
 
   return new Promise((resolve) => {
     server.bindAsync(
-      `0.0.0.0:${port}`,
+      `latest.0:${port}`,
       ServerCredentials.createInsecure(),
       () => {
         server.start();
@@ -1308,4 +1308,4 @@ pnpm test -- test/knowledge-engine
 
 **Document Status**: ✅ Complete
 **Last Updated**: 2025-10-01
-**Next Review**: Before v3.1.0 release
+**Next Review**: Before latest release

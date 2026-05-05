@@ -24,7 +24,7 @@ The codebase has **7 critical blockers** and **3 warnings** that must be resolve
 | OTEL Validation | ✅ PASS | 100/100 | 10% |
 | Security | ❌ FAIL | 8/100 | 5% |
 
-**Weighted Score**: (50×0.1 + 95×0.3 + 0×0.15 + 40×0.2 + 0×0.1 + 100×0.1 + 8×0.05) = **58.4/100**
+**Weighted Score**: (50×latest + 95×latest + 0×latest + 40×latest + 0×latest + 100×latest + 8×latest) = **latest/100**
 
 ---
 
@@ -32,7 +32,7 @@ The codebase has **7 critical blockers** and **3 warnings** that must be resolve
 
 ### P0 Blockers (MUST fix before deployment)
 
-1. **Test Failures** (28/578 tests failing - 95.2% pass rate)
+1. **Test Failures** (28/578 tests failing - latest% pass rate)
    - Impact: Core kgc-cli functionality not verified
    - Risk: Production bugs, data corruption
    - Fix Time: 2-4 hours
@@ -72,7 +72,7 @@ The codebase has **7 critical blockers** and **3 warnings** that must be resolve
 - ✅ node_modules: 3,927 packages
 
 ### 2. Test Suite ❌ FAIL
-**Result**: 28 failed | 550 passed (578 total) = 95.2% pass rate
+**Result**: 28 failed | 550 passed (578 total) = latest% pass rate
 **Expected**: 100% pass rate
 
 Main failures in @unrdf/kgc-cli:
@@ -185,7 +185,7 @@ All 6 features passed:
 
 ## Production Readiness Checklist
 
-- [ ] All tests pass (100%) - Currently 95.2%
+- [ ] All tests pass (100%) - Currently latest%
 - [ ] Zero lint errors/warnings - Currently 4
 - [ ] Zero TODOs - Currently 12
 - [ ] Zero skipped tests - Currently 14
@@ -204,7 +204,7 @@ All 6 features passed:
 
 ### ⛔ NOT APPROVED FOR PRODUCTION
 
-The codebase scored 58.4/100, below the 70/100 minimum threshold.
+The codebase scored latest/100, below the 70/100 minimum threshold.
 
 **Must fix before deployment**:
 1. 28 failing tests

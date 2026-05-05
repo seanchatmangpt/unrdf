@@ -20,7 +20,7 @@ This plan defines the architecture for a **Conventions-Preserving Migration Faç
 
 ## 1. Architecture Decisions
 
-### 1.1 Package Dependencies (NO NEW NPM DEPS)
+### latest Package Dependencies (NO NEW NPM DEPS)
 
 **APPROVED Dependencies** (workspace-internal only):
 
@@ -39,7 +39,7 @@ This plan defines the architecture for a **Conventions-Preserving Migration Faç
 - NO direct `from 'n3'` imports outside justified modules (CRITICAL: CLAUDE.md violation)
 - NO TypeScript source (JSDoc only)
 
-### 1.2 Architectural Style
+### latest Architectural Style
 
 - **Pure Functional**: All transformations are pure functions (NO side effects, NO OTEL in business logic)
 - **Pipeline-Based**: Profile → Lens → Adapter → Façade (clear data flow)
@@ -635,12 +635,12 @@ export default createNodeConfig({
 
 ## 7. Root Integration Points
 
-### 7.1 Package Configuration (`/packages/conventions-facade/package.json`)
+### latest Package Configuration (`/packages/conventions-facade/package.json`)
 
 ```json
 {
   "name": "@unrdf/conventions-facade",
-  "version": "0.1.0",
+  "version": "latest",
   "description": "Conventions-Preserving Migration Façade - Profile-driven API migration system",
   "type": "module",
   "main": "src/index.mjs",
@@ -666,15 +666,15 @@ export default createNodeConfig({
     "@unrdf/oxigraph": "workspace:*",
     "@unrdf/yawl": "workspace:*",
     "@unrdf/core": "workspace:*",
-    "hash-wasm": "^4.12.0",
-    "zod": "^4.1.13"
+    "hash-wasm": "^latest",
+    "zod": "^latest"
   },
   "devDependencies": {
-    "vitest": "^4.0.15"
+    "vitest": "^latest"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=7.0.0"
+    "node": ">=latest",
+    "pnpm": ">=latest"
   },
   "sideEffects": false,
   "keywords": [
@@ -689,7 +689,7 @@ export default createNodeConfig({
 }
 ```
 
-### 7.2 Demo Script (`/packages/conventions-facade/demo.mjs`)
+### latest Demo Script (`/packages/conventions-facade/demo.mjs`)
 
 **Purpose**: Demonstrate full migration pipeline in <5 seconds
 
@@ -709,7 +709,7 @@ export default createNodeConfig({
 timeout 5s node packages/conventions-facade/demo.mjs
 ```
 
-### 7.3 RUNBOOK.md
+### latest RUNBOOK.md
 
 **Exact Commands**:
 
@@ -717,8 +717,8 @@ timeout 5s node packages/conventions-facade/demo.mjs
 # Conventions-Preserving Migration Façade - RUNBOOK
 
 ## Prerequisites
-- Node.js ≥18.0.0
-- pnpm ≥7.0.0
+- Node.js ≥latest
+- pnpm ≥latest
 
 ## Installation
 ```bash

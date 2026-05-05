@@ -75,7 +75,7 @@ This makes it easy to ask questions like:
 
 ### Step 2: Set Up Your Development Environment (20 minutes)
 
-#### 2.1 Install Node.js
+#### latest Install Node.js
 
 1. Go to https://nodejs.org
 2. Download the LTS (Long Term Support) version
@@ -85,7 +85,7 @@ This makes it easy to ask questions like:
    node --version  # Should show v18.x.x or higher
    ```
 
-#### 2.2 Install Git
+#### latest Install Git
 
 **Mac:**
 ```bash
@@ -109,7 +109,7 @@ Verify:
 git --version
 ```
 
-#### 2.3 Configure Git
+#### latest Configure Git
 
 Tell Git who you are:
 ```bash
@@ -117,14 +117,14 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
-#### 2.4 Set Up GitHub
+#### latest Set Up GitHub
 
 1. Create account at https://github.com
 2. Set up SSH keys (recommended):
    - Follow: https://docs.github.com/en/authentication/connecting-to-github-with-ssh
    - Or use HTTPS (GitHub will prompt for password)
 
-#### 2.5 Install pnpm
+#### latest Install pnpm
 
 UNRDF uses pnpm instead of npm:
 ```bash
@@ -136,7 +136,7 @@ pnpm --version  # Should show 8.x.x or higher
 
 ### Step 3: Get the Code (15 minutes)
 
-#### 3.1 Fork the Repository
+#### latest Fork the Repository
 
 1. Go to https://github.com/unrdf/unrdf
 2. Click the "Fork" button in top right
@@ -145,7 +145,7 @@ pnpm --version  # Should show 8.x.x or higher
 **What is forking?**
 Forking creates your own copy of the project where you can make changes without affecting the original.
 
-#### 3.2 Clone Your Fork
+#### latest Clone Your Fork
 
 **Using command line:**
 ```bash
@@ -160,7 +160,7 @@ cd unrdf
 3. Choose a local path
 4. Click "Clone"
 
-#### 3.3 Set Up Remotes
+#### latest Set Up Remotes
 
 This connects your local copy to both your fork and the original project:
 
@@ -197,7 +197,7 @@ pnpm run build
 
 Let's make a simple documentation improvement - perfect for first-timers!
 
-#### 5.1 Find Something to Fix
+#### latest Find Something to Fix
 
 Easy options:
 - Fix a typo in README.md or docs/
@@ -207,7 +207,7 @@ Easy options:
 
 **For practice, let's add an example to the README:**
 
-#### 5.2 Create a Branch
+#### latest Create a Branch
 
 ```bash
 git checkout -b docs/add-example
@@ -216,7 +216,7 @@ git checkout -b docs/add-example
 **What is a branch?**
 A branch is like a parallel universe where you can make changes without affecting the main code.
 
-#### 5.3 Make Your Change
+#### latest Make Your Change
 
 Open `README.md` in your editor and add a simple example:
 
@@ -246,7 +246,7 @@ for (const row of results) {
 ```
 ```
 
-#### 5.4 Test Your Change
+#### latest Test Your Change
 
 ```bash
 # Make sure nothing broke
@@ -255,7 +255,7 @@ pnpm test
 # If tests fail, don't worry - ask for help!
 ```
 
-#### 5.5 Commit Your Change
+#### latest Commit Your Change
 
 ```bash
 git add README.md
@@ -272,13 +272,13 @@ feat: add new SPARQL function
 fix: resolve parsing error
 ```
 
-#### 5.6 Push to Your Fork
+#### latest Push to Your Fork
 
 ```bash
 git push -u origin docs/add-example
 ```
 
-#### 5.7 Create a Pull Request
+#### latest Create a Pull Request
 
 1. Go to https://github.com/YOUR-USERNAME/unrdf
 2. You'll see a banner: "Compare & pull request" - click it
@@ -443,7 +443,7 @@ Maintainers will help with language if needed.
 ### RDF & Semantic Web
 - [RDF Primer](https://www.w3.org/TR/rdf-primer/)
 - [SPARQL Tutorial](https://www.w3.org/TR/sparql11-query/)
-- [Linked Data Book](https://linkeddatabook.com/editions/1.0/)
+- [Linked Data Book](https://linkeddatabook.com/editions/latest/)
 
 ### JavaScript
 - [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)

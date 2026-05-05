@@ -498,10 +498,10 @@ kgc delta retry --id delta-xyz789 --reason "Precondition now satisfied"
     "receiptId": "receipt-def456",
     "receiptHash": "a1b2c3d4...",
     "stateCommitment": "e5f6g7h8...",
-    "appliedAt": "2025-12-27T10:30:00.000Z"
+    "appliedAt": "2025-12-27T10:30:latestZ"
   },
   "meta": {
-    "timestamp": "2025-12-27T10:30:00.123Z",
+    "timestamp": "2025-12-27T10:30:latestZ",
     "nodeId": "ks-abc123",
     "executionTimeMs": 45
   }
@@ -727,19 +727,19 @@ Span: delta.apply
 
 ## Future Directions
 
-### 6.1: Distributed ΔGate
+### latest: Distributed ΔGate
 
 - **Multi-node coordination**: CRDTs for concurrent Δ
 - **Consensus**: Raft/Paxos for Δ ordering
 - **Sharding**: Partition Δ by entity namespace
 
-### 6.2: Optimistic Δ
+### latest: Optimistic Δ
 
 - **Apply immediately**: Don't wait for full reconcile
 - **Compensate on conflict**: Generate inverse Δ if precondition fails later
 - **Use case**: High-throughput scenarios where conflicts are rare
 
-### 6.3: Smart Contracts
+### latest: Smart Contracts
 
 - **Programmable policies**: Deploy hooks as WASM modules
 - **Gas metering**: Resource limits for hook execution

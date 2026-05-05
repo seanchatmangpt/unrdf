@@ -4,7 +4,7 @@
 
 **Audience:** All developers
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -238,9 +238,9 @@ cd otel && weaver registry generate --registry registry/ js ../packages/otel/src
 
 | Package         | Description         | Status    | Version |
 | --------------- | ------------------- | --------- | ------- |
-| @unrdf/core     | Core RDF operations | ✅ Stable | 5.0.1   |
-| @unrdf/oxigraph | Rust triple store   | ✅ Stable | 5.0.1   |
-| @unrdf/hooks    | Reactive hooks      | ✅ Stable | 5.0.1   |
+| @unrdf/core     | Core RDF operations | ✅ Stable | latest   |
+| @unrdf/oxigraph | Rust triple store   | ✅ Stable | latest   |
+| @unrdf/hooks    | Reactive hooks      | ✅ Stable | latest   |
 | ...             | ...                 | ...       | ...     |
 
 **Evidence:** Package list at `/home/user/unrdf/package.json:workspaces`

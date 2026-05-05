@@ -143,7 +143,7 @@ describe('README Lockchain Provenance Examples', () => {
       mockLockchain.writeReceipt.mockResolvedValue({
         metadata: {
           reason: 'User registration',
-          ip: '192.168.1.1',
+          ip: 'latest.1',
           userAgent: 'Mozilla/5.0',
         },
       });
@@ -155,7 +155,7 @@ describe('README Lockchain Provenance Examples', () => {
         timestamp: new Date(),
         metadata: {
           reason: 'User registration',
-          ip: '192.168.1.1',
+          ip: 'latest.1',
           userAgent: 'Mozilla/5.0',
         },
       });
@@ -321,7 +321,7 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-user',
         delta: delta,
         timestamp: new Date(),
-        metadata: { ip: '192.168.1.1', reason: 'User registration' },
+        metadata: { ip: 'latest.1', reason: 'User registration' },
       });
 
       expect(receipt.actor).toBe('alice@example.org');
@@ -383,7 +383,7 @@ describe('README Lockchain Provenance Examples', () => {
         action: 'add-user',
         delta: result.delta,
         timestamp: new Date(),
-        metadata: { ip: '192.168.1.1', reason: 'User registration' },
+        metadata: { ip: 'latest.1', reason: 'User registration' },
       });
 
       // Verify receipt

@@ -1,6 +1,6 @@
 # @unrdf/hooks - Knowledge Hook Engine
 
-![Version](https://img.shields.io/badge/version-6.0.0-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
+![Version](https://img.shields.io/badge/version-[VERSION]-blue) ![Production Ready](https://img.shields.io/badge/production-ready-green)
 
 > Production-grade policy definition and execution framework for RDF knowledge graphs
 >

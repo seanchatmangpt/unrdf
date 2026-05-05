@@ -286,7 +286,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       for (const modName of coreModules) {
         validator.registerModule({
           name: modName,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['initialize', 'execute'],
           exportedInterfaces: ['initialize', 'execute', 'getStatus'],
@@ -311,7 +311,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       modules.forEach(name => {
         validator.registerModule({
           name,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['execute', 'getStatus'],
           exportedInterfaces: ['execute', 'getStatus', 'subscribe'],
@@ -429,7 +429,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       ['daemon', 'yawl', 'streaming', 'hooks', 'consensus', 'kgc-4d', 'v6-core'].forEach(name => {
         validator.registerModule({
           name,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['execute'],
           exportedInterfaces: ['execute', 'getStatus'],
@@ -492,7 +492,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       ['daemon', 'yawl', 'streaming'].forEach(name => {
         validator.registerModule({
           name,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['execute'],
           exportedInterfaces: ['execute', 'subscribe'],
@@ -710,7 +710,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       modules.forEach(name => {
         validator.registerModule({
           name,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['execute', 'handleError'],
           exportedInterfaces: ['execute', 'handleError', 'getStatus'],
@@ -849,7 +849,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
 
       validator.registerModule({
         name: 'daemon',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['execute'],
         exportedInterfaces: ['execute', 'subscribe'],
@@ -857,7 +857,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
 
       validator.registerModule({
         name: 'yawl',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['subscribe'],
         exportedInterfaces: ['subscribe', 'execute'],
@@ -865,7 +865,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
 
       validator.registerModule({
         name: 'streaming',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['trigger'],
         exportedInterfaces: ['trigger', 'subscribe'],
@@ -873,7 +873,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
 
       validator.registerModule({
         name: 'hooks',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['execute'],
         exportedInterfaces: ['execute', 'trigger'],
@@ -969,7 +969,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       // Register multiple modules with dependencies
       validator.registerModule({
         name: 'daemon',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['execute'],
         exportedInterfaces: ['execute'],
@@ -978,7 +978,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
 
       validator.registerModule({
         name: 'yawl',
-        version: '1.0.0',
+        version: '[VERSION]',
         type: 'core',
         requiredInterfaces: ['execute'],
         exportedInterfaces: ['execute'],
@@ -1031,7 +1031,7 @@ describe('Daemon Ecosystem Composition Tests', () => {
       allModules.forEach(name => {
         validator.registerModule({
           name,
-          version: '1.0.0',
+          version: '[VERSION]',
           type: 'core',
           requiredInterfaces: ['execute', 'getStatus'],
           exportedInterfaces: ['execute', 'getStatus', 'subscribe'],

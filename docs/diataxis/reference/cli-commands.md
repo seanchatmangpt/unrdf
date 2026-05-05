@@ -4,7 +4,7 @@
 
 **Audience:** CLI users and automation scripts
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

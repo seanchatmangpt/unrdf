@@ -1,7 +1,7 @@
 /**
  * @file use-dark-matter-core.mjs
  * @description React hook for 80/20 analysis - identifying critical code paths
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -11,7 +11,7 @@ import { useKnowledgeEngineContext } from '../core/use-knowledge-engine-context.
  * Hook for analyzing and identifying "dark matter" code - the 80% that delivers 20% value
  * Focus optimization efforts on the critical 20% that delivers 80% of value
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Dark matter analysis configuration
  * @param {string[]} [config.targets] - Specific queries/operations to analyze
  * @param {number} [config.sampleSize=1000] - Number of operations to sample

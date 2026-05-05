@@ -36,7 +36,7 @@ pnpm test
 
 **Note**: Always use `pnpm test` for running tests. See [Build System Practices](../rules/build-system-practices.mdc).
 
-#### 1.1: Collect Baseline Data (DMAIC Measurement)
+#### latest: Collect Baseline Data (DMAIC Measurement)
 
 **Action**: Measure current test state to establish baseline.
 
@@ -59,7 +59,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 # Output: 5 failures
 
 # Calculate failure rate
-# 5 failures / 150 tests = 3.3% failure rate
+# 5 failures / 150 tests = latest% failure rate
 
 # Categorize failures
 # Syntax/Type errors: 2
@@ -75,7 +75,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 
 **Total Tests**: 150
 **Failures**: 5
-**Failure Rate**: 3.3% (5/150)
+**Failure Rate**: latest% (5/150)
 
 **By Type**:
 
@@ -91,7 +91,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 
 **Action**: Parse test output to identify all failures and categorize them.
 
-#### 2.1: Extract Failure Information
+#### latest: Extract Failure Information
 
 **Look for these patterns in output**:
 
@@ -120,7 +120,7 @@ thread 'test_name' panicked at '<message>', src/file.mjs:line:column
 test('test_name' ... timeout
 ```
 
-#### 2.2: Categorize Failures
+#### latest: Categorize Failures
 
 **Create failure list**:
 
@@ -145,7 +145,7 @@ test('test_name' ... timeout
 - [ ] `test_slow_operation` - Timeout after 60s
 ```
 
-#### 2.3: Prioritize Fixes
+#### latest: Prioritize Fixes
 
 **Priority Order**:
 
@@ -160,28 +160,28 @@ test('test_name' ... timeout
 
 **Action**: Systematically fix each failure category.
 
-#### 3.1: Fix Syntax/Type Errors
+#### latest: Fix Syntax/Type Errors
 
 **For each syntax/type error**:
 
-**Step 3.1.1**: Read error message carefully
+**Step latest**: Read error message carefully
 
 - Understand what the error is complaining about
 - Identify the root cause
 
-**Step 3.1.2**: Fix the error
+**Step latest**: Fix the error
 
 - Update code to resolve syntax/type issue
 - Ensure proper JSDoc types
 - Fix import statements if needed
 
-**Step 3.1.3**: Verify fix
+**Step latest**: Verify fix
 
 ```bash
 pnpm lint
 ```
 
-**Step 3.1.4**: Repeat until all syntax/type errors fixed
+**Step latest**: Repeat until all syntax/type errors fixed
 
 **Common Fixes**:
 
@@ -192,34 +192,34 @@ pnpm lint
 
 **Reference**: See [User Guide - Troubleshooting](../../docs/USER_GUIDE.md#troubleshooting)
 
-#### 3.2: Fix Test Failures
+#### latest: Fix Test Failures
 
 **For each test failure**:
 
-**Step 3.2.1**: Read test failure message
+**Step latest**: Read test failure message
 
 - Understand what the test expected vs. what it got
 - Identify the root cause
 
-**Step 3.2.2**: Determine if test or implementation is wrong
+**Step latest**: Determine if test or implementation is wrong
 
 - Review test logic
 - Review implementation logic
 - Check if test needs updating or implementation needs fixing
 
-**Step 3.2.3**: Fix the issue
+**Step latest**: Fix the issue
 
 - Update test if test is wrong
 - Update implementation if implementation is wrong
 - Ensure test follows AAA pattern (see [Chicago TDD Standards](../rules/chicago-tdd-standards.mdc))
 
-**Step 3.2.4**: Verify fix
+**Step latest**: Verify fix
 
 ```bash
 pnpm test('test_name'
 ```
 
-**Step 3.2.5**: Repeat for each failing test
+**Step latest**: Repeat for each failing test
 
 **Common Fixes**:
 
@@ -230,29 +230,29 @@ pnpm test('test_name'
 
 **Reference**: See [User Guide - Best Practices](../../docs/USER_GUIDE.md#best-practices)
 
-#### 3.3: Fix Panics
+#### latest: Fix Panics
 
 **For each panic**:
 
-**Step 3.3.1**: Identify panic source
+**Step latest**: Identify panic source
 
 - Read stack trace
 - Find the exact line causing panic
 
-**Step 3.3.2**: Fix panic source
+**Step latest**: Fix panic source
 
 - Replace unsafe operations with proper error handling
 - Add null checks
 - Fix index out of bounds
 - Handle edge cases
 
-**Step 3.3.3**: Verify fix
+**Step latest**: Verify fix
 
 ```bash
 pnpm test('test_name'
 ```
 
-**Step 3.3.4**: Repeat for each panic
+**Step latest**: Repeat for each panic
 
 **Common Fixes**:
 
@@ -263,29 +263,29 @@ pnpm test('test_name'
 
 **Reference**: See [Expert Testing Patterns](./expert-testing-patterns.md) for panic safety testing
 
-#### 3.4: Fix Timeouts
+#### latest: Fix Timeouts
 
 **For each timeout**:
 
-**Step 3.4.1**: Identify slow operation
+**Step latest**: Identify slow operation
 
 - Review test code
 - Find the operation taking too long
 
-**Step 3.4.2**: Optimize or mock
+**Step latest**: Optimize or mock
 
 - Optimize slow code
 - Mock external dependencies
 - Increase timeout if legitimate
 - Use test fixtures for setup
 
-**Step 3.4.3**: Verify fix
+**Step latest**: Verify fix
 
 ```bash
 pnpm test('test_name'
 ```
 
-**Step 3.4.4**: Repeat for each timeout
+**Step latest**: Repeat for each timeout
 
 **Common Fixes**:
 
@@ -323,7 +323,7 @@ pnpm test
 
 **Action**: Final verification that work is complete.
 
-#### 5.1: Verify All Tests Pass
+#### latest: Verify All Tests Pass
 
 ```bash
 pnpm test
@@ -331,7 +331,7 @@ pnpm test
 
 **Expected**: Exit code 0, all tests pass
 
-#### 5.2: Verify Syntax/Type Check
+#### latest: Verify Syntax/Type Check
 
 ```bash
 pnpm lint
@@ -339,7 +339,7 @@ pnpm lint
 
 **Expected**: Exit code 0, no syntax/type errors
 
-#### 5.3: Verify No Pending Test Fixes
+#### latest: Verify No Pending Test Fixes
 
 **Check**: Review todo list for any pending test fixes
 
@@ -347,7 +347,7 @@ pnpm lint
 
 **Expected**: No pending test fixes remain
 
-#### 5.4: Measure Improvement (DMAIC Measurement)
+#### latest: Measure Improvement (DMAIC Measurement)
 
 **Action**: Measure improvement against baseline data.
 
@@ -366,7 +366,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 # Output: 0 failures (down from 5)
 
 # Calculate improvement
-# Baseline: 5 failures (3.3% failure rate)
+# Baseline: 5 failures (latest% failure rate)
 # After fixes: 0 failures (0% failure rate)
 # Improvement: 100% (5/5 failures fixed)
 ```
@@ -376,7 +376,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 ```markdown
 ## Improvement Measurement
 
-**Baseline**: 5 failures (3.3% failure rate)
+**Baseline**: 5 failures (latest% failure rate)
 **After Fixes**: 0 failures (0% failure rate)
 **Improvement**: 100% (5/5 failures fixed)
 
@@ -393,7 +393,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 - No test failures ✅
 ```
 
-#### 5.5: Mark Work Complete
+#### latest: Mark Work Complete
 
 **Only when**:
 
@@ -405,7 +405,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 
 **Then**: Mark work as complete
 
-#### 5.6: Establish Controls (DMAIC Control)
+#### latest: Establish Controls (DMAIC Control)
 
 **Action**: Set up controls to prevent test failures from returning.
 
@@ -460,7 +460,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 
 **Principle**: Implement controls to prevent test failures, don't just document them. Todos track progress, controls prevent recurrence.
 
-#### 5.7: Monitor (DMAIC Control)
+#### latest: Monitor (DMAIC Control)
 
 **Action**: Monitor to ensure test failures don't return.
 
@@ -479,7 +479,7 @@ pnpm test 2>&1 | grep -c "FAILED"
 # Alert if failure rate > 1%
 
 # Track trends
-# Week 1: 5 failures (3.3% failure rate - baseline)
+# Week 1: 5 failures (latest% failure rate - baseline)
 # Week 2: 0 failures (0% failure rate - after fixes)
 # Week 3: 0 failures (0% failure rate - controls working)
 # Week 4: 0 failures (0% failure rate - sustained)

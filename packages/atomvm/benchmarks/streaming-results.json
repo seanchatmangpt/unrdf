@@ -1,6 +1,6 @@
 {
   "timestamp": "2025-12-21T10:18:29.367Z",
-  "nodeVersion": "v24.11.1",
+  "nodeVersion": "[VERSION]",
   "throughput_1k": {
     "itemCount": 1000,
     "processedCount": 1000,

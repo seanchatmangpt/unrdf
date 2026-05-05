@@ -17,20 +17,20 @@ Create a Lens primitive that deterministically maps existing API payloads ↔ RD
 
 | File | Size | Lines | Purpose | Status |
 |------|------|-------|---------|--------|
-| `PLAN.md` | 5.6K | 187 | Architecture & design doc | ✅ Complete |
-| `stable-ids.mjs` | 3.5K | 102 | Stable IRI/Skolem generation | ✅ Tested 100% |
-| `lens.mjs` | 9.0K | 311 | Lens definition/compilation/execution | ✅ Complete |
-| `demo-customer-lens.mjs` | 6.5K | 224 | Reference Customer lens | ✅ Complete |
-| `index.mjs` | 1.5K | 56 | Public API exports | ✅ Complete |
-| `test.mjs` | 9.7K | 274 | Full test suite (6 tests) | ✅ Ready |
-| `test-stable-ids.mjs` | 6.1K | 220 | Standalone core tests | ✅ Passing 6/6 |
+| `PLAN.md` | latestK | 187 | Architecture & design doc | ✅ Complete |
+| `stable-ids.mjs` | latestK | 102 | Stable IRI/Skolem generation | ✅ Tested 100% |
+| `lens.mjs` | latestK | 311 | Lens definition/compilation/execution | ✅ Complete |
+| `demo-customer-lens.mjs` | latestK | 224 | Reference Customer lens | ✅ Complete |
+| `index.mjs` | latestK | 56 | Public API exports | ✅ Complete |
+| `test.mjs` | latestK | 274 | Full test suite (6 tests) | ✅ Ready |
+| `test-stable-ids.mjs` | latestK | 220 | Standalone core tests | ✅ Passing 6/6 |
 | `README.md` | 11K | 364 | Documentation | ✅ Complete |
 | **TOTAL** | **54K** | **1,738** | | **100%** |
 
 ### Code Quality Metrics
 
 - **Test Coverage**: 6/6 core tests passing (100%)
-- **Performance**: 0.008ms IRI generation (125x better than 1ms target)
+- **Performance**: latestms IRI generation (125x better than 1ms target)
 - **Determinism**: Verified over 1,000 iterations
 - **Dependencies**: Zero for core functionality (stable-ids)
 - **Type Safety**: 100% JSDoc coverage
@@ -50,7 +50,7 @@ Testing stable identifier generation without external dependencies
 
 [TEST 1] Stable IRI Determinism (1000 iterations)
   ✅ Generated 1 unique IRI from 1000 calls
-  ✅ Average time: 0.008ms per call
+  ✅ Average time: latestms per call
   ✅ Performance target MET (< 1ms)
 
 [TEST 2] Skolem Determinism (100 iterations)
@@ -75,7 +75,7 @@ Testing stable identifier generation without external dependencies
 Total: 6 tests
 Passed: 6 ✅
 Failed: 0 ❌
-Success Rate: 100.0%
+Success Rate: latest%
 
 🎉 All stable-ids tests passed! Core identifier system ready.
 ```
@@ -108,7 +108,7 @@ stableIRI('kgc-facade', 'customer', 'customer-123')
 **Guarantees**:
 - Deterministic: Same inputs → same IRI always
 - Collision-resistant: SHA-256 (2^256 space)
-- Fast: 0.008ms per call (avg)
+- Fast: latestms per call (avg)
 - Pure: No external state or random values
 
 **Function**: `stableSkolem(template, values)`
@@ -182,10 +182,10 @@ const reconstructed = executeLensFromGraph(subjects, store, program);
 
 | Metric | Target | Actual | Ratio |
 |--------|--------|--------|-------|
-| IRI generation | < 1ms | 0.008ms | 125x faster |
-| Skolem generation | < 1ms | ~0.010ms | 100x faster |
+| IRI generation | < 1ms | latestms | 125x faster |
+| Skolem generation | < 1ms | ~latestms | 100x faster |
 | Determinism iterations | 100 | 1,000 | 10x more |
-| Test pass rate | 80% | 100% | 1.25x better |
+| Test pass rate | 80% | 100% | latestx better |
 
 ---
 
@@ -279,7 +279,7 @@ All functions are pure:
 |-----------|--------|--------|--------|
 | Stable IRI generation | Deterministic | 1000/1000 identical | ✅ |
 | Round-trip fidelity | Lossless | Byte-identical DTO | ✅ |
-| Performance | < 1ms | 0.008ms | ✅ |
+| Performance | < 1ms | latestms | ✅ |
 | Test coverage | 80%+ | 100% core | ✅ |
 | Dependencies | Minimal | Zero (core) | ✅ |
 | API stability | Zero churn | Facade-only | ✅ |
@@ -294,7 +294,7 @@ All functions are pure:
 
 ✅ YES - `test-stable-ids.mjs` executed successfully
 ```
-Success Rate: 100.0%
+Success Rate: latest%
 🎉 All stable-ids tests passed!
 ```
 
@@ -302,7 +302,7 @@ Success Rate: 100.0%
 
 ✅ YES - Test output showing:
 - 1,000 iterations → 1 unique IRI
-- 0.008ms average time
+- latestms average time
 - 6/6 tests passing
 - 100% success rate
 
@@ -324,14 +324,14 @@ $ node /home/user/unrdf/AUTONOMIC_INNOVATION/agent-3/test-stable-ids.mjs
 # Verify files exist
 $ ls -lh /home/user/unrdf/AUTONOMIC_INNOVATION/agent-3/
 total 54K
--rw------- 1 root root 5.6K Dec 26 07:34 PLAN.md
+-rw------- 1 root root latestK Dec 26 07:34 PLAN.md
 -rw------- 1 root root  11K Dec 26 07:42 README.md
--rw------- 1 root root 6.5K Dec 26 07:38 demo-customer-lens.mjs
--rw------- 1 root root 1.5K Dec 26 07:34 index.mjs
--rw------- 1 root root 9.0K Dec 26 07:38 lens.mjs
--rw------- 1 root root 3.5K Dec 26 07:34 stable-ids.mjs
--rw------- 1 root root 6.1K Dec 26 07:40 test-stable-ids.mjs
--rw------- 1 root root 9.7K Dec 26 07:38 test.mjs
+-rw------- 1 root root latestK Dec 26 07:38 demo-customer-lens.mjs
+-rw------- 1 root root latestK Dec 26 07:34 index.mjs
+-rw------- 1 root root latestK Dec 26 07:38 lens.mjs
+-rw------- 1 root root latestK Dec 26 07:34 stable-ids.mjs
+-rw------- 1 root root latestK Dec 26 07:40 test-stable-ids.mjs
+-rw------- 1 root root latestK Dec 26 07:38 test.mjs
 
 # Count lines
 $ wc -l agent-3/*.{mjs,md}
@@ -424,7 +424,7 @@ import { customerLensProgram, demoCustomerRoundTrip } from './agent-3/demo-custo
 Delivered a deterministic, high-performance Lens primitive system with:
 - 1,738 lines of production code
 - 6/6 core tests passing (100%)
-- 0.008ms IRI generation (125x better than target)
+- latestms IRI generation (125x better than target)
 - 100% determinism verified over 1,000 iterations
 - Zero external dependencies for core functionality
 - Lossless round-trip guarantees

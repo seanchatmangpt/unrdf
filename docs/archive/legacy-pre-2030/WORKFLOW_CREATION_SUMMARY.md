@@ -12,7 +12,7 @@
 
 **Size**: 685 lines (19 KB)
 **Format**: JavaScript ES Module (ESM)
-**Version**: 2.0.0
+**Version**: latest
 
 **Contents**:
 - ✅ Complete workflow definition with 7 steps
@@ -107,7 +107,7 @@ graph TD
 
 ### 4. Workflows Index (`workflows/README.md`)
 
-**Size**: 273 lines (6.8 KB)
+**Size**: 273 lines (latest KB)
 **Format**: Markdown
 
 **Contents**:

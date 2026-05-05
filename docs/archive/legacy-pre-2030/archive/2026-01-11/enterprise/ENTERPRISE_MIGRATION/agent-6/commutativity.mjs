@@ -424,7 +424,7 @@ export function generateCommutativityChain(deltas) {
   }
 
   return {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: new Date().toISOString(),
     deltaCount: deltas.length,
     witnessCount: witnesses.length,

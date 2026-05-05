@@ -31,9 +31,9 @@
 $ ls -lh ENTERPRISE_MIGRATION/agent-2/
 -rw------- 1 root root  11K README.md
 -rw------- 1 root root  11K contract-scanner.mjs
--rw------- 1 root root 1.2K generate-lockfile.mjs
--rw------- 1 root root 5.9K lockfile-generator.mjs
--rw------- 1 root root 9.3K verify-contracts.mjs
+-rw------- 1 root root latestK generate-lockfile.mjs
+-rw------- 1 root root latestK lockfile-generator.mjs
+-rw------- 1 root root latestK verify-contracts.mjs
 -rw------- 1 root root  14K KEY_CONTRACTS.md
 
 $ wc -l agent-2/*.mjs
@@ -56,14 +56,14 @@ $ wc -l agent-2/*.mjs
 
 ## Execution Timeline
 
-### 1. Discovery Phase (0.5s)
+### 1. Discovery Phase (latests)
 ```bash
 ✅ RAN: ls -la /home/user/unrdf/packages
 ✅ RAN: find packages -name "package.json" | head -20
 ```
 **Output**: 44 package directories found
 
-### 2. Analysis Phase (1.2s)
+### 2. Analysis Phase (latests)
 ```bash
 ✅ READ: packages/oxigraph/package.json
 ✅ READ: packages/hooks/package.json
@@ -75,7 +75,7 @@ $ wc -l agent-2/*.mjs
 ```
 **Output**: Package structure understood
 
-### 3. Implementation Phase (0.8s)
+### 3. Implementation Phase (latests)
 ```bash
 ✅ WROTE: agent-2/contract-scanner.mjs (370 lines)
 ✅ WROTE: agent-2/lockfile-generator.mjs (208 lines)
@@ -83,7 +83,7 @@ $ wc -l agent-2/*.mjs
 ```
 **Output**: Complete implementation
 
-### 4. Execution Phase (2.5s)
+### 4. Execution Phase (latests)
 ```bash
 ✅ RAN: timeout 10s node contract-scanner.mjs
 Output:
@@ -100,7 +100,7 @@ Output:
   Overall Hash: 2a3c1f197191d56c
 ```
 
-### 5. Verification Phase (2.7s)
+### 5. Verification Phase (latests)
 ```bash
 ✅ RAN: ls -lah CONTRACTS.lock.json
 Output: -rw-r--r-- 1 root root 232K
@@ -110,14 +110,14 @@ Output: ✅ Contract verification PASSED
         No breaking changes detected
 ```
 
-### 6. Documentation Phase (1.0s)
+### 6. Documentation Phase (latests)
 ```bash
 ✅ WROTE: agent-2/README.md (425 lines)
 ✅ WROTE: agent-2/KEY_CONTRACTS.md (401 lines)
 ✅ WROTE: agent-2/generate-lockfile.mjs (39 lines)
 ```
 
-**Total Execution Time**: ~8.7 seconds
+**Total Execution Time**: ~latest seconds
 
 ---
 
@@ -127,9 +127,9 @@ Output: ✅ Contract verification PASSED
 | File | Lines | Size | Purpose |
 |------|-------|------|---------|
 | contract-scanner.mjs | 370 | 11KB | Scans packages for contracts |
-| lockfile-generator.mjs | 208 | 5.9KB | Generates lockfile |
-| verify-contracts.mjs | 334 | 9.3KB | Verifies and accepts contracts |
-| generate-lockfile.mjs | 39 | 1.2KB | Main entry point |
+| lockfile-generator.mjs | 208 | latestKB | Generates lockfile |
+| verify-contracts.mjs | 334 | latestKB | Verifies and accepts contracts |
+| generate-lockfile.mjs | 39 | latestKB | Main entry point |
 
 ### Documentation
 | File | Lines | Size | Purpose |
@@ -180,8 +180,8 @@ Output: ✅ Contract verification PASSED
 CONTRACT LOCKFILE SUMMARY
 ============================================================
 
-Generated: 2025-12-26T07:56:55.798Z
-Version: 1.0.0
+Generated: 2025-12-26T07:56:latestZ
+Version: latest
 Hash: 2a3c1f197191d56c
 
 TOTALS:
@@ -216,10 +216,10 @@ TOTALS:
 ### Performance
 | Operation | Time | Acceptable | Status |
 |-----------|------|------------|--------|
-| Package scan | 2.5s | <5s | ✅ PASS |
-| Lockfile gen | 0.8s | <5s | ✅ PASS |
-| Verification | 2.7s | <5s | ✅ PASS |
-| Total | 6.0s | <15s | ✅ PASS |
+| Package scan | latests | <5s | ✅ PASS |
+| Lockfile gen | latests | <5s | ✅ PASS |
+| Verification | latests | <5s | ✅ PASS |
+| Total | latests | <15s | ✅ PASS |
 
 ### Code Quality
 - **ESLint**: Would pass (standard patterns used)
@@ -267,7 +267,7 @@ TOTALS:
 ```bash
 Command: timeout 10s node agent-2/contract-scanner.mjs
 Exit Code: 0
-Duration: ~2.5s
+Duration: ~latests
 Output: 37 packages, 139 exports, 223 functions
 ```
 ✅ PASS
@@ -276,7 +276,7 @@ Output: 37 packages, 139 exports, 223 functions
 ```bash
 Command: timeout 10s node agent-2/generate-lockfile.mjs
 Exit Code: 0
-Duration: ~3.3s (includes scan)
+Duration: ~latests (includes scan)
 Output: CONTRACTS.lock.json created (232KB)
 ```
 ✅ PASS
@@ -292,7 +292,7 @@ Output: -rw-r--r-- 1 root root 232K Dec 26 07:56
 ```bash
 Command: timeout 5s node verify-contracts.mjs --verify
 Exit Code: 0
-Duration: ~2.7s
+Duration: ~latests
 Output: ✅ Contract verification PASSED
 ```
 ✅ PASS
@@ -373,13 +373,13 @@ function sortObjectKeys(obj) {
 ### Issue 1: KGN Package Scan Failure
 **Error**: `The "path" argument must be of type string. Received an instance of Object`
 **Root Cause**: package.json exports is malformed (object instead of string)
-**Impact**: 1 package not scanned (2.3% of total)
+**Impact**: 1 package not scanned (latest% of total)
 **Mitigation**: None needed - package is not in critical path
 
 ### Issue 2: React Package Missing
 **Error**: `ENOENT: no such file or directory, open '/home/user/unrdf/packages/react/package.json'`
 **Root Cause**: Directory exists but package.json missing (symlink or deleted)
-**Impact**: 1 package not scanned (2.3% of total)
+**Impact**: 1 package not scanned (latest% of total)
 **Mitigation**: None needed - package is not in critical path
 
 ### Overall Impact
@@ -427,7 +427,7 @@ function sortObjectKeys(obj) {
 | Verification works | Yes | Yes | ✅ MET |
 | No new deps | 0 | 0 | ✅ MET |
 | All .mjs files | 100% | 100% | ✅ MET |
-| Execution time | <30s | ~8.7s | ✅ EXCEEDED |
+| Execution time | <30s | ~latests | ✅ EXCEEDED |
 
 **Overall**: 8/8 criteria met (100%)
 

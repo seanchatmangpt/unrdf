@@ -15,7 +15,7 @@
       "@type": "unrdf:Protocol",
       "rdfs:label": "RAFT Consensus Protocol",
       "rdfs:comment": "RAFT-based consensus for distributed RDF store coordination",
-      "unrdf:version": "1.0.0",
+      "unrdf:version": "latest",
       "unrdf:initialState": "state:Follower",
       "unrdf:terminalStates": ["state:Shutdown"],
       "unrdf:states": [

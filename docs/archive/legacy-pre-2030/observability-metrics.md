@@ -177,7 +177,7 @@ All spans include standard attributes:
 {
   // Standard attributes
   "service.name": "unrdf-daemon",
-  "service.version": "6.0.0",
+  "service.version": "latest",
   "service.namespace": "unrdf",
 
   // Operation context

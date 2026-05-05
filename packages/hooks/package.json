@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "UNRDF Knowledge Hooks - Policy Definition and Execution Framework",
   "type": "module",
   "bin": {

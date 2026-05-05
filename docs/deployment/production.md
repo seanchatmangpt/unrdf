@@ -25,18 +25,18 @@ This guide covers deploying UNRDF in production environments with Docker, Kubern
 - CPU: 2 cores
 - RAM: 4 GB
 - Storage: 10 GB SSD
-- Node.js: 18.0.0+
+- Node.js: latest+
 
 **Recommended (Production):**
 - CPU: 4+ cores
 - RAM: 8+ GB
 - Storage: 50+ GB SSD (NVMe preferred)
-- Node.js: 18.19.0+ (LTS)
+- Node.js: latest+ (LTS)
 
 ### Software Dependencies
 
-- **Node.js:** 18.0.0 or higher
-- **pnpm:** 7.0.0+ (for monorepo deployments)
+- **Node.js:** latest or higher
+- **pnpm:** latest+ (for monorepo deployments)
 - **Docker:** 20.10+ (for containerized deployments)
 - **Redis:** 6.0+ (optional, for distributed caching)
 - **PostgreSQL/SQLite:** (optional, for persistent Oxigraph backend)
@@ -51,7 +51,7 @@ Create a `.env` file for production configuration:
 # Application
 NODE_ENV=production
 PORT=3000
-HOST=0.0.0.0
+HOST=latest.0
 
 # RDF Store Backend
 RDF_BACKEND=oxigraph          # Options: memory, oxigraph, sqlite
@@ -194,7 +194,7 @@ services:
 
   # OpenTelemetry Collector (Observability)
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.91.0
+    image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
@@ -219,7 +219,7 @@ services:
 
   # Prometheus (Metrics)
   prometheus:
-    image: prom/prometheus:v2.48.0
+    image: prom/prometheus:latest
     container_name: prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -236,7 +236,7 @@ services:
 
   # Grafana (Visualization)
   grafana:
-    image: grafana/grafana:10.2.3
+    image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3001:3000"
@@ -499,7 +499,7 @@ Response:
   "status": "healthy",
   "timestamp": "2024-01-15T10:30:00Z",
   "uptime": 3600,
-  "version": "5.0.1"
+  "version": "latest"
 }
 
 // Readiness check endpoint
@@ -562,9 +562,9 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: latest.0:4318
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: latest.0:4317
 
 processors:
   batch:
@@ -578,7 +578,7 @@ exporters:
       insecure: true
 
   prometheus:
-    endpoint: "0.0.0.0:8889"
+    endpoint: "latest.0:8889"
 
   logging:
     loglevel: debug

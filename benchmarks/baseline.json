@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-25T22:39:50.761Z",
+  "timestamp": "2025-12-25T22:39:latestZ",
   "benchmarks": [
     {
       "name": "hook-execution",
@@ -7,50 +7,50 @@
       "duration": 970,
       "results": {
         "benchmark": "hook-execution",
-        "timestamp": "2025-12-25T22:39:50.684Z",
+        "timestamp": "2025-12-25T22:39:latestZ",
         "results": {
           "definition": {
-            "meanUs": 1.8733656999999027,
-            "p95Us": 4.304999999988013,
-            "p99Us": 6.731999999999516
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
           "definitionWithValidation": {
-            "meanUs": 1.2683198000000688,
-            "p95Us": 2.2260000000073887,
-            "p99Us": 2.7650000000107866
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
           "execution": {
-            "meanUs": 2.6296183999998677,
-            "p95Us": 3.6600000000248656,
-            "p99Us": 7.683999999983371
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
           "chainExecution": {
-            "meanUs": 4.256179699999291,
-            "p95Us": 6.27400000007583,
-            "p99Us": 13.936000000057902
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
           "registryRegister": {
-            "meanUs": 3.1926973999998607,
-            "p95Us": 5.289999999945394,
-            "p99Us": 8.272000000033586
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
           "registryLookup": {
-            "meanUs": 0.3492387000002168,
-            "p95Us": 0.6139999999277279,
-            "p99Us": 0.927999999930762
+            "meanUs": latest,
+            "p95Us": latest,
+            "p99Us": latest
           },
-          "batchPerQuadUs": 1.9405572000000018,
-          "throughputPerSec": 380283314.11129856
+          "batchPerQuadUs": latest,
+          "throughputPerSec": latest
         },
         "claims": {
           "hookExecutionLt1ms": {
             "target": 1000,
-            "actualP95": 3.6600000000248656,
+            "actualP95": latest,
             "pass": true
           },
           "hookChainLt1ms": {
             "target": 1000,
-            "actualP95": 6.27400000007583,
+            "actualP95": latest,
             "pass": true
           }
         }

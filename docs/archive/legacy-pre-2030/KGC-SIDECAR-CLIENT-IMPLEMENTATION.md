@@ -347,8 +347,8 @@ Successfully implemented enterprise-grade gRPC client for KGC sidecar service wi
 ```json
 {
   "dependencies": {
-    "@grpc/grpc-js": "^1.14.0",
-    "@grpc/proto-loader": "^0.8.0"
+    "@grpc/grpc-js": "^latest",
+    "@grpc/proto-loader": "^latest"
   }
 }
 ```

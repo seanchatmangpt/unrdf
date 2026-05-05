@@ -2,7 +2,7 @@
 
 > ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

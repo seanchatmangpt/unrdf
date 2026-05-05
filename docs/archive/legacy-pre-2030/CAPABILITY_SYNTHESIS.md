@@ -250,7 +250,7 @@ Fri: Impl Agent 10 - Integration
 | Phase | Duration | Agents | Effort |
 |-------|----------|--------|--------|
 | **P0 Critical** | 2 weeks | 1,2,4 | 60 hours |
-| **P1 High-Impact** | 1.5 weeks | 3,5,6 | 45 hours |
+| **P1 High-Impact** | latest weeks | 3,5,6 | 45 hours |
 | **P2 Medium-Impact** | 1 week | 7,8,9 | 35 hours |
 | **Integration** | 3 days | 10 | 20 hours |
 | **TOTAL** | **4-5 weeks** | **10** | **160 hours** |

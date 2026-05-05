@@ -1,5 +1,5 @@
 {
-  "version": "6.0.0",
+  "version": "latest",
   "contractDate": "2025-12-28",
   "authority": "Agent 4: Performance Benchmarker",
   "description": "Machine-readable performance contracts for UNRDF v6 - Enforceable in CI/CD",
@@ -7,16 +7,16 @@
   "contracts": {
     "graphOperations": {
       "storeCreation": {
-        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": 0.3 },
-        "p95Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": 0.4 },
+        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": latest },
+        "p95Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": latest },
         "throughput": { "target": 1000, "unit": "ops/sec", "blockThreshold": 500, "current": 2500 },
         "memoryOverhead": { "target": 5, "unit": "MB", "blockThreshold": 10, "current": 2 }
       },
       "tripleInsertionSingle": {
-        "medianLatency": { "target": 0.1, "unit": "ms", "blockThreshold": 0.5, "current": 0.06 },
-        "p95Latency": { "target": 0.5, "unit": "ms", "blockThreshold": 1, "current": 0.15 },
+        "medianLatency": { "target": latest, "unit": "ms", "blockThreshold": latest, "current": latest },
+        "p95Latency": { "target": latest, "unit": "ms", "blockThreshold": 1, "current": latest },
         "throughput": { "target": 10000, "unit": "ops/sec", "blockThreshold": 5000, "current": 15000 },
-        "memoryPerTriple": { "target": 1, "unit": "KB", "blockThreshold": 2, "current": 0.5 }
+        "memoryPerTriple": { "target": 1, "unit": "KB", "blockThreshold": 2, "current": latest }
       },
       "tripleInsertionBatch100": {
         "totalLatency": { "target": 10, "unit": "ms", "blockThreshold": 20, "current": 7 },
@@ -34,15 +34,15 @@
 
     "sparqlQueries": {
       "simple": {
-        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 5, "current": 0.5 },
+        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 5, "current": latest },
         "p95Latency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": 2 },
         "p99Latency": { "target": 10, "unit": "ms", "blockThreshold": 20, "current": 5 },
         "throughput": { "target": 1000, "unit": "queries/sec", "blockThreshold": 500, "current": 2000 },
-        "cacheHitLatency": { "target": 0.1, "unit": "ms", "blockThreshold": 0.5, "current": 0.06 }
+        "cacheHitLatency": { "target": latest, "unit": "ms", "blockThreshold": latest, "current": latest }
       },
       "medium": {
-        "medianLatency": { "target": 10, "unit": "ms", "blockThreshold": 25, "current": 7.4 },
-        "p95Latency": { "target": 25, "unit": "ms", "blockThreshold": 50, "current": 12.5 },
+        "medianLatency": { "target": 10, "unit": "ms", "blockThreshold": 25, "current": latest },
+        "p95Latency": { "target": 25, "unit": "ms", "blockThreshold": 50, "current": latest },
         "p99Latency": { "target": 50, "unit": "ms", "blockThreshold": 100, "current": 20 },
         "throughput": { "target": 100, "unit": "queries/sec", "blockThreshold": 50, "current": 135 }
       },
@@ -54,15 +54,15 @@
         "memoryPerQuery": { "target": 50, "unit": "MB", "blockThreshold": 200, "current": 20 }
       },
       "largeGraph": {
-        "medianLatency": { "target": 200, "unit": "ms", "blockThreshold": 500, "current": 187.9 },
+        "medianLatency": { "target": 200, "unit": "ms", "blockThreshold": 500, "current": latest },
         "p95Latency": { "target": 500, "unit": "ms", "blockThreshold": 1000, "current": 350 },
-        "throughput": { "target": 5, "unit": "queries/sec", "blockThreshold": 2, "current": 5.3 }
+        "throughput": { "target": 5, "unit": "queries/sec", "blockThreshold": 2, "current": latest }
       }
     },
 
     "validation": {
       "zodSimple": {
-        "latency": { "target": 0.5, "unit": "ms", "blockThreshold": 2, "current": 0.2 },
+        "latency": { "target": latest, "unit": "ms", "blockThreshold": 2, "current": latest },
         "throughput": { "target": 1000, "unit": "ops/sec", "blockThreshold": 500, "current": 2000 }
       },
       "zodComplex": {
@@ -72,9 +72,9 @@
         "latency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": 3 }
       },
       "deltaCapsule": {
-        "medianLatency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": 0.003 },
-        "p95Latency": { "target": 10, "unit": "ms", "blockThreshold": 25, "current": 0.005 },
-        "p99Latency": { "target": 25, "unit": "ms", "blockThreshold": 50, "current": 0.037 },
+        "medianLatency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": latest },
+        "p95Latency": { "target": 10, "unit": "ms", "blockThreshold": 25, "current": latest },
+        "p99Latency": { "target": 25, "unit": "ms", "blockThreshold": 50, "current": latest },
         "throughput": { "target": 200, "unit": "ops/sec", "blockThreshold": 100, "current": 211311 }
       },
       "shaclSimple": {
@@ -107,26 +107,26 @@
 
     "cryptographic": {
       "receiptCreation": {
-        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": 0.009 },
-        "p95Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": 0.017 },
-        "p99Latency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": 0.030 },
+        "medianLatency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": latest },
+        "p95Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": latest },
+        "p99Latency": { "target": 5, "unit": "ms", "blockThreshold": 10, "current": latest },
         "throughput": { "target": 10000, "unit": "ops/sec", "blockThreshold": 5000, "current": 83895 },
-        "memoryPerReceipt": { "target": 1, "unit": "KB", "blockThreshold": 2, "current": 0.839 }
+        "memoryPerReceipt": { "target": 1, "unit": "KB", "blockThreshold": 2, "current": latest }
       },
       "receiptVerification": {
-        "medianLatency": { "target": 0.5, "unit": "ms", "blockThreshold": 1, "current": 0.000 },
-        "p95Latency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": 0.000 },
-        "p99Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": 0.001 },
+        "medianLatency": { "target": latest, "unit": "ms", "blockThreshold": 1, "current": latest },
+        "p95Latency": { "target": 1, "unit": "ms", "blockThreshold": 2, "current": latest },
+        "p99Latency": { "target": 2, "unit": "ms", "blockThreshold": 5, "current": latest },
         "throughput": { "target": 100000, "unit": "ops/sec", "blockThreshold": 50000, "current": 4573038 }
       },
       "receiptChain10": {
-        "medianLatency": { "target": 50, "unit": "ms", "blockThreshold": 100, "current": 0.122 },
-        "p95Latency": { "target": 100, "unit": "ms", "blockThreshold": 250, "current": 0.347 },
+        "medianLatency": { "target": 50, "unit": "ms", "blockThreshold": 100, "current": latest },
+        "p95Latency": { "target": 100, "unit": "ms", "blockThreshold": 250, "current": latest },
         "throughput": { "target": 100, "unit": "chains/sec", "blockThreshold": 50, "current": 6088 }
       },
       "chainVerification10": {
-        "medianLatency": { "target": 20, "unit": "ms", "blockThreshold": 50, "current": 0.001 },
-        "p95Latency": { "target": 50, "unit": "ms", "blockThreshold": 100, "current": 0.002 }
+        "medianLatency": { "target": 20, "unit": "ms", "blockThreshold": 50, "current": latest },
+        "p95Latency": { "target": 50, "unit": "ms", "blockThreshold": 100, "current": latest }
       },
       "merkleTree1k": {
         "latency": { "target": 500, "unit": "ms", "blockThreshold": 1000, "current": 337 },
@@ -138,7 +138,7 @@
   "memoryContracts": {
     "perOperation": {
       "storeCreation": { "targetPeak": 10, "unit": "MB", "blockThreshold": 25, "current": 2 },
-      "insert1k": { "targetPeak": 10, "unit": "MB", "blockThreshold": 25, "current": 4.1 },
+      "insert1k": { "targetPeak": 10, "unit": "MB", "blockThreshold": 25, "current": latest },
       "insert10k": { "targetPeak": 100, "unit": "MB", "blockThreshold": 250, "current": 41 },
       "querySimple": { "targetPeak": 5, "unit": "MB", "blockThreshold": 10, "current": 2 },
       "queryComplex": { "targetPeak": 50, "unit": "MB", "blockThreshold": 200, "current": 20 },
@@ -147,8 +147,8 @@
     "systemWide": {
       "coldStartHeap": { "target": 50, "unit": "MB", "blockThreshold": 100, "current": 26 },
       "peak10kUniverses": { "target": 512, "unit": "MB", "blockThreshold": 1024, "current": 41 },
-      "memoryPer1kQuads": { "target": 8, "unit": "MB", "blockThreshold": 20, "current": 4.1 },
-      "memoryGrowthRate": { "target": 1, "unit": "MB/min", "blockThreshold": 5, "current": 0.1 },
+      "memoryPer1kQuads": { "target": 8, "unit": "MB", "blockThreshold": 20, "current": latest },
+      "memoryGrowthRate": { "target": 1, "unit": "MB/min", "blockThreshold": 5, "current": latest },
       "memoryLeakAfterGC": { "target": 0, "unit": "percent", "blockThreshold": 1, "current": 0 }
     },
     "gcBehavior": {
@@ -229,7 +229,7 @@
       "endToEndPipeline": {
         "minimum": 50,
         "target": 83,
-        "current": 474.7,
+        "current": latest,
         "stretchGoal": 1000,
         "unit": "ops/sec"
       }
@@ -299,29 +299,29 @@
       "apiQuerySimple": {
         "p95": 10,
         "p99": 25,
-        "availability": 99.9,
-        "errorBudget": 0.1,
+        "availability": latest,
+        "errorBudget": latest,
         "unit": "ms"
       },
       "apiQueryComplex": {
         "p95": 250,
         "p99": 500,
-        "availability": 99.5,
-        "errorBudget": 0.5,
+        "availability": latest,
+        "errorBudget": latest,
         "unit": "ms"
       },
       "receiptCreation": {
         "p95": 5,
         "p99": 10,
-        "availability": 99.99,
-        "errorBudget": 0.01,
+        "availability": latest,
+        "errorBudget": latest,
         "unit": "ms"
       },
       "receiptVerification": {
         "p95": 2,
         "p99": 5,
-        "availability": 99.99,
-        "errorBudget": 0.01,
+        "availability": latest,
+        "errorBudget": latest,
         "unit": "ms"
       }
     },
@@ -390,7 +390,7 @@
     },
     "warning": {
       "p95LatencyElevated": {
-        "condition": "P95 >1.5x target for 15 minutes",
+        "condition": "P95 >latestx target for 15 minutes",
         "action": "slack_notification"
       },
       "cacheMissHigh": {
@@ -433,7 +433,7 @@
     },
     "v6PostMerge": {
       "date": "2025-12-28",
-      "file": "/home/user/unrdf/benchmarks/results/v6.0.0-post-merge-performance.json",
+      "file": "/home/user/unrdf/benchmarks/results/vlatest-merge-performance.json",
       "operations": [
         "universe-creation",
         "morphism-application",
@@ -442,16 +442,16 @@
         "merkle-tree-building",
         "chain-verification"
       ],
-      "totalDuration": "21.1s",
+      "totalDuration": "latests",
       "totalOperations": 10000,
-      "overallThroughput": 474.7
+      "overallThroughput": latest
     }
   },
 
   "metadata": {
     "generatedBy": "Agent 4: Performance Benchmarker",
     "generatedAt": "2025-12-28T00:00:00Z",
-    "version": "6.0.0",
+    "version": "latest",
     "status": "ENFORCEABLE",
     "reviewCycle": "quarterly",
     "nextReview": "2025-03-28"

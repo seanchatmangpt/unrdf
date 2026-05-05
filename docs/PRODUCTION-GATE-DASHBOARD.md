@@ -11,7 +11,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                    PRODUCTION QUALITY GATE                      │
 │                                                                 │
-│  Overall Score: 43.5/100 (43.5%)  ❌ FAIL (Need 80%)          │
+│  Overall Score: latest/100 (latest%)  ❌ FAIL (Need 80%)          │
 │  Blockers: 4 Critical, 2 High Priority                         │
 │  Status: NOT PRODUCTION READY                                  │
 └─────────────────────────────────────────────────────────────────┘
@@ -24,9 +24,9 @@
 | # | Criterion | Target | Actual | Status | Blocker Level |
 |---|-----------|--------|--------|--------|---------------|
 | **1** | **Package Structure** | 21/21 with src/index.mjs | 19/21 (90%) | ⚠️ PARTIAL | HIGH |
-| **2** | **Build Performance** | <30s, all dist/ | 0.5s FAIL | ❌ CRITICAL | **BLOCKER** |
+| **2** | **Build Performance** | <30s, all dist/ | latests FAIL | ❌ CRITICAL | **BLOCKER** |
 | **3** | **Linting** | 0 violations | Config error | ❌ CRITICAL | **BLOCKER** |
-| **4** | **Test Execution** | 100% pass | 83.6% (98 fail) | ❌ CRITICAL | **BLOCKER** |
+| **4** | **Test Execution** | 100% pass | latest% (98 fail) | ❌ CRITICAL | **BLOCKER** |
 | **5** | **Test Coverage** | ≥80% all packages | 60% Federation | ❌ CRITICAL | **BLOCKER** |
 | **6** | **Dependencies** | 0 circular | 2 circular | ❌ CRITICAL | **BLOCKER** |
 | **7** | **Export Validation** | Named only, .d.ts | Cannot verify | ⚠️ BLOCKED | HIGH |
@@ -41,7 +41,7 @@ Issue:    esbuild config missing --outdir flag
 Impact:   Cannot generate distributable packages
 Command:  pnpm run build
 Output:   ✘ [ERROR] Must use "outdir" when there are multiple input files
-Duration: 0.524s (failed)
+Duration: latests (failed)
 Fix Time: 15 minutes
 ```
 
@@ -53,12 +53,12 @@ sed -i 's/"build": "esbuild.*/"build": "node scripts\/build-all.mjs"/' package.j
 
 ---
 
-### 2. Test Failures (16.4% failing) ⛔
+### 2. Test Failures (latest% failing) ⛔
 ```
 Issue:    98 tests failing across 13 test files
 Impact:   Cannot verify functionality correctness
 Packages: hooks (74 failures), streaming (24 failures)
-Pass Rate: 83.6% (need 100%)
+Pass Rate: latest% (need 100%)
 Fix Time: 2-4 hours
 ```
 
@@ -85,18 +85,18 @@ cd packages/streaming && grep -r "removeQuad" src/
 
 ### 3. Coverage Below Threshold ⛔
 ```
-Issue:    Federation at 60.48% (need 80%)
+Issue:    Federation at latest% (need 80%)
 Impact:   Insufficient test coverage for production
-Critical: consensus-manager.mjs at 18.61% (81% untested)
+Critical: consensus-manager.mjs at latest% (81% untested)
 Fix Time: 4-6 hours
 ```
 
 **Files Below 80%:**
 ```
-consensus-manager.mjs:     18.61% (🔴 81% uncovered)
-federation-coordinator.mjs: 58.27% (🔴 41% uncovered)
-distributed-query.mjs:      77.77% (⚠️  22% uncovered)
-src/index.mjs:               0.00% (🔴 100% uncovered)
+consensus-manager.mjs:     latest% (🔴 81% uncovered)
+federation-coordinator.mjs: latest% (🔴 41% uncovered)
+distributed-query.mjs:      latest% (⚠️  22% uncovered)
+src/index.mjs:               latest% (🔴 100% uncovered)
 ```
 
 **Action Required:**
@@ -168,34 +168,34 @@ Fix Time: 2-3 hours
 ### Test Statistics
 ```
 Total Tests:      ~598 tests
-Passing:          ~500 tests (83.6%)  ⚠️
-Failing:          ~98 tests (16.4%)   ❌
+Passing:          ~500 tests (latest%)  ⚠️
+Failing:          ~98 tests (latest%)   ❌
 Skipped:          8 tests
 Target Pass Rate: 100%                ❌
 ```
 
 ### Coverage Statistics (Federation Package)
 ```
-Overall:          60.48%  ❌ (need 80%)
-Best File:        100.00% (health.mjs) ✅
-Worst File:       18.61%  (consensus-manager.mjs) ❌
+Overall:          latest%  ❌ (need 80%)
+Best File:        latest% (health.mjs) ✅
+Worst File:       latest%  (consensus-manager.mjs) ❌
 Files ≥80%:       4/8 (50%)  ⚠️
 ```
 
 ### Package Statistics
 ```
 Total Packages:         21
-With src/index.mjs:     19 (90.5%)  ⚠️
-With Test Files:        14 (66.7%)  ⚠️
-Private Packages:       5 (23.8%)   ✅
-Build Configs:          16 (76.2%)  ⚠️
+With src/index.mjs:     19 (latest%)  ⚠️
+With Test Files:        14 (latest%)  ⚠️
+Private Packages:       5 (latest%)   ✅
+Build Configs:          16 (latest%)  ⚠️
 ```
 
 ### Dependency Health
 ```
 Circular Dependencies:  2 cycles     ❌
 Version Alignment:      100%         ✅
-Unique Version:         5.0.1        ✅
+Unique Version:         latest        ✅
 Unused Dependencies:    Unknown      ⚠️
 ```
 
@@ -206,18 +206,18 @@ Unused Dependencies:    Unknown      ⚠️
 ```
 Category              Weight  Score  Max   Grade
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Structure             15%     13.5   15    ⚠️  90%
-Build Performance     20%     0.0    20    ❌  0%
-Linting               10%     0.0    10    ❌  0%
-Test Execution        25%     21.0   25    ⚠️  84%
-Test Coverage         15%     9.0    15    ❌  60%
-Dependencies          10%     0.0    10    ❌  0%
-Export Validation     5%      0.0    5     ⚠️  N/A
+Structure             15%     latest   15    ⚠️  90%
+Build Performance     20%     latest    20    ❌  0%
+Linting               10%     latest    10    ❌  0%
+Test Execution        25%     latest   25    ⚠️  84%
+Test Coverage         15%     latest    15    ❌  60%
+Dependencies          10%     latest    10    ❌  0%
+Export Validation     5%      latest    5     ⚠️  N/A
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TOTAL                 100%    43.5   100   ❌  43.5%
+TOTAL                 100%    latest   100   ❌  latest%
 
 Passing Grade:        80/100
-Deficit:              -36.5 points
+Deficit:              -latest points
 ```
 
 ---
@@ -227,7 +227,7 @@ Deficit:              -36.5 points
 | Criterion | Status | Impact on Production |
 |-----------|--------|---------------------|
 | Can build? | ❌ NO | **FATAL** - Cannot deploy without build |
-| Tests pass? | ❌ NO | **CRITICAL** - 16.4% failure rate unacceptable |
+| Tests pass? | ❌ NO | **CRITICAL** - latest% failure rate unacceptable |
 | Coverage? | ❌ NO | **HIGH** - 60% coverage = 40% untested code |
 | Circular deps? | ❌ NO | **CRITICAL** - Runtime errors likely |
 | Linting? | ❌ NO | **MEDIUM** - Code quality unknown |

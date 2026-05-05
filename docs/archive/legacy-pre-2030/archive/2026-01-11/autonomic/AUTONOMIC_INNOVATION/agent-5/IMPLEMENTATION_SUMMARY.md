@@ -148,7 +148,7 @@ const cert = conflictCertificate(capsuleA, capsuleB);
 //   hash: "a3c8f1e9...",
 //   capsuleIds: ["A", "B"],
 //   conflictType: "add-del-conflict",
-//   version: "1.0.0",
+//   version: "latest",
 //   timestamp: "2025-12-26T...",
 //   metadata: { minimality: "proven", witnessSize: 1 }
 // }
@@ -204,7 +204,7 @@ Where:
 | "Deterministic hashing" | 10x runs, identical structure | ✅ YES |
 | "Minimal witnesses" | Single quad for simple conflicts | ✅ YES |
 | "JSDoc 100%" | All exported functions documented | ✅ YES |
-| "<5ms canReorder" | <1s for 52 test cases (~0.02ms each) | ✅ YES |
+| "<5ms canReorder" | <1s for 52 test cases (~latestms each) | ✅ YES |
 
 ### What Could Break
 
@@ -313,5 +313,5 @@ Agent 5 is **fully implemented and tested** following the PLAN.md specification.
 
 ---
 
-**Implementation Time**: ~2 hours (vs estimated 5.5 hours)
+**Implementation Time**: ~2 hours (vs estimated latest hours)
 **Reason for efficiency**: Clear specification in PLAN.md + Big Bang 80/20 methodology

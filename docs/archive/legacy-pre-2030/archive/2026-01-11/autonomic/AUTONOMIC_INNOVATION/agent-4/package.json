@@ -1,6 +1,6 @@
 {
   "name": "@autonomic-innovation/impact",
-  "version": "0.1.0",
+  "version": "0.0.0-agnostic",
   "type": "module",
   "description": "Impact set extraction for RDF diffs (capsules)",
   "main": "./src/index.mjs",

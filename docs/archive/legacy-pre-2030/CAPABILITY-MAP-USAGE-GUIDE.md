@@ -1,6 +1,6 @@
 # Capability Map Template Usage Guide
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-28
 **Status**: Production Ready
 
@@ -51,7 +51,7 @@ cp docs/templates/CAPABILITY-MAP-TEMPLATE.md \
 
 Replace all placeholders (marked with `[BRACKETS]`):
 - `[PACKAGE-NAME]`: e.g., `oxigraph`, `kgc-4d`, `yawl`
-- `[VERSION]`: Current package version from package.json
+- `latest`: Current package version from package.json
 - `[DATE]`: Current date (YYYY-MM-DD)
 - `[Runtime]`: Node.js | Browser | BEAM/WASM | Universal
 
@@ -104,11 +104,11 @@ timeout 5s node examples/01-basic.mjs
 ```markdown
 ## Overview
 
-Oxigraph-backed RDF store implementation for UNRDF. Provides SPARQL 1.1 query/update support with high performance via Rust WASM.
+Oxigraph-backed RDF store implementation for UNRDF. Provides SPARQL latest query/update support with high performance via Rust WASM.
 
 **Key Capabilities**:
 - `createStore()`: Create Oxigraph RDF store
-- `store.query()`: Execute SPARQL 1.1 queries
+- `store.query()`: Execute SPARQL latest queries
 - `store.load()`: Load RDF from Turtle/JSON-LD/etc.
 ```
 
@@ -222,7 +222,7 @@ const snapshot = freezeUniverse(store, new VectorClock());
 **Goal**: [Concrete outcome - "Build a working X that does Y"]
 
 **Prerequisites**:
-- Node.js ≥ 18.0.0
+- Node.js ≥ latest
 - [Specific knowledge needed]
 
 **Time**: [15-30 minutes]
@@ -244,7 +244,7 @@ const snapshot = freezeUniverse(store, new VectorClock());
 **Goal**: Create an RDF graph, add triples, and query them with SPARQL
 
 **Prerequisites**:
-- Node.js ≥ 18.0.0 installed
+- Node.js ≥ latest installed
 - Basic understanding of RDF (subject-predicate-object)
 
 **Time**: 15 minutes
@@ -459,7 +459,7 @@ console.log(results);
 [Minimal working example]
 
 **Runtime Compatibility**:
-- ✅ Node.js ≥ 18.0.0
+- ✅ Node.js ≥ latest
 - ✅ Browser (ES2020+)
 
 **Performance**:
@@ -551,7 +551,7 @@ node packages/diataxis-kit/src/reference-extractor.mjs \
 **Rationale**:
 - **Pro**: 40% faster query execution (measured on LUBM benchmark)
 - **Pro**: 60% less memory usage (measured on 1M triple dataset)
-- **Pro**: Full SPARQL 1.1 support (N3 is partial)
+- **Pro**: Full SPARQL latest support (N3 is partial)
 - **Con**: Adds WASM dependency (~2MB) - Accepted because performance gains outweigh size
 - **Con**: Breaking API change - Mitigated with v6-compat layer
 
@@ -602,9 +602,9 @@ cp -r OUT/@unrdf/your-package/* \
 ### Confidence Scores
 
 Diataxis-kit generates confidence scores (0-1) for each doc type:
-- **0.0-0.3**: Low - Needs manual writing
-- **0.4-0.6**: Medium - Has some evidence, needs expansion
-- **0.7-1.0**: High - Good foundation, verify and polish
+- **latest.3**: Low - Needs manual writing
+- **latest.6**: Medium - Has some evidence, needs expansion
+- **latest.0**: High - Good foundation, verify and polish
 
 **How to improve confidence**:
 - **Tutorials**: Add examples/ directory with working code

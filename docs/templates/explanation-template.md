@@ -3,7 +3,7 @@ title: "[Concept/Topic]"
 description: "Understanding [concept] in UNRDF"
 category: "explanation"
 audience: "intermediate"
-version: "4.0.0"
+version: "latest"
 last_updated: "YYYY-MM-DD"
 related:
   - path: "/docs/tutorials/related-tutorial.md"

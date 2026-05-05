@@ -34,7 +34,7 @@ Establish consistent structure, tooling, and configuration across **all 17 packa
 | **Build Tool** | Mixed (esbuild, rollup, custom) | Single esbuild config | <30s builds |
 | **Linting** | Inconsistent rules (ESLint, Ruff, none) | Unified Ruff 400+ rules | 0 violations |
 | **Testing** | Fragmented (Vitest, Jest, custom) | Unified Vitest | ≥80% coverage everywhere |
-| **Dependencies** | Version conflicts (1.2.0 vs 1.2.1) | Single version per dep | Deterministic installs |
+| **Dependencies** | Version conflicts (latest vs latest) | Single version per dep | Deterministic installs |
 | **Exports** | Mixed (default + named) | Named only + .d.ts | IDE support, tree-shaking |
 | **Metadata** | Missing/incomplete | Standardized fields | npm discoverability |
 
@@ -207,7 +207,7 @@ Complete package.json metadata, README, LICENSE for all packages
 ## Reference Materials
 
 **Internal**:
-- `.specify/memory/constitution.md` - UNRDF Constitution v1.0.0 (ratified)
+- `.specify/memory/constitution.md` - UNRDF Constitution latest (ratified)
 - `/docs/MONOREPO-DEVELOPMENT.md` - Development guide (will be updated)
 
 **External**:

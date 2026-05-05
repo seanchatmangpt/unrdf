@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/blockchain-audit",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Blockchain-verified audit trail using YAWL receipts and cryptographic verification",
   "type": "module",
   "main": "src/index.mjs",

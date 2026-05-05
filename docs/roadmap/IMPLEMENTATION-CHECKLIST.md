@@ -2,7 +2,7 @@
 
 > Comprehensive task-by-task checklist for executing the GOAP-based roadmap
 
-**Version:** 1.0.0
+**Version:** latest
 **Generated:** 2025-11-18
 **Status:** Planning Phase
 

@@ -289,7 +289,7 @@ time timeout 30s pnpm build:core
 
 ### 8. Optimize CLI Import Time (Lazy Loading)
 
-**Issue**: CLI tests spend 55% of time on imports (1.19s of 2.18s)
+**Issue**: CLI tests spend 55% of time on imports (latests of latests)
 
 **Current Code**:
 ```javascript
@@ -326,10 +326,10 @@ export async function initStore() {
 ```bash
 cd /home/user/unrdf/packages/cli
 time timeout 10s pnpm test
-# Should show import time <500ms (down from 1.19s)
+# Should show import time <500ms (down from latests)
 ```
 
-**Expected Impact**: -50% CLI test time (4.54s → 2.5s)
+**Expected Impact**: -50% CLI test time (latests → latests)
 
 ---
 
@@ -456,7 +456,7 @@ time turbo run build
 
 ### 11. Profile Memory Usage Per Package
 
-**Issue**: Baseline 126.52 MB RSS exceeds 50 MB target by 2.5x
+**Issue**: Baseline latest MB RSS exceeds 50 MB target by latestx
 
 **Profiling Script**:
 ```javascript
@@ -552,7 +552,7 @@ console.log('After Create RSS:', afterCreate.rss / 1024 / 1024, 'MB');
 **Benchmark**:
 ```
 unbuild: ~2-5s per package
-esbuild: ~0.1-0.5s per package (10-50x faster)
+esbuild: ~latest.5s per package (10-50x faster)
 ```
 
 **Migration Plan**:

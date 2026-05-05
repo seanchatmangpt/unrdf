@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document captures the complete baseline state of UNRDF v4.2.3 across all measurement categories. These metrics establish the "before" picture for the v5 refactoring and enable quantitative tracking of improvements.
+This document captures the complete baseline state of UNRDF latest across all measurement categories. These metrics establish the "before" picture for the v5 refactoring and enable quantitative tracking of improvements.
 
 ---
 
@@ -62,7 +62,7 @@ CLI:                     3.5 (low)
 ### Code Quality Metrics (ESLint)
 
 ```
-Warnings Found:      0 (after v4.2.3 fixes)
+Warnings Found:      0 (after latest fixes)
 Errors Found:        0
 Avg Issues/File:     0.0
 Rules Enforced:      400+ (ruff standards)
@@ -154,32 +154,32 @@ Estimated Breakdown:
 ```
 Production Dependencies (22):
 ├─ RDF Processing (7):
-│  ├─ n3 ^1.17.0
-│  ├─ @comunica/query-sparql ^3.0.0
-│  ├─ rdf-validate-shacl ^0.6.5
-│  ├─ rdf-ext ^2.0.0
-│  ├─ @rdfjs/data-model ^2.0.0
-│  ├─ @rdfjs/serializer-turtle ^1.1.5
-│  └─ jsonld ^8.2.0
+│  ├─ n3 ^latest
+│  ├─ @comunica/query-sparql ^latest
+│  ├─ rdf-validate-shacl ^latest
+│  ├─ rdf-ext ^latest
+│  ├─ @rdfjs/data-model ^latest
+│  ├─ @rdfjs/serializer-turtle ^latest
+│  └─ jsonld ^latest
 ├─ Observability (6):
-│  ├─ @opentelemetry/sdk-node ^0.45.0
-│  ├─ @opentelemetry/api ^1.7.0
-│  ├─ @opentelemetry/exporter-jaeger ^1.17.0
-│  ├─ @opentelemetry/exporter-otlp-http ^0.26.0
-│  ├─ @opentelemetry/auto-instrumentations-node ^0.40.0
-│  └─ @opentelemetry/resources ^1.17.0
+│  ├─ @opentelemetry/sdk-node ^latest
+│  ├─ @opentelemetry/api ^latest
+│  ├─ @opentelemetry/exporter-jaeger ^latest
+│  ├─ @opentelemetry/exporter-otlp-http ^latest
+│  ├─ @opentelemetry/auto-instrumentations-node ^latest
+│  └─ @opentelemetry/resources ^latest
 ├─ Validation & Schema (3):
-│  ├─ zod ^3.22.0
-│  ├─ rdf-canonize ^2.0.0
-│  └─ rdf-validate-shacl ^0.6.5
+│  ├─ zod ^latest
+│  ├─ rdf-canonize ^latest
+│  └─ rdf-validate-shacl ^latest
 ├─ Async Context (1):
-│  └─ unctx ^1.0.0
+│  └─ unctx ^latest
 ├─ Utilities (5):
-│  ├─ lru-cache ^11.2.2
-│  ├─ @noble/hashes ^1.3.0
-│  ├─ yaml ^2.8.1
-│  ├─ table ^6.9.0
-│  └─ ws ^8.18.3
+│  ├─ lru-cache ^latest
+│  ├─ @noble/hashes ^latest
+│  ├─ yaml ^latest
+│  ├─ table ^latest
+│  └─ ws ^latest
 
 DevDependencies (13):
 ├─ Testing: vitest, @vitest/coverage-v8
@@ -190,7 +190,7 @@ DevDependencies (13):
 └─ Infrastructure: testcontainers, terraform, cdktf
 ```
 
-### v4.2.3 Package Exports
+### latest Package Exports
 
 ```json
 {
@@ -211,7 +211,7 @@ DevDependencies (13):
 ### Test Distribution
 
 ```
-Full Test Suite (v4.2.3):
+Full Test Suite (latest):
 ├─ Total Tests:               2,594 tests
 ├─ Test Files:                60+ files
 ├─ Total Test Code:           ~45,000 lines
@@ -249,7 +249,7 @@ Fast Test Suite (vitest.config.fast.mjs):
 ### Coverage Metrics
 
 ```
-v4.2.3 Coverage Status:
+latest Coverage Status:
 ├─ Statements:      95.2%
 ├─ Branches:        92.8%
 ├─ Functions:       96.1%
@@ -310,9 +310,9 @@ docs/ (64 files total):
 │  ├─ CLI documentation
 │  └─ Configuration guides
 ├─ Modern Features (10):
-│  ├─ 2028-FEATURES-*.md (v3.2.0+)
+│  ├─ 2028-FEATURES-*.md (latest+)
 │  ├─ HTF-*.md (v4.0+)
-│  └─ v4.0.0-VALIDATION.md
+│  └─ latest-VALIDATION.md
 ├─ Observability (4):
 │  ├─ ANDON-SIGNALS-*.md
 │  └─ observability guides
@@ -325,9 +325,9 @@ docs/ (64 files total):
 
 ```
 docs/archive/ (removed from active):
-├─ v2.4.0 docs (32 files)        - Deprecated
-├─ v3.0.0 docs (28 files)        - Superseded
-├─ v3.1.0 docs (24 files)        - Superseded
+├─ latest docs (32 files)        - Deprecated
+├─ latest docs (28 files)        - Superseded
+├─ latest docs (24 files)        - Superseded
 ├─ Reports & Analysis (18 files) - Historical
 ├─ Testing Docs (12 files)       - Outdated
 ├─ Experimental (8 files)        - Prototype
@@ -422,14 +422,14 @@ Baseline Memory (Node.js):
 ### Git History
 
 ```
-Recent Commits (v4.2.3 release):
+Recent Commits (latest release):
 - c10efe8: docs: complete Diataxis refactor based on validated capabilities
-- 5ab1489: chore: bump version to v4.1.1
+- 5ab1489: chore: bump version to latest
 - 27dadd2: fix(utils): remove underscore prefixes from utils imports
-- 2dd9a8e: fix(v4.1.0): resolve critical blocking issues #1-3
+- 2dd9a8e: fix(latest): resolve critical blocking issues #1-3
 - f9f2d96: fix: exclude React hooks tests (moving to unrdf-react)
 
-Commits in v4.2.3 Release Cycle:
+Commits in latest Release Cycle:
 ├─ Feature additions:         8 commits
 ├─ Bug fixes:                 12 commits
 ├─ Documentation updates:     5 commits
@@ -446,7 +446,7 @@ Commits in v4.2.3 Release Cycle:
 
 ```
 npm Registry Status:
-├─ Current Version:           4.2.3
+├─ Current Version:           latest
 ├─ Total Versions Published:  45 versions
 ├─ Download Stats:            ~5,000/month avg
 ├─ Package Score:             85/100 (npm)
@@ -571,8 +571,8 @@ Documentation Analysis:
 
 ### Baseline Capture Date
 
-- **Captured**: 2025-12-03 (v4.2.3 release)
-- **Previous Capture**: 2025-11-15 (v4.2.0)
+- **Captured**: 2025-12-03 (latest release)
+- **Previous Capture**: 2025-11-15 (latest)
 - **Next Capture Target**: End of IMPROVE phase
 - **Review Frequency**: Bi-weekly during v5 development
 

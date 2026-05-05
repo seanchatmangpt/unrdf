@@ -1,7 +1,7 @@
 # UNRDF CLI Command Evaluation Report
 **Date:** 2025-12-02
-**Evaluator:** Claude Code (Sonnet 4.5)
-**Project:** UNRDF v4.0.0
+**Evaluator:** Claude Code (Sonnet latest)
+**Project:** UNRDF vlatest
 **Objective:** Evaluate all citty-based CLI commands by running them to completion and validating their Jobs-To-Be-Done (JTBD)
 
 ---
@@ -135,7 +135,7 @@ node src/cli/index.mjs store backup /tmp/test-rdf-store --output /tmp/test-backu
 - ✅ Summary statistics shown:
   ```
   📦 Backup file: /tmp/test-backup.tar.gz
-  📊 Size: 0.00 MB
+  📊 Size: latest MB
   🔢 Quads backed up: 0
   📈 Graphs: 0
   ⏱️  Duration: 8ms
@@ -262,10 +262,10 @@ node validation/knowledge-engine.validation.mjs
       'service.name': 'unrdf',
       'telemetry.sdk.language': 'nodejs',
       'telemetry.sdk.name': 'opentelemetry',
-      'telemetry.sdk.version': '1.18.1',
+      'telemetry.sdk.version': 'latest',
       'process.pid': 10055,
       'process.executable.name': 'node',
-      'process.runtime.version': '22.12.0'
+      'process.runtime.version': 'latest'
     }
   },
   name: 'validation.knowledge-engine-core',
@@ -410,7 +410,7 @@ No spans collected for feature 'rdf-parsing'. Ensure TracerProvider is initializ
 | `unrdf store import` | Import RDF files | ⚠️ Partial | 30/100 | Glob expansion broken |
 | **Validation Framework** | OTEL span validation | ✅ Working | 60/100 | Features not instrumented |
 
-**Average Completion Score:** **47.9/100**
+**Average Completion Score:** **latest/100**
 
 ---
 
@@ -493,7 +493,7 @@ No spans collected for feature 'rdf-parsing'. Ensure TracerProvider is initializ
    ```
    ✅ Backup completed successfully
    📦 Backup file: /tmp/test-backup.tar.gz
-   📊 Size: 0.00 MB
+   📊 Size: latest MB
    🔢 Quads backed up: 0
    📈 Graphs: 0
    ⏱️  Duration: 8ms
@@ -510,7 +510,7 @@ No spans collected for feature 'rdf-parsing'. Ensure TracerProvider is initializ
 
 5. **Validation Framework (Working):**
    ```
-   🎯 UNRDF OTEL Span-Based Validation (v3.1.0)
+   🎯 UNRDF OTEL Span-Based Validation (vlatest)
    Score: 0/100
    Features: 0/5 passed
    ❌ No spans collected - TracerProvider not initialized in features
@@ -548,4 +548,4 @@ The UNRDF CLI has a **solid foundation** but requires **critical fixes** to be p
 
 **Report Generated:** 2025-12-02
 **Evaluation Method:** Direct command execution with OTEL span validation
-**Test Environment:** Node.js v22.12.0, macOS Darwin 24.5.0
+**Test Environment:** Node.js vlatest, macOS Darwin latest

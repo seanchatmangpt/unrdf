@@ -1,6 +1,6 @@
 # Utilities API Reference
 
-**Version**: v4.1.1
+**Version**: latest
 **Package**: `unrdf/utils`
 **Module**: `utils`
 
@@ -39,7 +39,7 @@ const id = generateUUID();
 console.log(id); // '550e8400-e29b-41d4-a716-446655440000'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -59,7 +59,7 @@ const id = generateShortUUID();
 console.log(id); // 'k5n8p7q2r1'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -82,7 +82,7 @@ const id = generateId('user');
 console.log(id); // 'user-550e8400-e29b-41d4-a716-446655440000'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -107,7 +107,7 @@ const id = generateHashId('alice@example.org');
 console.log(id); // 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -133,7 +133,7 @@ console.log(iri);
 // 'http://example.org/user/sha256/2bd806c97f0e00af1a1fc3328fa763a9269723c8db8fac4f93af71db186d6e90'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -158,7 +158,7 @@ const node = createHashNamedNode('alice');
 console.log(node.value);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -183,7 +183,7 @@ const id = generateRandomBNodeId();
 console.log(id); // 'a7f3c9e2b1d4f8e6'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -207,7 +207,7 @@ const id = generateDeterministicBNodeId('alice');
 console.log(id); // '2bd806c97f0e00af' (always same for 'alice')
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -230,7 +230,7 @@ const bn = createRandomBlankNode();
 console.log(bn.value); // '_:a7f3c9e2b1d4f8e6'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -254,7 +254,7 @@ const bn = createDeterministicBlankNode('alice');
 console.log(bn.value); // '_:2bd806c97f0e00af' (always same for 'alice')
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -279,7 +279,7 @@ const bn2 = generateBNode(); // BlankNode('b1')
 const bn3 = generateBNode(); // BlankNode('b2')
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -305,7 +305,7 @@ const iri = skolemize('b1');
 console.log(iri); // 'http://example.org/.well-known/genid/b1'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -331,7 +331,7 @@ console.log(node.value);
 // 'http://example.org/user/550e8400-e29b-41d4-a716-446655440000'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -354,7 +354,7 @@ const node = createShortUUIDNamedNode();
 console.log(node.value); // 'http://example.org/id/k5n8p7q2r1'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -379,7 +379,7 @@ const id = generateTimestampId('event');
 console.log(id); // 'event1701234567890'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -406,7 +406,7 @@ const id2 = generateId(); // 'item1'
 const id3 = generateId(); // 'item2'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -431,7 +431,7 @@ const id = generateStableId('alice', 'example.org', 30);
 console.log(id); // '7e8c9a1b2d3f4e5a' (always same for same inputs)
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -456,7 +456,7 @@ console.log(node.value);
 // 'http://example.org/user/7e8c9a1b2d3f4e5a' (always same for same inputs)
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -482,7 +482,7 @@ const iri = createNamespaceId('http://xmlns.com/foaf/0.1/', 'name');
 console.log(iri); // 'http://xmlns.com/foaf/0.1/name'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -506,7 +506,7 @@ const node = createNamespaceNamedNode('http://xmlns.com/foaf/0.1/', 'name');
 console.log(node.value); // 'http://xmlns.com/foaf/0.1/name'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -532,7 +532,7 @@ const localName2 = extractLocalName('http://www.w3.org/1999/02/22-rdf-syntax-ns#
 console.log(localName2); // 'type'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -558,7 +558,7 @@ const namespace2 = extractNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#
 console.log(namespace2); // 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -590,7 +590,7 @@ console.log(COMMON_VOCABULARIES.FOAF);
 // 'http://xmlns.com/foaf/0.1/'
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -608,7 +608,7 @@ console.log(COMMON_PREFIXES);
 // { rdf: 'http://...', rdfs: '...', foaf: '...', ... }
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -638,7 +638,7 @@ const objects = getObjects(store, 'http://example.org/alice', 'http://xmlns.com/
 console.log('Alice knows:', objects.map(o => o.value));
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -663,7 +663,7 @@ const subjects = getSubjects(store, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#
 console.log('People:', subjects.map(s => s.value));
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -688,7 +688,7 @@ const predicates = getPredicates(store, 'http://example.org/alice', 'http://exam
 console.log('Relationships between Alice and Bob:', predicates.map(p => p.value));
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -713,7 +713,7 @@ const isPerson = isA(store, 'http://example.org/alice', 'http://xmlns.com/foaf/0
 console.log('Alice is a Person:', isPerson);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -737,7 +737,7 @@ const types = getTypes(store, 'http://example.org/alice');
 console.log('Alice types:', types);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -761,7 +761,7 @@ const nameQuads = pluck(store, 'http://xmlns.com/foaf/0.1/name');
 console.log('All name quads:', nameQuads);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -785,7 +785,7 @@ const nameIndex = indexByPredicate(store, 'http://xmlns.com/foaf/0.1/name');
 console.log('Alice names:', nameIndex.get('http://example.org/alice'));
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -809,7 +809,7 @@ const properties = getProperties(store, 'http://example.org/alice');
 console.log('Alice properties:', properties);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -835,7 +835,7 @@ console.log('Data quality score:', quality.score);
 console.log('Issues found:', quality.issues);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -858,7 +858,7 @@ const broken = findBrokenLinks(store);
 console.log('Broken links:', broken);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -881,7 +881,7 @@ const dangling = findDanglingReferences(store);
 console.log('Dangling references:', dangling);
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 
@@ -904,7 +904,7 @@ const suggestions = suggestImprovements(store);
 suggestions.forEach(s => console.log('Suggestion:', s));
 ```
 
-**Since**: v4.1.1
+**Since**: latest
 
 ---
 

@@ -3,7 +3,7 @@
  *
  * This module exports all the RDF processing engines.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

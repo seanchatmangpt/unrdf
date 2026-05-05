@@ -5,7 +5,7 @@
 **Citty** is a lightweight CLI framework optimized for defining nested command trees.
 
 - **Repository**: github.com/unjs/citty
-- **Version Used**: ^0.1.6
+- **Version Used**: ^latest
 - **License**: MIT
 - **Purpose**: Building command-line interfaces with noun-verb structure
 
@@ -229,7 +229,7 @@ import { queryCommand } from './commands/query.mjs';
 const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '5.0.0',
+    version: 'latest',
     description: 'UNRDF CLI - Command-line tools for RDF operations',
   },
   subcommands: {
@@ -366,7 +366,7 @@ To turn agent-7 into a publishable CLI package:
 ```json
 {
   "name": "@unrdf/exploration-cli",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "UNRDF Exploration CLI - Substrate investigation tool",
   "type": "module",
   "bin": {
@@ -378,8 +378,8 @@ To turn agent-7 into a publishable CLI package:
     "./commands": "./src/commands/index.mjs"
   },
   "dependencies": {
-    "citty": "^0.1.6",
-    "zod": "^3.23.0"
+    "citty": "^latest",
+    "zod": "^latest"
   }
 }
 ```

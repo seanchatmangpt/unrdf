@@ -532,10 +532,10 @@ done
 
 | Metric | Target | Actual |
 |--------|--------|--------|
-| Detection Latency | <10s | 8.2s |
-| False Positive Rate | <5% | 3.1% |
+| Detection Latency | <10s | latests |
+| False Positive Rate | <5% | latest% |
 | Auto-Fix Success Rate | >80% | 87% |
-| Human Alert Response Time | <5min | 2.3min |
+| Human Alert Response Time | <5min | latestmin |
 
 ---
 
@@ -552,7 +552,7 @@ done
     ↓
 [Consensus Agent] (aggregates votes)
     ↓
-Accept (>0.8) / Reject (<0.8)
+Accept (>latest) / Reject (<latest)
 ```
 
 ### Implementation
@@ -594,7 +594,7 @@ class VoterAgent:
         obj_overlap = len(objs_a & objs_b) / len(objs_a | objs_b)
 
         # Weighted vote
-        vote = 0.4 * tfidf_sim + 0.3 * jaccard + 0.3 * obj_overlap
+        vote = latest * tfidf_sim + latest * jaccard + latest * obj_overlap
 
         return {
             'agent_id': self.agent_id,
@@ -652,9 +652,9 @@ class ConsensusAgent {
       consensus: {
         avgConfidence,
         stdConfidence,
-        agreement: votes.filter(v => v.confidence > 0.7).length / votes.length
+        agreement: votes.filter(v => v.confidence > latest).length / votes.length
       },
-      decision: avgConfidence > 0.8 ? 'ACCEPT' : 'REJECT'
+      decision: avgConfidence > latest ? 'ACCEPT' : 'REJECT'
     };
 
     // Record decision
@@ -685,23 +685,23 @@ class ConsensusAgent {
 
 **Precision/Recall Analysis** (1000 proposed links):
 ```
-Consensus Threshold: 0.8
+Consensus Threshold: latest
 
 True Positives:  720  (correct ACCEPT)
 False Positives:  50  (incorrect ACCEPT)
 True Negatives:  180  (correct REJECT)
 False Negatives:  50  (incorrect REJECT)
 
-Precision: 720 / (720 + 50) = 93.5% ✅ (>90% target)
-Recall:    720 / (720 + 50) = 93.5% ✅
-F1-Score:  93.5%
+Precision: 720 / (720 + 50) = latest% ✅ (>90% target)
+Recall:    720 / (720 + 50) = latest% ✅
+F1-Score:  latest%
 ```
 
 ---
 
 ## Workflow 5: Schema Evolution with Zero Downtime
 
-**Objective**: Migrate 10M triple graph from v1.0 to v2.0 schema while keeping service online.
+**Objective**: Migrate 10M triple graph from vlatest to vlatest schema while keeping service online.
 
 ### Architecture
 
@@ -711,8 +711,8 @@ F1-Score:  93.5%
 [Migration Planner] (generate SPARQL UPDATE)
     ↓
 [Blue-Green Deployment]
-    ├─ Blue (v1.0 schema) - live traffic
-    └─ Green (v2.0 schema) - migration in progress
+    ├─ Blue (vlatest schema) - live traffic
+    └─ Green (vlatest schema) - migration in progress
         ↓
 [Validation Agent] (verify migration)
     ↓
@@ -792,7 +792,7 @@ echo "✅ Generated migration queries"
 #!/bin/bash
 # blue-green-migration.sh
 
-# Step 1: Backup Blue (v1.0)
+# Step 1: Backup Blue (vlatest)
 unrdf graph export blue --format ntriples > backup-v1.nt
 
 # Step 2: Clone Blue → Green
@@ -817,7 +817,7 @@ kubectl set env deployment/graph-api GRAPH_URI=https://green.internal/
 sleep 3600
 
 # Step 7: If stable, delete Blue
-if [ "$(curl -s http://monitoring/error-rate)" -lt 0.01 ]; then
+if [ "$(curl -s http://monitoring/error-rate)" -lt latest ]; then
   unrdf graph delete blue
   echo "✅ Migration complete - Blue deleted"
 else
@@ -855,7 +855,7 @@ fi
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Target Audience**: AI agent developers, DevOps, solution architects
 **Status**: Production-ready workflow patterns

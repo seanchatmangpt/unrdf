@@ -785,7 +785,7 @@ describe('SecurityHeadersMiddleware', () => {
       });
 
       const request = {
-        ip: '127.0.0.1',
+        ip: '[VERSION].1',
       };
       const response = {};
 

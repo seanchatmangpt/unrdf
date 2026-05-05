@@ -354,7 +354,7 @@ import { defineHook } from 'unrdf/knowledge-engine';
 // Policy Pack: Financial Compliance
 const financialCompliancePack = {
   name: 'financial:compliance-pack',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Financial transaction compliance policies',
 
   hooks: [

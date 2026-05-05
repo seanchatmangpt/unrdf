@@ -522,7 +522,7 @@ export class ReceiptLedger {
     }
 
     return {
-      version: '1.0.0',
+      version: '[VERSION]',
       exportedAt: new Date().toISOString(),
       packages,
     };

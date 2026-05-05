@@ -1183,7 +1183,7 @@ export async function generateWithReceipt(generator, input, options) {
     duration: Date.now() - startTime,
     metadata: {
       deterministic: true,
-      version: '6.0.0'
+      version: 'latest'
     }
   });
 

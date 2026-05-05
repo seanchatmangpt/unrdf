@@ -3,7 +3,7 @@ title: "[Module/Function Name] Reference"
 description: "API reference for [module/function] in UNRDF"
 category: "reference"
 audience: "all"
-version: "6.0.0-alpha.1"
+version: "latest-alpha.1"
 last_updated: "YYYY-MM-DD"
 source: "src/path/to/module.mjs"
 proof:
@@ -61,7 +61,7 @@ import { functionName } from '@unrdf/v6-core/receipts';
  * @param {Function} [options.callback] - [Description] (optional)
  * @returns {Promise<Result>} [Description of return value]
  * @throws {ValidationError} [When this error is thrown]
- * @since 6.0.0-alpha.1
+ * @since latest-alpha.1
  */
 function functionName(options) {}
 ```

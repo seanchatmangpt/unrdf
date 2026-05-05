@@ -423,7 +423,7 @@ Before declaring MVP complete, the system MUST satisfy:
 - [ ] **Auditability**: Every state transition traceable to signed receipt (0 gaps)
 - [ ] **Minimality**: Delta proven minimal via formal algorithm (not heuristic)
 - [ ] **Composability**: At least 1 working bridge between 2 universes
-- [ ] **Correctness**: Invariants hold with p≥0.999 (extensive testing or formal verification)
+- [ ] **Correctness**: Invariants hold with p≥latest (extensive testing or formal verification)
 
 ### Non-Functional Requirements
 - [ ] **Performance**: <100ms median scene processing (p95 OTEL-verified)

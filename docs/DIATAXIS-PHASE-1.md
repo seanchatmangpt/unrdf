@@ -10,7 +10,7 @@
 
 ### Day 1-2: Create Base Structure
 
-#### Task 1.1: Create Root-Level Diataxis Directories
+#### Task latest: Create Root-Level Diataxis Directories
 ```bash
 mkdir -p docs/TUTORIALS
 mkdir -p docs/HOW-TO
@@ -30,7 +30,7 @@ mkdir -p docs/_scripts
 
 **Time estimate:** 2-3 hours
 
-#### Task 1.2: Create Root-Level Diataxis Navigation
+#### Task latest: Create Root-Level Diataxis Navigation
 **Files to create/update:**
 - [ ] `docs/DIATAXIS-MAP.md` ← Already created in previous work
 - [ ] `docs/START-HERE.md` → Add link to DIATAXIS-MAP
@@ -54,7 +54,7 @@ Mixing types makes docs confusing.
 
 ### Day 2-3: Create Templates
 
-#### Task 1.3: Create Diataxis Writing Templates
+#### Task latest: Create Diataxis Writing Templates
 
 Create in `docs/_templates/`:
 
@@ -207,7 +207,7 @@ function signature
 
 **Time estimate:** 4-5 hours
 
-#### Task 1.4: Create Package Documentation Template
+#### Task latest: Create Package Documentation Template
 
 **`docs/_templates/PACKAGE-INDEX.md`** ← Already created in previous work
 
@@ -249,7 +249,7 @@ packages/NEW-PACKAGE/docs/
 
 ### Day 3-4: Create Automation
 
-#### Task 1.5: Create Package Initialization Script
+#### Task latest: Create Package Initialization Script
 
 **File:** `scripts/init-package-docs.sh`
 
@@ -322,7 +322,7 @@ ls -R packages/core/docs/
 
 **Time estimate:** 2-3 hours
 
-#### Task 1.6: Create Validation Script
+#### Task latest: Create Validation Script
 
 **File:** `scripts/validate-diataxis.js`
 
@@ -487,7 +487,7 @@ chmod +x scripts/validate-diataxis.js
 
 ### Day 4-5: Documentation for the Docs
 
-#### Task 1.7: Update DIATAXIS-GUIDE.md with Tools
+#### Task latest: Update DIATAXIS-GUIDE.md with Tools
 
 Add section at the end:
 
@@ -559,7 +559,7 @@ See [scripts/generate-api-ref.js](../scripts/generate-api-ref.js) for options.
 
 ### Day 6-7: @unrdf/core TUTORIALS
 
-#### Task 2.1: Write Core Tutorial 1 - Getting Started
+#### Task latest: Write Core Tutorial 1 - Getting Started
 
 **File:** `packages/core/docs/TUTORIALS/01-getting-started.md`
 
@@ -582,7 +582,7 @@ See [scripts/generate-api-ref.js](../scripts/generate-api-ref.js) for options.
 
 **Time estimate:** 6-8 hours
 
-#### Task 2.2: Write Core Tutorial 2 - Common Patterns
+#### Task latest: Write Core Tutorial 2 - Common Patterns
 
 **File:** `packages/core/docs/TUTORIALS/02-basic-workflow.md`
 
@@ -626,7 +626,7 @@ store.removeQuad(...);
 
 **Time estimate:** 8-10 hours
 
-#### Task 2.3: Write Core Tutorial 3 - Advanced Patterns
+#### Task latest: Write Core Tutorial 3 - Advanced Patterns
 
 **File:** `packages/core/docs/TUTORIALS/03-advanced-patterns.md`
 
@@ -670,7 +670,7 @@ ORDER BY DESC(?count)
 
 ### Day 7-8: @unrdf/core HOW-TO GUIDES
 
-#### Task 2.4: Write Core How-To 1 - Optimize Queries
+#### Task latest: Write Core How-To 1 - Optimize Queries
 
 **File:** `packages/core/docs/HOW-TO/optimize-sparql-queries.md`
 
@@ -693,7 +693,7 @@ ORDER BY DESC(?count)
 
 **Time estimate:** 6-8 hours
 
-#### Task 2.5: Write Core How-To 2 - Working with Formats
+#### Task latest: Write Core How-To 2 - Working with Formats
 
 **File:** `packages/core/docs/HOW-TO/working-with-formats.md`
 
@@ -727,7 +727,7 @@ for await (const quad of core.parseStream(stream)) {
 
 **Time estimate:** 5-7 hours
 
-#### Task 2.6: Write Core How-To 3 - Troubleshooting
+#### Task latest: Write Core How-To 3 - Troubleshooting
 
 **File:** `packages/core/docs/HOW-TO/troubleshooting.md`
 
@@ -747,7 +747,7 @@ Common problems and solutions:
 
 **Time estimate:** 4-6 hours
 
-#### Task 2.7: Write Core How-To 4 - Performance Tuning
+#### Task latest: Write Core How-To 4 - Performance Tuning
 
 **File:** `packages/core/docs/HOW-TO/performance-tuning.md`
 
@@ -763,7 +763,7 @@ Common problems and solutions:
 
 ### Day 8-9: @unrdf/core REFERENCE
 
-#### Task 2.8: Generate & Write Core API Reference
+#### Task latest: Generate & Write Core API Reference
 
 **File:** `packages/core/docs/REFERENCE/API.md`
 
@@ -791,7 +791,7 @@ Common problems and solutions:
 
 **Time estimate:** 10-12 hours
 
-#### Task 2.9: Write Core Types Reference
+#### Task latest: Write Core Types Reference
 
 **File:** `packages/core/docs/REFERENCE/TYPES.md`
 
@@ -804,7 +804,7 @@ Common problems and solutions:
 
 **Time estimate:** 4-6 hours
 
-#### Task 2.10: Write Core Configuration Reference
+#### Task latest: Write Core Configuration Reference
 
 **File:** `packages/core/docs/REFERENCE/CONFIGURATION.md`
 
@@ -820,7 +820,7 @@ Common problems and solutions:
 
 **Time estimate:** 3-4 hours
 
-#### Task 2.11: Write Core Error Reference
+#### Task latest: Write Core Error Reference
 
 **File:** `packages/core/docs/REFERENCE/ERRORS.md`
 
@@ -838,7 +838,7 @@ Common problems and solutions:
 
 ### Day 9-10: @unrdf/core EXPLANATION
 
-#### Task 2.12: Write Core Architecture Explanation
+#### Task latest: Write Core Architecture Explanation
 
 **File:** `packages/core/docs/EXPLANATION/architecture.md`
 
@@ -853,7 +853,7 @@ Common problems and solutions:
 
 **Time estimate:** 6-8 hours
 
-#### Task 2.13: Write Core Design Decisions
+#### Task latest: Write Core Design Decisions
 
 **File:** `packages/core/docs/EXPLANATION/design-decisions.md`
 
@@ -866,7 +866,7 @@ Common problems and solutions:
 
 **Time estimate:** 6-8 hours
 
-#### Task 2.14: Write Core SPARQL Concepts
+#### Task latest: Write Core SPARQL Concepts
 
 **File:** `packages/core/docs/EXPLANATION/sparql-concepts.md`
 
@@ -879,7 +879,7 @@ Common problems and solutions:
 
 **Time estimate:** 5-7 hours
 
-#### Task 2.15: Write Core Performance Details
+#### Task latest: Write Core Performance Details
 
 **File:** `packages/core/docs/EXPLANATION/performance.md`
 

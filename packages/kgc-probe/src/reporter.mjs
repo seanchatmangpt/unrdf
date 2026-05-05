@@ -93,7 +93,7 @@ function generateHash(observation) {
  * @returns {string} Turtle-formatted RDF string
  *
  * @example
- * const obs = [{ method: 'probeRuntime', outputs: { node: 'v18.19.0' } }];
+ * const obs = [{ method: 'probeRuntime', outputs: { node: '[VERSION]' } }];
  * const turtle = observationsToRdf(obs);
  * console.log(turtle); // @prefix kgc: <http://unrdf.dev/kgc#> . ...
  */

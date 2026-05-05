@@ -11,7 +11,7 @@
 
 **Goal**: Add missing coverage thresholds to all 18 packages
 
-### 1.1 Update Package Configurations
+### latest Update Package Configurations
 
 **Action**: Add standardized thresholds to all `vitest.config.mjs` files
 
@@ -78,7 +78,7 @@ export default defineConfig({
 });
 ```
 
-### 1.2 Package-Specific Adjustments
+### latest Package-Specific Adjustments
 
 | Package          | Environment | Timeout | Notes                           |
 |------------------|-------------|---------|---------------------------------|
@@ -89,7 +89,7 @@ export default defineConfig({
 | streaming        | node        | 20s     | WebSocket tests need margin     |
 | others           | node        | 15s     | Standard configuration          |
 
-### 1.3 Execution Plan
+### latest Execution Plan
 
 **Batch 1** (Critical packages - Day 1):
 ```bash
@@ -123,7 +123,7 @@ packages/test-utils/vitest.config.mjs
 packages/docs/vitest.config.ts
 ```
 
-### 1.4 Verification Commands
+### latest Verification Commands
 
 ```bash
 # Per-package verification
@@ -144,7 +144,7 @@ timeout 30s pnpm test:coverage
 
 ## Phase 2: SHORT-TERM (Week 2-3) - Quality Improvements
 
-### 2.1 Standardize File Naming
+### latest Standardize File Naming
 
 **Action**: Rename `*.spec.mjs` → `*.test.mjs`
 
@@ -156,7 +156,7 @@ find packages -name "*.spec.mjs"
 # Update imports if any test files cross-reference
 ```
 
-### 2.2 Standardize Timeout Configuration
+### latest Standardize Timeout Configuration
 
 **Action**: Add explicit timeouts to all configs
 
@@ -173,7 +173,7 @@ hookTimeout: 5000,  // Default: 5s
 // - streaming: 20000 (WebSocket tests)
 ```
 
-### 2.3 Add CI-Optimized Reporters
+### latest Add CI-Optimized Reporters
 
 **Action**: Update reporter configuration for CI/local split
 
@@ -189,7 +189,7 @@ coverage: {
 }
 ```
 
-### 2.4 Migrate Experiment Dependencies
+### latest Migrate Experiment Dependencies
 
 **Action**: Replace Mocha/Chai in atomvm experiments with Vitest
 
@@ -207,7 +207,7 @@ coverage: {
 
 ## Phase 3: LONG-TERM (Month 1-2) - Advanced Optimization
 
-### 3.1 Workspace-Level Coverage Aggregation
+### latest Workspace-Level Coverage Aggregation
 
 **Action**: Create `vitest.workspace.mjs` for unified coverage
 
@@ -230,7 +230,7 @@ export default defineWorkspace([
 - Aggregated coverage report across packages
 - Parallel test execution with proper isolation
 
-### 3.2 Add Coverage Trend Tracking
+### latest Add Coverage Trend Tracking
 
 **Action**: Integrate coverage reports into CI/CD
 
@@ -247,7 +247,7 @@ export default defineWorkspace([
     fail_ci_if_error: true
 ```
 
-### 3.3 Add Pre-commit Coverage Hooks
+### latest Add Pre-commit Coverage Hooks
 
 **Action**: Enforce coverage locally before commits
 
@@ -259,7 +259,7 @@ pnpm test:fast # Uses vitest.config.fast.mjs with 80/20 tests
 
 **Expected runtime**: <30s for fast suite (per CLAUDE.md Andon SLA)
 
-### 3.4 Package-Specific Exemptions (If Justified)
+### latest Package-Specific Exemptions (If Justified)
 
 **Process**: Document any packages requiring <80% coverage
 

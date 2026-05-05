@@ -344,7 +344,7 @@ GET /loki/api/v1/query_range?query={service_name}.*&start=...&end=...&limit=1000
    - Update health checks (8090 port checks)
 
 4. **Archive pm4py-mcp repository**
-   - Tag final commit: `pm4py-mcp-deprecated-v1.0.0`
+   - Tag final commit: `pm4py-mcp-deprecated-latest`
    - Move to `attic/` or archive organization
    - Add README with pointer to Python pm4py integration
 

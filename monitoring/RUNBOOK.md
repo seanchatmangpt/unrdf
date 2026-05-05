@@ -1,6 +1,6 @@
 # UNRDF Production Runbook
 
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Last Updated**: 2025-12-25
 **Purpose**: Step-by-step incident response procedures
 
@@ -96,7 +96,7 @@ rm -rf node_modules package-lock.json
 npm install
 
 # Verify Node version
-nvm use 18.19.0
+nvm use [VERSION]
 
 # Check for missing dependencies
 npm audit

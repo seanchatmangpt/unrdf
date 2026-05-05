@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/lens",
-  "version": "1.0.0",
+  "version": "0.0.0-agnostic",
   "description": "Bidirectional, deterministic, serializable lens compiler for mapping API payloads to RDF graphs",
   "type": "module",
   "main": "./src/index.mjs",

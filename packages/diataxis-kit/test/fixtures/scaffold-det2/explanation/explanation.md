@@ -2,7 +2,7 @@
 title: "test-deterministic Explanation"
 type: "explanation"
 packageName: "test-deterministic"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0
 proof: "3f8072cee79349fae3971f82f5c1d412e5a32fbe09ed9860a00bdc84d583b953"

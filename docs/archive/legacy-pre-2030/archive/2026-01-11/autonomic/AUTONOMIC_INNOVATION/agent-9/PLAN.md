@@ -12,7 +12,7 @@ Enable safe, reversible migration from legacy systems to new facade/RDF systems 
 - Compare results deterministically
 - Report mismatches for investigation
 - **Rollback**: Simply disable facade calls
-- **Success Criteria**: 99.9%+ match rate over 7 days
+- **Success Criteria**: latest%+ match rate over 7 days
 
 ### Phase 2: Shadow Read (0% Risk)
 **Pattern**: Read from BOTH stores, serve legacy data
@@ -21,7 +21,7 @@ Enable safe, reversible migration from legacy systems to new facade/RDF systems 
 - Facade results compared for validation
 - Detect data consistency issues
 - **Rollback**: Disable facade queries
-- **Success Criteria**: 99.99%+ data consistency
+- **Success Criteria**: latest%+ data consistency
 
 ### Phase 3: Partial Serve (Controlled Risk)
 **Pattern**: Route specific paths to facade, others to legacy
@@ -160,12 +160,12 @@ Request → routingDecision → Target Selection
 ## Success Metrics
 
 ### Phase 1 (Shadow Write)
-- **Target**: 99.9%+ match rate
+- **Target**: latest%+ match rate
 - **Measure**: matches / total_requests
 - **Alert**: >10 unique mismatches/hour
 
 ### Phase 2 (Shadow Read)
-- **Target**: 99.99%+ data consistency
+- **Target**: latest%+ data consistency
 - **Measure**: matching_queries / total_queries
 - **Alert**: Any critical severity mismatch
 
@@ -177,7 +177,7 @@ Request → routingDecision → Target Selection
 ### Phase 4 (KGC Primary)
 - **Target**: 30 days stable operation
 - **Measure**: uptime, error_rate, latency_p99
-- **Alert**: Error rate >0.1% or latency >2x baseline
+- **Alert**: Error rate >latest% or latency >2x baseline
 
 ## Rollback Procedures
 
@@ -263,8 +263,8 @@ updateRouting([
 
 | Phase | Duration | Success Criteria | Risk |
 |-------|----------|------------------|------|
-| Shadow Write | 7 days | 99.9%+ match | None |
-| Shadow Read | 7 days | 99.99%+ consistency | None |
+| Shadow Write | 7 days | latest%+ match | None |
+| Shadow Read | 7 days | latest%+ consistency | None |
 | Partial Serve (1%) | 3 days | 0 critical mismatches | Minimal |
 | Partial Serve (10%) | 3 days | 0 critical mismatches | Low |
 | Partial Serve (50%) | 7 days | 0 critical mismatches | Medium |

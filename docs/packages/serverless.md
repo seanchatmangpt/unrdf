@@ -2,7 +2,7 @@
 
 > UNRDF Serverless - One-click AWS deployment for RDF applications
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

@@ -8,7 +8,7 @@ This hands-on tutorial walks you through building your first knowledge graph app
 
 ## Prerequisites
 
-- **Node.js**: 18.0.0 or higher
+- **Node.js**: latest or higher
 - **Package Manager**: pnpm (recommended), npm, or yarn
 - **Knowledge**: Basic JavaScript/Node.js
 - **Time**: 15 minutes
@@ -34,9 +34,9 @@ echo '{"type": "module"}' > package.json
 
 ```bash
 # Core packages
-pnpm add @unrdf/core@6.0.0-alpha.1
+pnpm add @unrdf/core@latest-alpha.1
 pnpm add @unrdf/oxigraph@latest
-pnpm add @unrdf/v6-core@6.0.0-alpha.1
+pnpm add @unrdf/v6-core@latest-alpha.1
 
 # Validation
 pnpm add zod@latest

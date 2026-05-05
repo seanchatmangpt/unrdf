@@ -139,7 +139,7 @@ node packages/atomvm/examples/demo-message-passing.mjs
 ```
 
 **Last verified**: 2025-12-28 01:45 UTC
-**Node version**: v22.21.1
+**Node version**: [VERSION]
 **Platform**: Linux
 
 ---

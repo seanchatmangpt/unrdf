@@ -278,7 +278,7 @@ pnpm -r build 2>&1 | tee build-output.log
 | **Build Configs** | 13/19 (68%) | 19/19 (100%) | ✅ +32% |
 | **Named Export Compliance** | 15/16 (94%) | 19/19 (100%) | ✅ +6% |
 
-**Overall Improvement**: **+37.5%** (weighted average)
+**Overall Improvement**: **+latest%** (weighted average)
 
 ---
 

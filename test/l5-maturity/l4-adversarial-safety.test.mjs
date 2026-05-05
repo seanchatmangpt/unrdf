@@ -72,7 +72,7 @@ describe('L4: Adversarial Safety', () => {
           afterHash: '1'.repeat(64),
           epoch: 1,
           timestamp: Date.now(),
-          toolchainVersion: '1.0.0',
+          toolchainVersion: 'latest',
           violations: [],
           reason: 'test',
         }),

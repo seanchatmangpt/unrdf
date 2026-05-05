@@ -40,7 +40,7 @@ const CompositionStepSchema = z.object({
 export const CommandMacroSchema = z.object({
   name: z.string().min(1).regex(/^[a-z][a-z0-9-]*$/i),
   description: z.string().min(1),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('latest'),
   parameters: z.array(z.string()).default([]),
   steps: z.array(CompositionStepSchema),
   onSuccess: z.string().optional(), // Command to run on success
@@ -73,7 +73,7 @@ export class CommandComposer {
     this.macro = {
       name,
       description: '',
-      version: '1.0.0',
+      version: 'latest',
       parameters: [],
       steps: [],
       timeout: 300000,

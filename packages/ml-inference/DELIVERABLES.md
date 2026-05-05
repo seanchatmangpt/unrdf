@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-**Package**: `@unrdf/ml-inference` v5.0.1
+**Package**: `@unrdf/ml-inference` [VERSION]
 **Innovation**: High-performance ONNX model inference for real-time RDF stream processing
 **Status**: ✅ Complete - All features implemented and tested
 **Implementation Time**: Single-pass development (Big Bang 80/20)
@@ -171,9 +171,9 @@ packages/ml-inference/
 ### Demo Execution Results
 
 **Environment**:
-- Platform: Node.js v22.21.1
+- Platform: Node.js [VERSION]
 - CPU: Commodity hardware (no GPU)
-- OS: Linux 4.4.0
+- OS: Linux [VERSION]
 
 ### Benchmark 1: Batch Size Optimization
 
@@ -336,7 +336,7 @@ if (metricsLookGood()) {
   - [x] Canary deployment
   - [x] Promotion/rollback
 
-**Test Framework**: Vitest v4.0.15
+**Test Framework**: Vitest [VERSION]
 
 ### Demo Execution
 
@@ -389,11 +389,11 @@ if (metricsLookGood()) {
 
 ```json
 {
-  "onnxruntime-node": "^1.20.1",
-  "@opentelemetry/api": "^1.9.0",
+  "onnxruntime-node": "^[VERSION]",
+  "@opentelemetry/api": "^[VERSION]",
   "@unrdf/core": "workspace:*",
   "@unrdf/streaming": "workspace:*",
-  "zod": "^4.1.13"
+  "zod": "^[VERSION]"
 }
 ```
 
@@ -401,8 +401,8 @@ if (metricsLookGood()) {
 
 ```json
 {
-  "@types/node": "^24.10.1",
-  "vitest": "^4.0.15"
+  "@types/node": "^[VERSION]",
+  "vitest": "^[VERSION]"
 }
 ```
 
@@ -581,6 +581,6 @@ The `@unrdf/ml-inference` package is a production-ready, high-performance ONNX m
 ---
 
 **Delivered**: 2025-12-25
-**Version**: 5.0.1
+**Version**: [VERSION]
 **Methodology**: Big Bang 80/20 (Single-pass implementation)
 **Quality**: UNRDF Standards Compliant ✅

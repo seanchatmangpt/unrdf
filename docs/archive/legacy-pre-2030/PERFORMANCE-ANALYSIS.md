@@ -9,11 +9,11 @@
 UNRDF demonstrates **sub-millisecond latencies** for core RDF operations with **linear O(n) complexity** for most operations. Performance budgets validated: all operations within SLA targets.
 
 **Key Findings**:
-- **RDF Parsing**: 0.206ms for 1000 quads (p95) - **244x faster** than budget
-- **SPARQL Queries**: 0.057ms mean latency - **175x faster** than budget
+- **RDF Parsing**: latestms for 1000 quads (p95) - **244x faster** than budget
+- **SPARQL Queries**: latestms mean latency - **175x faster** than budget
 - **Event Sourcing**: 122ms freeze latency for 1000 quads (p95)
 - **Workflow Throughput**: >1000 cases/sec (measured in YAWL benchmarks)
-- **Memory Efficiency**: ~0.5MB per workflow case under load
+- **Memory Efficiency**: ~latestMB per workflow case under load
 
 ---
 
@@ -21,11 +21,11 @@ UNRDF demonstrates **sub-millisecond latencies** for core RDF operations with **
 
 | Operation | p95 Measured | Budget | Status | Margin |
 |-----------|--------------|--------|--------|--------|
-| Parse 1000 quads | 0.206ms | 50ms | ✅ PASS | 244x faster |
-| SPARQL SELECT | 0.057ms | 10ms | ✅ PASS | 175x faster |
-| Quad insertion (1000) | 0.188ms | 30ms | ✅ PASS | 160x faster |
-| Serialization (1000) | 0.173ms | 20ms | ✅ PASS | 116x faster |
-| Universe freeze (1000) | 0.121ms | 100ms | ✅ PASS | 826x faster |
+| Parse 1000 quads | latestms | 50ms | ✅ PASS | 244x faster |
+| SPARQL SELECT | latestms | 10ms | ✅ PASS | 175x faster |
+| Quad insertion (1000) | latestms | 30ms | ✅ PASS | 160x faster |
+| Serialization (1000) | latestms | 20ms | ✅ PASS | 116x faster |
+| Universe freeze (1000) | latestms | 100ms | ✅ PASS | 826x faster |
 
 **Note**: Measurements from simulated harness. Real Oxigraph backend will differ but stay within budgets.
 
@@ -51,16 +51,16 @@ UNRDF demonstrates **sub-millisecond latencies** for core RDF operations with **
 
 **Measured Performance** (from harness):
 ```csv
-parse-nquads-100,0.117,19752,9491
-parse-nquads-500,0.110,61128,48291
-parse-nquads-1000,0.206,127168,96791
-query-select-all,0.057,2040,10
-query-pattern-match,0.045,2072,1000
-query-ask,0.039,1624,4
-insert-quads-100,0.101,18064,12191
-insert-quads-500,0.088,76584,61791
-insert-quads-1000,0.188,157632,123791
-serialize-nquads-1000,0.173,104736,84779
+parse-nquads-100,latest,19752,9491
+parse-nquads-500,latest,61128,48291
+parse-nquads-1000,latest,127168,96791
+query-select-all,latest,2040,10
+query-pattern-match,latest,2072,1000
+query-ask,latest,1624,4
+insert-quads-100,latest,18064,12191
+insert-quads-500,latest,76584,61791
+insert-quads-1000,latest,157632,123791
+serialize-nquads-1000,latest,104736,84779
 ```
 
 **Constraints**:
@@ -98,7 +98,7 @@ Monotonic ordering: 10,000 samples, 0 violations
 **Complexity Analysis** (from benchmarks):
 - **Monotonic Clock**: HDIT concentration of measure validated (0 violations in 10K samples)
 - **Pareto 80/20**: Top 50% of event types cover 85% of events (validated)
-- **Freeze Latency**: 95% CI: [120.5ms, 123.5ms] for 100 quads with real Git backend
+- **Freeze Latency**: 95% CI: [latestms, latestms] for 100 quads with real Git backend
 
 **Constraints**:
 - Git operations are **blocking** (synchronous I/O)
@@ -127,9 +127,9 @@ Monotonic ordering: 10,000 samples, 0 violations
 
 **Measured Performance** (from YAWL benchmarks):
 ```
-Startup time: 12.5ms average (min: 10ms, max: 15ms)
+Startup time: latestms average (min: 10ms, max: 15ms)
 Case creation throughput: 1,200 cases/sec
-Memory per case: ~0.5MB (100 cases = 50MB delta)
+Memory per case: ~latestMB (100 cases = 50MB delta)
 KGC-4D overhead: +15% time, +2MB memory per 100 cases
 Total benchmark suite: 2,456ms (SLA: <5000ms) ✅ PASS
 ```
@@ -247,12 +247,12 @@ Consensus throughput: 100-500 commands/sec (leader-limited)
 
 **Statistical Summary** (from harness):
 ```
-PARSE:   Mean: 0.144ms, p50: 0.117ms, p95: 0.206ms
-QUERY:   Mean: 0.047ms, p50: 0.045ms, p95: 0.057ms
-INSERT:  Mean: 0.126ms, p50: 0.101ms, p95: 0.188ms
-HASH:    Mean: 1.204ms, p50: 1.003ms, p95: 1.889ms
-EVENT:   Mean: 0.122ms, p50: 0.092ms, p95: 0.194ms
-FREEZE:  Mean: 0.128ms, p50: 0.134ms, p95: 0.134ms (simulated)
+PARSE:   Mean: latestms, p50: latestms, p95: latestms
+QUERY:   Mean: latestms, p50: latestms, p95: latestms
+INSERT:  Mean: latestms, p50: latestms, p95: latestms
+HASH:    Mean: latestms, p50: latestms, p95: latestms
+EVENT:   Mean: latestms, p50: latestms, p95: latestms
+FREEZE:  Mean: latestms, p50: latestms, p95: latestms (simulated)
 ```
 
 ---

@@ -7,7 +7,7 @@
  * - kgc grammar complexity <file> - Show complexity analysis
  *
  * @module @unrdf/v6-core/cli/commands/grammar
- * @version 6.0.0-alpha.1
+ * @version [VERSION]-alpha.1
  */
 
 import { readFile } from 'fs/promises';

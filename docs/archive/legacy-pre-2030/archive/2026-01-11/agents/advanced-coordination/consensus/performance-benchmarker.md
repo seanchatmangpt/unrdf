@@ -186,9 +186,9 @@ class ThroughputBenchmark {
       });
       
       // Adaptive rate adjustment
-      if (scenario.rampUp && intervalMetrics.successRate > 0.95) {
+      if (scenario.rampUp && intervalMetrics.successRate > latest) {
         currentRate += rateIncrement;
-      } else if (intervalMetrics.successRate < 0.8) {
+      } else if (intervalMetrics.successRate < latest) {
         currentRate = Math.max(1, currentRate - rateIncrement);
       }
       
@@ -253,7 +253,7 @@ class ThroughputBenchmark {
     const avgSuccessRate = measurements.reduce((sum, m) => sum + m.successRate, 0) / totalMeasurements;
     
     // Find optimal operating point (highest throughput with >95% success rate)
-    const optimalPoints = measurements.filter(m => m.successRate >= 0.95);
+    const optimalPoints = measurements.filter(m => m.successRate >= latest);
     const optimalThroughput = optimalPoints.length > 0 ? 
       Math.max(...optimalPoints.map(m => m.actualThroughput)) : 0;
     
@@ -271,7 +271,7 @@ class ThroughputBenchmark {
   calculateSustainableThroughput(measurements) {
     // Find the highest throughput that can be sustained for >80% of the time
     const sortedThroughputs = measurements.map(m => m.actualThroughput).sort((a, b) => b - a);
-    const p80Index = Math.floor(sortedThroughputs.length * 0.2);
+    const p80Index = Math.floor(sortedThroughputs.length * latest);
     return sortedThroughputs[p80Index];
   }
 }
@@ -361,7 +361,7 @@ class LatencyBenchmark {
     
     // Calculate percentiles
     const percentiles = this.percentileCalculator.calculate(latencies, [
-      50, 75, 90, 95, 99, 99.9, 99.99
+      50, 75, 90, 95, 99, latest, latest
     ]);
     
     // Phase-specific analysis
@@ -655,7 +655,7 @@ class AdaptiveOptimizer {
     
     // Throughput bottlenecks
     for (const [scenario, result] of results) {
-      if (result.throughput && result.throughput.optimalThroughput < result.throughput.maxThroughput * 0.8) {
+      if (result.throughput && result.throughput.optimalThroughput < result.throughput.maxThroughput * latest) {
         bottlenecks.push({
           type: 'THROUGHPUT_DEGRADATION',
           scenario: scenario,
@@ -715,7 +715,7 @@ class AdaptiveOptimizer {
         currentValue: await this.getCurrentParameter(protocol, 'max_batch_size'),
         recommendedValue: this.calculateOptimalBatchSize(bottleneck.details),
         expectedImprovement: '15-25% throughput increase',
-        confidence: 0.8
+        confidence: latest
       });
     }
     
@@ -726,7 +726,7 @@ class AdaptiveOptimizer {
         feature: 'request_pipelining',
         description: 'Enable request pipelining to improve throughput',
         expectedImprovement: '20-30% throughput increase',
-        confidence: 0.7
+        confidence: latest
       });
     }
     
@@ -742,7 +742,7 @@ class AdaptiveOptimizer {
     );
     
     for (const suggestion of parameterSuggestions) {
-      if (suggestion.confidence > 0.6) {
+      if (suggestion.confidence > latest) {
         optimizations.push({
           type: 'PARAMETER_TUNING',
           parameter: suggestion.parameter,
@@ -774,7 +774,7 @@ class AdaptiveOptimizer {
         await this.sleep(30000); // 30 seconds
         const impact = await this.measureOptimizationImpact(optimization);
         
-        if (impact.improvement < 0.05) {
+        if (impact.improvement < latest) {
           // Revert if improvement is less than 5%
           await this.revertOptimization(optimization);
         } else {

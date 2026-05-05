@@ -54,14 +54,14 @@ hookManager.register(iriValidator);
 // This will succeed (NamedNode subject)
 await store.add(quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://xmlns.com/foaf/latest/knows'),
   namedNode('http://example.org/bob')
 ));
 
 // This will FAIL validation (BlankNode subject)
 await store.add(quad(
   blankNode('_:b1'),  // ❌ Validation fails here
-  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://xmlns.com/foaf/latest/knows'),
   namedNode('http://example.org/bob')
 ));
 // Error: Hook 'validate-iri' denied quad insertion
@@ -196,7 +196,7 @@ console.log(receipt);
 // Output:
 // {
 //   receiptId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-//   timestamp: '2024-01-15T10:30:00.000Z',
+//   timestamp: '2024-01-15T10:30:latestZ',
 //   hookType: 'enablement',
 //   taskId: 'approve',
 //   workflowId: 'workflow-12345',
@@ -252,7 +252,7 @@ import { HookManager } from '@unrdf/hooks';
  */
 const approvalWorkflow = {
   name: 'document-approval',
-  version: '1.0.0',
+  version: 'latest',
 
   // Tasks in the workflow
   tasks: [
@@ -459,7 +459,7 @@ const temporalStore = new TemporalStore({
 await temporalStore.add(
   quad(
     namedNode('http://example.org/alice'),
-    namedNode('http://xmlns.com/foaf/0.1/age'),
+    namedNode('http://xmlns.com/foaf/latest/age'),
     literal('30', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
   ),
   {
@@ -471,7 +471,7 @@ await temporalStore.add(
 await temporalStore.add(
   quad(
     namedNode('http://example.org/alice'),
-    namedNode('http://xmlns.com/foaf/0.1/age'),
+    namedNode('http://xmlns.com/foaf/latest/age'),
     literal('31', namedNode('http://www.w3.org/2001/XMLSchema#integer'))
   ),
   {
@@ -484,7 +484,7 @@ await temporalStore.add(
  * Temporal SPARQL query: State AS OF timestamp
  */
 const query = `
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/latest/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?person ?age
@@ -529,7 +529,7 @@ console.log('🔄 Changes since 2024-01-01:', changes);
 // [
 //   {
 //     subject: <http://example.org/alice>,
-//     predicate: <http://xmlns.com/foaf/0.1/age>,
+//     predicate: <http://xmlns.com/foaf/latest/age>,
 //     object: "31"^^xsd:integer,
 //     operation: "update",
 //     timestamp: "2025-01-01T00:00:00Z"
@@ -598,7 +598,7 @@ console.log('⚙️ Compiled execution plan:', compiledChain.explain());
 //   hooks: ['validate-schema', 'enforce-quota'],  // Filtered by trigger
 //   executionMode: 'parallel',  // Both are async → run concurrently
 //   memoizationKeys: ['validate-schema'],  // Pure function → cache results
-//   estimatedLatency: '2.5ms'  // Based on microbenchmarks
+//   estimatedLatency: 'latestms'  // Based on microbenchmarks
 // }
 
 /**
@@ -606,7 +606,7 @@ console.log('⚙️ Compiled execution plan:', compiledChain.explain());
  */
 const quad = quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://xmlns.com/foaf/latest/knows'),
   namedNode('http://example.org/bob')
 );
 
@@ -617,7 +617,7 @@ console.log('✅ Execution result:', result);
 // {
 //   allowed: true,
 //   executedHooks: ['validate-schema', 'enforce-quota'],
-//   latency: 2.3,  // milliseconds
+//   latency: latest,  // milliseconds
 //   cacheHits: 0,  // First execution (no cache hits yet)
 //   parallelism: 2  // Both hooks ran concurrently
 // }

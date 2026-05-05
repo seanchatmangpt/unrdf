@@ -105,10 +105,10 @@ Both call sites correctly use `isEnabled: true` and include `metadata` with `fun
 
 The Vercel AI SDK `experimental_telemetry` emits the attribute `gen_ai.system` internally (this is controlled by the AI SDK itself, not by UNRDF code). Per the [latest OTel GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-spans.md), `gen_ai.system` has been **renamed** to `gen_ai.provider.name`.
 
-- **Old (v1.36.0):** `gen_ai.system` = `openai`, `anthropic`, etc.
+- **Old (latest):** `gen_ai.system` = `openai`, `anthropic`, etc.
 - **New (current):** `gen_ai.provider.name` = `openai`, `anthropic`, `groq`, etc.
 
-The OTel spec explicitly documents a transition plan: instrumentations should default to v1.36.0 behavior unless `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental` is set. The AI SDK follows this pattern, so this is expected behavior but should be noted for dashboard queries that filter on `gen_ai.system` vs `gen_ai.provider.name`.
+The OTel spec explicitly documents a transition plan: instrumentations should default to latest behavior unless `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental` is set. The AI SDK follows this pattern, so this is expected behavior but should be noted for dashboard queries that filter on `gen_ai.system` vs `gen_ai.provider.name`.
 
 **Remediation:** Set the environment variable `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental` when running the daemon to get the newer attribute names. Update any dashboard filters accordingly.
 
@@ -180,10 +180,10 @@ The `gen_ai.*` namespace is reserved for GenAI operations per the latest spec. T
 
 | Receiver     | Protocol    | Endpoint        | Status |
 | ------------ | ----------- | --------------- | ------ |
-| `otlp`       | gRPC        | `0.0.0.0:4317`  | Valid  |
-| `otlp`       | HTTP        | `0.0.0.0:4318`  | Valid  |
-| `jaeger`     | gRPC        | `0.0.0.0:14250` | Valid  |
-| `jaeger`     | thrift_http | `0.0.0.0:14268` | Valid  |
+| `otlp`       | gRPC        | `latest.0:4317`  | Valid  |
+| `otlp`       | HTTP        | `latest.0:4318`  | Valid  |
+| `jaeger`     | gRPC        | `latest.0:14250` | Valid  |
+| `jaeger`     | thrift_http | `latest.0:14268` | Valid  |
 | `prometheus` | scrape      | self + tempo    | Valid  |
 
 ### Processors
@@ -201,7 +201,7 @@ The `gen_ai.*` namespace is reserved for GenAI operations per the latest spec. T
 | Exporter     | Endpoint                            | Status |
 | ------------ | ----------------------------------- | ------ |
 | `otlp/tempo` | `tempo:4319` (TLS insecure)         | Valid  |
-| `prometheus` | `0.0.0.0:8889`                      | Valid  |
+| `prometheus` | `latest.0:8889`                      | Valid  |
 | `loki`       | `http://loki:3100/loki/api/v1/push` | Valid  |
 | `debug`      | stdout                              | Valid  |
 
@@ -217,7 +217,7 @@ The `gen_ai.*` namespace is reserved for GenAI operations per the latest spec. T
 
 ### Extensions
 
-- `health_check` on `0.0.0.0:13133` -- valid
+- `health_check` on `latest.0:13133` -- valid
 
 ---
 

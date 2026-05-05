@@ -254,7 +254,7 @@ export const syncCommand = defineCommand({
       console.error(`
 [project]
 name = "my-project"
-version = "1.0.0"
+version = "[VERSION]"
 
 [ontology]
 source = "ontology/schema.ttl"

@@ -277,8 +277,8 @@ Test categories:
 
 ## Performance
 
-- Hash computation: ~0.1-0.2ms per capsule
-- Chain verification: ~0.5-1.0ms for 5-capsule chain
+- Hash computation: ~latest.2ms per capsule
+- Chain verification: ~latest.0ms for 5-capsule chain
 - Memory: O(n) where n = number of capsules
 - Deterministic: Same input always produces same output
 

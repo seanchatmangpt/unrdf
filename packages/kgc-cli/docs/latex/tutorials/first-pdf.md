@@ -9,7 +9,7 @@
 - Basic troubleshooting
 
 **Prerequisites**:
-- Node.js ≥18.0.0 installed
+- Node.js ≥[VERSION] installed
 - `@unrdf/kgc-cli` package installed
 - Basic familiarity with command line
 
@@ -153,7 +153,7 @@ Output:
   "engine": "xetex",
   "resolvedInputs": {},
   "updatedAt": "2025-12-27T10:30:45.456Z",
-  "version": "1.0.0"
+  "version": "[VERSION]"
 }
 ```
 
@@ -254,7 +254,7 @@ Now you'll see:
     }
   },
   "updatedAt": "2025-12-27T10:35:12.789Z",
-  "version": "1.0.0"
+  "version": "[VERSION]"
 }
 ```
 

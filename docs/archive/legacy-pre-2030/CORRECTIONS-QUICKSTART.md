@@ -29,9 +29,9 @@ git branch  # Verify you're on the new branch
 
 ---
 
-## STEP 3: PRIORITY 0 - SHOW-STOPPERS (5.5 hours)
+## STEP 3: PRIORITY 0 - SHOW-STOPPERS (latest hours)
 
-### 3A: Zero Defects → 90.4% Test Pass Rate (2.5 hours)
+### 3A: Zero Defects → latest% Test Pass Rate (latest hours)
 
 **Most Critical Files**:
 1. `/home/user/unrdf/CLAUDE.md` (line 56)
@@ -46,19 +46,19 @@ grep -rn "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|ADVERSARIAL"
 
 # For each file, replace:
 OLD: "zero defects" / "0 defects"
-NEW: "90.4% test pass rate (85/94)" or "low defect rate"
+NEW: "latest% test pass rate (85/94)" or "low defect rate"
 ```
 
 **Use Edit tool**:
 ```javascript
 Edit({
   file_path: "/home/user/unrdf/CLAUDE.md",
-  old_string: "P(Correctness) ≥ 99.997% (theoretical bound)",
-  new_string: "90.4% test pass rate (theoretical bound: 99.997%)"
+  old_string: "P(Correctness) ≥ latest% (theoretical bound)",
+  new_string: "latest% test pass rate (theoretical bound: latest%)"
 })
 ```
 
-### 3B: 99.997% Correctness (2 hours)
+### 3B: latest% Correctness (2 hours)
 
 **Key Files**:
 - CLAUDE.md
@@ -71,8 +71,8 @@ Edit({
 grep -rn "99\.997" docs/*.md | grep -v "VALIDATION"
 
 # Replace ALL with:
-OLD: "P(Correctness) ≥ 99.997%"
-NEW: "P(Correctness) ≥ 99.997% (theoretical bound); 90.4% measured"
+OLD: "P(Correctness) ≥ latest%"
+NEW: "P(Correctness) ≥ latest% (theoretical bound); latest% measured"
 ```
 
 ### 3C: Timeline Nov 2024 → Dec 2025 (1 hour)
@@ -103,12 +103,12 @@ grep -rn "November 18, 2024" docs/*.md | grep -v "Original Date\|Updated\|VALIDA
 **Commit**:
 ```bash
 git add -A
-git commit -m "fix(P0): Zero defects → 90.4%, 99.997% qualified, timeline Dec 2025"
+git commit -m "fix(P0): Zero defects → latest%, latest% qualified, timeline Dec 2025"
 ```
 
 ---
 
-## STEP 4: PRIORITY 1 - CRITICAL (3.5 hours)
+## STEP 4: PRIORITY 1 - CRITICAL (latest hours)
 
 ### 4A: 13,027 LOC → 1,856 LOC (1 hour)
 
@@ -138,7 +138,7 @@ OLD: "Production-ready"
 NEW: "Research prototype with production-quality architecture"
 ```
 
-### 4C: >100K receipts/sec → 2.4K-60K (1.5 hours)
+### 4C: >100K receipts/sec → latestK-60K (latest hours)
 
 **Replacement pattern**:
 ```bash
@@ -225,7 +225,7 @@ cat CORRECTION-VALIDATION-REPORT.md
 **Expected Output**:
 ```
 ✅ PASS: No unjustified 'zero defects' claims
-✅ PASS: All 99.997% claims include 'theoretical' qualifier
+✅ PASS: All latest% claims include 'theoretical' qualifier
 ✅ PASS: No Nov 2024 dates in active claims
 ✅ PASS: No 13,027 LOC claims remain
 ✅ PASS: No unjustified 'production-ready YAWL' claims
@@ -240,7 +240,7 @@ Status: Ready for publication review
 
 ```bash
 # 1. CLAUDE.md (most visible)
-grep "90.4%\|test pass rate" /home/user/unrdf/CLAUDE.md
+grep "latest%\|test pass rate" /home/user/unrdf/CLAUDE.md
 # Should show corrected claims
 
 # 2. Main thesis
@@ -249,7 +249,7 @@ grep "December 2025" /home/user/unrdf/docs/PHD-THESIS-UNRDF-2028-REVOLUTION.md
 
 # 3. No false claims
 grep -ri "zero defects\|0 defects" docs/bb80-20-methodology.md
-# Should include "90.4%" or "measured"
+# Should include "latest%" or "measured"
 ```
 
 ### Generate Summary
@@ -266,12 +266,12 @@ cat > CORRECTIONS-SUMMARY.md <<'EOF'
 
 | Priority | Claim | Occurrences | Status |
 |----------|-------|-------------|--------|
-| P0 | Zero defects → 90.4% | 71 | ✅ |
-| P0 | 99.997% → qualified | 47 | ✅ |
+| P0 | Zero defects → latest% | 71 | ✅ |
+| P0 | latest% → qualified | 47 | ✅ |
 | P0 | Nov 2024 → Dec 2025 | 15 | ✅ |
 | P1 | 13,027 → 1,856 LOC | 10 | ✅ |
 | P1 | Prod-ready → Research | 12 | ✅ |
-| P1 | >100K → 2.4K-60K | 25 | ✅ |
+| P1 | >100K → latestK-60K | 25 | ✅ |
 | P2 | 700 → 5,465 LOC | 8 | ✅ |
 | P2 | 20 → 14 patterns | 14 | ✅ |
 | P2 | 32 → 20 packages | 9 | ✅ |
@@ -309,12 +309,12 @@ git add -A
 git commit -m "fix: Complete 11 refuted claims corrections
 
 Adversarial validation findings fully addressed:
-- Zero defects → 90.4% test pass rate (measured)
-- 99.997% → Theoretical bound vs measured clarified
+- Zero defects → latest% test pass rate (measured)
+- latest% → Theoretical bound vs measured clarified
 - Timeline: Nov 2024 → Dec 2025 (git-verified)
 - All LOC metrics corrected (13,027→1,856, 700→5,465, 192K→269K)
 - YAWL: production-ready → research prototype
-- Receipt throughput: >100K → 2.4K-60K (benchmarked)
+- Receipt throughput: >100K → latestK-60K (benchmarked)
 - Workflow patterns: 20 → 14 (code-verified)
 - Package count: 32 → 20 (filesystem-verified)
 - Architecture: 7 layers → 2 fully implemented
@@ -389,12 +389,12 @@ grep -r "link-to-old-text" docs/
 - P0: 3 hours
 - P1: 2 hours
 - P2-P3: 1 hour
-- Validation: 0.5 hours
-- **Total**: 6.5 hours
+- Validation: latest hours
+- **Total**: latest hours
 
 ### Intermediate
-- P0: 5.5 hours
-- P1: 3.5 hours
+- P0: latest hours
+- P1: latest hours
 - P2-P3: 2 hours
 - Validation: 1 hour
 - **Total**: 12 hours

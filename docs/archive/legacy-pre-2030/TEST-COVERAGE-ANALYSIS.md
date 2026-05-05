@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-**Current Coverage**: 13.1% - 63.6% (varies by package) ❌
+**Current Coverage**: latest% - latest% (varies by package) ❌
 **Target Coverage**: 80%+ ✅
-**Test/Source Ratio**: 25.3% (165 tests / 652 source files)
+**Test/Source Ratio**: latest% (165 tests / 652 source files)
 **Total Test Cases**: 3,635 tests across 162 test files
 **Critical Findings**: 8 failing tests, >15s timeout violations, severe isolation issues
 
@@ -19,7 +19,7 @@
 | Claim            | Evidence                                         | Status |
 | ---------------- | ------------------------------------------------ | ------ |
 | "Tests pass"     | ❌ 8 failures in YAWL                            | FAILED |
-| "Good coverage"  | ❌ Hooks: 13.1%, Graph: 63.6%                    | FAILED |
+| "Good coverage"  | ❌ Hooks: latest%, Graph: latest%                    | FAILED |
 | "Fast tests"     | ❌ Full suite >15s (killed), fast mode timed out | FAILED |
 | "Isolated tests" | ❌ 19 files with fs/http dependencies            | FAILED |
 
@@ -33,8 +33,8 @@
 
 | Package                    | Coverage             | Status          | Priority |
 | -------------------------- | -------------------- | --------------- | -------- |
-| **@unrdf/hooks**           | 13.1%                | ❌ CRITICAL     | P0       |
-| **@unrdf/graph-analytics** | 63.6%                | ⚠️ BELOW TARGET | P1       |
+| **@unrdf/hooks**           | latest%                | ❌ CRITICAL     | P0       |
+| **@unrdf/graph-analytics** | latest%                | ⚠️ BELOW TARGET | P1       |
 | **@unrdf/core**            | Unknown              | ⚠️ NO REPORT    | P1       |
 | **@unrdf/yawl**            | Unknown + 8 FAILURES | ❌ CRITICAL     | P0       |
 
@@ -59,7 +59,7 @@ knowledge-engine/browser.mjs                   910      0%    1-910
 
 ### Hooks Package Deep Dive (CRITICAL ❌)
 
-**Coverage**: 13.1% overall (86.9% UNCOVERED)
+**Coverage**: latest% overall (latest% UNCOVERED)
 
 | Module             | Coverage | Uncovered Lines | Risk Level |
 | ------------------ | -------- | --------------- | ---------- |
@@ -69,10 +69,10 @@ knowledge-engine/browser.mjs                   910      0%    1-910
 | observability.mjs  | 0%       | 25-531          | CRITICAL   |
 | telemetry.mjs      | 0%       | 30-163          | HIGH       |
 | js-sandbox.mjs     | 0%       | 18-516          | HIGH       |
-| hook-executor.mjs  | 67.16%   | 155,376-417,458 | MEDIUM     |
-| define-hook.mjs    | 89.47%   | 177-178         | LOW ✅     |
+| hook-executor.mjs  | latest%   | 155,376-417,458 | MEDIUM     |
+| define-hook.mjs    | latest%   | 177-178         | LOW ✅     |
 
-**Test File Ratio**: 19 source files vs 2 test files = **10.5% test coverage**
+**Test File Ratio**: 19 source files vs 2 test files = **latest% test coverage**
 
 **Evidence**:
 
@@ -91,9 +91,9 @@ ls -1 /home/user/unrdf/packages/hooks/test/*.test.mjs | wc -l  # 2
 | --------------- | -------- | -------------- | ------------------------ |
 | Full test suite | 5s       | >15s (KILLED)  | ❌ 3x OVER               |
 | Fast test mode  | 5s       | >120s (KILLED) | ❌ 24x OVER              |
-| Core package    | 5s       | 2.24s          | ✅ PASS                  |
-| Hooks package   | 5s       | 2.72s          | ✅ PASS                  |
-| YAWL package    | 5s       | 2.73s          | ✅ PASS (but 8 failures) |
+| Core package    | 5s       | latests          | ✅ PASS                  |
+| Hooks package   | 5s       | latests          | ✅ PASS                  |
+| YAWL package    | 5s       | latests          | ✅ PASS (but 8 failures) |
 
 ### Slow Test Hotspots
 
@@ -138,7 +138,7 @@ test/project-engine/code-complexity-js.test.mjs
 
 ### Mock Usage Analysis
 
-**Only 17 mock calls** across 8 test files (3,635 total tests = 0.5% mock usage):
+**Only 17 mock calls** across 8 test files (3,635 total tests = latest% mock usage):
 
 ```
 packages/composables/test/composables.test.mjs: 1
@@ -159,7 +159,7 @@ packages/yawl/test/yawl-hooks.test.mjs: 3
 
 ### YAWL Package Failures
 
-**8 failures** out of 292 tests (97.3% pass rate):
+**8 failures** out of 292 tests (latest% pass rate):
 
 | Test                                   | Error                                              | Root Cause                          |
 | -------------------------------------- | -------------------------------------------------- | ----------------------------------- |
@@ -216,9 +216,9 @@ Based on file size (complexity proxy) + 0% coverage:
 ```
        E2E (?)           <- Unknown count (likely 0)
       /        \
-     /Integration\       <- ~19 files (11.5%)
+     /Integration\       <- ~19 files (latest%)
     /              \
-   /    Unit (143)  \    <- 86.7% (should be ~70%)
+   /    Unit (143)  \    <- latest% (should be ~70%)
   /__________________\
 ```
 
@@ -229,7 +229,7 @@ Based on file size (complexity proxy) + 0% coverage:
 ```
 Package               Source Files  Test Files  Ratio   Status
 ─────────────────────────────────────────────────────────────
-hooks                     19            2       10.5%   ❌ CRITICAL
+hooks                     19            2       latest%   ❌ CRITICAL
 core                      ?             7       ?       ⚠️
 yawl                      ?             8       ?       ❌ (8 failures)
 graph-analytics           5             4       80%     ✅
@@ -257,7 +257,7 @@ validation                ?             0       0%      ❌ CRITICAL
   3.  Rule evaluation with real SPARQL queries
   4.  Error propagation + telemetry integration
   5.  Concurrent hook execution (race conditions)
-- **Expected Impact**: 13.1% → 65%+ coverage
+- **Expected Impact**: latest% → 65%+ coverage
 - **Lines**: ~200 LoC (Big Bang 80/20: one-pass implementation)
 
 #### 2. **OTEL Validation Test Suite** (P0)
@@ -283,7 +283,7 @@ validation                ?             0       0%      ❌ CRITICAL
   3.  Concurrent case isolation
   4.  Resource allocation determinism
   5.  Cancellation propagation
-- **Expected Impact**: 97.3% → 100% pass rate
+- **Expected Impact**: latest% → 100% pass rate
 - **Lines**: ~100 LoC (refactor existing tests)
 
 #### 4. **Query Optimizer Performance Suite** (P1)
@@ -313,7 +313,7 @@ validation                ?             0       0%      ❌ CRITICAL
 - **Lines**: ~100 LoC
 
 **Total Effort**: ~670 LoC → 5 focused test suites
-**Expected Coverage**: 13.1% → 75%+ overall (5.7x improvement)
+**Expected Coverage**: latest% → 75%+ overall (latestx improvement)
 
 ---
 
@@ -345,7 +345,7 @@ validation                ?             0       0%      ❌ CRITICAL
    - **Fix**: Mock fs/http using vitest.mock (17 occurrences needed)
    - **Savings**: ~1-2s aggregate
 
-**Total Optimization Savings**: ~2.2s (enables full suite <10s)
+**Total Optimization Savings**: ~latests (enables full suite <10s)
 
 ---
 
@@ -401,9 +401,9 @@ validation                ?             0       0%      ❌ CRITICAL
 
 ### What I MEASURED (Not Estimated)
 
-- Coverage: 13.1% (hooks), 63.6% (graph-analytics) from vitest reports
+- Coverage: latest% (hooks), latest% (graph-analytics) from vitest reports
 - Test count: 3,635 tests via regex pattern matching
-- Duration: 2.24s (core), 2.72s (hooks), 2.73s (yawl) from vitest output
+- Duration: latests (core), latests (hooks), latests (yawl) from vitest output
 - Failures: 8 specific tests in YAWL with error messages
 - File sizes: 1318 lines (otel-span-builder) via `wc -l`
 
@@ -411,7 +411,7 @@ validation                ?             0       0%      ❌ CRITICAL
 
 | Claim                  | If Wrong...                              |
 | ---------------------- | ---------------------------------------- |
-| "13.1% hooks coverage" | Hooks are untested → production failures |
+| "latest% hooks coverage" | Hooks are untested → production failures |
 | "8 YAWL failures"      | Time-travel broken → data corruption     |
 | "19 external deps"     | Tests are flaky → CI/CD unreliable       |
 | "0% OTEL coverage"     | Cannot validate agents → trust collapses |
@@ -447,11 +447,11 @@ validation                ?             0       0%      ❌ CRITICAL
 
 ### Current State (Baseline)
 
-- Coverage: 13.1% - 63.6%
-- Passing: 3,627 / 3,635 (99.8% but 8 CRITICAL failures)
+- Coverage: latest% - latest%
+- Passing: 3,627 / 3,635 (latest% but 8 CRITICAL failures)
 - Duration: >15s (3x SLA violation)
 - Isolation: 19 files with external deps
-- Mock Usage: 0.5% (17 / 3,635 tests)
+- Mock Usage: latest% (17 / 3,635 tests)
 
 ### Target State (Week 3)
 
@@ -504,7 +504,7 @@ All proposed test files:
 **Adversarial PM Checklist**:
 
 - ✅ Did I RUN code? YES (timeout 15s npm run test:coverage)
-- ✅ Did I read FULL output? YES (2.24s, 108 tests, 13.1% coverage)
+- ✅ Did I read FULL output? YES (latests, 108 tests, latest% coverage)
 - ✅ What BREAKS if wrong? LISTED (production failures, trust collapse)
 - ✅ Can I REPRODUCE? YES (all commands documented)
 - ✅ Batched operations? YES (6 parallel bash calls, 5 reads)

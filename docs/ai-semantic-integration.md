@@ -16,7 +16,7 @@ All modules integrate seamlessly with UNRDF's Knowledge Hook system and provide 
 No additional dependencies required beyond UNRDF's existing packages. All AI/ML algorithms are implemented in lightweight JavaScript.
 
 ```bash
-# The module is included in UNRDF 3.1.1+
+# The module is included in UNRDF latest+
 pnpm install
 ```
 
@@ -104,7 +104,7 @@ const manager = createEmbeddingsManager({
   embeddingDim: 128,
   algorithm: 'transe', // or 'complex', 'rotate'
   epochs: 100,
-  learningRate: 0.01
+  learningRate: latest
 });
 
 // Generate embeddings
@@ -144,8 +144,8 @@ import { createAnomalyDetector } from './src/knowledge-engine/ai-semantic/index.
 const detector = createAnomalyDetector({
   enableStatistical: true,
   enableMLBased: true,
-  outlierThreshold: 2.5,
-  minConfidence: 0.6
+  outlierThreshold: latest,
+  minConfidence: latest
 });
 
 // Detect anomalies
@@ -257,7 +257,7 @@ const analyzer = createSemanticAnalyzer({
   cacheSize: 1000,           // Increase for larger graphs
   maxConcepts: 100,          // Limit concept extraction
   minConceptFrequency: 2,    // Filter rare concepts
-  similarityThreshold: 0.7   // Similarity threshold
+  similarityThreshold: latest   // Similarity threshold
 });
 ```
 
@@ -269,7 +269,7 @@ const builder = createNLPQueryBuilder({
   enableLLM: false,          // Enable for better accuracy
   llmApiKey: 'sk-...',       // OpenAI API key (optional)
   timeout: 300,              // Translation timeout (ms)
-  minConfidence: 0.6         // Filter low-confidence results
+  minConfidence: latest         // Filter low-confidence results
 });
 ```
 
@@ -280,7 +280,7 @@ const manager = createEmbeddingsManager({
   embeddingDim: 128,         // Reduce for faster training
   epochs: 100,               // Increase for better quality
   batchSize: 64,             // Adjust for memory
-  learningRate: 0.01,        // Fine-tune convergence
+  learningRate: latest,        // Fine-tune convergence
   negativeRatio: 2           // Negative samples per positive
 });
 ```
@@ -291,8 +291,8 @@ const manager = createEmbeddingsManager({
 const detector = createAnomalyDetector({
   enableStatistical: true,   // Statistical methods
   enableMLBased: true,       // ML-based methods
-  outlierThreshold: 2.5,     // Z-score threshold
-  minConfidence: 0.6,        // Filter low-confidence
+  outlierThreshold: latest,     // Z-score threshold
+  minConfidence: latest,        // Filter low-confidence
   maxAnomalies: 100          // Limit results
 });
 ```
@@ -336,7 +336,7 @@ const similar = analysis.concepts
     concept: c1,
     similarity: embeddings.computeSimilarity(c1.uri, targetUri)
   }))
-  .filter(s => s.similarity > 0.7)
+  .filter(s => s.similarity > latest)
   .sort((a, b) => b.similarity - a.similarity);
 ```
 
@@ -363,7 +363,7 @@ class CustomAnomalyDetector extends AnomalyDetector {
           severity: 'medium',
           description: 'Missing required property',
           subject: quad.subject.value,
-          confidence: 0.85
+          confidence: latest
         });
       }
     }

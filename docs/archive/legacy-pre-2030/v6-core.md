@@ -2,7 +2,7 @@
 
 > UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts
 
-**Version**: `6.0.0-rc.1`
+**Version**: `latest-rc.1`
 **Tier**: Essential
 
 ## Overview

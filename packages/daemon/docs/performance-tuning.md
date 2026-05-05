@@ -508,6 +508,6 @@ const metrics = daemon.getMetrics();
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: [VERSION]
 **Last Updated**: 2026-01-10
-**Target**: @unrdf/daemon v6.0.0+
+**Target**: @unrdf/daemon [VERSION]+

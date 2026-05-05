@@ -12,7 +12,7 @@
  *
  * const health = createHealthChecks({
  *   serviceName: 'unrdf-api',
- *   version: '5.0.1',
+ *   version: '[VERSION]',
  *   dependencies: {
  *     database: async () => await db.ping(),
  *     cache: async () => await redis.ping()
@@ -319,7 +319,7 @@ export function createHealthMiddleware(config) {
      */
     prometheus: async (req, res) => {
       const result = await health.prometheus();
-      res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+      res.setHeader('Content-Type', 'text/plain; version=[VERSION]');
       res.status(200).send(result);
     },
   };
@@ -334,7 +334,7 @@ export function createHealthMiddleware(config) {
 export function createUnrdfHealthChecks(options = {}) {
   return createHealthChecks({
     serviceName: options.serviceName || 'unrdf',
-    version: options.version || '5.0.1',
+    version: options.version || '[VERSION]',
     environment: process.env.NODE_ENV || 'production',
     ...options,
   });

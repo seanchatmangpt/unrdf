@@ -8,7 +8,7 @@
 
 ## EXECUTIVE SUMMARY
 
-**PRODUCTION READINESS SCORE: 3.2/10**
+**PRODUCTION READINESS SCORE: latest/10**
 
 **RECOMMENDATION: ❌ DO NOT APPROVE FOR PRODUCTION**
 
@@ -55,7 +55,7 @@ $ grep -r "export function\|export const.*=" packages/*/src | wc -l
 1435
 ```
 
-**Ratio**: 5.2 annotations per function (excellent - suggests @param for multiple parameters + @returns)
+**Ratio**: latest annotations per function (excellent - suggests @param for multiple parameters + @returns)
 **Score**: 8/8 points
 
 ---
@@ -117,13 +117,13 @@ Command timed out after 25s
 
 #### YAWL Core Tests ❌ CRITICAL FAILURE
 **Requirement**: 334/334 tests passing (100%)
-**Actual**: 212/334 tests passing (63.5%)
+**Actual**: 212/334 tests passing (latest%)
 
 **Evidence**:
 ```
 Test Files  14 failed | 3 passed (17)
 Tests       122 failed | 212 passed (334)
-Duration    3.94s
+Duration    latests
 ```
 
 **Failed Test Files**:
@@ -274,14 +274,14 @@ Failed to log case event YAWL_CASE_CREATED: Error: Invalid YAWL_CASE_CREATED pay
 
 | Category | Score | Weight | Weighted Score |
 |----------|-------|--------|----------------|
-| Code Quality | 8/25 | 25% | 2.0 |
-| Security | 20/25 | 25% | 5.0 |
-| Testing | 2/20 | 20% | 0.4 |
-| Documentation | 12/15 | 15% | 1.8 |
-| Performance | 0/15 | 15% | 0.0 |
-| **TOTAL** | **42/100** | **100%** | **9.2/25** |
+| Code Quality | 8/25 | 25% | latest |
+| Security | 20/25 | 25% | latest |
+| Testing | 2/20 | 20% | latest |
+| Documentation | 12/15 | 15% | latest |
+| Performance | 0/15 | 15% | latest |
+| **TOTAL** | **42/100** | **100%** | **latest/25** |
 
-**Scaled to 10-point scale**: **3.2/10** (rounded down)
+**Scaled to 10-point scale**: **latest/10** (rounded down)
 
 ---
 
@@ -325,8 +325,8 @@ Failed to log case event YAWL_CASE_CREATED: Error: Invalid YAWL_CASE_CREATED pay
 
 | Metric | Current | Required for 10/10 | Gap |
 |--------|---------|-------------------|-----|
-| Production Score | 3.2/10 | 10/10 | **6.8 points** |
-| Test Pass Rate | 63.5% | 100% | **36.5%** |
+| Production Score | latest/10 | 10/10 | **latest points** |
+| Test Pass Rate | latest% | 100% | **latest%** |
 | Files Compliant | 86% | 100% | **14%** |
 | Linter Status | TIMEOUT | PASS <20s | **FAILED** |
 | Performance Benchmarks | 0% measurable | 100% passing | **100%** |
@@ -370,10 +370,10 @@ Failed to log case event YAWL_CASE_CREATED: Error: Invalid YAWL_CASE_CREATED pay
 
 ## COMPARISON TO PREVIOUS ASSESSMENT
 
-| Metric | Previous (8/10) | Current (3.2/10) | Delta |
+| Metric | Previous (8/10) | Current (latest/10) | Delta |
 |--------|-----------------|------------------|-------|
-| Overall Score | 8.0 | 3.2 | **-4.8** ⬇️ |
-| Test Pass Rate | ~56% | 63.5% | **+7.5%** ⬆️ |
+| Overall Score | latest | latest | **-latest** ⬇️ |
+| Test Pass Rate | ~56% | latest% | **+latest%** ⬆️ |
 | File Compliance | Unknown | 86% | **-14%** ⬇️ |
 | Linter | Unknown | TIMEOUT | **Regression** ⬇️ |
 | Performance | Partial | FAILED | **Regression** ⬇️ |
@@ -428,7 +428,7 @@ Failed to log case event YAWL_CASE_CREATED: Error: Invalid YAWL_CASE_CREATED pay
 
 | Gate | Criteria | Current | Target |
 |------|----------|---------|--------|
-| Tests | Pass rate | 63.5% | 100% |
+| Tests | Pass rate | latest% | 100% |
 | Files | <500 lines | 86% | 100% |
 | Linter | Runtime | TIMEOUT | <15s, exit 0 |
 | Performance | Benchmarks | FAILED | All passing, within SLA |
@@ -491,7 +491,7 @@ $ find docs -name "*.md" | wc -l
 
 ## FINAL VERDICT
 
-**PRODUCTION READINESS: 3.2/10**
+**PRODUCTION READINESS: latest/10**
 
 **APPROVAL STATUS: ❌ REJECTED**
 

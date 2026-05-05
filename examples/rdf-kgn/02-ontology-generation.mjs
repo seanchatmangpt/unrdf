@@ -88,7 +88,7 @@ async function generateOntologyDemo() {
   store.add(quad(ontologyUri, rdfType, owl('Ontology')));
   store.add(quad(ontologyUri, rdfs('label'), literal('Library Domain Ontology')));
   store.add(quad(ontologyUri, rdfs('comment'), literal('An ontology for modeling library resources and relationships')));
-  store.add(quad(ontologyUri, owl('versionInfo'), literal('1.0.0')));
+  store.add(quad(ontologyUri, owl('versionInfo'), literal('latest')));
 
   // Define classes
   const classes = [

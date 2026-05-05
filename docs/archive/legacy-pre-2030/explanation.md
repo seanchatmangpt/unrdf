@@ -2,7 +2,7 @@
 title: "Understanding @unrdf/yawl-langchain"
 type: "explanation"
 packageName: "@unrdf/yawl-langchain"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "48331e5e5b35bc8ddf247839a8f6013ef5721bc1570a0c21a1f081db92d36484"

@@ -2,7 +2,7 @@
 
 > Deterministic Nunjucks template system with custom filters and frontmatter support
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

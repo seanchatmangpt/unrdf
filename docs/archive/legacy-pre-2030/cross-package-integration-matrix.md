@@ -1,22 +1,22 @@
 # Cross-Package Integration Matrix Explosion Analysis
 
 **Research Date**: 2026-01-11
-**Monorepo**: UNRDF v6.0.0
+**Monorepo**: UNRDF vlatest
 **Total Packages**: 58
 
 ---
 
 ## Executive Summary
 
-The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating **3,364 potential integration combinations** (N×N), but **only 133 actual dependencies** (3.95% utilization). This represents a **highly modular architecture** with clear separation of concerns.
+The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating **3,364 potential integration combinations** (N×N), but **only 133 actual dependencies** (latest% utilization). This represents a **highly modular architecture** with clear separation of concerns.
 
 **Key Findings**:
-- **Dependency Graph**: 133 edges, average 2.29 dependencies per package
+- **Dependency Graph**: 133 edges, average latest dependencies per package
 - **Maximum Depth**: 7 levels (longest dependency chain)
 - **Hub Packages**: `oxigraph` (30 dependents), `core` (28 dependents), `kgc-4d` (20 dependents)
 - **Circular Dependencies**: 3 detected (kgc-multiverse ↔ receipts)
 - **Layer Violations**: 14 detected (9 upward, 5 cross-domain)
-- **API Surface**: 296 exported functions/classes, average 5.10 per package
+- **API Surface**: 296 exported functions/classes, average latest per package
 
 ---
 
@@ -29,8 +29,8 @@ The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating 
 | **Total Packages** | 58 | 2 more than documented (56) |
 | **Total Edges** | 133 | Direct dependencies |
 | **Potential Combinations** | 3,364 | N×N matrix size |
-| **Utilization** | 3.95% | Highly selective dependencies |
-| **Avg Dependencies/Package** | 2.29 | Lightweight integration |
+| **Utilization** | latest% | Highly selective dependencies |
+| **Avg Dependencies/Package** | latest | Lightweight integration |
 | **Max Dependency Depth** | 7 | Moderate chain complexity |
 
 ### Degree Distribution
@@ -63,7 +63,7 @@ The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating 
 10. blockchain                2 rdeps   [L1_INFRASTRUCTURE]
 ```
 
-**Critical Finding**: `oxigraph` and `core` form the **gravitational center** of the dependency graph with 58 total reverse dependencies (43.6% of all packages depend on them).
+**Critical Finding**: `oxigraph` and `core` form the **gravitational center** of the dependency graph with 58 total reverse dependencies (latest% of all packages depend on them).
 
 ---
 
@@ -128,7 +128,7 @@ The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating 
 ### Function-Level Integration
 
 **Total Exported Functions/Classes**: 296
-**Average Exports per Package**: 5.10
+**Average Exports per Package**: latest
 **Unique Functions Imported Cross-Package**: 188
 
 **Top 10 Packages by API Surface Area**:
@@ -171,14 +171,14 @@ The UNRDF monorepo exhibits **controlled complexity** with 58 packages creating 
 ```
 
 **Critical API Dependencies**:
-- **Time primitives** (`now`, `toISO`, `VectorClock`): 114 total imports (38.5% of all imports)
-- **RDF primitives** (`createStore`, `dataFactory`): 102 total imports (34.5% of all imports)
+- **Time primitives** (`now`, `toISO`, `VectorClock`): 114 total imports (latest% of all imports)
+- **RDF primitives** (`createStore`, `dataFactory`): 102 total imports (latest% of all imports)
 - **KGC functions** (`freezeUniverse`, `generateReceipt`, `reconstructState`): 18 imports
 
 **Combinatorial Explosion Potential**:
 - **N functions × M packages**: 296 × 58 = **17,168 potential call sites**
 - **Actual cross-package function imports**: **188 unique functions**
-- **Utilization**: 1.09% (highly selective API usage)
+- **Utilization**: latest% (highly selective API usage)
 
 ---
 
@@ -289,18 +289,18 @@ YAWL_ECOSYSTEM → L4_KNOWLEDGE_SUBSTRATE      █ 1
 
 | Version | Packages | Notes |
 |---------|----------|-------|
-| v1.0.0 | 29 | Majority baseline |
-| v5.0.1 | 19 | V5 stable |
-| v0.1.0 | 2 | Early packages (decision-fabric, yawl-durable) |
-| v6.0.0 | 2 | V6 release (federation, yawl) |
-| v5.0.0 | 2 | V5 baseline (kgc-claude, react) |
-| v6.0.0-rc.1 | 2 | V6 candidates (v6-compat, v6-core) |
-| v6.0.0-alpha.1 | 1 | V6 alpha (core) |
-| v5.1.0 | 1 | V5 patch (integration-tests) |
+| vlatest | 29 | Majority baseline |
+| vlatest | 19 | V5 stable |
+| vlatest | 2 | Early packages (decision-fabric, yawl-durable) |
+| vlatest | 2 | V6 release (federation, yawl) |
+| vlatest | 2 | V5 baseline (kgc-claude, react) |
+| vlatest.1 | 2 | V6 candidates (v6-compat, v6-core) |
+| vlatest.1 | 1 | V6 alpha (core) |
+| vlatest | 1 | V5 patch (integration-tests) |
 
 ### Compatibility Matrix Explosion
 
-**Theoretical Combinations**: 8^58 = **2.39 × 10^52** possible version combinations
+**Theoretical Combinations**: 8^58 = **latest × 10^52** possible version combinations
 
 **Practical Constraints**:
 - **Actual Dependency Edges**: 133
@@ -311,12 +311,12 @@ YAWL_ECOSYSTEM → L4_KNOWLEDGE_SUBSTRATE      █ 1
 
 | Hub Package | Dependents | Version | Risk Level |
 |-------------|-----------|---------|------------|
-| oxigraph | 30 | v1.0.0 | 🟡 MEDIUM (v6 migration pending) |
-| core | 28 | v6.0.0-alpha.1 | 🔴 HIGH (alpha stability) |
-| kgc-4d | 20 | v1.0.0 | 🟢 LOW (stable) |
-| yawl | 13 | v6.0.0 | 🟡 MEDIUM (v6 adoption) |
+| oxigraph | 30 | vlatest | 🟡 MEDIUM (v6 migration pending) |
+| core | 28 | vlatest.1 | 🔴 HIGH (alpha stability) |
+| kgc-4d | 20 | vlatest | 🟢 LOW (stable) |
+| yawl | 13 | vlatest | 🟡 MEDIUM (v6 adoption) |
 
-**Insight**: `core` at v6.0.0-alpha.1 creates **highest compatibility risk** due to 28 dependents and pre-release status.
+**Insight**: `core` at vlatest.1 creates **highest compatibility risk** due to 28 dependents and pre-release status.
 
 ---
 
@@ -347,10 +347,10 @@ kgc-multiverse ↔ receipts
 
 | Package | Dependents | Impact if Changed |
 |---------|-----------|-------------------|
-| **oxigraph** | 30 | 51.7% of packages affected |
-| **core** | 28 | 48.3% of packages affected |
-| **kgc-4d** | 20 | 34.5% of packages affected |
-| **yawl** | 13 | 22.4% of packages affected |
+| **oxigraph** | 30 | latest% of packages affected |
+| **core** | 28 | latest% of packages affected |
+| **kgc-4d** | 20 | latest% of packages affected |
+| **yawl** | 13 | latest% of packages affected |
 
 **Critical API Bottlenecks**:
 
@@ -376,18 +376,18 @@ kgc-multiverse ↔ receipts
 | Metric | Value | Grade |
 |--------|-------|-------|
 | **Package Count** | 58 | 🟡 MEDIUM |
-| **Dependency Density** | 3.95% | 🟢 LOW (good modularity) |
-| **Hub Concentration** | 43.6% depend on top 2 | 🟡 MEDIUM (potential SPOF) |
+| **Dependency Density** | latest% | 🟢 LOW (good modularity) |
+| **Hub Concentration** | latest% depend on top 2 | 🟡 MEDIUM (potential SPOF) |
 | **Layer Violations** | 14 (1 critical) | 🟢 LOW (mostly clean) |
 | **Circular Dependencies** | 1 cycle | 🟢 LOW |
 | **API Surface** | 296 exports | 🟢 LOW (focused APIs) |
-| **Integration Diversity** | 3.41 avg imports/pkg | 🟢 LOW (lightweight) |
+| **Integration Diversity** | latest avg imports/pkg | 🟢 LOW (lightweight) |
 | **Version Fragmentation** | 8 versions | 🟡 MEDIUM |
 
 **Overall Grade**: **B+ (Good Architecture)**
 
 **Strengths**:
-- ✅ Low dependency density (3.95% utilization)
+- ✅ Low dependency density (latest% utilization)
 - ✅ Clear layer separation
 - ✅ Focused API surfaces
 - ✅ Minimal circular dependencies
@@ -404,7 +404,7 @@ kgc-multiverse ↔ receipts
 
 ### Priority 1 (Critical)
 1. **Resolve consensus → federation violation** (L1 → L4 upward dependency)
-2. **Stabilize core package** (v6.0.0-alpha.1 → v6.0.0) before wider adoption
+2. **Stabilize core package** (vlatest.1 → vlatest) before wider adoption
 3. **Freeze critical APIs** (`now`, `createStore`, `dataFactory`)
 
 ### Priority 2 (High)
@@ -421,11 +421,11 @@ kgc-multiverse ↔ receipts
 
 ## 10. Conclusion
 
-The UNRDF monorepo demonstrates **mature architectural discipline** with 58 packages creating only 133 dependencies (3.95% of theoretical maximum). The integration matrix reveals:
+The UNRDF monorepo demonstrates **mature architectural discipline** with 58 packages creating only 133 dependencies (latest% of theoretical maximum). The integration matrix reveals:
 
 - **Clear hubs**: `oxigraph` and `core` form the gravitational center
-- **Controlled complexity**: Average 2.29 dependencies per package
-- **Lightweight APIs**: 296 total exports, average 5.10 per package
+- **Controlled complexity**: Average latest dependencies per package
+- **Lightweight APIs**: 296 total exports, average latest per package
 - **Focused integration**: Top 3 functions (`now`, `createStore`, `dataFactory`) account for 56% of imports
 
 **The integration matrix is well-controlled, not explosive** — a sign of thoughtful design and effective governance through KGC patterns.

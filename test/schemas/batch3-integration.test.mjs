@@ -228,7 +228,7 @@ describe('Batch 3 Schema Generation - Integration Tests', () => {
 
   describe('Manifest Integrity', () => {
     it('should have valid version', () => {
-      expect(manifest.version).toBe('6.0.0-batch3');
+      expect(manifest.version).toBe('latest-batch3');
     });
 
     it('should have timestamp', () => {

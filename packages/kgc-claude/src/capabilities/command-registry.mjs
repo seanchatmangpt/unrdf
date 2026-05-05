@@ -505,7 +505,7 @@ export class CommandRegistry {
       commands: Array.from(this.commands.values()),
       aliases: Object.fromEntries(this.aliases),
       metadata: {
-        version: '1.0.0',
+        version: 'latest',
         generated: new Date().toISOString(),
       },
     };

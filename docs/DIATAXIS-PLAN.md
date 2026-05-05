@@ -50,7 +50,7 @@ Diataxis is a documentation framework by Daniele Procida that organizes docs int
 
 | Package | README | docs/ | API.md | GUIDE.md | Status |
 |---------|:------:|:-----:|:------:|:--------:|--------|
-| @unrdf/core | ✅ | ✅ | 📄 (4.1K) | 📄 | Most developed |
+| @unrdf/core | ✅ | ✅ | 📄 (latestK) | 📄 | Most developed |
 | @unrdf/hooks | ✅ | ✅ | 📄 | 📄 | Strong (PhD thesis) |
 | @unrdf/browser | ✅ | ✅ | 📋 TODO | 📋 TODO | Needs content |
 | @unrdf/cli | ✅ | ✅ | 📋 TODO | 📋 TODO | Needs content |
@@ -176,7 +176,7 @@ docs/
 
 **Goal:** Create structure and templates
 
-#### Task 1.1: Create Diataxis Templates
+#### Task latest: Create Diataxis Templates
 - [ ] Create `docs/DIATAXIS-GUIDE.md` - How to write each type
 - [ ] Create `docs/_templates/` with boilerplate:
   - `TUTORIALS.md` template
@@ -186,14 +186,14 @@ docs/
 - [ ] Create package-level `INDEX.md` template
 - [ ] Create `docs/DIATAXIS-MAP.md` (navigation hub)
 
-#### Task 1.2: Update Root-Level Structure
+#### Task latest: Update Root-Level Structure
 - [ ] Rename `guides/` → `HOW-TO/` (or copy)
 - [ ] Rename `explanation/` → `EXPLANATION/` (or merge)
 - [ ] Create `TUTORIALS/` root directory
 - [ ] Create `REFERENCE/` root directory
 - [ ] Create `PACKAGE-GUIDES/` root directory
 
-#### Task 1.3: Create Package Structure Template
+#### Task latest: Create Package Structure Template
 - [ ] Create shell script: `scripts/create-package-docs.sh`
   - Creates standard directory structure
   - Copies INDEX.md template

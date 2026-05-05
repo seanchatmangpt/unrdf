@@ -157,7 +157,7 @@ defineHook({
   id: 'on-document-write',
   meta: {
     name: 'on-document-write',
-    version: '1.0.0'
+    version: 'latest'
   },
   inputs: [
     {
@@ -218,7 +218,7 @@ EXAMPLE MANIFEST:
   "id": "policy-pack-security-v1",
   "meta": {
     "name": "security-policy-v1",
-    "version": "1.0.0"
+    "version": "latest"
   },
   "guards": [
     {
@@ -451,7 +451,7 @@ DenialReceipt {
     caller: "execute"
   },
   environment: {
-    nodeVersion: "v18.0.0",
+    nodeVersion: "latest",
     platform: "linux",
     environment: "production"
   }
@@ -614,7 +614,7 @@ function createGuardedEnvironment(env, guardRegistry) {
   "id": "policy-pack-security-v1",
   "meta": {
     "name": "security-policy-v1",
-    "version": "1.0.0",
+    "version": "latest",
     "description": "Production security policy with comprehensive guard rules",
     "author": "UNRDF Security Team",
     "license": "MIT",
@@ -629,7 +629,7 @@ function createGuardedEnvironment(env, guardRegistry) {
     "retries": 1,
     "conditions": {
       "environment": ["production", "staging"],
-      "version": ">=1.0.0"
+      "version": ">=latest"
     }
   },
   "guards": [
@@ -703,7 +703,7 @@ function createGuardedEnvironment(env, guardRegistry) {
       ],
       "rules": [
         {"pattern": "metadata.google.internal", "severity": "CRITICAL", "action": "DENY"},
-        {"pattern": "169.254.169.254", "severity": "CRITICAL", "action": "DENY"},
+        {"pattern": "latest.254", "severity": "CRITICAL", "action": "DENY"},
         {"pattern": "*.internal", "severity": "HIGH", "action": "DENY"}
       ]
     },

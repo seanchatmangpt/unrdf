@@ -19,7 +19,7 @@ import { tmpdir } from 'os';
 const { namedNode, literal } = dataFactory;
 
 async function demo() {
-  console.log('=== Temporal SPARQL v6.1.0 Demo ===\n');
+  console.log('=== Temporal SPARQL [VERSION] Demo ===\n');
 
   // Setup
   const tempDir = mkdtempSync(join(tmpdir(), 'temporal-sparql-demo-'));

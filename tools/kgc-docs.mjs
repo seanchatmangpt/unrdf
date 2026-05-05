@@ -6,7 +6,7 @@
  * Provides receipt-driven documentation with proof guarantees and Diátaxis projection.
  *
  * @module tools/kgc-docs
- * @version 1.0.0
+ * @version latest
  *
  * @description
  * Command router for:

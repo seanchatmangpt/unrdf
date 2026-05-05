@@ -6,7 +6,7 @@ Conceptual Proof - Demonstrates chained receipt audit trail
 Step 1: Creating workflow case...
   ✅ Receipt 1: CASE_CREATED
      Receipt ID: receipt-1766790495392-rj3o1kwt6
-     Timestamp: 2025-12-26T23:08:15.392Z
+     Timestamp: 2025-12-26T23:08:latestZ
      Case: loan-application-12345
      Decision: CREATE
      Actor: automated-workflow
@@ -16,7 +16,7 @@ Step 1: Creating workflow case...
 Step 2: Enabling approval task...
   ✅ Receipt 2: TASK_ENABLED
      Receipt ID: receipt-1766790495406-5rb20zzgp
-     Timestamp: 2025-12-26T23:08:15.406Z
+     Timestamp: 2025-12-26T23:08:latestZ
      Task: approve-loan
      Work Item: wi-001
      Decision: ENABLE
@@ -27,7 +27,7 @@ Step 2: Enabling approval task...
 Step 3: Completing approval task...
   ✅ Receipt 3: TASK_COMPLETED
      Receipt ID: receipt-1766790495416-6iob6os2r
-     Timestamp: 2025-12-26T23:08:15.416Z
+     Timestamp: 2025-12-26T23:08:latestZ
      Task: approve-loan
      Decision: APPROVE
      Actor: john.smith@bank.com
@@ -64,11 +64,11 @@ Step 8: Exporting audit trail...
   ✅ Audit trail exported:
      Node ID: audit-node-001
      Receipt Count: 3
-     First Receipt: 2025-12-26T23:08:15.392Z
-     Last Receipt: 2025-12-26T23:08:15.416Z
+     First Receipt: 2025-12-26T23:08:latestZ
+     Last Receipt: 2025-12-26T23:08:latestZ
      Merkle Root: 67036da6cd1e7a72fa601213e974106c3481cdae21438f936f806a00a1d8deae
      Chain Valid: ✅
-     Exported At: 2025-12-26T23:08:15.418Z
+     Exported At: 2025-12-26T23:08:latestZ
 
 Step 9: Reconstructing decision history...
 
@@ -103,9 +103,9 @@ Verification Results:
   ✅ Merkle root computed for batch anchoring
 
 Decision Timeline:
-  1. 2025-12-26T23:08:15.392Z - CASE_CREATED by automated-workflow
-  2. 2025-12-26T23:08:15.406Z - TASK_ENABLED by credit-check-service
-  3. 2025-12-26T23:08:15.416Z - TASK_COMPLETED (APPROVE) by john.smith@bank.com
+  1. 2025-12-26T23:08:latestZ - CASE_CREATED by automated-workflow
+  2. 2025-12-26T23:08:latestZ - TASK_ENABLED by credit-check-service
+  3. 2025-12-26T23:08:latestZ - TASK_COMPLETED (APPROVE) by john.smith@bank.com
 
 Key Findings:
   1. Each decision has cryptographic receipt ✅

@@ -39,7 +39,7 @@ playground: a owl:Ontology ;
     dcterms:title "Playground Ontology"@en ;
     dcterms:description "An ontology for autonomic knowledge graph systems"@en ;
     dcterms:created "2024-01-01"^^xsd:date ;
-    owl:versionInfo "1.0.0" .
+    owl:versionInfo "latest" .
 
 # Classes
 

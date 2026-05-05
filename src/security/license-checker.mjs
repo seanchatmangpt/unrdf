@@ -39,7 +39,7 @@ export const LICENSE_CATEGORIES = {
   permissive: {
     licenses: [
       'MIT', 'MIT-0', 'ISC', 'BSD-2-Clause', 'BSD-3-Clause', 'Apache-2.0',
-      '0BSD', 'CC0-1.0', 'Unlicense', 'WTFPL', 'Zlib', 'X11', 'BlueOak-1.0.0',
+      '0BSD', 'CC0-1.0', 'Unlicense', 'WTFPL', 'Zlib', 'X11', 'BlueOak-[VERSION]',
       'CC-BY-3.0', 'CC-BY-4.0', 'OFL-1.1', 'Python-2.0', 'BSL-1.0', 'Artistic-2.0'
     ],
     compatible: true,

@@ -160,7 +160,7 @@ git log --format="%ai" | head -1            # Last commit
 ### 6. Test Pass Rate
 
 **Claim** (ADVERSARIAL-THESIS-REVIEW.md):
-- YAWL: 64.1% pass rate (168/262 tests)
+- YAWL: latest% pass rate (168/262 tests)
 - Status: Below production standards (≥95% required)
 
 **Validation**:
@@ -581,4 +581,4 @@ Only claims that pass this script survive scrutiny.
 **Author**: Adversarial PM Quality Analyzer
 **Date**: 2025-12-25
 **Status**: Production-Ready
-**Version**: 1.0.0
+**Version**: latest

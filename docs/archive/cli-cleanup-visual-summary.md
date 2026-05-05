@@ -80,7 +80,7 @@ ARCHIVED:
 │           CLEANUP METRICS               │
 ├─────────────────────────────────────────┤
 │ CLI Entry Points:    3 → 1   (-66%)    │
-│ Command Files:      48 → 39  (-18.75%) │
+│ Command Files:      48 → 39  (-latest%) │
 │ Stub Commands:       9 → 0   (-100%)   │
 │ TODO Placeholders:   9 → 1   (-88%)    │
 │ Working Commands:   37 → 37  (100%)    │
@@ -208,7 +208,7 @@ unrdf store restore     # ❌ REMOVED - TODO: Restore store data
 $ unrdf graph --help
 Shows: 8 commands (5 broken stubs + 3 working)
 Reality: Only 3 commands actually work
-Accuracy: 37.5%
+Accuracy: latest%
 ```
 
 **AFTER:**
@@ -265,7 +265,7 @@ Code Quality:
 └── CLI entry points: 3 → 1 (-66%)
 
 User Experience:
-├── Help text accuracy: 37.5% → 100%
+├── Help text accuracy: latest% → 100%
 ├── Command reliability: 80% → 100%
 └── Error clarity: Improved
 ```

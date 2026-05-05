@@ -61,7 +61,7 @@
 ✅ Validation subsystem (embedded)          PASS
 
 Summary: 5/5 test suites passing (100%)
-Total execution time: ~1.2 seconds
+Total execution time: ~latest seconds
 ```
 
 ### Key Files

@@ -45,7 +45,7 @@ const { namedNode, literal, quad } = dataFactory;
 
 const store = createStore();
 const alice = namedNode('http://example.org/alice');
-const name = namedNode('http://xmlns.com/foaf/0.1/name');
+const name = namedNode('http://xmlns.com/foaf/latest/name');
 const aliceName = literal('Alice');
 
 store.insert(quad(alice, name, aliceName));
@@ -72,7 +72,7 @@ import { executeSelect } from '@unrdf/core';
 
 const results = await executeSelect(store, `
   SELECT ?person ?name WHERE {
-    ?person <http://xmlns.com/foaf/0.1/name> ?name
+    ?person <http://xmlns.com/foaf/latest/name> ?name
   }
 `);
 
@@ -433,7 +433,7 @@ if (await executeHook(lengthCheck, quad)) {
 **Goal**: Build REST/GraphQL APIs backed by RDF
 
 **Path**: Quick Start → Week 1-2 (Intermediate) → @unrdf/rdf-graphql
-**Time**: 1.5 weeks
+**Time**: latest weeks
 **Focus**: SPARQL optimization, validation, GraphQL mapping
 
 **Resources**:

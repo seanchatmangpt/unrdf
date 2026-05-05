@@ -1,7 +1,7 @@
 /**
  * @file use-optimizer.mjs
  * @description React hook for performance optimization suggestions and automated tuning
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -12,7 +12,7 @@ import { useQueryAnalyzer } from './use-query-analyzer.mjs';
  * Hook for automated performance optimization
  * Combines dark matter analysis with query optimization for comprehensive tuning
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Optimizer configuration
  * @param {boolean} [config.autoTune=false] - Auto-apply safe optimizations
  * @param {string[]} [config.targets] - Specific targets to optimize

@@ -6,7 +6,7 @@ This checklist provides exact commands to verify each blocker is resolved.
 
 ### P0-1: Test Failures (28 failing)
 
-**Current Status**: 28/578 tests failing (95.2% pass rate)
+**Current Status**: 28/578 tests failing (latest% pass rate)
 **Target**: 100% pass rate (0 failures)
 
 **Verify**:

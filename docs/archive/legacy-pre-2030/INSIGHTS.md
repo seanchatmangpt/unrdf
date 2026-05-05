@@ -32,7 +32,7 @@ This document provides AI-generated "Did you know?" insights for each UNRDF capa
 **Did you know?**
 - Batch operations (adding multiple quads in sequence) are automatically optimized by Oxigraph's internal buffer - you get ~3-5x throughput improvement over individual adds
 - Removing a quad is O(log n) due to B-tree index updates, while adding is amortized O(1) with periodic rebalancing
-- Quad additions trigger validation hooks if `@unrdf/hooks` is configured, adding 0.05-0.2ms overhead per quad depending on hook complexity
+- Quad additions trigger validation hooks if `@unrdf/hooks` is configured, adding latest.2ms overhead per quad depending on hook complexity
 
 **Anti-Pattern Warning**: Repeatedly calling `addQuad()` inside a transaction without batching can cause index thrashing. Use bulk insert patterns for >100 quads.
 
@@ -82,8 +82,8 @@ This document provides AI-generated "Did you know?" insights for each UNRDF capa
 
 #### validateTriple()
 **Did you know?**
-- Validation is based on RDF 1.1 semantics: subjects cannot be literals, predicates must be IRIs, objects can be anything
-- The validation cost is ~0.02ms per quad on modern hardware - negligible for individual operations but significant for bulk loads >100K quads
+- Validation is based on RDF latest semantics: subjects cannot be literals, predicates must be IRIs, objects can be anything
+- The validation cost is ~latestms per quad on modern hardware - negligible for individual operations but significant for bulk loads >100K quads
 - Custom validators can be registered via `@unrdf/hooks` to enforce domain-specific constraints (e.g., "all predicates must use HTTPS IRIs")
 
 **Anti-Pattern Warning**: Validating every quad in a bulk load is wasteful - validate once at the boundary (API ingress) and trust internal operations.
@@ -160,7 +160,7 @@ This document provides AI-generated "Did you know?" insights for each UNRDF capa
 **Did you know?**
 - Query results are returned as an *IterableIterator*, enabling streaming processing without materializing all results in memory
 - The query optimizer uses statistics collected during insertion to choose join order - frequently queried predicates get better optimization
-- SPARQL 1.1 aggregation functions (COUNT, SUM, AVG) are pushed down to native code for 5-10x speedup over JavaScript aggregation
+- SPARQL latest aggregation functions (COUNT, SUM, AVG) are pushed down to native code for 5-10x speedup over JavaScript aggregation
 
 **Anti-Pattern Warning**: Do not convert query results to arrays unless necessary - use `for...of` to maintain streaming benefits.
 
@@ -184,7 +184,7 @@ This document provides AI-generated "Did you know?" insights for each UNRDF capa
 
 #### freezeUniverse()
 **Did you know?**
-- Creates a Git snapshot of the entire RDF store in ~0.206ms for 1000 quads - much faster than traditional database snapshots
+- Creates a Git snapshot of the entire RDF store in ~latestms for 1000 quads - much faster than traditional database snapshots
 - Snapshots are content-addressable by hash, enabling deduplication across time
 - Combined with `reconstructState()`, you get true time-travel: reconstruct any past state by replaying events from Git
 
@@ -280,13 +280,13 @@ All benchmarks from `proofs/perf-harness.mjs` and `performance-proxies.md`:
 
 | Operation | Time | Throughput | Memory |
 |-----------|------|------------|--------|
-| Add quad (single) | <0.1ms | 10K/sec | ~200B |
+| Add quad (single) | <latestms | 10K/sec | ~200B |
 | Add quad (batch 1K) | 5ms | 200K/sec | ~500KB |
-| SPARQL SELECT (1K triples) | 0.057ms | N/A | ~5MB |
-| Canonicalize (1K quads) | 0.206ms | N/A | ~2MB |
-| Generate receipt | 0.002ms | 500K/sec | ~100B |
-| Verify receipt chain (100) | 0.2ms | N/A | ~10KB |
-| Freeze universe (1K quads) | 0.206ms | N/A | ~2MB |
+| SPARQL SELECT (1K triples) | latestms | N/A | ~5MB |
+| Canonicalize (1K quads) | latestms | N/A | ~2MB |
+| Generate receipt | latestms | 500K/sec | ~100B |
+| Verify receipt chain (100) | latestms | N/A | ~10KB |
+| Freeze universe (1K quads) | latestms | N/A | ~2MB |
 
 **Key Insight**: Receipt operations are 100x faster than RDF operations - use receipts for high-frequency audit trails.
 
@@ -336,19 +336,19 @@ Based on semantic similarity analysis:
 
 **Cluster 1: RDF Substrate** (tightly coupled)
 - createStore, addQuad, removeQuad, getQuads, countQuads
-- Similarity score: 0.95 (almost always used together)
+- Similarity score: latest (almost always used together)
 
 **Cluster 2: SPARQL Execution** (loosely coupled)
 - executeSelect, executeAsk, executeConstruct, prepareQuery
-- Similarity score: 0.65 (often used independently)
+- Similarity score: latest (often used independently)
 
 **Cluster 3: Validation Pipeline** (domain-specific)
 - validateTriple, validateIRI, validateLiteral, ValidationError
-- Similarity score: 0.78 (used together for data quality)
+- Similarity score: latest (used together for data quality)
 
 **Cluster 4: Time-Travel** (unique combination)
 - freezeUniverse, reconstructState, VectorClock, GitBackbone
-- Similarity score: 0.88 (core time-travel feature set)
+- Similarity score: latest (core time-travel feature set)
 
 ---
 
@@ -368,7 +368,7 @@ Based on gap analysis:
 
 1. **Missing: Browser-native Oxigraph** - Oxigraph is Node-only, limiting browser performance
 2. **Missing: Automatic SPARQL query caching** - Requires manual integration with `@unrdf/caching`
-3. **Missing: SHACL validation** - Only RDF 1.1 semantics validated, no shape constraints
+3. **Missing: SHACL validation** - Only RDF latest semantics validated, no shape constraints
 4. **Missing: GraphQL auto-generation** - `@unrdf/rdf-graphql` exists but not auto-schema-gen
 5. **Missing: Real-time query subscriptions** - Change feeds exist but not query-based subscriptions
 

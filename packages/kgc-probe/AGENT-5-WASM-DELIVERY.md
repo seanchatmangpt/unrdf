@@ -131,7 +131,7 @@
 
 ## 📊 Feature Availability Matrix
 
-### Current Environment (Node.js v22.21.1)
+### Current Environment (Node.js [VERSION])
 
 | Feature | Available | Details |
 |---------|-----------|---------|
@@ -342,7 +342,7 @@ wasm.memory.max.bytes: 655360 bytes
 - ✅ **Full WASM support** detected (including SIMD + threads)
 
 ### Intelligence Gathered
-- **Environment**: Node.js v22.21.1 with full WebAssembly support
+- **Environment**: Node.js [VERSION] with full WebAssembly support
 - **Compile performance**: ~0.09ms (near-instant)
 - **Instantiate performance**: ~0.07ms (fast)
 - **Call overhead**: ~0.002ms (negligible boundary cost)

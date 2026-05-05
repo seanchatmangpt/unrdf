@@ -197,8 +197,8 @@ All files in: /home/user/unrdf/profiling/
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Generated: 2025-12-25
-Framework: @unrdf/profiling v1.0.0
-Node.js: v22.21.1
+Framework: @unrdf/profiling latest
+Node.js: latest
 Total Execution Time: < 1 second
 Total Lines of Code: 2,805
 Total Documentation: 102 KB

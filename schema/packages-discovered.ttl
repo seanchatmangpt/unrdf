@@ -6,7 +6,7 @@
 # @unrdf/atomvm
 unrdf:AtomvmPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/atomvm" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -17,7 +17,7 @@ unrdf:AtomvmPackage a unrdf:Package ;
 # @unrdf/blockchain
 unrdf:BlockchainPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/blockchain" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Blockchain integration for UNRDF - Cryptographic receipt anchoring and audit trails" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:Kgc4dPackage ;
@@ -27,7 +27,7 @@ unrdf:BlockchainPackage a unrdf:Package ;
 # @unrdf/caching
 unrdf:CachingPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/caching" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Multi-layer caching system for RDF queries with Redis and LRU" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -36,7 +36,7 @@ unrdf:CachingPackage a unrdf:Package ;
 # @unrdf/cli
 unrdf:CliPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/cli" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF CLI - Command-line Tools for Graph Operations and Context Management" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -49,7 +49,7 @@ unrdf:CliPackage a unrdf:Package ;
 # @unrdf/collab
 unrdf:CollabPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/collab" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Real-time collaborative RDF editing using CRDTs (Yjs) with offline-first architecture" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -58,7 +58,7 @@ unrdf:CollabPackage a unrdf:Package ;
 # @unrdf/composables
 unrdf:ComposablesPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/composables" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -68,7 +68,7 @@ unrdf:ComposablesPackage a unrdf:Package ;
 # @unrdf/consensus
 unrdf:ConsensusPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/consensus" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Production-grade Raft consensus for distributed workflow coordination" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:FederationPackage ;
@@ -77,7 +77,7 @@ unrdf:ConsensusPackage a unrdf:Package ;
 # @unrdf/core
 unrdf:CorePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/core" ;
-    unrdf:packageVersion "6.0.0-alpha.1" ;
+    unrdf:packageVersion "latest-alpha.1" ;
     unrdf:packageDescription "UNRDF Core - RDF Graph Operations, SPARQL Execution, and Foundational Substrate" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -86,7 +86,7 @@ unrdf:CorePackage a unrdf:Package ;
 # @unrdf/dark-matter
 unrdf:DarkmatterPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/dark-matter" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Dark Matter - Query Optimization and Performance Analysis (Optional Extension)" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -96,7 +96,7 @@ unrdf:DarkmatterPackage a unrdf:Package ;
 # @unrdf/decision-fabric
 unrdf:DecisionfabricPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/decision-fabric" ;
-    unrdf:packageVersion "0.1.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Hyperdimensional Decision Fabric - Intent-to-Outcome transformation engine using μ-operators" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -111,7 +111,7 @@ unrdf:DecisionfabricPackage a unrdf:Package ;
 # @unrdf/diataxis-kit
 unrdf:DiataxiskitPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/diataxis-kit" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Diátaxis documentation kit for monorepo package inventory and deterministic doc scaffold generation" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     rdfs:label "@unrdf/diataxis-kit" .
@@ -119,7 +119,7 @@ unrdf:DiataxiskitPackage a unrdf:Package ;
 # @unrdf/domain
 unrdf:DomainPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/domain" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Domain models and types for UNRDF" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     rdfs:label "@unrdf/domain" .
@@ -127,7 +127,7 @@ unrdf:DomainPackage a unrdf:Package ;
 # @unrdf/engine-gateway
 unrdf:EnginegatewayPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/engine-gateway" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "μ(O) Engine Gateway - Enforcement layer for Oxigraph-first, N3-minimal RDF processing" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -137,7 +137,7 @@ unrdf:EnginegatewayPackage a unrdf:Package ;
 # @unrdf/federation
 unrdf:FederationPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/federation" ;
-    unrdf:packageVersion "6.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -147,7 +147,7 @@ unrdf:FederationPackage a unrdf:Package ;
 # @unrdf/fusion
 unrdf:FusionPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/fusion" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Unified integration layer for 7-day UNRDF innovation - KGC-4D, blockchain, hooks, caching" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -161,7 +161,7 @@ unrdf:FusionPackage a unrdf:Package ;
 # @unrdf/graph-analytics
 unrdf:GraphanalyticsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/graph-analytics" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Advanced graph analytics for RDF knowledge graphs using graphlib" ;
     unrdf:hasTier unrdf:OptionalTier ;
     rdfs:label "@unrdf/graph-analytics" .
@@ -169,7 +169,7 @@ unrdf:GraphanalyticsPackage a unrdf:Package ;
 # @unrdf/hooks
 unrdf:HooksPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/hooks" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Knowledge Hooks - Policy Definition and Execution Framework" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -179,7 +179,7 @@ unrdf:HooksPackage a unrdf:Package ;
 # @unrdf/integration-tests
 unrdf:IntegrationtestsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/integration-tests" ;
-    unrdf:packageVersion "5.1.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Phase 5: Comprehensive Integration & Adversarial Tests (75 tests)" ;
     unrdf:hasTier unrdf:InternalTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -196,7 +196,7 @@ unrdf:IntegrationtestsPackage a unrdf:Package ;
 # @unrdf/kgc-4d
 unrdf:Kgc4dPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-4d" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging with Git-backed snapshots" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -206,7 +206,7 @@ unrdf:Kgc4dPackage a unrdf:Package ;
 # @unrdf/kgc-claude
 unrdf:KgcclaudePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-claude" ;
-    unrdf:packageVersion "5.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC-Claude Substrate - Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -219,7 +219,7 @@ unrdf:KgcclaudePackage a unrdf:Package ;
 # @unrdf/kgc-cli
 unrdf:KgccliPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-cli" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC CLI - Deterministic extension registry for ~40 workspace packages" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     rdfs:label "@unrdf/kgc-cli" .
@@ -227,7 +227,7 @@ unrdf:KgccliPackage a unrdf:Package ;
 # @unrdf/kgc-docs
 unrdf:KgcdocsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-docs" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Markdown parser and dynamic documentation generator with proof anchoring" ;
     unrdf:hasTier unrdf:InternalTier ;
     rdfs:label "@unrdf/kgc-docs" .
@@ -235,7 +235,7 @@ unrdf:KgcdocsPackage a unrdf:Package ;
 # @unrdf/kgc-multiverse
 unrdf:KgcmultiversePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-multiverse" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Multiverse - Universe branching, forking, and morphism algebra for knowledge graphs" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -247,7 +247,7 @@ unrdf:KgcmultiversePackage a unrdf:Package ;
 # @unrdf/kgc-probe
 unrdf:KgcprobePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-probe" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:KgcsubstratePackage ;
@@ -261,7 +261,7 @@ unrdf:KgcprobePackage a unrdf:Package ;
 # @unrdf/kgc-runtime
 unrdf:KgcruntimePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-runtime" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC governance runtime with comprehensive Zod schemas and work item system" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -270,7 +270,7 @@ unrdf:KgcruntimePackage a unrdf:Package ;
 # @unrdf/kgc-substrate
 unrdf:KgcsubstratePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-substrate" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Substrate - Deterministic, hash-stable KnowledgeStore with immutable append-only log" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:Kgc4dPackage ;
@@ -281,7 +281,7 @@ unrdf:KgcsubstratePackage a unrdf:Package ;
 # @unrdf/kgc-swarm
 unrdf:KgcswarmPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-swarm" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Multi-agent template orchestration with cryptographic receipts - KGC planning meets kgn rendering" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -295,7 +295,7 @@ unrdf:KgcswarmPackage a unrdf:Package ;
 # @unrdf/kgc-tools
 unrdf:KgctoolsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgc-tools" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Tools - Verification, freeze, and replay utilities for KGC capsules" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:Kgc4dPackage ;
@@ -306,7 +306,7 @@ unrdf:KgctoolsPackage a unrdf:Package ;
 # @unrdf/kgn
 unrdf:KgnPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/kgn" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Deterministic Nunjucks template system with custom filters and frontmatter support" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -316,7 +316,7 @@ unrdf:KgnPackage a unrdf:Package ;
 # @unrdf/knowledge-engine
 unrdf:KnowledgeenginePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/knowledge-engine" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -327,7 +327,7 @@ unrdf:KnowledgeenginePackage a unrdf:Package ;
 # @unrdf/ml-inference
 unrdf:MlinferencePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/ml-inference" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF ML Inference - High-performance ONNX model inference pipeline for RDF streams" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -338,7 +338,7 @@ unrdf:MlinferencePackage a unrdf:Package ;
 # @unrdf/ml-versioning
 unrdf:MlversioningPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/ml-versioning" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capabilities" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:Kgc4dPackage ;
@@ -349,7 +349,7 @@ unrdf:MlversioningPackage a unrdf:Package ;
 # @unrdf/nextra-docs
 unrdf:NextradocsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/nextra-docs" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF documentation with Nextra 4 - Developer-focused Next.js documentation" ;
     unrdf:hasTier unrdf:InternalTier ;
     rdfs:label "@unrdf/nextra-docs" .
@@ -357,7 +357,7 @@ unrdf:NextradocsPackage a unrdf:Package ;
 # @unrdf/observability
 unrdf:ObservabilityPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/observability" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Innovative Prometheus/Grafana observability dashboard for UNRDF distributed workflows" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     rdfs:label "@unrdf/observability" .
@@ -365,7 +365,7 @@ unrdf:ObservabilityPackage a unrdf:Package ;
 # @unrdf/oxigraph
 unrdf:OxigraphPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/oxigraph" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Oxigraph - Graph database benchmarking implementation using Oxigraph SPARQL engine" ;
     unrdf:hasTier unrdf:EssentialTier ;
     rdfs:label "@unrdf/oxigraph" .
@@ -373,7 +373,7 @@ unrdf:OxigraphPackage a unrdf:Package ;
 # @unrdf/project-engine
 unrdf:ProjectenginePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/project-engine" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Project Engine - Self-hosting Tools and Infrastructure (Development Only)" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -383,7 +383,7 @@ unrdf:ProjectenginePackage a unrdf:Package ;
 # @unrdf/rdf-graphql
 unrdf:RdfgraphqlPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/rdf-graphql" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -392,7 +392,7 @@ unrdf:RdfgraphqlPackage a unrdf:Package ;
 # @unrdf/react
 unrdf:ReactPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/react" ;
-    unrdf:packageVersion "5.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -402,7 +402,7 @@ unrdf:ReactPackage a unrdf:Package ;
 # @unrdf/receipts
 unrdf:ReceiptsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/receipts" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -414,7 +414,7 @@ unrdf:ReceiptsPackage a unrdf:Package ;
 # @unrdf/semantic-search
 unrdf:SemanticsearchPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/semantic-search" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "AI-powered semantic search over RDF knowledge graphs using vector embeddings" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -423,7 +423,7 @@ unrdf:SemanticsearchPackage a unrdf:Package ;
 # @unrdf/serverless
 unrdf:ServerlessPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/serverless" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Serverless - One-click AWS deployment for RDF applications" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -433,7 +433,7 @@ unrdf:ServerlessPackage a unrdf:Package ;
 # @unrdf/streaming
 unrdf:StreamingPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/streaming" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "UNRDF Streaming - Change Feeds and Real-time Synchronization" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -444,7 +444,7 @@ unrdf:StreamingPackage a unrdf:Package ;
 # @unrdf/test-utils
 unrdf:TestutilsPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/test-utils" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Testing utilities for UNRDF development" ;
     unrdf:hasTier unrdf:InternalTier ;
     unrdf:hasDependency unrdf:OxigraphPackage ;
@@ -453,7 +453,7 @@ unrdf:TestutilsPackage a unrdf:Package ;
 # @unrdf/v6-compat
 unrdf:V6compatPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/v6-compat" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -465,7 +465,7 @@ unrdf:V6compatPackage a unrdf:Package ;
 # @unrdf/v6-core
 unrdf:V6corePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/v6-core" ;
-    unrdf:packageVersion "6.0.0-rc.1" ;
+    unrdf:packageVersion "latest-rc.1" ;
     unrdf:packageDescription "UNRDF v6 Core - ΔGate control plane, unified receipts, and delta contracts" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:KgcsubstratePackage ;
@@ -480,7 +480,7 @@ unrdf:V6corePackage a unrdf:Package ;
 # @unrdf/validation
 unrdf:ValidationPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/validation" ;
-    unrdf:packageVersion "5.0.1" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "OTEL validation framework for UNRDF development" ;
     unrdf:hasTier unrdf:InternalTier ;
     unrdf:hasDependency unrdf:KnowledgeenginePackage ;
@@ -489,7 +489,7 @@ unrdf:ValidationPackage a unrdf:Package ;
 # @unrdf/yawl
 unrdf:YawlPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl" ;
-    unrdf:packageVersion "6.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "YAWL (Yet Another Workflow Language) engine with KGC-4D time-travel and receipt verification" ;
     unrdf:hasTier unrdf:EssentialTier ;
     unrdf:hasDependency unrdf:HooksPackage ;
@@ -500,7 +500,7 @@ unrdf:YawlPackage a unrdf:Package ;
 # @unrdf/yawl-ai
 unrdf:YawlaiPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-ai" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "AI-powered workflow optimization using TensorFlow.js and YAWL patterns" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     rdfs:label "@unrdf/yawl-ai" .
@@ -508,7 +508,7 @@ unrdf:YawlaiPackage a unrdf:Package ;
 # @unrdf/yawl-api
 unrdf:YawlapiPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-api" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "High-performance REST API framework that exposes YAWL workflows as RESTful APIs with OpenAPI documentation" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -518,7 +518,7 @@ unrdf:YawlapiPackage a unrdf:Package ;
 # @unrdf/yawl-durable
 unrdf:YawldurablePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-durable" ;
-    unrdf:packageVersion "0.1.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Durable execution framework inspired by Temporal.io using YAWL and KGC-4D" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -528,7 +528,7 @@ unrdf:YawldurablePackage a unrdf:Package ;
 # @unrdf/yawl-kafka
 unrdf:YawlkafkaPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-kafka" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Apache Kafka event streaming integration for YAWL workflows with Avro serialization" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:CorePackage ;
@@ -537,7 +537,7 @@ unrdf:YawlkafkaPackage a unrdf:Package ;
 # @unrdf/yawl-langchain
 unrdf:YawllangchainPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-langchain" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "LangChain integration for YAWL workflow engine - AI-powered workflow orchestration with RDF context" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:Kgc4dPackage ;
@@ -548,7 +548,7 @@ unrdf:YawllangchainPackage a unrdf:Package ;
 # @unrdf/yawl-observability
 unrdf:YawlobservabilityPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-observability" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Workflow observability framework with Prometheus metrics and OpenTelemetry tracing for YAWL" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -557,7 +557,7 @@ unrdf:YawlobservabilityPackage a unrdf:Package ;
 # @unrdf/yawl-queue
 unrdf:YawlqueuePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-queue" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Distributed YAWL workflow execution using BullMQ and Redis" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -567,7 +567,7 @@ unrdf:YawlqueuePackage a unrdf:Package ;
 # @unrdf/yawl-realtime
 unrdf:YawlrealtimePackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-realtime" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Real-time collaboration framework for YAWL workflows using Socket.io" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;
@@ -576,7 +576,7 @@ unrdf:YawlrealtimePackage a unrdf:Package ;
 # @unrdf/yawl-viz
 unrdf:YawlvizPackage a unrdf:Package ;
     unrdf:packageName "@unrdf/yawl-viz" ;
-    unrdf:packageVersion "1.0.0" ;
+    unrdf:packageVersion "latest" ;
     unrdf:packageDescription "Real-time D3.js visualization for YAWL workflows with Van der Aalst pattern rendering" ;
     unrdf:hasTier unrdf:ExtendedTier ;
     unrdf:hasDependency unrdf:YawlPackage ;

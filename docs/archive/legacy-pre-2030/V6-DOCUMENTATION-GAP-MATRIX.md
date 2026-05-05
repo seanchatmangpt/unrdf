@@ -2,7 +2,7 @@
 ## Comprehensive Coverage Assessment & Action Plan
 
 **Date:** 2025-12-27
-**Version:** v6.0.0-alpha.1
+**Version:** vlatest.1
 **Status:** ACTION REQUIRED
 
 ---
@@ -87,7 +87,7 @@ newFunction({ param });
 ```
 
 **Evidence Found:**
-- Only 1 deprecation: `@deprecated Use createStore() instead. Will be removed in v6.0.0.`
+- Only 1 deprecation: `@deprecated Use createStore() instead. Will be removed in vlatest.`
 
 **Acceptance Criteria:**
 - Every breaking change documented
@@ -104,7 +104,7 @@ newFunction({ param });
 ### GAP-003: V6 Architecture Documentation
 
 **Priority:** CRITICAL
-**Status:** ❌ MISSING (ARCHITECTURE.md is v5.0.0+)
+**Status:** ❌ MISSING (ARCHITECTURE.md is vlatest+)
 **Blocker For:** Understanding new system design
 **Effort:** 6 hours
 **Owner:** Agent 9
@@ -250,7 +250,7 @@ function createStore(options?: StoreOptions): Store
 **Effort:** 4 hours
 **Owner:** Agent 9
 
-**Problem:** GETTING_STARTED.md line 42: `"@unrdf/core": "^5.0.0"`
+**Problem:** GETTING_STARTED.md line 42: `"@unrdf/core": "^latest"`
 
 **Required Content:**
 - [ ] V6 installation instructions
@@ -313,7 +313,7 @@ function createStore(options?: StoreOptions): Store
 
 **Format:**
 ```markdown
-# UNRDF v6.0.0 Release Notes
+# UNRDF vlatest Release Notes
 
 ## New Features
 - **v6-core Package:** [Description]

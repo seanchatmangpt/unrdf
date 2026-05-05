@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks-example-chains",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "type": "module",
   "description": "Hook Chains Example - Sequential hook execution and composition",
   "private": true,

@@ -26,7 +26,7 @@ Validation of changes from the last 7 days covering 4 major features:
 | **ZERO it.skip() in tests** | ❌ FAIL | 7 skipped tests in daemon, 28+ across codebase | YES |
 | **ZERO lint errors/warnings** | ❌ FAIL | Cannot verify - missing dependencies | YES |
 | **80%+ test coverage** | ⚠️ UNKNOWN | Cannot verify - vitest not installed | YES |
-| **All tests pass (100%)** | ⚠️ CLAIMED 92.7% | Daemon: 393/424 tests (92.7%), cannot verify actual run | NO |
+| **All tests pass (100%)** | ⚠️ CLAIMED latest% | Daemon: 393/424 tests (latest%), cannot verify actual run | NO |
 | **JSDoc on all exports** | ⚠️ PARTIAL | Some files lack JSDoc (schemas.mjs, index.mjs) | NO |
 | **Performance targets met** | ✅ PASS | All P95 targets exceeded (see benchmarks) | NO |
 | **Security validation complete** | ✅ PASS | 94 security tests, injection detection implemented | NO |
@@ -173,17 +173,17 @@ All P95 targets **exceeded**:
 
 | Operation | Target | Actual | Status |
 |-----------|--------|--------|--------|
-| Operation scheduling | < 0.5ms p99 | 0.15ms avg, 0.45ms max | ✅ PASS |
+| Operation scheduling | < latestms p99 | latestms avg, latestms max | ✅ PASS |
 | Scheduling throughput | > 8000 ops/sec | 8500 ops/sec | ✅ PASS |
-| Execution latency p95 | < 5ms | 3.5ms | ✅ PASS |
-| Execution latency p99 | < 10ms | 5.2ms | ✅ PASS |
+| Execution latency p95 | < 5ms | latestms | ✅ PASS |
+| Execution latency p99 | < 10ms | latestms | ✅ PASS |
 | Memory per operation | < 5000 bytes/op | 4200 bytes/op | ✅ PASS |
-| Peak memory (1000 ops) | < 6MB | 4.85MB | ✅ PASS |
-| YAWL sequential | < 150ms | 125.5ms | ✅ PASS |
-| YAWL parallel | < 120ms | 85.3ms | ✅ PASS |
-| YAWL throughput | > 8 workflows/sec | 8.5 workflows/sec | ✅ PASS |
-| Raft replication | < 15ms p95 | 8.5ms avg, 12.8ms max | ✅ PASS |
-| Raft commit | < 20ms p95 | 12.3ms avg, 18.6ms max | ✅ PASS |
+| Peak memory (1000 ops) | < 6MB | latestMB | ✅ PASS |
+| YAWL sequential | < 150ms | latestms | ✅ PASS |
+| YAWL parallel | < 120ms | latestms | ✅ PASS |
+| YAWL throughput | > 8 workflows/sec | latest workflows/sec | ✅ PASS |
+| Raft replication | < 15ms p95 | latestms avg, latestms max | ✅ PASS |
+| Raft commit | < 20ms p95 | latestms avg, latestms max | ✅ PASS |
 
 **Verdict**: Performance targets met across all dimensions.
 
@@ -234,7 +234,7 @@ Cannot verify actual test execution due to missing dependencies, but reported re
 ### Daemon Package Tests
 - **Files**: 24 test files
 - **Total Tests**: 424
-- **Pass Rate**: 92.7% (393/424 tests)
+- **Pass Rate**: latest% (393/424 tests)
 - **Failing**: 31 tests
   - Consensus integration (Raft validation)
   - Hooks policy (schema validation)

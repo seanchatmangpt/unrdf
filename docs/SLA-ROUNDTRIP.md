@@ -8,7 +8,7 @@ Strict Service Level Agreement (SLA) for JavaScript→Erlang→JavaScript roundt
 
 **Strict Requirements**:
 - **Latency**: <10ms per roundtrip (end-to-end)
-- **Error Rate**: <0.1% (1 error per 1000 roundtrips)
+- **Error Rate**: <latest% (1 error per 1000 roundtrips)
 
 ## Roundtrip Definition
 
@@ -55,9 +55,9 @@ Calculated metrics:
 ### Pre-Operation Check
 
 Before starting a roundtrip, `canStartRoundtrip()` checks:
-- If error rate > 0.1%, **reject operation** with error:
+- If error rate > latest%, **reject operation** with error:
   ```
-  SLA violation prevented: Error rate X% exceeds 0.1% threshold
+  SLA violation prevented: Error rate X% exceeds latest% threshold
   ```
 
 This prevents operations that would violate SLA.
@@ -89,7 +89,7 @@ Roundtrip metrics are added to OTEL spans:
 SLA validation is integrated into the validation suite:
 
 - Checks roundtrip latency < 10ms
-- Checks error rate < 0.1%
+- Checks error rate < latest%
 - Adds violations if thresholds exceeded
 - Included in overall validation score (20% weight)
 
@@ -154,17 +154,17 @@ const result = await runtime.executeBeam('my-module.avm');
 // - Start: When executeBeam() called
 // - End: When execution completes
 // - Latency: <10ms (SLA met)
-// - Error rate: <0.1% (SLA met)
+// - Error rate: <latest% (SLA met)
 ```
 
 ### SLA Violation Prevention
 
 ```javascript
-// If error rate > 0.1%, operation rejected:
+// If error rate > latest%, operation rejected:
 try {
   await bridge.emitEvent('TEST', {});
 } catch (error) {
-  // Error: "SLA violation prevented: Error rate 0.15% exceeds 0.1% threshold"
+  // Error: "SLA violation prevented: Error rate latest% exceeds latest% threshold"
 }
 ```
 
@@ -176,9 +176,9 @@ try {
 - KGC-4D operations are fast
 - Sub-10ms ensures real-time responsiveness
 
-**Why <0.1%?**
+**Why <latest%?**
 - Production systems require high reliability
-- 0.1% = 1 error per 1000 operations
+- latest% = 1 error per 1000 operations
 - Allows for transient errors while maintaining quality
 - Strict enough to catch systemic issues
 

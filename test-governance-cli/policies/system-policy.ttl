@@ -10,7 +10,7 @@
 policy:SystemPolicy
   a policy:Policy ;
   rdfs:label "UNRDF System Policy" ;
-  policy:version "1.0.0" ;
+  policy:version "latest" ;
   policy:enforcementLevel "strict" .
 
 # Invariant 1: All projects must have status

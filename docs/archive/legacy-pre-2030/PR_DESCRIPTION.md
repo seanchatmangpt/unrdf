@@ -350,7 +350,7 @@ Duration: <30s (5s timeout compliance)
 Test Files: 3 files
 Test Cases: 62 tests
 Passing: 62 (100%)
-Coverage: 94.2% (lines)
+Coverage: latest% (lines)
 Security Tests: 100% pass
 ```
 
@@ -377,21 +377,21 @@ All performance targets **EXCEEDED**:
 
 | Operation | Target (P95) | Actual (P95) | Status |
 |-----------|--------------|--------------|--------|
-| Receipt Creation | <1ms | 0.017ms | ✅ **98.3% faster** |
-| Delta Validation | <5ms | 0.005ms | ✅ **99.9% faster** |
-| Receipt Verification | <0.5ms | 0.000ms | ✅ **99.9% faster** |
-| Receipt Chain (10) | <50ms | 0.347ms | ✅ **99.3% faster** |
+| Receipt Creation | <1ms | latestms | ✅ **latest% faster** |
+| Delta Validation | <5ms | latestms | ✅ **latest% faster** |
+| Receipt Verification | <latestms | latestms | ✅ **latest% faster** |
+| Receipt Chain (10) | <50ms | latestms | ✅ **latest% faster** |
 | 100 Concurrent Deltas | <5000ms | <5000ms | ✅ PASS |
 
 **Throughput Achievements**:
-- Receipt Creation: **83,895 ops/sec** (8.4x target)
-- Receipt Verification: **4,573,038 ops/sec** (45.7x target)
-- System Throughput: **474.7 ops/sec** (+472% vs baseline)
+- Receipt Creation: **83,895 ops/sec** (latestx target)
+- Receipt Verification: **4,573,038 ops/sec** (latestx target)
+- System Throughput: **latest ops/sec** (+472% vs baseline)
 
 **Memory Efficiency**:
 - Peak Memory (10k ops): **41 MB** vs 512 MB target (**-92%**)
 - Memory per receipt: **839 B** (within <1 KB target)
-- No memory leaks detected (0.31% growth)
+- No memory leaks detected (latest% growth)
 
 ### Security Posture ✅
 
@@ -492,15 +492,15 @@ All changes are:
 |--------|--------|-------|--------|
 | **Production Blockers** | 4 critical | 0 | ✅ -100% |
 | **Security Rating** | MEDIUM RISK | PRODUCTION READY | ✅ IMPROVED |
-| **Test Pass Rate** | 95.0% (403/424) | 100% (1,144/1,144) | ✅ +5% |
-| **Code Coverage** | 92.4% | 94.2% | ✅ +1.8% |
+| **Test Pass Rate** | latest% (403/424) | 100% (1,144/1,144) | ✅ +5% |
+| **Code Coverage** | latest% | latest% | ✅ +latest% |
 | **Production DEFERRED_ACTION(#loop-closure)s** | 10 | 0 | ✅ -100% |
 | **Skipped Tests** | 7 | 0 | ✅ -100% |
 | **Lint Violations** | 2 warnings | 0 | ✅ -100% |
 | **File Size Violations** | 10 files | 0 files | ✅ -100% |
 | **Security Coverage** | 40% OWASP | 80% OWASP | ✅ +100% |
 | **Protected Code Lines** | 0 | 6,858 | ✅ NEW |
-| **Performance (throughput)** | 83 ops/sec | 474.7 ops/sec | ✅ +472% |
+| **Performance (throughput)** | 83 ops/sec | latest ops/sec | ✅ +472% |
 | **Memory Usage** | Unknown | 41 MB | ✅ -92% vs target |
 
 ### Code Statistics
@@ -521,21 +521,21 @@ Documentation Lines: 15,000+ lines
 
 **10-Agent Swarm Execution**:
 - **Total Time**: 6 hours (estimated 37 hours if sequential)
-- **Efficiency Gain**: 83.8% time reduction
+- **Efficiency Gain**: latest% time reduction
 - **Coordination**: 100% success (zero conflicts)
 - **Quality**: 100% first-time-right (zero rework)
 
 **Agent Breakdown**:
-1. Code Review: 2.5 hours → Identified 13 issues
-2. Test Coverage: 1.5 hours → 100% pass rate achieved
+1. Code Review: latest hours → Identified 13 issues
+2. Test Coverage: latest hours → 100% pass rate achieved
 3. Security Audit: 4 hours → 13 modules secured
 4. Performance Analysis: 1 hour → All targets exceeded
 5. Production Validation: 2 hours → All gates passed
 6. Pattern Research: 3 hours → 15 patterns documented
-7. Architecture Analysis: 1.5 hours → Zero breaking changes
+7. Architecture Analysis: latest hours → Zero breaking changes
 8. Implementation Quality: 8 hours → File size compliance
 9. TDD Patterns: 2 hours → Test improvements
-10. Deployment Prep: 1.5 hours → Documentation complete
+10. Deployment Prep: latest hours → Documentation complete
 
 ---
 
@@ -577,7 +577,7 @@ Documentation Lines: 15,000+ lines
 **Concurrent Operations Test**:
 ```bash
 Test: 100 concurrent delta operations
-Duration: 4.8 seconds
+Duration: latest seconds
 Success Rate: 100%
 Average Latency: 48ms
 P95 Latency: 82ms
@@ -588,10 +588,10 @@ Target: <5000ms ✅ PASS
 **Memory Stress Test**:
 ```bash
 Test: 10,000 receipt creation
-Duration: 6.1 seconds
+Duration: latest seconds
 Peak Memory: 41 MB
 Memory per Operation: 839 B
-Memory Leak: 0.31% growth (acceptable)
+Memory Leak: latest% growth (acceptable)
 Target: <512 MB ✅ PASS
 ```
 
@@ -599,9 +599,9 @@ Target: <512 MB ✅ PASS
 ```bash
 Test: Receipt verification throughput
 Operations: 100,000
-Duration: 21.9ms
+Duration: latestms
 Throughput: 4,573,038 ops/sec
-Target: 100,000 ops/sec ✅ EXCEEDED 45.7x
+Target: 100,000 ops/sec ✅ EXCEEDED latestx
 ```
 
 ### Security Testing Results
@@ -775,7 +775,7 @@ console.log('Auth system initialized');
 node benchmarks/v6-performance-benchmark.mjs
 
 # Check results
-cat benchmarks/results/v6.0.0-post-merge-performance.json | grep -E "throughput|latency"
+cat benchmarks/results/vlatest-merge-performance.json | grep -E "throughput|latency"
 ```
 
 ### Key Files to Examine
@@ -798,7 +798,7 @@ cat benchmarks/results/v6.0.0-post-merge-performance.json | grep -E "throughput|
 
 **Performance Evidence**:
 1. `/home/user/unrdf/PERFORMANCE_ANALYSIS_7DAYS.md` (429 lines)
-2. `/home/user/unrdf/benchmarks/results/v6.0.0-post-merge-performance.json`
+2. `/home/user/unrdf/benchmarks/results/vlatest-merge-performance.json`
 
 ---
 
@@ -848,7 +848,7 @@ All claims in this PR are backed by:
 - ✅ Security test results (80% OWASP coverage)
 - ✅ OTEL validation (100/100 score)
 - ✅ File size measurements (ls -l output)
-- ✅ Code coverage reports (94.2%)
+- ✅ Code coverage reports (latest%)
 
 **Adversarial PM Validated**: Every metric has been measured, not assumed.
 
@@ -874,7 +874,7 @@ All claims in this PR are backed by:
 - [Security Examples](/home/user/unrdf/SECURITY_VALIDATION_EXAMPLES.md)
 
 ### Performance Evidence
-- [Benchmark Results](/home/user/unrdf/benchmarks/results/v6.0.0-post-merge-performance.json)
+- [Benchmark Results](/home/user/unrdf/benchmarks/results/vlatest-merge-performance.json)
 - [Performance Contracts](/home/user/unrdf/benchmarks/performance-contracts.json)
 
 ---
@@ -933,7 +933,7 @@ This pull request transforms UNRDF from "NOT PRODUCTION READY" (4 critical block
 
 **Total Work**: 6 hours (10-agent parallel execution)
 **Equivalent Sequential Time**: 37 hours
-**Efficiency Gain**: 83.8%
+**Efficiency Gain**: latest%
 **Quality**: 100% first-time-right (zero rework)
 **Evidence**: Git-verified, measurement-based
 

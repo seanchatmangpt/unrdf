@@ -55,7 +55,7 @@ describe('L3: Determinism - 100x Identical Runs', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: 1234567890, // Fixed timestamp
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Determinism test',
     };

@@ -69,7 +69,7 @@ describe('useHookRegistry', () => {
     it('should store hook metadata', () => {
       const hook = {
         name: 'meta-hook',
-        version: '1.0.0',
+        version: 'latest',
         author: 'test',
         description: 'Test hook',
         execute: vi.fn(),
@@ -78,7 +78,7 @@ describe('useHookRegistry', () => {
       registry.set(hook.name, hook);
       const stored = registry.get(hook.name);
 
-      expect(stored.version).toBe('1.0.0');
+      expect(stored.version).toBe('latest');
       expect(stored.author).toBe('test');
     });
   });

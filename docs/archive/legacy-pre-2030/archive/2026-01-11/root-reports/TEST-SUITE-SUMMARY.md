@@ -10,8 +10,8 @@ Comprehensive test suite for the UNRDF RDF admission control system with Univers
 - **Passed**: 63
 - **Failed**: 0
 - **Pass Rate**: 100%
-- **Execution Time**: 181.82ms (0.18 seconds)
-- **Real Time**: 0.283s
+- **Execution Time**: latestms (latest seconds)
+- **Real Time**: latests
 
 ## Test Suite Breakdown
 
@@ -159,8 +159,8 @@ End-to-end workflow tests:
 - `project --epoch <τ>` - Project artifacts at epoch
 
 ## Performance Metrics
-- **Total Execution Time**: 181.82ms
-- **Average Test Time**: 2.89ms per test
+- **Total Execution Time**: latestms
+- **Average Test Time**: latestms per test
 - **Fastest Suite**: universe.test.mjs (11ms for 10 tests)
 - **Comprehensive Suite**: cli.test.mjs (53ms for 16 tests)
 - **All tests complete within 5s timeout requirement**
@@ -183,7 +183,7 @@ All tests follow OTEL-style logging pattern:
 
 ## Adversarial PM Verification
 ✅ **Did you RUN it?** - Yes, full suite executed with `node --test`
-✅ **Can you PROVE it?** - Test output shows 63/63 passed in 181.82ms
+✅ **Can you PROVE it?** - Test output shows 63/63 passed in latestms
 ✅ **What BREAKS if you're wrong?** - Admission control could allow invalid deltas, receipt chain integrity could fail
 ✅ **What's the EVIDENCE?** - Full test output in `/home/user/unrdf/final-test-output.log`
 
@@ -199,7 +199,7 @@ timeout 30s node --test \
 
 ## Conclusion
 ✅ **100% test pass rate** (63/63 tests passing)
-✅ **Sub-second execution** (181.82ms total, well under 5s timeout)
+✅ **Sub-second execution** (latestms total, well under 5s timeout)
 ✅ **Comprehensive coverage** (Universe, Admission, Receipts, CLI, Integration)
 ✅ **Production-ready** - All invariants, chaining, and merkle batching verified
 ✅ **Independently reproducible** - Each test can run in isolation

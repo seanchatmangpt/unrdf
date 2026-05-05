@@ -223,7 +223,7 @@ function generateReceipt(decision, deltaPath, deltaHash, invariants) {
       reason: inv.reason || 'Invariant satisfied',
     })),
     metadata: {
-      version: '1.0.0',
+      version: '[VERSION]',
       generator: 'governance-substrate-cli',
     },
   };

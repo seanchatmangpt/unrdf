@@ -1,6 +1,6 @@
 # KGC-Swarm Formal Mathematical Specification
 
-**Version**: 1.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Status**: Production-Ready
 

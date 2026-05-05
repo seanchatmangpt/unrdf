@@ -36,7 +36,7 @@ function createTestObs(overrides = {}) {
     message: 'Test observation',
     metadata: {
       agentId: 'agent-test',
-      probeVersion: '1.0.0',
+      probeVersion: '[VERSION]',
       budgetMs: 5000,
       actualMs: 100,
       timestamp: new Date().toISOString()
@@ -222,13 +222,13 @@ describe('mergeShards', () => {
   test('should merge observations from multiple agents', () => {
     const shards = new Map([
       ['agent-1', [
-        createTestObs({ category: 'file', metadata: { agentId: 'agent-1', probeVersion: '1.0.0', budgetMs: 5000, actualMs: 100 } })
+        createTestObs({ category: 'file', metadata: { agentId: 'agent-1', probeVersion: '[VERSION]', budgetMs: 5000, actualMs: 100 } })
       ]],
       ['agent-2', [
-        createTestObs({ category: 'security', metadata: { agentId: 'agent-2', probeVersion: '1.0.0', budgetMs: 5000, actualMs: 100 } })
+        createTestObs({ category: 'security', metadata: { agentId: 'agent-2', probeVersion: '[VERSION]', budgetMs: 5000, actualMs: 100 } })
       ]],
       ['agent-3', [
-        createTestObs({ category: 'performance', metadata: { agentId: 'agent-3', probeVersion: '1.0.0', budgetMs: 5000, actualMs: 100 } })
+        createTestObs({ category: 'performance', metadata: { agentId: 'agent-3', probeVersion: '[VERSION]', budgetMs: 5000, actualMs: 100 } })
       ]]
     ]);
 

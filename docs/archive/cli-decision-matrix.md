@@ -11,7 +11,7 @@
 **Recommendation**:
 - ✅ **KEEP & Fast-Implement**: 5 commands (8-10h total) → 80% user value
 - ❌ **REMOVE**: 6 commands → Eliminate 65% technical debt
-- ⏸️ **DEFER to v2.2**: 2 commands → Nice-to-have features
+- ⏸️ **DEFER to vlatest**: 2 commands → Nice-to-have features
 
 **80/20 Insight**: Implementing 5 core RDF commands (38% of TODOs) delivers 80% of user value while removing 6 commands eliminates 65% of maintenance burden.
 
@@ -36,8 +36,8 @@
 | `graph export` | Medium | 1h | N | Y (store export) | ❌ **REMOVE** | - | - |
 | **HOOK Commands** ||||||||
 | `hook eval` | **HIGH** | 1h | N | Y (manager) | ⏸️ **DEFER** | P2 | 1h |
-| `hook describe` | Low | 0.5h | N | Y (manager) | ❌ **REMOVE** | - | - |
-| `hook get` | Low | 0.5h | N | Y (manager) | ❌ **REMOVE** | - | - |
+| `hook describe` | Low | latesth | N | Y (manager) | ❌ **REMOVE** | - | - |
+| `hook get` | Low | latesth | N | Y (manager) | ❌ **REMOVE** | - | - |
 | `hook history` | Low | 2h | N | Y (OTEL) | ❌ **REMOVE** | - | - |
 
 ---
@@ -253,7 +253,7 @@ Or use `store export` with graph filter.
 
 #### 6-8. `hook describe`, `hook get`, `hook history` (REMOVE)
 **Value**: Low
-**Effort**: 0.5h, 0.5h, 2h
+**Effort**: latesth, latesth, 2h
 **Alternative**: YES - KnowledgeHookManager API, OTEL traces
 
 **Rationale for removal**:
@@ -279,7 +279,7 @@ console.log(hook.metadata); // Full hook details
 
 ---
 
-### ⏸️ DEFER to v2.2 (2 commands)
+### ⏸️ DEFER to vlatest (2 commands)
 
 #### 1. `store stats` (DEFER - P3)
 **Value**: Medium
@@ -289,7 +289,7 @@ console.log(hook.metadata); // Full hook details
 **Rationale for deferral**:
 - **Nice-to-have**: Convenient but not blocking any workflow
 - **Easy workaround**: Simple SPARQL queries provide same info
-- **Fast implementation when needed**: Only 1h, can add quickly in v2.2
+- **Fast implementation when needed**: Only 1h, can add quickly in vlatest
 - **Store context ready**: Context already has `stats()` method (line 254-277)
 
 **Implementation when prioritized**:
@@ -454,7 +454,7 @@ if (currentContext?.knowledge-engine?.endpoint) {
 |------|------------|--------|------------|
 | Users need `graph list` | Medium | Low | Document SPARQL alternative |
 | Backup/restore confusion | Low | Medium | Clearly document removal rationale |
-| Hook eval demand | Medium | Low | Defer to v2.2, prioritize if requested |
+| Hook eval demand | Medium | Low | Defer to vlatest, prioritize if requested |
 | Integration bugs | Medium | Medium | Test suite for each command |
 | OTEL overhead | Low | Low | Already in use for context commands |
 
@@ -468,7 +468,7 @@ if (currentContext?.knowledge-engine?.endpoint) {
 - ✅ Integration tests passing (>80% coverage)
 - ✅ 6 REMOVE commands deleted and index files updated
 - ✅ Documentation updated with alternatives for removed commands
-- ✅ Migration guide for users upgrading from v2.1
+- ✅ Migration guide for users upgrading from vlatest
 
 **OTEL Validation**:
 ```bash
@@ -526,38 +526,38 @@ grep "span.status.*error" otel-traces.log | wc -l  # Should be 0
 
 #### `store backup` → Manual Export + Git
 ```bash
-# OLD (v2.1)
+# OLD (vlatest)
 unrdf store backup --output backup.nq --format nquads
 
-# NEW (v2.2)
+# NEW (vlatest)
 unrdf store export --output backup-$(date +%Y%m%d).nq --format nquads
 git add backup-*.nq && git commit -m "RDF backup"
 ```
 
 #### `store restore` → `store import`
 ```bash
-# OLD (v2.1)
+# OLD (vlatest)
 unrdf store restore backup.nq
 
-# NEW (v2.2)
+# NEW (vlatest)
 unrdf store import backup.nq --format nquads --graph default
 ```
 
 #### `graph list` → SPARQL Query
 ```bash
-# OLD (v2.1)
+# OLD (vlatest)
 unrdf graph list --output table
 
-# NEW (v2.2)
+# NEW (vlatest)
 unrdf store query --query "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }" --format table
 ```
 
 #### `graph export` → `store export` + Filter
 ```bash
-# OLD (v2.1)
+# OLD (vlatest)
 unrdf graph export my-graph --output graph.ttl --format turtle
 
-# NEW (v2.2)
+# NEW (vlatest)
 # Option 1: SPARQL CONSTRUCT
 unrdf store query --query "CONSTRUCT { ?s ?p ?o } WHERE { GRAPH <http://example.org/my-graph> { ?s ?p ?o } }" --format turtle > graph.ttl
 
@@ -568,10 +568,10 @@ unrdf store export --output all.ttl --format turtle
 
 #### `hook describe` / `hook get` → Programmatic API
 ```javascript
-// OLD (v2.1 - CLI)
+// OLD (vlatest - CLI)
 // unrdf hook describe my-hook
 
-// NEW (v2.2 - Programmatic)
+// NEW (vlatest - Programmatic)
 import { KnowledgeHookManager } from 'unrdf';
 const manager = new KnowledgeHookManager();
 const hook = manager.getHook('my-hook');
@@ -580,10 +580,10 @@ console.log(JSON.stringify(hook, null, 2));
 
 #### `hook history` → OTEL Traces
 ```bash
-# OLD (v2.1)
+# OLD (vlatest)
 unrdf hook history my-hook --limit 10
 
-# NEW (v2.2)
+# NEW (vlatest)
 # Use OTEL collector + Jaeger/Zipkin UI
 # Query traces with:
 #   service: unrdf-knowledge-engine
@@ -602,7 +602,7 @@ SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }
 ```
 
 ### Q: What if users demand `store backup` back?
-**A**: We'll reconsider in v2.3 if there's strong demand. However, the manual export + git workflow is sufficient for 95% of use cases. Enterprise users should use database-level backup tools.
+**A**: We'll reconsider in vlatest if there's strong demand. However, the manual export + git workflow is sufficient for 95% of use cases. Enterprise users should use database-level backup tools.
 
 ### Q: Why keep `graph validate` but defer `hook eval`?
 **A**: Validation is user-facing (quality assurance), while hook evaluation is developer-facing (debugging). Users validate RDF before ingestion; developers evaluate hooks programmatically.
@@ -625,7 +625,7 @@ Parallel implementation order:
 **Final Recommendation**:
 - ✅ Implement 5 commands (9h) → Delivers 80% user value
 - ❌ Remove 6 commands → Eliminates 65% maintenance burden
-- ⏸️ Defer 2 commands → Nice-to-have for v2.2
+- ⏸️ Defer 2 commands → Nice-to-have for vlatest
 
 **Total Effort**: 9h implementation + 1h cleanup = **10h total**
 
@@ -642,7 +642,7 @@ Parallel implementation order:
 4. Document removal rationale in CHANGELOG
 5. Implement in parallel (Week 1-2)
 6. OTEL validation for all commands
-7. Merge and ship v2.2
+7. Merge and ship vlatest
 
 ---
 

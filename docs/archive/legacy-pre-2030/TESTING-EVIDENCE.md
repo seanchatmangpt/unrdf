@@ -317,8 +317,8 @@ Per CLAUDE.md mandate, here's evidence for the core questions:
 
 **Current Status**: Blocker preventing test execution  
 **Impact**: Cannot install vitest, fast-check, zod  
-**Root Cause**: pnpm cache conflict with maplibre-gl@2.4.0  
-**Error**: `ENOTEMPTY: directory not empty, rmdir '/home/user/unrdf/node_modules/.pnpm/maplibre-gl@2.4.0'`  
+**Root Cause**: pnpm cache conflict with maplibre-gl@latest  
+**Error**: `ENOTEMPTY: directory not empty, rmdir '/home/user/unrdf/node_modules/.pnpm/maplibre-gl@latest'`  
 **Classification**: Environmental issue, NOT code issue  
 
 **Resolution Steps**:
@@ -365,13 +365,13 @@ Test Files   5 passed (5)
      Tests   121 passed (121)
     Suites  31 passed (31)
   Start:    2025-12-27T20:25:00Z
-  Duration: 7.34s
+  Duration: latests
   
 Coverage Summary:
-  Lines:       91.2%
-  Functions:   92.5%
-  Branches:    84.3%
-  Statements:  90.8%
+  Lines:       latest%
+  Functions:   latest%
+  Branches:    latest%
+  Statements:  latest%
 
 ════════════════════════════════════════════════════════════════════════════════
 ✅ All tests passed! Test suite is production-ready.

@@ -314,8 +314,8 @@ function buildDashboard(services) {
       },
     ],
     __requires: [
-      { type: 'grafana', id: 'grafana', name: 'Grafana', version: '10.0.0' },
-      { type: 'datasource', id: 'prometheus', name: 'Prometheus', version: '1.0.0' },
+      { type: 'grafana', id: 'grafana', name: 'Grafana', version: 'latest' },
+      { type: 'datasource', id: 'prometheus', name: 'Prometheus', version: 'latest' },
       { type: 'panel', id: 'timeseries', name: 'Time series', version: '' },
       { type: 'panel', id: 'stat', name: 'Stat', version: '' },
     ],

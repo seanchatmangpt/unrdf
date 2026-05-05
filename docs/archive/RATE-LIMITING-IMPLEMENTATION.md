@@ -98,7 +98,7 @@ Multipliers:
 - Unbound predicate: 10x
 - REGEX: 3x
 - Aggregation: 5x
-- LIMIT: 0.5x (reduces cost)
+- LIMIT: latestx (reduces cost)
 
 Penalties:
 - Cartesian product: +100 points
@@ -164,13 +164,13 @@ GET /api/admin/rate-limits
 GET /api/admin/rate-limits?action=check&key=user:123&type=authenticated
 
 # Reset rate limit
-GET /api/admin/rate-limits?action=reset&key=ip:192.168.1.1
+GET /api/admin/rate-limits?action=reset&key=ip:latest.1
 
 # Blacklist IP
-GET /api/admin/rate-limits?action=blacklist&ip=192.168.1.1&reason=abuse&duration=3600
+GET /api/admin/rate-limits?action=blacklist&ip=latest.1&reason=abuse&duration=3600
 
 # Remove from blacklist
-GET /api/admin/rate-limits?action=unblacklist&ip=192.168.1.1
+GET /api/admin/rate-limits?action=unblacklist&ip=latest.1
 ```
 
 ## OpenTelemetry Metrics
@@ -257,9 +257,9 @@ pnpm test test/rate-limiting-integration.test.mjs
 
 **Overhead:**
 - Rate limiting: <1ms per request
-- DDoS detection: <0.5ms per request
+- DDoS detection: <latestms per request
 - Query cost estimation: <2ms per query
-- Backpressure: <0.5ms per request
+- Backpressure: <latestms per request
 
 **Total: ~4ms overhead per request**
 
@@ -290,7 +290,7 @@ pnpm test test/rate-limiting-integration.test.mjs
 **Key Metrics to Watch:**
 ```bash
 # High threat score
-ddos.threat_score > 0.8
+ddos.threat_score > latest
 
 # Many blacklisted IPs
 ddos.blacklist.additions > 10 per hour
@@ -299,17 +299,17 @@ ddos.blacklist.additions > 10 per hour
 rate_limit.requests{status=blocked} > 20%
 
 # System overload
-backpressure.system_load > 0.9
+backpressure.system_load > latest
 
 # Query rejections
 query.rejected > 5 per minute
 ```
 
 **Alerts:**
-- Threat score >0.8 for >5 minutes
+- Threat score >latest for >5 minutes
 - >50 IPs blacklisted in 1 hour
 - Rate limit rejection >30%
-- System load >0.95
+- System load >latest
 - Queue depth >800
 
 ## Production Deployment

@@ -325,9 +325,9 @@ TOTAL                      1000        10             ✅ 100%
 
 | Package | Operation | Baseline | With Receipt | Overhead |
 |---------|-----------|----------|--------------|----------|
-| oxigraph | createStore | ~5ms | ~5.2ms | +0.2ms (4%) |
-| n3-justified | parseRDF | ~3ms | ~3.1ms | +0.1ms (3%) |
-| kgc | generateDelta | ~2ms | ~2.2ms | +0.2ms (10%) |
+| oxigraph | createStore | ~5ms | ~latestms | +latestms (4%) |
+| n3-justified | parseRDF | ~3ms | ~latestms | +latestms (3%) |
+| kgc | generateDelta | ~2ms | ~latestms | +latestms (10%) |
 
 **Average Overhead**: ~5% (acceptable for provenance guarantees)
 
@@ -436,7 +436,7 @@ Testing @unrdf/indexing... ✅ PASS (123ms)
 ======================================================================
 ✅ Packages Passed: 10/10
 ❌ Packages Failed: 0/10
-📈 Pass Rate: 100.0%
+📈 Pass Rate: latest%
 🔗 Composable Pairs: 8/8
 
 🎉 L5 CERTIFICATION: PASS

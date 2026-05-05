@@ -1,6 +1,6 @@
 # Pattern 1: Receipt HOF (Higher-Order Function) Pattern
 
-**Version**: v6.0.0
+**Version**: vlatest
 **Maturity Target**: L5 (Stable contracts, deterministic, adversarial-safe, composable)
 **Copy-Exact Template**: Yes - Use AS-IS for all P0+P1 packages
 
@@ -248,7 +248,7 @@ const {result, receipt} = withReceipt(
   },
   10, 20,
   1234567890000000000n,           // providedTime
-  0.5,                             // providedRandom (from seeded PRNG)
+  latest,                             // providedRandom (from seeded PRNG)
   '550e8400-e29b-41d4-a716-446655440000' // providedUUID
 );
 ```

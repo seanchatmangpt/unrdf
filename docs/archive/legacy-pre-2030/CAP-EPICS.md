@@ -2,7 +2,7 @@
 
 **Domain**: Capability Atoms & API Surface  
 **Owner**: Capability Cartographer  
-**Target**: V6.0.0 Release  
+**Target**: Vlatest Release  
 **Context**: Reduce from 400+ exports to 34, eliminate 40% dead code, establish 8 atoms + 5 compositions
 
 ---
@@ -220,7 +220,7 @@
 
 ### Dependencies
 - Blocked by: EPIC-CAP-002 (compositions provide patterns), EPIC-CAP-001 (atoms must be stable)
-- Blocks: None (enhancements, not blockers for v6.0.0)
+- Blocks: None (enhancements, not blockers for vlatest)
 
 ### Estimated Effort
 - T-shirt size: **L**

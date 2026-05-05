@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   return sendSuccess(event, {
     healthy,
-    version: process.env.npm_package_version || '1.0.0',
+    version: process.env.npm_package_version || '[VERSION]',
     service: config.otelServiceName,
     checks
   })

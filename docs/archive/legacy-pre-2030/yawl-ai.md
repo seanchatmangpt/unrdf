@@ -2,7 +2,7 @@
 
 > AI-powered workflow optimization using TensorFlow.js and YAWL patterns
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

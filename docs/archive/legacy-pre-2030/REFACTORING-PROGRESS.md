@@ -22,10 +22,10 @@
 |-----|----------|--------|----------|
 | Gap 1: Test Failures (110/292) | P0 | 🟡 IN PROGRESS | Helper created, fixes pending |
 | Gap 2: OTEL Validation (0/100) | P0 | ⏳ BLOCKED | Awaiting dependency fix |
-| Gap 3: Code Quality (4.5/10) | P1 | ⏳ PENDING | Quality gates added |
-| Gap 4: RDF Migration (97.5%) | P1 | ✅ COMPLETE | 100% (2 violations fixed) |
+| Gap 3: Code Quality (latest/10) | P1 | ⏳ PENDING | Quality gates added |
+| Gap 4: RDF Migration (latest%) | P1 | ✅ COMPLETE | 100% (2 violations fixed) |
 | Gap 5: Missing Deliverables (85%) | P2 | ⏳ PENDING | Documented as experimental |
-| Gap 6: Test Coverage (13.1%) | P2 | 🟡 IN PROGRESS | Config added, tests pending |
+| Gap 6: Test Coverage (latest%) | P2 | 🟡 IN PROGRESS | Config added, tests pending |
 
 ## Next Steps (Phase 0 Remaining)
 

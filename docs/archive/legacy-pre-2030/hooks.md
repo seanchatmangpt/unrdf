@@ -1,8 +1,8 @@
 # @unrdf/hooks Capability Map
 
-**Version**: 5.0.1
+**Version**: latest
 **Status**: Production Ready
-**Runtime**: Node.js ≥18.0.0 | Browser (ES2020+)
+**Runtime**: Node.js ≥latest | Browser (ES2020+)
 **Last Updated**: 2025-12-28
 
 ---
@@ -30,7 +30,7 @@ import {
 ```
 
 **Dependencies**:
-- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `zod` (^4.1.13)
+- Required: `@unrdf/core` (workspace), `@unrdf/oxigraph` (workspace), `zod` (^latest)
 - Optional: None
 
 **Evidence**:
@@ -125,7 +125,7 @@ import { PolicyPack } from '@unrdf/hooks';
 
 const pack = new PolicyPack({
   name: 'data-governance-v1',
-  version: '1.0.0',
+  version: 'latest',
   hooks: [/* ... */]
 });
 ```
@@ -290,7 +290,7 @@ timeout 30s pnpm --filter @unrdf/hooks run test && pnpm --filter @unrdf/hooks ru
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: 2025-12-28
 - **Maintainer**: @unrdf/core-team
 - **Last Review**: 2025-12-28

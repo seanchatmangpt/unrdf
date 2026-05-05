@@ -29,11 +29,11 @@
 **Job**: When I encounter new data sources, I need to transform and integrate them into the knowledge graph with validation, so that the graph remains consistent and queryable.
 
 **Sub-Jobs**:
-- **J1.1**: Parse heterogeneous formats (CSV, JSON, XML, APIs) → RDF triples
-- **J1.2**: Validate triples against SHACL shapes before ingestion
-- **J1.3**: Deduplicate entities using SPARQL queries
-- **J1.4**: Enrich triples with inferred predicates (rdfs:seeAlso, owl:sameAs)
-- **J1.5**: Emit OTEL traces for ingestion pipeline observability
+- **Jlatest**: Parse heterogeneous formats (CSV, JSON, XML, APIs) → RDF triples
+- **Jlatest**: Validate triples against SHACL shapes before ingestion
+- **Jlatest**: Deduplicate entities using SPARQL queries
+- **Jlatest**: Enrich triples with inferred predicates (rdfs:seeAlso, owl:sameAs)
+- **Jlatest**: Emit OTEL traces for ingestion pipeline observability
 
 **CLI Commands Used**:
 ```bash
@@ -62,11 +62,11 @@ unrdf graph validate integration-latest --shacl shapes.ttl
 **Job**: When knowledge graph is updated, I need to verify integrity constraints continuously, so that downstream agents consume only valid knowledge.
 
 **Sub-Jobs**:
-- **J2.1**: Execute SHACL validation on graph updates
-- **J2.2**: Detect constraint violations (cardinality, datatypes, ranges)
-- **J2.3**: Trigger remediation workflows on violations
-- **J2.4**: Maintain validation audit log in separate graph
-- **J2.5**: Emit metrics (violation count, severity distribution)
+- **Jlatest**: Execute SHACL validation on graph updates
+- **Jlatest**: Detect constraint violations (cardinality, datatypes, ranges)
+- **Jlatest**: Trigger remediation workflows on violations
+- **Jlatest**: Maintain validation audit log in separate graph
+- **Jlatest**: Emit metrics (violation count, severity distribution)
 
 **CLI Commands Used**:
 ```bash
@@ -95,11 +95,11 @@ done
 **Job**: When distributed knowledge graphs diverge, I need to merge changes with conflict resolution, so that all agents have consistent worldview.
 
 **Sub-Jobs**:
-- **J3.1**: Detect graph deltas via SPARQL DIFF queries
-- **J3.2**: Apply CRDTs (Conflict-Free Replicated Data Types) for merge
-- **J3.3**: Resolve conflicts using owl:sameAs and provenance
-- **J3.4**: Broadcast merged graph to agent network
-- **J3.5**: Verify eventual consistency via quorum queries
+- **Jlatest**: Detect graph deltas via SPARQL DIFF queries
+- **Jlatest**: Apply CRDTs (Conflict-Free Replicated Data Types) for merge
+- **Jlatest**: Resolve conflicts using owl:sameAs and provenance
+- **Jlatest**: Broadcast merged graph to agent network
+- **Jlatest**: Verify eventual consistency via quorum queries
 
 **CLI Commands Used**:
 ```bash
@@ -132,11 +132,11 @@ unrdf query "SELECT (COUNT(*) AS ?count) WHERE { ?s ?p ?o }" \
 **Job**: When new triples are added, I need to derive implicit knowledge via OWL/RDFS reasoning, so that queries return complete results.
 
 **Sub-Jobs**:
-- **J4.1**: Apply RDFS entailment (rdfs:subClassOf, rdfs:subPropertyOf)
-- **J4.2**: Execute OWL reasoning (transitivity, inverse properties)
-- **J4.3**: Materialize inferred triples into reasoning graph
-- **J4.4**: Index inferred triples for fast query access
-- **J4.5**: Incrementally update materialization on graph changes
+- **Jlatest**: Apply RDFS entailment (rdfs:subClassOf, rdfs:subPropertyOf)
+- **Jlatest**: Execute OWL reasoning (transitivity, inverse properties)
+- **Jlatest**: Materialize inferred triples into reasoning graph
+- **Jlatest**: Index inferred triples for fast query access
+- **Jlatest**: Incrementally update materialization on graph changes
 
 **CLI Commands Used**:
 ```bash
@@ -167,11 +167,11 @@ unrdf query "SELECT ?x WHERE { ?x rdf:type :Person }" \
 **Job**: When knowledge graph events occur (add/remove/update), I need to trigger downstream agent workflows, so that the system adapts autonomously.
 
 **Sub-Jobs**:
-- **J5.1**: Subscribe to graph change notifications (webhooks, SPARQL update logs)
-- **J5.2**: Filter events via SPARQL patterns (only relevant changes)
-- **J5.3**: Dispatch events to agent task queues
-- **J5.4**: Coordinate multi-agent workflows (validation → reasoning → sync)
-- **J5.5**: Monitor workflow execution via OTEL distributed traces
+- **Jlatest**: Subscribe to graph change notifications (webhooks, SPARQL update logs)
+- **Jlatest**: Filter events via SPARQL patterns (only relevant changes)
+- **Jlatest**: Dispatch events to agent task queues
+- **Jlatest**: Coordinate multi-agent workflows (validation → reasoning → sync)
+- **Jlatest**: Monitor workflow execution via OTEL distributed traces
 
 **CLI Commands Used**:
 ```bash
@@ -204,11 +204,11 @@ done < <(unrdf graph describe production --watch --format jsonstream)
 **Job**: When executing complex SPARQL queries, I need to rewrite and optimize them, so that results return in <100ms even on large graphs.
 
 **Sub-Jobs**:
-- **J6.1**: Analyze SPARQL query patterns (selectivity, join order)
-- **J6.2**: Rewrite queries using heuristics (push filters, use indexes)
-- **J6.3**: Cache frequent query results with TTL
-- **J6.4**: Materialize common query patterns as views
-- **J6.5**: Monitor query performance and adapt strategies
+- **Jlatest**: Analyze SPARQL query patterns (selectivity, join order)
+- **Jlatest**: Rewrite queries using heuristics (push filters, use indexes)
+- **Jlatest**: Cache frequent query results with TTL
+- **Jlatest**: Materialize common query patterns as views
+- **Jlatest**: Monitor query performance and adapt strategies
 
 **CLI Commands Used**:
 ```bash
@@ -240,11 +240,11 @@ unrdf query "SELECT * WHERE { ?s :friend ?o }" --graph friend-network
 **Job**: When knowledge is derived or merged, I need to record provenance metadata, so that trust and lineage are verifiable.
 
 **Sub-Jobs**:
-- **J7.1**: Attach prov:wasDerivedFrom to inferred triples
-- **J7.2**: Record agent identity and timestamp for all operations
-- **J7.3**: Create provenance graph separate from knowledge graph
-- **J7.4**: Enable temporal queries (graph state at time T)
-- **J7.5**: Support SPARQL queries over provenance chains
+- **Jlatest**: Attach prov:wasDerivedFrom to inferred triples
+- **Jlatest**: Record agent identity and timestamp for all operations
+- **Jlatest**: Create provenance graph separate from knowledge graph
+- **Jlatest**: Enable temporal queries (graph state at time T)
+- **Jlatest**: Support SPARQL queries over provenance chains
 
 **CLI Commands Used**:
 ```bash
@@ -288,11 +288,11 @@ unrdf query "
 **Job**: When graph patterns deviate from expected distributions, I need to flag anomalies, so that data quality issues are caught early.
 
 **Sub-Jobs**:
-- **J8.1**: Compute graph statistics (degree distribution, predicate frequency)
-- **J8.2**: Compare current statistics to historical baselines
-- **J8.3**: Detect outliers (e.g., entity with 10,000x more triples than median)
-- **J8.4**: Classify anomaly types (schema drift, data corruption, attack)
-- **J8.5**: Trigger alerts and remediation workflows
+- **Jlatest**: Compute graph statistics (degree distribution, predicate frequency)
+- **Jlatest**: Compare current statistics to historical baselines
+- **Jlatest**: Detect outliers (e.g., entity with 10,000x more triples than median)
+- **Jlatest**: Classify anomaly types (schema drift, data corruption, attack)
+- **Jlatest**: Trigger alerts and remediation workflows
 
 **CLI Commands Used**:
 ```bash
@@ -329,11 +329,11 @@ fi
 **Job**: When integrating multiple knowledge graphs, I need to identify equivalent entities, so that queries span all sources without duplication.
 
 **Sub-Jobs**:
-- **J9.1**: Compute entity fingerprints (hash of key predicates)
-- **J9.2**: Execute blocking strategies (group by type, locality)
-- **J9.3**: Apply similarity measures (Jaccard, Levenshtein, embedding distance)
-- **J9.4**: Generate owl:sameAs links with confidence scores
-- **J9.5**: Validate links via bidirectional queries
+- **Jlatest**: Compute entity fingerprints (hash of key predicates)
+- **Jlatest**: Execute blocking strategies (group by type, locality)
+- **Jlatest**: Apply similarity measures (Jaccard, Levenshtein, embedding distance)
+- **Jlatest**: Generate owl:sameAs links with confidence scores
+- **Jlatest**: Validate links via bidirectional queries
 
 **CLI Commands Used**:
 ```bash
@@ -378,11 +378,11 @@ unrdf query "
 **Job**: When ontology schemas change, I need to migrate existing data to new schema, so that graph remains queryable under new structure.
 
 **Sub-Jobs**:
-- **J10.1**: Detect schema changes (new classes, deprecated predicates)
-- **J10.2**: Generate migration plan (SPARQL UPDATE queries)
-- **J10.3**: Execute migration in batches with rollback capability
-- **J10.4**: Validate migrated data against new schema
-- **J10.5**: Update downstream agents with new schema definitions
+- **Jlatest**: Detect schema changes (new classes, deprecated predicates)
+- **Jlatest**: Generate migration plan (SPARQL UPDATE queries)
+- **Jlatest**: Execute migration in batches with rollback capability
+- **Jlatest**: Validate migrated data against new schema
+- **Jlatest**: Update downstream agents with new schema definitions
 
 **CLI Commands Used**:
 ```bash
@@ -457,8 +457,8 @@ wait
 # Aggregate votes
 jq -s 'map(.confidence) | add / length' votes/*.json > consensus-score.txt
 
-# Accept link if consensus > 0.8
-if [ "$(cat consensus-score.txt)" -gt 0.8 ]; then
+# Accept link if consensus > latest
+if [ "$(cat consensus-score.txt)" -gt latest ]; then
   unrdf graph update links --add proposed-link.ttl
 fi
 ```
@@ -691,7 +691,7 @@ if __name__ == '__main__':
 
 ```dockerfile
 FROM node:18-alpine
-RUN npm install -g @unrdf/cli@5.0.0-beta.3
+RUN npm install -g @unrdf/cli@latest.3
 
 COPY agent.py /app/agent.py
 COPY validation-rules.json /app/
@@ -741,7 +741,7 @@ spec:
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Target Audience**: AI agent developers, multi-agent system architects
 **Status**: Foundation for agent avatar documentation

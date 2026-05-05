@@ -20,8 +20,8 @@
     dc:creator "UNRDF Team" ;
     dc:created "2025-01-01"^^xsd:date ;
     dc:modified "2025-11-21"^^xsd:date ;
-    dc:version "2.0.0" ;
-    owl:versionInfo "2.0.0" ;
+    dc:version "latest" ;
+    owl:versionInfo "latest" ;
     dc:license <http://creativecommons.org/licenses/by/4.0/> ;
     rdfs:seeAlso <http://example.org/ontology/papers-thesis/documentation> ;
     owl:imports <http://xmlns.com/foaf/0.1/> .

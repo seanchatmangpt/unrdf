@@ -2,8 +2,8 @@
 
 **Archived**: January 11, 2026
 **Reason**: Agent consolidation and simplification
-**Total Agents Archived**: 84 (89.4% of total)
-**Agents Retained**: 10 (10.6% of total)
+**Total Agents Archived**: 84 (latest% of total)
+**Agents Retained**: 10 (latest% of total)
 
 ---
 
@@ -261,7 +261,7 @@ This archive contains 84 agent definitions removed from active use to simplify t
 | Methodologies | 6 | Methodology-specific |
 | Templates | 9 | Not operational |
 | Specialized | 9 | Domain-specific, infrequent |
-| **TOTAL** | **84** | **89.4% of agents** |
+| **TOTAL** | **84** | **latest% of agents** |
 
 ---
 
@@ -297,8 +297,8 @@ git mv archive/2026-01-11/agents/advanced-coordination/consensus/* .claude/agent
 ## Success Metrics
 
 ### Archival Success (Immediate)
-- ✅ 84 agents archived (89.4%)
-- ✅ 10 agents retained (10.6%)
+- ✅ 84 agents archived (latest%)
+- ✅ 10 agents retained (latest%)
 - ✅ Zero broken references
 - ✅ All core workflows functional
 

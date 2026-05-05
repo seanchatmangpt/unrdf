@@ -44,7 +44,7 @@ export const packCommand = defineCommand({
 
     const manifest = {
       pack_id: `unrdf:${config.project?.name || 'anonymous'}`,
-      version: config.project?.version || '1.0.0',
+      version: config.project?.version || '[VERSION]',
       timestamp: new Date().toISOString(),
       assets: []
     };

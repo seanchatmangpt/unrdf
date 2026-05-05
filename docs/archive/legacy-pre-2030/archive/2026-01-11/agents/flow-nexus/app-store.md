@@ -29,7 +29,7 @@ mcp__flow-nexus__app_store_publish_app({
   name: "My Auth Service",
   description: "JWT-based authentication microservice",
   category: "backend",
-  version: "1.0.0",
+  version: "latest",
   source_code: sourceCode,
   tags: ["auth", "jwt", "express"]
 })

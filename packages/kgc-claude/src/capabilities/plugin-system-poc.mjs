@@ -38,7 +38,7 @@ async function runProofOfConcept() {
   // Plugin A: Core utility (no dependencies)
   const pluginAMetadata = {
     id: 'plugin-a',
-    version: '1.0.0',
+    version: 'latest',
     name: 'Core Utilities',
     description: 'Provides core utility functions',
     dependencies: [],
@@ -58,11 +58,11 @@ async function runProofOfConcept() {
   // Plugin B: Depends on Plugin A
   const pluginBMetadata = {
     id: 'plugin-b',
-    version: '2.1.0',
+    version: 'latest',
     name: 'Advanced Features',
     description: 'Provides advanced features using core utilities',
     dependencies: [
-      { plugin: 'plugin-a', version: '^1.0.0', optional: false }
+      { plugin: 'plugin-a', version: '^latest', optional: false }
     ],
     capabilities: ['query-enhancement'],
     permissions: ['read:store', 'execute:sparql'],

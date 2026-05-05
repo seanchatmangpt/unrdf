@@ -39,7 +39,7 @@
 
 ## 1. Class Structure
 
-### 1.1 Field Inventory (Complete)
+### latest Field Inventory (Complete)
 
 ```java
 package org.yawlfoundation.yawl.engine;
@@ -103,7 +103,7 @@ public class YWorkItem {
 }
 ```
 
-### 1.2 Constructor Patterns
+### latest Constructor Patterns
 
 #### Empty Constructor (Persistence)
 ```java
@@ -203,7 +203,7 @@ private YWorkItem(YPersistenceManager pmgr,
 
 ## 2. Complete State Machine
 
-### 2.1 State Diagram
+### latest State Diagram
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -272,7 +272,7 @@ private YWorkItem(YPersistenceManager pmgr,
                   └───────────────────────────────┘
 ```
 
-### 2.2 State Enumeration (`YWorkItemStatus`)
+### latest State Enumeration (`YWorkItemStatus`)
 
 ```java
 public enum YWorkItemStatus {
@@ -313,7 +313,7 @@ public enum YWorkItemStatus {
 }
 ```
 
-### 2.3 State Categories
+### latest State Categories
 
 #### Live States (Unfinished)
 ```java
@@ -350,7 +350,7 @@ public boolean hasCompletedStatus() {
 
 ## 3. State Transition Methods
 
-### 3.1 Enabled → Executing (Start)
+### latest Enabled → Executing (Start)
 
 ```java
 /**
@@ -389,7 +389,7 @@ public void setStatusToStarted(YPersistenceManager pmgr, YClient client)
 }
 ```
 
-### 3.2 Executing → Complete (Completion)
+### latest Executing → Complete (Completion)
 
 ```java
 /**
@@ -451,7 +451,7 @@ public void setStatusToComplete(YPersistenceManager pmgr,
 }
 ```
 
-### 3.3 Rollback (Executing → Fired)
+### latest Rollback (Executing → Fired)
 
 ```java
 /**
@@ -490,7 +490,7 @@ public void rollBackStatus(YPersistenceManager pmgr)
 }
 ```
 
-### 3.4 Suspension (Case-Level)
+### latest Suspension (Case-Level)
 
 ```java
 /**
@@ -559,7 +559,7 @@ public void setStatusToUnsuspended(YPersistenceManager pmgr)
 }
 ```
 
-### 3.5 Cancellation (Delete)
+### latest Cancellation (Delete)
 
 ```java
 /**
@@ -598,7 +598,7 @@ public void setStatusToDeleted(YPersistenceManager pmgr)
 }
 ```
 
-### 3.6 Discard (Orphaned Tokens)
+### latest Discard (Orphaned Tokens)
 
 ```java
 /**
@@ -623,7 +623,7 @@ public void setStatusToDiscarded() {
 
 ## 4. Data Management
 
-### 4.1 Data Storage Format
+### latest Data Storage Format
 
 **Storage Medium**: XML via JDOM Element
 
@@ -642,7 +642,7 @@ private String _dataString;     // Persisted XML string
 </data>
 ```
 
-### 4.2 Input Data Loading
+### latest Input Data Loading
 
 ```java
 /**
@@ -680,7 +680,7 @@ public void setData(YPersistenceManager pmgr, Element data)
 }
 ```
 
-### 4.3 Output Data Capture
+### latest Output Data Capture
 
 ```java
 /**
@@ -699,7 +699,7 @@ public void completeData(Document dataDocument) {
 }
 ```
 
-### 4.4 Data Validation
+### latest Data Validation
 
 **XSD Schema Validation** (handled by YDataValidator):
 
@@ -717,7 +717,7 @@ validator.validate(
 // Throws YDataValidationException if invalid
 ```
 
-### 4.5 Data Transformation
+### latest Data Transformation
 
 **XPath/XQuery** (via YDataHandler):
 
@@ -728,7 +728,7 @@ XPath xpathCompiler = XPath.newInstance(xpath);
 String approver = xpathCompiler.valueOf(workItem.getDataElement());
 ```
 
-### 4.6 Data Restoration (Post-Persistence)
+### latest Data Restoration (Post-Persistence)
 
 ```java
 /**
@@ -768,7 +768,7 @@ public void restoreDataToNet(Set<YAWLServiceReference> services)
 
 ## 5. Multiple Instance Mechanics
 
-### 5.1 Parent-Child Relationships
+### latest Parent-Child Relationships
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -776,27 +776,27 @@ public void restoreDataToNet(Set<YAWLServiceReference> services)
 └────────────────────────────────────────────────────────────┘
 
   Parent Work Item (statusIsParent)
-  ├─ _workItemID: "1.2.3.mi_parent"
+  ├─ _workItemID: "latest.mi_parent"
   ├─ _status: statusIsParent
   ├─ _children: Set<YWorkItem>
   │
   ├─► Child 1 (statusFired → statusExecuting → statusComplete)
-  │   ├─ _workItemID: "1.2.3.1"
+  │   ├─ _workItemID: "latest.1"
   │   ├─ _parent: → Parent Work Item
   │   └─ _dataList: <data><index>0</index></data>
   │
   ├─► Child 2 (statusFired → statusExecuting → statusComplete)
-  │   ├─ _workItemID: "1.2.3.2"
+  │   ├─ _workItemID: "latest.2"
   │   ├─ _parent: → Parent Work Item
   │   └─ _dataList: <data><index>1</index></data>
   │
   └─► Child N (statusFired → statusExecuting → statusComplete)
-      ├─ _workItemID: "1.2.3.N"
+      ├─ _workItemID: "latest.N"
       ├─ _parent: → Parent Work Item
       └─ _dataList: <data><index>N-1</index></data>
 ```
 
-### 5.2 Child Creation (Static MI)
+### latest Child Creation (Static MI)
 
 ```java
 /**
@@ -859,7 +859,7 @@ public YWorkItem createChild(YPersistenceManager pmgr, YIdentifier childID)
 }
 ```
 
-### 5.3 Child Synchronization (Threshold)
+### latest Child Synchronization (Threshold)
 
 **Logic in YNetRunner** (not YWorkItem):
 
@@ -898,7 +898,7 @@ public boolean checkMICompletion(YWorkItem parent) {
 }
 ```
 
-### 5.4 Dynamic MI Instance Creation
+### latest Dynamic MI Instance Creation
 
 ```java
 /**
@@ -934,12 +934,12 @@ public YWorkItem addDynamicInstance(YPersistenceManager pmgr,
 }
 ```
 
-**Known Limitation** (YAWL 5.0):
+**Known Limitation** (YAWL latest):
 > "There is no facility (and never has been) in the engine or worklist for creating a new instance of a dynamic multi-instance composite task (i.e. a sub-net instance) at runtime."
 
 Reference: [GitHub Issue #644](https://github.com/yawlfoundation/yawl/issues/644)
 
-### 5.5 MI Output Aggregation
+### latest MI Output Aggregation
 
 ```java
 /**
@@ -973,7 +973,7 @@ public Element aggregateChildOutputs() {
 
 ## 6. Timer Integration
 
-### 6.1 Timer Parameters
+### latest Timer Parameters
 
 ```java
 /**
@@ -996,7 +996,7 @@ private boolean _timerStarted;              // Timer active flag
 private long _timerExpiry;                  // Expiration timestamp (ms)
 ```
 
-### 6.2 Timer Activation
+### latest Timer Activation
 
 ```java
 /**
@@ -1052,7 +1052,7 @@ public void checkStartTimer(YPersistenceManager pmgr, YNetData netData)
 }
 ```
 
-### 6.3 Timer Cancellation
+### latest Timer Cancellation
 
 ```java
 /**
@@ -1078,7 +1078,7 @@ public void cancelTimer() {
 }
 ```
 
-### 6.4 Timer Expiry Handling
+### latest Timer Expiry Handling
 
 ```java
 /**
@@ -1108,7 +1108,7 @@ public void handleTimerExpiry(YWorkItemID workItemID) {
 
 ## 7. Persistence & Event Logging
 
-### 7.1 Hibernate Mapping
+### latest Hibernate Mapping
 
 **File**: `YWorkItem.hbm.xml`
 
@@ -1165,7 +1165,7 @@ public void handleTimerExpiry(YWorkItemID workItemID) {
 </hibernate-mapping>
 ```
 
-### 7.2 Event Logging
+### latest Event Logging
 
 ```java
 /**
@@ -1201,7 +1201,7 @@ private void logEvent(String eventType, YPersistenceManager pmgr) {
 }
 ```
 
-### 7.3 Custom Log Predicates
+### latest Custom Log Predicates
 
 ```java
 /**
@@ -1245,7 +1245,7 @@ public YLogDataItemList createLogDataList(String predicate) {
 
 ## 8. Parent-Child Linking
 
-### 8.1 Parent Reference
+### latest Parent Reference
 
 ```java
 private YWorkItem _parent;  // Null for top-level items, set for MI children
@@ -1259,7 +1259,7 @@ public boolean isChild() {
 }
 ```
 
-### 8.2 Children Collection
+### latest Children Collection
 
 ```java
 private Set<YWorkItem> _children;  // Null for non-parents, HashSet for MI parents
@@ -1273,7 +1273,7 @@ public boolean isParent() {
 }
 ```
 
-### 8.3 Recursive Cancellation
+### latest Recursive Cancellation
 
 ```java
 /**
@@ -1294,7 +1294,7 @@ public void cancel(YPersistenceManager pmgr) throws YPersistenceException {
 }
 ```
 
-### 8.4 Family Removal (Repository)
+### latest Family Removal (Repository)
 
 ```java
 /**
@@ -1319,7 +1319,7 @@ public void removeWorkItemFamily(YWorkItem parent) {
 
 ## 9. Code References
 
-### 9.1 Source Files
+### latest Source Files
 
 | File | Purpose |
 |------|---------|
@@ -1334,7 +1334,7 @@ public void removeWorkItemFamily(YWorkItem parent) {
 | `YNetRunner.java` | Net execution (uses YWorkItem) |
 | `YWorkItem.hbm.xml` | Hibernate mapping |
 
-### 9.2 Key Methods Summary
+### latest Key Methods Summary
 
 | Method | Signature | Purpose |
 |--------|-----------|---------|
@@ -1353,12 +1353,12 @@ public void removeWorkItemFamily(YWorkItem parent) {
 | **Cancel Timer** | `cancelTimer()` | Stops timeout timer |
 | **Restore Data** | `restoreDataToNet(services)` | Deserializes post-persistence |
 
-### 9.3 External References
+### latest External References
 
 - **Official Repository**: [github.com/yawlfoundation/yawl](https://github.com/yawlfoundation/yawl)
-- **JavaDoc (4.3)**: [YWorkItemRepository](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/YWorkItemRepository.html)
-- **Technical Manual**: [YAWL Technical Manual 4.3 (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
-- **User Manual**: [YAWL User Manual 4.3 (PDF)](https://yawlfoundation.github.io/assets/files/YAWLUserManual4.3.pdf)
+- **JavaDoc (latest)**: [YWorkItemRepository](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/YWorkItemRepository.html)
+- **Technical Manual**: [YAWL Technical Manual latest (PDF)](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
+- **User Manual**: [YAWL User Manual latest (PDF)](https://yawlfoundation.github.io/assets/files/YAWLUserManuallatest.pdf)
 - **Known Issues**:
   - [Issue #644 - Dynamic MI Creation](https://github.com/yawlfoundation/yawl/issues/644)
   - [Issue #647 - MI Automated Task Finalization](https://github.com/yawlfoundation/yawl/issues/647)
@@ -1367,7 +1367,7 @@ public void removeWorkItemFamily(YWorkItem parent) {
 
 ## 10. Key Insights
 
-### 10.1 Design Patterns
+### latest Design Patterns
 
 1. **State Machine**: Explicit state enumeration with validated transitions
 2. **Event Sourcing**: YEventLogger records all state changes
@@ -1375,7 +1375,7 @@ public void removeWorkItemFamily(YWorkItem parent) {
 4. **Template Method**: Lifecycle methods follow consistent pattern (validate → transition → log → persist)
 5. **Observer Pattern**: Event logging decouples state changes from persistence
 
-### 10.2 Data Flow
+### latest Data Flow
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -1404,14 +1404,14 @@ public void removeWorkItemFamily(YWorkItem parent) {
   Next Tasks Enabled
 ```
 
-### 10.3 Concurrency Model
+### latest Concurrency Model
 
 - **Single-Threaded**: YWorkItem is NOT thread-safe
 - **Synchronization**: Handled by YEngine/YNetRunner (method-level `synchronized`)
 - **Persistence Lock**: `_pmgr` serves as global lock for major operations
 - **Repository**: `ConcurrentHashMap` for thread-safe storage
 
-### 10.4 Limitations
+### latest Limitations
 
 1. **Dynamic MI**: Partial implementation (composite tasks unsupported)
 2. **OR-Join**: No dead path elimination (simplified logic)
@@ -1435,6 +1435,6 @@ public void removeWorkItemFamily(YWorkItem parent) {
 
 **Sources**:
 - [YAWL GitHub Repository](https://github.com/yawlfoundation/yawl)
-- [YAWL Technical Manual 4.3](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
+- [YAWL Technical Manual latest](https://yawlfoundation.github.io/assets/files/YAWLTechnicalManual4.pdf)
 - [YWorkItemRepository JavaDoc](https://yawlfoundation.github.io/javadoc/org/yawlfoundation/yawl/engine/YWorkItemRepository.html)
 - [YAWL Foundation Website](https://yawlfoundation.github.io/)

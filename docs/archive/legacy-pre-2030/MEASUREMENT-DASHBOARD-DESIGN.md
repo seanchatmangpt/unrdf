@@ -2,7 +2,7 @@
 
 ## Real-Time Observability for UNRDF Monorepo
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Active
 **Last Updated**: 2024-12-26
 
@@ -12,7 +12,7 @@
 
 This document specifies the dashboard design for visualizing the dimension certificate measurements across the 43-package UNRDF monorepo. The dashboard provides real-time visibility into entropy, coupling, and capacity metrics.
 
-### 1.1 Design Principles
+### latest Design Principles
 
 1. **Glanceability**: Critical metrics visible in <3 seconds
 2. **Drill-down**: From system overview to package details in 2 clicks
@@ -23,7 +23,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ## 2. Dashboard Views
 
-### 2.1 System Overview (Landing Page)
+### latest System Overview (Landing Page)
 
 ```
 +==============================================================================+
@@ -32,18 +32,18 @@ This document specifies the dashboard design for visualizing the dimension certi
 |                                                                              |
 |  +-------------------------+  +-------------------------+  +---------------+ |
 |  |     SYSTEM ENTROPY      |  |    CHANGE CAPACITY     |  |    HEALTH     | |
-|  |        D_t = 18.79      |  |      C_t = 5.21        |  |   43/43 OK    | |
-|  |       +2.3% 7d          |  |     -0.8% 7d           |  |   [========]  | |
+|  |        D_t = latest      |  |      C_t = latest        |  |   43/43 OK    | |
+|  |       +latest% 7d          |  |     -latest% 7d           |  |   [========]  | |
 |  +-------------------------+  +-------------------------+  +---------------+ |
 |                                                                              |
 |  +-----------------------------------+  +----------------------------------+ |
 |  |        TIER DISTRIBUTION          |  |        ENTROPY BY TIER          | |
 |  |                                   |  |                                  | |
-|  |  T1 [=====] 5 pkg (11.6%)        |  |  T1  [==============] 8.2 bits  | |
-|  |  T2 [========] 8 pkg (18.6%)     |  |  T2  [==========] 5.1 bits      | |
-|  |  T3 [==============] 12 pkg (28%)|  |  T3  [=======] 3.5 bits         | |
-|  |  T4 [==============] 12 pkg (28%)|  |  T4  [====] 1.5 bits            | |
-|  |  T5 [======] 6 pkg (14%)         |  |  T5  [=] 0.5 bits               | |
+|  |  T1 [=====] 5 pkg (latest%)        |  |  T1  [==============] latest bits  | |
+|  |  T2 [========] 8 pkg (latest%)     |  |  T2  [==========] latest bits      | |
+|  |  T3 [==============] 12 pkg (28%)|  |  T3  [=======] latest bits         | |
+|  |  T4 [==============] 12 pkg (28%)|  |  T4  [====] latest bits            | |
+|  |  T5 [======] 6 pkg (14%)         |  |  T5  [=] latest bits               | |
 |  +-----------------------------------+  +----------------------------------+ |
 |                                                                              |
 |  +--------------------------------------------------------------------------+|
@@ -74,7 +74,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ---
 
-### 2.2 D_t Entropy Tracker
+### latest D_t Entropy Tracker
 
 ```
 +==============================================================================+
@@ -86,13 +86,13 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  +--------------------------------------------------------------------------+|
 |  |                     PACKAGE ENTROPY HEATMAP                              ||
 |  |                                                                          ||
-|  |    core    [=========] 4.82 bits                                         ||
-|  |    oxigraph [========] 4.12 bits                                         ||
-|  |    hooks   [=======] 3.45 bits                                           ||
-|  |    kgc-4d  [======] 2.98 bits                                            ||
-|  |    yawl    [=====] 2.67 bits                                             ||
+|  |    core    [=========] latest bits                                         ||
+|  |    oxigraph [========] latest bits                                         ||
+|  |    hooks   [=======] latest bits                                           ||
+|  |    kgc-4d  [======] latest bits                                            ||
+|  |    yawl    [=====] latest bits                                             ||
 |  |    ...                                                                   ||
-|  |    atomvm  [=] 0.34 bits                                                 ||
+|  |    atomvm  [=] latest bits                                                 ||
 |  |                                                                          ||
 |  |  Legend: [Low: 0-2] [Medium: 2-4] [High: 4-6] [Critical: >6]            ||
 |  +--------------------------------------------------------------------------+|
@@ -100,11 +100,11 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  +----------------------------------+  +-----------------------------------+ |
 |  |      TOP 5 ENTROPY PACKAGES     |  |    LARGEST ENTROPY CHANGES (7d)   | |
 |  |                                  |  |                                   | |
-|  |  1. core         4.82 bits      |  |  federation   +0.82 bits (+18%)   | |
-|  |  2. oxigraph     4.12 bits      |  |  yawl-api     +0.45 bits (+12%)   | |
-|  |  3. hooks        3.45 bits      |  |  streaming    -0.33 bits (-8%)    | |
-|  |  4. kgc-4d       2.98 bits      |  |  caching      +0.21 bits (+5%)    | |
-|  |  5. yawl         2.67 bits      |  |  react        -0.12 bits (-3%)    | |
+|  |  1. core         latest bits      |  |  federation   +latest bits (+18%)   | |
+|  |  2. oxigraph     latest bits      |  |  yawl-api     +latest bits (+12%)   | |
+|  |  3. hooks        latest bits      |  |  streaming    -latest bits (-8%)    | |
+|  |  4. kgc-4d       latest bits      |  |  caching      +latest bits (+5%)    | |
+|  |  5. yawl         latest bits      |  |  react        -latest bits (-3%)    | |
 |  +----------------------------------+  +-----------------------------------+ |
 |                                                                              |
 |  +--------------------------------------------------------------------------+|
@@ -128,7 +128,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ---
 
-### 2.3 TC Coupling Heatmap
+### latest TC Coupling Heatmap
 
 ```
 +==============================================================================+
@@ -149,17 +149,17 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  |  obsrv   [#]  [.]   [.]   [#]   [.]   [##]  [.]  [.]  [.]   ...          ||
 |  |  ...     ...  ...   ...   ...   ...   ...   ...  ...  ...   ...          ||
 |  |                                                                          ||
-|  |  Legend: [##]=TC>0.7  [#]=TC 0.3-0.7  [.]=TC<0.3  [ ]=No coupling        ||
+|  |  Legend: [##]=TC>latest  [#]=TC latest.7  [.]=TC<latest  [ ]=No coupling        ||
 |  +--------------------------------------------------------------------------+|
 |                                                                              |
 |  +----------------------------------+  +-----------------------------------+ |
 |  |      HIGH COUPLING PAIRS        |  |        COUPLING CLUSTERS          | |
 |  |                                  |  |                                   | |
-|  |  core <-> oxigraph    TC=0.87   |  |  Cluster 1 (5 packages):          | |
-|  |  core <-> validation  TC=0.84   |  |    core, oxigraph, validation,    | |
-|  |  hooks <-> validation TC=0.72   |  |    hooks, kgc-4d                  | |
-|  |  yawl <-> yawl-api    TC=0.68   |  |                                   | |
-|  |  ml-* packages        TC=0.65   |  |  Cluster 2 (8 packages):          | |
+|  |  core <-> oxigraph    TC=latest   |  |  Cluster 1 (5 packages):          | |
+|  |  core <-> validation  TC=latest   |  |    core, oxigraph, validation,    | |
+|  |  hooks <-> validation TC=latest   |  |    hooks, kgc-4d                  | |
+|  |  yawl <-> yawl-api    TC=latest   |  |                                   | |
+|  |  ml-* packages        TC=latest   |  |  Cluster 2 (8 packages):          | |
 |  |                                  |  |    yawl, yawl-api, yawl-kafka,    | |
 |  |                                  |  |    yawl-queue, ...               | |
 |  +----------------------------------+  +-----------------------------------+ |
@@ -167,13 +167,13 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  +--------------------------------------------------------------------------+|
 |  |                    COUPLING TREND (DENSITY)                              ||
 |  |                                                                          ||
-|  |  0.30 |                                                                  ||
+|  |  latest |                                                                  ||
 |  |       |      *                                                           ||
-|  |  0.25 |  *     *   *                                                     ||
+|  |  latest |  *     *   *                                                     ||
 |  |       |          *   *   *   *                                           ||
-|  |  0.20 |                      *   *   *   *   *                           ||
+|  |  latest |                      *   *   *   *   *                           ||
 |  |       |                                      *   *   *                   ||
-|  |  0.15 +----+----+----+----+----+----+----+----+----+----+----+          ||
+|  |  latest +----+----+----+----+----+----+----+----+----+----+----+          ||
 |  |                                                                          ||
 |  +--------------------------------------------------------------------------+|
 |                                                                              |
@@ -188,7 +188,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ---
 
-### 2.4 TE Causality Graph
+### latest TE Causality Graph
 
 ```
 +==============================================================================+
@@ -202,25 +202,25 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  |                                                                          ||
 |  |                            +----------+                                  ||
 |  |                            | oxigraph |                                  ||
-|  |                            | TE=42.3  |                                  ||
+|  |                            | TE=latest  |                                  ||
 |  |                            +----+-----+                                  ||
 |  |                                 |                                        ||
 |  |                                 v                                        ||
 |  |                            +----------+                                  ||
 |  |            +-------------->|   core   |<--------------+                  ||
-|  |            |               | TE=38.7  |               |                  ||
+|  |            |               | TE=latest  |               |                  ||
 |  |            |               +----+-----+               |                  ||
 |  |            |                    |                     |                  ||
 |  |            v                    v                     v                  ||
 |  |     +----------+          +----------+          +----------+             ||
 |  |     |validation|          |  hooks   |          | streaming|             ||
-|  |     | TE=28.4  |          | TE=24.1  |          | TE=12.8  |             ||
+|  |     | TE=latest  |          | TE=latest  |          | TE=latest  |             ||
 |  |     +----------+          +----+-----+          +----------+             ||
 |  |            |                   |                                         ||
 |  |            v                   v                                         ||
 |  |     +----------+          +----------+                                   ||
 |  |     |  kgc-4d  |          |   yawl   |                                   ||
-|  |     | TE=15.2  |          | TE=18.9  |                                   ||
+|  |     | TE=latest  |          | TE=latest  |                                   ||
 |  |     +----------+          +----------+                                   ||
 |  |                                                                          ||
 |  +--------------------------------------------------------------------------+|
@@ -230,11 +230,11 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  |                                                                          ||
 |  |  Package      | Direct D_t | Dep Count | TE Total | Influence Score     ||
 |  |  -------------|------------|-----------|----------|--------------------  ||
-|  |  oxigraph     | 4.12       | 0         | 42.3     | CRITICAL (100%)     ||
-|  |  core         | 4.82       | 1         | 38.7     | CRITICAL (91%)      ||
-|  |  validation   | 2.54       | 1         | 28.4     | HIGH (67%)          ||
-|  |  hooks        | 3.45       | 2         | 24.1     | HIGH (57%)          ||
-|  |  observability| 1.87       | 0         | 18.9     | MEDIUM (45%)        ||
+|  |  oxigraph     | latest       | 0         | latest     | CRITICAL (100%)     ||
+|  |  core         | latest       | 1         | latest     | CRITICAL (91%)      ||
+|  |  validation   | latest       | 1         | latest     | HIGH (67%)          ||
+|  |  hooks        | latest       | 2         | latest     | HIGH (57%)          ||
+|  |  observability| latest       | 0         | latest     | MEDIUM (45%)        ||
 |  |  ...          | ...        | ...       | ...      | ...                 ||
 |  +--------------------------------------------------------------------------+|
 |                                                                              |
@@ -250,7 +250,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ---
 
-### 2.5 C_t Capacity Chart
+### latest C_t Capacity Chart
 
 ```
 +==============================================================================+
@@ -264,13 +264,13 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  |                                                                          ||
 |  |  Package       | C_max | D_t  | C_t  | Usage  | Status                   ||
 |  |  --------------|-------|------|------|--------|------------------------  ||
-|  |  core          | 24    | 4.82 | 19.2 | 20%    | [====.............] OK   ||
-|  |  oxigraph      | 24    | 4.12 | 19.9 | 17%    | [===..............] OK   ||
-|  |  hooks         | 20    | 3.45 | 16.6 | 17%    | [===..............] OK   ||
-|  |  kgc-4d        | 18    | 2.98 | 15.0 | 17%    | [===..............] OK   ||
-|  |  yawl          | 18    | 2.67 | 15.3 | 15%    | [===..............] OK   ||
+|  |  core          | 24    | latest | latest | 20%    | [====.............] OK   ||
+|  |  oxigraph      | 24    | latest | latest | 17%    | [===..............] OK   ||
+|  |  hooks         | 20    | latest | latest | 17%    | [===..............] OK   ||
+|  |  kgc-4d        | 18    | latest | latest | 17%    | [===..............] OK   ||
+|  |  yawl          | 18    | latest | latest | 15%    | [===..............] OK   ||
 |  |  ...           | ...   | ...  | ...  | ...    | ...                      ||
-|  |  yawl-viz      | 16    | 0.34 | 15.7 | 2%     | [................] OK    ||
+|  |  yawl-viz      | 16    | latest | latest | 2%     | [................] OK    ||
 |  |                                                                          ||
 |  |  Legend: [.....] OK  [!!!!!] Warning (<25%)  [XXXXX] Critical (<10%)     ||
 |  +--------------------------------------------------------------------------+|
@@ -292,8 +292,8 @@ This document specifies the dashboard design for visualizing the dimension certi
 |  +--------------------------------------------------------------------------+|
 |  |                  EPOCH-OVER-EPOCH CAPACITY BURN                          ||
 |  |                                                                          ||
-|  |  This Week:   +0.23 bits consumed (net)                                  ||
-|  |  This Month:  +1.87 bits consumed (net)                                  ||
+|  |  This Week:   +latest bits consumed (net)                                  ||
+|  |  This Month:  +latest bits consumed (net)                                  ||
 |  |  Projection:  At current rate, will reach 50% system capacity in 8 mo   ||
 |  |                                                                          ||
 |  +--------------------------------------------------------------------------+|
@@ -305,7 +305,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ## 3. Alert Configuration
 
-### 3.1 Alert Thresholds
+### latest Alert Thresholds
 
 | Alert Level | Condition | Action |
 |-------------|-----------|--------|
@@ -314,7 +314,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 | **CRITICAL** | Package C_t < 10% of C_max | Page on-call, block PR |
 | **OVERFLOW** | Package D_t > C_max | Block all changes, escalate |
 
-### 3.2 Alert Panel
+### latest Alert Panel
 
 ```
 +==============================================================================+
@@ -325,15 +325,15 @@ This document specifies the dashboard design for visualizing the dimension certi
 |                                                                              |
 |  +--------------------------------------------------------------------------+|
 |  |                                                                          ||
-|  |  [*] WARNING  federation  TC spike detected (0.45 -> 0.72)    2h ago    ||
+|  |  [*] WARNING  federation  TC spike detected (latest -> latest)    2h ago    ||
 |  |      Action: Review recent commits for coupling patterns                 ||
 |  |      [View Details] [Acknowledge] [Suppress 24h]                         ||
 |  |                                                                          ||
-|  |  [*] WARNING  yawl-api    Approaching capacity (C_t = 4.2)    5h ago    ||
+|  |  [*] WARNING  yawl-api    Approaching capacity (C_t = latest)    5h ago    ||
 |  |      Action: Consider refactoring or splitting package                   ||
 |  |      [View Details] [Acknowledge] [Suppress 24h]                         ||
 |  |                                                                          ||
-|  |  [i] INFO     kgc-4d      Entropy increased +0.34 bits        12h ago   ||
+|  |  [i] INFO     kgc-4d      Entropy increased +latest bits        12h ago   ||
 |  |  [i] INFO     streaming   New dependency added: observability 1d ago    ||
 |  |  [i] INFO     ...                                                        ||
 |  |                                                                          ||
@@ -346,7 +346,7 @@ This document specifies the dashboard design for visualizing the dimension certi
 
 ## 4. Drill-down Paths
 
-### 4.1 Navigation Hierarchy
+### latest Navigation Hierarchy
 
 ```
 System Overview
@@ -375,7 +375,7 @@ System Overview
             +-- Burn Rate Projection
 ```
 
-### 4.2 Package Detail View
+### latest Package Detail View
 
 ```
 +==============================================================================+
@@ -387,26 +387,26 @@ System Overview
 |  +----------------------------------+  +-----------------------------------+ |
 |  |          ENTROPY (D_t)          |  |          CAPACITY (C_t)           | |
 |  |                                  |  |                                   | |
-|  |        4.82 bits                |  |    19.18 bits remaining           | |
-|  |     +0.12 bits (7d)             |  |    (79.9% of C_max)               | |
+|  |        latest bits                |  |    latest bits remaining           | |
+|  |     +latest bits (7d)             |  |    (latest% of C_max)               | |
 |  |                                  |  |                                   | |
-|  |  [====......] 20% of capacity   |  |  Burn rate: +0.02 bits/day        | |
+|  |  [====......] 20% of capacity   |  |  Burn rate: +latest bits/day        | |
 |  +----------------------------------+  +-----------------------------------+ |
 |                                                                              |
 |  +--------------------------------------------------------------------------+|
 |  |                        ENTROPY BY PARTITION                              ||
 |  |                                                                          ||
-|  |  src      [========] 1.93 bits  (40%)   21 files, 4500 lines            ||
-|  |  tests    [======] 1.45 bits    (30%)   18 files, 3200 lines            ||
-|  |  docs     [===] 0.72 bits       (15%)   12 files                        ||
-|  |  config   [==] 0.72 bits        (15%)   5 files                         ||
+|  |  src      [========] latest bits  (40%)   21 files, 4500 lines            ||
+|  |  tests    [======] latest bits    (30%)   18 files, 3200 lines            ||
+|  |  docs     [===] latest bits       (15%)   12 files                        ||
+|  |  config   [==] latest bits        (15%)   5 files                         ||
 |  +--------------------------------------------------------------------------+|
 |                                                                              |
 |  +--------------------------------------------------------------------------+|
 |  |                       FEATURE METRICS                                    ||
 |  |                                                                          ||
 |  |  Source Files:      21          Function Count:      156                 ||
-|  |  Test Coverage:     94.2%       Cyclomatic Complexity: 8.3 (avg)        ||
+|  |  Test Coverage:     latest%       Cyclomatic Complexity: latest (avg)        ||
 |  |  Internal Deps:     1           External Deps:        12                 ||
 |  |  Test Pass Rate:    100%        Max File Length:      342 lines         ||
 |  +--------------------------------------------------------------------------+|
@@ -415,9 +415,9 @@ System Overview
 |  |                    TEMPORAL COUPLING                                     ||
 |  |                                                                          ||
 |  |  Top coupled packages:                                                   ||
-|  |    oxigraph    TC=0.87  (High - frequently change together)             ||
-|  |    validation  TC=0.84  (High - shared dependencies)                    ||
-|  |    hooks       TC=0.72  (High - API contract)                           ||
+|  |    oxigraph    TC=latest  (High - frequently change together)             ||
+|  |    validation  TC=latest  (High - shared dependencies)                    ||
+|  |    hooks       TC=latest  (High - API contract)                           ||
 |  +--------------------------------------------------------------------------+|
 |                                                                              |
 |  [View History] [Compare Epochs] [Export Data] [View Commits]               |
@@ -442,21 +442,21 @@ System Overview
 
 ## 6. Technical Implementation Notes
 
-### 6.1 Data Sources
+### latest Data Sources
 
 - **Feature extraction**: File system scan + AST analysis
 - **TC computation**: Git log analysis (90-day window default)
 - **TE computation**: package.json dependency graph
 - **Historical data**: Time-series database (InfluxDB/Prometheus)
 
-### 6.2 Update Strategy
+### latest Update Strategy
 
 1. **Real-time**: File watcher triggers feature re-extraction
 2. **Batched**: TC matrix recomputed every 15 minutes
 3. **Scheduled**: Full measurement + certificate at midnight
 4. **On-demand**: PR trigger for affected packages only
 
-### 6.3 Performance Targets
+### latest Performance Targets
 
 | Operation | Target Latency | Acceptable |
 |-----------|---------------|------------|

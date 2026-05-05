@@ -3,7 +3,7 @@
 **Assessment Date**: 2026-01-11
 **Evaluator**: Strategic Planning Agent
 **Source**: Four adversarial evaluation reports (Execution Semantics, Pattern Compliance, Exception Handling, Worklist Management)
-**Target**: UNRDF YAWL v6.0.0-rc.1
+**Target**: UNRDF YAWL vlatest.1
 **Methodology**: Risk Priority Number (RPN) = Severity × Occurrence × Detection
 
 ---
@@ -758,7 +758,7 @@ class YawlEngine {
 }
 ```
 
-**Estimated Effort**: 1.5 weeks
+**Estimated Effort**: latest weeks
 
 ---
 
@@ -1003,7 +1003,7 @@ describe('Worklist Offer/Allocate Pattern', () => {
 | FM-004 | No deadlock detection | 432 | 1 week | FM-001 |
 | FM-005 | Missing MI patterns | 320 | 2-3 weeks | Engine refactor |
 | FM-008 | No livelock prevention | 320 | 3-4 days | None |
-| FM-006 | No compensation | 315 | 1.5 weeks | Worklet framework |
+| FM-006 | No compensation | 315 | latest weeks | Worklet framework |
 | FM-023 | activatedTasks growth | 336 | 2-3 days | FM-001 |
 
 **Total Estimated Effort**: 10-12 weeks
@@ -1203,12 +1203,12 @@ grep -n "OFFERED\|offered" packages/yawl/src/api/workflow-api-validation.mjs
 
 ### Related Standards
 - WfMC Reference Model
-- BPMN 2.0 Exception Handling
+- BPMN latest Exception Handling
 - Petri Net Theory (Reisig, W., 2013)
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: latest
 **Last Updated**: 2026-01-11
 **Next Review**: After Phase 1 completion (estimated 2026-04-11)
 **Approval Required From**: Technical Lead, QA Lead, Product Owner

@@ -110,7 +110,7 @@ export default defineNitroPlugin(async (nitroApp) => {
       meta: {
         id: 'default',
         name: 'default-policy-pack',
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'Default policy pack for KGC Sidecar'
       },
       config: {

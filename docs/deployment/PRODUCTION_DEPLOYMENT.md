@@ -1,10 +1,10 @@
-# Production Deployment Guide - UNRDF v6.0.0
+# Production Deployment Guide - UNRDF latest
 
-**Comprehensive checklist for deploying UNRDF v6.0.0 to production**
+**Comprehensive checklist for deploying UNRDF latest to production**
 
 ## Overview
 
-This guide provides step-by-step instructions for deploying UNRDF v6.0.0 with the @unrdf/daemon package to production environments.
+This guide provides step-by-step instructions for deploying UNRDF latest with the @unrdf/daemon package to production environments.
 
 **Deployment Time**: 2-4 hours
 **Complexity**: Medium
@@ -57,7 +57,7 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Verify installation
-node --version  # Should be >= 18.0.0
+node --version  # Should be >= latest
 ```
 
 #### 1.2 Install pnpm
@@ -332,7 +332,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: latest.0:4318
 
 processors:
   batch:
@@ -340,7 +340,7 @@ processors:
 
 exporters:
   prometheus:
-    endpoint: "0.0.0.0:9090"
+    endpoint: "latest.0:9090"
   logging:
     loglevel: debug
 
@@ -664,4 +664,4 @@ Environment=NODE_OPTIONS="--max-old-space-size=4096"
 
 **Deployment Status**: Production-Ready ✅
 **Last Updated**: 2026-01-11
-**Version**: 6.0.0
+**Version**: latest

@@ -5,7 +5,7 @@
 # - 3 Example Types (KnowledgeHook, TransactionReceipt, ValidationResult)
 # - 2 Example Rules (Transitive Closure, Capability Chaining)
 #
-# Version: 1.0.0
+# Version: latest
 # Compatible with: N3 reasoning, SPARQL querying
 
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -40,7 +40,7 @@
 ex:SparqlQueryCapability a cap:AtomicCapability ;
     rdfs:label "SPARQL Query Execution"@en ;
     rdfs:comment "Execute a SPARQL SELECT, ASK, or CONSTRUCT query against the RDF store. Returns query results in the requested format."@en ;
-    cap:version "1.0.0" ;
+    cap:version "latest" ;
 
     # Input/Output Types
     cap:inputType ex:SparqlQueryInput ;
@@ -204,7 +204,7 @@ ex:QueryEngineAgent a prov:Agent ;
 ex:ShaclValidationCapability a cap:AtomicCapability ;
     rdfs:label "SHACL Validation"@en ;
     rdfs:comment "Validate RDF data against SHACL shapes and return a validation report."@en ;
-    cap:version "1.0.0" ;
+    cap:version "latest" ;
 
     # Input/Output
     cap:inputType ex:ShaclValidationInput ;
@@ -315,7 +315,7 @@ ex:ValidationEngineAgent a prov:Agent ;
 ex:N3ReasoningCapability a cap:CompositeCapability ;
     rdfs:label "N3 Reasoning"@en ;
     rdfs:comment "Execute N3 rules for forward-chaining inference, deriving new facts from existing knowledge."@en ;
-    cap:version "1.0.0" ;
+    cap:version "latest" ;
 
     # Composition
     cap:composedOf ex:LoadRulesCapability ;
@@ -354,15 +354,15 @@ ex:N3ReasoningCapability a cap:CompositeCapability ;
 
 ex:LoadRulesCapability a cap:AtomicCapability ;
     rdfs:label "Load N3 Rules"@en ;
-    cap:version "1.0.0" .
+    cap:version "latest" .
 
 ex:ExecuteReasonerCapability a cap:AtomicCapability ;
     rdfs:label "Execute Reasoner"@en ;
-    cap:version "1.0.0" .
+    cap:version "latest" .
 
 ex:MaterializeResultsCapability a cap:AtomicCapability ;
     rdfs:label "Materialize Results"@en ;
-    cap:version "1.0.0" .
+    cap:version "latest" .
 
 ex:N3ReasoningPrecondition a cap:Precondition ;
     rdfs:label "Valid N3 Rules"@en ;

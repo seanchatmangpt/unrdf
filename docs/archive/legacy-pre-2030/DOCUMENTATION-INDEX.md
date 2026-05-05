@@ -1,6 +1,6 @@
 # UNRDF - Master Documentation Index
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Created**: 2025-12-27
 **Status**: Production-Ready (Core Documentation Complete)
 
@@ -305,25 +305,25 @@ This index provides complete navigation across ALL UNRDF documentation, organize
 
 ## 🚀 Roadmap
 
-### 6.0.0-alpha.2 (Jan 2025)
+### latest.2 (Jan 2025)
 
 - ✅ Complete API reference documentation
 - ✅ Add receipt schema reference
 - ✅ Create 2 more integration examples
 
-### 6.0.0-beta.1 (Feb 2025)
+### latest.1 (Feb 2025)
 
 - ✅ Complete explanation documents (4 articles)
 - ✅ Add troubleshooting guide
 - ✅ Video tutorials (YouTube)
 
-### 6.0.0-rc.1 (Mar 2025)
+### latest.1 (Mar 2025)
 
 - ✅ Interactive documentation site (Nextra)
 - ✅ Search functionality
 - ✅ Multilingual support (Spanish, Chinese)
 
-### 6.0.0 (Apr 2025)
+### latest (Apr 2025)
 
 - ✅ 100% documentation coverage
 - ✅ Community contributions integrated
@@ -369,7 +369,7 @@ git push origin docs/my-tutorial
 
 ## 📝 Change Log
 
-### 2025-12-27 - Initial 6.0.0 Documentation Release
+### 2025-12-27 - Initial latest Documentation Release
 
 - ✅ Created Diataxis structure
 - ✅ Tutorial: Getting Started with UNRDF

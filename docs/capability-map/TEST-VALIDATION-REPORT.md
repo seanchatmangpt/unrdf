@@ -43,7 +43,7 @@ timeout 30s pnpm test:coverage 2>&1 | tee /tmp/coverage-output.log
 ## Environment Details
 
 ### Pnpm Configuration
-- **Version**: 10.25.0
+- **Version**: latest
 - **Location**: /opt/node22/bin/pnpm
 - **Status**: ✅ Available
 

@@ -2,7 +2,7 @@
 title: "Integrate with workflow"
 type: "how-to"
 packageName: "@unrdf/yawl"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.7
 proof: "e585bd2e57d2ed0f05ce81cab07e99745cfb907f7ac38202c86a08e63ac79efd"

@@ -379,7 +379,7 @@ function countByReason(markers) {
  */
 export function exportRollbackState() {
   return {
-    version: '1.0.0',
+    version: 'latest',
     exportedAt: Date.now(),
     registry: Array.from(rollbackRegistry.entries()).map(([operation, marker]) => ({
       operation,

@@ -1,5 +1,5 @@
-mcp[cli]>=1.0.0
-pm4py>=2.7.0
+mcp[cli]>=latest
+pm4py>=latest
 tpot2
 requests
 pandas

@@ -1,6 +1,6 @@
 # Browser Compatibility Guide
 
-**UNRDF v3.1.0** - Production-Ready Browser Support
+**UNRDF vlatest** - Production-Ready Browser Support
 
 **Last Updated:** March 15, 2026
 
@@ -23,7 +23,7 @@
 
 ## Overview
 
-UNRDF v3.1.0 provides **production-ready browser support** with:
+UNRDF vlatest provides **production-ready browser support** with:
 
 - ✅ **IndexedDB storage** - Persistent RDF data storage
 - ✅ **Web Workers** - Background query execution
@@ -32,9 +32,9 @@ UNRDF v3.1.0 provides **production-ready browser support** with:
 - ✅ **Zero Node.js APIs** - Pure browser JavaScript
 - ✅ **Tree-shakeable** - Bundle size optimization
 
-### What's New in v3.1.0
+### What's New in vlatest
 
-**v3.0.x** had mock browser implementations. **v3.1.0** replaces these with real, production-ready browser APIs.
+**vlatest.x** had mock browser implementations. **vlatest** replaces these with real, production-ready browser APIs.
 
 **Key improvements:**
 - Real IndexedDB storage (was: mock localStorage)
@@ -87,7 +87,7 @@ UNRDF v3.1.0 provides **production-ready browser support** with:
 | **Service Workers** | ✅ | ✅ | ⚠️ | ✅ | ⚠️ |
 | **WebAssembly** | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **SharedArrayBuffer** | ✅ | ✅ | ⚠️ | ✅ | ⚠️ |
-| **Import Maps** | ✅ | ✅ v108+ | ✅ v16.4+ | ✅ | ⚠️ |
+| **Import Maps** | ✅ | ✅ v108+ | ✅ vlatest+ | ✅ | ⚠️ |
 | **Storage Quota API** | ✅ | ✅ | ❌ | ✅ | ⚠️ |
 
 **Legend:**
@@ -162,7 +162,7 @@ console.log(`
 `);
 
 // Alert at 80% usage
-if (quota.percentage > 0.8) {
+if (quota.percentage > latest) {
   console.warn('Storage nearly full, consider vacuum');
 }
 ```
@@ -224,7 +224,7 @@ const engine = await createBrowserKnowledgeEngine({
   profiling: {
     enabled: true,
     metrics: ['latency', 'memory', 'cache'],  // No 'cpu'
-    sampleRate: 0.1
+    sampleRate: latest
   }
 });
 
@@ -269,7 +269,7 @@ const engine = await createBrowserKnowledgeEngine({
 ### Step 1: Install UNRDF
 
 ```bash
-npm install unrdf@3.1.0
+npm install unrdf@latest
 ```
 
 ### Step 2: Configure Bundler
@@ -555,7 +555,7 @@ node build.mjs
 {
   "name": "unrdf-parcel-example",
   "source": "src/index.html",
-  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "browserslist": "> latest%, last 2 versions, not dead",
   "alias": {
     "unrdf": "unrdf/browser"
   },
@@ -612,7 +612,7 @@ npx parcel build src/index.html
   <pre id="results">Click buttons above...</pre>
 
   <script type="module">
-    import { createBrowserKnowledgeEngine, parseTurtle } from 'https://unpkg.com/unrdf@3.1.0/browser';
+    import { createBrowserKnowledgeEngine, parseTurtle } from 'https://unpkg.com/unrdf@latest/browser';
 
     let engine;
 
@@ -634,7 +634,7 @@ npx parcel build src/index.html
 
       const ttl = `
         @prefix ex: <http://example.org/> .
-        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
         ex:alice a foaf:Person ;
                  foaf:name "Alice" ;
@@ -660,7 +660,7 @@ npx parcel build src/index.html
 
       const results = await engine.query({
         query: `
-          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          PREFIX foaf: <http://xmlns.com/foaf/latest/>
           SELECT ?person ?name ?friend
           WHERE {
             ?person a foaf:Person ;
@@ -680,7 +680,7 @@ npx parcel build src/index.html
 
       const shapeTtl = `
         @prefix sh: <http://www.w3.org/ns/shacl#> .
-        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
         ex:PersonShape a sh:NodeShape ;
           sh:targetClass foaf:Person ;
@@ -740,7 +740,7 @@ function App() {
 
     const ttl = `
       @prefix ex: <http://example.org/> .
-      @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+      @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
       ex:alice foaf:name "Alice" ;
                foaf:age 30 .
@@ -765,7 +765,7 @@ function App() {
 
     const queryResults = await engine.query({
       query: `
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX foaf: <http://xmlns.com/foaf/latest/>
         SELECT ?person ?name ?age
         WHERE {
           ?person foaf:name ?name ;
@@ -943,8 +943,8 @@ export default {
 
       const ttl = `
         @prefix ex: <http://example.org/> .
-        ex:product1 ex:name "Widget" ; ex:price 19.99 .
-        ex:product2 ex:name "Gadget" ; ex:price 29.99 .
+        ex:product1 ex:name "Widget" ; ex:price latest .
+        ex:product2 ex:name "Gadget" ; ex:price latest .
       `;
 
       const store = await parseTurtle(ttl);
@@ -1266,7 +1266,7 @@ registerServiceWorker({
 ```javascript
 const engine = await createBrowserKnowledgeEngine({
   parsing: {
-    useWasm: true,  // Default in v3.1.0
+    useWasm: true,  // Default in vlatest
     wasmPath: '/wasm/parser.wasm'  // Optional custom path
   }
 });
@@ -1330,7 +1330,7 @@ const engine = await createBrowserKnowledgeEngine({
 
 **Solution:** Use polyfill:
 ```html
-<script async src="https://unpkg.com/es-module-shims@1.5.4/dist/es-module-shims.js"></script>
+<script async src="https://unpkg.com/es-module-shims@latest/dist/es-module-shims.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -1438,7 +1438,7 @@ const engine = await createBrowserKnowledgeEngine({
 
 ## Summary
 
-**UNRDF v3.1.0** provides production-ready browser support with:
+**UNRDF vlatest** provides production-ready browser support with:
 
 ✅ **Full RDF operations** in browser (SPARQL, SHACL, reasoning)
 ✅ **IndexedDB storage** for persistent data
@@ -1455,8 +1455,8 @@ const engine = await createBrowserKnowledgeEngine({
 5. Implement graceful degradation
 
 **Resources:**
-- [Release Notes](./v3.1.0-RELEASE-NOTES.md)
-- [Migration Guide](./MIGRATION-v3.0-to-v3.1.md)
+- [Release Notes](./vlatest-NOTES.md)
+- [Migration Guide](./MIGRATION-vlatest-vlatest.md)
 - [Examples](../examples/browser/)
 
 ---

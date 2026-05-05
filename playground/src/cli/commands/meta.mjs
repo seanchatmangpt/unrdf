@@ -6,7 +6,7 @@
  * middleware listing, telemetry export, and version info.
  *
  * @module cli/commands/meta
- * @version 2.0.0
+ * @version latest
  * @license MIT
  */
 
@@ -21,7 +21,7 @@ import { defineCommand } from 'citty';
  */
 const VERSION_INFO = {
   name: 'playground',
-  version: '2.0.0',
+  version: 'latest',
   node: process.version,
   platform: process.platform,
   arch: process.arch
@@ -145,7 +145,7 @@ const introspectCommand = defineCommand({
       },
       '@type': 'CLIApplication',
       name: 'playground',
-      version: '2.0.0',
+      version: 'latest',
       description: 'Citty + Nunjucks + UNRDF playground CLI',
       commands: {
         papers: {
@@ -598,7 +598,7 @@ const telemetryCommand = defineCommand({
           resource: {
             attributes: [
               { key: 'service.name', value: { stringValue: 'playground-cli' } },
-              { key: 'service.version', value: { stringValue: '2.0.0' } }
+              { key: 'service.version', value: { stringValue: 'latest' } }
             ]
           },
           scopeMetrics: [{
@@ -653,9 +653,9 @@ const versionCommand = defineCommand({
     const info = {
       ...VERSION_INFO,
       dependencies: {
-        citty: '0.1.6',
-        zod: '3.22.0',
-        nunjucks: '3.2.4'
+        citty: 'latest',
+        zod: 'latest',
+        nunjucks: 'latest'
       },
       buildDate: '2024-11-22',
       commit: 'abc1234'

@@ -3,14 +3,14 @@
 **Domain**: Performance Engineering
 **Owner**: Performance Benchmarker Agent
 **Status**: Active
-**Version**: v6.0.0-rc.1
+**Version**: [VERSION]-rc.1
 **Last Updated**: 2025-12-28
 
 ---
 
 ## Context & Current State
 
-**Current Performance** (v6.0.0 post-merge):
+**Current Performance** ([VERSION] post-merge):
 - Receipt creation: 0.009ms median (target <1ms) - **EXCEEDS 111x**
 - Throughput: 83,895 receipts/sec (target >5,000/sec) - **EXCEEDS 16.8x**
 - Memory: 4.1MB per 1K triples (target <20MB) - **EXCEEDS 4.9x**
@@ -39,7 +39,7 @@
 - [ ] P50, P95, P99 latency established for each operation with <5% variance
 - [ ] Throughput baselines (ops/sec) for single-threaded and concurrent (10/100/1000 workers)
 - [ ] Memory baselines (peak, average, growth rate) for all operation types
-- [ ] Baseline data stored in `/benchmarks/baselines/v6.0.0-baseline.json` with metadata
+- [ ] Baseline data stored in `/benchmarks/baselines/[VERSION]-baseline.json` with metadata
 - [ ] Historical tracking with 30-day retention showing trend analysis
 - [ ] Baseline validation runs in CI on every release candidate (rc-*) tag
 - [ ] Statistical confidence intervals (95%) documented for each metric

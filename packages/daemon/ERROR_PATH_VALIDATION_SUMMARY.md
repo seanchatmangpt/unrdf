@@ -230,7 +230,7 @@ it('should handle LRU cache eviction under memory pressure', async () => {
 **Test Implementation**:
 ```javascript
 it('should detect version mismatch in receipt', async () => {
-  // Arrange: Receipt v1.0.0, current v2.0.0
+  // Arrange: Receipt [VERSION], current [VERSION]
   // Act: Check version match
   // Assert:
   //   - versionMismatch = true
@@ -290,7 +290,7 @@ All 84 existing tests continue to pass. Error path validation tests integrate se
 - 27 comprehensive error path validation tests
 - Organized by JTBD (6 describe blocks)
 - Clear error scenarios with detailed comments
-- Vitest 4.0.16 compatible
+- Vitest [VERSION] compatible
 
 ### 2. Documentation
 **File**: `/packages/daemon/docs/error-path-validation.md`

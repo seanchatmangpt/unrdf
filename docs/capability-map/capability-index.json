@@ -9,8 +9,8 @@
   "packages": [
     {
       "package": "@unrdf/core",
-      "version": "6.0.0-alpha.1",
-      "runtime": "Node.js ≥18.0.0, Browser (ES2020+)",
+      "version": "latest-alpha.1",
+      "runtime": "Node.js ≥latest, Browser (ES2020+)",
       "atoms": [
         {
           "name": "createStore()",
@@ -378,8 +378,8 @@
     },
     {
       "package": "@unrdf/oxigraph",
-      "version": "5.0.1",
-      "runtime": "Node.js ≥18.0.0",
+      "version": "latest",
+      "runtime": "Node.js ≥latest",
       "atoms": [
         {
           "name": "createStore()",

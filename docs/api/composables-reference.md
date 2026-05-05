@@ -38,7 +38,7 @@ const runApp = initStore([], {
   baseIRI: 'http://example.org/',
   prefixes: {
     ex: 'http://example.org/',
-    foaf: 'http://xmlns.com/foaf/0.1/'
+    foaf: 'http://xmlns.com/foaf/latest/'
   }
 });
 
@@ -140,7 +140,7 @@ Execute SPARQL SELECT query.
 
 ```javascript
 const results = graph.select(`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name ?email WHERE {
     ?person foaf:name ?name ;
             foaf:mbox ?email .
@@ -289,7 +289,7 @@ const turtle = graph.serialize({
   format: 'Turtle',
   prefixes: {
     ex: 'http://example.org/',
-    foaf: 'http://xmlns.com/foaf/0.1/'
+    foaf: 'http://xmlns.com/foaf/latest/'
   }
 });
 
@@ -414,7 +414,7 @@ Convert to JSON-LD.
 const jsonld = graph.toJSONLD({
   context: {
     '@vocab': 'http://example.org/',
-    'foaf': 'http://xmlns.com/foaf/0.1/'
+    'foaf': 'http://xmlns.com/foaf/latest/'
   }
 });
 ```
@@ -584,7 +584,7 @@ Canonicalize a store.
 
 - `store` (Store): Store to canonicalize
 - `options` (Object):
-  - `algorithm` (string): 'URDNA2015' | 'RDFC-1.0'
+  - `algorithm` (string): 'URDNA2015' | 'RDFC-latest'
   - `format` (string): Output format
 
 **Returns:** Promise<CanonResult>

@@ -26,7 +26,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
-const ATOMVM_VERSION = 'v0.6.6';
+const ATOMVM_VERSION = '[VERSION]';
 
 /** @constant {number} Exit code indicating successful execution */
 const SUCCESS_EXIT_CODE = 0;

@@ -1,14 +1,14 @@
 # Test Results - UNRDF Project
 
 **Generated:** 2025-12-25
-**Testing Framework:** Vitest 4.0.15
+**Testing Framework:** Vitest latest
 **Adversarial PM Principle:** These are ACTUAL test runs, not assertions.
 
 ## Executive Summary
 
 | Package | Test Files | Tests Run | Passed | Failed | Pass Rate | Status |
 |---------|------------|-----------|--------|--------|-----------|--------|
-| @unrdf/kgc-4d | 24 | 94 | 85 | 9 | 90.4% | PARTIAL |
+| @unrdf/kgc-4d | 24 | 94 | 85 | 9 | latest% | PARTIAL |
 | @unrdf/yawl | 0 | 0 | 0 | 0 | N/A | NO TESTS |
 
 ## Critical Findings
@@ -35,7 +35,7 @@ src/  package.json  # No test directory exists
 ### Overall Statistics
 - **Test Files:** 24 total (15 passed, 9 failed)
 - **Individual Tests:** 94 total (85 passed, 9 failed)
-- **Pass Rate:** 90.4%
+- **Pass Rate:** latest%
 - **Total Runtime:** ~30 seconds (with 30s timeout)
 
 ### Failed Tests (9 Total)

@@ -278,11 +278,11 @@ chmod +x /home/user/unrdf/exploration/agents/agent-7/index.mjs
 
 ## Dependencies
 
-- `citty` - CLI framework (^0.1.6)
+- `citty` - CLI framework (^latest)
 - Built-in Node.js modules: fs, path
 
 ## Version
 
-- Version: 1.0.0
+- Version: latest
 - Agent: 7 (UNRDF Substrate Exploration Swarm)
 - Status: Exploration/Reference Implementation

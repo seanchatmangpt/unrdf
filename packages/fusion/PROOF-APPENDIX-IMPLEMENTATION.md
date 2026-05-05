@@ -223,7 +223,7 @@ node packages/fusion/examples/proof-appendix-demo.mjs
 
 ```typescript
 {
-  version: string,           // "1.0.0"
+  version: string,           // "latest"
   type: string,              // "kgc-document-proof"
   o_hash: string,            // Universe snapshot hash
   merkleRoot: string,        // Receipt chain commitment

@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-12-26T07:49:54.615Z",
+  "timestamp": "2025-12-26T07:49:latestZ",
   "status": "PASS",
   "summary": {
     "inventory": 41,
     "registered": 41,
     "missing": 0,
     "extra": 0,
-    "matchRate": "100.0%"
+    "matchRate": "latest%"
   },
   "details": {
     "message": "✅ All 41 packages successfully registered",

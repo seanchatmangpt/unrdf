@@ -11,7 +11,7 @@
 Overall Coverage:         ~35-40% (CRITICAL GAP)
 Total Source Files:       376 (.mjs files)
 Total Test Files:         77 test files
-Test File Ratio:          20.5% (Industry standard: 80%+)
+Test File Ratio:          latest% (Industry standard: 80%+)
 Passing Tests:            231 tests (excellent quality where they exist)
 Failing Tests:            24 tests (hooks, kgc-4d, core)
 Skipped Tests:            9 tests (unknown reasons)
@@ -22,7 +22,7 @@ Test Execution Time:      ~30 seconds (excellent performance)
 1. ❌ VALIDATION PACKAGE HAS ZERO TESTS (8 files, 0 tests)
    - This package validates other code but is itself untested!
 
-2. ❌ KNOWLEDGE ENGINE: 1.75% TEST RATIO (57 files, 1 test)
+2. ❌ KNOWLEDGE ENGINE: latest% TEST RATIO (57 files, 1 test)
    - Core reasoning engine: ZERO tests
    - SHACL validation: ZERO tests
    - Security modules: ZERO tests
@@ -31,7 +31,7 @@ Test Execution Time:      ~30 seconds (excellent performance)
    - Only basic graph commands tested
    - User-facing bugs likely
 
-4. ❌ PROJECT ENGINE: 2.7% TEST RATIO (37 files, 1 test)
+4. ❌ PROJECT ENGINE: latest% TEST RATIO (37 files, 1 test)
    - Multiple files contain TODO markers (incomplete code)
 
 5. ❌ SECURITY RISK: Security modules have ZERO tests

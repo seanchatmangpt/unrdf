@@ -26,11 +26,11 @@ async function example1_singleReceipt() {
     decision: 'allow',
     outputHash: 'd6e8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0',
     toolchainVersion: {
-      node: 'v18.19.0',
+      node: '[VERSION]',
       packages: {
-        '@unrdf/core': '^5.0.1',
+        '@unrdf/core': '^[VERSION]',
         '@unrdf/oxigraph': 'workspace:*',
-        'hash-wasm': '^4.12.0',
+        'hash-wasm': '^[VERSION]',
       },
     },
     timestamp: new Date('2025-12-26T14:30:00.123Z'),
@@ -65,8 +65,8 @@ async function example2_receiptChain() {
     decision: 'allow',
     outputHash: 'universe_state_after_person_class_hash',
     toolchainVersion: {
-      node: 'v18.19.0',
-      packages: { '@unrdf/core': '^5.0.1' },
+      node: '[VERSION]',
+      packages: { '@unrdf/core': '^[VERSION]' },
     },
     timestamp: new Date('2025-12-26T14:30:00.000Z'),
   });
@@ -82,8 +82,8 @@ async function example2_receiptChain() {
     decision: 'deny',
     outputHash: 'universe_state_unchanged_hash',
     toolchainVersion: {
-      node: 'v18.19.0',
-      packages: { '@unrdf/core': '^5.0.1' },
+      node: '[VERSION]',
+      packages: { '@unrdf/core': '^[VERSION]' },
     },
     beforeHash: receipt1.receiptHash,
     timestamp: new Date('2025-12-26T14:30:01.000Z'),
@@ -100,8 +100,8 @@ async function example2_receiptChain() {
     decision: 'allow',
     outputHash: 'universe_state_with_employee_hash',
     toolchainVersion: {
-      node: 'v18.19.0',
-      packages: { '@unrdf/core': '^5.0.1' },
+      node: '[VERSION]',
+      packages: { '@unrdf/core': '^[VERSION]' },
     },
     beforeHash: receipt2.receiptHash,
     timestamp: new Date('2025-12-26T14:30:02.000Z'),
@@ -158,8 +158,8 @@ async function example3_merkleBatching() {
       decision: i % 3 === 0 ? 'deny' : 'allow',
       outputHash: `state_${i}_hash`,
       toolchainVersion: {
-        node: 'v18.19.0',
-        packages: { '@unrdf/core': '^5.0.1' },
+        node: '[VERSION]',
+        packages: { '@unrdf/core': '^[VERSION]' },
       },
       timestamp: new Date(`2025-12-26T14:30:${String(i).padStart(2, '0')}.000Z`),
     });
@@ -273,8 +273,8 @@ async function example5_determinismVerification() {
     decision: 'allow',
     outputHash: 'hash4',
     toolchainVersion: {
-      node: 'v18.19.0',
-      packages: { '@unrdf/core': '^5.0.1' },
+      node: '[VERSION]',
+      packages: { '@unrdf/core': '^[VERSION]' },
     },
     timestamp,
   };

@@ -1,6 +1,6 @@
 {
   "name": "unrdf-hooks-showcase",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "private": true,
   "description": "Interactive showcase of 40+ UNRDF React hooks with real KGC-4D backend",
   "type": "module",

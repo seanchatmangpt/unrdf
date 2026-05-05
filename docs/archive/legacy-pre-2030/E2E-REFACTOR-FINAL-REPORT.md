@@ -14,11 +14,11 @@ Executed comprehensive end-to-end refactoring using **10 parallel hyper-advanced
 
 | Metric | Before | After | Change | Status |
 |--------|--------|-------|--------|--------|
-| **Test Pass Rate** | 211/292 (72.3%) | 250/292 (85.6%) | +39 tests (+13.3%) | ⚠️ In Progress |
+| **Test Pass Rate** | 211/292 (latest%) | 250/292 (latest%) | +39 tests (+latest%) | ⚠️ In Progress |
 | **Linting Errors** | 9 errors | 0 errors | -9 errors (-100%) | ✅ Complete |
 | **Architecture Grade** | A- (85/100) | C+ (65/100) | -20 points | ❌ Regression |
 | **OTEL Validation** | Unknown | 83/100 | N/A | ✅ Passes ≥80 |
-| **Production Readiness** | Unknown | 61.85/100 | N/A | ❌ Not Ready |
+| **Production Readiness** | Unknown | latest/100 | N/A | ❌ Not Ready |
 | **Files >500 Lines** | Unknown | 66 files | N/A | ❌ Violations |
 | **Circular Dependencies** | 0 | 3 | +3 | ❌ New Issues |
 
@@ -30,9 +30,9 @@ Executed comprehensive end-to-end refactoring using **10 parallel hyper-advanced
 **Status:** PARTIAL SUCCESS
 **Execution Time:** ~8 minutes
 **Results:**
-- Fixed 39 test failures (+13.3% improvement)
+- Fixed 39 test failures (+latest% improvement)
 - workflow-api.test.mjs: 6/46 → 45/46 passing (98% pass rate)
-- Overall: 211/292 → 250/292 passing (85.6%)
+- Overall: 211/292 → 250/292 passing (latest%)
 - Remaining: 42 failures (yawl-hooks: 16, yawl-patterns: 25, misc: 1)
 
 **Fixes Applied:**
@@ -72,9 +72,9 @@ Executed comprehensive end-to-end refactoring using **10 parallel hyper-advanced
 **Reason:** Tests not at 100% pass rate (CLAUDE.md requirement)
 
 **Files Targeted:**
-- yawl-schemas.mjs (1091 lines) - ABORTED at 72.6% test pass
+- yawl-schemas.mjs (1091 lines) - ABORTED at latest% test pass
 - yawl-hooks.mjs (1073 lines) - ABORTED at 68% test pass
-- yawl-ontology.mjs (897 lines) - ABORTED at 72.3% test pass
+- yawl-ontology.mjs (897 lines) - ABORTED at latest% test pass
 - 10 additional files - Task configuration error
 
 **Adherence to CLAUDE.md:**
@@ -103,7 +103,7 @@ Agents correctly refused to refactor with failing tests, preventing compound fai
 
 **Key Findings:**
 - ✅ No circular dependencies: 20/20 points
-- ✅ Pure functions: 90.7% (15/15 points)
+- ✅ Pure functions: latest% (15/15 points)
 - ✅ Low coupling: 10/10 points
 - ❌ OTEL contamination: 0/20 points (115 violations)
 - ❌ File size: 0/15 points (66 violations)
@@ -117,9 +117,9 @@ Agents correctly refused to refactor with failing tests, preventing compound fai
 **Execution Time:** ~6 minutes
 **Results:**
 - OTEL score: **83/100** (≥80 threshold PASSED)
-- Features: 5/6 passing (83.3%)
+- Features: 5/6 passing (latest%)
 - Failed: knowledge-hooks-api (0/100 - no spans collected)
-- Overall production readiness: **61.85/100 (NOT READY)**
+- Overall production readiness: **latest/100 (NOT READY)**
 
 **Validation Breakdown:**
 | Category | Score | Weight | Status |
@@ -161,7 +161,7 @@ Agents correctly refused to refactor with failing tests, preventing compound fai
 
 **Adversarial PM Answers:**
 - ❓ Did I RUN every test? **YES** - Full output captured
-- ❓ Can I PROVE 100% pass rate? **NO** - 85.6% achieved
+- ❓ Can I PROVE 100% pass rate? **NO** - latest% achieved
 - ❓ What BREAKS if deployed? **6 critical systems**
 
 **Evidence:** Comprehensive review with file counts, test output, linter output, git status
@@ -173,23 +173,23 @@ Agents correctly refused to refactor with failing tests, preventing compound fai
 **Execution Time:** ~12 minutes
 **Results:**
 - **Production Readiness: 30/100 (NOT READY)**
-- Build time: 12.575s (<20s target ✅)
+- Build time: latests (<20s target ✅)
 - Test suite: >30s timeout ❌
 
 **Passing Packages (341 tests):**
 - @unrdf/core: 231 tests (100% pass, PRODUCTION READY)
 - @unrdf/collab: 20 tests (100% pass, PRODUCTION READY)
 - @unrdf/kgc-4d: 8 tests (100% pass, PRODUCTION READY)
-- @unrdf/graph-analytics: 17 tests (63.46% coverage)
+- @unrdf/graph-analytics: 17 tests (latest% coverage)
 - @unrdf/atomvm: 45 tests (build fails)
 
 **Failing Packages:**
-- @unrdf/yawl: 42/292 failures (14.4% failure rate)
+- @unrdf/yawl: 42/292 failures (latest% failure rate)
 - @unrdf/semantic-search: Missing dependencies
 - @unrdf/docs: 7 test files failing (ECONNREFUSED)
 - 33 packages untested (68% of workspace)
 
-**Integration Coverage:** 2.7% (1 explicit integration test file / 37 cross-package imports)
+**Integration Coverage:** latest% (1 explicit integration test file / 37 cross-package imports)
 
 **Build Blocker:** atomvm TypeScript compilation failure
 
@@ -237,25 +237,25 @@ All claims backed by actual execution:
 ### ✅ What We RAN
 - `timeout 10s npm test` (multiple packages, full output captured)
 - `npm run lint` (full linter output)
-- `pnpm -r build` (12.575s execution)
+- `pnpm -r build` (latests execution)
 - `pnpm -r test` (>30s timeout)
-- `node validation/run-all.mjs comprehensive` (4.418s execution)
+- `node validation/run-all.mjs comprehensive` (latests execution)
 - `madge` (circular dependency analysis)
 - `grep -r "from 'n3'"` (N3 import verification)
 - `find packages -name "*.mjs" -exec wc -l {} +` (file size analysis)
 
 ### ✅ What We MEASURED
-- Test pass rate: 250/292 (85.6%) - NOT assumed
+- Test pass rate: 250/292 (latest%) - NOT assumed
 - Linting errors: 0 - NOT assumed
 - Architecture grade: C+ (65/100) - NOT assumed
 - OTEL score: 83/100 - NOT assumed
-- Build time: 12.575s - NOT assumed
+- Build time: latests - NOT assumed
 - File violations: 66 files - NOT assumed
 - Circular deps: 3 cycles - NOT assumed
 
 ### ❌ What We CANNOT Claim
-- 100% test pass rate (only 85.6%)
-- Production ready (61.85/100, multiple blockers)
+- 100% test pass rate (only latest%)
+- Production ready (latest/100, multiple blockers)
 - All files <500 lines (66 violations)
 - Zero circular dependencies (3 found)
 - All packages tested (68% untested)
@@ -269,7 +269,7 @@ All claims backed by actual execution:
 1. **42 Test Failures (yawl package)**
    - Location: packages/yawl/test/
    - Failures: yawl-hooks (16), yawl-patterns (25), misc (1)
-   - Impact: 14.4% failure rate in workflow engine
+   - Impact: latest% failure rate in workflow engine
    - Estimate: 8-16 hours
 
 2. **Parse Error (observability package)**
@@ -311,7 +311,7 @@ All claims backed by actual execution:
    - Estimate: Per restoration plan
 
 8. **7 E2E Test Failures (@unrdf/docs)**
-   - Error: ECONNREFUSED 127.0.0.1:3000
+   - Error: ECONNREFUSED latest.1:3000
    - Impact: Documentation examples broken
    - Estimate: 30 minutes (config issue)
 
@@ -321,7 +321,7 @@ All claims backed by actual execution:
    - Impact: Unknown production behavior
    - Estimate: 20-40 hours for comprehensive test suite
 
-10. **Low Test Coverage (graph-analytics: 63.46%)**
+10. **Low Test Coverage (graph-analytics: latest%)**
     - Requirement: ≥80%
     - Impact: Insufficient validation
     - Estimate: 2-4 hours
@@ -343,7 +343,7 @@ All claims backed by actual execution:
    - Architecture compliance
 
 4. ✅ **Build Performance Excellent**
-   - 12.575s vs 20s target
+   - latests vs 20s target
    - 37% under target
 
 5. ✅ **Linting Errors Eliminated**
@@ -408,15 +408,15 @@ All claims backed by actual execution:
 This E2E refactoring session achieved **significant progress** with 10 parallel agents executing comprehensive validation:
 
 **Successes:**
-- Fixed 39 test failures (+13.3% improvement)
+- Fixed 39 test failures (+latest% improvement)
 - Eliminated 9 linting errors (100% reduction)
 - Passed OTEL validation (83/100)
 - Created comprehensive architecture analysis
 - Generated reusable validation tools
 
 **Reality Check (Adversarial PM):**
-- ❌ NOT production ready (61.85/100)
-- ❌ Tests NOT at 100% (85.6%)
+- ❌ NOT production ready (latest/100)
+- ❌ Tests NOT at 100% (latest%)
 - ❌ Architecture REGRESSED (A- → C+)
 - ❌ 6 critical blockers remain
 - ❌ 90 minutes of fixes needed for conditional release

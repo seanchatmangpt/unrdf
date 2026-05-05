@@ -28,7 +28,7 @@
 
 - `createStore()` returns an oxigraph.Store wrapper
 - `store.load(data, { format: 'text/turtle' })` successfully ingests RDF
-- Both Turtle and N-Quads parsers are available in oxigraph v0.5.2
+- Both Turtle and N-Quads parsers are available in oxigraph latest
 
 ### 2. Canonicalization & Hashing
 

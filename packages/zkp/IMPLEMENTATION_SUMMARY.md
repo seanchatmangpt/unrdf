@@ -1,6 +1,6 @@
 # Zero-Knowledge SPARQL Implementation Summary
 
-**Package**: `@unrdf/zkp` v6.2.0-alpha.1
+**Package**: `@unrdf/zkp` [VERSION]-alpha.1
 **Status**: ✅ PRODUCTION READY
 **Date**: 2026-01-11
 
@@ -367,7 +367,7 @@ Successfully implemented **first production Zero-Knowledge SPARQL system** with:
 - ✅ Cryptographically sound implementation
 - ✅ Performance targets met
 
-**Status**: Ready for v6.2.0 release
+**Status**: Ready for [VERSION] release
 
 ---
 

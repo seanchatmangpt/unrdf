@@ -239,7 +239,7 @@ export async function generateSystemReport(deltas) {
   const strategy = await recommendStrategy(deltas);
 
   return {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: new Date().toISOString(),
     deltaCount: deltas.length,
     conflicts: {
@@ -273,4 +273,4 @@ export async function generateSystemReport(deltas) {
 }
 
 // Export version
-export const VERSION = '1.0.0';
+export const VERSION = 'latest';

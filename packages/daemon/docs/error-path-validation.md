@@ -413,19 +413,19 @@ Then:
 
 #### Scenario: Detect Version Mismatch in Receipt
 ```
-Given: Receipt with version v1.0.0, current system v2.0.0
+Given: Receipt with version [VERSION], current system [VERSION]
 When: Check version compatibility
 Then:
   - Mismatch detected (versionMismatch = true)
-  - Versions logged: {receipt_version: v1.0.0, current: v2.0.0}
+  - Versions logged: {receipt_version: [VERSION], current: [VERSION]}
 ```
 
 **Key Assertions**:
 ```javascript
 const versionMismatch = receipt.version !== currentVersion;
 expect(versionMismatch).toBe(true);
-expect(receipt.version).toBe('v1.0.0');
-expect(currentVersion).toBe('v2.0.0');
+expect(receipt.version).toBe('[VERSION]');
+expect(currentVersion).toBe('[VERSION]');
 ```
 
 #### Test: Should Prevent Rollback with Version Mismatch
@@ -603,5 +603,5 @@ pnpm -C packages/daemon test -- --grep "JTBD #4.2"
 
 - JTBD E2E Test Suite: `/docs/finops-fabric-e2e-jtbd-tests.md`
 - Daemon Implementation: `/packages/daemon/src/daemon.mjs`
-- Test Framework: Vitest 4.0.16
+- Test Framework: Vitest [VERSION]
 - Code Quality Rules: `/CLAUDE.md`

@@ -2,7 +2,7 @@
 
 **Phase:** 2 of 6
 **Duration:** 3 weeks (Weeks 3-5)
-**Effort:** 338-412 hours (5.5 FTE)
+**Effort:** 338-412 hours (latest FTE)
 **Packages:** 6 (streaming, federation, knowledge-engine, browser, cli, react)
 **Files:** 108 (16 per package, except CLI=12)
 **Words:** ~100,000

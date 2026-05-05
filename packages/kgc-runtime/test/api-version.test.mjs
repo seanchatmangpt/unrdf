@@ -23,28 +23,28 @@ describe('APIVersionManager', () => {
 
   it('should check version compatibility', () => {
     // Same major.minor = compatible
-    expect(versionManager.isCompatible('5.0.0', '5.0.1')).toBe(true);
+    expect(versionManager.isCompatible('[VERSION]', '[VERSION]')).toBe(true);
 
     // Higher minor = compatible
-    expect(versionManager.isCompatible('5.0.0', '5.1.0')).toBe(true);
+    expect(versionManager.isCompatible('[VERSION]', '[VERSION]')).toBe(true);
 
     // Lower minor = not compatible
-    expect(versionManager.isCompatible('5.1.0', '5.0.0')).toBe(false);
+    expect(versionManager.isCompatible('[VERSION]', '[VERSION]')).toBe(false);
 
     // Different major = not compatible
-    expect(versionManager.isCompatible('5.0.0', '6.0.0')).toBe(false);
+    expect(versionManager.isCompatible('[VERSION]', '[VERSION]')).toBe(false);
   });
 
   it('should detect deprecated versions', () => {
-    const deprecated = versionManager.isDeprecated('4.0.0');
+    const deprecated = versionManager.isDeprecated('[VERSION]');
     expect(deprecated).toBe(true);
 
-    const stable = versionManager.isDeprecated('5.0.1');
+    const stable = versionManager.isDeprecated('[VERSION]');
     expect(stable).toBe(false);
   });
 
   it('should calculate days until removal for deprecated versions', () => {
-    const days = versionManager.getDaysUntilRemoval('4.0.0');
+    const days = versionManager.getDaysUntilRemoval('[VERSION]');
     expect(typeof days).toBe('number');
   });
 
@@ -57,18 +57,18 @@ describe('APIVersionManager', () => {
 
 describe('Plugin Version Validation', () => {
   it('should validate compatible plugin versions', () => {
-    expect(isPluginCompatible('5.0.0')).toBe(true);
-    expect(isPluginCompatible('5.0.1')).toBe(true);
+    expect(isPluginCompatible('[VERSION]')).toBe(true);
+    expect(isPluginCompatible('[VERSION]')).toBe(true);
   });
 
   it('should reject incompatible plugin versions', () => {
-    expect(isPluginCompatible('6.0.0')).toBe(false);
-    expect(isPluginCompatible('4.0.0')).toBe(false);
+    expect(isPluginCompatible('[VERSION]')).toBe(false);
+    expect(isPluginCompatible('[VERSION]')).toBe(false);
   });
 
   it('should throw for removed versions', () => {
     expect(() => {
-      validatePluginVersion('3.0.0');
+      validatePluginVersion('[VERSION]');
     }).toThrow(/has been removed/);
   });
 });

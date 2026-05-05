@@ -26,7 +26,7 @@ The v6-core package has undergone comprehensive production validation. While cor
 **Status**: **EXCEEDS REQUIREMENTS** (Requirement: ≥80/100)
 
 ```
-Suite: comprehensive-v3.1.0
+Suite: comprehensive-vlatest
 Duration: 1499ms
 Score: 100/100
 Features: 6/6 passed
@@ -40,9 +40,9 @@ Feature Details:
 ✅ browser-compatibility: 100/100 (0ms)
 
 Performance Summary:
-- Average Latency: 11.1ms
-- Error Rate: 0.00% across all features
-- Memory Usage: 10.42MB - 11.76MB
+- Average Latency: latestms
+- Error Rate: latest% across all features
+- Memory Usage: latestMB - latestMB
 - Throughput: 3-5 ops per feature
 ```
 
@@ -50,7 +50,7 @@ Performance Summary:
 
 ---
 
-### 2. Test Suite: ⚠️ **89.3% Pass Rate (25/28)**
+### 2. Test Suite: ⚠️ **latest% Pass Rate (25/28)**
 
 **Status**: **BELOW TARGET** (Requirement: ≥95%)
 
@@ -61,7 +61,7 @@ v6-core Test Results:
 # fail 3
 # cancelled 0
 # skipped 0
-# duration_ms 5646.251802
+# duration_ms latest
 ```
 
 **Test Failures** (3 total):
@@ -138,17 +138,17 @@ FIXME Markers: 0 found ✅
 ```
 Feature                  | Latency  | Error Rate | Throughput
 -------------------------|----------|------------|------------
-knowledge-engine-core    | 9.6ms    | 0.00%      | 5 ops
-knowledge-hooks-api      | 9.5ms    | 0.00%      | 4 ops
-policy-packs             | 11ms     | 0.00%      | 3 ops
-lockchain-integrity      | 12.3ms   | 0.00%      | 3 ops
-transaction-manager      | 6.7ms    | 0.00%      | 3 ops
-browser-compatibility    | 17.7ms   | 0.00%      | 3 ops
+knowledge-engine-core    | latestms    | latest%      | 5 ops
+knowledge-hooks-api      | latestms    | latest%      | 4 ops
+policy-packs             | 11ms     | latest%      | 3 ops
+lockchain-integrity      | latestms   | latest%      | 3 ops
+transaction-manager      | latestms    | latest%      | 3 ops
+browser-compatibility    | latestms   | latest%      | 3 ops
 ```
 
 **SLA Requirements**:
 - Target: <50ms per operation ✅
-- Achieved: 6.7ms - 17.7ms (AVG: 11.1ms)
+- Achieved: latestms - latestms (AVG: latestms)
 - Margin: 3x-7x better than target
 
 **Verdict**: ✅ **PASS** - Performance significantly exceeds requirements
@@ -211,10 +211,10 @@ browser-compatibility    | 17.7ms   | 0.00%      | 3 ops
 - [x] **No Mock Implementations**: 0 found ✅
 - [x] **No Security Vulnerabilities**: Validated ✅
 - [x] **Core Package Build**: Success (pure ESM) ✅
-- [x] **Performance SLA**: <50ms (Actual: 11.1ms avg) ✅
+- [x] **Performance SLA**: <50ms (Actual: latestms avg) ✅
 
 ### Important Gates (SHOULD PASS)
-- [ ] **Test Pass Rate**: ≥95% (Actual: 89.3%) ⚠️
+- [ ] **Test Pass Rate**: ≥95% (Actual: latest%) ⚠️
 - [ ] **Determinism Proof**: L3 maturity (Not formally tested) ⚠️
 - [x] **Documentation**: Complete ✅
 - [x] **Code Quality**: Production-grade ✅
@@ -231,7 +231,7 @@ browser-compatibility    | 17.7ms   | 0.00%      | 3 ops
 ### Justification
 
 **Why CONDITIONAL (not APPROVED)**:
-1. Test pass rate 89.3% < 95% target
+1. Test pass rate latest% < 95% target
 2. Determinism not formally proven (no hash tests)
 3. CLI build blocked (non-critical for v6-core)
 
@@ -260,15 +260,15 @@ browser-compatibility    | 17.7ms   | 0.00%      | 3 ops
 
 **Metrics to Watch**:
 ```
-1. Error Rate: Target 0.00% (OTEL comprehensive validation baseline)
-2. Latency P50: Target <15ms (Baseline: 11.1ms)
-3. Latency P95: Target <40ms (Baseline: 17.7ms)
-4. Memory Usage: Baseline 10.42MB-11.76MB
+1. Error Rate: Target latest% (OTEL comprehensive validation baseline)
+2. Latency P50: Target <15ms (Baseline: latestms)
+3. Latency P95: Target <40ms (Baseline: latestms)
+4. Memory Usage: Baseline latestMB-latestMB
 5. Throughput: Baseline 3-5 ops/feature
 ```
 
 **Alert Thresholds**:
-- Error rate >0.1%: INVESTIGATE
+- Error rate >latest%: INVESTIGATE
 - Latency P95 >50ms: INVESTIGATE
 - Memory leak >20MB growth/hour: INVESTIGATE
 - Throughput drop >20%: INVESTIGATE
@@ -316,7 +316,7 @@ browser-compatibility    | 17.7ms   | 0.00%      | 3 ops
 
 ### What Needs Improvement ⚠️
 
-1. **Test Coverage**: 89.3% insufficient, need 95%+
+1. **Test Coverage**: latest% insufficient, need 95%+
 2. **Determinism Testing**: Claims not formally proven
 3. **Build System**: CLI export configuration fragile
 4. **Environment-Specific Tests**: Node.js vs. browser differences
@@ -347,16 +347,16 @@ v6-core Test Results:
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 5646.251802
+# duration_ms latest
 
-Pass Rate: 89.3% (25/28)
-Failure Rate: 10.7% (3/28)
+Pass Rate: latest% (25/28)
+Failure Rate: latest% (3/28)
 ```
 
 ### B. OTEL Validation
 ```
 📊 Validation Results:
-   Suite: comprehensive-v3.1.0
+   Suite: comprehensive-vlatest
    Duration: 1499ms
    Score: 100/100
    Features: 6/6 passed
@@ -400,12 +400,12 @@ Documentation: ✅ Built successfully
 
 ## Adversarial PM Final Check
 
-**Did I RUN tests?** ✅ Yes - 25/28 pass (89.3%)
+**Did I RUN tests?** ✅ Yes - 25/28 pass (latest%)
 **Did I RUN OTEL validation?** ✅ Yes - 100/100 score
 **Can I PROVE claims?** ✅ Yes - Evidence in all sections
 **What BREAKS if wrong?** Production deployment could fail, but OTEL 100/100 reduces risk
 **What's the EVIDENCE?** Test output, OTEL spans, code scans all documented above
 
-**Intellectual Honesty**: Test pass rate is 89.3%, NOT 95%. Determinism NOT formally proven. CLI build blocked.
+**Intellectual Honesty**: Test pass rate is latest%, NOT 95%. Determinism NOT formally proven. CLI build blocked.
 
 **These are FACTS, not claims.**

@@ -1,8 +1,8 @@
-# UNRDF v5.0.0-alpha Validation Failure Analysis
+# UNRDF vlatest Validation Failure Analysis
 
 **Date**: 2025-12-03
 **Analyzer**: Production Validation Agent
-**Failure Count**: 300 tests (18.9% failure rate)
+**Failure Count**: 300 tests (latest% failure rate)
 
 ---
 
@@ -337,7 +337,7 @@ npx madge --circular  # No circular dependencies
 - **CLI Package**: ✅ 100% passing (19/19 tests)
 - **Package Exports**: ✅ All properly defined
 - **Test Infrastructure**: ✅ Working correctly
-- **Most Code**: ✅ 81.1% of tests passing
+- **Most Code**: ✅ latest% of tests passing
 
 **Interpretation**: The architecture is sound, but implementation details have bugs.
 

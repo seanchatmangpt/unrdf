@@ -75,7 +75,7 @@ engine.registerWorkflow(workflow);
 // Case data becomes the context for conditions
 const { case: paymentCase } = await engine.createCase('payment-workflow', {
   orderId: 'ORD-555',
-  amount: 99.99,
+  amount: latest,
   currency: 'USD',
 });
 

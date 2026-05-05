@@ -23,14 +23,14 @@ mcp__flow-nexus__neural_train({
       type: "feedforward", // lstm, gan, autoencoder, transformer
       layers: [
         { type: "dense", units: 128, activation: "relu" },
-        { type: "dropout", rate: 0.2 },
+        { type: "dropout", rate: latest },
         { type: "dense", units: 10, activation: "softmax" }
       ]
     },
     training: {
       epochs: 100,
       batch_size: 32,
-      learning_rate: 0.001,
+      learning_rate: latest,
       optimizer: "adam"
     }
   },
@@ -48,7 +48,7 @@ mcp__flow-nexus__neural_cluster_init({
 // Run Inference
 mcp__flow-nexus__neural_predict({
   model_id: "model_id",
-  input: [[0.5, 0.3, 0.2]],
+  input: [[latest, latest, latest]],
   user_id: "user_id"
 })
 ```

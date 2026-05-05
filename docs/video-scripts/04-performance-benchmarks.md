@@ -44,9 +44,9 @@ Hardware:
 
 Software:
   OS: Ubuntu 22.04 LTS
-  Node.js: 18.19.0
-  UNRDF v4.1.2 (baseline)
-  UNRDF v5.0.0-beta.3 (current)
+  Node.js: latest
+  UNRDF latest (baseline)
+  UNRDF latest-beta.3 (current)
 ```
 
 **[SCREEN: Dataset information]**
@@ -133,7 +133,7 @@ SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 100
 
 **Results (100K triples):**
 
-| Metric | v4.1.2 | v5.0.0 | Improvement |
+| Metric | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Avg | 42.3 ms | 24.8 ms | **41% faster** ✅ |
 | p50 | 40.1 ms | 23.2 ms | 42% faster |
@@ -157,7 +157,7 @@ WHERE {
 
 **Results (100K triples):**
 
-| Metric | v4.1.2 | v5.0.0 | Improvement |
+| Metric | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Avg | 156.8 ms | 89.4 ms | **43% faster** ✅ |
 | p50 | 148.3 ms | 85.1 ms | 43% faster |
@@ -178,7 +178,7 @@ WHERE {
 
 **Results (100K triples):**
 
-| Metric | v4.1.2 | v5.0.0 | Improvement |
+| Metric | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Avg | 203.4 ms | 117.9 ms | **42% faster** ✅ |
 
@@ -224,7 +224,7 @@ function measureMemory(fn) {
 
 **100K Triples:**
 
-| Metric | v4.1.2 | v5.0.0 | Improvement |
+| Metric | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Heap Used | 124.3 MB | 52.7 MB | **58% reduction** ✅ |
 | External | 18.2 MB | 4.1 MB | 77% reduction |
@@ -232,7 +232,7 @@ function measureMemory(fn) {
 
 **1M Triples:**
 
-| Metric | v4.1.2 | v5.0.0 | Improvement |
+| Metric | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Heap Used | 1.24 GB | 520 MB | **58% reduction** ✅ |
 | Total | 1.42 GB | 568 MB | **60% reduction** ✅ |
@@ -250,8 +250,8 @@ function measureMemory(fn) {
 **[SHOW: Graph with x-axis time, y-axis memory]**
 
 ```
-v4.1.2: Memory grows from 1.42GB → 1.78GB (25% growth)
-v5.0.0: Memory stays at ~570MB (±2% variance) ✅
+latest: Memory grows from 1.42GB → 1.78GB (25% growth)
+latest: Memory stays at ~570MB (±2% variance) ✅
 ```
 
 > v5 has **zero memory leaks** and stable memory usage!
@@ -268,7 +268,7 @@ v5.0.0: Memory stays at ~570MB (±2% variance) ✅
 
 **100K Triples:**
 
-| Format | v4.1.2 | v5.0.0 | Improvement |
+| Format | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Turtle | 2,340 ms | 1,450 ms | **38% faster** |
 | N-Triples | 1,820 ms | 1,120 ms | **38% faster** |
@@ -278,7 +278,7 @@ v5.0.0: Memory stays at ~570MB (±2% variance) ✅
 
 > **Throughput (triples/second):**
 
-| Format | v4.1.2 | v5.0.0 | Improvement |
+| Format | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Turtle | 42,735 t/s | 68,966 t/s | **61% faster** ✅ |
 | N-Triples | 54,945 t/s | 89,286 t/s | **63% faster** |
@@ -290,7 +290,7 @@ v5.0.0: Memory stays at ~570MB (±2% variance) ✅
 
 **100K Triples:**
 
-| Format | v4.1.2 | v5.0.0 | Improvement |
+| Format | latest | latest | Improvement |
 |--------|--------|--------|-------------|
 | Turtle | 1,890 ms | 1,230 ms | **35% faster** |
 | N-Triples | 1,120 ms | 720 ms | **36% faster** |
@@ -393,7 +393,7 @@ store.enableHooks();
 
 ### Memory Scaling:
 
-| Triples | v4.1.2 Memory | v5.0.0 Memory | Ratio |
+| Triples | latest Memory | latest Memory | Ratio |
 |---------|---------------|---------------|-------|
 | 1K | 1.4 MB | 0.6 MB | 2.3x |
 | 10K | 14.2 MB | 5.7 MB | 2.5x |

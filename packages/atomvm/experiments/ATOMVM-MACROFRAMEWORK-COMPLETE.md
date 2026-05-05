@@ -47,7 +47,7 @@
 
 ```
 Docker Swarm Overlay Network (atomvm-net)
-    Subnet: 10.20.0.0/16
+    Subnet: [VERSION].0/16
     │
     ├─── atomvm_node1@atomvm-1 ────┐
     │    EPMD: 4369                 │

@@ -3,7 +3,7 @@ title: "[Concept/Topic]"
 description: "Understanding [concept] in UNRDF"
 category: "explanation"
 audience: "intermediate"
-version: "6.0.0-alpha.1"
+version: "latest-alpha.1"
 last_updated: "YYYY-MM-DD"
 proof:
   source:

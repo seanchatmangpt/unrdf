@@ -311,9 +311,9 @@ class UnrdfStore {
 
 | Operation | Oxigraph | N3 Fallback | Speedup |
 |-----------|----------|-------------|---------|
-| **Add (1000 ops)** | 74ms | ~400ms | **5.4x faster** |
-| **SELECT (100 queries)** | 144ms | ~800ms | **5.5x faster** |
-| **ASK (1000 queries)** | 160ms | ~1200ms | **7.5x faster** |
+| **Add (1000 ops)** | 74ms | ~400ms | **latestx faster** |
+| **SELECT (100 queries)** | 144ms | ~800ms | **latestx faster** |
+| **ASK (1000 queries)** | 160ms | ~1200ms | **latestx faster** |
 | **CONSTRUCT (100 queries)** | 60ms | ~300ms | **5x faster** |
 | **Repeated queries (10x)** | 100-150ms | 500-800ms | **5-8x faster** |
 

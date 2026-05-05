@@ -26,7 +26,7 @@ The **Autonomic All-Packages Innovation Harness** successfully exercises **all 4
 - **Result**:
   - Inventory: 41 packages
   - Registered: 41 packages
-  - **Match rate: 100.0%**
+  - **Match rate: latest%**
   - Status: **✅ HARD GATE PASSED**
 
 ### Gate 4: Determinism Verification ✅
@@ -113,7 +113,7 @@ Location: `AUTONOMIC_ALLPACKAGES/VERIFICATION_REPORT.json`
     "registered": 41,
     "missing": 0,
     "extra": 0,
-    "matchRate": "100.0%"
+    "matchRate": "latest%"
   },
   "details": {
     "message": "✅ All 41 packages successfully registered",

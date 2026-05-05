@@ -2,7 +2,7 @@
 
 See root CHANGELOG.md for full release notes.
 
-## [26.5.4] - 2026-04-04
+## [[VERSION]] - 2026-04-04
 
 ### Fixed
 
@@ -18,6 +18,6 @@ See root CHANGELOG.md for full release notes.
 - **Transform contract (POKA-YOKE)**: transforms that return `null`/`undefined` set `result.valid = false` without throwing. Transforms that return a non-object or object missing `subject`/`predicate`/`object` throw `TypeError`. Validation functions that throw propagate the exception rather than being caught silently.
 - **`poka-yoke-guards.test.mjs`**: tests updated to match actual error-propagation semantics.
 
-## [5.0.0-beta.1] - 2025-12-06
+## [[VERSION]-beta.1] - 2025-12-06
 
-Part of UNRDF v5.0.0 major release. See `../../CHANGELOG.md` for details.
+Part of UNRDF [VERSION] major release. See `../../CHANGELOG.md` for details.

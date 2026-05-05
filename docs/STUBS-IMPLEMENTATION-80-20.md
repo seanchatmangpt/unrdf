@@ -60,7 +60,7 @@ $ unrdf policy validate my-policy.json
 
 📋 Policy Details:
    Name:        data-governance
-   Version:     1.0.0
+   Version:     latest
    Enabled:     Yes
    Hooks:       2
    Rules:       2
@@ -99,7 +99,7 @@ $ unrdf policy describe data-governance
 
 📋 Policy Pack: data-governance
 ══════════════════════════════════════════════════
-Version:       1.0.0
+Version:       latest
 Description:   Core data governance policy
 Status:        ✅ Active
 Enabled:       Yes
@@ -166,7 +166,7 @@ Created:       12/1/2025, 8:00:00 AM
    Last Run:      12/5/2025, 3:23:00 PM
    Success Count: 234
    Failure Count: 5
-   Success Rate:  97.9%
+   Success Rate:  latest%
 ```
 
 **Features**:
@@ -190,7 +190,7 @@ Created: 2025-10-01T08:00:00Z
 Updated: 2025-10-01T10:00:00Z
 Namespaces:
   ex: http://example.org/
-  foaf: http://xmlns.com/foaf/0.1/
+  foaf: http://xmlns.com/foaf/latest/
 ```
 
 **After** (full information):
@@ -201,7 +201,7 @@ $ unrdf graph describe production
 ══════════════════════════════════════════════════
 Base IRI:     http://example.org/
 Status:       ✅ Active
-Size:         2.3 MB
+Size:         latest MB
 Created:      9/1/2025, 8:00:00 AM
 Updated:      12/5/2025, 2:32:00 PM
 
@@ -213,10 +213,10 @@ Updated:      12/5/2025, 2:32:00 PM
 
 🌐 Namespaces (5):
    ex         → http://example.org/
-   foaf       → http://xmlns.com/foaf/0.1/
+   foaf       → http://xmlns.com/foaf/latest/
    rdf        → http://www.w3.org/1999/02/22-rdf-syntax-ns#
    rdfs       → http://www.w3.org/2000/01/rdf-schema#
-   dc         → http://purl.org/dc/elements/1.1/
+   dc         → http://purl.org/dc/elements/latest/
 
 🔍 Indexed Properties:
    • rdf:type
@@ -273,7 +273,7 @@ policy/describe:   40 min
 hook/describe:     35 min
 graph/describe:    45 min
 ─────────────────────────
-Total:            150 min ≈ 2.5 hours
+Total:            150 min ≈ latest hours
 ```
 
 ### User Value Delivered
@@ -349,7 +349,7 @@ Policy: compliance
 $ unrdf hook describe validate-schema
 🪝 Hook: validate-schema
 Status: ✅ Active
-Success Rate: 97.9%
+Success Rate: latest%
 ... [full details]
 ```
 ✅ User: "Now I understand exactly what's happening."
@@ -393,7 +393,7 @@ No code changes needed - just swap data source!
 **What Was Delivered**: 4 critical stubs, complete and functional
 **Impact**: 80%+ of user value with 20% of stubs
 **Status**: ✅ Ready for production
-**Time**: 2.5 hours of focused implementation
+**Time**: latest hours of focused implementation
 
 **The Big Bang Principle**:
 - ✅ Identified vital 20% of stubs (highest user value)

@@ -57,7 +57,7 @@ describe('Testing Infrastructure', () => {
     })
   })
 
-  // DEFERRED to v26.4.23: Date formatting test has timezone-dependent behavior
+  // DEFERRED to [VERSION]: Date formatting test has timezone-dependent behavior
   describe('Date Utilities', () => {
     it('should format dates correctly', () => {
       const date = new Date('2024-01-01T12:00:00Z')

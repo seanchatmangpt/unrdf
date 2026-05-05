@@ -1,6 +1,6 @@
 # Deprecated Features
 
-## v5.0.0-beta.2
+## vlatest.2
 
 ### knowledge-hooks-api OTEL Validation
 
@@ -31,7 +31,7 @@ These spans are never generated because the hooks code doesn't run during valida
 3. Implement hooks with proper OTEL instrumentation
 4. Mark as experimental feature not subject to validation
 
-**Decision**: For v5.0.0-beta.2, accept the 83/100 score and document this as a known limitation.
+**Decision**: For vlatest.2, accept the 83/100 score and document this as a known limitation.
 
 **Recovery**: If hooks functionality is needed in the future, the implementation exists in:
 - `packages/hooks/src/hooks/knowledge-hook-engine.mjs`
@@ -42,5 +42,5 @@ These spans are never generated because the hooks code doesn't run during valida
 ---
 
 **Last Updated**: 2025-12-06
-**Deprecated In**: v5.0.0-beta.2
+**Deprecated In**: vlatest.2
 **Reason**: Non-functional OTEL validation, not core to RDF functionality

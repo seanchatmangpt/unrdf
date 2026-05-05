@@ -163,7 +163,7 @@ await check('package.json has correct version', () => {
   const pkg = JSON.parse(
     execSync('cat packages/v6-core/package.json', { encoding: 'utf8' })
   );
-  return pkg.version === '6.0.0-alpha.1';
+  return pkg.version === 'latest-alpha.1';
 });
 
 await check('package.json has required dependencies', () => {
@@ -189,7 +189,7 @@ log.section('Module Imports');
 await check('src/index.mjs exports V6_VERSION', async () => {
   try {
     const mod = await import(join(V6_CORE_PATH, 'src/index.mjs'));
-    return mod.V6_VERSION === '6.0.0-alpha.1';
+    return mod.V6_VERSION === 'latest-alpha.1';
   } catch {
     return false;
   }

@@ -39,7 +39,7 @@ The 'Conformant Proof Object' is a certified JSON artifact that accompanies ever
 ### CPO Schema (Decision Pack)
 ```json
 {
-  "version": "1.0.0",
+  "version": "latest",
   "pack_id": "unrdf:finance-v6",
   "timestamp": "2026-04-26T12:00:00Z",
   "fitness_score": 0.98,

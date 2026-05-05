@@ -311,15 +311,15 @@ $ timeout 10s node test-rdf-commands.mjs
 ### Dependencies Used
 
 **Runtime**:
-- `citty` ^0.1.6 - CLI framework (subcommands, arg parsing)
-- `table` ^6.9.0 - Table formatting for output
-- `yaml` ^2.8.2 - YAML parsing (Decision Fabric)
-- `@unrdf/core` workspace:5.0.0-beta.1 - RDF store operations
+- `citty` ^[VERSION] - CLI framework (subcommands, arg parsing)
+- `table` ^[VERSION] - Table formatting for output
+- `yaml` ^[VERSION] - YAML parsing (Decision Fabric)
+- `@unrdf/core` workspace:[VERSION]-beta.1 - RDF store operations
 - `n3` (via @unrdf/core) - RDF parsing and serialization
 
 **Development**:
-- `vitest` ^1.0.0 - Testing framework
-- `@types/node` ^20.0.0 - TypeScript types
+- `vitest` ^[VERSION] - Testing framework
+- `@types/node` ^[VERSION] - TypeScript types
 
 ### API Integration
 

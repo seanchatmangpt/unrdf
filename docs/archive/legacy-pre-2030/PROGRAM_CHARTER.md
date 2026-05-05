@@ -1,6 +1,6 @@
 # UNRDF Program Charter: Unification Release
 
-**Version**: 6.0.0-alpha
+**Version**: latest
 **Status**: Charter
 **Last Updated**: 2025-12-27
 
@@ -499,7 +499,7 @@ Each package must progress through these levels:
 
 ### Quantitative
 
-| Metric               | Baseline (v5) | Target (6.0) | Measurement                            |
+| Metric               | Baseline (v5) | Target (latest) | Measurement                            |
 | -------------------- | ------------- | ------------ | -------------------------------------- |
 | Receipt coverage     | 0%            | 100%         | % of mutating ops receipted            |
 | Deterministic builds | 60%           | 100%         | % of packages with hash-stable outputs |
@@ -550,5 +550,5 @@ builds on proven patterns:
 ---
 
 **Charter Approved**: [TBD]
-**Charter Version**: 1.0.0
+**Charter Version**: latest
 **Next Review**: Q2 2026

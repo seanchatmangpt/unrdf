@@ -28,7 +28,7 @@ async function setupTestInventories() {
   // Inventory 1: High confidence package
   const inventory1 = {
     packageName: '@unrdf/test-pkg-1',
-    version: '1.0.0',
+    version: '[VERSION]',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.9,
@@ -97,7 +97,7 @@ async function setupTestInventories() {
   // Inventory 2: Low confidence package
   const inventory2 = {
     packageName: '@unrdf/test-pkg-2',
-    version: '0.5.0',
+    version: '[VERSION]',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.3,
@@ -165,7 +165,7 @@ async function setupTestInventories() {
   // Inventory 3: Medium confidence package
   const inventory3 = {
     packageName: '@unrdf/test-pkg-3',
-    version: '2.1.0',
+    version: '[VERSION]',
     generatedAt: '2025-01-01T00:00:00.000Z',
     confidence: {
       tutorials: 0.6,

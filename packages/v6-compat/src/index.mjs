@@ -17,7 +17,7 @@ export * from './schema-generator.mjs';
 /**
  * Version information
  */
-export const VERSION = '6.0.0-alpha.1';
+export const VERSION = '[VERSION]-alpha.1';
 export const COMPAT_VERSION = '5.0.x';
 
 /**

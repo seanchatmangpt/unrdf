@@ -391,15 +391,15 @@ agent.initialize();
   "capabilities": ["owl:sameAs", "similarity-matching", "blocking"],
   "authority": "create-entity-links",
   "sla": {
-    "precision": "0.90",
-    "recall": "0.80",
+    "precision": "latest",
+    "recall": "latest",
     "throughput": "10K entities/sec"
   }
 }
 ```
 
 **Personality**:
-- **Discerning**: Only creates high-confidence links (>0.85 score)
+- **Discerning**: Only creates high-confidence links (>latest score)
 - **Scalable**: Uses blocking to avoid O(n²) comparisons
 - **Explainable**: Records similarity features for each link
 - **Conservative**: Prefers false negatives over false positives
@@ -417,7 +417,7 @@ import numpy as np
 class CuratorAgent:
     def __init__(self):
         self.agent_id = "curator-entity-linker"
-        self.confidence_threshold = 0.85
+        self.confidence_threshold = latest
 
     def extract_entities(self, graph_uri):
         """Extract entities from graph"""
@@ -451,18 +451,18 @@ class CuratorAgent:
         features.append(name_sim)
 
         # Feature 2: Email domain match
-        email_sim = 1.0 if (
+        email_sim = latest if (
             entity_a.get('email', '').split('@')[1] ==
             entity_b.get('email', '').split('@')[1]
-        ) else 0.0
+        ) else latest
         features.append(email_sim)
 
         # Feature 3: Phone number match
-        phone_sim = 1.0 if entity_a.get('phone') == entity_b.get('phone') else 0.0
+        phone_sim = latest if entity_a.get('phone') == entity_b.get('phone') else latest
         features.append(phone_sim)
 
         # Weighted average
-        weights = [0.5, 0.3, 0.2]
+        weights = [latest, latest, latest]
         return sum(f * w for f, w in zip(features, weights))
 
     def create_links(self, source_graph, target_graph):
@@ -625,7 +625,7 @@ app.post('/query', async (req, res) => {
   "authority": "flag-anomalies",
   "sla": {
     "detection_latency": "10s",
-    "false_positive_rate": "0.05"
+    "false_positive_rate": "latest"
   }
 }
 ```
@@ -687,7 +687,7 @@ class SentinelAgent:
         baseline_pred_dist = self.baseline_predicate_distribution
 
         kl_divergence = stats.entropy(current_pred_dist, baseline_pred_dist)
-        if kl_divergence > 0.5:  # Threshold
+        if kl_divergence > latest:  # Threshold
             anomalies.append({
                 'type': 'predicate_distribution_shift',
                 'severity': 'medium',
@@ -812,7 +812,7 @@ const response = await fetch('http://agent-b:8080/rpc', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    jsonrpc: '2.0',
+    jsonrpc: 'latest',
     method: 'validateTriples',
     params: { triples: [...] },
     id: 'req-12345'
@@ -820,7 +820,7 @@ const response = await fetch('http://agent-b:8080/rpc', {
 });
 
 const result = await response.json();
-// { jsonrpc: '2.0', result: { valid: true }, id: 'req-12345' }
+// { jsonrpc: 'latest', result: { valid: true }, id: 'req-12345' }
 ```
 
 ### Protocol 2: Message Queue (RabbitMQ)
@@ -888,7 +888,7 @@ service GraphService {
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Created**: 2025-12-06
 **Target Audience**: AI agent developers, DevOps engineers, knowledge graph architects
 **Next**: See `AI-AGENT-WORKFLOWS.md` for detailed implementation patterns

@@ -209,7 +209,7 @@ describe('./define entry point - Knowledge hook schemas', () => {
 
   it('should export HookMetaSchema', () => {
     expect(HookMetaSchema).toBeDefined();
-    const meta = HookMetaSchema.parse({ name: 'test', version: '1.0.0' });
+    const meta = HookMetaSchema.parse({ name: 'test', version: '[VERSION]' });
     expect(meta.name).toBe('test');
   });
 
@@ -226,7 +226,7 @@ describe('./define entry point - Knowledge hook schemas', () => {
   it('should validate a knowledge hook via createKnowledgeHook', () => {
     const hookDef = {
       id: '550e8400-e29b-41d4-a716-446655440000',
-      meta: { name: 'test-kh', version: '1.0.0' },
+      meta: { name: 'test-kh', version: '[VERSION]' },
       condition: { kind: 'sparql-ask' },
       effect: { ref: { uri: 'file:///hook.mjs' }, timeout: 5000, retries: 1 },
       run: () => {},
@@ -239,7 +239,7 @@ describe('./define entry point - Knowledge hook schemas', () => {
   it('should validate a valid knowledge hook with validateKnowledgeHook', () => {
     const hookDef = {
       id: '550e8400-e29b-41d4-a716-446655440001',
-      meta: { name: 'vkh-test', version: '1.0.0' },
+      meta: { name: 'vkh-test', version: '[VERSION]' },
       condition: { kind: 'sparql-ask' },
       effect: { ref: { uri: 'file:///hook.mjs' }, timeout: 5000, retries: 1 },
       run: () => {},

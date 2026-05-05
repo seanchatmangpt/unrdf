@@ -1,6 +1,6 @@
 # UNRDF API Reference
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest-alpha.1
 **Last Updated**: January 2025
 
 Complete API reference for all UNRDF packages.

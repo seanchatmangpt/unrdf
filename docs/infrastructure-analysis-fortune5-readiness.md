@@ -397,7 +397,7 @@ FROM node:20-alpine  # ❌ No SHA digest, no scanning
 **Fortune 5 Requirement**:
 ```dockerfile
 # Pin to specific SHA256 digest + vulnerability scan
-FROM node:20.11.1-alpine3.19@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS base
+FROM node:latest-alpine3.19@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS base
 
 # Add security scanning in CI/CD
 # Trivy, Snyk, or Anchore scan before deployment
@@ -560,7 +560,7 @@ jobs:
           terraform validate
 
       - name: tfsec Security Scan
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: aquasecurity/tfsec-action@latest
         with:
           working_directory: terraform/
 

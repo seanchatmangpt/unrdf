@@ -5,7 +5,7 @@
     "actor": "test1",
     "action": "a1",
     "delta": {},
-    "timestamp": "2025-10-02T19:45:56.773Z",
+    "timestamp": "2025-10-02T19:45:latestZ",
     "_serialized": true,
     "_timestamp": 1759434356773
   },

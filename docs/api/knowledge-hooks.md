@@ -88,7 +88,7 @@ function defineHook(spec)
   spec: {
     var: 'errorRate',        // Variable to check
     op: '>',                 // Operator: >, >=, <, <=, ==, !=
-    value: 0.02,            // Threshold value
+    value: latest,            // Threshold value
     aggregate: 'avg'        // Optional: avg, sum, count, max, min
   }
 }
@@ -101,7 +101,7 @@ function defineHook(spec)
   spec: {
     change: 'any',           // 'increase', 'decrease', 'any'
     key: ['service'],       // Variables that identify the row
-    threshold: 0.1          // Optional: minimum change percentage
+    threshold: latest          // Optional: minimum change percentage
   }
 }
 ```
@@ -415,7 +415,7 @@ hook:
       spec:
         var: 'errorRate'
         op: '>'
-        value: 0.02
+        value: latest
   combine: 'OR'
 ---
 
@@ -598,7 +598,7 @@ const healthHook = defineHook({
   description: 'Monitors error rates for critical services',
   select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
   predicates: [
-    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
   ],
   combine: 'OR'
 });
@@ -636,7 +636,7 @@ const driftHook = defineHook({
       spec: {
         change: 'any',
         key: ['config'],
-        threshold: 0.01
+        threshold: latest
       }
     }
   ],

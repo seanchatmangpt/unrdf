@@ -30,7 +30,7 @@
 
 ## Phase 1: Quick Wins (2-3 hours) - 🚀 IMMEDIATE VALUE
 
-### **Action 1.1: Remove or Mark Stubs (1 hour)**
+### **Action latest: Remove or Mark Stubs (1 hour)**
 
 **Problem**: 18 commands print "✅ Success" but do nothing
 
@@ -74,7 +74,7 @@ export const getCommand = defineCommand({
 
 ---
 
-### **Action 1.2: Remove Sidecar Refs from Context (1 hour)**
+### **Action latest: Remove Sidecar Refs from Context (1 hour)**
 
 **Problem**: 7 context commands show `sidecar: "N/A"` (user said "not doing sidecar")
 
@@ -104,7 +104,7 @@ const formatted = contexts.map((c) => ({
 
 ---
 
-### **Action 1.3: Update README (30 min)**
+### **Action latest: Update README (30 min)**
 
 **Problem**: README describes "enterprise production tool", code implements "local testbed"
 
@@ -186,7 +186,7 @@ unrdf repl
 
 **Current Problem**: These commands show hardcoded data that looks real but isn't
 
-#### **Action 2.1: Fix `graph describe` (45 min)**
+#### **Action latest: Fix `graph describe` (45 min)**
 
 **Current** (cli/commands/graph/describe.mjs:9-51):
 ```javascript
@@ -262,7 +262,7 @@ export const describeCommand = defineCommand({
 
 ---
 
-#### **Action 2.2: Fix `policy list` (30 min)**
+#### **Action latest: Fix `policy list` (30 min)**
 
 **Current** (cli/commands/policy/list.mjs:26-29):
 ```javascript
@@ -321,7 +321,7 @@ export const listCommand = defineCommand({
 
 ---
 
-#### **Action 2.3: Fix `policy describe` (45 min)**
+#### **Action latest: Fix `policy describe` (45 min)**
 
 Similar pattern to `policy list` - read from `~/.unrdf/policies/{name}.json`
 
@@ -329,7 +329,7 @@ Similar pattern to `policy list` - read from `~/.unrdf/policies/{name}.json`
 
 ---
 
-#### **Action 2.4: Fix `hook describe` (45 min)**
+#### **Action latest: Fix `hook describe` (45 min)**
 
 Similar pattern - read from `~/.unrdf/hooks/{name}.json`
 
@@ -337,7 +337,7 @@ Similar pattern - read from `~/.unrdf/hooks/{name}.json`
 
 ---
 
-#### **Action 2.5: Fix `hook history` (30 min)**
+#### **Action latest: Fix `hook history` (30 min)**
 
 **Current**: Returns hardcoded 2 history entries
 
@@ -347,7 +347,7 @@ Similar pattern - read from `~/.unrdf/hooks/{name}.json`
 
 ---
 
-#### **Action 2.6: Fix `hook list` (30 min)**
+#### **Action latest: Fix `hook list` (30 min)**
 
 **Current**: Shows in-memory hooks only
 
@@ -359,7 +359,7 @@ Similar pattern - read from `~/.unrdf/hooks/{name}.json`
 
 ## Phase 3: Documentation (1 hour) - 📚 CLARITY
 
-### **Action 3.1: Create Testbed Guide (45 min)**
+### **Action latest: Create Testbed Guide (45 min)**
 
 **File**: `docs/CLI-TESTBED-USAGE-GUIDE.md`
 
@@ -446,7 +446,7 @@ See package documentation for programmatic usage.
 
 ---
 
-### **Action 3.2: Update Architecture Docs (15 min)**
+### **Action latest: Update Architecture Docs (15 min)**
 
 Add testbed section to main architecture docs
 
@@ -501,25 +501,25 @@ Add testbed section to main architecture docs
 
 ### Phase 1 (2-3 hours)
 ```
-Action 1.1: Remove/mark stubs         1h
-Action 1.2: Remove sidecar refs       1h
-Action 1.3: Update README           0.5h
+Action latest: Remove/mark stubs         1h
+Action latest: Remove sidecar refs       1h
+Action latest: Update README           latesth
 ```
 
 ### Phase 2 (3-4 hours)
 ```
-Action 2.1: Fix graph describe      0.75h
-Action 2.2: Fix policy list          0.5h
-Action 2.3: Fix policy describe     0.75h
-Action 2.4: Fix hook describe       0.75h
-Action 2.5: Fix hook history         0.5h
-Action 2.6: Fix hook list            0.5h
+Action latest: Fix graph describe      latesth
+Action latest: Fix policy list          latesth
+Action latest: Fix policy describe     latesth
+Action latest: Fix hook describe       latesth
+Action latest: Fix hook history         latesth
+Action latest: Fix hook list            latesth
 ```
 
 ### Phase 3 (1 hour)
 ```
-Action 3.1: Testbed usage guide     0.75h
-Action 3.2: Architecture alignment  0.25h
+Action latest: Testbed usage guide     latesth
+Action latest: Architecture alignment  latesth
 ```
 
 ---

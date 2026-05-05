@@ -34,7 +34,7 @@ export async function initializeTracer() {
     // Configure resource attributes
     const resource = new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: 'unrdf-cli',
-      [SemanticResourceAttributes.SERVICE_VERSION]: '2.1.0',
+      [SemanticResourceAttributes.SERVICE_VERSION]: 'latest',
       [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'unrdf',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'development',
     });
@@ -68,12 +68,12 @@ export async function initializeTracer() {
     await sdk.start();
 
     // Get tracer instance
-    tracer = trace.getTracer('unrdf-cli', '2.1.0');
+    tracer = trace.getTracer('unrdf-cli', 'latest');
     initialized = true;
 
     console.log('[OTEL] ✅ Tracer initialized successfully');
     console.log(`[OTEL] ✅ Exporting traces to Jaeger at: ${jaegerEndpoint}`);
-    console.log(`[OTEL] ✅ Service: unrdf-cli (version 2.1.0)`);
+    console.log(`[OTEL] ✅ Service: unrdf-cli (version latest)`);
 
     if (process.env.OTEL_DEBUG) {
       console.log('[OTEL] Debug mode enabled');

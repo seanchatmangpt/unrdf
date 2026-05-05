@@ -1,6 +1,6 @@
 # BENCHMARK RESULTS - FINAL THESIS DEFENSE
 
-**Document Version:** 1.0
+**Document Version:** latest
 **Date:** December 25, 2025
 **Author:** Research Team
 **Status:** READY FOR THESIS DEFENSE
@@ -17,7 +17,7 @@ This document presents performance benchmarks for the UNRDF (Universal N-ary RDF
 
 ## 1. Methodology
 
-### 1.1 System Specifications
+### latest System Specifications
 
 | Component | Specification |
 |-----------|--------------|
@@ -25,14 +25,14 @@ This document presents performance benchmarks for the UNRDF (Universal N-ary RDF
 | **CPU Model** | Unknown (sandboxed environment) |
 | **Threads per Core** | 1 |
 | **Memory** | 21 GiB RAM (20 GiB available) |
-| **OS** | Linux 4.4.0 (runsc sandbox) |
-| **Node.js** | v22.21.1 |
+| **OS** | Linux latest (runsc sandbox) |
+| **Node.js** | vlatest |
 | **Runtime** | Single-threaded JavaScript (V8) |
 | **Environment** | Isolated sandbox (gVisor) |
 
 **Important Note:** Benchmarks run in a sandboxed environment with potential virtualization overhead. Production bare-metal performance may be higher.
 
-### 1.2 Benchmark Design
+### latest Benchmark Design
 
 **Statistical Rigor:**
 - **n = 10 independent runs** per benchmark (statistical significance)
@@ -47,7 +47,7 @@ This document presents performance benchmarks for the UNRDF (Universal N-ary RDF
 
 **Why P95?** Unlike mean values, P95 captures tail latency and is more defensible in academic settings. We report what 95% of operations achieve, not best-case scenarios.
 
-### 1.3 Reproducibility
+### latest Reproducibility
 
 All raw data and scripts available at:
 - **Raw results:** `/home/user/unrdf/results/statistical-raw.json`
@@ -65,18 +65,18 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ## 2. Benchmark Results
 
-### 2.1 Hook Execution Performance
+### latest Hook Execution Performance
 
 **Benchmark:** Workflow hook primitives (define, execute, chain, register)
 **Runs:** 10/10 successful
-**Total Duration:** 1,311 ± 200 ms (n=10, CV=15.2%)
+**Total Duration:** 1,311 ± 200 ms (n=10, CV=latest%)
 
 #### Innovation 1: Hook Definition Latency
 
 | Operation | Mean ± σ (μs) | P95 (μs) | Target | Status | Evidence |
 |-----------|---------------|----------|--------|--------|----------|
-| Simple hook definition | 2.03 ± 0.20 | **4.70** | <10 μs | ✅ PASS | 10 runs, CV=9.8% |
-| Hook with validation | 1.28 ± 0.17 | **2.09** | <10 μs | ✅ PASS | 10 runs, CV=13.1% |
+| Simple hook definition | latest ± latest | **latest** | <10 μs | ✅ PASS | 10 runs, CV=latest% |
+| Hook with validation | latest ± latest | **latest** | <10 μs | ✅ PASS | 10 runs, CV=latest% |
 
 **Thesis Claim (Conservative):** Hook definition completes in **<5μs P95**, enabling real-time workflow composition.
 
@@ -89,40 +89,40 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 | Operation | Mean ± σ (μs) | P95 (μs) | Target | Status | Evidence |
 |-----------|---------------|----------|--------|--------|----------|
-| Single hook execution | 2.73 ± 0.20 | **3.97** | <1000 μs | ✅ PASS | 10 runs, CV=7.2% |
-| Hook chain (3 hooks) | 5.08 ± 0.52 | **7.16** | <1000 μs | ✅ PASS | 10 runs, CV=10.1% |
+| Single hook execution | latest ± latest | **latest** | <1000 μs | ✅ PASS | 10 runs, CV=latest% |
+| Hook chain (3 hooks) | latest ± latest | **latest** | <1000 μs | ✅ PASS | 10 runs, CV=latest% |
 
 **Thesis Claim (Conservative):** Hook execution achieves **<4μs P95 latency**, well below the <1ms target.
 
 **Statistical Significance:**
 - **P-value:** All runs passed <1ms threshold (10/10 = 100% success)
-- **Safety margin:** 250x faster than target (3.97μs vs 1000μs)
+- **Safety margin:** 250x faster than target (latestμs vs 1000μs)
 
 #### Innovation 3: Registry Operations
 
 | Operation | Mean ± σ (μs) | P95 (μs) | Throughput | Evidence |
 |-----------|---------------|----------|------------|----------|
-| Hook registration | 3.53 ± 0.44 | **5.50** | 283K ops/sec | 10 runs, CV=12.5% |
-| Hook lookup | 0.71 ± 0.52 | **1.60** | 1.4M ops/sec | 10 runs, CV=72.6% |
+| Hook registration | latest ± latest | **latest** | 283K ops/sec | 10 runs, CV=latest% |
+| Hook lookup | latest ± latest | **latest** | latestM ops/sec | 10 runs, CV=latest% |
 
-**Note:** High CV% on lookup (72.6%) indicates measurement noise at sub-microsecond scale. P95 value remains defensible.
+**Note:** High CV% on lookup (latest%) indicates measurement noise at sub-microsecond scale. P95 value remains defensible.
 
 #### Innovation 4: Batch Processing
 
 | Metric | Value | Evidence |
 |--------|-------|----------|
 | Batch size | 1,000 quads | Fixed |
-| Per-quad latency (mean ± σ) | 2.06 ± 0.06 μs | CV=2.8% (excellent stability) |
-| Per-quad latency (P95) | **2.15 μs** | Conservative estimate |
+| Per-quad latency (mean ± σ) | latest ± latest μs | CV=latest% (excellent stability) |
+| Per-quad latency (P95) | **latest μs** | Conservative estimate |
 | Batch throughput | **485K quads/sec** | Based on P95 |
 
-**Thesis Claim:** Batch hook processing achieves **<2.5μs P95 per quad**, enabling high-throughput workflow execution.
+**Thesis Claim:** Batch hook processing achieves **<latestμs P95 per quad**, enabling high-throughput workflow execution.
 
 #### Innovation 5: System Throughput
 
 | Metric | Mean ± σ | P95 | Evidence |
 |--------|----------|-----|----------|
-| Hook throughput | 368M ± 27M ops/sec | **365M ops/sec** | 10 runs, CV=7.2% |
+| Hook throughput | 368M ± 27M ops/sec | **365M ops/sec** | 10 runs, CV=latest% |
 
 **Thesis Claim (Conservative):** System sustains **365 million hook operations per second** (P95), demonstrating production-grade scalability.
 
@@ -133,11 +133,11 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ---
 
-### 2.2 Receipt Generation Performance
+### latest Receipt Generation Performance
 
 **Benchmark:** Cryptographic receipt generation for workflow provenance
 **Runs:** 10/10 successful
-**Total Duration:** 2,015 ± 828 ms (n=10, CV=41.1%)
+**Total Duration:** 2,015 ± 828 ms (n=10, CV=latest%)
 
 **Note:** Higher variability (CV=41%) likely due to JIT warm-up effects and GC pauses. P95 values remain valid.
 
@@ -145,20 +145,20 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 | Percentile | Mean ± σ (ms) | P95 (ms) | Evidence |
 |------------|---------------|----------|----------|
-| **P50 (Median)** | 0.277 ± 0.009 | **0.296** | 10 runs, CV=3.3% |
-| **P90** | 0.496 ± 0.016 | **0.523** | 10 runs, CV=3.2% |
-| **P95** | 0.583 ± 0.021 | **0.615** | 10 runs, CV=3.6% |
-| **P99** | 1.550 ± 0.173 | **1.827** | 10 runs, CV=11.2% |
-| **P99.9** | 6.860 ± 1.233 | **9.579** | 10 runs, CV=18.0% |
+| **P50 (Median)** | latest ± latest | **latest** | 10 runs, CV=latest% |
+| **P90** | latest ± latest | **latest** | 10 runs, CV=latest% |
+| **P95** | latest ± latest | **latest** | 10 runs, CV=latest% |
+| **P99** | latest ± latest | **latest** | 10 runs, CV=latest% |
+| **Platest** | latest ± latest | **latest** | 10 runs, CV=latest% |
 
-**Thesis Claim (Conservative):** Receipt generation achieves **<0.62ms P95 latency** and **<1.83ms P99 latency**, suitable for real-time workflow attestation.
+**Thesis Claim (Conservative):** Receipt generation achieves **<latestms P95 latency** and **<latestms P99 latency**, suitable for real-time workflow attestation.
 
 #### Throughput Analysis
 
 | Metric | Mean ± σ | P95 | Evidence |
 |--------|----------|-----|----------|
 | Receipts generated | 1,000 | 1,000 | Fixed test size |
-| Total time | 421 ± 14 ms | 449 ms | CV=3.3% (excellent) |
+| Total time | 421 ± 14 ms | 449 ms | CV=latest% (excellent) |
 | Throughput | 2,380 ± 77 rec/sec | **2,225 rec/sec** | Conservative (P95) |
 
 **Thesis Claim:** System generates **≥2,200 cryptographic receipts per second** (P95), enabling production-scale workflow provenance.
@@ -170,13 +170,13 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ---
 
-### 2.3 Optimization Suite Performance
+### latest Optimization Suite Performance
 
 **Benchmark:** Query optimization and caching strategies
 **Runs:** 10/10 successful
-**Total Duration:** 2,391 ± 216 ms (n=10, CV=9.0%)
+**Total Duration:** 2,391 ± 216 ms (n=10, CV=latest%)
 
-**Status:** Low variability (CV=9.0%) indicates stable, repeatable performance.
+**Status:** Low variability (CV=latest%) indicates stable, repeatable performance.
 
 **Note:** Detailed metrics extraction failed (no JSON output from benchmark). Raw timing data valid for duration analysis.
 
@@ -187,15 +187,15 @@ node benchmarks/run-statistical-benchmarks.mjs
 | Mean duration | 2,391 ms | 10 runs |
 | Standard deviation | 216 ms | Moderate variation |
 | P95 duration | **2,662 ms** | Conservative estimate |
-| Coefficient of Variation | 9.0% | Good stability |
+| Coefficient of Variation | latest% | Good stability |
 
-**Thesis Claim:** Optimization suite completes in **<2.7 seconds P95**, demonstrating efficient query planning and caching.
+**Thesis Claim:** Optimization suite completes in **<latest seconds P95**, demonstrating efficient query planning and caching.
 
 ---
 
 ## 3. Benchmark Failures and Limitations
 
-### 3.1 Failed Benchmarks
+### latest Failed Benchmarks
 
 **Benchmarks that did not complete:**
 
@@ -212,7 +212,7 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 **Academic Honesty:** We report failed benchmarks transparently. A production system would require fixing these errors before publication.
 
-### 3.2 Known Limitations
+### latest Known Limitations
 
 #### System Limitations
 
@@ -223,7 +223,7 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 #### Measurement Limitations
 
-1. **Sub-microsecond resolution:** High CV% on sub-μs measurements (e.g., registry lookup: 72.6%)
+1. **Sub-microsecond resolution:** High CV% on sub-μs measurements (e.g., registry lookup: latest%)
 2. **JIT warm-up effects:** First-run latency not measured (warmup phase discarded)
 3. **GC pauses:** Not explicitly measured (may contribute to tail latency)
 4. **No network latency:** In-process benchmarks only
@@ -239,11 +239,11 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ## 4. Comparison with State of Art
 
-### 4.1 Workflow System Performance
+### latest Workflow System Performance
 
 | System | Latency (P95) | Throughput | Architecture | Source |
 |--------|---------------|------------|--------------|--------|
-| **UNRDF (this work)** | **3.97 μs** | **365M ops/sec** | In-process, RDF-native | This benchmark |
+| **UNRDF (this work)** | **latest μs** | **365M ops/sec** | In-process, RDF-native | This benchmark |
 | Temporal.io | ~5-10 ms | ~100-1K wf/sec | Distributed, event-sourced | Temporal docs (estimated) |
 | Apache Airflow | ~100-1000 ms | ~10-100 tasks/sec | DAG scheduler, Python | Airflow benchmarks (community) |
 | AWS Step Functions | ~25-100 ms | ~1K-10K exec/sec | Managed service, state machine | AWS limits |
@@ -256,7 +256,7 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 **Trade-off:** UNRDF sacrifices distributed fault-tolerance for extreme low latency. Appropriate for single-node, high-throughput scenarios.
 
-### 4.2 RDF Store Performance
+### latest RDF Store Performance
 
 | System | Quad throughput | Query latency | Architecture | Source |
 |--------|-----------------|---------------|--------------|--------|
@@ -275,7 +275,7 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ## 5. Thesis Defense Talking Points
 
-### 5.1 Statistical Rigor
+### latest Statistical Rigor
 
 **Committee Question:** "Are these results statistically significant?"
 
@@ -288,19 +288,19 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 **Defense:** Results are defensible for PhD thesis, though publication would benefit from n=30 and formal hypothesis testing.
 
-### 5.2 Baseline Comparisons
+### latest Baseline Comparisons
 
 **Committee Question:** "How do you compare with existing systems?"
 
 **Answer:**
-- ✅ Temporal.io: 1,000x lower latency (5-10ms vs 3.97μs)
+- ✅ Temporal.io: 1,000x lower latency (5-10ms vs latestμs)
 - ✅ Redis: 36x higher throughput (365M vs 10M ops/sec)
 - ✅ Git provenance: 100x faster receipts (2,225 vs ~20 commits/sec)
 - ⚠️ Some baselines estimated (no official benchmarks published)
 
 **Defense:** Direct apples-to-apples comparison difficult (different architectures), but order-of-magnitude differences are valid.
 
-### 5.3 Limitations and Threats to Validity
+### latest Limitations and Threats to Validity
 
 **Committee Question:** "What are the threats to validity?"
 
@@ -312,7 +312,7 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 **Defense:** Acknowledged limitations do not invalidate core findings. Distributed benchmarks are future work.
 
-### 5.4 Reproducibility
+### latest Reproducibility
 
 **Committee Question:** "Can others reproduce these results?"
 
@@ -330,14 +330,14 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 ## 6. Recommendations for Future Work
 
-### 6.1 Immediate Actions (Before Defense)
+### latest Immediate Actions (Before Defense)
 
 1. **Fix code defects:** Resolve duplicate export in YAWL package
 2. **Re-run failed benchmarks:** Task activation and workflow E2E
 3. **Increase sample size:** n=30 runs for publication-grade rigor
 4. **Compute confidence intervals:** 95% CIs for all metrics
 
-### 6.2 Extended Evaluation (Post-Defense)
+### latest Extended Evaluation (Post-Defense)
 
 1. **Distributed benchmarks:** Multi-node consensus, network latency
 2. **Production workloads:** Trace-driven replay (GitHub Actions, Temporal.io)
@@ -353,14 +353,14 @@ node benchmarks/run-statistical-benchmarks.mjs
 
 | Innovation | Target | Actual (P95) | Status | Margin |
 |------------|--------|--------------|--------|--------|
-| Hook definition | <10 μs | **4.70 μs** | ✅ PASS | 2.1x faster |
-| Hook execution | <1000 μs | **3.97 μs** | ✅ PASS | 252x faster |
-| Hook chain (3 hooks) | <1000 μs | **7.16 μs** | ✅ PASS | 140x faster |
-| Registry operations | N/A | **5.50 μs** | ✅ PASS | N/A |
-| Batch per-quad | N/A | **2.15 μs** | ✅ PASS | N/A |
+| Hook definition | <10 μs | **latest μs** | ✅ PASS | latestx faster |
+| Hook execution | <1000 μs | **latest μs** | ✅ PASS | 252x faster |
+| Hook chain (3 hooks) | <1000 μs | **latest μs** | ✅ PASS | 140x faster |
+| Registry operations | N/A | **latest μs** | ✅ PASS | N/A |
+| Batch per-quad | N/A | **latest μs** | ✅ PASS | N/A |
 | System throughput | N/A | **365M ops/sec** | ✅ PASS | N/A |
-| Receipt generation (P95) | N/A | **0.615 ms** | ✅ PASS | N/A |
-| Receipt generation (P99) | N/A | **1.827 ms** | ✅ PASS | N/A |
+| Receipt generation (P95) | N/A | **latest ms** | ✅ PASS | N/A |
+| Receipt generation (P99) | N/A | **latest ms** | ✅ PASS | N/A |
 | Receipt throughput | N/A | **2,225 rec/sec** | ✅ PASS | N/A |
 
 **Thesis Statement (Conservative):**
@@ -383,10 +383,10 @@ node benchmarks/run-statistical-benchmarks.mjs
 ### Appendix A: System Information
 
 ```
-System: Linux 4.4.0 (gVisor sandbox)
+System: Linux latest (gVisor sandbox)
 CPU: 16 cores, x86_64, 1 thread per core
 Memory: 21 GiB RAM (20 GiB available)
-Node.js: v22.21.1
+Node.js: vlatest
 Runtime: Single-threaded JavaScript (V8 engine)
 ```
 
@@ -414,5 +414,5 @@ See `/home/user/unrdf/results/statistical-run.log` for complete execution trace.
 
 **Document Prepared By:** UNRDF Research Team
 **Date:** December 25, 2025
-**Version:** 1.0 (FINAL)
+**Version:** latest (FINAL)
 **Status:** READY FOR THESIS DEFENSE ✅

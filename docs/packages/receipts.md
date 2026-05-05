@@ -2,7 +2,7 @@
 
 > KGC Receipts - Batch receipt generation with Merkle tree verification for knowledge graph operations
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

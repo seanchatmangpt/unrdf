@@ -14,7 +14,7 @@
    - Type definitions: Zod schemas throughout
 
 2. **Package Metadata**:
-   - package.json: @unrdf/kgc-claude@5.0.0
+   - package.json: @unrdf/kgc-claude@latest
    - Dependencies: @unrdf/core, @unrdf/oxigraph, @unrdf/kgc-4d, @unrdf/yawl, hash-wasm, zod
    - Description: "Deterministic run objects, universal checkpoints, bounded autonomy, and multi-agent concurrency for Claude integration"
 
@@ -320,11 +320,11 @@ find /home/user/unrdf/docs/substrate -name "*.md" -exec grep -h "\](\./" {} \; |
 ### File Sizes
 
 ```
-README.md:              4.7 KB
+README.md:              latest KB
 tutorial.md:            11  KB
 reference.md:           19  KB
 explanation.md:         22  KB
-how-to/run-capsules.md: 7.4 KB
+how-to/run-capsules.md: latest KB
 how-to/checkpoints.md:  11  KB
 how-to/autonomy-guards.md: 12 KB
 how-to/multi-agent.md:  12  KB

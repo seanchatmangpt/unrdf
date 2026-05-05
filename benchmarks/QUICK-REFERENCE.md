@@ -57,7 +57,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
 ### Hook Registration
 
 ```
-Small (100 hooks):    < 0.5ms avg, > 2000/sec, < 5MB
+Small (100 hooks):    < latestms avg, > 2000/sec, < 5MB
 Medium (1k hooks):    < 1ms avg, > 1000/sec, < 25MB
 Large (10k hooks):    < 1ms avg, > 1000/sec, < 100MB
 ```
@@ -120,7 +120,7 @@ const BENCHMARK_CONFIG = {
 ```javascript
 // Fix: Initialize OTEL properly
 import { trace } from '@opentelemetry/api';
-const tracer = trace.getTracer('benchmark', '1.0.0');
+const tracer = trace.getTracer('benchmark', 'latest');
 ```
 
 ## Interpreting Results
@@ -131,11 +131,11 @@ const tracer = trace.getTracer('benchmark', '1.0.0');
 📊 BENCHMARK RESULTS: ✅ PASS
 Targets Met: 5/5
 
-Mean Latency:    0.85ms  (target: < 1ms)     ✅
-P95 Latency:     1.8ms   (target: < 2ms)     ✅
+Mean Latency:    latestms  (target: < 1ms)     ✅
+P95 Latency:     latestms   (target: < 2ms)     ✅
 Throughput:      1176/s  (target: > 1000/s)  ✅
-Memory per 1k:   22.5MB  (target: < 25MB)    ✅
-Error Rate:      0.05%   (target: < 0.1%)    ✅
+Memory per 1k:   latestMB  (target: < 25MB)    ✅
+Error Rate:      latest%   (target: < latest%)    ✅
 ```
 
 ### What to Look For
@@ -155,10 +155,10 @@ Error Rate:      0.05%   (target: < 0.1%)    ✅
 {
   "benchmark.suite.name": "Knowledge Hooks Performance Benchmark Suite",
   "benchmark.id": "hook-registration",
-  "benchmark.latency.mean.ms": 0.85,
-  "benchmark.latency.p95.ms": 1.8,
+  "benchmark.latency.mean.ms": latest,
+  "benchmark.latency.p95.ms": latest,
   "benchmark.throughput.ops_per_sec": 1176,
-  "memory.overhead.mb": 22.5,
+  "memory.overhead.mb": latest,
   "validation.status": "PASS"
 }
 ```
@@ -187,7 +187,7 @@ Error Rate:      0.05%   (target: < 0.1%)    ✅
 | p90 | 90% of requests faster | Good user experience |
 | p95 | 95% of requests faster | SLA target |
 | p99 | 99% of requests faster | Tail latency / worst case |
-| p99.9 | 99.9% of requests faster | Extreme outliers |
+| platest | latest% of requests faster | Extreme outliers |
 
 **Rule of Thumb**: Optimize for p95, monitor p99.
 

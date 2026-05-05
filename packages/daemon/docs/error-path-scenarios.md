@@ -244,22 +244,22 @@ expect(metrics.successRate).toBe(100); // Metrics accurate
 
 ## JTBD #6.2: Version Mismatch During Rollback
 
-**Failure Mode**: Receipt version (v1.0.0) does not match current system version (v2.0.0) during rollback attempt
+**Failure Mode**: Receipt version ([VERSION]) does not match current system version ([VERSION]) during rollback attempt
 
 ### Error Scenario:
-A deployment generated and recorded a receipt for policy enforcement code using generator version v1.0.0. Six months later, the system has been upgraded to version v2.0.0. An incident requires rolling back to the previously recorded policy. When the team attempts to rollback using the v1.0.0 receipt against the v2.0.0 system, the version mismatch is detected. System must prevent the rollback, log the mismatch with context, and suggest checking compatibility.
+A deployment generated and recorded a receipt for policy enforcement code using generator version [VERSION]. Six months later, the system has been upgraded to version [VERSION]. An incident requires rolling back to the previously recorded policy. When the team attempts to rollback using the [VERSION] receipt against the [VERSION] system, the version mismatch is detected. System must prevent the rollback, log the mismatch with context, and suggest checking compatibility.
 
 ### Expected Error Handling:
 - Version mismatch detected (not silent)
 - Rollback prevented: canRollback=false
-- Error context logged: {receipt_version: v1.0.0, current_version: v2.0.0, operationId, timestamp}
+- Error context logged: {receipt_version: [VERSION], current_version: [VERSION], operationId, timestamp}
 - Warning message includes both versions for diagnostic
 - System state unchanged (no partial or incorrect rollback)
-- Suggestion logged: "Check compatibility between v1.0.0 and v2.0.0"
+- Suggestion logged: "Check compatibility between [VERSION] and [VERSION]"
 
 ### How to Trigger Error:
-1. Create operation receipt with version='v1.0.0'
-2. Set current system version to 'v2.0.0'
+1. Create operation receipt with version='[VERSION]'
+2. Set current system version to '[VERSION]'
 3. Attempt to verify compatibility: `receipt.version === currentVersion`
 4. Observe mismatch (false)
 5. Log warning with context
@@ -269,7 +269,7 @@ A deployment generated and recorded a receipt for policy enforcement code using 
 
 ### Proof of Correct Handling:
 1. Version comparison returns mismatch: versionMismatch=true
-2. Warning logged with context: {level: 'warn', contains: 'v1.0.0' and 'v2.0.0'}
+2. Warning logged with context: {level: 'warn', contains: '[VERSION]' and '[VERSION]'}
 3. Rollback not executed: canRollback=false
 4. System state unchanged: metrics.totalOperations unchanged
 5. New operations execute: result.ok=true
@@ -278,8 +278,8 @@ A deployment generated and recorded a receipt for policy enforcement code using 
 
 ### Test Assertion:
 ```javascript
-expect(receipt.version).toBe('v1.0.0');
-expect(currentVersion).toBe('v2.0.0');
+expect(receipt.version).toBe('[VERSION]');
+expect(currentVersion).toBe('[VERSION]');
 expect(versionMismatch).toBe(true); // Mismatch detected
 expect(canRollback).toBe(false);    // Rollback prevented
 expect(daemon.isRunning).toBe(true); // System stable

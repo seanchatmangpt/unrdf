@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/rdf-graphql
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -28,10 +28,10 @@ Type-safe GraphQL interface for RDF knowledge graphs with automatic schema gener
 
 ### Dependencies
 
-- `graphql`: ^16.8.1
-- `@graphql-tools/schema`: ^10.0.2
+- `graphql`: ^[VERSION]
+- `@graphql-tools/schema`: ^[VERSION]
 - `@unrdf/oxigraph`: workspace:*
-- `zod`: ^3.22.4
+- `zod`: ^[VERSION]
 
 ### Exports
 

@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/hooks-example-policy",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "type": "module",
   "description": "Policy Hooks Example - RDF data validation and access control",
   "private": true,

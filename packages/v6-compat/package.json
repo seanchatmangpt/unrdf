@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/v6-compat",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "UNRDF v6 Compatibility Layer - v5 to v6 migration bridge with adapters and lint rules",
   "type": "module",
   "main": "src/index.mjs",

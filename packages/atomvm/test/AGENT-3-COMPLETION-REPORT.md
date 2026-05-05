@@ -276,11 +276,11 @@ import { trace, metrics } from '@opentelemetry/api';  // ✅ Available
 ```bash
 $ cat package.json | grep -A 5 "devDependencies"
 "devDependencies": {
-  "@playwright/test": "^1.57.0",
-  "@vitest/browser": "^4.0.15",
-  "jsdom": "^24.0.0",
-  "vite": "^7.3.0",
-  "vitest": "^4.0.15"
+  "@playwright/test": "^[VERSION]",
+  "@vitest/browser": "^[VERSION]",
+  "jsdom": "^[VERSION]",
+  "vite": "^[VERSION]",
+  "vitest": "^[VERSION]"
 }
 ```
 

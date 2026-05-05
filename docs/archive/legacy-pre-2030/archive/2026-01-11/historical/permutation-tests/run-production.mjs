@@ -159,7 +159,7 @@ async function main() {
 
   if (passed === total) {
     console.log(`${colors.green}${colors.bright}🎉 ALL PRODUCTION TESTS PASSING!${colors.reset}\n`);
-    console.log(`${colors.cyan}Ready for v5.0.0 release${colors.reset}\n`);
+    console.log(`${colors.cyan}Ready for latest release${colors.reset}\n`);
     process.exit(0);
   } else {
     console.log(`${colors.red}${colors.bright}⚠️  SOME TESTS FAILING${colors.reset}\n`);

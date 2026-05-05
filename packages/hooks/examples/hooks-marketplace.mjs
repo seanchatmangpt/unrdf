@@ -67,7 +67,7 @@ async function main() {
   const singleHook = createHook(
     hookId1,
     'Data Enrichment Hook',
-    '1.0.0',
+    '[VERSION]',
     [], // No dependencies
   );
 
@@ -119,9 +119,9 @@ async function main() {
   const hookId2 = '550e8400-e29b-41d4-a716-446655440002';
   const hookId3 = '550e8400-e29b-41d4-a716-446655440003';
 
-  const hookA = createHook(hookId1, 'Hook A (Base)', '1.0.0', []);
-  const hookB = createHook(hookId2, 'Hook B (depends on A)', '1.0.0', [hookId1]);
-  const hookC = createHook(hookId3, 'Hook C (depends on B)', '1.0.0', [hookId2]);
+  const hookA = createHook(hookId1, 'Hook A (Base)', '[VERSION]', []);
+  const hookB = createHook(hookId2, 'Hook B (depends on A)', '[VERSION]', [hookId1]);
+  const hookC = createHook(hookId3, 'Hook C (depends on B)', '[VERSION]', [hookId2]);
 
   console.log('Admitting hooks A→B→C (valid chain)...\n');
 
@@ -145,8 +145,8 @@ async function main() {
   const hookId4 = '550e8400-e29b-41d4-a716-446655440004';
   const hookId5 = '550e8400-e29b-41d4-a716-446655440005';
 
-  const hookX = createHook(hookId4, 'Hook X', '1.0.0', [hookId5]);
-  const hookY = createHook(hookId5, 'Hook Y', '1.0.0', [hookId4]);
+  const hookX = createHook(hookId4, 'Hook X', '[VERSION]', [hookId5]);
+  const hookY = createHook(hookId5, 'Hook Y', '[VERSION]', [hookId4]);
 
   console.log('Admitting hooks X↔Y (circular dependency)...\n');
 
@@ -175,9 +175,9 @@ async function main() {
   const queryMarketplace = new HooksMarketplace();
 
   const demoHooks = [
-    createHook('550e8400-e29b-41d4-a716-446655440010', 'Hook Alpha', '1.0.0', []),
-    createHook('550e8400-e29b-41d4-a716-446655440011', 'Hook Beta', '2.0.0', []),
-    createHook('550e8400-e29b-41d4-a716-446655440012', 'Hook Gamma', '1.5.0', []),
+    createHook('550e8400-e29b-41d4-a716-446655440010', 'Hook Alpha', '[VERSION]', []),
+    createHook('550e8400-e29b-41d4-a716-446655440011', 'Hook Beta', '[VERSION]', []),
+    createHook('550e8400-e29b-41d4-a716-446655440012', 'Hook Gamma', '[VERSION]', []),
   ];
 
   demoHooks.forEach(h => queryMarketplace.admitHook(h));
@@ -220,7 +220,7 @@ async function main() {
   const validHook = createHook(
     '550e8400-e29b-41d4-a716-446655440020',
     'Analytics Hook',
-    '1.0.0',
+    '[VERSION]',
     [],
   );
 

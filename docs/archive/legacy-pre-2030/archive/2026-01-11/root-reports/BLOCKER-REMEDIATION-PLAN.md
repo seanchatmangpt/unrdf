@@ -10,7 +10,7 @@
 ## Executive Summary
 
 PHASE-4 validation revealed **4 critical blockers** preventing v6 production release:
-- **Blocker 1**: Test Failures (79.8% → need 95%) - 6 specific failures
+- **Blocker 1**: Test Failures (latest% → need 95%) - 6 specific failures
 - **Blocker 2**: Determinism Hash Mismatch (L3 maturity violation)
 - **Blocker 3**: Linting Violations (2 warnings, max allowed: 0)
 - **Blocker 4**: Build Configuration Warning (0 packages matched filter)
@@ -25,13 +25,13 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ## Root Cause Analysis (Adversarial PM Validated)
 
-### Blocker 1: Test Failures (79.8% pass rate, need ≥95%)
+### Blocker 1: Test Failures (latest% pass rate, need ≥95%)
 
 **Evidence**: `/home/user/unrdf/PHASE-4-FINAL-VALIDATION-REPORT.md` lines 65-108
 **Current State**: 77/107 tests passing
 **Required State**: ≥101/107 tests passing (95%)
 
-#### Failure 1.1: Missing DeltaProposalSchema Export
+#### Failure latest: Missing DeltaProposalSchema Export
 **File**: `/home/user/unrdf/packages/v6-core/src/delta/index.mjs`
 **Test**: `/home/user/unrdf/packages/v6-core/test/integration/v6-smoke.test.mjs:28`
 **Error**: `The requested module '../../src/delta/index.mjs' does not provide an export named 'DeltaProposalSchema'`
@@ -51,7 +51,7 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ---
 
-#### Failure 1.2: Grammar Compiler - Simple Query Compile Failed
+#### Failure latest: Grammar Compiler - Simple Query Compile Failed
 **File**: `/home/user/unrdf/packages/v6-core/test/grammar/closure.test.mjs:90`
 **Test**: `Grammar Compiler - simple query compiles successfully`
 **Error**: `Compile should succeed (false !== true)`
@@ -73,7 +73,7 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ---
 
-#### Failure 1.3: Grammar Compiler - Custom Bounds Override Failed
+#### Failure latest: Grammar Compiler - Custom Bounds Override Failed
 **File**: `/home/user/unrdf/packages/v6-core/test/grammar/closure.test.mjs:129`
 **Test**: `Grammar Compiler - custom bounds override defaults`
 **Error**: `Cannot read properties of undefined (reading '_zod')`
@@ -95,25 +95,25 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ---
 
-#### Failure 1.4: Full Pipeline - Valid Query Execution Failed
+#### Failure latest: Full Pipeline - Valid Query Execution Failed
 **File**: `/home/user/unrdf/packages/v6-core/test/grammar/closure.test.mjs:195`
 **Test**: `Full Pipeline - valid query executes`
 **Error**: `Pipeline should succeed (false !== true)`
 
 **Root Cause**:
-- Cascading failure from 1.2 and 1.3 above
+- Cascading failure from latest and latest above
 - Full pipeline: parse → compile → execute
 - If compiler returns `{success: false}`, pipeline execution fails
-- Dependent on fixing 1.2 and 1.3
+- Dependent on fixing latest and latest
 
 **Evidence Verified**: ✅
 - Dependency: This test depends on compiler working correctly
 
-**Impact**: 1 test failure (will auto-fix when 1.2/1.3 fixed)
+**Impact**: 1 test failure (will auto-fix when latest/latest fixed)
 
 ---
 
-#### Failure 1.5: withReceipt - Deterministic Timestamp Hash Mismatch
+#### Failure latest: withReceipt - Deterministic Timestamp Hash Mismatch
 **File**: `/home/user/unrdf/packages/v6-core/test/receipts/with-receipt-node.test.mjs:35`
 **Test**: `is deterministic with injected timestamp`
 **Error**: Hash mismatch
@@ -139,32 +139,32 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ---
 
-#### Failure 1.6: withReceipt - Idempotency Verification Failed
+#### Failure latest: withReceipt - Idempotency Verification Failed
 **File**: `/home/user/unrdf/packages/v6-core/test/receipts/with-receipt-node.test.mjs:59`
 **Test**: `verifies idempotency`
 **Error**: `false !== true` (idempotency check failed)
 
 **Root Cause**:
-- Same root cause as 1.5 above
+- Same root cause as latest above
 - `verifyIdempotency(wrapped, [5])` calls function twice
 - Expects `receipt1.receiptHash === receipt2.receiptHash`
 - Failure confirms non-deterministic receipt generation
 
 **Evidence Verified**: ✅
 - Read with-receipt-node.test.mjs lines 59-78 - test structure confirmed
-- Dependent on same fix as 1.5
+- Dependent on same fix as latest
 
-**Impact**: 1 test failure (will auto-fix when 1.5 fixed)
+**Impact**: 1 test failure (will auto-fix when latest fixed)
 
 ---
 
 ### Blocker 2: Determinism Hash Mismatch (L3 Maturity Violation)
 
-**Evidence**: Same as Blocker 1, Failures 1.5 and 1.6
+**Evidence**: Same as Blocker 1, Failures latest and latest
 **Status**: Duplicate of Blocker 1 - NOT a separate blocker
 **Root Cause**: withReceipt HOF non-deterministic receipt generation
 
-**Note**: This is the SAME blocker as test failures 1.5/1.6. Fixing test failures will resolve this.
+**Note**: This is the SAME blocker as test failures latest/latest. Fixing test failures will resolve this.
 
 ---
 
@@ -172,7 +172,7 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 **Evidence**: `/home/user/unrdf/PHASE-4-FINAL-VALIDATION-REPORT.md` lines 50-60
 
-#### Violation 3.1: Unused Variable `createContext`
+#### Violation latest: Unused Variable `createContext`
 **File**: `/home/user/unrdf/packages/cli/src/cli-receipts.mjs:12`
 **Line**: `import { withReceipt, createContext } from '../../v6-core/src/receipt-pattern.mjs';`
 **Error**: `'createContext' is defined but never used. Allowed unused vars must match /^_/u`
@@ -192,7 +192,7 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 
 ---
 
-#### Violation 3.2: Unused Variable `expect`
+#### Violation latest: Unused Variable `expect`
 **File**: `/home/user/unrdf/packages/cli/test/cli/decision-fabric.test.mjs:14`
 **Line**: `import { describe, it, expect } from '@jest/globals';`
 **Error**: `'expect' is defined but never used. Allowed unused vars must match /^_/u`
@@ -242,14 +242,14 @@ PHASE-4 validation revealed **4 critical blockers** preventing v6 production rel
 ```mermaid
 graph TD
     subgraph "PHASE A: Essential Fixes (PARALLEL)"
-        A1[Fix 1.1: DeltaProposalSchema Export<br/>5 min]
-        A2[Fix 1.5/1.6: withReceipt Determinism<br/>60 min]
-        A3[Fix 1.2/1.3: Grammar Compiler<br/>45 min]
-        A4[Fix 3.1/3.2: Linting Violations<br/>5 min]
+        A1[Fix latest: DeltaProposalSchema Export<br/>5 min]
+        A2[Fix latest/latest: withReceipt Determinism<br/>60 min]
+        A3[Fix latest/latest: Grammar Compiler<br/>45 min]
+        A4[Fix latest/latest: Linting Violations<br/>5 min]
     end
 
     subgraph "PHASE B: Dependent Fixes (SEQUENTIAL)"
-        B1[Fix 1.4: Full Pipeline Test<br/>AUTO-FIX]
+        B1[Fix latest: Full Pipeline Test<br/>AUTO-FIX]
         B2[Fix Blocker 2: Determinism Proof<br/>AUTO-FIX]
     end
 
@@ -259,11 +259,11 @@ graph TD
     end
 
     subgraph "PHASE D: Validation (SEQUENTIAL)"
-        D1[Re-run Gate 4.2: Lint<br/>5 min]
-        D2[Re-run Gate 4.3: Tests<br/>10 min]
-        D3[Re-run Gate 4.4: Determinism<br/>5 min]
-        D4[Re-run Gate 4.1: Build<br/>5 min]
-        D5[Re-run Gate 4.5: OTEL<br/>5 min]
+        D1[Re-run Gate latest: Lint<br/>5 min]
+        D2[Re-run Gate latest: Tests<br/>10 min]
+        D3[Re-run Gate latest: Determinism<br/>5 min]
+        D4[Re-run Gate latest: Build<br/>5 min]
+        D5[Re-run Gate latest: OTEL<br/>5 min]
         D6[Final Production Checklist<br/>10 min]
     end
 
@@ -298,7 +298,7 @@ graph TD
 - PHASE B: 0 min (auto-fixes when A completes)
 - PHASE C: 30 min (parallel with A if agents available)
 - PHASE D: 40 min (sequential validation)
-- **Total: 130 min (2.2 hours) optimistic, 180 min (3 hours) realistic**
+- **Total: 130 min (latest hours) optimistic, 180 min (3 hours) realistic**
 
 ---
 
@@ -308,10 +308,10 @@ graph TD
 
 | Agent ID | Role | Tasks | Est. Time | Dependencies | Success Criteria |
 |----------|------|-------|-----------|--------------|------------------|
-| **Agent R1** | Schema Export Fixer | Fix 1.1: Add DeltaProposalSchema export | 5 min | None | Export added, test imports successfully |
-| **Agent R2** | Determinism Engineer | Fix 1.5/1.6: withReceipt determinism | 60 min | None | 100/100 identical hashes, idempotency passes |
-| **Agent R3** | Grammar Compiler Debugger | Fix 1.2/1.3: Grammar compiler logic | 45 min | None | 3 compiler tests pass (simple, bounds, pipeline) |
-| **Agent R4** | Linting Cleaner | Fix 3.1/3.2: Remove unused imports | 5 min | None | 0 lint violations |
+| **Agent R1** | Schema Export Fixer | Fix latest: Add DeltaProposalSchema export | 5 min | None | Export added, test imports successfully |
+| **Agent R2** | Determinism Engineer | Fix latest/latest: withReceipt determinism | 60 min | None | 100/100 identical hashes, idempotency passes |
+| **Agent R3** | Grammar Compiler Debugger | Fix latest/latest: Grammar compiler logic | 45 min | None | 3 compiler tests pass (simple, bounds, pipeline) |
+| **Agent R4** | Linting Cleaner | Fix latest/latest: Remove unused imports | 5 min | None | 0 lint violations |
 | **Agent R5** | Build Validator | Fix 4 + Code Review + Re-run PHASE 4 | 60 min | R1-R4 complete | All 4 gates pass, production checklist 100% |
 
 ---
@@ -377,8 +377,8 @@ timeout 30s bash -c 'for i in {1..10}; do pnpm --filter @unrdf/v6-core test -- w
 ```
 
 **Success Criteria**:
-- ✅ Test 1.5 passes: Identical hashes for identical inputs (10/10 runs)
-- ✅ Test 1.6 passes: Idempotency verification succeeds
+- ✅ Test latest passes: Identical hashes for identical inputs (10/10 runs)
+- ✅ Test latest passes: Idempotency verification succeeds
 - ✅ Hash stability: `a38ab2b3b9b81e31d77b18109ba23367bf7dba1161c5ffc391ec3c5df985b360` (or ANY hash, but must be identical across runs)
 
 **Estimated Time**: 60 minutes
@@ -419,9 +419,9 @@ timeout 15s pnpm --filter @unrdf/v6-core test -- closure.test.mjs
 ```
 
 **Success Criteria**:
-- ✅ Test 1.2 passes: Simple query compiles successfully
-- ✅ Test 1.3 passes: Custom bounds override works
-- ✅ Test 1.4 passes: Full pipeline executes (dependent on 1.2/1.3)
+- ✅ Test latest passes: Simple query compiles successfully
+- ✅ Test latest passes: Custom bounds override works
+- ✅ Test latest passes: Full pipeline executes (dependent on latest/latest)
 
 **Estimated Time**: 45 minutes
 **Complexity**: MEDIUM
@@ -438,12 +438,12 @@ timeout 15s pnpm --filter @unrdf/v6-core test -- closure.test.mjs
 **Mission**: Fix 2 unused variable violations
 
 **Tasks**:
-1. **Fix 3.1**: Remove `createContext` from import or prefix with `_`
+1. **Fix latest**: Remove `createContext` from import or prefix with `_`
    - File: `/packages/cli/src/cli-receipts.mjs:12`
    - Change: `import { withReceipt, createContext }` → `import { withReceipt }`
    - OR: Keep but rename: `import { withReceipt, createContext as _createContext }`
 
-2. **Fix 3.2**: Remove `expect` from import or prefix with `_`
+2. **Fix latest**: Remove `expect` from import or prefix with `_`
    - File: `/packages/cli/test/cli/decision-fabric.test.mjs:14`
    - Change: `import { describe, it, expect }` → `import { describe, it }`
    - OR: Keep but rename: `import { describe, it, expect as _expect }`
@@ -491,11 +491,11 @@ timeout 60s pnpm run lint
      - Documentation updates needed
 
 3. **Re-run PHASE 4 Validation** (40 min)
-   - Gate 4.1: Build validation
-   - Gate 4.2: Lint validation (after R4)
-   - Gate 4.3: Test validation (after R1, R2, R3)
-   - Gate 4.4: Determinism proof (after R2)
-   - Gate 4.5: OTEL validation (should still pass)
+   - Gate latest: Build validation
+   - Gate latest: Lint validation (after R4)
+   - Gate latest: Test validation (after R1, R2, R3)
+   - Gate latest: Determinism proof (after R2)
+   - Gate latest: OTEL validation (should still pass)
 
 **Expected Files Modified**:
 - `/home/user/unrdf/package.json` (possibly fix build script)
@@ -511,11 +511,11 @@ timeout 180s node validation/run-all.mjs comprehensive
 ```
 
 **Success Criteria**:
-- ✅ Gate 4.1: Build completes, all packages compile (or at least no filter error)
-- ✅ Gate 4.2: 0 lint violations
-- ✅ Gate 4.3: ≥95% test pass rate (≥101/107 tests)
-- ✅ Gate 4.4: Determinism proof 100/100
-- ✅ Gate 4.5: OTEL score ≥80/100 (already 100/100)
+- ✅ Gate latest: Build completes, all packages compile (or at least no filter error)
+- ✅ Gate latest: 0 lint violations
+- ✅ Gate latest: ≥95% test pass rate (≥101/107 tests)
+- ✅ Gate latest: Determinism proof 100/100
+- ✅ Gate latest: OTEL score ≥80/100 (already 100/100)
 
 **Estimated Time**: 90 minutes (30 + 20 + 40)
 **Complexity**: LOW (orchestration + validation)
@@ -643,10 +643,10 @@ pnpm install
 
 | Blocker | Fix Complexity | Probability of Success | Impact if Fails | Mitigation |
 |---------|----------------|----------------------|----------------|------------|
-| 1.1 (Schema Export) | LOW | 99% | 1 test fails | Simple export, hard to fail |
-| 1.2/1.3 (Grammar) | MEDIUM | 85% | 3 tests fail | Debug compiler logic, may need parser fix |
-| 1.5/1.6 (Determinism) | MEDIUM | 90% | L3 maturity blocked | Context injection pattern proven in PHASE 2 |
-| 3.1/3.2 (Linting) | TRIVIAL | 100% | CI/CD blocked | Remove 2 imports, can't fail |
+| latest (Schema Export) | LOW | 99% | 1 test fails | Simple export, hard to fail |
+| latest/latest (Grammar) | MEDIUM | 85% | 3 tests fail | Debug compiler logic, may need parser fix |
+| latest/latest (Determinism) | MEDIUM | 90% | L3 maturity blocked | Context injection pattern proven in PHASE 2 |
+| latest/latest (Linting) | TRIVIAL | 100% | CI/CD blocked | Remove 2 imports, can't fail |
 | 4 (Build Config) | LOW | 95% | Build in production | Investigate filter, low impact if unfixed |
 
 ### Overall Risk
@@ -677,7 +677,7 @@ T+1:00  - PHASE B auto-completes (dependent fixes)
 T+1:00  - Start PHASE C (R5 build investigation)
 T+1:30  - R5 completes build fix + code review
 T+1:30  - Start PHASE D (validation)
-T+1:40  - Gates 4.1-4.5 complete
+T+1:40  - Gates latest.5 complete
 T+2:00  - Final checklist validated
 ```
 
@@ -697,7 +697,7 @@ T+1:30  - PHASE B auto-completes
 T+1:30  - Start PHASE C (R5 build investigation)
 T+2:00  - R5 completes build fix + code review
 T+2:00  - Start PHASE D (validation)
-T+2:20  - Gates 4.1-4.5 complete
+T+2:20  - Gates latest.5 complete
 T+2:40  - Final checklist validated
 T+3:00  - Buffer for unexpected issues
 ```
@@ -718,7 +718,7 @@ T+2:00  - PHASE B auto-completes
 T+2:00  - Start PHASE C
 T+2:45  - R5 completes (build config complex issue)
 T+2:45  - Start PHASE D
-T+3:10  - Gates 4.1-4.5 complete (1 retry needed)
+T+3:10  - Gates latest.5 complete (1 retry needed)
 T+3:30  - Final checklist validated
 T+4:00  - Buffer + documentation
 ```
@@ -799,8 +799,8 @@ T+4:00  - Buffer + documentation
 ### Did you ACCOUNT for dependencies?
 
 **YES** - Dependency graph shows:
-- Test 1.4 (pipeline) depends on 1.2/1.3 (compiler) → Sequential
-- Blocker 2 (determinism proof) same as 1.5/1.6 → Not separate
+- Test latest (pipeline) depends on latest/latest (compiler) → Sequential
+- Blocker 2 (determinism proof) same as latest/latest → Not separate
 - All other fixes independent → Parallel execution safe
 
 ---

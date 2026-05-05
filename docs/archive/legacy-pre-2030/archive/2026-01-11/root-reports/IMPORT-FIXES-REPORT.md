@@ -129,9 +129,9 @@ node --check packages/streaming/src/observability.mjs
 **Solution**:
 - Added to dependencies:
   ```json
-  "@opentelemetry/api": "^1.9.0"
+  "@opentelemetry/api": "^latest"
   ```
-- Version matches other packages in workspace (streaming already has 1.9.0)
+- Version matches other packages in workspace (streaming already has latest)
 
 **Verification**:
 ```bash
@@ -227,7 +227,7 @@ All files pass `node --check`:
 ✅ distributed-query-engine.mjs:21 → @unrdf/core/utils/sparql-utils (FIXED PATH + EXPORT)
 ✅ real-time-validator.mjs:16 → ../validate.mjs (CREATED - 245 lines, SHACL validation)
 ✅ real-time-validator.mjs:17 → ../observability.mjs (CREATED - 296 lines, OTEL manager)
-✅ packages/federation package.json (ADDED @opentelemetry/api@1.9.0)
+✅ packages/federation package.json (ADDED @opentelemetry/api@latest)
 ```
 
 ---
@@ -251,7 +251,7 @@ timeout 5s node validate-fixes.mjs
 
 ### Execution Time
 - File creation: < 1 second
-- Import verification: 2.1 seconds (6 files @ ~350ms each)
+- Import verification: latest seconds (6 files @ ~350ms each)
 - Total execution: ~3 seconds
 
 ---

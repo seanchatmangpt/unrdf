@@ -353,7 +353,7 @@ const NETWORK_ALLOWED_HOSTS = [
   { hostname: 'github.com', paths: ['**'], methods: ['GET'] },
   { hostname: 'docs.github.com', paths: ['**'], methods: ['GET'] },
   { hostname: 'localhost', paths: ['**'], methods: ['GET', 'POST'] },
-  { hostname: '127.0.0.1', paths: ['**'], methods: ['GET', 'POST'] },
+  { hostname: '[VERSION].1', paths: ['**'], methods: ['GET', 'POST'] },
 ];
 
 /**
@@ -362,7 +362,7 @@ const NETWORK_ALLOWED_HOSTS = [
  */
 const NETWORK_FORBIDDEN_DOMAINS = [
   'metadata.google.internal',
-  '169.254.169.254', // AWS/Azure metadata
+  '[VERSION].254', // AWS/Azure metadata
   '169.254.*',
   '*.internal',
   '*.local',
@@ -729,7 +729,7 @@ export class GuardRegistry {
    * @param {string} [method='GET'] - HTTP method
    * @returns {{allowed: boolean, reason?: string, guardId?: string, hostname?: string, severity?: string, receipt?: Object}}
    * @example
-   * const result = registry.checkNetworkURL('http://169.254.169.254/latest/meta-data/');
+   * const result = registry.checkNetworkURL('http://[VERSION].254/latest/meta-data/');
    * // { allowed: false, reason: 'Network access to metadata service forbidden', ... }
    */
   checkNetworkURL(url, method = 'GET') {

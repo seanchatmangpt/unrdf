@@ -153,12 +153,12 @@
       }
     ],
     "dependencies_to_add": [
-      "@nuxt/ui@^4.0.0",
-      "@iconify-json/lucide@^1.2.68",
-      "@iconify-json/simple-icons@^1.2.53",
-      "@unovis/ts@^1.6.1",
-      "@unovis/vue@^1.6.1",
-      "@nuxt/eslint@^1.9.0 -D"
+      "@nuxt/ui@^latest",
+      "@iconify-json/lucide@^latest",
+      "@iconify-json/simple-icons@^latest",
+      "@unovis/ts@^latest",
+      "@unovis/vue@^latest",
+      "@nuxt/eslint@^latest -D"
     ],
     "dependencies_to_remove": [
       "typescript -D",

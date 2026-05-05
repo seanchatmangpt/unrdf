@@ -38,7 +38,7 @@ import { publishCommand } from './commands/publish.mjs';
 export const main = defineCommand({
   meta: {
     name: 'unrdf',
-    version: '26.4.23',
+    version: '[VERSION]',
     description: 'UNRDF CLI - Command-line tools for RDF graph operations',
   },
   subCommands: {

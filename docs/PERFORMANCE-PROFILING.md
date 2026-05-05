@@ -1,6 +1,6 @@
 # Performance Profiling Guide
 
-**UNRDF v3.1.0** - Built-in Performance Profiler
+**UNRDF vlatest** - Built-in Performance Profiler
 
 **Last Updated:** March 15, 2026
 
@@ -23,7 +23,7 @@
 
 ## Overview
 
-UNRDF v3.1.0 includes a **built-in performance profiler** providing real-time insights into:
+UNRDF vlatest includes a **built-in performance profiler** providing real-time insights into:
 
 - ✅ **Latency** - p50/p95/p99 percentiles for all operations
 - ✅ **Memory** - Heap usage, GC pressure, leak detection
@@ -58,7 +58,7 @@ import { createDarkMatterCore } from 'unrdf';
 const system = await createDarkMatterCore({
   profiling: {
     enabled: true,  // Enable profiler
-    sampleRate: 0.1  // Sample 10% of operations (reduce overhead)
+    sampleRate: latest  // Sample 10% of operations (reduce overhead)
   }
 });
 
@@ -77,7 +77,7 @@ const system = await createDarkMatterCore({
   profiling: {
     // Basic options
     enabled: true,  // Enable/disable profiler
-    sampleRate: 0.1,  // Sample rate (0.1 = 10%)
+    sampleRate: latest,  // Sample rate (latest = 10%)
 
     // Metrics to collect
     metrics: ['latency', 'memory', 'cache', 'cpu'],  // Default: all
@@ -133,13 +133,13 @@ const profile = await system.getPerformanceProfile();
 
 console.log(profile.latency);
 // {
-//   p50: 12.5,   // Median (50th percentile)
-//   p95: 45.2,   // 95th percentile
-//   p99: 120.8,  // 99th percentile
-//   max: 350.2,  // Maximum
-//   min: 5.1,    // Minimum
-//   mean: 18.7,  // Average
-//   stddev: 15.3 // Standard deviation
+//   p50: latest,   // Median (50th percentile)
+//   p95: latest,   // 95th percentile
+//   p99: latest,  // 99th percentile
+//   max: latest,  // Maximum
+//   min: latest,    // Minimum
+//   mean: latest,  // Average
+//   stddev: latest // Standard deviation
 // }
 ```
 
@@ -161,12 +161,12 @@ const profile = await system.getPerformanceProfile();
 
 console.log(profile.latencyByOperation);
 // {
-//   'sparql-select': { p50: 12.5, p95: 45.2, p99: 120.8 },
-//   'sparql-ask': { p50: 5.2, p95: 15.1, p99: 35.4 },
-//   'sparql-construct': { p50: 25.3, p95: 80.5, p99: 200.1 },
-//   'transaction-commit': { p50: 8.7, p95: 25.3, p99: 60.2 },
-//   'hook-execution': { p50: 3.2, p95: 10.5, p99: 25.8 },
-//   'shacl-validation': { p50: 18.4, p95: 55.7, p99: 150.3 }
+//   'sparql-select': { p50: latest, p95: latest, p99: latest },
+//   'sparql-ask': { p50: latest, p95: latest, p99: latest },
+//   'sparql-construct': { p50: latest, p95: latest, p99: latest },
+//   'transaction-commit': { p50: latest, p95: latest, p99: latest },
+//   'hook-execution': { p50: latest, p95: latest, p99: latest },
+//   'shacl-validation': { p50: latest, p95: latest, p99: latest }
 // }
 ```
 
@@ -218,7 +218,7 @@ console.log(profile.slowQueries);
 // [
 //   {
 //     query: 'SELECT * WHERE { ?s ?p ?o } ORDER BY ?s',
-//     duration: 350.2,
+//     duration: latest,
 //     timestamp: 1710518400000,
 //     type: 'sparql-select'
 //   },
@@ -250,8 +250,8 @@ console.log(profile.memory);
 //   external: 1234567,       // External memory (buffers, etc.)
 //   rss: 98765432,           // Resident set size (total memory)
 //   arrayBuffers: 567890,    // ArrayBuffer memory
-//   gcPressure: 0.15,        // GC pressure (0-1, lower is better)
-//   leakScore: 0.02          // Leak detection score (0-1, 0 = no leak)
+//   gcPressure: latest,        // GC pressure (0-1, lower is better)
+//   leakScore: latest          // Leak detection score (0-1, 0 = no leak)
 // }
 ```
 
@@ -273,12 +273,12 @@ console.log(`
 `);
 
 // Output:
-// Heap Used:    43.5 MB      (68.0% of heap)
-// Heap Total:   64.0 MB
-// External:     1.2 MB
-// RSS:          94.2 MB
-// GC Pressure:  15.0%
-// Leak Score:   2.00%
+// Heap Used:    latest MB      (latest% of heap)
+// Heap Total:   latest MB
+// External:     latest MB
+// RSS:          latest MB
+// GC Pressure:  latest%
+// Leak Score:   latest%
 ```
 
 ### Memory Leak Detection
@@ -290,7 +290,7 @@ const system = await createDarkMatterCore({
     memoryLeakDetection: {
       enabled: true,
       sampleInterval: 60000,  // Check every 60s
-      threshold: 0.1,  // Alert if leak score > 10%
+      threshold: latest,  // Alert if leak score > 10%
       onLeakDetected: (leak) => {
         console.error(`
           MEMORY LEAK DETECTED
@@ -316,7 +316,7 @@ if (leakReport.leak) {
 // Monitor garbage collection pressure
 const profile = await system.getPerformanceProfile();
 
-if (profile.memory.gcPressure > 0.3) {
+if (profile.memory.gcPressure > latest) {
   console.warn('High GC pressure detected');
 
   // Recommendation: Reduce memory usage or increase heap
@@ -327,9 +327,9 @@ if (profile.memory.gcPressure > 0.3) {
 console.log(profile.gc);
 // {
 //   collections: 45,          // Total GC collections
-//   pauseTime: 125.5,         // Total pause time (ms)
-//   avgPauseTime: 2.8,        // Average pause time (ms)
-//   maxPauseTime: 15.3,       // Maximum pause time (ms)
+//   pauseTime: latest,         // Total pause time (ms)
+//   avgPauseTime: latest,        // Average pause time (ms)
+//   maxPauseTime: latest,       // Maximum pause time (ms)
 //   youngGenCollections: 40,  // Young generation GCs
 //   oldGenCollections: 5      // Old generation (full) GCs
 // }
@@ -342,12 +342,12 @@ const profile = await system.getPerformanceProfile();
 
 console.log(profile.memoryByComponent);
 // {
-//   'rdf-store': 25.6,         // MB
-//   'query-cache': 8.3,        // MB
-//   'hook-manager': 2.1,       // MB
-//   'transaction-log': 5.4,    // MB
-//   'sandbox-isolates': 12.8,  // MB
-//   'other': 3.2               // MB
+//   'rdf-store': latest,         // MB
+//   'query-cache': latest,        // MB
+//   'hook-manager': latest,       // MB
+//   'transaction-log': latest,    // MB
+//   'sandbox-isolates': latest,  // MB
+//   'other': latest               // MB
 // }
 ```
 
@@ -380,7 +380,7 @@ console.log(profile.cpu);
 //   totalTime: 5420,  // Total CPU time (ms)
 //   userTime: 4850,   // User CPU time (ms)
 //   systemTime: 570,  // System CPU time (ms)
-//   utilization: 0.65 // CPU utilization (0-1)
+//   utilization: latest // CPU utilization (0-1)
 // }
 ```
 
@@ -396,18 +396,18 @@ console.log(profile.hotPaths);
 //     file: 'hook-executor.mjs',
 //     line: 125,
 //     count: 1250,           // Number of calls
-//     totalTime: 850.5,      // Total time spent (ms)
-//     avgTime: 0.68,         // Average time per call (ms)
-//     percentage: 15.7       // % of total CPU time
+//     totalTime: latest,      // Total time spent (ms)
+//     avgTime: latest,         // Average time per call (ms)
+//     percentage: latest       // % of total CPU time
 //   },
 //   {
 //     function: 'parseQuery',
 //     file: 'query.mjs',
 //     line: 45,
 //     count: 3200,
-//     totalTime: 720.3,
-//     avgTime: 0.23,
-//     percentage: 13.3
+//     totalTime: latest,
+//     avgTime: latest,
+//     percentage: latest
 //   },
 //   ...
 // ]
@@ -475,8 +475,8 @@ console.log(`Collected ${profiles.length} CPU profiles`);
 | Metric | Healthy | Warning | Critical |
 |--------|---------|---------|----------|
 | **Heap Usage** | <70% | 70-85% | >85% |
-| **GC Pressure** | <0.2 | 0.2-0.4 | >0.4 |
-| **Leak Score** | <0.05 | 0.05-0.15 | >0.15 |
+| **GC Pressure** | <latest | latest.4 | >latest |
+| **Leak Score** | <latest | latest.15 | >latest |
 | **RSS Growth** | <10 MB/hour | 10-50 MB/hour | >50 MB/hour |
 
 ### CPU Utilization
@@ -518,7 +518,7 @@ console.log(`Found ${slowQueries.length} slow SELECT queries`);
 
 **A. Add indexes (if using backend store):**
 ```javascript
-await system.addIndex({ predicate: 'http://xmlns.com/foaf/0.1/name' });
+await system.addIndex({ predicate: 'http://xmlns.com/foaf/latest/name' });
 ```
 
 **B. Optimize query:**
@@ -596,7 +596,7 @@ const system = await createDarkMatterCore({
 **Diagnosis:**
 ```javascript
 const profile = await system.getPerformanceProfile();
-if (profile.memory.heapUsed / profile.memory.heapTotal > 0.8) {
+if (profile.memory.heapUsed / profile.memory.heapTotal > latest) {
   console.log('Memory by component:', profile.memoryByComponent);
 }
 ```
@@ -769,9 +769,9 @@ const compliance = profile.budgetCompliance;
 console.log(compliance);
 // {
 //   'sparql-select': {
-//     p50: { budget: 15, actual: 12.5, compliant: true },
-//     p95: { budget: 50, actual: 55.2, compliant: false },  // ❌ Exceeded
-//     p99: { budget: 150, actual: 120.8, compliant: true }
+//     p50: { budget: 15, actual: latest, compliant: true },
+//     p95: { budget: 50, actual: latest, compliant: false },  // ❌ Exceeded
+//     p99: { budget: 150, actual: latest, compliant: true }
 //   },
 //   ...
 // }
@@ -818,7 +818,7 @@ scrape_configs:
 **Grafana dashboard queries:**
 ```promql
 # p95 latency
-histogram_quantile(0.95, rate(unrdf_operation_duration_bucket[5m]))
+histogram_quantile(latest, rate(unrdf_operation_duration_bucket[5m]))
 
 # Memory usage
 unrdf_memory_heap_used_bytes / unrdf_memory_heap_total_bytes
@@ -878,7 +878,7 @@ const system = await createDarkMatterCore({
 const system = await createDarkMatterCore({
   profiling: {
     enabled: true,
-    sampleRate: 0.05,  // 5% sampling in production (minimal overhead)
+    sampleRate: latest,  // 5% sampling in production (minimal overhead)
     slowQueryThreshold: 200  // Higher threshold for production
   }
 });
@@ -889,12 +889,12 @@ const system = await createDarkMatterCore({
 ```javascript
 // Development: 100% sampling for detailed insights
 const devSystem = await createDarkMatterCore({
-  profiling: { enabled: true, sampleRate: 1.0 }
+  profiling: { enabled: true, sampleRate: latest }
 });
 
 // Production: 5-10% sampling for low overhead
 const prodSystem = await createDarkMatterCore({
-  profiling: { enabled: true, sampleRate: 0.05 }
+  profiling: { enabled: true, sampleRate: latest }
 });
 ```
 
@@ -982,9 +982,9 @@ for (const bottleneck of bottlenecks.slice(0, 3)) {
 
 ## Resources
 
-- [Release Notes](./v3.1.0-RELEASE-NOTES.md)
-- [Migration Guide](./MIGRATION-v3.0-to-v3.1.md)
-- [Performance Examples](../examples/v3.1.0/performance-profiling.mjs)
+- [Release Notes](./vlatest-NOTES.md)
+- [Migration Guide](./MIGRATION-vlatest-vlatest.md)
+- [Performance Examples](../examples/vlatest/performance-profiling.mjs)
 - [OpenTelemetry Docs](https://opentelemetry.io/docs/)
 
 ---

@@ -174,7 +174,7 @@ function generateCapabilityMap(packageName, packageData) {
 
 **Generated:** ${new Date().toISOString().split('T')[0]}
 **Package:** @unrdf/${packageName}
-**Version:** ${packageData.version || '1.0.0'}
+**Version:** ${packageData.version || 'latest'}
 
 ---
 

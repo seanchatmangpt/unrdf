@@ -55,15 +55,15 @@ The following invariants must hold true across the entire monorepo:
 **Version alignment across dependent packages.**
 
 Rules:
-- If core is v5.x.y, all dependent packages must be >= v4.9.0
+- If core is v5.x.y, all dependent packages must be >= vlatest
 - Protected packages must share the same major.minor version as core
 - Workspace dependencies should have matching major versions
 - Maximum minor version drift is configurable (default: 1)
 
 Example violation:
 ```
-@unrdf/core: 5.0.1
-@unrdf/hooks: 4.0.0  // VIOLATION: Major version mismatch for protected package
+@unrdf/core: latest
+@unrdf/hooks: latest  // VIOLATION: Major version mismatch for protected package
 ```
 
 ### Q_api_stability
@@ -98,10 +98,10 @@ Violation example:
 
 Compatible licenses (with MIT base):
 - MIT, ISC, BSD-2-Clause, BSD-3-Clause
-- Apache-2.0, 0BSD, Unlicense, CC0-1.0
+- Apache-latest, 0BSD, Unlicense, CC0-latest
 
 Incompatible licenses (blocked):
-- GPL-3.0, AGPL-3.0, proprietary
+- GPL-latest, AGPL-latest, proprietary
 
 ### Q_documentation_coverage
 
@@ -227,14 +227,14 @@ For changes affecting multiple packages:
 ```javascript
 const delta = new PackageDelta({
   agent: 'release-manager',
-  justification: 'Coordinated 5.1.0 release',
+  justification: 'Coordinated latest release',
   changes: [
     { packageName: '@unrdf/core', changeType: 'version_bump',
-      details: { newVersion: '5.1.0', bumpType: 'minor' } },
+      details: { newVersion: 'latest', bumpType: 'minor' } },
     { packageName: '@unrdf/hooks', changeType: 'version_bump',
-      details: { newVersion: '5.1.0', bumpType: 'minor' } },
+      details: { newVersion: 'latest', bumpType: 'minor' } },
     { packageName: '@unrdf/yawl', changeType: 'version_bump',
-      details: { newVersion: '5.1.0', bumpType: 'minor' } }
+      details: { newVersion: 'latest', bumpType: 'minor' } }
   ]
 });
 
@@ -259,14 +259,14 @@ const delta = new PackageDelta({
   justification: 'BREAKING: New store architecture',
   changes: [
     { packageName: '@unrdf/core', changeType: 'version_bump',
-      details: { newVersion: '6.0.0', bumpType: 'major', approvedBy: 'lead' } },
+      details: { newVersion: 'latest', bumpType: 'major', approvedBy: 'lead' } },
     { packageName: '@unrdf/core', changeType: 'api_breaking',
-      details: { symbol: 'createStore', migration: 'docs/migration-6.0.md' } },
+      details: { symbol: 'createStore', migration: 'docs/migration-latest.md' } },
     // All dependents must be updated:
     { packageName: '@unrdf/hooks', changeType: 'version_bump',
-      details: { newVersion: '6.0.0', bumpType: 'major' } },
+      details: { newVersion: 'latest', bumpType: 'major' } },
     { packageName: '@unrdf/yawl', changeType: 'version_bump',
-      details: { newVersion: '6.0.0', bumpType: 'major' } },
+      details: { newVersion: 'latest', bumpType: 'major' } },
     // ... all other dependents
   ]
 });

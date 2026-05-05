@@ -29,7 +29,7 @@ import { projectCommand } from './commands/project.mjs';
  */
 const CLI_CONFIG = {
   name: 'governance-substrate',
-  version: '1.0.0',
+  version: '[VERSION]',
   description: 'Governance Substrate CLI - Universe validation and admission control',
 };
 

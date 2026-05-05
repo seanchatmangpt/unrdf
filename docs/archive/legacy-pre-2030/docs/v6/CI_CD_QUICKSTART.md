@@ -78,12 +78,12 @@ git push
 
 ```bash
 # Update version in package.json
-npm version 6.0.0-alpha.2 --no-git-tag-version
+npm version latest-alpha.2 --no-git-tag-version
 
 # Commit and create tag
 git add packages/v6-core/package.json packages/v6-compat/package.json
-git commit -m "chore: bump to 6.0.0-alpha.2"
-git tag 6.0.0-alpha.2
+git commit -m "chore: bump to latest-alpha.2"
+git tag latest-alpha.2
 git push origin main --tags
 ```
 
@@ -99,7 +99,7 @@ The `release.yml` workflow will:
 
 ```bash
 # After team consensus and 7-day testing period
-git tag 6.0.0-beta.1
+git tag latest-beta.1
 git push origin --tags
 ```
 
@@ -107,7 +107,7 @@ git push origin --tags
 
 ```bash
 # After successful external user testing
-git tag 6.0.0-rc.1
+git tag latest-rc.1
 git push origin --tags
 ```
 
@@ -115,7 +115,7 @@ git push origin --tags
 
 ```bash
 # Final release with guarantees
-git tag 6.0.0
+git tag latest
 git push origin --tags
 ```
 
@@ -234,7 +234,7 @@ pnpm test:coverage
 
 # Generate release notes (maintainers)
 node .github/scripts/release-notes.mjs \
-  --version 6.0.0-alpha.2 \
+  --version latest-alpha.2 \
   --type alpha \
   --output release-notes.md
 ```

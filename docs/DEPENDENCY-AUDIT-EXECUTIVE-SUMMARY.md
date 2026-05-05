@@ -11,7 +11,7 @@
 ### 1. 🔴 CRITICAL: Fix zod Version Conflict
 ```bash
 cd packages/streaming
-pnpm remove zod && pnpm add zod@^4.1.13
+pnpm remove zod && pnpm add zod@^latest
 cd ../.. && pnpm install
 ```
 **Why:** Breaking change between v3 and v4 can cause runtime schema validation failures.
@@ -19,10 +19,10 @@ cd ../.. && pnpm install
 ### 2. 🟡 MEDIUM: Align @opentelemetry/api
 ```bash
 cd packages/atomvm
-pnpm update @opentelemetry/api@^1.9.0
+pnpm update @opentelemetry/api@^latest
 cd ../.. && pnpm install
 ```
-**Why:** Backward compatible, but v1.9 has performance improvements.
+**Why:** Backward compatible, but vlatest has performance improvements.
 
 ### 3. 🟢 LOW: Remove 73 Unused Dependencies
 See **Phase 3** in full report (`DEPENDENCY-AUDIT-REPORT.md`)
@@ -46,12 +46,12 @@ See **Phase 3** in full report (`DEPENDENCY-AUDIT-REPORT.md`)
 
 | Dependency | Impact | Versions | Recommendation |
 |------------|--------|----------|----------------|
-| **zod** | 🔴 HIGH | v3.24.1 vs v4.1.13 | Upgrade streaming to v4.1.13 |
-| **@opentelemetry/api** | 🟡 MEDIUM | v1.8.0 vs v1.9.0 | Upgrade atomvm to v1.9.0 |
-| **@playwright/test** | 🟢 LOW | v1.49.1 vs v1.57.0 | Upgrade docs to v1.57.0 |
-| **yaml** | 🟢 LOW | v2.8.1 vs v2.8.2 | Upgrade kgn to v2.8.2 |
-| **@rdfjs/data-model** | 🟢 LOW | v2.0.2 vs v2.1.1 | Upgrade streaming to v2.1.1 |
-| **eslint** | 🟢 LOW | v8.56.0 vs v9.39.1 | Defer (breaking change) |
+| **zod** | 🔴 HIGH | vlatest vs vlatest | Upgrade streaming to vlatest |
+| **@opentelemetry/api** | 🟡 MEDIUM | vlatest vs vlatest | Upgrade atomvm to vlatest |
+| **@playwright/test** | 🟢 LOW | vlatest vs vlatest | Upgrade docs to vlatest |
+| **yaml** | 🟢 LOW | vlatest vs vlatest | Upgrade kgn to vlatest |
+| **@rdfjs/data-model** | 🟢 LOW | vlatest vs vlatest | Upgrade streaming to vlatest |
+| **eslint** | 🟢 LOW | vlatest vs vlatest | Defer (breaking change) |
 
 ---
 
@@ -97,11 +97,11 @@ See **Phase 3** in full report (`DEPENDENCY-AUDIT-REPORT.md`)
 ```bash
 # Fix zod conflict
 cd packages/streaming
-pnpm remove zod && pnpm add zod@^4.1.13
+pnpm remove zod && pnpm add zod@^latest
 
 # Fix OTEL API conflict
 cd ../atomvm
-pnpm update @opentelemetry/api@^1.9.0
+pnpm update @opentelemetry/api@^latest
 
 # Regenerate lockfile
 cd ../.. && pnpm install
@@ -116,15 +116,15 @@ pnpm test
 ```bash
 # Align @playwright/test
 cd packages/docs
-pnpm update @playwright/test@^1.57.0
+pnpm update @playwright/test@^latest
 
 # Align yaml
 cd ../kgn
-pnpm update yaml@^2.8.2
+pnpm update yaml@^latest
 
 # Align @rdfjs/data-model
 cd ../streaming
-pnpm update @rdfjs/data-model@^2.1.1
+pnpm update @rdfjs/data-model@^latest
 
 # Regenerate lockfile
 cd ../.. && pnpm install
@@ -151,21 +151,21 @@ pnpm test
 
 ## Generated Reports
 
-1. **DEPENDENCY-AUDIT-REPORT.md** (8.6KB, 354 lines)
+1. **DEPENDENCY-AUDIT-REPORT.md** (latestKB, 354 lines)
    - Full technical report with all findings
    - Detailed resolution plan
    - Test compatibility matrix
 
-2. **DEPENDENCY-ALIGNMENT.csv** (4.4KB, 118 rows)
+2. **DEPENDENCY-ALIGNMENT.csv** (latestKB, 118 rows)
    - Complete dependency matrix
    - Recommended versions
    - Action items per package
 
-3. **DEPENDENCY-USAGE.csv** (4.4KB, 118 rows)
+3. **DEPENDENCY-USAGE.csv** (latestKB, 118 rows)
    - Usage status (USED/UNUSED)
    - Recommendations
 
-4. **UNUSED-DEPENDENCIES.md** (3.0KB)
+4. **UNUSED-DEPENDENCIES.md** (latestKB)
    - Detailed unused dependency analysis
    - Files scanned per package
 
@@ -211,7 +211,7 @@ timeout 10s pnpm test
 
 ### 1. Immediate Actions (Approve to Proceed)
 - [ ] Approve zod v3 → v4 migration for streaming
-- [ ] Approve @opentelemetry/api v1.8 → v1.9 for atomvm
+- [ ] Approve @opentelemetry/api vlatest → vlatest for atomvm
 - [ ] Run Phase 1 immediately
 
 ### 2. Private Package Cleanup (Decision Required)

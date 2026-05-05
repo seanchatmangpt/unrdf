@@ -16,7 +16,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **Action**: Capture customer needs through multiple methods.
 
-#### 1.1: Customer Interviews
+#### latest: Customer Interviews
 
 **Action**: Conduct direct interviews with customers.
 
@@ -58,7 +58,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 - "I want to know which tests are slow"
 ```
 
-#### 1.2: Surveys
+#### latest: Surveys
 
 **Action**: Conduct structured surveys to gather quantitative data.
 
@@ -76,14 +76,14 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **Question 1**: How important is test execution speed? (1-10)
 
-- Average: 9.2/10
-- Standard deviation: 1.1
+- Average: latest/10
+- Standard deviation: latest
 
 **Question 2**: How satisfied are you with current speed? (1-10)
 
-- Average: 3.5/10
-- Standard deviation: 2.1
-- Gap: 9.2 - 3.5 = 5.7 (large gap - high priority)
+- Average: latest/10
+- Standard deviation: latest
+- Gap: latest - latest = latest (large gap - high priority)
 
 **Question 3**: What features are most important? (Select top 3)
 
@@ -92,7 +92,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 - Ease of use: 65%
 ```
 
-#### 1.3: Observations
+#### latest: Observations
 
 **Action**: Observe customers using current solution.
 
@@ -121,7 +121,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 - **Inferred need**: "I want fast tests so I don't wait"
 ```
 
-#### 1.4: Data Analysis
+#### latest: Data Analysis
 
 **Action**: Analyze usage data to identify needs.
 
@@ -139,8 +139,8 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **Usage Logs**:
 
-- Average test execution time: 10.2 seconds
-- 95th percentile: 15.8 seconds
+- Average test execution time: latest seconds
+- 95th percentile: latest seconds
 - **Need**: "Tests should complete in < 2 seconds"
 
 **Error Logs**:
@@ -161,7 +161,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **Action**: Organize captured needs into structured categories.
 
-#### 2.1: Affinity Diagram
+#### latest: Affinity Diagram
 
 **Action**: Group related needs using affinity diagram.
 
@@ -206,7 +206,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 - "Real-time feedback"
 ```
 
-#### 2.2: Kano Model Classification
+#### latest: Kano Model Classification
 
 **Action**: Classify needs using Kano model.
 
@@ -240,7 +240,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 - "Tests learn from usage patterns" (delightful)
 ```
 
-#### 2.3: Prioritize Needs
+#### latest: Prioritize Needs
 
 **Action**: Prioritize customer needs by importance.
 
@@ -258,13 +258,13 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **High Priority** (Must address):
 
-1. "Tests run fast" (Importance: 9.2/10, Gap: 5.7, Frequency: High)
-2. "Tests are reliable" (Importance: 8.8/10, Gap: 4.2, Frequency: High)
-3. "Tests provide correct results" (Importance: 9.5/10, Gap: 0.5, Frequency: High)
+1. "Tests run fast" (Importance: latest/10, Gap: latest, Frequency: High)
+2. "Tests are reliable" (Importance: latest/10, Gap: latest, Frequency: High)
+3. "Tests provide correct results" (Importance: latest/10, Gap: latest, Frequency: High)
 
-**Medium Priority** (Should address): 4. "Tests are easy to use" (Importance: 7.5/10, Gap: 2.1, Frequency: Medium) 5. "Clear error messages" (Importance: 7.2/10, Gap: 3.4, Frequency: Medium)
+**Medium Priority** (Should address): 4. "Tests are easy to use" (Importance: latest/10, Gap: latest, Frequency: Medium) 5. "Clear error messages" (Importance: latest/10, Gap: latest, Frequency: Medium)
 
-**Low Priority** (Nice to have): 6. "Tests show progress" (Importance: 6.5/10, Gap: 1.8, Frequency: Low) 7. "Tests suggest optimizations" (Importance: 5.2/10, Gap: N/A, Frequency: Low)
+**Low Priority** (Nice to have): 6. "Tests show progress" (Importance: latest/10, Gap: latest, Frequency: Low) 7. "Tests suggest optimizations" (Importance: latest/10, Gap: N/A, Frequency: Low)
 ```
 
 ---
@@ -273,7 +273,7 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 **Action**: Build QFD House of Quality to translate needs into requirements.
 
-#### 3.1: QFD House Structure
+#### latest: QFD House Structure
 
 **Action**: Create QFD House of Quality matrix.
 
@@ -292,15 +292,15 @@ Step 1: Capture Voice of Customer → Step 2: Organize Customer Needs → Step 3
 
 | Customer Need  | Importance | Req 1: Exec Time | Req 2: Reliability | Req 3: API Simplicity | Req 4: Error Msgs | Target       | Competitive      |
 | -------------- | ---------- | ---------------- | ------------------ | --------------------- | ----------------- | ------------ | ---------------- |
-| Tests run fast | 9.2        | ●●               | ○                  | ○                     | ○                 | < 2s         | Current: 10s     |
-| Tests reliable | 8.8        | ○                | ●●                 | ○                     | ○                 | 0% flaky     | Current: 5%      |
-| Easy to import | 7.5        | ○                | ○                  | ●●                    | ○                 | Simple API   | Current: Complex |
-| Clear errors   | 7.2        | ○                | ○                  | ○                     | ●●                | Helpful msgs | Current: Cryptic |
+| Tests run fast | latest        | ●●               | ○                  | ○                     | ○                 | < 2s         | Current: 10s     |
+| Tests reliable | latest        | ○                | ●●                 | ○                     | ○                 | 0% flaky     | Current: 5%      |
+| Easy to import | latest        | ○                | ○                  | ●●                    | ○                 | Simple API   | Current: Complex |
+| Clear errors   | latest        | ○                | ○                  | ○                     | ●●                | Helpful msgs | Current: Cryptic |
 
 Legend: ●● = Strong, ● = Medium, ○ = Weak
 ```
 
-#### 3.2: Identify Design Requirements
+#### latest: Identify Design Requirements
 
 **Action**: Identify design requirements that address customer needs.
 
@@ -345,7 +345,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 - **Type**: Usability requirement
 ```
 
-#### 3.3: Map Relationships
+#### latest: Map Relationships
 
 **Action**: Map relationships between needs and requirements.
 
@@ -376,7 +376,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 - **Req 4 (Error Msgs)**: ○ (Weak - error messages help debugging)
 ```
 
-#### 3.4: Calculate Importance Scores
+#### latest: Calculate Importance Scores
 
 **Action**: Calculate importance scores for each requirement.
 
@@ -393,32 +393,32 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 **Requirement 1 (Exec Time)**:
 
-- Need "Tests run fast" (9.2) × Strong (9) = 82.8
-- Need "Tests reliable" (8.8) × Weak (1) = 8.8
-- Need "Easy to use" (7.5) × Weak (1) = 7.5
-- Need "Clear errors" (7.2) × 0 = 0
-- **Total**: 99.1
+- Need "Tests run fast" (latest) × Strong (9) = latest
+- Need "Tests reliable" (latest) × Weak (1) = latest
+- Need "Easy to use" (latest) × Weak (1) = latest
+- Need "Clear errors" (latest) × 0 = 0
+- **Total**: latest
 
 **Requirement 2 (Reliability)**:
 
-- Need "Tests run fast" (9.2) × Weak (1) = 9.2
-- Need "Tests reliable" (8.8) × Strong (9) = 79.2
-- Need "Easy to use" (7.5) × Weak (1) = 7.5
-- Need "Clear errors" (7.2) × Weak (1) = 7.2
-- **Total**: 103.1
+- Need "Tests run fast" (latest) × Weak (1) = latest
+- Need "Tests reliable" (latest) × Strong (9) = latest
+- Need "Easy to use" (latest) × Weak (1) = latest
+- Need "Clear errors" (latest) × Weak (1) = latest
+- **Total**: latest
 
-**Ranking**: Reliability (103.1) > Exec Time (99.1) > API Simplicity > Error Msgs
+**Ranking**: Reliability (latest) > Exec Time (latest) > API Simplicity > Error Msgs
 ```
 
 ---
 
-### Step 3.5: Gap Analysis (CRITICAL)
+### Step latest: Gap Analysis (CRITICAL)
 
 **Action**: Identify gaps between customer needs and current capabilities.
 
 **CRITICAL**: This step is mandatory. Skipping gap analysis causes QFD to verify existing requirements instead of implementing new ones to address unmet customer needs.
 
-#### 3.5.1: Compare Needs vs Capabilities
+#### latest: Compare Needs vs Capabilities
 
 **Action**: Compare each customer need against current capabilities.
 
@@ -438,16 +438,16 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 - **Current Capability**: Vitest provides basic output, but verbose reporting may need configuration
 - **Gap**: No real-time progress display
-- **Priority**: High (Visibility need, Importance: 7.5/10)
+- **Priority**: High (Visibility need, Importance: latest/10)
 
 **Customer Need**: "I want to know which tests are slow"
 
 - **Current Capability**: Vitest has timing information, but may need better reporting
 - **Gap**: No slow test identification feature
-- **Priority**: High (Visibility need, Importance: 7.2/10)
+- **Priority**: High (Visibility need, Importance: latest/10)
 ```
 
-#### 3.5.2: Create Requirements for Gaps
+#### latest: Create Requirements for Gaps
 
 **Action**: Create new requirements to address identified gaps.
 
@@ -484,7 +484,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 **Action**: Prioritize design requirements based on QFD analysis.
 
-#### 4.1: Rank Requirements
+#### latest: Rank Requirements
 
 **Action**: Rank requirements by importance score.
 
@@ -501,15 +501,15 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 **High Priority** (Must address):
 
-1. Requirement 2: Reliability (Score: 103.1)
-2. Requirement 1: Execution Time (Score: 99.1)
+1. Requirement 2: Reliability (Score: latest)
+2. Requirement 1: Execution Time (Score: latest)
 
-**Medium Priority** (Should address): 3. Requirement 3: API Simplicity (Score: 45.2) 4. Requirement 4: Error Messages (Score: 38.7)
+**Medium Priority** (Should address): 3. Requirement 3: API Simplicity (Score: latest) 4. Requirement 4: Error Messages (Score: latest)
 
 **Focus**: Address high-priority requirements first
 ```
 
-#### 4.2: Set Target Values
+#### latest: Set Target Values
 
 **Action**: Set target values for each requirement.
 
@@ -537,7 +537,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 - **Current**: 5% flakiness
 - **Competitor**: 2% flakiness
 - **Customer need**: 0% flakiness
-- **Target**: 0% flakiness (stretch goal: < 0.1%)
+- **Target**: 0% flakiness (stretch goal: < latest%)
 
 **Requirement 3: API Simplicity**
 
@@ -553,7 +553,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 **Action**: Set final targets and verify requirements address customer needs.
 
-#### 5.1: Finalize Targets
+#### latest: Finalize Targets
 
 **Action**: Finalize target values for each requirement.
 
@@ -573,28 +573,28 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 
 - **Target**: < 2 seconds (80% improvement from 10s)
 - **Stretch**: < 1 second (90% improvement)
-- **Rationale**: Addresses "Tests run fast" need (Importance: 9.2/10)
+- **Rationale**: Addresses "Tests run fast" need (Importance: latest/10)
 
 **Requirement 2: Test Reliability**
 
 - **Target**: 0% flakiness (100% improvement from 5%)
-- **Stretch**: < 0.1% flakiness
-- **Rationale**: Addresses "Tests reliable" need (Importance: 8.8/10)
+- **Stretch**: < latest% flakiness
+- **Rationale**: Addresses "Tests reliable" need (Importance: latest/10)
 
 **Requirement 3: API Simplicity**
 
 - **Target**: < 10 lines for basic test (50% improvement from 20 lines)
 - **Stretch**: < 5 lines
-- **Rationale**: Addresses "Easy to use" need (Importance: 7.5/10)
+- **Rationale**: Addresses "Easy to use" need (Importance: latest/10)
 
 **Requirement 4: Error Message Quality**
 
 - **Target**: 90%+ users understand errors
 - **Stretch**: 95%+ users understand errors
-- **Rationale**: Addresses "Clear error messages" need (Importance: 7.2/10)
+- **Rationale**: Addresses "Clear error messages" need (Importance: latest/10)
 ```
 
-#### 5.2: Verify Requirements Address Needs
+#### latest: Verify Requirements Address Needs
 
 **Action**: Verify that requirements fully address customer needs.
 
@@ -610,14 +610,14 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 ```markdown
 ## Requirements Verification
 
-**Need**: "Tests run fast" (Importance: 9.2/10)
+**Need**: "Tests run fast" (Importance: latest/10)
 
 - ✅ Requirement: Execution time < 2s
 - ✅ Relationship: Strong (●●)
 - ✅ Target set: < 2 seconds
 - **Status**: Fully addressed ✅
 
-**Need**: "Tests reliable" (Importance: 8.8/10)
+**Need**: "Tests reliable" (Importance: latest/10)
 
 - ✅ Requirement: 0% flakiness
 - ✅ Relationship: Strong (●●)
@@ -627,7 +627,7 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 **All high-priority needs addressed**: ✅
 ```
 
-#### 5.3: Create Todo List for Requirements Implementation
+#### latest: Create Todo List for Requirements Implementation
 
 **CRITICAL**: Do NOT write documents or reports. Create todos and execute them.
 
@@ -707,21 +707,21 @@ Legend: ●● = Strong, ● = Medium, ○ = Weak
 # Step 1: Capture Voice of Customer
 
 Interviews: "Tests take too long", "Tests should be reliable"
-Surveys: Speed importance 9.2/10, Satisfaction 3.5/10 (Gap: 5.7)
+Surveys: Speed importance latest/10, Satisfaction latest/10 (Gap: latest)
 Observations: Customers wait for tests, run tests multiple times
-Data: Average 10.2s execution, 5% flakiness
+Data: Average latests execution, 5% flakiness
 
 # Step 2: Organize Customer Needs
 
 Affinity: Performance, Reliability, Usability, Visibility
 Kano: Basic (correct results), Performance (speed, reliability), Delight (progress)
-Priority: Speed (9.2), Reliability (8.8), Ease of use (7.5)
+Priority: Speed (latest), Reliability (latest), Ease of use (latest)
 
 # Step 3: Build QFD House of Quality
 
 Needs → Requirements mapping
 Relationships: Speed → Exec Time (Strong), Reliability → Reliability (Strong)
-Importance scores: Reliability (103.1), Exec Time (99.1)
+Importance scores: Reliability (latest), Exec Time (latest)
 
 # Step 4: Prioritize Requirements
 

@@ -2,7 +2,7 @@
 title: "Reference"
 type: "reference"
 packageName: "escape-test"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.202Z"
 confidenceScore: 0.9
 proof: "8857370d6270a1bc31f7d5e4045fae4f9e463f366430be5bd543c7546cd1652e"

@@ -56,7 +56,7 @@ mcp__claude-flow__memory_usage {
   key: "swarm/shared/sync-manifest",
   namespace: "coordination",
   value: JSON.stringify({
-    version: "1.0.0",
+    version: "latest",
     checksum: "hash",
     agents_synced: ["agent1", "agent2"],
     conflicts_resolved: [],
@@ -149,7 +149,7 @@ mcp__claude-flow__memory_usage {
   namespace: "coordination",
   value: JSON.stringify({
     operations_per_second: 1000,
-    cache_hit_rate: 0.85,
+    cache_hit_rate: latest,
     sync_latency_ms: 50,
     memory_usage_mb: 256,
     active_connections: 12,

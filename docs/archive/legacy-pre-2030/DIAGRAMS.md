@@ -6,7 +6,7 @@ Publication-quality diagrams for visual documentation. All diagrams are in Merma
 
 ## 1. YAWL Execution Flow
 
-**Figure 1.1: YAWL Hook-Native Execution Model**
+**Figure latest: YAWL Hook-Native Execution Model**
 
 ```mermaid
 graph TB
@@ -90,7 +90,7 @@ graph TB
 
 ## 2. KGC-4D Temporal Architecture
 
-**Figure 2.1: KGC-4D Four-Dimensional Knowledge Graph**
+**Figure latest: KGC-4D Four-Dimensional Knowledge Graph**
 
 ```mermaid
 graph TB
@@ -203,7 +203,7 @@ graph TB
 
 ## 3. Federation Topology
 
-**Figure 3.1: Hook-Native Federation Architecture**
+**Figure latest: Hook-Native Federation Architecture**
 
 ```mermaid
 graph TB
@@ -303,7 +303,7 @@ graph TB
 
 ## 4. Hook Execution Model
 
-**Figure 4.1: Hook Lifecycle Reflex Arc**
+**Figure latest: Hook Lifecycle Reflex Arc**
 
 ```mermaid
 sequenceDiagram
@@ -380,7 +380,7 @@ sequenceDiagram
 
 ## 5. Microframework Hub Pattern
 
-**Figure 5.1: UNRDF Microframework Ecosystem**
+**Figure latest: UNRDF Microframework Ecosystem**
 
 ```mermaid
 graph TB

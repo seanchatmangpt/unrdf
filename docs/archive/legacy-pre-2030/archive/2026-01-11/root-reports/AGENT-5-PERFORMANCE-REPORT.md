@@ -10,10 +10,10 @@
 ## Executive Summary
 
 The v6-core system **exceeds all performance SLA targets** by wide margins:
-- **97.4% faster** than cold start SLA
-- **99.6% faster** than receipt generation SLA
-- **97.1% faster** than Merkle proof SLA
-- **92.6-95.9% under** memory limits
+- **latest% faster** than cold start SLA
+- **latest% faster** than receipt generation SLA
+- **latest% faster** than Merkle proof SLA
+- **latest.9% under** memory limits
 
 **Overall Assessment**: Production-ready from a performance perspective.
 
@@ -24,43 +24,43 @@ The v6-core system **exceeds all performance SLA targets** by wide margins:
 ### 1. Cold Start Performance ✅
 
 **SLA**: <500ms
-**Actual**: 13.21ms
-**Status**: **PASS** (97.4% better than SLA)
+**Actual**: latestms
+**Status**: **PASS** (latest% better than SLA)
 
-- Module load + first receipt creation: 13.21ms
+- Module load + first receipt creation: latestms
 - Well under the 500ms threshold
 - Indicates efficient module initialization
 
 ### 2. Receipt Generation Throughput ✅
 
 **SLA**: <10ms per operation
-**Actual**: 0.04ms per operation
-**Status**: **PASS** (99.6% better than SLA)
+**Actual**: latestms per operation
+**Status**: **PASS** (latest% better than SLA)
 
 **Key Metrics**:
-- **Average latency**: 0.04ms per receipt
+- **Average latency**: latestms per receipt
 - **Throughput**: 23,044 receipts/sec
-- **Total time (1000 receipts)**: 43.40ms
-- **Memory delta**: 1.32 MB for 1000 receipts
+- **Total time (1000 receipts)**: latestms
+- **Memory delta**: latest MB for 1000 receipts
 - **Chaining**: Full cryptographic chain with BLAKE3 hashing
 
 **Performance Breakdown**:
 - Receipt generation is **250x faster** than SLA requirement
 - Sustained throughput exceeds 20K receipts/sec
-- Memory efficiency: ~1.3 KB per receipt
+- Memory efficiency: ~latest KB per receipt
 
 ### 3. Merkle Tree Build & Proof ✅
 
 **SLA**: <50ms for 100 receipts
-**Actual**: 1.47ms total
-**Status**: **PASS** (97.1% better than SLA)
+**Actual**: latestms total
+**Status**: **PASS** (latest% better than SLA)
 
 **Detailed Timings**:
-- **Build time**: 0.51ms (100-leaf tree)
-- **Proof generation**: 0.96ms (inclusion proof)
-- **Proof verification**: 0.11ms
-- **Total**: 1.47ms (build + proof)
-- **Memory delta**: 0.26 MB
+- **Build time**: latestms (100-leaf tree)
+- **Proof generation**: latestms (inclusion proof)
+- **Proof verification**: latestms
+- **Total**: latestms (build + proof)
+- **Memory delta**: latest MB
 
 **Performance Notes**:
 - BLAKE3-based merkle tree
@@ -71,18 +71,18 @@ The v6-core system **exceeds all performance SLA targets** by wide margins:
 ### 4. Memory Usage Under Load ✅
 
 **SLA**: Base <200MB, Peak <500MB
-**Actual**: Base 14.79 MB, Peak 20.54 MB
-**Status**: **PASS** (92.6% under base, 95.9% under peak)
+**Actual**: Base latest MB, Peak latest MB
+**Status**: **PASS** (latest% under base, latest% under peak)
 
 **Load Test Details**:
 - **Test**: 10 batches × 100 receipts = 1000 receipts
 - **Each batch**: Receipt generation + Merkle tree build
-- **Baseline memory**: 14.79 MB
-- **Peak memory**: 20.54 MB
-- **Memory growth**: ~5.75 MB for 1000 receipts + 10 Merkle trees
+- **Baseline memory**: latest MB
+- **Peak memory**: latest MB
+- **Memory growth**: ~latest MB for 1000 receipts + 10 Merkle trees
 
 **Memory Efficiency**:
-- ~5.75 KB per receipt (including Merkle tree overhead)
+- ~latest KB per receipt (including Merkle tree overhead)
 - Effective garbage collection (saw decreases between batches)
 - No memory leaks detected
 - Extremely efficient compared to SLA limits
@@ -95,9 +95,9 @@ The v6-core system **exceeds all performance SLA targets** by wide margins:
 
 | Receipt Count | Time (ms) | Throughput (receipts/sec) |
 |---------------|-----------|---------------------------|
-| 1             | ~0.04     | 25,000                    |
-| 100           | ~4.0      | 25,000                    |
-| 1,000         | ~43.4     | 23,044                    |
+| 1             | ~latest     | 25,000                    |
+| 100           | ~latest      | 25,000                    |
+| 1,000         | ~latest     | 23,044                    |
 
 **Observation**: Linear scaling with slight overhead for larger chains (~8% decrease for 1000 receipts vs 1 receipt).
 
@@ -105,16 +105,16 @@ The v6-core system **exceeds all performance SLA targets** by wide margins:
 
 | Operation             | Memory Delta |
 |-----------------------|--------------|
-| 1000 receipts         | 1.32 MB      |
-| 100-receipt Merkle    | 0.26 MB      |
-| 10 × 100-batch Merkle | 5.75 MB      |
+| 1000 receipts         | latest MB      |
+| 100-receipt Merkle    | latest MB      |
+| 10 × 100-batch Merkle | latest MB      |
 
 **Observation**: Efficient memory usage with proper cleanup between operations.
 
 ### Latency Distribution
 
 Based on the 1000-receipt test:
-- **Average**: 0.04ms per operation
+- **Average**: latestms per operation
 - **Consistency**: High (linear throughput)
 - **No outliers** detected in batch processing
 
@@ -124,11 +124,11 @@ Based on the 1000-receipt test:
 
 | Metric                  | SLA Target   | Actual Result | Margin        | Status |
 |-------------------------|--------------|---------------|---------------|--------|
-| Cold Start              | <500ms       | 13.21ms       | 97.4% better  | ✅     |
-| Receipt Generation      | <10ms/op     | 0.04ms/op     | 99.6% better  | ✅     |
-| Merkle Proof (100)      | <50ms        | 1.47ms        | 97.1% better  | ✅     |
-| Base Memory             | <200MB       | 14.79MB       | 92.6% under   | ✅     |
-| Peak Memory             | <500MB       | 20.54MB       | 95.9% under   | ✅     |
+| Cold Start              | <500ms       | latestms       | latest% better  | ✅     |
+| Receipt Generation      | <10ms/op     | latestms/op     | latest% better  | ✅     |
+| Merkle Proof (100)      | <50ms        | latestms        | latest% better  | ✅     |
+| Base Memory             | <200MB       | latestMB       | latest% under   | ✅     |
+| Peak Memory             | <500MB       | latestMB       | latest% under   | ✅     |
 
 **Overall SLA Compliance**: **100% (5/5 metrics passed)**
 

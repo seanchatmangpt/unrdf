@@ -89,7 +89,7 @@ const store = createStore();
 const { quad, namedNode, literal } = dataFactory;
 store.add(quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/[VERSION]/name'),
   literal('Alice')
 ));
 
@@ -146,4 +146,4 @@ Choose your learning path:
 
 ---
 
-**Status**: Production Ready ✅ | **Version**: 1.0 | **Last Updated**: December 2025
+**Status**: Production Ready ✅ | **Version**: [VERSION] | **Last Updated**: December 2025

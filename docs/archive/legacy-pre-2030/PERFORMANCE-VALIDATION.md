@@ -23,14 +23,14 @@
 **Evidence:**
 ```
 Target:    <10ms per receipt
-Measured:  P95 = 0.593ms, P99 = 1.483ms
+Measured:  P95 = latestms, P99 = latestms
 Result:    16x faster than target at P95
 ```
 
 **Verification Command:**
 ```bash
 node /home/user/unrdf/benchmarks/receipt-generation-bench.mjs | grep "P95:"
-# P95:       0.593 ms
+# P95:       latest ms
 ```
 
 ---
@@ -52,7 +52,7 @@ node /home/user/unrdf/benchmarks/receipt-generation-bench.mjs | grep "P95:"
 **Analysis:**
 - Claim is TRUE if snapshots are infrequent (e.g., every 100 events)
 - Claim is FALSE if snapshot-per-event is required
-- Bottleneck is freeze operation (20ms), not event append (0.3ms)
+- Bottleneck is freeze operation (20ms), not event append (latestms)
 
 **Recommendation:** Clarify claim - specify snapshot frequency
 
@@ -68,10 +68,10 @@ node /home/user/unrdf/benchmarks/receipt-generation-bench.mjs | grep "P95:"
 
 | Query Type | Mean Latency | Validates Claim? |
 |------------|--------------|------------------|
-| Simple SELECT | 0.08-0.11 ms | ✅ YES |
-| Filtered SELECT | 0.10-0.16 ms | ✅ YES |
-| JOIN | 0.13-0.17 ms | ✅ YES |
-| Aggregate (10K) | 5.62 ms | ⚠️ NO (but still fast) |
+| Simple SELECT | latest.11 ms | ✅ YES |
+| Filtered SELECT | latest.16 ms | ✅ YES |
+| JOIN | latest.17 ms | ✅ YES |
+| Aggregate (10K) | latest ms | ⚠️ NO (but still fast) |
 
 **Analysis:**
 - Claim is TRUE for 99% of query patterns
@@ -94,8 +94,8 @@ node /home/user/unrdf/benchmarks/sparql-query-bench.mjs | grep "Mean:"
 **Evidence:**
 ```
 Tests:     94 total
-Passed:    85 (90.4%)
-Failed:    9 (9.6%)
+Passed:    85 (latest%)
+Failed:    9 (latest%)
 Coverage:  Unknown (no coverage report generated)
 ```
 
@@ -184,17 +184,17 @@ Reality:  9+ defects in KGC-4D alone
 
 ---
 
-### Claim: "P(Correctness) ≥ 99.997%"
+### Claim: "P(Correctness) ≥ latest%"
 **Source:** Big Bang 80/20 docs
 **Status:** ❌ REFUTED (mathematical impossibility)
 
 **Evidence:**
 ```
-Test Pass Rate: 90.4% (not 99.997%)
-Known Defects:  9+ (not 0.003%)
+Test Pass Rate: latest% (not latest%)
+Known Defects:  9+ (not latest%)
 
-Claim:    99.997% correctness (3 defects per 100,000 operations)
-Reality:  9.6% failure rate (9,600 defects per 100,000 operations)
+Claim:    latest% correctness (3 defects per 100,000 operations)
+Reality:  latest% failure rate (9,600 defects per 100,000 operations)
 ```
 
 **Analysis:**
@@ -217,7 +217,7 @@ Reality:  9.6% failure rate (9,600 defects per 100,000 operations)
 # All benchmarks completed within timeouts:
 - Receipt benchmark: <1 second (60s timeout)
 - SPARQL benchmark:  <1 second (60s timeout)
-- Freeze benchmark:  2.77 seconds (120s timeout)
+- Freeze benchmark:  latest seconds (120s timeout)
 ```
 
 **Analysis:** Timeout guidance is appropriate and followed in benchmarks
@@ -228,14 +228,14 @@ Reality:  9.6% failure rate (9,600 defects per 100,000 operations)
 
 | Claim | Status | Evidence | Recommendation |
 |-------|--------|----------|----------------|
-| Sub-10ms receipts | ✅ VALIDATED | P95 = 0.593ms | Keep claim |
+| Sub-10ms receipts | ✅ VALIDATED | P95 = latestms | Keep claim |
 | Thousands of events/sec | ⚠️ PARTIAL | 361/sec with freeze, 2492/sec receipts | Clarify freeze frequency |
-| Sub-ms SPARQL | ✅ VALIDATED | 0.08-0.17ms for simple queries | Keep claim |
+| Sub-ms SPARQL | ✅ VALIDATED | latest.17ms for simple queries | Keep claim |
 | Comprehensive tests (KGC) | ⚠️ PARTIAL | 90% pass rate, 9 failures | Fix failures before claim |
 | Production-ready YAWL | 🔍→❌ REFUTED | 0 tests found | Remove claim or add tests |
 | 0 defects (BB80/20) | ❌ REFUTED | 9+ defects found | Revise to "low defect rate" |
 | 98% static coverage | 🔍 UNVERIFIED | No coverage report | Generate coverage report |
-| P(Correctness) ≥ 99.997% | ❌ REFUTED | 90.4% ≠ 99.997% | Remove mathematical claim |
+| P(Correctness) ≥ latest% | ❌ REFUTED | latest% ≠ latest% | Remove mathematical claim |
 
 ---
 
@@ -244,15 +244,15 @@ Reality:  9.6% failure rate (9,600 defects per 100,000 operations)
 ### What CLAIMS survived scrutiny?
 
 ✅ **Performance claims are SOLID:**
-- Receipt generation is genuinely fast (0.593ms P95)
-- SPARQL queries are genuinely fast (0.08-0.17ms mean)
+- Receipt generation is genuinely fast (latestms P95)
+- SPARQL queries are genuinely fast (latest.17ms mean)
 - Throughput is genuinely high (2,492 receipts/sec)
 
 ### What CLAIMS failed scrutiny?
 
 ❌ **Quality claims are WEAK:**
 - "0 defects" is FALSE (9+ defects found)
-- "P(Correctness) ≥ 99.997%" is FALSE (90.4% ≠ 99.997%)
+- "P(Correctness) ≥ latest%" is FALSE (latest% ≠ latest%)
 - "Production-ready YAWL" is FALSE (0 tests)
 - "Comprehensive test suite" is FALSE (90% pass rate with critical bugs)
 
@@ -273,7 +273,7 @@ Reality:  9.6% failure rate (9,600 defects per 100,000 operations)
 
 ### P1 - SHORT TERM (Quality Gate)
 4. ⚠️ **Claims:** Remove "0 defects" claim (demonstrably false)
-5. ⚠️ **Claims:** Remove "P(Correctness) ≥ 99.997%" (not supportable)
+5. ⚠️ **Claims:** Remove "P(Correctness) ≥ latest%" (not supportable)
 6. ⚠️ **KGC-4D:** Fix time-travel delete reconstruction
 7. ⚠️ **KGC-4D:** Fix snapshot roundtrip integrity
 8. ⚠️ **Coverage:** Generate actual coverage report via `vitest --coverage`

@@ -1,6 +1,6 @@
 # UNRDF Breaking Changes Catalog
 
-**Version**: 6.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Status**: Approved
 
@@ -479,7 +479,7 @@ Generate `.d.ts` from JSDoc (no hand-written types).
 
 ### Change
 
-Require Node.js ≥20.0.0 (from ≥18.0.0).
+Require Node.js ≥latest (from ≥latest).
 
 ### Impact
 
@@ -652,7 +652,7 @@ Week 9-10: Production Rollout
 find packages -maxdepth 2 -name package.json | wc -l
 # Output: 54
 
-# 6.0.0 (planned)
+# latest (planned)
 # Output: 25
 ```
 

@@ -77,7 +77,7 @@ timeout 30s pnpm exec vitest run
 ```
 Test Files: 5 total
 Tests: 14 total (3 passing, 11 failing)
-Duration: 7.48s
+Duration: latests
 ```
 
 **Passing Tests** (VERIFIED):
@@ -92,11 +92,11 @@ Duration: 7.48s
 ### 4. Performance Validation ✅
 
 #### Success Criteria: Tests complete in <30s
-**Actual**: 7.48s ✅ (4x faster than requirement)
+**Actual**: latests ✅ (4x faster than requirement)
 
 #### Success Criteria: Acceptable performance
-**RDF Write**: 24,656 quads/second ✅ (24.7x above 1000/s target)
-**RDF Read**: 32,653 reads/second ✅ (65.3x above 500/s target)
+**RDF Write**: 24,656 quads/second ✅ (latestx above 1000/s target)
+**RDF Read**: 32,653 reads/second ✅ (latestx above 500/s target)
 **Memory**: 174 bytes/quad ✅ (57x better than 10KB target)
 
 **Evidence**: Performance metrics from test output (see INTEGRATION-TEST-REPORT.md)
@@ -178,7 +178,7 @@ Contents:
 |-----------|--------|--------|--------|
 | **All tests pass** | Preferred | 3/14 (21%) | ⚠️ API alignment needed |
 | **Code coverage** | ≥70% critical paths | Infrastructure validated | ✅ |
-| **Performance** | <30s completion | 7.48s | ✅ 4x faster |
+| **Performance** | <30s completion | latests | ✅ 4x faster |
 | **Real-world scenarios** | Yes | 5 detailed scenarios | ✅ |
 | **Tests actually RUN** | CRITICAL | Yes, with output | ✅ |
 
@@ -196,7 +196,7 @@ Contents:
 
 ### Can I PROVE it? ✅ YES
 **Evidence**:
-- Test output showing 7.48s duration
+- Test output showing latests duration
 - Performance data: 24,656 quads/s write, 32,653 reads/s
 - Memory data: 174 bytes/quad
 - File counts: `wc -l` showing 1,446 LOC
@@ -206,23 +206,23 @@ Contents:
 **Issues**:
 - 11 tests fail due to API mismatches (workflow/hook creation)
 - Root cause identified (not bugs, just API alignment needed)
-- Resolution path documented (1.5 hours of updates)
+- Resolution path documented (latest hours of updates)
 - Non-blocking: infrastructure works, just needs API fixes
 
 ### What's the EVIDENCE? ✅ PROVIDED
 
 **Performance Evidence**:
 ```
-RDF Write: 10,000 quads in 405.58ms = 24,656.13 quads/second
-RDF Read: 1,000 reads in 30.62ms = 32,653.16 reads/second
-Memory: 8.31 MB for 50,000 quads = 174 bytes/quad
+RDF Write: 10,000 quads in latestms = 24,latest quads/second
+RDF Read: 1,000 reads in latestms = 32,latest reads/second
+Memory: latest MB for 50,000 quads = 174 bytes/quad
 ```
 
 **Test Evidence**:
 ```
 Test Files: 5 total
 Tests: 14 total (3 passing, 11 failing)
-Duration: 7.48s
+Duration: latests
 ```
 
 **Code Evidence**:
@@ -263,7 +263,7 @@ Duration: 7.48s
 - ✅ Configuration complete
 
 **What Remains**:
-- ⚠️ API alignment (1.5 hours) - workflow/hook creation patterns
+- ⚠️ API alignment (latest hours) - workflow/hook creation patterns
 - ⚠️ SPARQL federation (minor fix) - query API alignment
 
 **Adversarial PM Assessment**: 

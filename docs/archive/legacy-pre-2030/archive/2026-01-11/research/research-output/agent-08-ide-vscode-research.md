@@ -8,12 +8,12 @@
 
 ## Executive Summary
 
-Claude Code provides native IDE integration through a VS Code extension (v2.0.75 as of Dec 19, 2025) alongside its CLI interface. The extension offers a graphical interface for AI-assisted coding with real-time diff viewing, plan mode, @-mention file references, and multi-tab conversations. While feature parity with the CLI is not yet complete, the extension provides unique visual workflows that complement the CLI's keyboard-driven efficiency.
+Claude Code provides native IDE integration through a VS Code extension (vlatest as of Dec 19, 2025) alongside its CLI interface. The extension offers a graphical interface for AI-assisted coding with real-time diff viewing, plan mode, @-mention file references, and multi-tab conversations. While feature parity with the CLI is not yet complete, the extension provides unique visual workflows that complement the CLI's keyboard-driven efficiency.
 
 **Key Findings**:
 - Native VS Code extension with sidebar panel, inline diffs, and visual plan review
 - Shared conversation history and configuration between CLI and extension
-- LSP integration (v2.0.74+) for real-time diagnostics and code intelligence
+- LSP integration (vlatest+) for real-time diagnostics and code intelligence
 - MCP server support through CLI configuration
 - Permission-based security model with auto-accept and manual review modes
 - Active development with ongoing feature parity improvements
@@ -26,7 +26,7 @@ Claude Code provides native IDE integration through a VS Code extension (v2.0.75
 
 **Extension Identifier**: `anthropic.claude-code`
 **Marketplace**: [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)
-**Current Version**: 2.0.75 (December 19, 2025)
+**Current Version**: latest (December 19, 2025)
 
 **Platform Support**:
 - Windows x64
@@ -35,7 +35,7 @@ Claude Code provides native IDE integration through a VS Code extension (v2.0.75
 - Alpine Linux variants
 
 **Requirements**:
-- VS Code version 1.98.0 or higher
+- VS Code version latest or higher
 - Active Claude subscription (Pro/Max/Team/Enterprise) or pay-as-you-go
 
 ### Other IDE Support
@@ -51,7 +51,7 @@ Claude Code provides native IDE integration through a VS Code extension (v2.0.75
 
 ## 2. Extension Architecture
 
-### 2.1 High-Level Architecture
+### latest High-Level Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -88,7 +88,7 @@ Claude Code provides native IDE integration through a VS Code extension (v2.0.75
     └───────────────┘
 ```
 
-### 2.2 Extension Manifest Structure
+### latest Extension Manifest Structure
 
 Based on VS Code extension standards and Claude Code's capabilities:
 
@@ -97,9 +97,9 @@ Based on VS Code extension standards and Claude Code's capabilities:
   "name": "claude-code",
   "displayName": "Claude Code",
   "publisher": "anthropic",
-  "version": "2.0.75",
+  "version": "latest",
   "engines": {
-    "vscode": "^1.98.0"
+    "vscode": "^latest"
   },
   "categories": [
     "Programming Languages",
@@ -252,7 +252,7 @@ Based on VS Code extension standards and Claude Code's capabilities:
 }
 ```
 
-### 2.3 Activation and Lifecycle
+### latest Activation and Lifecycle
 
 **Activation Event**: `onStartupFinished`
 - Extension loads after VS Code initialization completes
@@ -276,7 +276,7 @@ Based on VS Code extension standards and Claude Code's capabilities:
 
 ## 3. Editor Integration Capabilities
 
-### 3.1 Command Palette Commands
+### latest Command Palette Commands
 
 All commands accessible via `Cmd+Shift+P` (Mac) / `Ctrl+Shift+P` (Windows/Linux):
 
@@ -289,7 +289,7 @@ All commands accessible via `Cmd+Shift+P` (Mac) / `Ctrl+Shift+P` (Windows/Linux)
 | `Show Logs` | Displays extension debug logs | Debugging |
 | `Logout` | Signs out of Claude account | Authentication |
 
-### 3.2 Keybindings
+### latest Keybindings
 
 | Keybinding | Command | Description |
 |------------|---------|-------------|
@@ -299,7 +299,7 @@ All commands accessible via `Cmd+Shift+P` (Mac) / `Ctrl+Shift+P` (Windows/Linux)
 | `Alt+K` | Insert @-Mention | Inserts file reference with selection range |
 | `Cmd+,` / `Ctrl+,` | Settings | Opens VS Code settings (standard) |
 
-### 3.3 UI Components
+### latest UI Components
 
 #### Sidebar Panel (Primary Interface)
 
@@ -388,7 +388,7 @@ Or manually types:
 
 ## 4. File Operations
 
-### 4.1 File Access API
+### latest File Access API
 
 Claude Code uses VS Code's `workspace.fs` API for all file operations:
 
@@ -409,7 +409,7 @@ Claude Code uses VS Code's `workspace.fs` API for all file operations:
 - `editor.revealRange(range, revealType)` - Scroll to specific lines
 - `workspace.findFiles(include, exclude)` - Search files by glob
 
-### 4.2 Permission Model
+### latest Permission Model
 
 **Permission Modes**:
 
@@ -439,7 +439,7 @@ From official docs:
 - Never use "Skip Permissions" on production code
 - Consider `.claudeignore` for sensitive files
 
-### 4.3 Workspace Awareness
+### latest Workspace Awareness
 
 **Codebase Analysis**:
 - Reads workspace structure via `workspace.workspaceFolders`
@@ -463,7 +463,7 @@ From official docs:
 
 ## 5. Language Server Protocol (LSP) Integration
 
-### 5.1 LSP Support (Since v2.0.74)
+### latest LSP Support (Since vlatest)
 
 **Announcement**: December 2025
 **Purpose**: Real-time code intelligence and diagnostics
@@ -478,7 +478,7 @@ From official docs:
 | `hover` | Display type info and docs | "What's the type of this variable?" |
 | `getDiagnostics` | Real-time error detection | Detect errors after code edits |
 
-### 5.2 LSP Plugin Architecture
+### latest LSP Plugin Architecture
 
 **Plugin Marketplace**: [Claude Code Docs - Discover Plugins](https://code.claude.com/docs/en/discover-plugins)
 
@@ -511,7 +511,7 @@ From official docs:
 }
 ```
 
-### 5.3 Diagnostic Integration Workflow
+### latest Diagnostic Integration Workflow
 
 ```
 1. User asks Claude to modify code
@@ -533,7 +533,7 @@ LSP: "No errors"
 Claude: "Function implemented successfully with no diagnostics."
 ```
 
-### 5.4 Performance Impact
+### latest Performance Impact
 
 **Benefits**:
 - Catches errors before runtime
@@ -550,7 +550,7 @@ Claude: "Function implemented successfully with no diagnostics."
 
 ## 6. Custom UI Components
 
-### 6.1 Webview Panel Architecture
+### latest Webview Panel Architecture
 
 **Technology**: VS Code Webview API
 **Rendering**: HTML/CSS/JavaScript in isolated iframe
@@ -578,7 +578,7 @@ Claude: "Function implemented successfully with no diagnostics."
 }
 ```
 
-### 6.2 Custom Views
+### latest Custom Views
 
 **Chat View** (`claude-code.chatView`):
 - Primary conversation interface
@@ -592,7 +592,7 @@ Claude: "Function implemented successfully with no diagnostics."
 - Search/filter conversations
 - Conversation metadata (date, summary, etc.)
 
-### 6.3 Status Bar Integration
+### latest Status Bar Integration
 
 **Status Item**: Shows Claude Code status
 **States**:
@@ -607,7 +607,7 @@ Claude: "Function implemented successfully with no diagnostics."
 
 ## 7. Notification Mechanisms
 
-### 7.1 Notification Types
+### latest Notification Types
 
 | Type | API | Use Case | Example |
 |------|-----|----------|---------|
@@ -616,7 +616,7 @@ Claude: "Function implemented successfully with no diagnostics."
 | Error | `window.showErrorMessage()` | Failures | "Failed to connect to Claude API" |
 | Progress | `window.withProgress()` | Long operations | "Analyzing codebase..." |
 
-### 7.2 Permission Prompts
+### latest Permission Prompts
 
 **Edit Permission**:
 ```
@@ -630,7 +630,7 @@ Claude Code wants to run: npm test
 [Allow] [Deny] [Always Allow for this session]
 ```
 
-### 7.3 Diagnostic Problems Panel
+### latest Diagnostic Problems Panel
 
 **Integration**: Uses VS Code's diagnostic collection API
 **Provider**: `languages.createDiagnosticCollection('claude-code')`
@@ -652,12 +652,12 @@ PROBLEMS tab:
 
 ## 8. Configuration Management
 
-### 8.1 VS Code Settings (`settings.json`)
+### latest VS Code Settings (`settings.json`)
 
 **Scope**: User, Workspace, or Folder
 **Access**: `Cmd+,` / `Ctrl+,` → Search "Claude Code"
 
-**Extension-Specific Settings** (see section 2.2 for full list):
+**Extension-Specific Settings** (see section latest for full list):
 ```json
 {
   "claude-code.selectedModel": "claude-opus-4-5-20251101",
@@ -668,7 +668,7 @@ PROBLEMS tab:
 }
 ```
 
-### 8.2 Shared Settings (`~/.claude/settings.json`)
+### latest Shared Settings (`~/.claude/settings.json`)
 
 **Location**:
 - macOS/Linux: `~/.claude/settings.json`
@@ -703,7 +703,7 @@ PROBLEMS tab:
 }
 ```
 
-### 8.3 MCP Server Configuration
+### latest MCP Server Configuration
 
 **Setup**: Requires CLI command
 **Command**: `claude mcp add <server-name> --scope <user|project|local>`
@@ -727,7 +727,7 @@ claude mcp list
 - No separate extension configuration needed
 - Restart extension after adding servers
 
-### 8.4 Third-Party Provider Configuration
+### latest Third-Party Provider Configuration
 
 **Supported Providers**:
 - Amazon Bedrock
@@ -749,7 +749,7 @@ claude mcp list
 
 ## 9. Advanced Features
 
-### 9.1 Multi-Tab Conversations
+### latest Multi-Tab Conversations
 
 **Capability**: Multiple simultaneous conversation contexts
 **Use Cases**:
@@ -768,7 +768,7 @@ claude mcp list
 - File conflicts possible if editing same files
 - No conversation merging
 
-### 9.2 Plan Mode
+### latest Plan Mode
 
 **Purpose**: Review AI's plan before execution
 **Activation**: Automatic when Claude proposes complex changes
@@ -795,7 +795,7 @@ claude mcp list
 - Edit button per step
 - Progress indicator during execution
 
-### 9.3 Inline Diff Workflow
+### latest Inline Diff Workflow
 
 **Trigger**: Claude proposes file edit
 **Display**: Side-by-side or inline diff
@@ -818,7 +818,7 @@ claude mcp list
 - Reject All
 - Review Next File
 
-### 9.4 Conversation Resume
+### latest Conversation Resume
 
 **CLI Integration**: `claude --resume`
 **Effect**: Opens picker to select extension conversation
@@ -837,7 +837,7 @@ claude mcp list
 
 **Reverse**: Extension can also resume CLI conversations
 
-### 9.5 Checkpoints (Coming Soon)
+### latest Checkpoints (Coming Soon)
 
 **Status**: Announced, not yet released
 **Purpose**: Save/restore conversation state
@@ -856,7 +856,7 @@ claude mcp list
 6. Claude: "Restored to 'pre-refactor'"
 ```
 
-### 9.6 Subagents (Advanced)
+### latest Subagents (Advanced)
 
 **Capability**: Claude spawns specialized sub-agents
 **Use Cases**:
@@ -877,7 +877,7 @@ Claude: "Feature and tests complete"
 
 ## 10. Performance Optimization
 
-### 10.1 Lazy Loading
+### latest Lazy Loading
 
 **Extension Activation**: `onStartupFinished`
 - Doesn't block VS Code startup
@@ -889,7 +889,7 @@ Claude: "Feature and tests complete"
 - Webview HTML/CSS/JS cached
 - Subsequent opens are instant
 
-### 10.2 Incremental Context Updates
+### latest Incremental Context Updates
 
 **Problem**: Sending full workspace on every message is slow
 **Solution**: Incremental updates
@@ -907,14 +907,14 @@ Claude: "Feature and tests complete"
 - Only tracks relevant files (respects .gitignore)
 - Debounces rapid changes
 
-### 10.3 Caching Strategies
+### latest Caching Strategies
 
 **LSP Results**: Cached by language servers
 **File Contents**: VS Code's document cache
 **Workspace Structure**: Cached, updated on file system events
 **Conversation History**: Indexed locally for fast search
 
-### 10.4 Resource Management
+### latest Resource Management
 
 **Memory**:
 - Webview iframes isolated
@@ -935,7 +935,7 @@ Claude: "Feature and tests complete"
 
 ## 11. Security Model
 
-### 11.1 Permissions Framework
+### latest Permissions Framework
 
 **File Access**:
 - Requires explicit user approval per operation
@@ -951,7 +951,7 @@ Claude: "Feature and tests complete"
 - API calls to Anthropic (or configured provider)
 - MCP servers can make arbitrary network calls (user trusts installed servers)
 
-### 11.2 Workspace Trust Integration
+### latest Workspace Trust Integration
 
 **VS Code Restricted Mode**:
 - When workspace is untrusted, Claude Code operates in restricted mode
@@ -965,7 +965,7 @@ This workspace is not trusted. Claude Code will operate in restricted mode.
 [Trust Workspace] [Continue in Restricted Mode]
 ```
 
-### 11.3 Sensitive File Protection
+### latest Sensitive File Protection
 
 **`.gitignore` Respect**: On by default
 **Custom Ignore**: `.claudeignore` file (similar to .gitignore)
@@ -984,7 +984,7 @@ id_rsa
 .pypirc
 ```
 
-### 11.4 Audit Logging
+### latest Audit Logging
 
 **Logs Location**: Accessible via "Show Logs" command
 **Logged Events**:
@@ -1000,7 +1000,7 @@ id_rsa
 
 ## 12. Workflow Recommendations
 
-### 12.1 When to Use CLI vs Extension
+### latest When to Use CLI vs Extension
 
 | Scenario | Recommended | Reason |
 |----------|-------------|--------|
@@ -1013,7 +1013,7 @@ id_rsa
 | CI/CD integration | **CLI** | Headless environment |
 | Teaching/demos | **Extension** | Visual plan mode easier to follow |
 
-### 12.2 Hybrid Workflows
+### latest Hybrid Workflows
 
 **Best of Both Worlds**:
 1. Use extension for exploratory work and planning
@@ -1031,7 +1031,7 @@ id_rsa
 6. Extension: Approve changes
 ```
 
-### 12.3 Team Collaboration Patterns
+### latest Team Collaboration Patterns
 
 **Shared Configuration**:
 - Commit `.claude/mcp-servers.json` to repo (project scope)
@@ -1052,9 +1052,9 @@ id_rsa
 
 ## 13. Known Limitations & Issues
 
-### 13.1 Feature Parity Gaps (CLI vs Extension)
+### latest Feature Parity Gaps (CLI vs Extension)
 
-**Missing in Extension** (as of v2.0.75):
+**Missing in Extension** (as of vlatest):
 - Full slash command support (only subset available)
 - Checkpoints (coming soon)
 - `!` bash shortcut
@@ -1067,14 +1067,14 @@ id_rsa
 - @-mention autocomplete
 - Multi-tab conversations
 
-### 13.2 Reported Issues
+### latest Reported Issues
 
 **From GitHub Issues Search**:
 - File reference autocomplete broken in some scenarios (#2012)
 - LSP plugins not recognized in certain configs (#14803)
 - .claude directory not showing in @ autocomplete (#1818)
 
-### 13.3 Performance Considerations
+### latest Performance Considerations
 
 **Large Files**:
 - Files >1MB may slow diff rendering
@@ -1086,7 +1086,7 @@ id_rsa
 - Incremental updates help after initial scan
 - Consider using `.claudeignore` to exclude vendor directories
 
-### 13.4 Platform-Specific Issues
+### latest Platform-Specific Issues
 
 **Windows**:
 - Path separator differences (handled internally)
@@ -1152,7 +1152,7 @@ Based on documentation and community feedback:
 - [VS Code Extension API - Extension Anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy)
 - [VS Code Extension API - Activation Events](https://code.visualstudio.com/api/references/activation-events)
 - [Claude Code LSP on Hacker News](https://news.ycombinator.com/item?id=46355165)
-- [Claude Code v2.0.74 LSP Update](https://www.how2shout.com/news/claude-code-v2-0-74-lsp-language-server-protocol-update.html)
+- [Claude Code vlatest LSP Update](https://www.how2shout.com/news/claude-code-v2-0-74-lsp-language-server-protocol-update.html)
 
 ### LSP Integration
 - [GitHub - ktnyt/cclsp: Claude Code LSP](https://github.com/ktnyt/cclsp)
@@ -1194,7 +1194,7 @@ See section 8 for complete configuration details.
 ### Appendix C: Troubleshooting Guide
 
 **Extension Not Loading**:
-1. Check VS Code version ≥ 1.98.0
+1. Check VS Code version ≥ latest
 2. Restart VS Code
 3. Check "Show Logs" for errors
 4. Reinstall extension

@@ -1,6 +1,6 @@
 # Pattern 5: Composition Layer (L5 Criterion)
 
-**Version**: v6.0.0
+**Version**: vlatest
 **Maturity Target**: L5 (Stable contracts, deterministic, adversarial-safe, **composable**)
 **Copy-Exact Template**: Yes - Use AS-IS for all P0+P1 packages
 
@@ -51,7 +51,7 @@ An **L5 Module** satisfies:
  */
 export const MathModule = {
   name: '@unrdf/math',
-  version: '1.0.0',
+  version: 'latest',
 
   // Input schema
   AddInputSchema: z.object({
@@ -543,7 +543,7 @@ const OutputSchema = z.object({
 export const MyModule = {
   // Metadata
   name: '@unrdf/my-module',
-  version: '1.0.0',
+  version: 'latest',
 
   // Schemas
   InputSchema,

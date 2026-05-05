@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/react
-**Version:** 5.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -28,11 +28,11 @@ UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Exte
 
 ### Dependencies
 
-- `@opentelemetry/api`: ^1.9.0
+- `@opentelemetry/api`: ^[VERSION]
 - `@unrdf/core`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
-- `lru-cache`: ^11.1.0
-- `zod`: ^4.1.13
+- `lru-cache`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

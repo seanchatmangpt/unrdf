@@ -217,7 +217,7 @@ validationResult = {
   score: 87,
   metrics: {
     latency: 23,
-    errorRate: 0.0,
+    errorRate: latest,
     throughput: 1,
     memoryUsage: 15728640
   },
@@ -273,7 +273,7 @@ npx codeql database create <database>
   "lines": { "total": 100, "covered": 87, "pct": 87 },
   "statements": { "total": 100, "covered": 87, "pct": 87 },
   "functions": { "total": 50, "covered": 43, "pct": 86 },
-  "branches": { "total": 40, "covered": 33, "pct": 82.5 }
+  "branches": { "total": 40, "covered": 33, "pct": latest }
 }
 ```
 
@@ -337,7 +337,7 @@ export async function renderDashboard() {
 
   console.clear();
   console.log('═'.repeat(60));
-  console.log('  UNRDF v4.0 - ANDON DASHBOARD');
+  console.log('  UNRDF vlatest - ANDON DASHBOARD');
   console.log('═'.repeat(60));
 
   // Render validation signals
@@ -365,7 +365,7 @@ export async function renderDashboard() {
 }
 ```
 
-### Step 5: GitHub Actions Integration (1.5 hours)
+### Step 5: GitHub Actions Integration (latest hours)
 ```yaml
 # .github/workflows/andon-status.yml
 name: Update Andon Status

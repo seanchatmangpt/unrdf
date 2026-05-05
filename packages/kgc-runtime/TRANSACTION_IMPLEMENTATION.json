@@ -96,7 +96,7 @@
     "cascading_transactions": "Parent-child transaction chains supported"
   },
   "dependencies_added": [
-    "hash-wasm@^4.11.0 (for blake3 hashing)"
+    "hash-wasm@^[VERSION] (for blake3 hashing)"
   ],
   "files_created": [
     "/home/user/unrdf/packages/kgc-runtime/src/transaction.mjs",

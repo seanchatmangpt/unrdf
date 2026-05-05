@@ -13,7 +13,7 @@
 
 The v6 codebase is **BLOCKED from production release** due to critical failures in:
 - Lint validation (2 violations)
-- Test validation (78.6% pass rate, need ≥95%)
+- Test validation (latest% pass rate, need ≥95%)
 - Determinism proof (test failures)
 
 **ONLY** OTEL validation passed (100/100).
@@ -22,7 +22,7 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 ## Gate Results
 
-### Gate 4.1 (Build Validation): ⚠️ WARNING
+### Gate latest (Build Validation): ⚠️ WARNING
 - **Command**: `timeout 120s pnpm run build`
 - **Exit Code**: 0 (appears successful)
 - **Duration**: < 5s
@@ -39,7 +39,7 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 ---
 
-### Gate 4.2 (Lint Validation): ❌ FAILED
+### Gate latest (Lint Validation): ❌ FAILED
 - **Command**: `timeout 60s pnpm run lint`
 - **Exit Code**: 1 (failed)
 - **Duration**: < 5s
@@ -62,11 +62,11 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 ---
 
-### Gate 4.3 (Test Validation): ❌ FAILED
+### Gate latest (Test Validation): ❌ FAILED
 - **Command**: `timeout 180s pnpm test`
 - **Exit Code**: 1 (failed)
 - **Duration**: < 60s
-- **Pass Rate**: 79.8% (77 pass / 107 total)
+- **Pass Rate**: latest% (77 pass / 107 total)
 - **Required**: ≥95% pass rate
 - **Status**: ❌ **FAILED**
 - **Evidence**: `/home/user/unrdf/test-output.log`
@@ -76,12 +76,12 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 **AUTONOMIC_INNOVATION Agents** (56 tests):
 - Agent 2 (Capsule IR): 20/20 ✅ (100%)
 - Agent 4 (Impact Set): 13/13 ✅ (100%)
-- Agent 6 (Profile Compiler): 22/23 ✅ (95.7%)
+- Agent 6 (Profile Compiler): 22/23 ✅ (latest%)
   - **Failure**: Profile compilation invalid profile throws (test.mjs:96)
   - **Error**: `Cannot read properties of undefined (reading 'map')`
 
 **v6-core Package** (28 tests):
-- Pass: 22/28 (78.6%)
+- Pass: 22/28 (latest%)
 - **Failures**: 6 tests
 
 **Critical Failures**:
@@ -106,17 +106,17 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 6. **withReceipt - verifies idempotency** (with-receipt-node.test.mjs:59)
    - Error: Idempotency check failed
 
-**Blocker**: YES - Test pass rate 79.8% (need ≥95%)
+**Blocker**: YES - Test pass rate latest% (need ≥95%)
 
 ---
 
-### Gate 4.4 (Determinism Proof): ❌ FAILED
+### Gate latest (Determinism Proof): ❌ FAILED
 - **Command**: `timeout 60s pnpm --filter @unrdf/v6-core test -- l3-determinism-direct.test.mjs`
 - **Exit Code**: 1 (failed)
 - **Status**: ❌ **FAILED**
 - **Evidence**: `/home/user/unrdf/determinism-output.log`
 
-**Note**: Filter did not isolate determinism test as expected. Test run included all v6-core tests (same failures as Gate 4.3).
+**Note**: Filter did not isolate determinism test as expected. Test run included all v6-core tests (same failures as Gate latest).
 
 **Determinism-Specific Failures**:
 - withReceipt HOF determinism test (2 failures)
@@ -127,7 +127,7 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 ---
 
-### Gate 4.5 (OTEL Validation): ✅ PASSED
+### Gate latest (OTEL Validation): ✅ PASSED
 - **Command**: `timeout 180s node validation/run-all.mjs comprehensive`
 - **Exit Code**: 0 (success)
 - **Duration**: 1064ms
@@ -138,40 +138,40 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 **Features Validated** (6/6 passed):
 1. ✅ knowledge-engine-core: 100/100
-   - Latency: 9.6ms
-   - Error Rate: 0.00%
+   - Latency: latestms
+   - Error Rate: latest%
    - Throughput: 5 ops
-   - Memory: 10.42MB
+   - Memory: latestMB
 
 2. ✅ knowledge-hooks-api: 100/100
-   - Latency: 9.5ms
-   - Error Rate: 0.00%
+   - Latency: latestms
+   - Error Rate: latest%
    - Throughput: 4 ops
-   - Memory: 10.90MB
+   - Memory: latestMB
 
 3. ✅ policy-packs: 100/100
    - Latency: 11ms
-   - Error Rate: 0.00%
+   - Error Rate: latest%
    - Throughput: 3 ops
-   - Memory: 11.12MB
+   - Memory: latestMB
 
 4. ✅ lockchain-integrity: 100/100
-   - Latency: 12.3ms
-   - Error Rate: 0.00%
+   - Latency: latestms
+   - Error Rate: latest%
    - Throughput: 3 ops
-   - Memory: 11.32MB
+   - Memory: latestMB
 
 5. ✅ transaction-manager: 100/100
-   - Latency: 6.7ms
-   - Error Rate: 0.00%
+   - Latency: latestms
+   - Error Rate: latest%
    - Throughput: 3 ops
-   - Memory: 11.57MB
+   - Memory: latestMB
 
 6. ✅ browser-compatibility: 100/100
-   - Latency: 17.7ms
-   - Error Rate: 0.00%
+   - Latency: latestms
+   - Error Rate: latest%
    - Throughput: 3 ops
-   - Memory: 11.76MB
+   - Memory: latestMB
 
 **Blocker**: NO - OTEL validation passed
 
@@ -191,7 +191,7 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 - [x] ✅ Grammar tests (partial - 14/19 pass)
 - [ ] ❌ Determinism proof passes (hash mismatch detected)
 - [x] ✅ Zod schema validation tests pass
-- [ ] ❌ Overall test pass rate: ≥95% (actual: 79.8%)
+- [ ] ❌ Overall test pass rate: ≥95% (actual: latest%)
 - [ ] ❌ No flaky tests (not verified - would need 2 runs)
 
 ### Section 3: Code Quality (5 items)
@@ -224,17 +224,17 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 - [x] ✅ No OTEL validation errors
 - [x] ✅ All spans properly instrumented
 
-**Checklist Score**: 13/33 items passed (39.4%)
+**Checklist Score**: 13/33 items passed (latest%)
 
 ---
 
 ## Critical Blockers (Prioritized)
 
-### Blocker 1: Test Failures (79.8% pass rate)
+### Blocker 1: Test Failures (latest% pass rate)
 **Severity**: CRITICAL
 **Impact**: Production deployment blocked
 **Required**: ≥95% pass rate
-**Actual**: 79.8% (77/107 tests passing)
+**Actual**: latest% (77/107 tests passing)
 
 **Root Causes**:
 1. Module export missing: `DeltaProposalSchema` not exported from `/home/user/unrdf/packages/v6-core/src/delta/index.mjs`
@@ -300,11 +300,11 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 
 ### Can you PROVE each passed?
 **Partial** - Only OTEL passed:
-- Gate 4.1: ⚠️ WARNING (build filter matched 0 projects)
-- Gate 4.2: ❌ FAILED (exit code 1, 2 violations)
-- Gate 4.3: ❌ FAILED (79.8% pass rate)
-- Gate 4.4: ❌ FAILED (determinism hash mismatch)
-- Gate 4.5: ✅ PASSED (100/100 score)
+- Gate latest: ⚠️ WARNING (build filter matched 0 projects)
+- Gate latest: ❌ FAILED (exit code 1, 2 violations)
+- Gate latest: ❌ FAILED (latest% pass rate)
+- Gate latest: ❌ FAILED (determinism hash mismatch)
+- Gate latest: ✅ PASSED (100/100 score)
 
 ### What BREAKS if you're wrong?
 - **Build**: Deployment fails if packages don't compile
@@ -318,7 +318,7 @@ The v6 codebase is **BLOCKED from production release** due to critical failures 
 - [x] ✅ Full output logged (build, lint, test, determinism, OTEL)
 - [x] ✅ Error counts verified (2 lint, 6 test failures)
 - [x] ✅ OTEL score verified (100/100)
-- [x] ✅ Test pass rates calculated (79.8%)
+- [x] ✅ Test pass rates calculated (latest%)
 - [x] ✅ File references cited (line numbers)
 
 ---
@@ -337,7 +337,7 @@ All evidence files stored in `/home/user/unrdf/`:
 
 ## Next Steps (Recommended Priority)
 
-### Priority 1: Fix Test Failures (Gate 4.3)
+### Priority 1: Fix Test Failures (Gate latest)
 1. **Fix module export**: Add `DeltaProposalSchema` to `/home/user/unrdf/packages/v6-core/src/delta/index.mjs`
 2. **Fix grammar compiler**: Debug 3 grammar compilation test failures
 3. **Fix determinism**: Resolve hash mismatch in withReceipt HOF
@@ -347,7 +347,7 @@ All evidence files stored in `/home/user/unrdf/`:
 
 ---
 
-### Priority 2: Fix Determinism (Gate 4.4)
+### Priority 2: Fix Determinism (Gate latest)
 1. **Investigate timestamp injection**: Verify context injection is deterministic
 2. **Investigate input serialization**: Ensure canonical ordering
 3. **Run determinism proof**: Verify 100/100 identical hashes
@@ -357,7 +357,7 @@ All evidence files stored in `/home/user/unrdf/`:
 
 ---
 
-### Priority 3: Fix Linting (Gate 4.2)
+### Priority 3: Fix Linting (Gate latest)
 1. **Fix unused variable**: `/home/user/unrdf/packages/cli/src/cli-receipts.mjs:12:3`
    - Rename `createContext` to `_createContext` or remove
 2. **Fix unused variable**: `/home/user/unrdf/packages/cli/test/cli/decision-fabric.test.mjs:14:24`
@@ -367,7 +367,7 @@ All evidence files stored in `/home/user/unrdf/`:
 
 ---
 
-### Priority 4: Investigate Build (Gate 4.1)
+### Priority 4: Investigate Build (Gate latest)
 1. **Check package.json**: Verify `pnpm -r --filter ./packages build` filter
 2. **Check workspace structure**: Verify packages exist at `./packages`
 3. **Verify build script**: Ensure packages have `build` script defined
@@ -383,8 +383,8 @@ All evidence files stored in `/home/user/unrdf/`:
 
 **Rationale**:
 - 3/4 critical gates FAILED
-- Only 39.4% of production checklist passed (13/33)
-- Test pass rate 79.8% (need ≥95%)
+- Only latest% of production checklist passed (13/33)
+- Test pass rate latest% (need ≥95%)
 - Determinism failures = receipts non-reproducible
 - Linting violations block CI/CD
 

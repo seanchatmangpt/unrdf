@@ -159,13 +159,13 @@ queue.add(`${action}-${taskId}`, jobData, {
 ### 6. **@unrdf/yawl-api** - REST API Framework
 **External Dependencies**: `fastify`, `@fastify/swagger`, `@fastify/swagger-ui`, `zod-to-json-schema`
 
-**Innovation**: Auto-generated REST APIs from YAWL workflows with HATEOAS and OpenAPI 3.1.
+**Innovation**: Auto-generated REST APIs from YAWL workflows with HATEOAS and OpenAPI latest.
 
 **Key Features**:
 - Auto-generates endpoints from workflow specs
 - HATEOAS links based on enabled tasks
 - Zod schema validation from YAWL definitions
-- Complete OpenAPI 3.1 documentation
+- Complete OpenAPI latest documentation
 - Purchase order approval API example
 
 **Files**: `packages/yawl-api/`

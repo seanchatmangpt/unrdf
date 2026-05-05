@@ -17,7 +17,7 @@
  * // Define lens
  * const lens = defineLens({
  *   name: 'user-profile',
- *   version: '1.0.0',
+ *   version: 'latest',
  *   toSubstrate: (req) => ({ type: 'UPSERT_USER', payload: req.body }),
  *   fromSubstrate: (data) => ({ id: data.id, name: data.name }),
  * });

@@ -379,12 +379,12 @@ All files are located under: `/home/user/unrdf/packages/collab/`
 {
   "dependencies": {
     "@unrdf/core": "workspace:*",
-    "yjs": "^13.6.18",
-    "y-websocket": "^2.0.4",
-    "y-indexeddb": "^9.0.12",
-    "lib0": "^0.2.97",
-    "zod": "^4.1.13",
-    "ws": "^8.18.0"
+    "yjs": "^[VERSION]",
+    "y-websocket": "^[VERSION]",
+    "y-indexeddb": "^[VERSION]",
+    "lib0": "^[VERSION]",
+    "zod": "^[VERSION]",
+    "ws": "^[VERSION]"
   }
 }
 ```

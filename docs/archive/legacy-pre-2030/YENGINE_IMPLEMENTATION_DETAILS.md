@@ -6,7 +6,7 @@
 
 ## 1. Class Structure and Fields
 
-### 1.1 WorkflowEngine (Main Engine Class)
+### latest WorkflowEngine (Main Engine Class)
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine.mjs`
 
@@ -21,7 +21,7 @@ EngineCore
   ← WorkflowEngine
 ```
 
-### 1.2 Core Engine Fields (from EngineCore)
+### latest Core Engine Fields (from EngineCore)
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine-core.mjs:111-199`
 
@@ -109,7 +109,7 @@ class EngineCore {
 
 ## 2. Case Lifecycle Methods - Exact Sequences
 
-### 2.1 createCase() - Complete Sequence
+### latest createCase() - Complete Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine.mjs:73-141`
 
@@ -185,7 +185,7 @@ async createCase(workflowId, initialData = {}, options = {}) {
 - **Case ID**: UUID v4 via Node.js `crypto.randomUUID()`
 - **Receipt Chain**: Started immediately with `yawlCase.start()`
 
-### 2.2 YawlCase.start() - Internal Sequence
+### latest YawlCase.start() - Internal Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/case-lifecycle.mjs:25-42`
 
@@ -213,7 +213,7 @@ async start() {
 }
 ```
 
-### 2.3 Case.enableTask() - Task Enabling Sequence
+### latest Case.enableTask() - Task Enabling Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/case-lifecycle.mjs:50-112`
 
@@ -295,7 +295,7 @@ async enableTask(taskId, actor) {
 
 ## 3. State Management - Storage Mechanisms
 
-### 3.1 Case State Storage
+### latest Case State Storage
 
 **File**: `/home/user/unrdf/packages/yawl/src/case-core.mjs:58-127`
 
@@ -337,7 +337,7 @@ class CaseCore {
 
 **Storage Location**: In-memory (`Map` data structures)
 
-### 3.2 Petri Net Marking (Token Management)
+### latest Petri Net Marking (Token Management)
 
 **File**: `/home/user/unrdf/packages/yawl/src/case-state.mjs:22-157`
 
@@ -398,7 +398,7 @@ _fireTransition(workItem) {
 
 **Key Insight**: Token operations are **NOT transactional**. No ACID guarantees.
 
-### 3.3 State Persistence Options
+### latest State Persistence Options
 
 **Three-tier storage**:
 
@@ -424,7 +424,7 @@ _fireTransition(workItem) {
 
 ## 4. Concurrency Model
 
-### 4.1 Thread Model: Event Loop (JavaScript)
+### latest Thread Model: Event Loop (JavaScript)
 
 **NOT Java threads**. JavaScript uses:
 
@@ -433,7 +433,7 @@ _fireTransition(workItem) {
 - **No preemptive multithreading**
 - **No synchronized blocks**
 
-### 4.2 Locking Mechanisms
+### latest Locking Mechanisms
 
 **Answer: NONE**
 
@@ -461,7 +461,7 @@ async createCase(workflowId, initialData = {}, options = {}) {
 }
 ```
 
-### 4.3 Concurrency Safety
+### latest Concurrency Safety
 
 **How is concurrency handled?**
 
@@ -492,7 +492,7 @@ if (this.cases.size >= this.maxConcurrentCases) {
 // this check can pass for multiple calls before any sets the case
 ```
 
-### 4.4 Deadlock Prevention
+### latest Deadlock Prevention
 
 **Not Applicable**: No locks means no deadlocks.
 
@@ -516,14 +516,14 @@ const caseId = options.caseId || randomUUID();
 - Example: `9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d`
 
 **Collision Probability**:
-- ~1 in 2^122 (5.3 × 10^36)
+- ~1 in 2^122 (latest × 10^36)
 - Negligible for practical use
 
 ---
 
 ## 6. Task Execution Mechanics
 
-### 6.1 Engine.completeTask() - Full Sequence
+### latest Engine.completeTask() - Full Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine.mjs:293-400`
 
@@ -631,7 +631,7 @@ async completeTask(caseId, workItemId, output = {}, actor) {
 }
 ```
 
-### 6.2 Case.completeTask() - Internal Sequence
+### latest Case.completeTask() - Internal Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/case-lifecycle.mjs:174-256`
 
@@ -730,7 +730,7 @@ async completeTask(workItemId, output = {}, actor) {
 
 ## 7. Receipt Chain Mechanism
 
-### 7.1 Receipt Structure
+### latest Receipt Structure
 
 **File**: `/home/user/unrdf/packages/yawl/src/receipt-core.mjs`
 
@@ -751,7 +751,7 @@ async completeTask(workItemId, output = {}, actor) {
 }
 ```
 
-### 7.2 Receipt Building Sequence
+### latest Receipt Building Sequence
 
 **File**: `/home/user/unrdf/packages/yawl/src/receipt-core.mjs`
 
@@ -823,7 +823,7 @@ function hashReceipt(receipt) {
 
 ## 8. Recovery and Persistence
 
-### 8.1 Engine Restart Behavior
+### latest Engine Restart Behavior
 
 **Default (In-Memory Only)**:
 ```javascript
@@ -835,7 +835,7 @@ const engine = createWorkflowEngine();
 
 **On restart**: ALL cases lost. No recovery.
 
-### 8.2 With KGC-4D Event Log
+### latest With KGC-4D Event Log
 
 **Configuration**:
 ```javascript
@@ -873,7 +873,7 @@ async function recoverCases(engine) {
 
 **NOT automatic**. Engine does NOT auto-recover.
 
-### 8.3 With Git Snapshots
+### latest With Git Snapshots
 
 **Configuration**:
 ```javascript
@@ -934,7 +934,7 @@ for (const [caseId, caseState] of Object.entries(caseStates)) {
 
 ## 10. Performance Characteristics
 
-### 10.1 Bottlenecks
+### latest Bottlenecks
 
 1. **In-Memory Case Storage**:
    - `cases.size >= maxConcurrentCases` → 1000 cases default
@@ -954,7 +954,7 @@ for (const [caseId, caseState] of Object.entries(caseStates)) {
    - Each `completeTask()` is independent
    - No bulk operations
 
-### 10.2 Scalability Limits
+### latest Scalability Limits
 
 ```javascript
 // Default configuration
@@ -975,7 +975,7 @@ for (const [caseId, caseState] of Object.entries(caseStates)) {
 
 ## 11. Code Snippets - Key Operations
 
-### 11.1 Workflow Registration
+### latest Workflow Registration
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine-core.mjs:211-229`
 
@@ -1000,7 +1000,7 @@ registerWorkflow(workflowOrSpec) {
 }
 ```
 
-### 11.2 Resource Allocation
+### latest Resource Allocation
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine.mjs:218-257`
 
@@ -1044,7 +1044,7 @@ async startTask(caseId, workItemId, options = {}) {
 }
 ```
 
-### 11.3 Circuit Breaker Logic
+### latest Circuit Breaker Logic
 
 **File**: `/home/user/unrdf/packages/yawl/src/engine-execution.mjs:42-46`
 

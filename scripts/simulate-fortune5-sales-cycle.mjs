@@ -28,7 +28,7 @@ const _MAX_TOUCHPOINTS_PER_STAGE = 10;
 const _DEFAULT_TIMEOUT_MS = 30000;
 
 // OTEL Tracer
-const tracer = trace.getTracer('fortune5-sales-cycle', '1.0.0');
+const tracer = trace.getTracer('fortune5-sales-cycle', 'latest');
 
 // OCEL Event Emission
 function emitOCELEvent(eventType, attributes) {

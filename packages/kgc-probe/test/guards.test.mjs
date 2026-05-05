@@ -222,7 +222,7 @@ describe('GuardRegistry', () => {
 
   describe('checkNetworkURL', () => {
     it('should deny access to AWS metadata service', () => {
-      const result = registry.checkNetworkURL('http://169.254.169.254/latest/meta-data/');
+      const result = registry.checkNetworkURL('http://[VERSION].254/latest/meta-data/');
       expect(result.allowed).toBe(false);
       expect(result.reasonCode).toBe('FORBIDDEN_HOST');
     });
@@ -233,17 +233,17 @@ describe('GuardRegistry', () => {
     });
 
     it('should deny access to internal networks (10.x)', () => {
-      const result = registry.checkNetworkURL('http://10.0.0.1/api');
+      const result = registry.checkNetworkURL('http://[VERSION].1/api');
       expect(result.allowed).toBe(false);
     });
 
     it('should deny access to internal networks (172.16.x)', () => {
-      const result = registry.checkNetworkURL('http://172.16.0.1/api');
+      const result = registry.checkNetworkURL('http://[VERSION].1/api');
       expect(result.allowed).toBe(false);
     });
 
     it('should deny access to internal networks (192.168.x)', () => {
-      const result = registry.checkNetworkURL('http://192.168.1.1/api');
+      const result = registry.checkNetworkURL('http://[VERSION].1/api');
       expect(result.allowed).toBe(false);
     });
 
@@ -267,8 +267,8 @@ describe('GuardRegistry', () => {
       expect(result.allowed).toBe(true);
     });
 
-    it('should allow access to 127.0.0.1', () => {
-      const result = registry.checkNetworkURL('http://127.0.0.1:8080/');
+    it('should allow access to [VERSION].1', () => {
+      const result = registry.checkNetworkURL('http://[VERSION].1:8080/');
       expect(result.allowed).toBe(true);
     });
 

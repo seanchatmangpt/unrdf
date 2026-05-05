@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [6.0.0] - 2026-01-11
+## [latest] - 2026-01-11
 
 ### 🎉 Production Release - Phase 1+2 Complete
 
@@ -108,7 +108,7 @@
 
 #### ⚠️ Breaking Changes
 
-**NONE** - v6.0.0 maintains full backward compatibility with v5.x.
+**NONE** - vlatest maintains full backward compatibility with v5.x.
 
 All new features are additive. Existing RDF operations continue to work without modification.
 
@@ -141,7 +141,7 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 
 #### 🔒 Security Advisory
 
-**v6.0.0 Security Level**: Enterprise-grade
+**vlatest Security Level**: Enterprise-grade
 
 **Resolved Issues**:
 - P1: Missing authentication on daemon operations ✅ RESOLVED
@@ -157,14 +157,14 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 
 #### 📈 Next Steps
 
-**v6.1.0 (Q1 2026)** - Planned:
+**vlatest (Q1 2026)** - Planned:
 - Multi-key authentication support
 - Key rotation automation
 - Rate limiting per API key
 - OTEL metrics for authentication
 - Advanced audit log analytics
 
-**v7.0.0 (Q2 2026)** - Planned:
+**vlatest (Q2 2026)** - Planned:
 - OAuth2/OIDC integration
 - RBAC (Role-Based Access Control)
 - Multi-tenant daemon support
@@ -173,7 +173,7 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 
 ---
 
-## [6.0.0-rc.1] - 2025-12-27
+## [latest.1] - 2025-12-27
 
 ### 🚀 Release Candidate 1 - Production Readiness Validation
 
@@ -189,14 +189,14 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 - Duration: 1491ms
 - All features validated via span-based testing
 
-**Test Results**: 437/439 passing (99.5%) ⚠️
+**Test Results**: 437/439 passing (latest%) ⚠️
 - Core package tests: 438/439 passing
 - Integration tests: passing
 - Validation package: passing (OTEL-based)
 
 **Performance Metrics**:
-- Average latency: 9.5ms across all features
-- Error rate: 0.00%
+- Average latency: latestms across all features
+- Error rate: latest%
 - Throughput: 3-5 ops depending on feature
 - Memory usage: 10-12MB per feature
 
@@ -227,8 +227,8 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 
 #### 📊 Release Statistics
 
-- Version bump: 6.0.0-alpha.1 → 6.0.0-rc.1
-- Test coverage: 99.5% (437/439 tests passing)
+- Version bump: latest.1 → latest.1
+- Test coverage: latest% (437/439 tests passing)
 - OTEL validation: 100/100 (6/6 features)
 - N3 migration: Complete (test files use N3 for backward compat testing)
 - Documentation: Up to date
@@ -238,12 +238,12 @@ See [docs/MIGRATING_TO_V6.md](docs/MIGRATING_TO_V6.md) for complete migration gu
 This release candidate focuses on:
 1. Validating OTEL span-based testing framework (✅ 100/100)
 2. Identifying backward compatibility issues (⚠️ N3 result format)
-3. Core functionality stability (✅ 99.5% tests passing)
+3. Core functionality stability (✅ latest% tests passing)
 4. Performance baseline establishment (✅ metrics collected)
 
 #### ⚠️ Breaking Changes from v5
 
-Same as documented in 5.0.0-beta.1:
+Same as documented in latest.1:
 1. N3.js → Oxigraph migration
 2. CLI autonomic command removed
 3. TypeScript in source removed (MJS + JSDoc)
@@ -273,7 +273,7 @@ Same as documented in 5.0.0-beta.1:
   - Dependency was declared but never imported (dead dependency)
   - No impact on functionality
 
-## [5.0.0-alpha.0] - 2025-12-03
+## [latest.0] - 2025-12-03
 
 ### 🔧 Test Infrastructure Improvements
 
@@ -306,7 +306,7 @@ Same as documented in 5.0.0-beta.1:
 
 ---
 
-## [5.0.0-beta.1] - 2025-12-06
+## [latest.1] - 2025-12-06
 
 ### 🎯 Major Release - Production Ready
 
@@ -314,7 +314,7 @@ Same as documented in 5.0.0-beta.1:
 
 - chore: remove packages/browser (incomplete implementation, recoverable from git history)
 - chore: remove broken packages/react and dependent code
-- docs: add comprehensive v5.0.0 release plan
+- docs: add comprehensive vlatest release plan
 - docs: add comprehensive stale files deletion plan
 - chore: remove legacy CLI code and development artifacts
 - chore: update kgc-4d doctest files
@@ -382,4 +382,4 @@ Same as documented in 5.0.0-beta.1:
 
 ---
 
-For full details, see: `docs/RELEASE-PLAN-v5.0.0.md`
+For full details, see: `docs/RELEASE-PLAN-vlatest.md`

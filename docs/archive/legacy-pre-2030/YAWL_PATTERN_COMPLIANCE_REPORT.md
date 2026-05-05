@@ -3,7 +3,7 @@
 
 **Date:** 2026-01-11
 **Evaluator:** Simulated Wil van der Aalst
-**Subject:** UNRDF YAWL Implementation (@unrdf/yawl v6.0.0)
+**Subject:** UNRDF YAWL Implementation (@unrdf/yawl vlatest)
 **Methodology:** Pattern-by-pattern source code analysis against workflow patterns reference
 
 ---
@@ -12,7 +12,7 @@
 
 **CLAIM:** "Complete implementation of Van der Aalst's control flow patterns (WP1-WP20)" (README.md, line 11)
 
-**REALITY:** **14 of 43 core patterns implemented** (32.6% compliance)
+**REALITY:** **14 of 43 core patterns implemented** (latest% compliance)
 
 **COMPLIANCE GRADE: D+ (Partial Implementation)**
 
@@ -334,7 +334,7 @@ test('WP9: Structured Discriminator - First of N branches triggers downstream', 
 | **TOTAL (WP1-20)** | **10** | **4** | **6** |
 
 **Compliance Rate:** 10/20 = **50%** (if counting partial as complete)
-**True Compliance:** 10/20 full + 4×0.5 partial = **60%**
+**True Compliance:** 10/20 full + 4×latest partial = **60%**
 
 ---
 
@@ -466,8 +466,8 @@ test('WP9: Structured Discriminator - First of N branches triggers downstream', 
 |----------|-------|--------|----------|
 | **Basic Patterns (WP1-11)** | 95% | 40% | 38% |
 | **MI Patterns (WP12-15)** | 0% | 25% | 0% |
-| **State Patterns (WP16-18)** | 23% | 15% | 3.5% |
-| **Cancel Patterns (WP19-20)** | 85% | 10% | 8.5% |
+| **State Patterns (WP16-18)** | 23% | 15% | latest% |
+| **Cancel Patterns (WP19-20)** | 85% | 10% | latest% |
 | **Documentation Accuracy** | 30% | 10% | 3% |
 | **TOTAL** | | **100%** | **53%** |
 

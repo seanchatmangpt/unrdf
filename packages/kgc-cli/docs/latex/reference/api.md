@@ -425,7 +425,7 @@ const lockfile = createLatexLock('xetex');
 
 console.log(lockfile);
 // {
-//   version: '1.0.0',
+//   version: '[VERSION]',
 //   engine: 'xetex',
 //   resolvedInputs: {},
 //   createdAt: '2025-12-27T10:00:00.000Z',
@@ -551,7 +551,7 @@ try {
 
 ```typescript
 type LatexLockfile = {
-  version: '1.0.0';
+  version: '[VERSION]';
   engine: 'xetex' | 'pdftex' | 'luatex';
   resolvedInputs: Record<string, ResolvedInput>;
   createdAt: string;  // ISO timestamp

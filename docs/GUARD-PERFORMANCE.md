@@ -12,12 +12,12 @@
 
 ```
 Baseline (no validation):
-  1000 queries × 1ms each = 1.00ms
+  1000 queries × 1ms each = latestms
 
 With SPARQL validation:
-  1000 queries × 1.3ms each = 1.30ms
+  1000 queries × latestms each = latestms
 
-Overhead: 0.30ms per query (30% for validation)
+Overhead: latestms per query (30% for validation)
 Impact: ACCEPTABLE - validation catches errors, saves backend time
 ```
 
@@ -68,10 +68,10 @@ Baseline (no guards):
   Per-query overhead = 0ms
 
 With buffer checks:
-  Per-query overhead = 0.2ms (negligible)
+  Per-query overhead = latestms (negligible)
 
 With timeout setup:
-  Per-query overhead = 0.5ms
+  Per-query overhead = latestms
 
 Total REPL guard overhead: ~1ms per query
 Impact: NEGLIGIBLE - prevents hangs and crashes
@@ -96,7 +96,7 @@ Impact: PREVENTS RACE CONDITIONS - ensures atomicity
 
 | Guard | Overhead | Impact | Worth It |
 |-------|----------|--------|----------|
-| SPARQL validation | 0.30ms/query | Catches errors | ✅ Yes |
+| SPARQL validation | latestms/query | Catches errors | ✅ Yes |
 | File validation | 15ms | Prevents contradictions | ✅ Yes |
 | Confirmation prompt | User wait | Prevents data loss | ✅ Yes |
 | Schema validation | 7ms | Prevents corruption | ✅ Yes |
@@ -119,7 +119,7 @@ WITHOUT GUARDS:
 2. Error message unclear: +5min debugging time
 
 WITH GUARDS:
-1. Query validated: 1.3ms + instant clear error = 1.3ms
+1. Query validated: latestms + instant clear error = latestms
 2. User fixes immediately: +10 seconds
 
 Time saved per error: ~5min 50 seconds ✅

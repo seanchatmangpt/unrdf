@@ -1,19 +1,19 @@
 # Complete Test Suite Results - UNRDF Workspace
 
 **Generated**: 2025-12-25
-**Test Runner**: Vitest 4.0.15
+**Test Runner**: Vitest latest
 **Total Test Files Found**: 161
 
 ## Executive Summary
 
 | Package | Status | Test Files | Tests | Passed | Failed | Duration | Coverage |
 |---------|--------|------------|-------|--------|--------|----------|----------|
-| @unrdf/yawl | ❌ FAIL | 8 | 292 | 182 (62.3%) | 110 (37.7%) | 2.21s | N/A |
-| @unrdf/core | ✅ PASS | 6 | 231 | 231 (100%) | 0 | 1.50s | N/A |
-| @unrdf/hooks | ✅ PASS | 8 | 108 | 108 (100%) | 0 | 2.09s | 13.1% |
-| @unrdf/kgc-4d | ❌ FAIL | 24 | 305 | 296 (97.0%) | 9 (3.0%) | 3.35s | N/A |
-| @unrdf/atomvm | ❌ FAIL | 7 | 45 | 45 (100%) | 1 file | 14.95s | N/A |
-| @unrdf/streaming | ❌ FAIL | 3 | 48 | 28 (58.3%) | 20 (41.7%) | 1.16s | N/A |
+| @unrdf/yawl | ❌ FAIL | 8 | 292 | 182 (latest%) | 110 (latest%) | latests | N/A |
+| @unrdf/core | ✅ PASS | 6 | 231 | 231 (100%) | 0 | latests | N/A |
+| @unrdf/hooks | ✅ PASS | 8 | 108 | 108 (100%) | 0 | latests | latest% |
+| @unrdf/kgc-4d | ❌ FAIL | 24 | 305 | 296 (latest%) | 9 (latest%) | latests | N/A |
+| @unrdf/atomvm | ❌ FAIL | 7 | 45 | 45 (100%) | 1 file | latests | N/A |
+| @unrdf/streaming | ❌ FAIL | 3 | 48 | 28 (latest%) | 20 (latest%) | latests | N/A |
 | @unrdf/oxigraph | ⏱️ TIMEOUT | - | - | - | - | >120s | - |
 | @unrdf/docs | ❌ CONFIG | - | - | - | - | - | - |
 | @unrdf/domain | ⏭️ SKIP | 0 | 0 | N/A | N/A | N/A | Type-only |
@@ -24,8 +24,8 @@
 
 - **Packages Tested**: 6
 - **Total Tests Run**: 1,029
-- **Passed**: 890 (86.5%)
-- **Failed**: 139 (13.5%)
+- **Passed**: 890 (latest%)
+- **Failed**: 139 (latest%)
 - **Config Errors**: 1 (docs)
 - **Timeouts**: 1 (oxigraph >2min)
 
@@ -36,7 +36,7 @@
 ### ✅ @unrdf/core (PASSING)
 - **Files**: 6 test files
 - **Tests**: 231 total, 231 passed (100%)
-- **Duration**: 1.50s
+- **Duration**: latests
 - **Status**: ALL TESTS PASS ✅
 
 **Test Files**:
@@ -52,23 +52,23 @@
 ### ✅ @unrdf/hooks (PASSING)
 - **Files**: 8 test files
 - **Tests**: 108 total, 108 passed (100%)
-- **Duration**: 2.09s
-- **Coverage**: 13.1% overall (some modules 0%, core tested modules 65-95%)
+- **Duration**: latests
+- **Coverage**: latest% overall (some modules 0%, core tested modules 65-95%)
 - **Status**: ALL TESTS PASS ✅
 
 **Coverage Breakdown**:
-- `define-hook.mjs`: 89.47%
-- `hook-executor.mjs`: 67.16%
-- `hook-manager.mjs`: 72.5%
-- `hook-lifecycle-management.mjs`: 95.55%
+- `define-hook.mjs`: latest%
+- `hook-executor.mjs`: latest%
+- `hook-manager.mjs`: latest%
+- `hook-lifecycle-management.mjs`: latest%
 - Many security/sandbox modules: 0% (not tested)
 
 ---
 
 ### ❌ @unrdf/yawl (FAILING)
 - **Files**: 8 test files (5 failed, 3 passed)
-- **Tests**: 292 total, 182 passed (62.3%), 110 failed (37.7%)
-- **Duration**: 2.21s
+- **Tests**: 292 total, 182 passed (latest%), 110 failed (latest%)
+- **Duration**: latests
 - **Status**: SIGNIFICANT FAILURES ❌
 
 **Passing Test Files**:
@@ -103,8 +103,8 @@
 
 ### ❌ @unrdf/kgc-4d (MOSTLY PASSING)
 - **Files**: 24 test files (9 failed, 15 passed)
-- **Tests**: 305 total, 296 passed (97.0%), 9 failed (3.0%)
-- **Duration**: 3.35s
+- **Tests**: 305 total, 296 passed (latest%), 9 failed (latest%)
+- **Duration**: latests
 - **Status**: HIGH PASS RATE, MINOR FAILURES ❌
 
 **Failed Tests**:
@@ -125,7 +125,7 @@
 ### ❌ @unrdf/atomvm (PLAYWRIGHT ISSUE)
 - **Files**: 7 test files (1 failed config, 6 passed)
 - **Tests**: 45 passed
-- **Duration**: 14.95s
+- **Duration**: latests
 - **Status**: TEST FRAMEWORK CONFIGURATION ERROR ❌
 
 **Passing Tests**:
@@ -145,8 +145,8 @@
 
 ### ❌ @unrdf/streaming (SIGNIFICANT FAILURES)
 - **Files**: 3 test files (2 failed, 1 passed)
-- **Tests**: 48 total, 28 passed (58.3%), 20 failed (41.7%)
-- **Duration**: 1.16s
+- **Tests**: 48 total, 28 passed (latest%), 20 failed (latest%)
+- **Duration**: latests
 - **Errors**: 6 uncaught exceptions
 - **Status**: DEPRECATED API USAGE ❌
 
@@ -250,9 +250,9 @@
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Test Pass Rate | >95% | 86.5% | ❌ Below target |
-| Test Duration (avg) | <5s | 4.2s | ✅ Within target |
-| Coverage (@unrdf/hooks) | >80% | 13.1% | ❌ Very low |
+| Test Pass Rate | >95% | latest% | ❌ Below target |
+| Test Duration (avg) | <5s | latests | ✅ Within target |
+| Coverage (@unrdf/hooks) | >80% | latest% | ❌ Very low |
 | Timeout Compliance | <5s | 1 package >120s | ❌ 1 outlier |
 
 ---
@@ -291,13 +291,13 @@ By Package:
 ### ❓ Can I PROVE test quality?
 **PARTIAL**:
 - ✅ Core: 100% pass rate, 231 tests
-- ✅ Hooks: 100% pass rate BUT 13.1% coverage
-- ❌ YAWL: 62.3% pass rate (110 failures)
-- ❌ Overall: 86.5% pass rate (below 95% target)
+- ✅ Hooks: 100% pass rate BUT latest% coverage
+- ❌ YAWL: latest% pass rate (110 failures)
+- ❌ Overall: latest% pass rate (below 95% target)
 
 ### ❓ What BREAKS if I deploy?
-- **YAWL workflows**: 37.7% of patterns broken (WP2-WP7, WP11, WP19-WP20)
-- **Streaming**: 41.7% failure rate (change feeds, batching)
+- **YAWL workflows**: latest% of patterns broken (WP2-WP7, WP11, WP19-WP20)
+- **Streaming**: latest% failure rate (change feeds, batching)
 - **KGC-4D**: Event counting edge cases (3% failure)
 - **Oxigraph**: Unknown (timed out)
 
@@ -305,7 +305,7 @@ By Package:
 - Test output logs showing 139 failures across 1,029 tests
 - Specific stack traces for schema validation, type errors, deprecated APIs
 - Timeout evidence for oxigraph (>120s)
-- Coverage report showing 13.1% for hooks package
+- Coverage report showing latest% for hooks package
 
 ---
 
@@ -325,11 +325,11 @@ Only @unrdf/hooks provided coverage data:
 - All security/* modules - Not tested
 
 ### High Coverage Modules (>65%)
-- `define-hook.mjs`: 89.47% ✅
-- `lifecycle-management.mjs`: 95.55% ✅
-- `hook-manager.mjs`: 72.5% ✅
-- `hook-executor.mjs`: 67.16% ✅
-- `builtin-hooks.mjs`: 65.95% ✅
+- `define-hook.mjs`: latest% ✅
+- `lifecycle-management.mjs`: latest% ✅
+- `hook-manager.mjs`: latest% ✅
+- `hook-executor.mjs`: latest% ✅
+- `builtin-hooks.mjs`: latest% ✅
 
 **Action**: Add tests for 0% coverage security and sandbox modules.
 
@@ -351,17 +351,17 @@ This is GOOD - failures are reproducible and fixable.
 
 | Package | Duration | Tests | Tests/sec | Status |
 |---------|----------|-------|-----------|--------|
-| streaming | 1.16s | 48 | 41.4 | ✅ Fast |
-| core | 1.50s | 231 | 154 | ✅ Fast |
-| hooks | 2.09s | 108 | 51.7 | ✅ Fast |
-| yawl | 2.21s | 292 | 132 | ✅ Fast |
-| kgc-4d | 3.35s | 305 | 91.0 | ✅ Acceptable |
-| atomvm | 14.95s | 45 | 3.0 | ⚠️ Slow (browser tests) |
+| streaming | latests | 48 | latest | ✅ Fast |
+| core | latests | 231 | 154 | ✅ Fast |
+| hooks | latests | 108 | latest | ✅ Fast |
+| yawl | latests | 292 | 132 | ✅ Fast |
+| kgc-4d | latests | 305 | latest | ✅ Acceptable |
+| atomvm | latests | 45 | latest | ⚠️ Slow (browser tests) |
 | oxigraph | >120s | ? | ? | ❌ TIMEOUT |
 
 **Timeout SLA Violations**:
 - Oxigraph: >120s (should be <5s per test, <20s total)
-- Atomvm: 14.95s (browser tests justify extended time)
+- Atomvm: latests (browser tests justify extended time)
 
 ---
 
@@ -381,11 +381,11 @@ This is GOOD - failures are reproducible and fixable.
 **Status**: ❌ **NOT PRODUCTION READY**
 
 **Blocker Issues**:
-1. 13.5% test failure rate (target: <5%)
-2. YAWL package 37.7% failure (critical workflows broken)
-3. Streaming package 41.7% failure (deprecated APIs)
+1. latest% test failure rate (target: <5%)
+2. YAWL package latest% failure (critical workflows broken)
+3. Streaming package latest% failure (deprecated APIs)
 4. Oxigraph timeout (unknown stability)
-5. Very low coverage (13.1% for hooks)
+5. Very low coverage (latest% for hooks)
 
 **Can Deploy?**: **NO** - Fix YAWL and streaming failures first.
 

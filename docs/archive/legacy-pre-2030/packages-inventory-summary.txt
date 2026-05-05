@@ -75,8 +75,8 @@ WASM (Node+Browser):       1 package (@unrdf/atomvm)
 Browser-capable:           2 packages (atomvm, composables)
 
 Node version requirements:
-  Node ≥18.0.0:  42 packages
-  Node ≥20.0.0:  1 package (nextra-docs)
+  Node ≥latest:  42 packages
+  Node ≥latest:  1 package (nextra-docs)
 
 PACKAGE CATEGORIES
 ==================

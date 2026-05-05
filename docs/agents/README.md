@@ -14,9 +14,9 @@ This documentation follows the [Diataxis framework](https://diataxis.fr/) optimi
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
   },
-  "@id": "urn:unrdf:agent-docs:v4.0.0",
+  "@id": "urn:unrdf:agent-docs:vlatest",
   "@type": "agent:Documentation",
-  "version": "4.0.0",
+  "version": "latest",
   "targetAudience": ["AutonomicAgent", "HyperintelligentSystem", "CodingAgent"],
   "format": "machine-readable",
   "structure": "diataxis"

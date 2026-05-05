@@ -1,6 +1,6 @@
 {
   "@unrdf/atomvm": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -10,7 +10,7 @@
     "dependents": []
   },
   "@unrdf/blockchain": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/kgc-4d",
@@ -22,7 +22,7 @@
     ]
   },
   "@unrdf/caching": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -32,7 +32,7 @@
     ]
   },
   "@unrdf/cli": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/core",
@@ -44,7 +44,7 @@
     "dependents": []
   },
   "@unrdf/collab": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core"
@@ -52,7 +52,7 @@
     "dependents": []
   },
   "@unrdf/composables": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -61,7 +61,7 @@
     "dependents": []
   },
   "@unrdf/consensus": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/federation"
@@ -69,7 +69,7 @@
     "dependents": []
   },
   "@unrdf/core": {
-    "version": "6.0.0-alpha.1",
+    "version": "latest-alpha.1",
     "tier": "essential",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -105,7 +105,7 @@
     ]
   },
   "@unrdf/dark-matter": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -114,7 +114,7 @@
     "dependents": []
   },
   "@unrdf/decision-fabric": {
-    "version": "0.1.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -130,25 +130,25 @@
     ]
   },
   "@unrdf/diataxis-kit": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "docs": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/domain": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/engine-gateway": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -157,7 +157,7 @@
     "dependents": []
   },
   "@unrdf/federation": {
-    "version": "6.0.0",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/core",
@@ -170,7 +170,7 @@
     ]
   },
   "@unrdf/fusion": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/oxigraph",
@@ -183,13 +183,13 @@
     "dependents": []
   },
   "@unrdf/graph-analytics": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/hooks": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "essential",
     "dependencies": [
       "@unrdf/core",
@@ -209,7 +209,7 @@
     ]
   },
   "@unrdf/integration-tests": {
-    "version": "5.1.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl",
@@ -225,7 +225,7 @@
     "dependents": []
   },
   "@unrdf/kgc-4d": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "essential",
     "dependencies": [
       "@unrdf/core",
@@ -254,7 +254,7 @@
     ]
   },
   "@unrdf/kgc-claude": {
-    "version": "5.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -266,7 +266,7 @@
     "dependents": []
   },
   "@unrdf/kgc-cli": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": [
@@ -274,13 +274,13 @@
     ]
   },
   "@unrdf/kgc-docs": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/kgc-multiverse": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -294,7 +294,7 @@
     ]
   },
   "@unrdf/kgc-probe": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/kgc-substrate",
@@ -307,7 +307,7 @@
     "dependents": []
   },
   "@unrdf/kgc-runtime": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -317,7 +317,7 @@
     ]
   },
   "@unrdf/kgc-substrate": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/kgc-4d",
@@ -331,7 +331,7 @@
     ]
   },
   "@unrdf/kgc-swarm": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -344,7 +344,7 @@
     "dependents": []
   },
   "@unrdf/kgc-tools": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/kgc-4d",
@@ -354,7 +354,7 @@
     "dependents": []
   },
   "@unrdf/kgn": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -365,7 +365,7 @@
     ]
   },
   "@unrdf/knowledge-engine": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/core",
@@ -380,7 +380,7 @@
     ]
   },
   "@unrdf/ml-inference": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -390,7 +390,7 @@
     "dependents": []
   },
   "@unrdf/ml-versioning": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/kgc-4d",
@@ -400,19 +400,19 @@
     "dependents": []
   },
   "@unrdf/nextra-docs": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/observability": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/oxigraph": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "essential",
     "dependencies": [],
     "dependents": [
@@ -449,7 +449,7 @@
     ]
   },
   "@unrdf/project-engine": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -458,7 +458,7 @@
     "dependents": []
   },
   "@unrdf/rdf-graphql": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -466,7 +466,7 @@
     "dependents": []
   },
   "@unrdf/react": {
-    "version": "5.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -475,7 +475,7 @@
     "dependents": []
   },
   "@unrdf/receipts": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "extended",
     "dependencies": [
       "@unrdf/core",
@@ -489,7 +489,7 @@
     ]
   },
   "@unrdf/semantic-search": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -497,7 +497,7 @@
     "dependents": []
   },
   "@unrdf/serverless": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core",
@@ -506,7 +506,7 @@
     "dependents": []
   },
   "@unrdf/streaming": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "essential",
     "dependencies": [
       "@unrdf/core",
@@ -524,7 +524,7 @@
     ]
   },
   "@unrdf/test-utils": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/oxigraph"
@@ -534,7 +534,7 @@
     ]
   },
   "@unrdf/v6-compat": {
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "tier": "extended",
     "dependencies": [
       "@unrdf/core",
@@ -545,7 +545,7 @@
     "dependents": []
   },
   "@unrdf/v6-core": {
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "tier": "essential",
     "dependencies": [
       "@unrdf/kgc-substrate",
@@ -562,7 +562,7 @@
     ]
   },
   "@unrdf/validation": {
-    "version": "5.0.1",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/knowledge-engine"
@@ -572,7 +572,7 @@
     ]
   },
   "@unrdf/yawl": {
-    "version": "6.0.0",
+    "version": "latest",
     "tier": "essential",
     "dependencies": [
       "@unrdf/hooks",
@@ -596,13 +596,13 @@
     ]
   },
   "@unrdf/yawl-ai": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [],
     "dependents": []
   },
   "@unrdf/yawl-api": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl",
@@ -611,7 +611,7 @@
     "dependents": []
   },
   "@unrdf/yawl-durable": {
-    "version": "0.1.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl",
@@ -620,7 +620,7 @@
     "dependents": []
   },
   "@unrdf/yawl-kafka": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/core"
@@ -628,7 +628,7 @@
     "dependents": []
   },
   "@unrdf/yawl-langchain": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/kgc-4d",
@@ -638,7 +638,7 @@
     "dependents": []
   },
   "@unrdf/yawl-observability": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl"
@@ -646,7 +646,7 @@
     "dependents": []
   },
   "@unrdf/yawl-queue": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl",
@@ -655,7 +655,7 @@
     "dependents": []
   },
   "@unrdf/yawl-realtime": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl"
@@ -663,7 +663,7 @@
     "dependents": []
   },
   "@unrdf/yawl-viz": {
-    "version": "1.0.0",
+    "version": "latest",
     "tier": "optional",
     "dependencies": [
       "@unrdf/yawl"

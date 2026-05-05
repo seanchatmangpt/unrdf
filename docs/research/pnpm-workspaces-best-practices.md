@@ -1,9 +1,9 @@
 # PNPM Workspaces Best Practices Research
-## Unified Monorepo Tooling for UNRDF v5.0.1
+## Unified Monorepo Tooling for UNRDF latest
 
 **Research Date:** 2025-12-20
 **Researcher:** Research Agent
-**Project:** UNRDF v5.0.1 Monorepo (29 workspace packages)
+**Project:** UNRDF latest Monorepo (29 workspace packages)
 
 ---
 
@@ -16,7 +16,7 @@ This research document analyzes pnpm workspace best practices for the UNRDF mono
 - ✅ Root-level `pnpm.overrides` enforces consistent versions (@opentelemetry/api, zod)
 - ⚠️ No circular dependency detection tooling currently configured
 - ⚠️ No dedicated `.npmrc` at root level (only in packages/docs)
-- ⚠️ Mixed Zod versions detected (v3.24.1 in streaming, v4.1.13 in root)
+- ⚠️ Mixed Zod versions detected (latest in streaming, latest in root)
 
 ---
 
@@ -47,7 +47,7 @@ packages:
 | **Build Tools** | Root `devDependencies` | `vitest`, `eslint`, `prettier`, `unbuild` |
 | **Shared Dev Tools** | Root `devDependencies` | `@types/node`, `typescript`, `@vitest/coverage-v8` |
 | **Monorepo Tooling** | Root `devDependencies` | `citty` (CLI framework), `glob` |
-| **Common Runtime Deps** | Root `dependencies` + overrides | `zod` (v4.1.13) |
+| **Common Runtime Deps** | Root `dependencies` + overrides | `zod` (latest) |
 | **Package-Specific Deps** | Package `dependencies` | `n3`, `jsonld`, `rdf-ext`, `prom-client` |
 | **Workspace Protocol** | Package `dependencies` | `"@unrdf/core": "workspace:*"` |
 | **Peer Dependencies** | Package `peerDependencies` | `vue` in `@unrdf/composables` |
@@ -57,37 +57,37 @@ packages:
 **Root `devDependencies` (13 packages):**
 ```json
 {
-  "@opentelemetry/api": "^1.9.0",
-  "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
-  "@opentelemetry/instrumentation": "^0.208.0",
-  "@opentelemetry/resources": "^2.2.0",
-  "@opentelemetry/sdk-node": "^0.208.0",
-  "@opentelemetry/sdk-trace-base": "^2.2.0",
-  "@opentelemetry/sdk-trace-node": "^2.2.0",
-  "@opentelemetry/semantic-conventions": "^1.38.0",
-  "@types/node": "^24.10.1",
-  "@vitest/browser": "^4.0.15",
-  "@vitest/coverage-v8": "^4.0.15",
-  "@vitest/ui": "^4.0.15",
-  "citty": "^0.1.6",
-  "eslint": "^9.39.1",
-  "eslint-config-prettier": "^10.1.8",
-  "eslint-plugin-jsdoc": "^61.4.1",
-  "glob": "^13.0.0",
-  "globals": "^15.12.0",
-  "jsdom": "^27.2.0",
-  "playwright": "^1.57.0",
-  "prettier": "^3.7.4",
-  "typescript": "^5.9.3",
-  "unbuild": "^3.6.1",
-  "vitest": "^4.0.15"
+  "@opentelemetry/api": "^latest",
+  "@opentelemetry/exporter-trace-otlp-http": "^latest",
+  "@opentelemetry/instrumentation": "^latest",
+  "@opentelemetry/resources": "^latest",
+  "@opentelemetry/sdk-node": "^latest",
+  "@opentelemetry/sdk-trace-base": "^latest",
+  "@opentelemetry/sdk-trace-node": "^latest",
+  "@opentelemetry/semantic-conventions": "^latest",
+  "@types/node": "^latest",
+  "@vitest/browser": "^latest",
+  "@vitest/coverage-v8": "^latest",
+  "@vitest/ui": "^latest",
+  "citty": "^latest",
+  "eslint": "^latest",
+  "eslint-config-prettier": "^latest",
+  "eslint-plugin-jsdoc": "^latest",
+  "glob": "^1latest",
+  "globals": "^latest",
+  "jsdom": "^latest",
+  "playwright": "^latest",
+  "prettier": "^latest",
+  "typescript": "^latest",
+  "unbuild": "^latest",
+  "vitest": "^latest"
 }
 ```
 
 **Root `dependencies` (1 package):**
 ```json
 {
-  "zod": "^4.1.13"
+  "zod": "^latest"
 }
 ```
 
@@ -118,8 +118,8 @@ pnpm resolves dependencies in this order:
 {
   "pnpm": {
     "overrides": {
-      "@opentelemetry/api": "^1.7.0",
-      "zod": "^4.1.13"
+      "@opentelemetry/api": "^latest",
+      "zod": "^latest"
     }
   }
 }
@@ -127,16 +127,16 @@ pnpm resolves dependencies in this order:
 
 **Analysis:**
 - ✅ `@opentelemetry/api` override ensures consistency across OTEL packages
-- ⚠️ `zod` override to v4.1.13, but `@unrdf/streaming` declares v3.24.1 (potential conflict)
+- ⚠️ `zod` override to latest, but `@unrdf/streaming` declares latest (potential conflict)
 
 **Recommendation:**
 ```json
 {
   "pnpm": {
     "overrides": {
-      "@opentelemetry/api": "^1.9.0",  // Match root version
-      "zod": "^4.1.13",                 // Enforce v4 across all packages
-      "n3": "^1.26.0"                   // Consider adding N3 for RDF consistency
+      "@opentelemetry/api": "^latest",  // Match root version
+      "zod": "^latest",                 // Enforce v4 across all packages
+      "n3": "^latest"                   // Consider adding N3 for RDF consistency
     }
   }
 }
@@ -165,8 +165,8 @@ pnpm resolves dependencies in this order:
 | Protocol | Use Case | Example |
 |----------|----------|---------|
 | `workspace:*` | **Recommended** - Always latest local version | `"@unrdf/core": "workspace:*"` |
-| `workspace:^` | Semver range (allows ^5.0.0) | `"@unrdf/core": "workspace:^5.0.0"` |
-| `workspace:~` | Patch-level range | `"@unrdf/core": "workspace:~5.0.0"` |
+| `workspace:^` | Semver range (allows ^latest) | `"@unrdf/core": "workspace:^latest"` |
+| `workspace:~` | Patch-level range | `"@unrdf/core": "workspace:~latest"` |
 
 **UNRDF Status:** ✅ All 32 internal dependencies use `workspace:*` (correct)
 
@@ -176,16 +176,16 @@ pnpm resolves dependencies in this order:
 ```json
 {
   "dependencies": {
-    "vue": "^3.5.25"
+    "vue": "^latest"
   },
   "peerDependencies": {
-    "vue": "^3.0.0"
+    "vue": "^latest"
   }
 }
 ```
 
 **Best Practice:**
-- Declare flexible range in `peerDependencies` (e.g., `^3.0.0`)
+- Declare flexible range in `peerDependencies` (e.g., `^latest`)
 - Install specific version in `dependencies` for development
 - Users must provide peer dependency in their apps
 
@@ -592,17 +592,17 @@ packages:
 ```json
 {
   "name": "unrdf-workspace",
-  "version": "5.0.1",
+  "version": "latest",
   "private": true,
   "type": "module",
   "description": "UNRDF v5 Monorepo - RDF Knowledge Graph Substrate Platform",
 
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "node": ">=latest",
+    "pnpm": ">=latest"
   },
 
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "pnpm@latest",
 
   "scripts": {
     // (See Section 4.4)
@@ -610,39 +610,39 @@ packages:
 
   "devDependencies": {
     // Shared build tools
-    "unbuild": "^3.6.1",
-    "typescript": "^5.9.3",
+    "unbuild": "^latest",
+    "typescript": "^latest",
 
     // Shared test tools
-    "vitest": "^4.0.15",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
-    "@vitest/browser": "^4.0.15",
+    "vitest": "^latest",
+    "@vitest/coverage-v8": "^latest",
+    "@vitest/ui": "^latest",
+    "@vitest/browser": "^latest",
 
     // Shared linting
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jsdoc": "^61.4.1",
-    "prettier": "^3.7.4",
+    "eslint": "^latest",
+    "eslint-config-prettier": "^latest",
+    "eslint-plugin-jsdoc": "^latest",
+    "prettier": "^latest",
 
     // Monorepo tools
-    "dependency-cruiser": "^16.0.0",
-    "turbo": "^2.0.0",
+    "dependency-cruiser": "^1latest",
+    "turbo": "^latest",
 
     // Common types
-    "@types/node": "^24.10.1"
+    "@types/node": "^latest"
   },
 
   "dependencies": {
     // Shared runtime dependencies (hoisted)
-    "zod": "^4.1.13"
+    "zod": "^latest"
   },
 
   "pnpm": {
     "overrides": {
-      "@opentelemetry/api": "^1.9.0",
-      "zod": "^4.1.13",
-      "n3": "^1.26.0"
+      "@opentelemetry/api": "^latest",
+      "zod": "^latest",
+      "n3": "^latest"
     },
     "packageExtensions": {
       // Fix missing peer dependencies in third-party packages
@@ -733,7 +733,7 @@ public-hoist-pattern[]=*prettier*
    ```bash
    # Update @unrdf/streaming/package.json
    "dependencies": {
-     "zod": "^4.1.13"  // Match root override
+     "zod": "^latest"  // Match root override
    }
    ```
 
@@ -832,7 +832,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
         with:
-          version: 8.15.0
+          version: latest
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile

@@ -212,7 +212,7 @@ const validatedHook = HookSchema.parse(hook); // ~10μs
 
 ### 4.1 Quick Wins (Low Effort, High Impact)
 
-#### 4.1.1 Validation Caching ⭐⭐⭐⭐⭐
+#### [VERSION] Validation Caching ⭐⭐⭐⭐⭐
 
 **Priority**: 🔴 **CRITICAL** (Implement First)
 
@@ -241,7 +241,7 @@ export function executeHook(hook, quad) {
 
 **ROI**: 35% improvement for 15 minutes of work
 
-#### 4.1.2 Fast-Path for Validation-Only Hooks ⭐⭐⭐⭐
+#### [VERSION] Fast-Path for Validation-Only Hooks ⭐⭐⭐⭐
 
 **Priority**: 🔴 **HIGH** (Implement Second)
 
@@ -255,7 +255,7 @@ export function executeHook(hook, quad) {
 
 **Implementation Effort**: 🟡 **Medium** (1-2 hours)
 
-#### 4.1.3 Schema Compilation ⭐⭐⭐
+#### [VERSION] Schema Compilation ⭐⭐⭐
 
 **Priority**: 🟡 **MEDIUM** (Implement Third)
 
@@ -270,12 +270,12 @@ export function executeHook(hook, quad) {
 
 ### 4.2 Medium-Term Improvements
 
-#### 4.2.1 Zod Alternative Evaluation
+#### [VERSION] Zod Alternative Evaluation
 - **Candidates**: Valibot, Typia, TypeBox (faster schema validation)
 - **Timeline**: 1-2 weeks research + benchmarking
 - **Expected gain**: 3-5x improvement over Zod
 
-#### 4.2.2 Hook Pool Management
+#### [VERSION] Hook Pool Management
 - **Goal**: Reuse hook instances, reduce GC pressure
 - **Expected gain**: 10-20% memory reduction
 - **Timeline**: 2-3 weeks

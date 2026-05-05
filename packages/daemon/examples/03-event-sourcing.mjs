@@ -60,7 +60,7 @@ class ReceiptGenerator {
         chainHash: this.getChainHash(),
       },
       metadata: {
-        version: '1.0.0',
+        version: '[VERSION]',
         source: 'daemon',
       },
     };

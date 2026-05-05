@@ -70,7 +70,7 @@ User Journey Map (Current):
    └─ Time-to-First-Success: 45+ minutes (Target: 5-10 minutes)
 ```
 
-**Cognitive Load Score:** 8.2/10 (Target: <4/10)
+**Cognitive Load Score:** latest/10 (Target: <4/10)
 **Friction Points:** 7 major blockers
 **Success Rate:** ~40% (Target: 80%+)
 
@@ -95,7 +95,7 @@ User Journey Map (Target):
    └─ Time-to-First-Success: 5-8 minutes (80% improvement)
 ```
 
-**Cognitive Load Score:** 3.5/10 (Target achieved)
+**Cognitive Load Score:** latest/10 (Target achieved)
 **Friction Points:** 1-2 minor blockers
 **Success Rate:** 85%+ (Target exceeded)
 
@@ -105,7 +105,7 @@ User Journey Map (Target):
 
 **Objective:** Reduce time-to-first-success from 45+ min → 15 min (67% improvement)
 
-### 1.1 Create Core Navigation Hub (2 hours)
+### latest Create Core Navigation Hub (2 hours)
 
 **Action:** Implement root-level Diataxis structure
 
@@ -144,7 +144,7 @@ docs/
 **Impact:** High (fixes discoverability)
 **Risk:** Low (doesn't break existing docs)
 
-### 1.2 Implement "5-Minute Quickstart" Tutorial (3 hours)
+### latest Implement "5-Minute Quickstart" Tutorial (3 hours)
 
 **Action:** Create production-grade quickstart with verified code
 
@@ -200,7 +200,7 @@ A working knowledge graph that stores and queries RDF data
 **Impact:** Very High (primary entry point)
 **Risk:** Low (single tutorial)
 
-### 1.3 Cross-Reference Linking System (2 hours)
+### latest Cross-Reference Linking System (2 hours)
 
 **Action:** Implement systematic cross-referencing between quadrants
 
@@ -240,7 +240,7 @@ A working knowledge graph that stores and queries RDF data
 **Total Effort:** 7 hours
 **Impact Score:** 85/100
 **Time-to-First-Success:** 45 min → 15 min (67% improvement)
-**Cognitive Load:** 8.2/10 → 5.5/10 (33% improvement)
+**Cognitive Load:** latest/10 → latest/10 (33% improvement)
 **Deliverables:**
 - 4 root-level directories with READMEs
 - 1 production-grade tutorial (CI-tested)
@@ -250,9 +250,9 @@ A working knowledge graph that stores and queries RDF data
 
 ## Phase 2: Medium-Effort Wins (Week 2-3)
 
-**Objective:** Reduce cognitive load from 5.5/10 → 3.5/10 (36% improvement)
+**Objective:** Reduce cognitive load from latest/10 → latest/10 (36% improvement)
 
-### 2.1 Package-Level Diataxis Implementation (12 hours)
+### latest Package-Level Diataxis Implementation (12 hours)
 
 **Strategy:** Focus on top 5 most-used packages (80/20 rule)
 
@@ -310,7 +310,7 @@ packages/{name}/docs/
 **Impact:** Very High (covers 90% of use cases)
 **Risk:** Medium (requires JSDoc extraction tooling)
 
-### 2.2 Developer Journey Learning Paths (4 hours)
+### latest Developer Journey Learning Paths (4 hours)
 
 **Action:** Create guided learning paths for common roles
 
@@ -365,7 +365,7 @@ Time: 50 minutes
 **Impact:** High (structured learning)
 **Risk:** Low (organizational only)
 
-### 2.3 Production-Grade Code Examples (8 hours)
+### latest Production-Grade Code Examples (8 hours)
 
 **Action:** Create CI-tested example repository
 
@@ -403,7 +403,7 @@ examples/
 
 **Total Effort:** 24 hours
 **Impact Score:** 90/100
-**Cognitive Load:** 5.5/10 → 3.5/10 (36% improvement)
+**Cognitive Load:** latest/10 → latest/10 (36% improvement)
 **Time-to-Productivity:** 4+ hours → <60 minutes (75% improvement)
 **Deliverables:**
 - 5 packages with full Diataxis structure
@@ -416,7 +416,7 @@ examples/
 
 **Objective:** Achieve 90%+ documentation coverage with production best practices
 
-### 3.1 Remaining 12 Packages (24 hours)
+### latest Remaining 12 Packages (24 hours)
 
 **Strategy:** Apply template from Phase 2 to remaining packages
 
@@ -443,7 +443,7 @@ examples/
 **Impact:** Medium-High (completeness)
 **Risk:** Low (proven template)
 
-### 3.2 Explanation Deep Dives (12 hours)
+### latest Explanation Deep Dives (12 hours)
 
 **Action:** Create foundational explanation articles
 
@@ -471,7 +471,7 @@ EXPLANATION/
 **Impact:** Medium (deepens understanding)
 **Risk:** Low (conceptual content)
 
-### 3.3 Search & Discoverability (4 hours)
+### latest Search & Discoverability (4 hours)
 
 **Action:** Implement documentation search optimization
 
@@ -525,12 +525,12 @@ audience: [developer, data-scientist]
 | Metric | Baseline | Phase 1 | Phase 2 | Phase 3 | Target |
 |--------|----------|---------|---------|---------|--------|
 | **Time-to-First-Success** | 45+ min | 15 min | 10 min | 5-8 min | <10 min |
-| **Cognitive Load** | 8.2/10 | 5.5/10 | 3.5/10 | 2.5/10 | <4/10 |
+| **Cognitive Load** | latest/10 | latest/10 | latest/10 | latest/10 | <4/10 |
 | **Documentation Coverage** | 34% | 50% | 75% | 90%+ | 80%+ |
 | **Code Example Success Rate** | ~60% | 85% | 95% | 100% | 100% |
 | **Bounce Rate** | 45% | 30% | 20% | <15% | <20% |
 | **Search Success Rate** | ~40% | 65% | 80% | 95% | 90%+ |
-| **Cross-Reference Density** | 0.5/doc | 2/doc | 3+/doc | 5+/doc | 3+/doc |
+| **Cross-Reference Density** | latest/doc | 2/doc | 3+/doc | 5+/doc | 3+/doc |
 
 ### Qualitative Metrics
 
@@ -662,7 +662,7 @@ validate-coverage.js
 
 **Expected Outcomes:**
 - Time-to-First-Success: 45+ min → 5-8 min (82% improvement)
-- Cognitive Load: 8.2/10 → 2.5/10 (70% improvement)
+- Cognitive Load: latest/10 → latest/10 (70% improvement)
 - Documentation Coverage: 34% → 90%+ (165% improvement)
 - Developer Experience Score: 40/100 → 92/100 (+130%)
 

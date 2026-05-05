@@ -107,7 +107,7 @@ export default defineEventHandler(async (event) => {
           nodeVersion: process.version,
           platform: process.platform,
           arch: process.arch,
-          appVersion: process.env.APP_VERSION || process.env.npm_package_version || '3.0.0'
+          appVersion: process.env.APP_VERSION || process.env.npm_package_version || '[VERSION]'
         },
         timestamp: new Date().toISOString()
       }

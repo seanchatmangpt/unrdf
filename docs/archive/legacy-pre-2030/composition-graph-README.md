@@ -42,7 +42,7 @@
 
 ---
 
-### 3. **CORRECTIONS**: composition-graph-analysis-CORRECTIONS.md (8.9K)
+### 3. **CORRECTIONS**: composition-graph-analysis-CORRECTIONS.md (latestK)
 **Adversarial PM self-audit**
 
 **Contents**:
@@ -118,8 +118,8 @@ dot -Tpng composition-graph.dot -o composition-graph.png
 ### ❌ LOW CONFIDENCE (Overclaimed)
 
 **Performance Metrics**:
-- p99 latencies (2.5ms - 18ms) → NOT MEASURED
-- Test pass rates (99.8%) → TESTS BLOCKED
+- p99 latencies (latestms - 18ms) → NOT MEASURED
+- Test pass rates (latest%) → TESTS BLOCKED
 - OTEL validation (87/100) → CANNOT RUN
 - Git receipts (443) → NOT IN HISTORY
 

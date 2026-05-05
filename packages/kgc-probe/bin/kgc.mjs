@@ -155,11 +155,11 @@ async function cmdProbeScan(options) {
       message: 'Package structure initialized (stub from Agent 1)',
       data: {
         packageName: '@unrdf/kgc-probe',
-        version: '0.1.0'
+        version: '[VERSION]'
       },
       metadata: {
         agentId: 'agent-1-orchestrator',
-        probeVersion: '0.1.0',
+        probeVersion: '[VERSION]',
         budgetMs: options.budgetMs,
         actualMs: 0,
         timestamp: new Date().toISOString()

@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "latest",
   "info": {
     "title": "UNRDF API Reference",
-    "version": "6.0.0",
+    "version": "latest",
     "description": "Complete API reference for all UNRDF packages - RDF processing, SPARQL execution, workflow orchestration, and knowledge graph management",
     "contact": {
       "name": "UNRDF Team",
@@ -1067,7 +1067,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1085,7 +1085,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1103,7 +1103,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1121,7 +1121,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1139,7 +1139,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1157,7 +1157,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1175,7 +1175,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1193,7 +1193,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1211,7 +1211,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1229,7 +1229,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1247,7 +1247,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1265,7 +1265,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1283,7 +1283,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1301,7 +1301,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1319,7 +1319,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1337,7 +1337,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1355,7 +1355,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1373,7 +1373,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1391,7 +1391,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1409,7 +1409,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1427,7 +1427,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1445,7 +1445,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1463,7 +1463,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1481,7 +1481,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1499,7 +1499,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1517,7 +1517,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1535,7 +1535,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1553,7 +1553,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1571,7 +1571,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1589,7 +1589,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.1"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1607,7 +1607,7 @@
           },
           "version": {
             "type": "string",
-            "example": "5.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1625,7 +1625,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1643,7 +1643,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1661,7 +1661,7 @@
           },
           "version": {
             "type": "string",
-            "example": "0.1.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1679,7 +1679,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1697,7 +1697,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1715,7 +1715,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1733,7 +1733,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1751,7 +1751,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",
@@ -1769,7 +1769,7 @@
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "latest"
           },
           "description": {
             "type": "string",

@@ -6,7 +6,7 @@
 
 **Prerequisites:**
 
-- Node.js >= 18.0.0 installed
+- Node.js >= latest installed
 - pnpm installed (`npm install -g pnpm`)
 - Basic understanding of RDF triples and Turtle syntax
 - Familiarity with OpenAPI and Zod validation
@@ -79,7 +79,7 @@ npx unrdf --version
 **Expected output:**
 
 ```
-@unrdf/cli v6.0.0
+@unrdf/cli latest
 ```
 
 You now have a working project with the UNRDF CLI installed.
@@ -234,7 +234,7 @@ Create a configuration file that tells `unrdf sync` how to generate code from yo
 ```toml
 [project]
 name = "blog-api"
-version = "1.0.0"
+version = "latest"
 description = "Blog API generated from RDF ontology"
 
 [ontology]
@@ -452,7 +452,7 @@ description: OpenAPI 3.0 specification generated from RDF ontology
 # Generated: {{ now | date("YYYY-MM-DD HH:mm:ss") }}
 # Source: ontology/blog-api.ttl
 
-openapi: "3.0.3"
+openapi: "latest"
 info:
   title: {{ project.name }}
   version: {{ project.version }}

@@ -96,7 +96,7 @@
 
 **Content Coverage**:
 - ✅ Oxigraph WASM engine basics
-- ✅ SPARQL 1.1 full support
+- ✅ SPARQL latest full support
 - ✅ Comprehensive benchmark suite
   - Add operations
   - SELECT/ASK/CONSTRUCT queries
@@ -287,7 +287,7 @@ bf8c50f feat: Add integrated production example and quick-start guide (atomvm ga
 | **Phase 3** | oxigraph | 45 min | 100% complete (226% docs increase) |
 | **Phase 4** | hooks, cli, streaming | 60 min | 80% complete (all QUICKSTARTs) |
 | **Summary** | Documentation | 30 min | Summary reports |
-| **TOTAL** | 6 packages | **315 min (5.25 hours)** | **~3,500 lines of docs** |
+| **TOTAL** | 6 packages | **315 min (latest hours)** | **~3,500 lines of docs** |
 
 **Efficiency**: ~667 lines of high-quality documentation per hour
 
@@ -348,7 +348,7 @@ bf8c50f feat: Add integrated production example and quick-start guide (atomvm ga
 
 **@unrdf/oxigraph**:
 - Comprehensive benchmark suite
-- All SPARQL 1.1 operations tested
+- All SPARQL latest operations tested
 - Performance tables for all operations
 - Rust+WASM benefits explained
 

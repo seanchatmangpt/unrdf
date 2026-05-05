@@ -19,7 +19,7 @@ console.log("-------------------------------");
 try {
   // Test direct import from dark-matter-core.mjs
   const darkMatterCore = await import(
-    "./node_modules/.pnpm/unrdf@3.0.1_@rdfjs+types@2.0.1_node@24.9.0_web-streams-polyfill@3.3.3/node_modules/unrdf/src/knowledge-engine/dark-matter-core.mjs"
+    "./node_modules/.pnpm/unrdf@latest_@rdfjs+types@latest_node@latest_web-streams-polyfill@latest/node_modules/unrdf/src/knowledge-engine/dark-matter-core.mjs"
   );
   console.log(
     "✅ createDarkMatterCore:",
@@ -34,7 +34,7 @@ try {
 try {
   // Test direct import from lockchain-writer.mjs
   const LockchainModule = await import(
-    "./node_modules/.pnpm/unrdf@3.0.1_@rdfjs+types@2.0.1_node@24.9.0_web-streams-polyfill@3.3.3/node_modules/unrdf/src/knowledge-engine/lockchain-writer.mjs"
+    "./node_modules/.pnpm/unrdf@latest_@rdfjs+types@latest_node@latest_web-streams-polyfill@latest/node_modules/unrdf/src/knowledge-engine/lockchain-writer.mjs"
   );
   console.log(
     "✅ LockchainWriter class:",
@@ -51,7 +51,7 @@ try {
 try {
   // Test direct import from observability.mjs
   const ObserveModule = await import(
-    "./node_modules/.pnpm/unrdf@3.0.1_@rdfjs+types@2.0.1_node@24.9.0_web-streams-polyfill@3.3.3/node_modules/unrdf/src/knowledge-engine/observability.mjs"
+    "./node_modules/.pnpm/unrdf@latest_@rdfjs+types@latest_node@latest_web-streams-polyfill@latest/node_modules/unrdf/src/knowledge-engine/observability.mjs"
   );
   console.log(
     "✅ ObservabilityManager class:",
@@ -73,7 +73,7 @@ console.log("----------------------------------");
 
 try {
   const KEIndex = await import(
-    "./node_modules/.pnpm/unrdf@3.0.1_@rdfjs+types@2.0.1_node@24.9.0_web-streams-polyfill@3.3.3/node_modules/unrdf/src/knowledge-engine/index.mjs"
+    "./node_modules/.pnpm/unrdf@latest_@rdfjs+types@latest_node@latest_web-streams-polyfill@latest/node_modules/unrdf/src/knowledge-engine/index.mjs"
   );
 
   const expectedExports = [

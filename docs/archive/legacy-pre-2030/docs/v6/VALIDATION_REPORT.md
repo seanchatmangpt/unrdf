@@ -36,9 +36,9 @@ This validation follows the **Adversarial PM** approach from CLAUDE.md:
 
 ### Validation Environment
 
-- **Node Version**: v22.21.1
-- **Platform**: Linux 4.4.0
-- **Package Manager**: pnpm 8.15.0
+- **Node Version**: latest
+- **Platform**: Linux latest
+- **Package Manager**: pnpm latest
 - **Workspace**: 64 packages
 - **Source Files**: 452 files in src/
 
@@ -170,8 +170,8 @@ Without OTEL validation:
 **Evidence**:
 
 ```
-Current version: 6.0.0-alpha.1
-Required: 6.0.0-rc.X or 6.0.0
+Current version: latest-alpha.1
+Required: latest-rc.X or latest
 Status: ALPHA (pre-release)
 ```
 
@@ -179,9 +179,9 @@ Status: ALPHA (pre-release)
 
 1. Alpha versions are experimental, not production-ready
 2. Semantic versioning signals unstable API
-3. Users expect stable release for 6.0.0
+3. Users expect stable release for latest
 
-**Required Action**: Bump to `6.0.0-rc.1` or `6.0.0` ONLY after all critical issues resolved
+**Required Action**: Bump to `latest-rc.1` or `latest` ONLY after all critical issues resolved
 
 ---
 
@@ -318,7 +318,7 @@ Compliance rate: 75.9% (343/452 files compliant)
 2. Indicates lack of modularization
 3. Code smell for complexity
 
-**Recommendation**: Refactor large files post-6.0.0 release
+**Recommendation**: Refactor large files post-latest release
 
 ---
 
@@ -366,10 +366,10 @@ Moderate vulnerabilities: 3 (esbuild CORS issue)
 
 **Moderate Vulnerabilities**:
 
-- **Package**: esbuild (0.18.20, 0.21.5, 0.24.2)
+- **Package**: esbuild (latest, latest, latest)
 - **Issue**: GHSA-67mh-4wv8-2f99 - Dev server CORS bypass
 - **CVSS**: 5.3 (Medium)
-- **Recommendation**: Upgrade to esbuild >=0.25.0
+- **Recommendation**: Upgrade to esbuild >=latest
 
 **Assessment**: Non-blocking - dev-only dependency, no production impact
 
@@ -398,9 +398,9 @@ Performance: 98.1% under target
 **Evidence**:
 
 ```
-oxigraph: YES (v0.5.2)
+oxigraph: YES (latest)
 @unrdf/oxigraph: YES (workspace:*)
-n3: YES (v1.26.0 - legacy compat)
+n3: YES (latest - legacy compat)
 ```
 
 **Assessment**: Core dependencies present and compatible
@@ -561,11 +561,11 @@ Overage: +0.235s (+4.7%)
 **Timeline**: 1 hour
 **Tasks**:
 
-- [ ] Update `package.json`: `6.0.0-alpha.1` → `6.0.0-rc.1`
+- [ ] Update `package.json`: `latest-alpha.1` → `latest-rc.1`
 - [ ] Update all workspace package versions
 - [ ] Run: `grep version package.json` and verify RC format
 
-**Acceptance**: Version is `6.0.0-rc.1` or `6.0.0`
+**Acceptance**: Version is `latest-rc.1` or `latest`
 
 **Note**: Complete ONLY after all other critical issues resolved
 
@@ -621,7 +621,7 @@ Overage: +0.235s (+4.7%)
 #### 3.1 File Size Refactoring
 
 **Owner**: Architecture Team
-**Timeline**: 2 weeks (post-6.0.0)
+**Timeline**: 2 weeks (post-latest)
 **Tasks**:
 
 - [ ] Refactor files >500 lines (109 files)
@@ -667,7 +667,7 @@ Once all critical and high-priority issues are resolved:
 - [ ] Announce code freeze
 - [ ] Merge all approved PRs
 - [ ] Lock main branch (no new commits)
-- [ ] Tag release candidate: `git tag 6.0.0-rc.1`
+- [ ] Tag release candidate: `git tag latest-rc.1`
 
 ### Final Testing
 
@@ -688,7 +688,7 @@ Once all critical and high-priority issues are resolved:
 
 - [ ] Finalize release notes
 - [ ] Update changelog
-- [ ] Tag final release: `git tag 6.0.0`
+- [ ] Tag final release: `git tag latest`
 - [ ] Push to registry: `pnpm publish -r`
 - [ ] Create GitHub release
 - [ ] Announce release
@@ -726,7 +726,7 @@ Validation pass rate: 25% (3/12)
 ✓ 100% test pass rate (56/56 tests)
 ✓ 0 N3 import violations (71 → 0)
 ✓ OTEL validation ≥80/100 (0 → 80+)
-✓ Version = RC or stable (alpha.1 → rc.1 or 6.0.0)
+✓ Version = RC or stable (alpha.1 → rc.1 or latest)
 ✓ 0 linting errors
 ✓ All 4 docs present
 ✓ Benchmarks running

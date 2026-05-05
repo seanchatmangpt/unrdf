@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl-observability"
 type: "tutorial"
 packageName: "@unrdf/yawl-observability"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.4
 proof: "2cbcdbaaa29e01a0b3f02d41549573ba332a4c6acd2537014b81213583d91bde"

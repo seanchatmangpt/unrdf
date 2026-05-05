@@ -29,7 +29,7 @@ function generateReceipt({ component, operation, data }) {
     operation,
     data,
     signature: generateSignature({ component, operation, data, timestamp }),
-    kgcVersion: '4.0.0',
+    kgcVersion: '[VERSION]',
     universe: 'chatman-equation-v1',
   };
 }
@@ -96,7 +96,7 @@ function generateDeploymentManifest(validationResults, receipts) {
 
 [deployment]
 name = "chatman-equation-3t"
-version = "1.0.0"
+version = "[VERSION]"
 timestamp = "${timestamp}"
 components = ["toml-configs", "tera-templates", "turtle-ontologies"]
 
@@ -173,7 +173,7 @@ async function validateIntegration() {
       operation: 'create',
       data: {
         package: '@unrdf/chatman-equation',
-        version: '1.0.0',
+        version: '[VERSION]',
         methodology: '3T',
       },
     }),

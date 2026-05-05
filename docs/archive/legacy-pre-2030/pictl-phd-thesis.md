@@ -5,7 +5,7 @@
 **Candidate:** Sean Chatman
 **Institution:** ChatmanGPT Research Laboratories
 **Date:** May 4, 2026
-**Version:** v26.4.10
+**Version:** latest
 **Repository:** https://github.com/seanchatmangpt/pictl
 
 ---
@@ -311,20 +311,20 @@ The WASM core depends on 17 crates:
 
 | Crate | Version | Purpose |
 |-------|---------|---------|
-| `wasm-bindgen` | 0.2.92 | Rust ↔ JavaScript FFI |
-| `serde` | 1.0.188 | Serialization/deserialization |
-| `serde_json` | 1.0.105 | JSON handling |
-| `chrono` | 0.4.40 | Timestamp parsing and manipulation |
+| `wasm-bindgen` | latest | Rust ↔ JavaScript FFI |
+| `serde` | latest | Serialization/deserialization |
+| `serde_json` | latest | JSON handling |
+| `chrono` | latest | Timestamp parsing and manipulation |
 | `rand` | 0.8 | Random number generation (simulation) |
 | `rand_distr` | 0.4 | Statistical distributions |
 | `roxmltree` | 0.19 | XML parsing (XES, PNML, BPMN) |
-| `itertools` | 0.14.0 | Iterator combinatorics |
+| `itertools` | latest | Iterator combinatorics |
 | `rustc-hash` | 2 | FxHashMap (faster than std HashMap) |
 | `smallvec` | 1.13 | Stack-allocated small vectors |
 | `simd-json` | 0.13 | SIMD-accelerated JSON parsing |
 | `statrs` | 0.17 | Statistical functions (optional) |
 | `rayon` | 1.10 | Parallel iterators (optional) |
-| `uuid` | 1.16.0 | Unique identifiers |
+| `uuid` | latest | Unique identifiers |
 | `getrandom` | 0.2 | Random entropy (JS feature) |
 | `web-sys` | 0.3 | Web API bindings |
 | `criterion` | 0.5 | Benchmarking framework |
@@ -1140,7 +1140,7 @@ The `get_capabilities()` WASM function returns a JSON object indicating which fe
 
 ```json
 {
-  "version": "26.4.10",
+  "version": "latest",
   "features": {
     "discovery": true,
     "conformance": true,
@@ -1272,7 +1272,7 @@ This provides tamper-evident provenance for all process mining operations.
 
 ### 17.1 Command Inventory
 
-The `@pictl/cli` binary (version 26.4.10) provides 18 commands:
+The `@pictl/cli` binary (version latest) provides 18 commands:
 
 | Command | Exit Codes | Description |
 |---------|-----------|-------------|
@@ -1447,7 +1447,7 @@ The 24-hour development cycle that produced the current state of pictl employed 
 - Implemented A* alignments, marking equation LP solver, YAWL export
 - Fixed extensive_playout sequence emission bug (can_emit pattern)
 - Fixed montecarlo test fixture (10 traces for num_cases=10)
-- Version bump to v26.4.10
+- Version bump to latest
 - 17 files changed, 416 insertions
 
 **Wave 3** (Clippy + Format — 1 agent):
@@ -1682,9 +1682,9 @@ cloud ───┬── basic ───┬── discovery_minimal
 
 pictl uses CalVer (Calendar Versioning):
 
-- `v26.4.10` = May 4, 2026 (current version, this thesis)
+- `latest` = May 4, 2026 (current version, this thesis)
 - Format: `vYEAR.MONTH.DAY`
-- Multiple releases same day: `v26.4.10a`, `v26.4.10b`
+- Multiple releases same day: `latesta`, `latestb`
 - PATCH never exceeds 31 (it is the day of month)
 
 ### Appendix E: File Count Summary
@@ -1708,4 +1708,4 @@ pictl uses CalVer (Calendar Versioning):
 
 *End of Thesis*
 
-*This document was auto-generated on May 4, 2026, from the pictl codebase at commit 7ce62b0 on branch refactor/performance-optimizations. The thesis reflects the state of the art as of v26.4.10.*
+*This document was auto-generated on May 4, 2026, from the pictl codebase at commit 7ce62b0 on branch refactor/performance-optimizations. The thesis reflects the state of the art as of latest.*

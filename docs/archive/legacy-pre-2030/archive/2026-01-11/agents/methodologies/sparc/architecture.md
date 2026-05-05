@@ -203,10 +203,10 @@ CREATE TABLE audit_logs_2024_01 PARTITION OF audit_logs
 ### 4. API Architecture
 
 ```yaml
-openapi: 3.0.0
+openapi: latest
 info:
   title: Authentication API
-  version: 1.0.0
+  version: latest
   description: Authentication and authorization service
 
 servers:
@@ -397,7 +397,7 @@ security_architecture:
       - file_storage: "AES-256"
     
     in_transit:
-      - api: "TLS 1.3"
+      - api: "TLS latest"
       - internal: "mTLS"
   
   compliance:

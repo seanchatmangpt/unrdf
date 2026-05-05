@@ -3,7 +3,7 @@
 **Research Mission**: Explore combinatorial complexity in Raft and Byzantine consensus protocols
 
 **Date**: 2026-01-11
-**Codebase**: UNRDF v6.0.0
+**Codebase**: UNRDF latest
 **Packages Analyzed**: `@unrdf/consensus`, `@unrdf/kgc-swarm/consensus`
 
 ---

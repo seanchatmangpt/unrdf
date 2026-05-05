@@ -12,7 +12,7 @@
  */
 export const metadata = {
   name: 'docs',
-  version: '5.0.1',
+  version: '[VERSION]',
   description: 'UNRDF Nuxt documentation site',
 };
 

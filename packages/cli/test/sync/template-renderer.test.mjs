@@ -72,11 +72,11 @@ Project: {{ projectName }}`);
     await writeFile(varPath, `---
 to: output/result.txt
 variables:
-  defaultVersion: 0.1.0
+  defaultVersion: [VERSION]
 ---
 Version: {{ version | default(defaultVersion) }}`);
-    const varResult = await renderTemplate(varPath, [], { version: '2.0.0' });
-    expect(varResult.content).toContain('Version: 2.0.0');
+    const varResult = await renderTemplate(varPath, [], { version: '[VERSION]' });
+    expect(varResult.content).toContain('Version: [VERSION]');
 
     // Metadata in result
     const metaPath = join(templatesDir, 'meta.njk');
@@ -320,7 +320,7 @@ Content`);
     expect(shouldSkip({ skipIf: '/prod/' }, { env: 'development' })).toBe(false);
     expect(shouldSkip({ skipIf: '/^test/' }, { mode: 'test-value' })).toBe(true);
     expect(shouldSkip({ skipIf: '/^test/' }, { mode: 'production' })).toBe(false);
-    expect(shouldSkip({ skipIf: '/\\d+/' }, { version: 'v1.2.3' })).toBe(true);
+    expect(shouldSkip({ skipIf: '/\\d+/' }, { version: '[VERSION]' })).toBe(true);
     expect(shouldSkip({ skipIf: '/\\d+/' }, { version: 'stable' })).toBe(false);
 
     // Legacy equality still works

@@ -73,7 +73,7 @@ All proofs are **runnable** and **tested**.
 - `@unrdf/federation` - `AdvancedFederationEngine` (220 LoC) - Comunica integration unused
 - `@unrdf/yawl` - `YawlResourcePool` (78 LoC) - pre-v6 API
 
-**Potential Savings**: ~1,074 LoC (7.3% reduction)
+**Potential Savings**: ~1,074 LoC (latest% reduction)
 
 ---
 
@@ -156,7 +156,7 @@ node /tmp/capability-proofs/C3-freeze-receipt-chain.mjs
 - Week 5: Stabilize 34-export minimal API
 - Week 6: Implement 5 missing capabilities
 
-**Success Metric**: V6.0.0 with ≤12 packages, ≤15,000 LoC, 100% deterministic, 80%+ coverage
+**Success Metric**: Vlatest with ≤12 packages, ≤15,000 LoC, 100% deterministic, 80%+ coverage
 
 ---
 

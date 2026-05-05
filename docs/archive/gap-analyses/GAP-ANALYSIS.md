@@ -71,7 +71,7 @@
 
 **Current State:**
 - README: 208 lines (85% of atomvm standard) ✅
-- Features: SPARQL 1.1, multiple formats, high performance
+- Features: SPARQL latest, multiple formats, high performance
 - Benchmarks: Documented
 
 **Gaps:**
@@ -184,7 +184,7 @@
 
 **Time Estimate**: 45 minutes
 
-### Total Estimated Time: 3.25 hours for 80% of value
+### Total Estimated Time: latest hours for 80% of value
 
 ## Success Metrics
 

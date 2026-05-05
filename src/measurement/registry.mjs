@@ -6,7 +6,7 @@
  * Central registry defining which packages measure what metrics,
  * dependency graph for measurement rollup, and aggregation rules.
  *
- * @version 1.0.0
+ * @version [VERSION]
  */
 
 import {

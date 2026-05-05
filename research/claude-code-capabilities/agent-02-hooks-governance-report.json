@@ -67,7 +67,7 @@
       "description": "Bundled hooks with manifest.json, conditions, and resources",
       "evidence": {
         "manifest_schema": "JSON with meta, config, hooks, conditions, resources",
-        "versioning": "semantic versioning (1.0.0)",
+        "versioning": "semantic versioning (latest)",
         "lifecycle": ["load", "activate", "deactivate", "compatibility check"]
       }
     },
@@ -264,7 +264,7 @@
       "evidence": {
         "schema": "dependencies: [{ name, version, required }]",
         "resolution": "Compatibility check before activation",
-        "versioning": "Semantic version ranges (^2.0.0)"
+        "versioning": "Semantic version ranges (^latest)"
       }
     },
     {
@@ -273,7 +273,7 @@
       "location": "/home/user/unrdf/packages/hooks/src/hooks/policy-pack.mjs",
       "description": "Policies can specify environment requirements",
       "evidence": {
-        "conditions": "environment: ['production', 'staging'], version: '>=1.0.0', features: ['sparql-query']",
+        "conditions": "environment: ['production', 'staging'], version: '>=latest', features: ['sparql-query']",
         "api": "checkCompatibility({ environment: 'production' })",
         "activation": "Conditional activation based on environment"
       }

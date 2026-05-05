@@ -1,6 +1,6 @@
 # Claude Code Programmatic API Reference
 
-**Version:** 2.0.59
+**Version:** [VERSION]
 **Last Updated:** 2025-12-27
 
 ## CLI Interface
@@ -499,7 +499,7 @@ claude --ide
 
 ```bash
 claude --version
-# @anthropic-ai/claude-code/2.0.59
+# @anthropic-ai/claude-code/[VERSION]
 ```
 
 #### `-h, --help`
@@ -666,7 +666,7 @@ claude install stable
 claude install latest
 
 # Specific version
-claude install 2.0.59
+claude install [VERSION]
 ```
 
 ---
@@ -810,5 +810,5 @@ claude -p "Step 2" --session-id "$SESSION"
 ---
 
 **Document Status:** Complete
-**Verification:** All flags tested with Claude Code 2.0.59
+**Verification:** All flags tested with Claude Code [VERSION]
 **Source:** `claude --help` + empirical testing

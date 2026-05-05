@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/pictl-algorithms",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "PICTL Process Mining Algorithms for UNRDF Federation - OCEL discovery, conformance, and prediction via WASM",
   "type": "module",
   "main": "src/index.mjs",

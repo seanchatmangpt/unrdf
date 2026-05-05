@@ -1,9 +1,9 @@
 # UNRDF Comprehensive Performance Analysis Report
 
 **Generated:** 2025-12-21
-**Node Version:** v24.11.1
+**Node Version:** [VERSION]
 **Platform:** darwin (arm64)
-**Test Environment:** Apple M-series processor with Node.js 24.11.1
+**Test Environment:** Apple M-series processor with Node.js [VERSION]
 
 ---
 
@@ -687,7 +687,7 @@ setInterval(() => {
 **Hardware:**
 - Processor: Apple M-series (ARM64)
 - Memory: System RAM (not limited)
-- Node.js: v24.11.1
+- Node.js: [VERSION]
 - GC: Exposed via --expose-gc flag
 
 **Test Approach:**

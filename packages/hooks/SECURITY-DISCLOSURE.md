@@ -3,22 +3,22 @@
 **Date:** May 4, 2026  
 **Status:** RESOLVED  
 **Severity:** MEDIUM  
-**Affected Versions:** v26.5.4 - v26.5.4  
-**Fixed in:** v26.5.4
+**Affected Versions:** [VERSION] - [VERSION]  
+**Fixed in:** [VERSION]
 
 ---
 
 ## Executive Summary
 
-A cryptographic hashing vulnerability was identified in UNRDF Hooks audit trail implementation that affected the security of transaction receipts. The vulnerability has been fully resolved in v26.5.4 with implementation of BLAKE3 cryptographic hashing for all receipt and audit trail operations.
+A cryptographic hashing vulnerability was identified in UNRDF Hooks audit trail implementation that affected the security of transaction receipts. The vulnerability has been fully resolved in [VERSION] with implementation of BLAKE3 cryptographic hashing for all receipt and audit trail operations.
 
 **Key Details:**
 
 - **Vulnerability:** Weak hashing algorithm in receipt chain tracking
 - **Impact:** Audit trails were not cryptographically secure; receipt integrity could not be verified
 - **Root Cause:** Legacy DJB2 implementation replaced with BLAKE3 hashing
-- **Mitigation:** All users must upgrade to v26.5.4 or later
-- **Risk Window:** Approximately 2 weeks (v26.5.4 release to v26.5.4 fix)
+- **Mitigation:** All users must upgrade to [VERSION] or later
+- **Risk Window:** Approximately 2 weeks ([VERSION] release to [VERSION] fix)
 
 ---
 
@@ -41,7 +41,7 @@ The previous implementation could not guarantee these properties.
 - **Before:** DJB2-style hash (non-cryptographic, deterministic but weak collision resistance)
 - **After:** BLAKE3 (cryptographic, 256-bit output, <1ns/byte performance)
 
-**Receipt Structure (v26.5.4 and earlier):**
+**Receipt Structure ([VERSION] and earlier):**
 
 ```javascript
 {
@@ -56,7 +56,7 @@ The previous implementation could not guarantee these properties.
 }
 ```
 
-**Receipt Structure (v26.5.4+):**
+**Receipt Structure ([VERSION]+):**
 
 ```javascript
 {
@@ -95,9 +95,9 @@ The previous implementation could not guarantee these properties.
 
 ### Exposure Window
 
-- **Introduced:** v26.5.4 (January 2026)
+- **Introduced:** [VERSION] (January 2026)
 - **Discovered:** May 4, 2026
-- **Fixed:** May 4, 2026 (v26.5.4)
+- **Fixed:** May 4, 2026 ([VERSION])
 - **Exposure:** ~2 weeks
 
 **Estimated Impact:**
@@ -110,11 +110,11 @@ The previous implementation could not guarantee these properties.
 
 ## Resolution
 
-### What Changed in v26.5.4
+### What Changed in [VERSION]
 
 **Implementation:**
 
-- Dependency: `@noble/hashes@^2.0.1` (already in package.json)
+- Dependency: `@noble/hashes@^[VERSION]` (already in package.json)
 - Module: `blake3` imported from `@noble/hashes/blake3`
 - Implementation file: `packages/hooks/src/hooks/knowledge-hook-engine.mjs`
 
@@ -160,19 +160,19 @@ async _computeStoreHash(store) {
 
 ## Migration Guide
 
-### For Users Upgrading from v26.5.4-v26.5.4
+### For Users Upgrading from [VERSION]-[VERSION]
 
 #### Step 1: Upgrade Package
 
 ```bash
 # Using npm
-npm install @unrdf/hooks@26.5.4
+npm install @unrdf/hooks@[VERSION]
 
 # Using pnpm
-pnpm add @unrdf/hooks@26.5.4
+pnpm add @unrdf/hooks@[VERSION]
 
 # Using yarn
-yarn add @unrdf/hooks@26.5.4
+yarn add @unrdf/hooks@[VERSION]
 ```
 
 #### Step 2: Update Dependencies
@@ -182,19 +182,19 @@ yarn add @unrdf/hooks@26.5.4
 npm ls @noble/hashes
 
 # If not present, install manually
-npm install @noble/hashes@^2.0.1
+npm install @noble/hashes@^[VERSION]
 ```
 
 #### Step 3: Regenerate Receipts
 
-All existing receipts created with v26.5.4-v26.5.4 should be considered invalid. We recommend:
+All existing receipts created with [VERSION]-[VERSION] should be considered invalid. We recommend:
 
 **Option A: Start Fresh (Recommended)**
 
 ```javascript
 // Clear old receipts from your system
 const clearOldReceipts = async () => {
-  // Delete stored receipts from v26.5.4-v26.5.4
+  // Delete stored receipts from [VERSION]-[VERSION]
   // All future receipts will use BLAKE3
   await receiptStore.clear();
 };
@@ -230,7 +230,7 @@ const verifyReceiptHashStrength = receipt => {
   const isCryptographicHash = receipt.receiptHash?.length === 64;
 
   if (!isCryptographicHash) {
-    throw new Error('Receipt uses weak hashing—upgrade to v26.5.4+');
+    throw new Error('Receipt uses weak hashing—upgrade to [VERSION]+');
   }
 
   // Verify hash links are unbroken
@@ -279,42 +279,42 @@ const executeWithVerification = async (engine, hooks, store) => {
 
 ### If Issues Occur After Upgrade
 
-**v26.5.4 (Intermediate Fallback)**
+**[VERSION] (Intermediate Fallback)**
 
-v26.5.4 is available as a temporary rollback. However, v26.5.4 still has the hashing vulnerability—use only as a bridge to v26.5.4.
+[VERSION] is available as a temporary rollback. However, [VERSION] still has the hashing vulnerability—use only as a bridge to [VERSION].
 
 ```bash
-npm install @unrdf/hooks@26.5.4   # Temporary fallback only
+npm install @unrdf/hooks@[VERSION]   # Temporary fallback only
 ```
 
-**v26.5.4 (Not Recommended)**
+**[VERSION] (Not Recommended)**
 
-Rolling back to v26.5.4 re-introduces the security vulnerability. Only do this if:
+Rolling back to [VERSION] re-introduces the security vulnerability. Only do this if:
 
-- v26.5.4 has a blocking bug (unlikely)
+- [VERSION] has a blocking bug (unlikely)
 - Immediate emergency requires it
 - You have documented security exception
 
 ```bash
-npm install @unrdf/hooks@26.5.4   # ⚠️ RE-INTRODUCES VULNERABILITY
+npm install @unrdf/hooks@[VERSION]   # ⚠️ RE-INTRODUCES VULNERABILITY
 ```
 
 **If You Must Rollback:**
 
-1. Create isolated network segment for v26.5.4 systems
+1. Create isolated network segment for [VERSION] systems
 2. Disable receipt-based compliance audits
 3. Implement alternative audit trail (blockchain, WORM storage)
 4. File incident report with security team
-5. Move back to v26.5.4 within 7 days maximum
+5. Move back to [VERSION] within 7 days maximum
 
 ---
 
 ## Verification Checklist
 
-After upgrading to v26.5.4, verify:
+After upgrading to [VERSION], verify:
 
-- [ ] `@unrdf/hooks` version is 26.5.4 or higher (`npm list @unrdf/hooks`)
-- [ ] `@noble/hashes` version is 2.0.1 or higher (`npm list @noble/hashes`)
+- [ ] `@unrdf/hooks` version is [VERSION] or higher (`npm list @unrdf/hooks`)
+- [ ] `@noble/hashes` version is [VERSION] or higher (`npm list @noble/hashes`)
 - [ ] New receipts have 64-character hex hashes (BLAKE3)
 - [ ] Old receipts are marked as legacy/unverified if retained
 - [ ] Receipt chain verification is working (`verifyReceiptHashStrength()`)
@@ -328,11 +328,11 @@ After upgrading to v26.5.4, verify:
 
 | Date         | Event                                           |
 | ------------ | ----------------------------------------------- |
-| Jan 15, 2026 | v26.5.4 released with weak hashing              |
+| Jan 15, 2026 | [VERSION] released with weak hashing              |
 | Jan-Apr 2026 | ~150-200 downloads, ~2 weeks exposure           |
 | Apr 2, 2026  | Vulnerability identified during security audit  |
 | Apr 3, 2026  | Fix implemented and tested (BLAKE3 integration) |
-| Apr 4, 2026  | v26.5.4 released with security fix              |
+| Apr 4, 2026  | [VERSION] released with security fix              |
 | Apr 4, 2026  | This disclosure published                       |
 
 ---
@@ -368,17 +368,17 @@ After upgrading to v26.5.4, verify:
 **Q: Do I need to regenerate all my receipts?**  
 A: Yes. Old receipts with weak hashes should not be relied upon. Archive them as historical reference only.
 
-**Q: Will v26.5.4 receipts be compatible with my existing systems?**  
+**Q: Will [VERSION] receipts be compatible with my existing systems?**  
 A: Yes. The receipt structure is identical—only the hash algorithm changed from weak to cryptographic.
 
-**Q: What if I upgraded to v26.5.4—do I still have the vulnerability?**  
-A: Yes. v26.5.4 still uses weak hashing. You must upgrade to v26.5.4.
+**Q: What if I upgraded to [VERSION]—do I still have the vulnerability?**  
+A: Yes. [VERSION] still uses weak hashing. You must upgrade to [VERSION].
 
-**Q: Can I use v26.5.4 receipts to audit historical data?**  
-A: Only for informational purposes. Do not rely on v26.5.4 receipts for compliance verification.
+**Q: Can I use [VERSION] receipts to audit historical data?**  
+A: Only for informational purposes. Do not rely on [VERSION] receipts for compliance verification.
 
 **Q: What hash algorithm should I use for my own code?**  
-A: BLAKE3 via `@noble/hashes/blake3`. It's included as a dependency in v26.5.4+.
+A: BLAKE3 via `@noble/hashes/blake3`. It's included as a dependency in [VERSION]+.
 
 ---
 

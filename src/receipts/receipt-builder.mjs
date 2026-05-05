@@ -91,7 +91,7 @@ export class ReceiptBuilder {
     this._data = {
       id: generateReceiptId(type, pkg, this._timestamp),
       type,
-      version: '1.0.0',
+      version: '[VERSION]',
       package: pkg,
       epoch: generateEpoch(this._timestamp),
       timestamp: this._timestamp.toISOString(),

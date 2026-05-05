@@ -30,7 +30,7 @@ Before starting, verify you have:
 
 - [ ] **Rust** installed
   ```bash
-  rustc --version  # Should show 1.70.x or higher
+  rustc --version  # Should show latest.x or higher
   ```
   If not: [Install Rust](https://rustup.rs)
 
@@ -39,13 +39,13 @@ Before starting, verify you have:
 
 ## Step 1: Get the Code (5 minutes)
 
-### 1.1 Fork the Repository
+### latest Fork the Repository
 
 1. Go to https://github.com/unrdf/unrdf
 2. Click "Fork" in the top right
 3. Wait for GitHub to create your fork
 
-### 1.2 Clone Your Fork
+### latest Clone Your Fork
 
 ```bash
 # Replace YOUR-USERNAME with your GitHub username
@@ -53,7 +53,7 @@ git clone git@github.com:YOUR-USERNAME/unrdf.git
 cd unrdf
 ```
 
-### 1.3 Quick Start Setup (Recommended)
+### latest Quick Start Setup (Recommended)
 
 Run the following command to set up your environment, build the Open Ontologies sidecar, and install all dependencies:
 
@@ -61,7 +61,7 @@ Run the following command to set up your environment, build the Open Ontologies 
 ./scripts/quick-start.sh
 ```
 
-### 1.4 Add Upstream Remote
+### latest Add Upstream Remote
 
 This lets you sync with the main repository:
 
@@ -151,7 +151,7 @@ Test Files  25 passed (25)
 
 Read these in order to understand the codebase:
 
-### 5.1 Start Here (5 min)
+### latest Start Here (5 min)
 ```bash
 cat docs/START-HERE.md
 # Or open in your editor
@@ -164,7 +164,7 @@ cat docs/START-HERE.md
 - RDF = triples (subject-predicate-object)
 - SPARQL = query language for RDF
 
-### 5.2 Architecture Overview (5 min)
+### latest Architecture Overview (5 min)
 ```bash
 cat docs/ARCHITECTURE.md | head -150
 ```
@@ -175,7 +175,7 @@ cat docs/ARCHITECTURE.md | head -150
 - Comunica for SPARQL queries
 - Knowledge Hooks for reactive behaviors
 
-### 5.3 Monorepo Structure (5 min)
+### latest Monorepo Structure (5 min)
 ```bash
 cat docs/MONOREPO-QUICK-REFERENCE.md
 ```
@@ -190,13 +190,13 @@ cat docs/MONOREPO-QUICK-REFERENCE.md
 
 Let's make a simple documentation fix to practice the workflow.
 
-### 6.1 Create a Feature Branch
+### latest Create a Feature Branch
 
 ```bash
 git checkout -b feat/my-first-contribution
 ```
 
-### 6.2 Find Something to Fix
+### latest Find Something to Fix
 
 Look for:
 - Typos in `README.md` or `docs/*.md`
@@ -211,33 +211,33 @@ For practice, let's add your name to a contributor list:
 echo "- $(git config user.name) - Onboarding complete!" >> docs/ONBOARDING.md
 ```
 
-### 6.3 Verify Your Change
+### latest Verify Your Change
 
 ```bash
 git diff  # Review what changed
 ```
 
-### 6.4 Run Tests
+### latest Run Tests
 
 ```bash
 # Quick test to ensure nothing broke
 timeout 10s pnpm test:fast || echo "Tests completed"
 ```
 
-### 6.5 Commit Your Change
+### latest Commit Your Change
 
 ```bash
 git add docs/ONBOARDING.md
 git commit -m "docs: add contributor to onboarding doc"
 ```
 
-### 6.6 Push to Your Fork
+### latest Push to Your Fork
 
 ```bash
 git push -u origin feat/my-first-contribution
 ```
 
-### 6.7 Create a Pull Request
+### latest Create a Pull Request
 
 1. Go to https://github.com/YOUR-USERNAME/unrdf
 2. Click "Compare & pull request"
@@ -250,7 +250,7 @@ Congratulations! You've completed the contribution workflow.
 
 ## Step 7: Explore the Codebase (15-20 minutes)
 
-### 7.1 Understand Package Structure
+### latest Understand Package Structure
 
 ```bash
 # Look at the core package structure
@@ -267,7 +267,7 @@ packages/core/
 └── README.md      # Package documentation
 ```
 
-### 7.2 Read Example Code
+### latest Read Example Code
 
 ```bash
 # Simple parse and query example
@@ -285,7 +285,7 @@ Parsed X triples
 Query results: [...]
 ```
 
-### 7.3 Explore More Examples
+### latest Explore More Examples
 
 ```bash
 # List all examples
@@ -295,7 +295,7 @@ ls examples/*.mjs
 cat examples/basic-knowledge-hook.mjs
 ```
 
-### 7.4 Browse Tests
+### latest Browse Tests
 
 Tests show how to use the code:
 
@@ -319,7 +319,7 @@ describe('parseTurtle', () => {
 
 ## Step 8: Development Environment Setup (10 minutes)
 
-### 8.1 VS Code Setup (Optional but Recommended)
+### latest VS Code Setup (Optional but Recommended)
 
 If using VS Code, install these extensions:
 
@@ -345,7 +345,7 @@ Create `.vscode/settings.json`:
 }
 ```
 
-### 8.2 Git Hooks (Optional)
+### latest Git Hooks (Optional)
 
 Set up pre-commit hooks to catch issues early:
 
@@ -362,7 +362,7 @@ EOF
 chmod +x .git/hooks/pre-commit
 ```
 
-### 8.3 Shell Aliases (Optional)
+### latest Shell Aliases (Optional)
 
 Add to `~/.bashrc` or `~/.zshrc`:
 
@@ -379,20 +379,20 @@ alias ucore='pnpm --filter @unrdf/core'
 
 Now that you're set up, find a real issue to work on:
 
-### 9.1 Find a Good First Issue
+### latest Find a Good First Issue
 
 1. Go to https://github.com/unrdf/unrdf/issues
 2. Filter by label: `good first issue`
 3. Pick one that interests you
 4. Comment: "I'd like to work on this"
 
-### 9.2 Understand the Issue
+### latest Understand the Issue
 
 - Read the issue description carefully
 - Check if there are any linked PRs or discussions
 - Ask questions if anything is unclear
 
-### 9.3 Create a Feature Branch
+### latest Create a Feature Branch
 
 ```bash
 git checkout main
@@ -400,14 +400,14 @@ git pull upstream main
 git checkout -b fix/issue-NUMBER-description
 ```
 
-### 9.4 Implement the Fix
+### latest Implement the Fix
 
 - Make your changes
 - Follow existing code patterns
 - Add JSDoc comments
 - Add tests if needed
 
-### 9.5 Test Your Changes
+### latest Test Your Changes
 
 ```bash
 # Test the specific package
@@ -420,7 +420,7 @@ pnpm run lint:fix
 pnpm run build
 ```
 
-### 9.6 Commit and Push
+### latest Commit and Push
 
 ```bash
 git add .
@@ -428,7 +428,7 @@ git commit -m "fix: description of what you fixed (#ISSUE-NUMBER)"
 git push -u origin fix/issue-NUMBER-description
 ```
 
-### 9.7 Create Pull Request
+### latest Create Pull Request
 
 1. Go to your fork on GitHub
 2. Click "Compare & pull request"
@@ -438,7 +438,7 @@ git push -u origin fix/issue-NUMBER-description
    - Mention any testing you did
 4. Submit the PR
 
-### 9.8 Respond to Reviews
+### latest Respond to Reviews
 
 - Maintainers will review your PR
 - Make requested changes if needed
@@ -449,23 +449,23 @@ git push -u origin fix/issue-NUMBER-description
 
 Once you're comfortable with basics, explore:
 
-### 10.1 Knowledge Hooks
+### latest Knowledge Hooks
 ```bash
 cat docs/GETTING-STARTED/knowledge-hooks.md
 cat examples/basic-knowledge-hook.mjs
 ```
 
-### 10.2 SPARQL Queries
+### latest SPARQL Queries
 ```bash
 cat docs/GETTING-STARTED/sparql.md
 ```
 
-### 10.3 Streaming Large Graphs
+### latest Streaming Large Graphs
 ```bash
 cat packages/streaming/README.md
 ```
 
-### 10.4 Performance Optimization
+### latest Performance Optimization
 ```bash
 cat docs/performance-analysis-summary.md
 ```

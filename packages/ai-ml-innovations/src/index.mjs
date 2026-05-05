@@ -60,7 +60,7 @@ export * as schemas from './schemas.mjs';
 /**
  * Package version and metadata
  */
-export const VERSION = '0.1.0';
+export const VERSION = 'latest';
 
 export const INNOVATION_PATTERNS = {
   implemented: [

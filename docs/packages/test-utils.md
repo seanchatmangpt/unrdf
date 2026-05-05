@@ -2,7 +2,7 @@
 
 > Testing utilities for UNRDF development
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Internal
 
 ## Overview

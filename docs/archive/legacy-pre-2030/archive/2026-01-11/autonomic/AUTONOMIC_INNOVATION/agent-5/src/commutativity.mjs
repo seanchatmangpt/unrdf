@@ -68,7 +68,7 @@ export function conflictCertificate(capsuleA, capsuleB) {
 
   // Build certificate object (without hash initially)
   const certificateData = {
-    version: '1.0.0',
+    version: 'latest',
     capsuleA: {
       id: capsuleA.id,
       add: sortQuads(Array.from(capsuleA.add)).map(quadToNTriples),
@@ -95,7 +95,7 @@ export function conflictCertificate(capsuleA, capsuleB) {
     hash,
     capsuleIds: [capsuleA.id, capsuleB.id],
     conflictType: result.reason,
-    version: '1.0.0',
+    version: 'latest',
     timestamp: certificateData.timestamp,
     metadata: {
       minimality: 'proven',

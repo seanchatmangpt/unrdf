@@ -18,7 +18,7 @@ import {
  */
 export const GrammarSchema = z.object({
   source: z.string().min(1),
-  version: z.string().default('1.0.0'),
+  version: z.string().default('[VERSION]'),
   rules: z.array(z.string()).optional(),
 });
 
@@ -74,7 +74,7 @@ export const parseGrammar = withReceipt(parseGrammarImpl, {
 export async function testGrammarDeterminism(context, iterations = 100) {
   const grammar = {
     source: 'rule1 := value1; rule2 := value2;',
-    version: '1.0.0',
+    version: '[VERSION]',
     rules: ['rule1', 'rule2'],
   };
 

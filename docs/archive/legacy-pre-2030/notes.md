@@ -48,20 +48,20 @@ node /home/user/unrdf/exploration/agents/agent-1/index.mjs
 #### 1. @unrdf/oxigraph
 
 - **Path**: `/home/user/unrdf/packages/oxigraph/`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Main exports**: `createStore`, `dataFactory`, `OxigraphStore`
 - **Role**: store, io, derive, render
 - **Maturity**: mature (has tests, examples, README)
 - **Entry point**: `src/index.mjs`
 - **Key file**: `/home/user/unrdf/packages/oxigraph/src/store.mjs`
-- **Dependencies**: `oxigraph@^0.5.2`, `zod@^4.1.13`
+- **Dependencies**: `oxigraph@^latest`, `zod@^latest`
 - **Test config**: `vitest run --coverage`
 - **Key capability**: SPARQL engine + quad store
 
 #### 2. @unrdf/kgc-substrate
 
 - **Path**: `/home/user/unrdf/packages/kgc-substrate/`
-- **Version**: 5.0.1
+- **Version**: latest
 - **Role**: store, derive
 - **Maturity**: documented (has README, minimal tests)
 - **Key capability**: 4D substrate for temporal data
@@ -245,10 +245,10 @@ All packages have comprehensive READMEs covering:
 
 **External dependencies** (most common):
 
-- `zod@^4.1.13` - 30+ packages (validation)
+- `zod@^latest` - 30+ packages (validation)
 - `@opentelemetry/api` - Observability instrumentation
-- `n3@^1.26.0` - N3 parsing (in core)
-- `ws@^8.18.3` - WebSocket support
+- `n3@^latest` - N3 parsing (in core)
+- `ws@^latest` - WebSocket support
 
 ### Isolation Patterns
 
@@ -265,7 +265,7 @@ All packages have comprehensive READMEs covering:
 
 - **Current state**: Not found in public API scan
 - **Implication**: RDF validation may use external library
-- **File reference**: Check `/home/user/unrdf/packages/core/package.json` - includes `rdf-validate-shacl@^0.6.5`
+- **File reference**: Check `/home/user/unrdf/packages/core/package.json` - includes `rdf-validate-shacl@^latest`
 - **Recommendation**: Wrap SHACL validation in dedicated package
 
 ### 2. SPARQL Update Support

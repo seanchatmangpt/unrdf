@@ -12,7 +12,7 @@
 
 ```bash
 $ grep -rn "setTimeout.*[0-9]\{3,\}" packages/*/test --include="*.test.mjs"
-# Total: 3.3 seconds of pure sleeping!
+# Total: latest seconds of pure sleeping!
 ```
 
 ### Files to Fix
@@ -192,7 +192,7 @@ time timeout 5s pnpm -C packages/oxigraph build
 # Should complete in <2s (was >5s)
 ```
 
-**Expected Impact**: **Build: 5s → 2s (2.5x speedup)**
+**Expected Impact**: **Build: 5s → 2s (latestx speedup)**
 
 ---
 
@@ -282,7 +282,7 @@ chmod +x scripts/verify-performance.sh
 time timeout 5s npm test
 
 # Expected progression:
-# After Fix #1: 6-7s (removed 3.3s sleep)
+# After Fix #1: 6-7s (removed latests sleep)
 # After Fix #2: 3-4s (removed I/O overhead)
 # After Fix #3: 2-3s (faster imports)
 # After Fix #4: Build feedback <2s
@@ -350,10 +350,10 @@ Performance Validation Report
 =============================
 
 Test Suite:
-real    0m3.2s
+real    0mlatests
 
 Build Time:
-real    0m1.8s
+real    0mlatests
 ```
 
 ✅ **Success**: Both metrics under 5s SLA!

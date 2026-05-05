@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/observability
-**Version:** 1.0.0
+**Version:** latest
 
 ---
 
@@ -28,12 +28,12 @@ Innovative Prometheus/Grafana observability dashboard for UNRDF distributed work
 
 ### Dependencies
 
-- `prom-client`: ^15.1.0
-- `@opentelemetry/api`: ^1.9.0
-- `@opentelemetry/exporter-prometheus`: ^0.49.0
-- `@opentelemetry/sdk-metrics`: ^1.21.0
-- `express`: ^4.18.2
-- `zod`: ^4.1.13
+- `prom-client`: ^latest
+- `@opentelemetry/api`: ^latest
+- `@opentelemetry/exporter-prometheus`: ^latest
+- `@opentelemetry/sdk-metrics`: ^latest
+- `express`: ^latest
+- `zod`: ^latest
 
 ### Exports
 

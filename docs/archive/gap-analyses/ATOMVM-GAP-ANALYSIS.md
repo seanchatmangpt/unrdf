@@ -68,7 +68,7 @@
 
 **Evidence:**
 ```
-> @unrdf/atomvm@5.0.1 test /home/user/unrdf/packages/atomvm
+> @unrdf/atomvm@latest test /home/user/unrdf/packages/atomvm
 > vitest run --coverage
 sh: 1: vitest: not found
 ```

@@ -10,8 +10,8 @@
 
 ### Key Findings
 
-1. **Export Style Consistency**: 93.75% (15/16) of packages use **named exports only**
-2. **TypeScript Coverage**: 47.4% (9/19) packages have TypeScript definitions (`.d.ts` files)
+1. **Export Style Consistency**: latest% (15/16) of packages use **named exports only**
+2. **TypeScript Coverage**: latest% (9/19) packages have TypeScript definitions (`.d.ts` files)
 3. **External Re-exports**: **ZERO** packages re-export third-party dependencies
 4. **Consistency Score**: **EXCELLENT** - Uniform export patterns across codebase
 
@@ -26,7 +26,7 @@
 
 ## 1. Export Style Analysis
 
-### 1.1 Export Pattern Distribution
+### latest Export Pattern Distribution
 
 | Package | Named Exports | Default Exports | Wildcard (`export *`) | Direct Exports | Total |
 |---------|---------------|-----------------|----------------------|----------------|-------|
@@ -49,13 +49,13 @@
 
 *CLI package uses `citty` framework with imperative execution, no exports needed
 
-### 1.2 Export Style Summary
+### latest Export Style Summary
 
 ```
-Named Exports Only:     15/16 packages (93.75%) ✅
-Mixed (Named + Default): 1/16 packages (6.25%)   ⚠️
+Named Exports Only:     15/16 packages (latest%) ✅
+Mixed (Named + Default): 1/16 packages (latest%)   ⚠️
 Default Only:            0/16 packages (0%)
-Wildcard Re-exports:     1/16 packages (6.25%)   ⚠️
+Wildcard Re-exports:     1/16 packages (latest%)   ⚠️
 ```
 
 **Verdict**: **EXCELLENT CONSISTENCY** - Nearly perfect adherence to named exports pattern
@@ -64,7 +64,7 @@ Wildcard Re-exports:     1/16 packages (6.25%)   ⚠️
 
 ## 2. Export Style Categories
 
-### 2.1 Pure Named Exports (Recommended)
+### latest Pure Named Exports (Recommended)
 
 **15 packages follow this pattern** - Industry best practice for tree-shaking and IDE support.
 
@@ -86,7 +86,7 @@ export { useStreaming } from './composables/use-streaming.mjs';
 
 ---
 
-### 2.2 Mixed (Named + Default) - SINGLE OUTLIER
+### latest Mixed (Named + Default) - SINGLE OUTLIER
 
 **1 package**: `@unrdf/oxigraph`
 
@@ -112,7 +112,7 @@ export default {
 
 ---
 
-### 2.3 Wildcard Re-exports
+### latest Wildcard Re-exports
 
 **1 package**: `@unrdf/knowledge-engine`
 
@@ -131,7 +131,7 @@ export * from './schemas.mjs';
 
 ## 3. Transitive Dependency Re-exports
 
-### 3.1 Analysis Results
+### latest Analysis Results
 
 ```
 External Dependency Re-exports: 0 packages
@@ -142,7 +142,7 @@ Internal (@unrdf/*) Re-exports: 0 packages
 
 **No packages re-export third-party dependencies**. All packages properly encapsulate their dependencies.
 
-### 3.2 Benefits
+### latest Benefits
 
 1. **Dependency Isolation**: Users don't inherit transitive dependencies
 2. **Version Control**: Package maintainers control exact dependency versions
@@ -153,14 +153,14 @@ Internal (@unrdf/*) Re-exports: 0 packages
 
 ## 4. Internal Module Exposure Analysis
 
-### 4.1 Methodology
+### latest Methodology
 
 Checked all `index.mjs` files for:
 - Exports from `./internal/*` paths
 - Exports with `_` prefixes (private convention)
 - Exports from `./utils/*` or `./helpers/*` (potential internals)
 
-### 4.2 Results
+### latest Results
 
 **Zero accidental internal exposures detected** ✅
 
@@ -169,7 +169,7 @@ All exports are:
 - Documented with JSDoc
 - Intentionally designed for external use
 
-### 4.3 Notable Findings
+### latest Notable Findings
 
 **`@unrdf/test-utils`** exports internal helpers:
 ```javascript
@@ -188,7 +188,7 @@ export { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs
 
 ## 5. TypeScript Definition Coverage
 
-### 5.1 Current Status
+### latest Current Status
 
 | Package | Has `.d.ts` Files | Status |
 |---------|-------------------|--------|
@@ -212,12 +212,12 @@ export { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs
 | test-utils | ❌ NO | **Missing** |
 | validation | ✅ YES | Complete |
 
-**Coverage**: 9/19 packages (47.4%)
+**Coverage**: 9/19 packages (latest%)
 **Missing**: 9 packages need TypeScript definitions
 
 ---
 
-### 5.2 Packages Needing TypeScript Definitions
+### latest Packages Needing TypeScript Definitions
 
 #### High Priority (Complex APIs)
 
@@ -273,14 +273,14 @@ export { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs
 
 ---
 
-### 5.3 Estimated Total Effort
+### latest Estimated Total Effort
 
 | Priority | Packages | Estimated Hours | Person-Weeks (40h/week) |
 |----------|----------|----------------|-------------------------|
-| **High** | 5 | 150-196 hours | 3.75-4.9 weeks |
-| **Medium** | 2 | 28-36 hours | 0.7-0.9 weeks |
-| **Low** | 2 | 20-28 hours | 0.5-0.7 weeks |
-| **TOTAL** | 9 | **198-260 hours** | **5.0-6.5 weeks** |
+| **High** | 5 | 150-196 hours | latest.9 weeks |
+| **Medium** | 2 | 28-36 hours | latest.9 weeks |
+| **Low** | 2 | 20-28 hours | latest.7 weeks |
+| **TOTAL** | 9 | **198-260 hours** | **latest.5 weeks** |
 
 **Recommended Approach**: Incremental rollout (High → Medium → Low priority)
 
@@ -288,7 +288,7 @@ export { _createLockchainWriter } from '../knowledge-engine/lockchain-writer.mjs
 
 ## 6. Export Inconsistencies
 
-### 6.1 Minor Inconsistencies
+### latest Minor Inconsistencies
 
 #### 1. Mixed Export Style in `@unrdf/oxigraph`
 
@@ -322,42 +322,42 @@ import oxigraph from '@unrdf/oxigraph';         // Legacy
 
 ---
 
-### 6.2 Consistency Scorecard
+### latest Consistency Scorecard
 
 | Metric | Score | Grade |
 |--------|-------|-------|
-| **Export Style Uniformity** | 93.75% (15/16 named-only) | A+ |
+| **Export Style Uniformity** | latest% (15/16 named-only) | A+ |
 | **No External Re-exports** | 100% (0/16) | A+ |
 | **No Internal Leaks** | 100% (0 accidental) | A+ |
-| **TypeScript Coverage** | 47.4% (9/19) | C+ |
+| **TypeScript Coverage** | latest% (9/19) | C+ |
 | **Documentation Quality** | 100% (JSDoc on all exports) | A+ |
-| **Overall Consistency** | **88.3%** | **A-** |
+| **Overall Consistency** | **latest%** | **A-** |
 
 ---
 
 ## 7. Recommendations
 
-### 7.1 Immediate Actions (Week 1)
+### latest Immediate Actions (Week 1)
 
 1. ✅ **No Breaking Changes Needed** - Export patterns are already excellent
 2. 📝 **Document** `@unrdf/oxigraph` dual export pattern in README
 3. 🧹 **Refactor** `@unrdf/test-utils` to use public APIs from `@unrdf/knowledge-engine`
 
-### 7.2 Short-Term (Weeks 2-4)
+### latest Short-Term (Weeks 2-4)
 
 4. 📘 **Generate TypeScript Definitions** for High Priority packages:
    - Week 2: `@unrdf/core` (24h effort)
    - Week 3: `@unrdf/federation` (30h effort)
    - Week 4: `@unrdf/hooks` (32h effort)
 
-### 7.3 Medium-Term (Weeks 5-8)
+### latest Medium-Term (Weeks 5-8)
 
 5. 📘 **Complete TypeScript Coverage**:
    - `@unrdf/knowledge-engine` (50h)
    - `@unrdf/project-engine` (60h)
    - Medium/Low priority packages (48-64h)
 
-### 7.4 Long-Term (Continuous)
+### latest Long-Term (Continuous)
 
 6. 🔍 **Automated Validation**:
    - Add ESLint rule to enforce named exports only
@@ -368,7 +368,7 @@ import oxigraph from '@unrdf/oxigraph';         // Legacy
 
 ## 8. TypeScript Definition Generation Strategy
 
-### 8.1 Recommended Tooling
+### latest Recommended Tooling
 
 **Option 1: Manual (High Quality, High Effort)**
 - Write `.d.ts` files by hand
@@ -384,7 +384,7 @@ import oxigraph from '@unrdf/oxigraph';         // Legacy
 - Use `dts-gen` or similar tools
 - Suitable for simple utility packages (`@unrdf/domain`, `@unrdf/dark-matter`)
 
-### 8.2 Phased Rollout Plan
+### latest Phased Rollout Plan
 
 #### Phase 1: Foundation (Weeks 1-2)
 ```bash
@@ -420,25 +420,25 @@ pnpm --filter @unrdf/domain build:types
 
 ## 9. Conclusion
 
-### 9.1 Overall Assessment
+### latest Overall Assessment
 
-**Grade**: **A- (88.3%)**
+**Grade**: **A- (latest%)**
 
 The UNRDF monorepo demonstrates **excellent export hygiene** with:
-- ✅ Consistent named export patterns (93.75% uniformity)
+- ✅ Consistent named export patterns (latest% uniformity)
 - ✅ Zero transitive dependency pollution
 - ✅ No accidental internal module exposure
 - ✅ Clean, well-documented public APIs
 - ⚠️ Missing TypeScript definitions for 47% of packages
 
-### 9.2 Key Strengths
+### latest Key Strengths
 
 1. **Architectural Discipline**: Packages respect encapsulation boundaries
 2. **Tree-Shaking Friendly**: Named exports enable optimal bundling
 3. **IDE Support**: Clear export contracts improve developer experience
 4. **Maintainability**: Uniform patterns reduce cognitive load
 
-### 9.3 Areas for Improvement
+### latest Areas for Improvement
 
 1. **TypeScript Coverage**: Prioritize `.d.ts` generation for core packages
 2. **Test Utils Coupling**: Decouple from `@unrdf/knowledge-engine` internals

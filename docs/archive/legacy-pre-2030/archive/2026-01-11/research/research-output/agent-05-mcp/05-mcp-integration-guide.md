@@ -1,7 +1,7 @@
 # MCP Complete Integration Guide - Agent 05 Research
 
 **Research Date**: 2025-12-27
-**Claude Code Version**: 2.0.59
+**Claude Code Version**: latest
 **Status**: ✅ Complete end-to-end workflow
 
 ---
@@ -14,7 +14,7 @@ This guide walks through a **complete MCP integration** from design to productio
 
 ## Phase 1: Requirements & Design
 
-### Step 1.1: Define Use Case
+### Step latest: Define Use Case
 
 **Example**: Team needs database query capabilities in Claude Code
 
@@ -24,7 +24,7 @@ This guide walks through a **complete MCP integration** from design to productio
 - Team-shared configuration
 - Secrets managed securely
 
-### Step 1.2: Threat Model
+### Step latest: Threat Model
 
 **Security Analysis**:
 
@@ -35,7 +35,7 @@ This guide walks through a **complete MCP integration** from design to productio
 | Data Exfiltration | MEDIUM | HIGH | Read-only credentials |
 | Excessive Privileges | HIGH | HIGH | Dedicated DB user with SELECT only |
 
-### Step 1.3: Architecture Decision
+### Step latest: Architecture Decision
 
 **Transport**: stdio (local database) or HTTP (remote database)
 **Deployment**: npm package vs Docker container
@@ -55,7 +55,7 @@ This guide walks through a **complete MCP integration** from design to productio
 
 ## Phase 2: Development
 
-### Step 2.1: Project Setup
+### Step latest: Project Setup
 
 ```bash
 mkdir mcp-database-server
@@ -72,7 +72,7 @@ npm install -D typescript tsx @types/node @types/pg
 npx tsc --init
 ```
 
-### Step 2.2: Implement Server
+### Step latest: Implement Server
 
 **File**: `src/index.ts`
 
@@ -370,7 +370,7 @@ async function main() {
   const server = new Server(
     {
       name: 'database-mcp-server',
-      version: '1.0.0',
+      version: 'latest',
     },
     {
       capabilities: {
@@ -401,14 +401,14 @@ main().catch((error) => {
 });
 ```
 
-### Step 2.3: Add Package Configuration
+### Step latest: Add Package Configuration
 
 **File**: `package.json`
 
 ```json
 {
   "name": "mcp-database-server",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "MCP server for PostgreSQL database queries",
   "type": "module",
   "bin": {
@@ -424,20 +424,20 @@ main().catch((error) => {
   "author": "Your Team",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "pg": "^8.11.0",
-    "zod": "^3.22.0"
+    "@modelcontextprotocol/sdk": "^latest",
+    "pg": "^latest",
+    "zod": "^latest"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/pg": "^8.11.0",
-    "tsx": "^4.0.0",
-    "typescript": "^5.3.0"
+    "@types/node": "^latest",
+    "@types/pg": "^latest",
+    "tsx": "^latest",
+    "typescript": "^latest"
   }
 }
 ```
 
-### Step 2.4: Security Setup
+### Step latest: Security Setup
 
 **Create Read-Only Database User**:
 
@@ -467,7 +467,7 @@ WHERE grantee = 'mcp_readonly';
 
 ## Phase 3: Testing
 
-### Step 3.1: Unit Testing
+### Step latest: Unit Testing
 
 **File**: `tests/server.test.ts`
 
@@ -481,7 +481,7 @@ describe('Database MCP Server', () => {
 
   beforeAll(() => {
     server = new Server(
-      { name: 'test', version: '1.0.0' },
+      { name: 'test', version: 'latest' },
       { capabilities: { tools: {}, resources: {} } }
     );
     new DatabaseMCPServer(server, process.env.TEST_DATABASE_URL!);
@@ -489,7 +489,7 @@ describe('Database MCP Server', () => {
 
   it('should list tools', async () => {
     const response = await server.request({
-      jsonrpc: '2.0',
+      jsonrpc: 'latest',
       id: 1,
       method: 'tools/list',
     });
@@ -500,7 +500,7 @@ describe('Database MCP Server', () => {
 
   it('should reject non-SELECT queries', async () => {
     const response = await server.request({
-      jsonrpc: '2.0',
+      jsonrpc: 'latest',
       id: 2,
       method: 'tools/call',
       params: {
@@ -515,17 +515,17 @@ describe('Database MCP Server', () => {
 });
 ```
 
-### Step 3.2: Manual Testing
+### Step latest: Manual Testing
 
 ```bash
 # Test stdio protocol manually
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | npm run dev
+echo '{"jsonrpc":"latest","id":1,"method":"tools/list"}' | npm run dev
 
 # Expected output:
-# {"jsonrpc":"2.0","id":1,"result":{"tools":[...]}}
+# {"jsonrpc":"latest","id":1,"result":{"tools":[...]}}
 ```
 
-### Step 3.3: Integration Testing with Claude Code
+### Step latest: Integration Testing with Claude Code
 
 ```bash
 # 1. Set environment variable
@@ -549,7 +549,7 @@ claude mcp add --transport stdio testdb \
 
 ## Phase 4: Deployment
 
-### Step 4.1: Build Production Package
+### Step latest: Build Production Package
 
 ```bash
 # Build TypeScript
@@ -563,7 +563,7 @@ node dist/index.js
 ls -lh dist/
 ```
 
-### Step 4.2: Team Deployment (Project-Scoped)
+### Step latest: Team Deployment (Project-Scoped)
 
 **File**: `.mcp.json` (committed to git)
 
@@ -618,7 +618,7 @@ Ask Claude: "What tables are in the database?"
 Claude will use `mcp__project-db__query` tool.
 ```
 
-### Step 4.3: Production Deployment (npm Package)
+### Step latest: Production Deployment (npm Package)
 
 ```bash
 # 1. Prepare for publication
@@ -626,7 +626,7 @@ npm run build
 
 # 2. Test package locally
 npm pack
-# Creates: mcp-database-server-1.0.0.tgz
+# Creates: mcp-database-server-latest.tgz
 
 # 3. Publish to npm
 npm publish
@@ -638,7 +638,7 @@ claude mcp add --transport stdio db \
   -- npx -y mcp-database-server
 ```
 
-### Step 4.4: Production Deployment (Docker)
+### Step latest: Production Deployment (Docker)
 
 **File**: `Dockerfile`
 
@@ -664,13 +664,13 @@ CMD ["node", "dist/index.js"]
 
 ```bash
 # Build image
-docker build -t mcp-database-server:1.0.0 .
+docker build -t mcp-database-server:latest .
 
 # Run container
 docker run -d \
   --name mcp-db \
   -e DATABASE_URL="postgresql://..." \
-  mcp-database-server:1.0.0
+  mcp-database-server:latest
 
 # Add to Claude Code (requires HTTP transport - future work)
 # For stdio, need local install
@@ -680,7 +680,7 @@ docker run -d \
 
 ## Phase 5: Monitoring & Maintenance
 
-### Step 5.1: Audit Logging
+### Step latest: Audit Logging
 
 **Server logs to stderr** (captured by Claude Code):
 
@@ -699,7 +699,7 @@ tail -f ~/.claude/logs/mcp-*.log
 grep "mcp__testdb" ~/.claude/logs/*.log
 ```
 
-### Step 5.2: Performance Monitoring
+### Step latest: Performance Monitoring
 
 ```typescript
 class PerformanceMonitor {
@@ -719,7 +719,7 @@ class PerformanceMonitor {
 }
 ```
 
-### Step 5.3: Security Audits
+### Step latest: Security Audits
 
 **Quarterly Checklist**:
 
@@ -745,8 +745,8 @@ cat .mcp.json | jq .
 
 # Test server manually
 npx tsx src/index.ts
-# Enter: {"jsonrpc":"2.0","id":1,"method":"tools/list"}
-# Expect: {"jsonrpc":"2.0","id":1,"result":{...}}
+# Enter: {"jsonrpc":"latest","id":1,"method":"tools/list"}
+# Expect: {"jsonrpc":"latest","id":1,"result":{...}}
 ```
 
 **Solution**: Fix JSON syntax or server errors

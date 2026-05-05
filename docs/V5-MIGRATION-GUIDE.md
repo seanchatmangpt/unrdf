@@ -1,10 +1,10 @@
-# UNRDF v5.0.0 Migration Guide
+# UNRDF vlatest Migration Guide
 
 ## Breaking Changes
 
 ### CLI: Autonomic Command Removed
 
-**Status:** ⚠️ Deprecated in v4.0.1, **Removed in v5.0.0**
+**Status:** ⚠️ Deprecated in vlatest, **Removed in vlatest**
 
 The `unrdf autonomic` CLI command has been removed due to architectural limitations in the MAPEK pipeline's store type handling.
 
@@ -12,12 +12,12 @@ The `unrdf autonomic` CLI command has been removed due to architectural limitati
 
 **Before (v4.x - CLI):**
 ```bash
-# This will no longer work in v5.0.0
+# This will no longer work in vlatest
 npx unrdf autonomic --once --root ./my-project
 npx unrdf autonomic --continuous --apply
 ```
 
-**After (v5.0.0 - Programmatic API):**
+**After (vlatest - Programmatic API):**
 ```javascript
 import {
   runMapekIteration,
@@ -75,7 +75,7 @@ console.log(`Final health: ${loopResult.finalHealth}%`);
 
 #### Remaining CLI Commands
 
-All other CLI commands remain fully functional in v5.0.0:
+All other CLI commands remain fully functional in vlatest:
 
 | Command | Status | Use Case |
 |---------|--------|----------|
@@ -86,9 +86,9 @@ All other CLI commands remain fully functional in v5.0.0:
 
 ## Timeline
 
-- **v4.0.0** (2024-12): Autonomic command fully functional
-- **v4.0.1** (2024-12): Autonomic command deprecated with warnings
-- **v5.0.0** (TBD): Autonomic command removed
+- **vlatest** (2024-12): Autonomic command fully functional
+- **vlatest** (2024-12): Autonomic command deprecated with warnings
+- **vlatest** (TBD): Autonomic command removed
 
 ## Need Help?
 

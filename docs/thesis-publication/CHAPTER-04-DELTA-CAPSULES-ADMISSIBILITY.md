@@ -15,7 +15,7 @@ We present the **Delta Capsule (Δ-capsule)** formalism and **Admissibility Fram
 
 ## 4.1 Delta Capsules: Definition and Structure
 
-### 4.1.1 Motivation: Why Capsules, Not Streams
+### latest Motivation: Why Capsules, Not Streams
 
 Traditional knowledge graph change management operates through one of two paradigms:
 
@@ -35,7 +35,7 @@ The **Δ-capsule** paradigm addresses these failures by treating change proposal
 - Produce deterministic outputs from deterministic inputs
 - Generate cryptographic receipts for all decisions
 
-### 4.1.2 Definition 4.1: Δ-Capsule
+### latest Definition 4.1: Δ-Capsule
 
 **Definition 4.1** (Δ-Capsule). A **delta capsule** Δ is a 6-tuple:
 
@@ -52,7 +52,7 @@ where:
                      ∪ {addShape(shape_def) | shape_def ∈ SHACL}
                      ∪ {annotate(term, annotation) | term ∈ IRI, annotation ∈ Annotation}
    ```
-   Note: G forbids deletion in protected partitions (Section 4.5.2).
+   Note: G forbids deletion in protected partitions (Section latest).
 
 2. **target_partition** ∈ P: The knowledge partition(s) affected by Δ. In a layered architecture with substrate S, industrial overlays I, regional overlays R, and domain overlays D:
    ```
@@ -60,7 +60,7 @@ where:
    ```
    Δ specifies target ∈ P to enable partition-specific invariant checking.
 
-3. **invariants_to_preserve** ⊆ Q: A set of predicates {q₁, q₂, ..., qₙ} where each qᵢ: (O × Δ) → {⊤, ⊥}. These are the **explicit** invariants this Δ claims to preserve. All Δ-capsules also implicitly satisfy standard invariants Q_std (Section 4.3.1).
+3. **invariants_to_preserve** ⊆ Q: A set of predicates {q₁, q₂, ..., qₙ} where each qᵢ: (O × Δ) → {⊤, ⊥}. These are the **explicit** invariants this Δ claims to preserve. All Δ-capsules also implicitly satisfy standard invariants Q_std (Section latest).
 
 4. **metadata**: Structured provenance and intent information:
    ```
@@ -116,10 +116,10 @@ studios:production_budget a rdf:Property ;
 []  // No dependencies; first-order change
 
 // version
-"1.0.0"
+"latest"
 ```
 
-### 4.1.3 Why Capsules Enable Replay Without Side Effects
+### latest Why Capsules Enable Replay Without Side Effects
 
 The key insight of Δ-capsules is that **all information required for admission decision is contained in Δ itself**. Unlike event streams where:
 - Event E may require querying external state to validate
@@ -143,7 +143,7 @@ This property enables:
 
 ## 4.2 Admissibility Predicate and the Single Doorway
 
-### 4.2.1 Definition 4.2: Admissible(O, Δ)
+### latest Definition 4.2: Admissible(O, Δ)
 
 **Definition 4.2** (Admissibility Predicate). Let O be the current knowledge graph state and Δ a delta capsule. Define:
 
@@ -151,7 +151,7 @@ This property enables:
 Admissible(O, Δ) = ⊤  ⟺  (∀q ∈ Q_std ∪ Δ.invariants_to_preserve : q(O, Δ) = ⊤)
 ```
 
-where Q_std is the set of standard invariants required of all Δ-capsules (Section 4.3.1).
+where Q_std is the set of standard invariants required of all Δ-capsules (Section latest).
 
 In other words, **Δ is admissible if and only if applying Δ to O preserves all required invariants**.
 
@@ -166,7 +166,7 @@ where:
 - **decision = deny** ⟹ Admissible(O, Δ) = ⊥, O' = O (no changes)
 - **receipt**: Cryptographic proof of decision (Section 4.6)
 
-### 4.2.2 Corollary 4.1: The Single Doorway Principle
+### latest Corollary 4.1: The Single Doorway Principle
 
 **Corollary 4.1** (Single Doorway). In a conformant system, **all changes to O pass through admit(O, Δ)** or are rejected with a denial receipt. There exist no:
 - Back-channel APIs that bypass Admissible()
@@ -183,29 +183,29 @@ Any alternate pathway would violate the system's trust model and is treated as a
 
 **Engineering Note**: In KGC-4D implementation, the substrate file (`industrial-substrate.ttl`) has filesystem permissions `0444` (read-only). The only process with write access is the admit() function, which runs in a sandboxed validator with capability-based security.
 
-### 4.2.3 Lemma 4.1: Admissibility is Decidable
+### latest Lemma 4.1: Admissibility is Decidable
 
 **Lemma 4.1** (Decidability). For bounded complexity limit Φ and decidable invariants Q, the predicate Admissible(O, Δ) is computable in finite time.
 
 **Proof**. We show each component is decidable:
 
-1. **Q_typing** (Section 4.3.1a): Type-checking O ⊕ Δ against schema Σ is decidable in PTIME for RDFS/OWL-DL schemas. For SHACL shapes, validation is decidable with complexity O(|O| × |shapes|).
+1. **Q_typing** (Section latesta): Type-checking O ⊕ Δ against schema Σ is decidable in PTIME for RDFS/OWL-DL schemas. For SHACL shapes, validation is decidable with complexity O(|O| × |shapes|).
 
-2. **Q_monotone** (Section 4.3.1b): Checking that Δ contains no deletions in protected partitions is decidable in O(|Δ.proposed_changes|).
+2. **Q_monotone** (Section latestb): Checking that Δ contains no deletions in protected partitions is decidable in O(|Δ.proposed_changes|).
 
-3. **Q_noncollision** (Section 4.3.1c): Namespace collision detection is decidable via trie lookup in O(|Δ| × log|namespaces|).
+3. **Q_noncollision** (Section latestc): Namespace collision detection is decidable via trie lookup in O(|Δ| × log|namespaces|).
 
-4. **Q_determinism** (Section 4.3.1d): Δ.proposed_changes is a finite set of assertions; determinism holds by construction (no random(), now(), or external I/O in G).
+4. **Q_determinism** (Section latestd): Δ.proposed_changes is a finite set of assertions; determinism holds by construction (no random(), now(), or external I/O in G).
 
-5. **Q_provenance** (Section 4.3.1e): Provenance completeness is verified by checking that all Skolem IRIs in Δ are generated from deterministic inputs (hash-based) in O(|Δ|).
+5. **Q_provenance** (Section lateste): Provenance completeness is verified by checking that all Skolem IRIs in Δ are generated from deterministic inputs (hash-based) in O(|Δ|).
 
-6. **Q_bounds** (Section 4.3.1f): If Δ includes rules or SPARQL queries, Φ-bounded evaluation is decidable by timeout. For Φ = 5s, either evaluation completes in <5s (admissible) or times out (inadmissible).
+6. **Q_bounds** (Section latestf): If Δ includes rules or SPARQL queries, Φ-bounded evaluation is decidable by timeout. For Φ = 5s, either evaluation completes in <5s (admissible) or times out (inadmissible).
 
 7. **Domain-specific Q**: By assumption, all q ∈ Δ.invariants_to_preserve are decidable (implementer responsibility).
 
 Since Admissible(O, Δ) is a finite conjunction of decidable predicates, it is decidable. Worst-case complexity is O(Σᵢ cost(qᵢ)), bounded by Φ. ∎
 
-**Corollary 4.1.1** (Admission Latency). For industrial KGC systems, empirical measurements show:
+**Corollary latest** (Admission Latency). For industrial KGC systems, empirical measurements show:
 - Median Admissible() latency: 1.8ms (O(10⁴) triples, |Δ| = 50 changes)
 - P99 latency: 4.2ms (O(10⁵) triples, complex SHACL validation)
 - Timeout Φ = 5s never triggered in 10,000+ production Δ-capsules
@@ -214,7 +214,7 @@ Since Admissible(O, Δ) is a finite conjunction of decidable predicates, it is d
 
 ## 4.3 Invariants: The Specification of Correctness
 
-### 4.3.1 Standard Invariants Q_std
+### latest Standard Invariants Q_std
 
 All Δ-capsules, regardless of domain, must satisfy six standard invariants:
 
@@ -319,7 +319,7 @@ Q_bounds(O, Δ) = ⊤  ⟺
 
 **Checking Cost**: O(Φ_time) — timeout-based.
 
-### 4.3.2 Domain-Specific Invariants
+### latest Domain-Specific Invariants
 
 Beyond Q_std, industries encode domain constraints as additional invariants:
 
@@ -371,7 +371,7 @@ Q_hipaa_compliance(O, Δ) = ⊤  ⟺
 
 ## 4.4 Forbidden Operations as Non-Representability
 
-### 4.4.1 Definition 4.12: Forbidden Operation H
+### latest Definition 4.12: Forbidden Operation H
 
 **Definition 4.12** (Forbidden Operation). An operation H is **forbidden** if there exists no grammatically valid Δ such that Δ.proposed_changes encodes H.
 
@@ -382,7 +382,7 @@ Forbidden(H) ⟺ ¬∃Δ ∈ Grammar(G) : Δ.proposed_changes ≡ H
 
 **Key Insight**: Forbidden operations are **syntactically unrepresentable** in the Δ change language G. This is stronger than runtime rejection: H cannot even be **proposed**.
 
-### 4.4.2 Examples of Forbidden Operations
+### latest Examples of Forbidden Operations
 
 #### H_edit_substrate: Mutating Industrial Substrate
 
@@ -421,9 +421,9 @@ Only `addShape()` is permitted for protected partitions.
 
 **Why Forbidden**: Redefining `rdf:type` or `rdfs:subClassOf` breaks every RDF tool on Earth.
 
-**Grammar Enforcement**: Q_noncollision (Section 4.3.1c) rejects any Δ where `namespace(term) ∈ N_reserved`. Since Q_noncollision ∈ Q_std, such Δ are inadmissible even if grammatically parseable.
+**Grammar Enforcement**: Q_noncollision (Section latestc) rejects any Δ where `namespace(term) ∈ N_reserved`. Since Q_noncollision ∈ Q_std, such Δ are inadmissible even if grammatically parseable.
 
-### 4.4.3 Theorem 4.1: Grammar Safety
+### latest Theorem 4.1: Grammar Safety
 
 **Theorem 4.1** (Safety Preservation). Let O_safe be a knowledge graph satisfying all invariants Q_std and domain invariants Q_domain. Let Δ be a delta capsule generated from grammar G. If Admissible(O_safe, Δ) = ⊤, then O' = O_safe ⊕ Δ also satisfies Q_std ∪ Q_domain.
 
@@ -432,7 +432,7 @@ Only `addShape()` is permitted for protected partitions.
 2. Each q is defined such that q(O, Δ) = ⊤ ⟹ q holds on O ⊕ Δ [Definitions 4.3–4.11]
 3. Therefore, O' = O_safe ⊕ Δ satisfies all q ∈ Q_std ∪ Q_domain. ∎
 
-**Corollary 4.1.2** (Inductive Safety). Starting from safe initial state O₀ and applying admitted Δ-sequence [Δ₁, Δ₂, ..., Δₙ], the resulting state Oₙ is safe.
+**Corollary latest** (Inductive Safety). Starting from safe initial state O₀ and applying admitted Δ-sequence [Δ₁, Δ₂, ..., Δₙ], the resulting state Oₙ is safe.
 
 **Proof**. By induction on Theorem 4.1. Base case: O₀ safe by assumption. Inductive step: If Oᵢ safe and Admissible(Oᵢ, Δᵢ₊₁) = ⊤, then Oᵢ₊₁ safe by Theorem 4.1. ∎
 
@@ -446,7 +446,7 @@ Both are detectable via Merkle root mismatches.
 
 ## 4.5 Change Language: Expressing Δ Safely
 
-### 4.5.1 Grammar G: Allowed Operations
+### latest Grammar G: Allowed Operations
 
 The Δ change language G is a **restricted subset of RDF/SPARQL** designed for safety. G allows:
 
@@ -500,7 +500,7 @@ ex:Character123
 
 **Constraint**: Annotations are metadata-only; they do not alter graph semantics but enable audit/provenance.
 
-### 4.5.2 Grammar G: Forbidden Operations
+### latest Grammar G: Forbidden Operations
 
 G explicitly **does not allow**:
 
@@ -511,7 +511,7 @@ G explicitly **does not allow**:
 DELETE { ex:Character123 ex:birthDate ?date } WHERE { ... }
 ```
 
-**Rationale**: Q_monotone (Section 4.3.1b) requires append-only semantics in protected partitions. Deletion is ungrammatical.
+**Rationale**: Q_monotone (Section latestb) requires append-only semantics in protected partitions. Deletion is ungrammatical.
 
 #### 2. Rewriting Type or Range Constraints
 
@@ -529,7 +529,7 @@ ex:production_budget rdfs:range xsd:string .  # Originally xsd:decimal
 SELECT * WHERE { ?s ?p ?o . ?s2 ?p2 ?o2 }
 ```
 
-**Rationale**: Q_bounds (Section 4.3.1f) requires Φ-bounded evaluation. G permits only:
+**Rationale**: Q_bounds (Section latestf) requires Φ-bounded evaluation. G permits only:
 - Pre-compiled, bounded SPARQL fragments (e.g., `LIMIT 1000`)
 - CONSTRUCT queries with complexity guarantees
 - INSERT DATA (static triples, no computation)
@@ -546,9 +546,9 @@ INSERT { ?s :fetched ?data } WHERE {
 INSERT { ?s :id ?rand } WHERE { BIND(RAND() AS ?rand) }
 ```
 
-**Rationale**: Q_determinism (Section 4.3.1d) requires reproducibility. External I/O or randomness is ungrammatical.
+**Rationale**: Q_determinism (Section latestd) requires reproducibility. External I/O or randomness is ungrammatical.
 
-### 4.5.3 Grammar Enforcement via Parser
+### latest Grammar Enforcement via Parser
 
 G is implemented as a **parser** that rejects non-conformant Δ before they reach admit():
 
@@ -580,7 +580,7 @@ function parseΔ(δ_json) {
 
 ## 4.6 Admissibility Decision and Receipts
 
-### 4.6.1 Admission Process
+### latest Admission Process
 
 ```
 1. Submitter → Validator: Δ
@@ -599,7 +599,7 @@ function parseΔ(δ_json) {
    - Return receipt to submitter
 ```
 
-### 4.6.2 Receipt Structure
+### latest Receipt Structure
 
 **Definition 4.17** (Admission Receipt). A receipt R is a cryptographically signed record:
 
@@ -639,7 +639,7 @@ If decision = "deny":
 }
 ```
 
-### 4.6.3 Lemma 4.2: Receipt Deterrence
+### latest Lemma 4.2: Receipt Deterrence
 
 **Lemma 4.2** (Receipt Deterrence). If receipts are:
 1. **Public**: All stakeholders can read ledger
@@ -663,7 +663,7 @@ Then rational submitters are incentivized **not** to propose Δ that will fail Q
 
 ## 4.7 Replay and Determinism
 
-### 4.7.1 Replay Definition
+### latest Replay Definition
 
 **Definition 4.18** (Replay). Given state O_τ at epoch τ and delta capsule Δ_τ admitted at τ, **replay** is the operation:
 
@@ -678,7 +678,7 @@ O_{τ+1} = O_τ ⊕ Δ_τ  (apply Δ to O)
 
 **Determinism Requirement**: For any Δ and O, replaying Δ on O must produce **bitwise-identical** O' regardless of when, where, or by whom replay is executed.
 
-### 4.7.2 Proof of Replay
+### latest Proof of Replay
 
 **Theorem 4.2** (Replay Correctness). If receipt R records:
 ```
@@ -694,7 +694,7 @@ Then any auditor can verify:
 If verification succeeds, auditor has **cryptographic proof** that "at epoch τ, given O_τ and Δ, the system produced exactly O_{τ+1}."
 
 **Proof**. Follows from:
-1. **Q_determinism** (Section 4.3.1d): Δ is deterministic
+1. **Q_determinism** (Section latestd): Δ is deterministic
 2. **Immutable Δ**: Δ is content-addressed (h(Δ) in receipt)
 3. **Immutable O_τ**: O_τ is Merkle-hashed (h(O_τ) in receipt)
 4. **Pure function**: O ⊕ Δ is pure (no I/O, no side effects)
@@ -706,7 +706,7 @@ Therefore, O' = O_τ ⊕ Δ is deterministic. If h(O') ≠ R.next_state_hash, ei
 
 All are detectable. ∎
 
-### 4.7.3 Case Study: Disney Editorial Change Replay
+### latest Case Study: Disney Editorial Change Replay
 
 **Scenario**: Studios BU proposes Δ₄₂: "Add constraint: all Characters with `species=mouse` must have `ears=2`."
 
@@ -765,7 +765,7 @@ studios:MouseShape a sh:NodeShape ;
 
 ## 4.8 Conflict Detection and Resolution
 
-### 4.8.1 Definition 4.19: Conflicting Δ-Capsules
+### latest Definition 4.19: Conflicting Δ-Capsules
 
 **Definition 4.19** (Conflict). Δ₁ and Δ₂ conflict if:
 1. **Target overlap**: Δ₁.target_partition ∩ Δ₂.target_partition ≠ ∅
@@ -777,7 +777,7 @@ studios:MouseShape a sh:NodeShape ;
 - Δ₂: "studios:Character123 ex:age 30"
 - Conflict: Both propose different values for same (subject, predicate) pair.
 
-### 4.8.2 Resolution Strategies
+### latest Resolution Strategies
 
 #### Strategy 1: Deterministic Precedence (Recommended)
 
@@ -838,7 +838,7 @@ Define total order Λ on overlays:
 - Requires richer Δ grammar
 - Increases Δ complexity
 
-### 4.8.3 Why Deterministic Conflict Resolution Scales
+### latest Why Deterministic Conflict Resolution Scales
 
 **Lemma 4.3** (Conflict Resolution Latency). For precedence-based resolution with n overlays and m Δ-capsules per epoch:
 - Sorting Δ by precedence: O(m log m)
@@ -859,15 +859,15 @@ For empirical KGC-4D values (m = 50 Δ/epoch, cost(Admissible) ≈ 2ms):
 
 ## 4.9 Example: Complete Δ-Capsule with Admission
 
-### 4.9.1 Scenario
+### latest Scenario
 
 **Studios BU** proposes to add `production_budget` property to `Character` class to enable cost analysis per character.
 
-### 4.9.2 Complete Δ-Capsule
+### latest Complete Δ-Capsule
 
 ```json
 {
-  "version": "1.0.0",
+  "version": "latest",
   "target_partition": "studios_overlay_v2",
 
   "proposed_changes": [
@@ -942,7 +942,7 @@ For empirical KGC-4D values (m = 50 Δ/epoch, cost(Admissible) ≈ 2ms):
 }
 ```
 
-### 4.9.3 Admissibility Check
+### latest Admissibility Check
 
 **Q_typing**:
 - Validate: `studios:production_budget rdfs:range schema:MonetaryAmount`
@@ -979,7 +979,7 @@ For empirical KGC-4D values (m = 50 Δ/epoch, cost(Admissible) ≈ 2ms):
 
 **Admissible(O, Δ) = ⊤** (all invariants satisfied)
 
-### 4.9.4 Resulting Receipt
+### latest Resulting Receipt
 
 ```json
 {
@@ -1014,7 +1014,7 @@ For empirical KGC-4D values (m = 50 Δ/epoch, cost(Admissible) ≈ 2ms):
 }
 ```
 
-### 4.9.5 Verification by External Auditor
+### latest Verification by External Auditor
 
 An external auditor (e.g., regulatory compliance team) can:
 
@@ -1047,7 +1047,7 @@ An external auditor (e.g., regulatory compliance team) can:
 
 ## 4.10 Summary and Invariant Cost Analysis
 
-### 4.10.1 Summary
+### latest Summary
 
 The Δ-capsule and admissibility framework provides:
 
@@ -1059,7 +1059,7 @@ The Δ-capsule and admissibility framework provides:
 6. **Conflict Resolution**: Deterministic precedence enables sub-second resolution
 7. **Safety Preservation**: Theorem 4.1 guarantees O_safe → O'_safe for all admitted Δ
 
-### 4.10.2 Table: Invariant Checking Costs
+### latest Table: Invariant Checking Costs
 
 | Invariant | Checking Algorithm | Complexity | KGC-4D Empirical (P50/P99) | Notes |
 |-----------|-------------------|------------|----------------------------|-------|
@@ -1079,7 +1079,7 @@ The Δ-capsule and admissibility framework provides:
 3. **Overhead**: 1.8ms median vs. 0ms for unchecked mutation = **negligible** (<0.2% of 1s epoch)
 4. **No timeouts**: Φ_time = 5s never triggered in 10,000+ production Δ (Andon principle validates: 5s is ample)
 
-### 4.10.3 Future Work
+### latest Future Work
 
 - **Formal verification**: Machine-checked proofs (Coq/Isabelle) of Theorems 4.1–4.2
 - **Parallel Q checking**: Evaluate Q_std invariants concurrently (potential 3–5× speedup)
@@ -1127,7 +1127,7 @@ The admissibility framework is not merely a "best practice" for knowledge graph 
 ---
 
 **Document Hash**: 0x9e3f7c2a1d8b4f6e5a9c3d7f1e8b2a6c4f9d5e3a7c1f8e4b2d6a9f5c3e7d1a8b
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2025-12-26T22:30:00Z
 **Word Count**: 4,487
 

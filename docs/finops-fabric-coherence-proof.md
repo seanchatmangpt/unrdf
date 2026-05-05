@@ -141,8 +141,8 @@ O_new: ApprovalRule {
 **Day 3: Auditor Inspection**
 - Auditor asks: "What controls changed?"
 - Operations team retrieves receipt from Day 1 Evening
-- Auditor downloads the pinned generator v1.0.1 (version pinned in receipt)
-- Auditor computes: μ_v1.0.1(O_new)
+- Auditor downloads the pinned generator latest (version pinned in receipt)
+- Auditor computes: μ_latest(O_new)
 - Auditor verifies: hash(generated_A) = hash(receipt_A) ✓
 - Auditor concludes: "Approval rule was generated from specification; controls are correct-by-construction"
 

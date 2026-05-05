@@ -18,12 +18,12 @@ const sampleObservations = [
     outputs: {
       available: true,
       module: 'worker_threads',
-      nodeVersion: 'v22.21.1'
+      nodeVersion: '[VERSION]'
     },
     timestamp: 1766824576989,
     guardDecision: 'allowed',
     metadata: {
-      minVersion: 'v10.5.0'
+      minVersion: '[VERSION]'
     }
   },
   {
@@ -57,7 +57,7 @@ const sampleObservations = [
     method: 'runtime.node_version',
     domain: 'runtime',
     outputs: {
-      nodeVersion: 'v22.21.1',
+      nodeVersion: '[VERSION]',
       platform: 'linux',
       arch: 'x64'
     },

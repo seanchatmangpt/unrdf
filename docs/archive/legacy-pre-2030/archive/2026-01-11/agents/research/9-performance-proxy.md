@@ -112,11 +112,11 @@ Output: CSV with operation, time_ms, memory_delta_bytes, result_size
 ### Sample Output
 ```csv
 operation,time_ms,memory_delta_bytes,result_size
-parse-ttl-1000-quads,12.34,524288,245000
-freeze-universe,45.67,1048576,1024
-query-universe,5.23,262144,12000
-execute-hook,2.11,131072,500
-verify-receipt,0.89,65536,256
+parse-ttl-1000-quads,latest,524288,245000
+freeze-universe,latest,1048576,1024
+query-universe,latest,262144,12000
+execute-hook,latest,131072,500
+verify-receipt,latest,65536,256
 ```
 
 ### OTEL Instrumentation Gaps

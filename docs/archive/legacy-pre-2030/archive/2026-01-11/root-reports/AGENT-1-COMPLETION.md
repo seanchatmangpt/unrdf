@@ -83,7 +83,7 @@ DETERMINISTIC=1 node tools/prove.mjs
 ### ✅ Phase 1D: Artifact Ledger Schema
 
 **File**: `/home/user/unrdf/ARTIFACTS/last7days-ledger.json`
-**Size**: 1.3 KB
+**Size**: latest KB
 
 **Schema Fields**:
 ```json
@@ -264,7 +264,7 @@ diff run1.log run2.log  # Should be identical
 - If dependencies wrong → Runtime module errors
 
 ### Evidence Quality
-- ✅ File sizes measured (287 lines, 35 lines, 1.3 KB)
+- ✅ File sizes measured (287 lines, 35 lines, latest KB)
 - ✅ Structure verified (find, ls, wc)
 - ✅ Exports verified (grep shows 8 statements)
 - ⚠️ Runtime execution pending pnpm install (expected)
@@ -274,7 +274,7 @@ diff run1.log run2.log  # Should be identical
 ## Status: READY FOR AGENTS 2-10
 
 **Phase 1A-D**: ✅ COMPLETE
-**Files**: 5 created (287 + 35 + 1.3KB + docs)
+**Files**: 5 created (287 + 35 + latestKB + docs)
 **APIs**: 73 re-exported + 2 factory functions
 **Dependencies**: 5 workspace packages (zero external)
 **Determinism**: ✅ Guaranteed via DETERMINISTIC=1

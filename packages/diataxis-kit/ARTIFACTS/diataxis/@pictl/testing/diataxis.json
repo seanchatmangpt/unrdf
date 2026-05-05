@@ -1,0 +1,110 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.25,
+    "reference": 0.5,
+    "tutorials": 0.1
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "37060f28566dc535ae65f4a69dc3b19f61fbbb7b0fc21ac2399dcf6a8347d0d1",
+    "readmeHeadings": [
+      "Harnesses",
+      "OtelCapture",
+      "Exit Codes",
+      "Gotchas"
+    ]
+  },
+  "explanation": {
+    "architecture": "Test harnesses for the pictl monorepo. Provides parity, determinism, CLI, OTEL, and certification testing infrastructure.",
+    "concepts": [
+      "testing",
+      "fixtures",
+      "utilities"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-pictl-testing-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @pictl/testing",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with testing in your project",
+      "id": "howto-integrate-with-testing",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @pictl/testing with testing",
+      "title": "Integrate with testing"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "@pictl/testing",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-pictl-testing-reference",
+    "items": [
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@pictl/testing",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@pictl/testing Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.1,
+      "goal": "Learn how to set up and use @pictl/testing in your project",
+      "id": "tutorial-getting-started-with-pictl-testing",
+      "prerequisites": [],
+      "source": [
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with @pictl/testing"
+    }
+  ],
+  "version": "[VERSION]"
+}

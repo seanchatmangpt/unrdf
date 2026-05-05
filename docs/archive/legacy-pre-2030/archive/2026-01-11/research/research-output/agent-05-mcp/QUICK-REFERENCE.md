@@ -1,6 +1,6 @@
 # MCP Quick Reference Card
 
-**Claude Code 2.0.59** | **MCP Spec 2025-11-25** | **Agent 05 Research**
+**Claude Code latest** | **MCP Spec 2025-11-25** | **Agent 05 Research**
 
 ---
 
@@ -100,7 +100,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
 const server = new Server(
-  { name: 'my-server', version: '1.0.0' },
+  { name: 'my-server', version: 'latest' },
   { capabilities: { tools: {} } }
 );
 
@@ -145,7 +145,7 @@ npx tsx server.ts
 cat ~/.claude.json | jq .mcpServers
 
 # Test server manually
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | npx tsx server.ts
+echo '{"jsonrpc":"latest","id":1,"method":"tools/list"}' | npx tsx server.ts
 
 # Check Claude Code logs
 tail -f ~/.claude/logs/mcp-*.log
@@ -176,7 +176,7 @@ echo $DATABASE_URL
 ### Request
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 1,
   "method": "tools/call",
   "params": {
@@ -189,7 +189,7 @@ echo $DATABASE_URL
 ### Success Response
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 1,
   "result": {
     "content": [{ "type": "text", "text": "Result data" }]
@@ -200,7 +200,7 @@ echo $DATABASE_URL
 ### Error Response
 ```json
 {
-  "jsonrpc": "2.0",
+  "jsonrpc": "latest",
   "id": 1,
   "error": {
     "code": -32602,

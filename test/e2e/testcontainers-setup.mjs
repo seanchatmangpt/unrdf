@@ -114,7 +114,7 @@ export const testcontainersConfig = {
 
   // Elasticsearch configuration
   elasticsearch: {
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:8.11.0',
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:latest',
     port: 9200,
     environment: {
       'discovery.type': 'single-node',
@@ -131,7 +131,7 @@ export const testcontainersConfig = {
 
   // Kibana configuration
   kibana: {
-    image: 'docker.elastic.co/kibana/kibana:8.11.0',
+    image: 'docker.elastic.co/kibana/kibana:latest',
     port: 5601,
     environment: {
       ELASTICSEARCH_HOSTS: 'http://elasticsearch:9200',

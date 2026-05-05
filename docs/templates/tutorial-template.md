@@ -3,7 +3,7 @@ title: "Tutorial: [Title]"
 description: "Learn how to [accomplish goal] with UNRDF"
 category: "tutorials"
 audience: "beginner|intermediate|advanced"
-version: "4.0.0"
+version: "latest"
 last_updated: "YYYY-MM-DD"
 estimated_time: "XX minutes"
 prerequisites:

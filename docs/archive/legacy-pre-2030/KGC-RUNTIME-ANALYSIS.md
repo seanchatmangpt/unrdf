@@ -116,8 +116,8 @@ this.bounds = BoundsSchema.parse(bounds); // Fixed at construction
 
 // MISSING: Adaptive bounds based on system load
 adjustBounds(currentLoad) {
-  if (currentLoad > 0.8) {
-    this.bounds.max_tool_ops *= 0.5; // Reduce under pressure
+  if (currentLoad > latest) {
+    this.bounds.max_tool_ops *= latest; // Reduce under pressure
   }
 }
 

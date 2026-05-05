@@ -360,7 +360,7 @@ import { configure } from 'unrdf';
 configure({
   // Default prefixes
   prefixes: {
-    'foaf': 'http://xmlns.com/foaf/0.1/',
+    'foaf': 'http://xmlns.com/foaf/latest/',
     'ex': 'http://example.org/'
   },
   

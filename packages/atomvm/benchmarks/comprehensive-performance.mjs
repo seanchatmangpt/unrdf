@@ -4,7 +4,7 @@
  *
  * Fully compatible with OxigraphStore and actual package APIs
  *
- * @version 1.0.0
+ * @version [VERSION]
  */
 
 import { performance } from 'node:perf_hooks';

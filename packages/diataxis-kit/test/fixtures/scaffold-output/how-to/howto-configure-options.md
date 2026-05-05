@@ -2,7 +2,7 @@
 title: "Configure Options"
 type: "how-to"
 packageName: "test-package"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.126Z"
 confidenceScore: 0.85
 proof: "2581b7f7f9698a696a4f86cb63fb7a85c362988199a7bf9ad665397aee5f790b"

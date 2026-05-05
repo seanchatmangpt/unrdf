@@ -441,16 +441,16 @@ A **graduated quality framework** for package evolution (L1 → L5).
 **Traditional Approach**:
 
 ```bash
-# All packages must be perfect for 6.0.0
+# All packages must be perfect for latest
 # Result: Never ship
 ```
 
 **Maturity Ladder Approach**:
 
 ```bash
-# 6.0.0-alpha: Core packages at L5
-# 6.0.0-beta: All packages at L3
-# 6.0.0: All packages at L5
+# latest-alpha: Core packages at L5
+# latest-beta: All packages at L3
+# latest: All packages at L5
 ```
 
 ### L3: Deterministic Execution

@@ -22,7 +22,7 @@ UNRDF is a modular RDF knowledge graph platform built on a **hybrid dual-store a
 
 ## 1. Core Abstractions
 
-### 1.1 RDF Store Layer (`@unrdf/core`, `@unrdf/oxigraph`)
+### latest RDF Store Layer (`@unrdf/core`, `@unrdf/oxigraph`)
 
 #### Primary Store: OxigraphStore
 
@@ -94,7 +94,7 @@ dataFactory = {
 
 ---
 
-### 1.2 Knowledge Hooks Layer (`@unrdf/hooks`)
+### latest Knowledge Hooks Layer (`@unrdf/hooks`)
 
 #### Hook Definition DSL
 
@@ -166,7 +166,7 @@ BatchedTelemetry  // Buffered OTEL spans (10ms flush)
 
 ---
 
-### 1.3 Streaming Layer (`@unrdf/streaming`)
+### latest Streaming Layer (`@unrdf/streaming`)
 
 #### Change Feed (Event Emitter)
 
@@ -236,7 +236,7 @@ ValidationMode = {
 
 ## 2. Key Architectural Patterns
 
-### 2.1 Dual-Store Hybrid Architecture
+### latest Dual-Store Hybrid Architecture
 
 **Problem:** Oxigraph excels at SPARQL but lacks streaming parser. N3 has excellent streaming but slower SPARQL.
 
@@ -260,7 +260,7 @@ import { Parser, Writer, StreamParser, StreamWriter } from 'n3';
 
 ---
 
-### 2.2 Hook-Based Policy Framework
+### latest Hook-Based Policy Framework
 
 **Pattern:** **Policy-as-Code** using ECA (Event-Condition-Action)
 
@@ -288,7 +288,7 @@ executeHookChain([iriValidator, namespaceFixer], quad);
 
 ---
 
-### 2.3 Reactive Synchronous Queries
+### latest Reactive Synchronous Queries
 
 **Problem:** Vue/React computed() requires synchronous functions. Traditional SPARQL is async.
 
@@ -322,7 +322,7 @@ const nameCount = computed(() => {
 
 ---
 
-### 2.4 Batched Telemetry (Performance Optimization)
+### latest Batched Telemetry (Performance Optimization)
 
 **Problem:** OTEL span creation is expensive (200-500μs per span)
 
@@ -357,7 +357,7 @@ class BatchedTelemetry {
 
 ---
 
-### 2.5 Error Handling Strategy
+### latest Error Handling Strategy
 
 **Approach:** **Defensive Programming with Poka-Yoke Guards**
 
@@ -392,7 +392,7 @@ if (transformed._pooled && options.warnPooledQuads !== false) {
 
 ## 3. Module Boundaries and Interfaces
 
-### 3.1 Dependency Graph
+### latest Dependency Graph
 
 ```
 @unrdf/streaming
@@ -408,9 +408,9 @@ if (transformed._pooled && options.warnPooledQuads !== false) {
 
 ---
 
-### 3.2 Package Exports
+### latest Package Exports
 
-#### `@unrdf/core` (v6.0.0-alpha.1)
+#### `@unrdf/core` (vlatest.1)
 
 **Exports:**
 ```javascript
@@ -439,7 +439,7 @@ export { DebugLogger, PerformanceTracker, trace, formatBytes } from './debug.mjs
 
 ---
 
-#### `@unrdf/oxigraph` (v5.0.1)
+#### `@unrdf/oxigraph` (vlatest)
 
 **Exports:**
 ```javascript
@@ -454,7 +454,7 @@ export { dataFactory } from './index.mjs';
 
 ---
 
-#### `@unrdf/hooks` (v5.0.1)
+#### `@unrdf/hooks` (vlatest)
 
 **Exports:**
 ```javascript
@@ -488,7 +488,7 @@ export { PolicyPack, PolicyPackManager, createPolicyPackFromDirectory } from './
 
 ---
 
-#### `@unrdf/streaming` (v5.0.1)
+#### `@unrdf/streaming` (vlatest)
 
 **Exports:**
 ```javascript
@@ -525,7 +525,7 @@ export { PerformanceMonitor, createPerformanceMonitor } from './performance-moni
 
 ---
 
-### 3.3 Interface Contracts
+### latest Interface Contracts
 
 #### Store Interface Contract
 
@@ -591,7 +591,7 @@ interface ChangeEvent {
 
 ## 4. Architectural Quality Attributes
 
-### 4.1 Performance
+### latest Performance
 
 **Measured Characteristics:**
 - **Hook Execution:** 80-92% latency reduction via caching (KnowledgeHookEngine)
@@ -607,7 +607,7 @@ interface ChangeEvent {
 
 ---
 
-### 4.2 Scalability
+### latest Scalability
 
 **Horizontal:**
 - Stateless hook execution (parallelizable)
@@ -619,7 +619,7 @@ interface ChangeEvent {
 
 ---
 
-### 4.3 Maintainability
+### latest Maintainability
 
 **Strengths:**
 - Clear module boundaries (4-layer substrate)
@@ -635,7 +635,7 @@ interface ChangeEvent {
 
 ---
 
-### 4.4 Testability
+### latest Testability
 
 **Test Coverage:**
 - Target: 80%+ coverage, 100% pass rate
@@ -658,7 +658,7 @@ export function validateQuad(quad) {
 
 ---
 
-### 4.5 Security
+### latest Security
 
 **Defense Mechanisms:**
 - Zod validation at all boundaries (untrusted input)
@@ -675,7 +675,7 @@ export function validateQuad(quad) {
 
 ## 5. Architectural Anti-Patterns Avoided
 
-### 5.1 God Object
+### latest God Object
 
 **Avoided By:** Single Responsibility Principle
 - `OxigraphStore`: Only store operations
@@ -684,7 +684,7 @@ export function validateQuad(quad) {
 
 ---
 
-### 5.2 Circular Dependencies
+### latest Circular Dependencies
 
 **Avoided By:** Strict dependency flow
 ```
@@ -694,7 +694,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 5.3 Tight Coupling
+### latest Tight Coupling
 
 **Avoided By:**
 - Dependency injection (constructor-based)
@@ -703,7 +703,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 5.4 Leaky Abstractions
+### latest Leaky Abstractions
 
 **N3 Isolation:**
 - N3 imports ONLY in `n3-justified-only.mjs`
@@ -714,7 +714,7 @@ No upward or lateral dependencies.
 
 ## 6. Future Architectural Considerations
 
-### 6.1 Complete N3 Removal
+### latest Complete N3 Removal
 
 **Current State:** N3 isolated to streaming layer
 **Target State:** Replace N3 with Oxigraph native streaming parser (when available)
@@ -727,7 +727,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 6.2 Distributed Store
+### latest Distributed Store
 
 **Challenge:** Oxigraph is in-memory only
 **Potential Solutions:**
@@ -737,7 +737,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 6.3 Query Optimization
+### latest Query Optimization
 
 **Opportunities:**
 - Query plan caching (prepareQuerySync result reuse)
@@ -814,7 +814,7 @@ No upward or lateral dependencies.
 
 ## 8. Summary and Recommendations
 
-### 8.1 Architectural Strengths
+### latest Architectural Strengths
 
 1. **Clear Separation of Concerns:** 4-layer substrate with explicit boundaries
 2. **Best-of-Breed Combination:** Oxigraph + N3 hybrid
@@ -824,7 +824,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 8.2 Areas for Improvement
+### latest Areas for Improvement
 
 1. **Persistence Layer:** Oxigraph in-memory only (add serialization or external store)
 2. **N3 Migration:** Complete removal when Oxigraph streaming available
@@ -833,7 +833,7 @@ No upward or lateral dependencies.
 
 ---
 
-### 8.3 Recommended Next Steps
+### latest Recommended Next Steps
 
 1. **Short-term (Q1 2026):**
    - Add query plan caching to UnrdfStore

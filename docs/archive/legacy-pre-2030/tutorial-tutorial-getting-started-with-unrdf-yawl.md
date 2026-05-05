@@ -2,7 +2,7 @@
 title: "Getting Started with @unrdf/yawl"
 type: "tutorial"
 packageName: "@unrdf/yawl"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 0.9999999999999999
 proof: "7daebc11a89403d4b63e8a82bf48e2fe9c79f372c5485e316edf357cae6542e7"

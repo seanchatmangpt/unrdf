@@ -399,7 +399,7 @@ export default {
 
     // Custom attributes
     attributes: {
-      'service.version': '2.1.1',
+      'service.version': 'latest',
       'deployment.environment': 'development',
       'code.generator': 'weaver'
     }

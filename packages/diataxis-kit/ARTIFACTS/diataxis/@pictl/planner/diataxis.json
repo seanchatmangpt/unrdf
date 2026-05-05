@@ -1,0 +1,123 @@
+{
+  "confidence": {
+    "explanation": 0.7,
+    "howtos": 0.5,
+    "reference": 0.7,
+    "tutorials": 0.7
+  },
+  "evidence": {
+    "docsFiles": [],
+    "examplesFiles": [],
+    "fingerprint": "73b03e1642c334bfcfd8a62704bac1268e08ec75717bdf38ba8c112f9cca0daf",
+    "readmeHeadings": [
+      "Features",
+      "Installation",
+      "Quick Start",
+      "API Reference",
+      "Execution Profiles",
+      "Configuration Structure",
+      "Execution Plan Structure",
+      "Plan Steps",
+      "DAG Structure",
+      "Testing",
+      "Per PRD §11: explain() == run()",
+      "Examples",
+      "Architecture",
+      "Performance",
+      "Roadmap",
+      "Contributing",
+      "License"
+    ]
+  },
+  "explanation": {
+    "architecture": "Execution plan generation for the pictl process mining engine.",
+    "concepts": [
+      "process-mining",
+      "planning",
+      "optimization"
+    ],
+    "confidenceScore": 0.7,
+    "id": "explanation-pictl-planner-explanation",
+    "source": [
+      "keywords",
+      "readme",
+      "inferred"
+    ],
+    "title": "Understanding @pictl/planner",
+    "tradeoffs": [
+      "Ease of use vs. advanced configuration options",
+      "Memory usage vs. processing speed",
+      "Bundle size vs. feature completeness"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 1,
+      "context": "When you need to customize package behavior",
+      "id": "howto-configure-pictl-planner",
+      "source": [
+        "readme"
+      ],
+      "steps": [
+        "Create configuration file",
+        "Define configuration options",
+        "Apply configuration to package"
+      ],
+      "task": "Set up custom configuration for @pictl/planner",
+      "title": "Configure @pictl/planner"
+    },
+    {
+      "confidenceScore": 0.7,
+      "context": "When working with process-mining in your project",
+      "id": "howto-integrate-with-process-mining",
+      "source": [
+        "keywords",
+        "inferred"
+      ],
+      "steps": [
+        "Install dependencies",
+        "Set up integration",
+        "Test integration"
+      ],
+      "task": "Connect @pictl/planner with process-mining",
+      "title": "Integrate with process-mining"
+    }
+  ],
+  "packageName": "@pictl/planner",
+  "reference": {
+    "confidenceScore": 1,
+    "id": "reference-pictl-planner-reference",
+    "items": [
+      {
+        "description": "Export: .",
+        "example": null,
+        "name": "@pictl/planner",
+        "type": "export"
+      }
+    ],
+    "source": [
+      "exports"
+    ],
+    "title": "@pictl/planner Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.4,
+      "goal": "Learn how to set up and use @pictl/planner in your project",
+      "id": "tutorial-getting-started-with-pictl-planner",
+      "prerequisites": [],
+      "source": [
+        "readme",
+        "keywords"
+      ],
+      "stepsOutline": [
+        "Installation",
+        "Per PRD §11: explain() == run()",
+        "Examples"
+      ],
+      "title": "Getting Started with @pictl/planner"
+    }
+  ],
+  "version": "[VERSION]"
+}

@@ -43,24 +43,24 @@
 
 ### Phase 1 Tasks
 
-#### 1.1 Verify @unrdf/oxigraph Package Structure
+#### latest Verify @unrdf/oxigraph Package Structure
 
 - [ ] Check package.json exports are correct
 - [ ] Verify src/index.mjs exists and exports functions
 - [ ] Test: `node -e "import('@unrdf/oxigraph')"`
 
-#### 1.2 Fix Workspace Resolution (if needed)
+#### latest Fix Workspace Resolution (if needed)
 
 - [ ] Option A: Build packages (`pnpm run build`)
 - [ ] Option B: Fix export paths in package.json
 - [ ] Option C: Use `--shamefully-hoist` flag
 
-#### 1.3 Validate Core Imports
+#### latest Validate Core Imports
 
 - [ ] Test: `import { createStore, dataFactory } from '@unrdf/oxigraph'`
 - [ ] Test: `import { executeQuerySync } from '@unrdf/core'`
 
-#### 1.4 Run 01-core-only.mjs
+#### latest Run 01-core-only.mjs
 
 - [ ] Execute: `timeout 5s node permutation-tests/01-core-only.mjs`
 - [ ] Verify: Exit code 0, test passes
@@ -77,7 +77,7 @@
 
 - Working @unrdf/oxigraph package
 - Working @unrdf/core package
-- 1/8 permutation tests passing (12.5%)
+- 1/8 permutation tests passing (latest%)
 - Documented fix pattern
 
 **Estimated Time:** 30-60 minutes
@@ -96,20 +96,20 @@
 
 ### Phase 2 Tasks
 
-#### 2.1 Fix @unrdf/hooks Package
+#### latest Fix @unrdf/hooks Package
 
 - [ ] Apply Phase 1 pattern to hooks
 - [ ] Test: `import { defineHook } from '@unrdf/hooks'`
 - [ ] Run: `02-hooks-only.mjs` (expected fail - needs core)
 - [ ] Run: `05-core-hooks.mjs` (should pass)
 
-#### 2.2 Fix @unrdf/kgc-4d Package
+#### latest Fix @unrdf/kgc-4d Package
 
 - [ ] Apply Phase 1 pattern to kgc-4d
 - [ ] Test: `import { KGCStore } from '@unrdf/kgc-4d'`
 - [ ] Run: `06-core-kgc4d.mjs` (should pass)
 
-#### 2.3 Validate Dependencies
+#### latest Validate Dependencies
 
 - [ ] Verify hooks imports core correctly
 - [ ] Verify kgc-4d imports core + oxigraph correctly
@@ -136,18 +136,18 @@
 
 ### Phase 3 Tasks
 
-#### 3.1 Fix Remaining Packages
+#### latest Fix Remaining Packages
 
 - [ ] Fix @unrdf/knowledge-engine
 - [ ] Test: `04-knowledge-engine-only.mjs`
 
-#### 3.2 Run All Permutations
+#### latest Run All Permutations
 
 - [ ] Execute: `node permutation-tests/run-all.mjs`
 - [ ] Collect results for all 8 tests
 - [ ] Document pass/fail patterns
 
-#### 3.3 Analyze Results
+#### latest Analyze Results
 
 - [ ] Which packages work standalone?
 - [ ] Which require dependencies?
@@ -175,19 +175,19 @@
 
 ### Phase 4 Tasks
 
-#### 4.1 Analyze Test Results
+#### latest Analyze Test Results
 
 - [ ] Calculate actual dependency graph
 - [ ] Identify truly independent packages
 - [ ] Measure overlap and duplication
 
-#### 4.2 Generate Recommendations
+#### latest Generate Recommendations
 
 - [ ] Option A: Merge strategy (which packages to merge)
 - [ ] Option B: Keep separate (with justification)
 - [ ] Option C: Hybrid approach
 
-#### 4.3 Document Findings
+#### latest Document Findings
 
 - [ ] Create CONSOLIDATION-PLAN.md
 - [ ] Include test evidence

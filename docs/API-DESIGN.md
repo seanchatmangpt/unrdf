@@ -1,6 +1,6 @@
 # UNRDF API Design Guidelines
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Canonical Standard
 **Last Updated**: 2025-12-25
 
@@ -617,7 +617,7 @@ export function createStore(initialQuads = [], options = {}) {
 
 ```javascript
 /**
- * @deprecated Use createStore() instead. Will be removed in v6.0.0.
+ * @deprecated Use createStore() instead. Will be removed in vlatest.
  * @see createStore
  */
 export function newStore(options) {
@@ -630,9 +630,9 @@ export function newStore(options) {
 
 **Semantic versioning for breaking changes**:
 
-- **Patch (1.0.X)**: Bug fixes, no API changes
+- **Patch (latest.X)**: Bug fixes, no API changes
 - **Minor (1.X.0)**: New features, backward compatible
-- **Major (X.0.0)**: Breaking changes
+- **Major (X.latest)**: Breaking changes
 
 **Breaking changes**:
 - Removing exported functions
@@ -777,4 +777,4 @@ Before publishing an API:
 ---
 
 **Version History**:
-- 1.0.0 (2025-12-25): Initial standard based on @unrdf/core, @unrdf/streaming patterns
+- latest (2025-12-25): Initial standard based on @unrdf/core, @unrdf/streaming patterns

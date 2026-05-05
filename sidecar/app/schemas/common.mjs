@@ -71,10 +71,10 @@ export const PolicyPackIdSchema = z.string().regex(/^[a-z0-9-]+$/, {
 
 /**
  * Version schema for semantic versioning
- * @example "1.0.0"
+ * @example "[VERSION]"
  */
 export const VersionSchema = z.string().regex(/^\d+\.\d+\.\d+$/, {
-  message: 'Version must follow semantic versioning (e.g., 1.0.0)'
+  message: 'Version must follow semantic versioning (e.g., [VERSION])'
 })
 
 /**

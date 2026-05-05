@@ -1,6 +1,6 @@
 # MCP Integration: Knowledge Self-Play Autonomics
 
-> **Package:** `@unrdf/daemon` | **Since:** v26.5.4 | **Status:** Production
+> **Package:** `@unrdf/daemon` | **Since:** vlatest | **Status:** Production
 
 ## What is Knowledge Self-Play Autonomics?
 
@@ -155,7 +155,7 @@ Execute one iteration of the self-play loop.
 | Field | Type | Description |
 |-------|------|-------------|
 | `receipt` | `Object` | Cryptographic receipt with `input_hash`, `output_hash`, `receiptHash` |
-| `feedback` | `number` | `0.1 * hooksExecuted` if store changed, `0` if converged |
+| `feedback` | `number` | `latest * hooksExecuted` if store changed, `0` if converged |
 | `storeChanged` | `boolean` | `true` if `input_hash !== output_hash` |
 | `hooksExecuted` | `number` | Number of hooks that fired this step |
 

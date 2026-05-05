@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**Overall Quality Score**: 6.5/10
+**Overall Quality Score**: latest/10
 
 ### Summary Metrics
 - **Files Analyzed**: 22 (19 package.json + 3 source files)
@@ -283,8 +283,8 @@ test/streaming.test.mjs > should unsubscribe
 **Change**:
 ```json
 // BEFORE
-"@unrdf/core": "workspace:5.0.0-beta.1",
-"@unrdf/streaming": "workspace:5.0.0-beta.1",
+"@unrdf/core": "workspace:latest.1",
+"@unrdf/streaming": "workspace:latest.1",
 
 // AFTER
 "@unrdf/core": "workspace:*",

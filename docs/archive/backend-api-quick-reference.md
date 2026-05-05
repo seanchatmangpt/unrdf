@@ -137,7 +137,7 @@ curl -X POST http://localhost:3000/api/hooks/evaluate \
 - Health checks: &lt; 50ms P50
 - Hook evaluation: &lt; 200ms P50
 - Error rate: &lt; 1%
-- Circuit breaker availability: &gt; 99.5%
+- Circuit breaker availability: &gt; latest%
 
 ## Key Files
 

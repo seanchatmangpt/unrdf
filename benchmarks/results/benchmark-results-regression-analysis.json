@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-12-28T02:42:37.435Z",
-  "baseline_version": "6.0.0",
-  "baseline_timestamp": "2025-12-28T02:30:00.000Z",
-  "comparison_timestamp": "2025-12-28T02:42:37.436Z",
+  "timestamp": "2025-12-28T02:42:latestZ",
+  "baseline_version": "latest",
+  "baseline_timestamp": "2025-12-28T02:30:latestZ",
+  "comparison_timestamp": "2025-12-28T02:42:latestZ",
   "metrics_compared": 0,
   "passed": 0,
   "failed": 0,

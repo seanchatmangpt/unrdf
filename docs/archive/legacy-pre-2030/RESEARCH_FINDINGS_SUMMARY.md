@@ -38,7 +38,7 @@ function withReceipt(fn, options = {}) {
     const endTime = performance.now();
 
     const receipt = {
-      version: '6.0.0-alpha.1',
+      version: 'latest.1',
       operation: options.operation || fn.name,
       timestamp: Date.now(),
       duration: endTime - startTime,
@@ -303,7 +303,7 @@ async function composeOperations(opA, opB) {
 
 ## 3. Documentation Deliverables
 
-### 3.1 Pattern Library (`/docs/v6/PATTERNS.md`)
+### latest Pattern Library (`/docs/v6/PATTERNS.md`)
 
 **Size**: 25KB
 **Structure**:
@@ -321,7 +321,7 @@ async function composeOperations(opA, opB) {
 - ✅ Determinism Proof Pattern (complete with test structure)
 - ✅ Composition Layer Pattern (complete with L5 criteria)
 
-### 3.2 DIATAXIS Tutorials (`/docs/v6/PATTERN_TUTORIALS.md`)
+### latest DIATAXIS Tutorials (`/docs/v6/PATTERN_TUTORIALS.md`)
 
 **Size**: 18KB
 **Structure**: 5 tutorials (learning-oriented)
@@ -342,7 +342,7 @@ async function composeOperations(opA, opB) {
 - "What You Learned" summaries
 - Next steps
 
-### 3.3 Migration Runbooks (`/docs/v6/MIGRATION_RUNBOOKS.md`)
+### latest Migration Runbooks (`/docs/v6/MIGRATION_RUNBOOKS.md`)
 
 **Size**: 15KB
 **Structure**: 10 runbooks (1 per P1 package)
@@ -368,7 +368,7 @@ async function composeOperations(opA, opB) {
 - ✅ @unrdf/knowledge-engine (quick guide)
 - ✅ @unrdf/graph-analytics (quick guide)
 
-### 3.4 Pattern Compatibility Matrix
+### latest Pattern Compatibility Matrix
 
 **Format**: Table showing which patterns compose
 

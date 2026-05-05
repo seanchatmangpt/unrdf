@@ -110,7 +110,7 @@ Simulate offline mode by disconnecting from the internet (or blocking CTAN):
 ```bash
 # Option 1: Disconnect network
 # Option 2: Add CTAN to /etc/hosts (for testing)
-echo "127.0.0.1 mirrors.ctan.org" | sudo tee -a /etc/hosts
+echo "[VERSION].1 mirrors.ctan.org" | sudo tee -a /etc/hosts
 
 # Try compiling again
 kgc latex build --input thesis/main.tex --output dist/thesis-offline.pdf

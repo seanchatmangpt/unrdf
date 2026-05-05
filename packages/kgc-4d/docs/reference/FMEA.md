@@ -165,4 +165,4 @@ FMEA is a living document. After each production incident:
 4. Update RPN score
 5. Document root cause in commit message
 
-Current version: **v1.0.0** (24 failure modes, 100% guarded)
+Current version: **[VERSION]** (24 failure modes, 100% guarded)

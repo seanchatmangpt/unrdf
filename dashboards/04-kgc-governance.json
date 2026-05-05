@@ -40,7 +40,7 @@
             "legendFormat": "Hooks/min"
           },
           {
-            "expr": "histogram_quantile(0.95, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
+            "expr": "histogram_quantile(latest, rate(kgc_hook_duration_ms_bucket{service=\"unrdf-kgc\"}[5m]))",
             "legendFormat": "P95 Hook Latency (ms)"
           }
         ],

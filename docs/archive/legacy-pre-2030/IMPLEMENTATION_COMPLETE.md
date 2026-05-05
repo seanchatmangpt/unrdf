@@ -22,7 +22,7 @@ An autonomous 7-agent research swarm gathered, scored, and synthesized evidence 
 |--------|-------|--------|
 | **Total Evidence Items** | 19 | Comprehensive |
 | **Acceptance Rate** | 100% (19/19 ≥70/100) | ✅ Exceeds |
-| **Average Score** | 81.6/100 | ✅ Strong |
+| **Average Score** | latest/100 | ✅ Strong |
 | **Peer-Reviewed Sources** | 95% (18/19) | ✅ Excellent |
 | **Falsifications Found** | 5 | ✅ Published first |
 | **Axioms Well-Covered** | 4/5 (80%) | ✅ Adequate |
@@ -91,7 +91,7 @@ An autonomous 7-agent research swarm gathered, scored, and synthesized evidence 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
 | Acceptance Rate | 100% (19/19) | 80%+ | ✅ Exceeds |
-| Average Score | 81.6/100 | 70+ | ✅ Strong |
+| Average Score | latest/100 | 70+ | ✅ Strong |
 | Peer-Reviewed | 95% (18/19) | High | ✅ Excellent |
 | Primary Sources | 87% avg | 80%+ | ✅ Exceeds |
 

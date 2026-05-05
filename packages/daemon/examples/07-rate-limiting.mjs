@@ -21,7 +21,7 @@ console.log('1. Basic Rate Limiting');
 
   console.log('Making 7 requests (limit: 5)...');
   for (let i = 1; i <= 7; i++) {
-    const result = limiter.check({ ip: '192.168.1.1' });
+    const result = limiter.check({ ip: '[VERSION].1' });
     console.log(`  Request ${i}: ${result.allowed ? '✅ ALLOWED' : '❌ BLOCKED'} (remaining: ${result.remaining})`);
   }
   console.log();
@@ -36,14 +36,14 @@ console.log('2. Per-IP vs Per-API-Key Limiting');
   });
 
   console.log('Same IP, different API keys:');
-  const r1 = limiter.check({ ip: '192.168.1.1', apiKey: 'key1' });
-  const r2 = limiter.check({ ip: '192.168.1.1', apiKey: 'key2' });
+  const r1 = limiter.check({ ip: '[VERSION].1', apiKey: 'key1' });
+  const r2 = limiter.check({ ip: '[VERSION].1', apiKey: 'key2' });
   console.log(`  key1: ${r1.allowed ? '✅' : '❌'} (identifier: ${r1.identifier})`);
   console.log(`  key2: ${r2.allowed ? '✅' : '❌'} (identifier: ${r2.identifier})`);
 
   console.log('\nDifferent IPs, same API key:');
-  const r3 = limiter.check({ ip: '192.168.1.2', apiKey: 'key1' });
-  console.log(`  192.168.1.2: ${r3.allowed ? '✅' : '❌'} (uses same key1 bucket)`);
+  const r3 = limiter.check({ ip: '[VERSION].2', apiKey: 'key1' });
+  console.log(`  [VERSION].2: ${r3.allowed ? '✅' : '❌'} (uses same key1 bucket)`);
   console.log();
 }
 
@@ -59,7 +59,7 @@ console.log('3. Burst Protection');
 
   console.log('Rapid requests (burst limit: 3 per second):');
   for (let i = 1; i <= 5; i++) {
-    const result = limiter.check({ ip: '192.168.1.10' });
+    const result = limiter.check({ ip: '[VERSION].10' });
     console.log(`  Request ${i}: ${result.allowed ? '✅ ALLOWED' : '❌ BLOCKED'}`);
     if (!result.allowed) {
       console.log(`    Reason: ${result.reason}`);
@@ -78,11 +78,11 @@ console.log('4. Statistics Tracking');
 
   // Generate some traffic
   for (let i = 0; i < 10; i++) {
-    limiter.check({ ip: `192.168.1.${i}` });
+    limiter.check({ ip: `[VERSION].${i}` });
   }
 
   for (let i = 0; i < 15; i++) {
-    limiter.check({ ip: '192.168.1.100' });
+    limiter.check({ ip: '[VERSION].100' });
   }
 
   const stats = limiter.getStats();
@@ -125,7 +125,7 @@ console.log('5. Middleware Usage');
     }
   }
 
-  const mockReq = { ip: '192.168.1.200', headers: {} };
+  const mockReq = { ip: '[VERSION].200', headers: {} };
 
   console.log('Testing middleware with mock requests:');
   for (let i = 1; i <= 5; i++) {
@@ -171,16 +171,16 @@ console.log('7. Reset and Clear Operations');
   });
 
   console.log('Making 3 requests:');
-  limiter.check({ ip: '192.168.1.1' });
-  limiter.check({ ip: '192.168.1.1' });
-  const r3 = limiter.check({ ip: '192.168.1.1' });
+  limiter.check({ ip: '[VERSION].1' });
+  limiter.check({ ip: '[VERSION].1' });
+  const r3 = limiter.check({ ip: '[VERSION].1' });
   console.log(`  Request 3: ${r3.allowed ? '✅' : '❌'}`);
 
-  console.log('\nResetting limits for 192.168.1.1...');
-  const identifier = limiter.extractIdentifier({ ip: '192.168.1.1' });
+  console.log('\nResetting limits for [VERSION].1...');
+  const identifier = limiter.extractIdentifier({ ip: '[VERSION].1' });
   limiter.reset(identifier);
 
-  const r4 = limiter.check({ ip: '192.168.1.1' });
+  const r4 = limiter.check({ ip: '[VERSION].1' });
   console.log(`  Request 4 (after reset): ${r4.allowed ? '✅' : '❌'}`);
 
   console.log('\nClearing all limits...');
@@ -199,7 +199,7 @@ console.log('8. LRU Cache Eviction');
 
   console.log('Adding 5 identifiers (max: 3):');
   for (let i = 1; i <= 5; i++) {
-    limiter.check({ ip: `192.168.1.${i}` });
+    limiter.check({ ip: `[VERSION].${i}` });
     const stats = limiter.getStats();
     console.log(`  Added IP ${i}, cache size: ${stats.cacheSize}`);
   }
@@ -241,13 +241,13 @@ console.log('9. Integration with Authentication');
 
   console.log('Testing authenticated requests:');
 
-  const r1 = await authenticatedRequest('invalid-key', '192.168.1.1');
+  const r1 = await authenticatedRequest('invalid-key', '[VERSION].1');
   console.log(`  Invalid key: ${r1.status} - ${r1.error || 'success'}`);
 
-  const r2 = await authenticatedRequest('valid-key-123', '192.168.1.1');
+  const r2 = await authenticatedRequest('valid-key-123', '[VERSION].1');
   console.log(`  Valid key: ${r2.status} - Remaining: ${r2.remaining}`);
 
-  const r3 = await authenticatedRequest('valid-key-456', '192.168.1.1');
+  const r3 = await authenticatedRequest('valid-key-456', '[VERSION].1');
   console.log(`  Different key, same IP: ${r3.status} - Uses different bucket`);
   console.log();
 }
@@ -272,7 +272,7 @@ console.log('10. Custom Limits Per Endpoint');
   console.log('Different limits per endpoint:');
   endpoints.forEach(endpoint => {
     const limiter = getRateLimiter(endpoint);
-    const result = limiter.check({ ip: '192.168.1.1' });
+    const result = limiter.check({ ip: '[VERSION].1' });
     console.log(`  ${endpoint}: ${result.allowed ? '✅' : '❌'} (limit: ${limiter.maxRequests})`);
   });
   console.log();

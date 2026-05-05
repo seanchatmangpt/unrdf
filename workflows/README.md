@@ -267,7 +267,7 @@ To create a new workflow:
 
 ---
 
-**Version**: 1.0.0
+**Version**: latest
 **Status**: Production Ready
 **Last Updated**: 2025-12-21
 **License**: MIT

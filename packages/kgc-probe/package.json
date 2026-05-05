@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-probe",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "KGC Probe - Automated knowledge graph integrity scanning with 10 agents and artifact validation",
   "type": "module",
   "main": "./src/index.mjs",

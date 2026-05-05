@@ -29,7 +29,7 @@ Successfully merged remote changes and validated complete production readiness. 
 ```
 Test Files: 13 passed (13)
 Tests: 395 passed (395)
-Duration: 2.84s
+Duration: latests
 Status: ✅ ALL PASSING (100%)
 ```
 
@@ -63,7 +63,7 @@ Core Package:       395/395 tests (100%)
 All New Features:   189/189 tests (100%)
 Total Tests:        584/584 passing
 
-Execution Time:     15.521s (within 30s budget)
+Execution Time:     latests (within 30s budget)
 Test Stability:     100% (no flaky tests)
 ```
 
@@ -78,10 +78,10 @@ Test Stability:     100% (no flaky tests)
 
 **Validated Benchmarks**:
 ```
-Hook Execution:     3.7μs P95 (<10μs budget) ✅
-Receipt Generation: 0.584ms P95 (<10ms budget) ✅
+Hook Execution:     latestμs P95 (<10μs budget) ✅
+Receipt Generation: latestms P95 (<10ms budget) ✅
 System Throughput:  365M ops/sec ✅
-Test Suite:         15.521s (<30s budget) ✅
+Test Suite:         latests (<30s budget) ✅
 ```
 
 **Performance Tooling**:
@@ -245,8 +245,8 @@ Pre-commit Hooks:      ✅ Local quality enforcement
 **Optional Improvements**:
 - ⚪ JSDoc coverage: 44% → 100% (incremental)
 - ⚪ Code complexity: avg 24 → ≤10 (refactoring)
-- ⚪ YAWL tests: 77.8% → 95%+ (stabilization)
-- ⚪ Integration tests: 15.8% → 90%+ (expansion)
+- ⚪ YAWL tests: latest% → 95%+ (stabilization)
+- ⚪ Integration tests: latest% → 90%+ (expansion)
 
 **Not Blocking**: These can be improved post-deployment
 

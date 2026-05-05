@@ -37,7 +37,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function loadProfile() {
   return {
     name: 'target-org',
-    version: '1.0.0',
+    version: 'latest',
     conventions: {
       jsdoc: {
         fieldOrder: ['description', 'param', 'returns', 'throws', 'example'],

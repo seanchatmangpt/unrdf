@@ -15,7 +15,7 @@
 
 ## 🎯 Phase 1: Foundation (Day 1)
 
-### 1.1 Documentation Setup ✅ COMPLETE
+### latest Documentation Setup ✅ COMPLETE
 
 **Status:** Complete
 - ✅ Created VITEST_STANDARD.md (comprehensive guide)
@@ -27,7 +27,7 @@
 - Complete documentation suite in `/docs`
 - Stored in Claude Flow memory: `unrdf/vitest/standard`
 
-### 1.2 Template Creation ✅ COMPLETE
+### latest Template Creation ✅ COMPLETE
 
 **Status:** Complete
 - ✅ Node.js template (core packages)
@@ -36,7 +36,7 @@
 
 **Location:** Templates embedded in VITEST_STANDARD.md
 
-### 1.3 Audit Current State
+### latest Audit Current State
 
 **Tasks:**
 - [ ] List all packages with existing vitest.config.mjs
@@ -65,7 +65,7 @@ pnpm -r test:coverage 2>&1 | grep "Coverage"
 
 ## 🏗️ Phase 2: Core Package Migration (Day 2)
 
-### 2.1 Priority: Production-Critical Packages
+### latest Priority: Production-Critical Packages
 
 **Order:**
 1. @unrdf/core (foundation)
@@ -74,7 +74,7 @@ pnpm -r test:coverage 2>&1 | grep "Coverage"
 4. @unrdf/browser (browser support)
 5. @unrdf/streaming (real-time)
 
-### 2.2 Migration Steps (Per Package)
+### latest Migration Steps (Per Package)
 
 **For each package:**
 
@@ -120,7 +120,7 @@ pnpm -r test:coverage 2>&1 | grep "Coverage"
    git commit -m "feat(package): standardize vitest configuration"
    ```
 
-### 2.3 Package Migration Checklist
+### latest Package Migration Checklist
 
 **@unrdf/core:**
 - [ ] Apply Node.js template
@@ -196,7 +196,7 @@ pnpm -r test:coverage 2>&1 | grep "Coverage"
 
 ## 📦 Phase 3: Example Projects Migration (Day 3-4)
 
-### 3.1 Example Categories
+### latest Example Categories
 
 **Core Examples (3):**
 - packages/core/examples/basic-store
@@ -235,7 +235,7 @@ pnpm -r test:coverage 2>&1 | grep "Coverage"
 - packages/cli/examples/format-conversion
 - packages/cli/examples/graph-commands
 
-### 3.2 Batch Migration Strategy
+### latest Batch Migration Strategy
 
 **Approach:** Process examples in parallel by category
 
@@ -259,7 +259,7 @@ for example in packages/core/examples/*/; do
 done
 ```
 
-### 3.3 Example Migration Checklist
+### latest Example Migration Checklist
 
 **Core Examples:**
 - [ ] basic-store (node)
@@ -300,7 +300,7 @@ done
 
 ## 🔄 Phase 4: Validation & Quality Assurance (Day 5)
 
-### 4.1 Comprehensive Testing
+### latest Comprehensive Testing
 
 **Run all tests:**
 ```bash
@@ -319,7 +319,7 @@ pnpm -r --filter './packages/*/examples/*' test
 - Core packages: ≥ 80% coverage
 - Examples: ≥ 70% coverage
 
-### 4.2 Coverage Verification
+### latest Coverage Verification
 
 **Generate coverage reports:**
 ```bash
@@ -342,7 +342,7 @@ open packages/core/coverage/index.html
 | @unrdf/browser | ?% | ?% | ?% | ?% | ⏳ |
 | ... | ... | ... | ... | ... | ... |
 
-### 4.3 CI/CD Integration
+### latest CI/CD Integration
 
 **Update CI workflow:**
 ```yaml
@@ -374,7 +374,7 @@ jobs:
 - [ ] No flaky tests
 - [ ] Consistent performance
 
-### 4.4 Documentation Review
+### latest Documentation Review
 
 **Update project documentation:**
 - [ ] README.md (mention testing standards)
@@ -392,7 +392,7 @@ Quick reference: [VITEST_QUICK_REFERENCE.md](./docs/VITEST_QUICK_REFERENCE.md)
 
 ## 📊 Phase 5: Monitoring & Maintenance (Ongoing)
 
-### 5.1 Regular Monitoring
+### latest Regular Monitoring
 
 **Weekly checks:**
 - [ ] Run full test suite
@@ -406,7 +406,7 @@ Quick reference: [VITEST_QUICK_REFERENCE.md](./docs/VITEST_QUICK_REFERENCE.md)
 pnpm test:ci > test-report-$(date +%Y%m%d).log 2>&1
 ```
 
-### 5.2 Coverage Tracking
+### latest Coverage Tracking
 
 **Track coverage over time:**
 ```bash
@@ -420,7 +420,7 @@ cat coverage/coverage-summary.json | jq '.total.lines.pct'
 - Examples: Maintain ≥ 70%
 - Overall: Trend towards 85%+
 
-### 5.3 New Package Onboarding
+### latest New Package Onboarding
 
 **When adding new package:**
 1. Copy appropriate template
@@ -581,7 +581,7 @@ Task("CLI Examples Agent", "Migrate CLI examples (2)", "coder")
 
 ---
 
-**Roadmap Version:** 1.0.0
+**Roadmap Version:** latest
 **Last Updated:** 2025-12-04
 **Project Manager:** System Architecture Designer
 **Execution Team:** Claude Code + Agent Swarm

@@ -192,7 +192,7 @@ return combined.map((r) => InferenceResultSchema.parse(r));
 
 **Evidence**:
 ```
-ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @unrdf/chatman-equation@26.4.23 lint: 
+ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @unrdf/chatman-equation@latest lint: 
 `eslint src/ test/ --max-warnings=0`
 Exit status 1
 ```
@@ -247,7 +247,7 @@ Exit status 1
 
 ### Criterion 8: Breaking Changes Documented
 
-**Requirement**: v6.0.0 breaking changes explicitly documented  
+**Requirement**: vlatest breaking changes explicitly documented  
 **Actual**: Not validated in this pass  
 **Status**: INCOMPLETE
 

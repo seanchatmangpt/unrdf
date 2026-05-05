@@ -16,7 +16,7 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 
 | Package | Status | Release | Description |
 |---------|--------|---------|-------------|
-| **unrdf** | ✅ Shipped | v3.1.0 (Mar 2026) | Core RDF library |
+| **unrdf** | ✅ Shipped | vlatest (Mar 2026) | Core RDF library |
 | **@unrdf/cli** | 📋 Designed | Q2 2026 | Command-line interface |
 | **@unrdf/knowledge-engine** | 📋 Designed | Q2 2026 | gRPC server |
 | **@unrdf/web** | 📋 Planned | Q3 2026 | REST API server |
@@ -38,7 +38,7 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 
 ### Q2 2026
 
-#### @unrdf/cli v1.0.0
+#### @unrdf/cli vlatest
 **Status:** 📋 Design complete (see [CLI-PACKAGE-DESIGN.md](./CLI-PACKAGE-DESIGN.md))
 
 **Features:**
@@ -49,13 +49,13 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 - Hook management commands
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `citty@^0.1.6`
-- `consola@^3.2.3`
+- `unrdf@^latest`
+- `citty@^latest`
+- `consola@^latest`
 
 **Milestone:** Beta release May 2026, GA June 2026
 
-#### @unrdf/knowledge-engine v1.0.0
+#### @unrdf/knowledge-engine vlatest
 **Status:** 📋 Design in progress
 
 **Features:**
@@ -66,9 +66,9 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 - Authentication and authorization
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `@grpc/grpc-js@^1.14.0`
-- `@grpc/proto-loader@^0.8.0`
+- `unrdf@^latest`
+- `@grpc/grpc-js@^latest`
+- `@grpc/proto-loader@^latest`
 
 **Milestone:** Beta release June 2026, GA July 2026
 
@@ -76,21 +76,21 @@ UNRDF is evolving from a monolithic library into an **ecosystem of composable pa
 
 ### Q3 2026
 
-#### @unrdf/web v1.0.0
+#### @unrdf/web vlatest
 **Status:** 📋 Planned
 
 **Features:**
 - REST API server for RDF operations
-- OpenAPI 3.0 documentation
+- OpenAPI latest documentation
 - WebSocket support for real-time updates
 - Rate limiting and caching
 - Swagger UI for API exploration
 - JWT authentication
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `hono@^4.0.0` (or Express)
-- `swagger-ui-express@^5.0.0`
+- `unrdf@^latest`
+- `hono@^latest` (or Express)
+- `swagger-ui-express@^latest`
 
 **API Routes:**
 ```
@@ -105,7 +105,7 @@ WS     /api/subscribe          # Real-time updates
 
 **Milestone:** Beta release Aug 2026, GA Sep 2026
 
-#### @unrdf/react v1.0.0
+#### @unrdf/react vlatest
 **Status:** 📋 Planned
 
 **Features:**
@@ -142,12 +142,12 @@ function MyComponent() {
 ```
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `react@^18.0.0`
+- `unrdf@^latest`
+- `react@^latest`
 
 **Milestone:** Beta release Aug 2026, GA Sep 2026
 
-#### @unrdf/vue v1.0.0
+#### @unrdf/vue vlatest
 **Status:** 📋 Planned
 
 **Features:**
@@ -183,8 +183,8 @@ const { mutate: addData } = useMutation({
 ```
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `vue@^3.0.0`
+- `unrdf@^latest`
+- `vue@^latest`
 
 **Milestone:** Beta release Aug 2026, GA Sep 2026
 
@@ -192,7 +192,7 @@ const { mutate: addData } = useMutation({
 
 ### Q4 2026
 
-#### @unrdf/graphql v1.0.0
+#### @unrdf/graphql vlatest
 **Status:** 📋 Planned
 
 **Features:**
@@ -230,13 +230,13 @@ type Subscription {
 ```
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `graphql@^16.0.0`
-- `@graphql-tools/schema@^10.0.0`
+- `unrdf@^latest`
+- `graphql@^latest`
+- `@graphql-tools/schema@^latest`
 
 **Milestone:** Beta release Nov 2026, GA Dec 2026
 
-#### @unrdf/ui v1.0.0
+#### @unrdf/ui vlatest
 **Status:** 📋 Planned
 
 **Features:**
@@ -256,11 +256,11 @@ type Subscription {
 **Screenshots:** (Mockups to be added)
 
 **Dependencies:**
-- `unrdf@^3.1.0`
-- `@unrdf/react@^1.0.0`
-- `@unrdf/web@^1.0.0` (backend)
-- `react@^18.0.0`
-- `d3@^7.0.0`
+- `unrdf@^latest`
+- `@unrdf/react@^latest`
+- `@unrdf/web@^latest` (backend)
+- `react@^latest`
+- `d3@^latest`
 
 **Milestone:** Beta release Nov 2026, GA Dec 2026
 
@@ -268,7 +268,7 @@ type Subscription {
 
 ### 2027
 
-#### @unrdf/lsp v1.0.0
+#### @unrdf/lsp vlatest
 **Status:** 🔮 Future
 
 **Features:**
@@ -281,7 +281,7 @@ type Subscription {
 - Rename refactoring
 
 **Protocol Support:**
-- Language Server Protocol 3.17
+- Language Server Protocol latest
 - Debug Adapter Protocol
 
 **Editor Integration:**
@@ -293,7 +293,7 @@ type Subscription {
 
 **Milestone:** GA Q2 2027
 
-#### @unrdf/vscode v1.0.0
+#### @unrdf/vscode vlatest
 **Status:** 🔮 Future
 
 **Features:**
@@ -334,13 +334,13 @@ unrdf (core)
 
 | Package Version | Core Version | Notes |
 |----------------|--------------|-------|
-| @unrdf/cli@1.x | unrdf@^3.1.0 | Requires v3.1+ for browser features |
-| @unrdf/knowledge-engine@1.x | unrdf@^3.1.0 | Requires v3.1+ for isolated-vm |
-| @unrdf/web@1.x | unrdf@^3.1.0 | Compatible with v3.1+ |
-| @unrdf/react@1.x | unrdf@^3.1.0 | Works with v3.0+, optimized for v3.1+ |
-| @unrdf/vue@1.x | unrdf@^3.1.0 | Works with v3.0+, optimized for v3.1+ |
-| @unrdf/graphql@1.x | unrdf@^3.1.0 | Compatible with v3.1+ |
-| @unrdf/ui@1.x | unrdf@^3.1.0 | Requires @unrdf/web@^1.0.0 |
+| @unrdf/cli@1.x | unrdf@^latest | Requires vlatest+ for browser features |
+| @unrdf/knowledge-engine@1.x | unrdf@^latest | Requires vlatest+ for isolated-vm |
+| @unrdf/web@1.x | unrdf@^latest | Compatible with vlatest+ |
+| @unrdf/react@1.x | unrdf@^latest | Works with vlatest+, optimized for vlatest+ |
+| @unrdf/vue@1.x | unrdf@^latest | Works with vlatest+, optimized for vlatest+ |
+| @unrdf/graphql@1.x | unrdf@^latest | Compatible with vlatest+ |
+| @unrdf/ui@1.x | unrdf@^latest | Requires @unrdf/web@^latest |
 
 ---
 
@@ -351,17 +351,17 @@ unrdf (core)
 Some packages will be released together for feature parity:
 
 **Q2 2026 Bundle:**
-- @unrdf/cli@1.0.0
-- @unrdf/knowledge-engine@1.0.0
+- @unrdf/cli@latest
+- @unrdf/knowledge-engine@latest
 
 **Q3 2026 Bundle:**
-- @unrdf/web@1.0.0
-- @unrdf/react@1.0.0
-- @unrdf/vue@1.0.0
+- @unrdf/web@latest
+- @unrdf/react@latest
+- @unrdf/vue@latest
 
 **Q4 2026 Bundle:**
-- @unrdf/graphql@1.0.0
-- @unrdf/ui@1.0.0
+- @unrdf/graphql@latest
+- @unrdf/ui@latest
 
 ### Release Process
 
@@ -374,7 +374,7 @@ Some packages will be released together for feature parity:
 
 ### Semantic Versioning
 
-All packages follow [SemVer 2.0.0](https://semver.org/):
+All packages follow [SemVer latest](https://semver.org/):
 
 - **MAJOR:** Breaking changes
 - **MINOR:** New features (backward compatible)
@@ -382,7 +382,7 @@ All packages follow [SemVer 2.0.0](https://semver.org/):
 
 **Example:**
 ```
-@unrdf/cli@1.2.3
+@unrdf/cli@latest
             │ │ └─ Patch: Bug fix
             │ └─── Minor: New feature
             └───── Major: Breaking change
@@ -520,18 +520,18 @@ All packages are currently developed by volunteer contributors.
 ### 2026 Ecosystem Goals
 
 **Q2 2026:**
-- ✅ Core library (unrdf@3.1.0) - **Shipped**
-- 📋 CLI package (@unrdf/cli@1.0.0)
-- 📋 gRPC server (@unrdf/knowledge-engine@1.0.0)
+- ✅ Core library (unrdf@latest) - **Shipped**
+- 📋 CLI package (@unrdf/cli@latest)
+- 📋 gRPC server (@unrdf/knowledge-engine@latest)
 
 **Q3 2026:**
-- 📋 REST API server (@unrdf/web@1.0.0)
-- 📋 React hooks (@unrdf/react@1.0.0)
-- 📋 Vue composables (@unrdf/vue@1.0.0)
+- 📋 REST API server (@unrdf/web@latest)
+- 📋 React hooks (@unrdf/react@latest)
+- 📋 Vue composables (@unrdf/vue@latest)
 
 **Q4 2026:**
-- 📋 GraphQL gateway (@unrdf/graphql@1.0.0)
-- 📋 Graph explorer UI (@unrdf/ui@1.0.0)
+- 📋 GraphQL gateway (@unrdf/graphql@latest)
+- 📋 Graph explorer UI (@unrdf/ui@latest)
 
 **Total packages by end of 2026:** 8
 

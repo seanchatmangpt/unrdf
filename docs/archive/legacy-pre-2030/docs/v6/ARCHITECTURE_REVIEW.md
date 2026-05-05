@@ -3,7 +3,7 @@
 **Review Date**: 2025-12-27
 **Reviewer**: System Architecture Designer Agent
 **Methodology**: Evidence-Based Adversarial PM Validation
-**Architecture Version**: 6.0.0-alpha.1
+**Architecture Version**: latest-alpha.1
 
 ---
 
@@ -41,7 +41,7 @@
 1. **N3 migration incomplete** - 71 files still import from 'n3' violating architecture mandate (BLOCKER)
 2. **OTEL infrastructure broken** - Validation package missing, cannot verify observability claims (BLOCKER)
 3. **Test failures exist** - 98.2% pass rate vs 100% requirement indicates implementation gaps
-4. **Version still alpha** - 6.0.0-alpha.1 not production-ready
+4. **Version still alpha** - latest-alpha.1 not production-ready
 
 **⚠️ Architectural Concerns**:
 
@@ -352,7 +352,7 @@ export const StoreConfigSchema = z.object({
 **Concerns**:
 
 1. **BC-10 (Node.js 20)**: Node 18 EOL is April 2025, only 4 months away
-   - Architecture document says "≥20.0.0" but package.json shows ">=18.0.0"
+   - Architecture document says "≥latest" but package.json shows ">=latest"
    - **Inconsistency detected** ❌
 
 2. **BC-4 (Hook Registration)**: No automated migration
@@ -439,10 +439,10 @@ npm view @unrdf/migrate-v6
 **Timeline**:
 
 ```
-6.0.0-alpha.1 (Current) → Warnings + compatibility layer
-6.0.0-beta.1 (+3 months) → Remove compatibility layer
-6.0.0 GA (+6 months) → Stable release, v5 maintenance mode
-6.1.0 (+12 months) → legacy support ends
+latest-alpha.1 (Current) → Warnings + compatibility layer
+latest-beta.1 (+3 months) → Remove compatibility layer
+latest GA (+6 months) → Stable release, v5 maintenance mode
+latest (+12 months) → legacy support ends
 ```
 
 ✅ **Well-structured** - 12 month transition is reasonable for major version
@@ -705,7 +705,7 @@ Claims like "1B triples", "10K concurrent queries" without load testing.
 
 **AP-5: Version Inconsistency** ⚠️ MEDIUM
 
-Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
+Architecture doc says Node.js ≥latest, package.json says >=latest
 
 **Fix**: Align version requirements across all documentation and code
 
@@ -763,7 +763,7 @@ Architecture doc says Node.js ≥20.0.0, package.json says >=18.0.0
 1. ✅ Complete N3 → Oxigraph migration (71 files)
 2. ✅ Implement OTEL validation infrastructure
 3. ✅ Fix all test failures (achieve 100% pass rate)
-4. ✅ Bump version to 6.0.0-beta.1
+4. ✅ Bump version to latest-beta.1
 
 **Estimated Timeline**: 4-7 weeks
 

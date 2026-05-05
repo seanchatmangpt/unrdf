@@ -11,7 +11,7 @@
  * node scripts/download-atomvm.mjs
  * ```
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -26,7 +26,7 @@ const __dirname = dirname(__filename);
  * AtomVM version to download/verify
  * @constant {string}
  */
-const ATOMVM_VERSION = 'v0.6.6';
+const ATOMVM_VERSION = '[VERSION]';
 
 /**
  * Required WASM assets

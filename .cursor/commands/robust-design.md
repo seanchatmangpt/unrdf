@@ -16,7 +16,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 
 **Action**: Identify control factors, noise factors, and response variables.
 
-#### 1.1: Identify Control Factors
+#### latest: Identify Control Factors
 
 **Action**: Identify design parameters we can control.
 
@@ -56,7 +56,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 - **Type**: Configuration option
 ```
 
-#### 1.2: Identify Noise Factors
+#### latest: Identify Noise Factors
 
 **Action**: Identify sources of variation we can't control.
 
@@ -101,7 +101,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 - **Impact**: Affects distributed test execution
 ```
 
-#### 1.3: Identify Response Variables
+#### latest: Identify Response Variables
 
 **Action**: Identify what we want to optimize (responses).
 
@@ -152,7 +152,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 
 **Action**: Design experiments to test factor combinations.
 
-#### 2.1: Choose Experimental Design
+#### latest: Choose Experimental Design
 
 **Action**: Select appropriate experimental design method.
 
@@ -175,7 +175,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 **Selected**: Taguchi L16 orthogonal array
 ```
 
-#### 2.2: Create Experimental Matrix
+#### latest: Create Experimental Matrix
 
 **Action**: Create matrix of factor combinations to test.
 
@@ -206,7 +206,7 @@ Step 1: Identify Factors → Step 2: Design Experiments → Step 3: Run Experime
 Legend: Dep = By dependency, File = By file, Module = By module
 ```
 
-#### 2.3: Plan Experiment Execution
+#### latest: Plan Experiment Execution
 
 **Action**: Plan how to execute experiments.
 
@@ -239,7 +239,7 @@ Legend: Dep = By dependency, File = By file, Module = By module
 
 **Action**: Execute experiments and collect data.
 
-#### 3.1: Execute Experiments
+#### latest: Execute Experiments
 
 **Action**: Run experiments according to plan.
 
@@ -261,7 +261,7 @@ export GROUPING_STRATEGY=dependency
 export RETRY_COUNT=0
 
 time pnpm test > run1_results.txt 2>&1
-# Execution time: 8.5s
+# Execution time: latests
 # Success rate: 100%
 # Flakiness: 0%
 
@@ -272,12 +272,12 @@ export GROUPING_STRATEGY=dependency
 export RETRY_COUNT=5
 
 time pnpm test > run10_results.txt 2>&1
-# Execution time: 1.2s
+# Execution time: latests
 # Success rate: 100%
 # Flakiness: 0%
 ```
 
-#### 3.2: Collect Data
+#### latest: Collect Data
 
 **Action**: Collect and organize experimental data.
 
@@ -295,22 +295,22 @@ time pnpm test > run10_results.txt 2>&1
 
 | Run | Thread Pool | Cache | Grouping | Retry | Time (s) | Success % | Flakiness % | CPU % | Memory MB |
 | --- | ----------- | ----- | -------- | ----- | -------- | --------- | ----------- | ----- | --------- |
-| 1   | 2           | 100   | Dep      | 0     | 8.5      | 100       | 0           | 25    | 150       |
-| 2   | 2           | 100   | File     | 1     | 8.2      | 100       | 0           | 24    | 148       |
-| 3   | 2           | 500   | Module   | 3     | 7.8      | 100       | 0           | 23    | 200       |
-| 4   | 2           | 1000  | Dep      | 5     | 7.5      | 100       | 0           | 22    | 250       |
-| 5   | 4           | 100   | File     | 3     | 5.2      | 100       | 0           | 35    | 155       |
-| 6   | 4           | 100   | Module   | 5     | 5.0      | 100       | 0           | 34    | 152       |
-| 7   | 4           | 500   | Dep      | 0     | 4.8      | 100       | 0           | 33    | 205       |
-| 8   | 4           | 500   | File     | 1     | 4.5      | 100       | 0           | 32    | 203       |
-| 9   | 8           | 100   | Module   | 1     | 2.8      | 100       | 0           | 45    | 160       |
-| 10  | 8           | 500   | Dep      | 5     | 1.2      | 100       | 0           | 42    | 210       |
-| 11  | 8           | 1000  | File     | 0     | 1.0      | 100       | 0           | 40    | 260       |
-| 12  | 8           | 1000  | Module   | 3     | 1.1      | 100       | 0           | 41    | 258       |
-| 13  | 16          | 100   | Dep      | 5     | 2.5      | 100       | 0           | 60    | 165       |
-| 14  | 16          | 500   | File     | 0     | 2.2      | 100       | 0           | 58    | 215       |
-| 15  | 16          | 1000  | Module   | 1     | 2.0      | 100       | 0           | 56    | 270       |
-| 16  | 16          | 1000  | Dep      | 3     | 1.8      | 100       | 0           | 55    | 268       |
+| 1   | 2           | 100   | Dep      | 0     | latest      | 100       | 0           | 25    | 150       |
+| 2   | 2           | 100   | File     | 1     | latest      | 100       | 0           | 24    | 148       |
+| 3   | 2           | 500   | Module   | 3     | latest      | 100       | 0           | 23    | 200       |
+| 4   | 2           | 1000  | Dep      | 5     | latest      | 100       | 0           | 22    | 250       |
+| 5   | 4           | 100   | File     | 3     | latest      | 100       | 0           | 35    | 155       |
+| 6   | 4           | 100   | Module   | 5     | latest      | 100       | 0           | 34    | 152       |
+| 7   | 4           | 500   | Dep      | 0     | latest      | 100       | 0           | 33    | 205       |
+| 8   | 4           | 500   | File     | 1     | latest      | 100       | 0           | 32    | 203       |
+| 9   | 8           | 100   | Module   | 1     | latest      | 100       | 0           | 45    | 160       |
+| 10  | 8           | 500   | Dep      | 5     | latest      | 100       | 0           | 42    | 210       |
+| 11  | 8           | 1000  | File     | 0     | latest      | 100       | 0           | 40    | 260       |
+| 12  | 8           | 1000  | Module   | 3     | latest      | 100       | 0           | 41    | 258       |
+| 13  | 16          | 100   | Dep      | 5     | latest      | 100       | 0           | 60    | 165       |
+| 14  | 16          | 500   | File     | 0     | latest      | 100       | 0           | 58    | 215       |
+| 15  | 16          | 1000  | Module   | 1     | latest      | 100       | 0           | 56    | 270       |
+| 16  | 16          | 1000  | Dep      | 3     | latest      | 100       | 0           | 55    | 268       |
 ```
 
 ---
@@ -319,7 +319,7 @@ time pnpm test > run10_results.txt 2>&1
 
 **Action**: Analyze experimental data to find optimal factor settings.
 
-#### 4.1: Calculate Signal-to-Noise Ratios
+#### latest: Calculate Signal-to-Noise Ratios
 
 **Action**: Calculate S/N ratios for robustness (Taguchi method).
 
@@ -339,27 +339,27 @@ time pnpm test > run10_results.txt 2>&1
 
 | Run | Time (s) | S/N Ratio (dB) |
 | --- | -------- | -------------- |
-| 1   | 8.5      | -18.6          |
-| 2   | 8.2      | -18.3          |
-| 3   | 7.8      | -17.8          |
-| 4   | 7.5      | -17.5          |
-| 5   | 5.2      | -14.3          |
-| 6   | 5.0      | -14.0          |
-| 7   | 4.8      | -13.6          |
-| 8   | 4.5      | -13.1          |
-| 9   | 2.8      | -8.9           |
-| 10  | 1.2      | -1.6           |
-| 11  | 1.0      | 0.0            |
-| 12  | 1.1      | -0.8           |
-| 13  | 2.5      | -8.0           |
-| 14  | 2.2      | -6.8           |
-| 15  | 2.0      | -6.0           |
-| 16  | 1.8      | -5.1           |
+| 1   | latest      | -latest          |
+| 2   | latest      | -latest          |
+| 3   | latest      | -latest          |
+| 4   | latest      | -latest          |
+| 5   | latest      | -latest          |
+| 6   | latest      | -latest          |
+| 7   | latest      | -latest          |
+| 8   | latest      | -latest          |
+| 9   | latest      | -latest           |
+| 10  | latest      | -latest           |
+| 11  | latest      | latest            |
+| 12  | latest      | -latest           |
+| 13  | latest      | -latest           |
+| 14  | latest      | -latest           |
+| 15  | latest      | -latest           |
+| 16  | latest      | -latest           |
 
-**Best S/N**: Run 11 (S/N = 0.0 dB, Time = 1.0s)
+**Best S/N**: Run 11 (S/N = latest dB, Time = latests)
 ```
 
-#### 4.2: Analyze Factor Effects
+#### latest: Analyze Factor Effects
 
 **Action**: Analyze how each factor affects responses.
 
@@ -376,36 +376,36 @@ time pnpm test > run10_results.txt 2>&1
 
 **Factor 1: Thread Pool Size**
 
-- Level 2: Average = 7.5s
-- Level 4: Average = 4.9s
-- Level 8: Average = 1.5s (BEST)
-- Level 16: Average = 2.1s
+- Level 2: Average = latests
+- Level 4: Average = latests
+- Level 8: Average = latests (BEST)
+- Level 16: Average = latests
 - **Optimal**: 8 threads
 
 **Factor 2: Cache Size**
 
-- Level 100: Average = 4.6s
-- Level 500: Average = 3.4s (BEST)
-- Level 1000: Average = 3.0s
+- Level 100: Average = latests
+- Level 500: Average = latests (BEST)
+- Level 1000: Average = latests
 - **Optimal**: 500-1000 fixtures
 
 **Factor 3: Grouping Strategy**
 
-- Level Dep (Dependency): Average = 3.2s (BEST)
-- Level File: Average = 4.1s
-- Level Module: Average = 4.2s
+- Level Dep (Dependency): Average = latests (BEST)
+- Level File: Average = latests
+- Level Module: Average = latests
 - **Optimal**: By dependency
 
 **Factor 4: Retry Count**
 
-- Level 0: Average = 3.5s
-- Level 1: Average = 3.8s
-- Level 3: Average = 3.6s
-- Level 5: Average = 3.4s (BEST)
+- Level 0: Average = latests
+- Level 1: Average = latests
+- Level 3: Average = latests
+- Level 5: Average = latests (BEST)
 - **Optimal**: 5 retries
 ```
 
-#### 4.3: Identify Optimal Settings
+#### latest: Identify Optimal Settings
 
 **Action**: Identify optimal factor level combinations.
 
@@ -438,7 +438,7 @@ time pnpm test > run10_results.txt 2>&1
 - Cache Size: 500 fixtures (balance performance and memory)
 - Grouping: By dependency
 - Retry Count: 5 retries
-- **Predicted Performance**: ~1.2s execution time
+- **Predicted Performance**: ~latests execution time
 ```
 
 ---
@@ -447,7 +447,7 @@ time pnpm test > run10_results.txt 2>&1
 
 **Action**: Optimize design and verify robustness.
 
-#### 5.1: Implement Optimal Settings
+#### latest: Implement Optimal Settings
 
 **Action**: Implement optimal factor settings in design.
 
@@ -479,7 +479,7 @@ TestExecutor {
 });
 ```
 
-#### 5.2: Verify Robustness
+#### latest: Verify Robustness
 
 **Action**: Verify design works well under varying conditions.
 
@@ -497,30 +497,30 @@ TestExecutor {
 
 **Test 1: Low System Load**
 
-- Execution time: 1.2s ✅
+- Execution time: latests ✅
 - Success rate: 100% ✅
 - Flakiness: 0% ✅
 
 **Test 2: High System Load**
 
-- Execution time: 1.5s ✅ (still < 2s target)
+- Execution time: latests ✅ (still < 2s target)
 - Success rate: 100% ✅
 - Flakiness: 0% ✅
 
 **Test 3: Small Test Suite (10 tests)**
 
-- Execution time: 0.3s ✅
+- Execution time: latests ✅
 - Success rate: 100% ✅
 
 **Test 4: Large Test Suite (1000+ tests)**
 
-- Execution time: 1.8s ✅ (still < 2s target)
+- Execution time: latests ✅ (still < 2s target)
 - Success rate: 100% ✅
 
 **Conclusion**: Design is robust - meets targets under varying conditions ✅
 ```
 
-#### 5.3: Create Todo List for Robust Design Implementation
+#### latest: Create Todo List for Robust Design Implementation
 
 **CRITICAL**: Do NOT write documents or reports. Create todos and execute them.
 

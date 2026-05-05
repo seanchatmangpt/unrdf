@@ -2,7 +2,7 @@
 
 This chapter positions our contributions within the context of prior research in workflow engines, semantic web technologies, event sourcing patterns, cryptographic audit mechanisms, temporal databases, and software development methodology. We organize the review around six themes that directly correspond to our thesis claims.
 
-## 2.1 Workflow Engines and Orchestration
+## latest Workflow Engines and Orchestration
 
 The workflow orchestration landscape has evolved significantly since the formalization of workflow patterns by van der Aalst et al. (2003), who identified 21 fundamental control-flow patterns that characterize business process behavior. Their work remains the theoretical foundation for evaluating workflow system expressiveness.
 
@@ -10,15 +10,15 @@ The workflow orchestration landscape has evolved significantly since the formali
 
 Camunda Zeebe (2025) takes a different architectural approach, using event-streaming technology instead of a central database. This design enables unlimited horizontal scalability by avoiding database bottlenecks, with state maintained in a Kafka-like log structure. Zeebe can scale process throughput to high-transaction volumes, though workers still poll for task delivery.
 
-Apache Airflow 3.0 (2025) introduces event-driven scheduling capabilities, allowing execution based on real-time events such as file uploads and API responses. DAG versioning provides native change tracking, and the Task SDK simplifies task creation. However, Airflow's primary focus remains batch data pipeline orchestration rather than general workflow automation.
+Apache Airflow latest (2025) introduces event-driven scheduling capabilities, allowing execution based on real-time events such as file uploads and API responses. DAG versioning provides native change tracking, and the Task SDK simplifies task creation. However, Airflow's primary focus remains batch data pipeline orchestration rather than general workflow automation.
 
 Cadence (Uber, 2025) recently released Starlark Worker, integrating the Starlark scripting language for workflow definition. This enables more dynamic workflow specification while maintaining Cadence's proven durability guarantees. All major engines, however, share a common limitation: polling-based task activation with inherent latency overhead.
 
 **Our Position.** Building on the durable execution paradigm, we introduce hook-native execution that eliminates polling entirely. Where Temporal achieves durability through transactional state capture, and Zeebe achieves scalability through event streaming, our approach achieves O(1) activation latency through RDF quad-level event subscription. This represents the first application of reactive hook patterns to workflow orchestration.
 
-## 2.2 Semantic Web and SPARQL Federation
+## latest Semantic Web and SPARQL Federation
 
-The semantic web has matured from theoretical vision to practical infrastructure. W3C is currently developing SPARQL 1.2 and RDF 1.2 specifications (2024-2025), with RDF-star introducing quoted triples for statements about statements. The expected completion for these specifications is Q3 2025.
+The semantic web has matured from theoretical vision to practical infrastructure. W3C is currently developing SPARQL latest and RDF latest specifications (2024-2025), with RDF-star introducing quoted triples for statements about statements. The expected completion for these specifications is Q3 2025.
 
 **Federated Query Processing.** SPARQL federation enables queries across distributed endpoints using the SERVICE keyword. Recent work addresses heterogeneous federation, where endpoints expose different interfaces. FedUP (2024) queries large-scale federations, while smart-KG (2024) provides partition-based linked data fragments for efficient knowledge graph access. Web-SPARQL (2025) extends SPARQL with property functions linking centralized entities to distributed web microdata.
 
@@ -26,7 +26,7 @@ The semantic web has matured from theoretical vision to practical infrastructure
 
 **Our Position.** Prior work treats SPARQL as a query language for data retrieval. We present its first application as a control flow mechanism, where SPARQL ASK queries serve as routing predicates. This declarative approach enables runtime policy modification without code deployment, achieving what we term "SPARQL-as-control-flow." The innovation lies not in SPARQL itself but in repurposing semantic queries for execution control.
 
-## 2.3 Event Sourcing and CQRS
+## latest Event Sourcing and CQRS
 
 Event sourcing, as formalized by Fowler (2005), stores all changes to application state as a sequence of events, enabling reconstruction of past states by replaying events. The Command Query Responsibility Segregation (CQRS) pattern, described by Young and Fowler (2011), separates read and write models.
 
@@ -34,7 +34,7 @@ Event sourcing, as formalized by Fowler (2005), stores all changes to applicatio
 
 **Our Position.** We adopt event sourcing for workflow audit trails but diverge from traditional implementations. Rather than storing events in a specialized event store, we leverage RDF quads as the event log, with the knowledge graph serving as both event storage and queryable state. This integration aligns with our hook-native architecture where quad insertions trigger workflow transitions.
 
-## 2.4 Cryptographic Audit Trails
+## latest Cryptographic Audit Trails
 
 The need for tamper-evident audit trails has driven innovation in both blockchain and non-blockchain approaches.
 
@@ -46,7 +46,7 @@ The need for tamper-evident audit trails has driven innovation in both blockchai
 
 **Our Position.** We apply BLAKE3 hash chains to workflow receipt generation, achieving >100,000 receipts/sec without consensus overhead. This is an engineering contribution applying known techniques (hash chains) with faster primitives (BLAKE3) to a new domain (workflow audit). We explicitly do not claim novelty over Certificate Transparency's approach, but rather its application to workflow systems.
 
-## 2.5 Temporal Databases and Time Travel
+## latest Temporal Databases and Time Travel
 
 Temporal database research has progressed from theory to mainstream implementation.
 
@@ -58,7 +58,7 @@ Temporal database research has progressed from theory to mainstream implementati
 
 **Our Position.** Existing temporal database work focuses on data management and prediction. We apply temporal capabilities to workflow debugging, enabling bidirectional time travel through Git-backed checkpoints. The O(log n) reconstruction algorithm is standard binary search; our contribution is integrating temporal queries with knowledge graph workflows for forensic analysis.
 
-## 2.6 Software Development Methodology
+## latest Software Development Methodology
 
 Test-Driven Development (TDD), formalized by Beck (2003), advocates writing tests before implementation. Empirical studies continue to evaluate TDD's effectiveness.
 
@@ -68,7 +68,7 @@ Test-Driven Development (TDD), formalized by Beck (2003), advocates writing test
 
 **Our Position.** We introduce the Big Bang 80/20 methodology with formal information-theoretic correctness bounds. Where TDD provides empirical quality improvements, BB80/20 provides theoretical guarantees based on specification entropy and pattern reuse. This represents a novel contribution to software methodology, though applicability is limited to well-specified domains. We validate the approach through 30,000+ LOC of single-pass implementations, but acknowledge the need for broader empirical study across diverse project types.
 
-## 2.7 Summary
+## latest Summary
 
 Our contributions build upon substantial prior work while introducing novel applications and combinations. Hook-native workflow execution applies reactive programming to a new domain. SPARQL-as-control-flow repurposes query semantics for execution control. Cryptographic receipt chains apply proven hash-chain techniques with modern primitives. Temporal debugging integrates version control with knowledge graphs. The Big Bang 80/20 methodology provides a theoretical framework where empirical approaches previously dominated.
 

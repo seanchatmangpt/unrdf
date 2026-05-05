@@ -4,7 +4,7 @@
  * This composable generates Zod schemas dynamically from RDF data patterns.
  * Focuses on 80/20 use cases: generating schemas from SPARQL results and RDF shapes.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

@@ -6,7 +6,7 @@ Welcome to **UNRDF** - the Universal RDF Framework for Knowledge Graph Construct
 
 UNRDF is a comprehensive ecosystem for building, managing, and deploying RDF-based knowledge graphs with:
 
-- 🔮 **Latest Technology Stack**: React 19, TypeScript 5.9, Zod 4.1
+- 🔮 **Latest Technology Stack**: React 19, TypeScript [VERSION], Zod [VERSION]
 - 📦 **18 Specialized Packages**: Core, Hooks, Browser, KGC-4D, and more
 - 🎯 **Production-Ready**: Battle-tested with 330+ passing tests
 - 🚀 **Developer Experience**: 40+ React hooks, full TypeScript support

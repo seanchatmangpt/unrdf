@@ -24,7 +24,7 @@ The current UNRDF monorepo has **excessive fragmentation** across 57 packages wi
 
 ### Layer 1: FOUNDATION (3 packages)
 
-#### 1.1 `@unrdf/store`
+#### latest `@unrdf/store`
 **Purpose**: Graph storage and SPARQL execution
 **Current equivalent**: `@unrdf/oxigraph` (1,746 LOC) + parts of `@unrdf/core` (23,616 LOC)
 **Target LOC**: ~8,000
@@ -51,7 +51,7 @@ import { createStore, executeQuery, loadQuads } from '@unrdf/store';
 
 ---
 
-#### 1.2 `@unrdf/rdf`
+#### latest `@unrdf/rdf`
 **Purpose**: RDF data model, parsing, serialization, validation
 **Current equivalent**: Parts of `@unrdf/core` + `@unrdf/validation`
 **Target LOC**: ~6,000
@@ -81,7 +81,7 @@ import { validateShacl } from '@unrdf/rdf/validation';
 
 ---
 
-#### 1.3 `@unrdf/governance`
+#### latest `@unrdf/governance`
 **Purpose**: Provenance, receipts, time-travel, deterministic event sourcing
 **Current equivalent**: `@unrdf/kgc-4d` (6,693 LOC) + `@unrdf/receipts` (730 LOC) + `@unrdf/blockchain` (945 LOC) + `@unrdf/kgc-multiverse` (4,179 LOC) + `@unrdf/kgc-substrate` (2,334 LOC)
 **Target LOC**: ~12,000
@@ -115,7 +115,7 @@ import { anchorToBlockchain } from '@unrdf/governance/blockchain';
 
 ### Layer 2: RUNTIME (4 packages)
 
-#### 2.1 `@unrdf/workflows`
+#### latest `@unrdf/workflows`
 **Purpose**: YAWL workflow engine with deterministic execution
 **Current equivalent**: `@unrdf/yawl` (39,123 LOC) + `@unrdf/yawl-durable` (1,712 LOC)
 **Target LOC**: ~35,000
@@ -149,7 +149,7 @@ import { DurableWorkflow, defineSaga } from '@unrdf/workflows/durable';
 
 ---
 
-#### 2.2 `@unrdf/runtime`
+#### latest `@unrdf/runtime`
 **Purpose**: Streaming, federation, consensus, real-time synchronization
 **Current equivalent**: `@unrdf/streaming` (3,298 LOC) + `@unrdf/federation` (4,070 LOC) + `@unrdf/consensus` (2,143 LOC) + `@unrdf/collab` (2,375 LOC)
 **Target LOC**: ~10,000
@@ -180,7 +180,7 @@ import { createCRDTStore } from '@unrdf/runtime/collab';
 
 ---
 
-#### 2.3 `@unrdf/hooks`
+#### latest `@unrdf/hooks`
 **Purpose**: Policy definition, execution, and knowledge constraints
 **Current equivalent**: `@unrdf/hooks` (10,567 LOC) + `@unrdf/knowledge-engine` (5,419 LOC)
 **Target LOC**: ~12,000
@@ -210,7 +210,7 @@ import { defineRule, inferTriples } from '@unrdf/hooks/rules';
 
 ---
 
-#### 2.4 `@unrdf/observability`
+#### latest `@unrdf/observability`
 **Purpose**: Metrics, tracing, logging, health checks
 **Current equivalent**: `@unrdf/observability` (2,184 LOC) + `@unrdf/yawl-observability` (1,896 LOC) + parts of `@unrdf/core`
 **Target LOC**: ~5,000
@@ -241,7 +241,7 @@ import { healthCheck, readinessProbe } from '@unrdf/observability/health';
 
 ### Layer 3: APPLICATIONS (5 packages)
 
-#### 3.1 `@unrdf/cli`
+#### latest `@unrdf/cli`
 **Purpose**: Command-line tools for graph operations
 **Current equivalent**: `@unrdf/cli` (4,814 LOC) + `@unrdf/kgc-cli` (17,697 LOC) + `@unrdf/kgc-tools` (354 LOC)
 **Target LOC**: ~8,000
@@ -272,7 +272,7 @@ unrdf time-travel --timestamp 2025-12-28T10:00:00Z
 
 ---
 
-#### 3.2 `@unrdf/integrations`
+#### latest `@unrdf/integrations`
 **Purpose**: External service adapters (Kafka, REST API, GraphQL, etc.)
 **Current equivalent**: `@unrdf/yawl-api` (1,002 LOC) + `@unrdf/yawl-kafka` (1,548 LOC) + `@unrdf/yawl-queue` (911 LOC) + `@unrdf/yawl-langchain` (424 LOC) + `@unrdf/rdf-graphql` (1,720 LOC) + `@unrdf/serverless` (1,508 LOC)
 **Target LOC**: ~6,000
@@ -302,7 +302,7 @@ import { deployToLambda } from '@unrdf/integrations/serverless';
 
 ---
 
-#### 3.3 `@unrdf/ai`
+#### latest `@unrdf/ai`
 **Purpose**: ML inference, semantic search, embeddings, AI-powered features
 **Current equivalent**: `@unrdf/ml-inference` (1,164 LOC) + `@unrdf/ml-versioning` (663 LOC) + `@unrdf/semantic-search` (768 LOC) + `@unrdf/yawl-ai` (1,925 LOC) + `@unrdf/decision-fabric` (2,383 LOC)
 **Target LOC**: ~5,000
@@ -331,7 +331,7 @@ import { transformIntent } from '@unrdf/ai/decision-fabric';
 
 ---
 
-#### 3.4 `@unrdf/ui`
+#### latest `@unrdf/ui`
 **Purpose**: React components, Vue composables, visualization libraries
 **Current equivalent**: `@unrdf/react` (900 LOC) + `@unrdf/composables` (0 LOC) + `@unrdf/yawl-viz` (0 LOC) + `@unrdf/yawl-realtime` (1,414 LOC)
 **Target LOC**: ~4,000
@@ -364,7 +364,7 @@ import { WorkflowVisualizer } from '@unrdf/ui/viz';
 
 ---
 
-#### 3.5 `@unrdf/tools`
+#### latest `@unrdf/tools`
 **Purpose**: Development utilities, testing, documentation generation
 **Current equivalent**: `@unrdf/test-utils` (1,398 LOC) + `@unrdf/diataxis-kit` (2,620 LOC) + `@unrdf/kgc-docs` (1,583 LOC) + `@unrdf/kgc-probe` (16,810 LOC)
 **Target LOC**: ~8,000
@@ -504,7 +504,7 @@ graph TD
 
 ## 4. Kill List (45 packages eliminated)
 
-### 4.1 Merged into `@unrdf/governance`
+### latest Merged into `@unrdf/governance`
 - ❌ `@unrdf/kgc-4d` - Core time-travel merged
 - ❌ `@unrdf/receipts` - Merkle tree receipts merged
 - ❌ `@unrdf/blockchain` - Anchoring merged as optional feature
@@ -515,13 +515,13 @@ graph TD
 
 ---
 
-### 4.2 Merged into `@unrdf/workflows`
+### latest Merged into `@unrdf/workflows`
 - ❌ `@unrdf/yawl` - Core engine kept
 - ❌ `@unrdf/yawl-durable` - Saga pattern merged into core
 
 ---
 
-### 4.3 Merged into `@unrdf/integrations`
+### latest Merged into `@unrdf/integrations`
 - ❌ `@unrdf/yawl-api` - REST API adapter
 - ❌ `@unrdf/yawl-kafka` - Kafka adapter
 - ❌ `@unrdf/yawl-queue` - BullMQ adapter
@@ -533,7 +533,7 @@ graph TD
 
 ---
 
-### 4.4 Merged into `@unrdf/runtime`
+### latest Merged into `@unrdf/runtime`
 - ❌ `@unrdf/streaming` - Change feeds
 - ❌ `@unrdf/federation` - Distributed queries
 - ❌ `@unrdf/consensus` - RAFT consensus
@@ -543,7 +543,7 @@ graph TD
 
 ---
 
-### 4.5 Merged into `@unrdf/ai`
+### latest Merged into `@unrdf/ai`
 - ❌ `@unrdf/ml-inference` - ONNX inference
 - ❌ `@unrdf/ml-versioning` - Model versioning
 - ❌ `@unrdf/semantic-search` - Vector search
@@ -554,7 +554,7 @@ graph TD
 
 ---
 
-### 4.6 Merged into `@unrdf/ui`
+### latest Merged into `@unrdf/ui`
 - ❌ `@unrdf/react` - React hooks
 - ❌ `@unrdf/composables` - Vue composables
 - ❌ `@unrdf/yawl-viz` - Workflow visualization
@@ -564,7 +564,7 @@ graph TD
 
 ---
 
-### 4.7 Merged into `@unrdf/tools`
+### latest Merged into `@unrdf/tools`
 - ❌ `@unrdf/test-utils` - Testing utilities
 - ❌ `@unrdf/diataxis-kit` - Documentation framework
 - ❌ `@unrdf/kgc-docs` - KGC Markdown
@@ -575,7 +575,7 @@ graph TD
 
 ---
 
-### 4.8 Merged into `@unrdf/cli`
+### latest Merged into `@unrdf/cli`
 - ❌ `@unrdf/cli` - Main CLI kept
 - ❌ `@unrdf/kgc-cli` - Extension registry merged
 - ❌ `@unrdf/kgc-tools` - Verification tools merged
@@ -584,7 +584,7 @@ graph TD
 
 ---
 
-### 4.9 Merged into `@unrdf/hooks`
+### latest Merged into `@unrdf/hooks`
 - ❌ `@unrdf/hooks` - Core kept
 - ❌ `@unrdf/knowledge-engine` - Rule engine merged
 
@@ -592,7 +592,7 @@ graph TD
 
 ---
 
-### 4.10 Merged into `@unrdf/observability`
+### latest Merged into `@unrdf/observability`
 - ❌ `@unrdf/observability` - Core kept
 - ❌ `@unrdf/yawl-observability` - YAWL metrics merged
 
@@ -600,7 +600,7 @@ graph TD
 
 ---
 
-### 4.11 Merged into `@unrdf/store` + `@unrdf/rdf`
+### latest Merged into `@unrdf/store` + `@unrdf/rdf`
 - ❌ `@unrdf/core` - Split into store (execution) + rdf (data model)
 - ❌ `@unrdf/oxigraph` - Merged into @unrdf/store
 
@@ -608,7 +608,7 @@ graph TD
 
 ---
 
-### 4.12 KILLED ENTIRELY (not included in v6)
+### latest KILLED ENTIRELY (not included in v6)
 - ❌ `@unrdf/atomvm` - BEAM VM in browser (niche, 8K LOC, zero adoption)
 - ❌ `@unrdf/caching` - Redis/LRU caching (premature optimization, add later if needed)
 - ❌ `@unrdf/dark-matter` - Query optimization (0 LOC, vaporware)
@@ -658,22 +658,22 @@ graph TD
 
 ## 6. New Packages (What's Missing)
 
-### 6.1 `@unrdf/store` (NEW - refactored from core/oxigraph)
+### latest `@unrdf/store` (NEW - refactored from core/oxigraph)
 **Why**: Clear separation between SPARQL execution and RDF data model.
 
-### 6.2 `@unrdf/rdf` (NEW - refactored from core)
+### latest `@unrdf/rdf` (NEW - refactored from core)
 **Why**: Pure RDF concerns (parsing, validation) separate from execution.
 
-### 6.3 `@unrdf/governance` (NEW - consolidation of 6 packages)
+### latest `@unrdf/governance` (NEW - consolidation of 6 packages)
 **Why**: Unified provenance API eliminates confusion between kgc-4d, receipts, blockchain.
 
-### 6.4 `@unrdf/integrations` (NEW - consolidation of 6 adapter packages)
+### latest `@unrdf/integrations` (NEW - consolidation of 6 adapter packages)
 **Why**: Plugin model for external services better than package-per-integration.
 
-### 6.5 `@unrdf/ai` (NEW - consolidation of 5 ML packages)
+### latest `@unrdf/ai` (NEW - consolidation of 5 ML packages)
 **Why**: Shared vector infrastructure for all AI features.
 
-### 6.6 `@unrdf/ui` (NEW - consolidation of 4 UI packages)
+### latest `@unrdf/ui` (NEW - consolidation of 4 UI packages)
 **Why**: Framework-agnostic UI layer with React/Vue subpaths.
 
 ---
@@ -902,6 +902,6 @@ The v6 rewrite consolidates **57 packages → 12 packages** with **71% LOC reduc
 **Document Metadata**:
 - Author: System Architect (Claude Code)
 - Date: 2025-12-28
-- Version: 1.0
+- Version: latest
 - Status: PROPOSAL - Awaiting approval
 - Git-backed receipt: [Generate after review]

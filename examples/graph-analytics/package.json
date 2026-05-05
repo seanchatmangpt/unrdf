@@ -1,6 +1,6 @@
 {
   "name": "@unrdf-examples/graph-analytics",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "description": "Real-time graph analytics with pattern detection and visualization",
   "type": "module",
   "main": "src/index.mjs",

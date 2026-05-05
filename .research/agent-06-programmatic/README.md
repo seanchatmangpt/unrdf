@@ -2,7 +2,7 @@
 
 **Research Agent:** Agent 6 - Programmatic Execution Explorer
 **Date:** 2025-12-27
-**Claude Code Version:** 2.0.59
+**Claude Code Version:** [VERSION]
 **Status:** Complete ✅
 
 ## Mission
@@ -122,8 +122,8 @@ All examples are executable Node.js scripts with full error handling:
                     ▼
 ┌─────────────────────────────────────────────┐
 │  Anthropic API                              │
-│  ├─ Claude Sonnet 4.5                       │
-│  ├─ Claude Opus 4.5                         │
+│  ├─ Claude Sonnet [VERSION]                       │
+│  ├─ Claude Opus [VERSION]                         │
 │  └─ Claude Haiku                            │
 └─────────────────────────────────────────────┘
 ```
@@ -392,11 +392,11 @@ Claude Code provides **production-ready programmatic execution** through:
 ├── README.md (this file)
 ├── PROGRAMMATIC-EXECUTION-GUIDE.md (15KB - comprehensive guide)
 ├── API-REFERENCE.md (15KB - complete CLI reference)
-├── 01-cli-modes-test.mjs (5.1KB - output format tests)
-├── 02-streaming-parser.mjs (3.2KB - streaming demo)
-├── 03-pipeline-integration.mjs (6.1KB - ClaudeClient class)
-├── 04-session-management-test.mjs (6.5KB - session tests)
-└── 05-error-handling-patterns.mjs (8.7KB - robust client)
+├── 01-cli-modes-test.mjs ([VERSION]KB - output format tests)
+├── 02-streaming-parser.mjs ([VERSION]KB - streaming demo)
+├── 03-pipeline-integration.mjs ([VERSION]KB - ClaudeClient class)
+├── 04-session-management-test.mjs ([VERSION]KB - session tests)
+└── 05-error-handling-patterns.mjs ([VERSION]KB - robust client)
 
 Total: 8 files, ~68KB
 All scripts: Executable, tested, documented

@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-04
 **Scope:** 80/20 Framework -- All Tiers
-**Weaver Version:** 0.22.1
+**Weaver Version:** latest
 
 ## Summary
 
@@ -89,7 +89,7 @@ All dashboards reference `${DS_PROMETHEUS}` for datasource variables.
 **Warnings:**
 
 1. **Span name convention**: Current format is `llm.<operation>`. The GenAI semantic convention spec requires `gen_ai.<operation>` (e.g., `gen_ai.chat`, `gen_ai.embed`, `gen_ai.score`). This affects Tempo service graph grouping.
-2. **Missing `gen_ai.usage.total_tokens`**: RECOMMENDED attribute since semconv 1.26.0. Currently only `input_tokens` and `output_tokens` are set. Total tokens should be computed as `input + output`.
+2. **Missing `gen_ai.usage.total_tokens`**: RECOMMENDED attribute since semconv latest. Currently only `input_tokens` and `output_tokens` are set. Total tokens should be computed as `input + output`.
 3. **Non-standard `ai.*` attributes**: `ai.operationId`, `ai.toolCall.name`, `ai.toolCall.args`, `ai.toolCall.result` are Vercel AI SDK-specific and not part of the OTel GenAI spec. These are acceptable for SDK integration but should be documented as vendor-specific.
 
 ### 5. Weaver Validation (`otel/registry/`)
@@ -103,7 +103,7 @@ No registry manifest found: otel/registry/manifest.yaml
 No `after_resolution` policy violation
 ```
 
-Weaver 0.22.1 validated the 8 registry files in `otel/registry/`:
+Weaver latest validated the 8 registry files in `otel/registry/`:
 
 - `cli.yaml`, `crypto.yaml`, `knowledge_hook.yaml`, `mcp.yaml`, `metrics.yaml`, `policy.yaml`, `rdf.yaml`, `transaction.yaml`
 

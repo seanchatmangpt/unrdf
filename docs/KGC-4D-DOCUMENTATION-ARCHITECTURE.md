@@ -1,6 +1,6 @@
 # KGC-4D Documentation Architecture
 
-**Version:** 1.0
+**Version:** latest
 **Date:** 2025-12-27
 **Status:** Architecture Design Document
 
@@ -18,7 +18,7 @@ This document defines the information architecture for KGC-4D (Knowledge Graph C
 
 ## 1. Core Conceptual Model
 
-### 1.1 The Four Dimensions (Foundation Layer)
+### latest The Four Dimensions (Foundation Layer)
 
 **Mental Model:** KGC-4D is NOT a traditional database - it's a 4-dimensional information space.
 
@@ -41,7 +41,7 @@ This document defines the information architecture for KGC-4D (Knowledge Graph C
 
 **Critical Insight:** Each dimension builds on the previous. Don't introduce V before users understand t_ns.
 
-### 1.2 Named Graphs (Application Layer)
+### latest Named Graphs (Application Layer)
 
 **Mental Model:** Three partitioned namespaces, each with specific semantics.
 
@@ -62,7 +62,7 @@ This document defines the information architecture for KGC-4D (Knowledge Graph C
 - EventLog is IMMUTABLE (append-only, never delete)
 - System graph holds optimization pointers (latest snapshot)
 
-### 1.3 Event Sourcing (Architecture Pattern)
+### latest Event Sourcing (Architecture Pattern)
 
 **Mental Model:** State is DERIVED from events, not stored directly.
 
@@ -82,7 +82,7 @@ Universe (Derived State)
 
 **Learning Dependency:** Must understand event sourcing BEFORE understanding time-travel.
 
-### 1.4 Freezing & Snapshots (Performance Optimization)
+### latest Freezing & Snapshots (Performance Optimization)
 
 **Mental Model:** Snapshots are CHECKPOINTS for fast reconstruction.
 
@@ -103,7 +103,7 @@ t0 ────────── t1 ────────── t2 ───
 
 **Knowledge Gate:** Must understand event sourcing BEFORE understanding why snapshots are needed.
 
-### 1.5 Time-Travel & Reconstruction (Core Feature)
+### latest Time-Travel & Reconstruction (Core Feature)
 
 **Mental Model:** "Git checkout" for knowledge graphs.
 
@@ -116,7 +116,7 @@ t0 ────────── t1 ────────── t2 ───
 
 **Critical Performance Insight:** Without snapshots, must replay ALL events from genesis (O(n) where n = total events).
 
-### 1.6 Receipt Verification (Security)
+### latest Receipt Verification (Security)
 
 **Mental Model:** Cryptographic proof that state hasn't been tampered with.
 
@@ -135,7 +135,7 @@ t0 ────────── t1 ────────── t2 ───
 
 ## 2. User Journey Mapping
 
-### 2.1 Persona 1: Data Scientist (Query & Analysis)
+### latest Persona 1: Data Scientist (Query & Analysis)
 
 **Goals:**
 - Query historical data
@@ -167,7 +167,7 @@ Start: Familiar with SPARQL
 
 **Critical Path Blocker:** If they don't understand named graphs, they'll query wrong graph and get no results.
 
-### 2.2 Persona 2: Application Builder (Event Sourcing)
+### latest Persona 2: Application Builder (Event Sourcing)
 
 **Goals:**
 - Append events to EventLog
@@ -199,7 +199,7 @@ Start: Familiar with event sourcing patterns
 
 **Critical Path Blocker:** If they don't understand deltas, events won't reconstruct state correctly.
 
-### 2.3 Persona 3: System Architect (Understanding & Design)
+### latest Persona 3: System Architect (Understanding & Design)
 
 **Goals:**
 - Understand system architecture
@@ -234,7 +234,7 @@ Start: Familiar with distributed systems
 
 **Critical Path Blocker:** Without understanding the 4D model, they'll treat it like a traditional database.
 
-### 2.4 Persona 4: DevOps Engineer (Operations & Verification)
+### latest Persona 4: DevOps Engineer (Operations & Verification)
 
 **Goals:**
 - Verify receipts (audit trail)
@@ -274,7 +274,7 @@ Start: Familiar with Git and operations
 
 ## 3. Cross-Cutting Concerns
 
-### 3.1 Environment Differences (Node vs Browser)
+### latest Environment Differences (Node vs Browser)
 
 **Challenge:** API surface differs between runtimes.
 
@@ -306,7 +306,7 @@ Start: Familiar with Git and operations
 - How-To: "Cross-Runtime Development Patterns"
 - Explanation: "Why Git Is Node-Only"
 
-### 3.2 Performance Considerations
+### latest Performance Considerations
 
 **Critical Thresholds:**
 
@@ -338,7 +338,7 @@ Start: Familiar with Git and operations
 - Explanation: "Time-Travel Performance Trade-offs"
 - How-To: "HDIT Dimension Selection Guide"
 
-### 3.3 Error Handling Patterns
+### latest Error Handling Patterns
 
 **24 Poka-Yoke Guards:**
 
@@ -359,7 +359,7 @@ Start: Familiar with Git and operations
 - Troubleshooting: "Common Guard Errors"
 - Best Practices: "Error Handling Patterns"
 
-### 3.4 Testing Strategies
+### latest Testing Strategies
 
 **Test Pyramid:**
 
@@ -391,7 +391,7 @@ Start: Familiar with Git and operations
 
 ## 4. Learning Progression Model
 
-### 4.1 Concept Dependency Graph
+### latest Concept Dependency Graph
 
 ```mermaid
 graph TD
@@ -437,7 +437,7 @@ graph TD
 4. **DevOps Path** (Operations-First):
    - Freeze → Receipt → Verify → Reconstruct → Monitor
 
-### 4.2 Ordered Curriculum
+### latest Ordered Curriculum
 
 #### Level 0: Prerequisites (Not KGC-4D Specific)
 - RDF triples/quads
@@ -553,13 +553,13 @@ graph TD
 - Reference: "HDIT API Complete"
 - Best Practices: "Performance Optimization"
 
-### 4.3 Suggested Learning Paths by Persona
+### latest Suggested Learning Paths by Persona
 
 #### Data Scientist Path (Analysis-First)
 ```
 Week 1: Level 1 (Foundation)
 Week 2: Level 3 (Time-Travel) ← Skip Level 2 initially
-Week 3: Level 6.1 (HDIT only)
+Week 3: Level latest (HDIT only)
 Week 4: Level 2 (Core Ops) ← Circle back
 ```
 
@@ -588,9 +588,9 @@ Week 4: Custom exploration based on needs
 #### DevOps Path (Operations-First)
 ```
 Week 1: Level 1 (Foundation - minimal)
-Week 2: Level 2.3-2.4 (Freeze & Verify only)
+Week 2: Level latest.4 (Freeze & Verify only)
 Week 3: Level 5 (Production)
-Week 4: Level 3.2 (reconstructState only)
+Week 4: Level latest (reconstructState only)
 ```
 
 **Rationale:** Operations and verification first, time-travel as recovery tool.
@@ -599,7 +599,7 @@ Week 4: Level 3.2 (reconstructState only)
 
 ## 5. Documentation Roadmap
 
-### 5.1 Documentation Categories (Diátaxis Framework)
+### latest Documentation Categories (Diátaxis Framework)
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -627,7 +627,7 @@ Week 4: Level 3.2 (reconstructState only)
 └─────────────────┴──────────────────────────────────────┘
 ```
 
-### 5.2 Tutorial Deliverables (Learning-Oriented)
+### latest Tutorial Deliverables (Learning-Oriented)
 
 **Priority 1 (Launch Blockers):**
 1. ✅ **"Getting Started with KGC-4D"** (30-45 min)
@@ -662,7 +662,7 @@ Week 4: Level 3.2 (reconstructState only)
    - Audience: Architects
    - Dependencies: All above
 
-### 5.3 How-To Guide Deliverables (Task-Oriented)
+### latest How-To Guide Deliverables (Task-Oriented)
 
 **Priority 1 (Launch Blockers):**
 1. **"How to Query EventLog for Analysis"**
@@ -699,7 +699,7 @@ Week 4: Level 3.2 (reconstructState only)
    - Extend Poka-Yoke system
    - Audience: Advanced Builders
 
-### 5.4 Reference Deliverables (Information-Oriented)
+### latest Reference Deliverables (Information-Oriented)
 
 **Priority 1 (Launch Blockers):**
 1. ✅ **"KGCStore API Reference"**
@@ -729,7 +729,7 @@ Week 4: Level 3.2 (reconstructState only)
 8. **"Performance Benchmarks Reference"**
    - Measured latencies, throughput
 
-### 5.5 Explanation Deliverables (Understanding-Oriented)
+### latest Explanation Deliverables (Understanding-Oriented)
 
 **Priority 1 (Launch Blockers):**
 1. ✅ **"Why 4 Dimensions?"**
@@ -758,7 +758,7 @@ Week 4: Level 3.2 (reconstructState only)
 8. **"Poka-Yoke Design Philosophy"**
    - Mistake-proofing principles
 
-### 5.6 Additional Documentation Types
+### latest Additional Documentation Types
 
 **Architecture Documents:**
 1. **"KGC-4D Architecture Overview"** ✅
@@ -788,7 +788,7 @@ Week 4: Level 3.2 (reconstructState only)
 
 ## 6. Implementation Strategy
 
-### 6.1 Phased Rollout
+### latest Phased Rollout
 
 **Phase 1: Foundation (Week 1-2)**
 - Complete all Priority 1 deliverables
@@ -810,7 +810,7 @@ Week 4: Level 3.2 (reconstructState only)
 - Add new patterns as discovered
 - Keep in sync with code changes
 
-### 6.2 Quality Metrics
+### latest Quality Metrics
 
 **Documentation Quality Indicators:**
 1. **Completeness:** All public APIs documented (100%)
@@ -822,9 +822,9 @@ Week 4: Level 3.2 (reconstructState only)
 1. **Time to First Success:** < 15 minutes for Getting Started
 2. **Task Completion Rate:** > 80% for tutorials
 3. **Support Ticket Reduction:** > 50% after docs launch
-4. **User Satisfaction:** > 4.5/5 on documentation quality
+4. **User Satisfaction:** > latest/5 on documentation quality
 
-### 6.3 Maintenance Strategy
+### latest Maintenance Strategy
 
 **Continuous Validation:**
 - Run all code examples in CI/CD (fail build if broken)
@@ -840,7 +840,7 @@ Week 4: Level 3.2 (reconstructState only)
 
 ## 7. Conclusion
 
-### 7.1 Success Criteria
+### latest Success Criteria
 
 This documentation architecture is successful if:
 
@@ -849,7 +849,7 @@ This documentation architecture is successful if:
 3. ✅ **Architects** understand 4D model in < 1 hour
 4. ✅ **DevOps** can verify receipts and reconstruct in < 30 minutes
 
-### 7.2 Key Takeaways
+### latest Key Takeaways
 
 **For Documentation Authors:**
 1. Teach concepts in dependency order (RDF → Named Graphs → EventLog → Time-Travel)

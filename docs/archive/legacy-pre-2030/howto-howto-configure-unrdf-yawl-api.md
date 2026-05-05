@@ -2,7 +2,7 @@
 title: "Configure @unrdf/yawl-api"
 type: "how-to"
 packageName: "@unrdf/yawl-api"
-version: "26.4.3"
+version: "latest"
 generatedAt: "2000-01-01T00:00:00.000Z"
 confidenceScore: 1
 proof: "6ca3fe744f7ce3bb14cc28409fbc09a38fb228240d2b01c934abe205e2ef3a9d"

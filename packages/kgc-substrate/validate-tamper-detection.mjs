@@ -35,14 +35,14 @@ async function runTests() {
   const chain = new ReceiptChain();
   await chain.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [
       { type: 'code', path: 'ReceiptChain.mjs', hash: 'abc123', size_bytes: 8707 }
     ]
   });
   await chain.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [
       { type: 'code', path: 'TamperDetector.mjs', hash: 'def456', size_bytes: 9466 }
     ]
@@ -78,19 +78,19 @@ async function runTests() {
 
   await chain2.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: timestamp1
   });
   await chain2.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: timestamp3
   });
   await chain2.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: timestamp2 // Out of order
   });
@@ -109,13 +109,13 @@ async function runTests() {
 
   await chain3.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: timestamp
   });
   await chain3.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: timestamp // Replay
   });
@@ -133,19 +133,19 @@ async function runTests() {
   let ts4 = BigInt(Date.now()) * 1_000_000n;
   await chain4.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [{ type: 'code', path: 'a.mjs', hash: 'hash1', size_bytes: 100 }],
     timestamp_ns: ts4
   });
   await chain4.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [{ type: 'code', path: 'b.mjs', hash: 'hash2', size_bytes: 200 }],
     timestamp_ns: ts4 + 1_000_000n
   });
   await chain4.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [{ type: 'code', path: 'c.mjs', hash: 'hash3', size_bytes: 300 }],
     timestamp_ns: ts4 + 2_000_000n
   });
@@ -168,7 +168,7 @@ async function runTests() {
   const chain5 = new ReceiptChain();
   await chain5.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [{ type: 'code', path: 'file.mjs', hash: 'original_hash', size_bytes: 1000 }],
     timestamp_ns: BigInt(Date.now()) * 1_000_000n
   });
@@ -193,7 +193,7 @@ async function runTests() {
   const chain6 = new ReceiptChain({ genesis_hash: 'f'.repeat(64) });
   await chain6.append({
     agent_id: 'agent-2',
-    toolchain_version: '1.0.0',
+    toolchain_version: '[VERSION]',
     artifacts: [],
     timestamp_ns: BigInt(Date.now()) * 1_000_000n
   });
@@ -216,7 +216,7 @@ async function runTests() {
   for (let i = 0; i < 5; i++) {
     await reportChain.append({
       agent_id: 'agent-2',
-      toolchain_version: '1.0.0',
+      toolchain_version: '[VERSION]',
       artifacts: [
         { type: 'code', path: `file${i}.mjs`, hash: `hash${i}`, size_bytes: 100 * (i + 1) }
       ],

@@ -40,7 +40,7 @@ export const ProbeConfigSchema = z.object({
   maxTimeoutMs: z.number().int().positive().default(50000),
 
   // Probe version
-  probeVersion: z.string().default('1.0.0'),
+  probeVersion: z.string().default('[VERSION]'),
 });
 
 /**
@@ -69,7 +69,7 @@ export function parseConfig(options) {
     samples: options.samples,
     enforceTimeouts: true,
     maxTimeoutMs: (options.budgetMs || 5000) * 10,
-    probeVersion: '1.0.0',
+    probeVersion: '[VERSION]',
   };
 
   return ProbeConfigSchema.parse(config);

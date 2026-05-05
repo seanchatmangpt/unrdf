@@ -61,8 +61,8 @@
   epoch: 'τ_2025_12_26_1430_123',          // Deterministic timestamp
   outputHash: 'hash4',                      // Universe state hash
   toolchainVersion: {
-    node: 'v18.19.0',
-    packages: { '@unrdf/core': '^5.0.1' }
+    node: '[VERSION]',
+    packages: { '@unrdf/core': '^[VERSION]' }
   },
   generatedAtTime: '2025-12-26T14:30:00.123Z',
   beforeHash: 'previousHash' | null,        // Chain linkage

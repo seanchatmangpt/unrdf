@@ -1,7 +1,7 @@
 # UNRDF v5 Code Quality Analysis - Current State
 
 **Analysis Date**: 2025-12-28
-**Codebase Version**: 6.0.0-rc.1 (branch: claude/v6-agent-rewrite-AP1a4)
+**Codebase Version**: latest.1 (branch: claude/v6-agent-rewrite-AP1a4)
 **Analyzer**: Claude Code (Code Quality Analyzer)
 
 ---
@@ -24,7 +24,7 @@ Analysis of 56 packages in the UNRDF monorepo reveals **significant quality debt
 
 ## 1. File Size Violations
 
-### 1.1 Oversized Implementation Files
+### latest Oversized Implementation Files
 
 **Target**: ≤500 lines per .mjs file
 **Current**: 30+ violations
@@ -57,7 +57,7 @@ packages/yawl/src/resources/yawl-resources.mjs → split into 3 modules
 packages/kgc-probe/src/agents/index.mjs → split into 7 modules
 ```
 
-### 1.2 Test File Violations
+### latest Test File Violations
 
 **Target**: ≤800 lines per test file
 **Current**: 7 violations
@@ -76,7 +76,7 @@ packages/kgc-probe/src/agents/index.mjs → split into 7 modules
 
 ## 2. Complexity Violations
 
-### 2.1 Functions Exceeding Length Limit
+### latest Functions Exceeding Length Limit
 
 **Target**: ≤50 lines per function
 **Current**: 14+ violations in packages/core/src
@@ -93,7 +93,7 @@ packages/kgc-probe/src/agents/index.mjs → split into 7 modules
 | `runtime/detect.mjs` | (anonymous) | 74 | Runtime detection - extract detectors |
 | `minimal-n3-integration.mjs` | (anonymous) | 72 | Parser wrapper - simplify |
 
-### 2.2 Deep Nesting
+### latest Deep Nesting
 
 **Target**: ≤3 levels of nesting
 **Current**: 6 instances of 4+ level nesting
@@ -118,7 +118,7 @@ if (receipt) {                           // Level 1
 
 ## 3. Forbidden Patterns
 
-### 3.1 N3 Direct Imports (CRITICAL)
+### latest N3 Direct Imports (CRITICAL)
 
 **Rule**: ZERO direct imports from 'n3' package
 **Current**: 12 violations
@@ -152,7 +152,7 @@ import { Parser } from '@unrdf/core/rdf/n3-justified-only'; // Only for streamin
 const store = createStore();
 ```
 
-### 3.2 Console.log in Source Code
+### latest Console.log in Source Code
 
 **Rule**: ZERO console.log/warn/error in packages/*/src
 **Current**: 190 violations in packages/core/src
@@ -182,7 +182,7 @@ import { trace } from '@opentelemetry/api';
 trace.getActiveSpan()?.addEvent('query_executed', { duration_ms: duration });
 ```
 
-### 3.3 Default Exports
+### latest Default Exports
 
 **Rule**: NO default exports in implementation files
 **Current**: 20+ violations
@@ -258,7 +258,7 @@ export * from './command.mjs';
 
 ## 5. Documentation Quality
 
-### 5.1 JSDoc Coverage
+### latest JSDoc Coverage
 
 **Target**: 100% for public API
 **Current**: ~60% estimated
@@ -281,7 +281,7 @@ echo "Coverage: $((documented * 100 / exported))%"
 2. Internal helper functions (not exported, but should document)
 3. Type definitions (JSDoc @typedef missing for many schemas)
 
-### 5.2 TODO/FIXME Technical Debt
+### latest TODO/FIXME Technical Debt
 
 **Rule**: ZERO TODO/FIXME without issue reference
 **Current**: 23 instances
@@ -305,7 +305,7 @@ packages/hooks/src/policy-engine.mjs:// HACK: Workaround for circular dependency
 
 ## 6. Error Handling Patterns
 
-### 6.1 Try-Catch Blocks
+### latest Try-Catch Blocks
 
 **Count**: 115 try-catch blocks in packages/core/src
 **Assessment**: Many redundant (defensive programming)
@@ -346,7 +346,7 @@ export async function createReceipt(payload) {
 
 ## 7. Dependency Analysis
 
-### 7.1 Layer Violations
+### latest Layer Violations
 
 **5-Layer Architecture Compliance**: ✅ GOOD (no upward dependencies detected)
 
@@ -356,7 +356,7 @@ grep -r "@unrdf/kgc-4d" packages/core/src --include="*.mjs"  # 0 results ✅
 grep -r "@unrdf/hooks" packages/core/src --include="*.mjs"   # 0 results ✅
 ```
 
-### 7.2 Circular Dependencies
+### latest Circular Dependencies
 
 **Status**: ✅ CLEAN (no circular dependencies)
 
@@ -365,7 +365,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 # No circular dependencies found
 ```
 
-### 7.3 External Dependencies
+### latest External Dependencies
 
 **Total Runtime Dependencies**: 147 across all packages
 
@@ -374,16 +374,16 @@ $ npx madge --circular --extensions mjs packages/*/src
 - Multiple `@opentelemetry/*` versions - Consolidate to single version
 
 **Approved Core**:
-- ✅ `oxigraph@^0.5.2` - SPARQL engine
-- ✅ `zod@^4.1.13` - Runtime validation
-- ✅ `hash-wasm@^4.12.0` - BLAKE3 hashing
-- ✅ `@opentelemetry/api@^1.9.0` - Observability
+- ✅ `oxigraph@^latest` - SPARQL engine
+- ✅ `zod@^latest` - Runtime validation
+- ✅ `hash-wasm@^latest` - BLAKE3 hashing
+- ✅ `@opentelemetry/api@^latest` - Observability
 
 ---
 
 ## 8. Testing Quality
 
-### 8.1 Test Coverage
+### latest Test Coverage
 
 **Current**: ~70% average (varies by package)
 **Target**: ≥80% for v6
@@ -398,7 +398,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 | @unrdf/yawl | ~68% | ❌ FAIL |
 | @unrdf/hooks | ~72% | ⚠️ WARN |
 
-### 8.2 Test Organization
+### latest Test Organization
 
 **Total Test Files**: 547
 **Total Test Cases**: ~642 (describe/it blocks in core/test)
@@ -411,7 +411,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 9. Code Style Compliance
 
-### 9.1 Prettier Compliance
+### latest Prettier Compliance
 
 **Status**: ✅ CONFIGURED
 
@@ -429,7 +429,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 }
 ```
 
-### 9.2 ESLint Compliance
+### latest ESLint Compliance
 
 **Status**: ❌ NO CONFIG FOUND
 
@@ -442,7 +442,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 10. Package Quality Scores
 
-### 10.1 Tier 1 (Essential) - Quality Assessment
+### latest Tier 1 (Essential) - Quality Assessment
 
 | Package | File Size | Complexity | Docs | Deps | Score | Grade |
 |---------|-----------|------------|------|------|-------|-------|
@@ -464,7 +464,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 11. Migration Priority Matrix
 
-### 11.1 High Priority (Week 1-2)
+### latest High Priority (Week 1-2)
 
 **Impact**: Critical / Effort: Low
 
@@ -480,7 +480,7 @@ $ npx madge --circular --extensions mjs packages/*/src
    - Replace with OTEL spans (validation package)
    - Add structured logger utility
 
-### 11.2 Medium Priority (Week 3-4)
+### latest Medium Priority (Week 3-4)
 
 **Impact**: High / Effort: Medium
 
@@ -498,7 +498,7 @@ $ npx madge --circular --extensions mjs packages/*/src
    - Automated refactor with regex
    - Update imports across codebase
 
-### 11.3 Low Priority (Week 5-6)
+### latest Low Priority (Week 5-6)
 
 **Impact**: Medium / Effort: High
 
@@ -515,7 +515,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 12. Automation Opportunities
 
-### 12.1 Automated Fixes (Low Risk)
+### latest Automated Fixes (Low Risk)
 
 ✅ **Can automate safely**:
 - Prettier formatting
@@ -524,14 +524,14 @@ $ npx madge --circular --extensions mjs packages/*/src
 - Remove unused imports
 - Convert default exports → named exports
 
-### 12.2 Semi-Automated (Needs Review)
+### latest Semi-Automated (Needs Review)
 
 ⚠️ **AI-assisted + manual review**:
 - JSDoc generation
 - Function extraction (suggest split points)
 - Schema tightening (z.unknown → specific types)
 
-### 12.3 Manual Only (High Risk)
+### latest Manual Only (High Risk)
 
 ❌ **Requires human judgment**:
 - God Object splitting (architectural decisions)
@@ -542,7 +542,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 13. Risk Assessment
 
-### 13.1 High-Risk Areas (Technical Debt)
+### latest High-Risk Areas (Technical Debt)
 
 🔴 **CRITICAL**:
 1. **YAWL package** (52/100 quality score)
@@ -555,7 +555,7 @@ $ npx madge --circular --extensions mjs packages/*/src
    - 14+ functions >50 lines
    - Missing JSDoc (~40% undocumented)
 
-### 13.2 Low-Risk Areas (Good Quality)
+### latest Low-Risk Areas (Good Quality)
 
 ✅ **GOOD**:
 1. **v6-core package** (92/100 quality score)
@@ -572,14 +572,14 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 ## 14. Recommendations
 
-### 14.1 Immediate Actions (This Week)
+### latest Immediate Actions (This Week)
 
 1. ✅ **Add ESLint config** with complexity rules
 2. ✅ **Remove N3 direct imports** (12 instances)
 3. ✅ **Create GitHub issues** for all 23 TODO/FIXME
 4. ✅ **Set up quality gates** in CI/CD
 
-### 14.2 Short-Term (Next 2 Weeks)
+### latest Short-Term (Next 2 Weeks)
 
 1. 🔄 **Split YAWL package** (highest debt)
    - yawl-cancellation.mjs
@@ -593,7 +593,7 @@ $ npx madge --circular --extensions mjs packages/*/src
 
 3. 🔄 **Remove default exports** across all packages
 
-### 14.3 Long-Term (Next 4-6 Weeks)
+### latest Long-Term (Next 4-6 Weeks)
 
 1. 📚 **Comprehensive JSDoc** coverage (100%)
 2. 🧪 **Increase test coverage** to 80%+

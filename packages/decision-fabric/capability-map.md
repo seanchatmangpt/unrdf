@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/decision-fabric
-**Version:** 0.1.0
+**Version:** [VERSION]
 
 ---
 

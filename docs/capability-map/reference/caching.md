@@ -1,6 +1,6 @@
 # @unrdf/caching API Reference
 
-**Version**: 1.0.0
+**Version**: latest
 **Maturity**: stable
 **Main Export**: src/index.mjs
 

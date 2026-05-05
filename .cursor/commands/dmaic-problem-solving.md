@@ -16,7 +16,7 @@ Step 1: Define → Step 2: Measure → Step 3: Analyze → Step 4: Improve → S
 
 **Action**: Clearly define the problem, scope, and success criteria.
 
-#### 1.1: Define the Problem
+#### latest: Define the Problem
 
 **Action**: Write a clear problem statement.
 
@@ -40,7 +40,7 @@ Step 1: Define → Step 2: Measure → Step 3: Analyze → Step 4: Improve → S
 **Who**: All developers, CI/CD system
 ```
 
-#### 1.2: Define Scope
+#### latest: Define Scope
 
 **Action**: Determine what's in scope and what's out of scope.
 
@@ -74,7 +74,7 @@ Step 1: Define → Step 2: Measure → Step 3: Analyze → Step 4: Improve → S
 - Solution must be maintainable
 ```
 
-#### 1.3: Define Success Criteria
+#### latest: Define Success Criteria
 
 **Action**: Define what success looks like.
 
@@ -111,7 +111,7 @@ Step 1: Define → Step 2: Measure → Step 3: Analyze → Step 4: Improve → S
 
 **Action**: Collect data about the problem.
 
-#### 2.1: Collect Baseline Data
+#### latest: Collect Baseline Data
 
 **Action**: Measure current state.
 
@@ -133,13 +133,13 @@ done | sort | uniq -c
 
 # Measure execution time
 time pnpm test test_concurrent_access
-# Output: Average 0.5s
+# Output: Average latests
 
 # Capture error messages
 pnpm test test_concurrent_access 2>&1 | tee error_log.txt
 ```
 
-#### 2.2: Analyze Data Patterns
+#### latest: Analyze Data Patterns
 
 **Action**: Look for patterns in the data.
 
@@ -172,7 +172,7 @@ pnpm test test_concurrent_access 2>&1 | tee error_log.txt
 
 **Action**: Identify root causes using data.
 
-#### 3.1: Root Cause Analysis
+#### latest: Root Cause Analysis
 
 **Action**: Use 5 Whys to find root cause.
 
@@ -209,7 +209,7 @@ pnpm test test_concurrent_access 2>&1 | tee error_log.txt
 **Root Cause**: Lock scope is too narrow - doesn't protect entire increment operation
 ```
 
-#### 3.2: Verify Root Cause
+#### latest: Verify Root Cause
 
 **Action**: Confirm root cause with data.
 
@@ -237,7 +237,7 @@ let current = *value; // Lock released here
 
 **Action**: Implement solution that addresses root cause.
 
-#### 4.1: Generate Solutions
+#### latest: Generate Solutions
 
 **Action**: Brainstorm solutions that address root cause.
 
@@ -275,7 +275,7 @@ let current = *value; // Lock released here
 **Selected**: Option 1 - Expand lock scope (addresses root cause, simple, feasible)
 ```
 
-#### 4.2: Implement Solution
+#### latest: Implement Solution
 
 **Action**: Implement chosen solution.
 
@@ -301,7 +301,7 @@ let value = counter.lock().;
 // Lock released here, after operation complete
 ```
 
-#### 4.3: Verify Improvement
+#### latest: Verify Improvement
 
 **Action**: Measure improvement against success criteria.
 
@@ -320,7 +320,7 @@ let value = counter.lock().;
 
 **Action**: Prevent problem from returning.
 
-#### 5.1: Add Tests
+#### latest: Add Tests
 
 **Action**: Add tests to prevent regression.
 
@@ -340,7 +340,7 @@ test("test_concurrent_increment_no_race", () => {
 });
 ```
 
-#### 5.2: Create Todo List for Solution Implementation
+#### latest: Create Todo List for Solution Implementation
 
 **CRITICAL**: Do NOT write documents or reports. Create todos and execute them.
 
@@ -391,7 +391,7 @@ test("test_concurrent_increment_no_race", () => {
 
 **Principle**: Execute solution and prevention, don't document them. Todos track progress, fixes prevent recurrence.
 
-#### 5.3: Establish Controls
+#### latest: Establish Controls
 
 **Action**: Set up controls to prevent problem recurrence.
 
@@ -434,7 +434,7 @@ test("test_concurrent_increment_no_race", () => {
 
 **CRITICAL**: Implement controls as todos and execute them. Don't just document controls - actually implement them.
 
-#### 5.4: Monitor
+#### latest: Monitor
 
 **Action**: Monitor to ensure problem doesn't return.
 

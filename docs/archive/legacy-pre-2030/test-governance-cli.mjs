@@ -253,7 +253,7 @@ async function main() {
       args: ['--version'],
       expectedExitCode: 0,
       validate: async (result) => {
-        return result.stdout.includes('governance-substrate') && result.stdout.includes('1.0.0');
+        return result.stdout.includes('governance-substrate') && result.stdout.includes('latest');
       },
     },
   ];

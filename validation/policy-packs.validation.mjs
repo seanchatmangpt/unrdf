@@ -6,7 +6,7 @@
  * OTEL span-based validation for policy pack system.
  * Tests policy pack loading, activation, and hook management.
  *
- * v3.1.0 Feature: Policy pack system validation (15% weight)
+ * [VERSION] Feature: Policy pack system validation (15% weight)
  */
 
 import {

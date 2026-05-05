@@ -1,7 +1,7 @@
 # Diataxis API Documentation Audit Report
 
 **Date**: 2025-12-25
-**Package**: UNRDF v5.0.1
+**Package**: UNRDF latest
 **Auditor**: Backend-Dev Agent
 **Scope**: API Reference Documentation (Diataxis Reference Quadrant)
 
@@ -263,7 +263,7 @@ console.log(results); // [{ name: 'Alice' }]
 
 **Performance**: 10-100x faster than async API for small queries
 
-**Version**: 5.0.0
+**Version**: latest
 ```
 
 **Effort**: 3-6 hours
@@ -430,7 +430,7 @@ Even though source is JSDoc, link to generated `.d.ts` files for IDE support.
 
 5. **Metadata**
    ```markdown
-   **Version**: 5.0.0
+   **Version**: latest
    **Stability**: Stable
    **Performance**: O(n)
    **Throws**: TypeError, Error

@@ -2,7 +2,7 @@
 
 > Visual representation of GOAP action sequences, dependencies, and parallel execution opportunities
 
-**Version:** 1.0.0
+**Version:** latest
 **Generated:** 2025-11-18
 **Related:** UNRDF-2028-GOAP-ROADMAP.md
 
@@ -34,7 +34,7 @@ This document visualizes the dependency relationships between all 30 actions acr
 ### Action Sequence
 
 ```
-v3.1.1 (Current State)
+latest (Current State)
   ↓
 [1.1] integrate_vector_db ⚠️
   │ Cost: 5, Duration: 2 weeks
@@ -79,7 +79,7 @@ v3.1.1 (Current State)
 ### Action Sequence
 
 ```
-v3.1.1 (Current State)
+latest (Current State)
   ↓
 [2.1] setup_multi_node_cluster ⚠️
   │ Cost: 5, Duration: 3 weeks
@@ -119,7 +119,7 @@ v3.1.1 (Current State)
 ### Action Sequence
 
 ```
-v3.1.1 (Current State)
+latest (Current State)
   ↓
 [3.1] integrate_kafka ⚠️
   │ Cost: 4, Duration: 2 weeks
@@ -159,7 +159,7 @@ v3.1.1 (Current State)
 ### Action Sequence
 
 ```
-v3.1.1 (Current State)
+latest (Current State)
   ↓
 [4.1] integrate_ethereum ⚠️
   │ Cost: 6, Duration: 4 weeks
@@ -203,7 +203,7 @@ v3.1.1 (Current State)
 ### Action Sequence
 
 ```
-v3.1.1 (Current State)
+latest (Current State)
   ↓
 [5.1] implement_multi_tenancy ⚠️
   │ Cost: 6, Duration: 4 weeks

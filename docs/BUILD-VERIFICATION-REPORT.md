@@ -1,6 +1,6 @@
 # Build System Verification Report
 **Date:** 2025-12-20
-**Target:** UNRDF v5.0.1 Unified esbuild Configuration
+**Target:** UNRDF vlatest Unified esbuild Configuration
 **Build Tool:** esbuild with unified config
 **Expected Packages:** 21
 **Expected Build Time:** <30 seconds
@@ -19,7 +19,7 @@ SyntaxError: Unexpected identifier 'files'
 ```
 
 **Root Cause:**
-Node.js v24.11.1 has stricter ESM parsing than v18. The JSDoc comment on line 8:
+Node.js vlatest has stricter ESM parsing than v18. The JSDoc comment on line 8:
 ```javascript
  * Entry Points: All packages/*/src/index.mjs files
 ```
@@ -110,7 +110,7 @@ OR
 ```
 
 **Impact:**
-- ⚠️  90.5% coverage (19/21 packages)
+- ⚠️  latest% coverage (19/21 packages)
 - ❌ browser and react packages cannot build
 - ⚠️  May have different module structure (non-standard)
 
@@ -126,7 +126,7 @@ Investigate whether `browser` and `react` packages:
 
 ### Build Attempt 1: `pnpm run build`
 **Command:** `time timeout 30s pnpm run build`
-**Duration:** 0.251s
+**Duration:** latests
 **Exit Code:** 1 (FAILED)
 **Output:**
 ```
@@ -140,7 +140,7 @@ Build failed before processing any files due to missing `--outdir` flag.
 
 ### Build Attempt 2: `pnpm run build:unified`
 **Command:** `time timeout 30s pnpm run build:unified`
-**Duration:** 0.032s
+**Duration:** latests
 **Exit Code:** 1 (FAILED)
 **Output:**
 ```
@@ -249,11 +249,11 @@ $ ls -la packages/federation/src/index.mjs
 ### Actual Build Times
 | Attempt | Command | Duration | Result |
 |---------|---------|----------|--------|
-| 1 | `pnpm run build` | 0.251s | ❌ Failed (missing --outdir) |
-| 2 | `pnpm run build:unified` | 0.032s | ❌ Failed (syntax error) |
+| 1 | `pnpm run build` | latests | ❌ Failed (missing --outdir) |
+| 2 | `pnpm run build:unified` | latests | ❌ Failed (syntax error) |
 
 ### Expected Performance (IF FIXED)
-- **19 packages** × **~1.0s per package** = **~19 seconds**
+- **19 packages** × **~latests per package** = **~19 seconds**
 - **Target:** <30 seconds ✓ (should meet requirement)
 - **Per-package estimate:** 1-2 seconds (based on typical esbuild performance)
 
@@ -428,7 +428,7 @@ node -e "import('./packages/core/dist/index.mjs').then(m => console.log(Object.k
 - [ ] ❌ Build time <30 seconds (REQUIREMENT)
 
 ### Package Coverage
-- [x] ✓ 19/21 packages have src/index.mjs (90.5%)
+- [x] ✓ 19/21 packages have src/index.mjs (latest%)
 - [ ] ❌ browser package entry point created or excluded
 - [ ] ❌ react package entry point created or excluded
 - [ ] ❌ 21/21 packages building (100%)

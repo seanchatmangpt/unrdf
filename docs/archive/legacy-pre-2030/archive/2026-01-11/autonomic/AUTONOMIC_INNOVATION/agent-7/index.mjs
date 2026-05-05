@@ -28,7 +28,7 @@ export {
  */
 export const AGENT_7_METADATA = {
   name: 'Agent 7: Convention-Preserving Code Generator',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Generate service façade code matching organizational conventions exactly',
   capabilities: [
     'Generate CRUD service classes',

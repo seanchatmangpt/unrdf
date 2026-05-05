@@ -185,7 +185,7 @@ This thesis was generated with full receipt-driven provenance.
 **Receipt Compliance**:
 - All 4 commands emit .receipt.json files
 - All use SHA-256 for content hashing
-- All support --deterministic flag (ISO epoch or 1970-01-01T00:00:00.000Z)
+- All support --deterministic flag (ISO epoch or 1970-01-01T00:00:latestZ)
 - All support --output-format json|markdown|stream-json
 
 ## Testing Evidence

@@ -30,9 +30,9 @@
 
 | Category | Count | Percentage | Packages |
 |----------|-------|------------|----------|
-| **Leaf** (0 deps) | 6 | 31.6% | validation, test-utils, domain, atomvm, nextra-docs, docs |
-| **Mid-Level** (1-3 deps) | 12 | 63.2% | core, oxigraph, hooks, streaming, federation, etc. |
-| **Hub** (4+ deps) | 1 | 5.3% | cli |
+| **Leaf** (0 deps) | 6 | latest% | validation, test-utils, domain, atomvm, nextra-docs, docs |
+| **Mid-Level** (1-3 deps) | 12 | latest% | core, oxigraph, hooks, streaming, federation, etc. |
+| **Hub** (4+ deps) | 1 | latest% | cli |
 
 ---
 
@@ -109,7 +109,7 @@ pnpm run deps:stats        # Statistics only
 |--------|-------|
 | Total packages | 19 |
 | Total internal dependencies | 42 |
-| Average deps per package | 2.21 |
+| Average deps per package | latest |
 | Maximum dependency depth | 5 |
 | Circular dependency clusters | 1 |
 
@@ -201,7 +201,7 @@ cat docs/DEPENDENCY-ANALYSIS-REPORT.md
 |------|-------|------------|
 | Circular dependency impacts build | 🟡 Medium | Resolve before unification |
 | Deep dependency chains | 🟢 Low | Already at acceptable level (5) |
-| Hub package proliferation | 🟢 Low | Only 1 hub package (5.3%) |
+| Hub package proliferation | 🟢 Low | Only 1 hub package (latest%) |
 | Dependency graph complexity | 🟢 Low | Well-structured layers |
 
 **Overall Risk:** 🟡 **MEDIUM** - Single circular dependency is resolvable but blocks unification.

@@ -8,7 +8,7 @@
     "proto": "urn:playground:protocols:",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
   },
-  "@id": "urn:playground:protocols:v1.0.0",
+  "@id": "urn:playground:protocols:latest",
   "@type": "proto:ProtocolSpecification"
 }
 ```
@@ -418,7 +418,7 @@
 
 ```json
 {
-  "$schema": "urn:playground:config:v1.0.0",
+  "$schema": "urn:playground:config:latest",
   "author": {
     "name": "string",
     "email": "string",

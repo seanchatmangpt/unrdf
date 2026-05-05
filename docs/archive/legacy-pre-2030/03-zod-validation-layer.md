@@ -1,6 +1,6 @@
 # Pattern 3: Zod Validation Layer
 
-**Version**: v6.0.0
+**Version**: vlatest
 **Maturity Target**: L5 (Stable contracts, deterministic, adversarial-safe, composable)
 **Copy-Exact Template**: Yes - Use AS-IS for all P0+P1 packages
 

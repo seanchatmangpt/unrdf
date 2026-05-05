@@ -117,7 +117,7 @@ All 10 packages installed
 @unrdf/composables (30KB) +
 @unrdf/project-engine (200KB)
     ↓
-Total: 1.03MB - Complete ecosystem
+Total: latestMB - Complete ecosystem
 ```
 
 ## VOC to Package Mapping
@@ -159,7 +159,7 @@ No knowledge-engine, dark-matter, or composables needed.
 ### v4.x: Monolithic
 ```
 ┌─────────────────────────────────────────┐
-│           UNRDF v4.2.3                  │
+│           UNRDF vlatest                  │
 │  "Everything in one package"            │
 │                                         │
 │  ├─ RDF operations       (NEEDED)       │
@@ -174,17 +174,17 @@ No knowledge-engine, dark-matter, or composables needed.
 │  ├─ Project Engine       (DEV ONLY)     │
 │  └─ Examples & Docs                     │
 │                                         │
-│  Size: 2.5 MB                           │
+│  Size: latest MB                           │
 │  Useful: ~30%                           │
 │  Bloat: ~70%                            │
 │                                         │
 └─────────────────────────────────────────┘
 ```
 
-### v5.0+: Monorepo
+### vlatest+: Monorepo
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    UNRDF v5.0 MONOREPO                          │
+│                    UNRDF vlatest MONOREPO                          │
 │        "One repo, multiple focused packages"                    │
 │                                                                 │
 │  ESSENTIAL SUBSTRATE:                                          │
@@ -207,7 +207,7 @@ No knowledge-engine, dark-matter, or composables needed.
 │                                                                 │
 │  Minimal Install: 150 KB  (@unrdf/core)                       │
 │  Typical Install: 340 KB  (substrate)                         │
-│  Full Stack:      1.0 MB  (all packages)                      │
+│  Full Stack:      latest MB  (all packages)                      │
 │                                                                 │
 │  Users get exactly what they need, nothing more.              │
 │                                                                 │
@@ -220,7 +220,7 @@ No knowledge-engine, dark-matter, or composables needed.
 ```
 npm install unrdf
 
-2.5 MB total
+latest MB total
   ├─ Core RDF: 500 KB (needed by all)
   ├─ Hooks: 200 KB (needed by most)
   ├─ Federation: 300 KB (needed by many)
@@ -233,7 +233,7 @@ npm install unrdf
 User has 70% bloat - things they'll never use
 ```
 
-### After (v5.0)
+### After (vlatest)
 ```
 Minimal User:
   npm install @unrdf/core
@@ -253,23 +253,23 @@ Power User:
 ## Versioning Timeline
 
 ```
-       v4.x (Stable)  v5.0-alpha  v5.0-rc   v5.0 (Stable)  v5.1+
+       v4.x (Stable)  vlatest  vlatest   vlatest (Stable)  vlatest+
          ↓               ↓          ↓          ↓              ↓
 ┌───────────────────────────────────────────────────────────────┐
 │                                                               │
-│  @unrdf/core:          ─────────────────────────→ 5.0.0+    │
+│  @unrdf/core:          ─────────────────────────→ latest+    │
 │     (Stable, minimal changes)                                │
 │                                                               │
-│  @unrdf/hooks:         ─────────────────────────→ 5.0.0+    │
+│  @unrdf/hooks:         ─────────────────────────→ latest+    │
 │     (Stable core, can extend via plugins)                    │
 │                                                               │
-│  @unrdf/knowledge-engine: ──→ 2.0.0-alpha → 2.0.0+         │
+│  @unrdf/knowledge-engine: ──→ latest → latest+         │
 │     (Faster innovation, independent releases)               │
 │                                                               │
-│  @unrdf/dark-matter:   ──→ 1.0.0-alpha → 1.0.0+            │
+│  @unrdf/dark-matter:   ──→ latest → latest+            │
 │     (Optional, updates independently)                        │
 │                                                               │
-│  @unrdf/composables:   ──→ 1.0.0-alpha → 1.0.0+            │
+│  @unrdf/composables:   ──→ latest → latest+            │
 │     (Updates with Vue.js changes)                            │
 │                                                               │
 └───────────────────────────────────────────────────────────────┘

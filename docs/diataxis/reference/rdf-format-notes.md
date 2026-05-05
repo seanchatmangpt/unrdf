@@ -4,7 +4,7 @@
 
 **Audience:** Developers working with RDF data
 
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 

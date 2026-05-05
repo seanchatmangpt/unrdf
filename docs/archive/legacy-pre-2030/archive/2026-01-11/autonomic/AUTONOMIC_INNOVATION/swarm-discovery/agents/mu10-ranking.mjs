@@ -165,7 +165,7 @@ export function createPromotionManifest(promotions, options = {}) {
   const timestamp = options.timestamp || (options.deterministic ? '2025-12-26T00:00:00.000Z' : new Date().toISOString())
 
   return {
-    version: '1.0.0',
+    version: 'latest',
     timestamp: timestamp,
     promotedCount: promotions.length,
     promotions,

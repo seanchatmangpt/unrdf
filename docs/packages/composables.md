@@ -2,7 +2,7 @@
 
 > UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension)
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

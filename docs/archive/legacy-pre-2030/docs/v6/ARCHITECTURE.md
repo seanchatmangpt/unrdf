@@ -1,6 +1,6 @@
 # UNRDF Architecture Specification
 
-**Version**: 6.0.0
+**Version**: latest
 **Status**: Architecture Design Phase
 **Date**: 2025-12-27
 **Methodology**: Big Bang 80/20 + Adversarial PM Validation
@@ -481,7 +481,7 @@ unrdf freeze --output snapshot.json
 
 #### BC-10: Node.js Version Requirement (Low Impact)
 
-**Change**: Require Node.js ≥20.0.0 (from ≥18.0.0)
+**Change**: Require Node.js ≥latest (from ≥latest)
 **Affected**: Legacy Node.js deployments
 **Rationale**: Native fetch, improved performance
 **Migration**: Upgrade Node.js runtime
@@ -530,22 +530,22 @@ const { createStore } = await import('@unrdf/core');
 ### 5.3 Deprecation Timeline
 
 ```
-6.0.0-alpha.1 (Current)
+latest-alpha.1 (Current)
 ├─ Warning logs for deprecated APIs
 ├─ Compatibility layer for v5 APIs
 └─ Migration guide published
 
-6.0.0-beta.1 (+3 months)
+latest-beta.1 (+3 months)
 ├─ Remove compatibility layer
 ├─ Breaking changes enforced
 └─ Migration tool released
 
-6.0.0 GA (+6 months)
+latest GA (+6 months)
 ├─ Stable release
 ├─ LTS support begins
 └─ v5 enters maintenance mode (security only)
 
-6.1.0 (+12 months)
+latest (+12 months)
 └─ v5 support ends
 ```
 
@@ -797,7 +797,7 @@ enableV5Compat({
 const store = new Store(); // DEPRECATED: Use createStore() instead
 ```
 
-**Note**: Compatibility mode removed in 6.1.0 (12 months after 6.0.0 GA).
+**Note**: Compatibility mode removed in latest (12 months after latest GA).
 
 ### 7.4 Common Migration Patterns
 
@@ -1116,8 +1116,8 @@ spec:
 
 ## Appendix B: Performance Benchmarks
 
-**Baseline**: v5.0.0-beta.1
-**Target**: 6.0.0-alpha.1
+**Baseline**: latest-beta.1
+**Target**: latest-alpha.1
 **Hardware**: 8-core CPU, 16GB RAM, SSD
 
 ### SPARQL Query Performance
@@ -1224,7 +1224,7 @@ UNRDF represents a **major architectural evolution** focused on:
 
 1. Review and approve this architecture
 2. Implement breaking changes incrementally
-3. Release 6.0.0-beta.1 in Q1 2026
+3. Release latest-beta.1 in Q1 2026
 4. GA release in Q2 2026
 
 ---

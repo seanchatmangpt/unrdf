@@ -1,6 +1,6 @@
 # @unrdf/kgc-substrate API Reference
 
-**Version**: 1.0.0
+**Version**: latest
 **Maturity**: documented
 **Main Export**: ./src/index.mjs
 

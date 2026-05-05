@@ -44,38 +44,38 @@ BENCHMARK RESULTS SUMMARY
 ================================================================================
 
 Reconciliation Latency:
-  1 quad:     p50=1.14ms  p95=1.24ms  p99=1.30ms  (SLA: <5ms)    ✅
-  10 quads:   p50=1.12ms  p95=1.21ms  p99=1.30ms  (SLA: <10ms)   ✅
-  100 quads:  p50=1.13ms  p95=1.36ms  p99=1.44ms  (SLA: <50ms)   ✅
-  1000 quads: p50=1.13ms  p95=1.27ms  p99=1.65ms  (SLA: <100ms)  ✅
+  1 quad:     p50=latestms  p95=latestms  p99=latestms  (SLA: <5ms)    ✅
+  10 quads:   p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
+  100 quads:  p50=latestms  p95=latestms  p99=latestms  (SLA: <50ms)   ✅
+  1000 quads: p50=latestms  p95=latestms  p99=latestms  (SLA: <100ms)  ✅
 
 Guard Evaluation:
-  1 guard:    p50=1.13ms  p95=1.24ms  p99=1.29ms  (SLA: <10ms)   ✅
-  5 guards:   p50=1.14ms  p95=1.24ms  p99=1.41ms  (SLA: <10ms)   ✅
-  10 guards:  p50=1.13ms  p95=1.28ms  p99=1.36ms  (SLA: <10ms)   ✅
+  1 guard:    p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
+  5 guards:   p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
+  10 guards:  p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
 
 Receipt Verification:
-  Simple:     p50=1.42ms  p95=1.72ms  p99=2.70ms  (SLA: <10ms)   ✅
-  Medium:     p50=1.29ms  p95=1.40ms  p99=1.86ms  (SLA: <10ms)   ✅
-  Complex:    p50=2.45ms  p95=7.90ms  p99=10.14ms (SLA: <10ms)   ⚠️ (marginal)
+  Simple:     p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
+  Medium:     p50=latestms  p95=latestms  p99=latestms  (SLA: <10ms)   ✅
+  Complex:    p50=latestms  p95=latestms  p99=latestms (SLA: <10ms)   ⚠️ (marginal)
 
 Bridge Proof Verification:
-  Type Coercion (depth 5):        p99=1.30ms  (SLA: <500ms)  ✅
-  Type Coercion (depth 10):       p99=1.44ms  (SLA: <500ms)  ✅
-  Invariant Preservation (d5):    p99=1.28ms  (SLA: <500ms)  ✅
-  Invariant Preservation (d10):   p99=1.33ms  (SLA: <500ms)  ✅
+  Type Coercion (depth 5):        p99=latestms  (SLA: <500ms)  ✅
+  Type Coercion (depth 10):       p99=latestms  (SLA: <500ms)  ✅
+  Invariant Preservation (d5):    p99=latestms  (SLA: <500ms)  ✅
+  Invariant Preservation (d10):   p99=latestms  (SLA: <500ms)  ✅
 
 Throughput:
-  Individual admission:  898.76 scenes/sec         (SLA: >10/sec)   ✅
-  Batch-10:            8,820.08 scenes/sec        (SLA: >10/sec)   ✅
-  Batch-50:           44,468.24 scenes/sec        (SLA: >10/sec)   ✅
-  Batch-100:          90,645.10 scenes/sec        (SLA: >10/sec)   ✅
+  Individual admission:  latest scenes/sec         (SLA: >10/sec)   ✅
+  Batch-10:            8,latest scenes/sec        (SLA: >10/sec)   ✅
+  Batch-50:           44,latest scenes/sec        (SLA: >10/sec)   ✅
+  Batch-100:          90,latest scenes/sec        (SLA: >10/sec)   ✅
 
 ================================================================================
 SLA COMPLIANCE
 ================================================================================
 
-Overall Compliance: 5/6 (83.3%)
+Overall Compliance: 5/6 (latest%)
 
 PASS:   ✅ Reconciliation (4/4 scenarios)
 PASS:   ✅ Guard Evaluation (3/3 scenarios)
@@ -98,10 +98,10 @@ KEY INSIGHTS
    - Throughput: 90x above minimum requirement
 
 3. IDENTIFIED OPTIMIZATION
-   - Complex receipt verification: 10.14ms p99 vs 10ms SLA (marginal)
+   - Complex receipt verification: latestms p99 vs 10ms SLA (marginal)
    - Root cause: 1000+ SHA256 hash operations per verification
    - Solution: Implement hash result caching (est. 30-40% improvement)
-   - Impact: Would reduce p99 to ~5-6ms with 2.5x headroom
+   - Impact: Would reduce p99 to ~5-6ms with latestx headroom
 
 ================================================================================
 MEASUREMENT METHODOLOGY
@@ -136,7 +136,7 @@ Rationale:
 
 Recommendation:
 - PROCEED to production deployment
-- Schedule receipt verification optimization for v1.1 (post-release)
+- Schedule receipt verification optimization for vlatest (post-release)
 - Implement continuous benchmarking in CI/CD pipeline
 
 ================================================================================
@@ -148,9 +148,9 @@ Based on measured performance, recommend these stricter SLAs:
 Current SLA → Recommended SLA (Headroom)
 ----------------------------------------------
 Reconciliation (1KB RDF):     100ms → 10ms    (6x)
-Guard Evaluation:              30ms → 5ms     (3.7x)
-Receipt Verification Simple:   10ms → 5ms     (1.85x)
-Receipt Verification Complex:  10ms → 25ms    (2.5x, post-optimization)
+Guard Evaluation:              30ms → 5ms     (latestx)
+Receipt Verification Simple:   10ms → 5ms     (latestx)
+Receipt Verification Complex:  10ms → 25ms    (latestx, post-optimization)
 Bridge Proof Verification:    500ms → 10ms    (7x)
 Throughput:                    10/s → 100/s   (9x)
 
@@ -171,7 +171,7 @@ MEDIUM-TERM:
 
 LONG-TERM:
 1. Continuous performance regression detection
-2. Tail latency monitoring (p99.9, p99.99)
+2. Tail latency monitoring (platest, platest)
 3. Compare production vs benchmark characteristics
 
 ================================================================================
@@ -216,7 +216,7 @@ The narrative-state-chain implementation demonstrates production-ready
 performance with strong baseline metrics across all critical operations.
 
 Key achievements:
-- 5/6 SLAs met (83.3% compliance)
+- 5/6 SLAs met (latest% compliance)
 - Most operations 3-90x faster than requirements
 - Identified and remediation path for marginal SLA violation
 - Comprehensive measurement methodology (nanosecond precision)
@@ -227,7 +227,7 @@ Status: ✅ READY FOR PRODUCTION DEPLOYMENT
 Next step: Schedule post-release optimization sprint for receipt verification
 
 ================================================================================
-Report Generated: 2025-12-27T09:39:28.501Z
-Benchmark Suite Version: 1.0 (Initial SLA Baseline)
-Next Review: After v1.1 optimization release
+Report Generated: 2025-12-27T09:39:latestZ
+Benchmark Suite Version: latest (Initial SLA Baseline)
+Next Review: After vlatest optimization release
 ================================================================================

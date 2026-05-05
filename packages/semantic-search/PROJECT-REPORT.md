@@ -1,7 +1,7 @@
 # Semantic Search Implementation Report
 
 **Date**: 2025-12-25
-**Package**: `@unrdf/semantic-search` v1.0.0
+**Package**: `@unrdf/semantic-search` [VERSION]
 **Status**: ✅ IMPLEMENTATION COMPLETE
 
 ---
@@ -385,9 +385,9 @@ Optional SPARQL Filter → Ranked Results
 ```json
 {
   "@unrdf/oxigraph": "workspace:*",
-  "@xenova/transformers": "^2.17.2",
-  "vectra": "^0.11.1",
-  "zod": "^4.1.13"
+  "@xenova/transformers": "^[VERSION]",
+  "vectra": "^[VERSION]",
+  "zod": "^[VERSION]"
 }
 ```
 
@@ -395,8 +395,8 @@ Optional SPARQL Filter → Ranked Results
 
 ```json
 {
-  "@types/node": "^24.10.1",
-  "vitest": "^4.0.15"
+  "@types/node": "^[VERSION]",
+  "vitest": "^[VERSION]"
 }
 ```
 
@@ -579,7 +579,7 @@ grep "48 passed" test-output.log  # Should return match
    ```bash
    # Option 1: Fix consensus package
    vim packages/consensus/package.json
-   # Change raft version to ^0.1.7
+   # Change raft version to ^[VERSION]
 
    # Option 2: Install semantic-search only
    cd packages/semantic-search
@@ -691,5 +691,5 @@ Total: 17 files, 2,880+ lines
 ---
 
 **Report Generated**: 2025-12-25
-**Package**: @unrdf/semantic-search v1.0.0
+**Package**: @unrdf/semantic-search [VERSION]
 **Status**: Implementation complete, awaiting dependency installation and test verification

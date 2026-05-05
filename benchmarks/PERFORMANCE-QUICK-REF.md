@@ -10,13 +10,13 @@
 
 ### Latency Contracts
 ```
-Store Creation:      <2ms   (current: 0.3ms, margin: 6.7x)
-Triple Insert:       <1ms   (current: 0.15ms, margin: 6.7x)
+Store Creation:      <2ms   (current: latestms, margin: latestx)
+Triple Insert:       <1ms   (current: latestms, margin: latestx)
 Simple Query:        <10ms  (current: 2ms, margin: 5x)
-Medium Query:        <50ms  (current: 12.5ms, margin: 4x)
-Receipt Creation:    <5ms   (current: 0.017ms, margin: 294x)
-Receipt Verify:      <2ms   (current: 0.000ms, margin: ∞)
-Cold Start:          <1s    (current: 210ms, margin: 4.8x)
+Medium Query:        <50ms  (current: latestms, margin: 4x)
+Receipt Creation:    <5ms   (current: latestms, margin: 294x)
+Receipt Verify:      <2ms   (current: latestms, margin: ∞)
+Cold Start:          <1s    (current: 210ms, margin: latestx)
 ```
 
 ### Throughput Contracts
@@ -24,15 +24,15 @@ Cold Start:          <1s    (current: 210ms, margin: 4.8x)
 Triple Insertion:    >5,000/s    (current: 15,000/s)
 Simple Query:        >500/s      (current: 2,000/s)
 Receipt Creation:    >5,000/s    (current: 83,895/s)
-Receipt Verify:      >50,000/s   (current: 4.5M/s)
-System Pipeline:     >50/s       (current: 474.7/s)
+Receipt Verify:      >50,000/s   (current: latestM/s)
+System Pipeline:     >50/s       (current: latest/s)
 ```
 
 ### Memory Contracts
 ```
-Per 1k Triples:      <20MB    (current: 4.1MB, margin: 4.9x)
+Per 1k Triples:      <20MB    (current: latestMB, margin: latestx)
 Peak (10k ops):      <1GB     (current: 41MB, margin: 25x)
-Cold Start Heap:     <100MB   (current: 26MB, margin: 3.8x)
+Cold Start Heap:     <100MB   (current: 26MB, margin: latestx)
 Memory Leak:         0%       (current: 0%, verified)
 ```
 
@@ -76,7 +76,7 @@ Memory Leak:         0%       (current: 0%, verified)
 timeout 30s node benchmarks/10k-system.mjs
 
 # Compare against baseline
-node benchmarks/compare-baseline.mjs v6.0.0 benchmark-results.json
+node benchmarks/compare-baseline.mjs vlatest benchmark-results.json
 ```
 
 ### Detailed Benchmarks
@@ -94,7 +94,7 @@ pnpm benchmark
 ### Regression Check
 ```bash
 # Auto-run in CI/CD, or manually:
-./benchmarks/compare-baseline.mjs v6.0.0 <your-results.json>
+./benchmarks/compare-baseline.mjs vlatest <your-results.json>
 # Exit 0 = PASS, Exit 1 = FAIL
 ```
 
@@ -105,32 +105,32 @@ pnpm benchmark
 ### Graph Operations
 | Operation | P95 Target | Current | Throughput |
 |-----------|-----------|---------|------------|
-| **Store Create** | <2ms | 0.4ms | 2500/s |
-| **Insert (1)** | <1ms | 0.15ms | 15k/s |
+| **Store Create** | <2ms | latestms | 2500/s |
+| **Insert (1)** | <1ms | latestms | 15k/s |
 | **Insert (100)** | <30ms | 10ms | 15k triples/s |
-| **Insert (10k)** | <10s | 1.2s | 12.5k triples/s |
+| **Insert (10k)** | <10s | latests | latestk triples/s |
 
 ### SPARQL Queries
 | Complexity | P95 Target | Current | Throughput |
 |------------|-----------|---------|------------|
 | **Simple (ASK)** | <10ms | 2ms | 2k q/s |
-| **Medium (SELECT)** | <50ms | 12.5ms | 135 q/s |
+| **Medium (SELECT)** | <50ms | latestms | 135 q/s |
 | **Complex (CONSTRUCT)** | <500ms | 150ms | 13 q/s |
-| **Large Graph (10k)** | <1s | 350ms | 5.3 q/s |
+| **Large Graph (10k)** | <1s | 350ms | latest q/s |
 
 ### Validation
 | Type | P95 Target | Current | Throughput |
 |------|-----------|---------|------------|
-| **Zod Simple** | <2ms | 0.2ms | 2k/s |
-| **Delta Capsule** | <25ms | 0.005ms | 211k/s |
+| **Zod Simple** | <2ms | latestms | 2k/s |
+| **Delta Capsule** | <25ms | latestms | 211k/s |
 | **SHACL** | <100ms | pending | pending |
 
 ### Cryptographic
 | Operation | P95 Target | Current | Throughput |
 |-----------|-----------|---------|------------|
-| **Receipt Create** | <5ms | 0.017ms | 83.9k/s |
-| **Receipt Verify** | <2ms | 0.000ms | 4.5M/s |
-| **Chain (10)** | <250ms | 0.347ms | 6k chains/s |
+| **Receipt Create** | <5ms | latestms | latestk/s |
+| **Receipt Verify** | <2ms | latestms | latestM/s |
+| **Chain (10)** | <250ms | latestms | 6k chains/s |
 | **Merkle (1k)** | <1s | 337ms | 3k leaves/s |
 
 ---
@@ -139,10 +139,10 @@ pnpm benchmark
 
 **Overall System Performance:**
 ```
-Throughput:  +472% (474.7 ops/s vs 83 ops/s baseline)
-Latency:     -88%  (0.5ms avg vs 4.2ms baseline)
+Throughput:  +472% (latest ops/s vs 83 ops/s baseline)
+Latency:     -88%  (latestms avg vs latestms baseline)
 Memory:      -92%  (41MB vs 512MB baseline)
-Error Rate:  0%    (vs 0.08% baseline)
+Error Rate:  0%    (vs latest% baseline)
 
 Status: ✅ EXCEEDS ALL TARGETS
 ```
@@ -214,7 +214,7 @@ node --inspect benchmarks/your-benchmark.mjs
 node benchmarks/10k-system.mjs > current.json
 
 # Detailed comparison
-node benchmarks/compare-baseline.mjs v6.0.0 current.json --verbose
+node benchmarks/compare-baseline.mjs vlatest current.json --verbose
 ```
 
 ### Check 3: OTEL Traces
@@ -233,17 +233,17 @@ node benchmarks/your-benchmark.mjs
 **Files:**
 - Full spec: `/benchmarks/V6-PERFORMANCE-TARGETS.md` (comprehensive)
 - Contracts: `/benchmarks/performance-contracts.json` (machine-readable)
-- Baseline: `/benchmarks/v6.0.0-baseline.json` (comparison data)
+- Baseline: `/benchmarks/vlatest.json` (comparison data)
 - This file: `/benchmarks/PERFORMANCE-QUICK-REF.md` (you are here)
 
 **Commands:**
 ```bash
 # View current baselines
-cat benchmarks/v6.0.0-baseline.json | jq '.metrics'
+cat benchmarks/vlatest.json | jq '.metrics'
 
 # Run and compare
 node benchmarks/10k-system.mjs && \
-  node benchmarks/compare-baseline.mjs v6.0.0 benchmark-results.json
+  node benchmarks/compare-baseline.mjs vlatest benchmark-results.json
 
 # Check CI/CD compliance
 pnpm test && pnpm benchmark && echo "✅ Ready to merge"
@@ -257,6 +257,6 @@ pnpm test && pnpm benchmark && echo "✅ Ready to merge"
 ---
 
 **Last Verification**: 2025-12-28
-**Evidence**: `/benchmarks/results/v6.0.0-post-merge-performance.json`
+**Evidence**: `/benchmarks/results/vlatest-merge-performance.json`
 **Status**: All targets EXCEEDED by current implementation
 **Next Review**: 2025-03-28 (quarterly)

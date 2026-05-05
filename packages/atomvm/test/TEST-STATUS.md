@@ -204,10 +204,10 @@ These tests can run with just `pnpm install`:
 ```json
 {
   "devDependencies": {
-    "vitest": "^4.0.15",               // ✅ Present
-    "@vitest/browser": "^4.0.15",      // ✅ Present
-    "jsdom": "^24.0.0",                // ✅ Present
-    "@playwright/test": "^1.57.0"      // ✅ Present (for E2E)
+    "vitest": "^[VERSION]",               // ✅ Present
+    "@vitest/browser": "^[VERSION]",      // ✅ Present
+    "jsdom": "^[VERSION]",                // ✅ Present
+    "@playwright/test": "^[VERSION]"      // ✅ Present (for E2E)
   }
 }
 ```

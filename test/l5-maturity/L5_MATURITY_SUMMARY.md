@@ -61,7 +61,7 @@ const config = {
   afterHash: '1'.repeat(64),
   epoch: 1,
   timestamp: 1234567890, // FIXED
-  toolchainVersion: '1.0.0',
+  toolchainVersion: 'latest',
   violations: [],
   reason: 'Determinism test',
 };

@@ -391,7 +391,7 @@ console.log(metrics.throughput); // > 10,000 triples/sec
 ---
 
 **ADR Number:** 001
-**Version:** 1.0.0
+**Version:** [VERSION]
 **Last Updated:** 2025-12-28
 **Next Review:** 2026-01-28
 **Status:** Accepted

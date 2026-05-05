@@ -15,7 +15,7 @@ const { quad, namedNode, literal } = dataFactory;
 // Add data
 store.add(quad(
   namedNode('http://example.org/alice'),
-  namedNode('http://xmlns.com/foaf/0.1/name'),
+  namedNode('http://xmlns.com/foaf/[VERSION]/name'),
   literal('Alice')
 ));
 

@@ -87,7 +87,7 @@ describe('TemplateEngine', () => {
       const context = {
         title: 'Test Equation',
         module: '@unrdf/test',
-        version: '1.0.0',
+        version: '[VERSION]',
         updated: '2026-01-18',
         description: 'Test description',
         equations: [
@@ -147,7 +147,7 @@ describe('TemplateEngine', () => {
       const context = {
         title: 'File Test',
         module: '@unrdf/test',
-        version: '1.0.0',
+        version: '[VERSION]',
         updated: '2026-01-18',
         description: 'Test',
         equations: [],
@@ -170,7 +170,7 @@ describe('TemplateEngine', () => {
       const context = {
         title: 'Nested Test',
         module: '@unrdf/test',
-        version: '1.0.0',
+        version: '[VERSION]',
         updated: '2026-01-18',
         description: 'Test',
         equations: [],
@@ -234,10 +234,10 @@ describe('TemplateEngine', () => {
 
     it('should add custom global', () => {
       const engine = new TemplateEngine();
-      engine.addGlobal('appVersion', '1.0.0');
+      engine.addGlobal('appVersion', '[VERSION]');
 
       const result = engine.renderString('Version: {{ appVersion }}', {});
-      expect(result).toBe('Version: 1.0.0');
+      expect(result).toBe('Version: [VERSION]');
     });
   });
 

@@ -368,7 +368,7 @@ async function initCommand(options = {}) {
 
   // Create tool registry
   const registry = {
-    version: '1.0.0',
+    version: 'latest',
     tools: [],
     created: new Date().toISOString(),
   };

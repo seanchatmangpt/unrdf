@@ -29,7 +29,7 @@ source .env.production
 ### 3. Service Dependencies
 
 #### Required Services
-- **Node.js**: >= v18.0.0
+- **Node.js**: >= latest
 - **Oxigraph RDF Store**: Built into UNRDF (no external setup)
 
 #### Optional Services
@@ -366,4 +366,4 @@ grep -i "error" .unrdf/logs/unrdf.log
 
 **Last Updated**: 2025-10-01
 
-**Validated By**: Environment Validation Script v1.0.0
+**Validated By**: Environment Validation Script latest

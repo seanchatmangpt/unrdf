@@ -1,6 +1,6 @@
 # UNRDF V6 Production Gates - Executive Summary
 
-**Document**: Production Validation Gates for v6.0.0
+**Document**: Production Validation Gates for vlatest
 **Status**: SPECIFICATION COMPLETE
 **Validation Script**: `/home/user/unrdf/scripts/production-gates-validator.mjs`
 **Full Specification**: `/home/user/unrdf/V6-PRODUCTION-VALIDATION-GATES.md`
@@ -39,11 +39,11 @@ cat production-gates-report.json
 
 | # | Gate | Requirement | Current | Validation Command |
 |---|------|-------------|---------|-------------------|
-| 1 | **Test Suite** | 100% pass in <60s | ❌ 89.3% (25/28) | `timeout 60s pnpm test` |
+| 1 | **Test Suite** | 100% pass in <60s | ❌ latest% (25/28) | `timeout 60s pnpm test` |
 | 2 | **OTEL Score** | ≥80/100, 0 failures | ✅ 100/100 | `node validation/run-all.mjs comprehensive` |
 | 3 | **ESLint** | 0 violations | ❌ 7 violations | `timeout 30s pnpm lint` |
 | 4 | **Coverage** | ≥80% (all metrics) | ❌ ~70% | `timeout 300s pnpm test:coverage` |
-| 5 | **Performance** | Within SLA | ✅ 11.1ms avg | `timeout 30s pnpm benchmark:core` |
+| 5 | **Performance** | Within SLA | ✅ latestms avg | `timeout 30s pnpm benchmark:core` |
 | 6 | **Examples** | 100% working | ❌ 67% (2/3 broken) | `node scripts/validate-all-examples.mjs` |
 | 7 | **Build** | <60s total | ❌ TIMEOUT | `timeout 60s pnpm build` |
 | 8 | **No Mocks** | 0 mock implementations | ✅ 0 found | `grep -r "mock[A-Z]" packages/*/src` |
@@ -206,7 +206,7 @@ OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>
   status: 'healthy' | 'degraded' | 'unhealthy',
   timestamp: '2025-12-28T19:00:00Z',
   uptime_seconds: 12345,
-  version: '6.0.0',
+  version: 'latest',
   dependencies: {
     database: 'connected',
     cache: 'connected',
@@ -214,8 +214,8 @@ OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>
   },
   metrics: {
     memory_usage_mb: 42,
-    error_rate_percent: 0.01,
-    avg_latency_ms: 11.1,
+    error_rate_percent: latest,
+    avg_latency_ms: latest,
   },
 }
 ```
@@ -258,7 +258,7 @@ OTEL_EXPORTER_OTLP_HEADERS=<auth-headers>
 
 ```bash
 # 1. Tag production version
-git tag -a v5.9.0-production -m "Snapshot before v6"
+git tag -a vlatest -m "Snapshot before v6"
 
 # 2. Backup configuration
 cp .env .env.backup
@@ -290,7 +290,7 @@ node scripts/create-deployment-snapshot.mjs
 
 # Validates:
 # 1. Stop v6 processes
-# 2. Restore v5.9.0 from tag
+# 2. Restore vlatest from tag
 # 3. Restore dependencies
 # 4. Run v5 validation
 # 5. Restart services
@@ -304,7 +304,7 @@ node scripts/create-deployment-snapshot.mjs
 ### First 24 Hours
 
 **Check every 5 minutes**:
-- Error rate <0.1%
+- Error rate <latest%
 - P95 latency <50ms
 - Memory stable (<10MB/hour growth)
 - Throughput ≥baseline
@@ -342,7 +342,7 @@ PRE-DEPLOYMENT VALIDATION
 [ ] Review: production-gates-report.json
 
 ROLLBACK PREPARATION
-[ ] git tag v5.9.0-production
+[ ] git tag vlatest
 [ ] Backup: .env, config/
 [ ] Test rollback script: <15 min execution
 
@@ -353,7 +353,7 @@ DEPLOYMENT
 [ ] Verify health check: GET /health → 200 OK
 
 INITIAL MONITORING (First 15 Minutes)
-[ ] Error rate <0.1%
+[ ] Error rate <latest%
 [ ] P95 latency <50ms
 [ ] Memory stable
 [ ] Smoke tests pass
@@ -423,6 +423,6 @@ SIGN-OFF
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: latest
 **Last Updated**: 2025-12-28
 **Status**: COMPLETE ✅

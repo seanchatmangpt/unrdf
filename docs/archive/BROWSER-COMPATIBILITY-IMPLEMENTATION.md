@@ -1,8 +1,8 @@
-# Browser Compatibility Implementation Summary - UNRDF v3.1.0
+# Browser Compatibility Implementation Summary - UNRDF vlatest
 
 **Status**: ✅ **COMPLETED**  
 **Date**: 2025-11-16  
-**Version**: v3.1.0
+**Version**: vlatest
 
 ## Overview
 
@@ -220,7 +220,7 @@ await store.init();
 
 const parser = new Parser();
 const quads = parser.parse(`
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   ex:alice foaf:name "Alice" .
 `);
 
@@ -365,9 +365,9 @@ Tested on Chrome 120, MacBook Pro M1, 16GB RAM:
 ```json
 {
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
-    "esbuild": "^0.27.0",
-    "fake-indexeddb": "^6.2.5"
+    "@playwright/test": "^latest",
+    "esbuild": "^latest",
+    "fake-indexeddb": "^latest"
   }
 }
 ```
@@ -438,7 +438,7 @@ unrdf/
 - ✅ Examples working: 3 frameworks (vanilla, React, Vue)
 - ✅ Documentation complete: 800+ line guide
 
-**UNRDF v3.1.0 browser compatibility is production-ready.**
+**UNRDF vlatest browser compatibility is production-ready.**
 
 ---
 

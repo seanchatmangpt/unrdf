@@ -208,7 +208,7 @@ export interface WorkflowSpec {
 
 ✅ **API Discovery:** 5 seconds (autocomplete) - **90% faster**
 ✅ **Type Errors:** 100% caught in IDE - **80% reduction in runtime errors**
-✅ **Coding Speed:** 1.4x baseline - **40% faster**
+✅ **Coding Speed:** latestx baseline - **40% faster**
 ✅ **Learning Curve:** 45 minutes - **60% reduction**
 
 **Developer Benefits:**
@@ -434,7 +434,7 @@ wc -l .vscode/unrdf.code-snippets
 
 - 🚀 API discovery: **90% faster** (45s → 5s)
 - 🚀 Type error detection: **80% increase** (20% → 100%)
-- 🚀 Coding speed: **40% faster** (1.0x → 1.4x)
+- 🚀 Coding speed: **40% faster** (latestx → latestx)
 - 🚀 Learning curve: **60% reduction** (2h → 45min)
 
 **Developer Experience:**

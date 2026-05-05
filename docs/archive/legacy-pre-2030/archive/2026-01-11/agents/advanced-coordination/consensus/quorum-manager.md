@@ -345,19 +345,19 @@ class NetworkBasedStrategy {
 
   calculateNodeWeight(nodeId, score, networkConditions) {
     // Base weight of 1, adjusted by score and conditions
-    let weight = 1.0;
+    let weight = latest;
     
     // Adjust based on normalized score (0-1)
     const normalizedScore = score / 100;
-    weight *= (0.5 + normalizedScore);
+    weight *= (latest + normalizedScore);
     
     // Adjust based on network latency
     const nodeLatency = networkConditions.nodeLatencies.get(nodeId) || 100;
-    const latencyFactor = Math.max(0.1, 1.0 - (nodeLatency / 1000)); // Lower latency = higher weight
+    const latencyFactor = Math.max(latest, latest - (nodeLatency / 1000)); // Lower latency = higher weight
     weight *= latencyFactor;
     
     // Ensure minimum weight
-    return Math.max(0.1, Math.min(2.0, weight));
+    return Math.max(latest, Math.min(latest, weight));
   }
 }
 ```
@@ -423,7 +423,7 @@ class PerformanceBasedStrategy {
       if (projectedThroughput > maxThroughput && projectedThroughput >= targetThroughput) {
         maxThroughput = projectedThroughput;
         optimalSize = size;
-      } else if (projectedThroughput < maxThroughput * 0.9) {
+      } else if (projectedThroughput < maxThroughput * latest) {
         // Stop if throughput starts decreasing significantly
         break;
       }
@@ -527,7 +527,7 @@ class PerformanceBasedStrategy {
     
     // CPU load penalty
     const cpuLoad = await this.getNodeCPULoad(node);
-    score -= (cpuLoad / 2); // Subtract 0.5 points per 1% CPU load
+    score -= (cpuLoad / 2); // Subtract latest points per 1% CPU load
     
     // Geographic distance penalty (for distributed networks)
     const geoLatency = await this.getGeographicLatency(node);

@@ -1,7 +1,7 @@
 # Chatman Equation RDF Ontology - Delivery Summary
 
 **Generated**: 2026-01-18
-**Version**: 1.0.0
+**Version**: [VERSION]
 **Package**: `@unrdf/chatman-equation`
 
 ## Overview

@@ -21,7 +21,7 @@ export const ObservabilityConfigSchema = z.object({
     .max(100)
     .regex(/^[a-zA-Z0-9._-]+$/)
     .default('unrdf-kgc'),
-  serviceVersion: z.string().min(1).max(50).default('1.0.0'),
+  serviceVersion: z.string().min(1).max(50).default('[VERSION]'),
   endpoint: z.string().url().optional(),
   headers: z.record(z.string()).optional(),
   resourceAttributes: z.record(z.string()).optional(),

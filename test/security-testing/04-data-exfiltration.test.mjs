@@ -221,8 +221,8 @@ describe('Data Exfiltration Attack Penetration Tests', () => {
     it('ATTACK: Extract internal IPs from headers', () => {
       // Headers should not expose internal network info
       const headers = {
-        'X-Forwarded-For': '203.0.113.1', // Public IP only
-        'X-Real-IP': '203.0.113.1',
+        'X-Forwarded-For': 'latest.1', // Public IP only
+        'X-Real-IP': 'latest.1',
         'X-Internal-IP': undefined, // Should not exist
       };
 
@@ -234,7 +234,7 @@ describe('Data Exfiltration Attack Penetration Tests', () => {
     it('ATTACK: Extract build information', () => {
       // Build info should not leak sensitive details
       const buildInfo = {
-        version: '1.0.0', // Public version OK
+        version: 'latest', // Public version OK
         commitHash: undefined, // Internal detail - should not expose
         buildPath: undefined, // Internal detail - should not expose
         buildUser: undefined, // Internal detail - should not expose
@@ -397,7 +397,7 @@ describe('Data Exfiltration Attack Penetration Tests', () => {
         timestamp: Date.now(),
         event: 'authentication_failed',
         user: 'alice',
-        ip: '203.0.113.1',
+        ip: 'latest.1',
         // Should NOT include: password attempt, session token, etc.
       };
 

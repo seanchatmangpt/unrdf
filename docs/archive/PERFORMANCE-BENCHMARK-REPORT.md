@@ -1,6 +1,6 @@
 
 **Generated:** 2025-10-01
-**Test Suite Version:** 1.0.0
+**Test Suite Version:** latest
 **Environment:** Node.js v20.x, isolated-vm 5.x
 
 ## Executive Summary
@@ -14,14 +14,14 @@
 | Complex Effect Execution | p95 <500ms | ~280ms | ✅ PASS |
 | Transaction Throughput | >100 tx/sec | ~165 tx/sec | ✅ PASS |
 | API Latency | p95 <200ms | ~125ms | ✅ PASS |
-| OTel CPU Overhead | <5% | ~2.8% | ✅ PASS |
-| OTel Memory Overhead | <10MB | ~6.2MB | ✅ PASS |
+| OTel CPU Overhead | <5% | ~latest% | ✅ PASS |
+| OTel Memory Overhead | <10MB | ~latestMB | ✅ PASS |
 
 ---
 
 ## 1. Effect Execution Performance
 
-### 1.1 Simple Effect Execution
+### latest Simple Effect Execution
 
 **SLO:** p95 <100ms, p99 <150ms, Memory <50% of limit
 
@@ -29,23 +29,23 @@
 
 ```
 📊 Simple Effect Performance:
-  Mean: 42.35ms
-  Median: 39.12ms
-  P95: 48.67ms (SLO: <100ms) ✅
-  P99: 62.14ms (SLO: <150ms) ✅
-  Min: 28.43ms, Max: 95.21ms
-  StdDev: 12.18ms
+  Mean: latestms
+  Median: latestms
+  P95: latestms (SLO: <100ms) ✅
+  P99: latestms (SLO: <150ms) ✅
+  Min: latestms, Max: latestms
+  StdDev: latestms
 
 💾 Simple Effect Memory:
-  Used: 12.45 MB
-  Percentage: 32.89% (SLO: <50%) ✅
+  Used: latest MB
+  Percentage: latest% (SLO: <50%) ✅
 ```
 
 #### Analysis
 
 - **Latency**: Simple effects execute well under SLO with 48% headroom at p95
 - **Memory**: Memory usage is extremely efficient at 33% of allocated limit
-- **Consistency**: Low standard deviation (12.18ms) indicates stable performance
+- **Consistency**: Low standard deviation (latestms) indicates stable performance
 - **Throughput**: Capable of ~23 ops/sec per isolate
 
 #### Recommendations
@@ -56,7 +56,7 @@
 
 ---
 
-### 1.2 Complex Effect Execution
+### latest Complex Effect Execution
 
 **SLO:** p95 <500ms, p99 <1000ms, Memory <80% of limit
 
@@ -64,16 +64,16 @@
 
 ```
 📊 Complex Effect Performance:
-  Mean: 256.78ms
-  Median: 245.32ms
-  P95: 289.45ms (SLO: <500ms) ✅
-  P99: 412.67ms (SLO: <1000ms) ✅
-  Min: 198.12ms, Max: 876.34ms
-  StdDev: 45.23ms
+  Mean: latestms
+  Median: latestms
+  P95: latestms (SLO: <500ms) ✅
+  P99: latestms (SLO: <1000ms) ✅
+  Min: latestms, Max: latestms
+  StdDev: latestms
 
 💾 Complex Effect Memory:
-  Used: 45.67 MB
-  Percentage: 71.34% (SLO: <80%) ✅
+  Used: latest MB
+  Percentage: latest% (SLO: <80%) ✅
 ```
 
 #### Analysis
@@ -91,7 +91,7 @@
 
 ---
 
-### 1.3 Timeout Enforcement
+### latest Timeout Enforcement
 
 **SLO:** ±10% accuracy in timeout enforcement
 
@@ -100,8 +100,8 @@
 ```
 ⏱️  Timeout Enforcement:
   Expected: 1000ms
-  Actual (avg): 1047.23ms
-  Margin: 4.72% (SLO: <10%) ✅
+  Actual (avg): latestms
+  Margin: latest% (SLO: <10%) ✅
 ```
 
 #### Analysis
@@ -117,29 +117,29 @@
 
 ---
 
-### 1.4 Concurrent Execution
+### latest Concurrent Execution
 
 #### Results
 
 ```
 🚀 Concurrent Execution:
   Total operations: 50
-  Total duration: 3245.67ms
-  Throughput: 15.41 ops/sec
-  Avg per operation: 64.91ms
+  Total duration: latestms
+  Throughput: latest ops/sec
+  Avg per operation: latestms
 ```
 
 #### Analysis
 
 - Handles 50 concurrent executions efficiently
-- Per-operation latency remains low (64.91ms average)
+- Per-operation latency remains low (latestms average)
 - Isolate-per-effect architecture scales well
 
 ---
 
 ## 2. Transaction Throughput Performance
 
-### 2.1 Baseline Throughput
+### latest Baseline Throughput
 
 **SLO:** >100 tx/sec
 
@@ -148,20 +148,20 @@
 ```
 📈 Baseline Transaction Throughput:
   Total transactions: 200
-  Total duration: 1156.34ms
-  Throughput: 172.98 tx/sec (SLO: >100 tx/sec) ✅
-  Avg latency: 5.78ms
+  Total duration: latestms
+  Throughput: latest tx/sec (SLO: >100 tx/sec) ✅
+  Avg latency: latestms
 ```
 
 #### Analysis
 
-- **Exceeds SLO** by 73% (172.98 vs 100 tx/sec target)
+- **Exceeds SLO** by 73% (latest vs 100 tx/sec target)
 - Baseline transaction processing is extremely efficient
 - Sub-6ms average latency indicates minimal overhead
 
 ---
 
-### 2.2 Transaction Latency
+### latest Transaction Latency
 
 **SLO:** p95 <100ms, p99 <200ms
 
@@ -169,21 +169,21 @@
 
 ```
 ⏱️  Baseline Transaction Latency:
-  Mean: 12.45ms
-  P50: 10.23ms
-  P95: 24.67ms (SLO: <100ms) ✅
-  P99: 38.12ms (SLO: <200ms) ✅
+  Mean: latestms
+  P50: latestms
+  P95: latestms (SLO: <100ms) ✅
+  P99: latestms (SLO: <200ms) ✅
 ```
 
 #### Analysis
 
-- **Excellent latency**: p95 at 24.67ms is 75% better than SLO
-- p99 at 38.12ms is 81% better than SLO
-- Low mean (12.45ms) indicates consistent fast processing
+- **Excellent latency**: p95 at latestms is 75% better than SLO
+- p99 at latestms is 81% better than SLO
+- Low mean (latestms) indicates consistent fast processing
 
 ---
 
-### 2.3 Hook Execution Overhead
+### latest Hook Execution Overhead
 
 **SLO:** <20ms per hook
 
@@ -191,10 +191,10 @@
 
 ```
 🪝 Pre-Hook Performance:
-  Avg latency with hooks: 28.34ms
-  Avg baseline latency: 12.45ms
-  Total overhead: 15.89ms
-  Overhead per hook: 5.30ms (SLO: <20ms) ✅
+  Avg latency with hooks: latestms
+  Avg baseline latency: latestms
+  Total overhead: latestms
+  Overhead per hook: latestms (SLO: <20ms) ✅
 ```
 
 #### Analysis
@@ -211,7 +211,7 @@
 
 ---
 
-### 2.4 Policy Validation Overhead
+### latest Policy Validation Overhead
 
 **SLO:** <30ms
 
@@ -219,9 +219,9 @@
 
 ```
 🛡️  Policy Validation Performance:
-  Avg latency with policy: 27.89ms
-  Avg baseline latency: 12.45ms
-  Policy overhead: 15.44ms (SLO: <30ms) ✅
+  Avg latency with policy: latestms
+  Avg baseline latency: latestms
+  Policy overhead: latestms (SLO: <30ms) ✅
 ```
 
 #### Analysis
@@ -232,7 +232,7 @@
 
 ---
 
-### 2.5 Full Pipeline Throughput
+### latest Full Pipeline Throughput
 
 **SLO:** >50 tx/sec with hooks + policy
 
@@ -241,13 +241,13 @@
 ```
 🔄 Full Pipeline Throughput:
   Total transactions: 100
-  Total duration: 1876.23ms
-  Throughput: 53.30 tx/sec (SLO: >50 tx/sec) ✅
+  Total duration: latestms
+  Throughput: latest tx/sec (SLO: >50 tx/sec) ✅
 ```
 
 #### Analysis
 
-- Meets SLO with 6.6% headroom
+- Meets SLO with latest% headroom
 - Full pipeline (hooks + policy + transaction) performs well
 - Throughput reduction from baseline (173 → 53 tx/sec) is due to sequential hook execution
 
@@ -259,29 +259,29 @@
 
 ---
 
-### 2.6 Concurrent Transaction Processing
+### latest Concurrent Transaction Processing
 
 #### Results
 
 ```
 ⚡ Concurrent Transaction Processing:
   Concurrent operations: 50
-  Total duration: 456.78ms
-  Throughput: 109.46 tx/sec
-  Avg per transaction: 9.14ms
+  Total duration: latestms
+  Throughput: latest tx/sec
+  Avg per transaction: latestms
 ```
 
 #### Analysis
 
 - Concurrent processing is highly efficient
 - Achieves >100 tx/sec even with concurrency
-- Average per-transaction latency is excellent (9.14ms)
+- Average per-transaction latency is excellent (latestms)
 
 ---
 
 ## 3. API Latency Performance
 
-### 3.1 Health Check Endpoint
+### latest Health Check Endpoint
 
 **SLO:** p95 <10ms
 
@@ -289,9 +289,9 @@
 
 ```
 💚 Health Check Performance:
-  Mean: 2.34ms
-  P95: 4.67ms (SLO: <10ms) ✅
-  P99: 6.23ms
+  Mean: latestms
+  P95: latestms (SLO: <10ms) ✅
+  P99: latestms
 ```
 
 #### Analysis
@@ -302,7 +302,7 @@
 
 ---
 
-### 3.2 Authentication Overhead
+### latest Authentication Overhead
 
 **SLO:** <20ms
 
@@ -310,9 +310,9 @@
 
 ```
 🔐 Authentication Performance:
-  Avg authenticated latency: 15.67ms
-  Avg unauthenticated latency: 2.34ms
-  Auth overhead: 13.33ms (SLO: <20ms) ✅
+  Avg authenticated latency: latestms
+  Avg unauthenticated latency: latestms
+  Auth overhead: latestms (SLO: <20ms) ✅
 ```
 
 #### Analysis
@@ -323,7 +323,7 @@
 
 ---
 
-### 3.3 Effect Registration Endpoint
+### latest Effect Registration Endpoint
 
 **SLO:** p95 <150ms
 
@@ -331,9 +331,9 @@
 
 ```
 📝 Effect Registration Performance:
-  Mean: 78.45ms
-  P95: 124.67ms (SLO: <150ms) ✅
-  P99: 156.34ms
+  Mean: latestms
+  P95: latestms (SLO: <150ms) ✅
+  P99: latestms
 ```
 
 #### Analysis
@@ -344,7 +344,7 @@
 
 ---
 
-### 3.4 Effect Execution Endpoint
+### latest Effect Execution Endpoint
 
 **SLO:** p95 <200ms
 
@@ -352,20 +352,20 @@
 
 ```
 ⚡ Effect Execution Performance:
-  Mean: 89.23ms
-  P95: 142.56ms (SLO: <200ms) ✅
-  P99: 178.34ms
+  Mean: latestms
+  P95: latestms (SLO: <200ms) ✅
+  P99: latestms
 ```
 
 #### Analysis
 
 - **Excellent**: 29% better than SLO
 - End-to-end execution (HTTP → sandbox → response) is efficient
-- p99 at 178.34ms provides good tail latency
+- p99 at latestms provides good tail latency
 
 ---
 
-### 3.5 Transaction Apply Endpoint
+### latest Transaction Apply Endpoint
 
 **SLO:** p95 <200ms, p99 <500ms
 
@@ -373,9 +373,9 @@
 
 ```
 📊 Transaction Apply Performance:
-  Mean: 95.67ms
-  P95: 156.78ms (SLO: <200ms) ✅
-  P99: 234.56ms (SLO: <500ms) ✅
+  Mean: latestms
+  P95: latestms (SLO: <200ms) ✅
+  P99: latestms (SLO: <500ms) ✅
 ```
 
 #### Analysis
@@ -386,16 +386,16 @@
 
 ---
 
-### 3.6 Concurrent API Requests
+### latest Concurrent API Requests
 
 #### Results
 
 ```
 🚀 Concurrent Request Performance:
   Concurrent requests: 20
-  Total duration: 124.56ms
-  Avg latency: 6.23ms
-  Throughput: 160.58 req/sec
+  Total duration: latestms
+  Avg latency: latestms
+  Throughput: latest req/sec
 ```
 
 #### Analysis
@@ -406,7 +406,7 @@
 
 ---
 
-### 3.7 Error Response Latency
+### latest Error Response Latency
 
 **SLO:** <50ms
 
@@ -414,8 +414,8 @@
 
 ```
 ❌ Error Response Performance:
-  Mean: 18.34ms
-  P95: 28.67ms (SLO: <50ms) ✅
+  Mean: latestms
+  P95: latestms (SLO: <50ms) ✅
 ```
 
 #### Analysis
@@ -428,7 +428,7 @@
 
 ## 4. OpenTelemetry Overhead Performance
 
-### 4.1 Span Creation Overhead
+### latest Span Creation Overhead
 
 **SLO:** <1ms
 
@@ -437,9 +437,9 @@
 ```
 📊 Span Creation Performance:
   Iterations: 1000
-  Avg: 0.2345ms
-  P95: 0.3456ms (SLO: <1ms) ✅
-  P99: 0.4567ms
+  Avg: latestms
+  P95: latestms (SLO: <1ms) ✅
+  P99: latestms
 ```
 
 #### Analysis
@@ -450,15 +450,15 @@
 
 ---
 
-### 4.2 Nested Span Performance
+### latest Nested Span Performance
 
 #### Results
 
 ```
 🌳 Nested Span Creation:
   Iterations: 500
-  Avg (3 levels): 0.7234ms
-  Per span: 0.2411ms
+  Avg (3 levels): latestms
+  Per span: latestms
 ```
 
 #### Analysis
@@ -469,16 +469,16 @@
 
 ---
 
-### 4.3 Context Propagation
+### latest Context Propagation
 
-**SLO:** <0.5ms
+**SLO:** <latestms
 
 #### Results
 
 ```
 🔗 Context Propagation Performance:
-  Avg: 0.1234ms
-  P95: 0.2345ms (SLO: <0.5ms) ✅
+  Avg: latestms
+  P95: latestms (SLO: <latestms) ✅
 ```
 
 #### Analysis
@@ -489,7 +489,7 @@
 
 ---
 
-### 4.4 Memory Overhead
+### latest Memory Overhead
 
 **SLO:** <10MB
 
@@ -497,25 +497,25 @@
 
 ```
 💾 Baseline Memory:
-  RSS: 45.67 MB
-  Heap Used: 28.34 MB
+  RSS: latest MB
+  Heap Used: latest MB
 
 💾 After 10k Spans:
-  RSS: 51.23 MB
-  Heap Used: 34.56 MB
-  Overhead: 6.22 MB (SLO: <10MB) ✅
+  RSS: latest MB
+  Heap Used: latest MB
+  Overhead: latest MB (SLO: <10MB) ✅
 ```
 
 #### Analysis
 
 - **Excellent**: 38% better than SLO
-- 10,000 spans add only 6.22MB
+- 10,000 spans add only latestMB
 - Memory overhead is well-contained
 - Span export/cleanup is working correctly
 
 ---
 
-### 4.5 CPU Overhead
+### latest CPU Overhead
 
 **SLO:** <5%
 
@@ -523,17 +523,17 @@
 
 ```
 ⚡ CPU Usage:
-  Baseline: 12.45%
-  With tracing: 15.23%
-  Overhead: 2.78%
-  Relative overhead: 22.33% (SLO: <5%) ❌
+  Baseline: latest%
+  With tracing: latest%
+  Overhead: latest%
+  Relative overhead: latest% (SLO: <5%) ❌
 ```
 
 #### Analysis
 
 - **ATTENTION**: Relative CPU overhead exceeds SLO
-- Absolute overhead (2.78%) is acceptable
-- The 22.33% relative overhead is due to low baseline CPU usage
+- Absolute overhead (latest%) is acceptable
+- The latest% relative overhead is due to low baseline CPU usage
 - In production with higher baseline load, relative overhead will be <5%
 
 #### Recommendations
@@ -545,14 +545,14 @@
 
 ---
 
-### 4.6 Span Export Performance
+### latest Span Export Performance
 
 #### Results
 
 ```
 📤 Span Export Performance:
   Spans exported: 1000
-  Duration: 45.67ms
+  Duration: latestms
   Throughput: 21,891 spans/sec
 ```
 
@@ -580,7 +580,7 @@
 
 3. **OTel Relative CPU Overhead** (Monitor)
    - **Impact**: 22% relative overhead in synthetic benchmark
-   - **Severity**: Low (absolute overhead is 2.78%)
+   - **Severity**: Low (absolute overhead is latest%)
    - **Recommendation**: Monitor in production; optimize if needed
 
 ### No Critical Bottlenecks

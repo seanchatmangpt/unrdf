@@ -55,7 +55,7 @@ export function defineLens(name, config) {
     domain: config.domain,
     entity: config.entity,
     rules: config.rules,
-    version: '1.0.0',
+    version: 'latest',
     createdAt: new Date().toISOString()
   };
 }
@@ -98,7 +98,7 @@ export function compileLens(lens) {
 
   return {
     name: lens.name,
-    version: lens.version || '1.0.0',
+    version: lens.version || 'latest',
     stableIds: {
       domain: lens.domain,
       entity: lens.entity

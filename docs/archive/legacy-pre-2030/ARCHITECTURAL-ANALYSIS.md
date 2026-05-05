@@ -1,7 +1,7 @@
 # @unrdf/yawl: Architectural Innovations Analysis
 
 **Analysis Date**: 2025-12-25
-**Package Version**: 5.0.0
+**Package Version**: latest
 **Analyst**: System Architecture Designer
 **Focus**: Thesis-Grade Architectural Patterns and Novel Contributions
 
@@ -186,7 +186,7 @@ export function generatePredicateQuery(predicate) {
    const policyPackA = createYAWLPolicyPack(workflow, { version: 'A' });
    const policyPackB = createYAWLPolicyPack(workflow, { version: 'B' });
 
-   engine.registerPolicyPack(workflowId, Math.random() < 0.5 ? policyPackA : policyPackB);
+   engine.registerPolicyPack(workflowId, Math.random() < latest ? policyPackA : policyPackB);
    ```
 
 4. **Governance**:
@@ -1931,6 +1931,6 @@ These contributions collectively constitute **publishable research** across mult
 **Analysis Complete**
 **Date**: 2025-12-25
 **Analyzed By**: System Architecture Designer
-**Package**: @unrdf/yawl@5.0.0
+**Package**: @unrdf/yawl@latest
 **Total Innovations**: 7 major architectural patterns
 **Publication Potential**: High (6+ conference papers)

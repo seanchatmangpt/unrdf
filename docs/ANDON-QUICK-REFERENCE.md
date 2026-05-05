@@ -218,7 +218,7 @@ If ANY of these are RED:
 $ pnpm run andon:status
 
 ═══════════════════════════════════════════════════════════
-  UNRDF v4.0 ANDON STATUS
+  UNRDF vlatest ANDON STATUS
 ═══════════════════════════════════════════════════════════
 
 🟢 SYSTEM HEALTH: GREEN (87/100)
@@ -237,7 +237,7 @@ CI/CD PIPELINE
   🟡 Security ⚠️  🟢 Build ✓  🟢 Docs ✓
   🟢 Benchmark ✓  🟢 Integration ✓  🟢 Release ✓
 
-DEPLOYMENT READINESS (Release v4.0.1)
+DEPLOYMENT READINESS (Release vlatest)
   ✓ Build ✓ Tests ✓ Security ✓ Performance
   ✓ Docs ✗ Changelog needed
   Status: 🟡 YELLOW (5/6 gates)

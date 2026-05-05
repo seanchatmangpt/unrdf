@@ -151,7 +151,7 @@ const response = await beamRuntime.send({
 | Demo 2 | <100ms | <5MB | O(n) triples |
 | Demo 3 | <100ms | <5MB | O(1) |
 
-**Tested on**: Node.js v22.21.1, Linux
+**Tested on**: Node.js [VERSION], Linux
 
 ---
 

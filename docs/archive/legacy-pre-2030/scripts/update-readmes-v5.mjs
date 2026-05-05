@@ -11,7 +11,7 @@ const PACKAGES = [
   'oxigraph', 'project-engine', 'streaming', 'test-utils', 'validation'
 ];
 
-const v5Badge = '![Version](https://img.shields.io/badge/version-5.0.0--beta.1-blue)';
+const v5Badge = '![Version](https://img.shields.io/badge/version-latest--beta.1-blue)';
 const prodReadyBadge = '![Production Ready](https://img.shields.io/badge/production-ready-green)';
 
 console.log('📖 Updating package READMEs with v5 info\n');
@@ -36,11 +36,11 @@ pnpm add ${pkgJson.name}
 
 ## Documentation
 
-See [UNRDF v5 Documentation](../../docs/RELEASE-PLAN-v5.0.0.md) for full details.
+See [UNRDF v5 Documentation](../../docs/RELEASE-PLAN-latest.md) for full details.
 
 ## Version
 
-Current: **5.0.0-beta.1**
+Current: **latest-beta.1**
 
 - ✅ Production ready
 - ✅ 100% Oxigraph compliance

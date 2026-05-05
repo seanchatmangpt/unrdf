@@ -84,11 +84,11 @@ console.log(verification.isAnchored); // true/false
 
 | Receipts | Individual Cost | Merkle Cost | Savings |
 |----------|----------------|-------------|---------|
-| 10 | 0.0005 ETH | 0.000060 ETH | 88% |
-| 100 | 0.0050 ETH | 0.000060 ETH | 98.8% |
-| 1000 | 0.0500 ETH | 0.000060 ETH | 99.88% |
+| 10 | latest ETH | latest ETH | 88% |
+| 100 | latest ETH | latest ETH | latest% |
+| 1000 | latest ETH | latest ETH | latest% |
 
-**At $2500 ETH, 1000 receipts cost $0.15 with Merkle vs $125 individual (833x cheaper)**
+**At $2500 ETH, 1000 receipts cost $latest with Merkle vs $125 individual (833x cheaper)**
 
 ## How to Use
 
@@ -185,7 +185,7 @@ pnpm test
 - **Merkle tree build (1000 receipts)**: < 1 second
 - **Proof generation**: < 10ms per proof
 - **Proof verification**: < 5ms per proof
-- **Gas cost (1000 receipts)**: ~60k gas (~$0.15 @ $2500 ETH)
+- **Gas cost (1000 receipts)**: ~60k gas (~$latest @ $2500 ETH)
 
 ## Innovation Highlights
 
@@ -293,10 +293,10 @@ privateKey: '0xac0974bec...' // DANGER!
 
 ```json
 {
-  "ethers": "^6.10.0",           // Ethereum interaction
-  "@noble/hashes": "^1.3.3",     // Cryptographic hashing
-  "merkletreejs": "^0.3.11",     // Merkle tree implementation
-  "zod": "^3.22.4",              // Schema validation
+  "ethers": "^latest",           // Ethereum interaction
+  "@noble/hashes": "^latest",     // Cryptographic hashing
+  "merkletreejs": "^latest",     // Merkle tree implementation
+  "zod": "^latest",              // Schema validation
   "@unrdf/yawl": "workspace:*",  // Receipt generation
   "@unrdf/kgc-4d": "workspace:*" // Time utilities
 }
@@ -327,4 +327,4 @@ See:
 
 **Status**: ✅ Complete and Production-Ready
 **Created**: 2025-12-25
-**Package**: `@unrdf/blockchain` v1.0.0
+**Package**: `@unrdf/blockchain` vlatest

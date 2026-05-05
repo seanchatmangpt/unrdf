@@ -3,7 +3,7 @@
 **Complete step-by-step guide for migrating from v5 to v6**
 
 **Last Updated**: 2025-12-27
-**Target Version**: 6.0.0
+**Target Version**: latest
 **Estimated Migration Time**: 2-4 hours for typical project
 
 ---
@@ -27,7 +27,7 @@
 
 - [ ] **Backup your codebase**: `git commit -am "Pre-migration checkpoint"`
 - [ ] **Review breaking changes**: Read [`MIGRATION_PLAN.md`](./MIGRATION_PLAN.md)
-- [ ] **Check dependencies**: Ensure Node.js ≥18.0.0, pnpm ≥7.0.0
+- [ ] **Check dependencies**: Ensure Node.js ≥latest, pnpm ≥latest
 - [ ] **Run existing tests**: `pnpm test` (100% pass required)
 - [ ] **Document current behavior**: Save baseline metrics
 
@@ -35,10 +35,10 @@
 
 ```bash
 # Verify Node.js version
-node --version  # Must be ≥18.0.0
+node --version  # Must be ≥latest
 
 # Verify pnpm
-pnpm --version  # Must be ≥7.0.0
+pnpm --version  # Must be ≥latest
 
 # Check current UNRDF version
 pnpm list @unrdf/core  # Should show v5.x
@@ -51,7 +51,7 @@ pnpm list @unrdf/core  # Should show v5.x
 | v5.x + N3 Store     | Automated + Manual  | Medium     |
 | v5.x + Custom Store | Manual Only         | High       |
 | v4.x or earlier     | Migrate to v5 first | N/A        |
-| 6.0.0-alpha.x       | Review delta only   | Low        |
+| latest-alpha.x       | Review delta only   | Low        |
 
 ---
 
@@ -112,16 +112,16 @@ cd packages/my-app && pnpm test
 ```diff
 {
   "dependencies": {
--   "n3": "^1.26.0",
--   "@unrdf/engine": "^5.0.0"
+-   "n3": "^latest",
+-   "@unrdf/engine": "^latest"
 +   "@unrdf/oxigraph": "workspace:*",
 +   "@unrdf/core": "workspace:*",
 +   "@unrdf/v6-compat": "workspace:*"
   },
   "engines": {
--   "node": ">=16.0.0"
-+   "node": ">=18.0.0",
-+   "pnpm": ">=7.0.0"
+-   "node": ">=1latest"
++   "node": ">=latest",
++   "pnpm": ">=latest"
   },
 + "type": "module"
 }
@@ -746,8 +746,8 @@ pnpm install
 ```json
 {
   "dependencies": {
-    "@unrdf/core-v5": "npm:@unrdf/core@5.0.1",
-    "@unrdf/core": "^6.0.0"
+    "@unrdf/core-v5": "npm:@unrdf/core@latest",
+    "@unrdf/core": "^latest"
   }
 }
 ```
@@ -902,6 +902,6 @@ node scripts/migrate.mjs --all --report issue-report.json
 
 ---
 
-**Version**: 6.0.0
+**Version**: latest
 **Last Updated**: 2025-12-27
 **Maintained By**: UNRDF Core Team

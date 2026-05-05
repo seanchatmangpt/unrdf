@@ -1,6 +1,6 @@
 # UNRDF Migration Guide
 
-**Version**: 6.0.0
+**Version**: latest
 **Date**: 2025-12-27
 **Estimated Migration Time**: 2-6 weeks
 
@@ -30,9 +30,9 @@ This guide helps you migrate from **UNRDF v5** to \*\*UNRDF current.
 
 **Required**:
 
-- Node.js ≥20.0.0 (upgrade if on 18.x)
-- pnpm ≥7.0.0 (or npm ≥8.0.0)
-- UNRDF v5.0.0 or later
+- Node.js ≥latest (upgrade if on 18.x)
+- pnpm ≥latest (or npm ≥latest)
+- UNRDF latest or later
 
 **Recommended**:
 
@@ -48,14 +48,14 @@ This guide helps you migrate from **UNRDF v5** to \*\*UNRDF current.
 
 ```bash
 # Update UNRDF packages
-pnpm update '@unrdf/*@^6.0.0'
+pnpm update '@unrdf/*@^latest'
 
 # Or manually in package.json
 {
   "dependencies": {
-    "@unrdf/core": "^6.0.0",
-    "@unrdf/kgc-4d": "^6.0.0",
-    "@unrdf/cli": "^6.0.0"
+    "@unrdf/core": "^latest",
+    "@unrdf/kgc-4d": "^latest",
+    "@unrdf/cli": "^latest"
   }
 }
 ```
@@ -488,7 +488,7 @@ npm run deploy:production
 
 ```bash
 # Downgrade to v5
-pnpm update '@unrdf/*@^5.0.0'
+pnpm update '@unrdf/*@^latest'
 
 # Rebuild
 npm run build
@@ -508,7 +508,7 @@ enableV5Compat({
 });
 ```
 
-**Note**: Compatibility layer removed in 6.1.0 (12 months after v6.0.0 GA).
+**Note**: Compatibility layer removed in latest (12 months after latest GA).
 
 ---
 
@@ -520,7 +520,7 @@ enableV5Compat({
 - [ ] Analyze codebase with migration tool
 - [ ] Update dependencies to current version
 - [ ] Create backup (git commit)
-- [ ] Upgrade Node.js to ≥20.0.0
+- [ ] Upgrade Node.js to ≥latest
 
 ### Automated Migration
 

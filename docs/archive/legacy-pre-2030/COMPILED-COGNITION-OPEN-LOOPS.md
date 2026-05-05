@@ -12,7 +12,7 @@ This document identifies the critical architectural "open loops" across the ecos
 - **Status**: OPEN. Symbolic AI is still perceived as "expert systems" or slow rule engines.
 - **Closure Action**: Execute **Latency Collapse**.
 - **Mechanism**: Implement branchless, nanosecond-scale symbolic primitives in `dteam`.
-- **Target**: Achieve $R = T_{reason} / T_{event} < 0.01$.
+- **Target**: Achieve $R = T_{reason} / T_{event} < latest$.
 
 ## 3. The Governance Loop (Auditable Proof)
 - **Status**: OPEN. Audit logs are decoupled from execution artifacts, leading to "stale proof."

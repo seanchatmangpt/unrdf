@@ -59,9 +59,9 @@ Watches `packages/*/src/**/*.mjs` and `packages/*/test/**/*.test.mjs`:
 
 [14:24:12] 📝 File changed: packages/cli/src/index.mjs
 [14:24:12] 🔨 Rebuilding @unrdf/cli...
-[14:24:13] ✅ Build successful (1.23s)
+[14:24:13] ✅ Build successful (latests)
 [14:24:13] 🧪 Running tests for @unrdf/cli...
-[14:24:14] ✅ Tests passed: 10 (0.87s)
+[14:24:14] ✅ Tests passed: 10 (latests)
 ```
 
 Plus a desktop notification: "✅ @unrdf/cli - 10 tests passed"
@@ -72,9 +72,9 @@ Plus a desktop notification: "✅ @unrdf/cli - 10 tests passed"
 
 | Operation             | Target | Typical |
 | --------------------- | ------ | ------- |
-| Rebuild               | <2s    | 1-1.5s  |
-| Test re-run           | <1s    | 0.5-1s  |
-| Change → Notification | <3s    | 2-2.5s  |
+| Rebuild               | <2s    | 1-latests  |
+| Test re-run           | <1s    | latest  |
+| Change → Notification | <3s    | 2-latests  |
 
 ### DX Impact
 

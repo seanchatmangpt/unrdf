@@ -1,7 +1,7 @@
-# UNRDF v6.0 Receipt & Audit EPICs
+# UNRDF vlatest Receipt & Audit EPICs
 
 **Domain**: Receipts, Audit Trails & Cryptographic Proofs  
-**Version**: 6.0.0  
+**Version**: latest  
 **Date**: 2025-12-28  
 **Status**: Planning Phase
 
@@ -15,7 +15,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 - 9-field receipt model (ID, type, timestamps, hashes, payload)
 - BLAKE3 hash chains (linear + Merkle batching)
 - 4 specialized receipt types (execution, allocation, compile, verification)
-- Performance targets: <1ms creation, <0.5ms verification
+- Performance targets: <1ms creation, <latestms verification
 - 100% tamper detection via hash verification
 
 ---
@@ -35,8 +35,8 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 - [ ] Genesis receipt creation (previousHash = null) validated
 - [ ] Temporal ordering enforced: `receipt[N].t_ns > receipt[N-1].t_ns`
 - [ ] Zod schemas defined for all receipt types with runtime validation
-- [ ] Receipt creation performance: P95 < 1ms (target: 0.02ms based on current measurements)
-- [ ] Receipt verification performance: P95 < 0.5ms
+- [ ] Receipt creation performance: P95 < 1ms (target: latestms based on current measurements)
+- [ ] Receipt verification performance: P95 < latestms
 - [ ] Branded types implemented to prevent ID confusion (ReceiptId, UniverseId)
 - [ ] Object.freeze() applied to all receipts after creation (immutability guarantee)
 - [ ] 100% test coverage for receipt creation, hashing, and chaining
@@ -80,7 +80,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 - [ ] Context field captures task inputs/outputs for audit reconstruction
 - [ ] Receipt generated synchronously with task state transition (no async delays)
 - [ ] Integration with @unrdf/workflows package via hooks
-- [ ] Performance: Execution receipt creation adds <0.5ms overhead to task execution
+- [ ] Performance: Execution receipt creation adds <latestms overhead to task execution
 - [ ] Case-level audit trail API: `getExecutionTrail(caseId)` returns all receipts for a workflow case
 - [ ] Receipts stored in RDF event log with SPARQL queryability
 - [ ] 100% test coverage for all task lifecycle transitions
@@ -93,7 +93,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 5. **Implement Case Audit Trail** - API to retrieve all execution receipts for a specific workflow case
 6. **Add SPARQL Query Support** - Store execution receipts in RDF event log with optimized indexes
 7. **Write Execution Receipt Tests** - Test all task lifecycle events, decision capture, justification storage
-8. **Performance Optimization** - Ensure receipt creation adds <0.5ms overhead to task execution
+8. **Performance Optimization** - Ensure receipt creation adds <latestms overhead to task execution
 
 ### Dependencies
 - **Blocked by**: RCPT-001 (Core Receipt Infrastructure)
@@ -101,7 +101,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M
-- **Weeks**: 1.5-2
+- **Weeks**: latest
 - **Rationale**: Builds on core infrastructure, primary work is YAWL integration and schema definition. Test coverage is critical for all task lifecycle transitions.
 
 ---
@@ -145,7 +145,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M-L
-- **Weeks**: 2-2.5
+- **Weeks**: 2-latest
 - **Rationale**: Complex integration with graph store and hooks. Receipt-gated mutation pattern requires careful atomic transaction design. Batch optimization is critical for performance.
 
 ---
@@ -188,7 +188,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M
-- **Weeks**: 1.5-2
+- **Weeks**: latest
 - **Rationale**: KGC-4D and Git integration already exist, primary work is receipt schema and verification API. Performance optimization for large snapshots may require iteration.
 
 ---
@@ -233,7 +233,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M
-- **Weeks**: 1.5-2
+- **Weeks**: latest
 - **Rationale**: Merkle tree logic is straightforward but requires careful testing for correctness. Blockchain/timestamp anchoring is out of scope (metadata storage only).
 
 ---
@@ -277,7 +277,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M
-- **Weeks**: 1.5-2
+- **Weeks**: latest
 - **Rationale**: API design and SPARQL query optimization are primary work. PDF export may require additional library integration. CLI integration is straightforward.
 
 ---
@@ -296,7 +296,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 - [ ] Detects tampering scenarios: payload modification, timestamp changes, hash tampering, reordering, deletion, injection
 - [ ] verifyChain(receipts) validates complete chain: genesis, hash links, temporal ordering
 - [ ] detectAnomalies() identifies: temporal violations, chain gaps, duplicate receipts, invalid signatures
-- [ ] Performance: Single receipt verification completes in <0.5ms (target: <0.001ms)
+- [ ] Performance: Single receipt verification completes in <latestms (target: <latestms)
 - [ ] Chain verification (100 receipts) completes in <50ms
 - [ ] Automated verification schedules: hourly, daily, on-demand
 - [ ] Alerting integration: log errors, emit OTEL spans, trigger webhooks
@@ -312,7 +312,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 5. **Add Automated Verification Schedules** - Cron-style verification: hourly, daily, on-demand
 6. **Integrate Alerting** - Log errors, emit OTEL spans, trigger webhooks on tamper detection
 7. **Build Forensic Analysis** - Generate tamper reports with affected receipts, timeline, attack vectors
-8. **Optimize Verification Performance** - Ensure <0.5ms single receipt, <50ms chain (100 receipts)
+8. **Optimize Verification Performance** - Ensure <latestms single receipt, <50ms chain (100 receipts)
 9. **Write Tamper Detection Tests** - Test all tamper scenarios, detection accuracy, false positive rate
 
 ### Dependencies
@@ -321,7 +321,7 @@ This document defines the epic-level feature sets for UNRDF v6's receipt and aud
 
 ### Estimated Effort
 - **T-shirt size**: M
-- **Weeks**: 1.5-2
+- **Weeks**: latest
 - **Rationale**: Core verification logic already exists (from RCPT-001), primary work is anomaly detection, alerting, and forensic reporting. Automated scheduling requires cron integration.
 
 ---
@@ -373,9 +373,9 @@ RCPT-001 (Core Infrastructure)
 ### Performance Targets
 | Metric | Target | Baseline | Gate |
 |--------|--------|----------|------|
-| Receipt creation | <1ms | 0.017ms | Block if >1ms |
-| Receipt verification | <0.5ms | 0.000ms | Block if >0.5ms |
-| Chain verification (10) | <50ms | 0.347ms | Block if >50ms |
+| Receipt creation | <1ms | latestms | Block if >1ms |
+| Receipt verification | <latestms | latestms | Block if >latestms |
+| Chain verification (10) | <50ms | latestms | Block if >50ms |
 | Merkle tree (1000) | <50ms | TBD | Block if >50ms |
 | Audit query (100 receipts) | <50ms | TBD | Block if >50ms |
 

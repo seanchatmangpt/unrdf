@@ -2,7 +2,7 @@
 
 **Generated:** 2025-11-18
 **Reviewer:** Code Quality Analyzer
-**Version:** UNRDF v3.1.1
+**Version:** UNRDF latest
 **Scope:** React Hooks Implementation, Browser Compatibility, Vue Composables
 
 ---

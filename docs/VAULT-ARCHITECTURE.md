@@ -474,7 +474,7 @@ Token Renewal
 ─────────────
 Frequency:      Every 12h (50% of 24h TTL)
 Duration:       10-50ms
-Failure Rate:   < 0.01%
+Failure Rate:   < latest%
 
 Secret Rotation
 ───────────────

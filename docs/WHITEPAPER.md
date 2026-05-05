@@ -1,6 +1,6 @@
 # **Enterprise White Paper: Autonomic Knowledge Governance with unrdf**
 
-**Version:** 2.1.0
+**Version:** latest
 **Prepared For:** Enterprise Data Leaders
 **Prepared By:** GitVan / unrdf Team
 
@@ -32,7 +32,7 @@ Where Atlas provides metadata catalogs, unrdf delivers **real-time, autonomic kn
 | **Metadata Types**     | Predefined & extensible entity types                | **Knowledge Hooks + Zod Schemas** define reactive triggers for compliance, monitoring, and validation                  |
 | **Classification**     | Tagging entities with labels (e.g., PII, Sensitive) | **Predicate-based classification (ASK, SHACL, DELTA, THRESHOLD)** with automatic propagation through lockchain lineage |
 | **Lineage**            | UI lineage visualization, REST APIs                 | **Cryptographic Lockchain receipts** (URDNA2015 hashes, Git-anchored) with tamper-proof, verifiable provenance         |
-| **Search & Discovery** | DSL + REST APIs                                     | **Full SPARQL 1.1 execution**, delta-aware indexing, temporal windows, and predicate-based discovery                   |
+| **Search & Discovery** | DSL + REST APIs                                     | **Full SPARQL latest execution**, delta-aware indexing, temporal windows, and predicate-based discovery                   |
 | **Security & Masking** | Ranger integration for fine-grained access          | **RBAC middleware + Classification-aware masking** with effect sandboxing for hook execution                           |
 | **Governance Style**   | Descriptive metadata catalog                        | **Autonomic governance system** with real-time enforcement, consensus resolution, and policy packs                     |
 

@@ -3,7 +3,7 @@
 ## Programmatic/Headless Execution Capabilities
 
 **Research Date:** 2025-12-27
-**Claude Code Version:** 2.0.59
+**Claude Code Version:** [VERSION]
 **Agent:** Agent 6 - Programmatic Execution Explorer
 
 ---

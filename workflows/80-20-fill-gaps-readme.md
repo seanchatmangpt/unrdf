@@ -1,6 +1,6 @@
 # 80/20 Fill Gaps Workflow
 
-**Version**: 2.0.0
+**Version**: latest
 **Status**: Ready for Production
 **Last Updated**: 2025-12-21
 
@@ -490,7 +490,7 @@ Task("80-20 fill gaps",
 
 ---
 
-**Version**: 2.0.0
+**Version**: latest
 **Status**: Production Ready
 **Last Updated**: 2025-12-21
 **License**: MIT

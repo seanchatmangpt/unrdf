@@ -22,7 +22,7 @@ const quorum = new FederationQuorum({
 });
 
 // Governance decision: Upgrade core protocol
-const proposal = 'upgrade-protocol-v2.1';
+const proposal = 'upgrade-protocol-vlatest';
 
 const approvals = {
   'ethereum-validator': true,
@@ -108,7 +108,7 @@ const marketplace = new HooksMarketplace();
 // Define a payment validator hook
 const paymentHook = {
   name: 'payment-validator',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Validates payment transactions',
   conditions: [
     {
@@ -267,7 +267,7 @@ const deltas = [
     type: 'add',
     quad: dataFactory.quad(
       dataFactory.namedNode('http://example.org/alice'),
-      dataFactory.namedNode('http://xmlns.com/foaf/0.1/name'),
+      dataFactory.namedNode('http://xmlns.com/foaf/latest/name'),
       dataFactory.literal('Alice')
     ),
   },
@@ -275,7 +275,7 @@ const deltas = [
     type: 'add',
     quad: dataFactory.quad(
       dataFactory.namedNode('http://example.org/bob'),
-      dataFactory.namedNode('http://xmlns.com/foaf/0.1/name'),
+      dataFactory.namedNode('http://xmlns.com/foaf/latest/name'),
       dataFactory.literal('Bob')
     ),
   },
@@ -447,4 +447,4 @@ console.log('Stream Receipt Chain:', stream.getReceiptChain(...));
 
 ---
 
-**Version**: 26.5.4 | **Date**: May 4, 2026
+**Version**: latest | **Date**: May 4, 2026

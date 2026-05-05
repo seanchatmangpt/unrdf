@@ -183,9 +183,9 @@ export const COMPATIBLE_LICENSES = new Set([
  * @example
  * const partition = new PackagePartition({
  *   name: '@unrdf/core',
- *   version: '5.0.1',
+ *   version: '[VERSION]',
  *   category: 'O_core',
- *   dependencies: [{ name: '@unrdf/oxigraph', version: '5.0.1', isWorkspace: true }]
+ *   dependencies: [{ name: '@unrdf/oxigraph', version: '[VERSION]', isWorkspace: true }]
  * });
  */
 export class PackagePartition {

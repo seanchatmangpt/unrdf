@@ -69,18 +69,18 @@ Search Objective:
 
 | Atom ID | Name | Utility | Complexity | Proof Type |
 |---------|------|---------|------------|------------|
-| atom-rdf-store | RDF Store | 0.95 | moderate | test + example |
-| atom-sparql-executor | SPARQL Executor | 0.92 | high | test + example |
-| atom-hook-system | Hook System | 0.88 | high | test + example |
-| atom-pattern-matcher | Pattern Matcher | 0.85 | high | test + example |
-| atom-change-feed | Change Feed | 0.82 | moderate | example |
-| atom-federation-coordinator | Federation | 0.80 | very-high | example |
-| atom-event-logger | Event Logger (KGC-4D) | 0.90 | very-high | test + metrics |
-| atom-workflow-engine | Workflow Engine | 0.86 | very-high | test |
-| atom-ml-inference | ML Inference | 0.75 | high | test |
-| atom-graph-analytics | Graph Analytics | 0.78 | high | test |
+| atom-rdf-store | RDF Store | latest | moderate | test + example |
+| atom-sparql-executor | SPARQL Executor | latest | high | test + example |
+| atom-hook-system | Hook System | latest | high | test + example |
+| atom-pattern-matcher | Pattern Matcher | latest | high | test + example |
+| atom-change-feed | Change Feed | latest | moderate | example |
+| atom-federation-coordinator | Federation | latest | very-high | example |
+| atom-event-logger | Event Logger (KGC-4D) | latest | very-high | test + metrics |
+| atom-workflow-engine | Workflow Engine | latest | very-high | test |
+| atom-ml-inference | ML Inference | latest | high | test |
+| atom-graph-analytics | Graph Analytics | latest | high | test |
 
-**Average Utility:** 0.851
+**Average Utility:** latest
 
 ### Phase 2: Graph Inference (μ3)
 
@@ -103,11 +103,11 @@ Search Objective:
 - Unique candidates tracked: **20**
 
 **Top Candidates by Score:**
-1. **candidate-1:** {RDF Store} - score: 0.963
-2. **candidate-2:** {SPARQL Executor} - score: 0.959
-3. **candidate-3:** {Event Logger} - score: 0.954
-4. **candidate-4:** {Hook System} - score: 0.941
-5. **candidate-5:** {Pattern Matcher} - score: 0.920
+1. **candidate-1:** {RDF Store} - score: latest
+2. **candidate-2:** {SPARQL Executor} - score: latest
+3. **candidate-3:** {Event Logger} - score: latest
+4. **candidate-4:** {Hook System} - score: latest
+5. **candidate-5:** {Pattern Matcher} - score: latest
 
 ### Phase 4: Metrics (μ8)
 
@@ -123,11 +123,11 @@ U(C_k) = Σ U(α_i) / |C_k| + interactionBonus
 
 | Rank | Atoms | Synergy | Utility | Score |
 |------|-------|---------|---------|-------|
-| 1 | RDF Store | 0.0347 | 0.901 | 0.963 |
-| 2 | SPARQL Executor | 0.0347 | 0.881 | 0.959 |
-| 3 | Event Logger | 0.0347 | 0.872 | 0.954 |
-| 4 | Hook System | 0.0347 | 0.859 | 0.941 |
-| 5 | Pattern Matcher | 0.0347 | 0.838 | 0.920 |
+| 1 | RDF Store | latest | latest | latest |
+| 2 | SPARQL Executor | latest | latest | latest |
+| 3 | Event Logger | latest | latest | latest |
+| 4 | Hook System | latest | latest | latest |
+| 5 | Pattern Matcher | latest | latest | latest |
 
 **Note:** Positive synergy indicates composition value exceeds sum of individual utilities.
 
@@ -141,9 +141,9 @@ U(C_k) = Σ U(α_i) / |C_k| + interactionBonus
   "id": "promotion-1",
   "atoms": ["atom-rdf-store"],
   "name": "RDF Store",
-  "synergy": 0.0347,
-  "utility": 0.901,
-  "constraintStrength": 1.0,
+  "synergy": latest,
+  "utility": latest,
+  "constraintStrength": latest,
   "capabilities": [],
   "receiptPointer": "experiments/candidate-1/receipt.json",
   "runnablePointer": "experiments/candidate-1/run.mjs"
@@ -191,7 +191,7 @@ atom.source = {
 {
   hash: "sha256(...)",  // Deterministic hash of inputs+outputs+code
   codeHash: "...",
-  timestamp: "2025-12-26T00:00:00.000Z",
+  timestamp: "2025-12-26T00:00:latestZ",
   verify(inputs, outputs) { return recomputedHash === this.hash }
 }
 ```
@@ -244,7 +244,7 @@ atom.source = {
 
 ```
 ATLAS.json        39 KB  (complete discovery state)
-LEDGER.json      1.4 KB  (determinism proof + manifest)
+LEDGER.json      latest KB  (determinism proof + manifest)
 main.mjs         12 KB  (orchestrator + 6 phases)
 agents/*.mjs     ~35 KB total (5 agent implementations)
 kernel/*.mjs     ~20 KB total (determinism kernel)
@@ -287,36 +287,36 @@ kernel/*.mjs     ~20 KB total (determinism kernel)
 
 ### Single-Atom Promotions
 
-1. **RDF Store** - Foundational quad storage (utility: 0.901)
+1. **RDF Store** - Foundational quad storage (utility: latest)
    - Type: Stateful store
    - Dependency: Oxigraph (native)
 
-2. **SPARQL Executor** - Query execution (utility: 0.881)
+2. **SPARQL Executor** - Query execution (utility: latest)
    - Type: Stateless query processor
    - Sync + async variants
 
-3. **Event Logger (KGC-4D)** - Nanosecond-precision audit trails (utility: 0.872)
+3. **Event Logger (KGC-4D)** - Nanosecond-precision audit trails (utility: latest)
    - Type: Stateful persistent store
    - Capabilities: time-travel, git-backed snapshots
 
-4. **Hook System** - Policy enforcement (utility: 0.859)
+4. **Hook System** - Policy enforcement (utility: latest)
    - Type: Registry + execution engine
    - Optimizations: JIT compilation, quad pooling
 
-5. **Pattern Matcher** - DSL-based inference (utility: 0.838)
+5. **Pattern Matcher** - DSL-based inference (utility: latest)
    - Type: Stateless matcher
    - Complexity: High
 
 ### Potential Multi-Atom Compositions (not yet promoted)
 
 **Store + Hooks:** RDF store with policy validation
-- Expected ΔU: ~0.05 (interaction bonus from enforcement)
+- Expected ΔU: ~latest (interaction bonus from enforcement)
 
 **Store + Streaming:** Real-time sync via change feeds
-- Expected ΔU: ~0.06 (closure from feed→subscribe loop)
+- Expected ΔU: ~latest (closure from feed→subscribe loop)
 
 **Workflow + KGC-4D:** Audit trails with time-travel
-- Expected ΔU: ~0.07 (strong synergy from event logging)
+- Expected ΔU: ~latest (strong synergy from event logging)
 
 ---
 
@@ -350,7 +350,7 @@ node main.mjs --deterministic
 
 **Output:**
 - ATLAS.json (39 KB)
-- LEDGER.json (1.4 KB)
+- LEDGER.json (latest KB)
 - Console summary
 
 **Verification:**

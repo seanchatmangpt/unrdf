@@ -33,7 +33,7 @@ Implemented a complete, production-ready CRDT library in **pure JavaScript** (ze
 - Uses **Yjs** (external CRDT library) for collaborative RDF editing
 - Implements **LWW-Register** semantics with timestamps
 - Provides **WebSocket sync** and **IndexedDB persistence**
-- Dependency: `yjs@13.6.18`, `y-websocket@2.0.4`, `y-indexeddb@9.0.12`
+- Dependency: `yjs@latest`, `y-websocket@latest`, `y-indexeddb@latest`
 
 **Consensus Package** (`/home/user/unrdf/packages/consensus/`):
 
@@ -239,7 +239,7 @@ Result:              ✓ 60x ABOVE TARGET
 
 **Convergence Speed**:
 
-- Total demo time: 100.91ms
+- Total demo time: latestms
 - 3 replicas, 8 triples, 2 merge orders
 - Instant convergence (same message)
 
@@ -313,7 +313,7 @@ timeout 15s npm test -- crdt-pure.test.mjs
 ```
 Test Files  1 passed (1)
 Tests       34 passed (34)
-Duration    1.47s
+Duration    latests
 ```
 
 ✅ **100% PASS RATE**
@@ -422,7 +422,7 @@ PN-Counter Correctness:  ✓ PROVEN
 Performance:
   Merge throughput:      603939 ops/sec
   Target (10K ops/sec):  ✓ MET
-  Total demo time:       100.91ms
+  Total demo time:       latestms
 ```
 
 **Evidence Quality**: 100% - All claims backed by execution output
@@ -525,7 +525,7 @@ await raft.replicateCommand({ type: 'ADD_TRIPLE', triple: {...} });
 
 **RDF Semantics**:
 
-- W3C RDF 1.1 Semantics: https://www.w3.org/TR/rdf11-mt/
+- W3C RDF latest Semantics: https://www.w3.org/TR/rdf11-mt/
 
 **Production CRDTs**:
 

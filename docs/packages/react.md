@@ -2,7 +2,7 @@
 
 > UNRDF React - AI Semantic Analysis Tools for RDF Knowledge Graphs (Optional Extension)
 
-**Version**: `5.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

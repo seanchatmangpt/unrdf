@@ -165,7 +165,7 @@ async function probeWorkerThreadsAvailability() {
     // Check Node.js version
     const nodeVersion = process.version;
     outputs.nodeVersion = nodeVersion;
-    metadata.minVersion = 'v10.5.0'; // worker_threads introduced in Node 10.5.0
+    metadata.minVersion = '[VERSION]'; // worker_threads introduced in Node [VERSION]
   } catch (error) {
     outputs.available = false;
     metadata.error = error.message;
@@ -828,7 +828,7 @@ async function probeAsyncLocalStorage() {
     }
 
     metadata.nodeVersion = process.version;
-    metadata.note = 'AsyncLocalStorage available since Node.js v13.10.0';
+    metadata.note = 'AsyncLocalStorage available since Node.js [VERSION]';
   } catch (error) {
     outputs.available = false;
     outputs.functional = false;

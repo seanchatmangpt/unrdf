@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides the detailed implementation roadmap for transforming UNRDF from v4.2.3 (bloated, 65,867 LOC) to v5.0.0 (lean, 35,000 LOC). The plan follows Lean Six Sigma principles with clear phases, milestones, dependencies, and success metrics.
+This document provides the detailed implementation roadmap for transforming UNRDF from latest (bloated, 65,867 LOC) to latest (lean, 35,000 LOC). The plan follows Lean Six Sigma principles with clear phases, milestones, dependencies, and success metrics.
 
 ---
 
@@ -161,7 +161,7 @@ Create separate npm packages for advanced features while maintaining shared infr
 - Node management
 
 **Task Steps**:
-1. Create repo structure: `git checkout -b release/v5.0.0-federation`
+1. Create repo structure: `git checkout -b release/latest-federation`
 2. Copy federation code to unrdf-federation/
 3. Update imports to depend on unrdf
 4. Create separate package.json, vitest config
@@ -223,7 +223,7 @@ For each package:
 - [ ] CI/CD configured
 - [ ] npm registry configured
 - [ ] Namespace: @unrdf/<package> or unrdf-<feature>
-- [ ] Version pinned to match core (initially v5.0.0)
+- [ ] Version pinned to match core (initially latest)
 
 ### Phase 2 Success Criteria
 - ✅ 5 new packages created and tested
@@ -482,7 +482,7 @@ Browsers: (minimal - core focus is Node.js + browser fetch)
 - ✅ Optional packages: tests move with code
 - ✅ Bundle size: <1 MB gzipped
 - ✅ Performance: All operations <20ms
-- ✅ Zero regressions from v4.2.3 core functionality
+- ✅ Zero regressions from latest core functionality
 
 **Milestone**: Quality assurance complete
 
@@ -491,7 +491,7 @@ Browsers: (minimal - core focus is Node.js + browser fetch)
 ## PHASE 5: Release Preparation (Weeks 9-10)
 
 ### Objective
-Prepare v5.0.0 for production release.
+Prepare latest for production release.
 
 ### 5.1 Migration Guide Creation
 **Effort**: 3 days
@@ -504,7 +504,7 @@ Prepare v5.0.0 for production release.
 
 **Structure**:
 ```markdown
-# Migration Guide: v4.2.3 → v5.0.0
+# Migration Guide: latest → latest
 
 ## Breaking Changes
 [List all removed functions with replacements]
@@ -528,7 +528,7 @@ Prepare v5.0.0 for production release.
 
 **Highlights**:
 ```markdown
-# UNRDF v5.0.0 Release
+# UNRDF latest Release
 
 ## Highlights
 - 47% smaller core (65,867 → 35,000 LOC)
@@ -547,7 +547,7 @@ Prepare v5.0.0 for production release.
 - [REMOVED] Bloat features (see migration guide)
 
 ## Installation
-npm install unrdf@5.0.0
+npm install unrdf@latest
 
 # Optional Features
 npm install unrdf-federation  # For distributed RDF
@@ -559,10 +559,10 @@ npm install unrdf-enterprise  # For policies & vault
 **Effort**: 1 day
 
 **Tasks**:
-- [ ] Update package.json: version 5.0.0
+- [ ] Update package.json: version latest
 - [ ] Update src/index.mjs version constant
 - [ ] Update all documentation version references
-- [ ] Create git tag: v5.0.0-rc1 (release candidate)
+- [ ] Create git tag: latest-rc1 (release candidate)
 - [ ] Test npm dry-run: npm publish --dry-run
 - [ ] Prepare npm announcement
 
@@ -591,7 +591,7 @@ npm install unrdf-enterprise  # For policies & vault
 ## PHASE 6: Final Release & Deployment (Weeks 11-12)
 
 ### Objective
-Release v5.0.0 and ensure smooth adoption.
+Release latest and ensure smooth adoption.
 
 ### 6.1 Final Testing
 **Effort**: 2 days
@@ -611,28 +611,28 @@ Release v5.0.0 and ensure smooth adoption.
 
 **Command**:
 ```bash
-npm version major  # 4.2.3 → 5.0.0
-npm publish        # Publish v5.0.0
+npm version major  # latest → latest
+npm publish        # Publish latest
 npm publish --tag latest
 ```
 
 **Also Publish Optional Packages**:
 ```bash
-npm publish        # unrdf-federation@5.0.0
-npm publish        # unrdf-streaming@5.0.0
-npm publish        # unrdf-enterprise@5.0.0
-npm publish        # unrdf-advanced@5.0.0
-npm publish        # unrdf-experimental@5.0.0
+npm publish        # unrdf-federation@latest
+npm publish        # unrdf-streaming@latest
+npm publish        # unrdf-enterprise@latest
+npm publish        # unrdf-advanced@latest
+npm publish        # unrdf-experimental@latest
 ```
 
 ### 6.3 Post-Release Validation
 **Effort**: 2 days
 
 **Validation Steps**:
-1. Verify npm registry shows v5.0.0
-2. Test installation: `npm install unrdf@5.0.0`
+1. Verify npm registry shows latest
+2. Test installation: `npm install unrdf@latest`
 3. Test imports work correctly
-4. Test migration from v4.2.3
+4. Test migration from latest
 5. Monitor GitHub issues (new v5 bugs)
 6. Respond to community feedback
 
@@ -646,14 +646,14 @@ npm publish        # unrdf-experimental@5.0.0
 - [ ] Update all external links
 
 ### Phase 6 Success Criteria
-- ✅ v5.0.0 published to npm
+- ✅ latest published to npm
 - ✅ All 5 feature packages published
 - ✅ Installation works smoothly
 - ✅ Migration from v4 succeeds
 - ✅ No critical bugs reported in first week
 - ✅ Community adoption begins
 
-**Milestone**: v5.0.0 GA (General Availability)
+**Milestone**: latest GA (General Availability)
 
 ---
 
@@ -661,7 +661,7 @@ npm publish        # unrdf-experimental@5.0.0
 
 ### Quantitative Targets
 
-| Metric | v4.2.3 | v5.0.0 Target | Status |
+| Metric | latest | latest Target | Status |
 |--------|--------|---------------|--------|
 | Core LOC | 65,867 | 35,000 | -47% |
 | Functions | 300+ | 70 | -77% |
@@ -702,7 +702,7 @@ npm publish        # unrdf-experimental@5.0.0
 1. **Testing**: Run full test matrix before each phase
 2. **Documentation**: Keep migration guide updated in real-time
 3. **Communication**: Announce v5 early, get feedback
-4. **Rollback**: Keep v4.2.3 branch for security patches
+4. **Rollback**: Keep latest branch for security patches
 5. **Monitoring**: Track npm downloads, GitHub issues post-release
 
 ---
@@ -727,14 +727,14 @@ npm publish        # unrdf-experimental@5.0.0
 
 ## Success Definition
 
-### v5.0.0 is DONE when:
+### latest is DONE when:
 
 1. **Code Quality**: All tests pass, zero lint warnings
 2. **Performance**: Bundle <1 MB, test:fast <15s
 3. **API**: Only 70 essential functions exposed
 4. **Documentation**: Beginner-first structure, clear progression
 5. **Separation**: All optional features in separate packages
-6. **Migration**: Clear upgrade path from v4.2.3
+6. **Migration**: Clear upgrade path from latest
 7. **Adoption**: First 100 users successfully upgrade
 8. **Feedback**: No critical bugs in first 2 weeks
 

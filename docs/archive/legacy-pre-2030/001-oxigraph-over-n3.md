@@ -31,10 +31,10 @@ N3.js remains available for specific use cases (streaming, browser-only environm
 | Operation | N3.js | Oxigraph | Speedup |
 |-----------|-------|----------|---------|
 | **Parse 10K triples (Turtle)** | 120ms | 15ms | **8x** |
-| **SPARQL SELECT (simple)** | 45ms* | 0.4ms | **100x** |
+| **SPARQL SELECT (simple)** | 45ms* | latestms | **100x** |
 | **SPARQL SELECT (JOIN 2 patterns)** | 180ms* | 2ms | **90x** |
 | **Add 10K triples** | 80ms | 10ms | **8x** |
-| **Iterate all triples** | 5ms | 3ms | **1.7x** |
+| **Iterate all triples** | 5ms | 3ms | **latestx** |
 | **Export Turtle** | 100ms | 20ms | **5x** |
 
 *N3 requires manual iteration; timings include custom SPARQL-like logic.
@@ -47,7 +47,7 @@ N3.js remains available for specific use cases (streaming, browser-only environm
 
 | Feature | N3.js | Oxigraph |
 |---------|-------|----------|
-| **SPARQL 1.1** | ❌ Manual only | ✅ Built-in |
+| **SPARQL latest** | ❌ Manual only | ✅ Built-in |
 | **Persistence** | ❌ Memory only | ✅ RocksDB backend |
 | **Transactions** | ❌ None | ✅ ACID guarantees |
 | **Query optimizer** | ❌ None | ✅ Rust-optimized |
@@ -61,7 +61,7 @@ N3.js remains available for specific use cases (streaming, browser-only environm
 
 1. **SPARQL is mandatory** - W3C standard, users expect it
    - N3 requires writing custom query logic (error-prone, slow)
-   - Oxigraph has battle-tested SPARQL 1.1 engine
+   - Oxigraph has battle-tested SPARQL latest engine
 
 2. **Performance is critical** - 100x faster queries
    - Real workloads have 100K-10M triples
@@ -181,7 +181,7 @@ console.timeEnd('oxigraph');
 
 ### Production Metrics (Where Available)
 
-- **Thesis benchmark:** 6,327 LoC, 443 tests, 99.8% pass rate
+- **Thesis benchmark:** 6,327 LoC, 443 tests, latest% pass rate
 - **SPARQL queries:** Sub-millisecond for 90% of queries (10K triples)
 - **Load test:** 1M triples loaded in 8 seconds (Oxigraph) vs 2+ minutes (N3)
 
@@ -214,15 +214,15 @@ For existing N3 users:
 
 - **Oxigraph repo:** https://github.com/oxigraph/oxigraph
 - **N3.js repo:** https://github.com/rdfjs/N3.js
-- **SPARQL 1.1 spec:** https://www.w3.org/TR/sparql11-query/
-- **RDF benchmarks:** https://link.springer.com/chapter/10.1007/978-3-319-11964-9_24
+- **SPARQL latest spec:** https://www.w3.org/TR/sparql11-query/
+- **RDF benchmarks:** https://link.springer.com/chapter/latest/978-3-319-11964-9_24
 
 ---
 
 ## Review & Updates
 
 - **2024-12-04:** Initial decision
-- **2024-12-25:** Validated with thesis benchmarks (99.8% pass rate)
+- **2024-12-25:** Validated with thesis benchmarks (latest% pass rate)
 
 ---
 

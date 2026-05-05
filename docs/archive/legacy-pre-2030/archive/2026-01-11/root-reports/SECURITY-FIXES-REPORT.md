@@ -24,7 +24,7 @@ All 7 security vulnerabilities identified in `microfw-9-graph-routing.mjs` have 
 
 ## Vulnerability Fixes
 
-### SEC-001: Handler Injection + Process Access (CRITICAL - CVSS 9.8)
+### SEC-001: Handler Injection + Process Access (CRITICAL - CVSS latest)
 
 **Issue**: Arbitrary handlers could access Node.js `process` object and execute dangerous operations.
 
@@ -79,7 +79,7 @@ router.defineRoute('evil', '/evil', 'GET', async (ctx) => {
 
 ---
 
-### SEC-002: Information Disclosure via Exceptions (CRITICAL - CVSS 8.6)
+### SEC-002: Information Disclosure via Exceptions (CRITICAL - CVSS latest)
 
 **Issue**: Stack traces leaked sensitive data (API keys, passwords, file paths) in error messages.
 
@@ -121,7 +121,7 @@ throw new Error('API key: sk-secret-1234');
 
 ---
 
-### SEC-003: Cross-Site Scripting (XSS) (HIGH - CVSS 7.5)
+### SEC-003: Cross-Site Scripting (XSS) (HIGH - CVSS latest)
 
 **Issue**: Unsanitized user input in JSON responses could execute XSS attacks.
 
@@ -169,7 +169,7 @@ function sanitizeResponse(obj) {
 
 ---
 
-### SEC-004: No Authentication/Authorization (HIGH - CVSS 7.3)
+### SEC-004: No Authentication/Authorization (HIGH - CVSS latest)
 
 **Issue**: Zero access control - all routes publicly accessible.
 
@@ -240,7 +240,7 @@ GET /public (no token)                => 200 OK ✅
 
 ---
 
-### SEC-005: Prototype Pollution via Path (MEDIUM - CVSS 6.5)
+### SEC-005: Prototype Pollution via Path (MEDIUM - CVSS latest)
 
 **Issue**: `__proto__`, `constructor`, `prototype` could be injected via route paths.
 
@@ -287,7 +287,7 @@ for (const [k, v] of Object.entries(meta)) {
 
 ---
 
-### SEC-006: RDF Triple Injection (MEDIUM - CVSS 6.0)
+### SEC-006: RDF Triple Injection (MEDIUM - CVSS latest)
 
 **Issue**: Unsanitized input in RDF triple construction could inject malicious triples.
 
@@ -351,7 +351,7 @@ defineRelationship('http://valid.com/s', 'http://valid.com/p', 'http://valid.com
 
 ---
 
-### SEC-007: Memory Exhaustion (LOW - CVSS 4.0)
+### SEC-007: Memory Exhaustion (LOW - CVSS latest)
 
 **Issue**: Unbounded store growth could cause memory exhaustion DoS.
 
@@ -416,19 +416,19 @@ router.store.cleanup(50); // ✅ Reduces to 50 most recent triples
 **Total Tests**: 25
 **Passed**: 25 ✅
 **Failed**: 0
-**Success Rate**: 100.0%
+**Success Rate**: latest%
 
 #### Breakdown by Vulnerability:
 
 | Vulnerability | Tests | Passed | Status |
 |--------------|-------|--------|--------|
-| SEC-001 (CVSS 9.8) | 3 | 3/3 | ✅ FIXED |
-| SEC-002 (CVSS 8.6) | 2 | 2/2 | ✅ FIXED |
-| SEC-003 (CVSS 7.5) | 3 | 3/3 | ✅ FIXED |
-| SEC-004 (CVSS 7.3) | 5 | 5/5 | ✅ FIXED |
-| SEC-005 (CVSS 6.5) | 5 | 5/5 | ✅ FIXED |
-| SEC-006 (CVSS 6.0) | 4 | 4/4 | ✅ FIXED |
-| SEC-007 (CVSS 4.0) | 3 | 3/3 | ✅ FIXED |
+| SEC-001 (CVSS latest) | 3 | 3/3 | ✅ FIXED |
+| SEC-002 (CVSS latest) | 2 | 2/2 | ✅ FIXED |
+| SEC-003 (CVSS latest) | 3 | 3/3 | ✅ FIXED |
+| SEC-004 (CVSS latest) | 5 | 5/5 | ✅ FIXED |
+| SEC-005 (CVSS latest) | 5 | 5/5 | ✅ FIXED |
+| SEC-006 (CVSS latest) | 4 | 4/4 | ✅ FIXED |
+| SEC-007 (CVSS latest) | 3 | 3/3 | ✅ FIXED |
 
 ### Malicious Input Tests
 
@@ -476,10 +476,10 @@ router.store.cleanup(50); // ✅ Reduces to 50 most recent triples
 
 | Operation | Before | After | Delta |
 |-----------|--------|-------|-------|
-| Route lookup | ~0.5ms | ~0.6ms | +0.1ms (20%) |
-| Handler execution | ~1.0ms | ~1.1ms | +0.1ms (10%) |
-| Triple addition | ~0.2ms | ~0.3ms | +0.1ms (50%) |
-| Auth validation | N/A | ~0.2ms | New feature |
+| Route lookup | ~latestms | ~latestms | +latestms (20%) |
+| Handler execution | ~latestms | ~latestms | +latestms (10%) |
+| Triple addition | ~latestms | ~latestms | +latestms (50%) |
+| Auth validation | N/A | ~latestms | New feature |
 
 **Memory Impact**: Positive (limits prevent exhaustion)
 - Before: Unbounded growth → potential OOM

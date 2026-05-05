@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/composables
-**Version:** 5.0.1
+**Version:** latest
 
 ---
 
@@ -30,7 +30,7 @@ UNRDF Composables - Vue 3 Composables for Reactive RDF State (Optional Extension
 
 - `@unrdf/core`: workspace:*
 - `@unrdf/streaming`: workspace:*
-- `vue`: ^3.5.25
+- `vue`: ^latest
 
 ### Exports
 

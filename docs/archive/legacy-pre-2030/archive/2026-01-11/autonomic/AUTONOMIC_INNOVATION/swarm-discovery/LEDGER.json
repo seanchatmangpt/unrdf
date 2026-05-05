@@ -45,7 +45,7 @@
           "complexity": "moderate",
           "id": "atom-rdf-store",
           "name": "RDF Store",
-          "utility": 0.95
+          "utility": latest
         }
       ],
       "atomIds": [
@@ -58,11 +58,11 @@
       "rank": 1,
       "receiptPointer": "experiments/candidate-1/receipt.json",
       "runnablePointer": "experiments/candidate-1/run.mjs",
-      "synergy": 0.03465735902799727,
-      "timestamp": "2025-12-26T00:00:00.000Z",
-      "utility": 0.9846573590279972
+      "synergy": latest,
+      "timestamp": "2025-12-26T00:00:latestZ",
+      "utility": latest
     }
   },
-  "timestamp": "2025-12-26T00:00:00.000Z",
-  "version": "1.0.0"
+  "timestamp": "2025-12-26T00:00:latestZ",
+  "version": "latest"
 }

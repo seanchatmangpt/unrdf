@@ -178,9 +178,9 @@ node agent-3/test-schemas.mjs
 6. **Type Safety**: Complete JSDoc annotations for IDE support
 
 ## File Sizes
-- `id-rules.mjs`: 5.7K
-- `dto-schemas.mjs`: 9.5K
-- `error-schemas.mjs`: 8.1K
+- `id-rules.mjs`: latestK
+- `dto-schemas.mjs`: latestK
+- `error-schemas.mjs`: latestK
 - `logging-schemas.mjs`: 12K
-- `index.mjs`: 1.2K
+- `index.mjs`: latestK
 - **Total**: ~37K

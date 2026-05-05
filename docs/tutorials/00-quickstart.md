@@ -23,7 +23,7 @@ pnpm add @unrdf/oxigraph
 **Expected output:**
 ```
 Packages: +1
-+ @unrdf/oxigraph 5.0.0
++ @unrdf/oxigraph latest
 ```
 
 ---

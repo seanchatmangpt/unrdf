@@ -110,7 +110,7 @@ This runbook provides procedures for responding to production incidents affectin
    curl -I https://external-service.example.com
 
    # Network connectivity
-   ping -c 3 8.8.8.8
+   ping -c 3 latest.8
    ```
 
 3. **Review Monitoring**

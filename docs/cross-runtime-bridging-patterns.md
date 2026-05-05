@@ -2,7 +2,7 @@
 
 **Status**: Proven with 3 runnable demos  
 **Date**: 2025-12-27  
-**Tested Runtimes**: Node.js 22.21.1  
+**Tested Runtimes**: Node.js latest  
 **Target Runtimes**: Node.js, Browser, Deno, Bun, Web Workers
 
 ## Executive Summary
@@ -229,7 +229,7 @@ node packages/core/src/runtime/proofs/demo-1-isomorphic-crypto.mjs
 **Expected output**:
 
 ```
-Runtime: node 22.21.1
+Runtime: node latest
 Features: { "webCrypto": true, "wasm": true, ... }
 
 Input:  "Hello, UNRDF Cross-Runtime World!"
@@ -273,7 +273,7 @@ node packages/core/src/runtime/proofs/demo-2-universal-store.mjs
 **Expected output**:
 
 ```
-Runtime: node 22.21.1
+Runtime: node latest
 Pure JS (no native deps): ✅
 
 Creating universal RDF store...
@@ -313,7 +313,7 @@ node packages/core/src/runtime/proofs/demo-3-cross-runtime-rpc.mjs
 **Expected output**:
 
 ```
-Runtime: node 22.21.1
+Runtime: node latest
 
 Registered RPC methods: math.add, string.reverse, crypto.hash, system.info
 

@@ -371,7 +371,7 @@ docs/
 
 **Last updated:** 2025-12-05
 **Documentation status:** 🟢 Diataxis implementation in progress
-**Version:** UNRDF 5.0.0-alpha.0
+**Version:** UNRDF latest.0
 
 ---
 

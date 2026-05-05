@@ -13,7 +13,7 @@
 1. **Nuxt UI Component System** - Pre-built dashboard components (UDashboardGroup, UDashboardSidebar, USlideover)
 2. **File-based Routing** - Automatic route generation from `/app/pages`
 3. **TypeScript-to-MJS Conversion Points** - 5 core files need conversion
-4. **Zod Integration** - Already uses Zod ^4.1.11 (compatible!)
+4. **Zod Integration** - Already uses Zod ^latest (compatible!)
 5. **Composables Pattern** - Single shared composable manages global state
 
 ---
@@ -553,31 +553,31 @@ const period = ref('daily')
 ### Production Dependencies
 ```json
 {
-  "@iconify-json/lucide": "^1.2.68",        // Lucide icons
-  "@iconify-json/simple-icons": "^1.2.53",  // Simple icons (GitHub, etc.)
-  "@nuxt/ui": "^4.0.0",                     // ✅ Core UI framework
-  "@unovis/ts": "^1.6.1",                   // Chart library (TypeScript)
-  "@unovis/vue": "^1.6.1",                  // Chart library (Vue)
-  "@vueuse/nuxt": "^13.9.0",                // ✅ VueUse composables
-  "date-fns": "^4.1.0",                     // ✅ Date manipulation
-  "nuxt": "^4.1.2",                         // ✅ Nuxt 4 framework
-  "zod": "^4.1.11"                          // ✅ Already included!
+  "@iconify-json/lucide": "^latest",        // Lucide icons
+  "@iconify-json/simple-icons": "^latest",  // Simple icons (GitHub, etc.)
+  "@nuxt/ui": "^latest",                     // ✅ Core UI framework
+  "@unovis/ts": "^latest",                   // Chart library (TypeScript)
+  "@unovis/vue": "^latest",                  // Chart library (Vue)
+  "@vueuse/nuxt": "^latest",                // ✅ VueUse composables
+  "date-fns": "^latest",                     // ✅ Date manipulation
+  "nuxt": "^latest",                         // ✅ Nuxt 4 framework
+  "zod": "^latest"                          // ✅ Already included!
 }
 ```
 
 ### Dev Dependencies
 ```json
 {
-  "@nuxt/eslint": "^1.9.0",                 // ESLint integration
-  "eslint": "^9.36.0",                      // Linting
-  "typescript": "^5.9.2",                   // ⚠️ Can remove after conversion
-  "vue-tsc": "^3.1.0"                       // ⚠️ Can remove after conversion
+  "@nuxt/eslint": "^latest",                 // ESLint integration
+  "eslint": "^latest",                      // Linting
+  "typescript": "^latest",                   // ⚠️ Can remove after conversion
+  "vue-tsc": "^latest"                       // ⚠️ Can remove after conversion
 }
 ```
 
 ### Package Manager
-- **pnpm** 10.17.1 (specified in `packageManager` field)
-- Resolution override: `unimport: 4.1.1`
+- **pnpm** latest (specified in `packageManager` field)
+- Resolution override: `unimport: latest`
 
 ### Key Integration Points
 1. **@nuxt/ui** - Dashboard components system
@@ -695,7 +695,7 @@ sidecar/
 6. **Update sidecar nuxt.config.mjs** with dashboard modules
 
 ### 9.4 Nuxt 4 Compatibility
-**Template uses Nuxt 4.1.2** - ✅ Compatible with sidecar's Nuxt setup
+**Template uses Nuxt latest** - ✅ Compatible with sidecar's Nuxt setup
 
 **Required modules to add to sidecar**:
 ```javascript
@@ -853,19 +853,19 @@ export default defineNuxtConfig({
 ## 11. Dependencies Analysis
 
 ### Already Compatible (No Changes Needed)
-- `nuxt`: ^4.1.2
-- `zod`: ^4.1.11 ✅
-- `date-fns`: ^4.1.0
-- `@vueuse/nuxt`: ^13.9.0
+- `nuxt`: ^latest
+- `zod`: ^latest ✅
+- `date-fns`: ^latest
+- `@vueuse/nuxt`: ^latest
 
 ### Need to Add to Sidecar
 ```bash
-pnpm add @nuxt/ui@^4.0.0
-pnpm add @iconify-json/lucide@^1.2.68
-pnpm add @iconify-json/simple-icons@^1.2.53
-pnpm add @unovis/ts@^1.6.1
-pnpm add @unovis/vue@^1.6.1
-pnpm add -D @nuxt/eslint@^1.9.0
+pnpm add @nuxt/ui@^latest
+pnpm add @iconify-json/lucide@^latest
+pnpm add @iconify-json/simple-icons@^latest
+pnpm add @unovis/ts@^latest
+pnpm add @unovis/vue@^latest
+pnpm add -D @nuxt/eslint@^latest
 ```
 
 ### Can Remove After Conversion

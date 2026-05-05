@@ -58,7 +58,7 @@ npm install testcontainers
 # added 174 packages
 ```
 
-**Evidence**: Real `testcontainers` npm package (v10.13.2) installed, not mocked
+**Evidence**: Real `testcontainers` npm package ([VERSION]) installed, not mocked
 
 ### 3. Created Real Docker Container Test
 
@@ -148,14 +148,14 @@ Step 3: Starting EPMD daemon in each container...
 Step 5: Verifying Erlang installation...
 
   🔍 Checking Erlang in atomvm-node1...
-     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version 14.2.5.10
+     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version [VERSION].10
   🔍 Checking Erlang in atomvm-node2...
-     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version 14.2.5.10
+     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version [VERSION].10
   🔍 Checking Erlang in atomvm-node3...
-     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version 14.2.5.10
+     ✅ Erlang available: Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version [VERSION].10
 ```
 
-**Evidence**: Real Erlang BEAM emulator version 14.2.5.10 running in containers
+**Evidence**: Real Erlang BEAM emulator version [VERSION].10 running in containers
 
 ### 8. Cleaned Up Real Containers
 
@@ -224,9 +224,9 @@ const container = await new GenericContainer('node:18-alpine')
 
 - [x] AgentSwarm used (5 concurrent agents, 95s generation time)
 - [x] Code saved to `/Users/sac/unrdf/packages/atomvm/experiments` (not /tmp)
-- [x] Real `testcontainers` package installed (v10.13.2, 174 packages)
+- [x] Real `testcontainers` package installed ([VERSION], 174 packages)
 - [x] Real Docker containers spawned (3 containers with actual IDs)
-- [x] Real Erlang installed in containers (version 14.2.5.10)
+- [x] Real Erlang installed in containers (version [VERSION].10)
 - [x] Real EPMD daemon running (port 4369 in all containers)
 - [x] Real container cleanup (stopped actual Docker containers)
 
@@ -248,7 +248,7 @@ const container = await new GenericContainer('node:18-alpine')
 ```
 /Users/sac/unrdf/packages/atomvm/experiments/docker-cluster/
 ├── package.json
-├── node_modules/ (testcontainers v10.13.2)
+├── node_modules/ (testcontainers [VERSION])
 ├── docker-node-cluster.mjs (swarm-generated)
 ├── erlang-epmd-setup.mjs (swarm-generated)
 ├── container-network-bridge.mjs (swarm-generated)

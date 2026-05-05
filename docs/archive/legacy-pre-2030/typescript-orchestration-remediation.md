@@ -787,7 +787,7 @@ Also add corresponding `case` blocks in `executeTool()` for each new tool name.
 
 **File:** Same MCP server file, line 42.
 
-**Current state:** `version: '0.5.4'`
+**Current state:** `version: 'latest'`
 
 **Change:** Read from `package.json`:
 

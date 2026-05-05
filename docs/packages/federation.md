@@ -2,7 +2,7 @@
 
 > UNRDF Federation - Distributed RDF Query with RAFT Consensus and Multi-Master Replication
 
-**Version**: `6.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

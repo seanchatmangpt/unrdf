@@ -2,7 +2,7 @@
 name: "ml-developer"
 color: "purple"
 type: "data"
-version: "1.0.0"
+version: "latest"
 created: "2025-07-25"
 author: "Claude Code"
 metadata:
@@ -169,7 +169,7 @@ from sklearn.model_selection import train_test_split
 
 # Data preprocessing
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=latest, random_state=42
 )
 
 # Pipeline creation

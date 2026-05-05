@@ -32,7 +32,7 @@ export const UUID_V4_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /**
- * Semver pattern (e.g., 1.0.0, 2.1.3-beta.1+build.123)
+ * Semver pattern (e.g., [VERSION], [VERSION]-beta.1+build.123)
  * @type {RegExp}
  */
 export const SEMVER_REGEX =
@@ -725,7 +725,7 @@ export function createFrontmatter(data) {
     bounds: { maxQueries: 100, maxRuntime: 5000, maxFileScans: 50 },
     views: ['reference'],
     sources: [],
-    version: '1.0.0',
+    version: '[VERSION]',
     createdAt: now,
     lastProved: now,
   };
@@ -964,7 +964,7 @@ export function createProbeReport(data) {
       coverage: 1.0,
     },
     metadata: {
-      probeVersion: '1.0.0',
+      probeVersion: '[VERSION]',
       executionTimeMs: 0,
     },
   };

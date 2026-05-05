@@ -1,6 +1,6 @@
 {
   "name": "@unrdf/kgc-4d-playground",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "private": true,
   "description": "KGC-4D Playground - Shard-Based Architecture Demo with Perfect Client/Server Relationship",
   "type": "module",

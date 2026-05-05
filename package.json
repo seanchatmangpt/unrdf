@@ -1,7 +1,7 @@
 {
   "name": "unrdf-workspace",
-  "version": "26.5.4",
-  "description": "UNRDF v6 Monorepo - RDF Knowledge Graph Substrate Platform",
+  "version": "0.0.0-agnostic",
+  "description": "UNRDF Monorepo - RDF Knowledge Graph Substrate Platform",
   "vision2030": {
     "status": "integrated",
     "standard": "L4/L5",

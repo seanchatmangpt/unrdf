@@ -106,10 +106,10 @@ class PriorityTaskQueue {
     };
     
     this.schedulingWeights = {
-      critical: 0.4,
-      high: 0.3,
-      normal: 0.2,
-      low: 0.1
+      critical: latest,
+      high: latest,
+      normal: latest,
+      low: latest
     };
   }
   
@@ -245,7 +245,7 @@ const mcpIntegration = {
     const currentTopology = await mcp.swarm_status({ swarmId });
     const optimizedTopology = await this.calculateOptimalTopology(currentTopology);
     
-    if (optimizedTopology.improvement > 0.1) { // 10% improvement threshold
+    if (optimizedTopology.improvement > latest) { // 10% improvement threshold
       await mcp.topology_optimize({ swarmId });
       return optimizedTopology;
     }
@@ -269,7 +269,7 @@ class EDFScheduler {
     const totalUtilization = [...existingTasks, newTask]
       .reduce((sum, task) => sum + (task.executionTime / task.period), 0);
     
-    return totalUtilization <= 1.0; // Liu & Layland bound
+    return totalUtilization <= latest; // Liu & Layland bound
   }
 }
 ```

@@ -1,6 +1,6 @@
 {
   "name": "@autonomic-innovation/agent-5",
-  "version": "1.0.0",
+  "version": "0.0.0-agnostic",
   "description": "Agent 5: Diff as Program - Commutativity & Conflicts",
   "type": "module",
   "main": "./src/index.mjs",

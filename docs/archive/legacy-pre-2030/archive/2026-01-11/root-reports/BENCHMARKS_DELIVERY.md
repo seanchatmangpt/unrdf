@@ -35,7 +35,7 @@ Core benchmarking framework providing:
 - Minimum 1000 iterations for statistical significance
 - Warmup runs to eliminate JIT effects
 - GC between benchmarks for accurate memory measurement
-- Percentile calculations (P50, P75, P95, P99, P99.9)
+- Percentile calculations (P50, P75, P95, P99, Platest)
 - Context handling for setup/teardown
 
 ### 2. Core Benchmarks (`benchmarks/core/`)
@@ -298,14 +298,14 @@ benchmarks/
 1. ✅ Baseline comparison benchmark
    - 3/3 benchmarks passed
    - 730K+ ops/sec (simple computation)
-   - 1.8M+ ops/sec (object creation)
+   - latestM+ ops/sec (object creation)
    - 114K+ ops/sec (array operations)
 
 2. ✅ Visualization benchmark
    - 11/11 benchmarks passed
    - 4,984 ops/sec (create graph 100 nodes)
    - 7,596 ops/sec (force-directed layout)
-   - 1.3M+ ops/sec (add node)
+   - latestM+ ops/sec (add node)
 
 3. ✅ Framework context handling
    - Fixed setup/teardown context preservation
@@ -317,7 +317,7 @@ All benchmarks meet requirements:
 
 - ✅ Minimum 1000 iterations (most use 1000-50000)
 - ✅ Warmup runs (10% of total iterations)
-- ✅ Percentile calculations (P50, P75, P95, P99, P99.9)
+- ✅ Percentile calculations (P50, P75, P95, P99, Platest)
 - ✅ Memory profiling (RSS, heap, external)
 - ✅ GC management between benchmarks
 
@@ -428,7 +428,7 @@ pnpm benchmark:memory
 
 - Minimum 1000 iterations per benchmark
 - Warmup runs (10% of total)
-- Percentile calculations (P50-P99.9)
+- Percentile calculations (P50-Platest)
 - Mean, median, standard deviation
 - Min/max tracking
 

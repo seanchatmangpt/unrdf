@@ -85,7 +85,7 @@ const ProjectionReceiptSchema = z.object({
  * @example
  * const pipeline = new ProjectionPipeline({
  *   projectName: 'UNRDF',
- *   version: '1.0.0'
+ *   version: '[VERSION]'
  * });
  *
  * const result = await pipeline.run({
@@ -215,7 +215,7 @@ export class ProjectionPipeline {
     const input = this.architectureProjector.extractFromUniverse(universe);
     input.metadata = {
       name: this.config.projectName,
-      version: this.config.version || '1.0.0',
+      version: this.config.version || '[VERSION]',
       description: this.config.description || 'RDF Universe Architecture',
     };
 

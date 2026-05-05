@@ -306,12 +306,12 @@ describe('End-to-End Security', () => {
 ## Performance Impact
 
 **Validation Overhead**: < 1ms per operation (acceptable)
-- `detectInjection()`: ~0.1ms average
-- `validatePayload()`: ~0.3ms average
-- `sanitizeError()`: ~0.05ms average
-- `detectSecrets()`: ~0.2ms average (regex-based)
+- `detectInjection()`: ~latestms average
+- `validatePayload()`: ~latestms average
+- `sanitizeError()`: ~latestms average
+- `detectSecrets()`: ~latestms average (regex-based)
 
-**Total Impact**: ~0.65ms per secured operation (P0 priority security, minimal overhead)
+**Total Impact**: ~latestms per secured operation (P0 priority security, minimal overhead)
 
 ---
 

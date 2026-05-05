@@ -5,7 +5,7 @@
  * It handles loading, saving, and managing .ttl files with automatic
  * parsing and serialization to/from N3.Store.
  *
- * @version 1.0.0
+ * @version [VERSION]
  * @author GitVan Team
  * @license MIT
  */

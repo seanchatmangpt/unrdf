@@ -1,10 +1,10 @@
-# Migrating to UNRDF v6.0.0
+# Migrating to UNRDF vlatest
 
-**Complete migration guide from v5.x to v6.0.0**
+**Complete migration guide from v5.x to vlatest**
 
 ## Overview
 
-UNRDF v6.0.0 introduces the daemon package for background operation orchestration, enterprise-grade authentication, and comprehensive security enhancements across all integration modules.
+UNRDF vlatest introduces the daemon package for background operation orchestration, enterprise-grade authentication, and comprehensive security enhancements across all integration modules.
 
 **Migration Complexity**: Low to Medium
 **Estimated Time**: 1-4 hours depending on usage
@@ -13,7 +13,7 @@ UNRDF v6.0.0 introduces the daemon package for background operation orchestratio
 
 ---
 
-## What's New in v6.0.0
+## What's New in vlatest
 
 ### 1. @unrdf/daemon Package (NEW)
 
@@ -103,9 +103,9 @@ All 13 integration modules now include:
 ### Step 1: Update Dependencies
 
 ```bash
-# Update to v6.0.0
-pnpm add @unrdf/core@^6.0.0
-pnpm add @unrdf/daemon@^6.0.0
+# Update to vlatest
+pnpm add @unrdf/core@^latest
+pnpm add @unrdf/daemon@^latest
 
 # Or update all packages
 pnpm update @unrdf/*
@@ -113,7 +113,7 @@ pnpm update @unrdf/*
 
 ### Step 2: Review Breaking Changes
 
-**Good News**: v6.0.0 has **ZERO breaking changes** to core RDF operations.
+**Good News**: vlatest has **ZERO breaking changes** to core RDF operations.
 
 All existing code using `@unrdf/core`, `@unrdf/hooks`, and `@unrdf/streaming` will continue to work without modification.
 
@@ -254,7 +254,7 @@ If you're only using core RDF operations:
 ```javascript
 import { createKnowledgeSubstrateCore } from '@unrdf/core';
 
-// This code works identically in v5.x and v6.0.0
+// This code works identically in v5.x and vlatest
 const core = await createKnowledgeSubstrateCore();
 const store = core.parseRdf(turtleData);
 const results = await core.query(store, sparqlQuery);
@@ -273,7 +273,7 @@ setInterval(async () => {
 }, 60000);
 ```
 
-After (v6.0.0):
+After (vlatest):
 
 ```javascript
 import { UnrdfDaemon } from '@unrdf/daemon';
@@ -302,7 +302,7 @@ app.post('/api/query', async (req, res) => {
 });
 ```
 
-After (v6.0.0):
+After (vlatest):
 
 ```javascript
 import { createAuthMiddleware } from '@unrdf/daemon';
@@ -337,7 +337,7 @@ class CustomEventStore {
 }
 ```
 
-After (v6.0.0):
+After (vlatest):
 
 ```javascript
 import { createEventStore } from '@unrdf/daemon';
@@ -362,7 +362,7 @@ const events = await eventStore.getEvents('user-123');
 
 ## Compatibility Matrix
 
-| Package | v5.x | v6.0.0 | Breaking Changes |
+| Package | v5.x | vlatest | Breaking Changes |
 |---------|------|--------|------------------|
 | @unrdf/core | ✅ | ✅ | None |
 | @unrdf/oxigraph | ✅ | ✅ | None |
@@ -373,15 +373,15 @@ const events = await eventStore.getEvents('user-123');
 | @unrdf/daemon | ❌ | ✅ NEW | N/A |
 | @unrdf/v6-core | ❌ | ✅ NEW | N/A |
 
-**Summary**: All v5.x code continues to work in v6.0.0. New packages are additions, not replacements.
+**Summary**: All v5.x code continues to work in vlatest. New packages are additions, not replacements.
 
 ---
 
 ## Performance Considerations
 
-### v6.0.0 Performance Impact
+### vlatest Performance Impact
 
-| Operation | v5.x | v6.0.0 | Change |
+| Operation | v5.x | vlatest | Change |
 |-----------|------|--------|--------|
 | SPARQL Query | ~10ms | ~10ms | No change |
 | Triple Insert | ~1μs | ~1μs | No change |
@@ -389,7 +389,7 @@ const events = await eventStore.getEvents('user-123');
 | Security Validation (new) | N/A | <1ms | New feature |
 | Receipt Generation (new) | N/A | <1ms | New feature |
 
-**Conclusion**: v6.0.0 adds new capabilities with minimal overhead (<5ms per operation).
+**Conclusion**: vlatest adds new capabilities with minimal overhead (<5ms per operation).
 
 ---
 
@@ -400,7 +400,7 @@ If you encounter issues:
 ### Step 1: Downgrade Dependencies
 
 ```bash
-pnpm add @unrdf/core@^5.0.0
+pnpm add @unrdf/core@^latest
 pnpm remove @unrdf/daemon
 ```
 
@@ -453,12 +453,12 @@ pnpm test
 A: No. v5.x will continue to work. Migrate when you need daemon orchestration or enhanced security.
 
 **Q: Will my v5.x code break?**
-A: No. v6.0.0 has zero breaking changes to core RDF operations.
+A: No. vlatest has zero breaking changes to core RDF operations.
 
 **Q: Can I use only authentication without the daemon?**
 A: Yes. Import `createAuthenticator` from `@unrdf/daemon` without using `UnrdfDaemon`.
 
-**Q: Is v6.0.0 production-ready?**
+**Q: Is vlatest production-ready?**
 A: Yes. All features have 100% test pass rate and comprehensive security validation.
 
 **Q: What's the performance impact?**
@@ -470,7 +470,7 @@ A: Minimal. New features add <5ms overhead. Core RDF operations unchanged.
 
 See [CHANGELOG.md](../CHANGELOG.md) for complete details.
 
-### Added (v6.0.0)
+### Added (vlatest)
 
 - ✅ `@unrdf/daemon` package (98 MJS files)
 - ✅ API key authentication with BLAKE3 hashing
@@ -483,13 +483,13 @@ See [CHANGELOG.md](../CHANGELOG.md) for complete details.
 - ✅ Raft consensus coordination
 - ✅ Federated query execution
 
-### Changed (v6.0.0)
+### Changed (vlatest)
 
 - ✅ Enhanced security across all daemon operations
 - ✅ Improved observability with OTEL integration
 - ✅ Updated documentation (10+ new guides)
 
-### Fixed (v6.0.0)
+### Fixed (vlatest)
 
 - ✅ Zero CRITICAL/HIGH security vulnerabilities
 - ✅ 100% test pass rate across all new features
@@ -500,10 +500,10 @@ See [CHANGELOG.md](../CHANGELOG.md) for complete details.
 ## Next Steps
 
 1. ✅ Review this migration guide
-2. ✅ Update dependencies to v6.0.0
+2. ✅ Update dependencies to vlatest
 3. ✅ Run tests to verify compatibility
 4. ✅ Adopt new features as needed (optional)
 5. ✅ Review [SECURITY_MIGRATION.md](SECURITY_MIGRATION.md)
 6. ✅ Update deployment procedures (see [docs/deployment/](deployment/))
 
-**Welcome to UNRDF v6.0.0!** 🎉
+**Welcome to UNRDF vlatest!** 🎉

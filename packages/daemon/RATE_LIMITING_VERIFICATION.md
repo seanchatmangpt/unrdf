@@ -218,7 +218,7 @@ RATE_LIMIT_ENABLE_PER_API_KEY=true
   message: "Rate limit exceeded",
   retryAfter: 60,
   resetAt: 1704988800000,
-  identifier: "ratelimit:ip:192.168.1.1"
+  identifier: "ratelimit:ip:[VERSION].1"
 }
 ```
 
@@ -500,7 +500,7 @@ const limiter = createRateLimiter({
   windowMs: 60000,
 });
 
-const result = limiter.check({ ip: '192.168.1.1' });
+const result = limiter.check({ ip: '[VERSION].1' });
 
 console.log(result.allowed); // true
 console.log(result.remaining); // 99
@@ -516,7 +516,7 @@ import { createRateLimitMiddleware } from '@unrdf/daemon';
 const middleware = createRateLimitMiddleware();
 
 try {
-  await middleware({ ip: '192.168.1.1' });
+  await middleware({ ip: '[VERSION].1' });
   console.log('Request allowed');
 } catch (error) {
   console.log('Rate limited:', error.retryAfter);
@@ -534,7 +534,7 @@ try {
 const limiter = createRateLimiter({ maxRequests: 100 });
 
 for (let i = 0; i < 1000; i++) {
-  limiter.check({ ip: '192.168.1.1' });
+  limiter.check({ ip: '[VERSION].1' });
 }
 ```
 

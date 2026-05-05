@@ -29,7 +29,7 @@ export class KGenMacroTemplates {
    */
   initializeMacros() {
     // Document structure macros
-    this.registerMacro('document_header', `{%- macro document_header(title, author, version='1.0.0') -%}
+    this.registerMacro('document_header', `{%- macro document_header(title, author, version='latest') -%}
 /**
  * {{ title }}
  *

@@ -28,7 +28,7 @@ $ pnpm run andon:status
 
 Output:
 ┌──────────────────────────────────────────────────┐
-│ UNRDF v4.0 ANDON STATUS                          │
+│ UNRDF vlatest ANDON STATUS                          │
 ├──────────────────────────────────────────────────┤
 │ 🟢 SYSTEM HEALTH: GREEN                          │
 │ 🟢 Validation: 87/100                            │
@@ -160,7 +160,7 @@ Problem detection: Proactive (real-time alerts)
 🟢 COVERAGE_BRANCHES ................... 82% (threshold: 75%) ✓
 🟢 COVERAGE_FUNCTIONS .................. 85% (threshold: 80%) ✓
 🟢 COVERAGE_LINES ...................... 86% (threshold: 80%) ✓
-   COVERAGE_REGRESSION ................. -0.5% (acceptable)
+   COVERAGE_REGRESSION ................. -latest% (acceptable)
 ```
 
 ### 7. Deployment Readiness Signal (1 signal, 6 gates)
@@ -170,7 +170,7 @@ Problem detection: Proactive (real-time alerts)
 **Threshold**: Green (all gates), Yellow (some gates), Red (any fail)
 
 ```
-🟢 DEPLOYMENT_READINESS (Release v4.0.1)
+🟢 DEPLOYMENT_READINESS (Release vlatest)
    ✓ GATE_BUILD ................. Artifacts present
    ✓ GATE_TESTS ................. Score 87/100 (passing)
    ✓ GATE_SECURITY .............. No critical issues
@@ -303,7 +303,7 @@ Deployment Readiness     Aggregate of above signals               Orchestration 
 - Signal coverage: 95%+ of critical systems
 - Alert response time: <5 minutes for RED
 - False positive rate: <5%
-- Dashboard uptime: 99.9%
+- Dashboard uptime: latest%
 - MTTR improvement: 50%+ reduction
 - Team adoption: 100% daily usage
 
@@ -356,7 +356,7 @@ Early detection prevents: User complaints, SLA breaches
 
 ### Scenario 4: Release Gate
 ```
-Event: Release workflow starts for v4.0.1
+Event: Release workflow starts for vlatest
 Dashboard checks DEPLOYMENT_READINESS gates:
   ✓ Build artifacts present
   ✓ Tests: 87/100 (passing)
@@ -377,7 +377,7 @@ Safety: Prevents releasing without proper documentation
 $ pnpm run andon:status
 
 ┌────────────────────────────────────────────────────────┐
-│  UNRDF v4.0 ANDON DASHBOARD                            │
+│  UNRDF vlatest ANDON DASHBOARD                            │
 │  Last Update: 2024-11-21 15:30:45 UTC                  │
 ├────────────────────────────────────────────────────────┤
 │                                                        │
@@ -416,7 +416,7 @@ $ pnpm run andon:status
 │  └─ 🟢 Container Scan ....... No CVEs                  │
 │                                                        │
 ├────────────────────────────────────────────────────────┤
-│  DEPLOYMENT READINESS - Release v4.0.1 🟢              │
+│  DEPLOYMENT READINESS - Release vlatest 🟢              │
 │  ├─ ✓ Build Complete                                   │
 │  ├─ ✓ Tests Pass (87/100)                             │
 │  ├─ ✓ Security Clear                                  │

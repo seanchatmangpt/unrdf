@@ -90,7 +90,7 @@ import { jsonToQuad } from 'unrdf';
 
 const quad = jsonToQuad({
   subject: { termType: "NamedNode", value: "http://example.org/person" },
-  predicate: { termType: "NamedNode", value: "http://xmlns.com/foaf/0.1/name" },
+  predicate: { termType: "NamedNode", value: "http://xmlns.com/foaf/latest/name" },
   object: { termType: "Literal", value: "John Doe" },
   graph: { termType: "DefaultGraph", value: "" }
 });
@@ -226,7 +226,7 @@ Get all subjects of a specific type.
 ```javascript
 import { getSubjectsByType } from 'unrdf';
 
-const persons = getSubjectsByType(store, "http://xmlns.com/foaf/0.1/Person");
+const persons = getSubjectsByType(store, "http://xmlns.com/foaf/latest/Person");
 ```
 
 ### `hasType(store, subject, type)`
@@ -243,7 +243,7 @@ Check if a subject has a specific type.
 ```javascript
 import { hasType } from 'unrdf';
 
-const isPerson = hasType(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/Person");
+const isPerson = hasType(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/Person");
 ```
 
 ### `getOne(store, subject, predicate)`
@@ -260,7 +260,7 @@ Get a single object for a subject-predicate pair.
 ```javascript
 import { getOne } from 'unrdf';
 
-const name = getOne(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/name");
+const name = getOne(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
 
 ### `getAll(store, subject, predicate)`
@@ -277,7 +277,7 @@ Get all objects for a subject-predicate pair.
 ```javascript
 import { getAll } from 'unrdf';
 
-const names = getAll(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/name");
+const names = getAll(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
 
 ### `getSubjects(store, predicate, object)`
@@ -294,7 +294,7 @@ Get all subjects for a predicate-object pair.
 ```javascript
 import { getSubjects } from 'unrdf';
 
-const subjects = getSubjects(store, "http://xmlns.com/foaf/0.1/name", "John Doe");
+const subjects = getSubjects(store, "http://xmlns.com/foaf/latest/name", "John Doe");
 ```
 
 ### `getPredicates(store, subject, object)`
@@ -328,7 +328,7 @@ Find subjects by property value.
 ```javascript
 import { findByProperty } from 'unrdf';
 
-const subjects = findByProperty(store, "http://xmlns.com/foaf/0.1/name", "John Doe");
+const subjects = findByProperty(store, "http://xmlns.com/foaf/latest/name", "John Doe");
 ```
 
 ### `getTypes(store, subject)`
@@ -377,7 +377,7 @@ Get all objects for a subject-predicate pair.
 ```javascript
 import { getObjects } from 'unrdf';
 
-const objects = getObjects(store, "http://example.org/foo", "http://xmlns.com/foaf/0.1/name");
+const objects = getObjects(store, "http://example.org/foo", "http://xmlns.com/foaf/latest/name");
 ```
 
 ## Serialization Utilities

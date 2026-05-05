@@ -65,7 +65,7 @@
 - [ ] State transition visualization in docs (Mermaid diagrams)
 - [ ] Runtime guards throw clear errors: "Cannot X: Universe is FROZEN. Use Y instead."
 - [ ] Zero invalid state transition errors in production (OTEL span `state.invalid_transition` = 0)
-- [ ] Performance: State checks <1ms (currently 0.5ms)
+- [ ] Performance: State checks <1ms (currently latestms)
 
 ### Key Stories
 1. **Universe State Machine** - Harden existing MUTABLE→FROZEN→SEALED with type-level guards
@@ -109,7 +109,7 @@
 - [ ] Zero "missing required field" errors in production (currently 8% of errors)
 - [ ] Zero "mutated after creation" errors (currently 5% of errors)
 - [ ] Developer experience: IDE autocomplete guides through required fields
-- [ ] Performance: Builder overhead <0.1ms (currently 0.017ms for receipt creation)
+- [ ] Performance: Builder overhead <latestms (currently latestms for receipt creation)
 
 ### Key Stories
 1. **ReceiptBuilder** - 9 required fields (id, type, t_ns, timestamp_iso, previousHash, payloadHash, receiptHash, payload, signature)
@@ -151,7 +151,7 @@
 - [ ] JSDoc `@readonly` on all public properties
 - [ ] ESLint rule `@unrdf/no-mutation` detects assignment to frozen objects
 - [ ] Zero mutation errors in production (OTEL span `data.mutation_error` = 0)
-- [ ] Performance: Deep freeze overhead <0.5ms for receipt (currently 0.1ms)
+- [ ] Performance: Deep freeze overhead <latestms for receipt (currently latestms)
 - [ ] Defensive copies eliminated (immutability makes copies unnecessary)
 
 ### Key Stories
@@ -193,7 +193,7 @@
 - [ ] Capability = { actor: string, resource: string, action: string, signature: string, expiry: bigint }
 - [ ] Ed25519 signature verification on all capability proofs
 - [ ] Zero unauthorized operation errors in production
-- [ ] Performance: Signature verification <2ms (currently 0.5ms for receipt signing)
+- [ ] Performance: Signature verification <2ms (currently latestms for receipt signing)
 - [ ] Backward compatibility: v5 string actors migrated to v6 capabilities
 - [ ] Documentation: "Understanding Capabilities in v6"
 
@@ -236,7 +236,7 @@
 - [ ] Consume-on-use semantics for all state transitions
 - [ ] Type-level enforcement (consumed resources have no methods)
 - [ ] Zero concurrent modification errors in production
-- [ ] Performance: Ownership tracking overhead <0.5ms
+- [ ] Performance: Ownership tracking overhead <latestms
 - [ ] Mutex/CAS for critical sections (freeze, seal, lock)
 - [ ] Test suite: 20+ concurrent operation tests (all should serialize or fail-fast)
 

@@ -49,7 +49,7 @@ The Hive Mind collective intelligence system has completed a comprehensive multi
 - Single `useDashboard.ts` composable needs conversion
 - 4 API routes for mock data
 - File-based routing with Nuxt 4 compatibility
-- Zod 4.1.11 already included in template
+- Zod latest already included in template
 
 **Files Created:**
 ```
@@ -104,8 +104,8 @@ The Hive Mind collective intelligence system has completed a comprehensive multi
   - E2E infrastructure with Docker Compose (Jaeger, Prometheus, Grafana)
 
 - **Configuration:**
-  - ✅ Nuxt 4.1.2 (API-only mode)
-  - ✅ Vitest 3.2.4 (simplified config)
+  - ✅ Nuxt latest (API-only mode)
+  - ✅ Vitest latest (simplified config)
   - ✅ MJS/JSDoc/Zod stack (100% compliant)
   - ✅ OTEL integration + scheduled tasks
   - ✅ TLS/mTLS support with Vault secrets

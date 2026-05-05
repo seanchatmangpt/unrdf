@@ -33,7 +33,7 @@ const rule = {
   id: 'rule-001',
   name: 'Scale on High Load',
   description: 'Automatically scale replicas when load exceeds 80%',
-  version: '1.0.0',
+  version: '[VERSION]',
 
   // Condition: what triggers the rule
   condition: {
@@ -74,7 +74,7 @@ Every rule requires:
 |-------|------|-------------|
 | `id` | UUID | Unique identifier |
 | `name` | string | Human-readable name |
-| `version` | semver | Version (e.g., "1.0.0") |
+| `version` | semver | Version (e.g., "[VERSION]") |
 | `condition` | object | Trigger condition |
 | `action` | object | Operation to execute |
 | `minConfidence` | number | Minimum match confidence [0-1] |
@@ -247,7 +247,7 @@ Rules support built-in A/B testing for experimentation:
 const ruleVariant = {
   id: 'rule-ab-001',
   name: 'Smart Scaling',
-  version: '2.0.0',
+  version: '[VERSION]',
   condition: { /* ... */ },
   action: { type: 'scale', payload: { replicas: 5 } },
   metadata: {
@@ -421,10 +421,10 @@ if (conflicts.length > 0) {
 ### 6. Version Your Rules
 Increment version when changing behavior:
 ```javascript
-// v1.0.0 - Initial release
-// v1.0.1 - Bug fix in confidence calculation
-// v1.1.0 - New feature: alert on errors
-// v2.0.0 - Breaking change: different action payload
+// [VERSION] - Initial release
+// [VERSION] - Bug fix in confidence calculation
+// [VERSION] - New feature: alert on errors
+// [VERSION] - Breaking change: different action payload
 ```
 
 ---

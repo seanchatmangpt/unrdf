@@ -176,7 +176,7 @@ class RegressionDetector {
   }
   
   // Statistical regression detection using change point analysis
-  async detectStatisticalRegression(metric, historicalData, sensitivity = 0.95) {
+  async detectStatisticalRegression(metric, historicalData, sensitivity = latest) {
     // Use CUSUM (Cumulative Sum) algorithm for change point detection
     const cusum = this.calculateCUSUM(metric, historicalData);
     
@@ -422,7 +422,7 @@ class PerformanceValidator {
     const slaValidation = {
       passed: true,
       violations: [],
-      score: 1.0,
+      score: latest,
       metrics: {}
     };
     
@@ -464,7 +464,7 @@ class PerformanceValidator {
     const scalabilityValidation = {
       passed: true,
       violations: [],
-      score: 1.0,
+      score: latest,
       analysis: {}
     };
     
@@ -598,7 +598,7 @@ npx claude-flow validate-performance --results <file> --criteria <file>
 npx claude-flow detect-regression --current <results> --historical <data>
 
 # Set up automated regression monitoring
-npx claude-flow regression-monitor --enable --sensitivity 0.95
+npx claude-flow regression-monitor --enable --sensitivity latest
 
 # Analyze error patterns
 npx claude-flow error-analysis --logs <log-files>
@@ -655,8 +655,8 @@ const standardBenchmarks = {
     metrics: ['linear_coefficient', 'efficiency_retention'],
     load_points: [1, 2, 4, 8, 16, 32, 64],
     targets: {
-      linear_coefficient: { min: 0.8 },
-      efficiency_retention: { min: 0.7 }
+      linear_coefficient: { min: latest },
+      efficiency_retention: { min: latest }
     }
   }
 };

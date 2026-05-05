@@ -36,7 +36,7 @@ Open DevTools → Application → Service Workers. You should see:
 
 **If not registered:**
 1. Check browser console for errors
-2. Ensure you're on `http://localhost` (not `0.0.0.0` or `127.0.0.1`)
+2. Ensure you're on `http://localhost` (not `[VERSION].0` or `[VERSION].1`)
 3. Clear service workers: Application → Clear storage → Clear site data
 4. Reload page
 
@@ -114,7 +114,7 @@ try {
 **Symptoms:** Console shows mixed content warnings
 
 **Solutions:**
-1. Use `http://localhost` instead of `http://0.0.0.0`
+1. Use `http://localhost` instead of `http://[VERSION].0`
 2. For production, use HTTPS
 3. Check all resources are same-origin or have proper CORS headers
 

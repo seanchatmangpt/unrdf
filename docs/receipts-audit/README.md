@@ -120,7 +120,7 @@ RDF Index (Oxigraph)     Blob Storage (Git/S3)
 
 ## Architecture Summary
 
-### Current State (v6.0.0)
+### Current State (latest)
 
 **Strengths**:
 1. BLAKE3 hash chains (fast, secure)

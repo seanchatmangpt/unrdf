@@ -1,8 +1,8 @@
 # @unrdf/streaming Capability Map
 
-**Version**: 5.0.1
+**Version**: latest
 **Status**: Production Ready
-**Runtime**: Node.js ≥18.0.0 | Browser (ES2020+)
+**Runtime**: Node.js ≥latest | Browser (ES2020+)
 **Last Updated**: 2025-12-28
 
 ---
@@ -29,8 +29,8 @@ import {
 ```
 
 **Dependencies**:
-- Required: `@unrdf/core` (workspace), `@unrdf/hooks` (workspace), `@unrdf/oxigraph` (workspace), `ws` (^8.18.3), `zod` (^4.1.13)
-- Optional: `lru-cache` (^10.0.0) for caching
+- Required: `@unrdf/core` (workspace), `@unrdf/hooks` (workspace), `@unrdf/oxigraph` (workspace), `ws` (^latest), `zod` (^latest)
+- Optional: `lru-cache` (^latest) for caching
 
 **Evidence**:
 - Test Coverage: Not specified
@@ -252,7 +252,7 @@ timeout 5s pnpm --filter @unrdf/streaming test
 ---
 
 **Document Metadata**:
-- **Template Version**: 1.0.0
+- **Template Version**: latest
 - **Generated**: 2025-12-28
 - **Maintainer**: @unrdf/core-team
 - **Last Review**: 2025-12-28

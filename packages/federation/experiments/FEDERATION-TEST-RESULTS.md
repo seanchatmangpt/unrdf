@@ -6,7 +6,7 @@ This directory contains experimental results, benchmarks, and evidence for the `
 
 **Date**: 2025-12-25
 **Environment**: Local development cluster (3 nodes)
-**Target**: @unrdf/federation v6.0.0
+**Target**: @unrdf/federation [VERSION]
 
 ### Benchmark: Broadcast Query
 

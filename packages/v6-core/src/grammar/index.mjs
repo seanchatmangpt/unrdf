@@ -4,7 +4,7 @@
  * Unified grammar support with AOT complexity gating and denial receipts.
  *
  * @module @unrdf/v6-core/grammar
- * @version 6.0.0-alpha.1
+ * @version [VERSION]-alpha.1
  */
 
 // Parser exports
@@ -36,7 +36,7 @@ export {
  * v6 Grammar version identifier
  * @constant {string}
  */
-export const GRAMMAR_VERSION = '6.0.0-alpha.1';
+export const GRAMMAR_VERSION = '[VERSION]-alpha.1';
 
 /**
  * Full grammar closure pipeline: parse → compile → execute

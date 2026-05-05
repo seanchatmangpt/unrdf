@@ -20,7 +20,7 @@ import { WorkflowEngine, createWorkflow, sequence } from '@unrdf/yawl';
 const workflow = createWorkflow({
   id: 'order-processing',
   name: 'Order Processing',
-  version: '1.0.0',
+  version: 'latest',
   tasks: [
     { id: 'receive-order', name: 'Receive Order' },
     { id: 'process-payment', name: 'Process Payment' },

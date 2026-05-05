@@ -268,7 +268,7 @@ assertInvariant(
 | Consequence mismatch | HIGH | DEFERRED | Phase 2 |
 | Artifact failure | MEDIUM | DEFERRED | Phase 2 |
 
-**Risk Reduction**: 62.5% (5/8 vulnerabilities eliminated)
+**Risk Reduction**: latest% (5/8 vulnerabilities eliminated)
 
 ---
 

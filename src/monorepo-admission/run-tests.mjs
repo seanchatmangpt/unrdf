@@ -59,7 +59,7 @@ function createTestPartitions() {
   return [
     {
       name: '@unrdf/core',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.CORE,
       dependencies: [],
       exports: [{ path: '.', entryPoint: './src/index.mjs', isPublic: true }],
@@ -69,45 +69,45 @@ function createTestPartitions() {
     },
     {
       name: '@unrdf/oxigraph',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.CORE,
       dependencies: [],
       license: 'MIT'
     },
     {
       name: '@unrdf/hooks',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.HOOKS,
       dependencies: [
-        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true }
+        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true }
       ],
       license: 'MIT'
     },
     {
       name: '@unrdf/yawl',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.YAWL,
       dependencies: [
-        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true },
-        { name: '@unrdf/hooks', version: '5.0.1', isWorkspace: true }
+        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true },
+        { name: '@unrdf/hooks', version: '[VERSION]', isWorkspace: true }
       ],
       license: 'MIT'
     },
     {
       name: '@unrdf/ml-inference',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.ML,
       dependencies: [
-        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true }
+        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true }
       ],
       license: 'MIT'
     },
     {
       name: '@unrdf/serverless',
-      version: '5.0.1',
+      version: '[VERSION]',
       category: PartitionCategory.INFRASTRUCTURE,
       dependencies: [
-        { name: '@unrdf/core', version: '5.0.1', isWorkspace: true }
+        { name: '@unrdf/core', version: '[VERSION]', isWorkspace: true }
       ],
       license: 'MIT'
     }
@@ -129,7 +129,7 @@ console.log('1. PackagePartition Tests');
 test('creates partition with valid config', () => {
   const partition = new PackagePartition({
     name: '@unrdf/test',
-    version: '1.0.0',
+    version: '[VERSION]',
     category: PartitionCategory.UTILITY,
     license: 'MIT'
   });
@@ -140,7 +140,7 @@ test('creates partition with valid config', () => {
 test('parses semantic version correctly', () => {
   const partition = new PackagePartition({
     name: '@unrdf/test',
-    version: '5.2.3-beta.1',
+    version: '[VERSION]-beta.1',
     category: PartitionCategory.UTILITY
   });
   const parsed = partition.parseVersion();
@@ -153,7 +153,7 @@ test('parses semantic version correctly', () => {
 test('identifies protected packages', () => {
   const corePartition = new PackagePartition({
     name: '@unrdf/core',
-    version: '5.0.1',
+    version: '[VERSION]',
     category: PartitionCategory.CORE
   });
   assert(corePartition.isProtectedPartition(), 'core is protected');
@@ -165,7 +165,7 @@ test('creates delta with changes', () => {
   const delta = new PackageDelta({
     agent: 'test-agent',
     changes: [
-      { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '5.0.2' } }
+      { packageName: '@unrdf/core', changeType: 'version_bump', details: { newVersion: '[VERSION]' } }
     ]
   });
   assertEquals(delta.agent, 'test-agent', 'agent');
@@ -195,7 +195,7 @@ test('fails when protected package version mismatches', () => {
   const partitions = loadPartitions();
   partitions.set('@unrdf/hooks', new PackagePartition({
     name: '@unrdf/hooks',
-    version: '4.0.0', // Mismatched!
+    version: '[VERSION]', // Mismatched!
     category: PartitionCategory.HOOKS,
     license: 'MIT'
   }));
@@ -217,10 +217,10 @@ test('fails when circular dependency exists', () => {
   // Create cycle: core -> hooks -> core
   partitions.set('@unrdf/core', new PackagePartition({
     name: '@unrdf/core',
-    version: '5.0.1',
+    version: '[VERSION]',
     category: PartitionCategory.CORE,
     dependencies: [
-      { name: '@unrdf/hooks', version: '5.0.1', isWorkspace: true }
+      { name: '@unrdf/hooks', version: '[VERSION]', isWorkspace: true }
     ],
     license: 'MIT'
   }));
@@ -240,7 +240,7 @@ test('fails when incompatible license found', () => {
   const partitions = loadPartitions();
   partitions.set('@unrdf/problem', new PackagePartition({
     name: '@unrdf/problem',
-    version: '1.0.0',
+    version: '[VERSION]',
     category: PartitionCategory.UTILITY,
     license: 'GPL-3.0'
   }));
@@ -363,7 +363,7 @@ test('admits valid delta', async () => {
   const delta = new PackageDelta({
     agent: 'test',
     changes: [
-      { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '5.0.2' } }
+      { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '[VERSION]' } }
     ]
   });
 
@@ -398,7 +398,7 @@ test('provides atomic admission guarantee', async () => {
   const delta = new PackageDelta({
     agent: 'test',
     changes: [
-      { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '5.0.2' } },
+      { packageName: '@unrdf/serverless', changeType: 'version_bump', details: { newVersion: '[VERSION]' } },
       { packageName: '@unrdf/core', changeType: 'deprecation' } // This will fail
     ]
   });

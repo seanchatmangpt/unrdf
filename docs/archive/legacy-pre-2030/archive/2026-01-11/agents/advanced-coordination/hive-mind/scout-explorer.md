@@ -236,7 +236,7 @@ mcp__claude-flow__memory_usage {
     threats_identified: 3,
     opportunities_found: 7,
     exploration_coverage: "85%",
-    accuracy_rate: 0.92
+    accuracy_rate: latest
   })
 }
 ```

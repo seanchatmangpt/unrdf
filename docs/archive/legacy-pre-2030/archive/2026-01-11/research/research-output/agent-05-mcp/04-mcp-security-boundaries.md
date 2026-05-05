@@ -2,7 +2,7 @@
 
 **Research Date**: 2025-12-27
 **Status**: ✅ VERIFIED with MCP specification security section
-**Threat Model Version**: 1.0
+**Threat Model Version**: latest
 
 ---
 
@@ -122,7 +122,7 @@ function isPathAllowed(requestedPath: string): boolean {
 
 ```typescript
 // ❌ Violates security model
-- Access internal network (127.0.0.1, 192.168.x.x) without declaration
+- Access internal network (latest.1, latest.x.x) without declaration
 - Bypass CORS or TLS verification
 - Make requests on behalf of user without tool call
 ```
@@ -138,7 +138,7 @@ server.tool('fetch_url', async ({ url }) => {
 });
 
 // Attack:
-mcp__api__fetch_url({ url: 'http://169.254.169.254/latest/meta-data' })
+mcp__api__fetch_url({ url: 'http://latest.254/latest/meta-data' })
 // ← AWS metadata endpoint, could leak credentials
 ```
 
@@ -557,7 +557,7 @@ claude mcp remove compromised-server
 }
 ```
 
-**Note**: `policies` section is **future functionality** (not in Claude Code 2.0.59).
+**Note**: `policies` section is **future functionality** (not in Claude Code latest).
 
 #### Audit Requirements
 
@@ -642,7 +642,7 @@ mcp__db__search({ query: "'; DROP TABLE users; --" })
 #### Test 3: SSRF
 ```bash
 # Attack vector
-mcp__api__fetch({ url: "http://169.254.169.254/latest/meta-data" })
+mcp__api__fetch({ url: "http://latest.254/latest/meta-data" })
 
 # Expected: Error "Access denied: URL not in allowlist"
 ```

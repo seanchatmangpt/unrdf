@@ -55,7 +55,7 @@
         "patterns": [
           {
             "group": ["n3"],
-            "message": "Use @unrdf/oxigraph instead. N3 imports only allowed in @unrdf/core/rdf/n3-justified-only.mjs. See CLAUDE.md section 3.2"
+            "message": "Use @unrdf/oxigraph instead. N3 imports only allowed in @unrdf/core/rdf/n3-justified-only.mjs. See CLAUDE.md section [VERSION]"
           }
         ]
       }

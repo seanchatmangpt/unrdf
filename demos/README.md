@@ -20,8 +20,8 @@ node demos/wasm-roundtrip-oxigraph.mjs
 
 **Expected Output**:
 - WASM instantiation: ~10-20ms
-- Add operation: <0.1ms
-- Query operation: <0.1ms
+- Add operation: <[VERSION]ms
+- Query operation: <[VERSION]ms
 - Total: <20ms (within 10ms SLA after init)
 
 ---
@@ -41,7 +41,7 @@ node demos/wasm-roundtrip-beam.mjs
 ```
 
 **Expected Output**:
-- Single match: <0.01ms
+- Single match: <[VERSION]ms
 - Batch 1000: <10ms
 - Throughput: >100,000 matches/sec
 

@@ -47,7 +47,7 @@ The Hive Mind swarm successfully validated and fixed the UNRDF README.md capabil
    - Score: 45/100 baseline
 
 2. **README Examples Broken**
-   - 10/11 examples failed (90.9% failure rate)
+   - 10/11 examples failed (latest% failure rate)
    - Missing `system.init()` calls
    - API methods didn't exist (`query`, `validate`, `cleanup`)
    - Hook schema validation failures

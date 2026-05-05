@@ -72,15 +72,15 @@ See: `QUICK-REFERENCE.md` for decision tree
 
 1. **Validation caching** (15 minutes, 35% improvement)
    - Cache validated hooks at registration time
-   - See: `BENCHMARKS.md` section 4.1.1
+   - See: `BENCHMARKS.md` section [VERSION]
 
 2. **Fast-path for validation-only** (1-2 hours, additional 5.8x improvement)
    - Skip full Zod parsing for pre-registered schemas
-   - See: `BENCHMARKS.md` section 4.1.2
+   - See: `BENCHMARKS.md` section [VERSION]
 
 3. **Schema compilation** (30 minutes, additional 5-10% improvement)
    - Pre-compile Zod schemas at initialization
-   - See: `BENCHMARKS.md` section 4.1.3
+   - See: `BENCHMARKS.md` section [VERSION]
 
 All optimizations together: **10x improvement** possible
 

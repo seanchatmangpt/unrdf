@@ -1,7 +1,7 @@
 # AtomVM Package - Deep Architectural Analysis
 
 **Analysis Date**: 2025-12-21
-**Package**: @unrdf/atomvm v5.0.1
+**Package**: @unrdf/atomvm [VERSION]
 **Total Source Files**: 10 modules (1,980 LoC)
 **Analyst Role**: System Architecture Designer
 
@@ -118,8 +118,8 @@ cli.mjs
 
 **Single Points of Failure**:
 1. `window.Module` global object (browser)
-2. `AtomVM-web-v0.6.6.js` script availability
-3. `AtomVM-node-v0.6.6.js` file existence
+2. `AtomVM-web-[VERSION].js` script availability
+3. `AtomVM-node-[VERSION].js` file existence
 4. Service worker registration (browser COI)
 5. `coi-serviceworker` npm package
 
@@ -781,11 +781,11 @@ Total: 60 ms - 30 seconds
 - SLA Tracking: Negligible (Map operations)
 
 **Network**:
-- AtomVM-web-v0.6.6.js: ~1-10 MB (one-time download)
+- AtomVM-web-[VERSION].js: ~1-10 MB (one-time download)
 - .avm files: ~10-500 KB per module
 
 **Disk** (Node.js):
-- AtomVM-node-v0.6.6.js: ~1-10 MB (bundled)
+- AtomVM-node-[VERSION].js: ~1-10 MB (bundled)
 
 ### 6.4 Optimization Opportunities
 
@@ -943,7 +943,7 @@ SharedArrayBuffer (Browser capability)
   ↓
 window.Module (Global object)
   ↓
-AtomVM-web-v0.6.6.js (External file)
+AtomVM-web-[VERSION].js (External file)
   ↓
 Module.ready (Emscripten flag)
   ↓
@@ -1287,11 +1287,11 @@ Where:
 
 ```
 External Dependencies:
-├─ @opentelemetry/api (v1.8.0)
+├─ @opentelemetry/api ([VERSION])
 │  └─ Used by: atomvm-runtime.mjs, node-runtime.mjs
 │  └─ Risk: No fallback if package missing
 │
-└─ coi-serviceworker (v0.1.7)
+└─ coi-serviceworker ([VERSION])
    └─ Used by: service-worker-manager.mjs (dynamic import)
    └─ Risk: Browser must support service workers
 

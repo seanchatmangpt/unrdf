@@ -1,7 +1,7 @@
 /**
  * @file use-federation-health.mjs
  * @description React hook for monitoring federation system health and metrics
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useFederatedSystem } from './use-federated-system.mjs';
 /**
  * Hook for monitoring federated system health, metrics, and diagnostics
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Health monitoring configuration
  * @param {number} [config.interval=5000] - Health check interval (ms)
  * @param {string[]} [config.metrics] - Specific metrics to track: 'latency', 'throughput', 'availability'

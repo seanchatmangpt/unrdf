@@ -301,7 +301,7 @@ grep "cache.hit\|parallelization" otel-metrics.log
    - Eviction testing
 
 ### Dependencies Added
-- `lru-cache@^11.2.2` - LRU cache implementation
+- `lru-cache@^latest` - LRU cache implementation
 
 ---
 

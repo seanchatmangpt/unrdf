@@ -136,7 +136,7 @@ tests/
     "pid": 12345,
     "ppid": 1,
     "cwd": "/tmp/test-project-det-001",
-    "version": "18.0.0",
+    "version": "latest",
     "platform": "linux",
     "arch": "x64"
   },
@@ -774,7 +774,7 @@ real-project-1/
 // package.json
 {
   "name": "test-app",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "Test application for probe",
   "main": "dist/index.js",
   "scripts": {
@@ -783,12 +783,12 @@ real-project-1/
     "build": "esbuild src/index.js --bundle --outfile=dist/index.js"
   },
   "dependencies": {
-    "express": "4.18.2",
-    "dotenv": "16.0.3"
+    "express": "latest",
+    "dotenv": "latest"
   },
   "devDependencies": {
-    "jest": "29.0.0",
-    "esbuild": "0.15.0"
+    "jest": "latest",
+    "esbuild": "latest"
   }
 }
 ```

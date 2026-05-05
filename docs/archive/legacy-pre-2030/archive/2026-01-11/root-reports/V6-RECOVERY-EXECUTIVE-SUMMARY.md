@@ -11,7 +11,7 @@
 ```bash
 # BLOCKER 1: Vitest version mismatch (PREREQUISITE)
 grep '"vitest"' package.json
-# Result: "vitest": "^1.0.0"  (needs ^4.0.15)
+# Result: "vitest": "^latest"  (needs ^latest)
 
 # BLOCKER 2: pnpm install timeout
 # Evidence: ERR_MODULE_NOT_FOUND across all test runs
@@ -42,7 +42,7 @@ find packages/v6-*/src -name "*.schema.mjs" | wc -l
 ### Critical Path (Minimum time to validation)
 ```
 PHASE 0 (15m) → PHASE 1 (2-4h) → PHASE 4 (4-6h)
-= 6.25-10.25 hours before OTEL validation can run
+= latest.25 hours before OTEL validation can run
 ```
 
 ### Parallel Optimization
@@ -94,7 +94,7 @@ PHASE 0 (15m) → PHASE 1 (2-4h) → PHASE 4 (4-6h)
 # Blocker counts (measured 2025-12-27)
 ✅ 63 determinism violations (grep verified)
 ✅ 4/49 schema files = 92% gap (find verified)
-✅ Vitest version ^1.0.0 (package.json line 107)
+✅ Vitest version ^latest (package.json line 107)
 ✅ ERR_MODULE_NOT_FOUND in test runs (log verified)
 ```
 
@@ -133,7 +133,7 @@ After PHASE 1 completes, **4 agents can work simultaneously**:
 ## The Validation Gates
 
 ### Gate 1: PHASE 0 → PHASE 1
-**Check**: `grep '"vitest": "\^4.0.15"' package.json`
+**Check**: `grep '"vitest": "\^latest"' package.json`
 **Failure**: Manual edit package.json line 107
 
 ### Gate 2: PHASE 1 → PHASE 2/3
@@ -272,7 +272,7 @@ Every phase has a documented rollback plan:
 
 Options:
 1. **Full approval**: Execute all 4 phases (54-74 hours)
-2. **Partial approval**: Execute PHASE 0+1 only (6.25-10.25 hours)
+2. **Partial approval**: Execute PHASE 0+1 only (latest.25 hours)
 3. **Request changes**: Provide feedback on plan adjustments
 4. **Defer**: Archive plan for future execution
 

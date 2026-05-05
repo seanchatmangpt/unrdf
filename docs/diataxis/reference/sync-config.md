@@ -30,7 +30,7 @@ project-root/
 ```toml
 [project]
 name = "string"           # Required - Project identifier
-version = "string"        # Optional - Default: "1.0.0"
+version = "string"        # Optional - Default: "latest"
 description = "string"    # Optional - Project description
 
 [ontology]
@@ -65,7 +65,7 @@ enabled = true            # Optional - Default: true
 | Field         | Type   | Required | Default   | Description                                                          |
 | ------------- | ------ | -------- | --------- | -------------------------------------------------------------------- |
 | `name`        | string | Yes      | -         | Project identifier used in generated file headers and logging output |
-| `version`     | string | No       | `"1.0.0"` | Semantic version string for generated artifacts                      |
+| `version`     | string | No       | `"latest"` | Semantic version string for generated artifacts                      |
 | `description` | string | No       | `""`      | Human-readable project description                                   |
 
 ### [ontology] Section
@@ -217,7 +217,7 @@ output_file = "models/User.mjs" # Resolves to /home/user/project/lib/models/User
 
 [project]
 name = "user-management-api"
-version = "2.1.0"
+version = "latest"
 description = "Generated API from FOAF and custom user ontology"
 
 [ontology]

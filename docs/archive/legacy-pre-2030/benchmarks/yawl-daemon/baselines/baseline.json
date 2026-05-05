@@ -3,16 +3,16 @@
     "name": "daemon-cold-startup",
     "runs": 50,
     "latency": {
-      "mean": 0.19158634000000008,
-      "p50": 0.1119939999999815,
-      "p95": 0.5295750000000226,
-      "p99": 2.042782999999986,
-      "min": 0.03096299999998564,
-      "max": 2.042782999999986
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "memory": {
-      "avgMB": 0.011875762939453124,
-      "maxMB": 0.1651763916015625
+      "avgMB": latest,
+      "maxMB": latest
     },
     "passed": true,
     "target": "500ms",
@@ -22,12 +22,12 @@
     "name": "daemon-warm-startup",
     "runs": 30,
     "latency": {
-      "mean": 0.04536346666667062,
-      "p50": 0.03373100000010254,
-      "p95": 0.12295499999993353,
-      "p99": 0.14581799999996292,
-      "min": 0.022478999999975713,
-      "max": 0.14581799999996292
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "300ms",
@@ -38,12 +38,12 @@
     "runs": 10,
     "operationCount": 100,
     "latency": {
-      "mean": 0.02518579999997428,
-      "p50": 0.018155999999976302,
-      "p95": 0.0860890000000154,
-      "p99": 0.0860890000000154,
-      "min": 0.012456000000042877,
-      "max": 0.0860890000000154
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "1000ms",
@@ -54,12 +54,12 @@
     "messageCount": 5000,
     "runs": 5,
     "latency": {
-      "mean": 0.014219817800001443,
-      "p50": 0.008744000000092456,
-      "p95": 0.0357569999999896,
-      "p99": 0.10391400000003159,
-      "min": 0.004576000000042768,
-      "max": 0.7107849999999871
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "10ms",
@@ -70,9 +70,9 @@
     "duration": 5000,
     "runs": 3,
     "throughput": {
-      "mean": 61581.332478319644,
-      "min": 57573.15483512011,
-      "max": 63774.179916177345
+      "mean": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "1000 msg/s",
@@ -91,40 +91,40 @@
       {
         "queueDepth": 10,
         "latency": {
-          "p50": 0.01069900000038615,
-          "p95": 0.044200000000273576,
-          "mean": 0.01566301000000749
+          "p50": latest,
+          "p95": latest,
+          "mean": latest
         }
       },
       {
         "queueDepth": 50,
         "latency": {
-          "p50": 0.0092930000009801,
-          "p95": 0.018584999999802676,
-          "mean": 0.010654300000023795
+          "p50": latest,
+          "p95": latest,
+          "mean": latest
         }
       },
       {
         "queueDepth": 100,
         "latency": {
-          "p50": 0.009572999999363674,
-          "p95": 0.01586699999825214,
-          "mean": 0.01038591999991695
+          "p50": latest,
+          "p95": latest,
+          "mean": latest
         }
       },
       {
         "queueDepth": 500,
         "latency": {
-          "p50": 0.011241999998674146,
-          "p95": 0.0316129999991972,
-          "mean": 0.016065549999930227
+          "p50": latest,
+          "p95": latest,
+          "mean": latest
         }
       }
     ],
     "scaling": {
-      "latencyIncrease": 0.7152262443213017,
+      "latencyIncrease": latest,
       "queueIncrease": 50,
-      "scalingFactor": 0.014304524886426034,
+      "scalingFactor": latest,
       "sublinear": true
     },
     "passed": true,
@@ -136,12 +136,12 @@
     "workflowCount": 500,
     "runs": 5,
     "latency": {
-      "mean": 5.287069873999932,
-      "p50": 5.30690499999946,
-      "p95": 5.552544999998645,
-      "p99": 5.87720199999967,
-      "min": 4.117150000000038,
-      "max": 6.196390000000974
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "100ms",
@@ -153,12 +153,12 @@
     "workflowCount": 150,
     "runs": 3,
     "latency": {
-      "mean": 16.0590407466667,
-      "p50": 16.13745299999937,
-      "p95": 16.593801999999414,
-      "p99": 17.31229499999972,
-      "min": 14.401577000000543,
-      "max": 17.312918999999965
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "200ms",
@@ -175,12 +175,12 @@
       47
     ],
     "latency": {
-      "mean": 16.41623220666656,
-      "p50": 15.604178999998112,
-      "p95": 32.14274600000135,
-      "p99": 32.31984499999817,
-      "min": 4.204670999999507,
-      "max": 32.40399900000193
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "250ms",
@@ -191,11 +191,11 @@
     "transitions": 300,
     "workflowCount": 30,
     "latency": {
-      "mean": 1.221013913333433,
-      "p50": 1.1554709999982151,
-      "p95": 1.7915290000019013,
-      "min": 0.02836800000295625,
-      "max": 2.16849000000002
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "20ms",
@@ -216,73 +216,73 @@
       {
         "concurrency": 1,
         "latency": {
-          "mean": 1.038958249999996,
-          "min": 1.0236110999998345,
-          "max": 1.051372850000007
+          "mean": latest,
+          "min": latest,
+          "max": latest
         },
         "throughput": {
-          "mean": 962.6214569774233,
-          "min": 951.1373629250493,
-          "max": 976.9335248515395
+          "mean": latest,
+          "min": latest,
+          "max": latest
         }
       },
       {
         "concurrency": 5,
         "latency": {
-          "mean": 1.0268663666667028,
-          "min": 1.0206198500000028,
-          "max": 1.0304162500000529
+          "mean": latest,
+          "min": latest,
+          "max": latest
         },
         "throughput": {
-          "mean": 973.854734414262,
-          "min": 970.481589357649,
-          "max": 979.7967382272619
+          "mean": latest,
+          "min": latest,
+          "max": latest
         }
       },
       {
         "concurrency": 10,
         "latency": {
-          "mean": 1.0368911166666293,
-          "min": 1.0324114999999439,
-          "max": 1.0447486999999456
+          "mean": latest,
+          "min": latest,
+          "max": latest
         },
         "throughput": {
-          "mean": 964.449188401942,
-          "min": 957.1679773327807,
-          "max": 968.6060257949999
+          "mean": latest,
+          "min": latest,
+          "max": latest
         }
       },
       {
         "concurrency": 20,
         "latency": {
-          "mean": 1.0370069166666631,
-          "min": 1.0301136500000212,
-          "max": 1.0468831000000136
+          "mean": latest,
+          "min": latest,
+          "max": latest
         },
         "throughput": {
-          "mean": 964.3595677640063,
-          "min": 955.2164897876247,
-          "max": 970.7666722016347
+          "mean": latest,
+          "min": latest,
+          "max": latest
         }
       },
       {
         "concurrency": 50,
         "latency": {
-          "mean": 1.0319831666666384,
-          "min": 1.0251048000000083,
-          "max": 1.0423767000000226
+          "mean": latest,
+          "min": latest,
+          "max": latest
         },
         "throughput": {
-          "mean": 969.0586965198764,
-          "min": 959.3460790134492,
-          "max": 975.5100161466339
+          "mean": latest,
+          "min": latest,
+          "max": latest
         }
       }
     ],
     "scalability": {
-      "baselineThroughput": 962.6214569774233,
-      "highestThroughput": 969.0586965198764,
-      "scalabilityFactor": 1.0066871972318856,
+      "baselineThroughput": latest,
+      "highestThroughput": latest,
+      "scalabilityFactor": latest,
       "linear": false
     },
     "passed": true,
@@ -295,16 +295,16 @@
     "duration": 5000,
     "runs": 3,
     "latency": {
-      "mean": 10.302368315825829,
-      "p50": 10.179361000002245,
-      "p95": 10.638323000006494,
-      "p99": 11.012525000001915,
-      "variance": 1.0818483596366693
+      "mean": latest,
+      "p50": latest,
+      "p95": latest,
+      "p99": latest,
+      "variance": latest
     },
     "throughput": {
-      "mean": 96.34408464482675,
-      "min": 94.91312850020775,
-      "max": 97.26489227553976
+      "mean": latest,
+      "min": latest,
+      "max": latest
     },
     "passed": true,
     "target": "P99/P50 < 5",
@@ -316,16 +316,16 @@
     "maxConcurrent": 10,
     "runs": 5,
     "latency": {
-      "p50": 20.38807999999699,
-      "p95": 21.01528899999539,
-      "p99": 21.02284199999849
+      "p50": latest,
+      "p95": latest,
+      "p99": latest
     },
     "completionTime": {
-      "mean": 20.649163200000476,
-      "min": 20.443428999999014,
-      "max": 21.119641000004776
+      "mean": latest,
+      "min": latest,
+      "max": latest
     },
-    "throughput": 2421.4056286793666,
+    "throughput": latest,
     "passed": true,
     "target": "P95 <500ms, >50 wf/s",
     "unit": "ms"
@@ -334,40 +334,40 @@
     "name": "baseline-memory-footprint",
     "runs": 5,
     "memory": {
-      "avgFootprintMB": -0.01645965576171875,
-      "maxFootprintMB": 0.0003204345703125,
-      "avgRssMB": 151.33203125
+      "avgFootprintMB": -latest,
+      "maxFootprintMB": latest,
+      "avgRssMB": latest
     },
     "measurements": [
       {
-        "baseline": 7.915153503417969,
-        "withDaemon": 7.844551086425781,
-        "daemonFootprint": -0.0706024169921875,
-        "rss": 151.33203125
+        "baseline": latest,
+        "withDaemon": latest,
+        "daemonFootprint": -latest,
+        "rss": latest
       },
       {
-        "baseline": 7.8439178466796875,
-        "withDaemon": 7.831901550292969,
-        "daemonFootprint": -0.01201629638671875,
-        "rss": 151.33203125
+        "baseline": latest,
+        "withDaemon": latest,
+        "daemonFootprint": -latest,
+        "rss": latest
       },
       {
-        "baseline": 7.832183837890625,
-        "withDaemon": 7.832183837890625,
+        "baseline": latest,
+        "withDaemon": latest,
         "daemonFootprint": 0,
-        "rss": 151.33203125
+        "rss": latest
       },
       {
-        "baseline": 7.832435607910156,
-        "withDaemon": 7.832435607910156,
+        "baseline": latest,
+        "withDaemon": latest,
         "daemonFootprint": 0,
-        "rss": 151.33203125
+        "rss": latest
       },
       {
-        "baseline": 7.832550048828125,
-        "withDaemon": 7.8328704833984375,
-        "daemonFootprint": 0.0003204345703125,
-        "rss": 151.33203125
+        "baseline": latest,
+        "withDaemon": latest,
+        "daemonFootprint": latest,
+        "rss": latest
       }
     ],
     "passed": true,
@@ -379,87 +379,87 @@
     "workflowCount": 1000,
     "samplingInterval": 100,
     "memory": {
-      "initialMB": 7.847297668457031,
-      "finalMB": 9.029212951660156,
-      "growthMB": 1.181915283203125,
-      "growthRateMBPerWorkflow": 0.001181915283203125,
-      "afterStopMB": 9.150978088378906,
-      "leakedMB": 1.303680419921875
+      "initialMB": latest,
+      "finalMB": latest,
+      "growthMB": latest,
+      "growthRateMBPerWorkflow": latest,
+      "afterStopMB": latest,
+      "leakedMB": latest
     },
     "snapshots": [
       {
         "workflowsExecuted": 0,
-        "heapUsedMB": 7.847297668457031,
-        "heapTotalMB": 11.09765625,
-        "rssMB": 151.33203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 100,
-        "heapUsedMB": 7.962738037109375,
-        "heapTotalMB": 11.09765625,
-        "rssMB": 151.33203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 200,
-        "heapUsedMB": 8.096916198730469,
-        "heapTotalMB": 11.34765625,
-        "rssMB": 151.33203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 300,
-        "heapUsedMB": 8.236190795898438,
-        "heapTotalMB": 12.59765625,
-        "rssMB": 151.33203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 400,
-        "heapUsedMB": 8.359725952148438,
-        "heapTotalMB": 11.84765625,
-        "rssMB": 151.58203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 500,
-        "heapUsedMB": 8.477882385253906,
-        "heapTotalMB": 13.09765625,
-        "rssMB": 151.83203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 600,
-        "heapUsedMB": 8.6314697265625,
-        "heapTotalMB": 13.34765625,
-        "rssMB": 152.08203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 700,
-        "heapUsedMB": 8.751953125,
-        "heapTotalMB": 13.59765625,
-        "rssMB": 152.33203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 800,
-        "heapUsedMB": 8.910125732421875,
-        "heapTotalMB": 13.84765625,
-        "rssMB": 152.58203125,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "workflowsExecuted": 900,
-        "heapUsedMB": 9.029212951660156,
-        "heapTotalMB": 14.09765625,
-        "rssMB": 152.84375,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       }
     ],
     "passed": true,
-    "target": "<0.01MB/wf growth, <20MB leak",
+    "target": "<latestMB/wf growth, <20MB leak",
     "unit": "MB"
   },
   "memory.memoryStability": {
@@ -469,84 +469,84 @@
     "workflowCount": 491,
     "samplingInterval": 1000,
     "memory": {
-      "avgHeapMB": 8.579438103569878,
-      "minHeapMB": 8.175148010253906,
-      "maxHeapMB": 9.299324035644531,
-      "heapVariancePercent": 13.10314279116786,
+      "avgHeapMB": latest,
+      "minHeapMB": latest,
+      "maxHeapMB": latest,
+      "heapVariancePercent": latest,
       "monotonicGrowth": false
     },
     "timeSeries": [
       {
         "timestamp": 1002,
         "workflowCount": 49,
-        "heapUsedMB": 8.175148010253906,
-        "heapTotalMB": 16.34765625,
-        "rssMB": 155.09765625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 2002,
         "workflowCount": 99,
-        "heapUsedMB": 8.456230163574219,
-        "heapTotalMB": 16.34765625,
-        "rssMB": 155.09765625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 3002,
         "workflowCount": 148,
-        "heapUsedMB": 8.741554260253906,
-        "heapTotalMB": 16.34765625,
-        "rssMB": 155.09765625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 4002,
         "workflowCount": 197,
-        "heapUsedMB": 9.028892517089844,
-        "heapTotalMB": 16.34765625,
-        "rssMB": 155.66015625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 5002,
         "workflowCount": 246,
-        "heapUsedMB": 9.299324035644531,
-        "heapTotalMB": 16.34765625,
-        "rssMB": 155.66015625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 6002,
         "workflowCount": 295,
-        "heapUsedMB": 8.18243408203125,
-        "heapTotalMB": 13.34765625,
-        "rssMB": 155.6640625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 7002,
         "workflowCount": 344,
-        "heapUsedMB": 8.437568664550781,
-        "heapTotalMB": 13.34765625,
-        "rssMB": 155.6640625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 8004,
         "workflowCount": 393,
-        "heapUsedMB": 8.696319580078125,
-        "heapTotalMB": 13.34765625,
-        "rssMB": 155.6640625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       },
       {
         "timestamp": 9004,
         "workflowCount": 443,
-        "heapUsedMB": 8.197471618652344,
-        "heapTotalMB": 13.34765625,
-        "rssMB": 155.6640625,
-        "externalMB": 1.919774055480957
+        "heapUsedMB": latest,
+        "heapTotalMB": latest,
+        "rssMB": latest,
+        "externalMB": latest
       }
     ],
     "passed": true,
@@ -556,11 +556,11 @@
   "memory.gcPressure": {
     "name": "gc-pressure",
     "workflowCount": 500,
-    "executionTime": 2700.262713999997,
-    "throughput": 185.16716814540314,
+    "executionTime": latest,
+    "throughput": latest,
     "memory": {
-      "beforeMB": 7.933250427246094,
-      "afterMB": 8.489753723144531
+      "beforeMB": latest,
+      "afterMB": latest
     },
     "passed": true,
     "target": ">50 wf/s with GC",

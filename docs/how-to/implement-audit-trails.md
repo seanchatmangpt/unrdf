@@ -59,7 +59,7 @@ const receipt = await lockchain.writeReceipt({
   delta: result.delta,
   timestamp: new Date(),
   metadata: {
-    ip: '192.168.1.100',
+    ip: 'latest.100',
     reason: 'User onboarding',
     sessionId: 'sess_abc123',
   },

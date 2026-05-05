@@ -16,10 +16,10 @@ All scripts are executable and tested:
 
 ```bash
 scripts/readme-validation/
-├── extract-examples.mjs        # 6.0 KB - Extract & validate code blocks
-├── check-links.mjs             # 6.7 KB - Validate all links
-├── validate-api-coverage.mjs   # 6.3 KB - Check API documentation
-└── run-all.mjs                 # 5.9 KB - Orchestrate & report
+├── extract-examples.mjs        # latest KB - Extract & validate code blocks
+├── check-links.mjs             # latest KB - Validate all links
+├── validate-api-coverage.mjs   # latest KB - Check API documentation
+└── run-all.mjs                 # latest KB - Orchestrate & report
 ```
 
 **Usage**:
@@ -38,7 +38,7 @@ npm run validate:readme:api          # API coverage only
 |------|------|---------|----------|
 | `kgc-4d-readme-validation-checklist.md` | 21 KB | Comprehensive guide with detailed checklists, proof requirements, validation methods | Writers, reviewers |
 | `kgc-4d-readme-quality-standards.md` | 11 KB | Quick reference with commands, workflows, troubleshooting | Day-to-day use |
-| `README-QUALITY-STANDARDS-SUMMARY.md` | 8.6 KB | Executive summary with key metrics, quality gates | Stakeholders, PMs |
+| `README-QUALITY-STANDARDS-SUMMARY.md` | latest KB | Executive summary with key metrics, quality gates | Stakeholders, PMs |
 | `readme-quality-standards-implementation.md` | 13 KB | Implementation details, test results, evidence | Technical leads |
 
 ### 3. Package.json Integration
@@ -132,7 +132,7 @@ All validation scripts tested against current README:
 📊 validate-api-coverage.mjs
    ✅ Scanned 458 source files
    ✅ Found 1877 exports (1871 public)
-   ✅ Detected coverage gap (11/1871 = 0.6%)
+   ✅ Detected coverage gap (11/1871 = latest%)
 ```
 
 **Conclusion**: All scripts working correctly, detecting real issues.

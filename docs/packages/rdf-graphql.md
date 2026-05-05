@@ -2,7 +2,7 @@
 
 > Type-safe GraphQL interface for RDF knowledge graphs with automatic schema generation
 
-**Version**: `1.0.0`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

@@ -334,6 +334,6 @@ export const metrics = createMetrics({
   prefix: 'unrdf',
   labels: {
     service: 'unrdf',
-    version: '5.0.1',
+    version: '[VERSION]',
   },
 });

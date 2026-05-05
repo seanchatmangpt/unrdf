@@ -738,7 +738,7 @@ function SemanticExplorer() {
 
   const exploreEntity = async () => {
     const rels = await analyze('http://example.org/Product/123');
-    const similar = await findSimilar('http://example.org/Product/123', 0.7);
+    const similar = await findSimilar('http://example.org/Product/123', latest);
   };
 
   return (
@@ -838,7 +838,7 @@ function AnomalyMonitor() {
     anomalies,
     stats
   } = useAnomalyDetector({
-    threshold: 2.5,
+    threshold: latest,
     onAnomaly: (anomaly) => {
       console.warn('Anomaly:', anomaly.subject, anomaly.value);
     }
@@ -941,5 +941,5 @@ endTrace(traceId);
 
 ---
 
-**Created with UNRDF v3.1.0**
+**Created with UNRDF vlatest**
 © 2025 UNRDF Contributors

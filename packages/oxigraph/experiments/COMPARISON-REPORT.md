@@ -285,7 +285,7 @@ Winner: Current Engine (with optimization)
 
 ### Test Environment
 
-- **Node.js Version**: 18.19.0+
+- **Node.js Version**: [VERSION]+
 - **Hardware**: Standard developer machine
 - **Test Iterations**: 50-5000 per test (depending on operation)
 - **Warmup**: None (cold measurements)
@@ -458,5 +458,5 @@ pnpm test  # Runs both basic and comparison tests
 ---
 
 **Report Generated**: December 2024
-**Oxigraph Version**: 0.5.2
-**UNRDF Version**: 5.0.0-alpha.0
+**Oxigraph Version**: [VERSION]
+**UNRDF Version**: [VERSION]-alpha.0

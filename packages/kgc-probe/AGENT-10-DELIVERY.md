@@ -130,7 +130,7 @@
     kgc:method "concurrency.worker_threads_available" ;
     kgc:timestamp "2025-12-27T08:36:16.989Z"^^xsd:dateTime ;
     kgc:hash "d7ff22bccbf71dcc" ;
-    kgc:outputs "{\"available\":true,\"module\":\"worker_threads\",\"nodeVersion\":\"v22.21.1\"}"^^rdf:JSON ;
+    kgc:outputs "{\"available\":true,\"module\":\"worker_threads\",\"nodeVersion\":\"[VERSION]\"}"^^rdf:JSON ;
     kgc:guardDecision "allowed" .
 
 <urn:kgc:cap:4> a kgc:Capability ;
@@ -158,7 +158,7 @@
 ## Executive Summary
 
 - **Platform**: linux x64
-- **Runtime**: Node.js v22.21.1
+- **Runtime**: Node.js [VERSION]
 - **WASM**: Available
 - **Workers**: Available
 - **Capabilities**: 4 discovered
@@ -173,7 +173,7 @@
   {
     "available": true,
     "module": "worker_threads",
-    "nodeVersion": "v22.21.1"
+    "nodeVersion": "[VERSION]"
   }
   ```
 
@@ -369,7 +369,7 @@ const observations = [
   {
     method: 'runtime.node_version',
     domain: 'runtime',
-    outputs: { nodeVersion: 'v22.21.1' },
+    outputs: { nodeVersion: '[VERSION]' },
     timestamp: Date.now(),
     guardDecision: 'allowed'
   }

@@ -6,7 +6,7 @@
 
 ---
 
-## 8.1 Introduction
+## latest Introduction
 
 This chapter positions our contributions within the broader landscape of enterprise knowledge management, articulates the theoretical and practical implications of the "close the door" philosophy, and rigorously examines the limitations and failure modes of our approach. We move from what the thesis contributes (precisely stated claims) to why these contributions matter (conceptual significance) to where the approach applies (generalization bounds) and where it fails (honest limitations).
 
@@ -14,11 +14,11 @@ The organizing principle is intellectual honesty: we separate claims from realit
 
 ---
 
-## 8.2 What the Thesis Contributes (Precisely Stated)
+## latest What the Thesis Contributes (Precisely Stated)
 
 We organize our contributions around four core innovations, each positioned against specific prior work and validated through empirical evidence.
 
-### 8.2.1 Contribution 1: Formal Model of Enterprise Reality
+### latest Contribution 1: Formal Model of Enterprise Reality
 
 **Prior State**: Enterprise knowledge management systems lacked a unified formal model encompassing ontology, change, governance, and proof. Organizations employed separate systems for data storage (relational databases), change tracking (version control), governance (policy layers, committees), and audit (logging systems). These systems operated independently with no formal guarantee of coherence.
 
@@ -45,7 +45,7 @@ where Verify is a pure function requiring no privileged access.
 - Receipt integrity: P(undetected tampering) ≤ 2^-256 (BLAKE3 collision resistance)
 - Projection correctness: 100% structural validation before runtime (20 workflow patterns)
 
-### 8.2.2 Contribution 2: Admissibility as Single Mechanized Doorway
+### latest Contribution 2: Admissibility as Single Mechanized Doorway
 
 **Prior State**: Enterprise governance operated through layered policy systems with enforcement gaps. Typical architecture included:
 - Application-layer access control (often incomplete)
@@ -79,12 +79,12 @@ const DeltaSchema = z.object({
 Operations violating H fail at parse time, not runtime. This achieves **correctness by construction** rather than correctness by verification.
 
 **Validation Evidence**: Measured properties from KGC-4D implementation:
-- Admissibility check latency: <10ms (median 2.3ms, p99 8.7ms)
+- Admissibility check latency: <10ms (median latestms, p99 latestms)
 - False positive rate: 0% (over 10,000 test cases)
 - False negative rate: 0% (over 10,000 adversarial test cases)
-- Human override frequency: 0.3% of requests (37 out of 12,483 production requests)
+- Human override frequency: latest% of requests (37 out of 12,483 production requests)
 
-### 8.2.3 Contribution 3: Receipts as Bridge to External Audit
+### latest Contribution 3: Receipts as Bridge to External Audit
 
 **Prior State**: Enterprise systems required insider access for verification. Auditors needed:
 - Database credentials to verify data integrity
@@ -130,12 +130,12 @@ No access to O or μ internals is required.
 | Ontology support | None (simple transactions) | Full RDF/SPARQL |
 
 **Validation Evidence**: Measured from production deployment:
-- Receipt generation: median 2.1ms, p99 9.4ms
-- Receipt verification: median 0.8ms, p99 3.2ms
+- Receipt generation: median latestms, p99 latestms
+- Receipt verification: median latestms, p99 latestms
 - Chain integrity: 100% (checked via periodic full-chain verification)
 - Storage overhead: 247 bytes per receipt (compared to 523 bytes for equivalent blockchain entry)
 
-### 8.2.4 Contribution 4: Partition-and-Glue Model for Multi-Stakeholder Enterprises
+### latest Contribution 4: Partition-and-Glue Model for Multi-Stakeholder Enterprises
 
 **Prior State**: Multi-stakeholder knowledge systems faced a dilemma:
 - **Centralized**: Single canonical ontology, fast queries, but no stakeholder autonomy (e.g., Wikidata model)
@@ -182,15 +182,15 @@ S_2 (Studios): :Employee :hasRole :CrewMember
 - Query latency overhead: 12% (compared to pure centralized)
 - Consistency: 100% (via deterministic gluing)
 - Autonomy: Overlays deployable independently with 0 downtime
-- Conflict resolution: O(1) via precedence lookup (median 0.3μs)
+- Conflict resolution: O(1) via precedence lookup (median latestμs)
 
 ---
 
-## 8.3 Why "Close the Door" Matters (Conceptually)
+## latest Why "Close the Door" Matters (Conceptually)
 
 The phrase "close the door" encodes a correctness doctrine that inverts traditional access control philosophy.
 
-### 8.3.1 The Open Door Philosophy (Traditional)
+### latest The Open Door Philosophy (Traditional)
 
 Traditional systems operate as fortresses with guarded gates:
 - Privileged users enter through authenticated gates (API keys, database credentials)
@@ -203,7 +203,7 @@ This creates **power asymmetry**:
 - Gatekeepers become bottlenecks (approval delays)
 - Audit requires cooperation (admins control logs)
 
-### 8.3.2 The Closed Door Philosophy (This Work)
+### latest The Closed Door Philosophy (This Work)
 
 Our model inverts the access paradigm:
 - **No one enters**: All decisions are published as artifacts A
@@ -224,7 +224,7 @@ In closed-door systems:
 3. Verification requires no special access (pure function on public data)
 4. Therefore, all stakeholders have equal audit capability. ∎
 
-### 8.3.3 Governance Implication
+### latest Governance Implication
 
 This shifts enterprises from **trust the person** to **trust the math**:
 
@@ -234,15 +234,15 @@ This shifts enterprises from **trust the person** to **trust the math**:
 | Was policy followed? | Review committee notes (subjective) | Verify Q predicates (deterministic) |
 | Can I trust the audit? | Trust the auditor | Verify the math |
 
-**Measurement**: In pilot deployment with 3 stakeholder organizations (N=247 users), perceived fairness increased from 4.2/10 (open-door baseline) to 8.7/10 (closed-door system) on validated survey instrument (p < 0.001, paired t-test).
+**Measurement**: In pilot deployment with 3 stakeholder organizations (N=247 users), perceived fairness increased from latest/10 (open-door baseline) to latest/10 (closed-door system) on validated survey instrument (p < latest, paired t-test).
 
 ---
 
-## 8.4 Applicability Beyond Enterprise (Generalization)
+## latest Applicability Beyond Enterprise (Generalization)
 
 While grounded in enterprise knowledge management (Disney case study), the (O, μ, Δ, Q, H, receipts) model generalizes to any multi-stakeholder system with mutable shared state.
 
-### 8.4.1 Government Agencies
+### latest Government Agencies
 
 **Mapping**:
 - O: Interagency shared data (citizen records, permits, regulations)
@@ -258,7 +258,7 @@ While grounded in enterprise knowledge management (Disney case study), the (O, �
 
 **Expected Benefit**: Reduce inter-agency coordination time by 60% (based on enterprise case studies), increase public trust through verifiable receipts.
 
-### 8.4.2 Healthcare Networks
+### latest Healthcare Networks
 
 **Mapping**:
 - O: Patient medical records (distributed across hospitals)
@@ -276,7 +276,7 @@ Admissible(O, Δ) ⟺ Q_diagnosis(O, Δ) ≥ threshold
 
 **Open Question**: How to set threshold? Too high blocks valid treatments, too low allows medical errors.
 
-### 8.4.3 Supply Chain Networks
+### latest Supply Chain Networks
 
 **Mapping**:
 - O: Product provenance (manufacturer, suppliers, certifications)
@@ -289,7 +289,7 @@ Admissible(O, Δ) ⟺ Q_diagnosis(O, Δ) ≥ threshold
 
 **Validation Path**: Pilot with single product vertical (e.g., pharmaceutical cold chain), measure audit cost reduction.
 
-### 8.4.4 Open-Source Software Registries
+### latest Open-Source Software Registries
 
 **Mapping**:
 - O: Package metadata (npm, PyPI)
@@ -322,11 +322,11 @@ Therefore, the model is universal for this class of systems. ∎
 
 ---
 
-## 8.5 Limitations and Honest Failure Modes
+## latest Limitations and Honest Failure Modes
 
 We now examine the boundaries where our model fails or requires modification.
 
-### 8.5.1 Limitation 1: Requires Agreement on Invariants Q
+### latest Limitation 1: Requires Agreement on Invariants Q
 
 **Problem**: The model assumes stakeholders can agree on Q predicates upfront. In contentious domains (political systems, social networks), defining "correct" is itself contentious.
 
@@ -345,7 +345,7 @@ This makes Q evolution an auditable process, but does not eliminate the fundamen
 
 **Applicability Bound**: Model works for technical domains (healthcare: HIPAA is law; finance: SOX is law) but struggles in political/social domains where values are contested.
 
-### 8.5.2 Limitation 2: Binary Forbidden Operations H
+### latest Limitation 2: Binary Forbidden Operations H
 
 **Problem**: Real-world policies often have exceptions: "Never delete audit logs, except when legal hold expires after 7 years." Our H is binary: operation is either forbidden or allowed.
 
@@ -369,7 +369,7 @@ and validate exhaustively through formal methods. However, this does not elimina
 
 **Open Question**: Is there a calculus for composing Q predicates that preserves understandability? Current approach scales to ~10 exceptions per rule; beyond that, comprehension breaks down.
 
-### 8.5.3 Limitation 3: Determinism at Global Scale
+### latest Limitation 3: Determinism at Global Scale
 
 **Problem**: Distributed systems inherently have asynchrony. Ensuring deterministic projection μ across geographically distributed nodes is non-trivial.
 
@@ -389,15 +389,15 @@ If Δ_1 and Δ_2 operate on disjoint subjects:
 
 This requires **commutativity analysis**: determine which Δ pairs commute, then only serialize non-commutative pairs.
 
-**Validation Evidence**: For KGC-4D with 10,000 concurrent updates, 94.2% were pairwise commutative, reducing serialization overhead from 600ms to 47ms median.
+**Validation Evidence**: For KGC-4D with 10,000 concurrent updates, latest% were pairwise commutative, reducing serialization overhead from 600ms to 47ms median.
 
 **Open Question**: Can we prove commutativity statically (at Δ definition time) rather than dynamically (at runtime)? This would enable compile-time optimization.
 
-### 8.5.4 Limitation 4: Scaling Receipts to >10⁹ per Day
+### latest Limitation 4: Scaling Receipts to >10⁹ per Day
 
 **Problem**: High-throughput systems generate billions of transactions daily. Storing and verifying 10⁹ receipts is expensive:
 - Storage: 247 bytes/receipt × 10⁹ = 247 GB/day
-- Verification: 0.8ms/receipt × 10⁹ = 9.26 days (sequential)
+- Verification: latestms/receipt × 10⁹ = latest days (sequential)
 
 **Failure Mode**: Receipt chain becomes verification bottleneck.
 
@@ -422,9 +422,9 @@ This reduces verification to O(1) time regardless of transaction count, but requ
 
 **Trade-off**: Merkle batching is simpler (no trusted setup) but scales linearly. Recursive proofs are constant-time but require ZK-SNARK infrastructure.
 
-**Validation Evidence**: Merkle batching tested to 10⁷ receipts/day with 8.2ms mean verification time (p99 47ms). Recursive proofs remain future work.
+**Validation Evidence**: Merkle batching tested to 10⁷ receipts/day with latestms mean verification time (p99 47ms). Recursive proofs remain future work.
 
-### 8.5.5 Limitation 5: Byzantine Adversaries
+### latest Limitation 5: Byzantine Adversaries
 
 **Problem**: Our threat model assumes **honest-but-curious** adversaries: external attackers attempt to tamper with published receipts, but internal system operators are honest. This does not defend against **Byzantine** adversaries: malicious insiders with write access to O, μ, or receipts.
 
@@ -447,11 +447,11 @@ This requires collusion of ≥k administrators to forge receipts. For k=3, n=5, 
 
 ---
 
-## 8.6 Comparison to Related Work
+## latest Comparison to Related Work
 
 We position our contributions relative to four classes of systems.
 
-### 8.6.1 Blockchain (Bitcoin, Ethereum)
+### latest Blockchain (Bitcoin, Ethereum)
 
 **Similarities**:
 - Tamper-evident through hash chains
@@ -467,7 +467,7 @@ We position our contributions relative to four classes of systems.
 
 **Applicability**: Use blockchain when censorship resistance is paramount (cryptocurrency). Use our receipts when authority is already trusted (enterprise, government).
 
-### 8.6.2 Distributed Databases (Spanner, CockroachDB)
+### latest Distributed Databases (Spanner, CockroachDB)
 
 **Similarities**:
 - Distributed state with consistency guarantees
@@ -482,7 +482,7 @@ We position our contributions relative to four classes of systems.
 
 **Applicability**: Use distributed databases for operational workloads (OLTP). Use our model for governance-critical workloads (compliance, audit).
 
-### 8.6.3 Semantic Web (Wikidata, DBpedia)
+### latest Semantic Web (Wikidata, DBpedia)
 
 **Similarities**:
 - RDF-based knowledge representation
@@ -497,7 +497,7 @@ We position our contributions relative to four classes of systems.
 
 **Applicability**: Use semantic web for open knowledge (Wikipedia). Use our model for governed knowledge (enterprise, healthcare).
 
-### 8.6.4 Version Control (Git, GitHub)
+### latest Version Control (Git, GitHub)
 
 **Similarities**:
 - Immutable history (Git commits = our receipts)
@@ -515,55 +515,55 @@ We position our contributions relative to four classes of systems.
 
 ---
 
-## 8.7 Economic Implications
+## latest Economic Implications
 
 We quantify the economic case for adoption through cost-benefit analysis.
 
-### 8.7.1 Implementation Cost
+### latest Implementation Cost
 
 **Measured from Disney Pilot** (3 business units, 247 users, 12 months):
-- Engineering: 2.3 FTE-years (custom μ, Q, H definitions)
-- Integration: 1.7 FTE-years (legacy system connectors)
-- Training: 0.4 FTE-years (user onboarding, documentation)
-- **Total**: 4.4 FTE-years = $880K (at $200K/FTE fully loaded)
+- Engineering: latest FTE-years (custom μ, Q, H definitions)
+- Integration: latest FTE-years (legacy system connectors)
+- Training: latest FTE-years (user onboarding, documentation)
+- **Total**: latest FTE-years = $880K (at $200K/FTE fully loaded)
 
-**Amortization**: Cost is one-time setup. Marginal cost per additional business unit: 0.3 FTE-years.
+**Amortization**: Cost is one-time setup. Marginal cost per additional business unit: latest FTE-years.
 
-### 8.7.2 Governance Cost Reduction
+### latest Governance Cost Reduction
 
 **Baseline (Open-Door)**: Human committee reviews for change requests:
 - Request volume: 487/month (Disney pilot average)
-- Committee time: 2.4 hours/request (median)
+- Committee time: latest hours/request (median)
 - Committee composition: 5 members (director-level, $150K/year)
-- **Cost**: 487 × 2.4 × 5 × ($150K / 2080 hours) = $421K/year
+- **Cost**: 487 × latest × 5 × ($150K / 2080 hours) = $421K/year
 
 **New State (Closed-Door)**: Mechanized admissibility checks:
 - Automated: 97% of requests (473/month)
 - Human review: 3% of requests (14/month, complex exceptions)
-- Review time: 0.8 hours/request (reduced, only exceptional cases)
-- **Cost**: 14 × 0.8 × 5 × ($150K / 2080 hours) = $20K/year
+- Review time: latest hours/request (reduced, only exceptional cases)
+- **Cost**: 14 × latest × 5 × ($150K / 2080 hours) = $20K/year
 
 **Annual Savings**: $401K/year per business unit
 
-**ROI**: Break-even at 2.2 years for single business unit. For 10+ business units, ROI < 1 year.
+**ROI**: Break-even at latest years for single business unit. For 10+ business units, ROI < 1 year.
 
-### 8.7.3 Second-Order Benefits
+### latest Second-Order Benefits
 
 **Measured Impact**:
 
-1. **Faster Decision Latency**: Change requests admitted in 2.3ms (automated) vs. 2-7 days (committee). Enables agile response to market changes.
-   - **Value**: Disney estimated $1.2M value from 3-day faster product launch (pilot case study)
+1. **Faster Decision Latency**: Change requests admitted in latestms (automated) vs. 2-7 days (committee). Enables agile response to market changes.
+   - **Value**: Disney estimated $latestM value from 3-day faster product launch (pilot case study)
 
 2. **Lower Legal/Compliance Risk**: Automatic audit trail reduced SOX audit effort by 34 person-days (external auditor report).
    - **Value**: $68K savings (at $2K/day audit rate)
 
-3. **Hiring/Onboarding**: New employees replay receipts to understand historical decisions. Onboarding time reduced from 6 weeks to 3.5 weeks.
-   - **Value**: 2.5 weeks × 247 employees × $150K salary / 52 weeks = $180K/year
+3. **Hiring/Onboarding**: New employees replay receipts to understand historical decisions. Onboarding time reduced from 6 weeks to latest weeks.
+   - **Value**: latest weeks × 247 employees × $150K salary / 52 weeks = $180K/year
 
 4. **M&A Integration**: Acquired company overlays glued to canon in 2 weeks vs. 8-month typical integration.
-   - **Value**: $4.7M value from 6-month faster revenue realization (Disney acquisition case)
+   - **Value**: $latestM value from 6-month faster revenue realization (Disney acquisition case)
 
-**Total Measured Value**: $6.15M over 12 months (Disney pilot)
+**Total Measured Value**: $latestM over 12 months (Disney pilot)
 
 **Limitations**: Single pilot study limits generalizability. Value depends on:
 - Regulatory intensity (higher in healthcare, finance)
@@ -572,11 +572,11 @@ We quantify the economic case for adoption through cost-benefit analysis.
 
 ---
 
-## 8.8 Open Questions for Future Work
+## latest Open Questions for Future Work
 
 We identify seven research questions that extend beyond this thesis.
 
-### 8.8.1 Q1: Versioning Q Predicates Themselves
+### latest Q1: Versioning Q Predicates Themselves
 
 **Question**: Q predicates evolve as regulations and business rules change. How to handle Q₀ → Q₁ migration?
 
@@ -592,7 +592,7 @@ where Q(t) selects the predicate version active at timestamp t. This preserves h
 
 **Open Question**: What if Q₁ retroactively forbids operations allowed by Q₀? (e.g., GDPR retroactively forbids data retention). Must system support "temporal nullification" where past Δ are marked invalid?
 
-### 8.8.2 Q2: Circular Dependencies in Δ
+### latest Q2: Circular Dependencies in Δ
 
 **Question**: If Δ₁ depends on Δ₂ and Δ₂ depends on Δ₁, how to resolve?
 
@@ -615,7 +615,7 @@ Admissible(O, Δ_composite) checks consistency of entire batch
 
 **Open Question**: Can we detect circular dependencies statically (through schema analysis) or only at runtime?
 
-### 8.8.3 Q3: Conditional Transactions
+### latest Q3: Conditional Transactions
 
 **Question**: Can Δ₁ be "allowed only if Δ₂ is also admitted"?
 
@@ -635,7 +635,7 @@ Admissible(O, Δ_transaction) ⟺
 
 **Open Question**: What is the rollback mechanism if Δ₂ fails after Δ₁ succeeds? Event sourcing enables replay, but at what performance cost?
 
-### 8.8.4 Q4: Probabilistic Q Predicates
+### latest Q4: Probabilistic Q Predicates
 
 **Question**: Instead of Q: (O, Δ) → {⊤, ⊥}, allow Q: (O, Δ) → [0, 1] representing confidence.
 
@@ -652,7 +652,7 @@ Admissible(O, Δ) ⟺ Q(O, Δ) ≥ threshold
 2. How to combine multiple probabilistic Q predicates? (Product of probabilities? Minimum?)
 3. How to explain rejection to users? ("72% safe" is not actionable feedback)
 
-### 8.8.5 Q5: Human Override with Auditability
+### latest Q5: Human Override with Auditability
 
 **Question**: Sometimes governance must be overridden (emergency access to patient records, disaster recovery). How to support override while maintaining audit trail?
 
@@ -677,7 +677,7 @@ Admissible(O, Δ_emergency) = ⊤  // Always admitted
 
 **Open Question**: What prevents abuse? (e.g., marking routine operations as "emergency" to bypass Q). Need statistical analysis to detect anomalous override rates.
 
-### 8.8.6 Q6: Multi-Objective Optimization in Λ
+### latest Q6: Multi-Objective Optimization in Λ
 
 **Question**: Current Λ provides total order (precedence is linear). What if precedence depends on context?
 
@@ -695,7 +695,7 @@ Admissible(O, Δ_emergency) = ⊤  // Always admitted
 
 **Open Question**: How to avoid precedence conflicts? Need constraint solver to verify Λ is well-defined.
 
-### 8.8.7 Q7: Scaling to Exascale Knowledge Graphs
+### latest Q7: Scaling to Exascale Knowledge Graphs
 
 **Question**: Current validation is at 10⁶-10⁷ quads. What breaks at 10¹⁸ quads (exascale)?
 
@@ -713,11 +713,11 @@ Admissible(O, Δ_emergency) = ⊤  // Always admitted
 
 ---
 
-## 8.9 Standards and Interoperability
+## latest Standards and Interoperability
 
 For the model to achieve industry adoption, we propose standardization.
 
-### 8.9.1 Proposed Standard Formats
+### latest Proposed Standard Formats
 
 **Receipt Format**: Extend W3C PROV (provenance standard):
 
@@ -729,7 +729,7 @@ For the model to achieve industry adoption, we propose standardization.
   prov:wasGeneratedBy :transition_42 ;
   unrdf:prevHash "blake3:abc123..." ;
   unrdf:stateHash "blake3:def456..." ;
-  prov:generatedAtTime "2025-01-15T14:23:17.000000000Z"^^xsd:dateTime ;
+  prov:generatedAtTime "2025-01-15T14:23:latestZ"^^xsd:dateTime ;
   unrdf:signature "ed25519:xyz789..." .
 ```
 
@@ -742,7 +742,7 @@ For the model to achieve industry adoption, we propose standardization.
   "operation": "add",
   "quads": [...],
   "predicates": ["Q_consistency", "Q_authorization"],
-  "timestamp": "2025-01-15T14:23:17.000000000Z"
+  "timestamp": "2025-01-15T14:23:latestZ"
 }
 ```
 
@@ -769,7 +769,7 @@ condition:
 result: forbid
 ```
 
-### 8.9.2 Why Standards Matter
+### latest Why Standards Matter
 
 **Multi-Vendor Ecosystem**: Standardized formats enable:
 - Company A implements μ (projection engine)
@@ -784,7 +784,7 @@ result: forbid
 
 **Comparison to Email**: SMTP standardization enabled Gmail, Outlook, ProtonMail to interoperate. We envision similar ecosystem for knowledge governance.
 
-### 8.9.3 Standardization Roadmap
+### latest Standardization Roadmap
 
 **Phase 1** (2025): Publish IETF Internet-Draft for Receipt Format
 **Phase 2** (2026): W3C Community Group for UNRDF Governance
@@ -793,15 +793,15 @@ result: forbid
 
 **Risks**: Standardization is slow (3-5 years typical). Early adopters may build incompatible systems before standards solidify.
 
-**Mitigation**: Publish reference implementation with permissive license (MIT/Apache 2.0) to establish de facto standard.
+**Mitigation**: Publish reference implementation with permissive license (MIT/Apache latest) to establish de facto standard.
 
 ---
 
-## 8.10 Regulatory and Compliance Implications
+## latest Regulatory and Compliance Implications
 
 The model's auditability has significant regulatory advantages.
 
-### 8.10.1 GDPR Article 17 (Right to be Forgotten)
+### latest GDPR Article 17 (Right to be Forgotten)
 
 **Challenge**: User requests deletion of PII. How to prove deletion?
 
@@ -823,7 +823,7 @@ External auditor verifies:
 
 **Advantage**: Cryptographic proof (P ≤ 2^-256) vs. log attestation (trust-based).
 
-### 8.10.2 SOX (Financial Auditing)
+### latest SOX (Financial Auditing)
 
 **Challenge**: Prove all material changes to financial data were authorized and recorded.
 
@@ -841,7 +841,7 @@ Q_SOX(O, Δ) =
 
 **Measured Impact**: External auditor reduced SOX audit from 89 person-days to 55 person-days (38% reduction) due to mechanized evidence.
 
-### 8.10.3 HIPAA (Protected Health Information)
+### latest HIPAA (Protected Health Information)
 
 **Challenge**: Prove access to PHI was authorized and logged.
 
@@ -866,7 +866,7 @@ Receipt chain proves: who accessed what, when, why, and that access was authoriz
 
 **Advantage**: Immutable audit trail (receipts) vs. mutable logs. Verifiable externally by regulators.
 
-### 8.10.4 SEC Data Governance
+### latest SEC Data Governance
 
 **Challenge**: Prove earnings data was not manipulated.
 
@@ -886,7 +886,7 @@ Receipt chain proves: all changes to revenue, EBITDA, etc. were CFO-approved and
 
 ---
 
-## 8.11 Conclusion
+## latest Conclusion
 
 This chapter has examined what the thesis contributes, why it matters, where it applies, and where it fails. The key insights:
 
@@ -914,7 +914,7 @@ This chapter has examined what the thesis contributes, why it matters, where it 
 5. Byzantine adversaries require threshold signatures (latency/complexity cost)
 
 **Economic Case**:
-- ROI: 2.2 years for single business unit, <1 year for 10+ units
+- ROI: latest years for single business unit, <1 year for 10+ units
 - Governance cost reduction: 95% (from human committee to mechanized)
 - Second-order benefits: faster decisions, lower legal risk, easier M&A
 

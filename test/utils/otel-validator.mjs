@@ -296,7 +296,7 @@ export function calculateSpanStats(spans) {
 }
 
 /**
- * Validate v3.1.0 feature spans
+ * Validate latest feature spans
  * @param {Array} spans - Array of spans
  * @returns {Object} Validation result
  */

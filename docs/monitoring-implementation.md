@@ -149,7 +149,7 @@ Application Layer
 - **301 lines** of code
 - **Features**:
   - HTTP server for Prometheus scraping
-  - Standard Prometheus text format (v0.0.4)
+  - Standard Prometheus text format (latest)
   - Automatic metric registration
   - Custom metric support
   - Label support for dimensions
@@ -449,7 +449,7 @@ optimizer.on('optimization', (event) => {
 | "Latency P95 < 1.5ms" | Benchmark output | ✅ 1.33ms measured |
 | "100% test coverage" | Test file exists | ✅ 31 test cases |
 | "Zero external dependencies" | Import statements | ✅ Only Node.js builtins |
-| "Prometheus compatible" | Format validation | ✅ v0.0.4 format |
+| "Prometheus compatible" | Format validation | ✅ latest format |
 
 ### What Can Break?
 

@@ -38,7 +38,7 @@ const healthHook = defineHook({
   description: 'Monitors service error rates',
   select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
   predicates: [
-    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
   ],
   combine: 'OR'
 });
@@ -48,9 +48,9 @@ runApp(async () => {
   // Load some sample data
   const sampleData = `
     @prefix ex: <http://example.org/> .
-    ex:service1 ex:errorRate 0.01 .
-    ex:service2 ex:errorRate 0.05 .
-    ex:service3 ex:errorRate 0.08 .
+    ex:service1 ex:errorRate latest .
+    ex:service2 ex:errorRate latest .
+    ex:service3 ex:errorRate latest .
   `;
 
   // Evaluate the hook with cryptographic receipt
@@ -81,7 +81,7 @@ cat > service-monitor.json << 'EOF'
       "spec": {
         "var": "errorRate",
         "op": ">",
-        "value": 0.02
+        "value": latest
       }
     }
   ],
@@ -92,9 +92,9 @@ EOF
 # Load sample data
 cat > services.ttl << 'EOF'
 @prefix ex: <http://example.org/> .
-ex:service1 ex:errorRate 0.01 .
-ex:service2 ex:errorRate 0.05 .
-ex:service3 ex:errorRate 0.08 .
+ex:service1 ex:errorRate latest .
+ex:service2 ex:errorRate latest .
+ex:service3 ex:errorRate latest .
 EOF
 
 # Evaluate the hook
@@ -127,7 +127,7 @@ import { useTurtle } from 'unrdf';
 const turtle = useTurtle();
 const store = await turtle.parse(`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
 
   ex:person a foaf:Person ;
     foaf:name "John Doe" ;
@@ -144,7 +144,7 @@ const graph = useGraph(store);
 
 // Execute a SPARQL query
 const results = await graph.select(`
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX foaf: <http://xmlns.com/foaf/latest/>
   SELECT ?name WHERE {
     ?person foaf:name ?name .
   }

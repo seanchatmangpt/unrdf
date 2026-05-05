@@ -653,7 +653,7 @@ Add "Performance & Scalability" section with measured benchmarks (no claims with
 | **Code Examples Execute** | 100% | Extract + run all examples | ⚠️ TODO |
 | **Links Valid** | 100% internal, ≥95% external | Link checker | ⚠️ TODO |
 | **API Signatures Match** | 100% | Compare to source | ⚠️ TODO |
-| **Version Consistency** | 100% | README vs package.json | ✅ v5.0.1 |
+| **Version Consistency** | 100% | README vs package.json | ✅ latest |
 | **Performance Claims** | Evidence-based | Benchmark output | ⚠️ TODO |
 | **OTEL Score** | ≥80/100 | Validation harness | ⚠️ TODO |
 
@@ -949,7 +949,7 @@ Run actual benchmarks and document results (no claims without proof).
 
 **4-dimensional knowledge graph engine with nanosecond-precision event logging, Git-backed snapshots, and cryptographic receipts**
 
-[![Version](https://img.shields.io/badge/version-5.0.1-blue)]()
+[![Version](https://img.shields.io/badge/version-latest-blue)]()
 [![Tests](https://img.shields.io/badge/tests-176%2F176-green)]()
 [![OTEL](https://img.shields.io/badge/OTEL-100%2F100-green)]()
 
@@ -1070,7 +1070,7 @@ Understand the "why". Architectural deep dives.
 - ✅ **Dependencies:** 2 external (ARD compliant)
 - ✅ **Browser/Node:** Isomorphic
 
-**Status:** Production-ready (v5.0.1)
+**Status:** Production-ready (latest)
 
 ---
 

@@ -39,7 +39,7 @@
 export function createKitStructure(domain) {
   return {
     domain,
-    version: '1.0.0',
+    version: 'latest',
     facade: '',
     adapters: [],
     scenarios: [],

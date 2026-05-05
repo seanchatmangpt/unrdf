@@ -186,7 +186,7 @@ function deriveConstraints(observations) {
  * @returns {Promise<string>} Turtle-formatted RDF string
  *
  * @example
- * const obs = [{ method: 'runtime.node-version', outputs: { version: 'v22.21.1' } }];
+ * const obs = [{ method: 'runtime.node-version', outputs: { version: '[VERSION]' } }];
  * const turtle = await convertToTurtle(obs);
  * console.log(turtle); // @prefix kgc: <https://unrdf.org/kgc/probe#> . ...
  */

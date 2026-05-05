@@ -270,5 +270,5 @@ The UNRDF Knowledge Engine has achieved **100% N3 compliance** with zero direct 
 
 **Signed**: Code Quality Analyzer
 **Date**: December 4, 2025
-**Version**: 1.0.0
+**Version**: latest
 **Compliance Rate**: 100%

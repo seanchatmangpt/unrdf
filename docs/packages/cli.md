@@ -2,7 +2,7 @@
 
 > UNRDF CLI - Command-line Tools for Graph Operations and Context Management
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

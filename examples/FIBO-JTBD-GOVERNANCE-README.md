@@ -589,4 +589,4 @@ This case study is part of UNRDF and follows the same license terms.
 
 **Created:** 2026-04-03  
 **Last Updated:** 2026-04-03  
-**Version:** 1.0.0
+**Version:** latest

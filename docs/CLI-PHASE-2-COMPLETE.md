@@ -166,7 +166,7 @@ unrdf hook execute before-add \
 ```bash
 unrdf hook test before-add \
   --subject http://example.org/Bob \
-  --predicate http://xmlns.com/foaf/0.1/name \
+  --predicate http://xmlns.com/foaf/latest/name \
   --object "Bob Smith" \
   --verbose
 ```
@@ -361,7 +361,7 @@ $ unrdf hook test before-add --subject http://example.org/Alice --predicate http
 ✅ Would PASS: Data would be accepted by all hooks
 
 # Execute hook on test data
-$ unrdf hook execute before-add --subject http://example.org/Alice --predicate http://xmlns.com/foaf/0.1/name --object "Alice Smith" --verbose
+$ unrdf hook execute before-add --subject http://example.org/Alice --predicate http://xmlns.com/foaf/latest/name --object "Alice Smith" --verbose
 ✅ Hook execution completed:
    Hooks executed: 2
    Validation: ✅ PASSED

@@ -3,7 +3,7 @@
 
 **Date**: 2026-01-11
 **Status**: Research Complete
-**Version**: 1.0.0
+**Version**: latest
 
 ---
 
@@ -21,9 +21,9 @@ This research identifies **18 cutting-edge innovation areas** and **5 detailed r
 
 ### Strategic Impact
 
-1. **v6.2 (2026 Q3-Q4)**: Foundation for post-quantum cryptography, RDF-star support
-2. **v7.0 (2027)**: Spatial knowledge graphs, neuromorphic computing integration
-3. **v8.0 (2028-2030)**: Quantum knowledge graphs, brain-computer interfaces
+1. **vlatest (2026 Q3-Q4)**: Foundation for post-quantum cryptography, RDF-star support
+2. **vlatest (2027)**: Spatial knowledge graphs, neuromorphic computing integration
+3. **vlatest (2028-2030)**: Quantum knowledge graphs, brain-computer interfaces
 
 ---
 
@@ -223,7 +223,7 @@ spatialGraph.renderInVR({
 **Sources**:
 - [2026 AR VR: The Year the Digital and Physical Worlds Truly Merge](https://inairspace.com/blogs/learn-with-inair/2026-ar-vr-the-year-the-digital-and-physical-worlds-truly-merge)
 - [Transforming enterprise data visualization: unlocking the potential of virtual reality through metaphoric knowledge graph visualizations](https://www.researchgate.net/publication/375126691_Transforming_enterprise_data_visualization_unlocking_the_potential_of_virtual_reality_through_metaphoric_knowledge_graph_visualizations)
-- [Transforming graph data visualisations from 2D displays into augmented reality 3D space](https://www.frontiersin.org/journals/virtual-reality/articles/10.3389/frvir.2023.1155628/full)
+- [Transforming graph data visualisations from 2D displays into augmented reality 3D space](https://www.frontiersin.org/journals/virtual-reality/articles/latest/frvir.latest/full)
 
 ---
 
@@ -245,10 +245,10 @@ SELECT ?poi ?name ?distance WHERE {
 
   # Find POIs within 500m of user location
   FILTER(geo:sfWithin(?geom,
-    "POINT(-122.4194 37.7749)"^^geo:wktLiteral,
+    "POINT(-latest latest)"^^geo:wktLiteral,
     500, "meters"))
 
-  BIND(geo:distance(?geom, "POINT(-122.4194 37.7749)"^^geo:wktLiteral)
+  BIND(geo:distance(?geom, "POINT(-latest latest)"^^geo:wktLiteral)
        AS ?distance)
 }
 ORDER BY ?distance
@@ -350,9 +350,9 @@ const embedding = snnKG.embed('http://example.org/Entity1');
 - RDF graph embeddings knowledge
 
 **Sources**:
-- [Neuromorphic Knowledge Representation: SNN-Based Relational Inference](https://link.springer.com/chapter/10.1007/978-3-031-98284-2_13)
-- [AI-Powered Knowledge Graphs for Neuromorphic and Energy-Efficient Computing](https://dl.acm.org/doi/10.1145/3716368.3735295)
-- [Learning through structure: towards deep neuromorphic knowledge graph embeddings](https://arxiv.org/abs/2109.10376)
+- [Neuromorphic Knowledge Representation: SNN-Based Relational Inference](https://link.springer.com/chapter/latest/978-3-031-98284-2_13)
+- [AI-Powered Knowledge Graphs for Neuromorphic and Energy-Efficient Computing](https://dl.acm.org/doi/latest/latest)
+- [Learning through structure: towards deep neuromorphic knowledge graph embeddings](https://arxiv.org/abs/latest)
 
 ---
 
@@ -379,7 +379,7 @@ const result = await engine.query(`
     # Symbolic constraint
     ?similar :price ?p . FILTER(?p < 100)
     # Neural similarity (learned)
-    NEURAL(?similar, :embedDistance, <http://example.org/Product123>, 0.8)
+    NEURAL(?similar, :embedDistance, <http://example.org/Product123>, latest)
   }
 `);
 ```
@@ -425,7 +425,7 @@ const result = await engine.query(`
 ```javascript
 const result = await engine.query(sparql, {
   energyBudget: '100mJ', // Millijoules
-  accuracyThreshold: 0.95,
+  accuracyThreshold: latest,
   hardware: 'neuromorphic' // Prefer SNN over GPU
 });
 ```
@@ -440,7 +440,7 @@ const result = await engine.query(sparql, {
 
 #### D1. RDF-star & SPARQL-star Integration
 
-**Motivation**: RDF-star is included in **RDF 1.2 (W3C standard)**. Major databases support it: Stardog, Virtuoso, GraphDB, AllegroGraph, Apache Jena, **Oxigraph** (UNRDF uses Oxigraph!). RDF-star enables **statements about statements** without reification, critical for provenance, metadata, and temporal annotations.
+**Motivation**: RDF-star is included in **RDF latest (W3C standard)**. Major databases support it: Stardog, Virtuoso, GraphDB, AllegroGraph, Apache Jena, **Oxigraph** (UNRDF uses Oxigraph!). RDF-star enables **statements about statements** without reification, critical for provenance, metadata, and temporal annotations.
 
 **Innovation**: First-class RDF-star support in UNRDF core.
 
@@ -454,7 +454,7 @@ const { namedNode, literal, triple, quad } = dataFactory;
 // RDF-star quoted triple
 const statement = triple(
   namedNode('http://example.org/Alice'),
-  namedNode('http://xmlns.com/foaf/0.1/knows'),
+  namedNode('http://xmlns.com/foaf/latest/knows'),
   namedNode('http://example.org/Bob')
 );
 
@@ -473,7 +473,7 @@ const results = await store.query(`
 
   SELECT ?p ?confidence WHERE {
     <<?person :knows ?p>> :confidence ?confidence .
-    FILTER(?confidence > 0.8)
+    FILTER(?confidence > latest)
   }
 `);
 ```
@@ -502,7 +502,7 @@ const results = await store.query(`
 **Sources**:
 - [RDF-star and SPARQL-star W3C Draft](https://w3c.github.io/rdf-star/cg-spec/editors_draft.html)
 - [What Is RDF-star | Ontotext Fundamentals](https://www.ontotext.com/knowledgehub/fundamentals/what-is-rdf-star/)
-- [RDF-star and SPARQL-star — GraphDB Documentation](https://graphdb.ontotext.com/documentation/11.1/rdf-sparql-star.html)
+- [RDF-star and SPARQL-star — GraphDB Documentation](https://graphdb.ontotext.com/documentation/latest/rdf-sparql-star.html)
 
 ---
 
@@ -570,8 +570,8 @@ ex:ConfidenceShape a sh:NodeShape ;
   sh:property [
     sh:path ex:confidence ;
     sh:datatype xsd:decimal ;
-    sh:minInclusive 0.0 ;
-    sh:maxInclusive 1.0 ;
+    sh:minInclusive latest ;
+    sh:maxInclusive latest ;
   ] .
 
 # Validate RDF-star annotations
@@ -594,7 +594,7 @@ ex:QuotedTripleShape a sh:NodeShape ;
 
 #### E1. Semantic Sensor Fusion Framework
 
-**Motivation**: Research shows semantic data annotation and integration using ontology-driven frameworks enables structured representation of sensor-derived events within knowledge graphs. The global edge computing market is growing from $21.4B (2025) to $28.5B (2026), with 5G connections reaching 8 billion by 2026.
+**Motivation**: Research shows semantic data annotation and integration using ontology-driven frameworks enables structured representation of sensor-derived events within knowledge graphs. The global edge computing market is growing from $latestB (2025) to $latestB (2026), with 5G connections reaching 8 billion by 2026.
 
 **Innovation**: Real-time RDF generation from heterogeneous IoT sensors at the edge.
 
@@ -679,7 +679,7 @@ const federation = new FederatedKG({
 await federation.train({
   localEpochs: 5,
   globalRounds: 100,
-  privacyBudget: 1.0 // Differential privacy epsilon
+  privacyBudget: latest // Differential privacy epsilon
 });
 
 // Infer on local graph
@@ -749,7 +749,7 @@ spatialGraph.render(results);
 
 ### Proposal 1: Post-Quantum Receipt Infrastructure
 
-**Objective**: Migrate UNRDF's cryptographic receipt system to post-quantum algorithms by v7.0 (2027).
+**Objective**: Migrate UNRDF's cryptographic receipt system to post-quantum algorithms by vlatest (2027).
 
 **Motivation**:
 - NIST finalized PQC standards in 2024 (CRYSTALS-Dilithium, SPHINCS+, CRYSTALS-Kyber)
@@ -758,16 +758,16 @@ spatialGraph.render(results);
 
 **Technical Approach**:
 
-1. **Phase 1 (v6.2)**: Hybrid classical + PQC signatures
+1. **Phase 1 (vlatest)**: Hybrid classical + PQC signatures
    - Dual-sign receipts with SHA3-256 + SPHINCS+
    - Gradual rollout, backward compatibility
 
-2. **Phase 2 (v7.0)**: Full PQC migration
+2. **Phase 2 (vlatest)**: Full PQC migration
    - CRYSTALS-Dilithium for fast signatures
    - XMSS for Merkle tree proofs
    - Quantum RNG for receipt IDs
 
-3. **Phase 3 (v7.5)**: Performance optimization
+3. **Phase 3 (vlatest)**: Performance optimization
    - Hardware acceleration (AWS Nitro PQC)
    - Batched signature verification
    - Compact signature formats
@@ -799,7 +799,7 @@ spatialGraph.render(results);
 
 ### Proposal 2: Spatial Knowledge Graph Platform
 
-**Objective**: Enable immersive 3D/AR/VR knowledge graph exploration by v7.0 (2027).
+**Objective**: Enable immersive 3D/AR/VR knowledge graph exploration by vlatest (2027).
 
 **Motivation**:
 - 2026 is the "inflection point" for AR/VR
@@ -808,17 +808,17 @@ spatialGraph.render(results);
 
 **Technical Approach**:
 
-1. **Phase 1 (v6.2)**: WebXR foundation
+1. **Phase 1 (vlatest)**: WebXR foundation
    - Three.js-based 3D graph renderer
    - VR controller support (Meta Quest, Apple Vision Pro)
    - Basic interactions (gaze, hand tracking)
 
-2. **Phase 2 (v7.0)**: Spatial queries
+2. **Phase 2 (vlatest)**: Spatial queries
    - GeoSPARQL integration (geospatial queries)
    - 3D force-directed layout
    - Time-travel in 3D (KGC-4D integration)
 
-3. **Phase 3 (v7.5)**: Collaborative spaces
+3. **Phase 3 (vlatest)**: Collaborative spaces
    - Multi-user VR rooms (WebRTC + WebXR)
    - Shared annotations and highlights
    - Voice-based SPARQL queries
@@ -841,13 +841,13 @@ spatialGraph.render(results);
 
 **Hardware Requirements**:
 - VR headsets: Meta Quest 3 ($500), Apple Vision Pro ($3,500)
-- Development workstations with WebGL 2.0
+- Development workstations with WebGL latest
 
 ---
 
 ### Proposal 3: Neuromorphic Knowledge Graph Engine
 
-**Objective**: Develop SNN-based knowledge graph embeddings for 100x energy-efficient edge AI by v8.0 (2028).
+**Objective**: Develop SNN-based knowledge graph embeddings for 100x energy-efficient edge AI by vlatest (2028).
 
 **Motivation**:
 - SNNs achieve 100-1000x energy efficiency vs. GPUs
@@ -856,17 +856,17 @@ spatialGraph.render(results);
 
 **Technical Approach**:
 
-1. **Phase 1 (v7.0)**: SNN simulation
+1. **Phase 1 (vlatest)**: SNN simulation
    - Software SNN simulator (Nengo, Brian2)
    - Temporal spike encoding for RDF embeddings
    - STDP learning rule implementation
 
-2. **Phase 2 (v7.5)**: Hardware deployment
+2. **Phase 2 (vlatest)**: Hardware deployment
    - Intel Loihi 2 integration
    - Energy benchmarks (mJ per query)
    - Edge device deployment (Raspberry Pi + Akida chip)
 
-3. **Phase 3 (v8.0)**: Production optimization
+3. **Phase 3 (vlatest)**: Production optimization
    - Hybrid SNN + symbolic reasoning
    - Real-time KG updates via spike trains
    - Edge-cloud continuum (offload to cloud for complex queries)
@@ -896,26 +896,26 @@ spatialGraph.render(results);
 
 ### Proposal 4: RDF-star Native Integration
 
-**Objective**: First-class RDF-star support in UNRDF core by v6.2 (2026 Q4).
+**Objective**: First-class RDF-star support in UNRDF core by vlatest (2026 Q4).
 
 **Motivation**:
-- RDF 1.2 standardizes RDF-star (W3C)
+- RDF latest standardizes RDF-star (W3C)
 - Oxigraph (UNRDF's SPARQL engine) already supports RDF-star
 - Critical for provenance, temporal data, uncertainty
 
 **Technical Approach**:
 
-1. **Phase 1 (v6.2)**: Core support
+1. **Phase 1 (vlatest)**: Core support
    - API for quoted triples: `triple(subject, predicate, object)` as subject
    - SPARQL-star parser updates (<<>> syntax)
    - Documentation + migration guide
 
-2. **Phase 2 (v6.3)**: Advanced features
+2. **Phase 2 (vlatest)**: Advanced features
    - SHACL-star validation (validate annotations)
    - Temporal RDF-star (valid-from, valid-to)
    - Provenance tracking (who, when, why)
 
-3. **Phase 3 (v7.0)**: Ecosystem integration
+3. **Phase 3 (vlatest)**: Ecosystem integration
    - KGC-4D + RDF-star (time-travel with annotations)
    - Lockchain + RDF-star (provenance receipts)
    - Property graph bridge (export to Neo4j)
@@ -944,26 +944,26 @@ spatialGraph.render(results);
 
 ### Proposal 5: Semantic IoT Edge Platform
 
-**Objective**: Real-time knowledge graphs from IoT sensors at the edge by v7.0 (2027).
+**Objective**: Real-time knowledge graphs from IoT sensors at the edge by vlatest (2027).
 
 **Motivation**:
-- Edge computing market: $21.4B (2025) → $28.5B (2026)
+- Edge computing market: $latestB (2025) → $latestB (2026)
 - 5G connections: 8 billion by 2026
 - Research validates semantic sensor fusion at edge
 
 **Technical Approach**:
 
-1. **Phase 1 (v6.2)**: Sensor integration
+1. **Phase 1 (vlatest)**: Sensor integration
    - MQTT, CoAP, Zigbee protocol support
    - SSN (Semantic Sensor Network) ontology integration
    - Real-time RDF stream generation
 
-2. **Phase 2 (v7.0)**: Edge reasoning
+2. **Phase 2 (vlatest)**: Edge reasoning
    - Lightweight SPARQL engine for edge (compile to WASM)
    - Temporal reasoning (sensor history)
    - Anomaly detection at edge (reduce cloud bandwidth)
 
-3. **Phase 3 (v7.5)**: Federated sensor networks
+3. **Phase 3 (vlatest)**: Federated sensor networks
    - Multi-site sensor fusion
    - Privacy-preserving aggregation (differential privacy)
    - Cloud-edge continuum (offload complex queries)
@@ -1001,24 +1001,24 @@ spatialGraph.render(results);
 
 | Innovation | TRL | Timeframe | Key Blockers |
 |------------|-----|-----------|--------------|
-| **Post-Quantum Receipts** | 7/10 | v6.2 (2026 Q4) | JavaScript PQC library maturity |
-| **RDF-star Integration** | 9/10 | v6.2 (2026 Q4) | None (Oxigraph supports it) |
-| **Spatial KG Visualization** | 7/10 | v7.0 (2027 Q2) | VR headset adoption, WebXR maturity |
-| **Neuromorphic KG Embeddings** | 4/10 | v8.0 (2028-2030) | Neuromorphic hardware availability, SNN training complexity |
-| **Semantic IoT Edge** | 7/10 | v7.0 (2027 Q2) | Edge deployment complexity, sensor protocol diversity |
-| **Property Graph Bridge** | 6/10 | v7.5 (2027 Q4) | GQL standard adoption, translation complexity |
-| **Neuro-Symbolic Reasoning** | 6/10 | v7.5 (2027 Q4) | Research maturity, hybrid architecture design |
-| **Federated Learning KG** | 6/10 | v8.0 (2028) | Privacy guarantees, distributed training complexity |
-| **Geo-Spatial RDF** | 8/10 | v6.3 (2026 Q4) | GeoSPARQL adoption |
-| **SHACL-star Validation** | 5/10 | v7.0 (2027 Q2) | No formal standard yet |
-| **Quantum RNG** | 8/10 | v6.2 (2026 Q4) | Commercial QRNG API availability |
-| **Haptic KG Interaction** | 6/10 | v7.5 (2027 Q4) | WebXR Haptics API maturity |
-| **Holographic Projection** | 5/10 | v8.0+ (2028+) | Hardware availability (Looking Glass) |
-| **Temporal SNN Encoding** | 3/10 | v8.0+ (2029+) | Highly experimental |
-| **Energy-Aware Inference** | 4/10 | v8.0 (2028) | Energy measurement frameworks |
-| **DNA Storage** | 2/10 | v9.0+ (2030+) | Cost, biotech partnerships |
-| **Brain-Computer Interfaces** | 3/10 | v9.0+ (2030+) | BCI maturity, intent decoding |
-| **Hybrid Symbolic-Neural** | 6/10 | v7.0 (2027) | Research maturity, architecture design |
+| **Post-Quantum Receipts** | 7/10 | vlatest (2026 Q4) | JavaScript PQC library maturity |
+| **RDF-star Integration** | 9/10 | vlatest (2026 Q4) | None (Oxigraph supports it) |
+| **Spatial KG Visualization** | 7/10 | vlatest (2027 Q2) | VR headset adoption, WebXR maturity |
+| **Neuromorphic KG Embeddings** | 4/10 | vlatest (2028-2030) | Neuromorphic hardware availability, SNN training complexity |
+| **Semantic IoT Edge** | 7/10 | vlatest (2027 Q2) | Edge deployment complexity, sensor protocol diversity |
+| **Property Graph Bridge** | 6/10 | vlatest (2027 Q4) | GQL standard adoption, translation complexity |
+| **Neuro-Symbolic Reasoning** | 6/10 | vlatest (2027 Q4) | Research maturity, hybrid architecture design |
+| **Federated Learning KG** | 6/10 | vlatest (2028) | Privacy guarantees, distributed training complexity |
+| **Geo-Spatial RDF** | 8/10 | vlatest (2026 Q4) | GeoSPARQL adoption |
+| **SHACL-star Validation** | 5/10 | vlatest (2027 Q2) | No formal standard yet |
+| **Quantum RNG** | 8/10 | vlatest (2026 Q4) | Commercial QRNG API availability |
+| **Haptic KG Interaction** | 6/10 | vlatest (2027 Q4) | WebXR Haptics API maturity |
+| **Holographic Projection** | 5/10 | vlatest+ (2028+) | Hardware availability (Looking Glass) |
+| **Temporal SNN Encoding** | 3/10 | vlatest+ (2029+) | Highly experimental |
+| **Energy-Aware Inference** | 4/10 | vlatest (2028) | Energy measurement frameworks |
+| **DNA Storage** | 2/10 | vlatest+ (2030+) | Cost, biotech partnerships |
+| **Brain-Computer Interfaces** | 3/10 | vlatest+ (2030+) | BCI maturity, intent decoding |
+| **Hybrid Symbolic-Neural** | 6/10 | vlatest (2027) | Research maturity, architecture design |
 
 ### Timeline to Production
 
@@ -1050,7 +1050,7 @@ spatialGraph.render(results);
 
 ## 5. Strategic Roadmap
 
-### v6.2 (2026 Q3-Q4) - Quantum-Ready Foundation
+### vlatest (2026 Q3-Q4) - Quantum-Ready Foundation
 
 **Theme**: Future-proof cryptography and next-gen standards
 
@@ -1076,7 +1076,7 @@ spatialGraph.render(results);
 
 ---
 
-### v7.0 (2027 Q1-Q2) - Spatial & Edge Intelligence
+### vlatest (2027 Q1-Q2) - Spatial & Edge Intelligence
 
 **Theme**: Immersive knowledge graphs and edge AI
 
@@ -1107,7 +1107,7 @@ spatialGraph.render(results);
 
 ---
 
-### v7.5 (2027 Q3-Q4) - Production Hardening
+### vlatest (2027 Q3-Q4) - Production Hardening
 
 **Theme**: Enterprise-grade spatial and edge features
 
@@ -1136,7 +1136,7 @@ spatialGraph.render(results);
 
 ---
 
-### v8.0 (2028-2030) - Neuromorphic & Quantum Era
+### vlatest (2028-2030) - Neuromorphic & Quantum Era
 
 **Theme**: Next-generation compute paradigms
 
@@ -1166,7 +1166,7 @@ spatialGraph.render(results);
 
 ---
 
-### v9.0+ (2030+) - Speculative Futures
+### vlatest+ (2030+) - Speculative Futures
 
 **Theme**: Biological and brain-scale computing
 
@@ -1220,21 +1220,21 @@ spatialGraph.render(results);
 4. ✅ **Evaluate edge IoT platforms**
 
 **Short-term (Q3-Q4 2026)**:
-1. ✅ **Ship RDF-star in v6.2**
-2. ✅ **Hybrid PQC receipts in v6.2**
-3. ✅ **WebXR foundation in v6.2**
-4. ✅ **GeoSPARQL support in v6.3**
+1. ✅ **Ship RDF-star in vlatest**
+2. ✅ **Hybrid PQC receipts in vlatest**
+3. ✅ **WebXR foundation in vlatest**
+4. ✅ **GeoSPARQL support in vlatest**
 
 **Mid-term (2027)**:
-1. ✅ **Production spatial KG platform in v7.0**
-2. ✅ **Semantic IoT edge in v7.0**
-3. ✅ **Neuro-symbolic reasoning beta in v7.0**
-4. ✅ **Property graph bridge alpha in v7.0**
+1. ✅ **Production spatial KG platform in vlatest**
+2. ✅ **Semantic IoT edge in vlatest**
+3. ✅ **Neuro-symbolic reasoning beta in vlatest**
+4. ✅ **Property graph bridge alpha in vlatest**
 
 **Long-term (2028-2030)**:
-1. ✅ **Neuromorphic KG embeddings production in v8.0**
-2. ✅ **Full PQC migration in v8.0**
-3. ✅ **Holographic projection alpha in v8.0**
+1. ✅ **Neuromorphic KG embeddings production in vlatest**
+2. ✅ **Full PQC migration in vlatest**
+3. ✅ **Holographic projection alpha in vlatest**
 
 ### Next Steps
 
@@ -1250,24 +1250,24 @@ spatialGraph.render(results);
 
 | # | Innovation | Category | TRL | Timeline | Effort |
 |---|------------|----------|-----|----------|--------|
-| 1 | Post-Quantum Receipts | Quantum | 7/10 | v6.2 (2026 Q4) | 4-6 months |
-| 2 | Quantum-Resistant Merkle Trees | Quantum | 6/10 | v6.2 (2026 Q4) | 3-4 months |
-| 3 | Quantum RNG | Quantum | 8/10 | v6.2 (2026 Q4) | 1-2 months |
-| 4 | Spatial KG Visualization | XR | 7/10 | v7.0 (2027 Q2) | 6-8 months |
-| 5 | Geo-Spatial RDF | XR | 8/10 | v6.3 (2026 Q4) | 3-4 months |
-| 6 | Holographic Projection | XR | 5/10 | v8.0+ (2028+) | 4-6 months |
-| 7 | Haptic Interaction | XR | 6/10 | v7.5 (2027 Q4) | 2-3 months |
-| 8 | SNN Knowledge Embeddings | Neuromorphic | 4/10 | v8.0 (2028) | 9-12 months |
-| 9 | Neuro-Symbolic Reasoning | Neuromorphic | 6/10 | v7.0 (2027) | 8-10 months |
-| 10 | Temporal SNN Encoding | Neuromorphic | 3/10 | v8.0+ (2029+) | 12-18 months |
-| 11 | Energy-Aware Inference | Neuromorphic | 4/10 | v8.0 (2028) | 6-9 months |
-| 12 | RDF-star Integration | Standards | 9/10 | v6.2 (2026 Q4) | 2-3 months |
-| 13 | Property Graph Bridge | Standards | 6/10 | v7.5 (2027 Q4) | 6-9 months |
-| 14 | SHACL-star Validation | Standards | 5/10 | v7.0 (2027 Q2) | 4-6 months |
-| 15 | Semantic Sensor Fusion | IoT/Edge | 7/10 | v7.0 (2027 Q2) | 6-8 months |
-| 16 | Federated Learning KG | IoT/Edge | 6/10 | v8.0 (2028) | 9-12 months |
-| 17 | DNA Storage | Speculative | 2/10 | v9.0+ (2030+) | 18-24 months |
-| 18 | Brain-Computer Interfaces | Speculative | 3/10 | v9.0+ (2030+) | 24+ months |
+| 1 | Post-Quantum Receipts | Quantum | 7/10 | vlatest (2026 Q4) | 4-6 months |
+| 2 | Quantum-Resistant Merkle Trees | Quantum | 6/10 | vlatest (2026 Q4) | 3-4 months |
+| 3 | Quantum RNG | Quantum | 8/10 | vlatest (2026 Q4) | 1-2 months |
+| 4 | Spatial KG Visualization | XR | 7/10 | vlatest (2027 Q2) | 6-8 months |
+| 5 | Geo-Spatial RDF | XR | 8/10 | vlatest (2026 Q4) | 3-4 months |
+| 6 | Holographic Projection | XR | 5/10 | vlatest+ (2028+) | 4-6 months |
+| 7 | Haptic Interaction | XR | 6/10 | vlatest (2027 Q4) | 2-3 months |
+| 8 | SNN Knowledge Embeddings | Neuromorphic | 4/10 | vlatest (2028) | 9-12 months |
+| 9 | Neuro-Symbolic Reasoning | Neuromorphic | 6/10 | vlatest (2027) | 8-10 months |
+| 10 | Temporal SNN Encoding | Neuromorphic | 3/10 | vlatest+ (2029+) | 12-18 months |
+| 11 | Energy-Aware Inference | Neuromorphic | 4/10 | vlatest (2028) | 6-9 months |
+| 12 | RDF-star Integration | Standards | 9/10 | vlatest (2026 Q4) | 2-3 months |
+| 13 | Property Graph Bridge | Standards | 6/10 | vlatest (2027 Q4) | 6-9 months |
+| 14 | SHACL-star Validation | Standards | 5/10 | vlatest (2027 Q2) | 4-6 months |
+| 15 | Semantic Sensor Fusion | IoT/Edge | 7/10 | vlatest (2027 Q2) | 6-8 months |
+| 16 | Federated Learning KG | IoT/Edge | 6/10 | vlatest (2028) | 9-12 months |
+| 17 | DNA Storage | Speculative | 2/10 | vlatest+ (2030+) | 18-24 months |
+| 18 | Brain-Computer Interfaces | Speculative | 3/10 | vlatest+ (2030+) | 24+ months |
 
 ---
 
@@ -1282,17 +1282,17 @@ spatialGraph.render(results);
 5. [State of the post-quantum Internet in 2025](https://blog.cloudflare.com/pq-2025/)
 6. [2026 AR VR: The Year the Digital and Physical Worlds Truly Merge](https://inairspace.com/blogs/learn-with-inair/2026-ar-vr-the-year-the-digital-and-physical-worlds-truly-merge)
 7. [Transforming enterprise data visualization: unlocking the potential of virtual reality through metaphoric knowledge graph visualizations](https://www.researchgate.net/publication/375126691_Transforming_enterprise_data_visualization_unlocking_the_potential_of_virtual_reality_through_metaphoric_knowledge_graph_visualizations)
-8. [Transforming graph data visualisations from 2D displays into augmented reality 3D space](https://www.frontiersin.org/journals/virtual-reality/articles/10.3389/frvir.2023.1155628/full)
+8. [Transforming graph data visualisations from 2D displays into augmented reality 3D space](https://www.frontiersin.org/journals/virtual-reality/articles/latest/frvir.latest/full)
 9. [From Sensors to Data Intelligence: Leveraging IoT, Cloud, and Edge Computing with AI](https://www.mdpi.com/1424-8220/25/6/1763)
 10. [Collecting, Integrating and Processing IoT Sensor Data on Edge Devices](https://www.mdpi.com/2076-3417/15/19/10541)
 11. [15 Edge Computing Trends to Watch in 2025 and Beyond](https://www.techtarget.com/searchcio/tip/Top-edge-computing-trends-to-watch-in-2020)
-12. [Neuromorphic Knowledge Representation: SNN-Based Relational Inference](https://link.springer.com/chapter/10.1007/978-3-031-98284-2_13)
-13. [AI-Powered Knowledge Graphs for Neuromorphic and Energy-Efficient Computing](https://dl.acm.org/doi/10.1145/3716368.3735295)
-14. [Learning through structure: towards deep neuromorphic knowledge graph embeddings](https://arxiv.org/abs/2109.10376)
+12. [Neuromorphic Knowledge Representation: SNN-Based Relational Inference](https://link.springer.com/chapter/latest/978-3-031-98284-2_13)
+13. [AI-Powered Knowledge Graphs for Neuromorphic and Energy-Efficient Computing](https://dl.acm.org/doi/latest/latest)
+14. [Learning through structure: towards deep neuromorphic knowledge graph embeddings](https://arxiv.org/abs/latest)
 15. [Bridging Neurons and Symbols for Natural Language Processing and Knowledge Graphs Reasoning @ AAAI 2026](https://neusymbridge.github.io/)
 16. [RDF-star and SPARQL-star W3C Draft](https://w3c.github.io/rdf-star/cg-spec/editors_draft.html)
 17. [What Is RDF-star | Ontotext Fundamentals](https://www.ontotext.com/knowledgehub/fundamentals/what-is-rdf-star/)
-18. [RDF-star and SPARQL-star — GraphDB Documentation](https://graphdb.ontotext.com/documentation/11.1/rdf-sparql-star.html)
+18. [RDF-star and SPARQL-star — GraphDB Documentation](https://graphdb.ontotext.com/documentation/latest/rdf-sparql-star.html)
 19. [RDF vs. Property Graphs: Choosing the Right Approach for Knowledge Graphs](https://neo4j.com/blog/knowledge-graph/rdf-vs-property-graphs-knowledge-graphs/)
 20. [Transforming RDF-star to Property Graphs](https://ceur-ws.org/Vol-3279/paper2.pdf)
 

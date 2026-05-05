@@ -226,5 +226,5 @@ A: Domains 1, 2, 3, 4 are critical. Complete those first. Domains 5-10 follow.
 ---
 
 **Last Updated**: 2025-12-27  
-**Specification Version**: 1.0.0  
+**Specification Version**: latest  
 **Status**: Implementation Ready

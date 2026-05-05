@@ -6,7 +6,7 @@
  * Supports subject-predicate-object queries with global secondary indexes.
  *
  * @module serverless/storage/dynamodb-adapter
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 

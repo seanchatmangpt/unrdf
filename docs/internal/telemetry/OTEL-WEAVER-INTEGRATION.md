@@ -28,7 +28,7 @@ All three layers share the same trace ID, enabling end-to-end distributed tracin
 Defines semantic conventions, code generation, and instrumentation rules:
 
 ```yaml
-version: 1.0.0
+version: latest
 project_name: unrdf-kgc-sidecar
 
 registry:
@@ -237,7 +237,7 @@ import { initializeOTelSDK, shutdownOTelSDK } from './integrations/otel-sdk.mjs'
 // Called in daemon.start()
 await initializeOTelSDK({
   serviceName: 'unrdf-daemon',
-  version: '26.5.4',
+  version: 'latest',
   environment: process.env.NODE_ENV || 'development',
   otlpEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'localhost:4317',
 });

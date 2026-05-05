@@ -1,8 +1,8 @@
-# vm2 → isolated-vm Migration (v3.1.0)
+# vm2 → isolated-vm Migration (vlatest)
 
 ## Overview
 
-UNRDF v3.1.0 migrates from the deprecated `vm2` package to `isolated-vm` for secure sandbox execution. This migration provides:
+UNRDF vlatest migrates from the deprecated `vm2` package to `isolated-vm` for secure sandbox execution. This migration provides:
 
 - **Full V8 isolation** - Each execution runs in a separate V8 isolate
 - **Enhanced security** - 13 threat patterns blocked (VM escape, prototype pollution, etc.)
@@ -35,7 +35,7 @@ UNRDF v3.1.0 migrates from the deprecated `vm2` package to `isolated-vm` for sec
 
 ```json
 {
-  "isolated-vm": "^6.0.2"
+  "isolated-vm": "^latest"
 }
 ```
 
@@ -81,16 +81,16 @@ UNRDF v3.1.0 migrates from the deprecated `vm2` package to `isolated-vm` for sec
 | Metric | Target | Actual |
 |--------|--------|--------|
 | First execution | < 50ms | ~30-40ms |
-| Subsequent executions | < 0.1ms | ~5-8ms |
+| Subsequent executions | < latestms | ~5-8ms |
 | Memory per isolate | < 5MB | ~2-4MB |
-| Performance overhead vs v3.0.0 | < 10% | ~5-8% |
+| Performance overhead vs vlatest | < 10% | ~5-8% |
 
 ### Benchmarks
 
 - **Simple arithmetic**: ~5ms
 - **Array operations**: ~7ms
 - **JSON parsing**: ~6ms
-- **100 sequential executions**: ~1.5s (avg 15ms/execution)
+- **100 sequential executions**: ~latests (avg 15ms/execution)
 
 ## API Compatibility
 
@@ -177,7 +177,7 @@ console.log(env);
 // {
 //   isNode: true,
 //   isBrowser: false,
-//   nodeVersion: '18.19.0',
+//   nodeVersion: 'latest',
 //   platform: 'linux'
 // }
 
@@ -232,7 +232,7 @@ security.isolate.execute
 ├── security.execution.id: "exec_..."
 ├── security.code.hash: "sha256..."
 ├── security.threats.count: 0
-├── security.execution.duration: 12.5
+├── security.execution.duration: latest
 └── security.execution.success: true
 ```
 
@@ -243,7 +243,7 @@ const stats = executor.getStats();
 // {
 //   type: 'isolated-vm',
 //   executionCount: 1234,
-//   averageDuration: 8.5,
+//   averageDuration: latest,
 //   activeIsolates: 2
 // }
 ```
@@ -293,20 +293,20 @@ const adapter = new SandboxAdapter({ engine: 'vm2' });
 
 ## Rollout Plan
 
-### Phase 1: v3.1.0 (Current)
+### Phase 1: vlatest (Current)
 - ✅ Add isolated-vm dependency
 - ✅ Create executor infrastructure
 - ✅ Update effect-sandbox and sandbox-adapter
 - ✅ Add comprehensive tests
 - ✅ Maintain backward compatibility
 
-### Phase 2: v3.2.0 (Future)
+### Phase 2: vlatest (Future)
 - Remove vm2 from dependencies
 - Make isolated-vm required
 - Remove vm2 executor
 - Update documentation
 
-### Phase 3: v4.0.0 (Future)
+### Phase 3: vlatest (Future)
 - Remove all vm2 references
 - Make isolated-vm the only executor
 
@@ -361,7 +361,7 @@ console.log(`Active isolates: ${stats.activeIsolates}`);
 
 - **isolated-vm docs**: https://github.com/laverdet/isolated-vm
 - **vm2 deprecation**: https://github.com/patriksimek/vm2/issues/533
-- **UNRDF v3.1.0 PRD**: `/docs/v3.1.0-PRD.md` (if exists)
+- **UNRDF vlatest PRD**: `/docs/vlatest.md` (if exists)
 - **Security tests**: `/test/knowledge-engine/sandbox/isolated-vm.test.mjs`
 
 ## Summary
@@ -370,7 +370,7 @@ The vm2 → isolated-vm migration successfully:
 
 ✅ **Enhanced security** - 13 threat patterns blocked with V8 isolation
 ✅ **Maintained compatibility** - Zero breaking changes to existing APIs
-✅ **Improved performance** - < 10% overhead vs v3.0.0
+✅ **Improved performance** - < 10% overhead vs vlatest
 ✅ **Added auto-detection** - Automatically selects best available executor
 ✅ **Comprehensive testing** - 30+ security and performance tests
 ✅ **OTEL instrumentation** - Full observability with traces and metrics

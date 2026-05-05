@@ -1,4 +1,4 @@
-# COMPREHENSIVE OTEL VALIDATION REPORT - UNRDF v5.0.1
+# COMPREHENSIVE OTEL VALIDATION REPORT - UNRDF vlatest
 
 **Execution Date:** 2025-12-25 09:47-09:50 UTC
 **Validation Mode:** Production Readiness Assessment
@@ -10,11 +10,11 @@
 
 **FINAL VERDICT: ❌ NOT READY FOR PRODUCTION**
 
-**Overall Score: 61.85/100**
+**Overall Score: latest/100**
 
 **Critical Blockers:** 4
 **Quick Wins Available:** 2 (40 minutes to conditional release)
-**Production Ready ETA:** 1.5-2 hours with blocker fixes
+**Production Ready ETA:** latest hours with blocker fixes
 
 ---
 
@@ -28,19 +28,19 @@
 - **Status:** PASSED (≥80 threshold) but with 1 critical failure
 - **Duration:** 4418ms
 - **Features Tested:** 6
-- **Passed:** 5/6 (83.3%)
-- **Failed:** 1/6 (16.7%)
+- **Passed:** 5/6 (latest%)
+- **Failed:** 1/6 (latest%)
 
 ### Feature Breakdown
 
 | Feature | Score | Latency | Throughput | Memory | Status |
 |---------|-------|---------|------------|--------|--------|
-| knowledge-engine-core | 100/100 | 9.6ms | 5 ops | 12.06MB | ✅ PASS |
+| knowledge-engine-core | 100/100 | latestms | 5 ops | latestMB | ✅ PASS |
 | knowledge-hooks-api | 0/100 | 0ms | 0 ops | 0MB | ❌ FAIL |
-| policy-packs | 100/100 | 11ms | 3 ops | 13.02MB | ✅ PASS |
-| lockchain-integrity | 100/100 | 12.3ms | 3 ops | 13.17MB | ✅ PASS |
-| transaction-manager | 100/100 | 6.7ms | 3 ops | 9.99MB | ✅ PASS |
-| browser-compatibility | 100/100 | 17.7ms | 3 ops | 10.16MB | ✅ PASS |
+| policy-packs | 100/100 | 11ms | 3 ops | latestMB | ✅ PASS |
+| lockchain-integrity | 100/100 | latestms | 3 ops | latestMB | ✅ PASS |
+| transaction-manager | 100/100 | latestms | 3 ops | latestMB | ✅ PASS |
+| browser-compatibility | 100/100 | latestms | 3 ops | latestMB | ✅ PASS |
 
 ### ❌ Critical Failure
 
@@ -50,10 +50,10 @@
 
 ### Performance Summary
 
-- Average Latency: 9.5ms (excluding failed feature)
+- Average Latency: latestms (excluding failed feature)
 - Total Throughput: 17 operations
-- Memory Usage: 11.68MB average
-- Error Rate: 0.00% (on passing features)
+- Memory Usage: latestMB average
+- Error Rate: latest% (on passing features)
 - Execution Efficiency: EXCELLENT
 
 **Gate Status:** ⚠️ CONDITIONAL PASS
@@ -68,8 +68,8 @@
 ### Results
 
 - **Score:** 8/10 PASSED (80%)
-- **Execution Time:** 898.71ms
-- **Module Load Time:** 893.93ms
+- **Execution Time:** latestms
+- **Module Load Time:** latestms
 
 ### Validation Breakdown
 
@@ -90,7 +90,7 @@
 
 - **Reconstructible/Time Travel:** Related features requiring nanosecond precision
 - **Impact:** Historical state reconstruction limited
-- **Severity:** MEDIUM (acceptable for v5.0.1)
+- **Severity:** MEDIUM (acceptable for vlatest)
 
 **Gate Status:** ✅ PASS
 
@@ -129,7 +129,7 @@
 
 | Package | Tests | Status | Notes |
 |---------|-------|--------|-------|
-| @unrdf/graph-analytics | 17 | ✅ PASSED | 4 files, 2.62s, 63% coverage |
+| @unrdf/graph-analytics | 17 | ✅ PASSED | 4 files, latests, 63% coverage |
 | @unrdf/atomvm | 45 | ✅ PASSED | 6 files, browser + node |
 | @unrdf/docs | 6 | ⚠️ PARTIAL | 6 PASSED, 7 suites FAILED (ECONNREFUSED localhost:3000) |
 | @unrdf/domain | - | ⏭️ SKIPPED | type-only package |
@@ -147,12 +147,12 @@
 ### ❌ Critical Issue
 
 **@unrdf/docs:** 7 E2E test suites failing
-**Error:** ECONNREFUSED 127.0.0.1:3000
+**Error:** ECONNREFUSED latest.1:3000
 **Root Cause:** Tests require running dev server (not production-critical)
 
 ### Coverage Analysis
 
-- graph-analytics: 63.46% statement coverage (needs improvement)
+- graph-analytics: latest% statement coverage (needs improvement)
 - Other packages: Coverage data not collected in this run
 
 **Gate Status:** ⚠️ CONDITIONAL PASS
@@ -228,13 +228,13 @@
 ### Results
 
 - **Target:** <15s (preferably 6-8s)
-- **Actual:** 0.998s ✅
+- **Actual:** latests ✅
 
 ### Build Performance
 
-- Real Time: 0.998s
-- User Time: 0.930s
-- System Time: 0.140s
+- Real Time: latests
+- User Time: latests
+- System Time: latests
 - Result: No projects matched filters (build scripts conditional)
 
 **Gate Status:** ✅ EXCELLENT
@@ -288,7 +288,7 @@
 | Linting: 0 errors | 0 | 0 | ✅ PASS |
 | Linting: <10 warnings | <10 | 7 | ❌ FAIL |
 | File Sizes: 0 files >500 | 0 | 68 | ❌ FAIL |
-| Build Time <15s | <15s | 0.998s | ✅ PASS |
+| Build Time <15s | <15s | latests | ✅ PASS |
 | Architecture Grade ≥A | ≥90 | - | ⚠️ N/A |
 
 ### SUPPLEMENTARY GATES
@@ -305,14 +305,14 @@
 
 | Category | Score | Weight | Weighted Score |
 |----------|-------|--------|----------------|
-| OTEL Validation | 83/100 | 35% | 29.05/35 |
-| Test Suite | 75/100 | 25% | 18.75/25 |
+| OTEL Validation | 83/100 | 35% | latest/35 |
+| Test Suite | 75/100 | 25% | latest/25 |
 | Linting | 0/100 | 15% | 0/15 |
 | File Size Compliance | 0/100 | 10% | 0/10 |
 | Build Performance | 100/100 | 5% | 5/5 |
 | N3 Migration | 100/100 | 5% | 5/5 |
 | YAWL Validation | 80/100 | 5% | 4/5 |
-| **TOTAL** | | | **61.85/100** |
+| **TOTAL** | | | **latest/100** |
 
 ---
 
@@ -348,7 +348,7 @@
 
 - ✅ OTEL score 83/100 exceeds 80 threshold
 - ✅ N3 migration 100% complete (zero violations)
-- ✅ Build time exceptional (0.998s << 15s target)
+- ✅ Build time exceptional (latests << 15s target)
 - ✅ YAWL press release claims 80% validated
 - ✅ Core tests passing (graph-analytics, atomvm)
 
@@ -367,7 +367,7 @@
 
 | Milestone | Changes | Time | Score | Status |
 |-----------|---------|------|-------|--------|
-| Current State | - | - | 61.85/100 | ❌ NOT READY |
+| Current State | - | - | latest/100 | ❌ NOT READY |
 | Quick Wins | Linting + E2E fixes | 40 min | 70/100 | ⚠️ CONDITIONAL |
 | + OTEL Fix | Hooks API spans | +1 hour | 75/100 | ✅ PRODUCTION READY |
 | Full Compliance | File size refactoring | +2-4 hours | 85/100 | 🏆 GOLD STANDARD |
@@ -384,7 +384,7 @@ All claims in this report are backed by actual command execution:
 4. Test Suite: `timeout 15s pnpm test` (mixed results, 68+ tests passing)
 5. Linting: `timeout 10s pnpm run lint` (exit 1, 7 warnings)
 6. File Sizes: `find packages -name "*.mjs" -exec wc -l {} \;` (68 files >500 lines)
-7. Build Time: `time timeout 20s pnpm run build` (0.998s)
+7. Build Time: `time timeout 20s pnpm run build` (latests)
 
 **Adversarial PM Standard:** Every metric verified through command output, not assumptions.
 

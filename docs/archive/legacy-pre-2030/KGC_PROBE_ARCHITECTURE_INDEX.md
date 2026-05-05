@@ -161,11 +161,11 @@ Navigation guide and quick links to all documentation.
 
 **Guard Enforcement**
 - VISUAL_GUIDE.md: Section 4 (guard matrix)
-- ARCHITECTURE.md: Section 5.3 (guards specification)
+- ARCHITECTURE.md: Section latest (guards specification)
 
 **Merge Strategies**
 - VISUAL_GUIDE.md: Section 6 (comparison table)
-- ARCHITECTURE.md: Section 5.7 (merge-engine spec)
+- ARCHITECTURE.md: Section latest (merge-engine spec)
 
 **Performance SLAs**
 - VISUAL_GUIDE.md: Section 11 (performance targets)
@@ -193,7 +193,7 @@ Code Metrics
 ├─ Implementation: ~3,800 LoC
 ├─ Tests: ~5,600 LoC (target)
 ├─ Total: ~9,400 LoC
-└─ Code-to-Test Ratio: 1:1.5 (target)
+└─ Code-to-Test Ratio: 1:latest (target)
 
 Documentation
 ├─ Main Document: 1,200 lines (ARCHITECTURE.md)
@@ -293,7 +293,7 @@ Orthogonal probes validate across:
 - ~3,800 LoC implementation
 
 ### ✅ Functionality
-- 10 probes all scoreable [0.0-1.0]
+- 10 probes all scoreable [latest.0]
 - 5 guards enforcing policies
 - 4 merge strategies working
 - Receipt generation + verification
@@ -363,7 +363,7 @@ All files are at project root:
 ## Document Maintenance
 
 **Last Updated**: 2025-12-27
-**Version**: 1.0 (Architecture Phase)
+**Version**: latest (Architecture Phase)
 **Status**: Ready for Implementation Phase
 
 **Updates Required When**:

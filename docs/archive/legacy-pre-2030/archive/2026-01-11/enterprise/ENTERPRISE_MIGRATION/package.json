@@ -1,6 +1,6 @@
 {
   "name": "enterprise-migration",
-  "version": "1.0.0",
+  "version": "0.0.0-agnostic",
   "description": "Enterprise migration system for UNRDF substrate platform - 10-agent orchestrated migration from legacy systems",
   "type": "module",
   "private": true,

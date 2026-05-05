@@ -17,9 +17,9 @@
     "latencyP50": "cap:latencyP50",
     "latencyP99": "cap:latencyP99"
   },
-  "@id": "urn:playground:capability-registry:v1.0.0",
+  "@id": "urn:playground:capability-registry:latest",
   "@type": "cap:CapabilityRegistry",
-  "version": "1.0.0",
+  "version": "latest",
   "generatedAt": "2025-11-22T00:00:00Z",
   "capabilities": [
     {
@@ -27,7 +27,7 @@
       "@type": "cap:Capability",
       "name": "papers generate",
       "description": "Generate research paper from template using specified family structure",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground papers generate [family] --title <title> --author <author>",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "title argument provided", "required": true},
@@ -68,7 +68,7 @@
       "@type": "cap:Capability",
       "name": "papers list",
       "description": "List all available paper families with optional detailed information",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground papers list [--verbose]",
       "preconditions": [],
       "postconditions": [
@@ -91,7 +91,7 @@
       "@type": "cap:Capability",
       "name": "papers validate",
       "description": "Validate paper structure against family schema and SHACL constraints",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground papers validate <path> [--strict]",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "path argument provided", "required": true},
@@ -122,7 +122,7 @@
       "@type": "cap:Capability",
       "name": "thesis generate",
       "description": "Generate thesis document structure using specified type",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground thesis generate [type] --title <title> --author <author>",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "title argument provided", "required": true},
@@ -159,7 +159,7 @@
       "@type": "cap:Capability",
       "name": "thesis list",
       "description": "List all available thesis types",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground thesis list [--verbose]",
       "preconditions": [],
       "postconditions": [
@@ -182,7 +182,7 @@
       "@type": "cap:Capability",
       "name": "thesis schedule list",
       "description": "Display current thesis schedule and milestones",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground thesis schedule list [--format]",
       "preconditions": [],
       "postconditions": [
@@ -204,7 +204,7 @@
       "@type": "cap:Capability",
       "name": "thesis schedule set",
       "description": "Configure thesis schedule with defense date or milestones",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground thesis schedule set [--defense] [--milestone]",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "at least one of --defense or --milestone provided", "required": true}
@@ -232,7 +232,7 @@
       "@type": "cap:Capability",
       "name": "config set",
       "description": "Set a configuration value by key",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground config set <key> <value>",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "key matches pattern ^[a-z]+(\\.[a-z]+)*$", "required": true}
@@ -259,7 +259,7 @@
       "@type": "cap:Capability",
       "name": "config get",
       "description": "Get a configuration value by key",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground config get <key>",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "key exists in config", "required": true}
@@ -286,7 +286,7 @@
       "@type": "cap:Capability",
       "name": "config list",
       "description": "List all configuration values",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground config list [--defaults]",
       "preconditions": [],
       "postconditions": [
@@ -309,7 +309,7 @@
       "@type": "cap:Capability",
       "name": "config reset",
       "description": "Reset configuration to defaults",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground config reset [--confirm] [--key]",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "--confirm flag or --key specified", "required": true}
@@ -336,7 +336,7 @@
       "@type": "cap:Capability",
       "name": "meta introspect",
       "description": "Machine-grade introspection of CLI capabilities",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta introspect [--format] [--section]",
       "preconditions": [],
       "postconditions": [
@@ -359,7 +359,7 @@
       "@type": "cap:Capability",
       "name": "meta ontology list",
       "description": "List RDF classes and properties from ontology",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta ontology list [--verbose] [--type]",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "ontology file loaded", "required": true}
@@ -387,7 +387,7 @@
       "@type": "cap:Capability",
       "name": "meta sparql",
       "description": "Execute SPARQL query against loaded ontologies",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta sparql <query> [--file] [--format]",
       "preconditions": [
         {"@type": "cap:Precondition", "condition": "query or --file provided", "required": true}
@@ -418,7 +418,7 @@
       "@type": "cap:Capability",
       "name": "meta completions",
       "description": "Generate shell completions for specified shell",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta completions <shell>",
       "preconditions": [],
       "postconditions": [
@@ -442,7 +442,7 @@
       "@type": "cap:Capability",
       "name": "meta middleware list",
       "description": "List active middleware components",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta middleware list [--format]",
       "preconditions": [],
       "postconditions": [
@@ -464,7 +464,7 @@
       "@type": "cap:Capability",
       "name": "meta telemetry",
       "description": "Export execution metrics in specified format",
-      "version": "1.0.0",
+      "version": "latest",
       "command": "playground meta telemetry [format] [--output] [--timeframe]",
       "preconditions": [],
       "postconditions": [

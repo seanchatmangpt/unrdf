@@ -19,8 +19,8 @@ The LaTeX→PDF pipeline integrates several external components. This document p
 |-----------|---------|---------|------|---------|
 | SwiftLaTeX (XeTeX) | 2021.3 | MIT + TeX LPPL | 43 MB | TeX engine (WASM) |
 | SwiftLaTeX (PDFLaTeX) | 2021.3 | MIT + TeX LPPL | 34 MB | TeX engine (WASM) |
-| Zod | ^3.23.0 | MIT | ~50 KB | Schema validation |
-| Node.js | ≥18.0.0 | MIT | N/A | Runtime (user-provided) |
+| Zod | ^[VERSION] | MIT | ~50 KB | Schema validation |
+| Node.js | ≥[VERSION] | MIT | N/A | Runtime (user-provided) |
 
 **Total bundled size**: ~77 MB (WASM binaries) + ~50 KB (npm dependencies)
 
@@ -215,7 +215,7 @@ const options = CompileOptionsSchema.parse(userInput);
 
 **Project**: https://nodejs.org/
 **License**: MIT
-**Requirement**: ≥18.0.0 (user-provided, not bundled)
+**Requirement**: ≥[VERSION] (user-provided, not bundled)
 
 ### License
 
@@ -483,7 +483,7 @@ License compatibility, attribution requirements...
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2025-12-27 | Initial release (SwiftLaTeX 2021.3, Zod 3.23.0) |
+| [VERSION] | 2025-12-27 | Initial release (SwiftLaTeX 2021.3, Zod [VERSION]) |
 
 ### Security Audits
 

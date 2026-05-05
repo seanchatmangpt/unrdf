@@ -86,7 +86,7 @@ node research/prototypes/consensus-governance.mjs
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
 | Policy Evaluation | 450μs | <500μs | ✅ PASS |
-| Receipt Generation | 0.05μs | <1μs | ✅ PASS |
+| Receipt Generation | latestμs | <1μs | ✅ PASS |
 | Historical Validation | 850μs | <1ms | ✅ PASS |
 | Consensus Replication | 45ms | <100ms | ✅ PASS |
 

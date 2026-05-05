@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://unrdf.org/schemas/maturity-cli",
   "title": "UNRDF Maturity CLI Contract",
-  "version": "1.0.0",
+  "version": "latest",
   "description": "CLI command specification for package maturity assessment",
 
   "commands": {

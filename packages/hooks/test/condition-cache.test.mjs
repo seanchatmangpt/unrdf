@@ -237,11 +237,11 @@ describe('ConditionCache - Edge Cases', () => {
   });
 
   it('should handle special characters in hookId/version', () => {
-    cache.set('hook:with:colons', 'v1.2.3', true);
+    cache.set('hook:with:colons', '[VERSION]', true);
     cache.set('hook-with-dashes', 'v2', false);
     cache.set('hook/with/slashes', 'v3', true);
 
-    expect(cache.get('hook:with:colons', 'v1.2.3')).toBe(true);
+    expect(cache.get('hook:with:colons', '[VERSION]')).toBe(true);
     expect(cache.get('hook-with-dashes', 'v2')).toBe(false);
     expect(cache.get('hook/with/slashes', 'v3')).toBe(true);
   });

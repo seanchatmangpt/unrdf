@@ -841,5 +841,5 @@ docker-compose down
 - **[Explanation: YAWL-Nitro Architecture](/docs/diataxis/explanation/yawl-nitro-architecture.md)** - Architecture deep-dive
 - **[Example: YAWL-Nitro Workflow](/examples/yawl-nitro-workflow.mjs)** - Production example
 
-**Version**: 1.0.0
+**Version**: latest
 **Last Updated**: 2026-01-11

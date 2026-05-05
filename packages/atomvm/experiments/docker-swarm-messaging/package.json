@@ -1,6 +1,6 @@
 {
   "name": "docker-swarm-messaging",
-  "version": "26.5.4",
+  "version": "0.0.0-agnostic",
   "type": "module",
   "scripts": {
     "test": "vitest run",

@@ -46,7 +46,7 @@ The UNRDF monorepo demonstrates **production-grade quality** with comprehensive 
 
 ## 2. PACKAGE-BY-PACKAGE ASSESSMENT
 
-### 2.1 @unrdf/atomvm (v5.0.1)
+### 2.1 @unrdf/atomvm ([VERSION])
 
 **Package Purpose**: Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly
 

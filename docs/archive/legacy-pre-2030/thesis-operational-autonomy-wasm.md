@@ -5,7 +5,7 @@
 **Candidate:** Sean Chatman
 **Institution:** ChatmanGPT Research
 **Date:** April 2026
-**Program:** pictl v26.4.10 — Process Mining in WebAssembly
+**Program:** pictl latest — Process Mining in WebAssembly
 
 ---
 
@@ -755,7 +755,7 @@ All five modules are tested under `cargo test --lib` with 60 total tests:
 ### 11.2 Compilation Metrics
 
 ```
-cargo check --lib (pictl v26.4.10):
+cargo check --lib (pictl latest):
   0 errors
   2 warnings (pre-existing in smart_engine.rs, not from ported code)
   12.7s build time (incremental)
@@ -797,9 +797,9 @@ The benchmark harness is registered in `Cargo.toml` with `harness = false` (Crit
 
 ### 11.5 Performance Benchmarks
 
-All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results are reported as mean latency with 95% confidence intervals.
+All 41 benchmarks were executed on Apple Silicon (macOS Darwin latest). Results are reported as mean latency with 95% confidence intervals.
 
-#### 11.5.1 Guard Evaluation Engine (9 benchmarks)
+#### latest Guard Evaluation Engine (9 benchmarks)
 
 | Benchmark | Mean Latency | 95% CI | Thesis Target | Margin |
 |-----------|-------------|--------|---------------|--------|
@@ -816,7 +816,7 @@ All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results 
 
 **Key finding:** The GuardCompiler produces closures that execute in 1.81 ns — 2.2× faster than the generic `evaluate()` path (3.99 ns). TTL cache hits (2.57 ns) avoid the full evaluation cost, while cache misses (107.63 ns) pay the evaluation cost plus HashMap insertion. The compiled closure is 1.4× faster than even a cache hit.
 
-#### 11.5.2 43-Pattern Dispatch Table (11 benchmarks)
+#### latest 43-Pattern Dispatch Table (11 benchmarks)
 
 | Benchmark | Mean Latency | 95% CI | Thesis Target | Margin |
 |-----------|-------------|--------|---------------|--------|
@@ -834,7 +834,7 @@ All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results 
 
 **Key finding:** Single-pattern dispatch is consistently ~4.7 ns regardless of pattern type — the `unsafe get_unchecked` array indexing eliminates branch prediction variance. Dispatching all 43 patterns (full enumeration) costs 126 ns — approximately 2.9 ns per pattern, consistent with the per-pattern cost. Pattern validation (soundness check) costs 23.4 ns — approximately 5× a single dispatch.
 
-#### 11.5.3 Reinforcement Learning Agents (7 benchmarks)
+#### latest Reinforcement Learning Agents (7 benchmarks)
 
 | Benchmark | Mean Latency | 95% CI | Thesis Target | Margin |
 |-----------|-------------|--------|---------------|--------|
@@ -848,7 +848,7 @@ All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results 
 
 **Key finding:** Q-learning updates (45.65 ns) are 44% slower than SARSA updates (31.69 ns) due to the `max_a' Q(s', a')` argmax operation. The ε-greedy selection is identical for both agents (~17 ns for Q-learning vs ~32 ns for SARSA, the latter including the on-policy action selection in the same benchmark). A 100-step episode with exploration decay costs 11.66 µs (116.6 ns/step amortized), well within the budget for real-time routing decisions.
 
-#### 11.5.4 Self-Healing Automation (9 benchmarks)
+#### latest Self-Healing Automation (9 benchmarks)
 
 | Benchmark | Mean Latency | 95% CI | Thesis Target | Margin |
 |-----------|-------------|--------|---------------|--------|
@@ -864,7 +864,7 @@ All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results 
 
 **Key finding:** Circuit breaker state transitions are the fastest protection primitive (2.17 ns for allow). The closed→open transition after 5 consecutive failures costs only 9.48 ns — a state machine with no heap allocation. Retry with jitter (12.06 ns) is 47% slower than without jitter (8.21 ns) due to the `fastrand` call, but still sub-15 ns. The SelfHealingManager initialization (69.58 ns) is dominated by HashMap allocation.
 
-#### 11.5.5 Statistical Process Control (9 benchmarks)
+#### latest Statistical Process Control (9 benchmarks)
 
 | Benchmark | Mean Latency | 95% CI | Thesis Target | Margin |
 |-----------|-------------|--------|---------------|--------|
@@ -884,7 +884,7 @@ All 41 benchmarks were executed on Apple Silicon (macOS Darwin 25.2.0). Results 
 
 A dedicated validation suite (`benches/autonomy_jtbd_validation.rs`) tests 25 claims drawn from the thesis JTBD matrix (Section 9.3). Each test validates a specific JTBD claim with a quantitative assertion.
 
-#### 11.6.1 Results Summary
+#### latest Results Summary
 
 ```
 running 25 tests
@@ -917,7 +917,7 @@ test test_jtbd_rl_self_healing_loop ................ ok
 test result: ok. 25 passed; 0 failed; 0 ignored
 ```
 
-#### 11.6.2 Validation Matrix
+#### latest Validation Matrix
 
 | # | JTBD Claim | Module | Test | Assertion | Result |
 |---|-----------|--------|------|-----------|--------|
@@ -1347,7 +1347,7 @@ The claw implements a **complete** autonomic control loop — all five MAPE-K fu
 
 [16] Jasper J. (2024). *Criterion.rs: Statistics-Driven Microbenchmarking in Rust*. [https://github.com/bheisler/criterion.rs](https://github.com/bheisler/criterion.rs)
 
-[17] Chatman, S. (2026). *JTBD Benchmark Suite for Operational Autonomy Modules*. pictl v26.4.10 Technical Report. `wasm4pm/benches/`
+[17] Chatman, S. (2026). *JTBD Benchmark Suite for Operational Autonomy Modules*. pictl latest Technical Report. `wasm4pm/benches/`
 
 [18] Kephart, J. O. & Chess, D. M. (2003). The Vision of Autonomic Computing. *IEEE Computer*, 36(1), 41–50.
 

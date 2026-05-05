@@ -436,7 +436,7 @@ console.log(`Heap: ${usage.heapUsed / 1024 / 1024} MB`);
 
 **If results differ significantly:**
 
-- Check Node.js version (should be >= 18.0.0)
+- Check Node.js version (should be >= [VERSION])
 - Verify zod is installed
 - Run with `--expose-gc` flag
 - Check system load (CPU/memory)

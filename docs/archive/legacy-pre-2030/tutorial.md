@@ -4,8 +4,8 @@ This tutorial will guide you through creating your first run capsule, checkpoint
 
 ## Prerequisites
 
-- Node.js >= 18.0.0
-- pnpm >= 7.0.0
+- Node.js >= latest
+- pnpm >= latest
 - Basic understanding of JavaScript/TypeScript
 - Familiarity with async/await patterns
 

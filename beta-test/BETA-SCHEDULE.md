@@ -1,7 +1,7 @@
 # UNRDF Multiverse - 7-Day Beta Soak Test Schedule
 
 **Duration**: 7 days (2025-12-30 to 2026-01-06)
-**Objective**: Validate stability, performance, and reliability before v6.0.0 production release
+**Objective**: Validate stability, performance, and reliability before v[VERSION] production release
 
 ---
 
@@ -126,7 +126,7 @@ node beta-test/error-injection.mjs
 - Memory stable (no leaks detected)
 - Performance within ±10% of Day 1 baseline
 - All previous tests still passing
-- **READY FOR v6.0.0 RELEASE**
+- **READY FOR v[VERSION] RELEASE**
 
 **Commands**:
 ```bash

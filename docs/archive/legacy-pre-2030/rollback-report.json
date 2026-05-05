@@ -4,8 +4,8 @@
   "duration": "0.87s",
   "snapshot": "unknown",
   "packageVersions": {
-    "root": "6.0.0-alpha.1",
-    "core": "5.0.1"
+    "root": "latest-alpha.1",
+    "core": "latest"
   },
   "validation": false
 }

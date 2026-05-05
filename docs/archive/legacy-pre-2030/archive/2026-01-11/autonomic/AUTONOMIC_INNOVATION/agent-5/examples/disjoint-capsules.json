@@ -5,7 +5,7 @@
     "add": [
       {
         "subject": "http://example.org/alice",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Alice\"",
         "graph": "http://example.org/graph1"
       }
@@ -21,7 +21,7 @@
     "add": [
       {
         "subject": "http://example.org/bob",
-        "predicate": "http://xmlns.com/foaf/0.1/name",
+        "predicate": "http://xmlns.com/foaf/latest/name",
         "object": "\"Bob\"",
         "graph": "http://example.org/graph1"
       }

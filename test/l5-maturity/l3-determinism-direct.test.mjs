@@ -22,7 +22,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
       afterHash: '1'.repeat(64),
       epoch: 1,
       timestamp: 1234567890, // Fixed timestamp
-      toolchainVersion: '1.0.0',
+      toolchainVersion: 'latest',
       violations: [],
       reason: 'Determinism test',
     };
@@ -68,7 +68,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
           afterHash: '1'.repeat(64),
           epoch: j + 1,
           timestamp: 1234567890 + j,
-          toolchainVersion: '1.0.0',
+          toolchainVersion: 'latest',
           violations: [],
           reason: `Receipt ${j}`,
         });
@@ -106,7 +106,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
         afterHash: '1'.repeat(64),
         epoch: 1,
         timestamp: 1234567890,
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: 'Test 1',
       },
@@ -118,7 +118,7 @@ describe('L3: Determinism - 100x Identical Runs (Direct)', () => {
         afterHash: '2'.repeat(64),
         epoch: 2,
         timestamp: 1234567891,
-        toolchainVersion: '1.0.0',
+        toolchainVersion: 'latest',
         violations: [],
         reason: 'Test 2',
       },

@@ -105,7 +105,7 @@ validateConfig(unknown): MergeConfig
 ---
 
 ### 5. Quick Reference Card
-**File**: `/home/user/unrdf/docs/MERGE-ORCHESTRATOR.quick-ref.md` (357 lines, 8.5KB)
+**File**: `/home/user/unrdf/docs/MERGE-ORCHESTRATOR.quick-ref.md` (357 lines, latestKB)
 
 **Quick Lookup**:
 - Monoid algebra formula
@@ -244,7 +244,7 @@ RETURN MergedWorldModel {
 | Merged map | O(u) | 38K unique |
 | Conflict list | O(c) | 150 conflicts |
 | Merkle tree | O(n) | 76K nodes |
-| **TOTAL** | **O(n)** | **~5.4MB** |
+| **TOTAL** | **O(n)** | **~latestMB** |
 
 ---
 
@@ -332,7 +332,7 @@ RETURN MergedWorldModel {
 ├── merge-schemas.zod.mjs              ← Type definitions (13KB, 389 lines)
 ├── merge-examples.md                  ← Concrete examples (18KB, 743 lines)
 ├── merge-flow-diagram.txt             ← Visual flows (28KB, 565 lines)
-├── MERGE-ORCHESTRATOR.quick-ref.md    ← Quick lookup (8.5KB, 357 lines)
+├── MERGE-ORCHESTRATOR.quick-ref.md    ← Quick lookup (latestKB, 357 lines)
 └── ORCHESTRATOR-INDEX.md              ← This index
 
 Total: 3,470 lines | 117KB

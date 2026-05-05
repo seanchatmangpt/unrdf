@@ -33,7 +33,7 @@ $ node test-stable-ids.mjs
 
 [TEST 1] Stable IRI Determinism (1000 iterations)
   ✅ Generated 1 unique IRI from 1000 calls
-  ✅ Average time: 0.008ms per call
+  ✅ Average time: latestms per call
   ✅ Sample IRI: http://kgc.internal/kgc-facade/customer/customer-123#6577aa04e2481c14
 
 [TEST 2] Skolem Determinism (100 iterations)
@@ -54,15 +54,15 @@ $ node test-stable-ids.mjs
   ✅ Hash consistent
   ✅ Custom length supported
 
-Success Rate: 100.0%
+Success Rate: latest%
 ```
 
 ## Performance Metrics
 
 | Operation | Target | Actual | Status |
 |-----------|--------|--------|--------|
-| IRI generation | < 1ms | 0.008ms | ✅ 125x better |
-| Skolem generation | < 1ms | ~0.010ms | ✅ 100x better |
+| IRI generation | < 1ms | latestms | ✅ 125x better |
+| Skolem generation | < 1ms | ~latestms | ✅ 100x better |
 | Round-trip (projected) | < 15ms | ~10ms | ✅ Estimated |
 | Determinism | 100% | 100% | ✅ Verified 1000 iterations |
 
@@ -88,7 +88,7 @@ const skolem = stableSkolem('customer-{id}-{attr}', { id: '123', attr: 'address'
 - ✅ Same inputs → same IRI/Skolem (verified 1000 iterations)
 - ✅ SHA-256 collision resistance (2^256 space)
 - ✅ Property order independent
-- ✅ < 1ms per operation (0.008ms actual)
+- ✅ < 1ms per operation (latestms actual)
 
 ### 2. Lens Definition & Compilation (`lens.mjs`)
 
@@ -115,7 +115,7 @@ const program = compileLens(lens);
 ```json
 {
   "name": "CustomerLens",
-  "version": "1.0.0",
+  "version": "latest",
   "stableIds": { "domain": "kgc-facade", "entity": "customer" },
   "toGraph": [...rules for DTO → RDF...],
   "fromGraph": [...rules for RDF → DTO...]
@@ -345,7 +345,7 @@ Service API → Lens → RDF Graph → Lens → Service API
 - ✅ Lossless round-trip (byte-identical DTO reconstruction)
 - ✅ Stable identifiers (same inputs → same IRI always)
 - ✅ JSON portability (LensProgram fully serializable)
-- ✅ Performance < 1ms IRI generation (0.008ms actual)
+- ✅ Performance < 1ms IRI generation (latestms actual)
 - ✅ Zero API changes to existing services
 - ✅ Pure functions (no external state)
 - ✅ Comprehensive tests (6/6 core passing, 6 integration ready)
@@ -357,7 +357,7 @@ Agent 3 has successfully delivered a production-ready Lens primitive system with
 1. **Deterministic stable identifiers** - SHA-256 based, collision-resistant, property-order independent
 2. **Declarative lens definitions** - Clear, maintainable mappings between DTO and RDF
 3. **Lossless transformations** - Round-trip fidelity guaranteed
-4. **High performance** - 0.008ms IRI generation (125x better than target)
+4. **High performance** - latestms IRI generation (125x better than target)
 5. **Zero external dependencies** - Core stable-ids module is standalone
 6. **100% test coverage** - All core functions verified
 

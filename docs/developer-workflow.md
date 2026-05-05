@@ -15,7 +15,7 @@ This guide covers the most common development workflows (80% of daily tasks) tha
 
 This script will:
 
-1. Verify Node.js >= 18.0.0
+1. Verify Node.js >= latest
 2. Install pnpm if missing
 3. Install all dependencies
 4. Build core packages

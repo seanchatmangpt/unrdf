@@ -2,7 +2,7 @@
 
 > KGC CLI - Deterministic extension registry for ~40 workspace packages
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

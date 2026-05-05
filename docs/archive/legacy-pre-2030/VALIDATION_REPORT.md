@@ -132,7 +132,7 @@
 6. Return true if goal succeeds (results non-empty)
 
 **Dependency:**
-- `datalog-ts` ^0.2.0 (package.json line 52)
+- `datalog-ts` ^latest (package.json line 52)
 
 **Error handling:**
 - Invalid fact format detection

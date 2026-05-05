@@ -162,7 +162,7 @@ const analysis = await detector.analyzeCode(code, {
     "executionTime": 245,
     "memoryUsage": {
       "used": 1234567,
-      "percentage": 12.3
+      "percentage": latest
     }
   }
 }
@@ -275,7 +275,7 @@ All operations are instrumented:
 
 ## Dependencies
 
-- `isolated-vm@6.0.1` - V8 isolate management
+- `isolated-vm@latest` - V8 isolate management
 - `@wasmer/wasi` - WASM runtime support
 - `@opentelemetry/api` - Observability
 - `crypto` (built-in) - Code signing

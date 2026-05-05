@@ -99,7 +99,7 @@ console.log('\nTest 4: Conflict Certificate Generation');
   assert(/^[a-f0-9]{64}$/.test(cert.hash), 'Hash should be SHA-256 hex (64 chars)');
   assert(cert.capsuleIds.length === 2, 'Should have 2 capsule IDs');
   assert(cert.conflictType === 'add-del-conflict', 'Conflict type should be add-del-conflict');
-  assert(cert.version === '1.0.0', 'Version should be 1.0.0');
+  assert(cert.version === 'latest', 'Version should be latest');
   assert(cert.metadata.minimality === 'proven', 'Minimality should be proven');
 }
 

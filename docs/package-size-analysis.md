@@ -1,4 +1,4 @@
-# UNRDF v3.0.0 Package Size Analysis
+# UNRDF latest Package Size Analysis
 
 **Total Package Size:** 9.7 MB unpacked / 2.5 MB tarball
 **Analysis Date:** October 2, 2025
@@ -159,7 +159,7 @@
   "docs/guides/",
   "docs/examples/",
   "docs/migration-v2-to-v3.md",
-  "docs/v3.0.0-RELEASE-NOTES.md",
+  "docs/latest-RELEASE-NOTES.md",
   "examples/*.mjs",
   "!examples/legacy-cli/",
   "!examples/sidecar-*.mjs"
@@ -211,7 +211,7 @@
 
 ## 💡 Additional Optimizations
 
-### Consider for v3.1.0:
+### Consider for latest:
 1. **Separate sourcemaps package** (`@unrdf/sourcemaps`)
    - Saves ~1.1 MB
    - Users can opt-in for debugging
@@ -236,7 +236,7 @@
 - [ ] Test with `npm pack --dry-run`
 - [ ] Verify package contents
 - [ ] Test installation in clean project
-- [ ] Publish as v3.0.1 (patch release)
+- [ ] Publish as latest (patch release)
 - [ ] Update documentation about package contents
 
 ---

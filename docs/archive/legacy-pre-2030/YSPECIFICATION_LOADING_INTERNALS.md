@@ -22,7 +22,7 @@ Unlike the Java reference implementation (JDOM/XML), this implementation uses:
 
 ## 1. Specification Loading Architecture
 
-### 1.1 Entry Points
+### latest Entry Points
 
 ```javascript
 // File: packages/yawl/src/workflow.mjs (231 lines)
@@ -41,7 +41,7 @@ export class Workflow extends WorkflowCore {
 export async function workflowFromRDF(store, workflowId, options = {})
 ```
 
-### 1.2 Loading Sequence
+### latest Loading Sequence
 
 ```
 User Input (JSON)
@@ -67,7 +67,7 @@ Workflow instance (ready for execution)
 
 ## 2. Zod Schema Validation (Runtime Type Safety)
 
-### 2.1 Core Schemas
+### latest Core Schemas
 
 ```javascript
 // File: packages/yawl/src/workflow-core.mjs (639 lines)
@@ -110,7 +110,7 @@ export const FlowDefSchema = z.object({
 export const WorkflowSpecSchema = z.object({
   id: z.string().min(1).max(100),
   name: z.string().min(1).max(200).optional(),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('1.0.0'),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/).default('latest'),
   description: z.string().max(5000).optional(),
   tasks: z.array(TaskDefSchema).default([]),
   flows: z.array(FlowDefSchema).optional().default([]),
@@ -123,7 +123,7 @@ export const WorkflowSpecSchema = z.object({
 });
 ```
 
-### 2.2 Validation Strategy
+### latest Validation Strategy
 
 | Aspect | Approach | Location |
 |--------|----------|----------|
@@ -139,7 +139,7 @@ export const WorkflowSpecSchema = z.object({
 
 ## 3. Object Graph Construction
 
-### 3.1 Data Structures
+### latest Data Structures
 
 ```javascript
 // File: packages/yawl/src/workflow-core.mjs (lines 148-192)
@@ -182,7 +182,7 @@ export class Workflow {
 }
 ```
 
-### 3.2 Initialization Pipeline
+### latest Initialization Pipeline
 
 #### Task Initialization
 
@@ -232,7 +232,7 @@ _initializeFlows(flows) {
 }
 ```
 
-### 3.3 Lookup Performance
+### latest Lookup Performance
 
 | Operation | Time Complexity | Implementation |
 |-----------|----------------|----------------|
@@ -249,7 +249,7 @@ _initializeFlows(flows) {
 
 ## 4. Multiple Instance (MI) Configuration Parsing
 
-### 4.1 MI Task Schema
+### latest MI Task Schema
 
 ```javascript
 // File: packages/yawl/src/multiple-instance/wp13-design-time.mjs (lines 30-41)
@@ -263,7 +263,7 @@ export const MultipleInstanceTaskSchema = z.object({
 });
 ```
 
-### 4.2 Cardinality Expression Storage
+### latest Cardinality Expression Storage
 
 MI configuration is stored **inline in task definitions**:
 
@@ -285,7 +285,7 @@ const miTask = {
 };
 ```
 
-### 4.3 Expression Evaluator
+### latest Expression Evaluator
 
 ```javascript
 // File: packages/yawl/src/multiple-instance/expression-evaluator.mjs (345 lines)
@@ -340,7 +340,7 @@ export async function evaluateExpression(expression, data) {
 }
 ```
 
-### 4.4 MI Pattern Implementations
+### latest MI Pattern Implementations
 
 | Pattern | File | Lines | Status |
 |---------|------|-------|--------|
@@ -355,7 +355,7 @@ export async function evaluateExpression(expression, data) {
 
 ## 5. RDF Serialization (Alternative Format)
 
-### 5.1 Workflow to RDF
+### latest Workflow to RDF
 
 ```javascript
 // File: packages/yawl/src/workflow-rdf.mjs (434 lines)
@@ -403,7 +403,7 @@ export function workflowToRDF(workflow, store, options = {}) {
 }
 ```
 
-### 5.2 RDF to Workflow
+### latest RDF to Workflow
 
 ```javascript
 // File: packages/yawl/src/workflow-rdf.mjs (lines 294-433)
@@ -446,7 +446,7 @@ export async function workflowFromRDF(store, workflowId, options = {}, WorkflowC
 }
 ```
 
-### 5.3 RDF Ontology Mapping
+### latest RDF Ontology Mapping
 
 ```javascript
 // File: packages/yawl/src/ontology/yawl-ontology.mjs (150+ lines)
@@ -483,7 +483,7 @@ export const joinBehavior = namedNode(YAWL + 'joinBehavior');
 
 ## 6. Structural Validation (Post-Parse)
 
-### 6.1 Validation Checklist
+### latest Validation Checklist
 
 ```javascript
 // File: packages/yawl/src/workflow-validation.mjs (392 lines)
@@ -514,7 +514,7 @@ export function validate() {
 }
 ```
 
-### 6.2 Validation Rules
+### latest Validation Rules
 
 | Rule | Check | Error Level |
 |------|-------|-------------|
@@ -535,7 +535,7 @@ export function validate() {
 
 ## 7. Runtime Indexing & Lookup
 
-### 7.1 Index Structures
+### latest Index Structures
 
 ```javascript
 // Internal indices (all O(1) lookup)
@@ -549,7 +549,7 @@ class Workflow {
 }
 ```
 
-### 7.2 Query Methods
+### latest Query Methods
 
 ```javascript
 // File: packages/yawl/src/workflow-core.mjs (lines 281-461)
@@ -571,12 +571,12 @@ _validateReachability()            // BFS from start
 _findConvergencePoint(splitId)     // Multi-path BFS
 ```
 
-### 7.3 Performance Characteristics
+### latest Performance Characteristics
 
 | Workflow Size | Parse Time | Validate Time | Query Time |
 |---------------|------------|---------------|------------|
-| 10 tasks | <1ms | <1ms | <0.1ms |
-| 100 tasks | ~5ms | ~10ms | <0.5ms |
+| 10 tasks | <1ms | <1ms | <latestms |
+| 100 tasks | ~5ms | ~10ms | <latestms |
 | 1000 tasks | ~50ms | ~100ms | <1ms |
 
 **Bottleneck**: Validation (graph algorithms) is O(n²) for convergence detection.
@@ -602,7 +602,7 @@ _findConvergencePoint(splitId)     // Multi-path BFS
 
 ## 9. Code Snippets: Full Parse Flow
 
-### 9.1 Complete Example
+### latest Complete Example
 
 ```javascript
 import { createWorkflow } from '@unrdf/yawl';
@@ -611,7 +611,7 @@ import { createWorkflow } from '@unrdf/yawl';
 const spec = {
   id: 'expense-approval',
   name: 'Expense Approval Workflow',
-  version: '1.0.0',
+  version: 'latest',
   tasks: [
     {
       id: 'submit',
@@ -683,7 +683,7 @@ console.log('Loaded:', loaded.name);
 
 ## 10. Key Takeaways
 
-### 10.1 Architectural Decisions
+### latest Architectural Decisions
 
 1. **No XML Parsing**: Uses native JavaScript objects instead of JDOM/SAX
 2. **Dual Format**: JSON for runtime, RDF for persistence
@@ -691,7 +691,7 @@ console.log('Loaded:', loaded.name);
 4. **Map-Based Indexing**: O(1) lookups for tasks, flows, regions
 5. **Expression-Based MI**: Cardinality determined at runtime via evaluator
 
-### 10.2 Advantages Over Java YAWL
+### latest Advantages Over Java YAWL
 
 ✅ **Simpler parsing**: No XML libraries needed
 ✅ **Semantic integration**: Native RDF support
@@ -699,7 +699,7 @@ console.log('Loaded:', loaded.name);
 ✅ **Type-safe**: Zod validation catches errors at construction
 ✅ **Fast queries**: SPARQL + indexed lookups
 
-### 10.3 Trade-offs
+### latest Trade-offs
 
 ⚠️ **No XSD validation**: Schema evolution requires code changes
 ⚠️ **Runtime overhead**: Zod validation on every parse
@@ -764,5 +764,5 @@ This implementation demonstrates how workflow systems can leverage web technolog
 
 **End of Research Document**
 **Generated**: 2026-01-11
-**Implementation Version**: @unrdf/yawl v6.0.0
+**Implementation Version**: @unrdf/yawl vlatest
 **Total Lines Analyzed**: ~15,000+ across 56 packages

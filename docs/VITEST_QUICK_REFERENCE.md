@@ -311,4 +311,4 @@ it('should debug', () => {
 
 ---
 
-**Quick Reference Version 1.0.0**
+**Quick Reference Version latest**

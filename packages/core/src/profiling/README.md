@@ -1,6 +1,6 @@
 # UNRDF Performance Profiling
 
-Comprehensive performance profiling tools for UNRDF v3.1.0 with OpenTelemetry integration.
+Comprehensive performance profiling tools for UNRDF [VERSION] with OpenTelemetry integration.
 
 ## Features
 
@@ -115,7 +115,7 @@ if (comparison.regression) {
 
 ## Performance Targets
 
-UNRDF v3.1.0 performance targets (p95 latency):
+UNRDF [VERSION] performance targets (p95 latency):
 
 | Operation          | Target  |
 | ------------------ | ------- |

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Zod schemas for KGC Markdown (.kgcmd) format
  * @module schemas/kgc-markdown
- * @version 1.0.0
+ * @version latest
  * @license MIT
  *
  * Complete validation schemas for:
@@ -38,14 +38,14 @@ export const UUIDv4Schema = z
   );
 
 /**
- * Semantic version (semver 2.0.0)
+ * Semantic version (semver latest)
  * @type {z.ZodString}
  */
 export const SemverSchema = z
   .string()
   .regex(
     /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/,
-    'Must be valid semver (e.g., 1.2.3, 1.0.0-alpha.1)',
+    'Must be valid semver (e.g., latest, latest-alpha.1)',
   );
 
 /**

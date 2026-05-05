@@ -10,7 +10,7 @@
     "paper": "http://example.org/ontology/paper#",
     "thesis": "http://example.org/ontology/thesis#"
   },
-  "@id": "urn:playground:ontology-guide:v1.0.0",
+  "@id": "urn:playground:ontology-guide:latest",
   "@type": "owl:Ontology"
 }
 ```
@@ -22,7 +22,7 @@
 | Property | Value |
 |----------|-------|
 | URI | `http://example.org/ontology/papers-thesis` |
-| Version | 2.0.0 |
+| Version | latest |
 | Created | 2025-01-01 |
 | Modified | 2025-11-21 |
 | License | CC BY 4.0 |
@@ -438,5 +438,5 @@ thesis:PhDThesis owl:disjointWith
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2025-01-01 | Initial release |
-| 2.0.0 | 2025-11-21 | Added SHACL shapes, thesis schedule, defense events |
+| latest | 2025-01-01 | Initial release |
+| latest | 2025-11-21 | Added SHACL shapes, thesis schedule, defense events |

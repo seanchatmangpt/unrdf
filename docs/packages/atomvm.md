@@ -2,7 +2,7 @@
 
 > Run AtomVM (Erlang/BEAM VM) in browser and Node.js using WebAssembly
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

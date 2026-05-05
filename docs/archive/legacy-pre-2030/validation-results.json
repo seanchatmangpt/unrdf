@@ -1,7 +1,7 @@
 {
   "validation_metadata": {
     "timestamp": "2026-01-11T07:00:00Z",
-    "version": "6.0.0-rc.1",
+    "version": "latest-rc.1",
     "validation_level": "P0_PRODUCTION_READINESS",
     "duration_seconds": 240
   },
@@ -31,7 +31,7 @@
       "blocker": true,
       "details": {
         "failed_packages": [
-          "@unrdf/cli@5.0.1"
+          "@unrdf/cli@latest"
         ],
         "errors": [
           "unbuild: Could not find entrypoint for ./src/index.mjs",
@@ -51,7 +51,7 @@
           "packages/docs"
         ],
         "failures": [
-          "docs@5.0.1: TSConfckParseError - Cannot find .nuxt/tsconfig.json"
+          "docs@latest: TSConfckParseError - Cannot find .nuxt/tsconfig.json"
         ],
         "passed_tests": {
           "cli": 25,
@@ -70,7 +70,7 @@
       "blocker": true,
       "details": {
         "failed_packages": [
-          "@unrdf/kgc-cli@5.0.1"
+          "@unrdf/kgc-cli@latest"
         ],
         "warnings": 3,
         "errors": 0,
@@ -128,19 +128,19 @@
       "details": {
         "total_packages": 69,
         "version_distribution": {
-          "1.0.0": 39,
-          "5.0.1": 17,
-          "6.0.0": 1,
-          "6.0.0-alpha.1": 1,
-          "6.0.0-rc.1": 3,
-          "5.0.0": 3,
-          "5.1.0": 1,
-          "0.1.0": 4
+          "latest": 39,
+          "latest": 17,
+          "latest": 1,
+          "latest-alpha.1": 1,
+          "latest-rc.1": 3,
+          "latest": 3,
+          "latest": 1,
+          "latest": 4
         },
         "concerns": [
-          "Mixed versions across packages (1.0.0, 5.0.1, 6.0.0-rc.1)",
-          "39 packages still at 1.0.0",
-          "17 packages at 5.0.1 while monorepo claims 6.0.0-rc.1"
+          "Mixed versions across packages (latest, latest, latest-rc.1)",
+          "39 packages still at latest",
+          "17 packages at latest while monorepo claims latest-rc.1"
         ]
       }
     },
@@ -161,16 +161,16 @@
             "package": "qs",
             "vulnerability": "DoS via memory exhaustion (arrayLimit bypass)",
             "severity": "high",
-            "vulnerable_versions": "<6.14.1",
-            "patched_versions": ">=6.14.1",
+            "vulnerable_versions": "<latest",
+            "patched_versions": ">=latest",
             "path": "packages__observability>express>qs"
           },
           {
             "package": "preact",
             "vulnerability": "JSON VNode Injection",
             "severity": "high",
-            "vulnerable_versions": ">=10.28.0 <10.28.2",
-            "patched_versions": ">=10.28.2",
+            "vulnerable_versions": ">=latest <latest",
+            "patched_versions": ">=latest",
             "path": "packages__kgc-4d__playground>react-force-graph-3d>3d-force-graph>three-render-objects>float-tooltip>preact"
           }
         ]
@@ -294,7 +294,7 @@
       "category": "SECURITY",
       "description": "qs package has DoS vulnerability (GHSA-6rw7-vpxm-498p)",
       "impact": "Production security risk in observability package",
-      "remediation": "Update express dependency or pin qs to >=6.14.1"
+      "remediation": "Update express dependency or pin qs to >=latest"
     },
     {
       "id": "BLOCKER-005",
@@ -302,7 +302,7 @@
       "category": "SECURITY",
       "description": "preact package has JSON VNode Injection (GHSA-36hm-qxxp-pg3m)",
       "impact": "Security risk in kgc-4d playground",
-      "remediation": "Update preact to >=10.28.2 or remove playground dependency"
+      "remediation": "Update preact to >=latest or remove playground dependency"
     }
   ],
   "warnings": [
@@ -323,9 +323,9 @@
     {
       "id": "WARN-003",
       "category": "VERSION_CONSISTENCY",
-      "description": "Mixed package versions (39 at 1.0.0, 17 at 5.0.1, 3 at 6.0.0-rc.1)",
+      "description": "Mixed package versions (39 at latest, 17 at latest, 3 at latest-rc.1)",
       "impact": "Version confusion, unclear release status",
-      "remediation": "Standardize all package versions to 6.0.0-rc.1"
+      "remediation": "Standardize all package versions to latest-rc.1"
     },
     {
       "id": "WARN-004",
@@ -341,7 +341,7 @@
     "Resolve build failures in @unrdf/cli package",
     "Fix lint violations in kgc-cli package",
     "Resolve test failures in packages/docs",
-    "Standardize package versions to 6.0.0-rc.1",
+    "Standardize package versions to latest-rc.1",
     "Refactor files exceeding 500 lines (145 files)",
     "Update deprecated dependencies",
     "Run coverage analysis to verify ≥80% threshold"

@@ -18,7 +18,7 @@ export default defineTask({
   meta: {
     name: 'hooks:evaluate-periodic',
     description: 'Periodic evaluation of all knowledge hooks with SAFLA neural feedback',
-    version: '1.0.0'
+    version: '[VERSION]'
   },
 
   async run({ payload, context: taskContext }) {

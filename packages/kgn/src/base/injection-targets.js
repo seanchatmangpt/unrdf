@@ -560,7 +560,7 @@ import '{{ modulePath }}';
     
     const exported = {
       format: 'kgen-injection-targets',
-      version: '1.0.0',
+      version: 'latest',
       generated: this.options.staticBuildTime,
       namespace: this.options.namespace,
       templates: {}

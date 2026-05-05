@@ -11,11 +11,11 @@
 This matrix helps you discover related capabilities when exploring UNRDF. Similarity scores indicate how often capabilities are used together, share interfaces, or solve related problems.
 
 **Similarity Score Interpretation**:
-- **0.90-1.00**: Nearly always used together (tight coupling)
-- **0.70-0.89**: Frequently combined (loose coupling)
-- **0.50-0.69**: Occasionally related (domain overlap)
-- **0.30-0.49**: Weakly related (compositional potential)
-- **0.00-0.29**: Rarely combined (independent)
+- **latest.00**: Nearly always used together (tight coupling)
+- **latest.89**: Frequently combined (loose coupling)
+- **latest.69**: Occasionally related (domain overlap)
+- **latest.49**: Weakly related (compositional potential)
+- **latest.29**: Rarely combined (independent)
 
 ---
 
@@ -24,13 +24,13 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### createStore()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| dataFactory.namedNode() | 0.98 | Co-requisite | Always need nodes to populate store |
-| dataFactory.quad() | 0.95 | Co-requisite | Quads are primary store data type |
-| addQuad() | 0.93 | Direct composition | Store method for insertion |
-| executeSelect() | 0.87 | Direct composition | Querying requires store instance |
-| validateTriple() | 0.72 | Common pattern | Validate before adding to store |
-| freezeUniverse() | 0.68 | Advanced pattern | Snapshots require store instance |
-| defineHook() | 0.65 | Policy pattern | Policy-gated stores |
+| dataFactory.namedNode() | latest | Co-requisite | Always need nodes to populate store |
+| dataFactory.quad() | latest | Co-requisite | Quads are primary store data type |
+| addQuad() | latest | Direct composition | Store method for insertion |
+| executeSelect() | latest | Direct composition | Querying requires store instance |
+| validateTriple() | latest | Common pattern | Validate before adding to store |
+| freezeUniverse() | latest | Advanced pattern | Snapshots require store instance |
+| defineHook() | latest | Policy pattern | Policy-gated stores |
 
 **Discovery Insight**: If using `createStore()`, you'll almost certainly need `dataFactory` and likely want validation.
 
@@ -39,12 +39,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### executeSelect()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| executeAsk() | 0.82 | Sibling capability | Both SPARQL query types |
-| executeConstruct() | 0.79 | Sibling capability | All query methods share interface |
-| prepareQuery() | 0.71 | Optimization pattern | Prepared statements for repeated queries |
-| createStore() | 0.87 | Co-requisite | Queries operate on stores |
-| toNTriples() | 0.58 | Output pattern | Serialize query results |
-| PerformanceTracker | 0.54 | Observability | Profile query performance |
+| executeAsk() | latest | Sibling capability | Both SPARQL query types |
+| executeConstruct() | latest | Sibling capability | All query methods share interface |
+| prepareQuery() | latest | Optimization pattern | Prepared statements for repeated queries |
+| createStore() | latest | Co-requisite | Queries operate on stores |
+| toNTriples() | latest | Output pattern | Serialize query results |
+| PerformanceTracker | latest | Observability | Profile query performance |
 
 **Discovery Insight**: If using SELECT, consider ASK for existence checks (faster) and prepared statements for repeated queries.
 
@@ -53,12 +53,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### addQuad() / removeQuad()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| validateTriple() | 0.78 | Pre-condition | Validate before mutation |
-| dataFactory.quad() | 0.95 | Co-requisite | Create quads to add |
-| getQuads() | 0.65 | CRUD sibling | Read after write pattern |
-| appendEvent() | 0.62 | Event sourcing | Audit mutations as events |
-| executeHook() | 0.71 | Policy gate | Validate via hooks before add |
-| generateReceipt() | 0.59 | Audit pattern | Receipt for mutation |
+| validateTriple() | latest | Pre-condition | Validate before mutation |
+| dataFactory.quad() | latest | Co-requisite | Create quads to add |
+| getQuads() | latest | CRUD sibling | Read after write pattern |
+| appendEvent() | latest | Event sourcing | Audit mutations as events |
+| executeHook() | latest | Policy gate | Validate via hooks before add |
+| generateReceipt() | latest | Audit pattern | Receipt for mutation |
 
 **Discovery Insight**: Mutations often need validation (hooks) and audit trails (receipts/events).
 
@@ -69,11 +69,11 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### dataFactory.namedNode()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| dataFactory.literal() | 0.91 | Sibling | Both create RDF terms |
-| dataFactory.blankNode() | 0.88 | Sibling | All three are term types |
-| dataFactory.quad() | 0.94 | Composition | Nodes are quad components |
-| validateIRI() | 0.67 | Validation | Validate IRI format |
-| COMMON_PREFIXES | 0.73 | Shorthand | Expand prefixed IRIs |
+| dataFactory.literal() | latest | Sibling | Both create RDF terms |
+| dataFactory.blankNode() | latest | Sibling | All three are term types |
+| dataFactory.quad() | latest | Composition | Nodes are quad components |
+| validateIRI() | latest | Validation | Validate IRI format |
+| COMMON_PREFIXES | latest | Shorthand | Expand prefixed IRIs |
 
 **Discovery Insight**: Data factory methods are tightly coupled - if you use one, you'll likely use all.
 
@@ -82,9 +82,9 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### dataFactory.literal()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| dataFactory.namedNode() | 0.91 | Sibling | Both create RDF terms |
-| validateLiteral() | 0.64 | Validation | Validate literal datatype |
-| toNTriples() | 0.56 | Serialization | Serialize literals |
+| dataFactory.namedNode() | latest | Sibling | Both create RDF terms |
+| validateLiteral() | latest | Validation | Validate literal datatype |
+| toNTriples() | latest | Serialization | Serialize literals |
 
 **Discovery Insight**: Literals often need datatype validation and serialization.
 
@@ -95,11 +95,11 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### executeSelect() vs executeAsk() vs executeConstruct()
 |  | executeSelect | executeAsk | executeConstruct |
 |--|---------------|------------|------------------|
-| **executeSelect** | 1.00 | 0.82 | 0.79 |
-| **executeAsk** | 0.82 | 1.00 | 0.71 |
-| **executeConstruct** | 0.79 | 0.71 | 1.00 |
+| **executeSelect** | latest | latest | latest |
+| **executeAsk** | latest | latest | latest |
+| **executeConstruct** | latest | latest | latest |
 
-**Pattern**: Use ASK for existence checks (0.82 similarity), SELECT for data retrieval, CONSTRUCT for graph transformation.
+**Pattern**: Use ASK for existence checks (latest similarity), SELECT for data retrieval, CONSTRUCT for graph transformation.
 
 **Discovery Insight**: ASK is often overlooked but is the fastest way to check existence - prefer over `SELECT ... LIMIT 1`.
 
@@ -110,12 +110,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### validateTriple()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| validateIRI() | 0.89 | Sibling | Both semantic validation |
-| validateLiteral() | 0.87 | Sibling | Complete validation suite |
-| ValidationError | 0.92 | Error handling | Thrown on validation failure |
-| addQuad() | 0.78 | Pre-condition | Validate before add |
-| defineHook() | 0.73 | Policy pattern | Hooks for custom validation |
-| validateOnly() | 0.81 | Dry-run pattern | Validation without side effects |
+| validateIRI() | latest | Sibling | Both semantic validation |
+| validateLiteral() | latest | Sibling | Complete validation suite |
+| ValidationError | latest | Error handling | Thrown on validation failure |
+| addQuad() | latest | Pre-condition | Validate before add |
+| defineHook() | latest | Policy pattern | Hooks for custom validation |
+| validateOnly() | latest | Dry-run pattern | Validation without side effects |
 
 **Discovery Insight**: Validation methods work together - consider using all three (triple, IRI, literal) for comprehensive validation.
 
@@ -126,11 +126,11 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### canonicalize()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| toNTriples() | 0.88 | Prerequisite | Canonicalize produces N-Triples |
-| isIsomorphic() | 0.95 | Direct composition | Uses canonicalize internally |
-| sortQuads() | 0.84 | Related | Both order quads |
-| generateReceipt() | 0.76 | Downstream | Hash canonical form |
-| freezeUniverse() | 0.71 | Snapshot pattern | Snapshot canonical state |
+| toNTriples() | latest | Prerequisite | Canonicalize produces N-Triples |
+| isIsomorphic() | latest | Direct composition | Uses canonicalize internally |
+| sortQuads() | latest | Related | Both order quads |
+| generateReceipt() | latest | Downstream | Hash canonical form |
+| freezeUniverse() | latest | Snapshot pattern | Snapshot canonical state |
 
 **Discovery Insight**: Canonicalize is foundation for receipts and time-travel - critical for determinism.
 
@@ -141,12 +141,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### freezeUniverse()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| reconstructState() | 0.97 | Inverse operation | Freeze → Reconstruct cycle |
-| verifyReceipt() | 0.82 | Audit pattern | Verify frozen snapshots |
-| VectorClock | 0.79 | Timestamp | Order freeze events |
-| GitBackbone | 0.91 | Storage backend | Git stores snapshots |
-| appendEvent() | 0.85 | Event sourcing | Events between freezes |
-| canonicalize() | 0.71 | Determinism | Snapshot canonical form |
+| reconstructState() | latest | Inverse operation | Freeze → Reconstruct cycle |
+| verifyReceipt() | latest | Audit pattern | Verify frozen snapshots |
+| VectorClock | latest | Timestamp | Order freeze events |
+| GitBackbone | latest | Storage backend | Git stores snapshots |
+| appendEvent() | latest | Event sourcing | Events between freezes |
+| canonicalize() | latest | Determinism | Snapshot canonical form |
 
 **Discovery Insight**: Time-travel requires freeze + reconstruct + Git + events - use all together for complete solution.
 
@@ -155,10 +155,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### VectorClock
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| appendEvent() | 0.88 | Timestamp | Timestamp events |
-| freezeUniverse() | 0.79 | Snapshot time | Timestamp snapshots |
-| RaftNode | 0.74 | Distributed order | Lamport clocks for consensus |
-| generateReceipt() | 0.69 | Audit timestamp | Timestamp receipts |
+| appendEvent() | latest | Timestamp | Timestamp events |
+| freezeUniverse() | latest | Snapshot time | Timestamp snapshots |
+| RaftNode | latest | Distributed order | Lamport clocks for consensus |
+| generateReceipt() | latest | Audit timestamp | Timestamp receipts |
 
 **Discovery Insight**: Vector clocks are foundational for distributed systems and event sourcing.
 
@@ -169,12 +169,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### defineHook()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| executeHook() | 0.99 | Direct pair | Define → Execute |
-| executeHookChain() | 0.94 | Batch execution | Execute multiple hooks |
-| compileHookChain() | 0.87 | Optimization | JIT compile hooks |
-| validateOnly() | 0.83 | Dry-run | Hook without side effects |
-| addQuad() | 0.71 | Policy gate | Guard mutations with hooks |
-| createHookRegistry() | 0.89 | Management | Register defined hooks |
+| executeHook() | latest | Direct pair | Define → Execute |
+| executeHookChain() | latest | Batch execution | Execute multiple hooks |
+| compileHookChain() | latest | Optimization | JIT compile hooks |
+| validateOnly() | latest | Dry-run | Hook without side effects |
+| addQuad() | latest | Policy gate | Guard mutations with hooks |
+| createHookRegistry() | latest | Management | Register defined hooks |
 
 **Discovery Insight**: Hook ecosystem (define, execute, chain, compile, registry) work together for policy enforcement.
 
@@ -183,9 +183,9 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### validateOnly()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| executeHook() | 0.83 | Sibling | Both execute policies |
-| validateTriple() | 0.76 | Validation | Semantic validation |
-| defineHook() | 0.83 | Policy | Validate via hooks |
+| executeHook() | latest | Sibling | Both execute policies |
+| validateTriple() | latest | Validation | Semantic validation |
+| defineHook() | latest | Policy | Validate via hooks |
 
 **Discovery Insight**: Use `validateOnly()` for dry-run validation without mutation side effects.
 
@@ -196,12 +196,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### WorkflowEngine
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| WorkflowInstance | 0.96 | Direct composition | Engine creates instances |
-| YawlTask | 0.92 | Workflow component | Instances contain tasks |
-| YawlHook | 0.88 | Policy integration | Hooks for task validation |
-| generateReceipt() | 0.81 | Audit | Receipt per transition |
-| freezeUniverse() | 0.74 | Checkpoint | Snapshot workflow state |
-| CancellationRegion | 0.85 | Error handling | Pattern WCP-19 |
+| WorkflowInstance | latest | Direct composition | Engine creates instances |
+| YawlTask | latest | Workflow component | Instances contain tasks |
+| YawlHook | latest | Policy integration | Hooks for task validation |
+| generateReceipt() | latest | Audit | Receipt per transition |
+| freezeUniverse() | latest | Checkpoint | Snapshot workflow state |
+| CancellationRegion | latest | Error handling | Pattern WCP-19 |
 
 **Discovery Insight**: Workflows + receipts + time-travel enable auditable, recoverable long-running processes.
 
@@ -210,9 +210,9 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### CancellationRegion
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| WorkflowEngine | 0.85 | Component | Workflow pattern WCP-19 |
-| YawlTask | 0.79 | Scope | Tasks in cancellation region |
-| CircuitBreaker | 0.58 | Error handling | Both handle failures |
+| WorkflowEngine | latest | Component | Workflow pattern WCP-19 |
+| YawlTask | latest | Scope | Tasks in cancellation region |
+| CircuitBreaker | latest | Error handling | Both handle failures |
 
 **Discovery Insight**: Cancellation regions enable complex error handling - rare in workflow engines.
 
@@ -223,12 +223,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### generateReceipt()
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| verifyReceipt() | 0.98 | Inverse operation | Generate → Verify |
-| verifyChainLink() | 0.91 | Chain validation | Verify receipt chains |
-| ProofChain | 0.93 | Data structure | Chain of receipts |
-| deterministicSerialize() | 0.89 | Prerequisite | Deterministic input |
-| computeBlake3() | 0.94 | Hash function | BLAKE3 for receipts |
-| canonicalize() | 0.76 | Upstream | Canonicalize before receipt |
+| verifyReceipt() | latest | Inverse operation | Generate → Verify |
+| verifyChainLink() | latest | Chain validation | Verify receipt chains |
+| ProofChain | latest | Data structure | Chain of receipts |
+| deterministicSerialize() | latest | Prerequisite | Deterministic input |
+| computeBlake3() | latest | Hash function | BLAKE3 for receipts |
+| canonicalize() | latest | Upstream | Canonicalize before receipt |
 
 **Discovery Insight**: Receipt generation requires deterministic serialization + BLAKE3 - use together.
 
@@ -237,10 +237,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### ProofChain
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| generateReceipt() | 0.93 | Component | Chain of receipts |
-| verifyChainLink() | 0.95 | Validation | Verify chain integrity |
-| GitBackbone | 0.67 | Storage | Store chain in Git |
-| appendEvent() | 0.71 | Event sourcing | Events form chain |
+| generateReceipt() | latest | Component | Chain of receipts |
+| verifyChainLink() | latest | Validation | Verify chain integrity |
+| GitBackbone | latest | Storage | Store chain in Git |
+| appendEvent() | latest | Event sourcing | Events form chain |
 
 **Discovery Insight**: Proof chains combine receipts + events + Git for tamper-proof audit trails.
 
@@ -251,10 +251,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### DebugLogger
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| PerformanceTracker | 0.81 | Sibling | Both observability |
-| OTELTracer | 0.74 | Integration | Bridge to OTEL |
-| PrometheusExporter | 0.68 | Metrics | Export to Prometheus |
-| addQuad() | 0.52 | Instrumentation | Log mutations |
+| PerformanceTracker | latest | Sibling | Both observability |
+| OTELTracer | latest | Integration | Bridge to OTEL |
+| PrometheusExporter | latest | Metrics | Export to Prometheus |
+| addQuad() | latest | Instrumentation | Log mutations |
 
 **Discovery Insight**: Use DebugLogger + PerformanceTracker during development, OTEL in production.
 
@@ -263,9 +263,9 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### PerformanceTracker
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| DebugLogger | 0.81 | Sibling | Both observability |
-| executeSelect() | 0.54 | Profiling | Profile queries |
-| OTELTracer | 0.76 | Production | OTEL for distributed tracing |
+| DebugLogger | latest | Sibling | Both observability |
+| executeSelect() | latest | Profiling | Profile queries |
+| OTELTracer | latest | Production | OTEL for distributed tracing |
 
 **Discovery Insight**: PerformanceTracker is synchronous - use OTEL for async/distributed systems.
 
@@ -276,10 +276,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### AtomVMRuntime
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| ServiceWorkerManager | 0.89 | Component | Service worker clusters |
-| gen_statem bridge | 0.91 | BEAM integration | State machines in BEAM |
-| KGC4DBridge | 0.84 | Integration | Bridge KGC-4D to BEAM |
-| PokaYokeValidator | 0.78 | Validation | Validate BEAM messages |
+| ServiceWorkerManager | latest | Component | Service worker clusters |
+| gen_statem bridge | latest | BEAM integration | State machines in BEAM |
+| KGC4DBridge | latest | Integration | Bridge KGC-4D to BEAM |
+| PokaYokeValidator | latest | Validation | Validate BEAM messages |
 
 **Discovery Insight**: AtomVM ecosystem (runtime, service workers, bridges) enable BEAM in browser.
 
@@ -290,10 +290,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### RaftNode
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| PeerDiscovery | 0.88 | Component | Discover Raft peers |
-| DistributedQuery | 0.82 | Use case | Federate Raft nodes |
-| VectorClock | 0.74 | Ordering | Order Raft log entries |
-| PrometheusExporter | 0.71 | Observability | Monitor Raft cluster |
+| PeerDiscovery | latest | Component | Discover Raft peers |
+| DistributedQuery | latest | Use case | Federate Raft nodes |
+| VectorClock | latest | Ordering | Order Raft log entries |
+| PrometheusExporter | latest | Observability | Monitor Raft cluster |
 
 **Discovery Insight**: Raft + federation + observability = production distributed systems.
 
@@ -302,10 +302,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### DistributedQuery
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| executeSelect() | 0.79 | Query type | Federate SELECT queries |
-| RaftNode | 0.82 | Backend | Query Raft cluster |
-| PeerDiscovery | 0.86 | Component | Discover query targets |
-| CachingLayer | 0.73 | Optimization | Cache federated results |
+| executeSelect() | latest | Query type | Federate SELECT queries |
+| RaftNode | latest | Backend | Query Raft cluster |
+| PeerDiscovery | latest | Component | Discover query targets |
+| CachingLayer | latest | Optimization | Cache federated results |
 
 **Discovery Insight**: Federated queries + caching = 80-95% latency reduction.
 
@@ -316,9 +316,9 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### PageRank
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| SemanticSearch | 0.67 | Analytics sibling | Both graph analytics |
-| executeSelect() | 0.59 | Input | Query graph for PageRank |
-| coordsForEvent() | 0.54 | Clustering | HDIT + PageRank for ranking |
+| SemanticSearch | latest | Analytics sibling | Both graph analytics |
+| executeSelect() | latest | Input | Query graph for PageRank |
+| coordsForEvent() | latest | Clustering | HDIT + PageRank for ranking |
 
 **Discovery Insight**: Combine PageRank + semantic search for relevance ranking.
 
@@ -327,10 +327,10 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### SemanticSearch
 | Similar Capability | Score | Relationship | Why Similar |
 |-------------------|-------|--------------|-------------|
-| OnnxInference | 0.71 | ML pipeline | Inference for embeddings |
-| PageRank | 0.67 | Ranking | Combine semantic + structural |
-| executeSelect() | 0.61 | Backend | Query for search |
-| coordsForEvent() | 0.73 | HDIT | Event similarity |
+| OnnxInference | latest | ML pipeline | Inference for embeddings |
+| PageRank | latest | Ranking | Combine semantic + structural |
+| executeSelect() | latest | Backend | Query for search |
+| coordsForEvent() | latest | HDIT | Event similarity |
 
 **Discovery Insight**: Semantic search + HDIT + PageRank = hybrid ranking system.
 
@@ -341,25 +341,25 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### @unrdf/core vs Other Packages
 | Package | Score | Relationship | Shared Capabilities |
 |---------|-------|--------------|---------------------|
-| @unrdf/oxigraph | 0.94 | Foundation | createStore, dataFactory, query |
-| @unrdf/hooks | 0.72 | Composition | Validation, policy gates |
-| @unrdf/kgc-4d | 0.68 | Time-travel | Store snapshots, events |
-| @unrdf/yawl | 0.64 | Workflows | Store for workflow state |
-| @unrdf/validation | 0.71 | Quality | Validation, error handling |
-| @unrdf/federation | 0.67 | Distribution | Distributed queries |
+| @unrdf/oxigraph | latest | Foundation | createStore, dataFactory, query |
+| @unrdf/hooks | latest | Composition | Validation, policy gates |
+| @unrdf/kgc-4d | latest | Time-travel | Store snapshots, events |
+| @unrdf/yawl | latest | Workflows | Store for workflow state |
+| @unrdf/validation | latest | Quality | Validation, error handling |
+| @unrdf/federation | latest | Distribution | Distributed queries |
 
-**Discovery Insight**: @unrdf/core + @unrdf/oxigraph are co-requisites (0.94 similarity) - always use together.
+**Discovery Insight**: @unrdf/core + @unrdf/oxigraph are co-requisites (latest similarity) - always use together.
 
 ---
 
 ### @unrdf/kgc-4d vs Other Packages
 | Package | Score | Relationship | Shared Capabilities |
 |---------|-------|--------------|---------------------|
-| @unrdf/core | 0.68 | Foundation | RDF storage |
-| @unrdf/yawl | 0.79 | Workflows | Workflow snapshots |
-| @unrdf/blockchain | 0.76 | Audit | Receipt anchoring |
-| @unrdf/consensus | 0.71 | Distribution | Distributed time-travel |
-| @unrdf/atomvm | 0.59 | Runtime | BEAM integration |
+| @unrdf/core | latest | Foundation | RDF storage |
+| @unrdf/yawl | latest | Workflows | Workflow snapshots |
+| @unrdf/blockchain | latest | Audit | Receipt anchoring |
+| @unrdf/consensus | latest | Distribution | Distributed time-travel |
+| @unrdf/atomvm | latest | Runtime | BEAM integration |
 
 **Discovery Insight**: KGC-4D + YAWL + blockchain = complete auditable workflow system.
 
@@ -368,11 +368,11 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ### @unrdf/yawl vs Other Packages
 | Package | Score | Relationship | Shared Capabilities |
 |---------|-------|--------------|---------------------|
-| @unrdf/kgc-4d | 0.79 | Time-travel | Snapshots, events |
-| @unrdf/hooks | 0.81 | Policy | Task validation |
-| @unrdf/blockchain | 0.82 | Audit | Receipt generation |
-| @unrdf/yawl-durable | 0.95 | Extension | Durable execution |
-| @unrdf/yawl-kafka | 0.88 | Streaming | Event streaming |
+| @unrdf/kgc-4d | latest | Time-travel | Snapshots, events |
+| @unrdf/hooks | latest | Policy | Task validation |
+| @unrdf/blockchain | latest | Audit | Receipt generation |
+| @unrdf/yawl-durable | latest | Extension | Durable execution |
+| @unrdf/yawl-kafka | latest | Streaming | Event streaming |
 
 **Discovery Insight**: YAWL ecosystem is highly interconnected - extensions are tightly coupled.
 
@@ -384,18 +384,18 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 **Centroid**: createStore, dataFactory, addQuad, executeSelect
 
 **Members**:
-- createStore (0.95)
-- dataFactory.namedNode (0.93)
-- dataFactory.literal (0.91)
-- dataFactory.quad (0.94)
-- addQuad (0.89)
-- removeQuad (0.87)
-- getQuads (0.86)
-- countQuads (0.84)
-- executeSelect (0.88)
-- executeAsk (0.85)
-- executeConstruct (0.83)
-- prepareQuery (0.81)
+- createStore (latest)
+- dataFactory.namedNode (latest)
+- dataFactory.literal (latest)
+- dataFactory.quad (latest)
+- addQuad (latest)
+- removeQuad (latest)
+- getQuads (latest)
+- countQuads (latest)
+- executeSelect (latest)
+- executeAsk (latest)
+- executeConstruct (latest)
+- prepareQuery (latest)
 
 **Use Together**: Core RDF operations - nearly always used as a unit.
 
@@ -405,13 +405,13 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 **Centroid**: validateTriple, validateIRI, ValidationError
 
 **Members**:
-- validateTriple (0.92)
-- validateIRI (0.89)
-- validateLiteral (0.87)
-- ValidationError (0.93)
-- defineHook (0.79)
-- executeHook (0.77)
-- validateOnly (0.81)
+- validateTriple (latest)
+- validateIRI (latest)
+- validateLiteral (latest)
+- ValidationError (latest)
+- defineHook (latest)
+- executeHook (latest)
+- validateOnly (latest)
 
 **Use Together**: Data quality and policy enforcement.
 
@@ -421,14 +421,14 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 **Centroid**: freezeUniverse, VectorClock, appendEvent
 
 **Members**:
-- freezeUniverse (0.94)
-- reconstructState (0.97)
-- VectorClock (0.91)
-- GitBackbone (0.93)
-- KGCStore (0.89)
-- appendEvent (0.88)
-- verifyReceipt (0.84)
-- coordsForEvent (0.76)
+- freezeUniverse (latest)
+- reconstructState (latest)
+- VectorClock (latest)
+- GitBackbone (latest)
+- KGCStore (latest)
+- appendEvent (latest)
+- verifyReceipt (latest)
+- coordsForEvent (latest)
 
 **Use Together**: Event sourcing and time-travel debugging.
 
@@ -438,12 +438,12 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 **Centroid**: WorkflowEngine, generateReceipt
 
 **Members**:
-- WorkflowEngine (0.95)
-- WorkflowInstance (0.96)
-- YawlTask (0.92)
-- generateReceipt (0.89)
-- ProofChain (0.91)
-- CancellationRegion (0.85)
+- WorkflowEngine (latest)
+- WorkflowInstance (latest)
+- YawlTask (latest)
+- generateReceipt (latest)
+- ProofChain (latest)
+- CancellationRegion (latest)
 
 **Use Together**: Auditable workflow orchestration.
 
@@ -453,11 +453,11 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 **Centroid**: RaftNode, DistributedQuery
 
 **Members**:
-- RaftNode (0.93)
-- PeerDiscovery (0.88)
-- DistributedQuery (0.86)
-- VectorClock (0.82)
-- PrometheusExporter (0.79)
+- RaftNode (latest)
+- PeerDiscovery (latest)
+- DistributedQuery (latest)
+- VectorClock (latest)
+- PrometheusExporter (latest)
 
 **Use Together**: Federated, fault-tolerant knowledge bases.
 
@@ -466,25 +466,25 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ## Cross-Cluster Relationships
 
 ### Cluster 1 (RDF) ↔ Cluster 2 (Validation)
-**Similarity**: 0.73 (frequently composed)
+**Similarity**: latest (frequently composed)
 **Pattern**: Validate data before insertion into RDF store
 
 ---
 
 ### Cluster 1 (RDF) ↔ Cluster 3 (Time-Travel)
-**Similarity**: 0.68 (advanced composition)
+**Similarity**: latest (advanced composition)
 **Pattern**: Time-travel RDF stores with snapshots
 
 ---
 
 ### Cluster 3 (Time-Travel) ↔ Cluster 4 (Workflows)
-**Similarity**: 0.81 (tight coupling)
+**Similarity**: latest (tight coupling)
 **Pattern**: Auditable workflows with time-travel debugging
 
 ---
 
 ### Cluster 4 (Workflows) ↔ Cluster 5 (Distributed)
-**Similarity**: 0.76 (production pattern)
+**Similarity**: latest (production pattern)
 **Pattern**: Distributed workflow orchestration with consensus
 
 ---
@@ -492,82 +492,82 @@ This matrix helps you discover related capabilities when exploring UNRDF. Simila
 ## Recommendation Engine
 
 ### If you're using createStore(), consider:
-1. dataFactory.namedNode() - 0.98 similarity (co-requisite)
-2. validateTriple() - 0.72 similarity (validation)
-3. executeSelect() - 0.87 similarity (querying)
-4. freezeUniverse() - 0.68 similarity (time-travel)
+1. dataFactory.namedNode() - latest similarity (co-requisite)
+2. validateTriple() - latest similarity (validation)
+3. executeSelect() - latest similarity (querying)
+4. freezeUniverse() - latest similarity (time-travel)
 
 ---
 
 ### If you're using executeSelect(), consider:
-1. prepareQuery() - 0.71 similarity (optimization)
-2. executeAsk() - 0.82 similarity (existence checks)
-3. PerformanceTracker - 0.54 similarity (profiling)
-4. DistributedQuery - 0.79 similarity (federation)
+1. prepareQuery() - latest similarity (optimization)
+2. executeAsk() - latest similarity (existence checks)
+3. PerformanceTracker - latest similarity (profiling)
+4. DistributedQuery - latest similarity (federation)
 
 ---
 
 ### If you're using freezeUniverse(), consider:
-1. reconstructState() - 0.97 similarity (inverse operation)
-2. verifyReceipt() - 0.82 similarity (audit)
-3. GitBackbone - 0.91 similarity (storage)
-4. WorkflowEngine - 0.74 similarity (workflow snapshots)
+1. reconstructState() - latest similarity (inverse operation)
+2. verifyReceipt() - latest similarity (audit)
+3. GitBackbone - latest similarity (storage)
+4. WorkflowEngine - latest similarity (workflow snapshots)
 
 ---
 
 ### If you're using defineHook(), consider:
-1. executeHook() - 0.99 similarity (direct pair)
-2. compileHookChain() - 0.87 similarity (optimization)
-3. validateOnly() - 0.83 similarity (dry-run)
-4. addQuad() - 0.71 similarity (policy gate)
+1. executeHook() - latest similarity (direct pair)
+2. compileHookChain() - latest similarity (optimization)
+3. validateOnly() - latest similarity (dry-run)
+4. addQuad() - latest similarity (policy gate)
 
 ---
 
 ## Explore by Use Case
 
 ### Use Case: Build an RDF API
-**High-Similarity Capabilities** (score > 0.70):
-- createStore (0.95)
-- dataFactory.* (0.93)
-- executeSelect (0.88)
-- validateTriple (0.78)
-- toNTriples (0.71)
+**High-Similarity Capabilities** (score > latest):
+- createStore (latest)
+- dataFactory.* (latest)
+- executeSelect (latest)
+- validateTriple (latest)
+- toNTriples (latest)
 
 **Total Coverage**: 85% of RDF API use cases
 
 ---
 
 ### Use Case: Compliance & Audit
-**High-Similarity Capabilities** (score > 0.70):
-- defineHook (0.89)
-- generateReceipt (0.94)
-- freezeUniverse (0.82)
-- ProofChain (0.91)
-- verifyReceipt (0.98)
+**High-Similarity Capabilities** (score > latest):
+- defineHook (latest)
+- generateReceipt (latest)
+- freezeUniverse (latest)
+- ProofChain (latest)
+- verifyReceipt (latest)
 
 **Total Coverage**: 90% of compliance use cases
 
 ---
 
 ### Use Case: Distributed Systems
-**High-Similarity Capabilities** (score > 0.70):
-- RaftNode (0.93)
-- DistributedQuery (0.86)
-- VectorClock (0.88)
-- PeerDiscovery (0.88)
-- PrometheusExporter (0.79)
+**High-Similarity Capabilities** (score > latest):
+- RaftNode (latest)
+- DistributedQuery (latest)
+- VectorClock (latest)
+- PeerDiscovery (latest)
+- PrometheusExporter (latest)
 
 **Total Coverage**: 88% of distributed system use cases
 
 ---
 
 ### Use Case: Workflow Automation
-**High-Similarity Capabilities** (score > 0.70):
-- WorkflowEngine (0.95)
-- YawlTask (0.92)
-- generateReceipt (0.89)
-- freezeUniverse (0.74)
-- YawlHook (0.88)
+**High-Similarity Capabilities** (score > latest):
+- WorkflowEngine (latest)
+- YawlTask (latest)
+- generateReceipt (latest)
+- freezeUniverse (latest)
+- YawlHook (latest)
 
 **Total Coverage**: 92% of workflow use cases
 

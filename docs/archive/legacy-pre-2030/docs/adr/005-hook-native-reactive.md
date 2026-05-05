@@ -90,7 +90,7 @@ store.on('insert', (quad) => {
 });
 
 store.on('insert', (quad) => {
-  if (quad.predicate.value === 'http://xmlns.com/foaf/0.1/mbox') {
+  if (quad.predicate.value === 'http://xmlns.com/foaf/latest/mbox') {
     const email = quad.object.value;
     if (!email.includes('@')) {
       throw new Error('Invalid email');
@@ -448,7 +448,7 @@ for (let i = 0; i < 10000; i++) {
 console.timeEnd('with-hooks');
 // with-hooks: 65ms
 
-// Overhead: 15ms / 10K ops = 1.5μs per operation (acceptable)
+// Overhead: 15ms / 10K ops = latestμs per operation (acceptable)
 ```
 
 ---
@@ -457,7 +457,7 @@ console.timeEnd('with-hooks');
 
 - **Hooks defined:** 25+ policies
 - **Hook executions:** 100K+ (across tests)
-- **Validation pass rate:** 99.8%
+- **Validation pass rate:** latest%
 - **OTEL spans:** 1,247 (proof of execution)
 
 ---
@@ -474,7 +474,7 @@ console.timeEnd('with-hooks');
 ## Review & Updates
 
 - **2024-11-01:** Initial decision
-- **2024-12-25:** Validated with 1,247 OTEL spans (99.8% pass rate)
+- **2024-12-25:** Validated with 1,247 OTEL spans (latest% pass rate)
 
 ---
 

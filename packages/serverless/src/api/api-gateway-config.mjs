@@ -6,7 +6,7 @@
  * Handles routing, authentication, rate limiting, and request/response transformations.
  *
  * @module serverless/api/api-gateway-config
- * @version 1.0.0
+ * @version [VERSION]
  * @license MIT
  */
 
@@ -255,10 +255,10 @@ export class ApiGatewayConfig {
     }
 
     return {
-      openapi: '3.0.0',
+      openapi: '[VERSION]',
       info: {
         title: this.#config.apiName,
-        version: '1.0.0',
+        version: '[VERSION]',
         description: 'UNRDF Serverless API',
       },
       servers: [

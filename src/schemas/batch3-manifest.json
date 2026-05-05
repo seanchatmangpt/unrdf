@@ -1,5 +1,5 @@
 {
-  "version": "6.0.0-batch3",
+  "version": "[VERSION]-batch3",
   "timestamp": "2025-12-27T11:15:47.062Z",
   "coverage": {
     "target": 194,

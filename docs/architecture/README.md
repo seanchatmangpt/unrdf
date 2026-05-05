@@ -2,7 +2,7 @@
 
 **Post-Cyberpunk Governance System - Design Documentation**
 
-Status: DRAFT | Version: 0.1.0 | Date: 2025-12-27
+Status: DRAFT | Version: latest | Date: 2025-12-27
 
 ---
 
@@ -234,7 +234,7 @@ END-TO-END              <100ms            500/sec
 
 | Version | Date       | Changes                                      |
 |---------|------------|----------------------------------------------|
-| 0.1.0   | 2025-12-27 | Initial draft (full spec + diagrams + summary)|
+| latest   | 2025-12-27 | Initial draft (full spec + diagrams + summary)|
 
 ---
 

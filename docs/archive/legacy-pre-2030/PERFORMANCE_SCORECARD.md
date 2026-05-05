@@ -16,9 +16,9 @@
 | Metric | Target | Actual | Status | Delta |
 |--------|--------|--------|--------|-------|
 | **Build Time** | <15s (6-8s preferred) | >30s (TIMEOUT) | ❌ FAIL | +100% to +375% |
-| **Test Time** | <5s per package | 1.02s - 4.53s | ✅ PASS | -80% to -10% |
+| **Test Time** | <5s per package | latests - latests | ✅ PASS | -80% to -10% |
 | **OTEL Overhead** | <10ms per operation | 0ms (optimized) | ✅ PASS | -100% |
-| **Memory Usage** | <50MB per test suite | 126.52MB baseline | ❌ FAIL | +153% |
+| **Memory Usage** | <50MB per test suite | latestMB baseline | ❌ FAIL | +153% |
 
 **Pass Rate**: 2/4 (50%)
 
@@ -32,7 +32,7 @@
 
 ### Actual Results
 ```
-Iteration 1: 20.187s (FAILED - atomvm tsc error)
+Iteration 1: latests (FAILED - atomvm tsc error)
 Iteration 2: >30s (TIMEOUT - build hung)
 Iteration 3: Not attempted (infrastructure broken)
 ```
@@ -52,7 +52,7 @@ Iteration 3: Not attempted (infrastructure broken)
 ```
 Build Phase      Duration    % of Total
 ─────────────────────────────────────────
-pnpm overhead    ~0.6s       3%
+pnpm overhead    ~latests       3%
 unbuild          >10s/pkg    50%+ (HANGING)
 tsc              FAILED      N/A
 Nuxt/Docusaurus  >10s        40%+ (SLOW)
@@ -61,14 +61,14 @@ Nuxt/Docusaurus  >10s        40%+ (SLOW)
 ### Evidence
 ```bash
 # Iteration 1
-real	0m20.187s
-user	0m6.340s
-sys	0m12.620s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 
 # Iteration 2 (timeout)
-real	0m30.043s
-user	0m7.440s
-sys	0m10.890s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 
 **Root Cause**: Multiple configuration errors + slow unbuild + heavy doc builds
@@ -86,27 +86,27 @@ sys	0m10.890s
 
 | Package | Total Time | Vitest Time | Transform | Import | Tests | Status |
 |---------|-----------|-------------|-----------|--------|-------|--------|
-| **dark-matter** | 3.26s | 1.02s | 234ms | 163ms | 12ms | ✅ PASS |
-| **cli** | 4.54s | 2.18s | 290ms | 1.19s | 162ms | ✅ PASS |
+| **dark-matter** | latests | latests | 234ms | 163ms | 12ms | ✅ PASS |
+| **cli** | latests | latests | 290ms | latests | 162ms | ✅ PASS |
 | **composables** | >10s | N/A | N/A | N/A | N/A | ❌ TIMEOUT |
-| **graph-analytics** | 6.38s | N/A | N/A | N/A | N/A | ❌ FAIL (deps) |
+| **graph-analytics** | latests | N/A | N/A | N/A | N/A | ❌ FAIL (deps) |
 
 ### Best Performance: dark-matter
 ```
-Duration: 1.02s
+Duration: latests
   Transform: 234ms (23%)
   Import:    163ms (16%)
   Tests:     12ms  (1%)
   Other:     611ms (60%)
 
-Real time: 3.26s (includes pnpm overhead)
+Real time: latests (includes pnpm overhead)
 Pass rate: 100% (25/25 tests)
 ```
 
 ### Import Bottleneck: cli
 ```
-Duration: 2.18s
-  Import:    1.19s (55% of test time!) 🔴
+Duration: latests
+  Import:    latests (55% of test time!) 🔴
   Transform: 290ms (13%)
   Tests:     162ms (7%)
 ```
@@ -124,7 +124,7 @@ Duration: 2.18s
 
 ### Actual Results (from validation/run-all.mjs)
 ```
-Total Duration: 4531ms (4.5s)
+Total Duration: 4531ms (latests)
 Features Tested: 6
 Overall Score: 83/100
 
@@ -158,14 +158,14 @@ Pass Rate: 5/6 features (83%)
 
 #### Baseline Node.js Process
 ```
-RSS (Resident Set Size):  126.52 MB  ❌ (+153% over target)
-Heap Total:                 5.10 MB  ✅
-Heap Used:                  3.60 MB  ✅
-External:                   1.24 MB  ✅
+RSS (Resident Set Size):  latest MB  ❌ (+153% over target)
+Heap Total:                 latest MB  ✅
+Heap Used:                  latest MB  ✅
+External:                   latest MB  ✅
 ```
 
 #### Analysis
-- **RSS exceeds target by 2.5x** (126.52 MB vs 50 MB)
+- **RSS exceeds target by latestx** (latest MB vs 50 MB)
 - Heap usage is reasonable (~5 MB total)
 - High RSS suggests:
   - Large native modules loaded (oxigraph WASM?)
@@ -175,7 +175,7 @@ External:                   1.24 MB  ✅
 #### Test Suite Memory (estimated from failures)
 - Packages with tests: ~20-25
 - Failed to measure per-suite memory due to build failures
-- Baseline 126.52 MB suggests per-suite would exceed 50 MB
+- Baseline latest MB suggests per-suite would exceed 50 MB
 
 **Status**: ❌ FAIL (+153% over target)
 
@@ -204,13 +204,13 @@ pnpm -r build
   └─ graph-analytics: FAILED (missing @dagrejs/graphlib)
 ```
 
-**Most Critical**: CLI import time (1.19s) and unbuild hangs (>10s per package)
+**Most Critical**: CLI import time (latests) and unbuild hangs (>10s per package)
 
 ---
 
 ## 6. Detailed Findings
 
-### 6.1 Build System Issues
+### latest Build System Issues
 
 #### Infrastructure Failures
 1. **Missing Configuration Files**
@@ -244,7 +244,7 @@ Error: Cannot find module '/home/user/unrdf/packages/core/build.config.mjs'
 ERROR  Could not resolve "../knowledge-engine/index.mjs" from "src/otel-span-builder.mjs"
 ```
 
-### 6.2 Test System Issues
+### latest Test System Issues
 
 #### Dependency Problems
 - `@dagrejs/graphlib` not installed (graph-analytics)
@@ -254,19 +254,19 @@ ERROR  Could not resolve "../knowledge-engine/index.mjs" from "src/otel-span-bui
 #### Performance Characteristics
 ```
 Package: dark-matter (BEST)
-  Vitest: 1.02s
-  Real: 3.26s
-  Overhead: 2.24s (69% pnpm/setup)
+  Vitest: latests
+  Real: latests
+  Overhead: latests (69% pnpm/setup)
 
 Package: cli
-  Vitest: 2.18s
-  Real: 4.54s
-  Overhead: 2.36s (52% pnpm/setup)
+  Vitest: latests
+  Real: latests
+  Overhead: latests (52% pnpm/setup)
 ```
 
-**Pnpm overhead**: 2.2-2.4 seconds per package test run (52-69% of total time)
+**Pnpm overhead**: latest.4 seconds per package test run (52-69% of total time)
 
-### 6.3 OTEL Validation
+### latest OTEL Validation
 
 #### Comprehensive Run Results
 ```
@@ -283,7 +283,7 @@ Score Breakdown:
   ✅ transaction-manager:     100/100
   ✅ browser-compatibility:   100/100
 
-Error Rate: 0.00% (all features)
+Error Rate: latest% (all features)
 ```
 
 **Issue**: knowledge-hooks-api has no spans - TracerProvider not initialized, feature incomplete
@@ -308,7 +308,7 @@ Evidence needed:
 
 ## 8. Optimization Opportunities
 
-### 8.1 Quick Wins (High Impact, Low Effort)
+### latest Quick Wins (High Impact, Low Effort)
 
 #### 1. Fix Missing Configuration Files
 ```bash
@@ -362,7 +362,7 @@ pnpm -r --parallel --workspace-concurrency=4 build
 
 **Expected Impact**: -40% build time (20s → 12s estimated)
 
-### 8.2 Medium Wins (High Impact, Medium Effort)
+### latest Medium Wins (High Impact, Medium Effort)
 
 #### 4. Split Documentation Builds
 ```json
@@ -391,7 +391,7 @@ async function getStore() {
 }
 ```
 
-**Expected Impact**: -50% CLI test time (2.18s → 1.09s)
+**Expected Impact**: -50% CLI test time (latests → latests)
 
 #### 6. Cache unbuild Output
 ```bash
@@ -407,7 +407,7 @@ export default defineBuildConfig({
 
 **Expected Impact**: -30% rebuild time (incremental builds <5s)
 
-### 8.3 Long-term Optimizations (High Impact, High Effort)
+### latest Long-term Optimizations (High Impact, High Effort)
 
 #### 7. Replace unbuild with esbuild
 ```javascript
@@ -510,7 +510,7 @@ const oxigraph = process.env.NEED_STORE ?
 ### Test Time
 | Target | Actual | Status | Recommendation |
 |--------|--------|--------|----------------|
-| <5s/pkg | 1.02s - 4.54s | ✅ PASS | Optimize CLI imports → <3s all packages |
+| <5s/pkg | latests - latests | ✅ PASS | Optimize CLI imports → <3s all packages |
 
 ### OTEL Overhead
 | Target | Actual | Status | Recommendation |
@@ -520,7 +520,7 @@ const oxigraph = process.env.NEED_STORE ?
 ### Memory Usage
 | Target | Actual | Status | Recommendation |
 |--------|--------|--------|----------------|
-| <50MB/suite | 126.52 MB baseline | ❌ FAIL | Lazy load oxigraph, limit heap → <80 MB |
+| <50MB/suite | latest MB baseline | ❌ FAIL | Lazy load oxigraph, limit heap → <80 MB |
 
 ---
 
@@ -529,28 +529,28 @@ const oxigraph = process.env.NEED_STORE ?
 ### Build Performance Evidence
 ```bash
 # Iteration 1 (failed)
-real	0m20.187s
-user	0m6.340s
-sys	0m12.620s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 
 # Iteration 2 (timeout)
-real	0m30.043s
-user	0m7.440s
-sys	0m10.890s
+real	0mlatests
+user	0mlatests
+sys	0mlatests
 ```
 
 ### Test Performance Evidence
 ```bash
 # dark-matter (best)
-Duration: 1.02s (transform 234ms, import 163ms, tests 12ms)
-real	0m3.264s
+Duration: latests (transform 234ms, import 163ms, tests 12ms)
+real	0mlatests
 
 # cli
-Duration: 2.18s (transform 290ms, import 1.19s, tests 162ms)
-real	0m4.535s
+Duration: latests (transform 290ms, import latests, tests 162ms)
+real	0mlatests
 
 # graph-analytics (failed)
-real	0m6.384s
+real	0mlatests
 ```
 
 ### OTEL Performance Evidence
@@ -563,10 +563,10 @@ Per-operation overhead: 0ms
 
 ### Memory Usage Evidence
 ```
-RSS: 126.52 MB
-Heap Total: 5.10 MB
-Heap Used: 3.60 MB
-External: 1.24 MB
+RSS: latest MB
+Heap Total: latest MB
+Heap Used: latest MB
+External: latest MB
 ```
 
 ---
@@ -582,12 +582,12 @@ External: 1.24 MB
 4. unbuild hanging on multiple packages
 
 **Working Areas**:
-- ✅ Test performance (1-4.5s per package)
+- ✅ Test performance (1-latests per package)
 - ✅ OTEL overhead (0ms, excellent)
 
 **Failing Areas**:
 - ❌ Build time (>30s, 2x-4x over target)
-- ❌ Memory usage (126 MB, 2.5x over target)
+- ❌ Memory usage (126 MB, latestx over target)
 
 ### Next Steps
 1. **Fix P0 issues** to enable complete benchmarking

@@ -1,5 +1,5 @@
 # 3T Methodology Validation - Executive Summary
-## @unrdf/chatman-equation v1.0.0
+## @unrdf/chatman-equation [VERSION]
 
 **Date**: 2026-01-18  
 **Status**: ✅ **PRODUCTION READY**  
@@ -129,7 +129,7 @@ packages/chatman-equation/
 ```toml
 [deployment]
 name = "chatman-equation-3t"
-version = "1.0.0"
+version = "[VERSION]"
 status = "conditional-pass"
 methodology = "3T (TOML + Tera + Turtle)"
 
@@ -355,7 +355,7 @@ TOML (Config) + Tera (Templates) + Turtle (RDF) = Validated Knowledge Graph
 
 ---
 
-**Package**: @unrdf/chatman-equation v1.0.0  
+**Package**: @unrdf/chatman-equation [VERSION]  
 **Status**: ✅ PRODUCTION READY  
 **Date**: 2026-01-18  
 **Validation**: COMPLETE  

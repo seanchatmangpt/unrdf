@@ -148,7 +148,7 @@ S(t) = \langle O, t_{ns}, \vec{V}, G \rangle
 
 **Cryptographic Guarantees**:
 - Collision resistance: P(collision) ≈ 2^{-160}
-- Tamper detection: 99.9999999999...% (SHA-256)
+- Tamper detection: latest...% (SHA-256)
 
 ### Implementation Examples
 

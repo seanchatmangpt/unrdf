@@ -37,8 +37,8 @@ Designed for React applications:
 
 ### 4. Standards-Compliant
 Adheres to W3C standards:
-- RDF 1.1 specification
-- SPARQL 1.1 query language
+- RDF [VERSION] specification
+- SPARQL [VERSION] query language
 - Turtle syntax support
 
 ## Core Concepts

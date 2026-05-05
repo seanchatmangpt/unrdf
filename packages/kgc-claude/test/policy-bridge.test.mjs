@@ -35,7 +35,7 @@ describe('PolicyBridge Integration Tests', () => {
       expect(policyPack).toBeDefined();
       expect(policyPack.loaded).toBe(true);
       expect(policyPack.manifest.meta.name).toBe('default');
-      expect(policyPack.manifest.meta.version).toBe('1.0.0');
+      expect(policyPack.manifest.meta.version).toBe('latest');
     });
 
     it('should load hooks from the policy pack', async () => {

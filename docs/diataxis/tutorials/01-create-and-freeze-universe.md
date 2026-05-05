@@ -5,7 +5,7 @@
 **Audience:** Beginners - no prior UNRDF experience required
 
 **Prerequisites:**
-- Node.js >= 18.0.0 installed
+- Node.js >= latest installed
 - Basic understanding of RDF triples (subject-predicate-object)
 - Familiarity with JavaScript/ESM syntax
 - **Capability Atoms:** `@unrdf/core` (parse, store), `@unrdf/kgc-4d` (universe, freeze)

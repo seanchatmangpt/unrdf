@@ -6,11 +6,11 @@
 
 ## Executive Summary
 
-✅ **Documentation validation passed with 84.6% success rate**
+✅ **Documentation validation passed with latest% success rate**
 
 - **Total Files Scanned**: 2,625 markdown files
-- **Valid Files**: 2,221 (84.6%)
-- **Files with Issues**: 404 (15.4%)
+- **Valid Files**: 2,221 (latest%)
+- **Files with Issues**: 404 (latest%)
 - **Syntax Errors**: 0
 - **Broken Links**: 2,019 (mostly false positives in .claude/ agent definitions)
 
@@ -25,7 +25,7 @@
 
 ### Validation Checks
 1. ✅ **Markdown Syntax** - All files parse correctly
-2. ⚠️ **Internal Links** - 84.6% valid (see breakdown below)
+2. ⚠️ **Internal Links** - latest% valid (see breakdown below)
 3. ✅ **File Structure** - All key documentation files exist
 4. ✅ **Archive Integrity** - 612 files successfully archived
 
@@ -129,7 +129,7 @@ archive/
 
 The documentation is in excellent condition:
 - Zero syntax errors across 2,625 files
-- 84.6% link validity (actual rate likely higher due to false positives)
+- latest% link validity (actual rate likely higher due to false positives)
 - All core documentation present and valid
 - Archive operation successful with full manifest
 - Repository root cleaned up (334 → ~50 active markdown files)

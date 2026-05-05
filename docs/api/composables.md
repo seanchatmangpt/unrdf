@@ -338,7 +338,7 @@ Parses Turtle with custom prefixes.
 
 ```javascript
 const customPrefixes = {
-  'foaf': 'http://xmlns.com/foaf/0.1/',
+  'foaf': 'http://xmlns.com/foaf/latest/',
   'ex': 'http://example.org/'
 };
 const quads = await turtle.parseWithPrefixes(turtleData, customPrefixes);
@@ -359,7 +359,7 @@ import { useTurtle } from 'unrdf';
 
 const turtle = useTurtle({
   prefixes: {
-    'foaf': 'http://xmlns.com/foaf/0.1/',
+    'foaf': 'http://xmlns.com/foaf/latest/',
     'ex': 'http://example.org/'
   },
   strict: true
@@ -367,7 +367,7 @@ const turtle = useTurtle({
 
 // Parse Turtle data
 const quads = await turtle.parse(`
-  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  @prefix foaf: <http://xmlns.com/foaf/latest/> .
   @prefix ex: <http://example.org/> .
   
   ex:john a foaf:Person ;

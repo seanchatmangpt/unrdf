@@ -21,11 +21,11 @@ The UNRDF project has significant **developer experience** and **user experience
 | Category           | Metric                | Target | Actual     | Status      | Score |
 | ------------------ | --------------------- | ------ | ---------- | ----------- | ----- |
 | **DX: Onboarding** | Time to first success | <3 min | ∞ (broken) | ❌ FAIL     | 0/10  |
-| **DX: Build**      | Clean build time      | <10s   | 1.175s     | ⚠️ SKIP     | 3/10  |
+| **DX: Build**      | Clean build time      | <10s   | latests     | ⚠️ SKIP     | 3/10  |
 | **DX: Build**      | Incremental build     | <5s    | N/A        | ❌ SKIP     | 0/10  |
-| **DX: Test**       | Full test suite       | <30s   | 15.98s     | ⚠️ PARTIAL  | 5/10  |
-| **DX: Test**       | Fast test mode        | <10s   | 7.595s     | ✅ PASS     | 8/10  |
-| **DX: Lint**       | Full lint             | <30s   | 25.85s     | ❌ FAIL     | 3/10  |
+| **DX: Test**       | Full test suite       | <30s   | latests     | ⚠️ PARTIAL  | 5/10  |
+| **DX: Test**       | Fast test mode        | <10s   | latests     | ✅ PASS     | 8/10  |
+| **DX: Lint**       | Full lint             | <30s   | latests     | ❌ FAIL     | 3/10  |
 | **DX: Watch**      | Change → feedback     | <2s    | N/A        | ⚠️ UNTESTED | 0/10  |
 | **DX: IDE**        | Autocomplete coverage | 90%    | ~60%       | ⚠️ PARTIAL  | 6/10  |
 | **UX: Errors**     | Clear + actionable    | 90%    | 40%        | ❌ FAIL     | 4/10  |
@@ -39,7 +39,7 @@ The UNRDF project has significant **developer experience** and **user experience
 
 ## 1. DX Validation Results
 
-### 1.1 Onboarding Test ❌ FAILED (0/10)
+### latest Onboarding Test ❌ FAILED (0/10)
 
 **Test:** New developer simulation - clone → install → run hello world
 
@@ -71,12 +71,12 @@ $ node examples/basic-knowledge-hook.mjs
 
 ---
 
-### 1.2 Build Performance Test ⚠️ PARTIAL (3/10)
+### latest Build Performance Test ⚠️ PARTIAL (3/10)
 
 **Test:** Clean build time
 
 **Target:** <10s
-**Actual:** 1.175s (✅ FAST) but **packages skipped** (❌ BROKEN)
+**Actual:** latests (✅ FAST) but **packages skipped** (❌ BROKEN)
 
 **Evidence:**
 
@@ -85,7 +85,7 @@ $ time pnpm build
 > pnpm -r --filter ./packages build
 No projects matched the filters in "/home/user/unrdf"
 
-real    0m1.175s
+real    0mlatests
 
 # Individual package test:
 $ cd packages/core && pnpm build
@@ -102,12 +102,12 @@ Error: Cannot find module '/home/user/unrdf/packages/core/build.config.mjs'
 
 ---
 
-### 1.3 Test Performance Test ⚠️ MIXED (5-8/10)
+### latest Test Performance Test ⚠️ MIXED (5-8/10)
 
 **Test:** Full test suite
 
 **Target:** <30s
-**Actual:** 15.98s ✅ but **7/8 test files FAILED** ❌
+**Actual:** latests ✅ but **7/8 test files FAILED** ❌
 
 **Evidence:**
 
@@ -115,17 +115,17 @@ Error: Cannot find module '/home/user/unrdf/packages/core/build.config.mjs'
 $ time pnpm test
 packages/docs test: Test Files  7 failed | 1 passed (8)
                     Tests       6 passed (6)
-                    Duration    11.62s
+                    Duration    latests
 
 packages/core test: Test Files  1 failed | 6 passed (7)
                     Tests       231 passed (231)
 
-real    0m15.983s
+real    0mlatests
 ```
 
 **Test (Fast):**
 **Target:** <10s
-**Actual:** 7.595s ✅ but **1/7 test files FAILED** ❌
+**Actual:** latests ✅ but **1/7 test files FAILED** ❌
 
 **Evidence:**
 
@@ -134,19 +134,19 @@ $ time pnpm test:fast
 packages/core test:fast: Test Files  1 failed | 6 passed (7)
                          Tests       231 passed (231)
 
-real    0m7.595s
+real    0mlatests
 ```
 
 **Package-Specific Results:**
 
 | Package        | Passed  | Failed  | Duration | Status               |
 | -------------- | ------- | ------- | -------- | -------------------- |
-| **Hooks**      | 108/108 | 0       | 2.78s    | ✅ EXCELLENT         |
-| **YAWL**       | 284/292 | 8       | 3.87s    | ⚠️ 97% pass          |
-| **Streaming**  | 28/48   | 20      | 1.83s    | ❌ 58% pass          |
-| **Federation** | 0       | ALL     | 1.86s    | ❌ BROKEN            |
-| **Core**       | 231/232 | 1       | 2.56s    | ⚠️ 99.6% pass        |
-| **Docs (E2E)** | 6       | 7 files | 11.62s   | ❌ Playwright errors |
+| **Hooks**      | 108/108 | 0       | latests    | ✅ EXCELLENT         |
+| **YAWL**       | 284/292 | 8       | latests    | ⚠️ 97% pass          |
+| **Streaming**  | 28/48   | 20      | latests    | ❌ 58% pass          |
+| **Federation** | 0       | ALL     | latests    | ❌ BROKEN            |
+| **Core**       | 231/232 | 1       | latests    | ⚠️ latest% pass        |
+| **Docs (E2E)** | 6       | 7 files | latests   | ❌ Playwright errors |
 
 **Impact:** Tests are **unreliable**. CI would be red. Cannot ship.
 
@@ -160,12 +160,12 @@ real    0m7.595s
 
 ---
 
-### 1.4 Linting Performance Test ❌ FAILED (3/10)
+### latest Linting Performance Test ❌ FAILED (3/10)
 
 **Test:** Full lint
 
 **Target:** <30s, 0 errors
-**Actual:** 25.85s ✅ but **1 error** ❌
+**Actual:** latests ✅ but **1 error** ❌
 
 **Evidence:**
 
@@ -174,7 +174,7 @@ $ time pnpm lint
 packages/core lint: /home/user/unrdf/packages/core/test/enhanced-errors.test.mjs
 packages/core lint:   342:53  error  Parsing error: Cannot use keyword 'await' outside an async function
 
-real    0m25.850s
+real    0mlatests
 ```
 
 **Impact:** Linting FAILS. Code doesn't meet quality standards. CI would fail.
@@ -183,7 +183,7 @@ real    0m25.850s
 
 ---
 
-### 1.5 Error Experience Test ❌ POOR (4/10)
+### latest Error Experience Test ❌ POOR (4/10)
 
 **Test:** Error message quality and actionability
 
@@ -223,7 +223,7 @@ real    0m25.850s
 
 ---
 
-### 1.6 IDE Experience Test ⚠️ PARTIAL (6/10)
+### latest IDE Experience Test ⚠️ PARTIAL (6/10)
 
 **Test:** Autocomplete and IntelliSense
 
@@ -245,7 +245,7 @@ real    0m25.850s
 
 ## 2. UX Validation Results
 
-### 2.1 Example Quality Test ❌ FAILED (3/10)
+### latest Example Quality Test ❌ FAILED (3/10)
 
 **Test:** Run all 61 example files
 
@@ -272,7 +272,7 @@ real    0m25.850s
 
 ---
 
-### 2.2 Documentation Quality Test ⚠️ PARTIAL (5/10)
+### latest Documentation Quality Test ⚠️ PARTIAL (5/10)
 
 **Test:** Documentation completeness and accuracy
 
@@ -282,7 +282,7 @@ real    0m25.850s
 - README.md: ✅ Present with quick start
 - START-HERE.md: ✅ Present with orientation
 - API documentation: ✅ Present (API-REFERENCE.md)
-- Examples: ❌ Broken (see 2.1)
+- Examples: ❌ Broken (see latest)
 
 **Issues:**
 
@@ -294,7 +294,7 @@ real    0m25.850s
 
 ---
 
-### 2.3 API Discoverability Test ⚠️ PARTIAL (5/10)
+### latest API Discoverability Test ⚠️ PARTIAL (5/10)
 
 **Test:** Can users find the right API without docs?
 
@@ -318,7 +318,7 @@ export { RDF, RDFS, OWL, XSD, FOAF, DCTERMS, SKOS, COMMON_PREFIXES } from './con
 
 ---
 
-### 2.4 Performance Perception Test ⚠️ PARTIAL (5/10)
+### latest Performance Perception Test ⚠️ PARTIAL (5/10)
 
 **Test:** Response time < 100ms (instant), < 1s (fast)
 
@@ -326,12 +326,12 @@ export { RDF, RDFS, OWL, XSD, FOAF, DCTERMS, SKOS, COMMON_PREFIXES } from './con
 
 ```
 Hooks package tests: 108 tests in 657ms = ~6ms/test ✅ INSTANT
-YAWL package tests: 292 tests in 1.40s = ~4.8ms/test ✅ INSTANT
+YAWL package tests: 292 tests in latests = ~latestms/test ✅ INSTANT
 
 Oxigraph benchmarks:
-  ASK queries: 16,571 ops/sec = 0.06ms/query ✅ INSTANT
-  CONSTRUCT queries: 3,252 ops/sec = 0.31ms/query ✅ INSTANT
-  Triple addition: 17,803 ops/sec = 0.056ms/op ✅ INSTANT
+  ASK queries: 16,571 ops/sec = latestms/query ✅ INSTANT
+  CONSTRUCT queries: 3,252 ops/sec = latestms/query ✅ INSTANT
+  Triple addition: 17,803 ops/sec = latestms/op ✅ INSTANT
 ```
 
 **Performance:** ✅ EXCELLENT when working
@@ -535,7 +535,7 @@ $ time pnpm build
 > pnpm -r --filter ./packages build
 No projects matched the filters in "/home/user/unrdf"
 
-real    0m1.175s
+real    0mlatests
 ```
 
 ### Test (Fast)
@@ -544,9 +544,9 @@ real    0m1.175s
 $ time pnpm test:fast
 packages/core test:fast: Test Files  1 failed | 6 passed (7)
                          Tests       231 passed (231)
-                         Duration    2.56s
+                         Duration    latests
 
-real    0m7.595s
+real    0mlatests
 ```
 
 ### Lint
@@ -555,7 +555,7 @@ real    0m7.595s
 $ time pnpm lint
 packages/core lint:   342:53  error  Parsing error: Cannot use keyword 'await' outside an async function
 
-real    0m25.850s
+real    0mlatests
 ```
 
 ### Example Tests

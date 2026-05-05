@@ -185,7 +185,7 @@ console.log('Children:', supervisor.children);
 ## Architecture
 
 ```
-Docker Swarm (Overlay Network 10.20.0.0/16)
+Docker Swarm (Overlay Network [VERSION].0/16)
 │
 ├── atomvm_node1@atomvm-1
 │   ├── EPMD: 4369
@@ -238,7 +238,7 @@ docker exec $CONT sh -c "epmd -names"
 ```bash
 # Verify msg_handler is registered
 docker exec $CONT sh -c "erl -noshell -sname test -setcookie atomvm_secret_cookie -eval \"rpc:call('atomvm_node1@atomvm-1', erlang, whereis, [msg_handler]), init:stop().\""
-# Should return a PID like <9365.90.0>
+# Should return a PID like <[VERSION]>
 ```
 
 ## Next Steps

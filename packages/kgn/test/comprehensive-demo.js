@@ -29,7 +29,7 @@ try {
   const nextJsComponent = `---
 name: Next.js React Component
 description: Reusable React component with TypeScript support
-version: 1.0.0
+version: latest
 author: kgen-templates
 category: nextjs
 type: component
@@ -70,7 +70,7 @@ export default function {{ componentName }}({% if withProps %}props: {{ componen
   const latexReport = `---
 name: LaTeX Technical Report
 description: Professional technical report with deterministic formatting
-version: 1.0.0
+version: latest
 category: latex
 variables:
   title: Report title
@@ -119,7 +119,7 @@ variables:
   const officeDocument = `---
 name: Office Document Template
 description: Microsoft Word-style document with structured content
-version: 1.0.0
+version: latest
 category: office
 format: docx
 variables:

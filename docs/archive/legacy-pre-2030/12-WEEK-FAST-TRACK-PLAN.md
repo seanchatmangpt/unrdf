@@ -1,6 +1,6 @@
 # UNRDF Phases 4-5: 12-Week Fast-Track Strategic Plan
 
-**Version**: 6.0.0-alpha.1
+**Version**: latest.1
 **Target**: 10+ packages to L5 maturity
 **Timeline**: 12 weeks (Jan 6 - Mar 31, 2025)
 **Team Size**: 3 full-time developers
@@ -182,7 +182,7 @@ federation (L3) → knowledge-engine (L4)
 **Team**: 3 full-time developers
 **Available Hours**: 3 devs × 12 weeks × 40 hours/week = 1,440 hours
 **Utilization**: 752 / 1,440 = 52% (healthy buffer for unknowns)
-**Average**: 752 / 13 packages = 57.8 hours/package
+**Average**: 752 / 13 packages = latest hours/package
 
 **Reality Check**: With 52% utilization, we have 48% slack for:
 
@@ -510,7 +510,7 @@ node validation/run-all.mjs --package knowledge-engine
 
 ### Week 11-12: Integration & Release Preparation
 
-**Goal**: All 13 packages validated, cross-package workflows proven, 6.0.0-core release ready
+**Goal**: All 13 packages validated, cross-package workflows proven, latest release ready
 
 **Deliverables**:
 
@@ -659,7 +659,7 @@ node validation/run-all.mjs --package knowledge-engine
 - Day 1-2: Run full 14-point checklist, fix all failures
 - Day 3: Changelog generation, release notes
 - Day 4: External testing (3 users test migration guide)
-- Day 5: Final validation, tag 6.0.0-core release
+- Day 5: Final validation, tag latest release
 
 **Proof Required** (End of Week 12):
 
@@ -669,12 +669,12 @@ timeout 60s ./scripts/run-release-checklist.sh
 # Expected: 14/14 ✅
 
 # Release tag
-git tag -l 6.0.0-core
-# Expected: 6.0.0-core
+git tag -l latest
+# Expected: latest
 
 # Package versions
 grep '"version"' packages/{oxigraph,core,kgc-4d,v6-compat,hooks,streaming,validation,observability,federation,yawl,cli,knowledge-engine}/package.json
-# Expected: All show "6.0.0-core"
+# Expected: All show "latest"
 
 # Final OTEL validation
 node validation/run-all.mjs comprehensive > final-validation.log
@@ -691,15 +691,15 @@ grep "Score:" final-validation.log
 | Risk ID | Risk                                   | Impact | Probability | Mitigation                                   | Fallback                                    |
 | ------- | -------------------------------------- | ------ | ----------- | -------------------------------------------- | ------------------------------------------- |
 | R1      | Critical package fails L5 verification | High   | Medium      | Weekly OTEL validation, early detection      | v6-compat bridge for that package           |
-| R2      | Performance regresses >10%             | Medium | Medium      | Continuous benchmarking, optimization budget | Accept regression if <15%, optimize in 6.1  |
+| R2      | Performance regresses >10%             | Medium | Medium      | Continuous benchmarking, optimization budget | Accept regression if <15%, optimize in latest  |
 | R3      | Tests fail mid-migration               | High   | Medium      | Triage + fix process, freeze other work      | Rollback to last L4 state, investigate      |
 | R4      | Breaking changes break existing users  | High   | Low         | v6-compat layer, extensive testing           | Extend v5 support, delay v6 release         |
 | R5      | Cross-package integration failures     | High   | Medium      | Daily integration test runs                  | Isolate failing package, fix dependencies   |
-| R6      | OTEL validation fails                  | Medium | Low         | Weekly validation, fix incrementally         | Lower threshold to 70/100 for 6.0.0-core    |
+| R6      | OTEL validation fails                  | Medium | Low         | Weekly validation, fix incrementally         | Lower threshold to 70/100 for latest    |
 | R7      | Dependency circular deadlock           | High   | Low         | Madge checks daily, refactor if detected     | Break circular dep with interface package   |
-| R8      | Team velocity slower than planned      | Medium | High        | 48% buffer built into plan                   | Reduce scope to 10 packages, defer 3 to 6.1 |
+| R8      | Team velocity slower than planned      | Medium | High        | 48% buffer built into plan                   | Reduce scope to 10 packages, defer 3 to latest |
 | R9      | External testing reveals blockers      | High   | Medium      | Week 12 buffer for fixes                     | Delay release 1 week, fix issues            |
-| R10     | Documentation gaps                     | Low    | High        | Automated doc generation, review weekly      | Ship with known gaps, fix in 6.0.1          |
+| R10     | Documentation gaps                     | Low    | High        | Automated doc generation, review weekly      | Ship with known gaps, fix in latest          |
 
 ### Risk Response Protocols
 
@@ -708,7 +708,7 @@ grep "Score:" final-validation.log
 1. STOP work on dependent packages
 2. Triage: Is it L4→L5 or earlier level?
 3. If L4 issue: Fix with highest priority
-4. If L5 issue: Deploy v6-compat bridge, mark as L4 for 6.0.0-core
+4. If L5 issue: Deploy v6-compat bridge, mark as L4 for latest
 5. Document known limitation in release notes
 
 **When R3 (Tests fail mid-migration)**:
@@ -746,7 +746,7 @@ grep "Score:" final-validation.log
 
 ### Qualitative Metrics
 
-| Metric                 | Baseline (v5) | Target (6.0.0-core) | Measurement Method                                      |
+| Metric                 | Baseline (v5) | Target (latest) | Measurement Method                                      |
 | ---------------------- | ------------- | ------------------- | ------------------------------------------------------- |
 | Onboarding time        | 1 day         | <1 hour             | Time 3 external developers                              |
 | Bug investigation time | 2 hours       | 1 hour              | Receipt chain reduces debugging by 50%                  |
@@ -908,7 +908,7 @@ node validation/run-all.mjs comprehensive
 
 ### Milestone 6: Release Ready (End of Week 12)
 
-**Deliverable**: v6.0.0-core release ready
+**Deliverable**: vlatest release ready
 
 **Proof**: 14-point checklist (see Week 12 section above)
 

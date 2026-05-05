@@ -143,7 +143,7 @@ console.log('✓ Created SHACL shapes\n');
 // Step 3: Create policy pack manifest
 const manifest = createPolicyPackManifest({
   name: 'compliance-v1',
-  version: '1.0.0',
+  version: 'latest',
   description: 'Enterprise compliance policy pack',
   author: 'Compliance Team',
   hooks: [largeTxHook, qualityHook],
@@ -228,13 +228,13 @@ console.log('\n--- Policy Pack Versioning ---\n');
 // Create version 2 of the policy pack
 const manifestV2 = createPolicyPackManifest({
   name: 'compliance-v2',
-  version: '2.0.0',
+  version: 'latest',
   description: 'Enterprise compliance policy pack (v2 with enhanced rules)',
   author: 'Compliance Team',
   hooks: [largeTxHook, qualityHook],
   shapes: ['policy-packs/compliance-v1/shapes.ttl'],
   dependencies: {
-    'compliance-v1': '>=1.0.0',
+    'compliance-v1': '>=latest',
   },
   metadata: {
     category: 'compliance',
@@ -289,7 +289,7 @@ console.log('\n✓ Example complete!\n');
  *
  * Manifest: {
  *   "name": "compliance-v1",
- *   "version": "1.0.0",
+ *   "version": "latest",
  *   "description": "Enterprise compliance policy pack",
  *   "author": "Compliance Team",
  *   "hooks": [...],
@@ -311,7 +311,7 @@ console.log('\n✓ Example complete!\n');
  *
  * Policy pack details:
  *   Name: compliance-v1
- *   Version: 1.0.0
+ *   Version: latest
  *   Hooks: 2
  *   Shapes: 1
  *
@@ -322,9 +322,9 @@ console.log('\n✓ Example complete!\n');
  * --- Policy Pack Versioning ---
  *
  * ✓ Created compliance-v2
- * All available packs: [ 'compliance-v1 v1.0.0', 'compliance-v2 v2.0.0' ]
+ * All available packs: [ 'compliance-v1 latest', 'compliance-v2 latest' ]
  * ✓ Activated compliance-v2
- * Dependencies: { 'compliance-v1': '>=1.0.0' }
+ * Dependencies: { 'compliance-v1': '>=latest' }
  *
  * ✓ Example complete!
  */

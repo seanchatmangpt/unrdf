@@ -9,7 +9,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/oxigraph
 
 **Purpose**: Graph database using Oxigraph SPARQL engine
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: df5027117f89b55d
 
 ### Public API
@@ -47,7 +47,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/core
 
 **Purpose**: RDF Graph Operations, SPARQL Execution, Foundational Substrate
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: 48d3590cb8a230ea
 
 ### Public API
@@ -95,7 +95,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/hooks
 
 **Purpose**: Policy Definition and Execution Framework
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: 3b23ca267b112696
 
 ### Public API
@@ -150,7 +150,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/streaming
 
 **Purpose**: Change Feeds and Real-time Synchronization
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: 7545bae95a43c930
 
 ### Public API
@@ -185,7 +185,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/federation
 
 **Purpose**: Peer Discovery and Distributed Query Execution
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: 33e3ba54db7ffd96
 
 ### Public API
@@ -222,7 +222,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/kgc-4d
 
 **Purpose**: 4D Datum & Universe Freeze Engine - Nanosecond-precision event logging
-**Version**: 5.0.1
+**Version**: latest
 **Hash**: 3d5df499b3d77e49
 
 ### Public API
@@ -259,7 +259,7 @@ Hash: 2a3c1f197191d56c
 ## @unrdf/yawl
 
 **Purpose**: Workflow Automation and Orchestration
-**Version**: 5.0.0
+**Version**: latest
 **Hash**: 75f972c62eb021a5
 
 ### Public API
@@ -332,13 +332,13 @@ Hash: 2a3c1f197191d56c
 
 | Package | Version | Hash | Stability |
 |---------|---------|------|-----------|
-| @unrdf/oxigraph | 5.0.1 | df5027117f89b55d | Critical |
-| @unrdf/core | 5.0.1 | 48d3590cb8a230ea | Critical |
-| @unrdf/hooks | 5.0.1 | 3b23ca267b112696 | Stable |
-| @unrdf/streaming | 5.0.1 | 7545bae95a43c930 | Stable |
-| @unrdf/federation | 5.0.1 | 33e3ba54db7ffd96 | Stable |
-| @unrdf/kgc-4d | 5.0.1 | 3d5df499b3d77e49 | Stable |
-| @unrdf/yawl | 5.0.0 | 75f972c62eb021a5 | Active |
+| @unrdf/oxigraph | latest | df5027117f89b55d | Critical |
+| @unrdf/core | latest | 48d3590cb8a230ea | Critical |
+| @unrdf/hooks | latest | 3b23ca267b112696 | Stable |
+| @unrdf/streaming | latest | 7545bae95a43c930 | Stable |
+| @unrdf/federation | latest | 33e3ba54db7ffd96 | Stable |
+| @unrdf/kgc-4d | latest | 3d5df499b3d77e49 | Stable |
+| @unrdf/yawl | latest | 75f972c62eb021a5 | Active |
 
 **Stability Levels**:
 - **Critical**: Breaking changes affect all packages
@@ -453,13 +453,13 @@ If verification fails:
 
 ### 4. Update Version
 Update package.json version according to semver:
-- Breaking → major (5.0.1 → 6.0.0)
-- Addition → minor (5.0.1 → 5.1.0)
-- Fix only → patch (5.0.1 → 5.0.2)
+- Breaking → major (latest → latest)
+- Addition → minor (latest → latest)
+- Fix only → patch (latest → latest)
 
 ### 5. Accept Contracts
 ```bash
-node agent-2/verify-contracts.mjs --accept "v6.0.0 - Add federated SPARQL"
+node agent-2/verify-contracts.mjs --accept "vlatest - Add federated SPARQL"
 ```
 
 ### 6. Commit
@@ -468,5 +468,5 @@ Commit both package.json and CONTRACTS.lock.json together.
 ---
 
 **Last Updated**: 2025-12-26
-**Contract Version**: 1.0.0
+**Contract Version**: latest
 **Overall Hash**: 2a3c1f197191d56c

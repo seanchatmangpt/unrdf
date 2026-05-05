@@ -133,7 +133,7 @@ function analyzeVersions() {
     const pkg = readPackageJson(pkgName);
     if (!pkg) continue;
 
-    versions.set(pkgName, pkg.version || '0.0.0');
+    versions.set(pkgName, pkg.version || 'latest');
   }
 
   // Group by version

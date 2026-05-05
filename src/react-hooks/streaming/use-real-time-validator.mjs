@@ -1,7 +1,7 @@
 /**
  * @file use-real-time-validator.mjs
  * @description React hook for continuous SHACL validation stream
- * @since 3.2.0
+ * @since [VERSION]
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useChangeFeed } from './use-change-feed.mjs';
 /**
  * Hook for real-time SHACL validation on streaming graph changes
  *
- * @since 3.2.0
+ * @since [VERSION]
  * @param {Object} config - Validator configuration
  * @param {string} [config.shapeGraph] - SHACL shapes graph URI
  * @param {Function} [config.onViolation] - Callback for validation violations

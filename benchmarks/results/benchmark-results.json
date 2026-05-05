@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-04T20:33:13.601Z",
-  "totalDurationMs": 25366.392793,
+  "timestamp": "2025-12-04T20:33:latestZ",
+  "totalDurationMs": latest,
   "summary": {
     "totalBenchmarks": 5,
     "totalTests": 15,
@@ -15,40 +15,40 @@
         {
           "scale": "small",
           "hookCount": 10,
-          "totalTimeMs": 4.7181940000000395,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.1902860000000146,
-            "p95": 1.6194539999999051,
-            "p99": 1.6194539999999051,
-            "mean": 0.37793000000006033
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputHooksPerSec": 2119.455028767345,
+          "throughputHooksPerSec": latest,
           "passed": false
         },
         {
           "scale": "medium",
           "hookCount": 50,
-          "totalTimeMs": 7.342969999999923,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.08074899999996887,
-            "p95": 0.11047099999996135,
-            "p99": 3.0768950000001496,
-            "mean": 0.14079700000002504
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputHooksPerSec": 6809.233865860888,
+          "throughputHooksPerSec": latest,
           "passed": true
         },
         {
           "scale": "large",
           "hookCount": 100,
-          "totalTimeMs": 8.354626000000053,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.06623799999988478,
-            "p95": 0.15479899999991176,
-            "p99": 0.18624599999998281,
-            "mean": 0.08093380999999682
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputHooksPerSec": 11969.41670399122,
+          "throughputHooksPerSec": latest,
           "passed": true
         }
       ],
@@ -65,40 +65,40 @@
         {
           "complexity": "simple",
           "iterations": 1000,
-          "totalTimeMs": 75.94057099999986,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.05962900000008631,
-            "p95": 0.0833709999999428,
-            "p99": 0.15979300000003605,
-            "mean": 0.07511464399999931
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputOpsPerSec": 13168.191742988103,
+          "throughputOpsPerSec": latest,
           "passed": true
         },
         {
           "complexity": "medium",
           "iterations": 500,
-          "totalTimeMs": 35.07884000000013,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.0480400000001282,
-            "p95": 0.10138100000017403,
-            "p99": 0.15264400000000933,
-            "mean": 0.06930136200000697
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputOpsPerSec": 14253.60701779187,
+          "throughputOpsPerSec": latest,
           "passed": true
         },
         {
           "complexity": "complex",
           "iterations": 100,
-          "totalTimeMs": 22.098529000000326,
+          "totalTimeMs": latest,
           "latency": {
-            "p50": 0.14756899999974848,
-            "p95": 0.4797929999999724,
-            "p99": 1.2437799999997878,
-            "mean": 0.22040522000001148
+            "p50": latest,
+            "p95": latest,
+            "p99": latest,
+            "mean": latest
           },
-          "throughputOpsPerSec": 4525.188079260774,
+          "throughputOpsPerSec": latest,
           "passed": true
         }
       ],
@@ -115,34 +115,34 @@
         {
           "concurrencyLevel": "low",
           "workers": 10,
-          "totalTimeMs": 0.6930019999999786,
+          "totalTimeMs": latest,
           "successCount": 10,
           "errorCount": 0,
-          "throughputOpsPerSec": 14429.972785071774,
+          "throughputOpsPerSec": latest,
           "errorRate": 0,
-          "parallelizationEfficiency": 1442.9972785071773,
+          "parallelizationEfficiency": latest,
           "passed": true
         },
         {
           "concurrencyLevel": "medium",
           "workers": 100,
-          "totalTimeMs": 4.674917999999707,
+          "totalTimeMs": latest,
           "successCount": 100,
           "errorCount": 0,
-          "throughputOpsPerSec": 21390.74952758664,
+          "throughputOpsPerSec": latest,
           "errorRate": 0,
-          "parallelizationEfficiency": 213.90749527586638,
+          "parallelizationEfficiency": latest,
           "passed": true
         },
         {
           "concurrencyLevel": "high",
           "workers": 1000,
-          "totalTimeMs": 50.190794000000096,
+          "totalTimeMs": latest,
           "successCount": 1000,
           "errorCount": 0,
-          "throughputOpsPerSec": 19923.97251177174,
+          "throughputOpsPerSec": latest,
           "errorRate": 0,
-          "parallelizationEfficiency": 19.92397251177174,
+          "parallelizationEfficiency": latest,
           "passed": true
         }
       ],
@@ -159,37 +159,37 @@
         {
           "scale": "small",
           "hookCount": 10,
-          "registrationTimeMs": 0.7948700000001736,
-          "baselineMemoryMB": 26.048789978027344,
-          "peakMemoryMB": 25.977699279785156,
-          "memoryUsedMB": -0.0710906982421875,
-          "memoryPerHookMB": -0.00710906982421875,
-          "afterCleanupMemoryMB": 25.936485290527344,
-          "memoryLeakedMB": -0.1123046875,
+          "registrationTimeMs": latest,
+          "baselineMemoryMB": latest,
+          "peakMemoryMB": latest,
+          "memoryUsedMB": -latest,
+          "memoryPerHookMB": -latest,
+          "afterCleanupMemoryMB": latest,
+          "memoryLeakedMB": -latest,
           "passed": true
         },
         {
           "scale": "medium",
           "hookCount": 50,
-          "registrationTimeMs": 4.158976999999595,
-          "baselineMemoryMB": 25.93474578857422,
-          "peakMemoryMB": 26.13616943359375,
-          "memoryUsedMB": 0.20142364501953125,
-          "memoryPerHookMB": 0.004028472900390625,
-          "afterCleanupMemoryMB": 26.043113708496094,
-          "memoryLeakedMB": 0.108367919921875,
+          "registrationTimeMs": latest,
+          "baselineMemoryMB": latest,
+          "peakMemoryMB": latest,
+          "memoryUsedMB": latest,
+          "memoryPerHookMB": latest,
+          "afterCleanupMemoryMB": latest,
+          "memoryLeakedMB": latest,
           "passed": true
         },
         {
           "scale": "large",
           "hookCount": 100,
-          "registrationTimeMs": 6.291082999999617,
-          "baselineMemoryMB": 26.04351806640625,
-          "peakMemoryMB": 26.236862182617188,
-          "memoryUsedMB": 0.1933441162109375,
-          "memoryPerHookMB": 0.001933441162109375,
-          "afterCleanupMemoryMB": 26.057022094726562,
-          "memoryLeakedMB": 0.0135040283203125,
+          "registrationTimeMs": latest,
+          "baselineMemoryMB": latest,
+          "peakMemoryMB": latest,
+          "memoryUsedMB": latest,
+          "memoryPerHookMB": latest,
+          "afterCleanupMemoryMB": latest,
+          "memoryLeakedMB": latest,
           "passed": true
         }
       ],
@@ -209,21 +209,21 @@
           "testCase": "small-graph",
           "graphSize": 100,
           "iterations": 1000,
-          "totalTimeMs": 243.65613299999995,
-          "avgLatencyMs": 0.24312627299998893,
-          "throughputOpsPerSec": 4104.144589703393,
+          "totalTimeMs": latest,
+          "avgLatencyMs": latest,
+          "throughputOpsPerSec": latest,
           "cacheHits": 221,
           "cacheMisses": 779,
-          "cacheHitRate": 0.221,
+          "cacheHitRate": latest,
           "passed": false
         },
         {
           "testCase": "medium-graph",
           "graphSize": 1000,
           "iterations": 500,
-          "totalTimeMs": 3700.384191,
-          "avgLatencyMs": 7.399381096000015,
-          "throughputOpsPerSec": 135.1211047804414,
+          "totalTimeMs": latest,
+          "avgLatencyMs": latest,
+          "throughputOpsPerSec": latest,
           "cacheHits": 0,
           "cacheMisses": 500,
           "cacheHitRate": 0,
@@ -233,9 +233,9 @@
           "testCase": "large-graph",
           "graphSize": 10000,
           "iterations": 100,
-          "totalTimeMs": 18794.281984,
-          "avgLatencyMs": 187.9402598899999,
-          "throughputOpsPerSec": 5.320767246396126,
+          "totalTimeMs": latest,
+          "avgLatencyMs": latest,
+          "throughputOpsPerSec": latest,
           "cacheHits": 0,
           "cacheMisses": 100,
           "cacheHitRate": 0,
@@ -246,8 +246,8 @@
         "totalTests": 3,
         "passed": 0,
         "failed": 3,
-        "avgThroughputOpsPerSec": 1414.8621539100768,
-        "avgCacheHitRate": 0.07366666666666667
+        "avgThroughputOpsPerSec": latest,
+        "avgCacheHitRate": latest
       },
       "passed": false
     }

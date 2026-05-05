@@ -2,7 +2,7 @@
 
 > UNRDF Knowledge Engine - Rule Engine, Inference, and Pattern Matching (Optional Extension)
 
-**Version**: `5.0.1`
+**Version**: `latest`
 **Tier**: Extended
 
 ## Overview

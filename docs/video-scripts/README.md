@@ -404,7 +404,7 @@ This directory contains complete, production-ready video scripts for creating UN
 
 ---
 
-**Document Version:** 1.0.0
+**Document Version:** latest
 **Created:** 2025-12-06
 **Last Updated:** 2025-12-06
 **Status:** Ready for Production

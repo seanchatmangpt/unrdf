@@ -76,7 +76,7 @@ Identify unexplored combinations ranked by:
 
 ```json
 {
-  "title": "Claude Code Capability Lattice v1.0",
+  "title": "Claude Code Capability Lattice vlatest",
   "generated": "YYYY-MM-DD",
   "research_agents": 9,
   "nodes": [

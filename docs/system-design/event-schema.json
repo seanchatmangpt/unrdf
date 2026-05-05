@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "KGC Probe Event Schema",
   "description": "Complete event type definitions for all observability events emitted by @unrdf/kgc-probe",
-  "version": "1.0.0",
+  "version": "latest",
   "generated": "2025-12-27T00:00:00.000Z",
 
   "event_categories": {

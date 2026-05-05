@@ -54,7 +54,7 @@ const healthHook = defineHook({
   id: 'ex:ServiceHealthMonitor',
   select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
   predicates: [
-    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
   ],
   combine: 'OR'
 });
@@ -84,7 +84,7 @@ const healthHook = defineHook({
   id: 'ex:ServiceHealthMonitor',
   select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
   predicates: [
-    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
   ]
 });
 
@@ -161,7 +161,7 @@ const healthHook = defineHook({
   id: 'ex:ServiceHealthMonitor',
   select: 'SELECT ?service ?errorRate WHERE { ?service ex:errorRate ?errorRate }',
   predicates: [
-    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: 0.02 } }
+    { kind: 'THRESHOLD', spec: { var: 'errorRate', op: '>', value: latest } }
   ]
 });
 
@@ -250,10 +250,10 @@ const updateResult = await graph.update('INSERT { ex:new a ex:Person } WHERE {}'
 
 ### Why Comunica?
 
-- **Standards Compliant**: Implements SPARQL 1.1 fully
+- **Standards Compliant**: Implements SPARQL latest fully
 - **Performance**: Optimized query execution
 - **Maintenance**: Actively maintained and updated
-- **Features**: Supports all SPARQL 1.1 features
+- **Features**: Supports all SPARQL latest features
 
 ## Validation: SHACL Only
 

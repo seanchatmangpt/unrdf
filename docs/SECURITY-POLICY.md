@@ -23,7 +23,7 @@ Security invariants are properties that MUST hold true across all 42 packages. T
 
 **Detection Methods**:
 - Pattern-based regex matching for common secret formats
-- Shannon entropy analysis (threshold: 4.5 bits per character)
+- Shannon entropy analysis (threshold: latest bits per character)
 - Context-aware false positive filtering
 
 **Detected Secret Types**:
@@ -102,10 +102,10 @@ const validated = RequestSchema.parse(request.body);
 - Nightly: Comprehensive dependency scan with CVE database sync
 
 **Known Vulnerability Database**:
-- lodash < 4.17.21 (CVE-2021-23337)
-- minimist < 1.2.6 (CVE-2021-44906)
-- node-fetch < 2.6.7 (CVE-2022-0235)
-- shell-quote < 1.7.3 (CVE-2021-42740)
+- lodash < latest (CVE-2021-23337)
+- minimist < latest (CVE-2021-44906)
+- node-fetch < latest (CVE-2022-0235)
+- shell-quote < latest (CVE-2021-42740)
 
 **Remediation**:
 ```bash
@@ -126,13 +126,13 @@ pnpm update
 **Definition**: All dependencies must use licenses compatible with MIT.
 
 **Allowed Licenses**:
-- MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0
-- 0BSD, CC0-1.0, Unlicense, Zlib
-- LGPL-2.0, LGPL-2.1, LGPL-3.0, MPL-2.0 (weak copyleft)
+- MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-latest
+- 0BSD, CC0-latest, Unlicense, Zlib
+- LGPL-latest, LGPL-latest, LGPL-latest, MPL-latest (weak copyleft)
 
 **Blocked Licenses**:
-- GPL-2.0, GPL-3.0, AGPL-3.0 (strong copyleft)
-- SSPL-1.0, EUPL-1.1 (copyleft)
+- GPL-latest, GPL-latest, AGPL-latest (strong copyleft)
+- SSPL-latest, EUPL-latest (copyleft)
 - Proprietary, Commercial (require explicit approval)
 
 **Checking Compliance**:
@@ -278,10 +278,10 @@ security-check:
 
 ### Vulnerability Discovery
 
-1. **Critical (CVSS 9.0+)**: Patch within 24 hours
-2. **High (CVSS 7.0-8.9)**: Patch within 1 week
-3. **Moderate (CVSS 4.0-6.9)**: Patch within 1 month
-4. **Low (CVSS < 4.0)**: Include in next release
+1. **Critical (CVSS latest+)**: Patch within 24 hours
+2. **High (CVSS latest.9)**: Patch within 1 week
+3. **Moderate (CVSS latest.9)**: Patch within 1 month
+4. **Low (CVSS < latest)**: Include in next release
 
 ### License Issue
 
@@ -388,4 +388,4 @@ Regular audits ensure continued compliance.
 ---
 
 *Last updated: 2024-12-26*
-*Version: 1.0.0*
+*Version: latest*

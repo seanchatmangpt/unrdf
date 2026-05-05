@@ -521,14 +521,14 @@ validate:
 **OTEL Dependencies** (package.json):
 ```json
 {
-  "@opentelemetry/api": "^1.7.0",
-  "@opentelemetry/auto-instrumentations-node": "^0.40.0",
-  "@opentelemetry/exporter-jaeger": "^1.17.0",
-  "@opentelemetry/exporter-prometheus": "^0.45.0",
-  "@opentelemetry/instrumentation": "^0.45.0",
-  "@opentelemetry/resources": "^1.17.0",
-  "@opentelemetry/sdk-node": "^0.45.0",
-  "@opentelemetry/semantic-conventions": "^1.17.0"
+  "@opentelemetry/api": "^latest",
+  "@opentelemetry/auto-instrumentations-node": "^latest",
+  "@opentelemetry/exporter-jaeger": "^latest",
+  "@opentelemetry/exporter-prometheus": "^latest",
+  "@opentelemetry/instrumentation": "^latest",
+  "@opentelemetry/resources": "^latest",
+  "@opentelemetry/sdk-node": "^latest",
+  "@opentelemetry/semantic-conventions": "^latest"
 }
 ```
 

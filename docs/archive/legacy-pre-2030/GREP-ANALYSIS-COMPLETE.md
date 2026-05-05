@@ -11,7 +11,7 @@
 | Claim | Pattern | Total Occurrences | Files Affected | Priority |
 |-------|---------|-------------------|----------------|----------|
 | Zero defects | `zero defects\|0 defects` | 71 | 35+ | P0 |
-| 99.997% | `99\.997` | 47 | 25+ | P0 |
+| latest% | `99\.997` | 47 | 25+ | P0 |
 | Nov 2024 | `November 18, 2024` | 15 | 8 | P0 |
 | 13,027 LOC | `13,027\|13027` | 10 | 6 | P1 |
 | Prod YAWL | `production-ready.*yawl` | 12 | 5 | P1 |
@@ -85,7 +85,7 @@ packages/kgc-4d/docs/validated-implementation/REFACTORING-COMPLETE.md
 
 ---
 
-## P0-2: 99.997% CORRECTNESS (47 occurrences)
+## P0-2: latest% CORRECTNESS (47 occurrences)
 
 ### Grep Command
 ```bash
@@ -108,8 +108,8 @@ grep -rn "99\.997" --include="*.md" /home/user/unrdf/
 
 ### Replacement Pattern
 ```
-OLD: "P(Correctness) ≥ 99.997%"
-NEW: "P(Correctness) ≥ 99.997% (theoretical bound); 90.4% measured in KGC-4D validation"
+OLD: "P(Correctness) ≥ latest%"
+NEW: "P(Correctness) ≥ latest% (theoretical bound); latest% measured in KGC-4D validation"
 ```
 
 ---
@@ -429,10 +429,10 @@ After corrections, run these to verify:
 
 ```bash
 # P0-1: Zero defects
-grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|90.4%\|measured" | wc -l
+grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|latest%\|measured" | wc -l
 # MUST be 0
 
-# P0-2: 99.997%
+# P0-2: latest%
 grep -r "99\.997" docs/*.md | grep -v "theoretical\|bound\|VALIDATION" | wc -l
 # MUST be 0
 
@@ -529,7 +529,7 @@ echo "Safe bulk corrections complete"
 echo ""
 echo "Remaining (manual review needed):"
 echo "- Zero defects (context-dependent)"
-echo "- 99.997% (needs qualifier)"
+echo "- latest% (needs qualifier)"
 echo "- Timeline (multiple formats)"
 echo "- YAWL production-ready (rephrasing)"
 echo "- Receipt throughput (complex)"
@@ -550,9 +550,9 @@ echo ""
 
 # Count remaining issues
 echo "P0-1 Zero defects:"
-grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|90.4%\|measured" | wc -l
+grep -ri "zero defects\|0 defects" docs/*.md | grep -v "VALIDATION\|latest%\|measured" | wc -l
 
-echo "P0-2 99.997%:"
+echo "P0-2 latest%:"
 grep -r "99\.997" docs/*.md | grep -v "theoretical\|bound\|VALIDATION" | wc -l
 
 echo "P0-3 Timeline:"

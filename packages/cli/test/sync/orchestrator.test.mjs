@@ -52,7 +52,7 @@ describe('Sync Orchestrator', () => {
     vi.clearAllMocks();
 
     parseConfig.mockResolvedValue({
-      project: { name: 'test-project', version: '1.0.0' },
+      project: { name: 'test-project', version: '[VERSION]' },
       ontology: { source: '/test/schema.ttl', format: 'turtle' },
       generation: {
         output_dir: '/test/output',

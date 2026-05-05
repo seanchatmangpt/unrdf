@@ -284,7 +284,7 @@ async function scanPackages() {
     // Create capability map
     const capabilityMap = {
       timestamp: new Date().toISOString(),
-      scannerVersion: '1.0.0',
+      scannerVersion: 'latest',
       totalPackages: packages.length,
       packages,
       roles_mapping: rolesMapping,

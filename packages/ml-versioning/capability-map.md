@@ -2,7 +2,7 @@
 
 **Generated:** 2025-12-28
 **Package:** @unrdf/ml-versioning
-**Version:** 1.0.0
+**Version:** [VERSION]
 
 ---
 
@@ -28,12 +28,12 @@ ML Model Versioning System using TensorFlow.js and UNRDF KGC-4D time-travel capa
 
 ### Dependencies
 
-- `@tensorflow/tfjs-node`: ^4.22.0
+- `@tensorflow/tfjs-node`: ^[VERSION]
 - `@unrdf/kgc-4d`: workspace:*
 - `@unrdf/oxigraph`: workspace:*
 - `@unrdf/core`: workspace:*
-- `hash-wasm`: ^4.12.0
-- `zod`: ^4.1.13
+- `hash-wasm`: ^[VERSION]
+- `zod`: ^[VERSION]
 
 ### Exports
 

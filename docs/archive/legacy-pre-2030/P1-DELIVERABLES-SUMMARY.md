@@ -365,7 +365,7 @@ const ctx = createContext({ nodeId: 'example-1', t_ns: 1000000000000000n });
 // Compose operations
 const parseStoreQuery = compose(parseRDF, createStore, query);
 
-const rdfData = '<http://example.org/Alice> <http://xmlns.com/foaf/0.1/name> "Alice" .';
+const rdfData = '<http://example.org/Alice> <http://xmlns.com/foaf/latest/name> "Alice" .';
 const sparql = 'SELECT * WHERE { ?s ?p ?o }';
 
 const { result, receipts, chainVerification } = await parseStoreQuery(
@@ -479,10 +479,10 @@ if (valid) {
 | Metric | Value | Acceptable? |
 |--------|-------|-------------|
 | Average overhead per operation | ~5% | ✅ YES |
-| Hash computation time (SHA-256) | ~0.1ms | ✅ YES |
-| Schema validation time (Zod) | ~0.05ms | ✅ YES |
-| Canonicalization time | ~0.05ms | ✅ YES |
-| Total receipt generation | ~0.2ms | ✅ YES |
+| Hash computation time (SHA-256) | ~latestms | ✅ YES |
+| Schema validation time (Zod) | ~latestms | ✅ YES |
+| Canonicalization time | ~latestms | ✅ YES |
+| Total receipt generation | ~latestms | ✅ YES |
 
 **Conclusion**: Receipt overhead is negligible for provenance guarantees.
 

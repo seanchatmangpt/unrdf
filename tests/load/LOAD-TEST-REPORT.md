@@ -308,6 +308,6 @@ All test files are located in `/Users/sac/unrdf/tests/load/`:
 ---
 
 **Report Generated**: 2025-12-20T02:40:00Z
-**Test Suite Version**: 1.0.0
-**Node Version**: v24.11.1
+**Test Suite Version**: latest
+**Node Version**: latest
 **Platform**: darwin (macOS)

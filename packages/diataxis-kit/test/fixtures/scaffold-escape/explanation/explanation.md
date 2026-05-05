@@ -2,7 +2,7 @@
 title: "escape-test Explanation"
 type: "explanation"
 packageName: "escape-test"
-version: "1.0.0"
+version: "[VERSION]"
 generatedAt: "2025-12-26T20:10:17.202Z"
 confidenceScore: 0
 proof: "cb3c88a8793cc92dfd46143689c8623844218d8349391e9daa41567614139499"

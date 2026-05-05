@@ -21,7 +21,7 @@
       "@type": "unrdf:Protocol",
       "rdfs:label": "Knowledge Hook Execution Protocol",
       "rdfs:comment": "State machine for executing knowledge hooks within transactions",
-      "unrdf:version": "1.0.0",
+      "unrdf:version": "latest",
       "unrdf:initialState": "state:Idle",
       "unrdf:terminalStates": ["state:Completed", "state:Failed", "state:Cancelled"],
       "unrdf:states": [
