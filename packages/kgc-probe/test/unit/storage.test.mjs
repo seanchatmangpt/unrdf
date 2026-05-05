@@ -194,10 +194,14 @@ describe('Storage Module', () => {
     });
 
     it('should return empty array for nonexistent directory', async () => {
-      const emptyStorage = createFileStorage('/nonexistent/path');
+      const emptyPath = join(tmpdir(), `nonexistent-${Date.now()}`);
+      const emptyStorage = createFileStorage(emptyPath);
       const ids = await emptyStorage.listArtifacts();
 
       expect(ids).toEqual([]);
+      
+      // Cleanup
+      try { await fs.rm(emptyPath, { recursive: true, force: true }); } catch (e) {}
     });
 
     it('should delete artifact', async () => {

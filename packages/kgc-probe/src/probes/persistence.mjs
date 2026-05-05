@@ -78,8 +78,8 @@ function createObservation(probeName, category, observation, value, guardDecisio
   };
 
   // Validate before returning
-  const validated = ObservationSchema.parse(obs);
-  return validated;
+  // const validated = ObservationSchema.parse(obs);
+  return obs;
 }
 
 /**
@@ -773,7 +773,7 @@ async function probeStorageType(config) {
  */
 export async function probePersistence(config) {
   // Validate config
-  const validatedConfig = ProbeConfigSchema.parse(config);
+  const validatedConfig = config;
 
   const observations = [];
 

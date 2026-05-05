@@ -193,8 +193,8 @@ export function observationsToRdf(observations) {
     }
   }
 
-  // Serialize to Turtle
-  return store.dump({ format: 'turtle' });
+  // Serialize to N-Quads
+  return store.dump({ format: 'application/n-quads' });
 }
 
 /**

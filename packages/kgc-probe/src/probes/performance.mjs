@@ -39,7 +39,7 @@ import { readFile, writeFile, unlink, mkdir } from 'node:fs/promises';
 import { Readable, Writable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { join, resolve } from 'node:path';
-import { blake3 } from '@noble/hashes/blake3';
+import { blake3 } from '@noble/hashes/blake3.js';
 import { ObservationSchema, ProbeConfigSchema } from '../types.mjs';
 
 // =============================================================================

@@ -28,7 +28,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should probe persistence and return observations', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
       maxQuota: 10 * 1024 * 1024, // 10 MB for testing
@@ -43,7 +43,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should include guard decisions in observations', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -63,7 +63,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should test basic write/read persistence', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -81,7 +81,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should test directory permissions', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -96,7 +96,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should detect storage type', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -112,7 +112,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should validate observations schema', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -133,7 +133,7 @@ describe('Persistence Probe', () => {
   it('should respect guard constraints', async () => {
     // Try to use a path outside the allowed directory
     const outsideDir = '/tmp/outside';
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
     };
@@ -153,7 +153,7 @@ describe('Persistence Probe', () => {
   });
 
   it('should complete quota test within timeout', async () => {
-    const config = {
+    const config = { universe_id: "test-universe",
       out: testDir,
       timeout: 5000,
       maxQuota: 5 * 1024 * 1024, // 5 MB

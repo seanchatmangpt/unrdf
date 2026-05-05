@@ -14,8 +14,8 @@
  * - Verifiable: Can reconstruct and verify entire chain
  */
 
-import { blake3 } from '@noble/hashes/blake3';
-import { bytesToHex } from '@noble/hashes/utils';
+import { blake3 } from '@noble/hashes/blake3.js';
+import { bytesToHex } from '@noble/hashes/utils.js';
 
 /**
  * Hash data deterministically using BLAKE3

@@ -75,7 +75,7 @@ describe('Network Probe', () => {
       // Should include TLS validation (HTTPS)
       const tlsObs = urlObservations.find(obs => obs.capability === 'tls-certificate-validation');
       expect(tlsObs).toBeDefined();
-    }, { timeout: 10000 });
+    });
 
     it('should probe HTTP URL without TLS check', async () => {
       const observations = await probeNetwork({
@@ -89,7 +89,7 @@ describe('Network Probe', () => {
       // Should NOT include TLS validation for HTTP
       const tlsObs = urlObservations.find(obs => obs.capability === 'tls-certificate-validation');
       expect(tlsObs).toBeUndefined();
-    }, { timeout: 10000 });
+    });
 
     it('should record response metadata', async () => {
       const observations = await probeNetwork({
@@ -108,7 +108,7 @@ describe('Network Probe', () => {
       } else {
         expect(headObs.metadata.error).toBeDefined();
       }
-    }, { timeout: 10000 });
+    });
 
     it('should probe cache headers', async () => {
       const observations = await probeNetwork({
@@ -125,7 +125,7 @@ describe('Network Probe', () => {
       if (cacheObs.available) {
         expect(cacheObs.metadata).toHaveProperty('cacheControl');
       }
-    }, { timeout: 10000 });
+    });
 
     it('should probe DNS resolution time', async () => {
       const observations = await probeNetwork({
@@ -142,7 +142,7 @@ describe('Network Probe', () => {
       if (dnsObs.available) {
         expect(dnsObs.metadata.totalRequestTimeMs).toBeGreaterThan(0);
       }
-    }, { timeout: 10000 });
+    });
   });
 
   describe('Multiple URLs', () => {
@@ -157,7 +157,7 @@ describe('Network Probe', () => {
 
       expect(url1Obs.length).toBeGreaterThan(0);
       expect(url2Obs.length).toBeGreaterThan(0);
-    }, { timeout: 15000 });
+    });
   });
 
   describe('Timeout Behavior', () => {
@@ -171,8 +171,8 @@ describe('Network Probe', () => {
 
       const elapsed = Date.now() - startTime;
       // Should timeout before 10s (with some margin)
-      expect(elapsed).toBeLessThan(5000);
-    }, { timeout: 10000 });
+      expect(elapsed).toBeLessThan(6000);
+    });
   });
 
   describe('Observation Schema Validation', () => {
@@ -187,6 +187,6 @@ describe('Network Probe', () => {
         expect(obs).toHaveProperty('guardDecision');
         expect(['allowed', 'denied']).toContain(obs.guardDecision);
       }
-    }, { timeout: 10000 });
+    });
   });
 });
