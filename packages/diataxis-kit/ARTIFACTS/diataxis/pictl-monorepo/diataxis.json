@@ -1,0 +1,211 @@
+{
+  "confidence": {
+    "explanation": 0.6,
+    "howtos": 0.25,
+    "reference": 0,
+    "tutorials": 0.6
+  },
+  "evidence": {
+    "docsFiles": [
+      "API.md",
+      "AUTOPROCESS_EXAMPLES.md",
+      "AUTOPROCESS_HELP.md",
+      "BROWSER-BENCHMARKS.md",
+      "DATASETS-INDEX.md",
+      "DEPLOYMENT-ARCHITECTURE.md",
+      "DEPLOYMENT.md",
+      "DOCS_MONITORING.md",
+      "EXPLANATION.md",
+      "FAQ.md",
+      "GEMBA-ENFORCEMENT.md",
+      "GPU_KERNEL_CONFORMANCE_SPEC.yaml",
+      "GPU_KERNEL_INTEGRATION_GUIDE.md",
+      "HOW-TO.md",
+      "INDEX.md",
+      "PACKAGE_IMPLEMENTATION_HISTORY.md",
+      "PROCESS_MINING_AUDIT.md",
+      "PUBLISH_READINESS_FINAL_v26.4.16.md",
+      "QUICKSTART.md",
+      "README.md",
+      "REAL-BENCHMARK-RESULTS.md",
+      "REAL-DATASETS.md",
+      "SETUP_SUMMARY.md",
+      "THESIS-V2.md",
+      "TUTORIAL.md",
+      "UPGRADE_TO_VISION_2030.md",
+      "VISION_2030_5_DOMAINS_SUMMARY.md",
+      "VISION_2030_ARCHITECTURE.md",
+      "VISION_2030_INDEX.md",
+      "VISION_2030_PERFORMANCE.md",
+      "VISION_2030_VERIFICATION.md",
+      "WASM_API_VISION_2030.md",
+      "ZERO-TO-HERO.md",
+      "convergence-envelope-analysis.md",
+      "explore-plan-write-paper.aux",
+      "explore-plan-write-paper.log",
+      "explore-plan-write-paper.out",
+      "explore-plan-write-paper.pdf",
+      "explore-plan-write-paper.tex",
+      "explore-plan-write-paper.toc",
+      "feature-flags-reference.md",
+      "hot_kernels_benchmark_fix_summary.md",
+      "hot_kernels_benchmark_summary.md",
+      "hot_kernels_chatman_validation.md",
+      "hot_kernels_measured_results.md",
+      "manufacturing-pipeline-reference.md",
+      "pictl-phd-thesis-benchmarks.md",
+      "pictl-phd-thesis.md",
+      "post-cyberpunk-agi-theory.md",
+      "rust-algorithms-reference.md",
+      "thesis-operational-autonomy-wasm.md",
+      "tps-metrics-reference.md",
+      "type-system-press-release.aux",
+      "type-system-press-release.log",
+      "type-system-press-release.out",
+      "type-system-press-release.pdf",
+      "type-system-press-release.tex",
+      "type-system-press-release.toc",
+      "vision-2030-hyperthesis.md",
+      "wasm-exports-reference.md"
+    ],
+    "examplesFiles": [
+      "basic-config.toml",
+      "conformance-audit-example.d.mts",
+      "conformance-audit-example.d.mts.map",
+      "conformance-audit-example.mjs",
+      "observability-setup.d.ts",
+      "observability-setup.d.ts.map",
+      "observability-setup.js",
+      "observability-setup.js.map",
+      "observability-setup.ts",
+      "service-api.d.ts",
+      "service-api.d.ts.map",
+      "service-api.js",
+      "watch-mode.sh"
+    ],
+    "fingerprint": "3f1ba537915c4cb2e54bf43f6be7dfc77e9411e21785817696658b52118eae7c",
+    "readmeHeadings": [
+      "What is pictl?",
+      "🚀 Key Capabilities",
+      "📦 Installation",
+      "🎯 What's New in v26.4.8",
+      "🎯 What's New in v26.4.15",
+      "🎯 What's New in v26.4.5",
+      "⚡ Quick Start",
+      "📚 Documentation",
+      "📊 Performance",
+      "🔧 Development",
+      "🎯 Use Cases",
+      "🤝 Contributing",
+      "📝 License",
+      "🔗 Links",
+      "📚 Citation",
+      "🙋 Support"
+    ]
+  },
+  "explanation": {
+    "architecture": "**pictl** is a comprehensive, enterprise-grade process mining platform compiled to WebAssembly. It brings production-grade process discovery, conformance checking, analysis, and automation capabilities to browsers, Node.js, and containers.",
+    "concepts": [
+      "core functionality"
+    ],
+    "confidenceScore": 0.6,
+    "id": "explanation-pictl-monorepo-explanation",
+    "source": [
+      "readme",
+      "docs"
+    ],
+    "title": "Understanding pictl-monorepo",
+    "tradeoffs": [
+      "Performance vs. flexibility tradeoffs discussed in README"
+    ]
+  },
+  "generatedAt": "2000-01-01T00:00:00.000Z",
+  "howtos": [
+    {
+      "confidenceScore": 0.5,
+      "context": "When you need robust error handling in production",
+      "id": "howto-handle-errors",
+      "source": [
+        "tests"
+      ],
+      "steps": [
+        "Set up try-catch blocks",
+        "Handle common error types",
+        "Log errors appropriately"
+      ],
+      "task": "Implement error handling for pictl-monorepo",
+      "title": "Handle Errors"
+    },
+    {
+      "confidenceScore": 0.4,
+      "context": "When encountering issues during usage",
+      "id": "howto-troubleshoot-common-issues",
+      "source": [
+        "inferred"
+      ],
+      "steps": [
+        "Check configuration",
+        "Review error messages",
+        "Apply fixes"
+      ],
+      "task": "Resolve common problems and errors",
+      "title": "Troubleshoot Common Issues"
+    }
+  ],
+  "packageName": "pictl-monorepo",
+  "reference": {
+    "confidenceScore": 0.5,
+    "id": "reference-pictl-monorepo-reference",
+    "items": [
+      {
+        "description": "Reference documentation to be added",
+        "example": null,
+        "name": "unknown",
+        "type": "unknown"
+      }
+    ],
+    "source": [
+      "inferred"
+    ],
+    "title": "pictl-monorepo Reference"
+  },
+  "tutorials": [
+    {
+      "confidenceScore": 0.8,
+      "goal": "Complete your first practical examples",
+      "id": "tutorial-first-steps",
+      "prerequisites": [
+        "Completed \"Getting Started with pictl-monorepo\""
+      ],
+      "source": [
+        "examples"
+      ],
+      "stepsOutline": [
+        "Work through basic-config.toml",
+        "Work through conformance-audit-example.d.mts",
+        "Work through conformance-audit-example.d.mts.map",
+        "Work through conformance-audit-example.mjs",
+        "Work through observability-setup.d.ts"
+      ],
+      "title": "First Steps"
+    },
+    {
+      "confidenceScore": 0.8999999999999999,
+      "goal": "Learn how to set up and use pictl-monorepo in your project",
+      "id": "tutorial-getting-started-with-pictl-monorepo",
+      "prerequisites": [],
+      "source": [
+        "examples",
+        "readme"
+      ],
+      "stepsOutline": [
+        "Install the package",
+        "Import required modules",
+        "Create a basic example",
+        "Run and verify output"
+      ],
+      "title": "Getting Started with pictl-monorepo"
+    }
+  ],
+  "version": "26.4.23"
+}

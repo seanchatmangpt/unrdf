@@ -274,7 +274,14 @@ rules = []
        
        if (ontologySource && existsSync(ontologySource)) {
          const { readFile } = await import('fs/promises');
-         const { verifyPQReceipt } = await import('@unrdf/receipts');
+         // Fallback for missing @unrdf/receipts
+        let verifyPQReceipt;
+        try {
+          const pkg = await import('@unrdf/receipts');
+          verifyPQReceipt = pkg.verifyPQReceipt;
+        } catch (e) {
+          verifyPQReceipt = async () => false;
+        }
          const { UnrdfStore } = await import('@unrdf/core');
 
          const receiptPath = `${ontologySource}.receipt.json`;
