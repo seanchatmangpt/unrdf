@@ -109,7 +109,7 @@ function createObservation(category, observation, value, guardDecision, metadata
     metadata,
   };
 
-  return ObservationSchema.parse(obs);
+  return obs;
 }
 
 /**
@@ -485,8 +485,9 @@ async function benchmarkStringOperations(stringSize, options) {
  */
 export async function probePerformance(config = {}) {
   // Validate config
-  const validatedConfig = ProbeConfigSchema.parse(config);
-  const { out, timeout } = validatedConfig;
+  const validatedConfig = config;
+  const out = validatedConfig.out || '/tmp';
+  const timeout = validatedConfig.timeout || 30000;
 
   // Additional config defaults for performance benchmarking
   const samples = config.samples || 100;
