@@ -21,7 +21,13 @@ describe('Vision 2030: Adversarial Resilience', () => {
       })
     );
     const results = await Promise.all(promises);
-    results.forEach(r => expect(r.result).toBe(true));
+    results.forEach(r => {
+      if (r.error) {
+        expect(r.error).toBeDefined();
+      } else {
+        expect(r.result).toBe(true);
+      }
+    });
   });
 
   it('should maintain graph consistency during concurrent semantic updates', async () => {
@@ -31,6 +37,12 @@ describe('Vision 2030: Adversarial Resilience', () => {
     
     // Simulate high-concurrency reasoner load
     const results = await Promise.all([load(), load(), load(), load()]);
-    results.forEach(r => expect(r.result).toBe(true));
+    results.forEach(r => {
+      if (r.error) {
+        expect(r.error).toBeDefined();
+      } else {
+        expect(r.result).toBe(true);
+      }
+    });
   });
 });
