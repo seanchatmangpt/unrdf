@@ -27,7 +27,7 @@ const core = await createKnowledgeSubstrateCore();
 // Create store from Turtle
 const store = await core.parseRdf(`
   @prefix ex: <http://example.org/> .
-  @prefix foaf: <http://xmlns.com/foaf/latest/> .
+  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
   ex:alice a foaf:Person ; foaf:name "Alice" .
   ex:bob a foaf:Person ; foaf:name "Bob" .
@@ -75,7 +75,7 @@ const results = await core.query(store, `SELECT ?name WHERE { ?person foaf:name 
 ```javascript
 const storeData = `
   @prefix emp: <http://example.org/employee/> .
-  @prefix foaf: <http://xmlns.com/foaf/latest/> .
+  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
   @prefix org: <http://www.w3.org/ns/org#> .
   @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 
@@ -106,7 +106,7 @@ const store = await core.parseRdf(storeData);
 // Find all employees in a department
 const engineeringTeam = await core.query(store, `
   PREFIX emp: <http://example.org/employee/>
-  PREFIX foaf: <http://xmlns.com/foaf/latest/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX org: <http://www.w3.org/ns/org#>
 
   SELECT ?name ?email ?manager
@@ -130,7 +130,7 @@ engineeringTeam.forEach(row => {
 ```javascript
 // Find reporting chains
 const hierarchy = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/latest/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX org: <http://www.w3.org/ns/org#>
 
   SELECT ?employee ?manager ?director
@@ -178,7 +178,7 @@ deptStats.forEach(row => {
 ```javascript
 // Find all contacts (email OR phone)
 const contacts = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/latest/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
 
   SELECT ?person ?contact
@@ -198,7 +198,7 @@ const contacts = await core.query(store, `
 ```javascript
 // Find people with optional phone numbers
 const people = await core.query(store, `
-  PREFIX foaf: <http://xmlns.com/foaf/latest/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
 
   SELECT ?name ?phone
@@ -223,7 +223,7 @@ people.forEach(row => {
 ```javascript
 const shapes = `
   @prefix sh: <http://www.w3.org/ns/shacl#> .
-  @prefix foaf: <http://xmlns.com/foaf/latest/> .
+  @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
   foaf:PersonShape a sh:NodeShape ;
     sh:targetClass foaf:Person ;
@@ -265,7 +265,7 @@ const constraintShapes = `
       sh:path schema:price ;
       sh:datatype xsd:decimal ;
       sh:minInclusive 0 ;
-      sh:maxInclusive latest ;
+      sh:maxInclusive 99999.99 ;
     ] .
 `;
 ```
