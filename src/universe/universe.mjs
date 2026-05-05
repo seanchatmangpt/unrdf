@@ -16,9 +16,19 @@ import {
 import { OntologyRegistry } from './registry.mjs';
 import { mergeStores } from './rdf-utils.mjs';
 
+export function getUniverse() {
+  return new Universe().merge();
+}
+
+export function getGitBackbone() {
+  // Return the main Git backbone partition
+  const universe = new Universe();
+  return universe.getPartition('ExecutionLedger').git;
+}
+
 /**
  * Universe class - manages all RDF partitions
- *
+...
  * The Universe maintains a strict partition order and provides
  * unified query and merge capabilities across all partitions.
  *

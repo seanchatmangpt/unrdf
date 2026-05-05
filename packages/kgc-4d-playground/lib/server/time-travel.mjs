@@ -7,7 +7,7 @@
 
 import { reconstructState, GRAPHS } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
-import { getUniverse, getGitBackbone } from './universe.mjs';
+import { getUniverse, getGitBackbone } from '../../../../src/universe/universe.mjs';
 
 /**
  * Reconstruct Universe state at a specific nanosecond timestamp

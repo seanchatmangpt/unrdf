@@ -8,7 +8,8 @@
 
 import { reconstructState, GRAPHS } from '@unrdf/kgc-4d';
 import { dataFactory } from '@unrdf/oxigraph';
-import { getUniverse, getGitBackbone } from './universe.mjs';
+import { getUniverse, getGitBackbone } from '../../../../src/universe/universe.mjs';
+export { getUniverse, getGitBackbone };
 
 // In-memory fork registry (use Redis in production)
 const forks = new Map();

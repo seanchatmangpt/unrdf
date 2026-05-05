@@ -9,7 +9,7 @@ import {
   EntityList,
   ConnectionStatus,
   ShardViewer,
-} from '../components/index.mjs';
+} from '../components/ui/index.mjs';
 
 export default function PlaygroundPage() {
   const router = useRouter();

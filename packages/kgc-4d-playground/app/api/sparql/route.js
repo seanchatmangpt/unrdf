@@ -6,7 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getUniverse } from '../../../lib/server/universe.mjs';
+import { getUniverse } from '../../../lib/server/multiverse.mjs';
 
 export async function POST(request) {
   try {

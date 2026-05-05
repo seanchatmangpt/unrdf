@@ -9,7 +9,7 @@
  * This is the "Check-In" operation in the Shard-Based Architecture.
  */
 
-import { getUniverse, broadcastUpdate, GRAPHS, dataFactory, now, VectorClock } from './universe.mjs';
+import { getUniverse, broadcastUpdate, GRAPHS, dataFactory, now, VectorClock } from '../../../../src/universe/universe.mjs';
 import { HookRegistry } from '@unrdf/kgc-4d';
 
 /**

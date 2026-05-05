@@ -19,5 +19,5 @@ export default defineBuildConfig({
     },
   },
   outDir: 'dist',
-  failOnWarn: false,
+  failOnWarn: true,
 });

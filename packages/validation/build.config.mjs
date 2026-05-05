@@ -16,5 +16,5 @@ export default defineBuildConfig({
     '../atomvm/playground/src/kgc4d-bridge.mjs',
     '../atomvm/src/node-runtime.mjs'
   ],
-  failOnWarn: false
+  failOnWarn: true
 });

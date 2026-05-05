@@ -15,6 +15,7 @@ import { checkIntegrations } from './checks/integration.mjs';
 import { checkOTEL } from './checks/otel.mjs';
 import { checkKubernetes } from './checks/kubernetes.mjs';
 import { checkTruth } from './checks/truth.mjs';
+import { checkPublishReadiness } from './checks/publish.mjs';
 import { formatHuman } from './formatters/human.mjs';
 import { formatJSON } from './formatters/json.mjs';
 import { formatYAML } from './formatters/yaml.mjs';
@@ -206,6 +207,24 @@ export const doctor = defineCommand({
   meta: {
     name: 'doctor',
     description: 'Comprehensive health check for UNRDF development environment and system state',
+  },
+  subCommands: {
+    publish: defineCommand({
+      name: 'publish',
+      args: {
+        'dry-run': { type: 'boolean', default: true }
+      },
+      async run({ args }) {
+        console.log('Running publication readiness diagnostics...');
+        const result = await checkPublishReadiness(process.cwd());
+        if (result.success) {
+            console.log(`✅ Package ${result.package} is ready for publication.`);
+        } else {
+            console.error(`❌ Package ${result.package} has issues:`, result.issues);
+            process.exit(1);
+        }
+      }
+    }),
   },
   args: {
     mode: {
