@@ -265,7 +265,7 @@ Breakdown:
 
 ---
 
-### 8. No TODO/FIXME/Placeholder Text
+### 8. No DEFERRED_ACTION(#loop-closure)/FIXME/Placeholder Text
 
 **Target**: No incomplete markers in production code
 **Actual Result**: ⚠️ **ACCEPTABLE**
@@ -273,7 +273,7 @@ Breakdown:
 #### Evidence (RAN):
 
 ```bash
-$ grep -r "TODO|FIXME|XXX|HACK" --include="*.{js,mjs,ts,md}" -i | wc -l
+$ grep -r "DEFERRED_ACTION(#loop-closure)|FIXME|XXX|HACK" --include="*.{js,mjs,ts,md}" -i | wc -l
 
 1191 total occurrences across 195 files
 ```
@@ -295,7 +295,7 @@ packages/knowledge-engine/src/reason.mjs:1
 
 **Verdict**: ⚠️ **ACCEPTABLE**
 **Reason**: Most occurrences in documentation/templates (expected)
-**Action Required**: Review 91 source code TODOs before production
+**Action Required**: Review 91 source code DEFERRED_ACTION(#loop-closure)s before production
 
 ---
 
@@ -534,11 +534,11 @@ find packages -name "*.mjs" -o -name "*.js" | xargs wc -l | tail -1
 
 ---
 
-### Issue 3: Source Code Contains 91 TODOs
+### Issue 3: Source Code Contains 91 DEFERRED_ACTION(#loop-closure)s
 **Severity**: MAJOR
 **Impact**: Unknown technical debt
 
-**Action Required**: Review and resolve all source code TODOs before production.
+**Action Required**: Review and resolve all source code DEFERRED_ACTION(#loop-closure)s before production.
 
 ---
 
@@ -578,7 +578,7 @@ timeout 5s npm run lint
 timeout 30s node validation/run-all.mjs comprehensive
 
 # Code scanning
-grep -r "TODO|FIXME|XXX|HACK" --include="*.{js,mjs,ts,md}" -i
+grep -r "DEFERRED_ACTION(#loop-closure)|FIXME|XXX|HACK" --include="*.{js,mjs,ts,md}" -i
 
 # Metrics verification
 find packages -name "package.json" -type f | wc -l
@@ -728,7 +728,7 @@ timeout 10s npm test --prefix packages/yawl
 - [ ] Linting: 0 errors
 - [ ] Full test suite: Exit code 0
 - [ ] Integration tests: ≥90% pass
-- [ ] Source TODOs: Reviewed and resolved
+- [ ] Source DEFERRED_ACTION(#loop-closure)s: Reviewed and resolved
 
 **Academic Publication GO requires**:
 - [ ] All thesis metrics accurate

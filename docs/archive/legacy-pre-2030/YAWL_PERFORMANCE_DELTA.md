@@ -560,7 +560,7 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@unrdf/kgc-4d'
    - Async exception handling
    - Retry/circuit breaker
 
-### 10.3 Performance Validation TODO
+### 10.3 Performance Validation DEFERRED_ACTION(#loop-closure)
 
 **CRITICAL GAPS**:
 
@@ -661,7 +661,7 @@ node ipc-throughput.bench.mjs
 node memory-footprint.bench.mjs
 ```
 
-### Java YAWL Benchmarks (TODO)
+### Java YAWL Benchmarks (DEFERRED_ACTION(#loop-closure))
 
 ```bash
 # 1. Download YAWL 4.x
@@ -669,10 +669,10 @@ wget https://yawlfoundation.org/download/YAWL-4.x.zip
 unzip YAWL-4.x.zip
 
 # 2. Create benchmark suite
-# TODO: Write JMH benchmarks matching UNRDF tests
+# DEFERRED_ACTION(#loop-closure): Write JMH benchmarks matching UNRDF tests
 
 # 3. Run and compare
-# TODO: Document actual numbers
+# DEFERRED_ACTION(#loop-closure): Document actual numbers
 ```
 
 ---

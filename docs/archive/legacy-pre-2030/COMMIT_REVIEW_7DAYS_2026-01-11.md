@@ -87,7 +87,7 @@ pnpm lint → Cannot find package 'eslint-plugin-jsdoc'
 
 ---
 
-### 4. Production Code TODOs ❌ 3 INCOMPLETE IMPLEMENTATIONS
+### 4. Production Code DEFERRED_ACTION(#loop-closure)s ❌ 3 INCOMPLETE IMPLEMENTATIONS
 **Impact**: Incomplete features in production code
 
 - `packages/composables/src/context/index.mjs:15` - Replace with Oxigraph Store
@@ -175,7 +175,7 @@ return false; // Unknown conditions denied
 
 - **424 total tests** with **95% pass rate** (403/424)
 - **92.4% code coverage** (exceeds 80% target)
-- **ZERO TODOs** in test files
+- **ZERO DEFERRED_ACTION(#loop-closure)s** in test files
 - **ZERO lint errors** in tests
 - **100% AAA pattern** adherence
 - **20+ edge case tests** (100% pass)
@@ -260,7 +260,7 @@ Layer 1: INFRASTRUCTURE (Observability, Event Store, Core)
 ### ✅ Code Quality - STRONG (8/10)
 
 **Positive Indicators**:
-- ✅ **ZERO TODOs** in daemon/v6-core source
+- ✅ **ZERO DEFERRED_ACTION(#loop-closure)s** in daemon/v6-core source
 - ✅ **ZERO N3 direct imports** (correctly using Oxigraph)
 - ✅ **Comprehensive Zod validation** (13 modules with schemas)
 - ✅ **Excellent JSDoc coverage** (153 blocks for 82 exports)
@@ -511,7 +511,7 @@ export function createReceipt(options) {
 | Install dependencies | 0.25 | P0 | DevOps |
 | Import security module in all integrations | 4 | P0 | Backend |
 | Refactor 10 oversized files | 8 | P0 | Backend |
-| Remove/implement TODOs | 2 | P0 | Backend |
+| Remove/implement DEFERRED_ACTION(#loop-closure)s | 2 | P0 | Backend |
 | Fix merkle tree vulnerability | 0.75 | P0 | Security |
 
 **Deliverable**: All critical blockers resolved
@@ -578,7 +578,7 @@ node validation/run-all.mjs comprehensive
 grep "Score:" validation-output.log  # Expect: ≥80/100
 
 # Phase 4: Security validation
-grep -r "TODO\|FIXME" packages/*/src --include="*.mjs" | wc -l  # Expect: 0
+grep -r "DEFERRED_ACTION(#loop-closure)\|FIXME" packages/*/src --include="*.mjs" | wc -l  # Expect: 0
 grep -r "it.skip\|describe.skip" packages/*/test --include="*.test.mjs"  # Expect: empty
 
 # Phase 5: File size compliance
@@ -641,7 +641,7 @@ The team delivered a **monumental architectural addition** to UNRDF:
 1. Missing dependencies
 2. Security module integration
 3. File size violations
-4. Production TODOs
+4. Production DEFERRED_ACTION(#loop-closure)s
 
 **Important** (strong recommendation):
 1. No authentication layer

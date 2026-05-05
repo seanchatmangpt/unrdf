@@ -40,20 +40,20 @@ grep -E "error|warning" lint-results.log | wc -l
 
 ---
 
-### P0-3: TODO Comments (12 found)
+### P0-3: DEFERRED_ACTION(#loop-closure) Comments (12 found)
 
-**Current Status**: 12 TODOs in production code
+**Current Status**: 12 DEFERRED_ACTION(#loop-closure)s in production code
 **Target**: 0
 
 **Verify**:
 ```bash
-grep -r "TODO\|FIXME" /home/user/unrdf/packages/*/src --include="*.mjs" | wc -l
+grep -r "DEFERRED_ACTION(#loop-closure)\|FIXME" /home/user/unrdf/packages/*/src --include="*.mjs" | wc -l
 # Expected: 0
 ```
 
 **Evidence Required**:
 - Command output: 0
-- No TODOs in production code (test TODOs are acceptable)
+- No DEFERRED_ACTION(#loop-closure)s in production code (test DEFERRED_ACTION(#loop-closure)s are acceptable)
 
 ---
 
@@ -211,9 +211,9 @@ timeout 30s pnpm lint || echo "FAIL: Lint"
 echo "3. Building..."
 timeout 60s pnpm build || echo "FAIL: Build"
 
-echo "4. Checking TODOs..."
-TODO_COUNT=$(grep -r "TODO\|FIXME" packages/*/src --include="*.mjs" | wc -l)
-echo "TODOs: $TODO_COUNT (expected: 0)"
+echo "4. Checking DEFERRED_ACTION(#loop-closure)s..."
+DEFERRED_ACTION(#loop-closure)_COUNT=$(grep -r "DEFERRED_ACTION(#loop-closure)\|FIXME" packages/*/src --include="*.mjs" | wc -l)
+echo "DEFERRED_ACTION(#loop-closure)s: $DEFERRED_ACTION(#loop-closure)_COUNT (expected: 0)"
 
 echo "5. Checking skipped tests..."
 SKIP_COUNT=$(grep -r "it.skip\|describe.skip" packages/*/test --include="*.test.mjs" | wc -l)
@@ -246,7 +246,7 @@ All of the following MUST be true:
 
 - [ ] Test pass rate: 100% (0 failures)
 - [ ] Lint violations: 0
-- [ ] TODOs in production code: 0
+- [ ] DEFERRED_ACTION(#loop-closure)s in production code: 0
 - [ ] Skipped tests: 0
 - [ ] Forbidden N3 imports: 0
 - [ ] Build status: SUCCESS (all packages)
@@ -271,7 +271,7 @@ When all criteria are met, regenerate this validation report and submit for fina
 
 ### Medium Priority
 
-4. TODOs (12) - Requires implementation decisions
+4. DEFERRED_ACTION(#loop-closure)s (12) - Requires implementation decisions
 5. Skipped tests (14) - Requires investigation
 6. Build failures - Requires dependency fixes
 

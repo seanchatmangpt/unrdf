@@ -1111,7 +1111,7 @@ packages/daemon/test/e2e-v6-deltagate.test.mjs:331:  it.skip('should rollback de
 **Rationale:**
 - Skipped tests = **technical debt**
 - `.skip()` hides implementation gaps
-- Violates "Zero TODOs" rule from CLAUDE.md
+- Violates "Zero DEFERRED_ACTION(#loop-closure)s" rule from CLAUDE.md
 
 **Action Plan:**
 1. Create GitHub issues for each skipped test

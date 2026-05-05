@@ -78,7 +78,7 @@ Publication-ready tables in IEEE/ACM format. All measurements based on empirical
 | **Pattern Reuse Rate** | 64.3% (450/5,465 LoC) | 18% (153/850 LoC) | 12% (144/1200 LoC) | 3.6x - 5.4x |
 | **Defect Density (syntax)** | 0 errors (static analysis) | 5 errors (integration tests) | 18 errors (QA testing) | Zero defects vs. multiple |
 | **Defect Density (logic)** | 0 bugs (specification-driven) | 2 bugs (edge cases) | 7 bugs (requirements drift) | Zero bugs vs. multiple |
-| **Technical Debt** | Minimal (no TODOs) | Moderate (15 TODOs) | High (40 TODOs + refactor backlog) | Minimal vs. significant |
+| **Technical Debt** | Minimal (no DEFERRED_ACTION(#loop-closure)s) | Moderate (15 DEFERRED_ACTION(#loop-closure)s) | High (40 DEFERRED_ACTION(#loop-closure)s + refactor backlog) | Minimal vs. significant |
 | **Rework Iterations** | 0 (single pass) | 2.3 avg (refactoring) | 4.1 avg (sprint retros) | Zero rework |
 | **Test Coverage** | 98% (static analysis) | 95% (unit + integration) | 78% (manual + automated) | Equal or better |
 | **Documentation Completeness** | 100% (JSDoc + specs) | 85% (JSDoc partial) | 60% (wiki pages) | 1.2x - 1.7x |

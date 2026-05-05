@@ -1,138 +1,179 @@
-# UNRDF v5 Monorepo - Quick Reference
+# UNRDF Quick Reference
 
-## Installation
+**One-page cheat sheet** for common UNRDF operations across all packages.
 
-```bash
-git clone https://github.com/unrdf/unrdf.git
-cd unrdf
-pnpm install
+---
+
+## Core RDF Operations
+
+### Create Store
+```javascript
+import { createStore } from '@unrdf/oxigraph';
+const store = createStore();
 ```
 
-## Quick Commands
-
-```bash
-# Test all packages
-pnpm test
-
-# Build all packages
-pnpm build
-
-# Lint and format
-pnpm lint && pnpm format
-
-# Work on specific package
-cd packages/core && pnpm test
-
-# View workspace structure
-pnpm list --depth=0
+### Add Data
+```javascript
+import { namedNode, literal } from '@unrdf/oxigraph';
+store.insert(store.dataFactory.quad(
+  namedNode('http://example.org/s'),
+  namedNode('http://example.org/p'),
+  literal('object')
+));
 ```
 
-## The 10 Packages
-
-### Essential (Always Needed)
-- **@unrdf/core** - RDF operations & SPARQL
-- **@unrdf/hooks** - Policy enforcement
-- **@unrdf/federation** - Peer queries
-- **@unrdf/streaming** - Change feeds
-- **@unrdf/browser** - Browser SDK
-- **@unrdf/cli** - CLI tools
-
-### Optional
-- **@unrdf/knowledge-engine** - Rule engine
-- **@unrdf/dark-matter** - Query optimization
-- **@unrdf/composables** - Vue 3 composables
-
-### Dev Only
-- **@unrdf/project-engine** - Self-hosting
-
-## Installation by Use Case
-
-### Minimal (Edge/IoT)
-```bash
-pnpm add @unrdf/core
+### Query Data
+```javascript
+import { executeSelect } from '@unrdf/core';
+const results = await executeSelect(store, `
+  SELECT ?s ?p ?o WHERE { ?s ?p ?o }
+`);
 ```
 
-### Substrate (Most Users)
-```bash
-pnpm add @unrdf/core @unrdf/hooks @unrdf/federation @unrdf/streaming
+---
+
+## SPARQL Query Types
+
+| Type | Purpose | Returns | Example |
+|------|---------|---------|---------|
+| **SELECT** | Retrieve bindings | Array of objects | `SELECT ?name WHERE { ?person foaf:name ?name }` |
+| **ASK** | Boolean test | true/false | `ASK { ?s rdf:type foaf:Person }` |
+| **CONSTRUCT** | Build new graph | Quads | `CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }` |
+| **DESCRIBE** | Get resource description | Quads | `DESCRIBE <http://example.org/resource>` |
+
+---
+
+## Validation & Hooks
+
+### Define Validation Hook
+```javascript
+import { defineHook } from '@unrdf/hooks';
+const hook = defineHook({
+  trigger: 'before:insert',
+  validate: (quad) => quad.object.value.length < 1000,
+  onFailure: (quad) => console.error('Validation failed', quad)
+});
 ```
 
-### Web App
-```bash
-pnpm add @unrdf/composables
-# Auto-installs: core, browser, streaming
+### Execute Hook
+```javascript
+import { executeHook } from '@unrdf/hooks';
+if (await executeHook(hook, quad)) {
+  await store.insert(quad);
+}
 ```
 
-### Data Engineering
-```bash
-pnpm add @unrdf/cli
-# Auto-installs: core, hooks, federation, streaming
+---
+
+## Workflow Orchestration
+
+### Create Workflow
+```javascript
+import { createWorkflow } from '@unrdf/yawl';
+const workflow = createWorkflow({
+  id: 'my-workflow',
+  tasks: [
+    { id: 'task1', execute: async () => { /* ... */ } },
+    { id: 'task2', execute: async () => { /* ... */ } }
+  ]
+});
 ```
 
-### Full Stack
-```bash
-pnpm add @unrdf/core @unrdf/hooks @unrdf/federation @unrdf/streaming \
-  @unrdf/browser @unrdf/cli @unrdf/knowledge-engine @unrdf/dark-matter \
-  @unrdf/composables
+### Execute Workflow
+```javascript
+import { executeWorkflow } from '@unrdf/yawl';
+await executeWorkflow(workflow, { /* context */ });
 ```
 
-## Documentation
+---
 
-- **Getting Started**: `docs/v5-README.md`
-- **Complete Overview**: `docs/v5-MONOREPO-SUMMARY.md`
-- **Architecture**: `docs/MONOREPO-STRUCTURE.md`
-- **Setup Guide**: `docs/MONOREPO-SETUP.md`
-- **Migration Guide**: `docs/MONOREPO-MIGRATION.md`
-- **VOC Analysis**: `docs/v5-substrate-voc-analysis.md`
-- **Visuals & Diagrams**: `docs/MONOREPO-VISUALS.md`
+## Temporal Events (KGC-4D)
 
-## Typical Workflow
-
-```bash
-# Install and test
-pnpm install
-pnpm test
-
-# Work on core
-cd packages/core
-pnpm test:watch
-
-# Make changes, test passes automatically
-
-# Back to root, test everything
-cd ../..
-pnpm test
-
-# All good? Commit and push
-git add .
-git commit -m "feat: add new RDF operation"
-git push
+### Create Temporal Store
+```javascript
+import { createTemporalStore } from '@unrdf/kgc-4d';
+const store = createTemporalStore();
 ```
 
-## Key Stats
+### Record Event
+```javascript
+import { recordEvent } from '@unrdf/kgc-4d';
+await recordEvent(store, {
+  type: 'DataInserted',
+  quad: /* quad */,
+  timestamp: Date.now()
+});
+```
 
-- **Size Reduction**: 68-69% (2.5MB → 150KB-880KB)
-- **Packages**: 10 focused modules
-- **VOCs Served**: All 7 (agents + developers + ops)
-- **Dependencies**: Acyclic, workspace-linked
-- **Scripts**: All working across workspace
+### Time Travel Query
+```javascript
+import { queryAtTime } from '@unrdf/kgc-4d';
+const historicalData = await queryAtTime(store, timestamp, query);
+```
 
-## Size Comparison
+---
 
-| Installation | Size |
-|---|---|
-| @unrdf/core only | 150 KB |
-| Substrate | 340 KB |
-| With web tools | 370 KB |
-| Full stack | 880 KB |
-| v4.x monolith | 2.5 MB |
+## Common Namespaces
 
-## Status
+```javascript
+import { RDF, RDFS, OWL, DCTERMS } from '@unrdf/core';
 
-✅ Monorepo structure complete
-✅ All packages configured
-✅ Installation tested
-✅ Documentation complete
-✅ Ready for development
+RDF.type          // http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+RDFS.label        // http://www.w3.org/2000/01/rdf-schema#label
+OWL.sameAs        // http://www.w3.org/2002/07/owl#sameAs
+DCTERMS.created   // http://purl.org/dc/terms/created
+```
 
-Next: Extract v4 code into packages and start building!
+---
+
+## Package Categories Cheat Sheet
+
+| Category | Key Packages | Primary Use Cases |
+|----------|-------------|-------------------|
+| **RDF & Storage** | core, oxigraph, caching | Store and query RDF data |
+| **Governance** | hooks, validation | Policy enforcement, validation |
+| **Temporal** | kgc-4d, blockchain | Event sourcing, time-travel |
+| **Workflow** | yawl, yawl-* | Orchestration, execution |
+| **AI & ML** | knowledge-engine, ml-inference | Reasoning, embeddings |
+| **Infrastructure** | cli, observability | Tooling, monitoring |
+
+---
+
+## Performance Tips
+
+1. **Batch Operations**: Insert multiple quads at once for better throughput
+2. **Use Indexes**: Query with specific predicates to leverage indexes
+3. **Cache Results**: Use `@unrdf/caching` for frequently accessed queries
+4. **Stream Large Data**: Use streaming parsers for files >10MB
+5. **Enable OTEL**: Monitor performance with OpenTelemetry spans
+
+---
+
+## Error Handling
+
+```javascript
+import { ValidationError } from '@unrdf/core';
+
+try {
+  await store.insert(quad);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.error('Invalid RDF:', error.message);
+  } else {
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+---
+
+## API Maturity Legend
+
+- ✅ **mature** - Production-ready, stable
+- ⚡ **stable** - API finalized, minor changes possible
+- 📝 **documented** - API defined, may evolve
+
+---
+
+**Last Updated**: 2025-12-28
+**Full API Reference**: [API-REFERENCE.md](./API-REFERENCE.md)

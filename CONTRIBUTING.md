@@ -4,11 +4,10 @@ Welcome! We're excited you want to contribute to UNRDF. This guide will get you 
 
 ## Quick Links
 
-- **First time here?** → [docs/ONBOARDING.md](docs/ONBOARDING.md) - Step-by-step setup guide
-- **Need examples?** → [docs/WALKTHROUGHS.md](docs/WALKTHROUGHS.md) - Text-based tutorials
-- **Detailed guidelines** → [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) - Complete contribution guide
-- **Monorepo structure** → [docs/MONOREPO-QUICK-REFERENCE.md](docs/MONOREPO-QUICK-REFERENCE.md) - Package overview
-- **Development setup** → [docs/LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md) - Dev environment guide
+- **Setup Guide** → [DEVELOPER-GUIDE.md](DEVELOPER-GUIDE.md)
+- **Best Practices** → [VISION-2030-BEST-PRACTICES.md](VISION-2030-BEST-PRACTICES.md)
+- **Package Overview** → [docs/PACKAGES.md](docs/PACKAGES.md)
+- **Modern Tutorials** → [Diátaxis Documentation](docs/diataxis/README.md)
 
 ## The 5-Minute Quick Start
 
@@ -17,6 +16,7 @@ Welcome! We're excited you want to contribute to UNRDF. This guide will get you 
 You need:
 - **Node.js 18+** ([download](https://nodejs.org))
 - **pnpm** (install with `npm install -g pnpm`)
+- **Rust toolchain** (for Open Ontologies & Oxigraph builds)
 - **Git**
 
 ### 2. Get the Code
@@ -24,8 +24,10 @@ You need:
 ```bash
 git clone https://github.com/unrdf/unrdf.git
 cd unrdf
-pnpm install
+./scripts/quick-start.sh
 ```
+
+For more detailed setup instructions and daily workflows, see [DEVELOPER-GUIDE.md](DEVELOPER-GUIDE.md).
 
 ### 3. Verify Everything Works
 

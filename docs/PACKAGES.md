@@ -7,17 +7,16 @@ UNRDF is organized as a monorepo with specialized packages. This guide explains 
 ```
 @unrdf/
   ├─ core ...................... Main RDF library (START HERE)
+  ├─ wasm4pm ................... PoWL v2 Process Mining ⭐
+  ├─ daemon .................... Autonomic orchestrator ⭐
   ├─ oxigraph .................. Rust-based triple store
   ├─ hooks ..................... Knowledge Hooks framework
   ├─ streaming ................. Large graph streaming
   ├─ federation ................ Federated queries
-  ├─ knowledge-engine .......... Inference & reasoning
   ├─ browser ................... Browser runtime
   ├─ cli ....................... Command-line interface
   ├─ composables ............... React/Vue hooks
-  ├─ project-engine ............ Workspace management
-  ├─ dark-matter ............... Performance optimization
-  └─ engine-gateway ............ API gateway
+  └─ zk-proofs ................. Zero-knowledge proofs for RDF
 ```
 
 ---
@@ -86,6 +85,38 @@ const results = await core.query(store, 'SELECT * WHERE { ?s ?p ?o }');
 **When to use:** Always. This is the foundation.
 
 **Depends on:** `@unrdf/oxigraph`
+
+---
+
+### `@unrdf/wasm4pm` - PoWL v2 Process Mining
+
+**Purpose:** Discovery, conformance, and semantic mapping of partially ordered workflows.
+
+**Install:**
+```bash
+npm install @unrdf/wasm4pm
+```
+
+**What you get:**
+- High-performance WASM engine (`pictl`)
+- PoWL v2 model discovery from event logs
+- Token-replay conformance checking
+- RDF ontology generation (`powl.ttl` mapping)
+- Autonomic process governance
+
+**When to use:**
+- Building self-governing business processes
+- Real-time deviation detection
+- Autonomous process optimization
+
+**Example:**
+```javascript
+import { discoverPowl } from '@unrdf/wasm4pm';
+
+const log = [{ caseId: 1, activity: 'A', timestamp: ... }, ...];
+const model = await discoverPowl(log);
+console.log(model); // Output: "X(A, ->(B, C))"
+```
 
 ---
 
@@ -304,63 +335,33 @@ const results = await core.query(fedStore, `
 
 ---
 
-### `@unrdf/knowledge-engine` - Inference & Reasoning
+### `@unrdf/daemon` - Autonomic Orchestrator
 
-**Purpose:** Derive new facts from existing data using rules
+**Purpose:** Manage long-running autonomic processes and the Open Ontologies sidecar.
 
 **Install:**
 ```bash
-npm install @unrdf/knowledge-engine
+npm install @unrdf/daemon
 ```
 
 **What you get:**
-- Forward chaining rules
-- Backward chaining query
-- OWL reasoning (partial)
-- Custom rule definitions
-- Performance optimized
-
-**Exports:**
-```javascript
-import {
-  createRuleSet,
-  addRule,
-  inferenceQuery,
-  applyRules,
-  createReasoner,
-} from '@unrdf/knowledge-engine';
-```
+- **SemanticSidecarManager**: Supervised management of the Open Ontologies Rust binary.
+- **Autonomic Process Control**: Background orchestration of PoWL v2 conformance loops.
+- **MCP Server**: Native Model Context Protocol interface for AI agents.
+- **Health Monitoring**: Watchdog and heartbeat for the semantic substrate.
 
 **Example:**
 ```javascript
-import { applyRules } from '@unrdf/knowledge-engine';
+import { SemanticSidecarManager } from '@unrdf/daemon';
 
-// Define rules
-const rules = `
-  @prefix ex: <http://example.org/> .
+const sidecar = new SemanticSidecarManager({
+  binPath: './open-ontologies',
+  watchdog: true
+});
 
-  [rule1: (?a ex:parentOf ?b) (?b ex:parentOf ?c)
-    -> (?a ex:grandparentOf ?c)]
-
-  [rule2: (?a ex:sibling ?b) (?b ex:sibling ?c)
-    -> (?a ex:sibling ?c)]
-`;
-
-// Apply rules (derive new facts)
-const enrichedStore = await applyRules(store, rules);
-
-// Query enriched store
-const grandparents = await core.query(enrichedStore, `
-  SELECT ?gp WHERE { ?gp ex:grandparentOf ?person }
-`);
+await sidecar.start();
+// The sidecar is now running and supervised.
 ```
-
-**Supports:**
-- SPARQL rules
-- N3 rules
-- Custom JavaScript rules
-- Transitive closure
-- Inverse relations
 
 ---
 

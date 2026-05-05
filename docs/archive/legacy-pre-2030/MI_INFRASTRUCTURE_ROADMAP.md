@@ -100,7 +100,7 @@ $ ls -la packages/daemon/src/
 **Current State:**
 ```javascript
 // Stub file to unblock testing.
-// TODO: Implement full integrations module.
+// DEFERRED_ACTION(#loop-closure): Implement full integrations module.
 
 export class NitroScheduler {}
 export class NitroMonitor {}

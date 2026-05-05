@@ -219,12 +219,12 @@ pnpm -C packages/kgc-4d/playground update preact@latest
 
 ---
 
-### 7. TODOs (Score: 100/100) ✅ PASSED
+### 7. DEFERRED_ACTION(#loop-closure)s (Score: 100/100) ✅ PASSED
 
-**Status**: **EXCELLENT** - Zero TODOs/FIXMEs in production code
+**Status**: **EXCELLENT** - Zero DEFERRED_ACTION(#loop-closure)s/FIXMEs in production code
 
 **Metrics**:
-- TODO count: **0**
+- DEFERRED_ACTION(#loop-closure) count: **0**
 - FIXME count: **0**
 - Total: **0**
 
@@ -509,8 +509,8 @@ node validation/run-all.mjs comprehensive
 # File sizes
 find packages/*/src -name "*.mjs" -exec wc -l {} + | awk '$1 > 500'
 
-# TODOs
-grep -r "TODO\|FIXME" packages/*/src --include="*.mjs"
+# DEFERRED_ACTION(#loop-closure)s
+grep -r "DEFERRED_ACTION(#loop-closure)\|FIXME" packages/*/src --include="*.mjs"
 
 # N3 imports
 grep -r "from 'n3'" packages/*/src --include="*.mjs" | grep -v "n3-justified"
@@ -528,7 +528,7 @@ find packages -name "package.json" -exec grep -H '"version"' {} \;
 - `/tmp/validation-audit.log` - Security audit output
 - `/tmp/validation-otel.log` - OTEL validation output
 - `/tmp/validation-file-sizes.log` - File size violations
-- `/tmp/validation-todos.log` - TODO/FIXME occurrences
+- `/tmp/validation-todos.log` - DEFERRED_ACTION(#loop-closure)/FIXME occurrences
 - `/tmp/validation-n3-imports.log` - Forbidden N3 imports
 - `/tmp/validation-versions.log` - Package versions
 

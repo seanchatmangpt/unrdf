@@ -263,8 +263,8 @@ Error class coverage: 0.89%
 **Evidence**:
 
 ```bash
-Documentation files with TODOs/FIXMEs: 48
-Source code TODOs: 12
+Documentation files with DEFERRED_ACTION(#loop-closure)s/FIXMEs: 48
+Source code DEFERRED_ACTION(#loop-closure)s: 12
 
 Files requiring completion:
 docs/CLI-80-20-BIG-BANG-COMPLETE.md
@@ -281,7 +281,7 @@ docs/DIATAXIS-PHASE-*.md
 
 **Recommended Action**:
 
-- Complete or remove TODO markers
+- Complete or remove DEFERRED_ACTION(#loop-closure) markers
 - Archive incomplete docs to docs/archive/
 - Focus on user-facing docs first
 
@@ -443,7 +443,7 @@ Test-to-module ratio: 0.31:1 (Acceptable)
 ### Phase 3 (Quality Improvement)
 
 8. Add custom error classes (10+ types)
-9. Complete documentation TODOs
+9. Complete documentation DEFERRED_ACTION(#loop-closure)s
 10. Increase test-to-module ratio to 0.5:1
 
 ---
@@ -500,7 +500,7 @@ timeout 10s node validation/run-all.mjs comprehensive
 
 ### Week 3 (Documentation)
 
-- [ ] Resolve 48 TODO/FIXME markers
+- [ ] Resolve 48 DEFERRED_ACTION(#loop-closure)/FIXME markers
 - [ ] Archive incomplete documentation
 - [ ] Update user-facing guides
 
@@ -541,7 +541,7 @@ timeout 10s node validation/run-all.mjs comprehensive
 1. **OTEL validation**: 100/100 score demonstrates excellent observability
 2. **Zod usage**: 2166 validations show strong API boundary protection
 3. **Test quantity**: 137 test files is substantial coverage
-4. **Small TODOs**: Only 12 in source code (manageable debt)
+4. **Small DEFERRED_ACTION(#loop-closure)s**: Only 12 in source code (manageable debt)
 
 ### What Needs Improvement ❌
 

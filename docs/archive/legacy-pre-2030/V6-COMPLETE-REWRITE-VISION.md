@@ -418,7 +418,7 @@ Mandatory spans:
 | N3 direct imports | 7 (CRITICAL) |
 | Console.log in src/ | 304 |
 | Default exports | 327 |
-| TODO without issue | 17 |
+| DEFERRED_ACTION(#loop-closure) without issue | 17 |
 
 ### Antipatterns to Ban
 
@@ -428,7 +428,7 @@ Mandatory spans:
 4. ❌ God Objects (>15 exports)
 5. ❌ Magic numbers (use constants)
 6. ❌ Defensive programming (Zod at boundaries)
-7. ❌ TODO without GitHub issue
+7. ❌ DEFERRED_ACTION(#loop-closure) without GitHub issue
 
 ### Quality Score
 

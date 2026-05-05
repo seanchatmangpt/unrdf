@@ -1,6 +1,6 @@
 # Scoped Rule: v6-Core Delta Contract
 
-**Scope**: `@unrdf/v6-core` - YAWL v6 Delta operations
+**Scope**: `@unrdf/v6-core` - Vision 2030 Delta operations (PoWL v2)
 
 ## Delta Structure
 

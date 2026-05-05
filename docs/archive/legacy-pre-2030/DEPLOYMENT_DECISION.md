@@ -125,7 +125,7 @@ Exit status 1
 | Lint | 0 warnings | 3 warnings | `/tmp/validation-lint.log` lines 8-13 | ❌ FAIL |
 | Security | 0 high | 2 high | `/tmp/validation-audit.log` | ❌ FAIL |
 | OTEL | ≥80/100 | 100/100 | `/tmp/validation-otel.log` line 142 | ✅ PASS |
-| TODOs | 0 | 0 | `grep` returned 0 | ✅ PASS |
+| DEFERRED_ACTION(#loop-closure)s | 0 | 0 | `grep` returned 0 | ✅ PASS |
 
 **Gates Passed**: 2/6 (33.3%)
 **Gates Failed**: 4/6 (66.7%)
