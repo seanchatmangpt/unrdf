@@ -1,0 +1,2 @@
+<http://example.org/powl#powl_1777940624090> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/powl#Node> .
+<http://example.org/powl#powl_1777940624090> <http://example.org/powl#repr> "X(A, B)" .
